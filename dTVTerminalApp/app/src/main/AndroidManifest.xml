@@ -112,7 +112,7 @@
 
         <activity
             android:name="proj.activity.Player.RecommendPlayerActivity"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"/>
         <!-- ======================================  Player グループ End ======================================  -->
 
         <!-- ====================================== Ranking グループ Begin ====================================== -->
