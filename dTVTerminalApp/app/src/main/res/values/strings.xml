@@ -1,3 +1,24 @@
 <resources>
+
+    <!-- Common -->
     <string name="app_name">dTVTerminalApp</string>
+
+    <!-- Launch -->
+
+    <!-- Home -->
+
+    <!-- TvProgram -->
+
+    <!-- Video -->
+
+    <!-- Search -->
+
+    <!-- Ranking -->
+    <string name="daily_tv_ranking_title">今日のテレビランキング</string>
+    <string name="weekly_tv_ranking_title">週刊テレビランキング</string>
+    <string name="video_ranking_title">ビデオランキング</string>
+
+    <!-- Other -->
+
+    <!-- Player -->
 </resources>
