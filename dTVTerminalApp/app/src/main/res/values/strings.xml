@@ -21,4 +21,5 @@
     <!-- Other -->
 
     <!-- Player -->
+    <string name="remote_control_start">テレビで視聴する</string>
 </resources>

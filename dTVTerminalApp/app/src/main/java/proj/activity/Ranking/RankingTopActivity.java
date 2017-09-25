@@ -3,10 +3,6 @@ package proj.activity.Ranking;
 import android.os.Bundle;
 import android.view.View;
 
-/**
- * Created by hitue-fsi on 2017/09/22.
- */
-
 import proj.activity.Player.ChannelDetailPlayerActivity;
 import proj.common.BaseActivity;
 import proj.dtvterminalapp.R;

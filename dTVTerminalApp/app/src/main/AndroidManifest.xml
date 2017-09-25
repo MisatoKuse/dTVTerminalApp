@@ -107,8 +107,12 @@
             <activity android:name="proj.activity.Player.TvPlayerActivity">
             </activity>
 
-            <activity android:name="proj.activity.Player.VideoPlayerActivity">
+            <activity android:name="proj.activity.Player.VideoPlayerActivity">/
             </activity>
+
+        <activity
+            android:name="proj.activity.Player.RecommendPlayerActivity"
+            android:launchMode="singleTask">
         <!-- ======================================  Player グループ End ======================================  -->
 
         <!-- ====================================== Ranking グループ Begin ====================================== -->
