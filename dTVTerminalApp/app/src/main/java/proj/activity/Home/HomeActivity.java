@@ -5,7 +5,6 @@ package proj.activity.Home;
  */
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -197,11 +196,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
                 R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher));
     }
 
-    private void setDrawerToggle() {
+    /*private void setDrawerToggle() {
         // left --> right
         //toggle = new ActionBarDrawerToggle(this, drawerlayout, toolbar, 0, 0);
 
-        /* right --> left */
+        *//* right --> left *//*
         toggle = new ActionBarDrawerToggle(this, drawerlayout, toolbar, 0, 0){
 
             @Override
@@ -249,7 +248,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
                 return true;
             }
         });
-    }
+    }*/
 
     public class HorizontalViewAdapter extends RecyclerView.Adapter<HorizontalViewAdapter.ViewHolder>
     {
@@ -271,7 +270,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i)
         {
-            View view = mInflater.inflate(R.layout.home_main_layout_item,viewGroup, false);
+            View view = mInflater.inflate(R.layout.home_main_layout_item_demo,viewGroup, false);
             ViewHolder viewHolder = new ViewHolder(view);
             viewHolder.mImg = view.findViewById(R.id.home_main_layout_item_iv);
             viewHolder.mTxt = view.findViewById(R.id.home_main_layout_item_tv);
