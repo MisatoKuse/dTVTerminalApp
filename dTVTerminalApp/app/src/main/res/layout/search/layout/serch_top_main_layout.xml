@@ -24,25 +24,41 @@
 
     </RelativeLayout>
 
-
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="キーワードを入力"
         android:textColor="#ffffffff"/>
-
-    <Button
-        android:id="@+id/bt_keyword"
-        android:layout_width="match_parent"
+    <RelativeLayout
+        android:id="@+id/Search_result"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="履歴キーワード" />
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/bt_seeMore"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="もっと見る" />
+        <ImageView
+            android:id="@+id/Search_result_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_launcher" />
 
+        <TextView
+            android:id="@+id/Search_result_iv1"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/Search_result_iv"
+            android:text="ニーナ・ドブレフ"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:text="●"
+            android:textColor="#888888"
+            android:textSize="25sp" />
+    </RelativeLayout>
     <Button
         android:id="@+id/bt_backHome"
         android:layout_width="match_parent"

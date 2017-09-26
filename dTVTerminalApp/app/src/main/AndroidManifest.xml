@@ -119,9 +119,7 @@
 
 
         <!-- ====================================== Search グループ Begin ====================================== -->
-        <activity
-            android:name="proj.activity.Search.SearchHistoryListActivity"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name="proj.activity.Search.SearchResultActivity"
             android:screenOrientation="portrait" />
