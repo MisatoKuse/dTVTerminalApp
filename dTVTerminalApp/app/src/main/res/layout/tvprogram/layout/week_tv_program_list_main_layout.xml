@@ -3,4 +3,34 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <Button
+        android:id="@+id/btn_back"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="戻る"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="週間番組表縮小版へ"
+        android:id="@+id/btn_mode"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="チャンネル詳細情報"
+        android:id="@+id/btn_channel_info" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="番組詳細情報画面へ"
+        android:id="@+id/btn_tv_info" />
+
+    <Button
+        android:id="@+id/btn_video_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="録画予約ダイアログ表示" />
+
+
+
 </LinearLayout>

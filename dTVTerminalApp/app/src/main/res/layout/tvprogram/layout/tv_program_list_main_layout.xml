@@ -1,6 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="ここは番組表拡大版"
+        android:textColor="@color/colorAccent"
+        android:id="@+id/textView2"
+        android:gravity="center"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="戻る"
+        android:id="@+id/btn_back" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="番組表縮小版へ"
+        android:id="@+id/btn_mode" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:id="@+id/btn_channel_info"
+        android:text="チャンネル詳細画面へ"
+        android:gravity="center">
+
+    </Button>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_tv_info"
+        android:text="コンテンツ詳細画面へ"/>
+   <Button
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:id="@+id/btn_video_dialog"
+       android:text="録画予約ダイアログ表示"/>
 </LinearLayout>
