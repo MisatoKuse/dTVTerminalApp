@@ -110,9 +110,10 @@
             <activity android:name="proj.activity.Player.VideoPlayerActivity">/
             </activity>
 
-        <activity
-            android:name="proj.activity.Player.RecommendPlayerActivity"
-            android:launchMode="singleTask"/>
+            <activity
+                android:name="proj.activity.Player.RecommendPlayerActivity"
+                android:launchMode="singleTask">
+            </activity>
         <!-- ======================================  Player グループ End ======================================  -->
 
         <!-- ====================================== Ranking グループ Begin ====================================== -->
