@@ -13,30 +13,31 @@ import android.widget.TextView;
 import proj.common.BaseActivity;
 import proj.dtvterminalapp.R;
 
-public class SettingActivity extends BaseActivity {
-   private  TextView tv_toSettingDetail;
+public class SettingActivity extends BaseActivity implements View.OnClickListener {
+    private TextView tv_toSettingDetail;
     private Button bt_back1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.setting_main_layout);
         tv_toSettingDetail = (TextView) findViewById(R.id.tv_setting);
-        bt_back1= (Button) findViewById(R.id.Back1);
-        bt_back1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SettingActivity.this.finish();
-            }
-        });
+        bt_back1 = (Button) findViewById(R.id.Back1);
         tv_toSettingDetail.setClickable(true);
-        tv_toSettingDetail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent it_toSettingDetail = new Intent(SettingActivity.this,SettingDetailActivity.class);
-                startActivity(it_toSettingDetail);
-            }
-        });
+        bt_back1.setOnClickListener(this);
+        tv_toSettingDetail.setOnClickListener(this);
+    }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.Back1:
+                finish();
+                break;
+            case R.id.tv_setting:
+                startActivity(SettingDetailActivity.class,null);
+            default:
+                break;
+        }
     }
 }

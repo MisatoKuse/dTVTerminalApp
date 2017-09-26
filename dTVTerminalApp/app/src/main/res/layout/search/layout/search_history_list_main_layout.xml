@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#000000"
     android:orientation="vertical">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -21,6 +22,11 @@
             android:textSize="20dp" />
 
     </RelativeLayout>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="キーワードを入力"
+        android:textColor="#ffffffff"/>
 
     <Button
         android:id="@+id/bt_backTop"
@@ -29,33 +35,43 @@
         android:text="戻る" />
 
     <TextView
+        android:id="@+id/tv_toResult1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="これは検索履歴一覧ページ" />
+        android:text="これは検索履歴一覧ページ"
+        android:textColor="#ffffffff"
+        android:clickable="true" />
+
+    <TextView
+        android:id="@+id/tv_toResult2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="これは検索履歴一覧ページ"
+        android:textColor="#ffffffff"
+        android:clickable="true" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="これは検索履歴一覧ページ" />
+        android:text="これは検索履歴一覧ページ"
+        android:textColor="#ffffffff"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="これは検索履歴一覧ページ" />
+        android:text="これは検索履歴一覧ページ"
+        android:textColor="#ffffffff"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="これは検索履歴一覧ページ" />
+        android:text="これは検索履歴一覧ページ"
+        android:textColor="#ffffffff"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="これは検索履歴一覧ページ" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="これは検索履歴一覧ページ" />
+        android:text="これは検索履歴一覧ページ"
+        android:textColor="#ffffffff"/>
 
 </LinearLayout>

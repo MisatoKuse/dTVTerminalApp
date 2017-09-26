@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#000000"
     android:orientation="vertical">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -26,7 +27,8 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="キーワードを入力" />
+        android:hint="キーワードを入力"
+        android:textColor="#ffffffff"/>
 
 
     <Button
@@ -53,11 +55,11 @@
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"
-            android:backgroundTint="#ff0000"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
+            android:backgroundTint="#ff0000"
             android:src="@mipmap/sort"
             app:elevation="8dp" />
 
