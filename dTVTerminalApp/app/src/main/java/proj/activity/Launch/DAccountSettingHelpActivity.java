@@ -16,7 +16,8 @@ import proj.dtvterminalapp.R;
 public class DAccountSettingHelpActivity extends BaseActivity implements View.OnClickListener {
 
     private Button mActivationCodeInputDAccounHelpActivity=null;
-    private Button mRepairDAccounHelpActivity=null;  //
+    private Button mRepairDAccounHelpActivity=null;
+    private Button mReturnDAccounHelpActivity=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +42,9 @@ public class DAccountSettingHelpActivity extends BaseActivity implements View.On
 
         mRepairDAccounHelpActivity=(Button)findViewById(R.id.repairDAccounHelpActivity);
         mRepairDAccounHelpActivity.setOnClickListener(this);
+
+        mReturnDAccounHelpActivity=(Button)findViewById(R.id.returnDAccounHelpActivity);
+        mReturnDAccounHelpActivity.setOnClickListener(this);
     }
 
     @Override
@@ -49,7 +53,13 @@ public class DAccountSettingHelpActivity extends BaseActivity implements View.On
             onActivationButton();
         } else if(v.equals(mRepairDAccounHelpActivity)){
             onRepairButton();
+        } else if(v.equals(mReturnDAccounHelpActivity)){
+            onReturnButton();
         }
+    }
+
+    private void onReturnButton() {
+        startActivity(DAccountReSettingActivity.class, null);
     }
 
     /**

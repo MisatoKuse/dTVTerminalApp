@@ -19,6 +19,7 @@ public class STBParingInvitationActivity extends BaseActivity implements View.On
     private static boolean mIsFirstDisplay=true;
 
     private Button mUseWithoutPairingSTBParingInvitationActivity=null;
+    private Button mReturnSTBParingInvitationActivity=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +48,9 @@ public class STBParingInvitationActivity extends BaseActivity implements View.On
         mUseWithoutPairingSTBParingInvitationActivity=(Button)findViewById(R.id.useWithoutPairingSTBParingInvitationActivity);
         mUseWithoutPairingSTBParingInvitationActivity.setOnClickListener(this);
 
+        mReturnSTBParingInvitationActivity=(Button)findViewById(R.id.returnSTBParingInvitationActivity);
+        mReturnSTBParingInvitationActivity.setOnClickListener(this);
+
         mIsFirstDisplay=false;
     }
 
@@ -59,7 +63,13 @@ public class STBParingInvitationActivity extends BaseActivity implements View.On
     public void onClick(View v) {
         if(v.equals(mUseWithoutPairingSTBParingInvitationActivity)) {
             onUseWithoutPairingButton();
+        } else if(v.equals(mReturnSTBParingInvitationActivity)){
+            onReturnButton();
         }
+    }
+
+    private void onReturnButton() {
+        startActivity(STBSelectActivity.class, null);
     }
 
     private void onUseWithoutPairingButton() {
