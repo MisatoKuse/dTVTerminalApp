@@ -43,6 +43,7 @@ import proj.activity.Ranking.VideoRankingActivity;
 import proj.activity.Search.SearchTopActivity;
 import proj.activity.TvProgram.ChannelListActivity;
 import proj.activity.TvProgram.TvProgramListActivity;
+import proj.activity.Video.VideoPurchListActivity;
 import proj.activity.Video.VideoTopActivity;
 import proj.common.BaseActivity;
 import proj.dtvterminalapp.R;
@@ -178,7 +179,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
         popupWindowView.findViewById(R.id.pop_purchased).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(HomeActivity.this,"四月非対応",Toast.LENGTH_SHORT).show();
+                startActivity(VideoPurchListActivity.class,null);
                 popupWindow.dismiss();
             }
         });
