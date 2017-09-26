@@ -5,7 +5,9 @@ package proj.activity.Home;
  */
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -262,6 +264,16 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
             @Override
             public void onClick(View view) {
                 initPopupWindow();
+            }
+        });
+        findViewById(R.id.home_main_layout_prrl).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setAction("android.intent.action.VIEW");
+                Uri content_url = Uri.parse("https://www.google.co.jp/");
+                intent.setData(content_url);
+                startActivity(intent);
             }
         });
 

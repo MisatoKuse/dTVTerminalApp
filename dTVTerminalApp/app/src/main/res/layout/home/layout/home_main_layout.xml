@@ -29,6 +29,22 @@
             android:textColor="#FFFFFF"
             android:layout_height="match_parent" />
     </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/home_main_layout_prrl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:src="@mipmap/ic_launcher"/>
+        <TextView
+            android:text="PR"
+            android:textSize="30sp"
+            android:textColor="#0000FF"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>
     <!--<android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -196,7 +212,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:text="クリープ"
+                    android:text="クリップ"
                     android:textColor="#FFFFFF"/>
                 <TextView
                     android:id="@+id/home_main_cliplist"
