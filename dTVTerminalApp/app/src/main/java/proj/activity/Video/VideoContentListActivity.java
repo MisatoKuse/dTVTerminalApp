@@ -21,7 +21,7 @@ public class VideoContentListActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.video_content_main_layout);
+        setContentView(R.layout.video_content_list_main_layout);
         initView();
     }
 
