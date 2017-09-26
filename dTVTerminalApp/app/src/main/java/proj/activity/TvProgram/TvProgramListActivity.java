@@ -61,7 +61,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 final AlertDialog dialog = builder.create();
-                View view1 = View.inflate(this, R.layout.schedule_rec_dialog_layout, null);
+                final View view1 = View.inflate(this, R.layout.schedule_rec_dialog_layout, null);
                 dialog.setView(view1,0,0,0,0);
                 dialog.show();
                 view1.findViewById(R.id.video_ok).setOnClickListener(new View.OnClickListener() {
@@ -72,6 +72,14 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
                         View view1 = View.inflate(TvProgramListActivity.this, R.layout.schedule_rec_dialog_layout2, null);
                         dialog.setView(view1,0,0,0,0);
                         dialog.show();
+                        view1.findViewById(R.id.tv_cancel).setOnClickListener(new View.OnClickListener(){
+
+                            @Override
+                            public void onClick(View view) {
+                                dialog.dismiss();
+                            }
+                        });
+
                     }
                 });
                 view1.findViewById(R.id.video_cancel).setOnClickListener(new View.OnClickListener() {
@@ -79,7 +87,9 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
                     public void onClick(View view) {
                         dialog.dismiss();
                     }
+
                 });
+
 
 
                 break;

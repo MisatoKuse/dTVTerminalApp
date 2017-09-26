@@ -22,7 +22,7 @@
         android:layout_height="50dp"
         android:text="設定しない"
         android:gravity="center"
-        android:id="@+id/video_ok"/>
+        android:id="@+id/tv_cancel"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="1dp"
