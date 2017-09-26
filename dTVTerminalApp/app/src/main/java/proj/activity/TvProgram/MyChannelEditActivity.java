@@ -10,9 +10,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.HorizontalScrollView;
-
-import proj.activity.Player.ChannelDetailPlayerActivity;
 import proj.common.BaseActivity;
 import proj.dtvterminalapp.R;
 

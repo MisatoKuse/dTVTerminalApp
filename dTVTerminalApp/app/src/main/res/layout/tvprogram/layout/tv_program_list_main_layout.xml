@@ -4,13 +4,20 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
+    <RelativeLayout
+        android:id="@+id/home_main_layout_title"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:text="ここは番組表拡大版"
-        android:textColor="@color/colorAccent"
-        android:id="@+id/textView2"
-        android:gravity="center"/>
+        android:layout_height="40dp"
+        android:background="#FF0000">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="番組表画面"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="15sp"/>
+    </RelativeLayout>
 
     <Button
         android:layout_width="match_parent"
