@@ -43,6 +43,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="再度ペアリングを実行する" />
+
+        <Button
+            android:id="@+id/returnDAccounHelpActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="戻る" />
     </LinearLayout>
 
 </LinearLayout>

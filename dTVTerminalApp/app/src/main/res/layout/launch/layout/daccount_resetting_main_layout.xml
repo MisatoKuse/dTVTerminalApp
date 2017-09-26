@@ -44,6 +44,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="STBにdアカウントを登録するには" />
+
+        <Button
+            android:id="@+id/returnDAccountReSettingActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="戻る" />
     </LinearLayout>
 
 </LinearLayout>

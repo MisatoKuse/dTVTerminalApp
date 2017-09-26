@@ -37,6 +37,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="ペアリングしないでアプリを利用する" />
+
+        <Button
+            android:id="@+id/returnSTBParingInvitationActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="戻る" />
+
     </LinearLayout>
 
 </LinearLayout>

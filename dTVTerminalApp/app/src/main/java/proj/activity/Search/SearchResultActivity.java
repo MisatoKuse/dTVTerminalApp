@@ -26,7 +26,7 @@ public class SearchResultActivity extends BaseActivity implements View.OnClickLi
         bt_backTop2 = findViewById(R.id.bt_backTop2);
         fab_sort = findViewById(R.id.fab);
         mrelativeLayout1 = findViewById(R.id.Search_result1);
-        mrelativeLayout2=findViewById(R.id.Search_result2);
+        mrelativeLayout2 = findViewById(R.id.Search_result2);
         bt_backTop2.setOnClickListener(this);
         fab_sort.setOnClickListener(this);
         mrelativeLayout1.setOnClickListener(this);
@@ -37,7 +37,7 @@ public class SearchResultActivity extends BaseActivity implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()) {
 
-                        case R.id.Search_result1:
+            case R.id.Search_result1:
                 startActivity(ChannelDetailPlayerActivity.class, null);
                 break;
             case R.id.Search_result2:

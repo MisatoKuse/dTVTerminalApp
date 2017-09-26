@@ -17,6 +17,7 @@ public class DAccountReSettingActivity extends BaseActivity implements View.OnCl
 
     private Button mOtherDAccountDAccounReSettingActivity=null;
     private Button mDAccountRegDAccountReSettingActivity=null;
+    private Button mReturnDAccountReSettingActivity=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +43,9 @@ public class DAccountReSettingActivity extends BaseActivity implements View.OnCl
         mDAccountRegDAccountReSettingActivity=(Button)findViewById(R.id.dAccountRegDAccountReSettingActivity);
         mDAccountRegDAccountReSettingActivity.setOnClickListener(this);
 
+        mReturnDAccountReSettingActivity=(Button)findViewById(R.id.returnDAccountReSettingActivity);
+        mReturnDAccountReSettingActivity.setOnClickListener(this);
+
     }
 
     @Override
@@ -50,7 +54,13 @@ public class DAccountReSettingActivity extends BaseActivity implements View.OnCl
             onOtherDAccountButton();
         } else if(v.equals(mDAccountRegDAccountReSettingActivity)){
             onDAccountRegButton();
+        } else if(v.equals(mReturnDAccountReSettingActivity)){
+            onReturnButton();
         }
+    }
+
+    private void onReturnButton() {
+        startActivity(STBSelectActivity.class, null);
     }
 
     /**
