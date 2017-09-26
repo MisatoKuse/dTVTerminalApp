@@ -9,6 +9,9 @@ package proj.common;
 
 public class DCommon {
 
+    //アプリ名前
+    public static final String AppliName ="dリモート";
+
     //============================== 画面IDと画面タイトル定義 Begin ==============================
     //HOME(契約・ペアリング済み)
     public static final String HomeScreenID     = "dRM-01-001";
@@ -25,6 +28,15 @@ public class DCommon {
     //チャンネル詳細
     public static final String ChannelDetailScreenID     = "dRM-09-003";
     public static final String ChannelDetailScreenTitle  = "チャンネル詳細";
+
+
+    //---------------------------------- Launch グループ Begin ----------------------------------
+    //起動画面
+    public static final String LaunchActivityScreenID= "";
+    public static final String LaunchActivityScreenTitle = "起動画面";
+
+
+    //----------------------------------- Launch グループ End -----------------------------------
 
     //=============================== 画面IDと画面タイトル定義 End ===============================
 

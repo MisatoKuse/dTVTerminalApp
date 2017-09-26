@@ -46,7 +46,8 @@ public class BaseActivity extends Activity{
     public void startActivity(Class<?> clz, Bundle bundle) {
         Intent intent = new Intent(this, clz);
         if (bundle != null) {
-            intent.putExtra("bundle", bundle);
+            //intent.putExtra("bundle", bundle);
+            intent.putExtras(bundle);
         }
         startActivity(intent);
     }
