@@ -33,10 +33,11 @@
        android:layout_height="40dp">
 
       <TextView
-          android:id="@+id/open"
+          android:id="@+id/channel1"
           android:layout_width="wrap_content"
           android:layout_height="match_parent"
           android:text="チャンネル1"
+
           android:textColor="#ffffff"
           android:textSize="20sp"
           android:layout_alignParentLeft="true"
@@ -54,6 +55,7 @@
           android:layout_width="wrap_content"
           android:layout_height="match_parent"
           android:text="チャンネル2"
+          android:id="@+id/channel2"
           android:textColor="#ffffff"
           android:textSize="20sp"
           android:layout_alignParentLeft="true"
@@ -77,6 +79,7 @@
           android:layout_width="wrap_content"
           android:layout_height="match_parent"
           android:text="チャンネル3"
+          android:id="@+id/channel3"
           android:textColor="#ffffff"
           android:textSize="20sp"
           android:layout_alignParentLeft="true"
@@ -100,6 +103,7 @@
           android:layout_width="wrap_content"
           android:layout_height="match_parent"
           android:text="チャンネル4"
+          android:id="@+id/channel4"
           android:textColor="#ffffff"
           android:textSize="20sp"
           android:layout_alignParentLeft="true"
@@ -123,6 +127,7 @@
           android:layout_width="wrap_content"
           android:layout_height="match_parent"
           android:text="チャンネル5"
+          android:id="@+id/channel5"
           android:textColor="#ffffff"
           android:textSize="20sp"
           android:layout_alignParentLeft="true"

@@ -71,34 +71,30 @@ public class WeekTvProgramListActivity extends BaseActivity implements View.OnCl
                 startActivity(TvPlayerActivity.class,null);
                 break;
             case R.id.btn_video_dialog:
-//                new MyDialogFragment().show(getFragmentManager(), "dialog_fragment");
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 final AlertDialog dialog = builder.create();
-                View view = View.inflate(this, R.layout.schedule_rec_dialog_layout, null);
-                // dialog.setView(view);// 将自定义的布局文件设置给dialog
-                dialog.setView(view,0,0,0,0);// 设置边距为0,保证在2.x的版本上运行没问题
-
-
-
+                View view1 = View.inflate(this, R.layout.schedule_rec_dialog_layout, null);
+                dialog.setView(view1,0,0,0,0);
+                dialog.show();
+                view1.findViewById(R.id.video_ok).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(WeekTvProgramListActivity.this);
+                        final AlertDialog dialog = builder.create();
+                        View view1 = View.inflate(WeekTvProgramListActivity.this, R.layout.schedule_rec_dialog_layout2, null);
+                        dialog.setView(view1,0,0,0,0);
+                        dialog.show();
+                    }
+                });
+                view1.findViewById(R.id.video_cancel).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                    }
+                });
                 break;
-
-
         }
     }
 
-//    private class MyDialogFragment {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        final AlertDialog dialog = builder.create();
-//        View view = View.inflate(this, R.layout.schedule_rec_dialog_layout, null);
-//        // dialog.setView(view);// 将自定义的布局文件设置给dialog
-//        dialog.setView(view,0,0,0,0);// 设置边距为0,保证在2.x的版本上运行没问题
-//
-//        TextView videoOk = (TextView)findViewById(R.id.video_ok);
-//        TextView videoCancel = (TextView)findViewById(R.id.video_cancel);
-//
-//
-//
-//
-//
-//    }
 }
