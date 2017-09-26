@@ -5,7 +5,6 @@ package proj.activity.TvProgram;
  */
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -72,25 +71,34 @@ public class WeekTvProgramListActivity extends BaseActivity implements View.OnCl
                 startActivity(TvPlayerActivity.class,null);
                 break;
             case R.id.btn_video_dialog:
-                new AlertDialog.Builder(WeekTvProgramListActivity.this)
-                        .setTitle("録画よやくしますか？")
-                        .setPositiveButton("録画予約します",new DialogInterface.OnClickListener(){
+//                new MyDialogFragment().show(getFragmentManager(), "dialog_fragment");
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                final AlertDialog dialog = builder.create();
+                View view = View.inflate(this, R.layout.schedule_rec_dialog_layout, null);
+                // dialog.setView(view);// 将自定义的布局文件设置给dialog
+                dialog.setView(view,0,0,0,0);// 设置边距为0,保证在2.x的版本上运行没问题
 
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
 
-                            }
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
 
-                            }
-                        })
-                        .show();
                 break;
 
 
         }
     }
+
+//    private class MyDialogFragment {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        final AlertDialog dialog = builder.create();
+//        View view = View.inflate(this, R.layout.schedule_rec_dialog_layout, null);
+//        // dialog.setView(view);// 将自定义的布局文件设置给dialog
+//        dialog.setView(view,0,0,0,0);// 设置边距为0,保证在2.x的版本上运行没问题
+//
+//        TextView videoOk = (TextView)findViewById(R.id.video_ok);
+//        TextView videoCancel = (TextView)findViewById(R.id.video_cancel);
+//
+//
+//
+//
+//
+//    }
 }

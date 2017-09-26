@@ -5,12 +5,12 @@ package proj.activity.TvProgram;
  */
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import proj.activity.Home.HomeActivity;
 import proj.activity.Player.ChannelDetailPlayerActivity;
@@ -58,19 +58,30 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
                 startActivity(TvPlayerActivity.class,null);
                 break;
             case R.id.btn_video_dialog:
-                new AlertDialog.Builder(TvProgramListActivity.this)
-                        .setTitle("録画よやくしますか？")
-                        .setPositiveButton("録画予約します",new DialogInterface.OnClickListener(){
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        })
-                        .show();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                final AlertDialog dialog = builder.create();
+                View view1 = View.inflate(this, R.layout.schedule_rec_dialog_layout, null);
+                dialog.setView(view1,0,0,0,0);
+                dialog.show();
+                view1.findViewById(R.id.video_ok).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(TvProgramListActivity.this);
+                        final AlertDialog dialog = builder.create();
+                        View view1 = View.inflate(TvProgramListActivity.this, R.layout.schedule_rec_dialog_layout2, null);
+                        dialog.setView(view1,0,0,0,0);
+                        dialog.show();
+                    }
+                });
+                view1.findViewById(R.id.video_cancel).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                    }
+                });
+
+
                 break;
             case R.id.btn_mode:
                 if (flag) {
