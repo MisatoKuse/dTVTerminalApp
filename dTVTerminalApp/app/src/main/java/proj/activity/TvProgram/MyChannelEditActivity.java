@@ -10,12 +10,15 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.TextView;
+
 import proj.common.BaseActivity;
 import proj.dtvterminalapp.R;
 
 public class MyChannelEditActivity extends BaseActivity implements View.OnClickListener {
 
     private Button btnBack,btnAdd;
+    private TextView channel1,channel2,channel3,channel4,channel5,channel6,backIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +31,22 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     private void initView() {
         btnBack = (Button)findViewById(R.id.btn_back);
         btnAdd = (Button)findViewById(R.id.btn_add);
+        channel1= (TextView)findViewById(R.id.channel1);
+        channel2= (TextView)findViewById(R.id.channel2);
+        channel3= (TextView)findViewById(R.id.channel3);
+        channel4= (TextView)findViewById(R.id.channel4);
+        channel5= (TextView)findViewById(R.id.channel5);
+        channel6= (TextView)findViewById(R.id.channel6);
+        backIcon = (TextView)findViewById(R.id.back_key);
+        backIcon.setOnClickListener(this);
         btnBack.setOnClickListener(this);
         btnAdd.setOnClickListener(this);
+        channel1.setOnClickListener(this);
+        channel2.setOnClickListener(this);
+        channel3.setOnClickListener(this);
+        channel4.setOnClickListener(this);
+        channel5.setOnClickListener(this);
+        channel6.setOnClickListener(this);
     }
 
 
@@ -37,9 +54,16 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_back:
+            case R.id.back_key:
                 finish();
                 break;
             case R.id.btn_add:
+            case R.id.channel1:
+            case R.id.channel2:
+            case R.id.channel3:
+            case R.id.channel4:
+            case R.id.channel5:
+            case R.id.channel6:
                 new AlertDialog.Builder(MyChannelEditActivity.this)
                         .setTitle("追加")
                         .setPositiveButton("",new DialogInterface.OnClickListener(){

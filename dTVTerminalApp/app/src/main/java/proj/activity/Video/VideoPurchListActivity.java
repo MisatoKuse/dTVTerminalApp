@@ -1,34 +1,32 @@
-package proj.activity.Home;
-
-/**
- * Created by ryuhan on 2017/09/22.
- */
+package proj.activity.Video;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import proj.activity.Player.ChannelDetailPlayerActivity;
-import proj.activity.Player.RecordedVideoPlayerActivity;
 import proj.activity.Player.TvPlayerActivity;
 import proj.common.BaseActivity;
 import proj.dtvterminalapp.R;
 
-public class RecordedListActivity extends BaseActivity {
+/**
+ * Created by hitue-fsi on 2017/09/22.
+ */
 
-    private RelativeLayout mLinearLayout;
+public class VideoPurchListActivity extends BaseActivity {
+
+    private RelativeLayout mRelativeLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.record_list_main_layout);
-
+        setContentView(R.layout.video_purch_list_main_layout);
         initView();
     }
 
     private void initView(){
-        mLinearLayout = findViewById(R.id.record_list_main_layout_ll1);
-        mLinearLayout.setOnClickListener(new View.OnClickListener() {
+        mRelativeLayout = findViewById(R.id.purch_video_list_main_layout_ll1);
+        mRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(TvPlayerActivity.class,null);

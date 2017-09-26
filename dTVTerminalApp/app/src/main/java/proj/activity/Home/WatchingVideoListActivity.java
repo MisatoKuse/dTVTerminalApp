@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 
 import proj.activity.Player.ChannelDetailPlayerActivity;
 import proj.activity.Player.RecordedVideoPlayerActivity;
+import proj.activity.Player.TvPlayerActivity;
 import proj.common.BaseActivity;
 import proj.dtvterminalapp.R;
 
@@ -28,7 +29,7 @@ public class WatchingVideoListActivity extends BaseActivity {
         mLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(ChannelDetailPlayerActivity.class,null);
+                startActivity(TvPlayerActivity.class,null);
             }
         });
     }

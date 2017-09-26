@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#000000"
     android:orientation="vertical">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -21,13 +22,20 @@
             android:textSize="20dp" />
 
     </RelativeLayout>
+    <Button
+        android:id="@+id/Back3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="戻る"
+        android:textColor="#ffffffff"/>
 
     <TextView
         android:id="@+id/tv_news1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:text="お知らせ内容一" />
+        android:text="お知らせ内容一"
+        android:textColor="#ffffffff"/>
 
 
     <TextView
@@ -35,6 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:text="お知らせ内容二" />
+        android:text="お知らせ内容二"
+        android:textColor="#ffffffff"/>
 
 </LinearLayout>
