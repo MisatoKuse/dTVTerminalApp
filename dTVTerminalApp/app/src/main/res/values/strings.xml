@@ -1,25 +1,34 @@
 <resources>
 
-    <!-- Common -->
-    <string name="app_name">dTVTerminalApp</string>
+<!-- Common -->
+<string name="app_name">dTVTerminalApp</string>
 
-    <!-- Launch -->
+<!-- Launch -->
+    <string name="str_launch_title">起動画面</string>
+    <string name="str_tutorial_title">チュートリアル画面</string>
+    <string name="str_stb_select_title">STB選択</string>
+    <string name="str_stb_connect_title">STB接続</string>
+    <string name="str_stb_pair_invitation_title">STBペアリング勧誘</string>
+    <string name="str_d_account_setting_title">dアカウントアプリ誘導</string>
+    <string name="str_d_account_resetting_title">dアカウント再設定</string>
+    <string name="str_d_account_setting_help_title">dアカウント設定ヘルプ</string>
+    <string name="str_d_account_reg_confirmation_title">dアカウント登録確認</string>
 
-    <!-- Home -->
+<!-- Home -->
 
-    <!-- TvProgram -->
+<!-- TvProgram -->
 
-    <!-- Video -->
+<!-- Video -->
 
-    <!-- Search -->
+<!-- Search -->
 
-    <!-- Ranking -->
-    <string name="daily_tv_ranking_title">今日のテレビランキング</string>
-    <string name="weekly_tv_ranking_title">週刊テレビランキング</string>
-    <string name="video_ranking_title">ビデオランキング</string>
+<!-- Ranking -->
+<string name="daily_tv_ranking_title">今日のテレビランキング</string>
+<string name="weekly_tv_ranking_title">週刊テレビランキング</string>
+<string name="video_ranking_title">ビデオランキング</string>
 
-    <!-- Other -->
+<!-- Other -->
 
-    <!-- Player -->
-    <string name="remote_control_start">テレビで視聴する</string>
+<!-- Player -->
+<string name="remote_control_start">テレビで視聴する</string>
 </resources>

@@ -3,4 +3,100 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="#FF0000">
+        <TextView
+            android:id="@+id/titleStbSelectActivity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/str_stb_select_title"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="18sp"/>
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/button1STBSelectActivity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="docomo STB1" />
+
+    <Button
+        android:id="@+id/button2STBSelectActivity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="docomo STB2" />
+
+    <Button
+        android:id="@+id/button3STBSelectActivity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="docomo STB3" />
+
+    <Button
+        android:id="@+id/dAccountLoginYesSTBSelectActivity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="dアカウントログイン済 " />
+
+    <Button
+        android:id="@+id/dAccountLoginNoSTBSelectActivity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="dアカウント未ログイン " />
+
+    <Button
+        android:id="@+id/dAccountAppliYesSTBSelectActivity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="端末内にdアカウントアプリがある" />
+
+    <Button
+        android:id="@+id/dAccountAppliNoSTBSelectActivity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="端末内にdアカウントアプリがない" />
+
+    <Button
+        android:id="@+id/dAccountSameYesSTBSelectActivity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="STBに同じdアカウントが登録されている" />
+
+    <Button
+        android:id="@+id/dAccountSameNoSTBSelectActivity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="STBに同じdアカウントが登録されていない" />
+
+    <LinearLayout
+        android:id="@+id/content"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:orientation="vertical">
+
+        <CheckBox
+            android:id="@+id/checkBoxSTBSelectActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="次回以降表示しない" />
+
+        <Button
+            android:id="@+id/useWithoutPairingSTBParingInvitationActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ペアリングしないでアプリを利用する" />
+    </LinearLayout>
+
 </LinearLayout>

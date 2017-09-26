@@ -11,179 +11,157 @@
         android:theme="@style/AppTheme">
 
         <!-- ====================================== Home グループ Begin ====================================== -->
-            <activity android:name="proj.activity.Home.HomeActivity"
-                android:screenOrientation="portrait">
+        <activity
+            android:name="proj.activity.Home.HomeActivity"
+            android:screenOrientation="portrait">
+
+            <!--
                 <intent-filter>
                     <action android:name="android.intent.action.MAIN" />
 
                     <category android:name="android.intent.category.LAUNCHER" />
                 </intent-filter>
-            </activity>
+            -->
+        </activity>
+        <activity
+            android:name="proj.activity.Home.ClipListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="proj.activity.Home.RecommendActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="proj.activity.Home.RecordedListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="proj.activity.Home.RecordReservationListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="proj.activity.Home.WatchingVideoListActivity"
+            android:screenOrientation="portrait" />
+        <!-- ======================================  Home グループ End ====================================== -->
 
-            <activity android:name="proj.activity.Home.ClipListActivity"
-                android:screenOrientation="portrait">
-            </activity>
-
-            <activity android:name="proj.activity.Home.RecommendActivity"
-                android:screenOrientation="portrait">
-            </activity>
-
-            <activity android:name="proj.activity.Home.RecordedListActivity"
-                android:screenOrientation="portrait">
-            </activity>
-
-            <activity android:name="proj.activity.Home.RecordReservationListActivity"
-                android:screenOrientation="portrait">
-            </activity>
-
-            <activity android:name="proj.activity.Home.WatchingVideoListActivity"
-                android:screenOrientation="portrait">
-            </activity>
-        <!-- ======================================  Home グループ End ======================================  -->
 
         <!-- ===================================== Launch グループ Begin ===================================== -->
-            <activity android:name="proj.activity.Launch.BaseAccountReSettingActivity"
-                android:screenOrientation="portrait">
-            </activity>
+        <activity
+            android:name="proj.activity.Launch.DAccountReSettingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="proj.activity.Launch.DAccountSettingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="proj.activity.Launch.DAccountSettingHelpActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="proj.activity.Launch.LaunchActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-            <activity android:name="proj.activity.Launch.BaseAccountSettingActivity"
-                android:screenOrientation="portrait">
-            </activity>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="proj.activity.Launch.STBConnectActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="proj.activity.Launch.STBParingInvitationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="proj.activity.Launch.STBSelectActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="proj.activity.Launch.TutorialActivity"
+            android:screenOrientation="portrait" />
+        <!-- ======================================  Launch グループ End ====================================== -->
 
-            <activity android:name="proj.activity.Launch.BaseAccountSettingHelpActivity"
-                android:screenOrientation="portrait">
-            </activity>
-
-            <activity android:name="proj.activity.Launch.LaunchActivity"
-                android:screenOrientation="portrait">
-            </activity>
-
-            <activity android:name="proj.activity.Launch.STBConnectActivity"
-                android:screenOrientation="portrait">
-            </activity>
-
-            <activity android:name="proj.activity.Launch.STBParingInvitationActivity"
-                android:screenOrientation="portrait">
-            </activity>
-
-            <activity android:name="proj.activity.Launch.STBSelectActivity"
-                android:screenOrientation="portrait">
-            </activity>
-
-            <activity android:name="proj.activity.Launch.TutorialActivity"
-                android:screenOrientation="portrait">
-            </activity>
-        <!-- ======================================  Launch グループ End ======================================  -->
 
         <!-- ====================================== Other グループ Begin ====================================== -->
-            <activity android:name="proj.activity.Other.NewsActivity"
-                android:screenOrientation="portrait">
-            </activity>
+        <activity
+            android:name="proj.activity.Other.NewsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="proj.activity.Other.NewsDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="proj.activity.Other.RemoteControlActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="proj.activity.Other.SettingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="proj.activity.Other.SettingDetailActivity"
+            android:screenOrientation="portrait" />
+        <!-- ======================================  Other グループ End ====================================== -->
 
-            <activity android:name="proj.activity.Other.NewsDetailActivity"
-                android:screenOrientation="portrait">
-            </activity>
-
-            <activity android:name="proj.activity.Other.RemoteControlActivity"
-                android:screenOrientation="portrait">
-            </activity>
-
-            <activity android:name="proj.activity.Other.SettingActivity"
-                android:screenOrientation="portrait">
-            </activity>
-
-            <activity android:name="proj.activity.Other.SettingDetailActivity"
-                android:screenOrientation="portrait">
-            </activity>
-        <!-- ======================================  Other グループ End ======================================  -->
 
         <!-- ====================================== Player グループ Begin ====================================== -->
-            <activity android:name="proj.activity.Player.ChannelDetailPlayerActivity">
-            </activity>
+        <activity android:name="proj.activity.Player.ChannelDetailPlayerActivity" />
+        <activity android:name="proj.activity.Player.RecordedVideoPlayerActivity" />
+        <activity android:name="proj.activity.Player.TvPlayerActivity" />
+        <activity android:name="proj.activity.Player.VideoPlayerActivity" />
+        <!-- ======================================  Player グループ End ====================================== -->
 
-            <activity android:name="proj.activity.Player.RecordedVideoPlayerActivity">
-            </activity>
-
-            <activity android:name="proj.activity.Player.TvPlayerActivity">
-            </activity>
-
-            <activity android:name="proj.activity.Player.VideoPlayerActivity">/
-            </activity>
-
-            <activity
-                android:name="proj.activity.Player.RecommendPlayerActivity"
-                android:launchMode="singleTask">
-            </activity>
-        <!-- ======================================  Player グループ End ======================================  -->
 
         <!-- ====================================== Ranking グループ Begin ====================================== -->
-            <activity android:name="proj.activity.Ranking.DailyTvRankingActivity"
-                android:screenOrientation="portrait">
-            </activity>
+        <activity
+            android:name="proj.activity.Ranking.DailyTvRankingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="proj.activity.Ranking.RankingTopActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="proj.activity.Ranking.VideoRankingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="proj.activity.Ranking.WeeklyTvRankingActivity"
+            android:screenOrientation="portrait" />
+        <!-- ======================================  Ranking グループ End ====================================== -->
 
-            <activity android:name="proj.activity.Ranking.RankingTopActivity"
-                android:screenOrientation="portrait">
-            </activity>
-
-            <activity android:name="proj.activity.Ranking.VideoRankingActivity"
-                android:screenOrientation="portrait">
-            </activity>
-
-            <activity android:name="proj.activity.Ranking.WeeklyTvRankingActivity"
-                android:screenOrientation="portrait">
-            </activity>
-        <!-- ======================================  Ranking グループ End ======================================  -->
 
         <!-- ====================================== Search グループ Begin ====================================== -->
-            <activity android:name="proj.activity.Search.SearchHistoryListActivity"
-                android:screenOrientation="portrait">
-            </activity>
+        <activity
+            android:name="proj.activity.Search.SearchHistoryListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="proj.activity.Search.SearchResultActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="proj.activity.Search.SearchTopActivity"
+            android:screenOrientation="portrait" />
+        <!-- ======================================  Search グループ End ====================================== -->
 
-            <activity android:name="proj.activity.Search.SearchResultActivity"
-                android:screenOrientation="portrait">
-            </activity>
-
-            <activity android:name="proj.activity.Search.SearchTopActivity"
-                android:screenOrientation="portrait">
-            </activity>
-        <!-- ======================================  Search グループ End ======================================  -->
 
         <!-- ====================================== TvProgram グループ Begin ====================================== -->
-            <activity android:name="proj.activity.TvProgram.ChannelListActivity"
-                android:screenOrientation="portrait">
-            </activity>
+        <activity
+            android:name="proj.activity.TvProgram.ChannelListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="proj.activity.TvProgram.MyChannelEditActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="proj.activity.TvProgram.TvProgramListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="proj.activity.TvProgram.WeekTvProgramListActivity"
+            android:screenOrientation="portrait" />
+        <!-- ======================================  TvProgram グループ End ====================================== -->
 
-            <activity android:name="proj.activity.TvProgram.MyChannelEditActivity"
-                android:screenOrientation="portrait">
-            </activity>
-
-            <activity android:name="proj.activity.TvProgram.TvProgramListActivity"
-                android:screenOrientation="portrait">
-            </activity>
-
-            <activity android:name="proj.activity.TvProgram.WeekTvProgramListActivity"
-                android:screenOrientation="portrait">
-            </activity>
-        <!-- ======================================  TvProgram グループ End ======================================  -->
 
         <!-- ====================================== Video グループ Begin ====================================== -->
-            <activity android:name="proj.activity.Video.VideoContentListActivity"
-                android:screenOrientation="portrait">
-            </activity>
+        <activity
+            android:name="proj.activity.Video.VideoContentListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="proj.activity.Video.VideoSubGenreActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="proj.activity.Video.VideoTopActivity"
+            android:screenOrientation="portrait" />
+        <!-- ======================================  Video グループ End ====================================== -->
 
-            <activity android:name="proj.activity.Video.VideoSubGenreActivity"
-                android:screenOrientation="portrait">
-            </activity>
-
-            <activity android:name="proj.activity.Video.VideoTopActivity"
-                android:screenOrientation="portrait">
-            </activity>
-
-            <activity android:name="proj.activity.Video.VideoPurchListActivity"
-                android:screenOrientation="portrait">
-            </activity>
-        <!-- ======================================  Video グループ End ======================================  -->
-
+        <activity android:name="proj.activity.Temp.DAccountAppliActivity" />
+        <activity android:name="proj.activity.Temp.GoogleStoreActivity" />
+        <activity android:name="proj.activity.Launch.DAccountRegConfirmationActivity"></activity>
     </application>
 
 </manifest>

@@ -8,19 +8,20 @@
         android:layout_height="46dp"
         android:background="#FF0000">
         <TextView
-            android:id="@+id/titleTutorialActivity"
+            android:id="@+id/titleDAccountAppli"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="@string/str_tutorial_title"
+            android:text="Googleストア"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
             android:textSize="18sp"/>
     </RelativeLayout>
 
     <Button
-        android:id="@+id/skipOrFinishTutorialAcivity"
+        android:id="@+id/downloadOkGoogleStore"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="スキップ" />
+        android:text="dアカウントアプリをダウンロードする" />
+
 </LinearLayout>
