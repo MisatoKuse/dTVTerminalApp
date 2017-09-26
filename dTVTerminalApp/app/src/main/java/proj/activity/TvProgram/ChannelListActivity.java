@@ -31,6 +31,7 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
     private List<String> tabNames;
     private LinearLayout mLinearLayout;
     private ListView mListView;
+    private TextView channel1,channel2,channel3,channel4,channel5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +80,19 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
 
         btnBack = (Button)findViewById(R.id.btn_back);
         btnChannelInfo = (Button)findViewById(R.id.btn_channel_info);
+        channel1= (TextView)findViewById(R.id.channel1);
+        channel2= (TextView)findViewById(R.id.channel2);
+        channel3= (TextView)findViewById(R.id.channel3);
+        channel4= (TextView)findViewById(R.id.channel4);
+        channel5= (TextView)findViewById(R.id.channel5);
         btnBack.setOnClickListener(this);
         btnChannelInfo.setOnClickListener(this);
+        channel1.setOnClickListener(this);
+        channel2.setOnClickListener(this);
+        channel3.setOnClickListener(this);
+        channel4.setOnClickListener(this);
+        channel5.setOnClickListener(this);
+
 
     }
 
@@ -91,6 +103,11 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
                 startActivity(HomeActivity.class,null);
                 break;
             case R.id.btn_channel_info:
+            case R.id.channel1:
+            case R.id.channel2:
+            case R.id.channel3:
+            case R.id.channel4:
+            case R.id.channel5:
                 startActivity(ChannelDetailPlayerActivity.class,null);
                 break;
 

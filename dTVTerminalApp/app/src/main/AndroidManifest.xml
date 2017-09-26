@@ -178,6 +178,10 @@
             <activity android:name="proj.activity.Video.VideoTopActivity"
                 android:screenOrientation="portrait">
             </activity>
+
+            <activity android:name="proj.activity.Video.VideoPurchListActivity"
+                android:screenOrientation="portrait">
+            </activity>
         <!-- ======================================  Video グループ End ======================================  -->
 
     </application>
