@@ -15,15 +15,16 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal|center"
             android:maxLines="1"
-            android:text="キーワード検索"
+            android:text="キーワード検索＞結果（dTV、dアニメ）"
             android:textColor="#ffffffff"
             android:textSize="20dp" />
 
     </RelativeLayout>
-    <TextView
+    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="キーワード検索＞結果（dTV、dアニメ）"/>
+        android:hint="キーワードを入力" />
+
 
     <Button
         android:id="@+id/bt_result1"
@@ -40,5 +41,4 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="戻る"/>
-
 </LinearLayout>
