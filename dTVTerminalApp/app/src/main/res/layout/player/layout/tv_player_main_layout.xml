@@ -28,6 +28,20 @@
         android:text="コンテンツ詳細(おすすめ作品)" />
 
     <Button
+        android:id="@+id/button18"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="channelButton"
+        android:text="チャンネル" />
+
+    <Button
+        android:id="@+id/button17"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="scheduleRecButton"
+        android:text="録画予約する" />
+
+    <Button
         android:id="@+id/button5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
