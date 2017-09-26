@@ -240,6 +240,19 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
     }
 
     private void initView(){
+
+        TextView tv = (TextView)findViewById(R.id.home_main_layout_title_tv);
+        Bundle b= getIntent().getExtras();
+        String state="";
+        try {
+            state = b.getString("state");
+        } catch (Exception e) {
+
+        }
+        if(state!=null && state.length()>0){
+            tv.setText(state);
+        }
+
         channelTextView = findViewById(R.id.home_main_chanellist);
         recommendTextView = findViewById(R.id.home_main_recommendlist);
         recommendVideoTextView = findViewById(R.id.home_main_recommendvideolist);
