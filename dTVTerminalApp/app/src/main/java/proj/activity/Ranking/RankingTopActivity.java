@@ -3,7 +3,7 @@ package proj.activity.Ranking;
 import android.os.Bundle;
 import android.view.View;
 
-import proj.activity.Player.ChannelDetailPlayerActivity;
+import proj.activity.Player.TvPlayerActivity;
 import proj.common.BaseActivity;
 import proj.dtvterminalapp.R;
 
@@ -18,7 +18,7 @@ public class RankingTopActivity extends BaseActivity {
      * コンテンツ詳細への遷移
      */
     public void contentsDetailButton(View view) {
-        startActivity(ChannelDetailPlayerActivity.class, null);
+        startActivity(TvPlayerActivity.class, null);
     }
 
     /**

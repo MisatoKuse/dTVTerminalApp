@@ -3,10 +3,6 @@ package proj.activity.Player;
 import android.os.Bundle;
 import android.view.View;
 
-/**
- * Created by hitue-fsi on 2017/09/22.
- */
-
 import proj.activity.Other.RemoteControlActivity;
 import proj.common.BaseActivity;
 import proj.dtvterminalapp.R;

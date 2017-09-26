@@ -3,11 +3,7 @@ package proj.activity.Ranking;
 import android.os.Bundle;
 import android.view.View;
 
-/**
- * Created by hitue-fsi on 2017/09/22.
- */
-
-import proj.activity.Player.ChannelDetailPlayerActivity;
+import proj.activity.Player.TvPlayerActivity;
 import proj.common.BaseActivity;
 import proj.dtvterminalapp.R;
 
@@ -24,6 +20,6 @@ public class VideoRankingActivity extends BaseActivity {
      * @param view
      */
     public void contentsDetailButton(View view) {
-        startActivity(ChannelDetailPlayerActivity.class, null);
+        startActivity(TvPlayerActivity.class, null);
     }
 }

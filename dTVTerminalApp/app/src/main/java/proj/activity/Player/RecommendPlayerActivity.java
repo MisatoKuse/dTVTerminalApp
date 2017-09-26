@@ -6,11 +6,11 @@ import android.widget.Toast;
 
 import proj.dtvterminalapp.R;
 
-public class RecommendPlayerActivity extends ChannelDetailPlayerActivity {
+public class RecommendPlayerActivity extends TvPlayerActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.channel_detail_player_main_layout);
+        setContentView(R.layout.tv_player_main_layout);
         //launchModeにsingleTaskを設定しているため、画面の処理はonResumeに記載すること
     }
 
