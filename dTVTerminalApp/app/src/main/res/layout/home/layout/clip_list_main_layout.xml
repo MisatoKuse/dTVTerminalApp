@@ -4,30 +4,17 @@
     android:layout_height="match_parent"
     android:background="#000000">
     <RelativeLayout
-        android:id="@+id/clip_list_main_layout_title"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:background="#FF0000">
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="dりモード"
+            android:text="クリープ一覧"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
             android:textSize="15sp"/>
-        <TextView
-            android:id="@+id/clip_list_main_layout_r"
-            android:paddingRight="15dp"
-            android:paddingLeft="15dp"
-            android:layout_alignParentRight="true"
-            android:gravity="center_vertical"
-            android:layout_width="wrap_content"
-            android:text="..."
-            android:textSize="18sp"
-            android:textColor="#FFFFFF"
-            android:layout_height="match_parent" />
     </RelativeLayout>
 
     <RelativeLayout

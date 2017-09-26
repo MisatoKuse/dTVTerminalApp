@@ -7,6 +7,7 @@ package proj.activity.Home;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import proj.activity.Player.ChannelDetailPlayerActivity;
 import proj.activity.Player.RecordedVideoPlayerActivity;
@@ -15,7 +16,7 @@ import proj.dtvterminalapp.R;
 
 public class RecordedListActivity extends BaseActivity {
 
-    private LinearLayout mLinearLayout;
+    private RelativeLayout mLinearLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
