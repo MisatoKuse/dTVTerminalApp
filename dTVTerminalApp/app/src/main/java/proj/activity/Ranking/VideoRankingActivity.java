@@ -2,6 +2,7 @@ package proj.activity.Ranking;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import proj.activity.Player.TvPlayerActivity;
 import proj.common.BaseActivity;
@@ -21,5 +22,14 @@ public class VideoRankingActivity extends BaseActivity {
      */
     public void contentsDetailButton(View view) {
         startActivity(TvPlayerActivity.class, null);
+    }
+
+    /**
+     * クリップボタン
+     *
+     * @param view
+     */
+    public void clipButton(View view) {
+        Toast.makeText(this, "クリップしました", Toast.LENGTH_SHORT).show();
     }
 }

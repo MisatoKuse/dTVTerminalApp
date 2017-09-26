@@ -6,6 +6,7 @@ import android.view.View;
 import proj.activity.Other.RemoteControlActivity;
 import proj.activity.TvProgram.MyChannelEditActivity;
 import proj.activity.TvProgram.TvProgramListActivity;
+import proj.activity.TvProgram.WeekTvProgramListActivity;
 import proj.common.BaseActivity;
 import proj.dtvterminalapp.R;
 
@@ -31,7 +32,7 @@ public class ChannelDetailPlayerActivity extends BaseActivity {
      * @param view
      */
     public void weeklyTvGuideButton(View view) {
-        startActivity(TvProgramListActivity.class, null);
+        startActivity(WeekTvProgramListActivity.class, null);
     }
 
     /**
