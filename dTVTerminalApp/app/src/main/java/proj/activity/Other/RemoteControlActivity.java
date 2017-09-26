@@ -15,5 +15,6 @@ public class RemoteControlActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.remote_controll_main_layout);
+
     }
 }
