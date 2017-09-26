@@ -4,9 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-/**
- * Created by hitue-fsi on 2017/09/22.
- */
+
 
 import proj.common.BaseActivity;
 import proj.dtvterminalapp.R;

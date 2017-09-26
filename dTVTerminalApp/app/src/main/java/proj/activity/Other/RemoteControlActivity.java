@@ -4,9 +4,6 @@ import android.os.Bundle;
 
 import proj.dtvterminalapp.R;
 
-/**
- * Created by hitue-fsi on 2017/09/22.
- */
 
 import proj.common.BaseActivity;
 

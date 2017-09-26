@@ -7,9 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-/**
- * Created by hitue-fsi on 2017/09/22.
- */
+
 
 import proj.activity.Player.ChannelDetailPlayerActivity;
 import proj.common.BaseActivity;

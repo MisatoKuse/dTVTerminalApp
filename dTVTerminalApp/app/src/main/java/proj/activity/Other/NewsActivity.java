@@ -7,9 +7,7 @@ import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
 
-/**
- * Created by hitue-fsi on 2017/09/22.
- */
+
 
 import proj.common.BaseActivity;
 import proj.dtvterminalapp.R;
