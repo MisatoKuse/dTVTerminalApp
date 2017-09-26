@@ -7,6 +7,7 @@ package proj.activity.TvProgram;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -64,15 +65,21 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
             case R.id.channel4:
             case R.id.channel5:
             case R.id.channel6:
-                new AlertDialog.Builder(MyChannelEditActivity.this)
-                        .setTitle("追加")
-                        .setPositiveButton("",new DialogInterface.OnClickListener(){
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        })
+            case R.id.add_over:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                final AlertDialog dialog = builder.create();
+                Window window = dialog.getWindow();
+                window.setGravity(Gravity.BOTTOM);
+                View view1 = View.inflate(this, R.layout.channel_add_dialog_layout, null);
+                dialog.setView(view1,0,0,0,0);
+                dialog.show();
+                view1.findViewById(R.id.add_over).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                    }
+                });
 
-                        .show();
                 break;
         }
     }

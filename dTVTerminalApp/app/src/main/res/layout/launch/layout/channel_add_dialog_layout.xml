@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+       <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="▽"
+        android:textSize="20sp"
+        android:layout_marginLeft="10dp"
+        android:gravity="center"
+           android:id="@+id/down_add"
+           android:layout_alignParentBottom="true" />
+
+        <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:textSize="20sp"
+        android:text="△"
+        android:id="@+id/on_add"
+        android:layout_marginLeft="10dp"
+            android:gravity="center"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/down_add" />
+       <TextView
+           android:layout_width="50dp"
+           android:layout_height="match_parent"
+           android:text="完了"
+           android:id="@+id/add_over"
+           android:layout_alignParentTop="true"
+           android:layout_alignParentEnd="true"
+           android:gravity="center"/>
+
+    </RelativeLayout>
+
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="チャンネル1"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="チャンネル1"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="チャンネル1"
+        android:gravity="center"/>
+
+
+</LinearLayout>
