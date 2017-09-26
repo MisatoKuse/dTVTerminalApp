@@ -5,14 +5,33 @@ package proj.activity.Home;
  */
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
+import proj.activity.Player.ChannelDetailPlayerActivity;
+import proj.activity.Player.RecordedVideoPlayerActivity;
 import proj.common.BaseActivity;
 import proj.dtvterminalapp.R;
 
 public class ClipListActivity extends BaseActivity {
+
+    private RelativeLayout mLinearLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.clip_list_main_layout);
+        initView();
+    }
+
+    private void initView(){
+        mLinearLayout = findViewById(R.id.clip_list_main_layout_ll1);
+        mLinearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(ChannelDetailPlayerActivity.class,null);
+            }
+        });
     }
 }
