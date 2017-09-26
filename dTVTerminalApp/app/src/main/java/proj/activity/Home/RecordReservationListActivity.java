@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import proj.activity.Player.ChannelDetailPlayerActivity;
 import proj.activity.Player.RecordedVideoPlayerActivity;
 import proj.common.BaseActivity;
 import proj.dtvterminalapp.R;
@@ -29,7 +30,7 @@ public class RecordReservationListActivity extends BaseActivity {
         mLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(RecordedVideoPlayerActivity.class,null);
+                startActivity(ChannelDetailPlayerActivity.class,null);
             }
         });
     }
