@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/layout_titleBar"
         android:layout_width="match_parent"
@@ -20,6 +22,7 @@
             android:textSize="20dp" />
 
     </RelativeLayout>
+
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,15 +33,34 @@
         android:id="@+id/bt_result1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="検索結果　内容１"/>
+        android:text="検索結果　内容１" />
+
     <Button
         android:id="@+id/bt_result2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="検索結果　内容２"/>
+        android:text="検索結果　内容２" />
+
     <Button
         android:id="@+id/bt_backTop2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="戻る"/>
+        android:text="戻る" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:backgroundTint="#ff0000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:src="@mipmap/sort"
+            app:elevation="8dp" />
+
+    </FrameLayout>
+
 </LinearLayout>
