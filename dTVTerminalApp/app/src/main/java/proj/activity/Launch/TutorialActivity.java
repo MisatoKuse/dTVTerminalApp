@@ -34,7 +34,6 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public String getScreenTitle() {
-
         return getString(R.string.str_tutorial_title);
     }
 

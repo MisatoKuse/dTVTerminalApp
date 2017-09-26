@@ -36,15 +36,6 @@ public class DAccountRegConfirmationActivity extends BaseActivity implements Vie
     }
 
     private void setContents() {
-        /**
-         * 次回以降表示しない設定した
-         */
-        /*
-        if(mIsNextTimeHide){
-            startActivity(STBParingInvitationActivity.class, null);
-            return;
-        }
-        */
 
         TextView title= (TextView)findViewById(R.id.titleDAccountRegConfirmationActivity);
         title.setText(getScreenTitle());

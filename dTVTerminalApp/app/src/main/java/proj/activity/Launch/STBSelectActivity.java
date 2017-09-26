@@ -101,7 +101,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     public String getScreenTitle() {
-
         return getString(R.string.str_stb_select_title);
     }
 

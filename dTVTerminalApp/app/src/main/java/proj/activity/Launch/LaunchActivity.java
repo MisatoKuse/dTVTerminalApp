@@ -16,8 +16,6 @@ import proj.dtvterminalapp.R;
 
 public class LaunchActivity extends BaseActivity implements View.OnClickListener {
 
-    //private boolean mIsFirstLanch=true;
-
     public static final String mStateFromTutorialActivity="fromTutorialActivity";
     public static final String mStateToHomePairingOk="ホーム画面（ペアリング済）";
     public static final String mStateToHomePairingNg="ホーム画面（未ペアリング）";
@@ -27,10 +25,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
     Button pairYesLanchActivity=null;
     Button pairNoLanchActivity=null;
-
-    /*Button dAccountLoginYesLanchActivity=null;
-    Button dAccountLoginNoLanchActivity=null;
-    */
 
     Button mStbWifiYesLanchActivity=null;
     Button mStbWifiNoLanchActivity=null;
@@ -63,15 +57,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         pairNoLanchActivity= (Button)findViewById(R.id.pairNoLanchActivity);
         pairNoLanchActivity.setOnClickListener(this);
 
-        /*
-        dAccountLoginYesLanchActivity= (Button)findViewById(R.id.dAccountLoginYesLanchActivity);
-        dAccountLoginYesLanchActivity.setOnClickListener(this);
-
-
-        dAccountLoginNoLanchActivity= (Button)findViewById(R.id.dAccountLoginNoLanchActivity);
-        dAccountLoginNoLanchActivity.setOnClickListener(this);
-        */
-
         mStbWifiYesLanchActivity= (Button)findViewById(R.id.stbWifiYesLanchActivity);
         mStbWifiYesLanchActivity.setOnClickListener(this);
 
@@ -92,7 +77,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
     private void state1(){
         onFirstLanchNoButton();
-        //onPairNoButton();
     }
 
 
@@ -116,11 +100,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
             onPairYesButton();
         } else if(v.equals(pairNoLanchActivity)) {
             onPairNoButton();
-        } /*else if (v.equals(dAccountLoginYesLanchActivity)) {
-            onDAccountLoginYesButton();
-        } else if(v.equals(dAccountLoginNoLanchActivity)) {
-
-        } */else if (v.equals(mStbWifiYesLanchActivity)) {
+        } else if (v.equals(mStbWifiYesLanchActivity)) {
             onStbWifiYesButton();
         } else if(v.equals(mStbWifiNoLanchActivity)) {
             onStbWifiNoButton();
@@ -139,17 +119,8 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
      * ※一度表示されたら以降表示されない
      */
     private void onStbWifiNoButton() {
-        //Bundle b=new Bundle();
-        //b.putString("state", mStateToHomePairingNg);
         startActivity(STBParingInvitationActivity.class, null);
     }
-
-    /*
-    private void onDAccountLoginYesButton() {
-        showDAccountYesNoButtons(View.GONE);
-        showStbWifiYesNoButtons(View.VISIBLE);
-    }
-    */
 
     private void onPairNoButton() {
         //showDAccountYesNoButtons(View.VISIBLE);
@@ -190,17 +161,9 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         firstLanchLanchNoActivity.setVisibility(visibility);
     }
 
-    /*
-    private void showDAccountYesNoButtons(int visibility){
-        dAccountLoginYesLanchActivity.setVisibility(visibility);
-        dAccountLoginNoLanchActivity.setVisibility(visibility);
-    }
-    */
-
     private void showStbWifiYesNoButtons(int visibility){
         mStbWifiYesLanchActivity.setVisibility(visibility);
         mStbWifiNoLanchActivity.setVisibility(visibility);
     }
-
 
 }

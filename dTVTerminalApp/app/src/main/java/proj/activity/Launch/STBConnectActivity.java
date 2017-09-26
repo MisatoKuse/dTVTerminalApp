@@ -51,12 +51,10 @@ public class STBConnectActivity extends BaseActivity {
         public void run() {
             try {
                 if(!isStbConnected) {
-                    //handler.postDelayed(this, 0);
                     mInfoSTBConnectActivity.setText("STBとペアリングしました。\n(ホーム画面に自動遷移)");
                     isStbConnected=true;
                     handler.postDelayed(this, 2500);
                 } else {
-                    //handler.postDelayed(this, 0);
                     handler.removeCallbacks(runnable);
                     Bundle b=new Bundle();
                     b.putString("state", LaunchActivity.mStateToHomePairingOk);
