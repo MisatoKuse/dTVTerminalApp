@@ -6,12 +6,10 @@ package proj.activity.TvProgram;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Toolbar;
 
 import proj.activity.Home.HomeActivity;
 import proj.activity.Player.ChannelDetailPlayerActivity;
@@ -22,7 +20,6 @@ import proj.dtvterminalapp.R;
 public class WeekTvProgramListActivity extends BaseActivity implements View.OnClickListener {
     private Button btnBack,btnMode,btnChannelInfo,btnTvInfo,btnVideoDialog;
     private boolean flag= true;
-//    private Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,12 +29,6 @@ public class WeekTvProgramListActivity extends BaseActivity implements View.OnCl
 
     private void initView() {
         btnBack = (Button)findViewById(R.id.btn_back);
-//        toolbar = (Toolbar)findViewById(R.id.toolbar);
-//
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            toolbar.setTitle("TvProgramListActivity");
-//        }
-
         btnMode = (Button)findViewById(R.id.btn_mode);
         btnChannelInfo = (Button)findViewById(R.id.btn_channel_info);
         btnTvInfo = (Button)findViewById(R.id.btn_tv_info);
@@ -57,7 +48,7 @@ public class WeekTvProgramListActivity extends BaseActivity implements View.OnCl
                 break;
             case R.id.btn_mode:
                 if (flag) {
-                    btnMode.setText("番組表拡大版へ");
+                    btnMode.setText("週間番組表拡大版へ");
                     LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                             800,
                             LinearLayout.LayoutParams.WRAP_CONTENT
@@ -65,7 +56,7 @@ public class WeekTvProgramListActivity extends BaseActivity implements View.OnCl
                     btnMode.setLayoutParams(lp);
                     flag = false;
                 }else{
-                    btnMode.setText("番組表縮小版へ");
+                    btnMode.setText("週間番組表縮小版へ");
                     LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.MATCH_PARENT,
                             LinearLayout.LayoutParams.WRAP_CONTENT

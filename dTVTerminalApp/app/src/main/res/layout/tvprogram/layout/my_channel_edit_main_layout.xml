@@ -1,29 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
+    <RelativeLayout
+        android:id="@+id/home_main_layout_title"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:text="ここはチャンネル編集メニュー画面"
-        android:gravity="center"
-        android:id="@+id/textView" />
+        android:layout_height="40dp"
+        android:background="#FF0000">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="チャンネルリスト編集メニュー画面"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="15sp"/>
+    </RelativeLayout>
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="戻る"
-        android:layout_below="@+id/textView"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
         android:id="@+id/btn_back" />
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="+ボタン"
         android:id="@+id/btn_add"
-        android:layout_below="@+id/btn_back"
-        android:layout_centerHorizontal="true" />
+ />
 
 
-</RelativeLayout>
+</LinearLayout>
