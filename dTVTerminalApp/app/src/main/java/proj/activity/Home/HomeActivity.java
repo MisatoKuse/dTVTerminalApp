@@ -9,7 +9,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,13 +26,22 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import proj.activity.Other.NewsActivity;
+import proj.activity.Other.SettingActivity;
+import proj.activity.Player.ChannelDetailPlayerActivity;
 import proj.activity.Ranking.DailyTvRankingActivity;
+import proj.activity.Ranking.RankingTopActivity;
 import proj.activity.Ranking.VideoRankingActivity;
+import proj.activity.Search.SearchTopActivity;
 import proj.activity.TvProgram.ChannelListActivity;
 import proj.activity.TvProgram.TvProgramListActivity;
+import proj.activity.Video.VideoTopActivity;
 import proj.common.BaseActivity;
 import proj.dtvterminalapp.R;
 
@@ -58,11 +66,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_main_layout);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = this.getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(0xFF0000);
-        }
 
         initView();
     }
@@ -114,12 +117,105 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
                 return false;
             }
         });
+        popupWindowView.findViewById(R.id.pop_iv).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(ChannelDetailPlayerActivity.class,null);
+                popupWindow.dismiss();
+            }
+        });
         popupWindowView.findViewById(R.id.pop_home).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 //                startActivity();
+                popupWindow.dismiss();
             }
         });
+        popupWindowView.findViewById(R.id.pop_banngumi).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(TvProgramListActivity.class,null);
+                popupWindow.dismiss();
+            }
+        });
+        popupWindowView.findViewById(R.id.pop_chanellist).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(ChannelListActivity.class,null);
+                popupWindow.dismiss();
+            }
+        });
+        popupWindowView.findViewById(R.id.pop_recordbanngumi).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(RecordedListActivity.class,null);
+                popupWindow.dismiss();
+            }
+        });
+        popupWindowView.findViewById(R.id.pop_susenbanngumi).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(RecommendActivity.class,null);
+                popupWindow.dismiss();
+            }
+        });
+        popupWindowView.findViewById(R.id.pop_rank).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(RankingTopActivity.class,null);
+                popupWindow.dismiss();
+            }
+        });
+        popupWindowView.findViewById(R.id.pop_clip).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(ClipListActivity.class,null);
+                popupWindow.dismiss();
+            }
+        });
+        popupWindowView.findViewById(R.id.pop_purchased).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(HomeActivity.this,"四月非対応",Toast.LENGTH_SHORT).show();
+                popupWindow.dismiss();
+            }
+        });
+        popupWindowView.findViewById(R.id.pop_yoyaku).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(RecordReservationListActivity.class,null);
+                popupWindow.dismiss();
+            }
+        });
+        popupWindowView.findViewById(R.id.pop_video).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(VideoTopActivity.class,null);
+                popupWindow.dismiss();
+            }
+        });
+        popupWindowView.findViewById(R.id.pop_keyword).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(SearchTopActivity.class,null);
+                popupWindow.dismiss();
+            }
+        });
+        popupWindowView.findViewById(R.id.pop_notice).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(NewsActivity.class,null);
+                popupWindow.dismiss();
+            }
+        });
+        popupWindowView.findViewById(R.id.pop_set).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(SettingActivity.class,null);
+                popupWindow.dismiss();
+            }
+        });
+
 
 
     }
