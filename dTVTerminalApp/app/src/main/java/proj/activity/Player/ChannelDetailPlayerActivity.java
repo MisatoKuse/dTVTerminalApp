@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.View;
 
 import proj.activity.Other.RemoteControlActivity;
+import proj.activity.TvProgram.MyChannelEditActivity;
+import proj.activity.TvProgram.TvProgramListActivity;
 import proj.common.BaseActivity;
 import proj.dtvterminalapp.R;
 
@@ -15,20 +17,38 @@ public class ChannelDetailPlayerActivity extends BaseActivity {
     }
 
     /**
-     * リモコン画面への遷移
+     * 選局ボタン
      *
      * @param view
      */
-    public void remoteControlButton(View view) {
-        startActivity(RemoteControlActivity.class, null);
+    public void selectChannelButton(View view) {
+        startActivity(TvPlayerActivity.class, null);
     }
 
     /**
-     * おすすめへの遷移
+     * 週間番組表
      *
      * @param view
      */
-    public void recommendButton(View view) {
-        startActivity(RecommendPlayerActivity.class, null);
+    public void weeklyTvGuideButton(View view) {
+        startActivity(TvProgramListActivity.class, null);
+    }
+
+    /**
+     * 番組表設定
+     *
+     * @param view
+     */
+    public void tvGuideSetting(View view) {
+        startActivity(MyChannelEditActivity.class, null);
+    }
+
+    /**
+     * 放送プログラム
+     *
+     * @param view
+     */
+    public void tvProgramButton(View view) {
+        startActivity(TvPlayerActivity.class, null);
     }
 }

@@ -4,17 +4,47 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/button5"
+    <RelativeLayout
+        android:id="@+id/home_main_layout_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="remoteControlButton"
-        android:text="remote_control_start" />
+        android:layout_height="40dp"
+        android:background="#FF0000">
+        <TextView
+            android:id="@+id/contents_detail_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="チャンネル詳細"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="15sp"/>
+    </RelativeLayout>
 
     <Button
-        android:id="@+id/button6"
+        android:id="@+id/button10"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="recommendButton"
-        android:text="コンテンツ詳細(おすすめ作品)" />
+        android:onClick="selectChannelButton"
+        android:text="選局ボタン(コンテンツ詳細へ遷移)" />
+
+    <Button
+        android:id="@+id/button14"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="weeklyTvGuideButton"
+        android:text="週間番組表" />
+
+    <Button
+        android:id="@+id/button12"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="tvGuideSetting"
+        android:text="番組表設定" />
+
+    <Button
+        android:id="@+id/button13"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="tvProgramButton"
+        android:text="放送プログラム(コンテンツ詳細へ遷移)" />
 </LinearLayout>
