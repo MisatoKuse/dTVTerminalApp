@@ -80,11 +80,18 @@ public class WeekTvProgramListActivity extends BaseActivity implements View.OnCl
                 view1.findViewById(R.id.video_ok).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        dialog.dismiss();
                         AlertDialog.Builder builder = new AlertDialog.Builder(WeekTvProgramListActivity.this);
                         final AlertDialog dialog = builder.create();
                         View view1 = View.inflate(WeekTvProgramListActivity.this, R.layout.schedule_rec_dialog_layout2, null);
                         dialog.setView(view1,0,0,0,0);
                         dialog.show();
+                        view1.findViewById(R.id.tv_cancel).setOnClickListener(new View.OnClickListener(){
+                            @Override
+                            public void onClick(View view) {
+                               dialog.dismiss();
+                            }
+                        });
                     }
                 });
                 view1.findViewById(R.id.video_cancel).setOnClickListener(new View.OnClickListener() {
