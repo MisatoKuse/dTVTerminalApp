@@ -3,4 +3,47 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="#FF0000">
+        <TextView
+            android:id="@+id/titleDAccountReSettingActivity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/str_d_account_resetting_title"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="18sp"/>
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:id="@+id/content"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/otherDAccountDAccounReSettingActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="別のdアカウントを登録する" />
+
+        <Button
+            android:id="@+id/dAccountRegDAccountReSettingActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="STBにdアカウントを登録するには" />
+    </LinearLayout>
+
 </LinearLayout>

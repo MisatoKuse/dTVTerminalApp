@@ -4,74 +4,60 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
-        android:id="@+id/home_main_layout_title"
         android:layout_width="match_parent"
         android:layout_height="46dp"
         android:background="#FF0000">
         <TextView
-            android:id="@+id/titleLanchActivity"
+            android:id="@+id/titleDAccountRegConfirmationActivity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="@string/str_launch_title"
+            android:text="@string/str_d_account_reg_confirmation_title"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
             android:textSize="18sp"/>
     </RelativeLayout>
 
-
     <Button
-        android:id="@+id/firstLanchLanchYesActivity"
+        android:id="@+id/dAccountLoginYesDAccountRegConfirmationActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="初回起動" />
+        android:text="dアカウントログイン済 " />
 
     <Button
-        android:id="@+id/firstLanchLanchNoActivity"
+        android:id="@+id/dAccountLoginNoDAccountRegConfirmationActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="初回起動ではない" />
+        android:text="dアカウント未ログイン " />
 
     <Button
-        android:id="@+id/pairYesLanchActivity"
+        android:id="@+id/dAccountAppliYesDAccountRegConfirmationActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="ペアリング済、はい"
-        android:visibility="invisible" />
+        android:text="端末内にdアカウントアプリがある" />
 
     <Button
-        android:id="@+id/pairNoLanchActivity"
+        android:id="@+id/dAccountAppliNoDAccountRegConfirmationActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="ペアリング済、いいえ"
-        android:visibility="invisible" />
+        android:text="端末内にdアカウントアプリがない" />
 
     <Button
-        android:id="@+id/dAccountLoginYesLanchActivity"
+        android:id="@+id/dAccountSameYesDAccountRegConfirmationActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="dアカウント自動ログイン済"
-        android:visibility="gone" />
+        android:text="STBに同じdアカウントが登録されている" />
 
     <Button
-        android:id="@+id/dAccountLoginNoLanchActivity"
+        android:id="@+id/dAccountSameNoDAccountRegConfirmationActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="dアカウント自動ログインしない"
-        android:visibility="gone" />
+        android:text="STBに同じdアカウントが登録されていない" />
 
     <Button
-        android:id="@+id/stbWifiYesLanchActivity"
+        android:id="@+id/returnDAccountRegConfirmationActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="同一Wi-Fi上にSTBがある"
-        android:visibility="invisible" />
-
-    <Button
-        android:id="@+id/stbWifiNoLanchActivity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="同一Wi-Fi上にSTBがない"
-        android:visibility="invisible" />
+        android:text="戻る" />
 
 </LinearLayout>
