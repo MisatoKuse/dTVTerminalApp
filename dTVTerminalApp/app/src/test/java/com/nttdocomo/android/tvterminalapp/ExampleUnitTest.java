@@ -1,4 +1,4 @@
-package com.dtvterminalapp;
+package com.nttdocomo.android.tvterminalapp;
 
 import org.junit.Test;
 

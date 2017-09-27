@@ -1,4 +1,4 @@
-package com.dtvterminalapp;
+package com.nttdocomo.android.tvterminalapp;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
