@@ -99,8 +99,9 @@
         <activity android:name="proj.activity.Player.RecordedVideoPlayerActivity" />
         <activity android:name="proj.activity.Player.TvPlayerActivity" />
         <activity android:name="proj.activity.Player.VideoPlayerActivity" />
-        <activity android:name="proj.activity.Player.RecommendPlayerActivity"
-            android:launchMode="singleTop"/>
+        <activity
+            android:name="proj.activity.Player.RecommendPlayerActivity"
+            android:launchMode="singleTop" />
         <!-- ======================================  Player グループ End ====================================== -->
 
 
@@ -122,9 +123,6 @@
 
         <!-- ====================================== Search グループ Begin ====================================== -->
 
-        <activity
-            android:name="proj.activity.Search.SearchResultActivity"
-            android:screenOrientation="portrait" />
         <activity
             android:name="proj.activity.Search.SearchTopActivity"
             android:screenOrientation="portrait" />
