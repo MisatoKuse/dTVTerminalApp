@@ -1,4 +1,4 @@
-package com.nttdocomo.activity.android.tvterminalapp.common;
+package com.nttdocomo.android.tvterminalapp.common;
 
 import android.app.Activity;
 import android.content.Intent;

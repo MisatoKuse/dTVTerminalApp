@@ -6,8 +6,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.activity.Home.HomeActivity;
-import com.nttdocomo.activity.android.tvterminalapp.common.BaseActivity;
-import com.nttdocomo.activity.android.tvterminalapp.common.DCommon;
+import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.common.DCommon;
 import com.nttdocomo.android.tvterminalapp.R;
 
 /**

@@ -7,7 +7,7 @@ import android.os.Bundle;
  */
 
 
-import com.nttdocomo.activity.android.tvterminalapp.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 
 

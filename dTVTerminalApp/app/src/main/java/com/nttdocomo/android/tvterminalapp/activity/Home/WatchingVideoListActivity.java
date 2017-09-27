@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.nttdocomo.android.tvterminalapp.activity.Player.TvPlayerActivity;
-import com.nttdocomo.activity.android.tvterminalapp.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 
 public class WatchingVideoListActivity extends BaseActivity {

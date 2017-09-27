@@ -42,7 +42,7 @@ import com.nttdocomo.android.tvterminalapp.activity.TvProgram.ChannelListActivit
 import com.nttdocomo.android.tvterminalapp.activity.TvProgram.TvProgramListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.Video.VideoPurchListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.Video.VideoTopActivity;
-import com.nttdocomo.activity.android.tvterminalapp.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 
 public class HomeActivity extends BaseActivity implements View.OnClickListener{
