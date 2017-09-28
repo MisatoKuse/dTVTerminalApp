@@ -1,14 +1,16 @@
 package com.nttdocomo.android.tvterminalapp.activity.Launch;
 
+import android.content.ComponentName;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.Home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.Temp.GoogleStoreActivity;
 import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.R;
 
 /**
  * Created by ryuhan on 2017/09/22.
@@ -25,6 +27,11 @@ public class DAccountSettingActivity extends BaseActivity implements View.OnClic
         setContentView(R.layout.daccount_setting_main_layout);
 
         setContents();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
     }
 
     private void setContents() {

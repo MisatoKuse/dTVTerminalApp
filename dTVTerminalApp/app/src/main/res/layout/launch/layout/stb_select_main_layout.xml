@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    style="@style/default_layout_style"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <RelativeLayout
@@ -22,54 +24,63 @@
         android:id="@+id/button1STBSelectActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
         android:text="docomo STB1" />
 
     <Button
         android:id="@+id/button2STBSelectActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
         android:text="docomo STB2" />
 
     <Button
         android:id="@+id/button3STBSelectActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
         android:text="docomo STB3" />
 
     <Button
         android:id="@+id/dAccountLoginYesSTBSelectActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
         android:text="dアカウントログイン済 " />
 
     <Button
         android:id="@+id/dAccountLoginNoSTBSelectActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
         android:text="dアカウント未ログイン " />
 
     <Button
         android:id="@+id/dAccountAppliYesSTBSelectActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
         android:text="端末内にdアカウントアプリがある" />
 
     <Button
         android:id="@+id/dAccountAppliNoSTBSelectActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
         android:text="端末内にdアカウントアプリがない" />
 
     <Button
         android:id="@+id/dAccountSameYesSTBSelectActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
         android:text="STBに同じdアカウントが登録されている" />
 
     <Button
         android:id="@+id/dAccountSameNoSTBSelectActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
         android:text="STBに同じdアカウントが登録されていない" />
 
     <LinearLayout
@@ -90,12 +101,14 @@
             android:id="@+id/checkBoxSTBSelectActivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#ffffff"
             android:text="次回以降表示しない" />
 
         <Button
             android:id="@+id/useWithoutPairingSTBParingInvitationActivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
             android:text="ペアリングしないでアプリを利用する" />
     </LinearLayout>
 

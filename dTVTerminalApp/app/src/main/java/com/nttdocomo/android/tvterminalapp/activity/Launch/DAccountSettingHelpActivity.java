@@ -5,9 +5,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.Temp.DAccountAppliActivity;
 import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.R;
 
 /**
  * Created by ryuhan on 2017/09/22.
@@ -25,6 +25,11 @@ public class DAccountSettingHelpActivity extends BaseActivity implements View.On
         setContentView(R.layout.daccount_help_main_layout);
 
         setContents();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
     }
 
     @Override

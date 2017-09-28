@@ -6,10 +6,10 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.Home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.Temp.DAccountAppliActivity;
 import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.R;
 
 /**
  * Created by ryuhan on 2017/09/22.
@@ -39,6 +39,11 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         setContentView(R.layout.stb_select_main_layout);
 
         setContents();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
     }
 
     private void setContents() {

@@ -5,8 +5,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
 
 /**
  * Created by ryuhan on 2017/09/25.
@@ -25,6 +25,7 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void setContents() {
+
         TextView title= (TextView)findViewById(R.id.titleTutorialActivity);
         title.setText(getScreenTitle());
 
@@ -49,9 +50,17 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+    }
+
     private void onSkipOrFinish() {
         Bundle b=new Bundle();
         b.putString("state", LaunchActivity.mStateFromTutorialActivity);
         startActivity(LaunchActivity.class, b);
+
+        LaunchActivity.setNotFirstRun();
+        finish();
     }
 }

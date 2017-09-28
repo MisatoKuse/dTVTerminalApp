@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    style="@style/default_layout_style"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <RelativeLayout
@@ -24,18 +26,21 @@
         android:id="@+id/firstLanchLanchYesActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
         android:text="初回起動" />
 
     <Button
         android:id="@+id/firstLanchLanchNoActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
         android:text="初回起動ではない" />
 
     <Button
         android:id="@+id/pairYesLanchActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
         android:text="ペアリング済、はい"
         android:visibility="invisible" />
 
@@ -43,6 +48,7 @@
         android:id="@+id/pairNoLanchActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
         android:text="ペアリング済、いいえ"
         android:visibility="invisible" />
 
@@ -50,6 +56,7 @@
         android:id="@+id/dAccountLoginYesLanchActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
         android:text="dアカウント自動ログイン済"
         android:visibility="gone" />
 
@@ -57,6 +64,7 @@
         android:id="@+id/dAccountLoginNoLanchActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
         android:text="dアカウント自動ログインしない"
         android:visibility="gone" />
 
@@ -64,6 +72,7 @@
         android:id="@+id/stbWifiYesLanchActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
         android:text="同一Wi-Fi上にSTBがある"
         android:visibility="invisible" />
 
@@ -71,6 +80,7 @@
         android:id="@+id/stbWifiNoLanchActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
         android:text="同一Wi-Fi上にSTBがない"
         android:visibility="invisible" />
 

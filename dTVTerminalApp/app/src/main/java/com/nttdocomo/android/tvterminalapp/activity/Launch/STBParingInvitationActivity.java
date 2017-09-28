@@ -1,13 +1,14 @@
 package com.nttdocomo.android.tvterminalapp.activity.Launch;
 
+import android.app.Application;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.Home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.R;
 
 /**
  * Created by ryuhan on 2017/09/25.
@@ -26,6 +27,11 @@ public class STBParingInvitationActivity extends BaseActivity implements View.On
         setContentView(R.layout.stb_paring_main_layout);
 
         setContents();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
     }
 
     private void setContents() {

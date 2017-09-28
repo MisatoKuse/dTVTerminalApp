@@ -1,14 +1,18 @@
 package com.nttdocomo.android.tvterminalapp.activity.Launch;
 
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.Home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DCommon;
-import com.nttdocomo.android.tvterminalapp.R;
 
 /**
  * Created by ryuhan on 2017/09/25.
@@ -19,6 +23,8 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     public static final String mStateFromTutorialActivity="fromTutorialActivity";
     public static final String mStateToHomePairingOk="ホーム画面（ペアリング済）";
     public static final String mStateToHomePairingNg="ホーム画面（未ペアリング）";
+
+    private static boolean mIsFirstRun=true;
 
     Button firstLanchLanchYesActivity=null;
     Button firstLanchLanchNoActivity=null;
@@ -79,6 +85,20 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         onFirstLanchNoButton();
     }
 
+    @Override
+    protected void onResume(){
+        if(!mIsFirstRun){
+            firstLanchLanchYesActivity.setVisibility(View.GONE);
+        }
+
+        super.onResume();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+    }
+
 
     @Override
     public String getScreenID() {
@@ -105,6 +125,14 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         } else if(v.equals(mStbWifiNoLanchActivity)) {
             onStbWifiNoButton();
         }
+    }
+
+    public static boolean isFirstRun() {
+        return mIsFirstRun;
+    }
+
+    public static void setNotFirstRun() {
+        LaunchActivity.mIsFirstRun = false;
     }
 
     /**
