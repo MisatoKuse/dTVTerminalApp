@@ -31,4 +31,21 @@
 
 <!-- Player -->
 <string name="remote_control_start">テレビで視聴する</string>
+
+<!-- MenuDisplay Begin -->
+<string name="nav_menu_item_home">ホーム</string>
+<string name="nav_menu_item_program_list">番組表</string>
+<string name="nav_menu_item_channel_list">チャンネルリスト</string>
+<string name="nav_menu_item_recorder_program">録画番組</string>
+<string name="nav_menu_item_recommend_program_video">おすすめ番組・ビデオ</string>
+<string name="nav_menu_item_staff_recommend">スタッフおすすめ</string>
+<string name="nav_menu_item_ranking">ランキング</string>
+<string name="nav_menu_item_clip">クリップ</string>
+<string name="nav_menu_item_purchased_video">購入済みビデオ</string>
+<string name="nav_menu_item_record_reserve">録画予約</string>
+<string name="nav_menu_item_video">ビデオ</string>
+<string name="nav_menu_item_keyword_search">キーワードで探す</string>
+<string name="nav_menu_item_notice">お知らせ</string>
+<string name="nav_menu_item_setting">設定</string>
+<!-- MenuDisplay End -->
 </resources>
