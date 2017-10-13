@@ -14,11 +14,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nttdocomo.android.tvterminalapp.DataProvider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.Home.ClipListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.Player.TvPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.beans.HomeBeanContent;
-import com.nttdocomo.android.tvterminalapp.utils.AsyncImageLoader;
 
 import java.util.List;
 
@@ -27,7 +26,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private LayoutInflater mInflater;
     private List<HomeBeanContent> mListDatas;
     private Context context;
-    private AsyncImageLoader imageLoader;
+    private ThumbnailProvider imageLoader;
     private int index;
     private View mFooterView;
 
@@ -41,7 +40,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         this.mListDatas = mListDatas;
         this.context = context;
         this.index = index;
-        imageLoader = new AsyncImageLoader(context);
+        imageLoader = new ThumbnailProvider(context);
     }
 
     public View getmFooterView() {
@@ -97,10 +96,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         Drawable drawable = context.getResources().getDrawable(R.mipmap.ic_launcher);
         viewHolder.mImage.setBackground(drawable);
         if (!TextUtils.isEmpty(mListDatas.get(i).getContentSrcURL())) {
-            Bitmap bitmap = imageLoader.loadImage(viewHolder.mImage, mListDatas.get(i).getContentSrcURL());
+            Bitmap bitmap = imageLoader.getThumbnailImage(viewHolder.mImage, mListDatas.get(i).getContentSrcURL());
             if (bitmap != null) {
-                viewHolder.mImage.setBackground(new BitmapDrawable(bitmap));
-//                viewHolder.mImage.setImageBitmap(bitmap);
+                //viewHolder.mImage.setBackground(new BitmapDrawable(bitmap));
+                viewHolder.mImage.setImageBitmap(bitmap);
             }
         }
         if(!TextUtils.isEmpty(mListDatas.get(i).getContentName())){

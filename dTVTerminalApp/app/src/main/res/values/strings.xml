@@ -3,49 +3,66 @@
 <!-- Common -->
 <string name="app_name">dTVTerminalApp</string>
 
-<!-- Launch -->
-    <string name="str_launch_title">起動画面</string>
-    <string name="str_tutorial_title">チュートリアル画面</string>
-    <string name="str_stb_select_title">STB選択</string>
-    <string name="str_stb_connect_title">STB接続</string>
-    <string name="str_stb_pair_invitation_title">STBペアリング勧誘</string>
-    <string name="str_d_account_setting_title">dアカウントアプリ誘導</string>
-    <string name="str_d_account_resetting_title">dアカウント再設定</string>
-    <string name="str_d_account_setting_help_title">dアカウント設定ヘルプ</string>
-    <string name="str_d_account_reg_confirmation_title">dアカウント登録確認</string>
+    <!-- Launch -->
+        <string name="str_launch_title">起動画面</string>
+        <string name="str_tutorial_title">チュートリアル画面</string>
+        <string name="str_stb_select_title">STB選択</string>
+        <string name="str_stb_connect_title">STB接続</string>
+        <string name="str_stb_pair_invitation_title">STBペアリング勧誘</string>
+        <string name="str_d_account_setting_title">dアカウントアプリ誘導</string>
+        <string name="str_d_account_resetting_title">dアカウント再設定</string>
+        <string name="str_d_account_setting_help_title">dアカウント設定ヘルプ</string>
+        <string name="str_d_account_reg_confirmation_title">dアカウント登録確認</string>
 
-<!-- Home -->
+    <!-- Home -->
+    
+    <!-- TvProgram -->
 
-<!-- TvProgram -->
+    <!-- Video -->
 
-<!-- Video -->
+    <!-- Search -->
+        <string name="keyword_search_hint">検索するキーワードを入力</string>
+        <string name="keyword_search_history">履歴</string>
+        <string-array name="tab_names">
+            <item>テレビ</item>
+            <item>ビデオ</item>
+            <!-- <item>録画</item> -->
+            <!-- <item>人物</item> -->
+            <item>dTVチャンネル</item>
+            <item>dTV</item>
+            <item>dアニメ</item>
+    </string-array>
 
-<!-- Search -->
+    <!-- Ranking -->
+    <string name="daily_tv_ranking_title">今日のテレビランキング</string>
+    <string name="weekly_tv_ranking_title">週刊テレビランキング</string>
+    <string name="video_ranking_title">ビデオランキング</string>
 
-<!-- Ranking -->
-<string name="daily_tv_ranking_title">今日のテレビランキング</string>
-<string name="weekly_tv_ranking_title">週刊テレビランキング</string>
-<string name="video_ranking_title">ビデオランキング</string>
+    <!-- Other -->
 
-<!-- Other -->
+    <!-- Player -->
+    <string name="remote_control_start">テレビで視聴する</string>
 
-<!-- Player -->
-<string name="remote_control_start">テレビで視聴する</string>
+    <!-- MenuDisplay Begin -->
+    <string name="nav_menu_item_home">ホーム</string>
+    <string name="nav_menu_item_program_list">番組表</string>
+    <string name="nav_menu_item_channel_list">チャンネルリスト</string>
+    <string name="nav_menu_item_recorder_program">録画番組</string>
+    <string name="nav_menu_item_recommend_program_video">おすすめ番組・ビデオ</string>
+    <string name="nav_menu_item_staff_recommend">スタッフおすすめ</string>
+    <string name="nav_menu_item_ranking">ランキング</string>
+    <string name="nav_menu_item_clip">クリップ</string>
+    <string name="nav_menu_item_purchased_video">購入済みビデオ</string>
+    <string name="nav_menu_item_record_reserve">録画予約</string>
+    <string name="nav_menu_item_video">ビデオ</string>
+    <string name="nav_menu_item_keyword_search">キーワードで探す</string>
+    <string name="nav_menu_item_notice">お知らせ</string>
+    <string name="nav_menu_item_setting">設定</string>
+    <!-- MenuDisplay End -->
 
-<!-- MenuDisplay Begin -->
-<string name="nav_menu_item_home">ホーム</string>
-<string name="nav_menu_item_program_list">番組表</string>
-<string name="nav_menu_item_channel_list">チャンネルリスト</string>
-<string name="nav_menu_item_recorder_program">録画番組</string>
-<string name="nav_menu_item_recommend_program_video">おすすめ番組・ビデオ</string>
-<string name="nav_menu_item_staff_recommend">スタッフおすすめ</string>
-<string name="nav_menu_item_ranking">ランキング</string>
-<string name="nav_menu_item_clip">クリップ</string>
-<string name="nav_menu_item_purchased_video">購入済みビデオ</string>
-<string name="nav_menu_item_record_reserve">録画予約</string>
-<string name="nav_menu_item_video">ビデオ</string>
-<string name="nav_menu_item_keyword_search">キーワードで探す</string>
-<string name="nav_menu_item_notice">お知らせ</string>
-<string name="nav_menu_item_setting">設定</string>
-<!-- MenuDisplay End -->
+    <!-- 検索画面 Begin -->
+        <string name="search_load_finish">load finished</string>
+        <string name="search_loading">loading...</string>
+    <!--  検索画面 End  -->
+
 </resources>

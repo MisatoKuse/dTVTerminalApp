@@ -108,6 +108,7 @@ public class HomeActivity extends BaseActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_main_layout);
+        setNoTitle();
         initView();
     }
 
@@ -259,6 +260,7 @@ public class HomeActivity extends BaseActivity{
         mHorizontalViewAdapter.setFooterView(footer);
     }
 
+    /*
     //契約・ペアリング済み用
     private void onSampleGlobalMenuButton_PairLoginOk() {
         MenuItemParam param = new MenuItemParam();
@@ -266,5 +268,6 @@ public class HomeActivity extends BaseActivity{
         setUserState(param);
         displayMenu();
     }
+    */
 
 }

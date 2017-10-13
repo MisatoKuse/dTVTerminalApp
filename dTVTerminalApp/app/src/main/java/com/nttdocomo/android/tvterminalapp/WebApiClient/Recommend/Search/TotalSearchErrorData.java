@@ -1,0 +1,27 @@
+package com.nttdocomo.android.tvterminalapp.WebApiClient.Recommend.Search;
+
+
+import com.nttdocomo.android.tvterminalapp.common.DCommon;
+
+//response
+public class TotalSearchErrorData {
+    public String status;
+    public ErrorResultData error;
+
+    public class ErrorResultData {
+        public String id;
+        public String param;
+    }
+
+    public TotalSearchErrorData() {
+        error = new ErrorResultData();
+    }
+
+    public TotalSearchErrorData(String id, String param) {
+        error = new ErrorResultData();
+        error.id= id;
+        error.param = param;
+        status = DCommon.SEARCH_STATUS_NG;
+    }
+
+}

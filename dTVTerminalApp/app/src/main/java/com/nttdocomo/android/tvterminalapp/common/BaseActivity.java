@@ -3,9 +3,14 @@ package com.nttdocomo.android.tvterminalapp.common;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.menudisplay.MenuDisplay;
 import com.nttdocomo.android.tvterminalapp.common.menudisplay.MenuDisplayEventListener;
 import com.nttdocomo.android.tvterminalapp.common.menudisplay.MenuItem;
@@ -18,7 +23,10 @@ import com.nttdocomo.android.tvterminalapp.common.menudisplay.MenuItemParam;
  *      「Activity」全体にとって、共通の機能があれば、追加すること
  */
 
-public class BaseActivity extends Activity implements MenuDisplayEventListener {
+public class BaseActivity extends FragmentActivity implements MenuDisplayEventListener {
+
+    private LinearLayout titleLinearLayout;
+    private TextView titleTextView;
 
     /**
      * Created on 2017/09/21.
@@ -58,9 +66,59 @@ public class BaseActivity extends Activity implements MenuDisplayEventListener {
         startActivity(intent);
     }
 
+    /**
+     * タイトルビュー
+     * @param resId
+     */
+    @Override
+    public void setContentView(int resId) {
+        View view = getLayoutInflater().inflate(resId, null);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        titleLinearLayout.addView(view);
+    }
+
+    /**
+     *タイトルビユー初期化
+     *
+     */
+    private void initView(){
+        titleLinearLayout = findViewById(R.id.base_ll);
+        titleTextView = findViewById(R.id.header_layout_text);
+    }
+
+    /**
+     *タイトルを隠す
+     *
+     */
+    protected void setNoTitle(){
+        findViewById(R.id.base_title).setVisibility(View.GONE);
+    }
+
+    /**
+     *
+     * タイトル内容を設定
+     * @param c
+     */
+    protected void setTitleText(CharSequence c) {
+        if (titleTextView != null)
+            titleTextView.setText(c);
+    }
+
+    //契約・ペアリング済み用
+    protected void onSampleGlobalMenuButton_PairLoginOk() {
+        MenuItemParam param = new MenuItemParam();
+        param.setParamForContractOkPairingOk(3, 1, 2, 6, 8);
+        setUserState(param);
+        displayMenu();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        super.setContentView(R.layout.activity_base);
+        initView();
         String TAG = getLocalClassName();
         Log.i(TAG,TAG+"  OｎCreate()");
     }
