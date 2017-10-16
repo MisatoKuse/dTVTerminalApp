@@ -198,13 +198,13 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 
     }
 
-    private void dAccountState(){
-        mUseWithoutPairingSTBParingInvitationActivity.setVisibility(View.GONE);
-        mCheckBoxSTBSelectActivity.setVisibility(View.GONE);
-        mButton1STBSelectActivity.setVisibility(View.GONE);
-        mButton2STBSelectActivity.setVisibility(View.GONE);
-        mButton3STBSelectActivity.setVisibility(View.GONE);
-    }
+//    private void dAccountState(){
+//        mUseWithoutPairingSTBParingInvitationActivity.setVisibility(View.GONE);
+//        mCheckBoxSTBSelectActivity.setVisibility(View.GONE);
+//        mButton1STBSelectActivity.setVisibility(View.GONE);
+//        mButton2STBSelectActivity.setVisibility(View.GONE);
+//        mButton3STBSelectActivity.setVisibility(View.GONE);
+//    }
 
     private void setDAccountButtonVisibility(int visibility){
         mDAccountLoginYesSTBSelectActivity.setVisibility(visibility);

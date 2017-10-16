@@ -28,7 +28,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private List<HomeBeanContent> mListDatas;
     private Context context;
     private ThumbnailProvider imageLoader;
-    private int index;
+//    private int index;
     private View mFooterView;
 
     public static final int TYPE_HEADER = 0;
@@ -40,7 +40,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         mInflater = LayoutInflater.from(context);
         this.mListDatas = mListDatas;
         this.context = context;
-        this.index = index;
         imageLoader = new ThumbnailProvider(context);
     }
 

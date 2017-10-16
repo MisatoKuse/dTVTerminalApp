@@ -145,11 +145,11 @@ public class DAccountRegConfirmationActivity extends BaseActivity implements Vie
         setDAccountSameButtonsVisibility(View.VISIBLE);
     }
 
-    private void onUseWithoutPairingButton() {
-        Bundle b=new Bundle();
-        b.putString("state", LaunchActivity.mStateToHomePairingNg);
-        startActivity(STBParingInvitationActivity.class, b);
-    }
+//    private void onUseWithoutPairingButton() {
+//        Bundle b=new Bundle();
+//        b.putString("state", LaunchActivity.mStateToHomePairingNg);
+//        startActivity(STBParingInvitationActivity.class, b);
+//    }
 
     static public void installDAccountAppli(){
         mHasDAccountAppli=true;

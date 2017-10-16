@@ -47,6 +47,8 @@ public class VideoTopActivity extends BaseActivity implements View.OnClickListen
             case R.id.video_top_main_layout_rl4:
                 startActivity(VideoSubGenreActivity.class,null);
                 break;
+            default:
+                break;
         }
     }
 }

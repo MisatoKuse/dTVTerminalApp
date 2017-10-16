@@ -47,6 +47,8 @@ public class VideoSubGenreActivity extends BaseActivity implements View.OnClickL
             case R.id.video_sub_genre_main_layout_rl4:
                 startActivity(VideoContentListActivity.class,null);
                 break;
+            default:
+                break;
         }
     }
 }

@@ -78,7 +78,8 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
                         dialog.dismiss();
                     }
                 });
-
+                break;
+            default:
                 break;
         }
     }

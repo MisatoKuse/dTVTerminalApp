@@ -38,8 +38,6 @@ public class NewsActivity extends BaseActivity implements View.OnClickListener {
              finish();
              break;
          case R.id.tv_news1:
-             startActivity(NewsDetailActivity.class,null);
-             break;
          case R.id.tv_news2:
              startActivity(NewsDetailActivity.class,null);
              break;

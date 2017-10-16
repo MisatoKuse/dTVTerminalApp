@@ -101,6 +101,8 @@ public class WeekTvProgramListActivity extends BaseActivity implements View.OnCl
                     }
                 });
                 break;
+            default:
+                break;
         }
     }
 

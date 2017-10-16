@@ -35,6 +35,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 break;
             case R.id.tv_setting:
                 startActivity(SettingDetailActivity.class,null);
+                break;
             default:
                 break;
         }

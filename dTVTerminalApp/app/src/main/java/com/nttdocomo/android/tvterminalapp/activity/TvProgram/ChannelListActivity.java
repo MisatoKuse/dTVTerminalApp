@@ -107,6 +107,8 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
             case R.id.channel5:
                 startActivity(ChannelDetailPlayerActivity.class,null);
                 break;
+            default:
+                break;
 
         }
     }

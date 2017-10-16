@@ -108,7 +108,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
 
         mPopupWindow.showAtLocation(mActivity.getLayoutInflater()
                 .inflate(R.layout.home_main_layout, null), Gravity.RIGHT, 0, 0);
-        mPopupWindow.setOnDismissListener(new popupDismissListener());
+        mPopupWindow.setOnDismissListener(new PopupDismissListener());
 
         popupWindowView.setOnTouchListener(new View.OnTouchListener() {
 
@@ -227,7 +227,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
         }
     }
 
-    class popupDismissListener implements PopupWindow.OnDismissListener {
+    class PopupDismissListener implements PopupWindow.OnDismissListener {
 
         @Override
         public void onDismiss() {

@@ -88,9 +88,6 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
                     }
 
                 });
-
-
-
                 break;
             case R.id.btn_mode:
                 if (flag) {
@@ -111,7 +108,8 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
                     flag = true;
                 }
                 break;
-
+            default:
+                break;
         }
     }
 }

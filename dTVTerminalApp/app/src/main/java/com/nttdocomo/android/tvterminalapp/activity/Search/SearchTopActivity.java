@@ -44,11 +44,7 @@ public class SearchTopActivity extends BaseActivity implements View.OnClickListe
         switch (v.getId()) {
 
             case R.id.Search_result:
-                startActivity(ChannelDetailPlayerActivity.class, null);
-                break;
             case R.id.Search_result1:
-                startActivity(ChannelDetailPlayerActivity.class, null);
-                break;
             case R.id.Search_result2:
                 startActivity(ChannelDetailPlayerActivity.class, null);
                 break;
