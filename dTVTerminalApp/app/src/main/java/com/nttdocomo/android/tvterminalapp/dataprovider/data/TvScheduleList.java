@@ -9,7 +9,7 @@ import java.util.List;
  * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-public class DailyRankList implements Serializable {
+public class TvScheduleList implements Serializable{
     private int rowId;
 
     private String value;

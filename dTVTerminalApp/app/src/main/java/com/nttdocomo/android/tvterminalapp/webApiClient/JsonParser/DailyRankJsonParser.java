@@ -27,9 +27,30 @@ public class DailyRankJsonParser  {
     public static final String DAILYRANK_LIST_PAGER_COUNT = "count";
     public static final String DAILYRANK_LIST_PAGER_TOTAL = "total";
 
+
+
     public static final String DAILYRANK_LIST = "list";
     public static final String DAILYRANK_LIST_CRID = "crid";
     public static final String DAILYRANK_LIST_TITLE = "title";
+    public static final String DAILYRANK_LIST_TITLE_ID = "title_id";
+    public static final String DAILYRANK_LIST_EPITITLE = "epititle";
+    public static final String DAILYRANK_LIST_DISPLAY_START_DATE = "display_start_date";
+    public static final String DAILYRANK_LIST_DISPLAY_END_DATE = "display_end_date";
+    public static final String DAILYRANK_LIST_AVAIL_START_DATE = "avail_start_date";
+    public static final String DAILYRANK_LIST_AVAIL_END_DATE = "avail_end_date";
+    public static final String DAILYRANK_LIST_PUBLISH_START_DATE = "publish_start_date";
+    public static final String DAILYRANK_LIST_PUBLISH_END_DATE = "publish_end_date";
+    public static final String DAILYRANK_LIST_NEWA_START_DATE = "newa_start_date";
+    public static final String DAILYRANK_LIST_NEWA_END_DATE = "newa_end_date";
+    public static final String DAILYRANK_LIST_BVFLG = "bvflg";
+    public static final String DAILYRANK_LIST_4KFLG = "4kflg";
+    public static final String DAILYRANK_LIST_HDRFLG = "hdrflg";
+    public static final String DAILYRANK_LIST_ADULT = "adult";
+    public static final String DAILYRANK_LIST_MS = "ms";
+    public static final String DAILYRANK_LIST_NG_FUNC = "ng_func";
+    public static final String DAILYRANK_LIST_GENRE_ID_ARRAY = "genre_id_array";
+    public static final String DAILYRANK_LIST_DTV = "dtv";
+    public static final String DAILYRANK_LIST_EPISODE_ID = "episode_id";
     public static final String DAILYRANK_LIST_CID = "cid";
     public static final String DAILYRANK_LIST_SERVICE_ID = "service_id";
     public static final String DAILYRANK_LIST_EVENT_ID = "event_id";

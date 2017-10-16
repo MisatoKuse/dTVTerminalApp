@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
+ * Created by chinr-fsi on 2017/10/16.
  */
 
-public class DailyRankList implements Serializable {
+public class TvClipList implements Serializable{
     private int rowId;
 
     private String value;
