@@ -11,6 +11,11 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.VOD_LAST_INSERT;
 
 /**
@@ -52,9 +57,10 @@ public class HomeDataProvider {
 
         //Vodクリップ一覧のDB保存履歴と、有効期間を確認
         if (lastDate != null || lastDate.length() > 0 || dateUtils.isBeforeLimitDate(lastDate)) {
+            List<Map<String,String>> list = new ArrayList<>();
             //データをDBから取得する
             HomeDataManager homeDataManager = new HomeDataManager(mContext);
-            homeDataManager.selectHomeData();
+            list = homeDataManager.selectHomeData();
         } else {
             //通信クラスにデータ取得要求を出す
         }

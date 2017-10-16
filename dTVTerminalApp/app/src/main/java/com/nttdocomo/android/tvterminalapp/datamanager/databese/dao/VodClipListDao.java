@@ -6,17 +6,20 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.VodClipListDBHelper.VOD_CLIP_LIST_CRID;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.VodClipListDBHelper.VOD_CLIP_LIST_ID_COLUMN;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.VodClipListDBHelper.VOD_CLIP_LIST_TABLE_NAME;
+import static com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.VodClipJsonParser.VODCLIP_LIST_CRID;
 
 /**
  * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
 public class VodClipListDao {
-
-    private static final String[] COLUMNS = {VOD_CLIP_LIST_ID_COLUMN, VOD_CLIP_LIST_CRID};
 
     // SQLiteDatabase
     private SQLiteDatabase db;
@@ -31,27 +34,40 @@ public class VodClipListDao {
     }
 
     /**
-     * 特定IDのデータを取得
+     * 配列で指定した列データをすべて取得
      *
-     * @param rowId
+     * @param strings
      * @return
      */
-    public VodClipList findById(int rowId) {
+    public List<Map<String, String>> findById(String[] strings) {
         //特定IDのデータ取得はしない方針
-        String selection = VOD_CLIP_LIST_ID_COLUMN + "=" + rowId;
+        List<Map<String, String>> list = new ArrayList<>();
+
         Cursor cursor = db.query(
                 VOD_CLIP_LIST_TABLE_NAME,
-                COLUMNS,
-                selection,
+                strings,
+                null,
                 null,
                 null,
                 null,
                 null);
 
-        cursor.moveToNext();
-        VodClipList entity = new VodClipList();
+        //参照先を一番始めに
+        boolean isEof = cursor.moveToFirst();
 
-        return entity;
+        //データを一行ずつ格納する
+        while (isEof) {
+            HashMap<String, String> map = new HashMap<>();
+            for (int i = 0; i < strings.length; i++) {
+                map.put(strings[i], cursor.getString(cursor.getColumnIndex(strings[i])));
+            }
+            list.add(map);
+
+            isEof = cursor.moveToNext();
+        }
+        cursor.close();
+
+        return list;
     }
 
     /**
