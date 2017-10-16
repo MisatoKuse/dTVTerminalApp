@@ -32,21 +32,32 @@ public class HomeDataProvider {
 
     public void getHomeData() {
         //Activityからのデータ取得要求受付
-        HomeDataManager homeDataManager = new HomeDataManager(mContext);
-        homeDataManager.selectHomeData();
+        getVodClipListData();
     }
 
     public void getHomeBeen() {
         //Home用構造体を作成する
     }
 
-    public boolean checkLastDate() {
-        //前回DB更新日時から一定時間が経過していたらfalseを返却
-        return false;
-    }
-
     public void sendHomeData() {
         //HomeActivityにHomeBeenを返却する
+    }
+
+    /**
+     * Vodクリップリストデータ取得開始
+     */
+    private void getVodClipListData() {
+        DateUtils dateUtils = new DateUtils(mContext);
+        String lastDate = dateUtils.getLastDate(VOD_LAST_INSERT);
+
+        //Vodクリップ一覧のDB保存履歴と、有効期間を確認
+        if (lastDate != null || lastDate.length() > 0 || dateUtils.isBeforeLimitDate(lastDate)) {
+            //データをDBから取得する
+            HomeDataManager homeDataManager = new HomeDataManager(mContext);
+            homeDataManager.selectHomeData();
+        } else {
+            //通信クラスにデータ取得要求を出す
+        }
     }
 
     /**

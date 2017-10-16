@@ -59,6 +59,18 @@ public class DateUtils {
     }
 
     /**
+     * 前回取得日時を返却
+     *
+     * @param key
+     * @return
+     */
+    public String getLastDate(String key) {
+        SharedPreferences data = mContext.getSharedPreferences(DATA_SAVE, Context.MODE_PRIVATE);
+        String date = data.getString(key, "");
+        return date;
+    }
+
+    /**
      * 日付が期限内か判定
      *
      * @param str
