@@ -1,15 +1,13 @@
-package com.nttdocomo.android.tvterminalapp.utils;
+package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.util.LruCache;
-import java.io.BufferedInputStream;
+
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -29,7 +27,9 @@ public class ThumbnailCacheManager {
     // メモリキャッシュ
     private LruCache<String, Bitmap> memCache;
     // ディスクキャッシュ件数
-    private final static int limit = 100;
+    private final static int THUMBNAIL_FILE_CASHE_LIMIT = 100;
+    // サムネイルキャッシュ保存するフォルダ　packagename/cache/thumbnail_cache
+    private static final String THUMBNAIL_CACHE  ="/thumbnail_cache/";
 
     private Context context;
 
@@ -67,7 +67,7 @@ public class ThumbnailCacheManager {
     public Bitmap getBitmapFromDisk(String fileName) {
         try {
             //ファイルパス
-            String dir = context.getCacheDir() + "/" + hashKeyForDisk(fileName);
+            String dir = context.getCacheDir() + THUMBNAIL_CACHE + hashKeyForDisk(fileName);
             File file = new File(dir);
             Bitmap bitmap = null;
             if (file.exists()) {
@@ -107,7 +107,7 @@ public class ThumbnailCacheManager {
      */
     public boolean saveBitmapToDisk(String filename, Bitmap bitmap) {
         //フォルダーパス
-        String localPath = context.getCacheDir() + "/";
+        String localPath = context.getCacheDir() + THUMBNAIL_CACHE;
         int quality = 100;
         if (bitmap == null || filename == null) {
             return false;
@@ -115,12 +115,16 @@ public class ThumbnailCacheManager {
         Bitmap.CompressFormat format = Bitmap.CompressFormat.PNG;
         OutputStream stream = null;
         try {
-            File[] files = context.getCacheDir().listFiles();
+            File myFile = new File(context.getCacheDir() + THUMBNAIL_CACHE);
+            if (!myFile.exists()){
+                myFile.mkdir();
+            }
+            File[] files = myFile.listFiles();
             int count = files.length;
             List<File> mListFile = new ArrayList<>();
             boolean isLimitFlg = false;
             for (int i = 0; i < count; i++) {
-                if (count >= limit) {
+                if (count >= THUMBNAIL_FILE_CASHE_LIMIT) {
                     isLimitFlg = true;
                 }
                 mListFile.add(files[i]);
