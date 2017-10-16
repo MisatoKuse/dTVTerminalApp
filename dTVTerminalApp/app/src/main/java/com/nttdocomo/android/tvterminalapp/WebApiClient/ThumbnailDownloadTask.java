@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.WebApiClient;
 
 import android.graphics.Bitmap;
@@ -13,9 +17,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/**
- * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
- */
 public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
 
     private String imageUrl;

@@ -1,8 +1,10 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.common;
 
 /**
- * Created by ouweiyan on 2017/09/20.
- *
  * クラス機能：
  *      プロジェクトにて共通データを定義するクラスである
  */

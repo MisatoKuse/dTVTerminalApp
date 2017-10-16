@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.activity.Launch;
 
 import android.content.ComponentName;
@@ -12,9 +16,6 @@ import com.nttdocomo.android.tvterminalapp.activity.Home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.Temp.GoogleStoreActivity;
 import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
 
-/**
- * Created by ryuhan on 2017/09/22.
- */
 
 public class DAccountSettingActivity extends BaseActivity implements View.OnClickListener {
 
