@@ -152,7 +152,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
                                             mHandler.post(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    Log.d(DCommon.LOG_DEF_TAG, "1秒経過");
+                                                    Log.d(DCommon.LOG_DEF_TAG, "1 sencond passed");
                                                     mSearchTime = System.currentTimeMillis();
                                                     if(mInputText != mBeforeText) {
                                                         // 文字列に変化があった場合
