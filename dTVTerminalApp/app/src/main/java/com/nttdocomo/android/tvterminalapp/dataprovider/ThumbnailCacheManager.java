@@ -8,11 +8,13 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.util.LruCache;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -118,23 +120,30 @@ public class ThumbnailCacheManager {
         try {
             File myFile = new File(context.getCacheDir() + THUMBNAIL_CACHE);
             if (!myFile.exists()){
-                myFile.mkdir();
+                if(!myFile.mkdir()){
+                    Log.i("dTV", "create file fail ");
+                }
             }
             File[] files = myFile.listFiles();
-            int count = files.length;
             List<File> mListFile = new ArrayList<>();
             boolean isLimitFlg = false;
-            for (int i = 0; i < count; i++) {
-                if (count >= THUMBNAIL_FILE_CASHE_LIMIT) {
-                    isLimitFlg = true;
+            if (files!=null && files.length > 0){
+                for (int i = 0; i < files.length; i++) {
+                    if (files.length >= THUMBNAIL_FILE_CASHE_LIMIT) {
+                        isLimitFlg = true;
+                    }
+                    mListFile.add(files[i]);
                 }
-                mListFile.add(files[i]);
             }
             if (isLimitFlg) {
                 //ファイル更新時間通り昇順ソート
                 Collections.sort(mListFile, new CalendarComparator());
                 //古い情報を削除する
-                mListFile.get(0).delete();
+                if(mListFile.get(0)!=null && mListFile.get(0).exists()){
+                    if(!mListFile.get(0).delete()){
+                        Log.i("dTV", "delete file fail ");
+                    }
+                }
             }
             //ファイル名を暗号化する
             filename = hashKeyForDisk(filename);
@@ -166,9 +175,12 @@ public class ThumbnailCacheManager {
         String cacheKey;
         try {
             final MessageDigest mDigest = MessageDigest.getInstance("MD5");
-            mDigest.update(key.getBytes());
+            byte[] bytes = key.getBytes("UTF-8");
+            mDigest.update(bytes);
             cacheKey = bytesToHexString(mDigest.digest());
-        } catch (NoSuchAlgorithmException e) {
+        }catch (UnsupportedEncodingException e) {
+            cacheKey = String.valueOf(key.hashCode());
+        }catch (NoSuchAlgorithmException e) {
             cacheKey = String.valueOf(key.hashCode());
         }
         return cacheKey;
