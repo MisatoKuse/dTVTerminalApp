@@ -30,14 +30,17 @@ public class SearchResultBaseAdapter extends BaseAdapter {
         mThumbnailProvider = new ThumbnailProvider(mContext);
     }
 
+    @Override
     public int getCount() {
         return mData.size();
     }
 
+    @Override
     public Object getItem(int i) {
         return mData.get(i);
     }
 
+    @Override
     public long getItemId(int i) {
         return i;
     }
@@ -50,29 +53,25 @@ public class SearchResultBaseAdapter extends BaseAdapter {
 //        return view;
 //    }
 
-    public View getView(int position, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-            convertView = setListItemContent(convertView, (SearchContentInfo)mData.get(position));
-        } else {
-            setListItemContent(convertView, (SearchContentInfo)mData.get(position));
-        }
-        return convertView;
-    }
-
-    private View setListItemContent(View view, SearchContentInfo searchContentInfo){
+    @Override
+    public View getView(int position, View view, ViewGroup parent) {
+        SearchContentInfo searchContentInfo = (SearchContentInfo) mData.get(position);
+        ViewHolder holder;
         if(null==view){
             view = View.inflate(mContext, R.layout.item_search_result_televi, null);
+            holder = new ViewHolder();
+            holder.iv_thumbnail = view.findViewById(R.id.iv_thumbnail);
+            holder.tv_title = view.findViewById(R.id.tv_title);
+            holder.tv_des = view.findViewById(R.id.tv_des);
+            holder.bt_clip = view.findViewById(R.id.bt_clip);
+
+            float mWidth = (float)mContext.getResources().getDisplayMetrics().widthPixels / 3;
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int)mWidth,(int)mWidth/2);
+            holder.iv_thumbnail.setLayoutParams(layoutParams);
+            view.setTag(holder);
+        }else {
+            holder = (ViewHolder) view.getTag();
         }
-
-        ViewHolder holder = new ViewHolder();
-        holder.iv_thumbnail = view.findViewById(R.id.iv_thumbnail);
-        holder.tv_title = view.findViewById(R.id.tv_title);
-        holder.tv_des = view.findViewById(R.id.tv_des);
-        holder.bt_clip = view.findViewById(R.id.bt_clip);
-
-        float mWidth = mContext.getResources().getDisplayMetrics().widthPixels / 3;
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int)mWidth,(int)mWidth/2);
-        holder.iv_thumbnail.setLayoutParams(layoutParams);
 
         if(null != holder.tv_title){
             holder.tv_title.setText(searchContentInfo.title);
@@ -88,19 +87,16 @@ public class SearchResultBaseAdapter extends BaseAdapter {
 
         if(null!=holder.iv_thumbnail){
             //holder.iv_thumbnail.setImageBitmap(null);
-
             Bitmap bp= mThumbnailProvider.getThumbnailImage(holder.iv_thumbnail, searchContentInfo.contentPictureUrl);
             if(null!=bp){
                 holder.iv_thumbnail.setImageBitmap(bp);
             }
         }
 
-        view.setTag(holder);
-
         return view;
     }
 
-    class ViewHolder {
+    static class ViewHolder {
         ImageView iv_thumbnail;
         TextView tv_title;
         TextView tv_des;

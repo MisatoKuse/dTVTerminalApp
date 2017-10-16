@@ -8,7 +8,7 @@ public class TotalSearchErrorData {
     public String status;
     public ErrorResultData error;
 
-    public class ErrorResultData {
+    public static class ErrorResultData {
         public String id;
         public String param;
     }

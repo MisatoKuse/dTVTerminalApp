@@ -213,8 +213,11 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
                 break;
             case PAGE_NO_OF_SERVICE_DTV: //dTV
                 ret.add(new SearchServiceType(SearchServiceType.ServiceId.dTV));
+                break;
             case PAGE_NO_OF_SERVICE_DANIME: //dアニメ
                 ret.add(new SearchServiceType(SearchServiceType.ServiceId.dAnime));
+                break;
+            default:
         }
 
         return ret;

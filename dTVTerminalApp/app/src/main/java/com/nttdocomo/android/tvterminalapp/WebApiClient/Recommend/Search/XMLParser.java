@@ -161,6 +161,7 @@ public class XMLParser extends AsyncTask<String, Integer, String> {
                         }
 
                         break;
+                    default:
                 }
 
                 event = parser.next();

@@ -33,7 +33,7 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, XML
 
         LinkedHashMap queryItems=new LinkedHashMap();
         queryItems.put(SearchRequestKey.kUserId, data.userId);
-        queryItems.put(SearchRequestKey.kFunction, new String(data.function.value()+""));   //ok
+        queryItems.put(SearchRequestKey.kFunction, data.function.value()+"");   //ok
         //queryItems.put(SearchRequestKey.kFunction, new String(2+""));   //ng for test
         queryItems.put(SearchRequestKey.kResponseType, String.valueOf(data.responseType.ordinal() + 1));
         queryItems.put(SearchRequestKey.kQuery, data.query);

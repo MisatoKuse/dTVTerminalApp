@@ -9,7 +9,7 @@ public class SearchServiceType {
         mType=type;
     }
 
-    public  class ServiceId {
+    public  static class ServiceId {
         public static  final String dTV = "15";
         public static  final String dAnime = "17";
         public static  final String dTVChannel = "43";

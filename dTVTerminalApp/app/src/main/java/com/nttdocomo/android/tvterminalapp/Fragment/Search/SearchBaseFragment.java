@@ -108,6 +108,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
             case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
                 mTeveviListview.setVisibility(View.VISIBLE);
                 break;
+            default:
         }
 
         if(null!=mSearchBaseFragmentScrollListener){
