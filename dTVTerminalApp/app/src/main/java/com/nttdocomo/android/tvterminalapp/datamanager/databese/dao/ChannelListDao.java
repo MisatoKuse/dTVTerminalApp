@@ -4,10 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBTestEntity;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.ChannelListDBHelper.CHANNEL_LIST_ID_COLUMN;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.ChannelListDBHelper.CHANNEL_LIST_SERVICE_ID;
@@ -32,36 +29,12 @@ public class ChannelListDao {
     }
 
     /**
-     * 全データの取得
-     *
-     * @return
-     */
-    public List<DBTestEntity> findAll() {
-        List<DBTestEntity> entityList = new ArrayList<DBTestEntity>();
-        Cursor cursor = db.query(
-                CHANNEL_LIST_TABLE_NAME,
-                COLUMNS,
-                null,
-                null,
-                null,
-                null,
-                CHANNEL_LIST_ID_COLUMN);
-
-        while (cursor.moveToNext()) {
-            DBTestEntity entity = new DBTestEntity();
-            entityList.add(entity);
-        }
-
-        return entityList;
-    }
-
-    /**
      * 特定IDのデータを取得
      *
      * @param rowId
      * @return
      */
-    public DBTestEntity findById(int rowId) {
+    public ChannelList findById(int rowId) {
         String selection = CHANNEL_LIST_ID_COLUMN + "=" + rowId;
         Cursor cursor = db.query(
                 CHANNEL_LIST_TABLE_NAME,
@@ -73,7 +46,7 @@ public class ChannelListDao {
                 null);
 
         cursor.moveToNext();
-        DBTestEntity entity = new DBTestEntity();
+        ChannelList entity = new ChannelList();
 
         return entity;
     }
@@ -91,25 +64,12 @@ public class ChannelListDao {
     }
 
     /**
-     * データの更新
+     * データを一括削除
      *
-     * @param entity
      * @return
      */
-    public int update(DBTestEntity entity) {
-        //基本的にデータの更新はしない予定
-        return 0;
-    }
-
-    /**
-     * データの削除
-     *
-     * @param rowId
-     * @return
-     */
-    public int delete(int rowId) {
+    public int delete() {
         //基本的には一括削除
-        String whereClause = CHANNEL_LIST_ID_COLUMN + "=" + rowId;
-        return db.delete(CHANNEL_LIST_TABLE_NAME, whereClause, null);
+        return db.delete(CHANNEL_LIST_TABLE_NAME, null, null);
     }
 }

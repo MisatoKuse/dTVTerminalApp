@@ -4,17 +4,23 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATABASE_NAME;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATABASE_VERSION;
+
 /**
  * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
 public class VodClipListDBHelper extends SQLiteOpenHelper {
 
+    /**
+     * DB定義用定数(最終的にはJsonParser側から入手する
+     */
     public static final String VOD_CLIP_LIST_TABLE_NAME = "vod_clip_list";
     public static final String VOD_CLIP_LIST_ID_COLUMN = "row_id";
     //    public static final String VOD_CLIP_LIST_VALUE_NAME_COLUMN = "value_name";
     public static final String VOD_CLIP_LIST_VALUE_COLUMN = "value";
-    //    public static final String VOD_CLIP_LIST_STATUS = "status";
+    public static final String VOD_CLIP_LIST_STATUS = "status";
 //    public static final String VOD_CLIP_LIST_COUNT = "count";
     public static final String VOD_CLIP_LIST_CRID = "crid";
     public static final String VOD_CLIP_LIST_CID = "cid";
@@ -90,14 +96,10 @@ public class VodClipListDBHelper extends SQLiteOpenHelper {
 
     /**
      * コンストラクタ
-     *
      * @param context
-     * @param name
-     * @param factory
-     * @param version
      */
-    public VodClipListDBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
+    public VodClipListDBHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
