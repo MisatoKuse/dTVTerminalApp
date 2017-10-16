@@ -1,5 +1,7 @@
 package com.nttdocomo.android.tvterminalapp.datamanager.select;
 
+import android.content.Context;
+
 import java.util.Objects;
 
 /**
@@ -8,8 +10,18 @@ import java.util.Objects;
 
 public class HomeDataManager {
 
+    private Context mContext;
 
-    public Objects selectHomeData(){
+    /**
+     * コンストラクタ
+     *
+     * @param mContext
+     */
+    public HomeDataManager(Context mContext) {
+        this.mContext = mContext;
+    }
+
+    public Objects selectHomeData() {
         return null;
     }
 }

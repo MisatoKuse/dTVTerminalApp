@@ -7,13 +7,10 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VodClipListD
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.VodClipListDBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.VodClipListDBHelper.VOD_CLIP_LIST_STATUS;
 
 /**
  * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
