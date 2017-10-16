@@ -6,7 +6,7 @@ import android.widget.Button;
 
 
 
-import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.common.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 
 public class SettingDetailActivity extends BaseActivity {

@@ -5,7 +5,7 @@ import android.os.Bundle;
 import com.nttdocomo.android.tvterminalapp.R;
 
 
-import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.common.BaseActivity;
 
 public class RemoteControlActivity extends BaseActivity {
     @Override

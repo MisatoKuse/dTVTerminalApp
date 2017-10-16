@@ -1,4 +1,4 @@
-package com.nttdocomo.android.tvterminalapp.common.menudisplay;
+package com.nttdocomo.android.tvterminalapp.activity.common.menudisplay;
 
 import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
@@ -25,8 +25,8 @@ import com.nttdocomo.android.tvterminalapp.activity.Search.SearchTopActivity;
 import com.nttdocomo.android.tvterminalapp.activity.TvProgram.ChannelListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.TvProgram.TvProgramListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.Video.VideoTopActivity;
-import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.common.UserState;
+import com.nttdocomo.android.tvterminalapp.activity.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.common.UserState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +69,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
         }
     }
 
-    public void changeUserState(MenuItemParam  menuItemParam) {
+    public void changeUserState(MenuItemParam menuItemParam) {
         if(null != mMenuDisplayEventListener){
             mMenuDisplayEventListener.onPreUserStateChange(mMenuItemParam.getUserState(), menuItemParam.getUserState());
         }

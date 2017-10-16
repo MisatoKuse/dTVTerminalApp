@@ -6,7 +6,7 @@ import android.os.Bundle;
  * Created by hitue-fsi on 2017/09/22.
  */
 
-import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.common.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 
 public class RecordedVideoPlayerActivity extends BaseActivity {

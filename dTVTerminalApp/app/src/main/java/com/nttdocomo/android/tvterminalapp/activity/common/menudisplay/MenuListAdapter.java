@@ -1,4 +1,4 @@
-package com.nttdocomo.android.tvterminalapp.common.menudisplay;
+package com.nttdocomo.android.tvterminalapp.activity.common.menudisplay;
 
 import android.content.Context;
 import android.view.View;
@@ -61,7 +61,7 @@ public class MenuListAdapter extends BaseAdapter {
         return view;
     }
 
-    class ProgramViewHolder {
+   static class ProgramViewHolder {
         TextView tv_title;
         TextView tv_count;
     }

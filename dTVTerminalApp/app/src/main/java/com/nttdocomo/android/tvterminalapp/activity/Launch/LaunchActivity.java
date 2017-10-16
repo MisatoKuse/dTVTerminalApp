@@ -11,8 +11,8 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.Home.HomeActivity;
-import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.common.DCommon;
+import com.nttdocomo.android.tvterminalapp.activity.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.common.DCommon;
 
 /**
  * Created by ryuhan on 2017/09/25.

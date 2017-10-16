@@ -12,7 +12,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.common.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 
 public class MyChannelEditActivity extends BaseActivity implements View.OnClickListener {

@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 
 
-import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.common.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 
 public class SettingActivity extends BaseActivity implements View.OnClickListener {

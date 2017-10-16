@@ -3,54 +3,50 @@ package com.nttdocomo.android.tvterminalapp.activity.Home.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.Home.ClipListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.Player.TvPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.beans.HomeBeanContent;
-import com.nttdocomo.android.tvterminalapp.utils.AsyncImageLoader;
+import com.nttdocomo.android.tvterminalapp.utils.ThumbnailProvider;
 
 import java.util.List;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>
+/**
+ * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerViewAdapter.ViewHolder>
 {
     private LayoutInflater mInflater;
-    private List<HomeBeanContent> mListDatas;
+    private List<HomeBeanContent> mContentList;
     private Context context;
-    private AsyncImageLoader imageLoader;
-    private int index;
+    //サムネイル取得プロバイダー
+    private ThumbnailProvider thumbnailProvider;
+    //もっと見るフッター
     private View mFooterView;
 
     public static final int TYPE_HEADER = 0;
     public static final int TYPE_FOOTER = 1;
     public static final int TYPE_NORMAL = 2;
 
-    public RecyclerViewAdapter(Context context, List<HomeBeanContent> mListDatas, int index)
+    public HomeRecyclerViewAdapter(Context context, List<HomeBeanContent> mContentList)
     {
         mInflater = LayoutInflater.from(context);
-        this.mListDatas = mListDatas;
+        this.mContentList = mContentList;
         this.context = context;
-        this.index = index;
-        imageLoader = new AsyncImageLoader(context);
-    }
-
-    public View getmFooterView() {
-        return mFooterView;
+        thumbnailProvider = new ThumbnailProvider(context);
     }
 
     public void setFooterView(View footerView) {
         mFooterView = footerView;
-        notifyItemInserted(getItemCount()-1);
+        notifyItemInserted(getItemCount() - 1);
     }
 
     @Override
@@ -69,9 +65,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public int getItemCount()
     {
         if(mFooterView == null){
-            return mListDatas.size();
+            return mContentList.size();
         }else{
-            return mListDatas.size()+1;
+            return mContentList.size()+1;
         }
     }
 
@@ -84,7 +80,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         View view = mInflater.inflate(R.layout.home_main_layout_recyclerview_item,viewGroup, false);
         ViewHolder viewHolder = new ViewHolder(view);
         viewHolder.mImage = view.findViewById(R.id.home_main_recyclerview_item_iv);
-        viewHolder.mTxt = view.findViewById(R.id.home_main_recyclerview_item_tv);
+        //コンテンツキャッシュを幅さ、長さ初期化
+        float widthPixels = context.getResources().getDisplayMetrics().widthPixels / 3 * 2;
+        float heightPixels = widthPixels / 1.8f;
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                (int)widthPixels,
+                (int)heightPixels);
+        viewHolder.mImage.setLayoutParams(lp);
+        viewHolder.mContent = view.findViewById(R.id.home_main_recyclerview_item_tv_content);
+        viewHolder.mTime = view.findViewById(R.id.home_main_recyclerview_item_tv_time);
         return viewHolder;
     }
 
@@ -94,17 +98,26 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         if(getItemViewType(i) == TYPE_FOOTER){
             return;
         }
-        Drawable drawable = context.getResources().getDrawable(R.mipmap.ic_launcher);
-        viewHolder.mImage.setBackground(drawable);
-        if (!TextUtils.isEmpty(mListDatas.get(i).getContentSrcURL())) {
-            Bitmap bitmap = imageLoader.loadImage(viewHolder.mImage, mListDatas.get(i).getContentSrcURL());
-            if (bitmap != null) {
-                viewHolder.mImage.setBackground(new BitmapDrawable(bitmap));
-//                viewHolder.mImage.setImageBitmap(bitmap);
-            }
+        if(!TextUtils.isEmpty(mContentList.get(i).getContentName())){
+            viewHolder.mContent.setVisibility(View.VISIBLE);
+            viewHolder.mContent.setText(mContentList.get(i).getContentName());
+        }else {
+            viewHolder.mContent.setVisibility(View.GONE);
         }
-        if(!TextUtils.isEmpty(mListDatas.get(i).getContentName())){
-            viewHolder.mTxt.setText(mListDatas.get(i).getContentName());
+        if(!TextUtils.isEmpty(mContentList.get(i).getContentTime())){
+            viewHolder.mTime.setVisibility(View.VISIBLE);
+            viewHolder.mTime.setText(mContentList.get(i).getContentTime());
+        }else{
+            viewHolder.mTime.setVisibility(View.GONE);
+        }
+        viewHolder.mImage.setImageResource(R.drawable.test_image);
+        //URLによって、サムネイル取得
+        if (!TextUtils.isEmpty(mContentList.get(i).getContentSrcURL())) {
+            viewHolder.mImage.setTag(mContentList.get(i).getContentSrcURL());
+            Bitmap bitmap = thumbnailProvider.getThumbnailImage(viewHolder.mImage, mContentList.get(i).getContentSrcURL());
+            if (bitmap != null) {
+                viewHolder.mImage.setImageBitmap(bitmap);
+            }
         }
         viewHolder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,9 +127,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 context.startActivity(mIntent);
             }
         });
-        //viewHolder.mImg.setImageResource(mDatas.get(i));
     }
 
+    /**
+     * コンテンツビューを初期化
+     */
     public class ViewHolder extends RecyclerView.ViewHolder
     {
         public ViewHolder(View itemView)
@@ -127,6 +142,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             }
         }
         ImageView mImage;
-        TextView mTxt;
+        TextView mContent;
+        TextView mTime;
     }
 }

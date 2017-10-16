@@ -1,4 +1,4 @@
-package com.nttdocomo.android.tvterminalapp.common;
+package com.nttdocomo.android.tvterminalapp.activity.common;
 
 /**
  * Created by moon_jaesung on 2017/10/03.
