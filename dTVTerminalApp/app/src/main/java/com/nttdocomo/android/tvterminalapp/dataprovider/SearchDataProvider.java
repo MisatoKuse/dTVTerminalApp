@@ -71,8 +71,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
         request.sortKind = sortKind.searchWebSortType().ordinal();
         request.filterTypeList = condition.searchFilterList();
         request.maxResult = SearchConstants.Search.requestMaxResultCount;
-        int pageIndex = ( 0==pageNumber ? 1: pageNumber);
-        request.startIndex = (pageIndex - 1) * SearchConstants.Search.requestMaxResultCount + 1;
+        request.startIndex = pageNumber * SearchConstants.Search.requestMaxResultCount + 1;
 
         mTotalSearchWebApi = new TotalSearchWebApi();
         mTotalSearchWebApi.setDelegate(this);

@@ -26,6 +26,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
     private SearchBaseFragmentScrollListener mSearchBaseFragmentScrollListener=null;
     private View mLoadMoreView;
     private View mLoadCompleteView;
+	private SearchResultBaseAdapter mSearchResultBaseAdapter=null;
 
     public void setSearchBaseFragmentScrollListener(SearchBaseFragmentScrollListener lis){
         mSearchBaseFragmentScrollListener=lis;
@@ -64,15 +65,15 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
             mLoadMoreView = LayoutInflater.from(mActivity).inflate(R.layout.search_load_more, null);
             mLoadCompleteView = LayoutInflater.from(mActivity).inflate(R.layout.search_load_complete, null);
 
-            //mTeveviListview.addFooterView(mLoadMoreView);
+            mTeveviListview.addFooterView(mLoadMoreView);
             //mTeveviListview.addFooterView(mLoadCompleteView);
             mLoadMoreView.setVisibility(View.GONE);
             mLoadCompleteView.setVisibility(View.GONE);
         }
 
-        SearchResultBaseAdapter searchResultBaseAdapter
-                = new SearchResultBaseAdapter(getContext(), mData, R.layout.item_search_result_televi);
-        mTeveviListview.setAdapter(searchResultBaseAdapter);
+        //SearchResultBaseAdapter searchResultBaseAdapter
+        mSearchResultBaseAdapter = new SearchResultBaseAdapter(getContext(), mData, R.layout.item_search_result_televi);
+        mTeveviListview.setAdapter(mSearchResultBaseAdapter);
 
         if(null==mCountText) {
             mCountText = mTeleviFragmentView.findViewById(R.id.tv_searched_result);
@@ -81,23 +82,30 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         return mTeleviFragmentView;
     }
 
-
-    public void refresh(String count){
-        initView();
+    public void notifyDataSetChanged(String count){
+        if(null!=mSearchResultBaseAdapter){
+            mSearchResultBaseAdapter.notifyDataSetChanged();
+        }
         mCountText.setText(count);
+    }
+
+    public void setSelection(int itemNo){
+        if(null!=mTeveviListview){
+            mTeveviListview.setSelection(itemNo);
+        }
+    }
+
+    public void displayLoadMore(boolean b){
+        if(null!=mLoadMoreView){
+            int s= (b? View.VISIBLE: View.GONE);
+            mLoadMoreView.setVisibility(s);
+        }
     }
 
     public void clear(){
         mData.clear();
-        refresh(SearchTopActivity.sSearchCountDefault);
+        notifyDataSetChanged(SearchTopActivity.sSearchCountDefault);
     }
-
-    public void pagingFinish(){
-        if(null != mTeveviListview){
-            mTeveviListview.setVisibility(View.GONE);
-        }
-    }
-
 
     @Override
     public void onScrollStateChanged(AbsListView absListView, int scrollState) {
