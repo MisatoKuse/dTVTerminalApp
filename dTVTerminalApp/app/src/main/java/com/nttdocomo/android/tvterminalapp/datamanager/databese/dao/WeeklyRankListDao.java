@@ -4,20 +4,18 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.ChannelListDBHelper.CHANNEL_LIST_TABLE_NAME;
-
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.WeeklyRankListDBHelper.WEEKLY_RANK_LIST_TABLE_NAME;
 
 /**
  * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-public class ChannelListDao {
+public class WeeklyRankListDao {
     // SQLiteDatabase
     private SQLiteDatabase db;
 
@@ -26,7 +24,7 @@ public class ChannelListDao {
      *
      * @param db
      */
-    public ChannelListDao(SQLiteDatabase db) {
+    public WeeklyRankListDao(SQLiteDatabase db) {
         this.db = db;
     }
 
@@ -41,7 +39,7 @@ public class ChannelListDao {
         List<Map<String, String>> list = new ArrayList<>();
 
         Cursor cursor = db.query(
-                CHANNEL_LIST_TABLE_NAME,
+               WEEKLY_RANK_LIST_TABLE_NAME,
                 strings,
                 null,
                 null,
@@ -76,7 +74,7 @@ public class ChannelListDao {
     public long insert(String key, String value) {
         ContentValues values = new ContentValues();
         values.put(key, value);
-        return db.insert(CHANNEL_LIST_TABLE_NAME, null, values);
+        return db.insert(WEEKLY_RANK_LIST_TABLE_NAME, null, values);
     }
 
     public int update() {
@@ -90,6 +88,7 @@ public class ChannelListDao {
      * @return
      */
     public int delete() {
-        return db.delete(CHANNEL_LIST_TABLE_NAME, null, null);
+        return db.delete(WEEKLY_RANK_LIST_TABLE_NAME, null, null);
     }
 }
+
