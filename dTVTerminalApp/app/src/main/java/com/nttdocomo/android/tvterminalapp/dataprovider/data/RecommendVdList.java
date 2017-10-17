@@ -1,12 +1,12 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-/**
- * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
- */
 
 public class RecommendVdList {
     private HashMap<String, String> mRvMap = new HashMap<String, String>();

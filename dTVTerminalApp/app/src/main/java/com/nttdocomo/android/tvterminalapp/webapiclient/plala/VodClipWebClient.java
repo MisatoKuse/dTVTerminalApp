@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.webapiclient.plala;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
@@ -8,10 +12,6 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-/**
- * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
- * VODクリップ通信処理
- */
 public class VodClipWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback{
 

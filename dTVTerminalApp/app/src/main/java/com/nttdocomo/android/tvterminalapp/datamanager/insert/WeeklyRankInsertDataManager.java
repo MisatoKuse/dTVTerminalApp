@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.datamanager.insert;
 
 import android.content.ContentValues;
@@ -12,10 +16,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-/**
- * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
- */
 
 public class WeeklyRankInsertDataManager {
 

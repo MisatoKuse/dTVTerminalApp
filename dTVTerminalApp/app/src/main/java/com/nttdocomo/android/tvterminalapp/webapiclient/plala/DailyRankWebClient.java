@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.webapiclient.plala;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
@@ -8,10 +12,6 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-/**
- * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
- * 当日のクリップ数番組ランキング取得処理
- */
 public class DailyRankWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback{
 

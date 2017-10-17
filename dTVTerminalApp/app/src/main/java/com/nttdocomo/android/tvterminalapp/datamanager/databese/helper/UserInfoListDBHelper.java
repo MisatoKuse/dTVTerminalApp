@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.datamanager.databese.helper;
 
 import android.content.Context;
@@ -10,10 +14,6 @@ import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserIn
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser.USER_INFO_LIST_H4D_AGE_REQ;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser.USER_INFO_LIST_LOGGEDIN_ACCOUNT;
-
-/**
- * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
- */
 
 public class UserInfoListDBHelper extends SQLiteOpenHelper{
     /**

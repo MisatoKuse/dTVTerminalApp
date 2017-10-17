@@ -1,11 +1,11 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.utils;
 
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.FOUR_K_FLG;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.UNDER_BAR_FOUR_K_FLG;
-
-/**
- * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
- */
 
 public class DBUtils {
 

@@ -1,12 +1,12 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.webapiclient.plala;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendVdList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendVideoXmlParser;
 
-/**
- * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
- * チャンネル一覧取得処理
- */
 public class RecommendVdWebClient{
 
     private RecommendVideoCallback mRecommendVideoCallback;

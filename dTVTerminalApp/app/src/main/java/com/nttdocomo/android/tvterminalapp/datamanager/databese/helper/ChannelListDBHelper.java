@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.datamanager.databese.helper;
 
 import android.content.Context;
@@ -36,10 +40,6 @@ import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.Channe
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_THUMB;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_TITLE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_TITLE_ID;
-
-/**
- * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
- */
 
 public class ChannelListDBHelper extends SQLiteOpenHelper {
 

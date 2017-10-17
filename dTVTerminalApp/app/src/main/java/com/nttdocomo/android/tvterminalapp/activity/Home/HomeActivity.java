@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.activity.Home;
 
 import android.content.DialogInterface;
@@ -27,9 +31,6 @@ import com.nttdocomo.android.tvterminalapp.beans.HomeBeanContent;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.dataprovider.HomeDataProvider;
 
-/**
- * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
- */
 public class HomeActivity extends BaseActivity implements View.OnClickListener, HomeDataProvider.ApiDataProviderCallback {
 
     private LinearLayout mLinearLayout;

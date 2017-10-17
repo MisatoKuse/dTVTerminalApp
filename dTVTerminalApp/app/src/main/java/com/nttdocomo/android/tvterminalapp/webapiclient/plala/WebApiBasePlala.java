@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.webapiclient.plala;
 
 import android.os.AsyncTask;
@@ -21,10 +25,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
- * ぷらら用WebApi呼び出し用http通信処理
- */
 public class WebApiBasePlala {
     /**
      * データ受け渡しコールバック

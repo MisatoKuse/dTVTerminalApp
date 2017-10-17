@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.datamanager.databese.dao;
 
 import android.content.ContentValues;
@@ -12,10 +16,6 @@ import java.util.Map;
 
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.VodClipListDBHelper.VODCLIP_LIST_TABLE_NAME;
 
-
-/**
- * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
- */
 
 public class VodClipListDao {
 

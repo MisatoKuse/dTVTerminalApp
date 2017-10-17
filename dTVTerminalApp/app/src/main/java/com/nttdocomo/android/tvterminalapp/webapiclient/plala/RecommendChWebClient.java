@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.webapiclient.plala;
 
 import android.content.Context;
@@ -6,10 +10,6 @@ import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendChInsertD
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser;
 
-/**
- * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
- * おすすめ番組一覧取得処理
- */
 public class RecommendChWebClient {
 
     private RecommendChannelCallback mRecommendChannelCallback;
