@@ -5,19 +5,19 @@ import android.util.Log;
 
 import com.nttdocomo.android.tvterminalapp.common.DCommon;
 import com.nttdocomo.android.tvterminalapp.model.ResultType;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.SearchConstants;
 import com.nttdocomo.android.tvterminalapp.model.search.SearchContentInfo;
 import com.nttdocomo.android.tvterminalapp.model.search.SearchNarrowCondition;
 import com.nttdocomo.android.tvterminalapp.model.search.SearchServiceType;
 import com.nttdocomo.android.tvterminalapp.model.search.SearchSortKind;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.TotalSearchContentInfo;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.TotalSearchErrorData;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.TotalSearchRequestData;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.TotalSearchResponseData;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.TotalSearchWebApi;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.TotalSearchWebApiDelegate;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchResultError;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchState;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.TotalSearchContentInfo;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.TotalSearchErrorData;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.TotalSearchRequestData;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.TotalSearchResponseData;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.TotalSearchWebApi;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.TotalSearchWebApiDelegate;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.SearchResultError;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.SearchState;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

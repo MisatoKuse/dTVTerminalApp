@@ -5,8 +5,8 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.nttdocomo.android.tvterminalapp.common.DCommon;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.HttpThread;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.WebApiCallback;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.HttpThread;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.WebApiCallback;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
