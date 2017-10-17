@@ -2,7 +2,7 @@
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-package com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser;
+package com.nttdocomo.android.tvterminalapp.webapiclient_temp.jsonparser_temp;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

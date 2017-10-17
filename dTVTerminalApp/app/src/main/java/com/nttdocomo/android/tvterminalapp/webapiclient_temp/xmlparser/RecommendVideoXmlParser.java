@@ -1,9 +1,7 @@
-package com.nttdocomo.android.tvterminalapp.webApiClient.xmlparser;
+package com.nttdocomo.android.tvterminalapp.webapiclient_temp.xmlparser;
 
 import android.util.Xml;
 
-import com.nttdocomo.android.tvterminalapp.beans.HomeBean;
-import com.nttdocomo.android.tvterminalapp.beans.HomeBeanContent;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendVdList;
 
 import org.xmlpull.v1.XmlPullParser;

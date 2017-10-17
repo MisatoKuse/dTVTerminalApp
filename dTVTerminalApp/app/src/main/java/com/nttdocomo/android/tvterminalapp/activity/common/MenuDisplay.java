@@ -1,4 +1,4 @@
-package com.nttdocomo.android.tvterminalapp.activity.common.menudisplay;
+package com.nttdocomo.android.tvterminalapp.activity.common;
 
 import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
@@ -25,8 +25,8 @@ import com.nttdocomo.android.tvterminalapp.activity.Search.SearchTopActivity;
 import com.nttdocomo.android.tvterminalapp.activity.TvProgram.ChannelListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.TvProgram.TvProgramListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.Video.VideoTopActivity;
-import com.nttdocomo.android.tvterminalapp.activity.common.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.common.UserState;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.common.UserState;
 
 import java.util.ArrayList;
 import java.util.List;

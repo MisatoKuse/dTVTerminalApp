@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import com.nttdocomo.android.tvterminalapp.activity.Home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.Player.ChannelDetailPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.activity.Player.TvPlayerActivity;
-import com.nttdocomo.android.tvterminalapp.activity.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 
 public class TvProgramListActivity extends BaseActivity implements View.OnClickListener {

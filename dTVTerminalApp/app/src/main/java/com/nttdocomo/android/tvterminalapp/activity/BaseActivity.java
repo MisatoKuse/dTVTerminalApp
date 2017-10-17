@@ -1,4 +1,4 @@
-package com.nttdocomo.android.tvterminalapp.activity.common;
+package com.nttdocomo.android.tvterminalapp.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,10 +11,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.common.menudisplay.MenuDisplay;
-import com.nttdocomo.android.tvterminalapp.activity.common.menudisplay.MenuDisplayEventListener;
-import com.nttdocomo.android.tvterminalapp.activity.common.menudisplay.MenuItem;
-import com.nttdocomo.android.tvterminalapp.activity.common.menudisplay.MenuItemParam;
+import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
+import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplayEventListener;
+import com.nttdocomo.android.tvterminalapp.activity.common.MenuItem;
+import com.nttdocomo.android.tvterminalapp.activity.common.MenuItemParam;
+import com.nttdocomo.android.tvterminalapp.common.UserState;
 
 /**
  *

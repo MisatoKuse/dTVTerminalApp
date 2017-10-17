@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.activity.Player.TvPlayerActivity;
-import com.nttdocomo.android.tvterminalapp.activity.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 
 public class DailyTvRankingActivity extends BaseActivity {

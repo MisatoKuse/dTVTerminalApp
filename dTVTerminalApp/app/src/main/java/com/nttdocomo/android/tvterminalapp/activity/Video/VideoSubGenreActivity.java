@@ -8,7 +8,7 @@ import android.widget.RelativeLayout;
  * Created by hitue-fsi on 2017/09/22.
  */
 
-import com.nttdocomo.android.tvterminalapp.activity.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 
 public class VideoSubGenreActivity extends BaseActivity implements View.OnClickListener{

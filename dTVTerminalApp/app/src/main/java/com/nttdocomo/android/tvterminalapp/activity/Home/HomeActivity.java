@@ -21,7 +21,7 @@ import com.nttdocomo.android.tvterminalapp.activity.Home.adapter.HomeRecyclerVie
 import com.nttdocomo.android.tvterminalapp.activity.Ranking.DailyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.Ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.TvProgram.ChannelListActivity;
-import com.nttdocomo.android.tvterminalapp.activity.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.beans.HomeBean;
 import com.nttdocomo.android.tvterminalapp.beans.HomeBeanContent;
 import com.nttdocomo.android.tvterminalapp.R;

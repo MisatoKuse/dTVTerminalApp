@@ -6,10 +6,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATABASE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATABASE_VERSION;
-import static com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.UserInfoJsonParser.USER_INFO_LIST_CONTRACT_STATUS;
-import static com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ;
-import static com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.UserInfoJsonParser.USER_INFO_LIST_H4D_AGE_REQ;
-import static com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.UserInfoJsonParser.USER_INFO_LIST_LOGGEDIN_ACCOUNT;
+import static com.nttdocomo.android.tvterminalapp.webapiclient_temp.jsonparser_temp.UserInfoJsonParser.USER_INFO_LIST_CONTRACT_STATUS;
+import static com.nttdocomo.android.tvterminalapp.webapiclient_temp.jsonparser_temp.UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ;
+import static com.nttdocomo.android.tvterminalapp.webapiclient_temp.jsonparser_temp.UserInfoJsonParser.USER_INFO_LIST_H4D_AGE_REQ;
+import static com.nttdocomo.android.tvterminalapp.webapiclient_temp.jsonparser_temp.UserInfoJsonParser.USER_INFO_LIST_LOGGEDIN_ACCOUNT;
 
 /**
  * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.

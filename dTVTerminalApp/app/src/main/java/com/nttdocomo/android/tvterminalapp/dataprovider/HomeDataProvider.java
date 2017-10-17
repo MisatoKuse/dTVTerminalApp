@@ -21,13 +21,13 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WeeklyRankList;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.webApiClient.ChannelWebClient;
-import com.nttdocomo.android.tvterminalapp.webApiClient.DailyRankWebClient;
-import com.nttdocomo.android.tvterminalapp.webApiClient.RecommendChWebClient;
-import com.nttdocomo.android.tvterminalapp.webApiClient.RecommendVdWebClient;
-import com.nttdocomo.android.tvterminalapp.webApiClient.TvScheduleWebClient;
-import com.nttdocomo.android.tvterminalapp.webApiClient.VodClipWebClient;
-import com.nttdocomo.android.tvterminalapp.webApiClient.WeeklyRankWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient_temp.plala.ChannelWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient_temp.plala.DailyRankWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient_temp.plala.RecommendChWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient_temp.plala.RecommendVdWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient_temp.plala.TvScheduleWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient_temp.plala.VodClipWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient_temp.plala.WeeklyRankWebClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,12 +38,10 @@ import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.DAILY_RANK_LAS
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.TvSchedule_LAST_INSERT;
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.VOD_LAST_INSERT;
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.WEEKLY_RANK_LAST_INSERT;
-import static com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.VodClipJsonParser.VODCLIP_LIST_DISPLAY_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.VodClipJsonParser.VODCLIP_LIST_DISP_TYPE;
-import static com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.VodClipJsonParser.VODCLIP_LIST_THUMB;
-import static com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.VodClipJsonParser.VODCLIP_LIST_TITLE;
-import static com.nttdocomo.android.tvterminalapp.webApiClient.WebApiBasePlala.FILTER_RELEASE;
-import static com.nttdocomo.android.tvterminalapp.webApiClient.WebApiBasePlala.TYPE_D_CHANNEL;
+import static com.nttdocomo.android.tvterminalapp.webapiclient_temp.jsonparser_temp.VodClipJsonParser.VODCLIP_LIST_DISPLAY_START_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient_temp.jsonparser_temp.VodClipJsonParser.VODCLIP_LIST_DISP_TYPE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient_temp.jsonparser_temp.VodClipJsonParser.VODCLIP_LIST_THUMB;
+import static com.nttdocomo.android.tvterminalapp.webapiclient_temp.jsonparser_temp.VodClipJsonParser.VODCLIP_LIST_TITLE;
 
 /**
  * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.

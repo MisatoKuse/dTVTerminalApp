@@ -1,7 +1,7 @@
-package com.nttdocomo.android.tvterminalapp.webApiClient;
+package com.nttdocomo.android.tvterminalapp.webapiclient_temp.plala;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendVdList;
-import com.nttdocomo.android.tvterminalapp.webApiClient.xmlparser.RecommendVideoXmlParser;
+import com.nttdocomo.android.tvterminalapp.webapiclient_temp.xmlparser.RecommendVideoXmlParser;
 
 /**
  * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.

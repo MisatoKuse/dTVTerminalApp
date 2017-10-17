@@ -1,7 +1,7 @@
-package com.nttdocomo.android.tvterminalapp.webApiClient;
+package com.nttdocomo.android.tvterminalapp.webapiclient_temp.plala;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
-import com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.VodClipJsonParser;
+import com.nttdocomo.android.tvterminalapp.webapiclient_temp.jsonparser_temp.VodClipJsonParser;
 
 import org.json.JSONException;
 import org.json.JSONObject;

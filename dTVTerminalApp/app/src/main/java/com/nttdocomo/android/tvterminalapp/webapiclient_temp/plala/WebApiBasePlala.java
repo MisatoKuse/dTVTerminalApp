@@ -1,4 +1,4 @@
-package com.nttdocomo.android.tvterminalapp.webApiClient;
+package com.nttdocomo.android.tvterminalapp.webapiclient_temp.plala;
 
 import android.os.AsyncTask;
 

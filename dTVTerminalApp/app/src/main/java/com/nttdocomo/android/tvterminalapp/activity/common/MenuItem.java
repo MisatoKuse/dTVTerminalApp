@@ -1,4 +1,4 @@
-package com.nttdocomo.android.tvterminalapp.activity.common.menudisplay;
+package com.nttdocomo.android.tvterminalapp.activity.common;
 
 
 /**

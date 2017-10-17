@@ -1,7 +1,7 @@
-package com.nttdocomo.android.tvterminalapp.webApiClient;
+package com.nttdocomo.android.tvterminalapp.webapiclient_temp.plala;
 
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
-import com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.DailyRankJsonParser;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.WeeklyRankList;
+import com.nttdocomo.android.tvterminalapp.webapiclient_temp.jsonparser_temp.WeeklyRankJsonParser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,24 +10,24 @@ import java.util.List;
 
 /**
  * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
- * 当日のクリップ数番組ランキング取得処理
+ * 週間のクリップ数番組ランキング取得処理
  */
-public class DailyRankWebClient
-        extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback{
+public class WeeklyRankWebClient
+        extends WebApiBasePlala  implements WebApiBasePlala.WebApiBasePlalaCallback{
 
     /**
      * コールバック
      */
-    public interface DailyRankJsonParserCallback {
+    public interface WeeklyRankJsonParserCallback {
         /**
          * 正常に終了した場合に呼ばれるコールバック
-         * @param dailyRankLists JSONパース後のデータ
+         * @param weeklyRankLists JSONパース後のデータ
          */
-        void onDailyRankJsonParsed(List<DailyRankList> dailyRankLists);
+        void onWeeklyRankJsonParsed(List<WeeklyRankList> weeklyRankLists);
     }
 
     //コールバックのインスタンス
-    private DailyRankJsonParserCallback mDailyRankJsonParserCallback;
+    private WeeklyRankJsonParserCallback mWeeklyRankJsonParserCallback;
 
     /**
      * 通信成功時のコールバック
@@ -36,14 +36,14 @@ public class DailyRankWebClient
     @Override
     public void onAnswer(ReturnCode returnCode) {
         //パース後データ受け取り用
-        List<DailyRankList> pursedData;
+        List<WeeklyRankList> pursedData;
 
         //JSONをパースする
-        DailyRankJsonParser dailyRankJsonParser = new DailyRankJsonParser();
-        pursedData = dailyRankJsonParser.DAILYRANKListSender(returnCode.bodyData);
+        WeeklyRankJsonParser weeklyRankJsonParser = new WeeklyRankJsonParser();
+        pursedData = weeklyRankJsonParser.WEEKLYRANKListSender(returnCode.bodyData);
 
         //パース後のデータを返す
-        mDailyRankJsonParserCallback.onDailyRankJsonParsed(pursedData);
+        mWeeklyRankJsonParserCallback.onWeeklyRankJsonParsed(pursedData);
     }
 
     /**
@@ -52,42 +52,45 @@ public class DailyRankWebClient
     @Override
     public void onError() {
         //エラーが発生したのでヌルを返す
-        mDailyRankJsonParserCallback.onDailyRankJsonParsed(null);
+        mWeeklyRankJsonParserCallback.onWeeklyRankJsonParsed(null);
     }
 
+
     /**
-     * 当日のクリップ数番組ランキング取得
-     * @param limit                         取得する最大件数(値は1以上)
-     * @param offset                        取得位置(値は1以上)
-     * @param filter                        フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
-     * @param ageReq                        年齢設定値（ゼロの場合は1扱い）
-     * @param dailyRankJsonParserCallback コールバック
-     * @return パラメータエラー等が発生した場合はfalse
+     * 週間のクリップ数番組ランキング取得
+     * @param limit                           取得する最大件数(値は1以上)
+     * @param offset                        　取得位置(値は1以上)
+     * @param filter                          フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
+     * @param ageReq                          年齢設定値（ゼロの場合は1扱い）
+     * @param genreId                         ジャンルID
+     * @param weeklyRankJsonParserCallback コールバック
+     * @return パラメータエラー等ならばfalse
      */
-    public boolean getDailyRankApi(int limit,int offset,String filter,int ageReq,
-                                         DailyRankJsonParserCallback dailyRankJsonParserCallback) {
-        //パラメーターのチェック
-        if(!checkNormalParameter(limit,offset,filter,ageReq,dailyRankJsonParserCallback)) {
+    public boolean getWeeklyRankApi(int limit, int offset, String filter,
+                                       int ageReq, String genreId,
+                                       WeeklyRankJsonParserCallback weeklyRankJsonParserCallback) {
+        //パラメーターのチェック(genreIdはヌルを受け付けるので、チェックしない)
+        if(!checkNormalParameter(limit,offset,filter,ageReq,weeklyRankJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、falseで帰る
             return false;
         }
 
-        //コールバックのセット
-        mDailyRankJsonParserCallback = dailyRankJsonParserCallback;
+        //コールバックを呼べるようにする
+        mWeeklyRankJsonParserCallback = weeklyRankJsonParserCallback;
 
         //送信用パラメータの作成
-        String sendParameter = makeSendParameter(limit,offset,filter,ageReq);
+        String sendParameter = makeSendParameter(limit,offset,filter,ageReq,genreId);
 
         //JSONの組み立てに失敗していれば、falseで帰る
         if(sendParameter.isEmpty()) {
             return false;
         }
 
-        //日毎ランク一覧を呼び出す
-        //TODO: 内部的には暫定的にVOD一覧を呼んでいる
+        //週毎ランク一覧を呼び出す
+        //TODO: 内部的には暫定措置としてVODクリップ一覧を呼び出す
         openUrl(API_NAME_LIST.DAILY_RANK_LIST.getString(),sendParameter,this);
 
-        //今のところ失敗していないので、trueを返す
+        //今のところ失敗は無いので、trueで帰る
         return true;
     }
 
@@ -96,10 +99,11 @@ public class DailyRankWebClient
      * @param limit    取得する最大件数(値は1以上)
      * @param offset   取得位置(値は1以上)
      * @param filter   フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
+     * @param ageReq   年齢設定値（ゼロの場合は1扱い）
      * @return 値がおかしいならばfalse
      */
     private boolean checkNormalParameter(int limit,int offset,String filter,int ageReq,
-                                         DailyRankJsonParserCallback dailyRankJsonParserCallback) {
+                                         WeeklyRankJsonParserCallback weeklyRankJsonParserCallback) {
         // 各値が下限以下ならばfalse
         if(limit < 1) {
             return false;
@@ -129,8 +133,8 @@ public class DailyRankWebClient
             return false;
         }
 
-        //コールバックが指定されていないならばfalse
-        if(dailyRankJsonParserCallback == null) {
+        //コールバックがヌルならばエラー
+        if(weeklyRankJsonParserCallback == null) {
             return false;
         }
 
@@ -143,9 +147,12 @@ public class DailyRankWebClient
      * @param limit    取得する最大件数(値は1以上)
      * @param offset   取得位置(値は1以上)
      * @param filter   フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
+     * @param ageReq   年齢設定値（ゼロの場合は1扱い）
+     * @param genreId  ジャンルID
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(int limit,int offset,String filter,int ageReq) {
+    private String makeSendParameter(int limit,int offset,String filter,
+                                     int ageReq,String genreId) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
@@ -164,6 +171,11 @@ public class DailyRankWebClient
             }
 
             jsonObject.put("age_req", ageReq);
+
+            //ヌルや空文字ではないならば、値を出力する
+            if(genreId != null && !genreId.isEmpty()) {
+                jsonObject.put("genre_id", genreId);
+            }
 
             answerText = jsonObject.toString();
 

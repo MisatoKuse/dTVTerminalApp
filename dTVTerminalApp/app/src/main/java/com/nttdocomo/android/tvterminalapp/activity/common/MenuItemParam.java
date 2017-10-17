@@ -1,7 +1,7 @@
-package com.nttdocomo.android.tvterminalapp.activity.common.menudisplay;
+package com.nttdocomo.android.tvterminalapp.activity.common;
 
 
-import com.nttdocomo.android.tvterminalapp.activity.common.UserState;
+import com.nttdocomo.android.tvterminalapp.common.UserState;
 
 public class MenuItemParam{
 

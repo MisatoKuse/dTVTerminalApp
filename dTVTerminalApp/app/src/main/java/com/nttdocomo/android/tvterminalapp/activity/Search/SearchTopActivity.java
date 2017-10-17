@@ -9,7 +9,7 @@ import android.widget.Toast;
 
 
 import com.nttdocomo.android.tvterminalapp.activity.Player.ChannelDetailPlayerActivity;
-import com.nttdocomo.android.tvterminalapp.activity.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 
 public class SearchTopActivity extends BaseActivity implements View.OnClickListener {

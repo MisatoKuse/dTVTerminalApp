@@ -11,7 +11,7 @@ import android.util.Log;
 import android.widget.ImageView;
 
 
-import com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.ThumbnailDownloadTask;
+import com.nttdocomo.android.tvterminalapp.webapiclient_temp.jsonparser_temp.ThumbnailDownloadTask;
 
 import java.util.ArrayList;
 import java.util.List;

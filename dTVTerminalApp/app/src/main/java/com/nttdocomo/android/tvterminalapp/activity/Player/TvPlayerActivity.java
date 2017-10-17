@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.nttdocomo.android.tvterminalapp.activity.Other.RemoteControlActivity;
-import com.nttdocomo.android.tvterminalapp.activity.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 
 public class TvPlayerActivity extends BaseActivity {

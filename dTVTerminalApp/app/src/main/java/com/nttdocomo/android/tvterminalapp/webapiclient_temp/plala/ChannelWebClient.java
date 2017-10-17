@@ -1,7 +1,7 @@
-package com.nttdocomo.android.tvterminalapp.webApiClient;
+package com.nttdocomo.android.tvterminalapp.webapiclient_temp.plala;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
-import com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.ChannelJsonParser;
+import com.nttdocomo.android.tvterminalapp.webapiclient_temp.jsonparser_temp.ChannelJsonParser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
