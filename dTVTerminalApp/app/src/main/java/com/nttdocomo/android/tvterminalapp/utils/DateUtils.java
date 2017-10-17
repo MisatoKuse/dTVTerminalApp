@@ -61,6 +61,7 @@ public class DateUtils {
     public void addLastDate(
             String key) {
 
+        // TODO:DBには取得日時を格納しておき、現在時刻よりもデータが未来の場合,キャッシュ切れと判断すべき
         //現在日時を取得
         Calendar c = Calendar.getInstance();
         c.add(Calendar.HOUR_OF_DAY, LIMIT_HOUR);
@@ -92,6 +93,7 @@ public class DateUtils {
      * @return
      */
     public boolean isBeforeLimitDate(String str) {
+        // TODO:DBには取得日時を格納しておき、現在時刻よりもデータが未来の場合,キャッシュ切れと判断すべき
         Calendar limit = new GregorianCalendar();
         //現在日時を取得
         Calendar now = Calendar.getInstance();
