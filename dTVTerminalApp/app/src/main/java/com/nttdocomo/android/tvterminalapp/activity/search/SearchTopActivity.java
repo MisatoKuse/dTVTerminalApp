@@ -323,9 +323,6 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
     }
 
     private void initSearchedResultView() {
-        if(null!=mSearchViewPager){
-            return;
-        }
 
         findViewById(R.id.search_history).setVisibility(View.GONE);
         findViewById(R.id.fl_search_result).setVisibility(View.VISIBLE);
