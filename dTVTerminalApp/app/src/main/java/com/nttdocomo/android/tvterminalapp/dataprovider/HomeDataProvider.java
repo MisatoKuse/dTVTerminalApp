@@ -243,9 +243,9 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
     public void sendChannelListData(List<Map<String, String>> list) {
         HomeBean homeBean = new HomeBean();
         homeBean.setContentTypeName(mContext.getResources().getString(R.string.nav_menu_item_channel_list));
-        HomeBeanContent homeBeanContent = new HomeBeanContent();
         List<HomeBeanContent> contents = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
+            HomeBeanContent homeBeanContent = new HomeBeanContent();
             homeBeanContent.setContentSrcURL(list.get(i).get(VODCLIP_LIST_THUMB));
             homeBeanContent.setContentName(list.get(i).get(VODCLIP_LIST_TITLE));
             homeBeanContent.setContentTime(list.get(i).get(VODCLIP_LIST_DISPLAY_START_DATE));
@@ -264,9 +264,9 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
     public void sendDailyRankListData(List<Map<String, String>> list) {
         HomeBean homeBean = new HomeBean();
         homeBean.setContentTypeName(mContext.getResources().getString(R.string.daily_tv_ranking_title));
-        HomeBeanContent homeBeanContent = new HomeBeanContent();
         List<HomeBeanContent> contents = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
+            HomeBeanContent homeBeanContent = new HomeBeanContent();
             homeBeanContent.setContentSrcURL(list.get(i).get(VODCLIP_LIST_THUMB));
             homeBeanContent.setContentName(list.get(i).get(VODCLIP_LIST_TITLE));
             homeBeanContent.setContentTime(list.get(i).get(VODCLIP_LIST_DISPLAY_START_DATE));
@@ -285,9 +285,9 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
     public void sendTvScheduleListData(List<Map<String, String>> list) {
         HomeBean homeBean = new HomeBean();
         homeBean.setContentTypeName(mContext.getResources().getString(R.string.nav_menu_item_channel_list));
-        HomeBeanContent homeBeanContent = new HomeBeanContent();
         List<HomeBeanContent> contents = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
+            HomeBeanContent homeBeanContent = new HomeBeanContent();
             homeBeanContent.setContentSrcURL(list.get(i).get(VODCLIP_LIST_THUMB));
             homeBeanContent.setContentName(list.get(i).get(VODCLIP_LIST_TITLE));
             homeBeanContent.setContentTime(list.get(i).get(VODCLIP_LIST_DISPLAY_START_DATE));
@@ -305,9 +305,9 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      */
     public void sendUserInfoListData(List<Map<String, String>> list) {
         HomeBean homeBean = new HomeBean();
-        HomeBeanContent homeBeanContent = new HomeBeanContent();
         List<HomeBeanContent> contents = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
+            HomeBeanContent homeBeanContent = new HomeBeanContent();
             homeBeanContent.setContentSrcURL(list.get(i).get(VODCLIP_LIST_THUMB));
             homeBeanContent.setContentName(list.get(i).get(VODCLIP_LIST_TITLE));
             homeBeanContent.setContentTime(list.get(i).get(VODCLIP_LIST_DISPLAY_START_DATE));
@@ -326,9 +326,9 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
     public void sendVodClipListData(List<Map<String, String>> list) {
         HomeBean homeBean = new HomeBean();
         homeBean.setContentTypeName(mContext.getResources().getString(R.string.nav_menu_item_clip));
-        HomeBeanContent homeBeanContent = new HomeBeanContent();
         List<HomeBeanContent> contents = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
+            HomeBeanContent homeBeanContent = new HomeBeanContent();
             homeBeanContent.setContentSrcURL(list.get(i).get(VODCLIP_LIST_THUMB));
             homeBeanContent.setContentName(list.get(i).get(VODCLIP_LIST_TITLE));
             homeBeanContent.setContentTime(list.get(i).get(VODCLIP_LIST_DISPLAY_START_DATE));
@@ -347,9 +347,9 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
     public void sendWeeklyRankListData(List<Map<String, String>> list) {
         HomeBean homeBean = new HomeBean();
         homeBean.setContentTypeName(mContext.getResources().getString(R.string.weekly_tv_ranking_title));
-        HomeBeanContent homeBeanContent = new HomeBeanContent();
         List<HomeBeanContent> contents = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
+            HomeBeanContent homeBeanContent = new HomeBeanContent();
             homeBeanContent.setContentSrcURL(list.get(i).get(VODCLIP_LIST_THUMB));
             homeBeanContent.setContentName(list.get(i).get(VODCLIP_LIST_TITLE));
             homeBeanContent.setContentTime(list.get(i).get(VODCLIP_LIST_DISPLAY_START_DATE));
