@@ -1,20 +1,19 @@
-package com.nttdocomo.android.tvterminalapp.common;
+package com.nttdocomo.android.tvterminalapp.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.common.menudisplay.MenuDisplay;
-import com.nttdocomo.android.tvterminalapp.common.menudisplay.MenuDisplayEventListener;
-import com.nttdocomo.android.tvterminalapp.common.menudisplay.MenuItem;
-import com.nttdocomo.android.tvterminalapp.common.menudisplay.MenuItemParam;
+import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
+import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplayEventListener;
+import com.nttdocomo.android.tvterminalapp.activity.common.MenuItem;
+import com.nttdocomo.android.tvterminalapp.activity.common.MenuItemParam;
+import com.nttdocomo.android.tvterminalapp.common.UserState;
 
 /**
  *
@@ -102,8 +101,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      * @param c
      */
     protected void setTitleText(CharSequence c) {
-        if (titleTextView != null)
+        if (titleTextView != null) {
             titleTextView.setText(c);
+        }
     }
 
     //契約・ペアリング済み用

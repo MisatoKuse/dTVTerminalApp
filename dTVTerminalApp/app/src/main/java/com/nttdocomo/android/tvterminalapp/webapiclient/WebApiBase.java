@@ -4,7 +4,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient;
 import android.os.Handler;
 import android.util.Log;
 
-import com.nttdocomo.android.tvterminalapp.common.DCommon;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.HttpThread;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.WebApiCallback;
 
@@ -43,10 +43,10 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
                             u.append(key+ "=") ;
                             u.append(queryItems.get(key));
                         }else {
-                            Log.d(DCommon.LOG_DEF_TAG, "WebApiBase::createUrlComponents, queryItems.get(key) is NULL");
+                            Log.d(DTVTConstants.LOG_DEF_TAG, "WebApiBase::createUrlComponents, queryItems.get(key) is NULL");
                         }
                     } else {
-                        Log.d(DCommon.LOG_DEF_TAG, "WebApiBase::createUrlComponents, queryItems has no key "+ key);
+                        Log.d(DTVTConstants.LOG_DEF_TAG, "WebApiBase::createUrlComponents, queryItems has no key "+ key);
                     }
                 }
 
@@ -75,7 +75,7 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
 
             }*/
             //findbug 対応 end
-            Log.d(DCommon.LOG_DEF_TAG, "WebApiBase::createUrlComponents, url=" + u.toString());
+            Log.d(DTVTConstants.LOG_DEF_TAG, "WebApiBase::createUrlComponents, url=" + u.toString());
         }
         return u.toString();
     }

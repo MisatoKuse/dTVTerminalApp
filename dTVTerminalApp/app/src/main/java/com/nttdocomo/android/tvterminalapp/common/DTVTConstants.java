@@ -12,7 +12,7 @@ package com.nttdocomo.android.tvterminalapp.common;
  *      プロジェクトにて共通データを定義するクラスである
  *
  */
-public class DCommon {
+public class DTVTConstants {
     
     //=================================== Logメセッジ定義 Begin ==================================
     public static final String LOG_DEF_TAG = "Common_Log";

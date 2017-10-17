@@ -99,7 +99,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public String getScreenID() {
-        return DTVTConstants.LaunchActivityScreenID;
+        return getString(R.string.str_launch_title);
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.util.Log;
 
-import com.nttdocomo.android.tvterminalapp.common.DCommon;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.model.ResultType;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.SearchConstants;
 import com.nttdocomo.android.tvterminalapp.model.search.SearchContentInfo;
@@ -82,7 +82,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
 
     public void cancelSearch() {
         setSearchState(SearchState.canceled);
-        Log.d(DCommon.LOG_DEF_TAG, "SearchDataProvider::cancelSearch()");
+        Log.d(DTVTConstants.LOG_DEF_TAG, "SearchDataProvider::cancelSearch()");
     }
 
     private String getMappedData(ArrayList<SearchServiceType> serviceTypeArray, String comma){
@@ -106,7 +106,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
             e.printStackTrace();
         }
         */
-        Log.d(DCommon.LOG_DEF_TAG, "SearchDataProvider::onSuccess(), _state=" + _state.toString());
+        Log.d(DTVTConstants.LOG_DEF_TAG, "SearchDataProvider::onSuccess(), _state=" + _state.toString());
         synchronized (this) {
             if (_state != SearchState.canceled) {
 

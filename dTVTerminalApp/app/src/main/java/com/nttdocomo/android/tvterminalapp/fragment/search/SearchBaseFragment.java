@@ -12,10 +12,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.Search.SearchTopActivity;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
+import com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.SearchResultBaseAdapter;
-import com.nttdocomo.android.tvterminalapp.activity.Player.TvPlayerActivity;
-import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
 
 import java.util.ArrayList;
 import java.util.List;

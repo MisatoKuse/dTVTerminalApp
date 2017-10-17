@@ -3,7 +3,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search;
 
 import android.os.Handler;
 
-import com.nttdocomo.android.tvterminalapp.common.DCommon;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -56,7 +56,7 @@ public class HttpThread extends Thread {
             URL url = new URL(this.mUrl);
             httpUrlConn = (HttpURLConnection) url.openConnection();
 
-            httpUrlConn.setReadTimeout(DCommon.SEARCH_SERVER_TIMEOUT);
+            httpUrlConn.setReadTimeout(DTVTConstants.SEARCH_SERVER_TIMEOUT);
             httpUrlConn.setRequestMethod("GET");
             httpUrlConn.setRequestProperty("Accept-Charset", "utf-8");
             httpUrlConn.setRequestProperty("contentType", "utf-8");

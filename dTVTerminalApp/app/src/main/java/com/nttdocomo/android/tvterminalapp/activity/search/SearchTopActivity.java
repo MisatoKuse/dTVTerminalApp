@@ -1,4 +1,4 @@
-package com.nttdocomo.android.tvterminalapp.activity.Search;
+package com.nttdocomo.android.tvterminalapp.activity.search;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -17,9 +17,9 @@ import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.common.DCommon;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.SearchDataProvider;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.SearchResultError;
 import com.nttdocomo.android.tvterminalapp.model.ResultType;
@@ -108,7 +108,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
             @Override
             public void onFocusChange(View view, boolean isFocus) {
                 if (isFocus) {
-                    Log.d(DCommon.LOG_DEF_TAG,"SearchView Focus");
+                    Log.d(DTVTConstants.LOG_DEF_TAG,"SearchView Focus");
                     // フォーカスが当たった時
                     mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
@@ -154,17 +154,17 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
                                             mHandler.post(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    Log.d(DCommon.LOG_DEF_TAG, "1 sencond passed");
+                                                    Log.d(DTVTConstants.LOG_DEF_TAG, "1 sencond passed");
                                                     mSearchTime = System.currentTimeMillis();
                                                     if(mInputText != mBeforeText) {
                                                         // 文字列に変化があった場合
-                                                        Log.d(DCommon.LOG_DEF_TAG,"Start IncrementalSearch:"+mInputText);
+                                                        Log.d(DTVTConstants.LOG_DEF_TAG,"Start IncrementalSearch:"+mInputText);
                                                         initSearchedResultView();
                                                         setSearchData(mInputText);
                                                         mBeforeText = mInputText;
                                                     } else {
                                                         // nop.
-                                                        Log.d(DCommon.LOG_DEF_TAG,"Don't Start IncrementalSearch I="+mInputText+":B="+mBeforeText);
+                                                        Log.d(DTVTConstants.LOG_DEF_TAG,"Don't Start IncrementalSearch I="+mInputText+":B="+mBeforeText);
                                                     }
                                                 }
                                             });
@@ -265,7 +265,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
     SearchDataProvider mSearchDataProvider=null;
     private void setSearchData(String searchText) {
         if(null==mSearchDataProvider){
-            Log.e(DCommon.LOG_DEF_TAG, "SearchTopActivity::setSearchData, mSearchDataProvider is null");
+            Log.e(DTVTConstants.LOG_DEF_TAG, "SearchTopActivity::setSearchData, mSearchDataProvider is null");
             return;
         }
 
@@ -453,7 +453,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
                 SearchContentInfo searchContentInfo=new SearchContentInfo(false, ci.contentId, ci. serviceId, ci.contentPictureUrl, ci.title);
                 baseFragment.mData.add(searchContentInfo);
             }
-            Log.d(DCommon.LOG_DEF_TAG, "baseFragment.mData.size = " + baseFragment.mData.size());
+            Log.d(DTVTConstants.LOG_DEF_TAG, "baseFragment.mData.size = " + baseFragment.mData.size());
 
             baseFragment.notifyDataSetChanged(totalCountText);
             baseFragment.setSelection(mSearchLastItem);
@@ -478,7 +478,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
     @Override
     public void onSearchDataProviderFinishNg(ResultType<SearchResultError> resultType) {
 		clearAllFragment();
-        Log.e(DCommon.LOG_DEF_TAG, "onSearchDataProviderFinishNg");
+        Log.e(DTVTConstants.LOG_DEF_TAG, "onSearchDataProviderFinishNg");
     }
 
     @Override
@@ -508,7 +508,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
         int maxPage = mSearchTotalCount/SearchConstants.Search.requestMaxResultCount;
         if(firstVisibleItem + visibleItemCount>=pageMax && maxPage >=1+ mPageNumber ){
             setPageNumber(mPageNumber + 1);
-            Log.d(DCommon.LOG_DEF_TAG, "page no=" + (mPageNumber + 1));
+            Log.d(DTVTConstants.LOG_DEF_TAG, "page no=" + (mPageNumber + 1));
             setPagingStatus(true);
             fragment.displayLoadMore(true);
 

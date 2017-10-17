@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.util.Xml;
 
-import com.nttdocomo.android.tvterminalapp.common.DCommon;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -73,7 +73,7 @@ public class XMLParser extends AsyncTask<String, Integer, String> {
         }
 
         if(0==strings[0].length()){
-            Log.d(DCommon.LOG_DEF_TAG, "XMLParser::doInBackground, str.length=0");
+            Log.d(DTVTConstants.LOG_DEF_TAG, "XMLParser::doInBackground, str.length=0");
             setOtherError();
         } else {
             parse(strings[0]);
@@ -83,13 +83,13 @@ public class XMLParser extends AsyncTask<String, Integer, String> {
     }
 
     private void setOtherError(){
-        searchError = new TotalSearchErrorData(DCommon.SEARCH_ERROR_ID_1, DCommon.SEARCH_ERROR_PARAM_NULL_REQ);
+        searchError = new TotalSearchErrorData(DTVTConstants.SEARCH_ERROR_ID_1, DTVTConstants.SEARCH_ERROR_PARAM_NULL_REQ);
     }
 
     @Override
     protected void onPostExecute(String aVoid) {
         super.onPostExecute(aVoid);
-        Log.d(DCommon.LOG_DEF_TAG, "MyAsyncTask.onPostExecute aVoid=" + aVoid);
+        Log.d(DTVTConstants.LOG_DEF_TAG, "MyAsyncTask.onPostExecute aVoid=" + aVoid);
 
         if(null!=mXMLParserFinishListener){
             if(null == searchError){
@@ -102,7 +102,7 @@ public class XMLParser extends AsyncTask<String, Integer, String> {
 
     //2.parse
     private void parse(String responseData) {
-        Log.d(DCommon.LOG_DEF_TAG, "parse");
+        Log.d(DTVTConstants.LOG_DEF_TAG, "parse");
 
         XmlPullParser parser = Xml.newPullParser();
         try {
@@ -183,7 +183,7 @@ public class XMLParser extends AsyncTask<String, Integer, String> {
     }
 
     public void parserDidStartDocument(/*XMLParser parser*/) {
-        Log.d(DCommon.LOG_DEF_TAG, "xml parse start");
+        Log.d(DTVTConstants.LOG_DEF_TAG, "xml parse start");
 
         searchResponse = new TotalSearchResponseData();
         //searchError = new TotalSearchErrorData();
@@ -196,17 +196,17 @@ public class XMLParser extends AsyncTask<String, Integer, String> {
     }
 
     public void parserDidEndDocument(/*XMLParser parser*/) {
-        Log.d(DCommon.LOG_DEF_TAG, "xml parse finished");
+        Log.d(DTVTConstants.LOG_DEF_TAG, "xml parse finished");
     }
 
     public void parseProc(XmlPullParser parser, String tagName, String value) throws Exception {
 
         if(kStatus.equals(tagName)){
             if(kStatusOk.equals(value)){
-                Log.d(DCommon.LOG_DEF_TAG, "parseProc, " + kStatusOk);
+                Log.d(DTVTConstants.LOG_DEF_TAG, "parseProc, " + kStatusOk);
                 searchResponse.status = kStatusOk;
             }else if(kStatusNg.equals(value)) {
-                Log.d(DCommon.LOG_DEF_TAG, "parseProc, " + kStatusNg);
+                Log.d(DTVTConstants.LOG_DEF_TAG, "parseProc, " + kStatusNg);
                 ifNullCreate();
                 searchError.status=value;
             }
