@@ -1,7 +1,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search;
 
 
-import com.nttdocomo.android.tvterminalapp.model.Search.SearchNarrowCondition;
+import com.nttdocomo.android.tvterminalapp.model.search.SearchNarrowCondition;
 
 public class SearchChargeType extends SearchFilterTypeMappable {
     public final int free = SearchNarrowCondition.getNextOrdinal();

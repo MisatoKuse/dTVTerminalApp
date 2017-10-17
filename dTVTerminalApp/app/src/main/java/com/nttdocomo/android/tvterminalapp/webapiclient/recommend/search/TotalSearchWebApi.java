@@ -1,7 +1,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search;
 
 
-import com.nttdocomo.android.tvterminalapp.common.Constants.UrlConstants;
+import com.nttdocomo.android.tvterminalapp.common.constants.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.webapiclient.WebApiBase;
 
 
