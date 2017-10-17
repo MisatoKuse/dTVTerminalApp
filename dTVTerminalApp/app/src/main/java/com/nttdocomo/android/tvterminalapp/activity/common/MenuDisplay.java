@@ -73,7 +73,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
         }
     }
 
-    public void changeUserState(MenuItemParam  menuItemParam) {
+    public void changeUserState(MenuItemParam menuItemParam) {
         if(null != mMenuDisplayEventListener){
             mMenuDisplayEventListener.onPreUserStateChange(mMenuItemParam.getUserState(), menuItemParam.getUserState());
         }

@@ -15,6 +15,7 @@ import android.view.View;
 import android.support.v7.widget.SearchView;
 import android.widget.AbsListView;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -63,7 +64,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
     SearchNarrowCondition mSearchNarrowCondition=null;
     SearchSortKind mSearchSortKind= new SearchSortKind("SearchSortKindNone");
 
-    private TextView mMenuTextView=null;
+    private ImageView mMenuImageView=null;
     private int mPageNumber=0;
     private boolean mIsSearching = false;
 
@@ -73,9 +74,9 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
         setContentView(R.layout.search_top_main_layout);
         setTitleText(getString(R.string.keyword_search_title));
 
-        mMenuTextView= findViewById(R.id.header_layout_menu);
-        mMenuTextView.setVisibility(View.VISIBLE);
-        mMenuTextView.setOnClickListener(this);
+        mMenuImageView = findViewById(R.id.header_layout_menu);
+        mMenuImageView.setVisibility(View.VISIBLE);
+        mMenuImageView.setOnClickListener(this);
 
         initData();
         initView();
@@ -485,7 +486,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
 
     @Override
     public void onClick(View view) {
-        if(view ==mMenuTextView){
+        if(view ==mMenuImageView){
             onSampleGlobalMenuButton_PairLoginOk();
         }
     }

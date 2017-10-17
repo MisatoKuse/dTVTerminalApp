@@ -8,17 +8,16 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VodClipListDao;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendVideolListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.HomeDBHelper;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendVdList;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class VodClipInsertDataManager {
+public class RecommendVdInsertDataManager {
 
     private Context mContext;
 
@@ -27,7 +26,7 @@ public class VodClipInsertDataManager {
      *
      * @param context
      */
-    public VodClipInsertDataManager(Context context) {
+    public RecommendVdInsertDataManager(Context context) {
         mContext = context;
     }
 
@@ -36,16 +35,16 @@ public class VodClipInsertDataManager {
      *
      * @return
      */
-    public void insertVodClipInsertList(VodClipList vodClipList) {
+    public void insertVodClipInsertList(RecommendVdList redVdList) {
 
         //各種オブジェクト作成
-        HomeDBHelper vodClipListDBHelper = new HomeDBHelper(mContext);
-        SQLiteDatabase db = vodClipListDBHelper.getWritableDatabase();
-        VodClipListDao vodClipListDao = new VodClipListDao(db);
-        List<HashMap<String,String>> hashMaps = vodClipList.getVcList();
+        HomeDBHelper redVdListDBHelper = new HomeDBHelper(mContext);
+        SQLiteDatabase db = redVdListDBHelper.getWritableDatabase();
+        RecommendVideolListDao redVdListDao = new RecommendVideolListDao(db);
+        List<HashMap<String,String>> hashMaps = redVdList.getmRvList();
 
         //DB保存前に前回取得したデータは全消去する
-        vodClipListDao.delete();
+        redVdListDao.delete();
 
         //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
         for (int i = 0; i < hashMaps.size(); i++) {
@@ -55,9 +54,11 @@ public class VodClipInsertDataManager {
                 Map.Entry entry = (Map.Entry) entries.next();
                 String keyName = (String) entry.getKey();
                 String valName = (String) entry.getValue();
-                values.put(DBUtils.fourKFlgConversion(keyName), valName);
+                values.put(keyName, valName);
             }
-            vodClipListDao.insert(values);
+            redVdListDao.insert(values);
         }
+        db.close();
+        redVdListDBHelper.close();
     }
 }

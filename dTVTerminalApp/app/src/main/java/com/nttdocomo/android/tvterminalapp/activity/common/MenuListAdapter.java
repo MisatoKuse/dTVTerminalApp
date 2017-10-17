@@ -69,7 +69,7 @@ public class MenuListAdapter extends BaseAdapter {
         return view;
     }
 
-    class ProgramViewHolder {
+   static class ProgramViewHolder {
         TextView tv_title;
         TextView tv_count;
     }

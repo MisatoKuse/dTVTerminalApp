@@ -1,11 +1,18 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -24,7 +31,8 @@ import com.nttdocomo.android.tvterminalapp.common.UserState;
 
 public class BaseActivity extends FragmentActivity implements MenuDisplayEventListener {
 
-    private LinearLayout titleLinearLayout;
+    private LinearLayout baseLinearLayout;
+    private RelativeLayout headerLayout;
     private TextView titleTextView;
 
     /**
@@ -75,7 +83,8 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT);
-        titleLinearLayout.addView(view);
+        view.setLayoutParams(lp);
+        baseLinearLayout.addView(view);
     }
 
     /**
@@ -83,7 +92,12 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      *
      */
     private void initView(){
-        titleLinearLayout = findViewById(R.id.base_ll);
+        baseLinearLayout = findViewById(R.id.base_ll);
+        headerLayout = findViewById(R.id.base_title);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                getHeightDensity() / 15);
+        headerLayout.setLayoutParams(lp);
         titleTextView = findViewById(R.id.header_layout_text);
     }
 
@@ -92,7 +106,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      *
      */
     protected void setNoTitle(){
-        findViewById(R.id.base_title).setVisibility(View.GONE);
+        if (headerLayout!=null){
+            headerLayout.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -101,9 +117,8 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      * @param c
      */
     protected void setTitleText(CharSequence c) {
-        if (titleTextView != null) {
+        if (titleTextView != null)
             titleTextView.setText(c);
-        }
     }
 
     //契約・ペアリング済み用
@@ -123,6 +138,65 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         Log.i(TAG,TAG+"  OｎCreate()");
     }
 
+    private static final int MIN_CLICK_DELAY_TIME = 1000;
+    private static long lastClickTime;
+
+    /**
+     * 機能
+     *      ダブルクリック防止
+     */
+    protected boolean isFastClick() {
+        boolean flag = false;
+        long curClickTime = System.currentTimeMillis();
+        if ((curClickTime - lastClickTime) >= MIN_CLICK_DELAY_TIME) {
+            flag = true;
+        }
+        lastClickTime = curClickTime;
+        return flag;
+    }
+
+    /**
+     * 機能
+     *      密度取得
+     * @return
+     *      密度
+     */
+    protected float getDensity() {
+        return getDisplayMetrics().density;
+    }
+
+    /**
+     * 機能
+     *      ディスプレイ幅さ取得
+     * @return
+     *      ディスプレイ幅さ
+     */
+    protected int getWidthDensity() {
+        return getDisplayMetrics().widthPixels;
+    }
+
+    /**
+     * 機能
+     *      ディスプレイ幅さ取得
+     * @return
+     *      ディスプレイ幅さ
+     */
+    protected int getHeightDensity() {
+        return getDisplayMetrics().heightPixels;
+    }
+
+    /**
+     * 機能
+     *      ディスプレイインスタンス取得
+     * @return
+     *      ディスプレイインスタンス
+     */
+    private DisplayMetrics getDisplayMetrics(){
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        return dm;
+    }
+
     /**
      * 機能
      *      カレントユーザ名を戻す
@@ -133,7 +207,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         return "Test User";
     }
 
-    private static UserState sUserState=UserState.LOGIN_NG;
+    private static UserState sUserState = UserState.LOGIN_NG;
 
     public UserState getUserState() {
         return sUserState;
