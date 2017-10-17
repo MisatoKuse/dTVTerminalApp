@@ -54,36 +54,36 @@ public class DailyRankListDBHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_SQL = "" +
             "create table " + DAILYRANK_LIST_TABLE_NAME + " (" +
             DAILYRANK_LIST_ID_COLUMN + " integer primary key, " +
-            DAILYRANK_LIST_CRID + " text not null " +
-            DAILYRANK_LIST_CID + " text not null " +
-            DAILYRANK_LIST_TITLE_ID + " text not null " +
-            DAILYRANK_LIST_EPISODE_ID + " text not null " +
-            DAILYRANK_LIST_TITLE + " text not null " +
-            DAILYRANK_LIST_EPITITLE + " text not null " +
-            DAILYRANK_LIST_DISP_TYPE + " text not null " +
-            DAILYRANK_LIST_DISPLAY_START_DATE + " text not null " +
-            DAILYRANK_LIST_DISPLAY_END_DATE + " text not null " +
-            DAILYRANK_LIST_AVAIL_START_DATE + " text not null " +
-            DAILYRANK_LIST_AVAIL_END_DATE + " text not null " +
-            DAILYRANK_LIST_PUBLISH_START_DATE + " text not null " +
-            DAILYRANK_LIST_PUBLISH_END_DATE + " text not null " +
-            DAILYRANK_LIST_NEWA_START_DATE + " text not null " +
-            DAILYRANK_LIST_NEWA_END_DATE + " text not null " +
-            DAILYRANK_LIST_COPYRIGHT + " text not null " +
-            DAILYRANK_LIST_THUMB + " text not null " +
-            DAILYRANK_LIST_DUR + " text not null " +
-            DAILYRANK_LIST_DEMONG + " text not null " +
-            DAILYRANK_LIST_BVFLG + " text not null " +
-            DAILYRANK_LIST_4KFLG + " text not null " +
-            DAILYRANK_LIST_HDRFLG + " text not null " +
-            DAILYRANK_LIST_AVAIL_STATUS + " text not null " +
-            DAILYRANK_LIST_DELIVERY + " text not null " +
-            DAILYRANK_LIST_R_VALUE + " text not null " +
-            DAILYRANK_LIST_ADULT + " text not null " +
-            DAILYRANK_LIST_MS + " text not null " +
-            DAILYRANK_LIST_NG_FUNC + " text not null " +
-            DAILYRANK_LIST_GENRE_ID_ARRAY + " text not null " +
-            DAILYRANK_LIST_DTV + " text not null " +
+            DAILYRANK_LIST_CRID + " text, " +
+            DAILYRANK_LIST_CID + " text, " +
+            DAILYRANK_LIST_TITLE_ID + " text, " +
+            DAILYRANK_LIST_EPISODE_ID + " text, " +
+            DAILYRANK_LIST_TITLE + " text, " +
+            DAILYRANK_LIST_EPITITLE + " text, " +
+            DAILYRANK_LIST_DISP_TYPE + " text, " +
+            DAILYRANK_LIST_DISPLAY_START_DATE + " text, " +
+            DAILYRANK_LIST_DISPLAY_END_DATE + " text, " +
+            DAILYRANK_LIST_AVAIL_START_DATE + " text, " +
+            DAILYRANK_LIST_AVAIL_END_DATE + " text, " +
+            DAILYRANK_LIST_PUBLISH_START_DATE + " text, " +
+            DAILYRANK_LIST_PUBLISH_END_DATE + " text, " +
+            DAILYRANK_LIST_NEWA_START_DATE + " text, " +
+            DAILYRANK_LIST_NEWA_END_DATE + " text, " +
+            DAILYRANK_LIST_COPYRIGHT + " text, " +
+            DAILYRANK_LIST_THUMB + " text, " +
+            DAILYRANK_LIST_DUR + " text, " +
+            DAILYRANK_LIST_DEMONG + " text, " +
+            DAILYRANK_LIST_BVFLG + " text, " +
+            DAILYRANK_LIST_4KFLG + " text, " +
+            DAILYRANK_LIST_HDRFLG + " text, " +
+            DAILYRANK_LIST_AVAIL_STATUS + " text, " +
+            DAILYRANK_LIST_DELIVERY + " text, " +
+            DAILYRANK_LIST_R_VALUE + " text, " +
+            DAILYRANK_LIST_ADULT + " text, " +
+            DAILYRANK_LIST_MS + " text, " +
+            DAILYRANK_LIST_NG_FUNC + " text, " +
+            DAILYRANK_LIST_GENRE_ID_ARRAY + " text, " +
+            DAILYRANK_LIST_DTV + " text" +
             ")";
 
     /**

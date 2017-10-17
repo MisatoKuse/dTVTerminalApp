@@ -4,20 +4,19 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.ChannelListDBHelper.CHANNEL_LIST_TABLE_NAME;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.RecommendVideoListDBHelper.RECOMMEND_VIDEO_LIST_TABLE_NAME;
 
 
 /**
  * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-public class ChannelListDao {
+public class RecommendVideolListDao {
     // SQLiteDatabase
     private SQLiteDatabase db;
 
@@ -26,7 +25,7 @@ public class ChannelListDao {
      *
      * @param db
      */
-    public ChannelListDao(SQLiteDatabase db) {
+    public RecommendVideolListDao(SQLiteDatabase db) {
         this.db = db;
     }
 
@@ -41,7 +40,7 @@ public class ChannelListDao {
         List<Map<String, String>> list = new ArrayList<>();
 
         Cursor cursor = db.query(
-                CHANNEL_LIST_TABLE_NAME,
+                RECOMMEND_VIDEO_LIST_TABLE_NAME,
                 strings,
                 null,
                 null,
@@ -70,11 +69,10 @@ public class ChannelListDao {
     /**
      * データの登録
      *
-     * @param values
      * @return
      */
     public long insert(ContentValues values) {
-        return db.insert(CHANNEL_LIST_TABLE_NAME, null, values);
+        return db.insert(RECOMMEND_VIDEO_LIST_TABLE_NAME, null, values);
     }
 
     public int update() {
@@ -88,6 +86,6 @@ public class ChannelListDao {
      * @return
      */
     public int delete() {
-        return db.delete(CHANNEL_LIST_TABLE_NAME, null, null);
+        return db.delete(RECOMMEND_VIDEO_LIST_TABLE_NAME, null, null);
     }
 }

@@ -53,36 +53,36 @@ public class ChannelListDBHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_SQL = "" +
             "create table " + CHANNEL_LIST_TABLE_NAME + " (" +
             CHANNEL_LIST_ID_COLUMN + " integer primary key, " +
-            CHANNEL_LIST_CRID + " text not null " +
-            CHANNEL_LIST_CID + " text not null " +
-            CHANNEL_LIST_TITLE_ID + " text not null " +
-            CHANNEL_LIST_EPISODE_ID + " text not null " +
-            CHANNEL_LIST_TITLE + " text not null " +
-            CHANNEL_LIST_EPITITLE + " text not null " +
-            CHANNEL_LIST_DISP_TYPE + " text not null " +
-            CHANNEL_LIST_DISPLAY_START_DATE + " text not null " +
-            CHANNEL_LIST_DISPLAY_END_DATE + " text not null " +
-            CHANNEL_LIST_AVAIL_START_DATE + " text not null " +
-            CHANNEL_LIST_AVAIL_END_DATE + " text not null " +
-            CHANNEL_LIST_PUBLISH_START_DATE + " text not null " +
-            CHANNEL_LIST_PUBLISH_END_DATE + " text not null " +
-            CHANNEL_LIST_NEWA_START_DATE + " text not null " +
-            CHANNEL_LIST_NEWA_END_DATE + " text not null " +
-            CHANNEL_LIST_COPYRIGHT + " text not null " +
-            CHANNEL_LIST_THUMB + " text not null " +
-            CHANNEL_LIST_DUR + " text not null " +
-            CHANNEL_LIST_DEMONG + " text not null " +
-            CHANNEL_LIST_BVFLG + " text not null " +
-            CHANNEL_LIST_4KFLG + " text not null " +
-            CHANNEL_LIST_HDRFLG + " text not null " +
-            CHANNEL_LIST_AVAIL_STATUS + " text not null " +
-            CHANNEL_LIST_DELIVERY + " text not null " +
-            CHANNEL_LIST_R_VALUE + " text not null " +
-            CHANNEL_LIST_ADULT + " text not null " +
-            CHANNEL_LIST_MS + " text not null " +
-            CHANNEL_LIST_NG_FUNC + " text not null " +
-            CHANNEL_LIST_GENRE_ID_ARRAY + " text not null " +
-            CHANNEL_LIST_DTV + " text not null " +
+            CHANNEL_LIST_CRID + " text, " +
+            CHANNEL_LIST_CID + " text, " +
+            CHANNEL_LIST_TITLE_ID + " text, " +
+            CHANNEL_LIST_EPISODE_ID + " text, " +
+            CHANNEL_LIST_TITLE + " text, " +
+            CHANNEL_LIST_EPITITLE + " text, " +
+            CHANNEL_LIST_DISP_TYPE + " text, " +
+            CHANNEL_LIST_DISPLAY_START_DATE + " text, " +
+            CHANNEL_LIST_DISPLAY_END_DATE + " text, " +
+            CHANNEL_LIST_AVAIL_START_DATE + " text, " +
+            CHANNEL_LIST_AVAIL_END_DATE + " text, " +
+            CHANNEL_LIST_PUBLISH_START_DATE + " text, " +
+            CHANNEL_LIST_PUBLISH_END_DATE + " text, " +
+            CHANNEL_LIST_NEWA_START_DATE + " text, " +
+            CHANNEL_LIST_NEWA_END_DATE + " text, " +
+            CHANNEL_LIST_COPYRIGHT + " text, " +
+            CHANNEL_LIST_THUMB + " text, " +
+            CHANNEL_LIST_DUR + " text, " +
+            CHANNEL_LIST_DEMONG + " text, " +
+            CHANNEL_LIST_BVFLG + " text, " +
+            CHANNEL_LIST_4KFLG + " text, " +
+            CHANNEL_LIST_HDRFLG + " text, " +
+            CHANNEL_LIST_AVAIL_STATUS + " text, " +
+            CHANNEL_LIST_DELIVERY + " text, " +
+            CHANNEL_LIST_R_VALUE + " text, " +
+            CHANNEL_LIST_ADULT + " text, " +
+            CHANNEL_LIST_MS + " text, " +
+            CHANNEL_LIST_NG_FUNC + " text, " +
+            CHANNEL_LIST_GENRE_ID_ARRAY + " text, " +
+            CHANNEL_LIST_DTV + " text " +
             ")";
 
     /**

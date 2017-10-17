@@ -71,12 +71,10 @@ public class VodClipListDao {
     /**
      * データの登録
      *
-     * @param value
+     * @param values
      * @return
      */
-    public long insert(String key, String value) {
-        ContentValues values = new ContentValues();
-        values.put(key, value);
+    public long insert(ContentValues values) {
         return db.insert(VODCLIP_LIST_TABLE_NAME, null, values);
     }
 

@@ -53,36 +53,36 @@ public class VodClipListDBHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_SQL = "" +
             "create table " + VODCLIP_LIST_TABLE_NAME + " (" +
             VODCLIP_LIST_ID_COLUMN + " integer primary key, " +
-            VODCLIP_LIST_CRID + " text not null " +
-            VODCLIP_LIST_CID + " text not null " +
-            VODCLIP_LIST_TITLE_ID + " text not null " +
-            VODCLIP_LIST_EPISODE_ID + " text not null " +
-            VODCLIP_LIST_TITLE + " text not null " +
-            VODCLIP_LIST_EPITITLE + " text not null " +
-            VODCLIP_LIST_DISP_TYPE + " text not null " +
-            VODCLIP_LIST_DISPLAY_START_DATE + " text not null " +
-            VODCLIP_LIST_DISPLAY_END_DATE + " text not null " +
-            VODCLIP_LIST_AVAIL_START_DATE + " text not null " +
-            VODCLIP_LIST_AVAIL_END_DATE + " text not null " +
-            VODCLIP_LIST_PUBLISH_START_DATE + " text not null " +
-            VODCLIP_LIST_PUBLISH_END_DATE + " text not null " +
-            VODCLIP_LIST_NEWA_START_DATE + " text not null " +
-            VODCLIP_LIST_NEWA_END_DATE + " text not null " +
-            VODCLIP_LIST_COPYRIGHT + " text not null " +
-            VODCLIP_LIST_THUMB + " text not null " +
-            VODCLIP_LIST_DUR + " text not null " +
-            VODCLIP_LIST_DEMONG + " text not null " +
-            VODCLIP_LIST_BVFLG + " text not null " +
-            VODCLIP_LIST_4KFLG + " text not null " +
-            VODCLIP_LIST_HDRFLG + " text not null " +
-            VODCLIP_LIST_AVAIL_STATUS + " text not null " +
-            VODCLIP_LIST_DELIVERY + " text not null " +
-            VODCLIP_LIST_R_VALUE + " text not null " +
-            VODCLIP_LIST_ADULT + " text not null " +
-            VODCLIP_LIST_MS + " text not null " +
-            VODCLIP_LIST_NG_FUNC + " text not null " +
-            VODCLIP_LIST_GENRE_ID_ARRAY + " text not null " +
-            VODCLIP_LIST_DTV + " text not null " +
+            VODCLIP_LIST_CRID + " text, " +
+            VODCLIP_LIST_CID + " text, " +
+            VODCLIP_LIST_TITLE_ID + " text, " +
+            VODCLIP_LIST_EPISODE_ID + " text, " +
+            VODCLIP_LIST_TITLE + " text, " +
+            VODCLIP_LIST_EPITITLE + " text, " +
+            VODCLIP_LIST_DISP_TYPE + " text, " +
+            VODCLIP_LIST_DISPLAY_START_DATE + " text, " +
+            VODCLIP_LIST_DISPLAY_END_DATE + " text, " +
+            VODCLIP_LIST_AVAIL_START_DATE + " text, " +
+            VODCLIP_LIST_AVAIL_END_DATE + " text, " +
+            VODCLIP_LIST_PUBLISH_START_DATE + " text, " +
+            VODCLIP_LIST_PUBLISH_END_DATE + " text, " +
+            VODCLIP_LIST_NEWA_START_DATE + " text, " +
+            VODCLIP_LIST_NEWA_END_DATE + " text, " +
+            VODCLIP_LIST_COPYRIGHT + " text, " +
+            VODCLIP_LIST_THUMB + " text, " +
+            VODCLIP_LIST_DUR + " text, " +
+            VODCLIP_LIST_DEMONG + " text, " +
+            VODCLIP_LIST_BVFLG + " text, " +
+            VODCLIP_LIST_4KFLG + " text, " +
+            VODCLIP_LIST_HDRFLG + " text, " +
+            VODCLIP_LIST_AVAIL_STATUS + " text, " +
+            VODCLIP_LIST_DELIVERY + " text, " +
+            VODCLIP_LIST_R_VALUE + " text, " +
+            VODCLIP_LIST_ADULT + " text, " +
+            VODCLIP_LIST_MS + " text, " +
+            VODCLIP_LIST_NG_FUNC + " text, " +
+            VODCLIP_LIST_GENRE_ID_ARRAY + " text, " +
+            VODCLIP_LIST_DTV + " text " +
             ")";
 
     /**

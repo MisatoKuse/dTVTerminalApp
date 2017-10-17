@@ -53,36 +53,36 @@ public class TvScheduleListDBHelper extends SQLiteOpenHelper{
     private static final String CREATE_TABLE_SQL = "" +
             "create table " + TV_SCHEDULE_LIST_TABLE_NAME + " (" +
             TV_SCHEDULE_LIST_ID_COLUMN + " integer primary key, " +
-            TV_SCHEDULE_LIST_CRID + " text not null " +
-            TV_SCHEDULE_LIST_CID + " text not null " +
-            TV_SCHEDULE_LIST_TITLE_ID + " text not null " +
-            TV_SCHEDULE_LIST_EPISODE_ID + " text not null " +
-            TV_SCHEDULE_LIST_TITLE + " text not null " +
-            TV_SCHEDULE_LIST_EPITITLE + " text not null " +
-            TV_SCHEDULE_LIST_DISP_TYPE + " text not null " +
-            TV_SCHEDULE_LIST_DISPLAY_START_DATE + " text not null " +
-            TV_SCHEDULE_LIST_DISPLAY_END_DATE + " text not null " +
-            TV_SCHEDULE_LIST_AVAIL_START_DATE + " text not null " +
-            TV_SCHEDULE_LIST_AVAIL_END_DATE + " text not null " +
-            TV_SCHEDULE_LIST_PUBLISH_START_DATE + " text not null " +
-            TV_SCHEDULE_LIST_PUBLISH_END_DATE + " text not null " +
-            TV_SCHEDULE_LIST_NEWA_START_DATE + " text not null " +
-            TV_SCHEDULE_LIST_NEWA_END_DATE + " text not null " +
-            TV_SCHEDULE_LIST_COPYRIGHT + " text not null " +
-            TV_SCHEDULE_LIST_THUMB + " text not null " +
-            TV_SCHEDULE_LIST_DUR + " text not null " +
-            TV_SCHEDULE_LIST_DEMONG + " text not null " +
-            TV_SCHEDULE_LIST_BVFLG + " text not null " +
-            TV_SCHEDULE_LIST_4KFLG + " text not null " +
-            TV_SCHEDULE_LIST_HDRFLG + " text not null " +
-            TV_SCHEDULE_LIST_AVAIL_STATUS + " text not null " +
-            TV_SCHEDULE_LIST_DELIVERY + " text not null " +
-            TV_SCHEDULE_LIST_R_VALUE + " text not null " +
-            TV_SCHEDULE_LIST_ADULT + " text not null " +
-            TV_SCHEDULE_LIST_MS + " text not null " +
-            TV_SCHEDULE_LIST_NG_FUNC + " text not null " +
-            TV_SCHEDULE_LIST_GENRE_ID_ARRAY + " text not null " +
-            TV_SCHEDULE_LIST_DTV + " text not null " +
+            TV_SCHEDULE_LIST_CRID + " text, " +
+            TV_SCHEDULE_LIST_CID + " text, " +
+            TV_SCHEDULE_LIST_TITLE_ID + " text, " +
+            TV_SCHEDULE_LIST_EPISODE_ID + " text, " +
+            TV_SCHEDULE_LIST_TITLE + " text, " +
+            TV_SCHEDULE_LIST_EPITITLE + " text, " +
+            TV_SCHEDULE_LIST_DISP_TYPE + " text, " +
+            TV_SCHEDULE_LIST_DISPLAY_START_DATE + " text, " +
+            TV_SCHEDULE_LIST_DISPLAY_END_DATE + " text, " +
+            TV_SCHEDULE_LIST_AVAIL_START_DATE + " text, " +
+            TV_SCHEDULE_LIST_AVAIL_END_DATE + " text, " +
+            TV_SCHEDULE_LIST_PUBLISH_START_DATE + " text, " +
+            TV_SCHEDULE_LIST_PUBLISH_END_DATE + " text, " +
+            TV_SCHEDULE_LIST_NEWA_START_DATE + " text, " +
+            TV_SCHEDULE_LIST_NEWA_END_DATE + " text, " +
+            TV_SCHEDULE_LIST_COPYRIGHT + " text, " +
+            TV_SCHEDULE_LIST_THUMB + " text, " +
+            TV_SCHEDULE_LIST_DUR + " text, " +
+            TV_SCHEDULE_LIST_DEMONG + " text, " +
+            TV_SCHEDULE_LIST_BVFLG + " text, " +
+            TV_SCHEDULE_LIST_4KFLG + " text, " +
+            TV_SCHEDULE_LIST_HDRFLG + " text, " +
+            TV_SCHEDULE_LIST_AVAIL_STATUS + " text, " +
+            TV_SCHEDULE_LIST_DELIVERY + " text, " +
+            TV_SCHEDULE_LIST_R_VALUE + " text, " +
+            TV_SCHEDULE_LIST_ADULT + " text, " +
+            TV_SCHEDULE_LIST_MS + " text, " +
+            TV_SCHEDULE_LIST_NG_FUNC + " text, " +
+            TV_SCHEDULE_LIST_GENRE_ID_ARRAY + " text, " +
+            TV_SCHEDULE_LIST_DTV + " text " +
             ")";
 
     /**

@@ -52,36 +52,36 @@ public class WeeklyRankListDBHelper extends SQLiteOpenHelper{
     private static final String CREATE_TABLE_SQL = "" +
             "create table " + WEEKLYRANK_LIST_TABLE_NAME + " (" +
             WEEKLYRANK_LIST_ID_COLUMN + " integer primary key, " +
-            WEEKLYRANK_LIST_CRID + " text not null " +
-            WEEKLYRANK_LIST_CID + " text not null " +
-            WEEKLYRANK_LIST_TITLE_ID + " text not null " +
-            WEEKLYRANK_LIST_EPISODE_ID + " text not null " +
-            WEEKLYRANK_LIST_TITLE + " text not null " +
-            WEEKLYRANK_LIST_EPITITLE + " text not null " +
-            WEEKLYRANK_LIST_DISP_TYPE + " text not null " +
-            WEEKLYRANK_LIST_DISPLAY_START_DATE + " text not null " +
-            WEEKLYRANK_LIST_DISPLAY_END_DATE + " text not null " +
-            WEEKLYRANK_LIST_AVAIL_START_DATE + " text not null " +
-            WEEKLYRANK_LIST_AVAIL_END_DATE + " text not null " +
-            WEEKLYRANK_LIST_PUBLISH_START_DATE + " text not null " +
-            WEEKLYRANK_LIST_PUBLISH_END_DATE + " text not null " +
-            WEEKLYRANK_LIST_NEWA_START_DATE + " text not null " +
-            WEEKLYRANK_LIST_NEWA_END_DATE + " text not null " +
-            WEEKLYRANK_LIST_COPYRIGHT + " text not null " +
-            WEEKLYRANK_LIST_THUMB + " text not null " +
-            WEEKLYRANK_LIST_DUR + " text not null " +
-            WEEKLYRANK_LIST_DEMONG + " text not null " +
-            WEEKLYRANK_LIST_BVFLG + " text not null " +
-            WEEKLYRANK_LIST_4KFLG + " text not null " +
-            WEEKLYRANK_LIST_HDRFLG + " text not null " +
-            WEEKLYRANK_LIST_AVAIL_STATUS + " text not null " +
-            WEEKLYRANK_LIST_DELIVERY + " text not null " +
-            WEEKLYRANK_LIST_R_VALUE + " text not null " +
-            WEEKLYRANK_LIST_ADULT + " text not null " +
-            WEEKLYRANK_LIST_MS + " text not null " +
-            WEEKLYRANK_LIST_NG_FUNC + " text not null " +
-            WEEKLYRANK_LIST_GENRE_ID_ARRAY + " text not null " +
-            WEEKLYRANK_LIST_DTV + " text not null " +
+            WEEKLYRANK_LIST_CRID + " text, " +
+            WEEKLYRANK_LIST_CID + " text, " +
+            WEEKLYRANK_LIST_TITLE_ID + " text, " +
+            WEEKLYRANK_LIST_EPISODE_ID + " text, " +
+            WEEKLYRANK_LIST_TITLE + " text, " +
+            WEEKLYRANK_LIST_EPITITLE + " text, " +
+            WEEKLYRANK_LIST_DISP_TYPE + " text, " +
+            WEEKLYRANK_LIST_DISPLAY_START_DATE + " text, " +
+            WEEKLYRANK_LIST_DISPLAY_END_DATE + " text, " +
+            WEEKLYRANK_LIST_AVAIL_START_DATE + " text, " +
+            WEEKLYRANK_LIST_AVAIL_END_DATE + " text, " +
+            WEEKLYRANK_LIST_PUBLISH_START_DATE + " text, " +
+            WEEKLYRANK_LIST_PUBLISH_END_DATE + " text, " +
+            WEEKLYRANK_LIST_NEWA_START_DATE + " text, " +
+            WEEKLYRANK_LIST_NEWA_END_DATE + " text, " +
+            WEEKLYRANK_LIST_COPYRIGHT + " text, " +
+            WEEKLYRANK_LIST_THUMB + " text, " +
+            WEEKLYRANK_LIST_DUR + " text, " +
+            WEEKLYRANK_LIST_DEMONG + " text, " +
+            WEEKLYRANK_LIST_BVFLG + " text, " +
+            WEEKLYRANK_LIST_4KFLG + " text, " +
+            WEEKLYRANK_LIST_HDRFLG + " text, " +
+            WEEKLYRANK_LIST_AVAIL_STATUS + " text, " +
+            WEEKLYRANK_LIST_DELIVERY + " text, " +
+            WEEKLYRANK_LIST_R_VALUE + " text, " +
+            WEEKLYRANK_LIST_ADULT + " text, " +
+            WEEKLYRANK_LIST_MS + " text, " +
+            WEEKLYRANK_LIST_NG_FUNC + " text, " +
+            WEEKLYRANK_LIST_GENRE_ID_ARRAY + " text, " +
+            WEEKLYRANK_LIST_DTV + " text " +
             ")";
 
     /**

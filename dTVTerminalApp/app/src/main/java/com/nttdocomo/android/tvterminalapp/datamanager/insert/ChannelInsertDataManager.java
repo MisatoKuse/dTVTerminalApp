@@ -1,5 +1,6 @@
 package com.nttdocomo.android.tvterminalapp.datamanager.insert;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ChannelListDao;
@@ -47,12 +48,14 @@ public class ChannelInsertDataManager {
         //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
         for (int i = 0; i < hashMaps.size(); i++) {
             Iterator entries = hashMaps.get(i).entrySet().iterator();
+            ContentValues values = new ContentValues();
             while (entries.hasNext()) {
                 Map.Entry entry = (Map.Entry) entries.next();
                 String keyName = (String) entry.getKey();
                 String valName = (String) entry.getValue();
-                channelListDao.insert(keyName, valName);
+                values.put(keyName, valName);
             }
+            channelListDao.insert(values);
         }
     }
 }
