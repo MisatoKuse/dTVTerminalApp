@@ -1,9 +1,9 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.VodClipListDBHelper;
+import com.nttdocomo.android.tvterminalapp.beans.HomeBean;
+import com.nttdocomo.android.tvterminalapp.beans.HomeBeanContent;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.VodClipInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.HomeDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
@@ -12,7 +12,6 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,44 +25,119 @@ public class HomeDataProvider {
 
     private Context mContext;
 
+    private List<Map<String, String>> HomeStructList = new ArrayList<>();
+
+    public interface ApiDataProviderCallback {
+        void ChannelListCallback(HomeBean homeBean);
+
+        void DailyRankListCallback(HomeBean homeBean);
+
+        void TvScheduleCallback(HomeBean homeBean);
+
+        void UserInfoCallback(HomeBean homeBean);
+
+        void VodClipListCallback(HomeBean homeBean);
+
+        void WeeklyRankCallback(HomeBean homeBean);
+    }
+
+    private ApiDataProviderCallback apiDataProviderCallback;
+
     /**
      * コンストラクタ
      *
-     * @param context
+     * @param mContext
+     * @param apiDataProviderCallback
      */
-    public HomeDataProvider(Context context) {
-        mContext = context;
+    public HomeDataProvider(Context mContext, ApiDataProviderCallback apiDataProviderCallback) {
+        this.mContext = mContext;
+        this.apiDataProviderCallback = apiDataProviderCallback;
     }
 
     public void getHomeData() {
         //Activityからのデータ取得要求受付
-        getVodClipListData();
+        List<Map<String, String>> vodClipList = getVodClipListData();
+        makeHomeStruct(vodClipList);
     }
 
-    public void getHomeBeen() {
+    public HomeBean makeHomeStruct(List<Map<String, String>> list) {
+        HomeBean homeBean = new HomeBean();
+        HomeBeanContent homeBeanContent = new HomeBeanContent();
         //Home用構造体を作成する
+        return homeBean;
     }
 
-    public void sendHomeData() {
-        //HomeActivityにHomeBeenを返却する
+    /**
+     * CH一覧をHomeActivityに送る
+     *
+     * @param homeBean
+     */
+    public void sendChannelListData(HomeBean homeBean) {
+        apiDataProviderCallback.ChannelListCallback(homeBean);
+    }
+
+    /**
+     * 今日のランキングをHomeActivityに送る
+     *
+     * @param homeBean
+     */
+    public void sendDailyRankListData(HomeBean homeBean) {
+        apiDataProviderCallback.DailyRankListCallback(homeBean);
+    }
+
+    /**
+     * CH毎番組表をHomeActivityに送る
+     *
+     * @param homeBean
+     */
+    public void sendTvScheduleListData(HomeBean homeBean) {
+        apiDataProviderCallback.TvScheduleCallback(homeBean);
+    }
+
+    /**
+     * ユーザ情報をHomeActivityに送る
+     *
+     * @param homeBean
+     */
+    public void sendUserInfoListData(HomeBean homeBean) {
+        apiDataProviderCallback.UserInfoCallback(homeBean);
+    }
+
+    /**
+     * VodクリップリストをHomeActivityに送る
+     *
+     * @param homeBean
+     */
+    public void sendVodClipListData(HomeBean homeBean) {
+        apiDataProviderCallback.VodClipListCallback(homeBean);
+    }
+
+    /**
+     * 週間ランキングリストをHomeActivityに送る
+     *
+     * @param homeBean
+     */
+    public void sendWeeklyRankListData(HomeBean homeBean) {
+        apiDataProviderCallback.WeeklyRankCallback(homeBean);
     }
 
     /**
      * Vodクリップリストデータ取得開始
      */
-    private void getVodClipListData() {
+    private List<Map<String, String>> getVodClipListData() {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(VOD_LAST_INSERT);
 
+        List<Map<String, String>> list = new ArrayList<>();
         //Vodクリップ一覧のDB保存履歴と、有効期間を確認
         if (lastDate != null || lastDate.length() > 0 || dateUtils.isBeforeLimitDate(lastDate)) {
-            List<Map<String,String>> list = new ArrayList<>();
             //データをDBから取得する
             HomeDataManager homeDataManager = new HomeDataManager(mContext);
             list = homeDataManager.selectHomeData();
         } else {
             //通信クラスにデータ取得要求を出す
         }
+        return list;
     }
 
     /**
