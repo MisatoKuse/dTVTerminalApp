@@ -88,7 +88,7 @@ public class WeeklyRankWebClient
 
         //週毎ランク一覧を呼び出す
         //TODO: 内部的には暫定措置としてVODクリップ一覧を呼び出す
-        openUrl(API_NAME_LIST.DAILY_RANK_LIST.getString(),sendParameter,this);
+        openUrl(API_NAME_LIST.WEEKLY_RANK_LIST.getString(),sendParameter,this);
 
         //今のところ失敗は無いので、trueで帰る
         return true;
