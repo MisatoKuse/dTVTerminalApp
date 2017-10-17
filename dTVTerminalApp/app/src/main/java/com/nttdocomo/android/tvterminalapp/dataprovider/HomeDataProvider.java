@@ -247,10 +247,10 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         HomeBeanContent homeBeanContent = new HomeBeanContent();
         List<HomeBeanContent> contents = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-            homeBeanContent.setContentTime(VODCLIP_LIST_THUMB);
-            homeBeanContent.setContentName(VODCLIP_LIST_TITLE);
-            homeBeanContent.setContentTime(VODCLIP_LIST_DISPLAY_START_DATE);
-            homeBeanContent.setContentId(VODCLIP_LIST_DISP_TYPE);
+            homeBeanContent.setContentSrcURL(list.get(i).get(VODCLIP_LIST_THUMB));
+            homeBeanContent.setContentName(list.get(i).get(VODCLIP_LIST_TITLE));
+            homeBeanContent.setContentTime(list.get(i).get(VODCLIP_LIST_DISPLAY_START_DATE));
+            homeBeanContent.setContentId(list.get(i).get(VODCLIP_LIST_DISP_TYPE));
             contents.add(homeBeanContent);
         }
         homeBean.setContentList(contents);
@@ -268,7 +268,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         HomeBeanContent homeBeanContent = new HomeBeanContent();
         List<HomeBeanContent> contents = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-            homeBeanContent.setContentSrcURL("http:"+list.get(i).get(VODCLIP_LIST_THUMB));
+            homeBeanContent.setContentSrcURL(list.get(i).get(VODCLIP_LIST_THUMB));
             homeBeanContent.setContentName(list.get(i).get(VODCLIP_LIST_TITLE));
             homeBeanContent.setContentTime(list.get(i).get(VODCLIP_LIST_DISPLAY_START_DATE));
             homeBeanContent.setContentId(list.get(i).get(VODCLIP_LIST_DISP_TYPE));
@@ -289,7 +289,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         HomeBeanContent homeBeanContent = new HomeBeanContent();
         List<HomeBeanContent> contents = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-            homeBeanContent.setContentSrcURL("http:"+list.get(i).get(VODCLIP_LIST_THUMB));
+            homeBeanContent.setContentSrcURL(list.get(i).get(VODCLIP_LIST_THUMB));
             homeBeanContent.setContentName(list.get(i).get(VODCLIP_LIST_TITLE));
             homeBeanContent.setContentTime(list.get(i).get(VODCLIP_LIST_DISPLAY_START_DATE));
             homeBeanContent.setContentId(list.get(i).get(VODCLIP_LIST_DISP_TYPE));
@@ -309,7 +309,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         HomeBeanContent homeBeanContent = new HomeBeanContent();
         List<HomeBeanContent> contents = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-            homeBeanContent.setContentSrcURL("http:"+list.get(i).get(VODCLIP_LIST_THUMB));
+            homeBeanContent.setContentSrcURL(list.get(i).get(VODCLIP_LIST_THUMB));
             homeBeanContent.setContentName(list.get(i).get(VODCLIP_LIST_TITLE));
             homeBeanContent.setContentTime(list.get(i).get(VODCLIP_LIST_DISPLAY_START_DATE));
             homeBeanContent.setContentId(list.get(i).get(VODCLIP_LIST_DISP_TYPE));
@@ -330,7 +330,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         HomeBeanContent homeBeanContent = new HomeBeanContent();
         List<HomeBeanContent> contents = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-            homeBeanContent.setContentSrcURL("http:"+list.get(i).get(VODCLIP_LIST_THUMB));
+            homeBeanContent.setContentSrcURL(list.get(i).get(VODCLIP_LIST_THUMB));
             homeBeanContent.setContentName(list.get(i).get(VODCLIP_LIST_TITLE));
             homeBeanContent.setContentTime(list.get(i).get(VODCLIP_LIST_DISPLAY_START_DATE));
             homeBeanContent.setContentId(list.get(i).get(VODCLIP_LIST_DISP_TYPE));
@@ -351,7 +351,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         HomeBeanContent homeBeanContent = new HomeBeanContent();
         List<HomeBeanContent> contents = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-            homeBeanContent.setContentSrcURL("http:"+list.get(i).get(VODCLIP_LIST_THUMB));
+            homeBeanContent.setContentSrcURL(list.get(i).get(VODCLIP_LIST_THUMB));
             homeBeanContent.setContentName(list.get(i).get(VODCLIP_LIST_TITLE));
             homeBeanContent.setContentTime(list.get(i).get(VODCLIP_LIST_DISPLAY_START_DATE));
             homeBeanContent.setContentId(list.get(i).get(VODCLIP_LIST_DISP_TYPE));
