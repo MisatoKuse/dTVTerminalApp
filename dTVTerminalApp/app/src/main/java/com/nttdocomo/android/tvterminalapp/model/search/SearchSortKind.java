@@ -1,6 +1,7 @@
 package com.nttdocomo.android.tvterminalapp.model.search;
 
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.SearchSortType;
 
 public class SearchSortKind {
@@ -42,13 +43,15 @@ public class SearchSortKind {
 
     public SearchSortType searchWebSortType() {
         switch (mSearchSortKindEnum) {
-        case none:
-            return SearchSortType.none;
-        case popularity:
-            return SearchSortType.populatiry;
+            case none:
+                return SearchSortType.none;
+            case popularity:
+                return SearchSortType.populatiry;
+            case newArrivalOrder:
+                return SearchSortType.newest;
+            default:
+                DTVTLogger.error("SortKind is not exist. mSearchSortKindEnum=" + mSearchSortKindEnum);
+                return SearchSortType.none;
         }
-
-        return SearchSortType.newest;
     }
-
 }

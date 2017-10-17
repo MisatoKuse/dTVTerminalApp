@@ -117,8 +117,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      * @param c
      */
     protected void setTitleText(CharSequence c) {
-        if (titleTextView != null)
+        if (titleTextView != null) {
             titleTextView.setText(c);
+        }
     }
 
     //契約・ペアリング済み用

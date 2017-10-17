@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search;
 
 
@@ -6,6 +10,8 @@ import android.util.Log;
 import android.util.Xml;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.TotalSearchErrorData;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.TotalSearchResponseData;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -13,7 +19,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.io.StringReader;
 
-public class XMLParser extends AsyncTask<String, Integer, String> {
+public class SearchXmlParser extends AsyncTask<String, Integer, String> {
 
     private TotalSearchResponseData searchResponse = null;
     private TotalSearchErrorData searchError = null;
@@ -57,7 +63,7 @@ public class XMLParser extends AsyncTask<String, Integer, String> {
     }
 
 
-    public XMLParser(XMLParserFinishListener xMLParserFinishListener){
+    public SearchXmlParser(XMLParserFinishListener xMLParserFinishListener){
         mXMLParserFinishListener=  xMLParserFinishListener;
     }
 
@@ -73,7 +79,7 @@ public class XMLParser extends AsyncTask<String, Integer, String> {
         }
 
         if(0==strings[0].length()){
-            Log.d(DTVTConstants.LOG_DEF_TAG, "XMLParser::doInBackground, str.length=0");
+            Log.d(DTVTConstants.LOG_DEF_TAG, "SearchXmlParser::doInBackground, str.length=0");
             setOtherError();
         } else {
             parse(strings[0]);
@@ -182,7 +188,7 @@ public class XMLParser extends AsyncTask<String, Integer, String> {
 
     }
 
-    public void parserDidStartDocument(/*XMLParser parser*/) {
+    public void parserDidStartDocument(/*SearchXmlParser parser*/) {
         Log.d(DTVTConstants.LOG_DEF_TAG, "xml parse start");
 
         searchResponse = new TotalSearchResponseData();
@@ -195,7 +201,7 @@ public class XMLParser extends AsyncTask<String, Integer, String> {
         }
     }
 
-    public void parserDidEndDocument(/*XMLParser parser*/) {
+    public void parserDidEndDocument(/*SearchXmlParser parser*/) {
         Log.d(DTVTConstants.LOG_DEF_TAG, "xml parse finished");
     }
 

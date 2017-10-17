@@ -273,7 +273,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
         }
 
         synchronized (this) {
-            if (false == mIsSearching) {
+            if (!mIsSearching) {
                 setSearchStart(true);
             }else {
                 return;

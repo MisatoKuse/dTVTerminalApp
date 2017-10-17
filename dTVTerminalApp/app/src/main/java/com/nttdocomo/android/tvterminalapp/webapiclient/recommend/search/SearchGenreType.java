@@ -11,7 +11,6 @@ public class SearchGenreType extends SearchFilterTypeMappable {
     public SearchGenreType(String name) {
         if("SearchGenreTypeActive_001".equals(name)){
             mType=active_001;
-            return;
         }
     }
 

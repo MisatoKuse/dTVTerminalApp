@@ -102,7 +102,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                return;
                             }
                         }).create();
         alertDialog.show();

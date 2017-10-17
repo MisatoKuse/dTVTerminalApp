@@ -4,10 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
-/**
- * Created by ryuhan on 2017/09/22.
- */
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;

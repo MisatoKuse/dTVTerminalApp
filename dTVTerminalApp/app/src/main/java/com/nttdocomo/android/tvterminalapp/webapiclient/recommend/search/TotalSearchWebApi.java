@@ -1,6 +1,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search;
 
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.constants.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.webapiclient.WebApiBase;
 
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 
-public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, XMLParser.XMLParserFinishListener {
+public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, SearchXmlParser.XMLParserFinishListener {
 
     private TotalSearchWebApiDelegate delegate;
 
@@ -27,7 +28,7 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, XML
     // 1.request
     public void request(TotalSearchRequestData requestData){
 
-        System.out.println("request");
+        DTVTLogger.debug("request");
 
         TotalSearchRequestData data = requestData;
         data.userId = "1234567890"; //KARI
@@ -59,10 +60,10 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, XML
     // MARK : - private method
     private String concatFilterString() {
         String resultString = "";
-        if(genreFilterString.isEmpty() == false) {
+        if(!genreFilterString.isEmpty()) {
             resultString +=genreFilterString;
         }
-        if(dubbedFilterString.isEmpty() == false) {
+        if(!dubbedFilterString.isEmpty()) {
             if(resultString.isEmpty()){
                 resultString += dubbedFilterString;
             } else {
@@ -70,7 +71,7 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, XML
                 resultString +=dubbedFilterString;
             }
         }
-        if(chargeFilterString.isEmpty()== false) {
+        if(!chargeFilterString.isEmpty()) {
             if(resultString.isEmpty()){
                 resultString +=chargeFilterString;
             } else {
@@ -78,7 +79,7 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, XML
                 resultString +="chargeFilterString";
             }
         }
-        if(otherFilterString.isEmpty() == false){
+        if(!otherFilterString.isEmpty()){
             if(resultString.isEmpty()){
                 resultString+=otherFilterString;
             } else {
@@ -149,7 +150,7 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, XML
         if(null==responseData || 0==responseData.length()){
             str = "";
         }
-        new XMLParser(this).execute(str);
+        new SearchXmlParser(this).execute(str);
     }
 
     @Override
