@@ -1,7 +1,7 @@
 package com.nttdocomo.android.tvterminalapp.model.Search;
 
 
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.SearchSortType;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchSortType;
 
 public class SearchSortKind {
 

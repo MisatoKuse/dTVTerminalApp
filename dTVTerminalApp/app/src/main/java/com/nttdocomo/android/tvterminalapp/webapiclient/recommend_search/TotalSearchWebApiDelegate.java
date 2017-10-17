@@ -1,4 +1,4 @@
-package com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search;
+package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
 
 public interface TotalSearchWebApiDelegate {

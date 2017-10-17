@@ -1,4 +1,4 @@
-package com.nttdocomo.android.tvterminalapp.webapiclient_temp.recommend.search;
+package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
 
 import android.os.AsyncTask;
