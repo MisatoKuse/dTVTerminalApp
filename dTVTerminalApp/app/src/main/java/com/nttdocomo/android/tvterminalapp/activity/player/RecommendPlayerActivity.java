@@ -29,6 +29,7 @@ public class RecommendPlayerActivity extends TvPlayerActivity {
      *
      * @param view
      */
+    @Override
     public void recommendButton(View view) {
         startActivity(RecommendPlayerActivity.class, null);
     }

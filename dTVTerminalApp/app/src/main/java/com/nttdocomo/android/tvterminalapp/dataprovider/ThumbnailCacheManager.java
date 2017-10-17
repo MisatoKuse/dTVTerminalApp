@@ -159,6 +159,7 @@ public class ThumbnailCacheManager {
      *
      */
     class CalendarComparator implements Comparator {
+        @Override
         public int compare(Object object1, Object object2) {
             File p1 = (File) object1;
             File p2 = (File) object2;

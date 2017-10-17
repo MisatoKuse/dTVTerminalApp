@@ -36,7 +36,7 @@ public class STBParingInvitationActivity extends BaseActivity implements View.On
 
     private void setContents() {
 
-        /**
+        /*
          * ペアリング勧誘
          * ※一度表示されたら以降表示されない
          */

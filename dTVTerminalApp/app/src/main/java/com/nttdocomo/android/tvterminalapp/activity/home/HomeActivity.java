@@ -117,6 +117,7 @@ public class HomeActivity extends BaseActivity{
 
     private void initData(){
         HomeBean mHomeBean = new HomeBean();
+        // TODO: ワーディングはリソース化すること
         String contents[] = {"NOW ON AIR","おすすめ番組","おすすめビデオ",
                 "今日のテレビランキング","ビデオランキング","クリップ"};
         String contents2[] = {"チャンネルリスト >","24 >","30 >",
@@ -127,7 +128,7 @@ public class HomeActivity extends BaseActivity{
             switch (i){
                 case 0:
                     url = urls1;
-                break;
+                    break;
                 case 1:
                     url = urls2;
                     break;
