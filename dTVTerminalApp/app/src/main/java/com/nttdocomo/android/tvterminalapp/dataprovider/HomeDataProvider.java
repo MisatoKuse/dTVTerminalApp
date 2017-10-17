@@ -27,6 +27,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.WeeklyRankList;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.plala.ChannelWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.plala.DailyRankWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.plala.WebApiBasePlala;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.RecommendChWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.RecommendVdWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.plala.TvScheduleWebClient;
@@ -205,17 +206,13 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * Activityからのデータ取得要求受付
      */
     public void getHomeData() {
-        List<Map<String, String>> channelList = getChannelListData();
-        if(channelList != null && channelList.size() > 0){
-            sendChannelListData(channelList);
+        List<Map<String, String>> tvScheduleData = getTvScheduleData();
+        if(tvScheduleData != null && tvScheduleData.size() > 0){
+            sendTvScheduleListData(tvScheduleData);
         }
         List<Map<String, String>> dailyRankList = getDailyRankListData();
         if(dailyRankList != null && dailyRankList.size() > 0){
             sendDailyRankListData(dailyRankList);
-        }
-        List<Map<String, String>> tvScheduleList = getTvScheduleData();
-        if(tvScheduleList != null && tvScheduleList.size() > 0){
-            sendTvScheduleListData(tvScheduleList);
         }
         List<Map<String, String>> weeklyRankList = getWeeklyRankListData();
         if(weeklyRankList != null && weeklyRankList.size() > 0){
@@ -283,7 +280,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      */
     public void sendTvScheduleListData(List<Map<String, String>> list) {
         HomeBean homeBean = new HomeBean();
-        homeBean.setContentTypeName(mContext.getResources().getString(R.string.nav_menu_item_channel_list));
+        homeBean.setContentTypeName(mContext.getResources().getString(R.string.now_on_air_list));
         List<HomeBeanContent> contents = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             HomeBeanContent homeBeanContent = new HomeBeanContent();
@@ -345,7 +342,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      */
     public void sendWeeklyRankListData(List<Map<String, String>> list) {
         HomeBean homeBean = new HomeBean();
-        homeBean.setContentTypeName(mContext.getResources().getString(R.string.weekly_tv_ranking_title));
+        homeBean.setContentTypeName(mContext.getResources().getString(R.string.video_ranking_title));
         List<HomeBeanContent> contents = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             HomeBeanContent homeBeanContent = new HomeBeanContent();
@@ -447,7 +444,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
             //通信クラスにデータ取得要求を出す
             TvScheduleWebClient webClient = new TvScheduleWebClient();
             int []ageReq = {1};
-            String [] upperPageLimit = {""};
+            String [] upperPageLimit = {WebApiBasePlala.DATE_NOW};
             String lowerPageLimit = "";
             //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
             webClient.getTvScheduleApi(ageReq, upperPageLimit,
@@ -526,8 +523,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         dateUtils.addLastDate(TvSchedule_LAST_INSERT);
         TvScheduleInsertDataManager dataManager = new TvScheduleInsertDataManager(mContext);
         dataManager.insertTvScheduleInsertList(tvScheduleList);
-//        sendWeeklyRankListData(getWeeklyRankListData());
-        sendWeeklyRankListData(tvScheduleList.geTvsList());
+        sendTvScheduleListData(tvScheduleList.geTvsList());
 
     }
 
@@ -572,7 +568,6 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         dateUtils.addLastDate(WEEKLY_RANK_LAST_INSERT);
         RecommendChInsertDataManager dataManager = new RecommendChInsertDataManager(mContext);
         dataManager.insertVodClipInsertList(recommendChList);
-//        sendWeeklyRankListData(getWeeklyRankListData());
 //        sendWeeklyRankListData(getWeeklyRankListData());
     }
 

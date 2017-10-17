@@ -15,7 +15,8 @@
         <string name="str_d_account_reg_confirmation_title">dアカウント登録確認</string>
 
     <!-- Home -->
-    
+    <string name="now_on_air_list">NOW ON AIR</string>
+
     <!-- TvProgram -->
 
     <!-- Video -->
