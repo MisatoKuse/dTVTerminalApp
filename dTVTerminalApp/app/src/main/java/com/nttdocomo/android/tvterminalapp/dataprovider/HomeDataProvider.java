@@ -376,8 +376,8 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
             ChannelWebClient webClient = new ChannelWebClient();
             int ageReq = 1;
             int upperPageLimit = 1;
-            String lowerPageLimit = "1";
-            String pagerOffset = "1";
+            String lowerPageLimit = "";
+            String pagerOffset = "";
             //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
             webClient.getChannelApi(ageReq, upperPageLimit,
                     lowerPageLimit, pagerOffset, this);
@@ -426,7 +426,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
             DailyRankWebClient webClient = new DailyRankWebClient();
             int ageReq = 1;
             int upperPageLimit = 1;
-            String lowerPageLimit = "1";
+            String lowerPageLimit = "";
             int pagerOffset = 1;
             //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
             webClient.getDailyRankApi(ageReq, upperPageLimit,
@@ -449,8 +449,8 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
             //通信クラスにデータ取得要求を出す
             TvScheduleWebClient webClient = new TvScheduleWebClient();
             int []ageReq = {1};
-            String [] upperPageLimit = {"1"};
-            String lowerPageLimit = "1";
+            String [] upperPageLimit = {""};
+            String lowerPageLimit = "";
             //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
             webClient.getTvScheduleApi(ageReq, upperPageLimit,
                     lowerPageLimit, this);
@@ -473,9 +473,9 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
             WeeklyRankWebClient webClient = new WeeklyRankWebClient();
             int limit = 1;
             int offset = 1;
-            String filter = "1";
+            String filter = "";
             int ageReq = 1;
-            String genreId = "1";
+            String genreId = "";
 
             //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
             webClient.getWeeklyRankApi(limit, offset,
