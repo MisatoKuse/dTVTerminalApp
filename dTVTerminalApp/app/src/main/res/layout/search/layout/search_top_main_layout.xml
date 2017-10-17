@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="#000000"
+              android:orientation="vertical">
+
+
+
+	<android.support.v7.widget.SearchView
+		android:id="@+id/keyword_search_form"
+		android:layout_width="match_parent"
+		android:layout_height="40dp"
+		android:layout_marginBottom="10dp"
+		android:layout_marginLeft="20dp"
+		android:layout_marginRight="20dp"
+		android:layout_marginTop="10dp"
+		android:background="@color/keyword_search_background"/>
+
+	<!-- 検索履歴画面 -->
+	<LinearLayout
+		android:id="@+id/search_history"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_marginLeft="20dp"
+		android:background="@color/keyword_search_header_background"
+		android:orientation="vertical">
+
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="5dp"
+			android:text="@string/keyword_search_history"
+			android:textColor="@color/keyword_search_result_text"
+			android:textSize="20dp"/>
+
+		<ListView
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"/>
+	</LinearLayout>
+
+	<!-- 検索結果画面 -->
+	<RelativeLayout
+		android:id="@+id/fl_search_result"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:visibility="gone">
+
+		<HorizontalScrollView
+			android:id="@+id/hs_tab_strip_scroll"
+			android:layout_width="match_parent"
+			android:layout_height="50dp"
+			android:layout_marginTop="15dp"
+			android:fillViewport="true"
+			android:foregroundGravity="center_horizontal"
+			android:scrollbars="none"/>
+
+		<android.support.v4.view.ViewPager
+			android:id="@+id/vp_search_result"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_below="@id/hs_tab_strip_scroll"
+			android:layout_centerHorizontal="true"
+			android:layout_centerVertical="true"/>
+	</RelativeLayout>
+</LinearLayout>
