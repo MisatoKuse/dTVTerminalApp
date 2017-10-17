@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.nttdocomo.android.tvterminalapp.activity.Player.TvPlayerActivity;
-import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 
 public class RankingTopActivity extends BaseActivity {

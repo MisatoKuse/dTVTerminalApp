@@ -2,7 +2,7 @@
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-package com.nttdocomo.android.tvterminalapp.common.menudisplay;
+package com.nttdocomo.android.tvterminalapp.activity.common;
 
 import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
@@ -29,7 +29,7 @@ import com.nttdocomo.android.tvterminalapp.activity.Search.SearchTopActivity;
 import com.nttdocomo.android.tvterminalapp.activity.TvProgram.ChannelListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.TvProgram.TvProgramListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.Video.VideoTopActivity;
-import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 
 import java.util.ArrayList;

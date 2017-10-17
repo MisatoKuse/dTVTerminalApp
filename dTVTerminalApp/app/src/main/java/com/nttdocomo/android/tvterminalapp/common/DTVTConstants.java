@@ -9,7 +9,7 @@ package com.nttdocomo.android.tvterminalapp.common;
  *      プロジェクトにて共通データを定義するクラスである
  */
 
-public class DCommon {
+public class DTVTConstants {
 
     //アプリ名前
     public static final String AppliName ="dリモート";

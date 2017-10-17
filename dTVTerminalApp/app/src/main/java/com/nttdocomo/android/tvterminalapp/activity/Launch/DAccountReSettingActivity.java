@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.Temp.DAccountAppliActivity;
-import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 
 public class DAccountReSettingActivity extends BaseActivity implements View.OnClickListener {
 

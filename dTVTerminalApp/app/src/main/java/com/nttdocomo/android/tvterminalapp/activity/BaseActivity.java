@@ -2,18 +2,18 @@
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-package com.nttdocomo.android.tvterminalapp.common;
+package com.nttdocomo.android.tvterminalapp.activity;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.nttdocomo.android.tvterminalapp.common.menudisplay.MenuDisplay;
-import com.nttdocomo.android.tvterminalapp.common.menudisplay.MenuDisplayEventListener;
-import com.nttdocomo.android.tvterminalapp.common.menudisplay.MenuItem;
-import com.nttdocomo.android.tvterminalapp.common.menudisplay.MenuItemParam;
+import com.nttdocomo.android.tvterminalapp.common.UserState;
+import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
+import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplayEventListener;
+import com.nttdocomo.android.tvterminalapp.activity.common.MenuItem;
+import com.nttdocomo.android.tvterminalapp.activity.common.MenuItemParam;
 
 /**
  *

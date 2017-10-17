@@ -21,12 +21,11 @@ import com.nttdocomo.android.tvterminalapp.activity.Home.adapter.RecyclerViewAda
 import com.nttdocomo.android.tvterminalapp.activity.Ranking.DailyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.Ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.TvProgram.ChannelListActivity;
-import com.nttdocomo.android.tvterminalapp.activity.Video.VideoPurchListActivity;
 import com.nttdocomo.android.tvterminalapp.beans.HomeBean;
 import com.nttdocomo.android.tvterminalapp.beans.HomeBeanContent;
-import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.common.menudisplay.MenuItemParam;
+import com.nttdocomo.android.tvterminalapp.activity.common.MenuItemParam;
 
 public class HomeActivity extends BaseActivity{
 

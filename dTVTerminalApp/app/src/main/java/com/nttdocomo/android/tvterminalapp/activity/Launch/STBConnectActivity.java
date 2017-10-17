@@ -9,11 +9,9 @@ import android.os.Handler;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.TimerTask;
-
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.Home.HomeActivity;
-import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 
 
 public class STBConnectActivity extends BaseActivity {

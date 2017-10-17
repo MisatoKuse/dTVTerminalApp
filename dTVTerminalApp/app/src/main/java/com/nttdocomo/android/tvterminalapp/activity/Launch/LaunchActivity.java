@@ -4,19 +4,15 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.Launch;
 
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.Home.HomeActivity;
-import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.common.DCommon;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 
 
 public class LaunchActivity extends BaseActivity implements View.OnClickListener {
@@ -103,7 +99,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public String getScreenID() {
-        return DCommon.LaunchActivityScreenID;
+        return DTVTConstants.LaunchActivityScreenID;
     }
 
     @Override
