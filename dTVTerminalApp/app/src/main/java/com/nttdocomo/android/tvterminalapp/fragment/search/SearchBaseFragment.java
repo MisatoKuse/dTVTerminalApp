@@ -67,12 +67,6 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
 
             getContext();
             mLoadMoreView = LayoutInflater.from(mActivity).inflate(R.layout.search_load_more, null);
-            //mLoadCompleteView = LayoutInflater.from(mActivity).inflate(R.layout.search_load_complete, null);
-
-            //mTeveviListview.addFooterView(mLoadMoreView);
-            //mTeveviListview.addFooterView(mLoadCompleteView);
-            //mLoadMoreView.setVisibility(View.GONE);
-            //mLoadCompleteView.setVisibility(View.GONE);
         }
 
         //SearchResultBaseAdapter searchResultBaseAdapter
@@ -116,21 +110,6 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
 
     @Override
     public void onScrollStateChanged(AbsListView absListView, int scrollState) {
-        /*
-        switch(scrollState){
-            case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
-
-                break;
-            case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
-                mTeveviListview.setVisibility(View.VISIBLE);
-                break;
-            default:
-        }
-
-        if(null!=mSearchBaseFragmentScrollListener){
-            mSearchBaseFragmentScrollListener.onScrollStateChanged(this, absListView, scrollState);
-        }
-        */
     }
 
     @Override

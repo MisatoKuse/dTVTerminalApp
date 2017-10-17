@@ -465,12 +465,6 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
         }
     }
 
-    /*
-    @Override
-    public void onScrollStateChanged(SearchBaseFragment fragment, AbsListView absListView, int scrollState) {
-    }
-    */
-
     private int mSearchLastItem =0;
     private boolean mIsPaging=false;
 
