@@ -9,11 +9,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendChannelListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VodClipListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.RecommendChannelListDBHelper;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.VodClipListDBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.HomeDBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -41,7 +38,7 @@ public class RecommendChInsertDataManager {
     public void insertVodClipInsertList(RecommendChList redChList) {
 
         //各種オブジェクト作成
-        RecommendChannelListDBHelper recommemdChListDBHelper = new RecommendChannelListDBHelper(mContext);
+        HomeDBHelper recommemdChListDBHelper = new HomeDBHelper(mContext);
         SQLiteDatabase db = recommemdChListDBHelper.getWritableDatabase();
         RecommendChannelListDao redChListDao = new RecommendChannelListDao(db);
         List<HashMap<String,String>> hashMaps = redChList.getmRcList();

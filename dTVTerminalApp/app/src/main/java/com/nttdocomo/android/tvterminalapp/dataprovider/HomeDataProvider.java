@@ -9,6 +9,7 @@ import android.content.Context;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.beans.HomeBean;
 import com.nttdocomo.android.tvterminalapp.beans.HomeBeanContent;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.HomeDBHelper;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DailyRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendChInsertDataManager;
@@ -201,9 +202,10 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         this.apiDataProviderCallback = (ApiDataProviderCallback) mContext;
     }
 
+    /**
+     * Activityからのデータ取得要求受付
+     */
     public void getHomeData() {
-        //Activityからのデータ取得要求受付
-
         List<Map<String, String>> vodClipList = getVodClipListData();
         if(vodClipList != null && vodClipList.size() > 0){
             sendVodClipListData(vodClipList);

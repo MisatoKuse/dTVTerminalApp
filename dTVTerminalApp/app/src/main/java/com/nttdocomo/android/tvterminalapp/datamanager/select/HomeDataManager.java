@@ -12,11 +12,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.DailyRankLis
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvScheduleListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VodClipListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WeeklyRankListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.ChannelListDBHelper;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DailyRankListDBHelper;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.TvScheduleListDBHelper;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.VodClipListDBHelper;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.WeeklyRankListDBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.HomeDBHelper;
 
 import java.util.List;
 import java.util.Map;
@@ -62,7 +58,7 @@ public class HomeDataManager {
                 VODCLIP_LIST_DISPLAY_START_DATE, VODCLIP_LIST_DISP_TYPE};
 
         //Daoクラス使用準備
-        VodClipListDBHelper vodClipListDBHelper = new VodClipListDBHelper(mContext);
+        HomeDBHelper vodClipListDBHelper = new HomeDBHelper(mContext);
         SQLiteDatabase db = vodClipListDBHelper.getWritableDatabase();
         VodClipListDao vodClipListDao = new VodClipListDao(db);
 
@@ -84,7 +80,7 @@ public class HomeDataManager {
                 CHANNEL_LIST_DISPLAY_START_DATE, CHANNEL_LIST_DISP_TYPE};
 
         //Daoクラス使用準備
-        ChannelListDBHelper channelListDBHelper = new ChannelListDBHelper(mContext);
+        HomeDBHelper channelListDBHelper = new HomeDBHelper(mContext);
         SQLiteDatabase db = channelListDBHelper.getWritableDatabase();
         ChannelListDao channelListDao = new ChannelListDao(db);
 
@@ -106,7 +102,7 @@ public class HomeDataManager {
                 DAILYRANK_LIST_DISPLAY_START_DATE, DAILYRANK_LIST_DISP_TYPE};
 
         //Daoクラス使用準備
-        DailyRankListDBHelper dailyRankListDBHelper = new DailyRankListDBHelper(mContext);
+        HomeDBHelper dailyRankListDBHelper = new HomeDBHelper(mContext);
         SQLiteDatabase db = dailyRankListDBHelper.getWritableDatabase();
         DailyRankListDao dailyRankListDao = new DailyRankListDao(db);
 
@@ -128,7 +124,7 @@ public class HomeDataManager {
                 TV_SCHEDULE_LIST_DISPLAY_START_DATE, TV_SCHEDULE_LIST_DISP_TYPE};
 
         //Daoクラス使用準備
-        TvScheduleListDBHelper tvScheduleListDBHelper = new TvScheduleListDBHelper(mContext);
+        HomeDBHelper tvScheduleListDBHelper = new HomeDBHelper(mContext);
         SQLiteDatabase db = tvScheduleListDBHelper.getWritableDatabase();
         TvScheduleListDao tvScheduleListDao = new TvScheduleListDao(db);
 
@@ -150,7 +146,7 @@ public class HomeDataManager {
                 VODCLIP_LIST_DISPLAY_START_DATE, VODCLIP_LIST_DISP_TYPE};
 
         //Daoクラス使用準備
-        WeeklyRankListDBHelper weeklyRankListDBHelper = new WeeklyRankListDBHelper(mContext);
+        HomeDBHelper weeklyRankListDBHelper = new HomeDBHelper(mContext);
         SQLiteDatabase db = weeklyRankListDBHelper.getWritableDatabase();
         WeeklyRankListDao weeklyRankListDao = new WeeklyRankListDao(db);
 

@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.VodClipListDBHelper.VODCLIP_LIST_TABLE_NAME;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.VODCLIP_LIST_TABLE_NAME;
 
 
 public class VodClipListDao {

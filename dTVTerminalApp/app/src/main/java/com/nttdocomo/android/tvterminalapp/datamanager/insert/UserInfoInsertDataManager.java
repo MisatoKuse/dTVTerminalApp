@@ -7,7 +7,7 @@ package com.nttdocomo.android.tvterminalapp.datamanager.insert;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.UserInfoListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.UserInfoListDBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.HomeDBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
@@ -37,7 +37,7 @@ public class UserInfoInsertDataManager {
     public void insertUserInfoInsertList(UserInfoList userInfoList) {
 
         //各種オブジェクト作成
-        UserInfoListDBHelper userInfoListDBHelper = new UserInfoListDBHelper(mContext);
+        HomeDBHelper userInfoListDBHelper = new HomeDBHelper(mContext);
         SQLiteDatabase db = userInfoListDBHelper.getWritableDatabase();
         UserInfoListDao userInfoListDao = new UserInfoListDao(db);
         List<HashMap<String, String>> hashMaps1 = userInfoList.getLoggedinAccountList();

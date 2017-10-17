@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.WeeklyRankListDBHelper.WEEKLYRANK_LIST_TABLE_NAME;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.WEEKLYRANK_LIST_TABLE_NAME;
 
 public class WeeklyRankListDao {
     // SQLiteDatabase
