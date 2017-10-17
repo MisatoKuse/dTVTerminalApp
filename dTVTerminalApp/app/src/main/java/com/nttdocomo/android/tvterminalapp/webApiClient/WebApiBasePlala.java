@@ -20,20 +20,37 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
  * ぷらら用WebApi呼び出し用http通信処理
  */
 public class WebApiBasePlala {
+    /**
+     * データ受け渡しコールバック
+     */
+    interface WebApiBasePlalaCallback {
+        /**
+         * 正常終了時のコールバック
+         * @param returnCode 値を返す構造体
+         */
+        void onAnswer(ReturnCode returnCode);
+
+        /**
+         * 異常時のコールバック
+         */
+        void onError();
+    }
+
+    /**
+     * コールバックのインスタンス
+     */
+    private WebApiBasePlalaCallback mWebApiBasePlalaCallback;
+
+
     //仮のベースURL
     //TODO: 本物のサーバーが提供されるまでは、テストサーバーのアドレスとを指定する
     private static final String baseUrl = "http://192.168.2.127/";
-
-    //タイムアウト時間・仮に10秒とする
-    private static final long COMMUNICATE_TIME_OUT = 10000L;
 
     //通信停止用コネクション蓄積
     private volatile static List<HttpURLConnection> mUrlConnections = null;
@@ -237,45 +254,33 @@ public class WebApiBasePlala {
     }
 
     /**
-     * 指定したAPIで通信を開始する
-     * @param sourceUrl API
+     * TODO:一時的に用意した、コールバック未対応クラスをコンパイルエラーにしないためのメソッド・後で消すこと
+     * @param sourceUrl
+     * @param receivedParameters
+     * @return
      */
     public ReturnCode openUrl(final String sourceUrl,String receivedParameters) {
+        openUrl(sourceUrl,receivedParameters,null);
+        return null;
+    }
+
+    /**
+     * 指定したAPIで通信を開始する
+     * @param sourceUrl                 API呼び出し名
+     * @param webApiBasePlalaCallback コールバック
+     */
+    public void openUrl(final String sourceUrl,String receivedParameters,
+                              WebApiBasePlalaCallback webApiBasePlalaCallback) {
         CommunicationTask communicationTask = new CommunicationTask(sourceUrl,receivedParameters);
 
-        //同期処理用のカウンターの設定(待つのは通信処理だけなので、1以外はありえない)
-        CountDownLatch countDownLatch = new CountDownLatch(1);
-        communicationTask.setCountDownLatch(countDownLatch);
+        //コールバックの準備
+        mWebApiBasePlalaCallback = webApiBasePlalaCallback;
 
+        //結果格納構造体の作成
         WebApiBasePlala.ReturnCode returnCode = new WebApiBasePlala.ReturnCode();
+
+        //通信本体の開始
         communicationTask.execute(returnCode);
-
-        try {
-            //処理が終わるか、タイムアウトまで待つ
-            if(!countDownLatch.await(COMMUNICATE_TIME_OUT, TimeUnit.MILLISECONDS)) {
-                //タイムアウトを起こしたならば、通信エラーとする
-                mReturnCode.errorType = ERROR_TYPE.HTTP_ERROR;
-            }
-        } catch (InterruptedException e) {
-            //割り込みが発生したならば、通信エラーとする
-            mReturnCode.errorType = ERROR_TYPE.HTTP_ERROR;
-        }
-
-        //エラーではなく、バッファに値があれば、読み込んだボディ部を設定して返す
-        if(mReturnCode.errorType == ERROR_TYPE.SUCCESS && mAnswerBuffer != null && !mAnswerBuffer.isEmpty()) {
-            if(mAnswerBuffer.isEmpty()) {
-                //データが無ければデータなしのコード
-                mReturnCode.errorType = ERROR_TYPE.NO_DATA;
-            } else {
-                //データがあるので返す
-                /* **FindBugs** Bad practice (openUrl)　FireBugは読みだされないのでbodyDataを削除せよと言うが、
-                   呼び出し元で使用される為、対応しない。
-                */
-                mReturnCode.bodyData = mAnswerBuffer;
-            }
-        }
-
-        return mReturnCode;
     }
 
     /**
@@ -375,7 +380,6 @@ public class WebApiBasePlala {
         }
     }
 
-
     /**
      * 通信本体のクラス
      */
@@ -396,25 +400,10 @@ public class WebApiBasePlala {
             mSendParameter =  receivedParameters;
         }
 
-
-        /**
-         * 同期処理用のカウンター
-         */
-        CountDownLatch countDownLatch;
-
-        /**
-         * 同期処理用のカウンターを取得
-         * @param countDownLatchSource カウンター
-         */
-        private void setCountDownLatch(CountDownLatch countDownLatchSource) {
-            //先方から送られてきた同期処理カウンターを退避させる
-            countDownLatch = countDownLatchSource;
-        }
-
         /**
          * 通信本体処理
          * @param strings 不使用
-         * @return エラーコードと処理結果の構造体
+         * @return 不使用
          */
         @Override
         protected ReturnCode doInBackground(Object... strings) {
@@ -451,10 +440,31 @@ public class WebApiBasePlala {
                 mUrlConnection = null;
             }
 
-            //カウントダウンして呼び出し元に終了を伝える
-            countDownLatch.countDown();
-
             return mReturnCode;
+        }
+
+        /**
+         * 通信終了後の処理
+         * @param returnCode 結果格納構造体
+         */
+        @Override
+        protected void onPostExecute(ReturnCode returnCode) {
+            //呼び出し元に伝える情報を判断する
+            if(returnCode.errorType == ERROR_TYPE.SUCCESS) {
+                if(mAnswerBuffer.isEmpty()) {
+                    //エラーが無いので、失敗を伝える
+                    mWebApiBasePlalaCallback.onError();
+                } else {
+                    //通信に成功したので、値を伝える
+                    // **FindBugs** Bad practice FindBugsは不使用なのでbodyDataは消せと警告するが、
+                    // コールバック先では使用するため対応しない
+                    returnCode.bodyData = mAnswerBuffer;
+                    mWebApiBasePlalaCallback.onAnswer(returnCode);
+                }
+            } else {
+                //エラーがあったので、失敗を伝える
+                mWebApiBasePlalaCallback.onError();
+            }
         }
 
         /**

@@ -13,58 +13,99 @@ import java.util.List;
  * VODクリップ通信処理
  */
 public class VodClipWebClient
-        extends WebApiBasePlala {
+        extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback{
+
+    /**
+     * コールバック
+     */
+    public interface VodClipJsonParserCallback {
+        /**
+         * 正常に終了した場合に呼ばれるコールバック
+         * @param vodClipLists JSONパース後のデータ
+         */
+        void onVodClipJsonParsed(List<VodClipList> vodClipLists);
+    }
+
+    //コールバックのインスタンス
+    private VodClipJsonParserCallback mVodClipJsonParserCallback;
+
+    /**
+     * 通信成功時のコールバック
+     * @param returnCode 戻り値構造体
+     */
+    @Override
+    public void onAnswer(ReturnCode returnCode) {
+        //パース後データ受け取り用
+        List<VodClipList> pursedData;
+
+        //JSONをパースする
+        VodClipJsonParser vodClipJsonParser = new VodClipJsonParser();
+        pursedData = vodClipJsonParser.VodClipListSender(returnCode.bodyData);
+
+        //パース後のデータを返す
+        mVodClipJsonParserCallback.onVodClipJsonParsed(pursedData);
+    }
+
+    /**
+     * 通信失敗時のコールバック
+     */
+    @Override
+    public void onError() {
+        //エラーが発生したのでヌルを返す
+        mVodClipJsonParserCallback.onVodClipJsonParsed(null);
+
+    }
+
     /**
      * VODクリップ取得
-     * @param ageReq            視聴年齢制限値（1から17までの値）
-     * @param upperPagetLimit  結果の最大件数（1以上）
-     * @param lowerPagetLimit　結果の最小件数（1以上）
-     * @param pagerOffset      取得位置
-     * @return VODクリップのリスト
+     * @param ageReq                         視聴年齢制限値（1から17までの値）
+     * @param upperPagetLimit               結果の最大件数（1以上）
+     * @param lowerPagetLimit　             結果の最小件数（1以上）
+     * @param pagerOffset                    取得位置
+     * @param vodClipJsonParserCallback    コールバック
+     * @return パラメータ等に問題があった場合はfalse
      */
-    public List<VodClipList> getVodClipApi(int ageReq,int upperPagetLimit,int lowerPagetLimit,int pagerOffset) {
+    public boolean getVodClipApi(int ageReq,int upperPagetLimit,int lowerPagetLimit,
+                                 int pagerOffset,
+                                 VodClipJsonParserCallback vodClipJsonParserCallback) {
         //パラメーターのチェック
-        if(!checkNormalParameter(ageReq,upperPagetLimit,lowerPagetLimit,pagerOffset)) {
+        if(!checkNormalParameter(ageReq,upperPagetLimit,lowerPagetLimit,
+                pagerOffset,vodClipJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、ヌルで帰る
-            return null;
+            return false;
         }
+
+        //コールバックの準備
+        mVodClipJsonParserCallback = vodClipJsonParserCallback;
 
         //送信用パラメータの作成
         String sendParameter = makeSendParameter(ageReq,upperPagetLimit,lowerPagetLimit,pagerOffset);
 
         //JSONの組み立てに失敗していれば、ヌルで帰る
         if(sendParameter.isEmpty()) {
-            return null;
+            return false;
         }
 
         //VODクリップ一覧を呼び出す
-        ReturnCode returnCode = openUrl(API_NAME_LIST.VOD_CLIP_LIST.getString(),sendParameter);
+        openUrl(API_NAME_LIST.VOD_CLIP_LIST.getString(),
+                sendParameter,this);
 
-        //パース後データ受け取り用
-        List<VodClipList> pursedData;
-
-        if(returnCode.errorType == ERROR_TYPE.SUCCESS) {
-            //JSONをパースする
-            VodClipJsonParser vodClipJsonParser = new VodClipJsonParser();
-            pursedData = vodClipJsonParser.VodClipListSender(returnCode.bodyData);
-
-            //パース後のデータを返す
-            return pursedData;
-        } else {
-            //通信に失敗しているので、ヌルを返す
-            return null;
-        }
+        //今のところ正常なので、trueで帰る
+        return true;
     }
 
     /**
      * 指定されたパラメータがおかしいかどうかのチェック
-     * @param ageReq            視聴年齢制限値
-     * @param upperPagetLimit  結果の最大件数
-     * @param lowerPagetLimit　結果の最小件数
-     * @param pagerOffset      取得位置
+     * @param ageReq                        視聴年齢制限値
+     * @param upperPagetLimit              結果の最大件数
+     * @param lowerPagetLimit　            結果の最小件数
+     * @param pagerOffset                   取得位置
+     * @param vodClipJsonParserCallback   コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(int ageReq,int upperPagetLimit,int lowerPagetLimit,int pagerOffset) {
+    private boolean checkNormalParameter(int ageReq,int upperPagetLimit,int lowerPagetLimit,
+                                         int pagerOffset,
+                                         VodClipJsonParserCallback vodClipJsonParserCallback) {
         if(!(ageReq >= 1 && ageReq <= 17)) {
             //ageReqが1から17ではないならばfalse
             return false;
@@ -78,6 +119,11 @@ public class VodClipWebClient
             return false;
         }
         if(pagerOffset < 0) {
+            return false;
+        }
+
+        //コールバックが含まれていないならばエラー
+        if(vodClipJsonParserCallback == null) {
             return false;
         }
 
@@ -116,5 +162,4 @@ public class VodClipWebClient
 
         return answerText;
     }
-
 }

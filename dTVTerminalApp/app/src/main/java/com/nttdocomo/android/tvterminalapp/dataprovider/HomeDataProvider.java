@@ -224,11 +224,12 @@ public class HomeDataProvider {
             int upperPageLimit = 1;
             int lowerPageLimit = 1;
             int pagerOffset = 1;
-            List<VodClipList> clipLists = webClient.getVodClipApi(ageReq, upperPageLimit,
-                    lowerPageLimit, pagerOffset);
-            for (int i = 0; i < clipLists.size(); i++) {
-                list = clipLists.get(i).getVcList();
-            }
+            //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
+//            List<VodClipList> clipLists = webClient.getVodClipApi(ageReq, upperPageLimit,
+//                    lowerPageLimit, pagerOffset);
+//            for (int i = 0; i < clipLists.size(); i++) {
+//                list = clipLists.get(i).getVcList();
+//            }
         }
         return list;
     }
