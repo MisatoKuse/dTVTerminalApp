@@ -2,7 +2,7 @@ package com.nttdocomo.android.tvterminalapp.model.search;
 
 
 public class SearchContentInfo {
-    public boolean clipFlag;
+    public boolean clipFlag; 
     public String contentId;
     public int  serviceId;
     public String contentPictureUrl;
