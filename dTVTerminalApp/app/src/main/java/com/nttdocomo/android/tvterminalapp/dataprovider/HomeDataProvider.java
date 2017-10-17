@@ -42,8 +42,10 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
     @Override
     public void onVodClipJsonParsed(List<VodClipList> vodClipLists) {
         if (vodClipLists != null && vodClipLists.size() > 0) {
-            List<Map<String, String>> list = vodClipLists.get(0).getVcList();
-            sendVodClipListData(list);
+            VodClipList list = vodClipLists.get(0);
+            setStructDB(list);
+        } else {
+            //TODO:WEBAPIを取得できなかった時の処理を記載予定
         }
     }
 
@@ -109,6 +111,9 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
     public void getHomeData() {
         //Activityからのデータ取得要求受付
         List<Map<String, String>> vodClipList = getVodClipListData();
+        if(vodClipList != null && vodClipList.size() > 0){
+            sendVodClipListData(vodClipList);
+        }
     }
 
     public HomeBean makeHomeStruct(List<Map<String, String>> list) {
@@ -316,7 +321,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         DailyRankInsertDataManager dataManager = new DailyRankInsertDataManager(mContext);
 //        dataManager.insertVodClipInsertList(dailyRankList);
 
-        sendVodClipListData(getVodClipListData());
+//        sendVodClipListData(getVodClipListData());
 
     }
 
