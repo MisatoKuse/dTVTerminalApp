@@ -1,4 +1,4 @@
-package com.nttdocomo.android.tvterminalapp.model.Search;
+package com.nttdocomo.android.tvterminalapp.model.search_temp;
 
 
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchSortType;

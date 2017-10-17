@@ -1,4 +1,4 @@
-package com.nttdocomo.android.tvterminalapp.model.Search;
+package com.nttdocomo.android.tvterminalapp.model.search_temp;
 
 
 public class SearchContentInfo {

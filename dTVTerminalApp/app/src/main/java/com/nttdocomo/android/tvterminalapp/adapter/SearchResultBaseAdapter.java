@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
-import com.nttdocomo.android.tvterminalapp.model.Search.SearchContentInfo;
+import com.nttdocomo.android.tvterminalapp.model.search_temp.SearchContentInfo;
 
 import java.util.List;
 
