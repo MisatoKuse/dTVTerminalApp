@@ -1,7 +1,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
 
-import com.nttdocomo.android.tvterminalapp.common.Constants.UrlConstants;
+import com.nttdocomo.android.tvterminalapp.common.constants_temp.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.webapiclient.WebApiBase;
 
 
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 
-public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, XMLParser.XMLParserFinishListener {
+public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, SearchXMLParser.XMLParserFinishListener {
 
     private TotalSearchWebApiDelegate delegate;
 
@@ -149,7 +149,7 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, XML
         if(null==responseData || 0==responseData.length()){
             str = "";
         }
-        new XMLParser(this).execute(str);
+        new SearchXMLParser(this).execute(str);
     }
 
     @Override

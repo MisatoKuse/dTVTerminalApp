@@ -13,7 +13,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.io.StringReader;
 
-public class XMLParser extends AsyncTask<String, Integer, String> {
+public class SearchXMLParser extends AsyncTask<String, Integer, String> {
 
     private TotalSearchResponseData searchResponse = null;
     private TotalSearchErrorData searchError = null;
@@ -57,7 +57,7 @@ public class XMLParser extends AsyncTask<String, Integer, String> {
     }
 
 
-    public XMLParser(XMLParserFinishListener xMLParserFinishListener){
+    public SearchXMLParser(XMLParserFinishListener xMLParserFinishListener){
         mXMLParserFinishListener=  xMLParserFinishListener;
     }
 
@@ -73,7 +73,7 @@ public class XMLParser extends AsyncTask<String, Integer, String> {
         }
 
         if(0==strings[0].length()){
-            Log.d(DCommon.LOG_DEF_TAG, "XMLParser::doInBackground, str.length=0");
+            Log.d(DCommon.LOG_DEF_TAG, "SearchXMLParser::doInBackground, str.length=0");
             setOtherError();
         } else {
             parse(strings[0]);
@@ -182,7 +182,7 @@ public class XMLParser extends AsyncTask<String, Integer, String> {
 
     }
 
-    public void parserDidStartDocument(/*XMLParser parser*/) {
+    public void parserDidStartDocument(/*SearchXMLParser parser*/) {
         Log.d(DCommon.LOG_DEF_TAG, "xml parse start");
 
         searchResponse = new TotalSearchResponseData();
@@ -195,7 +195,7 @@ public class XMLParser extends AsyncTask<String, Integer, String> {
         }
     }
 
-    public void parserDidEndDocument(/*XMLParser parser*/) {
+    public void parserDidEndDocument(/*SearchXMLParser parser*/) {
         Log.d(DCommon.LOG_DEF_TAG, "xml parse finished");
     }
 
