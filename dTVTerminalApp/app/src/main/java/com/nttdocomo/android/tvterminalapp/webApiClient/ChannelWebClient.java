@@ -65,7 +65,7 @@ public class ChannelWebClient
      * @return パラメータエラー等が発生した場合はfalse
      */
     public boolean getChannelApi(int pagetLimit, int pagerOffset,
-                                           String filter,String type,
+                                           String filter, String type,
                                            ChannelJsonParserCallback channelJsonParserCallback) {
         //パラメーターのチェック
         if(!checkNormalParameter(pagetLimit,pagerOffset,filter,type,channelJsonParserCallback)) {

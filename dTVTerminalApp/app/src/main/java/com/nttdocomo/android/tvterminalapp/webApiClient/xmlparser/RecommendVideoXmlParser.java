@@ -73,7 +73,7 @@ public class RecommendVideoXmlParser {
     public static final String RECOMMENDVIDEO_LIST_GROUPID = "groupId";
     public static final String RECOMMENDVIDEO_LIST_RECOMMENDMETHODID = "recommendMethodId";
 
-    public RecommendVdList getRecommendVideoList(String xmlStr) {
+    public RecommendVdList getRecommendVideoList() {
         RecommendVdList redVdContents = null;
         List<HashMap<String, String>> redVdContentList = null;
         HashMap<String, String> redVdHashMap = null;

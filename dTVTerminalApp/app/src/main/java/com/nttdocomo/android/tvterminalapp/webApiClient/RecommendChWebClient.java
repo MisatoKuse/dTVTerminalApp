@@ -31,16 +31,7 @@ public class RecommendChWebClient {
         //TODO: レコメンドサーバ処理
         RecommendChannelXmlParser recommendChannelXmlParser = new RecommendChannelXmlParser();
         //TODO: dummy data
-        RecommendChList mRecommendChList = recommendChannelXmlParser.getRecommendchannelList("");
-        for (int i = 0; i < mRecommendChList.getmRcList().size(); i++) {
-            Iterator entries = mRecommendChList.getmRcList().get(i).entrySet().iterator();
-            while (entries.hasNext()) {
-                Map.Entry entry = (Map.Entry) entries.next();
-                String keyName = (String) entry.getKey();
-                String valName = (String) entry.getValue();
-                System.out.println("keyName----->"+keyName+"---valName--->"+valName);
-            }
-        }
+        RecommendChList mRecommendChList = recommendChannelXmlParser.getRecommendchannelList();
         RecommendChInsertDataManager mRecommendChInsertDataManager = new RecommendChInsertDataManager(context);
         mRecommendChInsertDataManager.insertVodClipInsertList(mRecommendChList);
         mRecommendChannelCallback.RecommendChannelCallback(mRecommendChList);

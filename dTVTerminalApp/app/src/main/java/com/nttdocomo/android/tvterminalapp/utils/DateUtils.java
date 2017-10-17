@@ -101,8 +101,8 @@ public class DateUtils {
             limit = null;
         } else {
             try {
-                limit.setTime(DateFormat.getDateInstance().parse(str.replace("-", "/")));
-                ;
+                SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
+                limit.setTime(sdf.parse(str.replace("-", "/")));
             } catch (ParseException e) {
                 limit = null;
             }

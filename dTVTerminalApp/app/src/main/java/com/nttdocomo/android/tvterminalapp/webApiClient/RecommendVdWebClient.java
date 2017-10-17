@@ -23,7 +23,7 @@ public class RecommendVdWebClient{
         //TODO: レコメンドサーバ処理
         RecommendVideoXmlParser recommendVideoXmlParser = new RecommendVideoXmlParser();
         //TODO: dummy data
-        RecommendVdList mRecommendVdList = recommendVideoXmlParser.getRecommendVideoList("");
+        RecommendVdList mRecommendVdList = recommendVideoXmlParser.getRecommendVideoList();
         mRecommendVideoCallback.RecommendVideoCallback(mRecommendVdList);
     }
 }

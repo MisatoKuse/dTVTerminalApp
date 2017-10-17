@@ -74,7 +74,7 @@ public class RecommendChannelXmlParser  {
     public static final String RECOMMENDCHANNEL_LIST_GROUPID = "groupId";
     public static final String RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID = "recommendMethodId";
 
-    public RecommendChList getRecommendchannelList(String xmlStr) {
+    public RecommendChList getRecommendchannelList() {
         RecommendChList redChContents = null;
         List<HashMap<String, String>> redChContentList = null;
         HashMap<String, String> redChHashMap = null;

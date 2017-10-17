@@ -126,8 +126,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
      */
     private void initView() {
         mLinearLayout = findViewById(R.id.home_main_layout_linearLayout);
-        TextView menuTextView = findViewById(R.id.header_layout_menu);
-        menuTextView.setVisibility(View.VISIBLE);
+        ImageView menuImageView = findViewById(R.id.header_layout_menu);
+        menuImageView.setVisibility(View.VISIBLE);
         TextView agreementTextView = findViewById(R.id.home_main_layout_kytv);
         LinearLayout agreementRl = findViewById(R.id.home_main_layout_kyrl);
         ImageView prImageView = findViewById(R.id.home_main_layout_pr);
@@ -141,7 +141,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 height / 10);
         prImageView.setLayoutParams(imgIp);
         agreementRl.setLayoutParams(textLp);
-        menuTextView.setOnClickListener(this);
+        menuImageView.setOnClickListener(this);
         agreementTextView.setOnClickListener(this);
         prImageView.setOnClickListener(this);
     }
@@ -238,22 +238,30 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void ChannelListCallback(HomeBean homeBean) {
-
+        if (homeBean != null && homeBean.getContentList() != null
+                && homeBean.getContentList().size() > 0) {
+            setRecyclerView(homeBean);
+        }
     }
 
     @Override
     public void DailyRankListCallback(HomeBean homeBean) {
-
+        if (homeBean != null && homeBean.getContentList() != null
+                && homeBean.getContentList().size() > 0) {
+            setRecyclerView(homeBean);
+        }
     }
 
     @Override
     public void TvScheduleCallback(HomeBean homeBean) {
-
+        if (homeBean != null && homeBean.getContentList() != null
+                && homeBean.getContentList().size() > 0) {
+            setRecyclerView(homeBean);
+        }
     }
 
     @Override
     public void UserInfoCallback(HomeBean homeBean) {
-
     }
 
     @Override
@@ -266,6 +274,25 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void WeeklyRankCallback(HomeBean homeBean) {
+        if (homeBean != null && homeBean.getContentList() != null
+                && homeBean.getContentList().size() > 0) {
+            setRecyclerView(homeBean);
+        }
+    }
 
+    @Override
+    public void RecommendChannelCallback(HomeBean homeBean) {
+        if (homeBean != null && homeBean.getContentList() != null
+                && homeBean.getContentList().size() > 0) {
+            setRecyclerView(homeBean);
+        }
+    }
+
+    @Override
+    public void RecommemdVideoCallback(HomeBean homeBean) {
+        if (homeBean != null && homeBean.getContentList() != null
+                && homeBean.getContentList().size() > 0) {
+            setRecyclerView(homeBean);
+        }
     }
 }
