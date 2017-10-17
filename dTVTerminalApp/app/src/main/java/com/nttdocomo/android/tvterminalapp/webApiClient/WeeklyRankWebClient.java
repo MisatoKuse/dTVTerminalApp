@@ -1,7 +1,7 @@
 package com.nttdocomo.android.tvterminalapp.webApiClient;
 
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
-import com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.VodClipJsonParser;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.WeeklyRankList;
+import com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.WeeklyRankJsonParser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,50 +13,85 @@ import java.util.List;
  * 週間のクリップ数番組ランキング取得処理
  */
 public class WeeklyRankWebClient
-        extends WebApiBasePlala {
+        extends WebApiBasePlala  implements WebApiBasePlala.WebApiBasePlalaCallback{
+
+    /**
+     * コールバック
+     */
+    public interface WeeklyRankJsonParserCallback {
+        /**
+         * 正常に終了した場合に呼ばれるコールバック
+         * @param weeklyRankLists JSONパース後のデータ
+         */
+        void onWeeklyRankJsonParsed(List<WeeklyRankList> weeklyRankLists);
+    }
+
+    //コールバックのインスタンス
+    private WeeklyRankJsonParserCallback mWeeklyRankJsonParserCallback;
+
+    /**
+     * 通信成功時のコールバック
+     * @param returnCode 戻り値構造体
+     */
+    @Override
+    public void onAnswer(ReturnCode returnCode) {
+        //パース後データ受け取り用
+        List<WeeklyRankList> pursedData;
+
+        //JSONをパースする
+        WeeklyRankJsonParser weeklyRankJsonParser = new WeeklyRankJsonParser();
+        pursedData = weeklyRankJsonParser.WEEKLYRANKListSender(returnCode.bodyData);
+
+        //パース後のデータを返す
+        mWeeklyRankJsonParserCallback.onWeeklyRankJsonParsed(pursedData);
+    }
+
+    /**
+     * 通信失敗時のコールバック
+     */
+    @Override
+    public void onError() {
+        //エラーが発生したのでヌルを返す
+        mWeeklyRankJsonParserCallback.onWeeklyRankJsonParsed(null);
+    }
+
 
     /**
      * 週間のクリップ数番組ランキング取得
-     * @param limit    取得する最大件数(値は1以上)
-     * @param offset   取得位置(値は1以上)
-     * @param filter   フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
-     * @param ageReq   年齢設定値（ゼロの場合は1扱い）
-     * @param genreId  ジャンルID
-     * @return TODO: ひとまずテスト用にVODクリップのリストを格納する
+     * @param limit                           取得する最大件数(値は1以上)
+     * @param offset                        　取得位置(値は1以上)
+     * @param filter                          フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
+     * @param ageReq                          年齢設定値（ゼロの場合は1扱い）
+     * @param genreId                         ジャンルID
+     * @param weeklyRankJsonParserCallback コールバック
+     * @return パラメータエラー等ならばfalse
      */
-    public List<VodClipList> getWeeklyRankApi(int limit, int offset, String filter,
-                                              int ageReq, String genreId) {
+    public boolean getWeeklyRankApi(int limit, int offset, String filter,
+                                       int ageReq, String genreId,
+                                       WeeklyRankJsonParserCallback weeklyRankJsonParserCallback) {
         //パラメーターのチェック(genreIdはヌルを受け付けるので、チェックしない)
-        if(!checkNormalParameter(limit,offset,filter,ageReq)) {
-            //パラメーターがおかしければ通信不能なので、ヌルで帰る
-            return null;
+        if(!checkNormalParameter(limit,offset,filter,ageReq,weeklyRankJsonParserCallback)) {
+            //パラメーターがおかしければ通信不能なので、falseで帰る
+            return false;
         }
+
+        //コールバックを呼べるようにする
+        mWeeklyRankJsonParserCallback = weeklyRankJsonParserCallback;
 
         //送信用パラメータの作成
         String sendParameter = makeSendParameter(limit,offset,filter,ageReq,genreId);
 
-        //JSONの組み立てに失敗していれば、ヌルで帰る
+        //JSONの組み立てに失敗していれば、falseで帰る
         if(sendParameter.isEmpty()) {
-            return null;
+            return false;
         }
 
-        //VODクリップ一覧を呼び出す
-        ReturnCode returnCode = openUrl(API_NAME_LIST.DAILY_RANK_LIST.getString(),sendParameter);
+        //週毎ランク一覧を呼び出す
+        //TODO: 内部的には暫定措置としてVODクリップ一覧を呼び出す
+        openUrl(API_NAME_LIST.DAILY_RANK_LIST.getString(),sendParameter,this);
 
-        //TODO: ひとまずテスト用にVODクリップ用のパーサーを使用する
-        VodClipJsonParser vodClipJsonParser = new VodClipJsonParser();
-        List<VodClipList> pursedData;
-
-        if(returnCode.errorType == ERROR_TYPE.SUCCESS) {
-            //JSONをパースする
-            pursedData = vodClipJsonParser.VodClipListSender(returnCode.bodyData);
-
-            //パース後のデータを返す
-            return pursedData;
-        } else {
-            //通信に失敗しているので、ヌルを返す
-            return null;
-        }
+        //今のところ失敗は無いので、trueで帰る
+        return true;
     }
 
     /**
@@ -67,7 +102,8 @@ public class WeeklyRankWebClient
      * @param ageReq   年齢設定値（ゼロの場合は1扱い）
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(int limit,int offset,String filter,int ageReq) {
+    private boolean checkNormalParameter(int limit,int offset,String filter,int ageReq,
+                                         WeeklyRankJsonParserCallback weeklyRankJsonParserCallback) {
         // 各値が下限以下ならばfalse
         if(limit < 1) {
             return false;
@@ -94,6 +130,11 @@ public class WeeklyRankWebClient
 
         //年齢情報の件0から17までの間以外はエラー
         if(ageReq < 0 || ageReq > 17) {
+            return false;
+        }
+
+        //コールバックがヌルならばエラー
+        if(weeklyRankJsonParserCallback == null) {
             return false;
         }
 

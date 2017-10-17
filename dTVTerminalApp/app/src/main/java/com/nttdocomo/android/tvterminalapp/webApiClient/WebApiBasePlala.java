@@ -217,6 +217,21 @@ public class WebApiBasePlala {
     }
 
     /**
+     * コネクションを蓄積して、後で止められるようにする
+     * @param mUrlConnection コネクション
+     */
+    private void addUrlConnections(HttpURLConnection mUrlConnection) {
+        //通信が終わり、ヌルが入れられる場合に備えたヌルチェック
+        if(mUrlConnections == null) {
+            //既に削除されていたので、再度確保を行う
+            mUrlConnections = new ArrayList<>();
+        }
+
+        //HTTPコネクションを追加する
+        mUrlConnections.add(mUrlConnection);
+    }
+
+    /**
      * 全ての通信を遮断する
      * TODO:実装予定のすべての通信を遮断するAPIで使用の予定
      */
@@ -254,17 +269,6 @@ public class WebApiBasePlala {
     }
 
     /**
-     * TODO:一時的に用意した、コールバック未対応クラスをコンパイルエラーにしないためのメソッド・後で消すこと
-     * @param sourceUrl
-     * @param receivedParameters
-     * @return
-     */
-    public ReturnCode openUrl(final String sourceUrl,String receivedParameters) {
-        openUrl(sourceUrl,receivedParameters,null);
-        return null;
-    }
-
-    /**
      * 指定したAPIで通信を開始する
      * @param sourceUrl                 API呼び出し名
      * @param webApiBasePlalaCallback コールバック
@@ -296,7 +300,7 @@ public class WebApiBasePlala {
         }
 
         //コネクトに成功したので、控えておく
-        mUrlConnections.add(mUrlConnection);
+        addUrlConnections(mUrlConnection);
 
         StringBuilder stringBuilder = null;
         InputStream stream = null;

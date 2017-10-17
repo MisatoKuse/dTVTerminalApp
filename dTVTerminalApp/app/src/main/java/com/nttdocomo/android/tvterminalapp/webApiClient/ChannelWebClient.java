@@ -1,7 +1,7 @@
 package com.nttdocomo.android.tvterminalapp.webApiClient;
 
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
-import com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.VodClipJsonParser;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
+import com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.ChannelJsonParser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,59 +13,97 @@ import java.util.List;
  * チャンネル一覧取得処理
  */
 public class ChannelWebClient
-        extends WebApiBasePlala {
+        extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback{
+
+    /**
+     * コールバック
+     */
+    public interface ChannelJsonParserCallback {
+        /**
+         * 正常に終了した場合に呼ばれるコールバック
+         * @param channelLists JSONパース後のデータ
+         */
+        void onChannelJsonParsed(List<ChannelList> channelLists);
+    }
+
+    //コールバックのインスタンス
+    private ChannelJsonParserCallback mChannelJsonParserCallback;
+
+    /**
+     * 通信成功時のコールバック
+     * @param returnCode 戻り値構造体
+     */
+    @Override
+    public void onAnswer(ReturnCode returnCode) {
+        //パース後データ受け取り用
+        List<ChannelList> pursedData;
+
+        //JSONをパースする
+        ChannelJsonParser channelJsonParser = new ChannelJsonParser();
+        pursedData = channelJsonParser.CHANNELListSender(returnCode.bodyData);
+
+        //パース後のデータを返す
+        mChannelJsonParserCallback.onChannelJsonParsed(pursedData);
+    }
+
+    /**
+     * 通信失敗時のコールバック
+     */
+    @Override
+    public void onError() {
+        //エラーが発生したのでヌルを返す
+        mChannelJsonParserCallback.onChannelJsonParsed(null);
+    }
 
     /**
      * チャンネル一覧取得
-     * @param pagetLimit    取得する最大件数(値は1以上)
-     * @param pagerOffset   取得位置(値は1以上)
-     * @param filter        フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
-     * @param type          タイプ　dch：dチャンネル・hikaritv：ひかりTVの多ch・指定なし：全て
-     * @return TODO: ひとまずテスト用にVODクリップのリストを格納する
+     * @param pagetLimit                  取得する最大件数(値は1以上)
+     * @param pagerOffset                 取得位置(値は1以上)
+     * @param filter                       フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
+     * @param type                         タイプ　dch：dチャンネル・hikaritv：ひかりTVの多ch・指定なし：全て
+     * @param channelJsonParserCallback  コールバック
+     * @return パラメータエラー等が発生した場合はfalse
      */
-    public List<VodClipList> getChannelApi(int pagetLimit, int pagerOffset, String filter, String type) {
+    public boolean getChannelApi(int pagetLimit, int pagerOffset,
+                                           String filter,String type,
+                                           ChannelJsonParserCallback channelJsonParserCallback) {
         //パラメーターのチェック
-        if(!checkNormalParameter(pagetLimit,pagerOffset,filter,type)) {
-            //パラメーターがおかしければ通信不能なので、ヌルで帰る
-            return null;
+        if(!checkNormalParameter(pagetLimit,pagerOffset,filter,type,channelJsonParserCallback)) {
+            //パラメーターがおかしければ通信不能なので、falseで帰る
+            return false;
         }
+
+        //コールバックの設定
+        mChannelJsonParserCallback = channelJsonParserCallback;
 
         //送信用パラメータの作成
         String sendParameter = makeSendParameter(pagetLimit,pagerOffset,filter,type);
 
-        //JSONの組み立てに失敗していれば、ヌルで帰る
+        //JSONの組み立てに失敗していれば、falseで帰る
         if(sendParameter.isEmpty()) {
-            return null;
+            return false;
         }
 
-        //VODクリップ一覧を呼び出す
-        ReturnCode returnCode = openUrl(API_NAME_LIST.CHANNEL_LIST.getString(),sendParameter);
+        //チャンネル一覧を呼び出す
+        //TODO: 内部的には暫定的にVOD一覧を呼んでいる
+        openUrl(API_NAME_LIST.CHANNEL_LIST.getString(),sendParameter,this);
 
-        List<VodClipList> pursedData;
-
-        if(returnCode.errorType == ERROR_TYPE.SUCCESS) {
-            //JSONをパースする
-            //TODO: ひとまずテスト用にVODクリップ用のパーサーを使用する
-            VodClipJsonParser vodClipJsonParser = new VodClipJsonParser();
-            pursedData = vodClipJsonParser.VodClipListSender(returnCode.bodyData);
-
-            //パース後のデータを返す
-            return pursedData;
-        } else {
-            //通信に失敗しているので、ヌルを返す
-            return null;
-        }
+        //現状失敗は無いのでtrue
+        return true;
     }
 
     /**
      * 指定されたパラメータがおかしいかどうかのチェック
-     * @param pagetLimit    取得する最大件数(値は1以上)
-     * @param pagerOffset   取得位置(値は1以上)
-     * @param filter        フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
-     * @param type          タイプ　dch：dチャンネル・hikaritv：ひかりTVの多ch・指定なし：全て
+     * @param pagetLimit                   取得する最大件数(値は1以上)
+     * @param pagerOffset                  取得位置(値は1以上)
+     * @param filter                        フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
+     * @param type                          タイプ　dch：dチャンネル・hikaritv：ひかりTVの多ch・指定なし：全て
+     * @param channelJsonParserCallback   コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(int pagetLimit,int pagerOffset,String filter,String type) {
+    private boolean checkNormalParameter(int pagetLimit,int pagerOffset,
+                                         String filter,String type,
+                                         ChannelJsonParserCallback channelJsonParserCallback) {
         // 各値が下限以下ならばfalse
         if(pagetLimit < 1) {
             return false;
@@ -102,6 +140,10 @@ public class ChannelWebClient
             return false;
         }
 
+        if(channelJsonParserCallback == null) {
+            //コールバックがヌルならばfalse
+            return false;
+        }
 
         //何もエラーが無いのでtrue
         return true;

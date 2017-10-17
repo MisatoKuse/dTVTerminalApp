@@ -296,11 +296,12 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
             int pagerOffset = 1;
             String filter = FILTER_RELEASE;
             String type = TYPE_D_CHANNEL;
-            List<VodClipList> clipLists = webClient.getChannelApi(pageLimit, pagerOffset, filter,
-                    type);
-            for (int i = 0; i < clipLists.size(); i++) {
-                list = clipLists.get(i).getVcList();
-            }
+            //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
+//            List<VodClipList> clipLists = webClient.getChannelApi(pageLimit, pagerOffset, filter,
+//                    type);
+//            for (int i = 0; i < clipLists.size(); i++) {
+//                list = clipLists.get(i).getVcList();
+//            }
         }
         return list;
     }

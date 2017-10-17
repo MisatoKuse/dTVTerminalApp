@@ -1,7 +1,7 @@
 package com.nttdocomo.android.tvterminalapp.webApiClient;
 
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
-import com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.VodClipJsonParser;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
+import com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.TvScheduleJsonParser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,47 +14,80 @@ import java.util.List;
  * チャンネル毎番組一覧取得処理
  */
 public class TvScheduleWebClient
-        extends WebApiBasePlala {
+        extends WebApiBasePlala  implements WebApiBasePlala.WebApiBasePlalaCallback{
+
+    /**
+     * コールバック
+     */
+    public interface TvScheduleJsonParserCallback {
+        /**
+         * 正常に終了した場合に呼ばれるコールバック
+         * @param tvScheduleList JSONパース後のデータ
+         */
+        void onTvScheduleJsonParsed(List<TvScheduleList> tvScheduleList);
+    }
+
+    //コールバックのインスタンス
+    private TvScheduleJsonParserCallback mTvScheduleJsonParserCallback;
+
+    /**
+     * 通信成功時のコールバック
+     * @param returnCode 戻り値構造体
+     */
+    @Override
+    public void onAnswer(ReturnCode returnCode) {
+        //パース後データ受け取り用
+        List<TvScheduleList> pursedData;
+
+        //JSONをパースする
+        TvScheduleJsonParser tvScheduleJsonParser = new TvScheduleJsonParser();
+        pursedData = tvScheduleJsonParser.TV_SCHEDULEListSender(returnCode.bodyData);
+
+        //パース後のデータを返す
+        mTvScheduleJsonParserCallback.onTvScheduleJsonParsed(pursedData);
+    }
+
+    /**
+     * 通信失敗時のコールバック
+     */
+    @Override
+    public void onError() {
+        //エラーが発生したのでヌルを返す
+        mTvScheduleJsonParserCallback.onTvScheduleJsonParsed(null);
+    }
+
 
     /**
      * チャンネル一覧取得
      * @param chno    チャンネル番号
      * @param date    日付（"now"を指定した場合、現在放送中番組を返却)
      * @param filter  フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
-     * @return TODO: ひとまずテスト用にVODクリップのリストを格納する
+     * @return パラメータエラーならばfalse
      */
-    public List<VodClipList> getTvScheduleApi(int[] chno, String[] date, String filter) {
+    public boolean getTvScheduleApi(int[] chno, String[] date, String filter,
+                                   TvScheduleJsonParserCallback tvScheduleJsonParserCallback) {
 
-        if(!checkNormalParameter(chno,date,filter)) {
-            //パラメーターがおかしければ通信不能なので、ヌルで帰る
-            return null;
+        if(!checkNormalParameter(chno,date,filter,tvScheduleJsonParserCallback)) {
+            //パラメーターがおかしければ通信不能なので、falseで帰る
+            return false;
         }
+
+        mTvScheduleJsonParserCallback = tvScheduleJsonParserCallback;
 
         //送信用パラメータの作成
         String sendParameter = makeSendParameter(chno,date,filter);
 
-        //JSONの組み立てに失敗していれば、ヌルで帰る
+        //JSONの組み立てに失敗していれば、falseで帰る
         if(sendParameter.isEmpty()) {
-            return null;
+            return false;
         }
 
-        //VODクリップ一覧を呼び出す
-        ReturnCode returnCode = openUrl(API_NAME_LIST.TV_SCHEDULE_LIST.getString(),sendParameter);
+        //TVスケジュール一覧を呼び出す
+        //TODO: 内部では暫定的にVODクリップ一覧を呼び出す
+        openUrl(API_NAME_LIST.TV_SCHEDULE_LIST.getString(),sendParameter,this);
 
-        List<VodClipList> pursedData;
-
-        if(returnCode.errorType == ERROR_TYPE.SUCCESS) {
-            //JSONをパースする
-            //TODO: ひとまずテスト用にVODクリップ用のパーサーを使用する
-            VodClipJsonParser vodClipJsonParser = new VodClipJsonParser();
-            pursedData = vodClipJsonParser.VodClipListSender(returnCode.bodyData);
-
-            //パース後のデータを返す
-            return pursedData;
-        } else {
-            //通信に失敗しているので、ヌルを返す
-            return null;
-        }
+        //今のところ失敗は無いので、trueで帰る
+        return true;
     }
 
     /**
@@ -62,9 +95,11 @@ public class TvScheduleWebClient
      * @param chno    チャンネル番号
      * @param date    日付（"now"を指定した場合、現在放送中番組を返却)
      * @param filter  フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
+     * @param tvScheduleJsonParserCallback  コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(int[] chno,String[] date,String filter) {
+    private boolean checkNormalParameter(int[] chno,String[] date,String filter,
+                                      TvScheduleJsonParserCallback tvScheduleJsonParserCallback) {
         //パラメーターのチェック
         if(chno.length == 0) {
             //データが一つもなければエラー
@@ -94,6 +129,11 @@ public class TvScheduleWebClient
             if(!filter.isEmpty()) {
                 return false;
             }
+        }
+
+        //コールバックがヌルならばfalse
+        if(tvScheduleJsonParserCallback == null) {
+            return false;
         }
 
         //何もエラーが無いのでtrue
