@@ -1,21 +1,20 @@
-package com.nttdocomo.android.tvterminalapp.DataProvider;
+package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 
-import com.nttdocomo.android.tvterminalapp.Model.ResultType;
-import com.nttdocomo.android.tvterminalapp.WebApiClient.Recommend.Search.SearchConstants;
-import com.nttdocomo.android.tvterminalapp.Model.Search.SearchContentInfo;
-import com.nttdocomo.android.tvterminalapp.Model.Search.SearchNarrowCondition;
-import com.nttdocomo.android.tvterminalapp.Model.Search.SearchServiceType;
-import com.nttdocomo.android.tvterminalapp.Model.Search.SearchSortKind;
-import com.nttdocomo.android.tvterminalapp.WebApiClient.Recommend.Search.TotalSearchContentInfo;
-import com.nttdocomo.android.tvterminalapp.WebApiClient.Recommend.Search.TotalSearchErrorData;
-import com.nttdocomo.android.tvterminalapp.WebApiClient.Recommend.Search.TotalSearchRequestData;
-import com.nttdocomo.android.tvterminalapp.WebApiClient.Recommend.Search.TotalSearchResponseData;
-import com.nttdocomo.android.tvterminalapp.WebApiClient.Recommend.Search.TotalSearchWebApi;
-import com.nttdocomo.android.tvterminalapp.WebApiClient.Recommend.Search.TotalSearchWebApiDelegate;
-import com.nttdocomo.android.tvterminalapp.WebApiClient.Recommend.Search.XMLParser;
-import com.nttdocomo.android.tvterminalapp.WebApiClient.Recommend.Search.SearchResultError;
-import com.nttdocomo.android.tvterminalapp.WebApiClient.Recommend.Search.SearchState;
+import com.nttdocomo.android.tvterminalapp.model.ResultType;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.SearchConstants;
+import com.nttdocomo.android.tvterminalapp.model.Search.SearchContentInfo;
+import com.nttdocomo.android.tvterminalapp.model.Search.SearchNarrowCondition;
+import com.nttdocomo.android.tvterminalapp.model.Search.SearchServiceType;
+import com.nttdocomo.android.tvterminalapp.model.Search.SearchSortKind;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.TotalSearchContentInfo;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.TotalSearchErrorData;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.TotalSearchRequestData;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.TotalSearchResponseData;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.TotalSearchWebApi;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.TotalSearchWebApiDelegate;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.SearchResultError;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.SearchState;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -29,9 +28,9 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
     }
 
     public static final String comma = ",";
-    //private Lock lock = new ReentrantLock();    //private let lock = NSLock()
+
     private SearchState _state = SearchState.inital;
-    private TotalSearchContentInfo handler=null;    //private var handler: ((ResultType<TotalSearchContentInfo>) -> Void)?
+    //private TotalSearchContentInfo handler=null;    //private var handler: ((ResultType<TotalSearchContentInfo>) -> Void)?
 
     private SearchDataProviderListener mSearchDataProviderListener=null;
 
@@ -49,7 +48,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
     }
 
     private TotalSearchWebApi mTotalSearchWebApi=null;
-    XMLParser.XMLParserFinishListener mXMLParserFinishListener=null;
+    //XMLParser.XMLParserFinishListener mXMLParserFinishListener=null;
     public void startSearchWith(String keyword,
                                 ArrayList<SearchServiceType> serviceTypeArray,
                                 SearchNarrowCondition condition,
@@ -58,7 +57,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
                                 /*TotalSearchContentInfo handler, */
                                 SearchDataProviderListener searchDataProviderListener) {
 
-        this.handler = handler;
+        //this.handler = handler;
         setSearchState(SearchState.running);
         TotalSearchRequestData request = new TotalSearchRequestData();
         try {
@@ -99,21 +98,23 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
 
     @Override
     public void onSuccess(TotalSearchResponseData result) {
-        if(_state != SearchState.canceled ) {
+        synchronized (this) {
+            if (_state != SearchState.canceled) {
 
-            final ArrayList<SearchContentInfo> contentArray=new ArrayList<SearchContentInfo>();
-            result.map(contentArray);
+                final ArrayList<SearchContentInfo> contentArray = new ArrayList<SearchContentInfo>();
+                result.map(contentArray);
 
-            ResultType<TotalSearchContentInfo> resultType= new ResultType<TotalSearchContentInfo>();
-            TotalSearchContentInfo totalSearchContentInfo=new TotalSearchContentInfo();
-            totalSearchContentInfo.init(result.totalCount, contentArray);
-            resultType.success(totalSearchContentInfo);
+                ResultType<TotalSearchContentInfo> resultType = new ResultType<TotalSearchContentInfo>();
+                TotalSearchContentInfo totalSearchContentInfo = new TotalSearchContentInfo();
+                totalSearchContentInfo.init(result.totalCount, contentArray);
+                resultType.success(totalSearchContentInfo);
 
-            if(null!=mSearchDataProviderListener){
-                mSearchDataProviderListener.onSearchDataProviderFinishOk(resultType);
+                if (null != mSearchDataProviderListener) {
+                    mSearchDataProviderListener.onSearchDataProviderFinishOk(resultType);
+                }
+
+                setSearchState(SearchState.finished);
             }
-
-            setSearchState(SearchState.finished);
         }
     }
 
@@ -121,25 +122,23 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
     public void onFailure(TotalSearchErrorData result) {
         if(SearchState.canceled != getSearchState()){
 
-            SearchResultError error;
+            SearchResultError error = SearchResultError.systemError;;
             if(result.error.id.equals(SearchConstants.SearchResponseErrorId.requestError)){
                 error = SearchResultError.requestError;
             } else if (result.error.id.equals(SearchConstants.SearchResponseErrorId.systemError)){
                 error = SearchResultError.systemError;
-            } else {
-                error = SearchResultError.systemError;
             }
 
-            if(null!=handler){
+            //if(null!=handler){
 
-                ResultType<SearchResultError> resultType= new ResultType<SearchResultError>();
-                resultType.failure(error);
+            ResultType<SearchResultError> resultType= new ResultType<SearchResultError>();
+            resultType.failure(error);
 
-                //handler.init(resultType);
-                if(null!=mSearchDataProviderListener){
-                    mSearchDataProviderListener.onSearchDataProviderFinishNg(resultType);
-                }
+            //handler.init(resultType);
+            if(null!=mSearchDataProviderListener){
+                mSearchDataProviderListener.onSearchDataProviderFinishNg(resultType);
             }
+            //}
 
             setSearchState(SearchState.finished);
         }

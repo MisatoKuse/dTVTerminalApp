@@ -1,8 +1,9 @@
-package com.nttdocomo.android.tvterminalapp.WebApiClient.Recommend.Search;
+package com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search;
 
 
 import com.nttdocomo.android.tvterminalapp.common.Constants.UrlConstants;
-import com.nttdocomo.android.tvterminalapp.WebApiClient.WebApiBase;
+import com.nttdocomo.android.tvterminalapp.webapiclient.WebApiBase;
+
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

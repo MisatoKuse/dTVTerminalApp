@@ -1,8 +1,8 @@
-package com.nttdocomo.android.tvterminalapp.WebApiClient.Recommend.Search;
+package com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search;
 
 
-import com.nttdocomo.android.tvterminalapp.Model.ResultType;
-import com.nttdocomo.android.tvterminalapp.Model.Search.SearchContentInfo;
+import com.nttdocomo.android.tvterminalapp.model.ResultType;
+import com.nttdocomo.android.tvterminalapp.model.Search.SearchContentInfo;
 
 import java.util.ArrayList;
 

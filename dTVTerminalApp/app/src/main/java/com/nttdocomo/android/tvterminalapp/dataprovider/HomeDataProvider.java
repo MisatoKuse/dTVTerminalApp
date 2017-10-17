@@ -1,4 +1,4 @@
-package com.nttdocomo.android.tvterminalapp.DataProvider;
+package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 /**
  * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.

@@ -1,4 +1,4 @@
-package com.nttdocomo.android.tvterminalapp.DataProvider;
+package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 import android.graphics.Bitmap;

@@ -1,4 +1,4 @@
-package com.nttdocomo.android.tvterminalapp.WebApiClient.Recommend.Search;
+package com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search;
 
 
 import java.util.ArrayList;
@@ -11,12 +11,12 @@ public class TotalSearchRequestData {
     public String query;       //複数条件の場合は半角スペース
 
     //optional
-    public String searchFields;
+    //public String searchFields;
     public final ResponseType responseType = ResponseType.xml;
     public int startIndex = 1;     //省略時は1
     public int maxResult = 1000;   //省略時は1000
 
-    public String getColumn;
+    //public String getColumn;
     public int sortKind;
 
     public ArrayList<SearchFilterType> filterTypeList=new ArrayList<SearchFilterType>();

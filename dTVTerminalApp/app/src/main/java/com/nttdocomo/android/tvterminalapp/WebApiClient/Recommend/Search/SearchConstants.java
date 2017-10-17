@@ -1,4 +1,4 @@
-package com.nttdocomo.android.tvterminalapp.WebApiClient.Recommend.Search;
+package com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search;
 
 /**
  * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.

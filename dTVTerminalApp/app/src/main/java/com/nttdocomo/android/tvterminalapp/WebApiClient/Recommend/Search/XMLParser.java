@@ -1,4 +1,4 @@
-package com.nttdocomo.android.tvterminalapp.WebApiClient.Recommend.Search;
+package com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search;
 
 
 import android.os.AsyncTask;
@@ -19,37 +19,37 @@ public class XMLParser extends AsyncTask<String, Integer, String> {
     private TotalSearchErrorData searchError = null;
     private XMLParserFinishListener mXMLParserFinishListener=null;
 
-    private String  kStatus = "status";
-    private String  kStatusOk = "ok";
-    private String  kStatusNg = "ng";
+    private static final String kStatus = "status";
+    private static final String kStatusOk = "ok";
+    private static final String kStatusNg = "ng";
 
-    private String  kId = "id";
-    private String  kParam = "param";
+    private static final String kId = "id";
+    private static final String kParam = "param";
 
-    private String  kTotalCount = "totalCount";
-    private String  kResultCount = "resultCount";
+    private static final String kTotalCount = "totalCount";
+    private static final String kResultCount = "resultCount";
 
-    private String  kServiceCount = "serviceCount";
-    private String  kContent = "content";
+    private static final String kServiceCount = "serviceCount";
+    private static final String kContent = "content";
 
-    private String  kContentCount = "contentCount";
+    private static final String kContentCount = "contentCount";
 
-    private String  kRank = "rank";
-    private String  kCtId = "ctId";
-    private String  kCtPicURL = "ctPicURL";
-    private String  kTitle = "title";
-    private String  kPerson = "person";
-    private String  kTitleKind = "titleKind";
+    private static final String kRank = "rank";
+    private static final String kCtId = "ctId";
+    private static final String kCtPicURL = "ctPicURL";
+    private static final String kTitle = "title";
+    private static final String kPerson = "person";
+    private static final String kTitleKind = "titleKind";
 
-    private String kUserId = "userId";
-    private String kFunction = "function";
-    private String kResponseType = "responseType";
-    private String kQuery = "query";
-    private String kStartIndex = "startIndex";
-    private String kMaxResult = "maxResult";
-    private String kSortKind = "sortKind";
-    private String kServiceId = "serviceId";
-    private String kCondition = "condition";
+    private static final String kUserId = "userId";
+    private static final String kFunction = "function";
+    private static final String kResponseType = "responseType";
+    private static final String kQuery = "query";
+    private static final String kStartIndex = "startIndex";
+    private static final String kMaxResult = "maxResult";
+    private static final String kSortKind = "sortKind";
+    private static final String kServiceId = "serviceId";
+    private static final String kCondition = "condition";
 
     public interface XMLParserFinishListener {
         public void onXMLParserFinish(TotalSearchResponseData responseData);

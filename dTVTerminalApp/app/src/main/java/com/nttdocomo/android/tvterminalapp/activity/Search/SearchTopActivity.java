@@ -20,21 +20,21 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DCommon;
-import com.nttdocomo.android.tvterminalapp.DataProvider.SearchDataProvider;
-import com.nttdocomo.android.tvterminalapp.WebApiClient.Recommend.Search.SearchResultError;
-import com.nttdocomo.android.tvterminalapp.Model.ResultType;
-import com.nttdocomo.android.tvterminalapp.WebApiClient.Recommend.Search.SearchConstants;
-import com.nttdocomo.android.tvterminalapp.Model.Search.SearchContentInfo;
-import com.nttdocomo.android.tvterminalapp.WebApiClient.Recommend.Search.SearchDubbedType;
-import com.nttdocomo.android.tvterminalapp.WebApiClient.Recommend.Search.SearchFilterTypeMappable;
-import com.nttdocomo.android.tvterminalapp.WebApiClient.Recommend.Search.SearchGenreType;
-import com.nttdocomo.android.tvterminalapp.Model.Search.SearchNarrowCondition;
-import com.nttdocomo.android.tvterminalapp.Model.Search.SearchServiceType;
-import com.nttdocomo.android.tvterminalapp.Model.Search.SearchSortKind;
-import com.nttdocomo.android.tvterminalapp.WebApiClient.Recommend.Search.TotalSearchContentInfo;
-import com.nttdocomo.android.tvterminalapp.Fragment.Search.FragmentFactory;
-import com.nttdocomo.android.tvterminalapp.Fragment.Search.SearchBaseFragment;
-import com.nttdocomo.android.tvterminalapp.Fragment.Search.SearchBaseFragmentScrollListener;
+import com.nttdocomo.android.tvterminalapp.dataprovider.SearchDataProvider;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.SearchResultError;
+import com.nttdocomo.android.tvterminalapp.model.ResultType;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.SearchConstants;
+import com.nttdocomo.android.tvterminalapp.model.Search.SearchContentInfo;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.SearchDubbedType;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.SearchFilterTypeMappable;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.SearchGenreType;
+import com.nttdocomo.android.tvterminalapp.model.Search.SearchNarrowCondition;
+import com.nttdocomo.android.tvterminalapp.model.Search.SearchServiceType;
+import com.nttdocomo.android.tvterminalapp.model.Search.SearchSortKind;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.TotalSearchContentInfo;
+import com.nttdocomo.android.tvterminalapp.fragment.search.FragmentFactory;
+import com.nttdocomo.android.tvterminalapp.fragment.search.SearchBaseFragment;
+import com.nttdocomo.android.tvterminalapp.fragment.search.SearchBaseFragmentScrollListener;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -154,7 +154,8 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
                                                 public void run() {
                                                     Log.d(DCommon.LOG_DEF_TAG, "1 sencond passed");
                                                     mSearchTime = System.currentTimeMillis();
-                                                    if(mInputText != mBeforeText) {
+                                                    //findbug 修正 if(mInputText != mBeforeText) {
+                                                    if(false == mInputText.equals(mBeforeText)) {
                                                         // 文字列に変化があった場合
                                                         Log.d(DCommon.LOG_DEF_TAG,"Start IncrementalSearch:"+mInputText);
                                                         initSearchedResultView();
@@ -232,7 +233,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
                 ret.add(new SearchServiceType(SearchServiceType.ServiceId.dTV));
             case PAGE_NO_OF_SERVICE_DANIME: //dアニメ
                 ret.add(new SearchServiceType(SearchServiceType.ServiceId.dAnime));
-            default:
+                break;
         }
 
         return ret;
@@ -409,11 +410,13 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
 
         SearchBaseFragment baseFragment = getCurrentSearchBaseFragment();//(SearchBaseFragment)FragmentFactory.createFragment(currentPageNo, this);
 
-        if(mIsPaging){
-            baseFragment.displayLoadMore(false);
-            setPagingStatus(false);
-        }else{
-            baseFragment.clear();
+        synchronized (this) {
+            if (mIsPaging) {
+                baseFragment.displayLoadMore(false);
+                setPagingStatus(false);
+            } else {
+                baseFragment.clear();
+            }
         }
 
         if(0<mSearchTotalCount){
@@ -432,6 +435,8 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
             baseFragment.notifyDataSetChanged(totalCountText);
             baseFragment.setSelection(mSearchLastItem);
         }
+
+        baseFragment.displayLoadMore(false);
 
         setSearchStart(false);
     }
@@ -460,9 +465,11 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
         }
     }
 
+    /*
     @Override
     public void onScrollStateChanged(SearchBaseFragment fragment, AbsListView absListView, int scrollState) {
     }
+    */
 
     private int mSearchLastItem =0;
     private boolean mIsPaging=false;
@@ -472,6 +479,8 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
             mIsPaging=b;
         }
     }
+
+    private static final int sLoadPageDelayTime = 500;
 
     @Override
     public void onScroll(SearchBaseFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
@@ -492,7 +501,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
                 public void run() {
                     setSearchData(null);
                 }
-            }, 1000);
+            }, sLoadPageDelayTime);
         }
     }
 

@@ -1,4 +1,4 @@
-package com.nttdocomo.android.tvterminalapp.Model.Search;
+package com.nttdocomo.android.tvterminalapp.model.Search;
 
 
 public class SearchServiceType {

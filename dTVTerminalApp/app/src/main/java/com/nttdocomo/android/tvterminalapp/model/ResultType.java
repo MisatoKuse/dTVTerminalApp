@@ -1,4 +1,4 @@
-package com.nttdocomo.android.tvterminalapp.Model;
+package com.nttdocomo.android.tvterminalapp.model;
 
 
 

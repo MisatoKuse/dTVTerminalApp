@@ -1,7 +1,7 @@
-package com.nttdocomo.android.tvterminalapp.WebApiClient.Recommend.Search;
+package com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search;
 
 
-import com.nttdocomo.android.tvterminalapp.Model.Search.SearchContentInfo;
+import com.nttdocomo.android.tvterminalapp.model.Search.SearchContentInfo;
 
 import java.util.ArrayList;
 
@@ -18,8 +18,8 @@ public class TotalSearchResponseData {
         int serviceId;
         String ctPicURL;
         String title;
-        String person;
-        int titleKind;
+        //String person;    //iosソースより、保留
+        //int titleKind;    //iosソースより、保留
     }
 
     public TotalSearchResponseData() {
@@ -37,7 +37,7 @@ public class TotalSearchResponseData {
     public ArrayList<Content> contentList;
 
     public void map(ArrayList<SearchContentInfo> searchContentInfoArray){
-        if(null==searchContentInfoArray){
+        if(null == searchContentInfoArray){
             searchContentInfoArray=new ArrayList<SearchContentInfo>();
         } else {
             searchContentInfoArray.clear();

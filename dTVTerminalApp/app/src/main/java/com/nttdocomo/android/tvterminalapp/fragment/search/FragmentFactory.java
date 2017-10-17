@@ -1,4 +1,4 @@
-package com.nttdocomo.android.tvterminalapp.Fragment.Search;
+package com.nttdocomo.android.tvterminalapp.fragment.search;
 
 import java.util.HashMap;
 import java.util.Map;

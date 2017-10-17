@@ -1,4 +1,4 @@
-package com.nttdocomo.android.tvterminalapp.Fragment.Search;
+package com.nttdocomo.android.tvterminalapp.fragment.search;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -7,18 +7,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.Search.SearchTopActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.SearchResultBaseAdapter;
+import com.nttdocomo.android.tvterminalapp.activity.Player.TvPlayerActivity;
+import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class SearchBaseFragment extends Fragment implements AbsListView.OnScrollListener {
+public class SearchBaseFragment extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
 
     public Context mActivity;
     public List mData;
@@ -60,15 +63,16 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
             mTeveviListview = mTeleviFragmentView.findViewById(R.id.lv_searched_result);
 
             mTeveviListview.setOnScrollListener(this);
+            mTeveviListview.setOnItemClickListener(this);
 
             getContext();
             mLoadMoreView = LayoutInflater.from(mActivity).inflate(R.layout.search_load_more, null);
-            mLoadCompleteView = LayoutInflater.from(mActivity).inflate(R.layout.search_load_complete, null);
+            //mLoadCompleteView = LayoutInflater.from(mActivity).inflate(R.layout.search_load_complete, null);
 
-            mTeveviListview.addFooterView(mLoadMoreView);
+            //mTeveviListview.addFooterView(mLoadMoreView);
             //mTeveviListview.addFooterView(mLoadCompleteView);
-            mLoadMoreView.setVisibility(View.GONE);
-            mLoadCompleteView.setVisibility(View.GONE);
+            //mLoadMoreView.setVisibility(View.GONE);
+            //mLoadCompleteView.setVisibility(View.GONE);
         }
 
         //SearchResultBaseAdapter searchResultBaseAdapter
@@ -96,9 +100,12 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
     }
 
     public void displayLoadMore(boolean b){
-        if(null!=mLoadMoreView){
-            int s= (b? View.VISIBLE: View.GONE);
-            mLoadMoreView.setVisibility(s);
+        if(null!=mTeveviListview && null!=mLoadMoreView){
+            if(b){
+                mTeveviListview.addFooterView(mLoadMoreView);
+            } else {
+                mTeveviListview.removeFooterView(mLoadMoreView);
+            }
         }
     }
 
@@ -109,6 +116,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
 
     @Override
     public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+        /*
         switch(scrollState){
             case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
 
@@ -122,6 +130,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         if(null!=mSearchBaseFragmentScrollListener){
             mSearchBaseFragmentScrollListener.onScrollStateChanged(this, absListView, scrollState);
         }
+        */
     }
 
     @Override
@@ -129,6 +138,11 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         if(null!=mSearchBaseFragmentScrollListener){
             mSearchBaseFragmentScrollListener.onScroll(this, absListView, firstVisibleItem, visibleItemCount, totalItemCount);
         }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        ((BaseActivity)mActivity).startActivity(TvPlayerActivity.class, null);
     }
 
 }

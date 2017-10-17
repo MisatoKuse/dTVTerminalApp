@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.nttdocomo.android.tvterminalapp.DataProvider.ThumbnailProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.Player.TvPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.beans.HomeBeanContent;

@@ -1,4 +1,4 @@
-package com.nttdocomo.android.tvterminalapp.WebApiClient.Recommend.Search;
+package com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search;
 
 
 import com.nttdocomo.android.tvterminalapp.common.DCommon;
