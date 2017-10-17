@@ -35,26 +35,62 @@ import static com.nttdocomo.android.tvterminalapp.webApiClient.WebApiBasePlala.T
  * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-public class HomeDataProvider {
+public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallback {
 
     private Context mContext;
 
-    private List<Map<String, String>> HomeStructList = new ArrayList<>();
+    @Override
+    public void onVodClipJsonParsed(List<VodClipList> vodClipLists) {
+        if (vodClipLists != null && vodClipLists.size() > 0) {
+            List<Map<String, String>> list = vodClipLists.get(0).getVcList();
+            sendVodClipListData(list);
+        }
+    }
 
     /**
      * Home画面用データを返却するためのコールバック
      */
     public interface ApiDataProviderCallback {
+        /**
+         * チャンネル一覧用コールバック
+         *
+         * @param homeBean
+         */
         void ChannelListCallback(HomeBean homeBean);
 
+        /**
+         * デイリーランキング用コールバック
+         *
+         * @param homeBean
+         */
         void DailyRankListCallback(HomeBean homeBean);
 
+        /**
+         * CH毎番組表用コールバック
+         *
+         * @param homeBean
+         */
         void TvScheduleCallback(HomeBean homeBean);
 
+        /**
+         * ユーザ情報用コールバック
+         *
+         * @param homeBean
+         */
         void UserInfoCallback(HomeBean homeBean);
 
+        /**
+         * クリップリスト用コールバック
+         *
+         * @param homeBean
+         */
         void VodClipListCallback(HomeBean homeBean);
 
+        /**
+         * 週間ランキング用コールバック
+         *
+         * @param homeBean
+         */
         void WeeklyRankCallback(HomeBean homeBean);
     }
 
@@ -229,9 +265,6 @@ public class HomeDataProvider {
             int pagerOffset = 1;
             webClient.getVodClipApi(ageReq, upperPageLimit,
                     lowerPageLimit, pagerOffset, (VodClipWebClient.VodClipJsonParserCallback) mContext);
-//            for (int i = 0; i < clipLists.size(); i++) {
-//                list = clipLists.get(i).getVcList();
-//            }
         }
         return list;
     }
