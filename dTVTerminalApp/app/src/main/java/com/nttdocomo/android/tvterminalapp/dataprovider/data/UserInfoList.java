@@ -10,7 +10,8 @@ import java.util.List;
 
 public class UserInfoList {
     private HashMap<String, String> mUiMap = new HashMap<>();
-    private List<HashMap<String, String>> mUiList = new ArrayList<>();
+    private List<HashMap<String, String>> mLoggedinAccountList = new ArrayList<>();
+    private List<HashMap<String, String>> mH4dAccountList = new ArrayList<>();
 
     public HashMap getUiMap() {
         return mUiMap;
@@ -20,11 +21,19 @@ public class UserInfoList {
         this.mUiMap = uiMap;
     }
 
-    public List getUiList() {
-        return mUiList;
+    public List getLoggedinAccountList() {
+        return mLoggedinAccountList;
     }
 
-    public void setUiList(List uiList) {
-        this.mUiList = uiList;
+    public void setLoggedinAccountList(List loggedinAccountList) {
+        this.mLoggedinAccountList = loggedinAccountList;
+    }
+
+    public List getH4dAccountList() {
+        return mH4dAccountList;
+    }
+
+    public void setH4dAccountList(List h4dAccountList) {
+        this.mH4dAccountList = h4dAccountList;
     }
 }
