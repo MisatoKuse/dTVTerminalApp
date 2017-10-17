@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 
 public class STBConnectActivity extends BaseActivity {
@@ -66,8 +67,7 @@ public class STBConnectActivity extends BaseActivity {
                 }
             } catch (Exception e) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
-                System.out.println("exception...");
+                DTVTLogger.debug(e);
             }
         }
     };
