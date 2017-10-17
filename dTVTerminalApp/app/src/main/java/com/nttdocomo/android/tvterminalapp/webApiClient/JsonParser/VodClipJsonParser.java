@@ -72,4 +72,104 @@ public class VodClipJsonParser {
             VODCLIP_LIST_HDRFLG, VODCLIP_LIST_AVAIL_STATUS, VODCLIP_LIST_DELIVERY, VODCLIP_LIST_R_VALUE,
             VODCLIP_LIST_ADULT, VODCLIP_LIST_MS, VODCLIP_LIST_NG_FUNC, VODCLIP_LIST_GENRE_ID_ARRAY, VODCLIP_LIST_DTV};
 
+    public List<VodClipList> VodClipListSender(String jsonStr) {
+
+        mVodClipList = new VodClipList();
+
+        try {
+            JSONObject jsonObj = new JSONObject(jsonStr);
+            if (jsonObj != null) {
+                sendStatus(jsonObj);
+                sendVcList(jsonObj);
+
+                List<VodClipList> vodClipList = Arrays.asList(mVodClipList);
+
+                return vodClipList;
+            }
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void sendStatus(JSONObject jsonObj) {
+        try {
+            // statusの値を取得し、Mapに格納
+            HashMap<String, String> map = new HashMap<String, String>();
+            if (!jsonObj.isNull(VODCLIP_LIST_STATUS)) {
+                String status = jsonObj.getString(VODCLIP_LIST_STATUS);
+                map.put(VODCLIP_LIST_STATUS, status);
+            }
+
+            if (!jsonObj.isNull(VODCLIP_LIST_PAGER)) {
+                JSONObject pager = jsonObj.getJSONObject(VODCLIP_LIST_PAGER);
+
+                for (int i = 0; i < pagerPara.length; i++){
+                    if (!pager.isNull(pagerPara[i])) {
+                        String para = pager.getString(pagerPara[i]);
+                        map.put(pagerPara[i], para);
+                    }
+                }
+            }
+
+            mVodClipList.setVcMap(map);
+
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    /*
+    * コンテンツのList<HashMap>をオブジェクトクラスに格納
+     */
+    public void sendVcList(JSONObject jsonObj) {
+        try {
+            if (!jsonObj.isNull(VODCLIP_LIST)) {
+                // コンテンツリストのList<HashMap>を用意
+                List<HashMap<String, String>> vcList = new ArrayList<>();
+
+                // コンテンツリストをJSONArrayにパースする
+                JSONArray jsonArr = jsonObj.getJSONArray(VODCLIP_LIST);
+
+                // リストの数だけまわす
+                for (int i = 0; i<jsonArr.length(); i++){
+                    // 最初にHashMapを生成＆初期化
+                    HashMap<String, String> vcListMap = new HashMap<String, String>();
+
+                    // i番目のJSONArrayをJSONObjectに変換する
+                    JSONObject jsonObject = jsonArr.getJSONObject(i);
+
+                    for (int j = 0; j < listPara.length; j++){
+                        if (!jsonObject.isNull(listPara[j])) {
+                            if (listPara[j] == VODCLIP_LIST_GENRE_ID_ARRAY) {
+                                String para = jsonObject.getString(listPara[j]);
+                                vcListMap.put(listPara[j], para.substring(1, (para.length() -1)));
+                            } else {
+                                String para = jsonObject.getString(listPara[j]);
+                                vcListMap.put(listPara[j], para);
+                            }
+                        }
+                    }
+
+                    // i番目のMapをListにadd
+                    vcList.add(vcListMap);
+                }
+                // リスト数ぶんの格納が終わったらオブジェクトクラスにList<HashMap>でset
+                mVodClipList.setVcList(vcList);
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
 }
