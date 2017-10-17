@@ -84,27 +84,24 @@ public class WebApiBasePlala {
 
         /**
          * チャンネル一覧の呼び出し先
-         * TODO: （まだテストサーバーに無いので、VOD用を仮置き）
          */
-        CHANNEL_LIST("vod_clip/list"),
+        CHANNEL_LIST("channel/list"),
 
         /**
          * チャンネル毎番組一覧の呼び出し先
-         * TODO: （まだテストサーバーに無いので、VOD用を仮置き）
          */
-        TV_SCHEDULE_LIST("vod_clip/list"),
+        TV_SCHEDULE_LIST("channel/program/get"),
 
         /**
          * 日毎ランク一覧の呼び出し先
-         * TODO: （まだテストサーバーに無いので、VOD用を仮置き）
          */
-        DAILY_RANK_LIST("vod_clip/list"),
+        DAILY_RANK_LIST("dayclip/count/programranking/get"),
 
         /**
          * 週毎ランク一覧の呼び出し先
-         * TODO: （まだテストサーバーに無いので、VOD用を仮置き）
+         * TODO: 現状の仕様では使わない想定
          */
-        WEEKLY_RANK_LIST("vod_clip/list"),
+        WEEKLY_RANK_LIST("weekclip/count/programranking/get"),
 
         ;   //最後にセミコロンが必要
 
