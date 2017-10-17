@@ -87,7 +87,8 @@ public class SearchResultBaseAdapter extends BaseAdapter {
         }
 
         if(null!=holder.iv_thumbnail){
-            //holder.iv_thumbnail.setImageBitmap(null);
+
+            holder.iv_thumbnail.setTag(searchContentInfo.contentPictureUrl);
             Bitmap bp= mThumbnailProvider.getThumbnailImage(holder.iv_thumbnail, searchContentInfo.contentPictureUrl);
             if(null!=bp){
                 holder.iv_thumbnail.setImageBitmap(bp);
