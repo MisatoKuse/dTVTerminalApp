@@ -121,6 +121,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
         loadMenuList(popupWindowView);
     }
 
+    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 

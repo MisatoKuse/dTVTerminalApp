@@ -13,9 +13,6 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.Home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 
-/**
- * Created by ryuhan on 2017/09/25.
- */
 
 public class STBParingInvitationActivity extends BaseActivity implements View.OnClickListener {
 
@@ -39,7 +36,7 @@ public class STBParingInvitationActivity extends BaseActivity implements View.On
 
     private void setContents() {
 
-        /**
+        /*
          * ペアリング勧誘
          * ※一度表示されたら以降表示されない
          */

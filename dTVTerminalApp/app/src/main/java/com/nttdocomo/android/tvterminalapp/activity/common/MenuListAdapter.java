@@ -27,19 +27,23 @@ public class MenuListAdapter extends BaseAdapter {
         this.mDataCounts=dataCounts;
     }
 
+    @Override
     public int getCount() {
         return mData.size();
     }
 
+    @Override
     public Object getItem(int i) {
         return mData.get(i);
     }
 
+    @Override
     public long getItemId(int i) {
         return i;
     }
 
 
+    @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         View itemProgramVIew = null;
         ProgramViewHolder holder = null;
