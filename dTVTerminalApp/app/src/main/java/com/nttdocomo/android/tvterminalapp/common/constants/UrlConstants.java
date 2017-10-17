@@ -1,4 +1,4 @@
-package com.nttdocomo.android.tvterminalapp.common.constants_temp;
+package com.nttdocomo.android.tvterminalapp.common.constants;
 
 
 
