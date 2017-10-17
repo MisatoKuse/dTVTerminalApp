@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.support.v7.widget.SearchView;
 import android.widget.AbsListView;
@@ -549,6 +550,17 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
         public CharSequence getPageTitle(int position) {
             return mTabNames[position];
         }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        View currentView = getCurrentFocus();
+        if (currentView != null && currentView instanceof SearchView) {
+        } else {
+            //検索ボックス以外タッチならキーボードを消す
+            mSearchView.clearFocus();
+        }
+        return super.dispatchTouchEvent(event);
     }
 }
 
