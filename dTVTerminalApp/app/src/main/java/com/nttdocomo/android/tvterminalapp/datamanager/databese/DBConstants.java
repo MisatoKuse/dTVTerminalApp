@@ -15,4 +15,10 @@ public class DBConstants {
      * DBVersion
      */
     public static final int DATABASE_VERSION = 1;
+
+    /**
+     * Jsonのキー名が数字から始まってる時の対策用定数
+     */
+    public static final String FOUR_K_FLG = "4kflg";
+    public static final String UNDER_BAR_FOUR_K_FLG = "_4kflg";
 }

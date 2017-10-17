@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATABASE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATABASE_VERSION;
-import static com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.DailyRankJsonParser.DAILYRANK_LIST_4KFLG;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.UNDER_BAR_FOUR_K_FLG;
 import static com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.DailyRankJsonParser.DAILYRANK_LIST_ADULT;
 import static com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.DailyRankJsonParser.DAILYRANK_LIST_AVAIL_END_DATE;
 import static com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.DailyRankJsonParser.DAILYRANK_LIST_AVAIL_START_DATE;
@@ -74,7 +74,7 @@ public class DailyRankListDBHelper extends SQLiteOpenHelper {
             DAILYRANK_LIST_DUR + " text, " +
             DAILYRANK_LIST_DEMONG + " text, " +
             DAILYRANK_LIST_BVFLG + " text, " +
-            DAILYRANK_LIST_4KFLG + " text, " +
+            UNDER_BAR_FOUR_K_FLG + " text, " +
             DAILYRANK_LIST_HDRFLG + " text, " +
             DAILYRANK_LIST_AVAIL_STATUS + " text, " +
             DAILYRANK_LIST_DELIVERY + " text, " +

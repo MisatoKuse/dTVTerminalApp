@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WeeklyRankListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.WeeklyRankListDBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WeeklyRankList;
+import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -52,7 +54,7 @@ public class WeeklyRankInsertDataManager {
                 Map.Entry entry = (Map.Entry) entries.next();
                 String keyName = (String) entry.getKey();
                 String valName = (String) entry.getValue();
-                values.put(keyName, valName);
+                values.put(DBUtils.fourKFlgConversion(keyName), valName);
             }
             weeklyRankListDao.insert(values);
         }

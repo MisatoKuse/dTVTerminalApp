@@ -37,7 +37,7 @@ public class DateUtils {
     private static final String DATA_SAVE = "DataSave";
 
     //日付フォーマット
-    private static final String DATE_PATTERN = "\"YYYY/MM/DD hh:mm:ss\"";
+    private static final String DATE_PATTERN = "yyyy/MM/dd HH:mm:ss";
 
     //DB保存期限
     private static final int LIMIT_HOUR = 1;

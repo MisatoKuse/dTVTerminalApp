@@ -25,11 +25,12 @@ import com.nttdocomo.android.tvterminalapp.activity.common.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.beans.HomeBean;
 import com.nttdocomo.android.tvterminalapp.beans.HomeBeanContent;
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.dataprovider.HomeDataProvider;
 
 /**
  * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
-public class HomeActivity extends BaseActivity implements View.OnClickListener{
+public class HomeActivity extends BaseActivity implements View.OnClickListener, HomeDataProvider.ApiDataProviderCallback {
 
     private LinearLayout mLinearLayout;
     private RecyclerView mRecyclerView;
@@ -43,20 +44,22 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
         setTitleText("ホーム");
         //ビューの初期化処理
         initView();
+        HomeDataProvider homeDataProvider = new HomeDataProvider(this);
+        homeDataProvider.getHomeData();
     }
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.home_main_layout_pr:
             case R.id.home_main_layout_kytv:
-                if (isFastClick()){
+                if (isFastClick()) {
                     startBrowser();
                 }
                 break;
             case R.id.header_layout_menu:
                 //ダブルクリックを防ぐ
-                if (isFastClick()){
+                if (isFastClick()) {
                     onSampleGlobalMenuButton_PairLoginOk();
                 }
                 break;
@@ -69,7 +72,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
-                if(isFastClick()){
+                if (isFastClick()) {
                     showTips();
                 }
                 break;
@@ -82,19 +85,21 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
 
     /**
      * 機能
-     *      アプリ終了ダイアログ
+     * アプリ終了ダイアログ
      */
     private void showTips() {
         AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .setTitle("アプリ終了")
                 .setMessage("アプリ終了してよろしいでしょうか？")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
                     public void onClick(DialogInterface dialog, int which) {
                         finish();
                     }
                 })
                 .setNegativeButton("Cancel",
                         new DialogInterface.OnClickListener() {
+                            @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 return;
                             }
@@ -105,9 +110,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
 
     /**
      * 機能
-     *      外部ブラウザーを起動する
+     * 外部ブラウザーを起動する
      */
-    private void startBrowser(){
+    private void startBrowser() {
         Intent intent = new Intent();
         intent.setAction("android.intent.action.VIEW");
         Uri content_url = Uri.parse(PR_URL);
@@ -117,15 +122,15 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
 
     /**
      * 機能
-     *      ビューの初期化処理
+     * ビューの初期化処理
      */
-    private void initView(){
+    private void initView() {
         mLinearLayout = findViewById(R.id.home_main_layout_linearLayout);
         TextView menuTextView = findViewById(R.id.header_layout_menu);
         menuTextView.setVisibility(View.VISIBLE);
         TextView agreementTextView = findViewById(R.id.home_main_layout_kytv);
         LinearLayout agreementRl = findViewById(R.id.home_main_layout_kyrl);
-        ImageView prImageView= findViewById(R.id.home_main_layout_pr);
+        ImageView prImageView = findViewById(R.id.home_main_layout_pr);
         int height = getHeightDensity();
         //多機種を対応できるよう
         LinearLayout.LayoutParams imgIp = new LinearLayout.LayoutParams(
@@ -143,9 +148,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
 
     /**
      * 機能
-     *      コンテンツ一覧ビューを設定
+     * コンテンツ一覧ビューを設定
      */
-    private void setRecyclerView(HomeBean mHomeBean){
+    private void setRecyclerView(HomeBean mHomeBean) {
         String typeContentName = mHomeBean.getContentTypeName();
         String resultCount = mHomeBean.getContentCount();
         final int index = mHomeBean.getContentType();
@@ -178,9 +183,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
 
     /**
      * 機能
-     *      コンテンツ一覧データを設定
+     * コンテンツ一覧データを設定
      */
-    private void setRecyclerViewData(RecyclerView mRecyclerView, List<HomeBeanContent> mList,final int index){
+    private void setRecyclerViewData(RecyclerView mRecyclerView, List<HomeBeanContent> mList, final int index) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mRecyclerView.setLayoutManager(linearLayoutManager);
@@ -201,33 +206,66 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
 
     /**
      * 機能
-     *      遷移先を設定
+     * 遷移先を設定
      */
-    private void startTo(int index){
-        switch (index){
+    private void startTo(int index) {
+        switch (index) {
             case 0:
                 //チャンネルリスト一覧へ遷移
-                startActivity(ChannelListActivity.class,null);
+                startActivity(ChannelListActivity.class, null);
                 break;
             case 1:
             case 2:
                 //おすすめへ遷移
-                startActivity(RecommendActivity.class,null);
+                startActivity(RecommendActivity.class, null);
                 break;
             case 3:
                 //今日のテレビランキングへ遷移
-                startActivity(DailyTvRankingActivity.class,null);
+                startActivity(DailyTvRankingActivity.class, null);
                 break;
             case 4:
                 //ビデオランキングへ遷移
-                startActivity(VideoRankingActivity.class,null);
+                startActivity(VideoRankingActivity.class, null);
                 break;
             case 5:
                 //クリップ一覧へ遷移
-                startActivity(ClipListActivity.class,null);
+                startActivity(ClipListActivity.class, null);
                 break;
             default:
                 break;
         }
+    }
+
+    @Override
+    public void ChannelListCallback(HomeBean homeBean) {
+
+    }
+
+    @Override
+    public void DailyRankListCallback(HomeBean homeBean) {
+
+    }
+
+    @Override
+    public void TvScheduleCallback(HomeBean homeBean) {
+
+    }
+
+    @Override
+    public void UserInfoCallback(HomeBean homeBean) {
+
+    }
+
+    @Override
+    public void VodClipListCallback(HomeBean homeBean) {
+        if (homeBean != null && homeBean.getContentList() != null
+                && homeBean.getContentList().size() > 0) {
+            setRecyclerView(homeBean);
+        }
+    }
+
+    @Override
+    public void WeeklyRankCallback(HomeBean homeBean) {
+
     }
 }

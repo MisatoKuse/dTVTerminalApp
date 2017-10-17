@@ -222,10 +222,10 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         HomeBeanContent homeBeanContent = new HomeBeanContent();
         List<HomeBeanContent> contents = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-            homeBeanContent.setContentTime(VODCLIP_LIST_THUMB);
-            homeBeanContent.setContentName(VODCLIP_LIST_TITLE);
-            homeBeanContent.setContentTime(VODCLIP_LIST_DISPLAY_START_DATE);
-            homeBeanContent.setContentId(VODCLIP_LIST_DISP_TYPE);
+            homeBeanContent.setContentSrcURL("http:"+list.get(i).get(VODCLIP_LIST_THUMB));
+            homeBeanContent.setContentName(list.get(i).get(VODCLIP_LIST_TITLE));
+            homeBeanContent.setContentTime(list.get(i).get(VODCLIP_LIST_DISPLAY_START_DATE));
+            homeBeanContent.setContentId(list.get(i).get(VODCLIP_LIST_DISP_TYPE));
             contents.add(homeBeanContent);
         }
         homeBean.setContentList(contents);
@@ -262,7 +262,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
 
         List<Map<String, String>> list = new ArrayList<>();
         //Vodクリップ一覧のDB保存履歴と、有効期間を確認
-        if (lastDate != null || lastDate.length() > 0 || dateUtils.isBeforeLimitDate(lastDate)) {
+        if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
             //データをDBから取得する
             HomeDataManager homeDataManager = new HomeDataManager(mContext);
             list = homeDataManager.selectClipHomeData();
@@ -274,7 +274,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
             int lowerPageLimit = 1;
             int pagerOffset = 1;
             webClient.getVodClipApi(ageReq, upperPageLimit,
-                    lowerPageLimit, pagerOffset, (VodClipWebClient.VodClipJsonParserCallback) mContext);
+                    lowerPageLimit, pagerOffset, this);
         }
         return list;
     }

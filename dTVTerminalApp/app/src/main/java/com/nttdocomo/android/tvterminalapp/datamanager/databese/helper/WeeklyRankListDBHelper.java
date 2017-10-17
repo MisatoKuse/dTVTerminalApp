@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATABASE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATABASE_VERSION;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.UNDER_BAR_FOUR_K_FLG;
 import static com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.WeeklyRankJsonParser.WEEKLYRANK_LIST_4KFLG;
 import static com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.WeeklyRankJsonParser.WEEKLYRANK_LIST_ADULT;
 import static com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.WeeklyRankJsonParser.WEEKLYRANK_LIST_AVAIL_END_DATE;
@@ -72,7 +73,7 @@ public class WeeklyRankListDBHelper extends SQLiteOpenHelper{
             WEEKLYRANK_LIST_DUR + " text, " +
             WEEKLYRANK_LIST_DEMONG + " text, " +
             WEEKLYRANK_LIST_BVFLG + " text, " +
-            WEEKLYRANK_LIST_4KFLG + " text, " +
+            UNDER_BAR_FOUR_K_FLG + " text, " +
             WEEKLYRANK_LIST_HDRFLG + " text, " +
             WEEKLYRANK_LIST_AVAIL_STATUS + " text, " +
             WEEKLYRANK_LIST_DELIVERY + " text, " +

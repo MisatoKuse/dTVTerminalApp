@@ -5,6 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.UserInfoListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.UserInfoListDBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
+import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -51,7 +53,7 @@ public class UserInfoInsertDataManager {
                 Map.Entry entry = (Map.Entry) entries.next();
                 String keyName = (String) entry.getKey();
                 String valName = (String) entry.getValue();
-                userInfoListDao.insert(keyName, valName);
+                userInfoListDao.insert(DBUtils.fourKFlgConversion(keyName), valName);
             }
         }
         for (int i = 0; i < hashMaps2.size(); i++) {

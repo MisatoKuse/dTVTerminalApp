@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATABASE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATABASE_VERSION;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.UNDER_BAR_FOUR_K_FLG;
 import static com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.TvScheduleJsonParser.TV_SCHEDULE_LIST_4KFLG;
 import static com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.TvScheduleJsonParser.TV_SCHEDULE_LIST_ADULT;
 import static com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.TvScheduleJsonParser.TV_SCHEDULE_LIST_AVAIL_END_DATE;
@@ -73,7 +74,7 @@ public class TvScheduleListDBHelper extends SQLiteOpenHelper{
             TV_SCHEDULE_LIST_DUR + " text, " +
             TV_SCHEDULE_LIST_DEMONG + " text, " +
             TV_SCHEDULE_LIST_BVFLG + " text, " +
-            TV_SCHEDULE_LIST_4KFLG + " text, " +
+            UNDER_BAR_FOUR_K_FLG + " text, " +
             TV_SCHEDULE_LIST_HDRFLG + " text, " +
             TV_SCHEDULE_LIST_AVAIL_STATUS + " text, " +
             TV_SCHEDULE_LIST_DELIVERY + " text, " +

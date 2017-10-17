@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATABASE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATABASE_VERSION;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.UNDER_BAR_FOUR_K_FLG;
 import static com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.VodClipJsonParser.VODCLIP_LIST_4KFLG;
 import static com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.VodClipJsonParser.VODCLIP_LIST_ADULT;
 import static com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.VodClipJsonParser.VODCLIP_LIST_AVAIL_END_DATE;
@@ -73,7 +74,7 @@ public class VodClipListDBHelper extends SQLiteOpenHelper {
             VODCLIP_LIST_DUR + " text, " +
             VODCLIP_LIST_DEMONG + " text, " +
             VODCLIP_LIST_BVFLG + " text, " +
-            VODCLIP_LIST_4KFLG + " text, " +
+            UNDER_BAR_FOUR_K_FLG + " text, " +
             VODCLIP_LIST_HDRFLG + " text, " +
             VODCLIP_LIST_AVAIL_STATUS + " text, " +
             VODCLIP_LIST_DELIVERY + " text, " +

@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ChannelListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.ChannelListDBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
+import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -53,7 +54,7 @@ public class ChannelInsertDataManager {
                 Map.Entry entry = (Map.Entry) entries.next();
                 String keyName = (String) entry.getKey();
                 String valName = (String) entry.getValue();
-                values.put(keyName, valName);
+                values.put(DBUtils.fourKFlgConversion(keyName), valName);
             }
             channelListDao.insert(values);
         }
