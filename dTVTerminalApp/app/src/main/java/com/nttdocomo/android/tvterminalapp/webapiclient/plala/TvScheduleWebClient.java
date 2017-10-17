@@ -1,7 +1,7 @@
-package com.nttdocomo.android.tvterminalapp.webapiclient_temp.plala;
+package com.nttdocomo.android.tvterminalapp.webapiclient.plala;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
-import com.nttdocomo.android.tvterminalapp.webapiclient_temp.jsonparser_temp.TvScheduleJsonParser;
+import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser;
 
 import org.json.JSONArray;
 import org.json.JSONException;

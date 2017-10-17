@@ -1,4 +1,4 @@
-package com.nttdocomo.android.tvterminalapp.webapiclient_temp.jsonparser_temp;
+package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import org.json.JSONException;

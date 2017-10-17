@@ -1,4 +1,4 @@
-package com.nttdocomo.android.tvterminalapp.webapiclient_temp.xmlparser;
+package com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser;
 
 import android.util.Xml;
 

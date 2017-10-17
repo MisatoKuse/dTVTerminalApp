@@ -1,7 +1,7 @@
-package com.nttdocomo.android.tvterminalapp.webapiclient_temp.plala;
+package com.nttdocomo.android.tvterminalapp.webapiclient.plala;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WeeklyRankList;
-import com.nttdocomo.android.tvterminalapp.webapiclient_temp.jsonparser_temp.WeeklyRankJsonParser;
+import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
