@@ -87,7 +87,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener{
     private void showTips() {
         AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .setTitle("アプリ終了")
-                .setMessage("アプリ終了してよろしいでしょうか")
+                .setMessage("アプリ終了してよろしいでしょうか？")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         finish();
