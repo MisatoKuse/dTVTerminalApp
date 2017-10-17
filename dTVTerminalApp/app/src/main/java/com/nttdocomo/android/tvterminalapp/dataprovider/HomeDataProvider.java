@@ -205,10 +205,6 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * Activityからのデータ取得要求受付
      */
     public void getHomeData() {
-        List<Map<String, String>> vodClipList = getVodClipListData();
-        if(vodClipList != null && vodClipList.size() > 0){
-            sendVodClipListData(vodClipList);
-        }
         List<Map<String, String>> channelList = getChannelListData();
         if(channelList != null && channelList.size() > 0){
             sendChannelListData(channelList);
@@ -225,7 +221,10 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         if(weeklyRankList != null && weeklyRankList.size() > 0){
             sendWeeklyRankListData(weeklyRankList);
         }
-
+        List<Map<String, String>> vodClipList = getVodClipListData();
+        if(vodClipList != null && vodClipList.size() > 0){
+            sendVodClipListData(vodClipList);
+        }
     }
 
     public HomeBean makeHomeStruct(List<Map<String, String>> list) {
