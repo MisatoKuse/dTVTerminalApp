@@ -18,6 +18,21 @@ public class DateUtils {
     //VodClipList取得日付キー
     public static final String VOD_LAST_INSERT = "VodLastInsert";
 
+    //DailyRankList取得日付キー
+    public static final String DAILY_RANK_LAST_INSERT = "DailyRankLastInsert";
+
+    //ChannelList取得日付キー
+    public static final String CHANNEL_LAST_INSERT = "ChannelLastInsert";
+
+    //TvScheduleList取得日付キー
+    public static final String TvSchedule_LAST_INSERT = "TvScheduleLastInsert";
+
+    //UserInfo取得日付キー
+    public static final String USER_INFO_LAST_INSERT = "UserInfoLastInsert";
+
+    //WeeklyRank取得日付キー
+    public static final String WEEKLY_RANK_LAST_INSERT = "WeeklyRankLastInsert";
+
     //SharedPreferences用データ
     private static final String DATA_SAVE = "DataSave";
 
@@ -25,7 +40,7 @@ public class DateUtils {
     private static final String DATE_PATTERN = "\"YYYY/MM/DD hh:mm:ss\"";
 
     //DB保存期限
-    private static final int LIMIT_HOUR = 24;
+    private static final int LIMIT_HOUR = 1;
 
     private Context mContext;
 

@@ -10,7 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.VodClipListDBHelper.VOD_CLIP_LIST_TABLE_NAME;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.VodClipListDBHelper.VODCLIP_LIST_TABLE_NAME;
+
 
 /**
  * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
@@ -41,7 +42,7 @@ public class VodClipListDao {
         List<Map<String, String>> list = new ArrayList<>();
 
         Cursor cursor = db.query(
-                VOD_CLIP_LIST_TABLE_NAME,
+                VODCLIP_LIST_TABLE_NAME,
                 strings,
                 null,
                 null,
@@ -76,7 +77,7 @@ public class VodClipListDao {
     public long insert(String key, String value) {
         ContentValues values = new ContentValues();
         values.put(key, value);
-        return db.insert(VOD_CLIP_LIST_TABLE_NAME, null, values);
+        return db.insert(VODCLIP_LIST_TABLE_NAME, null, values);
     }
 
     public int update() {
@@ -90,6 +91,6 @@ public class VodClipListDao {
      * @return
      */
     public int delete() {
-        return db.delete(VOD_CLIP_LIST_TABLE_NAME, null, null);
+        return db.delete(VODCLIP_LIST_TABLE_NAME, null, null);
     }
 }
