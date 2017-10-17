@@ -41,6 +41,9 @@ public class HomeDataProvider {
 
     private List<Map<String, String>> HomeStructList = new ArrayList<>();
 
+    /**
+     * Home画面用データを返却するためのコールバック
+     */
     public interface ApiDataProviderCallback {
         void ChannelListCallback(HomeBean homeBean);
 
@@ -224,9 +227,8 @@ public class HomeDataProvider {
             int upperPageLimit = 1;
             int lowerPageLimit = 1;
             int pagerOffset = 1;
-            //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
-//            List<VodClipList> clipLists = webClient.getVodClipApi(ageReq, upperPageLimit,
-//                    lowerPageLimit, pagerOffset);
+            webClient.getVodClipApi(ageReq, upperPageLimit,
+                    lowerPageLimit, pagerOffset, (VodClipWebClient.VodClipJsonParserCallback) mContext);
 //            for (int i = 0; i < clipLists.size(); i++) {
 //                list = clipLists.get(i).getVcList();
 //            }
