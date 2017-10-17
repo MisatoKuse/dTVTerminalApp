@@ -52,7 +52,7 @@ public class TvScheduleListDBHelper extends SQLiteOpenHelper{
     //Homeキャッシュデータ格納用テーブル
     private static final String CREATE_TABLE_SQL = "" +
             "create table " + TV_SCHEDULE_LIST_TABLE_NAME + " (" +
-            TV_SCHEDULE_LIST_ID_COLUMN + " integer primary key, " +
+            TV_SCHEDULE_LIST_ID_COLUMN + " integer primary key autoincrement, " +
             TV_SCHEDULE_LIST_CRID + " text, " +
             TV_SCHEDULE_LIST_CID + " text, " +
             TV_SCHEDULE_LIST_TITLE_ID + " text, " +

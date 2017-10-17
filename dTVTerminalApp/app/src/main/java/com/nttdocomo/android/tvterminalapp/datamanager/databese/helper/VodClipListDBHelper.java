@@ -52,7 +52,7 @@ public class VodClipListDBHelper extends SQLiteOpenHelper {
     //Homeキャッシュデータ格納用テーブル
     private static final String CREATE_TABLE_SQL = "" +
             "create table " + VODCLIP_LIST_TABLE_NAME + " (" +
-            VODCLIP_LIST_ID_COLUMN + " integer primary key, " +
+            VODCLIP_LIST_ID_COLUMN + " integer primary key autoincrement, " +
             VODCLIP_LIST_CRID + " text, " +
             VODCLIP_LIST_CID + " text, " +
             VODCLIP_LIST_TITLE_ID + " text, " +

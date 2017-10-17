@@ -52,7 +52,7 @@ public class ChannelListDBHelper extends SQLiteOpenHelper {
     //Homeキャッシュデータ格納用テーブル
     private static final String CREATE_TABLE_SQL = "" +
             "create table " + CHANNEL_LIST_TABLE_NAME + " (" +
-            CHANNEL_LIST_ID_COLUMN + " integer primary key, " +
+            CHANNEL_LIST_ID_COLUMN + " integer primary key autoincrement, " +
             CHANNEL_LIST_CRID + " text, " +
             CHANNEL_LIST_CID + " text, " +
             CHANNEL_LIST_TITLE_ID + " text, " +

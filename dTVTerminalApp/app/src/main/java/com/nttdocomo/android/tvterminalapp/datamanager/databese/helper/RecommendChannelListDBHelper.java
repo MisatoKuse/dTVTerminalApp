@@ -42,7 +42,7 @@ public class RecommendChannelListDBHelper extends SQLiteOpenHelper {
     //Homeキャッシュデータ格納用テーブル
     private static final String CREATE_TABLE_SQL = "" +
             "create table " + RECOMMEND_CHANNEL_LIST_TABLE_NAME + " (" +
-            RECOMMEND_CHANNEL_LIST_ID_COLUMN + " integer primary key, " +
+            RECOMMEND_CHANNEL_LIST_ID_COLUMN + " integer primary key autoincrement, " +
             RECOMMENDCHANNEL_LIST_RECOMMENDORDER + " text, " +
             RECOMMENDCHANNEL_LIST_SERVICEID + " text, " +
             RECOMMENDCHANNEL_LIST_CATEGORYID + " text, " +

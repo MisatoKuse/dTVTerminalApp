@@ -53,7 +53,7 @@ public class DailyRankListDBHelper extends SQLiteOpenHelper {
     //Homeキャッシュデータ格納用テーブル
     private static final String CREATE_TABLE_SQL = "" +
             "create table " + DAILYRANK_LIST_TABLE_NAME + " (" +
-            DAILYRANK_LIST_ID_COLUMN + " integer primary key, " +
+            DAILYRANK_LIST_ID_COLUMN + " integer primary key autoincrement, " +
             DAILYRANK_LIST_CRID + " text, " +
             DAILYRANK_LIST_CID + " text, " +
             DAILYRANK_LIST_TITLE_ID + " text, " +

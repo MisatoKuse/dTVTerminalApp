@@ -51,7 +51,7 @@ public class WeeklyRankListDBHelper extends SQLiteOpenHelper{
     //Homeキャッシュデータ格納用テーブル
     private static final String CREATE_TABLE_SQL = "" +
             "create table " + WEEKLYRANK_LIST_TABLE_NAME + " (" +
-            WEEKLYRANK_LIST_ID_COLUMN + " integer primary key, " +
+            WEEKLYRANK_LIST_ID_COLUMN + " integer primary key autoincrement, " +
             WEEKLYRANK_LIST_CRID + " text, " +
             WEEKLYRANK_LIST_CID + " text, " +
             WEEKLYRANK_LIST_TITLE_ID + " text, " +
