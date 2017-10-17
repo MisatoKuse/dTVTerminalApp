@@ -40,7 +40,7 @@ public class VodClipInsertDataManager {
         VodClipListDBHelper vodClipListDBHelper = new VodClipListDBHelper(mContext);
         SQLiteDatabase db = vodClipListDBHelper.getWritableDatabase();
         VodClipListDao vodClipListDao = new VodClipListDao(db);
-        List<HashMap<String,String>> hashMaps = vodClipList.getHashMaps();
+        List<HashMap<String,String>> hashMaps = vodClipList.getVcList();
 
         //DB保存前に前回取得したデータは全消去する
         vodClipListDao.delete();
