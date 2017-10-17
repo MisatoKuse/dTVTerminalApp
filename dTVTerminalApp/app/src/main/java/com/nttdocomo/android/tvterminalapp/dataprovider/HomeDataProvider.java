@@ -5,8 +5,11 @@ import android.content.Context;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.beans.HomeBean;
 import com.nttdocomo.android.tvterminalapp.beans.HomeBeanContent;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DailyRankInsertDataManager;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.TvScheduleInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.VodClipInsertDataManager;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.WeeklyRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.HomeDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
@@ -23,7 +26,9 @@ import java.util.Map;
 
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.CHANNEL_LAST_INSERT;
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.DAILY_RANK_LAST_INSERT;
+import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.TvSchedule_LAST_INSERT;
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.VOD_LAST_INSERT;
+import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.WEEKLY_RANK_LAST_INSERT;
 import static com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.VodClipJsonParser.VODCLIP_LIST_DISPLAY_START_DATE;
 import static com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.VodClipJsonParser.VODCLIP_LIST_DISP_TYPE;
 import static com.nttdocomo.android.tvterminalapp.webApiClient.JsonParser.VodClipJsonParser.VODCLIP_LIST_THUMB;
@@ -306,6 +311,12 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param channelList
      */
     public void setStructDB(ChannelList channelList) {
+        DateUtils dateUtils = new DateUtils(mContext);
+        dateUtils.addLastDate(CHANNEL_LAST_INSERT);
+        ChannelInsertDataManager dataManager = new ChannelInsertDataManager(mContext);
+        dataManager.insertChannelInsertList(channelList);
+        sendChannelListData(getChannelListData());
+
     }
 
     /**
@@ -331,6 +342,13 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param tvScheduleList
      */
     public void setStructDB(TvScheduleList tvScheduleList) {
+
+        DateUtils dateUtils = new DateUtils(mContext);
+        dateUtils.addLastDate(TvSchedule_LAST_INSERT);
+        TvScheduleInsertDataManager dataManager = new TvScheduleInsertDataManager(mContext);
+        dataManager.insertTvScheduleInsertList(tvScheduleList);
+//        sendWeeklyRankListData(getTvScheduleListData());
+
     }
 
     /**
@@ -342,10 +360,8 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
 
         DateUtils dateUtils = new DateUtils(mContext);
         dateUtils.addLastDate(VOD_LAST_INSERT);
-
         VodClipInsertDataManager dataManager = new VodClipInsertDataManager(mContext);
         dataManager.insertVodClipInsertList(vodClipList);
-
         sendVodClipListData(getVodClipListData());
     }
 
@@ -355,5 +371,11 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param weeklyRankList
      */
     public void setStructDB(WeeklyRankList weeklyRankList) {
+
+        DateUtils dateUtils = new DateUtils(mContext);
+        dateUtils.addLastDate(WEEKLY_RANK_LAST_INSERT);
+        WeeklyRankInsertDataManager dataManager = new WeeklyRankInsertDataManager(mContext);
+        dataManager.insertWeeklyRankInsertList(weeklyRankList);
+//        sendWeeklyRankListData(getWeeklyRankListData());
     }
 }
