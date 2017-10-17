@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.WeeklyRankListDBHelper.WEEKLY_RANK_LIST_TABLE_NAME;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.WeeklyRankListDBHelper.WEEKLYRANK_LIST_TABLE_NAME;
 
 /**
  * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
@@ -39,7 +39,7 @@ public class WeeklyRankListDao {
         List<Map<String, String>> list = new ArrayList<>();
 
         Cursor cursor = db.query(
-               WEEKLY_RANK_LIST_TABLE_NAME,
+               WEEKLYRANK_LIST_TABLE_NAME,
                 strings,
                 null,
                 null,
@@ -74,7 +74,7 @@ public class WeeklyRankListDao {
     public long insert(String key, String value) {
         ContentValues values = new ContentValues();
         values.put(key, value);
-        return db.insert(WEEKLY_RANK_LIST_TABLE_NAME, null, values);
+        return db.insert(WEEKLYRANK_LIST_TABLE_NAME, null, values);
     }
 
     public int update() {
@@ -88,7 +88,7 @@ public class WeeklyRankListDao {
      * @return
      */
     public int delete() {
-        return db.delete(WEEKLY_RANK_LIST_TABLE_NAME, null, null);
+        return db.delete(WEEKLYRANK_LIST_TABLE_NAME, null, null);
     }
 }
 

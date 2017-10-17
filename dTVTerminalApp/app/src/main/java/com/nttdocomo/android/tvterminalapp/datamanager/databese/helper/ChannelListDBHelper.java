@@ -48,10 +48,6 @@ public class ChannelListDBHelper extends SQLiteOpenHelper {
      */
     public static final String CHANNEL_LIST_TABLE_NAME = "channel_list";
     public static final String CHANNEL_LIST_ID_COLUMN = "row_id";
-    //    public static final String  CHANNEL_LIST_VALUE_NAME_COLUMN = "value_name";
-    public static final String CHANNEL_LIST_VALUE_COLUMN = "value";
-    public static final String CHANNEL_LIST_STATUS = "status";
-    //    public static final String  CHANNEL_LIST_COUNT = "count";
 
     //Homeキャッシュデータ格納用テーブル
     private static final String CREATE_TABLE_SQL = "" +

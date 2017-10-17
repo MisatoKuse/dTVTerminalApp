@@ -47,11 +47,6 @@ public class WeeklyRankListDBHelper extends SQLiteOpenHelper{
      */
     public static final String WEEKLYRANK_LIST_TABLE_NAME = "weekly_rank_list";
     public static final String WEEKLYRANK_LIST_ID_COLUMN = "row_id";
-    //    public static final String  WEEKLYRANK_LIST_VALUE_NAME_COLUMN = "value_name";
-    public static final String WEEKLYRANK_LIST_VALUE_COLUMN = "value";
-    public static final String WEEKLYRANK_LIST_STATUS = "status";
-    //    public static final String  WEEKLYRANK_LIST_COUNT = "count";
-
 
     //Homeキャッシュデータ格納用テーブル
     private static final String CREATE_TABLE_SQL = "" +

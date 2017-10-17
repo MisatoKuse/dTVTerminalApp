@@ -48,11 +48,6 @@ public class TvScheduleListDBHelper extends SQLiteOpenHelper{
      */
     public static final String TV_SCHEDULE_LIST_TABLE_NAME = "tv_schedule_list";
     public static final String TV_SCHEDULE_LIST_ID_COLUMN = "row_id";
-    //    public static final String  TV_SCHEDULE_LIST_VALUE_NAME_COLUMN = "value_name";
-    public static final String TV_SCHEDULEK_LIST_VALUE_COLUMN = "value";
-    public static final String TV_SCHEDULE_LIST_STATUS = "status";
-    //    public static final String  TV_SCHEDULE_LIST_COUNT = "count";
-
 
     //Homeキャッシュデータ格納用テーブル
     private static final String CREATE_TABLE_SQL = "" +
