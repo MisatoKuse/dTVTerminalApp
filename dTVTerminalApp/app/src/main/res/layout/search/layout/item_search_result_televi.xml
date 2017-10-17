@@ -55,7 +55,6 @@
 					android:layout_height="wrap_content"
 					android:paddingTop="8dp"
 					android:singleLine="true"
-					android:text="NOW ON AIR"
 					android:textColor="@android:color/white"/>
 			</LinearLayout>
 

@@ -67,11 +67,17 @@ public class XMLParser extends AsyncTask<String, Integer, String> {
         searchResponse = null;
         searchError = null;
 
-        if(null==strings || 1>strings.length){
+        if(null==strings || 1>strings.length ){
             setOtherError();    //searchError = new TotalSearchErrorData(DCommon.SEARCH_ERROR_ID_1, DCommon.SEARCH_ERROR_PARAM_NULL_REQ);
             return null;
         }
-        parse(strings[0]);
+
+        if(0==strings[0].length()){
+            Log.d(DCommon.LOG_DEF_TAG, "XMLParser::doInBackground, str.length=0");
+            setOtherError();
+        } else {
+            parse(strings[0]);
+        }
 
         return null;
     }
@@ -177,7 +183,7 @@ public class XMLParser extends AsyncTask<String, Integer, String> {
     }
 
     public void parserDidStartDocument(/*XMLParser parser*/) {
-        Log.d(DCommon.LOG_DEF_TAG, "パース開始");
+        Log.d(DCommon.LOG_DEF_TAG, "xml parse start");
 
         searchResponse = new TotalSearchResponseData();
         //searchError = new TotalSearchErrorData();
@@ -190,7 +196,7 @@ public class XMLParser extends AsyncTask<String, Integer, String> {
     }
 
     public void parserDidEndDocument(/*XMLParser parser*/) {
-        Log.d(DCommon.LOG_DEF_TAG, "パース終了");
+        Log.d(DCommon.LOG_DEF_TAG, "xml parse finished");
     }
 
     public void parseProc(XmlPullParser parser, String tagName, String value) throws Exception {
