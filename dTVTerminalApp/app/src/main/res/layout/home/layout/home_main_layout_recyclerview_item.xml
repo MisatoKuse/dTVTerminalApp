@@ -6,8 +6,8 @@
     <RelativeLayout
         android:layout_marginTop="5dp"
         android:layout_marginLeft="5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="256dp"
+        android:layout_height="144dp">
         <ImageView
             android:id="@+id/home_main_recyclerview_item_iv"
             android:layout_width="wrap_content"
@@ -32,7 +32,8 @@
             android:text="NEW"/>
         <LinearLayout
             android:layout_marginBottom="2dp"
-            android:layout_marginLeft="2dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -46,13 +47,21 @@
                 android:ellipsize="end"
                 android:textStyle="bold"
                 android:textSize="15dp"
-                android:textColor="#FFFFFF"/>
+                android:textColor="#FFFFFF"
+                android:shadowColor="#222222"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="2"/>
             <TextView
                 android:id="@+id/home_main_recyclerview_item_tv_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12dp"
-                android:textColor="#FFFFFF"/>
+                android:textSize="13dp"
+                android:textColor="#FFFFFF"
+                android:shadowColor="#222222"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="2"/>
         </LinearLayout>
     </RelativeLayout>
 </RelativeLayout>

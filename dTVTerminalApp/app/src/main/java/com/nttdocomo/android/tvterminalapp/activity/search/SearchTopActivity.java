@@ -55,7 +55,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
     public final static String sSearchCountDefault ="検索結果:0件";
 
     private SearchView mSearchView;
-    private final static int TEXT_SIZE = 14;
+    private final static int TEXT_SIZE = 15;
     private String[] mTabNames;
     private LinearLayout mLinearLayout;
     private HorizontalScrollView mTabScrollView;

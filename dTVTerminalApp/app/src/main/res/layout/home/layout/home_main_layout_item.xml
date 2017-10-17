@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#000000"
+    android:background="#222222"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -37,7 +37,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:background="#000000"
         android:divider="#ffff0000"
         android:dividerHeight="10dp"
         android:fadingEdge="none"
