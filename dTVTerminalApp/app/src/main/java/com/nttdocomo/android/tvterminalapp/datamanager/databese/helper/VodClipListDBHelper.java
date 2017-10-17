@@ -46,13 +46,13 @@ public class VodClipListDBHelper extends SQLiteOpenHelper {
     /**
      * DB定義用定数(最終的にはJsonParser側から入手する
      */
-    public static final String VOD_CLIP_LIST_TABLE_NAME = "vod_clip_list";
-    public static final String VOD_CLIP_LIST_ID_COLUMN = "row_id";
+    public static final String VODCLIP_LIST_TABLE_NAME = "vod_clip_list";
+    public static final String VODCLIP_LIST_ID_COLUMN = "row_id";
 
     //Homeキャッシュデータ格納用テーブル
     private static final String CREATE_TABLE_SQL = "" +
-            "create table " + VOD_CLIP_LIST_TABLE_NAME + " (" +
-            VOD_CLIP_LIST_ID_COLUMN + " integer primary key, " +
+            "create table " + VODCLIP_LIST_TABLE_NAME + " (" +
+            VODCLIP_LIST_ID_COLUMN + " integer primary key, " +
             VODCLIP_LIST_CRID + " text not null " +
             VODCLIP_LIST_CID + " text not null " +
             VODCLIP_LIST_TITLE_ID + " text not null " +
@@ -88,7 +88,7 @@ public class VodClipListDBHelper extends SQLiteOpenHelper {
     /**
      * 「vod_clip_list」テーブルの削除用SQL
      */
-    private static final String DROP_TABLE_SQL = "drop table if exists " + VOD_CLIP_LIST_TABLE_NAME;
+    private static final String DROP_TABLE_SQL = "drop table if exists " + VODCLIP_LIST_TABLE_NAME;
 
     /**
      * コンストラクタ
