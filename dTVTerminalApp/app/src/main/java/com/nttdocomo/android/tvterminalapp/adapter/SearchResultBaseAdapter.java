@@ -64,6 +64,7 @@ public class SearchResultBaseAdapter extends BaseAdapter {
             holder.tv_title = view.findViewById(R.id.tv_title);
             holder.tv_des = view.findViewById(R.id.tv_des);
             holder.bt_clip = view.findViewById(R.id.bt_clip);
+            holder.bt_clip.setVisibility(View.GONE);
 
             float mWidth = (float)mContext.getResources().getDisplayMetrics().widthPixels / 3;
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int)mWidth,(int)mWidth/2);
@@ -86,7 +87,8 @@ public class SearchResultBaseAdapter extends BaseAdapter {
         }
 
         if(null!=holder.iv_thumbnail){
-            //holder.iv_thumbnail.setImageBitmap(null);
+
+            holder.iv_thumbnail.setTag(searchContentInfo.contentPictureUrl);
             Bitmap bp= mThumbnailProvider.getThumbnailImage(holder.iv_thumbnail, searchContentInfo.contentPictureUrl);
             if(null!=bp){
                 holder.iv_thumbnail.setImageBitmap(bp);

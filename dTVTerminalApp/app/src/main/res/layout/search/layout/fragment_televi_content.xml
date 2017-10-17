@@ -29,6 +29,7 @@
 		android:dividerHeight="1dp">
 	</ListView>
 
+	<!-- 201804対応
 	<Button
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -36,5 +37,6 @@
 		android:layout_alignParentRight="true"
 		android:layout_marginBottom="30dp"
 		android:layout_marginRight="30dp"/>
+		-->
 
 </RelativeLayout>

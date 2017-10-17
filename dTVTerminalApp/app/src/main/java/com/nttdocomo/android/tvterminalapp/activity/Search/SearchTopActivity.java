@@ -70,7 +70,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_top_main_layout);
-        setTitleText(getString(R.string.keyword_search_hint));
+        setTitleText(getString(R.string.keyword_search_title));
 
         mMenuTextView= findViewById(R.id.header_layout_menu);
         mMenuTextView.setVisibility(View.VISIBLE);
@@ -156,8 +156,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
                                                 public void run() {
                                                     Log.d(DCommon.LOG_DEF_TAG, "1 sencond passed");
                                                     mSearchTime = System.currentTimeMillis();
-                                                    //findbug 修正 if(mInputText != mBeforeText) {
-                                                    if(false == mInputText.equals(mBeforeText)) {
+                                                    if(mInputText != mBeforeText) {
                                                         // 文字列に変化があった場合
                                                         Log.d(DCommon.LOG_DEF_TAG,"Start IncrementalSearch:"+mInputText);
                                                         initSearchedResultView();
@@ -278,6 +277,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
             }
         }
         if(null!=searchText){
+            /*
             if(false ==mCurrentSearchText.equals(searchText)){
                 SearchBaseFragment b=getCurrentSearchBaseFragment();
                 if(null!=b){
@@ -285,6 +285,13 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
                     setPageNumber(0);
                     setPagingStatus(false);
                 }
+            }
+            */
+            SearchBaseFragment b=getCurrentSearchBaseFragment();
+            if(null!=b){
+                b.clear();
+                setPageNumber(0);
+                setPagingStatus(false);
             }
             mCurrentSearchText = searchText;
         }
@@ -429,7 +436,9 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
                 baseFragment.displayLoadMore(false);
                 setPagingStatus(false);
             } else {
-                baseFragment.clear();
+                //if(0==mPageNumber) {
+                    baseFragment.clear();
+                //}
             }
         }
 

@@ -21,6 +21,7 @@
     <!-- Video -->
 
     <!-- Search -->
+        <string name="keyword_search_title">キーワード検索</string>
         <string name="keyword_search_hint">検索するキーワードを入力</string>
         <string name="keyword_search_history">履歴</string>
         <string-array name="tab_names">

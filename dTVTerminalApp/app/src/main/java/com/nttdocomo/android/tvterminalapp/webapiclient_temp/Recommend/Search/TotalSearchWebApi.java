@@ -145,7 +145,11 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, XML
 
     @Override
     public void onFinish(String responseData) {
-        new XMLParser(this).execute(responseData);
+        String str= responseData;
+        if(null==responseData || 0==responseData.length()){
+            str = "";
+        }
+        new XMLParser(this).execute(str);
     }
 
     @Override
