@@ -84,6 +84,8 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
     private void initData() {
         mTabNames = getResources().getStringArray(R.array.tab_names);
         setSearchNarrowCondition();
+
+        mSearchDataProvider = new SearchDataProvider();
     }
 
     /*検索トップ画面初期化*/
@@ -261,7 +263,13 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
         }
     }
     private static String mCurrentSearchText="";
+    SearchDataProvider mSearchDataProvider=null;
     private void setSearchData(String searchText) {
+        if(null==mSearchDataProvider){
+            Log.e(DCommon.LOG_DEF_TAG, "SearchTopActivity::setSearchData, mSearchDataProvider is null");
+            return;
+        }
+
         synchronized (this) {
             if (false == mIsSearching) {
                 setSearchStart(true);
@@ -285,10 +293,9 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
             return;
         }
 
-        SearchDataProvider dp=new SearchDataProvider();
-
+        //SearchDataProvider dp=new SearchDataProvider();
         ArrayList<SearchServiceType> serviceTypeArray=getCurrentSearchServiceTypeArray();
-        dp.startSearchWith(
+        mSearchDataProvider.startSearchWith(
                 mCurrentSearchText,
                 serviceTypeArray,
                 mSearchNarrowCondition,
@@ -296,6 +303,14 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
                 mPageNumber,
                 this
         );
+        /* //for test
+        try {
+            Thread.sleep(1000);
+            dp.cancelSearch();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        */
     }
 
     private void initSearchedResultView() {
@@ -390,7 +405,6 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
         }
     }
 
-
     private int mSearchTotalCount = 0;
 
     private SearchBaseFragment getCurrentSearchBaseFragment(){
@@ -455,7 +469,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
     @Override
     public void onSearchDataProviderFinishNg(ResultType<SearchResultError> resultType) {
 		clearAllFragment();
-        Log.d(DCommon.LOG_DEF_TAG, "onSearchDataProviderFinishNg");
+        Log.e(DCommon.LOG_DEF_TAG, "onSearchDataProviderFinishNg");
     }
 
     @Override

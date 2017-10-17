@@ -1,6 +1,9 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 
+import android.util.Log;
+
+import com.nttdocomo.android.tvterminalapp.common.DCommon;
 import com.nttdocomo.android.tvterminalapp.model.ResultType;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.SearchConstants;
 import com.nttdocomo.android.tvterminalapp.model.Search.SearchContentInfo;
@@ -30,7 +33,6 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
     public static final String comma = ",";
 
     private SearchState _state = SearchState.inital;
-    //private TotalSearchContentInfo handler=null;    //private var handler: ((ResultType<TotalSearchContentInfo>) -> Void)?
 
     private SearchDataProviderListener mSearchDataProviderListener=null;
 
@@ -41,14 +43,14 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
         }
     }
 
-    public void setSearchState(SearchState newSearchState){
+    private void setSearchState(SearchState newSearchState){
         synchronized (this) {
             _state = newSearchState;
         }
     }
 
     private TotalSearchWebApi mTotalSearchWebApi=null;
-    //XMLParser.XMLParserFinishListener mXMLParserFinishListener=null;
+
     public void startSearchWith(String keyword,
                                 ArrayList<SearchServiceType> serviceTypeArray,
                                 SearchNarrowCondition condition,
@@ -79,9 +81,8 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
     }
 
     public void cancelSearch() {
-        synchronized (this) {
-            _state = SearchState.canceled;
-        }
+        setSearchState(SearchState.canceled);
+        Log.d(DCommon.LOG_DEF_TAG, "SearchDataProvider::cancelSearch()");
     }
 
     private String getMappedData(ArrayList<SearchServiceType> serviceTypeArray, String comma){
@@ -98,6 +99,14 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
 
     @Override
     public void onSuccess(TotalSearchResponseData result) {
+        /* //for test
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        */
+        Log.d(DCommon.LOG_DEF_TAG, "SearchDataProvider::onSuccess(), _state=" + _state.toString());
         synchronized (this) {
             if (_state != SearchState.canceled) {
 
