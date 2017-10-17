@@ -1,8 +1,9 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.activity.Home;
 
-/**
- * Created by ryuhan on 2017/09/22.
- */
 
 import android.os.Bundle;
 import android.view.View;

@@ -1,8 +1,8 @@
-package com.nttdocomo.android.tvterminalapp.common;
-
-/**
- * Created by moon_jaesung on 2017/10/03.
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
+
+package com.nttdocomo.android.tvterminalapp.common;
 
 public class BaseWebApi {
 

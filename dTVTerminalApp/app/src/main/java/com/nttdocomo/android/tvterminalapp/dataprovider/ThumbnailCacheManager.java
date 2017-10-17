@@ -1,16 +1,20 @@
-package com.nttdocomo.android.tvterminalapp.utils;
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
+package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.util.LruCache;
-import java.io.BufferedInputStream;
+import android.util.Log;
+
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -19,9 +23,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
- */
 public class ThumbnailCacheManager {
 
     // メモリサイズ 5MB
@@ -29,7 +30,9 @@ public class ThumbnailCacheManager {
     // メモリキャッシュ
     private LruCache<String, Bitmap> memCache;
     // ディスクキャッシュ件数
-    private final static int limit = 100;
+    private final static int THUMBNAIL_FILE_CASHE_LIMIT = 100;
+    // サムネイルキャッシュ保存するフォルダ　packagename/cache/thumbnail_cache
+    private static final String THUMBNAIL_CACHE  ="/thumbnail_cache/";
 
     private Context context;
 
@@ -67,7 +70,7 @@ public class ThumbnailCacheManager {
     public Bitmap getBitmapFromDisk(String fileName) {
         try {
             //ファイルパス
-            String dir = context.getCacheDir() + "/" + hashKeyForDisk(fileName);
+            String dir = context.getCacheDir() + THUMBNAIL_CACHE + hashKeyForDisk(fileName);
             File file = new File(dir);
             Bitmap bitmap = null;
             if (file.exists()) {
@@ -107,7 +110,7 @@ public class ThumbnailCacheManager {
      */
     public boolean saveBitmapToDisk(String filename, Bitmap bitmap) {
         //フォルダーパス
-        String localPath = context.getCacheDir() + "/";
+        String localPath = context.getCacheDir() + THUMBNAIL_CACHE;
         int quality = 100;
         if (bitmap == null || filename == null) {
             return false;
@@ -115,21 +118,32 @@ public class ThumbnailCacheManager {
         Bitmap.CompressFormat format = Bitmap.CompressFormat.PNG;
         OutputStream stream = null;
         try {
-            File[] files = context.getCacheDir().listFiles();
-            int count = files.length;
+            File myFile = new File(context.getCacheDir() + THUMBNAIL_CACHE);
+            if (!myFile.exists()){
+                if(!myFile.mkdir()){
+                    Log.i("dTV", "create file fail ");
+                }
+            }
+            File[] files = myFile.listFiles();
             List<File> mListFile = new ArrayList<>();
             boolean isLimitFlg = false;
-            for (int i = 0; i < count; i++) {
-                if (count >= limit) {
-                    isLimitFlg = true;
+            if (files!=null && files.length > 0){
+                for (int i = 0; i < files.length; i++) {
+                    if (files.length >= THUMBNAIL_FILE_CASHE_LIMIT) {
+                        isLimitFlg = true;
+                    }
+                    mListFile.add(files[i]);
                 }
-                mListFile.add(files[i]);
             }
             if (isLimitFlg) {
                 //ファイル更新時間通り昇順ソート
                 Collections.sort(mListFile, new CalendarComparator());
                 //古い情報を削除する
-                mListFile.get(0).delete();
+                if(mListFile.get(0)!=null && mListFile.get(0).exists()){
+                    if(!mListFile.get(0).delete()){
+                        Log.i("dTV", "delete file fail ");
+                    }
+                }
             }
             //ファイル名を暗号化する
             filename = hashKeyForDisk(filename);
@@ -161,9 +175,12 @@ public class ThumbnailCacheManager {
         String cacheKey;
         try {
             final MessageDigest mDigest = MessageDigest.getInstance("MD5");
-            mDigest.update(key.getBytes());
+            byte[] bytes = key.getBytes("UTF-8");
+            mDigest.update(bytes);
             cacheKey = bytesToHexString(mDigest.digest());
-        } catch (NoSuchAlgorithmException e) {
+        }catch (UnsupportedEncodingException e) {
+            cacheKey = String.valueOf(key.hashCode());
+        }catch (NoSuchAlgorithmException e) {
             cacheKey = String.valueOf(key.hashCode());
         }
         return cacheKey;

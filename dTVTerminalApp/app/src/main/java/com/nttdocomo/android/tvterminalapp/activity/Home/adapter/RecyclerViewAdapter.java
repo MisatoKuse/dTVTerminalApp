@@ -1,11 +1,12 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.activity.Home.adapter;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -15,10 +16,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.Home.ClipListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.Player.TvPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.beans.HomeBeanContent;
-import com.nttdocomo.android.tvterminalapp.utils.AsyncImageLoader;
+import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 
 import java.util.List;
 
@@ -27,8 +27,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private LayoutInflater mInflater;
     private List<HomeBeanContent> mListDatas;
     private Context context;
-    private AsyncImageLoader imageLoader;
-    private int index;
+    private ThumbnailProvider imageLoader;
+//    private int index;
     private View mFooterView;
 
     public static final int TYPE_HEADER = 0;
@@ -40,8 +40,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         mInflater = LayoutInflater.from(context);
         this.mListDatas = mListDatas;
         this.context = context;
-        this.index = index;
-        imageLoader = new AsyncImageLoader(context);
+        imageLoader = new ThumbnailProvider(context);
     }
 
     public View getmFooterView() {
@@ -94,13 +93,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         if(getItemViewType(i) == TYPE_FOOTER){
             return;
         }
-        Drawable drawable = context.getResources().getDrawable(R.mipmap.ic_launcher);
-        viewHolder.mImage.setBackground(drawable);
+        viewHolder.mImage.setImageResource(R.mipmap.ic_launcher);
         if (!TextUtils.isEmpty(mListDatas.get(i).getContentSrcURL())) {
-            Bitmap bitmap = imageLoader.loadImage(viewHolder.mImage, mListDatas.get(i).getContentSrcURL());
+            viewHolder.mImage.setTag(mListDatas.get(i).getContentSrcURL());
+            Bitmap bitmap = imageLoader.getThumbnailImage(viewHolder.mImage, mListDatas.get(i).getContentSrcURL());
             if (bitmap != null) {
-                viewHolder.mImage.setBackground(new BitmapDrawable(bitmap));
-//                viewHolder.mImage.setImageBitmap(bitmap);
+                viewHolder.mImage.setImageBitmap(bitmap);
             }
         }
         if(!TextUtils.isEmpty(mListDatas.get(i).getContentName())){

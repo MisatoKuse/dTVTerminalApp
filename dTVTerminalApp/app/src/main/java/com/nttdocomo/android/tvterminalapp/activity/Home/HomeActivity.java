@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.activity.Home;
 
 import android.content.Intent;
@@ -139,6 +143,8 @@ public class HomeActivity extends BaseActivity{
                 case 5:
                     url = urls6;
                     break;
+                default:
+                    break;
             }
 
             for (int j=0;j<10;j++){
@@ -214,6 +220,8 @@ public class HomeActivity extends BaseActivity{
                     case 5:
                         startActivity(ClipListActivity.class,null);
                         break;
+                    default:
+                        break;
                 }
 
             }
@@ -252,6 +260,8 @@ public class HomeActivity extends BaseActivity{
                         break;
                     case 5:
                         startActivity(ClipListActivity.class,null);
+                        break;
+                    default:
                         break;
                 }
             }

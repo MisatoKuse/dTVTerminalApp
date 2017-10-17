@@ -1,8 +1,8 @@
-package com.nttdocomo.android.tvterminalapp.activity.TvProgram;
-
-/**
- * Created by ryuhan on 2017/09/22.
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
+
+package com.nttdocomo.android.tvterminalapp.activity.TvProgram;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
@@ -100,6 +100,8 @@ public class WeekTvProgramListActivity extends BaseActivity implements View.OnCl
                         dialog.dismiss();
                     }
                 });
+                break;
+            default:
                 break;
         }
     }

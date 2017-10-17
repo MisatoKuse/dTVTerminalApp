@@ -1,11 +1,13 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.activity.Other;
 
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
-
 
 import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
@@ -33,6 +35,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 break;
             case R.id.tv_setting:
                 startActivity(SettingDetailActivity.class,null);
+                break;
             default:
                 break;
         }
