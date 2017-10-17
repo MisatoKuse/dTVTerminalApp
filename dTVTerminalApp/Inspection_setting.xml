@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inspections version="1.0">
   <option name="myName" value="dTVT_Inspection_setting" />
+  <inspection_tool class="AndroidLintContentDescription" enabled="false" level="WARNING" enabled_by_default="false" />
+  <inspection_tool class="AndroidLintLabelFor" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="ChainedMethodCall" enabled="true" level="WARNING" enabled_by_default="true">
     <option name="m_ignoreFieldInitializations" value="true" />
     <option name="m_ignoreThisSuperCalls" value="true" />
