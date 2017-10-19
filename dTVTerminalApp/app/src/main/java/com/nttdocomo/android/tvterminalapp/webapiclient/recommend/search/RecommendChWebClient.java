@@ -13,15 +13,13 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChann
 public class RecommendChWebClient {
 
     private RecommendChannelCallback mRecommendChannelCallback;
-    private Context context;
 
     public interface RecommendChannelCallback {
         void RecommendChannelCallback(RecommendChList mRecommendChList);
     }
 
-    public RecommendChWebClient(Context context, RecommendChannelCallback mRecommendChannelCallback){
+    public RecommendChWebClient(RecommendChannelCallback mRecommendChannelCallback){
         this.mRecommendChannelCallback = mRecommendChannelCallback;
-        this.context = context;
     }
 
     public void getRecommendChannelApi() {
@@ -29,8 +27,6 @@ public class RecommendChWebClient {
         RecommendChannelXmlParser recommendChannelXmlParser = new RecommendChannelXmlParser();
         //TODO: dummy data
         RecommendChList mRecommendChList = recommendChannelXmlParser.getRecommendchannelList();
-        RecommendChInsertDataManager mRecommendChInsertDataManager = new RecommendChInsertDataManager(context);
-        mRecommendChInsertDataManager.insertVodClipInsertList(mRecommendChList);
         mRecommendChannelCallback.RecommendChannelCallback(mRecommendChList);
     }
 

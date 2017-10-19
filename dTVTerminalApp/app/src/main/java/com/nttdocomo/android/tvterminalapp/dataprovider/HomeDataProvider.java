@@ -35,6 +35,7 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.plala.VodClipWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.plala.WeeklyRankWebClient;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -114,6 +115,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         if (mRecommendVdList != null && mRecommendVdList.getmRvList()!=null &&
                 mRecommendVdList.getmRvList().size() > 0) {
 //            setStructDB(mRecommendVdList);
+            sendRecommendVdListData(mRecommendVdList.getmRvList());
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
         }
@@ -124,6 +126,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         if (mRecommendChList != null && mRecommendChList.getmRcList()!=null &&
                 mRecommendChList.getmRcList().size() > 0) {
 //            setStructDB(mRecommendChList);
+            sendRecommendChListData(mRecommendChList.getmRcList());
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
         }
@@ -222,6 +225,18 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         if(vodClipList != null && vodClipList.size() > 0){
             sendVodClipListData(vodClipList);
         }
+        try{
+            Thread.sleep(500);
+            RecommendChWebClient mRecommendChWebClient = new RecommendChWebClient(this);
+            mRecommendChWebClient.getRecommendChannelApi();
+
+            RecommendVdWebClient mRecommendChWebClient2 = new RecommendVdWebClient(this);
+            mRecommendChWebClient2.getRecommendChannelApi();
+        }catch (Exception e){
+
+        }
+
+
     }
 
     public HomeBean makeHomeStruct(List<Map<String, String>> list) {
@@ -354,6 +369,44 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         }
         homeBean.setContentList(contents);
         apiDataProviderCallback.WeeklyRankCallback(homeBean);
+    }
+
+    /**
+     * おすすめ番組をHomeActivityに送る
+     *
+     * @param list
+     */
+    public void sendRecommendChListData(List<HashMap<String, String>> list) {
+        HomeBean homeBean = new HomeBean();
+        homeBean.setContentTypeName("おすすめ番組");
+        HomeBeanContent homeBeanContent = new HomeBeanContent();
+        List<HomeBeanContent> contents = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            homeBeanContent.setContentSrcURL(list.get(i).get("ctPicURL1"));
+            homeBeanContent.setContentName(list.get(i).get("title"));
+            contents.add(homeBeanContent);
+        }
+        homeBean.setContentList(contents);
+        apiDataProviderCallback.RecommendChannelCallback(homeBean);
+    }
+
+    /**
+     * おすすめビデオをHomeActivityに送る
+     *
+     * @param list
+     */
+    public void sendRecommendVdListData(List<HashMap<String, String>> list) {
+        HomeBean homeBean = new HomeBean();
+        homeBean.setContentTypeName("おすすめビデオ");
+        HomeBeanContent homeBeanContent = new HomeBeanContent();
+        List<HomeBeanContent> contents = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            homeBeanContent.setContentSrcURL(list.get(i).get("ctPicURL1"));
+            homeBeanContent.setContentName(list.get(i).get("title"));
+            contents.add(homeBeanContent);
+        }
+        homeBean.setContentList(contents);
+        apiDataProviderCallback.RecommemdVideoCallback(homeBean);
     }
 
     private List<Map<String, String>> getChannelListData() {
