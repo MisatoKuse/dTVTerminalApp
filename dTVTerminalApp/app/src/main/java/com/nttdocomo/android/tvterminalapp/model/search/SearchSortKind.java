@@ -2,7 +2,7 @@ package com.nttdocomo.android.tvterminalapp.model.search;
 
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend.search.SearchSortType;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchSortType;
 
 public class SearchSortKind {
 

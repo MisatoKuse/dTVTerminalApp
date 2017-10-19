@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 
 
 public class LaunchActivity extends BaseActivity implements View.OnClickListener {
