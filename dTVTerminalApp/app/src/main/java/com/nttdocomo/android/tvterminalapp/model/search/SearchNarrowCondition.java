@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.model.search;
 
 
@@ -6,10 +10,6 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchF
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchFilterTypeMappable;
 
 import java.util.ArrayList;
-
-/**
- * Copyright © 2018 NTT DOCOMO, INC. All Rights Reserved.
- */
 
 public class SearchNarrowCondition {
 

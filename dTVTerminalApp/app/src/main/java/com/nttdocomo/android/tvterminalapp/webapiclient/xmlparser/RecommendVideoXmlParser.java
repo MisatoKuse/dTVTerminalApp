@@ -28,7 +28,7 @@ public class RecommendVideoXmlParser {
             "   <categoryId>01</categoryId>\n" +
             "   <channelId></channelId>\n" +
             "   <contentsId>10010045</contentsId>\n" +
-            "   <title>24－TWENTY　FOUR－　リブ・アナザー・デイ</title>\n" +
+            "   <title>24−TWENTY　FOUR−　リブ・アナザー・デイ</title>\n" +
             "   <ctPicURL1>https://image5-a.beetv.jp/basic/img/title/10010045_top_hd_org.jpg</ctPicURL1>\n" +
             "   <ctPicURL2></ctPicURL2>\n" +
             "   <startViewing>20150401000000</startViewing>\n" +
@@ -40,7 +40,7 @@ public class RecommendVideoXmlParser {
             "   <categoryId>01</categoryId>\n" +
             "   <channelId></channelId>\n" +
             "   <contentsId>10238503</contentsId>\n" +
-            "   <title>24　－TWENTY　FOUR－　レガシー</title>\n" +
+            "   <title>24　−TWENTY　FOUR−　レガシー</title>\n" +
             "   <ctPicURL1>http://image5-a.beetv.jp/basic/img/title/10018486_v.jpg</ctPicURL1>\n" +
             "   <ctPicURL2></ctPicURL2>\n" +
             "   <startViewing>20150501000000</startViewing>\n" +
