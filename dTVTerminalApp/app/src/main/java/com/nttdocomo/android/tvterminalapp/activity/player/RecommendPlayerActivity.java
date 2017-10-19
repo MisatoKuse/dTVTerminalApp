@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.activity.player;
 
 import android.os.Bundle;
@@ -25,6 +29,7 @@ public class RecommendPlayerActivity extends TvPlayerActivity {
      *
      * @param view
      */
+    @Override
     public void recommendButton(View view) {
         startActivity(RecommendPlayerActivity.class, null);
     }

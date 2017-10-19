@@ -17,4 +17,11 @@
         <item name="android:background">#000000</item>
         <item name="android:textColor">#ffffff</item>
     </style>
+
+    <!--検索画面アイテムRatingBar -->
+    <style name="roomRatingBar" parent="@android:style/Widget.RatingBar">
+        <item name="android:progressDrawable">@drawable/video_item_ratingbar</item>
+        <item name="android:minHeight">10dp</item>
+        <item name="android:maxHeight">10dp</item>
+    </style>
 </resources>

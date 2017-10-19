@@ -1,10 +1,10 @@
 *.iml
 .gradle
+/.idea
 /build
 /captures
 .externalNativeBuild
 
-/.idea
 bin/
 gen/
 app/build/

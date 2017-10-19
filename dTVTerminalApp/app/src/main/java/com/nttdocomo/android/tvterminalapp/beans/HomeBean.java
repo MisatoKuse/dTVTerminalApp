@@ -1,9 +1,12 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.beans;
 
-import java.io.Serializable;
 import java.util.List;
 
-public class HomeBean implements Serializable {
+public class HomeBean {
 
     /**
      * コンテンツ
@@ -14,6 +17,11 @@ public class HomeBean implements Serializable {
      * コンテンツ数
      */
     private String contentCount;
+
+    /**
+     * コンテンツタイプ
+     */
+    private int contentType;
 
     /**
      * コンテンツリスト
@@ -34,6 +42,14 @@ public class HomeBean implements Serializable {
 
     public void setContentCount(String contentCount) {
         this.contentCount = contentCount;
+    }
+
+    public int getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(int contentType) {
+        this.contentType = contentType;
     }
 
     public List<HomeBeanContent> getContentList() {

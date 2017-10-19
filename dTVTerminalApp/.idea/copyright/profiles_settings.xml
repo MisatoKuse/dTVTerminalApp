@@ -1,0 +1,7 @@
+<component name="CopyrightManager">
+  <settings default="docomo">
+    <module2copyright>
+      <element module="All" copyright="docomo" />
+    </module2copyright>
+  </settings>
+</component>

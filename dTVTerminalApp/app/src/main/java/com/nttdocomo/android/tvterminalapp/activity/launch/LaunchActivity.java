@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
 import android.os.Bundle;
@@ -7,12 +11,9 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
-import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.common.DCommon;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 
-/**
- * Created by ryuhan on 2017/09/25.
- */
 
 public class LaunchActivity extends BaseActivity implements View.OnClickListener {
 
@@ -98,7 +99,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public String getScreenID() {
-        return DCommon.LaunchActivityScreenID;
+        return getString(R.string.str_launch_title);
     }
 
     @Override

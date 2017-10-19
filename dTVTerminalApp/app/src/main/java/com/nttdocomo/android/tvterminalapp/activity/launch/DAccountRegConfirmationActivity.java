@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
 import android.os.Bundle;
@@ -7,12 +11,7 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.temp.DAccountAppliActivity;
-import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
-
-
-/**
- * Created by ryuhan on 2017/09/22.
- */
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 
 public class DAccountRegConfirmationActivity extends BaseActivity implements View.OnClickListener {
 
@@ -146,11 +145,11 @@ public class DAccountRegConfirmationActivity extends BaseActivity implements Vie
         setDAccountSameButtonsVisibility(View.VISIBLE);
     }
 
-    private void onUseWithoutPairingButton() {
-        Bundle b=new Bundle();
-        b.putString("state", LaunchActivity.mStateToHomePairingNg);
-        startActivity(STBParingInvitationActivity.class, b);
-    }
+//    private void onUseWithoutPairingButton() {
+//        Bundle b=new Bundle();
+//        b.putString("state", LaunchActivity.mStateToHomePairingNg);
+//        startActivity(STBParingInvitationActivity.class, b);
+//    }
 
     static public void installDAccountAppli(){
         mHasDAccountAppli=true;

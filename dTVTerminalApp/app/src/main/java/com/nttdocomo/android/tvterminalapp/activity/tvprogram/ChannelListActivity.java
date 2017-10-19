@@ -1,8 +1,8 @@
-package com.nttdocomo.android.tvterminalapp.activity.tvprogram;
-
-/**
- * Created by ryuhan on 2017/09/22.
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
+
+package com.nttdocomo.android.tvterminalapp.activity.tvprogram;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -19,7 +19,7 @@ import java.util.List;
 
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.ChannelDetailPlayerActivity;
-import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 
 public class ChannelListActivity extends BaseActivity implements View.OnClickListener {
@@ -106,6 +106,8 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
             case R.id.channel4:
             case R.id.channel5:
                 startActivity(ChannelDetailPlayerActivity.class,null);
+                break;
+            default:
                 break;
 
         }

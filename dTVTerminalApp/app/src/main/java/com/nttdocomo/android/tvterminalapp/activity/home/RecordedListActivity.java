@@ -1,15 +1,16 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
-/**
- * Created by ryuhan on 2017/09/22.
- */
 
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
-import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 
 public class RecordedListActivity extends BaseActivity {

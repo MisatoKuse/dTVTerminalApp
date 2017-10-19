@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.activity.other;
 
 import android.os.Bundle;
@@ -5,9 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-
-
-import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 
 public class NewsActivity extends BaseActivity implements View.OnClickListener {
@@ -36,8 +38,6 @@ public class NewsActivity extends BaseActivity implements View.OnClickListener {
              finish();
              break;
          case R.id.tv_news1:
-             startActivity(NewsDetailActivity.class,null);
-             break;
          case R.id.tv_news2:
              startActivity(NewsDetailActivity.class,null);
              break;

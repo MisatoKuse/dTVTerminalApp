@@ -1,14 +1,14 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.activity.video;
 
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-/**
- * Created by hitue-fsi on 2017/09/22.
- */
-
-import com.nttdocomo.android.tvterminalapp.common.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 
 public class VideoSubGenreActivity extends BaseActivity implements View.OnClickListener{
@@ -46,6 +46,8 @@ public class VideoSubGenreActivity extends BaseActivity implements View.OnClickL
             case R.id.video_sub_genre_main_layout_rl3:
             case R.id.video_sub_genre_main_layout_rl4:
                 startActivity(VideoContentListActivity.class,null);
+                break;
+            default:
                 break;
         }
     }
