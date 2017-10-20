@@ -102,6 +102,7 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
         mRecyclerView.setAdapter(mHorizontalViewAdapter);
         View footer = LayoutInflater.from(this).inflate(R.layout.home_main_layout_recyclerview_footer, mRecyclerView, false);
         TextView mTextView = footer.findViewById(R.id.home_main_layout_recyclerview_footer);
+        mTextView.setText("more");
         //もっと見るの遷移先を設定
         mTextView.setOnClickListener(new View.OnClickListener() {
             @Override

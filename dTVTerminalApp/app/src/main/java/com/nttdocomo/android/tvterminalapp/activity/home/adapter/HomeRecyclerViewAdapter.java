@@ -86,14 +86,15 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         View view = mInflater.inflate(R.layout.home_main_layout_recyclerview_item,viewGroup, false);
         ViewHolder viewHolder = new ViewHolder(view);
         viewHolder.mImage = view.findViewById(R.id.home_main_recyclerview_item_iv);
-        viewHolder.mRLayout = view.findViewById(R.id.home_main_recyclerview_item_rl);
         //コンテンツキャッシュを幅さ、長さ初期化
         float widthPixels = context.getResources().getDisplayMetrics().widthPixels / 3 * 2;
         float heightPixels = widthPixels / 1.8f;
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
                 (int)widthPixels,
                 (int)heightPixels);
-        viewHolder.mRLayout.setLayoutParams(lp);
+        view.setLayoutParams(lp);
+        viewHolder.mImage.setMaxWidth((int)widthPixels);
+        viewHolder.mImage.setMaxHeight((int)heightPixels);
         viewHolder.mContent = view.findViewById(R.id.home_main_recyclerview_item_tv_content);
         viewHolder.mTime = view.findViewById(R.id.home_main_recyclerview_item_tv_time);
         return viewHolder;
@@ -156,7 +157,6 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             if (itemView == mFooterView){
             }
         }
-        RelativeLayout mRLayout;
         ImageView mImage;
         TextView mContent;
         TextView mTime;
