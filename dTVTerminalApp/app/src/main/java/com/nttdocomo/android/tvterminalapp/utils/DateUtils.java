@@ -7,11 +7,10 @@ package com.nttdocomo.android.tvterminalapp.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.Date;
 
 public class DateUtils {
 
@@ -32,6 +31,9 @@ public class DateUtils {
 
     //WeeklyRank取得日付キー
     public static final String WEEKLY_RANK_LAST_INSERT = "WeeklyRankLastInsert";
+
+    //VideoRank取得日付キー
+    public static final String VIDEO_RANK_LAST_INSERT = "VideoRankLastInsert";
 
     //SharedPreferences用データ
     private static final String DATA_SAVE = "DataSave";
@@ -94,25 +96,18 @@ public class DateUtils {
      */
     public boolean isBeforeLimitDate(String str) {
         // TODO:DBには取得日時を格納しておき、現在時刻よりもデータが未来の場合,キャッシュ切れと判断すべき
-        Calendar limit = new GregorianCalendar();
-        //現在日時を取得
-        Calendar now = Calendar.getInstance();
-
-        //文字列からCalender型に変換
-        if (str == null) {
-            limit = null;
-        } else {
-            try {
-                SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
-                limit.setTime(sdf.parse(str.replace("-", "/")));
-            } catch (ParseException e) {
-                limit = null;
-            }
-        }
-
-        //
         boolean isExpired = false;
-        if (limit.compareTo(now) == 1) {
+        long last = 0;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
+            Date lastDate = sdf.parse(str);
+            last = lastDate.getTime();
+
+        } catch (ParseException e){
+            e.printStackTrace();
+        }
+        long now = Calendar.getInstance().getTimeInMillis();
+        if( (now -last) / (1000 * 3600) > 1 ){
             isExpired = true;
         }
         return isExpired;
