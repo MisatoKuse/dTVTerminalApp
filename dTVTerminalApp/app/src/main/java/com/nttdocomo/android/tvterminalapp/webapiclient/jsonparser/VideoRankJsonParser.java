@@ -23,7 +23,7 @@ public class VideoRankJsonParser {
 
     public static final String VIDEORANK_LIST_PAGER = "pager";
     public static final String VIDEORANK_LIST_PAGER_LIMIT = "limit";
-    public static final String VIDEORANK_LIST_PAGER_OFFSET= "offset";
+    public static final String VIDEORANK_LIST_PAGER_OFFSET = "offset";
     public static final String VIDEORANK_LIST_PAGER_COUNT = "count";
     public static final String VIDEORANK_LIST_PAGER_TOTAL = "total";
 
@@ -106,7 +106,8 @@ public class VideoRankJsonParser {
 
     /**
      * ジャンル毎一覧Jsonデータを解析する
-     * @param jsonStr　String形式のJSONデータ
+     *
+     * @param jsonStr 　String形式のJSONデータ
      * @return List<VideoRankList> ObjectクラスをList形式で返却
      */
     public List<VideoRankList> VideoRankListSender(String jsonStr) {
@@ -126,7 +127,7 @@ public class VideoRankJsonParser {
                 if (!jsonObj.isNull(VIDEORANK_LIST_PAGER)) {
                     JSONObject pager = jsonObj.getJSONObject(VIDEORANK_LIST_PAGER);
 
-                    for (int i = 0; i < pagerPara.length; i++){
+                    for (int i = 0; i < pagerPara.length; i++) {
                         if (!pager.isNull(pagerPara[i])) {
                             String para = pager.getString(pagerPara[i]);
                             map.put(pagerPara[i], para);
@@ -156,14 +157,15 @@ public class VideoRankJsonParser {
 
     /**
      * コンテンツリストをList<HashMap>の形式でObjectクラスへ格納する
-     * @param jsonArr　JSONArray
+     *
+     * @param jsonArr 　JSONArray
      */
     public void sendList(JSONArray jsonArr) {
         try {
             // コンテンツリストのList<HashMap>を用意
             List<HashMap<String, String>> wrList = new ArrayList<>();
 
-            for (int i = 0; i<jsonArr.length(); i++) {
+            for (int i = 0; i < jsonArr.length(); i++) {
                 // statusの値を取得し、Mapに格納
                 HashMap<String, String> map = new HashMap<String, String>();
                 // i番目のJSONArrayをJSONObjectに変換する
