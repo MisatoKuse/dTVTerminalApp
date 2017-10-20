@@ -17,61 +17,48 @@ import java.util.List;
 
 public class WeeklyRankJsonParser {
     // オブジェクトクラスの定義
-    private WeeklyRankList mWeeklyRankList;
+    public WeeklyRankList mWeeklyRankList;
 
     public static final String WEEKLYRANK_LIST_STATUS = "status";
 
     public static final String WEEKLYRANK_LIST_PAGER = "pager";
-    public static final String WEEKLYRANK_LIST_PAGER_UPPER_LIMIT = "upper_limit";
-    public static final String WEEKLYRANK_LIST_PAGER_LOWER_LIMIT = "lower_limit";
+    public static final String WEEKLYRANK_LIST_PAGER_LIMIT = "limit";
     public static final String WEEKLYRANK_LIST_PAGER_OFFSET = "offset";
     public static final String WEEKLYRANK_LIST_PAGER_COUNT = "count";
+    public static final String WEEKLYRANK_LIST_PAGER_TOTAL = "total";
 
     public static final String WEEKLYRANK_LIST = "list";
     public static final String WEEKLYRANK_LIST_CRID = "crid";
-    public static final String WEEKLYRANK_LIST_CID = "cid";
-    public static final String WEEKLYRANK_LIST_TITLE_ID = "title_id";
-    public static final String WEEKLYRANK_LIST_EPISODE_ID = "episode_id";
     public static final String WEEKLYRANK_LIST_TITLE = "title";
-    public static final String WEEKLYRANK_LIST_EPITITLE = "epititle";
+    public static final String WEEKLYRANK_LIST_CID = "cid";
+    public static final String WEEKLYRANK_LIST_SERVICE_ID = "service_id";
+    public static final String WEEKLYRANK_LIST_EVENT_ID = "event_id";
+    public static final String WEEKLYRANK_LIST_CHNO = "chno";
     public static final String WEEKLYRANK_LIST_DISP_TYPE = "disp_type";
-    public static final String WEEKLYRANK_LIST_DISPLAY_START_DATE = "display_start_date";
-    public static final String WEEKLYRANK_LIST_DISPLAY_END_DATE = "display_end_date";
-    public static final String WEEKLYRANK_LIST_AVAIL_START_DATE = "avail_start_date";
-    public static final String WEEKLYRANK_LIST_AVAIL_END_DATE = "avail_end_date";
-    public static final String WEEKLYRANK_LIST_PUBLISH_START_DATE = "publish_start_date";
-    public static final String WEEKLYRANK_LIST_PUBLISH_END_DATE = "publish_end_date";
-    public static final String WEEKLYRANK_LIST_NEWA_START_DATE = "newa_start_date";
-    public static final String WEEKLYRANK_LIST_NEWA_END_DATE = "newa_end_date";
-    public static final String WEEKLYRANK_LIST_COPYRIGHT = "copyright";
+    public static final String WEEKLYRANK_LIST_MISSED_VOD = "missed_vod";
+    public static final String WEEKLYRANK_LIST_LINEAR_START_DATE = "linear_start_date";
+    public static final String WEEKLYRANK_LIST_LINEAR_START_END = "linear_start_end";
+    public static final String WEEKLYRANK_LIST_VOD_START_DATE = "vod_start_date";
+    public static final String WEEKLYRANK_LIST_VOD_END_DATE = "vod_end_date";
     public static final String WEEKLYRANK_LIST_THUMB = "thumb";
+    public static final String WEEKLYRANK_LIST_COPYRIGHT = "copyright";
     public static final String WEEKLYRANK_LIST_DUR = "dur";
     public static final String WEEKLYRANK_LIST_DEMONG = "demong";
-    public static final String WEEKLYRANK_LIST_BVFLG = "bvflg";
-    public static final String WEEKLYRANK_LIST_4KFLG = "4kflg";
-    public static final String WEEKLYRANK_LIST_HDRFLG = "hdrflg";
-    public static final String WEEKLYRANK_LIST_AVAIL_STATUS = "avail_status";
+    public static final String WEEKLYRANK_LIST_AVAII_STATUS = "avail_status";
     public static final String WEEKLYRANK_LIST_DELIVERY = "delivery";
     public static final String WEEKLYRANK_LIST_R_VALUE = "r_value";
-    public static final String WEEKLYRANK_LIST_ADULT = "adult";
-    public static final String WEEKLYRANK_LIST_MS = "ms";
-    public static final String WEEKLYRANK_LIST_NG_FUNC = "ng_func";
-    public static final String WEEKLYRANK_LIST_GENRE_ID_ARRAY = "genre_id_array";
-    public static final String WEEKLYRANK_LIST_DTV = "dtv";
 
-    public static final String[] pagerPara = {WEEKLYRANK_LIST_PAGER_UPPER_LIMIT, WEEKLYRANK_LIST_PAGER_LOWER_LIMIT,
-            WEEKLYRANK_LIST_PAGER_OFFSET, WEEKLYRANK_LIST_PAGER_COUNT};
+    public static final String[] pagerPara = {WEEKLYRANK_LIST_PAGER_LIMIT, WEEKLYRANK_LIST_PAGER_OFFSET,
+            WEEKLYRANK_LIST_PAGER_COUNT, WEEKLYRANK_LIST_PAGER_TOTAL};
 
-    public static final String[] listPara = {WEEKLYRANK_LIST_CRID, WEEKLYRANK_LIST_CID, WEEKLYRANK_LIST_TITLE_ID,
-            WEEKLYRANK_LIST_EPISODE_ID, WEEKLYRANK_LIST_TITLE, WEEKLYRANK_LIST_EPITITLE, WEEKLYRANK_LIST_DISP_TYPE,
-            WEEKLYRANK_LIST_DISPLAY_START_DATE, WEEKLYRANK_LIST_DISPLAY_END_DATE, WEEKLYRANK_LIST_AVAIL_START_DATE,
-            WEEKLYRANK_LIST_AVAIL_END_DATE, WEEKLYRANK_LIST_PUBLISH_START_DATE, WEEKLYRANK_LIST_PUBLISH_END_DATE,
-            WEEKLYRANK_LIST_NEWA_START_DATE, WEEKLYRANK_LIST_NEWA_END_DATE, WEEKLYRANK_LIST_COPYRIGHT,
-            WEEKLYRANK_LIST_THUMB, WEEKLYRANK_LIST_DUR, WEEKLYRANK_LIST_DEMONG, WEEKLYRANK_LIST_BVFLG, WEEKLYRANK_LIST_4KFLG,
-            WEEKLYRANK_LIST_HDRFLG, WEEKLYRANK_LIST_AVAIL_STATUS, WEEKLYRANK_LIST_DELIVERY, WEEKLYRANK_LIST_R_VALUE,
-            WEEKLYRANK_LIST_ADULT, WEEKLYRANK_LIST_MS, WEEKLYRANK_LIST_NG_FUNC, WEEKLYRANK_LIST_GENRE_ID_ARRAY, WEEKLYRANK_LIST_DTV};
+    public static final String[] listPara = {WEEKLYRANK_LIST_CRID, WEEKLYRANK_LIST_TITLE, WEEKLYRANK_LIST_CID,
+            WEEKLYRANK_LIST_SERVICE_ID, WEEKLYRANK_LIST_EVENT_ID, WEEKLYRANK_LIST_CHNO, WEEKLYRANK_LIST_DISP_TYPE,
+            WEEKLYRANK_LIST_MISSED_VOD, WEEKLYRANK_LIST_LINEAR_START_DATE, WEEKLYRANK_LIST_LINEAR_START_END,
+            WEEKLYRANK_LIST_VOD_START_DATE, WEEKLYRANK_LIST_VOD_END_DATE, WEEKLYRANK_LIST_THUMB,
+            WEEKLYRANK_LIST_COPYRIGHT, WEEKLYRANK_LIST_DUR, WEEKLYRANK_LIST_DEMONG,
+            WEEKLYRANK_LIST_AVAII_STATUS, WEEKLYRANK_LIST_DELIVERY, WEEKLYRANK_LIST_R_VALUE};
 
-    public List<WeeklyRankList> WEEKLYRANKListSender(String jsonStr) {
+    public List<WeeklyRankList> WeeklyRankListSender(String jsonStr) {
 
         mWeeklyRankList = new WeeklyRankList();
 
@@ -79,11 +66,12 @@ public class WeeklyRankJsonParser {
             JSONObject jsonObj = new JSONObject(jsonStr);
             if (jsonObj != null) {
                 sendStatus(jsonObj);
-                sendVcList(jsonObj);
-
-                List<WeeklyRankList> WEEKLYRANKList = Arrays.asList(mWeeklyRankList);
-
-                return WEEKLYRANKList;
+                if (!jsonObj.isNull(WEEKLYRANK_LIST)) {
+                    JSONArray arrayLlist = jsonObj.getJSONArray(WEEKLYRANK_LIST);
+                    senWrcList(arrayLlist);
+                }
+                List<WeeklyRankList> wrList = Arrays.asList(mWeeklyRankList);
+                return wrList;
             }
         } catch (JSONException e) {
             // TODO Auto-generated catch block
@@ -114,7 +102,6 @@ public class WeeklyRankJsonParser {
                     }
                 }
             }
-
             mWeeklyRankList.setWrMap(map);
 
         } catch (JSONException e) {
@@ -128,41 +115,22 @@ public class WeeklyRankJsonParser {
     /*
     * コンテンツのList<HashMap>をオブジェクトクラスに格納
      */
-    public void sendVcList(JSONObject jsonObj) {
+    public void senWrcList(JSONArray arrayLlist) {
         try {
-            if (!jsonObj.isNull(WEEKLYRANK_LIST)) {
-                // コンテンツリストのList<HashMap>を用意
-                List<HashMap<String, String>> vcList = new ArrayList<>();
+            List<HashMap<String, String>> wrList = new ArrayList<>();
 
-                // コンテンツリストをJSONArrayにパースする
-                JSONArray jsonArr = jsonObj.getJSONArray(WEEKLYRANK_LIST);
-
-                // リストの数だけまわす
-                for (int i = 0; i<jsonArr.length(); i++){
-                    // 最初にHashMapを生成＆初期化
-                    HashMap<String, String> vcListMap = new HashMap<String, String>();
-
-                    // i番目のJSONArrayをJSONObjectに変換する
-                    JSONObject jsonObject = jsonArr.getJSONObject(i);
-
-                    for (int j = 0; j < listPara.length; j++){
-                        if (!jsonObject.isNull(listPara[j])) {
-                            if (listPara[j] == WEEKLYRANK_LIST_GENRE_ID_ARRAY) {
-                                String para = jsonObject.getString(listPara[j]);
-                                vcListMap.put(listPara[j], para.substring(1, (para.length() -1)));
-                            } else {
-                                String para = jsonObject.getString(listPara[j]);
-                                vcListMap.put(listPara[j], para);
-                            }
-                        }
+            for (int i = 0; i<arrayLlist.length(); i++){
+                HashMap<String, String> wrListMap = new HashMap<String, String>();
+                JSONObject jsonObject = arrayLlist.getJSONObject(i);
+                for (int j = 0; j < listPara.length; j++){
+                    if (!jsonObject.isNull(listPara[j])) {
+                        String para = jsonObject.getString(listPara[j]);
+                        wrListMap.put(listPara[j], para);
                     }
-
-                    // i番目のMapをListにadd
-                    vcList.add(vcListMap);
                 }
-                // リスト数ぶんの格納が終わったらオブジェクトクラスにList<HashMap>でset
-                mWeeklyRankList.setWrList(vcList);
+                wrList.add(wrListMap);
             }
+            mWeeklyRankList.setWrList(wrList);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {

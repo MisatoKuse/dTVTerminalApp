@@ -40,7 +40,7 @@ public class WeeklyRankWebClient
 
         //JSONをパースする
         WeeklyRankJsonParser weeklyRankJsonParser = new WeeklyRankJsonParser();
-        pursedData = weeklyRankJsonParser.WEEKLYRANKListSender(returnCode.bodyData);
+        pursedData = weeklyRankJsonParser.WeeklyRankListSender(returnCode.bodyData);
 
         //パース後のデータを返す
         mWeeklyRankJsonParserCallback.onWeeklyRankJsonParsed(pursedData);

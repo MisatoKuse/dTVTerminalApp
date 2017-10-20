@@ -124,35 +124,44 @@ import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodCli
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_THUMB;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_TITLE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_TITLE_ID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_ADULT;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_AVAIL_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_AVAIL_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_AVAIL_STATUS;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_BVFLG;
+//import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_ADULT;
+//import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_AVAIL_END_DATE;
+//import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_AVAIL_START_DATE;
+//import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_AVAIL_STATUS;
+//import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_BVFLG;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_AVAII_STATUS;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_CHNO;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_CID;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_COPYRIGHT;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_CRID;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_DELIVERY;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_DEMONG;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_DISPLAY_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_DISPLAY_START_DATE;
+//import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_DISPLAY_END_DATE;
+//import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_DISPLAY_START_DATE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_DISP_TYPE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_DTV;
+//import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_DTV;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_DUR;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_EPISODE_ID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_EPITITLE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_GENRE_ID_ARRAY;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_HDRFLG;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_MS;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_NEWA_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_NEWA_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_NG_FUNC;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_PUBLISH_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_PUBLISH_START_DATE;
+//import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_EPISODE_ID;
+//import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_EPITITLE;
+//import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_GENRE_ID_ARRAY;
+//import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_HDRFLG;
+//import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_MS;
+//import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_NEWA_END_DATE;
+//import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_NEWA_START_DATE;
+//import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_NG_FUNC;
+//import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_PUBLISH_END_DATE;
+//import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_PUBLISH_START_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_EVENT_ID;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_LINEAR_START_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_LINEAR_START_END;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_MISSED_VOD;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_R_VALUE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_SERVICE_ID;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_THUMB;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_TITLE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_TITLE_ID;
+//import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_TITLE_ID;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_VOD_END_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_VOD_START_DATE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_AGREEMENT;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID;
@@ -380,34 +389,56 @@ public class DBConstants {
             ID_COLUMN + " integer primary key autoincrement, " +
             WEEKLYRANK_LIST_CRID + " text, " +
             WEEKLYRANK_LIST_CID + " text, " +
-            WEEKLYRANK_LIST_TITLE_ID + " text, " +
-            WEEKLYRANK_LIST_EPISODE_ID + " text, " +
             WEEKLYRANK_LIST_TITLE + " text, " +
-            WEEKLYRANK_LIST_EPITITLE + " text, " +
+            WEEKLYRANK_LIST_CID + " text, " +
+            WEEKLYRANK_LIST_SERVICE_ID + " text, " +
+            WEEKLYRANK_LIST_EVENT_ID + " text, " +
+            WEEKLYRANK_LIST_CHNO + " text, " +
             WEEKLYRANK_LIST_DISP_TYPE + " text, " +
-            WEEKLYRANK_LIST_DISPLAY_START_DATE + " text, " +
-            WEEKLYRANK_LIST_DISPLAY_END_DATE + " text, " +
-            WEEKLYRANK_LIST_AVAIL_START_DATE + " text, " +
-            WEEKLYRANK_LIST_AVAIL_END_DATE + " text, " +
-            WEEKLYRANK_LIST_PUBLISH_START_DATE + " text, " +
-            WEEKLYRANK_LIST_PUBLISH_END_DATE + " text, " +
-            WEEKLYRANK_LIST_NEWA_START_DATE + " text, " +
-            WEEKLYRANK_LIST_NEWA_END_DATE + " text, " +
-            WEEKLYRANK_LIST_COPYRIGHT + " text, " +
+            WEEKLYRANK_LIST_MISSED_VOD + " text, " +
+            WEEKLYRANK_LIST_LINEAR_START_DATE + " text, " +
+            WEEKLYRANK_LIST_LINEAR_START_END + " text, " +
+            WEEKLYRANK_LIST_VOD_START_DATE + " text, " +
+            WEEKLYRANK_LIST_VOD_END_DATE + " text, " +
             WEEKLYRANK_LIST_THUMB + " text, " +
+            WEEKLYRANK_LIST_COPYRIGHT + " text, " +
             WEEKLYRANK_LIST_DUR + " text, " +
             WEEKLYRANK_LIST_DEMONG + " text, " +
-            WEEKLYRANK_LIST_BVFLG + " text, " +
-            UNDER_BAR_FOUR_K_FLG + " text, " +
-            WEEKLYRANK_LIST_HDRFLG + " text, " +
-            WEEKLYRANK_LIST_AVAIL_STATUS + " text, " +
+            WEEKLYRANK_LIST_AVAII_STATUS + " text, " +
             WEEKLYRANK_LIST_DELIVERY + " text, " +
             WEEKLYRANK_LIST_R_VALUE + " text, " +
-            WEEKLYRANK_LIST_ADULT + " text, " +
-            WEEKLYRANK_LIST_MS + " text, " +
-            WEEKLYRANK_LIST_NG_FUNC + " text, " +
-            WEEKLYRANK_LIST_GENRE_ID_ARRAY + " text, " +
-            WEEKLYRANK_LIST_DTV + " text " +
+
+            // 旧パラメータをコメントアウト
+//            WEEKLYRANK_LIST_CRID + " text, " +
+//            WEEKLYRANK_LIST_CID + " text, " +
+//            WEEKLYRANK_LIST_TITLE_ID + " text, " +
+//            WEEKLYRANK_LIST_EPISODE_ID + " text, " +
+//            WEEKLYRANK_LIST_TITLE + " text, " +
+//            WEEKLYRANK_LIST_EPITITLE + " text, " +
+//            WEEKLYRANK_LIST_DISP_TYPE + " text, " +
+//            WEEKLYRANK_LIST_DISPLAY_START_DATE + " text, " +
+//            WEEKLYRANK_LIST_DISPLAY_END_DATE + " text, " +
+//            WEEKLYRANK_LIST_AVAIL_START_DATE + " text, " +
+//            WEEKLYRANK_LIST_AVAIL_END_DATE + " text, " +
+//            WEEKLYRANK_LIST_PUBLISH_START_DATE + " text, " +
+//            WEEKLYRANK_LIST_PUBLISH_END_DATE + " text, " +
+//            WEEKLYRANK_LIST_NEWA_START_DATE + " text, " +
+//            WEEKLYRANK_LIST_NEWA_END_DATE + " text, " +
+//            WEEKLYRANK_LIST_COPYRIGHT + " text, " +
+//            WEEKLYRANK_LIST_THUMB + " text, " +
+//            WEEKLYRANK_LIST_DUR + " text, " +
+//            WEEKLYRANK_LIST_DEMONG + " text, " +
+//            WEEKLYRANK_LIST_BVFLG + " text, " +
+//            UNDER_BAR_FOUR_K_FLG + " text, " +
+//            WEEKLYRANK_LIST_HDRFLG + " text, " +
+//            WEEKLYRANK_LIST_AVAIL_STATUS + " text, " +
+//            WEEKLYRANK_LIST_DELIVERY + " text, " +
+//            WEEKLYRANK_LIST_R_VALUE + " text, " +
+//            WEEKLYRANK_LIST_ADULT + " text, " +
+//            WEEKLYRANK_LIST_MS + " text, " +
+//            WEEKLYRANK_LIST_NG_FUNC + " text, " +
+//            WEEKLYRANK_LIST_GENRE_ID_ARRAY + " text, " +
+//            WEEKLYRANK_LIST_DTV + " text " +
             ")";
 
     //Homeキャッシュデータ格納用テーブル
