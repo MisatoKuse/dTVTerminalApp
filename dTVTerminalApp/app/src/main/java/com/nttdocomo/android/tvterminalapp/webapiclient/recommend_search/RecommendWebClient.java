@@ -56,22 +56,20 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
     //先頭スイッチ
     boolean mfirstParmater;
 
-    /**
-     * 種別・チャンネル
-     */
+ 
     private final RecommendCallback mRecommendCallback;
 
     public interface RecommendCallback {
         void RecommendCallback(RecommendChList mRecommendChList);
     }
 
-    public RecommendWebClient(RecommendCallback mRecommendChannelCallback){
-        this.mRecommendCallback = mRecommendChannelCallback;
+    public RecommendWebClient(RecommendCallback mRecommendCallback){
+        this.mRecommendCallback = mRecommendCallback;
     }
 
     public void getRecommendApi(RecommendRequestData recommendRequestData) {
 
-        DTVTLogger.debug("getRecommendChannelApi");
+        DTVTLogger.debug("getRecommendApi");
 
         LinkedHashMap queryItems = new LinkedHashMap();
 
