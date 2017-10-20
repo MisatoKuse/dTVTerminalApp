@@ -58,6 +58,11 @@ public class WeeklyRankJsonParser {
             WEEKLYRANK_LIST_COPYRIGHT, WEEKLYRANK_LIST_DUR, WEEKLYRANK_LIST_DEMONG,
             WEEKLYRANK_LIST_AVAII_STATUS, WEEKLYRANK_LIST_DELIVERY, WEEKLYRANK_LIST_R_VALUE};
 
+    /**
+     * 週間ランキングJsonデータを解析する
+     * @param jsonStr String形式のJSONデータ
+     * @return List<WeeklyRankList> ObjectクラスをList形式で返却
+     */
     public List<WeeklyRankList> WeeklyRankListSender(String jsonStr) {
 
         mWeeklyRankList = new WeeklyRankList();
@@ -112,8 +117,9 @@ public class WeeklyRankJsonParser {
         }
     }
 
-    /*
-    * コンテンツのList<HashMap>をオブジェクトクラスに格納
+    /**
+     * コンテンツリストをList<HashMap>の形式でObjectクラスへ格納する
+     * @param arrayLlist JSONArray
      */
     public void senWrcList(JSONArray arrayLlist) {
         try {
