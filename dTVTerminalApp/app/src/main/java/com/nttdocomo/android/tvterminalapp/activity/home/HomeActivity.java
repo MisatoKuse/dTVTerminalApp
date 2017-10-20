@@ -19,24 +19,28 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.List;
-
+import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.common.SpaceItemDecoration;
 import com.nttdocomo.android.tvterminalapp.activity.home.adapter.HomeRecyclerViewAdapter;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.beans.HomeBean;
 import com.nttdocomo.android.tvterminalapp.beans.HomeBeanContent;
-import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.dataprovider.HomeDataProvider;
+
+import java.util.List;
 
 public class HomeActivity extends BaseActivity implements View.OnClickListener, HomeDataProvider.ApiDataProviderCallback {
 
     private LinearLayout mLinearLayout;
-    private RecyclerView mRecyclerView;
     //外部ブラウザー遷移先
     private final static String PR_URL = "https://www.hikaritv.net/video";
+    //コンテンツ一覧数
+    private final static int CONTENT_LIST_COUNT = 6;
+    //ヘッダのmargin
+    private final static int CONTENT_LIST_START_INDEX = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,41 +148,48 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         menuImageView.setOnClickListener(this);
         agreementTextView.setOnClickListener(this);
         prImageView.setOnClickListener(this);
+        //各コンテンツのビューを作成する
+        for(int i=CONTENT_LIST_START_INDEX;i<CONTENT_LIST_COUNT+CONTENT_LIST_START_INDEX;i++){
+            View view = LayoutInflater.from(this).inflate(R.layout.home_main_layout_item, null, false);
+            RelativeLayout relativeLayout = view.findViewById(R.id.home_main_item_type_rl);
+            LinearLayout.LayoutParams relIp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    height / 15);
+            relativeLayout.setLayoutParams(relIp);
+            view.setTag(i);
+            view.setVisibility(View.GONE);
+            mLinearLayout.addView(view);
+        }
     }
 
     /**
      * 機能
      * コンテンツ一覧ビューを設定
      */
-    private void setRecyclerView(HomeBean mHomeBean) {
+    private void setRecyclerView(HomeBean mHomeBean, final int tag) {
         String typeContentName = mHomeBean.getContentTypeName();
         String resultCount = mHomeBean.getContentCount();
-        final int index = mHomeBean.getContentType();
-        View view = LayoutInflater.from(this).inflate(R.layout.home_main_layout_item, null, false);
-        RelativeLayout relativeLayout = view.findViewById(R.id.home_main_item_type_rl);
-        int height = getHeightDensity();
-        LinearLayout.LayoutParams relIp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                height / 15);
-        relativeLayout.setLayoutParams(relIp);
+        View view = mLinearLayout.getChildAt(tag);
+        view.setVisibility(View.VISIBLE);
         TextView typeTextView = view.findViewById(R.id.home_main_item_type_tx);
         TextView countTextView = view.findViewById(R.id.home_main_item_type_tx_count);
         //各一覧を遷移すること
         countTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startTo(index);
+                startTo(tag);
             }
         });
-        mRecyclerView = view.findViewById(R.id.home_main_item_recyclerview);
+        RecyclerView mRecyclerView = view.findViewById(R.id.home_main_item_recyclerview);
+        //リサイクルビューの間隔
+        int spacingInPixels = (int)getDensity() * 5;
+        mRecyclerView.addItemDecoration(new SpaceItemDecoration(spacingInPixels));
         //コンテンツタイプを設定（NOW ON AIR）
         typeTextView.setText(typeContentName);
         //コンテンツカウントを設定（20）
         countTextView.setText(resultCount);
-        //リサイクルビューをスクロールビューに追加する
-        mLinearLayout.addView(view);
         //リサイクルビューデータ設定
-        setRecyclerViewData(mRecyclerView, mHomeBean.getContentList(), index);
+        setRecyclerViewData(mRecyclerView, mHomeBean.getContentList(), tag);
     }
 
     /**
@@ -210,24 +221,24 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
      */
     private void startTo(int index) {
         switch (index) {
-            case 0:
+            case 2:
                 //チャンネルリスト一覧へ遷移
                 startActivity(ChannelListActivity.class, null);
                 break;
-            case 1:
-            case 2:
+            case 3:
+            case 4:
                 //おすすめへ遷移
                 startActivity(RecommendActivity.class, null);
                 break;
-            case 3:
+            case 5:
                 //今日のテレビランキングへ遷移
                 startActivity(DailyTvRankingActivity.class, null);
                 break;
-            case 4:
+            case 6:
                 //ビデオランキングへ遷移
                 startActivity(VideoRankingActivity.class, null);
                 break;
-            case 5:
+            case 7:
                 //クリップ一覧へ遷移
                 startActivity(ClipListActivity.class, null);
                 break;
@@ -238,17 +249,17 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void ChannelListCallback(HomeBean homeBean) {
-        if (homeBean != null && homeBean.getContentList() != null
+        /*if (homeBean != null && homeBean.getContentList() != null
                 && homeBean.getContentList().size() > 0) {
             setRecyclerView(homeBean);
-        }
+        }*/
     }
 
     @Override
     public void DailyRankListCallback(HomeBean homeBean) {
         if (homeBean != null && homeBean.getContentList() != null
                 && homeBean.getContentList().size() > 0) {
-            setRecyclerView(homeBean);
+            setRecyclerView(homeBean,5);
         }
     }
 
@@ -256,7 +267,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     public void TvScheduleCallback(HomeBean homeBean) {
         if (homeBean != null && homeBean.getContentList() != null
                 && homeBean.getContentList().size() > 0) {
-            setRecyclerView(homeBean);
+            setRecyclerView(homeBean,2);
         }
     }
 
@@ -268,7 +279,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     public void VodClipListCallback(HomeBean homeBean) {
         if (homeBean != null && homeBean.getContentList() != null
                 && homeBean.getContentList().size() > 0) {
-            setRecyclerView(homeBean);
+            setRecyclerView(homeBean,7);
         }
     }
 
@@ -276,7 +287,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     public void WeeklyRankCallback(HomeBean homeBean) {
         if (homeBean != null && homeBean.getContentList() != null
                 && homeBean.getContentList().size() > 0) {
-            setRecyclerView(homeBean);
+            setRecyclerView(homeBean, 6);
         }
     }
 
@@ -284,7 +295,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     public void RecommendChannelCallback(HomeBean homeBean) {
         if (homeBean != null && homeBean.getContentList() != null
                 && homeBean.getContentList().size() > 0) {
-            setRecyclerView(homeBean);
+            setRecyclerView(homeBean,3);
         }
     }
 
@@ -292,7 +303,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     public void RecommemdVideoCallback(HomeBean homeBean) {
         if (homeBean != null && homeBean.getContentList() != null
                 && homeBean.getContentList().size() > 0) {
-            setRecyclerView(homeBean);
+            setRecyclerView(homeBean,4);
         }
     }
 }

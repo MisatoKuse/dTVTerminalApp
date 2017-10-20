@@ -5,44 +5,171 @@
 package com.nttdocomo.android.tvterminalapp.activity.ranking;
 
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
-import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.common.SpaceItemDecoration;
+import com.nttdocomo.android.tvterminalapp.activity.home.adapter.HomeRecyclerViewAdapter;
+import com.nttdocomo.android.tvterminalapp.beans.HomeBean;
+import com.nttdocomo.android.tvterminalapp.beans.HomeBeanContent;
+import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
 
-public class RankingTopActivity extends BaseActivity {
+import java.util.List;
+
+public class RankingTopActivity extends BaseActivity implements View.OnClickListener, RankingTopDataProvider.ApiDataProviderCallback{
+
+    private LinearLayout mLinearLayout;
+    //コンテンツ一覧数
+    private final static int CONTENT_LIST_COUNT = 3;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ranking_top_main_layout);
+        setTitleText("ランキング");
+        //ビューの初期化処理
+        initView();
+        RankingTopDataProvider rankingTopDataProvider = new RankingTopDataProvider(this);
+        rankingTopDataProvider.getRankingTopData();
     }
 
     /**
-     * コンテンツ詳細への遷移
+     * 機能
+     * ビューの初期化処理
      */
-    public void contentsDetailButton(View view) {
-        startActivity(TvPlayerActivity.class, null);
+    private void initView() {
+        mLinearLayout = findViewById(R.id.ranking_top_main_layout_linearLayout);
+        ImageView menuImageView = findViewById(R.id.header_layout_menu);
+        menuImageView.setVisibility(View.VISIBLE);
+        menuImageView.setOnClickListener(this);
+        int height = getHeightDensity();
+        for(int i=0; i<CONTENT_LIST_COUNT; i++){
+            View view = LayoutInflater.from(this).inflate(R.layout.home_main_layout_item, null, false);
+            RelativeLayout relativeLayout = view.findViewById(R.id.home_main_item_type_rl);
+            LinearLayout.LayoutParams relIp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    height / 15);
+            relativeLayout.setLayoutParams(relIp);
+            view.setTag(i);
+            view.setVisibility(View.GONE);
+            mLinearLayout.addView(view);
+        }
     }
 
     /**
-     * 今日のテレビランキングへの遷移
+     * 機能
+     * コンテンツ一覧ビューを設定
      */
-    public void dailyRankingButton(View view) {
-        startActivity(DailyTvRankingActivity.class, null);
+    private void setRecyclerView(HomeBean mHomeBean, final int tag) {
+        String typeContentName = mHomeBean.getContentTypeName();
+        String resultCount = mHomeBean.getContentCount();
+        View view = mLinearLayout.getChildAt(tag);
+        view.setVisibility(View.VISIBLE);
+        TextView typeTextView = view.findViewById(R.id.home_main_item_type_tx);
+        TextView countTextView = view.findViewById(R.id.home_main_item_type_tx_count);
+        //各一覧を遷移すること
+        countTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startTo(tag);
+            }
+        });
+        RecyclerView mRecyclerView = view.findViewById(R.id.home_main_item_recyclerview);
+        int spacingInPixels = (int)getDensity() * 5;
+        mRecyclerView.addItemDecoration(new SpaceItemDecoration(spacingInPixels));
+        //コンテンツタイプを設定
+        typeTextView.setText(typeContentName);
+        countTextView.setText(resultCount);
+        //リサイクルビューデータ設定
+        setRecyclerViewData(mRecyclerView, mHomeBean.getContentList(), tag);
     }
 
     /**
-     * 週刊テレビランキングへの遷移
+     * 機能
+     * コンテンツ一覧データを設定
      */
-    public void weeklyTvRankingButton(View view) {
-        startActivity(WeeklyTvRankingActivity.class, null);
+    private void setRecyclerViewData(RecyclerView mRecyclerView, List<HomeBeanContent> mList, final int index) {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+        HomeRecyclerViewAdapter mHorizontalViewAdapter = new HomeRecyclerViewAdapter(this, mList);
+        mRecyclerView.setAdapter(mHorizontalViewAdapter);
+        View footer = LayoutInflater.from(this).inflate(R.layout.home_main_layout_recyclerview_footer, mRecyclerView, false);
+        TextView mTextView = footer.findViewById(R.id.home_main_layout_recyclerview_footer);
+        //もっと見るの遷移先を設定
+        mTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startTo(index);
+            }
+        });
+        //リサイクルビューデータの設定
+        mHorizontalViewAdapter.setFooterView(footer);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.header_layout_menu:
+                //ダブルクリックを防ぐ
+                if (isFastClick()) {
+                    onSampleGlobalMenuButton_PairLoginOk();
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     /**
-     * ビデオランキングへの遷移
+     * 機能
+     * 遷移先を設定
      */
-    public void videoRankingButton(View view) {
-        startActivity(VideoRankingActivity.class, null);
+    private void startTo(int index) {
+        switch (index) {
+            case 0:
+                //今日のテレビランキングへ遷移
+                startActivity(DailyTvRankingActivity.class, null);
+                break;
+            case 1:
+                //週刊テレビランキングへ遷移
+                startActivity(WeeklyTvRankingActivity.class, null);
+                break;
+            case 2:
+                //ビデオランキングへ遷移
+                startActivity(VideoRankingActivity.class, null);
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void DailyRankListCallback(HomeBean homeBean) {
+        if (homeBean!=null && homeBean.getContentList()!=null
+                && homeBean.getContentList().size() > 0){
+            setRecyclerView(homeBean,0);
+        }
+    }
+
+    @Override
+    public void WeeklyRankCallback(HomeBean homeBean) {
+        if (homeBean!=null && homeBean.getContentList()!=null
+                && homeBean.getContentList().size() > 0){
+            setRecyclerView(homeBean,1);
+        }
+    }
+
+    @Override
+    public void VideoRankCallback(HomeBean homeBean) {
+
     }
 }
