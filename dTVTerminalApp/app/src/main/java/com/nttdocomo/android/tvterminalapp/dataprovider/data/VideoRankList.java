@@ -30,20 +30,20 @@ public class VideoRankList {
         this.mVrList = vrList;
     }
 
-    public List getVrPLITList() {
-        return mVrPLITList;
-    }
-
-    public void setVrPLITList(List rPLITList) {
-        this.mVrPLITList = rPLITList;
-    }
-
-    public List getVrPlicenseList() {
-        return mVrPlicenseList;
-    }
-
-    public void setVrPlicenseList(List vrPlicenseList) {
-        this.mVrPlicenseList = vrPlicenseList;
-    }
+//    public List getVrPLITList() {
+//        return mVrPLITList;
+//    }
+//
+//    public void setVrPLITList(List rPLITList) {
+//        this.mVrPLITList = rPLITList;
+//    }
+//
+//    public List getVrPlicenseList() {
+//        return mVrPlicenseList;
+//    }
+//
+//    public void setVrPlicenseList(List vrPlicenseList) {
+//        this.mVrPlicenseList = vrPlicenseList;
+//    }
 
 }
