@@ -71,13 +71,18 @@ public class RecommendChannelXmlParser  {
     public static final String RECOMMENDCHANNEL_LIST_GROUPID = "groupId";
     public static final String RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID = "recommendMethodId";
 
-    public RecommendChList getRecommendchannelList() {
+    /**
+     * 受け取ったレスポンスデータからXMLをパースする
+     * @param responseData レスポンスデータ
+     * @return パース後のデータ
+     */
+    public RecommendChList getRecommendchannelList(String responseData) {
         RecommendChList redChContents = null;
         List<Map<String, String>> redChContentList = null;
         HashMap<String, String> redChHashMap = null;
         XmlPullParser parser = Xml.newPullParser();
         try {
-            parser.setInput(new StringReader(xmlResult));
+            parser.setInput(new StringReader(responseData));
             int eventType = parser.getEventType();
             boolean endFlg = false;
             while (!endFlg) {
@@ -170,5 +175,13 @@ public class RecommendChannelXmlParser  {
             e.printStackTrace();
         }
         return redChContents;
+    }
+
+    /**
+     * ダミーデータをパースする
+     * @return パース後のデータ
+     */
+    public RecommendChList getRecommendchannelList() {
+        return getRecommendchannelList(xmlResult);
     }
 }
