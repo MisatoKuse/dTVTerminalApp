@@ -16,6 +16,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import javax.net.ssl.HttpsURLConnection;
+
 
 public class HttpThread extends Thread {
 
@@ -52,13 +54,13 @@ public class HttpThread extends Thread {
     public void run() {
 
         clearStatus();
-        HttpURLConnection httpUrlConn = null;
+        HttpsURLConnection httpUrlConn = null;
         final StringBuffer sb = new StringBuffer();
         String str = null;
 
         try {
             URL url = new URL(this.mUrl);
-            httpUrlConn = (HttpURLConnection) url.openConnection();
+            httpUrlConn = (HttpsURLConnection) url.openConnection();
 
             httpUrlConn.setReadTimeout(DTVTConstants.SEARCH_SERVER_TIMEOUT);
             httpUrlConn.setRequestMethod("GET");

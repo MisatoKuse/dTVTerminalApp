@@ -72,13 +72,18 @@ public class RecommendVideoXmlParser {
     public static final String RECOMMENDVIDEO_LIST_GROUPID = "groupId";
     public static final String RECOMMENDVIDEO_LIST_RECOMMENDMETHODID = "recommendMethodId";
 
-    public RecommendVdList getRecommendVideoList() {
+    /**
+     * 受け取ったレスポンスデータからXMLをパースする
+     * @param responseData レスポンスデータ
+     * @return パース後のデータ
+     */
+    public RecommendVdList getRecommendVideoList(String responseData) {
         RecommendVdList redVdContents = null;
         List<Map<String, String>> redVdContentList = null;
         HashMap<String, String> redVdHashMap = null;
         XmlPullParser parser = Xml.newPullParser();
         try {
-            parser.setInput(new StringReader(xmlResult));
+            parser.setInput(new StringReader(responseData));
             int eventType = parser.getEventType();
             boolean endFlg = false;
             while (!endFlg) {
@@ -172,5 +177,11 @@ public class RecommendVideoXmlParser {
         }
         return redVdContents;
     }
-
+    /**
+     * ダミーデータをパースする
+     * @return パース後のデータ
+     */
+    public RecommendVdList getRecommendVideoList() {
+        return getRecommendVideoList(xmlResult);
+    }
 }
