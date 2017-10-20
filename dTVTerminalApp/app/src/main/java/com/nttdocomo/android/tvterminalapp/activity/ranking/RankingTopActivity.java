@@ -13,22 +13,23 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.common.SpaceItemDecoration;
 import com.nttdocomo.android.tvterminalapp.activity.home.adapter.HomeRecyclerViewAdapter;
-import com.nttdocomo.android.tvterminalapp.beans.HomeBean;
-import com.nttdocomo.android.tvterminalapp.beans.HomeBeanContent;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
 
 import java.util.List;
+import java.util.Map;
 
 public class RankingTopActivity extends BaseActivity implements View.OnClickListener, RankingTopDataProvider.ApiDataProviderCallback{
 
     private LinearLayout mLinearLayout;
     //コンテンツ一覧数
     private final static int CONTENT_LIST_COUNT = 3;
+    private final static String DAILY_RANK = "今日のテレビランキング";
+    private final static String WEEKLY_RANK = "週刊テレビランキング";
+    private final static String VIDEO_RANK = "ビデオランキング";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,9 +69,9 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
      * 機能
      * コンテンツ一覧ビューを設定
      */
-    private void setRecyclerView(HomeBean mHomeBean, final int tag) {
-        String typeContentName = mHomeBean.getContentTypeName();
-        String resultCount = mHomeBean.getContentCount();
+    private void setRecyclerView(List<Map<String,String>> contentsData, final int tag) {
+        String typeContentName = getContentTypeName(tag);
+        String resultCount = String.valueOf(contentsData.size());
         View view = mLinearLayout.getChildAt(tag);
         view.setVisibility(View.VISIBLE);
         TextView typeTextView = view.findViewById(R.id.home_main_item_type_tx);
@@ -89,14 +90,14 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
         typeTextView.setText(typeContentName);
         countTextView.setText(resultCount);
         //リサイクルビューデータ設定
-        setRecyclerViewData(mRecyclerView, mHomeBean.getContentList(), tag);
+        setRecyclerViewData(mRecyclerView, contentsData, tag);
     }
 
     /**
      * 機能
      * コンテンツ一覧データを設定
      */
-    private void setRecyclerViewData(RecyclerView mRecyclerView, List<HomeBeanContent> mList, final int index) {
+    private void setRecyclerViewData(RecyclerView mRecyclerView, List<Map<String,String>> mList, final int index) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mRecyclerView.setLayoutManager(linearLayoutManager);
@@ -152,24 +153,44 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
         }
     }
 
+    /**
+     * 機能
+     * コンテンツ一覧タイトル取得
+     */
+    private String getContentTypeName (int tag){
+        String typeName = "";
+        switch (tag){
+            case 0:
+                typeName = DAILY_RANK;
+                break;
+            case 1:
+                typeName = WEEKLY_RANK;
+                break;
+            case 2:
+                typeName = VIDEO_RANK;
+                break;
+            default:
+                break;
+        }
+        return typeName;
+    }
+
     @Override
-    public void DailyRankListCallback(HomeBean homeBean) {
-        if (homeBean!=null && homeBean.getContentList()!=null
-                && homeBean.getContentList().size() > 0){
-            setRecyclerView(homeBean,0);
+    public void DailyRankListCallback(List<Map<String,String>> dailyMap) {
+        if (dailyMap!=null && dailyMap.size() > 0){
+            setRecyclerView(dailyMap, 0);
         }
     }
 
     @Override
-    public void WeeklyRankCallback(HomeBean homeBean) {
-        if (homeBean!=null && homeBean.getContentList()!=null
-                && homeBean.getContentList().size() > 0){
-            setRecyclerView(homeBean,1);
+    public void WeeklyRankCallback(List<Map<String,String>> weeklyMap) {
+        if (weeklyMap!=null && weeklyMap.size() > 0){
+            setRecyclerView(weeklyMap, 1);
         }
     }
 
     @Override
-    public void VideoRankCallback(HomeBean homeBean) {
+    public void VideoRankCallback(List<Map<String,String>> videoMap) {
 
     }
 }

@@ -18,15 +18,20 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
-import com.nttdocomo.android.tvterminalapp.beans.HomeBeanContent;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_START_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_THUMB;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_TITLE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE;
 
 import java.util.List;
+import java.util.Map;
 
 public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerViewAdapter.ViewHolder>
 {
     private LayoutInflater mInflater;
-    private List<HomeBeanContent> mContentList;
+    private List<Map<String,String>> mContentList;
     private Context context;
     //サムネイル取得プロバイダー
     private ThumbnailProvider thumbnailProvider;
@@ -37,7 +42,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     public static final int TYPE_FOOTER = 1;
     public static final int TYPE_NORMAL = 2;
 
-    public HomeRecyclerViewAdapter(Context context, List<HomeBeanContent> mContentList)
+    public HomeRecyclerViewAdapter(Context context, List<Map<String,String>> mContentList)
     {
         mInflater = LayoutInflater.from(context);
         this.mContentList = mContentList;
@@ -99,23 +104,32 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         if(getItemViewType(i) == TYPE_FOOTER){
             return;
         }
-        if(!TextUtils.isEmpty(mContentList.get(i).getContentName())){
+        String date = mContentList.get(i).get(VIDEORANK_LIST_START_DATE);
+        String title = mContentList.get(i).get(VIDEORANK_LIST_TITLE);
+        if(TextUtils.isEmpty(title)){
+            title = mContentList.get(i).get(RECOMMENDCHANNEL_LIST_TITLE);
+        }
+        String thumbnail = mContentList.get(i).get(VIDEORANK_LIST_THUMB);
+        if(TextUtils.isEmpty(thumbnail)){
+            thumbnail = mContentList.get(i).get(RECOMMENDCHANNEL_LIST_CTPICURL1);
+        }
+        if(!TextUtils.isEmpty(title)){
             viewHolder.mContent.setVisibility(View.VISIBLE);
-            viewHolder.mContent.setText(mContentList.get(i).getContentName());
+            viewHolder.mContent.setText(title);
         }else {
             viewHolder.mContent.setVisibility(View.GONE);
         }
-        if(!TextUtils.isEmpty(mContentList.get(i).getContentTime())){
+        if(!TextUtils.isEmpty(date)){
             viewHolder.mTime.setVisibility(View.VISIBLE);
-            viewHolder.mTime.setText(mContentList.get(i).getContentTime());
+            viewHolder.mTime.setText(date);
         }else{
             viewHolder.mTime.setVisibility(View.GONE);
         }
         viewHolder.mImage.setImageResource(R.drawable.test_image);
         //URLによって、サムネイル取得
-        if (!TextUtils.isEmpty(mContentList.get(i).getContentSrcURL())) {
-            viewHolder.mImage.setTag(mContentList.get(i).getContentSrcURL());
-            Bitmap bitmap = thumbnailProvider.getThumbnailImage(viewHolder.mImage, mContentList.get(i).getContentSrcURL());
+        if (!TextUtils.isEmpty(thumbnail)) {
+            viewHolder.mImage.setTag(thumbnail);
+            Bitmap bitmap = thumbnailProvider.getThumbnailImage(viewHolder.mImage, thumbnail);
             if (bitmap != null) {
                 viewHolder.mImage.setImageBitmap(bitmap);
             }

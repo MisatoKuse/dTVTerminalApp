@@ -9,7 +9,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VodClipListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.HomeDBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
@@ -39,7 +39,7 @@ public class VodClipInsertDataManager {
     public void insertVodClipInsertList(VodClipList vodClipList) {
 
         //各種オブジェクト作成
-        HomeDBHelper vodClipListDBHelper = new HomeDBHelper(mContext);
+        DBHelper vodClipListDBHelper = new DBHelper(mContext);
         SQLiteDatabase db = vodClipListDBHelper.getWritableDatabase();
         VodClipListDao vodClipListDao = new VodClipListDao(db);
         List<HashMap<String,String>> hashMaps = vodClipList.getVcList();

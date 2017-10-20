@@ -17,6 +17,7 @@ import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstan
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_USER_INFO_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_VODCLIP_LIST_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_WEEKLYRANK_SQL;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_RANKING_VIDEO_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DAILYRANK_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATABASE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATABASE_VERSION;
@@ -27,7 +28,7 @@ import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstan
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.VODCLIP_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.WEEKLYRANK_LIST_TABLE_NAME;
 
-public class HomeDBHelper extends SQLiteOpenHelper {
+public class DBHelper extends SQLiteOpenHelper {
 
     /**
      * 「channel_list」テーブルの削除用SQL
@@ -40,12 +41,13 @@ public class HomeDBHelper extends SQLiteOpenHelper {
     private static final String USER_INFO_TABLE_SQL = "drop table if exists " + USER_INFO_LIST_TABLE_NAME;
     private static final String DROP_VODCLIP_TABLE_SQL = "drop table if exists " + VODCLIP_LIST_TABLE_NAME;
     private static final String DROP_WEEKLYRANK_TABLE_SQL = "drop table if exists " + WEEKLYRANK_LIST_TABLE_NAME;
+    private static final String DROP_VIDEORANK_TABLE_SQL = "drop table if exists " + CREATE_TABLE_RANKING_VIDEO_SQL;
 
     /**
      * コンストラクタ
      * @param context
      */
-    public HomeDBHelper(Context context) {
+    public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -59,6 +61,7 @@ public class HomeDBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(CREATE_TABLE_RECOMMEND_CHANNEL_SQL);
         sqLiteDatabase.execSQL(CREATE_TABLE_RECOMMEND_VIDEO_SQL);
         sqLiteDatabase.execSQL(CREATE_TABLE_VODCLIP_LIST_SQL);
+        sqLiteDatabase.execSQL(CREATE_TABLE_RANKING_VIDEO_SQL);
     }
 
     @Override
@@ -71,5 +74,6 @@ public class HomeDBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(USER_INFO_TABLE_SQL);
         sqLiteDatabase.execSQL(DROP_VODCLIP_TABLE_SQL);
         sqLiteDatabase.execSQL(DROP_WEEKLYRANK_TABLE_SQL);
+        sqLiteDatabase.execSQL(DROP_VIDEORANK_TABLE_SQL);
     }
 }

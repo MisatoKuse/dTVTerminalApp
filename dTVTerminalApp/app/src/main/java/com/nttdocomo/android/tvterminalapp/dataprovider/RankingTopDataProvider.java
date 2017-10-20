@@ -7,14 +7,13 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.beans.HomeBean;
-import com.nttdocomo.android.tvterminalapp.beans.HomeBeanContent;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DailyRankInsertDataManager;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.VideoRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.WeeklyRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.HomeDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.RankingTopDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WeeklyRankList;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.DailyRankWebClient;
@@ -27,10 +26,6 @@ import java.util.Map;
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.DAILY_RANK_LAST_INSERT;
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.VIDEO_RANK_LAST_INSERT;
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.WEEKLY_RANK_LAST_INSERT;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_DISPLAY_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_DISP_TYPE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_THUMB;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_TITLE;
 
 public class RankingTopDataProvider implements
         DailyRankWebClient.DailyRankJsonParserCallback,
@@ -67,23 +62,23 @@ public class RankingTopDataProvider implements
         /**
          * デイリーランキング用コールバック
          *
-         * @param homeBean
+         * @param dailyHashMap
          */
-        void DailyRankListCallback(HomeBean homeBean);
+        void DailyRankListCallback(List<Map<String, String>> dailyHashMap);
 
         /**
          * 週間ランキング用コールバック
          *
-         * @param homeBean
+         * @param weeklyHashMap
          */
-        void WeeklyRankCallback(HomeBean homeBean);
+        void WeeklyRankCallback(List<Map<String, String>> weeklyHashMap);
 
         /**
          * ビデオランキング用コールバック
          *
-         * @param homeBean
+         * @param videoHashMap
          */
-        void VideoRankCallback(HomeBean homeBean);
+        void VideoRankCallback(List<Map<String, String>> videoHashMap);
     }
 
     private ApiDataProviderCallback apiDataProviderCallback;
@@ -112,11 +107,11 @@ public class RankingTopDataProvider implements
         if(weeklyRankList != null && weeklyRankList.size() > 0){
             sendWeeklyRankListData(weeklyRankList);
         }
-        /*//ビデオのランキング
+        //ビデオのランキング
         List<Map<String, String>> videoRankList = getVideoRankListData();
         if(videoRankList != null && videoRankList.size() > 0){
-            sendWeeklyRankListData(videoRankList);
-        }*/
+            sendVideoRankListData(videoRankList);
+        }
     }
 
     /**
@@ -125,19 +120,7 @@ public class RankingTopDataProvider implements
      * @param list
      */
     public void sendDailyRankListData(List<Map<String, String>> list) {
-        HomeBean homeBean = new HomeBean();
-        homeBean.setContentTypeName(mContext.getResources().getString(R.string.daily_tv_ranking_title));
-        List<HomeBeanContent> contents = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            HomeBeanContent homeBeanContent = new HomeBeanContent();
-            homeBeanContent.setContentSrcURL(list.get(i).get(VODCLIP_LIST_THUMB));
-            homeBeanContent.setContentName(list.get(i).get(VODCLIP_LIST_TITLE));
-            homeBeanContent.setContentTime(list.get(i).get(VODCLIP_LIST_DISPLAY_START_DATE));
-            homeBeanContent.setContentId(list.get(i).get(VODCLIP_LIST_DISP_TYPE));
-            contents.add(homeBeanContent);
-        }
-        homeBean.setContentList(contents);
-        apiDataProviderCallback.DailyRankListCallback(homeBean);
+        apiDataProviderCallback.DailyRankListCallback(list);
     }
 
     /**
@@ -146,27 +129,28 @@ public class RankingTopDataProvider implements
      * @param list
      */
     public void sendWeeklyRankListData(List<Map<String, String>> list) {
-        HomeBean homeBean = new HomeBean();
-        homeBean.setContentTypeName(mContext.getResources().getString(R.string.weekly_tv_ranking_title));
-        List<HomeBeanContent> contents = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            HomeBeanContent homeBeanContent = new HomeBeanContent();
-            homeBeanContent.setContentSrcURL(list.get(i).get(VODCLIP_LIST_THUMB));
-            homeBeanContent.setContentName(list.get(i).get(VODCLIP_LIST_TITLE));
-            homeBeanContent.setContentTime(list.get(i).get(VODCLIP_LIST_DISPLAY_START_DATE));
-            homeBeanContent.setContentId(list.get(i).get(VODCLIP_LIST_DISP_TYPE));
-            contents.add(homeBeanContent);
-        }
-        homeBean.setContentList(contents);
-        apiDataProviderCallback.WeeklyRankCallback(homeBean);
+        apiDataProviderCallback.WeeklyRankCallback(list);
     }
 
+    /**
+     * ビデオランキングリストをRankingTopActivityに送る
+     *
+     * @param list
+     */
+    public void sendVideoRankListData(List<Map<String, String>> list) {
+        apiDataProviderCallback.WeeklyRankCallback(list);
+    }
+
+    /**
+     * 今日のランキングデータを取得する
+     *
+     */
     private List<Map<String, String>> getDailyRankListData() {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DAILY_RANK_LAST_INSERT);
 
         List<Map<String, String>> list = new ArrayList<>();
-        //Vodクリップ一覧のDB保存履歴と、有効期間を確認
+        //今日のランキング一覧のDB保存履歴と、有効期間を確認
         if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeLimitDate(lastDate)) {
             //データをDBから取得する
             HomeDataManager homeDataManager = new HomeDataManager(mContext);
@@ -193,8 +177,8 @@ public class RankingTopDataProvider implements
         //Vodクリップ一覧のDB保存履歴と、有効期間を確認
         if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeLimitDate(lastDate)) {
             //データをDBから取得する
-            RankingTopDataManager rankingTopDataManager = new RankingTopDataManager(mContext);
-            list = rankingTopDataManager.selectWeeklyRankListHomeData();
+            HomeDataManager homeDataManager = new HomeDataManager(mContext);
+            list = homeDataManager.selectWeeklyRankListHomeData();
         } else {
             //通信クラスにデータ取得要求を出す
             WeeklyRankWebClient webClient = new WeeklyRankWebClient();
@@ -219,8 +203,8 @@ public class RankingTopDataProvider implements
         //Vodクリップ一覧のDB保存履歴と、有効期間を確認
         if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeLimitDate(lastDate)) {
             //データをDBから取得する
-            HomeDataManager homeDataManager = new HomeDataManager(mContext);
-//            list = homeDataManager.selectVideoRankListRankingTopData();
+            RankingTopDataManager rankingTopDataManager = new RankingTopDataManager(mContext);
+            list = rankingTopDataManager.selectVideoRankListData();
         } else {
             //通信クラスにデータ取得要求を出す
             WeeklyRankWebClient webClient = new WeeklyRankWebClient();
@@ -270,12 +254,12 @@ public class RankingTopDataProvider implements
      *
      * @param videoRankList
      */
-    public void setStructDB2(WeeklyRankList videoRankList) {
+    public void setStructDB(VideoRankList videoRankList) {
 
         DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(WEEKLY_RANK_LAST_INSERT);
-        WeeklyRankInsertDataManager dataManager = new WeeklyRankInsertDataManager(mContext);
-        dataManager.insertWeeklyRankInsertList(videoRankList);
-        sendWeeklyRankListData(videoRankList.getWrList());
+        dateUtils.addLastDate(VIDEO_RANK_LAST_INSERT);
+        VideoRankInsertDataManager dataManager = new VideoRankInsertDataManager(mContext);
+        dataManager.insertVideoRankInsertList(videoRankList);
+        sendVideoRankListData(videoRankList.getVrList());
     }
 }

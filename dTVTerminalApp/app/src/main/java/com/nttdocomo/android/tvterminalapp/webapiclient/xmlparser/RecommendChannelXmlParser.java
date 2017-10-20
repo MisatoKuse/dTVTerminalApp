@@ -15,6 +15,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RecommendChannelXmlParser  {
 
@@ -72,7 +73,7 @@ public class RecommendChannelXmlParser  {
 
     public RecommendChList getRecommendchannelList() {
         RecommendChList redChContents = null;
-        List<HashMap<String, String>> redChContentList = null;
+        List<Map<String, String>> redChContentList = null;
         HashMap<String, String> redChHashMap = null;
         XmlPullParser parser = Xml.newPullParser();
         try {

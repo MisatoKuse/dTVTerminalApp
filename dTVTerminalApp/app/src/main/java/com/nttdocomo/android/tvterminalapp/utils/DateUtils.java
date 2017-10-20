@@ -23,6 +23,12 @@ public class DateUtils {
     //ChannelList取得日付キー
     public static final String CHANNEL_LAST_INSERT = "ChannelLastInsert";
 
+    //おすすめ番組取得日付キー
+    public static final String RECOMMEND_CH_LAST_INSERT = "RecommendChLastInsert";
+
+    //おすすめビデオ取得日付キー
+    public static final String RECOMMEND_VD_LAST_INSERT = "RecommendVdLastInsert";
+
     //TvScheduleList取得日付キー
     public static final String TvSchedule_LAST_INSERT = "TvScheduleLastInsert";
 

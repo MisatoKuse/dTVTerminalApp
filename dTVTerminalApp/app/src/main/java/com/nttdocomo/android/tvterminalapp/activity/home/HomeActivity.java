@@ -26,11 +26,10 @@ import com.nttdocomo.android.tvterminalapp.activity.home.adapter.HomeRecyclerVie
 import com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
-import com.nttdocomo.android.tvterminalapp.beans.HomeBean;
-import com.nttdocomo.android.tvterminalapp.beans.HomeBeanContent;
 import com.nttdocomo.android.tvterminalapp.dataprovider.HomeDataProvider;
 
 import java.util.List;
+import java.util.Map;
 
 public class HomeActivity extends BaseActivity implements View.OnClickListener, HomeDataProvider.ApiDataProviderCallback {
 
@@ -41,6 +40,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     private final static int CONTENT_LIST_COUNT = 6;
     //ヘッダのmargin
     private final static int CONTENT_LIST_START_INDEX = 2;
+
+    private final static String NOW_ON_AIR = "NOW ON AIR";
+    private final static String RECOMMEND_CHANNEL = "おすすめ番組";
+    private final static String RECOMMEND_VIDEO = "おすすめビデオ";
+    private final static String DAILY_RANK = "今日のテレビランキング";
+    private final static String VIDEO_RANK = "ビデオランキング";
+    private final static String CLIP = "クリップ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,9 +172,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
      * 機能
      * コンテンツ一覧ビューを設定
      */
-    private void setRecyclerView(HomeBean mHomeBean, final int tag) {
-        String typeContentName = mHomeBean.getContentTypeName();
-        String resultCount = mHomeBean.getContentCount();
+    private void setRecyclerView(List<Map<String,String>> contentList, final int tag) {
+        String typeContentName = getContentTypeName(tag);
+        String resultCount =String.valueOf(contentList.size());
         View view = mLinearLayout.getChildAt(tag);
         view.setVisibility(View.VISIBLE);
         TextView typeTextView = view.findViewById(R.id.home_main_item_type_tx);
@@ -189,14 +195,45 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         //コンテンツカウントを設定（20）
         countTextView.setText(resultCount);
         //リサイクルビューデータ設定
-        setRecyclerViewData(mRecyclerView, mHomeBean.getContentList(), tag);
+        setRecyclerViewData(mRecyclerView, contentList, tag);
+    }
+
+    /**
+     * 機能
+     * コンテンツ一覧タイトル取得
+     */
+    private String getContentTypeName (int tag){
+        String typeName = "";
+        switch (tag){
+            case 2:
+                typeName = NOW_ON_AIR;
+                break;
+            case 3:
+                typeName = RECOMMEND_CHANNEL;
+                break;
+            case 4:
+                typeName = RECOMMEND_VIDEO;
+                break;
+            case 5:
+                typeName = DAILY_RANK;
+                break;
+            case 6:
+                typeName = VIDEO_RANK;
+                break;
+            case 7:
+                typeName = CLIP;
+                break;
+            default:
+                break;
+        }
+        return typeName;
     }
 
     /**
      * 機能
      * コンテンツ一覧データを設定
      */
-    private void setRecyclerViewData(RecyclerView mRecyclerView, List<HomeBeanContent> mList, final int index) {
+    private void setRecyclerViewData(RecyclerView mRecyclerView, List<Map<String,String>> mList, final int index) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mRecyclerView.setLayoutManager(linearLayoutManager);
@@ -248,62 +285,49 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     @Override
-    public void ChannelListCallback(HomeBean homeBean) {
-        /*if (homeBean != null && homeBean.getContentList() != null
-                && homeBean.getContentList().size() > 0) {
-            setRecyclerView(homeBean);
-        }*/
-    }
-
-    @Override
-    public void DailyRankListCallback(HomeBean homeBean) {
-        if (homeBean != null && homeBean.getContentList() != null
-                && homeBean.getContentList().size() > 0) {
-            setRecyclerView(homeBean,5);
+    public void ChannelListCallback(List<Map<String,String>> channelList) {
+        if (channelList != null && channelList.size() > 0) {
+            setRecyclerView(channelList, 2);
         }
     }
 
     @Override
-    public void TvScheduleCallback(HomeBean homeBean) {
-        if (homeBean != null && homeBean.getContentList() != null
-                && homeBean.getContentList().size() > 0) {
-            setRecyclerView(homeBean,2);
+    public void DailyRankListCallback(List<Map<String,String>> dailyRankList) {
+        if (dailyRankList != null && dailyRankList.size() > 0) {
+            setRecyclerView(dailyRankList, 5);
         }
     }
 
     @Override
-    public void UserInfoCallback(HomeBean homeBean) {
-    }
-
-    @Override
-    public void VodClipListCallback(HomeBean homeBean) {
-        if (homeBean != null && homeBean.getContentList() != null
-                && homeBean.getContentList().size() > 0) {
-            setRecyclerView(homeBean,7);
+    public void VodClipListCallback(List<Map<String,String>> clipList) {
+        if (clipList != null && clipList.size() > 0) {
+            setRecyclerView(clipList, 7);
         }
     }
 
     @Override
-    public void WeeklyRankCallback(HomeBean homeBean) {
-        if (homeBean != null && homeBean.getContentList() != null
-                && homeBean.getContentList().size() > 0) {
-            setRecyclerView(homeBean, 6);
+    public void VideoRankCallback(List<Map<String,String>> videoRankList) {
+        if (videoRankList != null && videoRankList.size() > 0) {
+            setRecyclerView(videoRankList, 6);
         }
     }
 
     @Override
-    public void RecommendChannelCallback(HomeBean homeBean) {
-        if (homeBean != null && homeBean.getContentList() != null
-                && homeBean.getContentList().size() > 0) {
-            setRecyclerView(homeBean,3);
+    public void RecommendChannelCallback(List<Map<String,String>> redChList) {
+        if (redChList != null && redChList.size() > 0) {
+            setRecyclerView(redChList, 3);
         }
     }
 
     @Override
-    public void RecommemdVideoCallback(HomeBean homeBean) {
-        if (homeBean != null && homeBean.getContentList() != null
-                && homeBean.getContentList().size() > 0) {
-            setRecyclerView(homeBean,4);
+    public void RecommemdVideoCallback(List<Map<String,String>> redVdList) {
+        if (redVdList != null && redVdList.size() > 0) {
+            setRecyclerView(redVdList, 4);
         }
+    }
+
+    @Override
+    public void UserInfoCallback(List<Map<String, String>> userList) {
+
     }
 }

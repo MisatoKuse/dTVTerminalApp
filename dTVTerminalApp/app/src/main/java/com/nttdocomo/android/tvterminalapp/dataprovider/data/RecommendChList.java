@@ -7,10 +7,11 @@ package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RecommendChList {
     private HashMap<String, String> mRcMap = new HashMap<String, String>();
-    private List<HashMap<String, String>> mRcList = new ArrayList<>();
+    private List<Map<String, String>> mRcList = new ArrayList<>();
 
     public HashMap<String, String> getmRcMap() {
         return mRcMap;
@@ -20,11 +21,11 @@ public class RecommendChList {
         this.mRcMap = mRcMap;
     }
 
-    public List<HashMap<String, String>> getmRcList() {
+    public List<Map<String, String>> getmRcList() {
         return mRcList;
     }
 
-    public void setmRcList(List<HashMap<String, String>> mRcList) {
+    public void setmRcList(List<Map<String, String>> mRcList) {
         this.mRcList = mRcList;
     }
 

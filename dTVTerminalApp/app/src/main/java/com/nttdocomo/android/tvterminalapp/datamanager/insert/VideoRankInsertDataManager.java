@@ -8,16 +8,18 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendChannelListDao;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VideoRankListDao;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WeeklyRankListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
+import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class RecommendChInsertDataManager {
+public class VideoRankInsertDataManager {
 
     private Context mContext;
 
@@ -26,25 +28,25 @@ public class RecommendChInsertDataManager {
      *
      * @param context
      */
-    public RecommendChInsertDataManager(Context context) {
+    public VideoRankInsertDataManager(Context context) {
         mContext = context;
     }
 
     /**
-     * VodClipAPIの解析結果をDBに格納する。
+     * WeeklyRankAPIの解析結果をDBに格納する。
      *
      * @return
      */
-    public void insertRecommendChInsertList(RecommendChList redChList) {
+    public void insertVideoRankInsertList(VideoRankList videoRankList) {
 
         //各種オブジェクト作成
-        DBHelper recommemdChListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = recommemdChListDBHelper.getWritableDatabase();
-        RecommendChannelListDao redChListDao = new RecommendChannelListDao(db);
-        List<Map<String,String>> hashMaps = redChList.getmRcList();
+        DBHelper videoRankListDBHelper = new DBHelper(mContext);
+        SQLiteDatabase db = videoRankListDBHelper.getWritableDatabase();
+        VideoRankListDao weeklyRankListDao = new VideoRankListDao(db);
+        List<HashMap<String,String>> hashMaps = videoRankList.getVrList();
 
         //DB保存前に前回取得したデータは全消去する
-        redChListDao.delete();
+        weeklyRankListDao.delete();
 
         //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
         for (int i = 0; i < hashMaps.size(); i++) {
@@ -54,11 +56,9 @@ public class RecommendChInsertDataManager {
                 Map.Entry entry = (Map.Entry) entries.next();
                 String keyName = (String) entry.getKey();
                 String valName = (String) entry.getValue();
-                values.put(keyName, valName);
+                values.put(DBUtils.fourKFlgConversion(keyName), valName);
             }
-            redChListDao.insert(values);
+            weeklyRankListDao.insert(values);
         }
-        db.close();
-        recommemdChListDBHelper.close();
     }
 }

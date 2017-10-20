@@ -8,7 +8,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WeeklyRankListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.HomeDBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WeeklyRankList;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
@@ -38,7 +38,7 @@ public class WeeklyRankInsertDataManager {
     public void insertWeeklyRankInsertList(WeeklyRankList weeklyRankList) {
 
         //各種オブジェクト作成
-        HomeDBHelper weeklyRankListDBHelper = new HomeDBHelper(mContext);
+        DBHelper weeklyRankListDBHelper = new DBHelper(mContext);
         SQLiteDatabase db = weeklyRankListDBHelper.getWritableDatabase();
         WeeklyRankListDao weeklyRankListDao = new WeeklyRankListDao(db);
         List<HashMap<String,String>> hashMaps = weeklyRankList.getWrList();

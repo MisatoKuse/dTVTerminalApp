@@ -15,6 +15,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RecommendVideoXmlParser {
 
@@ -73,7 +74,7 @@ public class RecommendVideoXmlParser {
 
     public RecommendVdList getRecommendVideoList() {
         RecommendVdList redVdContents = null;
-        List<HashMap<String, String>> redVdContentList = null;
+        List<Map<String, String>> redVdContentList = null;
         HashMap<String, String> redVdHashMap = null;
         XmlPullParser parser = Xml.newPullParser();
         try {

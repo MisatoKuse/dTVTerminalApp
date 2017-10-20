@@ -6,16 +6,11 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 
-import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.beans.HomeBean;
-import com.nttdocomo.android.tvterminalapp.beans.HomeBeanContent;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DailyRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendChInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendVdInsertDataManager;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.TvScheduleInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.VodClipInsertDataManager;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.WeeklyRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.HomeDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
@@ -27,7 +22,6 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.WeeklyRankList;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.DailyRankWebClient;
-import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendChWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendVdWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvScheduleWebClient;
@@ -35,19 +29,15 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WeeklyRankWebClient;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.CHANNEL_LAST_INSERT;
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.DAILY_RANK_LAST_INSERT;
-import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.TvSchedule_LAST_INSERT;
+import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.RECOMMEND_CH_LAST_INSERT;
+import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.RECOMMEND_VD_LAST_INSERT;
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.VOD_LAST_INSERT;
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.WEEKLY_RANK_LAST_INSERT;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_DISPLAY_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_DISP_TYPE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_THUMB;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_TITLE;
 
 public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallback,
         ChannelWebClient.ChannelJsonParserCallback,
@@ -94,7 +84,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
     public void onTvScheduleJsonParsed(List<TvScheduleList> tvScheduleList) {
         if (tvScheduleList != null && tvScheduleList.size() > 0) {
             TvScheduleList list = tvScheduleList.get(0);
-            setStructDB(list);
+//            setStructDB(list);
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
         }
@@ -104,18 +94,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
     public void onWeeklyRankJsonParsed(List<WeeklyRankList> weeklyRankLists) {
         if (weeklyRankLists != null && weeklyRankLists.size() > 0) {
             WeeklyRankList list = weeklyRankLists.get(0);
-            setStructDB(list);
-        } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
-        }
-    }
-
-    @Override
-    public void RecommendVideoCallback(RecommendVdList mRecommendVdList) {
-        if (mRecommendVdList != null && mRecommendVdList.getmRvList()!=null &&
-                mRecommendVdList.getmRvList().size() > 0) {
-//            setStructDB(mRecommendVdList);
-            sendRecommendVdListData(mRecommendVdList.getmRvList());
+//            setStructDB(list);
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
         }
@@ -125,8 +104,17 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
     public void RecommendChannelCallback(RecommendChList mRecommendChList) {
         if (mRecommendChList != null && mRecommendChList.getmRcList()!=null &&
                 mRecommendChList.getmRcList().size() > 0) {
-//            setStructDB(mRecommendChList);
-            sendRecommendChListData(mRecommendChList.getmRcList());
+            setStructDB(mRecommendChList);
+        } else {
+            //TODO:WEBAPIを取得できなかった時の処理を記載予定
+        }
+    }
+
+    @Override
+    public void RecommendVideoCallback(RecommendVdList mRecommendVdList) {
+        if (mRecommendVdList != null && mRecommendVdList.getmRvList()!=null &&
+                mRecommendVdList.getmRvList().size() > 0) {
+            setStructDB(mRecommendVdList);
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
         }
@@ -139,58 +127,51 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         /**
          * チャンネル一覧用コールバック
          *
-         * @param homeBean
+         * @param channelList
          */
-        void ChannelListCallback(HomeBean homeBean);
+        void ChannelListCallback(List<Map<String,String>> channelList);
 
         /**
          * デイリーランキング用コールバック
          *
-         * @param homeBean
+         * @param dailyList
          */
-        void DailyRankListCallback(HomeBean homeBean);
-
-        /**
-         * CH毎番組表用コールバック
-         *
-         * @param homeBean
-         */
-        void TvScheduleCallback(HomeBean homeBean);
+        void DailyRankListCallback(List<Map<String,String>> dailyList);
 
         /**
          * ユーザ情報用コールバック
          *
-         * @param homeBean
+         * @param userList
          */
-        void UserInfoCallback(HomeBean homeBean);
+        void UserInfoCallback(List<Map<String,String>> userList);
 
         /**
          * クリップリスト用コールバック
          *
-         * @param homeBean
+         * @param clipList
          */
-        void VodClipListCallback(HomeBean homeBean);
+        void VodClipListCallback(List<Map<String,String>> clipList);
 
         /**
-         * 週間ランキング用コールバック
+         * ビデオランキング用コールバック
          *
-         * @param homeBean
+         * @param weeklyList
          */
-        void WeeklyRankCallback(HomeBean homeBean);
+        void VideoRankCallback(List<Map<String,String>> weeklyList);
 
         /**
          * おすすめ番組用コールバック
          *
-         * @param homeBean
+         * @param recChList
          */
-        void RecommendChannelCallback(HomeBean homeBean);
+        void RecommendChannelCallback(List<Map<String,String>> recChList);
 
         /**
          * おすすめビデオ用コールバック
          *
-         * @param homeBean
+         * @param recVdList
          */
-        void RecommemdVideoCallback(HomeBean homeBean);
+        void RecommemdVideoCallback(List<Map<String,String>> recVdList);
     }
 
     private ApiDataProviderCallback apiDataProviderCallback;
@@ -209,62 +190,63 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * Activityからのデータ取得要求受付
      */
     public void getHomeData() {
-        List<Map<String, String>> tvScheduleData = getTvScheduleData();
-        if(tvScheduleData != null && tvScheduleData.size() > 0){
-            sendTvScheduleListData(tvScheduleData);
+        //NOW ON AIR
+        List<Map<String, String>> channelListData = getChannelListData();
+        if(channelListData != null && channelListData.size() > 0){
+            sendChannelListData(channelListData);
         }
+        //おすすめ番組
+        List<Map<String, String>> recommendChListData = getRecommendChListData();
+        if(recommendChListData != null && recommendChListData.size() > 0){
+            sendRecommendChListData(recommendChListData);
+        }
+        //おすすめビデオ
+        List<Map<String, String>> recommendVdListData = getRecommendVdListData();
+        if(recommendVdListData != null && recommendVdListData.size() > 0){
+            sendRecommendVdListData(recommendVdListData);
+        }
+        //今日のテレビランキング
         List<Map<String, String>> dailyRankList = getDailyRankListData();
         if(dailyRankList != null && dailyRankList.size() > 0){
             sendDailyRankListData(dailyRankList);
         }
-        List<Map<String, String>> weeklyRankList = getWeeklyRankListData();
-        if(weeklyRankList != null && weeklyRankList.size() > 0){
-            sendWeeklyRankListData(weeklyRankList);
-        }
+        /*//ビデオランキング
+        List<Map<String, String>> VideoRankList = getDailyRankListData();
+        if(VideoRankList != null && VideoRankList.size() > 0){
+            sendVideoRankListData(VideoRankList);
+        }*/
+        //クリップ
         List<Map<String, String>> vodClipList = getVodClipListData();
         if(vodClipList != null && vodClipList.size() > 0){
             sendVodClipListData(vodClipList);
         }
-        try{
-            Thread.sleep(500);
-            RecommendChWebClient mRecommendChWebClient = new RecommendChWebClient(this);
-            mRecommendChWebClient.getRecommendChannelApi();
-
-            RecommendVdWebClient mRecommendChWebClient2 = new RecommendVdWebClient(this);
-            mRecommendChWebClient2.getRecommendChannelApi();
-        }catch (Exception e){
-
-        }
-
-
-    }
-
-    public HomeBean makeHomeStruct(List<Map<String, String>> list) {
-        HomeBean homeBean = new HomeBean();
-        HomeBeanContent homeBeanContent = new HomeBeanContent();
-        //Home用構造体を作成する
-        return homeBean;
     }
 
     /**
-     * CH一覧をHomeActivityに送る
+     * NOW ON AIRをHomeActivityに送る
      *
      * @param list
      */
     public void sendChannelListData(List<Map<String, String>> list) {
-        HomeBean homeBean = new HomeBean();
-        homeBean.setContentTypeName(mContext.getResources().getString(R.string.nav_menu_item_channel_list));
-        List<HomeBeanContent> contents = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            HomeBeanContent homeBeanContent = new HomeBeanContent();
-            homeBeanContent.setContentSrcURL(list.get(i).get(VODCLIP_LIST_THUMB));
-            homeBeanContent.setContentName(list.get(i).get(VODCLIP_LIST_TITLE));
-            homeBeanContent.setContentTime(list.get(i).get(VODCLIP_LIST_DISPLAY_START_DATE));
-            homeBeanContent.setContentId(list.get(i).get(VODCLIP_LIST_DISP_TYPE));
-            contents.add(homeBeanContent);
-        }
-        homeBean.setContentList(contents);
-        apiDataProviderCallback.ChannelListCallback(homeBean);
+        apiDataProviderCallback.ChannelListCallback(list);
+    }
+
+    /**
+     * おすすめ番組をHomeActivityに送る
+     *
+     * @param list
+     */
+    public void sendRecommendChListData(List<Map<String, String>> list) {
+        apiDataProviderCallback.RecommendChannelCallback(list);
+    }
+
+    /**
+     * おすすめビデオをHomeActivityに送る
+     *
+     * @param list
+     */
+    public void sendRecommendVdListData(List<Map<String, String>> list) {
+        apiDataProviderCallback.RecommemdVideoCallback(list);
     }
 
     /**
@@ -273,60 +255,16 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param list
      */
     public void sendDailyRankListData(List<Map<String, String>> list) {
-        HomeBean homeBean = new HomeBean();
-        homeBean.setContentTypeName(mContext.getResources().getString(R.string.daily_tv_ranking_title));
-        List<HomeBeanContent> contents = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            HomeBeanContent homeBeanContent = new HomeBeanContent();
-            homeBeanContent.setContentSrcURL(list.get(i).get(VODCLIP_LIST_THUMB));
-            homeBeanContent.setContentName(list.get(i).get(VODCLIP_LIST_TITLE));
-            homeBeanContent.setContentTime(list.get(i).get(VODCLIP_LIST_DISPLAY_START_DATE));
-            homeBeanContent.setContentId(list.get(i).get(VODCLIP_LIST_DISP_TYPE));
-            contents.add(homeBeanContent);
-        }
-        homeBean.setContentList(contents);
-        apiDataProviderCallback.DailyRankListCallback(homeBean);
+        apiDataProviderCallback.DailyRankListCallback(list);
     }
 
     /**
-     * CH毎番組表をHomeActivityに送る
+     * ビデオランキングをHomeActivityに送る
      *
      * @param list
      */
-    public void sendTvScheduleListData(List<Map<String, String>> list) {
-        HomeBean homeBean = new HomeBean();
-        homeBean.setContentTypeName(mContext.getResources().getString(R.string.now_on_air_list));
-        List<HomeBeanContent> contents = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            HomeBeanContent homeBeanContent = new HomeBeanContent();
-            homeBeanContent.setContentSrcURL(list.get(i).get(VODCLIP_LIST_THUMB));
-            homeBeanContent.setContentName(list.get(i).get(VODCLIP_LIST_TITLE));
-            homeBeanContent.setContentTime(list.get(i).get(VODCLIP_LIST_DISPLAY_START_DATE));
-            homeBeanContent.setContentId(list.get(i).get(VODCLIP_LIST_DISP_TYPE));
-            contents.add(homeBeanContent);
-        }
-        homeBean.setContentList(contents);
-        apiDataProviderCallback.TvScheduleCallback(homeBean);
-    }
-
-    /**
-     * ユーザ情報をHomeActivityに送る
-     *
-     * @param list
-     */
-    public void sendUserInfoListData(List<Map<String, String>> list) {
-        HomeBean homeBean = new HomeBean();
-        List<HomeBeanContent> contents = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            HomeBeanContent homeBeanContent = new HomeBeanContent();
-            homeBeanContent.setContentSrcURL(list.get(i).get(VODCLIP_LIST_THUMB));
-            homeBeanContent.setContentName(list.get(i).get(VODCLIP_LIST_TITLE));
-            homeBeanContent.setContentTime(list.get(i).get(VODCLIP_LIST_DISPLAY_START_DATE));
-            homeBeanContent.setContentId(list.get(i).get(VODCLIP_LIST_DISP_TYPE));
-            contents.add(homeBeanContent);
-        }
-        homeBean.setContentList(contents);
-        apiDataProviderCallback.UserInfoCallback(homeBean);
+    public void sendVideoRankListData(List<Map<String, String>> list) {
+        apiDataProviderCallback.VideoRankCallback(list);
     }
 
     /**
@@ -335,78 +273,16 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param list
      */
     public void sendVodClipListData(List<Map<String, String>> list) {
-        HomeBean homeBean = new HomeBean();
-        homeBean.setContentTypeName(mContext.getResources().getString(R.string.nav_menu_item_clip));
-        List<HomeBeanContent> contents = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            HomeBeanContent homeBeanContent = new HomeBeanContent();
-            homeBeanContent.setContentSrcURL(list.get(i).get(VODCLIP_LIST_THUMB));
-            homeBeanContent.setContentName(list.get(i).get(VODCLIP_LIST_TITLE));
-            homeBeanContent.setContentTime(list.get(i).get(VODCLIP_LIST_DISPLAY_START_DATE));
-            homeBeanContent.setContentId(list.get(i).get(VODCLIP_LIST_DISP_TYPE));
-            contents.add(homeBeanContent);
-        }
-        homeBean.setContentList(contents);
-        apiDataProviderCallback.VodClipListCallback(homeBean);
+        apiDataProviderCallback.VodClipListCallback(list);
     }
 
     /**
-     * 週間ランキングリストをHomeActivityに送る
+     * ユーザ情報をHomeActivityに送る
      *
      * @param list
      */
-    public void sendWeeklyRankListData(List<Map<String, String>> list) {
-        HomeBean homeBean = new HomeBean();
-        homeBean.setContentTypeName(mContext.getResources().getString(R.string.video_ranking_title));
-        List<HomeBeanContent> contents = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            HomeBeanContent homeBeanContent = new HomeBeanContent();
-            homeBeanContent.setContentSrcURL(list.get(i).get(VODCLIP_LIST_THUMB));
-            homeBeanContent.setContentName(list.get(i).get(VODCLIP_LIST_TITLE));
-            homeBeanContent.setContentTime(list.get(i).get(VODCLIP_LIST_DISPLAY_START_DATE));
-            homeBeanContent.setContentId(list.get(i).get(VODCLIP_LIST_DISP_TYPE));
-            contents.add(homeBeanContent);
-        }
-        homeBean.setContentList(contents);
-        apiDataProviderCallback.WeeklyRankCallback(homeBean);
-    }
-
-    /**
-     * おすすめ番組をHomeActivityに送る
-     *
-     * @param list
-     */
-    public void sendRecommendChListData(List<HashMap<String, String>> list) {
-        HomeBean homeBean = new HomeBean();
-        homeBean.setContentTypeName("おすすめ番組");
-        HomeBeanContent homeBeanContent = new HomeBeanContent();
-        List<HomeBeanContent> contents = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            homeBeanContent.setContentSrcURL(list.get(i).get("ctPicURL1"));
-            homeBeanContent.setContentName(list.get(i).get("title"));
-            contents.add(homeBeanContent);
-        }
-        homeBean.setContentList(contents);
-        apiDataProviderCallback.RecommendChannelCallback(homeBean);
-    }
-
-    /**
-     * おすすめビデオをHomeActivityに送る
-     *
-     * @param list
-     */
-    public void sendRecommendVdListData(List<HashMap<String, String>> list) {
-        HomeBean homeBean = new HomeBean();
-        homeBean.setContentTypeName("おすすめビデオ");
-        HomeBeanContent homeBeanContent = new HomeBeanContent();
-        List<HomeBeanContent> contents = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            homeBeanContent.setContentSrcURL(list.get(i).get("ctPicURL1"));
-            homeBeanContent.setContentName(list.get(i).get("title"));
-            contents.add(homeBeanContent);
-        }
-        homeBean.setContentList(contents);
-        apiDataProviderCallback.RecommemdVideoCallback(homeBean);
+    public void sendUserInfoListData(List<Map<String, String>> list) {
+        apiDataProviderCallback.UserInfoCallback(list);
     }
 
     private List<Map<String, String>> getChannelListData() {
@@ -429,6 +305,42 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
             //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
             webClient.getChannelApi(ageReq, upperPageLimit,
                     lowerPageLimit, pagerOffset, this);
+        }
+        return list;
+    }
+
+    private List<Map<String, String>> getRecommendChListData() {
+        DateUtils dateUtils = new DateUtils(mContext);
+        String lastDate = dateUtils.getLastDate(RECOMMEND_CH_LAST_INSERT);
+
+        List<Map<String, String>> list = new ArrayList<>();
+        //Vodクリップ一覧のDB保存履歴と、有効期間を確認
+        if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
+            //データをDBから取得する
+            HomeDataManager homeDataManager = new HomeDataManager(mContext);
+            list = homeDataManager.selectRecommendChListHomeData();
+        } else {
+            //通信クラスにデータ取得要求を出す
+            RecommendChWebClient mRecommendChWebClient = new RecommendChWebClient(this);
+            mRecommendChWebClient.getRecommendChannelApi();
+        }
+        return list;
+    }
+
+    private List<Map<String, String>> getRecommendVdListData() {
+        DateUtils dateUtils = new DateUtils(mContext);
+        String lastDate = dateUtils.getLastDate(RECOMMEND_VD_LAST_INSERT);
+
+        List<Map<String, String>> list = new ArrayList<>();
+        //Vodクリップ一覧のDB保存履歴と、有効期間を確認
+        if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
+            //データをDBから取得する
+            HomeDataManager homeDataManager = new HomeDataManager(mContext);
+            list = homeDataManager.selectRecommendVdListHomeData();
+        } else {
+            //通信クラスにデータ取得要求を出す
+            RecommendVdWebClient mRecommendChWebClient = new RecommendVdWebClient(this);
+            mRecommendChWebClient.getRecommendChannelApi();
         }
         return list;
     }
@@ -483,29 +395,6 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         return list;
     }
 
-    private List<Map<String, String>> getTvScheduleData() {
-        DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(TvSchedule_LAST_INSERT);
-
-        List<Map<String, String>> list = new ArrayList<>();
-        //Vodクリップ一覧のDB保存履歴と、有効期間を確認
-        if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
-            //データをDBから取得する
-            HomeDataManager homeDataManager = new HomeDataManager(mContext);
-            list = homeDataManager.selectTvScheduleListHomeData();
-        } else {
-            //通信クラスにデータ取得要求を出す
-            TvScheduleWebClient webClient = new TvScheduleWebClient();
-            int []ageReq = {1};
-            String [] upperPageLimit = {WebApiBasePlala.DATE_NOW};
-            String lowerPageLimit = "";
-            //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
-            webClient.getTvScheduleApi(ageReq, upperPageLimit,
-                    lowerPageLimit, this);
-        }
-        return list;
-    }
-
     private List<Map<String, String>> getWeeklyRankListData() {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(WEEKLY_RANK_LAST_INSERT);
@@ -543,71 +432,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         dateUtils.addLastDate(CHANNEL_LAST_INSERT);
         ChannelInsertDataManager dataManager = new ChannelInsertDataManager(mContext);
         dataManager.insertChannelInsertList(channelList);
-//        sendChannelListData(getChannelListData());
         sendChannelListData(channelList.getClList());
-
-    }
-
-    /**
-     * デーリーランキングデータをDBに格納する
-     *
-     * @param dailyRankList
-     */
-    public void setStructDB(DailyRankList dailyRankList) {
-
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(DAILY_RANK_LAST_INSERT);
-
-        DailyRankInsertDataManager dataManager = new DailyRankInsertDataManager(mContext);
-        dataManager.insertDailyRankInsertList(dailyRankList);
-//       sendDailyRankListData(getDailyRankListData());
-        sendDailyRankListData(dailyRankList.getDrList());
-
-    }
-
-    /**
-     * CH毎チャンネルリストをDBに格納する
-     *
-     * @param tvScheduleList
-     */
-    public void setStructDB(TvScheduleList tvScheduleList) {
-
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(TvSchedule_LAST_INSERT);
-        TvScheduleInsertDataManager dataManager = new TvScheduleInsertDataManager(mContext);
-        dataManager.insertTvScheduleInsertList(tvScheduleList);
-        sendTvScheduleListData(tvScheduleList.geTvsList());
-
-    }
-
-    /**
-     * Vodクリップ一覧データをDBに格納する
-     *
-     * @param vodClipList
-     */
-    public void setStructDB(VodClipList vodClipList) {
-
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(VOD_LAST_INSERT);
-        VodClipInsertDataManager dataManager = new VodClipInsertDataManager(mContext);
-        dataManager.insertVodClipInsertList(vodClipList);
-        sendVodClipListData(vodClipList.getVcList());
-//        sendVodClipListData(getVodClipListData());
-    }
-
-    /**
-     * 週間ランキングリストをDBに保存する
-     *
-     * @param weeklyRankList
-     */
-    public void setStructDB(WeeklyRankList weeklyRankList) {
-
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(WEEKLY_RANK_LAST_INSERT);
-        WeeklyRankInsertDataManager dataManager = new WeeklyRankInsertDataManager(mContext);
-        dataManager.insertWeeklyRankInsertList(weeklyRankList);
-//        sendWeeklyRankListData(getWeeklyRankListData());
-        sendWeeklyRankListData(weeklyRankList.getWrList());
     }
 
     /**
@@ -616,12 +441,11 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param recommendChList
      */
     public void setStructDB(RecommendChList recommendChList) {
-
         DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(WEEKLY_RANK_LAST_INSERT);
+        dateUtils.addLastDate(RECOMMEND_CH_LAST_INSERT);
         RecommendChInsertDataManager dataManager = new RecommendChInsertDataManager(mContext);
-        dataManager.insertVodClipInsertList(recommendChList);
-//        sendWeeklyRankListData(getWeeklyRankListData());
+        dataManager.insertRecommendChInsertList(recommendChList);
+        sendRecommendChListData(recommendChList.getmRcList());
     }
 
     /**
@@ -630,11 +454,36 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param recommendVdList
      */
     public void setStructDB(RecommendVdList recommendVdList) {
-
         DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(WEEKLY_RANK_LAST_INSERT);
+        dateUtils.addLastDate(RECOMMEND_VD_LAST_INSERT);
         RecommendVdInsertDataManager dataManager = new RecommendVdInsertDataManager(mContext);
-        dataManager.insertVodClipInsertList(recommendVdList);
-        sendWeeklyRankListData(getWeeklyRankListData());
+        dataManager.insertRecommendVdInsertList(recommendVdList);
+        sendRecommendChListData(recommendVdList.getmRvList());
+    }
+
+    /**
+     * デーリーランキングデータをDBに格納する
+     *
+     * @param dailyRankList
+     */
+    public void setStructDB(DailyRankList dailyRankList) {
+        DateUtils dateUtils = new DateUtils(mContext);
+        dateUtils.addLastDate(DAILY_RANK_LAST_INSERT);
+        DailyRankInsertDataManager dataManager = new DailyRankInsertDataManager(mContext);
+        dataManager.insertDailyRankInsertList(dailyRankList);
+        sendDailyRankListData(dailyRankList.getDrList());
+    }
+
+    /**
+     * Vodクリップ一覧データをDBに格納する
+     *
+     * @param vodClipList
+     */
+    public void setStructDB(VodClipList vodClipList) {
+        DateUtils dateUtils = new DateUtils(mContext);
+        dateUtils.addLastDate(VOD_LAST_INSERT);
+        VodClipInsertDataManager dataManager = new VodClipInsertDataManager(mContext);
+        dataManager.insertVodClipInsertList(vodClipList);
+        sendVodClipListData(vodClipList.getVcList());
     }
 }

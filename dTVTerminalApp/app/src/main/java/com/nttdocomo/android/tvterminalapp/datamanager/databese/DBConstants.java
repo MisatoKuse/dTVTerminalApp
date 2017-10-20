@@ -202,6 +202,46 @@ import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.Recomme
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_STARTVIEWING;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_TITLE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_VIEWABLE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_CRID;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_CID;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_TITLE_ID;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_EPISODE_ID;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_TITLE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_EPITITLE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_TITLERUBY;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_DISP_TYPE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_START_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_DISPLAY_END_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_AVAIL_START_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_AVAIL_END_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_PUBLISH_START_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_PUBLISH_END_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_NEWA_START_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_NEWA_END_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_COPYRIGTHT;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_THUMB;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_DUR;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_DEMONG;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_DVFLG;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_4KFLG;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_HDRFLG;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_AVAIL_STATUS;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_DELIVERY;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_R_VALUE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_ADULT;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_MS;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_NG_FUNC;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_GENRE_ID_ARRAY;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_SYNOP;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_PUID;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_PRICE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_QUNIT;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_PU_S;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_PU_E;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_CREDITS;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_RATING;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_DTV;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_PLIT;
 
 public class DBConstants {
 
@@ -390,7 +430,6 @@ public class DBConstants {
             WEEKLYRANK_LIST_CRID + " text, " +
             WEEKLYRANK_LIST_CID + " text, " +
             WEEKLYRANK_LIST_TITLE + " text, " +
-            WEEKLYRANK_LIST_CID + " text, " +
             WEEKLYRANK_LIST_SERVICE_ID + " text, " +
             WEEKLYRANK_LIST_EVENT_ID + " text, " +
             WEEKLYRANK_LIST_CHNO + " text, " +
@@ -406,7 +445,7 @@ public class DBConstants {
             WEEKLYRANK_LIST_DEMONG + " text, " +
             WEEKLYRANK_LIST_AVAII_STATUS + " text, " +
             WEEKLYRANK_LIST_DELIVERY + " text, " +
-            WEEKLYRANK_LIST_R_VALUE + " text, " +
+            WEEKLYRANK_LIST_R_VALUE + " text " +
 
             // 旧パラメータをコメントアウト
 //            WEEKLYRANK_LIST_CRID + " text, " +
@@ -493,6 +532,53 @@ public class DBConstants {
             RECOMMENDVIDEO_LIST_PAGEID + " text, " +
             RECOMMENDVIDEO_LIST_GROUPID + " text, " +
             RECOMMENDVIDEO_LIST_RECOMMENDMETHODID + " text " +
+            ")";
+
+    //ランキングキャッシュデータ格納用テーブル
+    public static final String RANKING_VIDEO_LIST_TABLE_NAME = "ranking_video_list";
+    public static final String CREATE_TABLE_RANKING_VIDEO_SQL = "" +
+            "create table " + RANKING_VIDEO_LIST_TABLE_NAME + " (" +
+            ID_COLUMN + " integer primary key autoincrement, " +
+            VIDEORANK_LIST_CRID + " text, " +
+            VIDEORANK_LIST_CID + " text, " +
+            VIDEORANK_LIST_TITLE_ID + " text, " +
+            VIDEORANK_LIST_EPISODE_ID + " text, " +
+            VIDEORANK_LIST_TITLE  + " text, " +
+            VIDEORANK_LIST_EPITITLE  + " text, " +
+            VIDEORANK_LIST_TITLERUBY  + " text, " +
+            VIDEORANK_LIST_DISP_TYPE  + " text, " +
+            VIDEORANK_LIST_START_DATE  + " text, " +
+            VIDEORANK_LIST_DISPLAY_END_DATE  + " text, " +
+            VIDEORANK_LIST_AVAIL_START_DATE  + " text, " +
+            VIDEORANK_LIST_AVAIL_END_DATE  + " text, " +
+            VIDEORANK_LIST_PUBLISH_START_DATE  + " text, " +
+            VIDEORANK_LIST_PUBLISH_END_DATE  + " text, " +
+            VIDEORANK_LIST_NEWA_START_DATE  + " text, " +
+            VIDEORANK_LIST_NEWA_END_DATE  + " text, " +
+            VIDEORANK_LIST_COPYRIGTHT  + " text, " +
+            VIDEORANK_LIST_THUMB  + " text, " +
+            VIDEORANK_LIST_DUR   + " text, " +
+            VIDEORANK_LIST_DEMONG   + " text, " +
+            VIDEORANK_LIST_DVFLG   + " text, " +
+            UNDER_BAR_FOUR_K_FLG   + " text, " +
+            VIDEORANK_LIST_HDRFLG   + " text, " +
+            VIDEORANK_LIST_AVAIL_STATUS   + " text, " +
+            VIDEORANK_LIST_DELIVERY   + " text, " +
+            VIDEORANK_LIST_R_VALUE   + " text, " +
+            VIDEORANK_LIST_ADULT   + " text, " +
+            VIDEORANK_LIST_MS   + " text, " +
+            VIDEORANK_LIST_NG_FUNC + " text, " +
+            VIDEORANK_LIST_GENRE_ID_ARRAY    + " text, " +
+            VIDEORANK_LIST_SYNOP   + " text, " +
+            VIDEORANK_LIST_PUID   + " text, " +
+            VIDEORANK_LIST_PRICE    + " text, " +
+            VIDEORANK_LIST_QUNIT    + " text, " +
+            VIDEORANK_LIST_PU_S    + " text, " +
+            VIDEORANK_LIST_PU_E    + " text, " +
+            VIDEORANK_LIST_CREDITS    + " text, " +
+            VIDEORANK_LIST_RATING    + " text, " +
+            VIDEORANK_LIST_DTV    + " text, " +
+            VIDEORANK_LIST_PLIT    + " text " +
             ")";
 
 }
