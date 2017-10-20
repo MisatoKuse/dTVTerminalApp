@@ -41,13 +41,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     //ヘッダのmargin
     private final static int CONTENT_LIST_START_INDEX = 2;
 
-    private final static String NOW_ON_AIR = "NOW ON AIR";
-    private final static String RECOMMEND_CHANNEL = "おすすめ番組";
-    private final static String RECOMMEND_VIDEO = "おすすめビデオ";
-    private final static String DAILY_RANK = "今日のテレビランキング";
-    private final static String VIDEO_RANK = "ビデオランキング";
-    private final static String CLIP = "クリップ";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -188,7 +181,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         });
         RecyclerView mRecyclerView = view.findViewById(R.id.home_main_item_recyclerview);
         //リサイクルビューの間隔
-        int spacingInPixels = (int)getDensity() * 5;
+        int spacingInPixels = (int)getDensity() * 4;
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(spacingInPixels));
         //コンテンツタイプを設定（NOW ON AIR）
         typeTextView.setText(typeContentName);
@@ -206,22 +199,22 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         String typeName = "";
         switch (tag){
             case 2:
-                typeName = NOW_ON_AIR;
+                typeName = getResources().getString(R.string.home_label_now_on_air);
                 break;
             case 3:
-                typeName = RECOMMEND_CHANNEL;
+                typeName = getResources().getString(R.string.home_label_recommend_program);
                 break;
             case 4:
-                typeName = RECOMMEND_VIDEO;
+                typeName = getResources().getString(R.string.home_label_recommend_video);
                 break;
             case 5:
-                typeName = DAILY_RANK;
+                typeName = getResources().getString(R.string.daily_tv_ranking_title);
                 break;
             case 6:
-                typeName = VIDEO_RANK;
+                typeName = getResources().getString(R.string.weekly_tv_ranking_title);
                 break;
             case 7:
-                typeName = CLIP;
+                typeName = getResources().getString(R.string.nav_menu_item_clip);
                 break;
             default:
                 break;

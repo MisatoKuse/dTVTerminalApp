@@ -4,14 +4,15 @@
     android:layout_height="wrap_content">
 
     <RelativeLayout
+        android:id="@+id/home_main_recyclerview_item_rl"
         android:layout_marginTop="5dp"
         android:layout_marginLeft="5dp"
-        android:layout_width="256dp"
-        android:layout_height="144dp">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
         <ImageView
             android:id="@+id/home_main_recyclerview_item_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:scaleType="fitCenter"/>
         <TextView
             android:id="@+id/home_main_recyclerview_item_iv_new"

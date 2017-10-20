@@ -4,9 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
-import android.content.Context;
-
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendChInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser;
 

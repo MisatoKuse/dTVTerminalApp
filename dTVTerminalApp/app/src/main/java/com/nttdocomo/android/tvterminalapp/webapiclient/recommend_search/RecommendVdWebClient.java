@@ -19,7 +19,7 @@ public class RecommendVdWebClient{
         this.mRecommendVideoCallback = mRecommendVideoCallback;
     }
 
-    public void getRecommendChannelApi() {
+    public void getRecommendVideoApi() {
         //TODO: レコメンドサーバ処理
         RecommendVideoXmlParser recommendVideoXmlParser = new RecommendVideoXmlParser();
         //TODO: dummy data

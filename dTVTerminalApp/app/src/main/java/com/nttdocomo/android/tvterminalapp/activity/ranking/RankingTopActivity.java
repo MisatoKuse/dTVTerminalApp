@@ -27,9 +27,6 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
     private LinearLayout mLinearLayout;
     //コンテンツ一覧数
     private final static int CONTENT_LIST_COUNT = 3;
-    private final static String DAILY_RANK = "今日のテレビランキング";
-    private final static String WEEKLY_RANK = "週刊テレビランキング";
-    private final static String VIDEO_RANK = "ビデオランキング";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,13 +158,13 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
         String typeName = "";
         switch (tag){
             case 0:
-                typeName = DAILY_RANK;
+                typeName = getResources().getString(R.string.daily_tv_ranking_title);
                 break;
             case 1:
-                typeName = WEEKLY_RANK;
+                typeName = getResources().getString(R.string.weekly_tv_ranking_title);
                 break;
             case 2:
-                typeName = VIDEO_RANK;
+                typeName = getResources().getString(R.string.video_ranking_title);
                 break;
             default:
                 break;

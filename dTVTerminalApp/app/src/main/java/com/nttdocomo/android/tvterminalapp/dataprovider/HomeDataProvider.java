@@ -43,7 +43,6 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         ChannelWebClient.ChannelJsonParserCallback,
         DailyRankWebClient.DailyRankJsonParserCallback,
         TvScheduleWebClient.TvScheduleJsonParserCallback,
-        WeeklyRankWebClient.WeeklyRankJsonParserCallback,
         RecommendChWebClient.RecommendChannelCallback,
         RecommendVdWebClient.RecommendVideoCallback
 {
@@ -84,16 +83,6 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
     public void onTvScheduleJsonParsed(List<TvScheduleList> tvScheduleList) {
         if (tvScheduleList != null && tvScheduleList.size() > 0) {
             TvScheduleList list = tvScheduleList.get(0);
-//            setStructDB(list);
-        } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
-        }
-    }
-
-    @Override
-    public void onWeeklyRankJsonParsed(List<WeeklyRankList> weeklyRankLists) {
-        if (weeklyRankLists != null && weeklyRankLists.size() > 0) {
-            WeeklyRankList list = weeklyRankLists.get(0);
 //            setStructDB(list);
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
@@ -340,7 +329,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         } else {
             //通信クラスにデータ取得要求を出す
             RecommendVdWebClient mRecommendChWebClient = new RecommendVdWebClient(this);
-            mRecommendChWebClient.getRecommendChannelApi();
+            mRecommendChWebClient.getRecommendVideoApi();
         }
         return list;
     }
@@ -395,33 +384,6 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         return list;
     }
 
-    private List<Map<String, String>> getWeeklyRankListData() {
-        DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(WEEKLY_RANK_LAST_INSERT);
-
-        List<Map<String, String>> list = new ArrayList<>();
-        //Vodクリップ一覧のDB保存履歴と、有効期間を確認
-        if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
-            //データをDBから取得する
-            HomeDataManager homeDataManager = new HomeDataManager(mContext);
-            list = homeDataManager.selectWeeklyRankListHomeData();
-        } else {
-            //通信クラスにデータ取得要求を出す
-            WeeklyRankWebClient webClient = new WeeklyRankWebClient();
-            int limit = 1;
-            int offset = 1;
-            String filter = "";
-            int ageReq = 1;
-            String genreId = "";
-
-            //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
-            webClient.getWeeklyRankApi(limit, offset,
-                    filter, ageReq, genreId , this);
-        }
-        return list;
-    }
-
-
     /**
      * チャンネル一覧データをDBに格納する
      *
@@ -458,7 +420,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         dateUtils.addLastDate(RECOMMEND_VD_LAST_INSERT);
         RecommendVdInsertDataManager dataManager = new RecommendVdInsertDataManager(mContext);
         dataManager.insertRecommendVdInsertList(recommendVdList);
-        sendRecommendChListData(recommendVdList.getmRvList());
+        sendRecommendVdListData(recommendVdList.getmRvList());
     }
 
     /**
