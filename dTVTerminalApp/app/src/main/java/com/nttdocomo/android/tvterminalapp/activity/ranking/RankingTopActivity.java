@@ -47,6 +47,7 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
         mLinearLayout = findViewById(R.id.ranking_top_main_layout_linearLayout);
         ImageView menuImageView = findViewById(R.id.header_layout_menu);
         menuImageView.setVisibility(View.VISIBLE);
+        findViewById(R.id.header_layout_back).setVisibility(View.INVISIBLE);
         menuImageView.setOnClickListener(this);
         int height = getHeightDensity();
         for(int i=0; i<CONTENT_LIST_COUNT; i++){

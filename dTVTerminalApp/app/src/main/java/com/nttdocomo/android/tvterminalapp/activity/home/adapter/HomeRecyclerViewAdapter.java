@@ -37,10 +37,14 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     private ThumbnailProvider thumbnailProvider;
     //もっと見るフッター
     private View mFooterView;
-
-    public static final int TYPE_HEADER = 0;
-    public static final int TYPE_FOOTER = 1;
-    public static final int TYPE_NORMAL = 2;
+    //最大表示件数
+    private static final int MAX_COUNT = 10;
+    //ヘッダー
+    private static final int TYPE_HEADER = 0;
+    //フッター
+    private static final int TYPE_FOOTER = 1;
+    //普通
+    private static final int TYPE_NORMAL = 2;
 
     public HomeRecyclerViewAdapter(Context context, List<Map<String,String>> mContentList)
     {
@@ -70,10 +74,14 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     @Override
     public int getItemCount()
     {
+        int count = mContentList.size();
+        if(count > MAX_COUNT){
+            count = MAX_COUNT;
+        }
         if(mFooterView == null){
-            return mContentList.size();
+            return count;
         }else{
-            return mContentList.size()+1;
+            return count+1;
         }
     }
 
