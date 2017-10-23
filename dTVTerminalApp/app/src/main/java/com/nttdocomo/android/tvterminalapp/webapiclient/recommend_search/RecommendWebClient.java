@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
+import android.os.Handler;
+
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
@@ -19,7 +21,8 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
      */
     public static final String SERVICE_ID = "serviceId";
     /**
-     * リクエスト用・カテゴリーID
+     * リクエスト用・カテゴリーID:※本パラメータ指定時は、"サービスID:カテゴリーID"のように、
+     * コロンで挟んで一組となるので注意。複数指定の場合はこの組をカンマで接続して指定する。
      */
     public static final String SERVICE_CATEGORY_ID = "serviceCategoryId";
     /**
@@ -27,7 +30,7 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
      */
     public static final String GET_PAGE = "getPage";
     /**
-     * リクエスト用・開始位置
+     * リクエスト用・開始位置：※maxResultの値を指定した際は、こちらは省略できないので注意
      */
     public static final String START_INDEX = "startIndex";
     /**
@@ -54,10 +57,14 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
 
 
     //先頭スイッチ
-    boolean mfirstParmater;
+    private boolean mfirstParmater;
 
  
     private final RecommendCallback mRecommendCallback;
+
+    //コールバックにエラーを返すためのハンドラー
+    private Handler handler;
+    private Runnable runnable;
 
     public interface RecommendCallback {
         void RecommendCallback(RecommendChList mRecommendChList);
@@ -87,6 +94,29 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
         if(!queryItems.isEmpty()) {
             //サーバーへおすすめ情報取得を依頼する
             get(UrlConstants.WebApiUrl.RECOMMEND_LIST_GET_URL, queryItems, this);
+        } else {
+            //パラメータに誤りがあったので、ヌルを返却する
+            if(mRecommendCallback != null) {
+                //コールバック処理の定義
+                runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        //ヌルをコールバックに返す
+                        mRecommendCallback.RecommendCallback(null);
+
+                        //後始末
+                        // **FindBugs** Bad pratice handler初期化されていないとfindbugは警告するが、
+                        // handlerに値が入っていなければここに来ることはありえないので、対処は行わない
+                        handler.removeCallbacks(runnable);
+                        runnable = null;
+                        handler = null;
+                    }
+                };
+
+                //コールバック処理を呼び出す
+                handler = new Handler();
+                handler.post(runnable);
+            }
         }
     }
 
@@ -133,12 +163,13 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
         RecommendChList mRecommendChList =
                 recommendChannelXmlParser.getRecommendchannelList(responseData);
 
-        //TODO:テストサーバーが値を返さなくなくなったので、取得できていたころのデータを設定する
-        mRecommendChList =
-                recommendChannelXmlParser.getRecommendchannelList(DUMMY_DATA);
+        //TODO:テストサーバーが値を返さなくなった際の、ダミーデータを設定する・ダミーデータ削除時に消すこと
+//        mRecommendChList =
+//                recommendChannelXmlParser.getRecommendchannelList(DUMMY_DATA);
 
-
-        mRecommendCallback.RecommendCallback(mRecommendChList);
+        if(mRecommendCallback != null) {
+            mRecommendCallback.RecommendCallback(mRecommendChList);
+        }
     }
 
     //TODO: サーバーが動作していたころのデータ・最終的には必ず消すこと

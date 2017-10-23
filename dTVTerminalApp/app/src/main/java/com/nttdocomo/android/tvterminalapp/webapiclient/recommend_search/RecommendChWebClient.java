@@ -16,7 +16,7 @@ public class RecommendChWebClient extends WebApiBase implements WebApiCallback  
     /**
      * 種別・チャンネル
      */
-    private static final String CHANNEL_CATEGORY = "03,04,05&";
+    private static final String CHANNEL_CATEGORY = "43:01,44:03,44:04&";
 
     private RecommendChannelCallback mRecommendChannelCallback;
 
@@ -69,8 +69,9 @@ public class RecommendChWebClient extends WebApiBase implements WebApiCallback  
         RecommendChList mRecommendChList =
                 recommendChannelXmlParser.getRecommendchannelList(responseData);
 
-        //TODO: テストサーバーが正常に動作しなくなったので、再度ダミーデータを使用する
-        RecommendChList dummyData = recommendChannelXmlParser.getRecommendchannelList();
-        mRecommendChannelCallback.RecommendChannelCallback(dummyData);
+        //TODO: テストサーバーが動作しない場合に使うダミーデータ
+        //RecommendChList mRecommendChList = recommendChannelXmlParser.getRecommendchannelList();
+
+        mRecommendChannelCallback.RecommendChannelCallback(mRecommendChList);
     }
 }
