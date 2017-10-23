@@ -11,4 +11,7 @@
     <color name="keyword_search_result_background">#222222</color>
     <color name="keyword_search_header_background">#000000</color>
     <color name="keyword_search_result_text">#FFFFFF</color>
+    <color name="recommend_list_background">#222222</color>
+    <color name="recommend_list_text">#FFFFFF</color>
+    <color name="recommend_list_border">#888888</color>
 </resources>

@@ -16,6 +16,14 @@
 
     <!-- Home -->
     <string name="now_on_air_list">NOW ON AIR</string>
+    <string name="recommend_list_title">おすすめ番組・ビデオ</string>
+    <string-array name="recommend_list_tab_names">
+        <item>テレビ</item>
+        <item>ビデオ</item>
+        <item>dTVチャンネル</item>
+        <item>dTV</item>
+        <item>dアニメ</item>
+    </string-array>
 
     <!-- TvProgram -->
 

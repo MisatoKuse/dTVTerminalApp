@@ -15,6 +15,24 @@ public class SearchConstants {
         public static final String requestError = "ERMD08001";
         public static final String systemError = "ERMD08002";
     }
+
+    public static class RecommendList {
+        public static final int requestMaxCount_Recommend = 20;
+    }
+    public static class RecommendResponseErrorId {
+        public static final String requestError_Recommend = "ERMD08001";
+        public static final String systemError_Recommend = "ERMD08002";
+    }
+
+    public static class RecommendTabPageNo {
+        public static final int RECOMMEND_PAGE_NO_OF_SERVICE_TEREBI = 0;                                                     // テレビ
+        public static final int RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO = RECOMMEND_PAGE_NO_OF_SERVICE_TEREBI + 1;          // ビデオ
+        public static final int RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL = RECOMMEND_PAGE_NO_OF_SERVICE_TEREBI + 2;   // dチャンネル
+        public static final int RECOMMEND_PAGE_NO_OF_SERVICE_DTV = RECOMMEND_PAGE_NO_OF_SERVICE_TEREBI + 3;            // dTV
+        public static final int RECOMMEND_PAGE_NO_OF_SERVICE_DANIME = RECOMMEND_PAGE_NO_OF_SERVICE_TEREBI + 4;         //  dアニメ
+        public static final int RECOMMEND_PAGE_NO_OF_SERVICE_UNKNOWN = RECOMMEND_PAGE_NO_OF_SERVICE_TEREBI + 99;       // その他
+
+    }
 }
 
 

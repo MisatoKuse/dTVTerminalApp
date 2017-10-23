@@ -5,32 +5,410 @@
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.widget.AbsListView;
+import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.dataprovider.RecommendDataProvider;
+import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendBaseFragment;
+import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendBaseFragmentScrollListener;
+import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendFragmentFactory;
+import com.nttdocomo.android.tvterminalapp.model.ResultType;
+import com.nttdocomo.android.tvterminalapp.model.recommend.RecommendContentInfo;
+import com.nttdocomo.android.tvterminalapp.model.search.SearchContentInfo;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.TotalSearchContentInfo;
 
-public class RecommendActivity extends BaseActivity {
+import java.util.List;
 
-    private RelativeLayout mLinearLayout;
+public class RecommendActivity extends BaseActivity implements View.OnClickListener,
+        RecommendBaseFragmentScrollListener, RecommendDataProvider.RecommendApiDataProviderCallback {
+
+
+
+    private static final int PAGE_NO_OF_SERVICE_TEREBI = 0;                                         //テレビ
+    private static final int PAGE_NO_OF_SERVICE_VIDEO = PAGE_NO_OF_SERVICE_TEREBI + 1;         //ビデオ
+    private static final int PAGE_NO_OF_SERVICE_DTV_CHANNEL = PAGE_NO_OF_SERVICE_TEREBI + 2;  //dTVチャンネル
+    private static final int PAGE_NO_OF_SERVICE_DTV = PAGE_NO_OF_SERVICE_TEREBI + 3;            //dTV
+    private static final int PAGE_NO_OF_SERVICE_DANIME = PAGE_NO_OF_SERVICE_TEREBI + 4;        //dアニメ
+
+    public final static int sSearchDisplayCountOnce = 20;
+    public final static String sSearchCountDefault = "検索結果:0件";
+
+    private String[] mTabNames;
+    private LinearLayout mLinearLayout;
+    private HorizontalScrollView mTabScrollView;
+    private ViewPager mRecommendViewPager = null;
+
+
+    private ImageView mMenuImageView = null;
+    private boolean mIsSearching = false;
+
+    private static String mCurrentSearchText = "";
+    RecommendDataProvider mRecommendDataProvider = null;
+
+    private static final int mLoadPageDelayTime = 500;
+
+    private int mRequestService = 99;
+    // レコメンドコンテンツ最大件数（システム制約）
+    private int maxShowListSize = 100;
+    // 表示中レコメンドコンテンツ件数
+    private int showListSize = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recommend_main_layout);
+        setTitleText(getString(R.string.recommend_list_title));
+
+        mMenuImageView = findViewById(R.id.header_layout_menu);
+        mMenuImageView.setVisibility(View.VISIBLE);
+        mMenuImageView.setOnClickListener(this);
+
+        mRequestService = 99;
+
+        initData();
         initView();
+        initRecommendListView();
     }
 
-    private void initView(){
-        mLinearLayout = findViewById(R.id.recommend_main_layout_ll1);
-        mLinearLayout.setOnClickListener(new View.OnClickListener() {
+    /**
+     * おすすめ番組・ビデオ画面初期化
+     */
+    private void initView() {
+
+    }
+
+    private void initData() {
+        mTabNames = getResources().getStringArray(R.array.recommend_list_tab_names);
+
+        mRecommendDataProvider = new RecommendDataProvider(this);
+
+    }
+
+     private void setSearchStart(boolean b) {
+        synchronized (this) {
+            mIsSearching = b;
+        }
+    }
+
+    /**
+     * データプロバイダへデータ取得要求
+     */
+    private void requestRecommendData() {
+        if (null == mRecommendDataProvider) {
+            Log.e(DTVTConstants.LOG_DEF_TAG, "RecommendActivity::setRecommendData, mRecommendDataProvider is null");
+            return;
+        }
+
+        synchronized (this) {
+            if (!mIsSearching) {
+                setSearchStart(true);
+            } else {
+                return;
+            }
+        }
+        RecommendBaseFragment b = getCurrentRecommendBaseFragment();
+        if (null != b) {
+            b.clear();
+            setPagingStatus(false);
+        }
+
+        if (null == mRecommendViewPager) {
+            return ;
+        }
+//        // TODO? レコメンド画面呼び出し直後の取得処理か否かを判定
+//        if(mRequestService != SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_UNKNOWN) {
+//            mRequestService = mRecommendViewPager.getCurrentItem();
+//        }
+        int requestService = mRecommendViewPager.getCurrentItem();
+        int startIndex = showListSize + 1;
+        showListSize += SearchConstants.RecommendList.requestMaxCount_Recommend;
+        mRecommendDataProvider.startGetRecommendData(
+                requestService,startIndex,SearchConstants.RecommendList.requestMaxCount_Recommend);
+}
+
+    private void initRecommendListView() {
+        if(null!=mRecommendViewPager){
+            return;
+        }
+        mRecommendViewPager = findViewById(R.id.vp_recommend_list_items);
+        mTabScrollView = findViewById(R.id.recommend_tab_strip_scroll);
+        initTabVIew();
+
+        mRecommendViewPager.setAdapter(new RecommendActivity.TabAdpater(getSupportFragmentManager(), this));
+        mRecommendViewPager.addOnPageChangeListener(new ViewPager
+                .SimpleOnPageChangeListener() {
+            // タブ切り替え時
             @Override
-            public void onClick(View view) {
-                startActivity(TvPlayerActivity.class,null);
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                setTab(position);
+
+                clearAllFragment();
+                setPagingStatus(false);
+                showListSize = 0;
+                requestRecommendData();
             }
         });
     }
+
+    /**
+     * tabの関連Viewを初期化
+     */
+    private void initTabVIew() {
+        mTabScrollView.removeAllViews();
+        mLinearLayout = new LinearLayout(this);
+        LinearLayout.LayoutParams layoutParams
+                = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT
+                , LinearLayout.LayoutParams.WRAP_CONTENT);
+        mLinearLayout.setLayoutParams(layoutParams);
+        mLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+        mLinearLayout.setBackgroundColor(Color.BLACK);
+        mLinearLayout.setGravity(Gravity.CENTER);
+        mTabScrollView.addView(mLinearLayout);
+
+        for (int i = 0; i < mTabNames.length; i++) {
+            TextView tabTextView = new TextView(this);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT);
+            if (i != 0) {
+                params.setMargins(30, 0, 0, 0);
+            }
+            tabTextView.setLayoutParams(params);
+            tabTextView.setText(mTabNames[i]);
+            tabTextView.setTextSize(15);
+            tabTextView.setBackgroundColor(Color.BLACK);
+            tabTextView.setTextColor(Color.WHITE);
+            tabTextView.setGravity(Gravity.CENTER_VERTICAL);
+            tabTextView.setTag(i);
+            if (i == 0) {
+                tabTextView.setBackgroundResource(R.drawable.indicating);
+            }
+            tabTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = (int) view.getTag();
+                    mRecommendViewPager.setCurrentItem(position);
+                    setTab(position);
+                }
+            });
+            mLinearLayout.addView(tabTextView);
+        }
+    }
+
+    /*インジケーター設置*/
+    public void setTab(int position) {
+        if (mLinearLayout != null) {
+            for (int i = 0; i < mTabNames.length; i++) {
+                TextView textView = (TextView) mLinearLayout.getChildAt(i);
+                if (position == i) {
+                    textView.setBackgroundResource(R.drawable.indicating);
+                } else {
+                    textView.setBackgroundResource(R.drawable.indicating_no);
+                }
+            }
+        }
+    }
+
+    private int mSearchTotalCount = 0;
+
+    private RecommendBaseFragment getCurrentRecommendBaseFragment(){
+        int currentPageNo = mRecommendViewPager.getCurrentItem();
+        RecommendBaseFragment baseFragment = (RecommendBaseFragment) RecommendFragmentFactory.createFragment(currentPageNo, this);
+        return baseFragment;
+    }
+
+
+    public void onRecommendDataProviderSuccess(ResultType<TotalSearchContentInfo> resultType) {
+        TotalSearchContentInfo content= resultType.getResultType();
+
+
+        mSearchTotalCount = content.totalCount;
+
+        String totalCountText=sSearchCountDefault;
+
+        RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
+
+        synchronized (this) {
+            if (mIsPaging) {
+                baseFragment.displayLoadMore(false);
+                setPagingStatus(false);
+            } else {
+                //if(0==mPageNumber) {
+                baseFragment.clear();
+                //}
+            }
+        }
+
+        if(0<mSearchTotalCount){
+            for(SearchContentInfo info :content.searchContentInfo) {
+                baseFragment.mData.add(info);
+            }
+
+            int thisTimeTotal = content.searchContentInfo.size();
+            for(int i=0; i<thisTimeTotal; ++i){
+                SearchContentInfo ci = content.searchContentInfo.get(i);
+
+                SearchContentInfo searchContentInfo=new SearchContentInfo(false, ci.contentId, ci. serviceId, ci.contentPictureUrl, ci.title);
+
+            }
+            Log.d(DTVTConstants.LOG_DEF_TAG, "baseFragment.mData.size = " + baseFragment.mData.size());
+
+            // フラグメントの更新
+            baseFragment.notifyDataSetChanged();
+            baseFragment.setSelection(mSearchLastItem);
+        }
+
+        baseFragment.displayLoadMore(false);
+
+        setSearchStart(false);
+    }
+
+    public void clearAllFragment() {
+
+        if(null!=mRecommendViewPager){
+            int sum=RecommendFragmentFactory.getFragmentCount();
+            for(int i=0;i<sum;++i){
+                RecommendBaseFragment baseFragment = RecommendFragmentFactory.createFragment(i, this);
+                baseFragment.clear();
+            }
+        }
+    }
+
+//    /**
+//     * データ取得失敗時の処理
+//     * @param resultType
+//     */
+//    public void recommendDataProviderFinishNg(ResultType<SearchResultError> resultType) {
+//        clearAllFragment();
+//        Log.e(DTVTConstants.LOG_DEF_TAG, "onSearchDataProviderFinishNg");
+//    }
+
+    @Override
+    public void onClick(View view) {
+        if(view ==mMenuImageView){
+            onSampleGlobalMenuButton_PairLoginOk();
+        }
+    }
+
+    private int mSearchLastItem =0;
+    private boolean mIsPaging=false;
+
+    private void setPagingStatus(boolean b) {
+        synchronized (this) {
+            mIsPaging = b;
+        }
+    }
+    /*タブ専用アダプター*/
+    private class TabAdpater extends FragmentStatePagerAdapter {
+
+        private RecommendActivity mRecommendActivity = null;
+        TabAdpater(FragmentManager fm, RecommendActivity top) {
+            super(fm);
+            mRecommendActivity=top;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            synchronized (this) {
+                return RecommendFragmentFactory.createFragment(position, mRecommendActivity);
+            }
+        }
+
+        @Override
+        public int getCount() {
+        return mTabNames.length;
+    }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+        return mTabNames[position];
+    }
+    }
+
+    @Override
+    public void onScroll(RecommendBaseFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+
+        mSearchLastItem = firstVisibleItem + visibleItemCount - 1;
+
+//        int pageMax = (mPageNumber+ 1)* SearchConstants.RecommendList.requestMaxCount_Recommend;
+//        int maxPage = mSearchTotalCount/SearchConstants.RecommendList.requestMaxCount_Recommend;
+//        if(firstVisibleItem + visibleItemCount>=pageMax && maxPage >=1+ mPageNumber ){
+        if(maxShowListSize > fragment.mData.size() &&
+                fragment.mData.size() % SearchConstants.RecommendList.requestMaxCount_Recommend != 0 &&
+                firstVisibleItem + visibleItemCount>=fragment.mData.size()) {
+            setPagingStatus(true);
+            fragment.displayLoadMore(true);
+
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    requestRecommendData();
+                }
+            }, mLoadPageDelayTime);
+        }
+    }
+
+    // TODO コールバック処理追加
+    @Override
+    public void RecommendChannelCallback(List<RecommendContentInfo> recommendContentInfoList) {
+
+    }
+
+    /**
+     * おすすめビデオ用コールバック
+     *
+     * @param recommendContentInfoList
+     */
+    @Override
+    public void RecommendVideoCallback(List<RecommendContentInfo> recommendContentInfoList) {
+    }
+
+    /**
+     * おすすめdTV用コールバック
+     *
+     * @param recommendContentInfoList
+     */
+    public void RecommenddTVCallback(List<RecommendContentInfo> recommendContentInfoList) {
+
+    }
+
+    /**
+     * おすすめdアニメ用コールバック
+     *
+     * @param recommendContentInfoList
+     */
+    public void RecommenddAnimeCallback(List<RecommendContentInfo> recommendContentInfoList) {
+
+    }
+
+    /**
+     * おすすめdチャンネル用コールバック
+     *
+     * @param recommendContentInfoList
+     */
+    public void RecommenddChannelCallback(List<RecommendContentInfo> recommendContentInfoList) {
+
+    }
 }
+
