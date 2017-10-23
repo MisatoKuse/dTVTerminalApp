@@ -121,7 +121,7 @@ public class DateUtils {
 
         //
         boolean isExpired = false;
-        if (limit.compareTo(now) == 1) {
+        if (limit.compareTo(now) < 0) {
             isExpired = true;
         }
         return isExpired;
