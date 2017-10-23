@@ -85,7 +85,7 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(spacingInPixels));
         //コンテンツタイプを設定
         typeTextView.setText(typeContentName);
-        countTextView.setText(resultCount);
+        countTextView.setText("＞");
         //リサイクルビューデータ設定
         setRecyclerViewData(mRecyclerView, contentsData, tag);
     }
@@ -189,6 +189,8 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
 
     @Override
     public void VideoRankCallback(List<Map<String,String>> videoMap) {
-
+        if (videoMap!=null && videoMap.size() > 0){
+            setRecyclerView(videoMap, 2);
+        }
     }
 }

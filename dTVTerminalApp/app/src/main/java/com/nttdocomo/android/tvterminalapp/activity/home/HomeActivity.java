@@ -211,7 +211,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 typeName = getResources().getString(R.string.daily_tv_ranking_title);
                 break;
             case 6:
-                typeName = getResources().getString(R.string.weekly_tv_ranking_title);
+                typeName = getResources().getString(R.string.video_ranking_title);
                 break;
             case 7:
                 typeName = getResources().getString(R.string.nav_menu_item_clip);
