@@ -61,7 +61,7 @@ public class ContentsListPerGenreWebClient
 
 
     /**
-     * 週間のクリップ数番組ランキング取得
+     * ジャンル毎コンテンツ数取得
      * @param limit     取得する最大件数(値は1以上)
      * @param offset    取得位置(値は1以上)
      * @param filter    フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
@@ -94,7 +94,7 @@ public class ContentsListPerGenreWebClient
             return false;
         }
 
-        //週毎ランク一覧を呼び出す
+        //ジャンル毎コンテンツ数取得を呼び出す
         openUrl(API_NAME_LIST.CONTENTS_LIST_PER_GENRE_WEB_CLIENT.getString(),sendParameter,this);
 
         //今のところ失敗は無いので、trueで帰る
@@ -137,7 +137,7 @@ public class ContentsListPerGenreWebClient
         }
 
         //年齢情報の件0から17までの間以外はエラー
-        if(ageReq < 0 || ageReq > 17) {
+        if(ageReq < 1 || ageReq > 17) {
             return false;
         }
 
