@@ -162,8 +162,6 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         public ViewHolder(View itemView)
         {
             super(itemView);
-            if (itemView == mFooterView){
-            }
         }
         ImageView mImage;
         TextView mContent;

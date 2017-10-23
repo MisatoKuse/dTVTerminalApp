@@ -69,7 +69,6 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
      */
     private void setRecyclerView(List<Map<String,String>> contentsData, final int tag) {
         String typeContentName = getContentTypeName(tag);
-        String resultCount = String.valueOf(contentsData.size());
         View view = mLinearLayout.getChildAt(tag);
         view.setVisibility(View.VISIBLE);
         TextView typeTextView = view.findViewById(R.id.home_main_item_type_tx);
@@ -175,21 +174,21 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
     }
 
     @Override
-    public void DailyRankListCallback(List<Map<String,String>> dailyMap) {
+    public void dailyRankListCallback(List<Map<String,String>> dailyMap) {
         if (dailyMap!=null && dailyMap.size() > 0){
             setRecyclerView(dailyMap, 0);
         }
     }
 
     @Override
-    public void WeeklyRankCallback(List<Map<String,String>> weeklyMap) {
+    public void weeklyRankCallback(List<Map<String,String>> weeklyMap) {
         if (weeklyMap!=null && weeklyMap.size() > 0){
             setRecyclerView(weeklyMap, 1);
         }
     }
 
     @Override
-    public void VideoRankCallback(List<Map<String,String>> videoMap) {
+    public void videoRankCallback(List<Map<String,String>> videoMap) {
         if (videoMap!=null && videoMap.size() > 0){
             setRecyclerView(videoMap, 2);
         }

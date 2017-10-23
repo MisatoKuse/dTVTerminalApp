@@ -76,21 +76,21 @@ public class RankingTopDataProvider implements
          *
          * @param dailyHashMap
          */
-        void DailyRankListCallback(List<Map<String, String>> dailyHashMap);
+        void dailyRankListCallback(List<Map<String, String>> dailyHashMap);
 
         /**
          * 週間ランキング用コールバック
          *
          * @param weeklyHashMap
          */
-        void WeeklyRankCallback(List<Map<String, String>> weeklyHashMap);
+        void weeklyRankCallback(List<Map<String, String>> weeklyHashMap);
 
         /**
          * ビデオランキング用コールバック
          *
          * @param videoHashMap
          */
-        void VideoRankCallback(List<Map<String, String>> videoHashMap);
+        void videoRankCallback(List<Map<String, String>> videoHashMap);
     }
 
     private ApiDataProviderCallback apiDataProviderCallback;
@@ -132,7 +132,7 @@ public class RankingTopDataProvider implements
      * @param list
      */
     public void sendDailyRankListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.DailyRankListCallback(list);
+        apiDataProviderCallback.dailyRankListCallback(list);
     }
 
     /**
@@ -141,7 +141,7 @@ public class RankingTopDataProvider implements
      * @param list
      */
     public void sendWeeklyRankListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.WeeklyRankCallback(list);
+        apiDataProviderCallback.weeklyRankCallback(list);
     }
 
     /**
@@ -150,7 +150,7 @@ public class RankingTopDataProvider implements
      * @param list
      */
     public void sendVideoRankListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.VideoRankCallback(list);
+        apiDataProviderCallback.videoRankCallback(list);
     }
 
     /**

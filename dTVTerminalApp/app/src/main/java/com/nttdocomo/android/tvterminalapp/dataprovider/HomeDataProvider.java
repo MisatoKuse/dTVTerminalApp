@@ -119,49 +119,49 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
          *
          * @param channelList
          */
-        void ChannelListCallback(List<Map<String,String>> channelList);
+        void channelListCallback(List<Map<String,String>> channelList);
 
         /**
          * デイリーランキング用コールバック
          *
          * @param dailyList
          */
-        void DailyRankListCallback(List<Map<String,String>> dailyList);
+        void dailyRankListCallback(List<Map<String,String>> dailyList);
 
         /**
          * ユーザ情報用コールバック
          *
          * @param userList
          */
-        void UserInfoCallback(List<Map<String,String>> userList);
+        void userInfoCallback(List<Map<String,String>> userList);
 
         /**
          * クリップリスト用コールバック
          *
          * @param clipList
          */
-        void VodClipListCallback(List<Map<String,String>> clipList);
+        void vodClipListCallback(List<Map<String,String>> clipList);
 
         /**
          * ビデオランキング用コールバック
          *
          * @param weeklyList
          */
-        void VideoRankCallback(List<Map<String,String>> weeklyList);
+        void videoRankCallback(List<Map<String,String>> weeklyList);
 
         /**
          * おすすめ番組用コールバック
          *
          * @param recChList
          */
-        void RecommendChannelCallback(List<Map<String,String>> recChList);
+        void recommendChannelCallback(List<Map<String,String>> recChList);
 
         /**
          * おすすめビデオ用コールバック
          *
          * @param recVdList
          */
-        void RecommemdVideoCallback(List<Map<String,String>> recVdList);
+        void recommemdVideoCallback(List<Map<String,String>> recVdList);
     }
 
     private ApiDataProviderCallback apiDataProviderCallback;
@@ -218,7 +218,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param list
      */
     public void sendChannelListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.ChannelListCallback(list);
+        apiDataProviderCallback.channelListCallback(list);
     }
 
     /**
@@ -227,7 +227,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param list
      */
     public void sendRecommendChListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.RecommendChannelCallback(list);
+        apiDataProviderCallback.recommendChannelCallback(list);
     }
 
     /**
@@ -236,7 +236,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param list
      */
     public void sendRecommendVdListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.RecommemdVideoCallback(list);
+        apiDataProviderCallback.recommemdVideoCallback(list);
     }
 
     /**
@@ -245,7 +245,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param list
      */
     public void sendDailyRankListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.DailyRankListCallback(list);
+        apiDataProviderCallback.dailyRankListCallback(list);
     }
 
     /**
@@ -254,7 +254,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param list
      */
     public void sendVideoRankListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.VideoRankCallback(list);
+        apiDataProviderCallback.videoRankCallback(list);
     }
 
     /**
@@ -263,7 +263,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param list
      */
     public void sendVodClipListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.VodClipListCallback(list);
+        apiDataProviderCallback.vodClipListCallback(list);
     }
 
     /**
@@ -272,7 +272,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param list
      */
     public void sendUserInfoListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.UserInfoCallback(list);
+        apiDataProviderCallback.userInfoCallback(list);
     }
 
     private List<Map<String, String>> getChannelListData() {
