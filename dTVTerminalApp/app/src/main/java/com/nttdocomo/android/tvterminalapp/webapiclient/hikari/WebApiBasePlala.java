@@ -50,7 +50,8 @@ public class WebApiBasePlala {
 
     //仮のベースURL
     //TODO: 本物のサーバーが提供されるまでは、テストサーバーのアドレスとを指定する
-    private static final String baseUrl = "http://192.168.2.224/";
+    //private static final String baseUrl = "http://192.168.2.224/";
+    private static final String baseUrl = "http://192.168.2.127/";
 
     //通信停止用コネクション蓄積
     private volatile static List<HttpURLConnection> mUrlConnections = null;
@@ -102,6 +103,16 @@ public class WebApiBasePlala {
          * TODO: 現状の仕様では使わない想定
          */
         WEEKLY_RANK_LIST("weekclip/count/programranking/get"),
+
+        /**
+         * ジャンル毎コンテンツ数
+         */
+        CONTENTS_NUMBER_PER_GENRE_WEB_CLIENT("genre/contents/count/get"),
+
+        /**
+         * ジャンル毎コンテンツ一覧
+         */
+        CONTENTS_LIST_PER_GENRE_WEB_CLIENT("genre/contents/list"),
 
         ;   //最後にセミコロンが必要
 
@@ -176,6 +187,18 @@ public class WebApiBasePlala {
      */
     public static final String TYPE_HIKARI_TV = "hikaritv";
     /**
+     * タイプ用指定文字列・ひかりTVのVOD
+     */
+    public static final String TYPE_HIKARI_TV_VOD = "hikaritv_vod";
+    /**
+     * タイプ用指定文字列・dTVのVOD
+     */
+    public static final String TYPE_DTV_VOD = "dtv_vod";
+    /**
+     * タイプ用指定文字列・ひかりTVのVODとdTVのVOD
+     */
+    public static final String TYPE_HIKARI_TV_AND_DTV_VOD = "hikaritv_and_dtv_vod";
+    /**
      * タイプ用指定文字列・全て（指定なしは全てになる）
      */
     public static final String TYPE_ALL = "";
@@ -184,6 +207,23 @@ public class WebApiBasePlala {
      * 日付指定文字列・現在時刻指定
      */
     public static final String DATE_NOW = "now";
+
+    /**
+     * ソート用文字列・タイトルルビ昇順
+     */
+    public static final String SORT_TITLE_RUBY_ASC = "titleruby_asc";
+    /**
+     * ソート用文字列・配信開始日昇順
+     */
+    public static final String SORT_AVAIL_S_ASC = "avail_s_asc";
+    /**
+     * ソート用文字列・配信終了日降順
+     */
+    public static final String SORT_AVAIL_E_DESC = "avail_e_desc";
+    /**
+     * ソート用文字列・人気順（前日の視聴回数数降順）
+     */
+    public static final String SORT_PLAY_COUNT_DESC = "play_count_desc";
 
     //戻り値用構造体
     static protected class ReturnCode {

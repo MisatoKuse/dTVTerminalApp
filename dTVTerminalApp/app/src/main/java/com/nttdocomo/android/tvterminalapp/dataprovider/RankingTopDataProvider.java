@@ -16,6 +16,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WeeklyRankList;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.DailyRankWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WeeklyRankWebClient;
 
@@ -29,7 +30,8 @@ import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.WEEKLY_RANK_LA
 
 public class RankingTopDataProvider implements
         DailyRankWebClient.DailyRankJsonParserCallback,
-        WeeklyRankWebClient.WeeklyRankJsonParserCallback{
+        WeeklyRankWebClient.WeeklyRankJsonParserCallback,
+        ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback{
 
     private Context mContext;
 
@@ -48,6 +50,16 @@ public class RankingTopDataProvider implements
     public void onWeeklyRankJsonParsed(List<WeeklyRankList> weeklyRankLists) {
         if (weeklyRankLists != null && weeklyRankLists.size() > 0) {
             WeeklyRankList list = weeklyRankLists.get(0);
+            setStructDB(list);
+        } else {
+            //TODO:WEBAPIを取得できなかった時の処理を記載予定
+        }
+    }
+
+    @Override
+    public void onContentsListPerGenreJsonParsed(List<VideoRankList> contentsListPerGenre) {
+        if (contentsListPerGenre != null && contentsListPerGenre.size() > 0) {
+            VideoRankList list = contentsListPerGenre.get(0);
             setStructDB(list);
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
@@ -138,7 +150,7 @@ public class RankingTopDataProvider implements
      * @param list
      */
     public void sendVideoRankListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.WeeklyRankCallback(list);
+        apiDataProviderCallback.VideoRankCallback(list);
     }
 
     /**
@@ -207,16 +219,18 @@ public class RankingTopDataProvider implements
             list = rankingTopDataManager.selectVideoRankListData();
         } else {
             //通信クラスにデータ取得要求を出す
-            WeeklyRankWebClient webClient = new WeeklyRankWebClient();
+            ContentsListPerGenreWebClient webClient = new ContentsListPerGenreWebClient();
             int limit = 1;
             int offset = 1;
             String filter = "";
             int ageReq = 1;
             String genreId = "";
+            String type = "";
+            String sort = "";
 
             //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
-            webClient.getWeeklyRankApi(limit, offset,
-                    filter, ageReq, genreId , this);
+            webClient.getContentsListPerGenreApi(limit, offset,
+                    filter, ageReq, genreId ,type,sort, this);
         }
         return list;
     }

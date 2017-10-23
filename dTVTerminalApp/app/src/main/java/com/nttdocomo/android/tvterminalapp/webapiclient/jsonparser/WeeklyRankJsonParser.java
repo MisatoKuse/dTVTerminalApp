@@ -58,6 +58,12 @@ public class WeeklyRankJsonParser {
             WEEKLYRANK_LIST_COPYRIGHT, WEEKLYRANK_LIST_DUR, WEEKLYRANK_LIST_DEMONG,
             WEEKLYRANK_LIST_AVAII_STATUS, WEEKLYRANK_LIST_DELIVERY, WEEKLYRANK_LIST_R_VALUE};
 
+    /**
+     * 週間ランキングJsonデータを解析する
+     *
+     * @param jsonStr String形式のJSONデータ
+     * @return List<WeeklyRankList> ObjectクラスをList形式で返却
+     */
     public List<WeeklyRankList> WeeklyRankListSender(String jsonStr) {
 
         mWeeklyRankList = new WeeklyRankList();
@@ -95,7 +101,7 @@ public class WeeklyRankJsonParser {
             if (!jsonObj.isNull(WEEKLYRANK_LIST_PAGER)) {
                 JSONObject pager = jsonObj.getJSONObject(WEEKLYRANK_LIST_PAGER);
 
-                for (int i = 0; i < pagerPara.length; i++){
+                for (int i = 0; i < pagerPara.length; i++) {
                     if (!pager.isNull(pagerPara[i])) {
                         String para = pager.getString(pagerPara[i]);
                         map.put(pagerPara[i], para);
@@ -112,17 +118,19 @@ public class WeeklyRankJsonParser {
         }
     }
 
-    /*
-    * コンテンツのList<HashMap>をオブジェクトクラスに格納
+    /**
+     * コンテンツリストをList<HashMap>の形式でObjectクラスへ格納する
+     *
+     * @param arrayLlist JSONArray
      */
     public void senWrcList(JSONArray arrayLlist) {
         try {
             List<HashMap<String, String>> wrList = new ArrayList<>();
 
-            for (int i = 0; i<arrayLlist.length(); i++){
+            for (int i = 0; i < arrayLlist.length(); i++) {
                 HashMap<String, String> wrListMap = new HashMap<String, String>();
                 JSONObject jsonObject = arrayLlist.getJSONObject(i);
-                for (int j = 0; j < listPara.length; j++){
+                for (int j = 0; j < listPara.length; j++) {
                     if (!jsonObject.isNull(listPara[j])) {
                         String para = jsonObject.getString(listPara[j]);
                         wrListMap.put(listPara[j], para);

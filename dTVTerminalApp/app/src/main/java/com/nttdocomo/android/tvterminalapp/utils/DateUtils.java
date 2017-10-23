@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class DateUtils {
 
@@ -102,18 +103,25 @@ public class DateUtils {
      */
     public boolean isBeforeLimitDate(String str) {
         // TODO:DBには取得日時を格納しておき、現在時刻よりもデータが未来の場合,キャッシュ切れと判断すべき
-        boolean isExpired = false;
-        long last = 0;
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
-            Date lastDate = sdf.parse(str);
-            last = lastDate.getTime();
+        Calendar limit = new GregorianCalendar();
+        //現在日時を取得
+        Calendar now = Calendar.getInstance();
 
-        } catch (ParseException e){
-            e.printStackTrace();
+        //文字列からCalender型に変換
+        if (str == null) {
+            limit = null;
+        } else {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
+                limit.setTime(sdf.parse(str.replace("-", "/")));
+            } catch (ParseException e) {
+                limit = null;
+            }
         }
-        long now = Calendar.getInstance().getTimeInMillis();
-        if( (now -last) / (1000 * 3600) > 1 ){
+
+        //
+        boolean isExpired = false;
+        if (limit.compareTo(now) < 0) {
             isExpired = true;
         }
         return isExpired;

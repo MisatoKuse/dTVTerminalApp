@@ -5,28 +5,29 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DailyRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendChInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendVdInsertDataManager;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.VideoRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.VodClipInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.HomeDataManager;
+import com.nttdocomo.android.tvterminalapp.datamanager.select.RankingTopDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendVdList;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.WeeklyRankList;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.DailyRankWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendChWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendVdWebClient;
-import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvScheduleWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
-import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WeeklyRankWebClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,12 +38,12 @@ import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.DAILY_RANK_LAS
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.RECOMMEND_CH_LAST_INSERT;
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.RECOMMEND_VD_LAST_INSERT;
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.VOD_LAST_INSERT;
-import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.WEEKLY_RANK_LAST_INSERT;
+import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.VIDEO_RANK_LAST_INSERT;
 
 public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallback,
         ChannelWebClient.ChannelJsonParserCallback,
         DailyRankWebClient.DailyRankJsonParserCallback,
-        TvScheduleWebClient.TvScheduleJsonParserCallback,
+        ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback,
         RecommendChWebClient.RecommendChannelCallback,
         RecommendVdWebClient.RecommendVideoCallback
 {
@@ -80,10 +81,10 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
     }
 
     @Override
-    public void onTvScheduleJsonParsed(List<TvScheduleList> tvScheduleList) {
-        if (tvScheduleList != null && tvScheduleList.size() > 0) {
-            TvScheduleList list = tvScheduleList.get(0);
-//            setStructDB(list);
+    public void onContentsListPerGenreJsonParsed(List<VideoRankList> contentsListPerGenre) {
+        if (contentsListPerGenre != null && contentsListPerGenre.size() > 0) {
+            VideoRankList list = contentsListPerGenre.get(0);
+            setStructDB(list);
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
         }
@@ -199,11 +200,11 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         if(dailyRankList != null && dailyRankList.size() > 0){
             sendDailyRankListData(dailyRankList);
         }
-        /*//ビデオランキング
-        List<Map<String, String>> VideoRankList = getDailyRankListData();
+        //ビデオランキング
+        List<Map<String, String>> VideoRankList = getVideoRankListData();
         if(VideoRankList != null && VideoRankList.size() > 0){
             sendVideoRankListData(VideoRankList);
-        }*/
+        }
         //クリップ
         List<Map<String, String>> vodClipList = getVodClipListData();
         if(vodClipList != null && vodClipList.size() > 0){
@@ -384,6 +385,34 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         return list;
     }
 
+    private List<Map<String, String>> getVideoRankListData() {
+        DateUtils dateUtils = new DateUtils(mContext);
+        String lastDate = dateUtils.getLastDate(VIDEO_RANK_LAST_INSERT);
+
+        List<Map<String, String>> list = new ArrayList<>();
+        //Vodクリップ一覧のDB保存履歴と、有効期間を確認
+        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeLimitDate(lastDate)) {
+            //データをDBから取得する
+            RankingTopDataManager rankingTopDataManager = new RankingTopDataManager(mContext);
+            list = rankingTopDataManager.selectVideoRankListData();
+        } else {
+            //通信クラスにデータ取得要求を出す
+            ContentsListPerGenreWebClient webClient = new ContentsListPerGenreWebClient();
+            int limit = 1;
+            int offset = 1;
+            String filter = "";
+            int ageReq = 1;
+            String genreId = "";
+            String type = "";
+            String sort = "";
+
+            //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
+            webClient.getContentsListPerGenreApi(limit, offset,
+                    filter, ageReq, genreId ,type,sort, this);
+        }
+        return list;
+    }
+
     /**
      * チャンネル一覧データをDBに格納する
      *
@@ -434,6 +463,19 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         DailyRankInsertDataManager dataManager = new DailyRankInsertDataManager(mContext);
         dataManager.insertDailyRankInsertList(dailyRankList);
         sendDailyRankListData(dailyRankList.getDrList());
+    }
+
+    /**
+     * ビデオランキングデータをDBに格納する
+     *
+     * @param videoRankList
+     */
+    public void setStructDB(VideoRankList videoRankList) {
+        DateUtils dateUtils = new DateUtils(mContext);
+        dateUtils.addLastDate(VIDEO_RANK_LAST_INSERT);
+        VideoRankInsertDataManager dataManager = new VideoRankInsertDataManager(mContext);
+        dataManager.insertVideoRankInsertList(videoRankList);
+        sendVideoRankListData(videoRankList.getVrList());
     }
 
     /**
