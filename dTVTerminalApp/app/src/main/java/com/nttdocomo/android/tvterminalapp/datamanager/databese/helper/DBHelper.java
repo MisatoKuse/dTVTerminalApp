@@ -7,6 +7,9 @@ package com.nttdocomo.android.tvterminalapp.datamanager.databese.helper;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CHANNEL_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_CHANNEL_SQL;
@@ -21,6 +24,7 @@ import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstan
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_VODCLIP_LIST_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_WEEKLYRANK_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_RANKING_VIDEO_SQL;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_TVCLIP_LIST_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DAILYRANK_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATABASE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATABASE_VERSION;
@@ -33,6 +37,7 @@ import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstan
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.USER_INFO_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.VODCLIP_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.WEEKLYRANK_LIST_TABLE_NAME;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.TVCLIP_LIST_TABLE_NAME;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -51,6 +56,10 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String DROP_RECOMMEND_DCHANNEL_TABLE_SQL = "drop table if exists " + RECOMMEND_LIST_DCHANNEL_TABLE_NAME;
     private static final String DROP_RECOMMEND_DTV_TABLE_SQL = "drop table if exists " + RECOMMEND_LIST_DTV_TABLE_NAME;
     private static final String DROP_RECOMMEND_DANIME_TABLE_SQL = "drop table if exists " + RECOMMEND_LIST_DANIME_TABLE_NAME;
+    /**
+     * 「tv clip list」テーブルの削除用SQL
+     */
+    private static final String DROP_TVCLIP_TABLE_SQL = "drop table if exists " + TVCLIP_LIST_TABLE_NAME;
 
     /**
      * コンストラクタ
@@ -74,6 +83,12 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(CREATE_TABLE_RECOMMEND_DCHANNEL_SQL);
         sqLiteDatabase.execSQL(CREATE_TABLE_RECOMMEND_DTV_SQL);
         sqLiteDatabase.execSQL(CREATE_TABLE_RECOMMEND_DANIME_SQL);
+        try {
+            sqLiteDatabase.execSQL(CREATE_TABLE_TVCLIP_LIST_SQL);   //クリップ一覧画面用
+        }catch (Exception e){
+            Log.d(DTVTConstants.LOG_DEF_TAG, "HomeDBHelper::onCreate, create " + CREATE_TABLE_TVCLIP_LIST_SQL+ " table failed, cause=" + e.getCause());
+        }
+
     }
 
     @Override
@@ -90,5 +105,6 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(DROP_RECOMMEND_DCHANNEL_TABLE_SQL);
         sqLiteDatabase.execSQL(DROP_RECOMMEND_DTV_TABLE_SQL);
         sqLiteDatabase.execSQL(DROP_RECOMMEND_DANIME_TABLE_SQL);
+        sqLiteDatabase.execSQL(DROP_TVCLIP_TABLE_SQL);  //クリップ一覧画面用
     }
 }
