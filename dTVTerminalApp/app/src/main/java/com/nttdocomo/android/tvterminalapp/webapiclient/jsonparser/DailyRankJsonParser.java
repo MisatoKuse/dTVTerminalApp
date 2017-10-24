@@ -96,7 +96,7 @@ public class DailyRankJsonParser extends AsyncTask<Object,Object,Object> {
     @Override
     protected Object doInBackground(Object... strings) {
         String result = (String)strings[0];
-        List<DailyRankList> resultList = DAILYRANKListSender(result);
+        List<DailyRankList> resultList = DailyRankListSender(result);
         return resultList;
     }
 

@@ -96,7 +96,7 @@ public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object>{
     @Override
     protected Object doInBackground(Object... strings) {
         String result = (String)strings[0];
-        List<TvScheduleList> resultList = TV_SCHEDULEListSender(result);
+        List<TvScheduleList> resultList = TvScheduleListListSender(result);
         return resultList;
     }
 
