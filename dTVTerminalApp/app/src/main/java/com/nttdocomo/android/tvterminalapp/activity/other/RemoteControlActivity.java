@@ -7,10 +7,8 @@ package com.nttdocomo.android.tvterminalapp.activity.other;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
-
 
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RemoteControlDataProvider;
@@ -46,9 +44,7 @@ public class RemoteControlActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 // Code here executes on main thread after user presses button
-                Toast.makeText(RemoteControlActivity.this, "button:" + ((Button)v).getText() , Toast.LENGTH_SHORT).show();
                 mRemoteControlDataProvider.sendKeycode(v.getId());
-
             }
         });
     }

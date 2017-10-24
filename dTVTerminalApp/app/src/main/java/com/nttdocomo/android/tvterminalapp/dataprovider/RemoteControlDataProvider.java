@@ -70,7 +70,6 @@ public class RemoteControlDataProvider {
      */
     public RemoteControlDataProvider(Context context) {
         mRemoteAddress = new InetSocketAddress(ｍRemoteHost, SERVER_PORT);
-        Log.i("RemoteControl", "mRemoteAddress:" + mRemoteAddress);
         mContext = context;
     }
 
@@ -85,7 +84,7 @@ public class RemoteControlDataProvider {
         if (keyCodeNameMap.containsKey(keycodeRid)) {
             keyCodeName = keyCodeNameMap.get(keycodeRid);
         }
-        Log.i("RemoteControl", "convertKeycode:" + keycodeRid + "=" +keyCodeName);
+//        Log.i("RemoteControl", "convertKeycode:" + keycodeRid + "=" +keyCodeName);
         return keyCodeName;
     }
 
@@ -95,7 +94,6 @@ public class RemoteControlDataProvider {
      */
     public void sendKeycode(int keycodeRid){
         mKeycodeName = convertKeycode(keycodeRid);
-        Log.i("sendKeycode", "mKeycodeName:" + mKeycodeName);
         if (mKeycodeName != null){
             // キーコード送信スレッドを開始
             new Thread(new KeycodeRerayTask(mKeycodeName)).start();
@@ -115,18 +113,22 @@ public class RemoteControlDataProvider {
          */
         @Override
         public void run() {
+            DatagramSocket socket = null;
             try {
-                Log.i("KeycodeRerayTask", "mSendKeycodeName:" + mSendKeycodeName);
-                Log.i("KeycodeRerayTask", "mRemoteAddress:" + mRemoteAddress);
                 if (mSendKeycodeName != null) {
                     byte[] buff = mSendKeycodeName.getBytes();
                     DatagramPacket packet = new DatagramPacket(buff, buff.length, mRemoteAddress);
-                    new DatagramSocket().send(packet);
+                    socket = new DatagramSocket();
+                    socket.send(packet);
                 }
             } catch (SocketException e) {
                 Log.i("KeycodeRerayTask", e.getMessage());
             } catch (IOException e ) {
                 Log.i("KeycodeRerayTask", e.getMessage());
+            } finally {
+                if (socket != null) {
+                    socket.close();
+                }
             }
         }
     }
