@@ -79,6 +79,12 @@ public class WebApiBasePlala {
         VOD_CLIP_LIST("vod_clip/list"),
 
         /**
+         * 視聴中ビデオ一覧
+         *
+         */
+        WATCH_LISTEN_VIDEO_LIST("viewingvideo/list"),
+
+        /**
          * TVクリップ一覧の呼び出し先
          */
         TV_CLIP_LIST("tv_clip/list"),

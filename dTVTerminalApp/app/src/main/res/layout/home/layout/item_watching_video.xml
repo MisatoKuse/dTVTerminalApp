@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="10dp"
+        android:id="@+id/relativeLayout"
+        android:descendantFocusability="blocksDescendants">
+
+        <ImageView
+            android:id="@+id/wl_thumbnail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            />
+        <!--<ProgressBar-->
+            <!--android:id="@+id/wl_progressBar"-->
+            <!--style="?android:attr/progressBarStyleHorizontal"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="2dp"-->
+            <!--android:layout_below="@+id/wl_thumbnail"-->
+            <!--android:layout_alignLeft="@id/wl_thumbnail"-->
+            <!--android:layout_alignRight="@id/wl_thumbnail"-->
+            <!--android:layout_alignParentStart="true"-->
+            <!--android:background="#F00"-->
+            <!--android:progress="68" />-->
+
+        <ImageView
+            android:id="@+id/wl_clip"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/watch_listen_video_list_clip_icon"
+            android:background="@android:color/background_dark"/>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/wl_thumbnail"
+            android:layout_marginLeft="12dp"
+            android:layout_toLeftOf="@id/wl_clip"
+            android:layout_toRightOf="@id/wl_thumbnail"
+            android:id="@+id/relativeLayout2"
+            android:layout_alignBottom="@+id/wl_thumbnail">
+
+
+            <RatingBar
+                android:id="@+id/wl_video_rating"
+                style="@style/roomRatingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:numStars="5"
+                android:paddingBottom="5dp"
+                android:rating="2.5"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:id="@+id/wl_rating_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/wl_video_rating"
+                android:layout_alignParentBottom="true"
+                android:layout_alignTop="@id/wl_video_rating"
+                android:layout_toRightOf="@id/wl_video_rating"
+                android:text="3.5"
+                android:textColor="@android:color/white"
+                android:textSize="10dp"/>
+
+            <TextView
+                android:id="@+id/wl_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="プリズン・ブレイクシーズン1第1話マイケルブレイクシーズン1第1話"
+                android:textColor="@android:color/white"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:gravity="center"
+                android:layout_above="@+id/wl_video_rating" />
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

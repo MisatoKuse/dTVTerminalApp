@@ -62,6 +62,35 @@ import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyR
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_THUMB;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_TITLE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_TITLE_ID;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_ADULT;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_AVAIL_END_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_AVAIL_START_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_AVAIL_STATUS;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_BVFLG;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_CID;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_COPYRIGHT;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_CRID;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_DELIVERY;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_DEMONG;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_DISPLAY_END_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_DISPLAY_START_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_DISP_TYPE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_DTV;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_DUR;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_EPISODE_ID;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_EPITITLE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_GENRE_ID_ARRAY;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_HDRFLG;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_MS;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_NEWA_END_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_NEWA_START_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_NG_FUNC;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_PUBLISH_END_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_PUBLISH_START_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_R_VALUE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_THUMB;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_TITLE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_TITLE_ID;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_ADULT;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_AVAIL_END_DATE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_AVAIL_START_DATE;
@@ -226,7 +255,7 @@ import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoR
 public class DBConstants {
 
     /**
-     * DB名
+     * DB吁E
      */
     public static final String DATABASE_NAME = "db_data";
 
@@ -609,5 +638,42 @@ public class DBConstants {
             RECOMMENDCHANNEL_LIST_PAGEID + " text, " +
             RECOMMENDCHANNEL_LIST_GROUPID + " text, " +
             RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID + " text " +
+            ")";
+	
+	//TV CLIP TABLE、クリップ一覧用
+    public static final String TVCLIP_LIST_TABLE_NAME = "tv_clip_list";
+    public static final String CREATE_TABLE_TVCLIP_LIST_SQL = "" +
+            "create table " + TVCLIP_LIST_TABLE_NAME + " (" +
+            ID_COLUMN + " integer primary key autoincrement, " +
+            TVCLIP_LIST_CRID + " text, " +
+            TVCLIP_LIST_CID + " text, " +
+            TVCLIP_LIST_TITLE_ID + " text, " +
+            TVCLIP_LIST_EPISODE_ID + " text, " +
+            TVCLIP_LIST_TITLE + " text, " +
+            TVCLIP_LIST_EPITITLE + " text, " +
+            TVCLIP_LIST_DISP_TYPE + " text, " +
+            TVCLIP_LIST_DISPLAY_START_DATE + " text, " +
+            TVCLIP_LIST_DISPLAY_END_DATE + " text, " +
+            TVCLIP_LIST_AVAIL_START_DATE + " text, " +
+            TVCLIP_LIST_AVAIL_END_DATE + " text, " +
+            TVCLIP_LIST_PUBLISH_START_DATE + " text, " +
+            TVCLIP_LIST_PUBLISH_END_DATE + " text, " +
+            TVCLIP_LIST_NEWA_START_DATE + " text, " +
+            TVCLIP_LIST_NEWA_END_DATE + " text, " +
+            TVCLIP_LIST_COPYRIGHT + " text, " +
+            TVCLIP_LIST_THUMB + " text, " +
+            TVCLIP_LIST_DUR + " text, " +
+            TVCLIP_LIST_DEMONG + " text, " +
+            TVCLIP_LIST_BVFLG + " text, " +
+            UNDER_BAR_FOUR_K_FLG + " text, " +
+            TVCLIP_LIST_HDRFLG + " text, " +
+            TVCLIP_LIST_AVAIL_STATUS + " text, " +
+            TVCLIP_LIST_DELIVERY + " text, " +
+            TVCLIP_LIST_R_VALUE + " text, " +
+            TVCLIP_LIST_ADULT + " text, " +
+            TVCLIP_LIST_MS + " text, " +
+            TVCLIP_LIST_NG_FUNC + " text, " +
+            TVCLIP_LIST_GENRE_ID_ARRAY + " text, " +
+            TVCLIP_LIST_DTV + " text " +
             ")";
 }

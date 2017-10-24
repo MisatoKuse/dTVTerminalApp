@@ -15,15 +15,27 @@
         <string name="str_d_account_reg_confirmation_title">dアカウント登録確認</string>
 
     <!-- Home -->
-    <string name="now_on_air_list">NOW ON AIR</string>
-    <string name="recommend_list_title">おすすめ番組・ビデオ</string>
-    <string-array name="recommend_list_tab_names">
-        <item>テレビ</item>
-        <item>ビデオ</item>
-        <item>dTVチャンネル</item>
-        <item>dTV</item>
-        <item>dアニメ</item>
-    </string-array>
+	    <string name="now_on_air_list">NOW ON AIR</string>
+	    <string name="recommend_list_title">おすすめ番組・ビデオ</string>
+	    <string-array name="recommend_list_tab_names">
+	        <item>テレビ</item>
+	        <item>ビデオ</item>
+	        <item>dTVチャンネル</item>
+	        <item>dTV</item>
+	        <item>dアニメ</item>
+	    </string-array>
+
+		<!-- クリップ一覧 -->
+        <string name="str_clip_activity_title">クリップ</string>
+        <string-array name="tab_clip_names">
+            <item>テレビ</item>
+            <item>ビデオ</item>
+            <!-- <item>キーワード</item> -->
+            <!-- <item>人物</item> -->
+        </string-array>
+
+        <!-- WatchingVideoActivity -->
+        <string name="str_watching_video_activity_title">視聴中ビデオ一覧</string>
 
     <!-- TvProgram -->
 

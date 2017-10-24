@@ -18,6 +18,9 @@ public class DateUtils {
     //VodClipList取得日付キー
     public static final String VOD_LAST_INSERT = "VodLastInsert";
 
+    //TV_LAST_INSERT
+    public static final String TV_LAST_INSERT = "TvLastInsert";
+
     //DailyRankList取得日付キー
     public static final String DAILY_RANK_LAST_INSERT = "DailyRankLastInsert";
 
