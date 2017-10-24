@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
- */
-
 package com.nttdocomo.android.tvterminalapp.fragment.recommend;
 
 import android.content.Context;
@@ -13,12 +9,10 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
-import com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.RecommendListBaseAdapter;
 
 import java.util.ArrayList;
@@ -59,6 +53,11 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     private View mRecommendFragmentView;
     private ListView mRecommendListview;
 
+    /**
+     * Viewの初期設定
+     *
+     * @return
+     */
     public View initView() {
         if (null == mRecommendFragmentView) {
             mRecommendFragmentView = View.inflate(getActivity()
@@ -79,18 +78,31 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
         return mRecommendFragmentView;
     }
 
+    /**
+     * データの更新
+     */
     public void notifyDataSetChanged() {
         if (null != mRecommendListBaseAdapter) {
             mRecommendListBaseAdapter.notifyDataSetChanged();
         }
     }
 
+    /**
+     * リストのカーソルを移動
+     *
+     * @param itemNo
+     */
     public void setSelection(int itemNo) {
         if (null != mRecommendListview) {
             mRecommendListview.setSelection(itemNo);
         }
     }
 
+    /**
+     * リストの最後に更新中の行を追加または追加した行を削除する
+     *
+     * @param b
+     */
     public void displayLoadMore(boolean b) {
         if (null != mRecommendListview && null != mLoadMoreView) {
             if (b) {
