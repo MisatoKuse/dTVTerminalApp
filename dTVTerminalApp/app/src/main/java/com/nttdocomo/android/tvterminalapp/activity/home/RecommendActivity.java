@@ -118,7 +118,6 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
 
         int requestService = mRecommendViewPager.getCurrentItem();
         int startIndex = showListSize + 1;
-        showListSize += SearchConstants.RecommendList.requestMaxCount_Recommend;
         mRecommendDataProvider.startGetRecommendData(
                 requestService, startIndex, SearchConstants.RecommendList.requestMaxCount_Recommend);
     }
