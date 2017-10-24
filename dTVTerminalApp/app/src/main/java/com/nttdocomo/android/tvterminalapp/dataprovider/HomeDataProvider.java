@@ -329,7 +329,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         } else {
             //通信クラスにデータ取得要求を出す
             RecommendVdWebClient mRecommendChWebClient = new RecommendVdWebClient(this);
-            mRecommendChWebClient.getRecommendChannelApi();
+            mRecommendChWebClient.getRecommendVideoApi();
         }
         return list;
     }

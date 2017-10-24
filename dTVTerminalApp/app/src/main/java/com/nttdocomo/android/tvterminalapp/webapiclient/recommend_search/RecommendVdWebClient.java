@@ -22,17 +22,17 @@ public class RecommendVdWebClient extends WebApiBase implements WebApiCallback {
     private RecommendVideoCallback mRecommendVideoCallback;
 
     public interface RecommendVideoCallback {
-        void RecommendVideoCallback(RecommendVdList mRecommendChList);
+        void RecommendVideoCallback(RecommendVdList mRecommendVdList);
     }
 
-    public RecommendVdWebClient(RecommendVideoCallback mRecommendVideoCallback){
+    public RecommendVdWebClient(RecommendVideoCallback mRecommendVideoCallback) {
         this.mRecommendVideoCallback = mRecommendVideoCallback;
     }
 
-    public void getRecommendChannelApi() {
+    public void getRecommendVideoApi() {
 
-        DTVTLogger.debug("getRecommendChannelApi");
-        LinkedHashMap queryItems=new LinkedHashMap();
+        DTVTLogger.debug("getRecommendVideoApi");
+        LinkedHashMap queryItems = new LinkedHashMap();
 
         //種別パラメータにテレビチャンネルを指定
         queryItems.put(RecommendWebClient.SERVICE_CATEGORY_ID, VIDEO_CATEGORY);
@@ -48,7 +48,7 @@ public class RecommendVdWebClient extends WebApiBase implements WebApiCallback {
 
         //パラメータがあるならば、URLの後ろに"?"をつける
         String sendUrlAdder;
-        if(queryItems.size() > 0) {
+        if (queryItems.size() > 0) {
             sendUrlAdder = "?";
         } else {
             sendUrlAdder = "";

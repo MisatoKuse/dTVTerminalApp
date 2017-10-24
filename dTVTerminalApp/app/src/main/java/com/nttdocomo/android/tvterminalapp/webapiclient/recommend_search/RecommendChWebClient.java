@@ -12,7 +12,7 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChann
 
 import java.util.LinkedHashMap;
 
-public class RecommendChWebClient extends WebApiBase implements WebApiCallback  {
+public class RecommendChWebClient extends WebApiBase implements WebApiCallback {
     /**
      * 種別・チャンネル
      */
@@ -24,14 +24,14 @@ public class RecommendChWebClient extends WebApiBase implements WebApiCallback  
         void RecommendChannelCallback(RecommendChList mRecommendChList);
     }
 
-    public RecommendChWebClient(RecommendChannelCallback mRecommendChannelCallback){
+    public RecommendChWebClient(RecommendChannelCallback mRecommendChannelCallback) {
         this.mRecommendChannelCallback = mRecommendChannelCallback;
     }
 
     public void getRecommendChannelApi() {
 
         DTVTLogger.debug("getRecommendChannelApi");
-        LinkedHashMap queryItems=new LinkedHashMap();
+        LinkedHashMap queryItems = new LinkedHashMap();
 
         //種別パラメータにテレビチャンネルを指定
         queryItems.put(RecommendWebClient.SERVICE_CATEGORY_ID, CHANNEL_CATEGORY);
@@ -47,7 +47,7 @@ public class RecommendChWebClient extends WebApiBase implements WebApiCallback  
 
         //パラメータがあるならば、URLの後ろに"?"をつける
         String sendUrlAdder;
-        if(queryItems.size() > 0) {
+        if (queryItems.size() > 0) {
             sendUrlAdder = "?";
         } else {
             sendUrlAdder = "";
@@ -60,6 +60,7 @@ public class RecommendChWebClient extends WebApiBase implements WebApiCallback  
 
     /**
      * 通信終了後に呼ばれるコールバック
+     *
      * @param responseData
      */
     @Override
