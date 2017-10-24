@@ -110,7 +110,10 @@ public class RecommendListDataManager {
         List<Map<String, String>> resultList
                 = mRecommendListDao.findById(columns, tagPageNo, String.valueOf(maxResultData));
         List<RecommendContentInfo> recommendContentInfoList = new ArrayList<RecommendContentInfo>();
-        for (int i = startIndex - 1; i >= resultList.size(); i++) {
+        if(resultList.size() == 0) {
+            return recommendContentInfoList;
+        }
+        for (int i = startIndex - 1; i <= resultList.size()-1; i++) {
             Map<String, String> map = resultList.get(i);
             RecommendContentInfo info = new RecommendContentInfo(
                     map.get(RECOMMENDCHANNEL_LIST_CONTENTSID),

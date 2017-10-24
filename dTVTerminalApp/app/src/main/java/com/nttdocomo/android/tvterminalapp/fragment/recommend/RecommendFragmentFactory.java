@@ -4,9 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.fragment.recommend;
 
-import com.nttdocomo.android.tvterminalapp.fragment.search.SearchBaseFragment;
-import com.nttdocomo.android.tvterminalapp.fragment.search.SearchBaseFragmentScrollListener;
-
 import java.util.HashMap;
 import java.util.Map;
 

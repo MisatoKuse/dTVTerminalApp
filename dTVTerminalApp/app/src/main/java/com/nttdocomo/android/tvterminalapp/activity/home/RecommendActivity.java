@@ -218,8 +218,6 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
 
 
     public void recommendDataProviderSuccess(List<RecommendContentInfo> resultInfoList) {
-        ;
-
         RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
 
         synchronized (this) {
@@ -240,8 +238,6 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
             Log.d(DTVTConstants.LOG_DEF_TAG, "baseFragment.mData.size = " + baseFragment.mData.size());
 
             // フラグメントの更新
-
-
 //             RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
             baseFragment.notifyDataSetChanged();
             baseFragment.setSelection(mSearchLastItem);
@@ -266,7 +262,17 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
      * データ取得失敗時の処理
      */
     public void recommendDataProviderFinishNg() {
+        RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
+        synchronized (this) {
+            if (mIsPaging) {
+                baseFragment.displayLoadMore(false);
+                setPagingStatus(false);
+            } else {
+                baseFragment.clear();
+            }
+        }
         clearAllFragment();
+        setSearchStart(false);
         Log.e(DTVTConstants.LOG_DEF_TAG, "onSearchDataProviderFinishNg");
     }
 
@@ -326,6 +332,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
         Log.i(DTVTConstants.LOG_DEF_TAG, "onScroll.first:" + firstVisibleItem + " .visible:" + visibleItemCount + " .total:" + totalItemCount + " dataSize:" + fragment.mData.size());
         if (maxShowListSize > fragment.mData.size() &&
                 fragment.mData.size() % SearchConstants.RecommendList.requestMaxCount_Recommend == 0 &&
+                totalItemCount != 0 &&
                 firstVisibleItem + visibleItemCount >= fragment.mData.size()) {
             setPagingStatus(true);
             fragment.displayLoadMore(true);
