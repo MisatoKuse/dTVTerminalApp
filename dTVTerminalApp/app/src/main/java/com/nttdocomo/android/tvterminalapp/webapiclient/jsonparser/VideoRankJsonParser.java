@@ -4,7 +4,12 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
+import android.os.AsyncTask;
+
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,7 +20,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class VideoRankJsonParser {
+public class VideoRankJsonParser extends AsyncTask<Object, Object, Object>{
+
+    private ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback mContentsListPerGenreJsonParserCallback;
     // オブジェクトクラスの定義
     private VideoRankList mVideoRankList;
 
@@ -106,6 +113,27 @@ public class VideoRankJsonParser {
 //    public static final String[] listPritPlicensePara = {VIDEORANK_LIST_PLI_PUID, VIDEORANK_LIST_PLI_CRID, VIDEORANK_LIST_PLI_TITLE,
 //            VIDEORANK_LIST_PLI_EPITITLE, VIDEORANK_LIST_PLI_DISP_TYPE, VIDEORANK_LIST_PLI_PRICE, VIDEORANK_LIST_PLI_QUNIT,
 //            VIDEORANK_LIST_PLI_GRANGE, VIDEORANK_LIST_PLI_PU_S, VIDEORANK_LIST_PLI_PU_E};
+
+    /**
+     * コンストラクタ
+     *
+     * @param mContentsListPerGenreJsonParserCallback
+     */
+    public VideoRankJsonParser(ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback mContentsListPerGenreJsonParserCallback) {
+        this.mContentsListPerGenreJsonParserCallback = mContentsListPerGenreJsonParserCallback;
+    }
+
+    @Override
+    protected void onPostExecute(Object s) {
+        mContentsListPerGenreJsonParserCallback.onContentsListPerGenreJsonParsed((List<VideoRankList>) s);
+    }
+
+    @Override
+    protected Object doInBackground(Object... strings) {
+        String result = (String) strings[0];
+        List<VideoRankList> resultList = VideoRankListSender(result);
+        return resultList;
+    }
 
     /**
      * ジャンル毎一覧Jsonデータを解析する
