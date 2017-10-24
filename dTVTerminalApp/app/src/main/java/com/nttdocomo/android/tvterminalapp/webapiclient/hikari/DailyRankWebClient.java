@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser;
+import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,15 +36,8 @@ public class DailyRankWebClient
      */
     @Override
     public void onAnswer(ReturnCode returnCode) {
-        //パース後データ受け取り用
-        List<DailyRankList> pursedData;
-
-        //JSONをパースする
-        DailyRankJsonParser dailyRankJsonParser = new DailyRankJsonParser();
-        pursedData = dailyRankJsonParser.DAILYRANKListSender(returnCode.bodyData);
-
-        //パース後のデータを返す
-        mDailyRankJsonParserCallback.onDailyRankJsonParsed(pursedData);
+        //JSONをパースして、データを返す
+        new DailyRankJsonParser(mDailyRankJsonParserCallback).execute(returnCode.bodyData);
     }
 
     /**

@@ -4,7 +4,12 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
+import android.os.AsyncTask;
+
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.DailyRankWebClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,7 +20,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class DailyRankJsonParser  {
+public class DailyRankJsonParser extends AsyncTask<Object,Object,Object> {
+
+    private DailyRankWebClient.DailyRankJsonParserCallback mDailyRankJsonParserCallback;
 
     // オブジェクトクラスの定義
     private DailyRankList mDailyRankList;
@@ -71,6 +78,27 @@ public class DailyRankJsonParser  {
             DAILYRANK_LIST_THUMB, DAILYRANK_LIST_DUR, DAILYRANK_LIST_DEMONG, DAILYRANK_LIST_BVFLG, DAILYRANK_LIST_4KFLG,
             DAILYRANK_LIST_HDRFLG, DAILYRANK_LIST_AVAIL_STATUS, DAILYRANK_LIST_DELIVERY, DAILYRANK_LIST_R_VALUE,
             DAILYRANK_LIST_ADULT, DAILYRANK_LIST_MS, DAILYRANK_LIST_NG_FUNC, DAILYRANK_LIST_GENRE_ID_ARRAY, DAILYRANK_LIST_DTV};
+
+    /**
+     * コンストラクタ
+     *
+     * @param mDailyRankJsonParserCallback
+     */
+    public DailyRankJsonParser(DailyRankWebClient.DailyRankJsonParserCallback mDailyRankJsonParserCallback){
+        this.mDailyRankJsonParserCallback = mDailyRankJsonParserCallback;
+    }
+
+    @Override
+    protected void onPostExecute(Object s) {
+        mDailyRankJsonParserCallback.onDailyRankJsonParsed((List<DailyRankList>)s);
+    }
+
+    @Override
+    protected Object doInBackground(Object... strings) {
+        String result = (String)strings[0];
+        List<DailyRankList> resultList = DAILYRANKListSender(result);
+        return resultList;
+    }
 
     public List<DailyRankList> DAILYRANKListSender(String jsonStr) {
 

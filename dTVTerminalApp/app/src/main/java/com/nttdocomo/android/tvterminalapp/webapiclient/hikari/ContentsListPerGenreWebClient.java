@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
+import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser;
 
 import org.json.JSONException;
@@ -40,16 +41,8 @@ public class ContentsListPerGenreWebClient
      */
     @Override
     public void onAnswer(ReturnCode returnCode) {
-        //パース後データ受け取り用
-        List<VideoRankList> pursedData;
-
-        //JSONをパースする
-        VideoRankJsonParser contentsListPerGenreJsonParser = new VideoRankJsonParser();
-        pursedData = contentsListPerGenreJsonParser.VideoRankListSender(returnCode.bodyData);
-
-        //パース後のデータを返す
-        mContentsListPerGenreJsonParserCallback.
-                onContentsListPerGenreJsonParsed(pursedData);
+        //JSONをパースして、データを返す
+        new VideoRankJsonParser(mContentsListPerGenreJsonParserCallback).execute(returnCode.bodyData);
     }
 
     /**

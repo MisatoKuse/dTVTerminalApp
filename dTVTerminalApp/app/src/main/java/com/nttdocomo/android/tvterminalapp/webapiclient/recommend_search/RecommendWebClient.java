@@ -11,6 +11,7 @@ import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.WebApiBase;
 import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser;
+import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendWebXmlParser;
 
 import java.util.LinkedHashMap;
 
@@ -160,18 +161,8 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
      */
     @Override
     public void onFinish(String responseData) {
-        //得られたXMLのパースを行う
-        RecommendChannelXmlParser recommendChannelXmlParser = new RecommendChannelXmlParser();
-        RecommendChList mRecommendChList =
-                recommendChannelXmlParser.getRecommendchannelList(responseData);
-
-        //TODO:テストサーバーが値を返さなくなった際の、ダミーデータを設定する・ダミーデータ削除時に消すこと
-//        mRecommendChList =
-//                recommendChannelXmlParser.getRecommendchannelList(DUMMY_DATA);
-
-        if (mRecommendCallback != null) {
-            mRecommendCallback.RecommendCallback(mRecommendChList);
-        }
+        //得られたXMLのパースを行って、データを返す
+        new RecommendWebXmlParser(mRecommendCallback).execute(responseData);
     }
 
     //TODO: サーバーが動作していたころのデータ・最終的には必ず消すこと

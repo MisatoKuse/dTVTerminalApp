@@ -4,7 +4,12 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
+import android.os.AsyncTask;
+
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,8 +20,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class VodClipJsonParser {
+public class VodClipJsonParser extends AsyncTask<Object, Object, Object>{
 
+    private VodClipWebClient.VodClipJsonParserCallback mVodClipJsonParserCallback;
     // オブジェクトクラスの定義
     private VodClipList mVodClipList;
 
@@ -71,6 +77,27 @@ public class VodClipJsonParser {
             VODCLIP_LIST_THUMB, VODCLIP_LIST_DUR, VODCLIP_LIST_DEMONG, VODCLIP_LIST_BVFLG, VODCLIP_LIST_4KFLG,
             VODCLIP_LIST_HDRFLG, VODCLIP_LIST_AVAIL_STATUS, VODCLIP_LIST_DELIVERY, VODCLIP_LIST_R_VALUE,
             VODCLIP_LIST_ADULT, VODCLIP_LIST_MS, VODCLIP_LIST_NG_FUNC, VODCLIP_LIST_GENRE_ID_ARRAY, VODCLIP_LIST_DTV};
+
+    /**
+     * コンストラクタ
+     *
+     * @param mVodClipJsonParserCallback
+     */
+    public VodClipJsonParser(VodClipWebClient.VodClipJsonParserCallback mVodClipJsonParserCallback){
+        this.mVodClipJsonParserCallback = mVodClipJsonParserCallback;
+    }
+
+    @Override
+    protected void onPostExecute(Object s) {
+        mVodClipJsonParserCallback.onVodClipJsonParsed((List<VodClipList>)s);
+    }
+
+    @Override
+    protected Object doInBackground(Object... strings) {
+        String result = (String)strings[0];
+        List<VodClipList> resultList = VodClipListSender(result);
+        return resultList;
+    }
 
     public List<VodClipList> VodClipListSender(String jsonStr) {
 

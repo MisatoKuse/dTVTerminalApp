@@ -8,6 +8,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendVdList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.WebApiBase;
+import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser;
 import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendVideoXmlParser;
 
 import java.util.LinkedHashMap;
@@ -60,14 +61,7 @@ public class RecommendVdWebClient extends WebApiBase implements WebApiCallback {
 
     @Override
     public void onFinish(String responseData) {
-        //得られたXMLのパースを行う
-        RecommendVideoXmlParser recommendVideoXmlParser = new RecommendVideoXmlParser();
-        RecommendVdList mRecommendVdList =
-                recommendVideoXmlParser.getRecommendVideoList(responseData);
-
-        //TODO: テストサーバーが動作しなくなった場合のダミーデータ
-        //RecommendVdList mRecommendVdList = recommendVideoXmlParser.getRecommendVideoList();
-
-        mRecommendVideoCallback.RecommendVideoCallback(mRecommendVdList);
+        //得られたXMLのパースを行って、データを返す
+        new RecommendVideoXmlParser(mRecommendVideoCallback).execute(responseData);
     }
 }

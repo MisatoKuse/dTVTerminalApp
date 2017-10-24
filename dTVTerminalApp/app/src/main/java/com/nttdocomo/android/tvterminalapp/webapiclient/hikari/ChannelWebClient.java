@@ -35,15 +35,8 @@ public class ChannelWebClient
      */
     @Override
     public void onAnswer(ReturnCode returnCode) {
-        //パース後データ受け取り用
-        List<ChannelList> pursedData;
-
-        //JSONをパースする
-        ChannelJsonParser channelJsonParser = new ChannelJsonParser();
-        pursedData = channelJsonParser.CHANNELListSender(returnCode.bodyData);
-
-        //パース後のデータを返す
-        mChannelJsonParserCallback.onChannelJsonParsed(pursedData);
+        //JSONをパースして、データを返す
+       new ChannelJsonParser(mChannelJsonParserCallback).execute(returnCode.bodyData);
     }
 
     /**

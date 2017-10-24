@@ -4,7 +4,12 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
+import android.os.AsyncTask;
+
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.DailyRankWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvScheduleWebClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,7 +20,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class TvScheduleJsonParser {
+public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object>{
+
+    private TvScheduleWebClient.TvScheduleJsonParserCallback mTvScheduleJsonParserCallback;
+
     // オブジェクトクラスの定義
     private TvScheduleList mTvScheduleList;
 
@@ -70,6 +78,27 @@ public class TvScheduleJsonParser {
             TV_SCHEDULE_LIST_THUMB, TV_SCHEDULE_LIST_DUR, TV_SCHEDULE_LIST_DEMONG, TV_SCHEDULE_LIST_BVFLG, TV_SCHEDULE_LIST_4KFLG,
             TV_SCHEDULE_LIST_HDRFLG, TV_SCHEDULE_LIST_AVAIL_STATUS, TV_SCHEDULE_LIST_DELIVERY, TV_SCHEDULE_LIST_R_VALUE,
             TV_SCHEDULE_LIST_ADULT, TV_SCHEDULE_LIST_MS, TV_SCHEDULE_LIST_NG_FUNC, TV_SCHEDULE_LIST_GENRE_ID_ARRAY, TV_SCHEDULE_LIST_DTV};
+
+    /**
+     * コンストラクタ
+     *
+     * @param mTvScheduleJsonParserCallback
+     */
+    public TvScheduleJsonParser(TvScheduleWebClient.TvScheduleJsonParserCallback mTvScheduleJsonParserCallback){
+        this.mTvScheduleJsonParserCallback = mTvScheduleJsonParserCallback;
+    }
+
+    @Override
+    protected void onPostExecute(Object s) {
+        mTvScheduleJsonParserCallback.onTvScheduleJsonParsed((List<TvScheduleList>)s);
+    }
+
+    @Override
+    protected Object doInBackground(Object... strings) {
+        String result = (String)strings[0];
+        List<TvScheduleList> resultList = TV_SCHEDULEListSender(result);
+        return resultList;
+    }
 
     public List<TvScheduleList> TV_SCHEDULEListSender(String jsonStr) {
 

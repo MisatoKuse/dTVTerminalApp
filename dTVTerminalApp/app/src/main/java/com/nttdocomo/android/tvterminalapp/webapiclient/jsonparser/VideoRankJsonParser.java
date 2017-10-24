@@ -4,7 +4,12 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
+import android.os.AsyncTask;
+
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvScheduleWebClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,7 +20,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class VideoRankJsonParser {
+public class VideoRankJsonParser extends AsyncTask<Object, Object, Object>{
+
+    private ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback mContentsListPerGenreJsonParserCallback;
     // オブジェクトクラスの定義
     private VideoRankList mVideoRankList;
 
@@ -69,20 +76,6 @@ public class VideoRankJsonParser {
     public static final String VIDEORANK_LIST_DTV = "dtv";
 
     public static final String VIDEORANK_LIST_PLIT = "PLIT";
-    public static final String VIDEORANK_LIST_PLI_VIS = "pli_vis";
-    public static final String VIDEORANK_LIST_PLI_VIE = "pli_vie";
-
-    public static final String VIDEORANK_LIST_PLICENSS = "plicense";
-    public static final String VIDEORANK_LIST_PLI_PUID = "pli_puid";
-    public static final String VIDEORANK_LIST_PLI_CRID = "pli_crid";
-    public static final String VIDEORANK_LIST_PLI_TITLE = "pli_title";
-    public static final String VIDEORANK_LIST_PLI_EPITITLE = "pli_epititle";
-    public static final String VIDEORANK_LIST_PLI_DISP_TYPE = "pli_disp_type";
-    public static final String VIDEORANK_LIST_PLI_PRICE = "pli_price";
-    public static final String VIDEORANK_LIST_PLI_QUNIT = "pli_qunit";
-    public static final String VIDEORANK_LIST_PLI_GRANGE = "pli_qrange";
-    public static final String VIDEORANK_LIST_PLI_PU_S = "pli_pu_s";
-    public static final String VIDEORANK_LIST_PLI_PU_E = "pli_pu_e";
 
     public static final String[] pagerPara = {VIDEORANK_LIST_PAGER_LIMIT, VIDEORANK_LIST_PAGER_OFFSET,
             VIDEORANK_LIST_PAGER_COUNT, VIDEORANK_LIST_PAGER_TOTAL};
@@ -98,11 +91,26 @@ public class VideoRankJsonParser {
             VIDEORANK_LIST_SYNOP, VIDEORANK_LIST_PUID, VIDEORANK_LIST_PRICE, VIDEORANK_LIST_QUNIT, VIDEORANK_LIST_PU_S,
             VIDEORANK_LIST_PU_E, VIDEORANK_LIST_CREDITS, VIDEORANK_LIST_RATING, VIDEORANK_LIST_DTV, VIDEORANK_LIST_PLIT};
 
-//    public static final String[] listPritPara = {VIDEORANK_LIST_PLI_VIS, VIDEORANK_LIST_PLI_VIE, VIDEORANK_LIST_PLICENSS};
-//
-//    public static final String[] listPritPlicensePara = {VIDEORANK_LIST_PLI_PUID, VIDEORANK_LIST_PLI_CRID, VIDEORANK_LIST_PLI_TITLE,
-//            VIDEORANK_LIST_PLI_EPITITLE, VIDEORANK_LIST_PLI_DISP_TYPE, VIDEORANK_LIST_PLI_PRICE, VIDEORANK_LIST_PLI_QUNIT,
-//            VIDEORANK_LIST_PLI_GRANGE, VIDEORANK_LIST_PLI_PU_S, VIDEORANK_LIST_PLI_PU_E};
+    /**
+     * コンストラクタ
+     *
+     * @param mContentsListPerGenreJsonParserCallback
+     */
+    public VideoRankJsonParser(ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback mContentsListPerGenreJsonParserCallback){
+        this.mContentsListPerGenreJsonParserCallback = mContentsListPerGenreJsonParserCallback;
+    }
+
+    @Override
+    protected void onPostExecute(Object s) {
+        mContentsListPerGenreJsonParserCallback.onContentsListPerGenreJsonParsed((List<VideoRankList>)s);
+    }
+
+    @Override
+    protected Object doInBackground(Object... strings) {
+        String result = (String)strings[0];
+        List<VideoRankList> resultList = VideoRankListSender(result);
+        return resultList;
+    }
 
     /**
      * ジャンル毎一覧Jsonデータを解析する
@@ -187,64 +195,4 @@ public class VideoRankJsonParser {
             e.printStackTrace();
         }
     }
-
-//    public void sendPLITList(JSONArray jsonArr) {
-//        try {
-//            // コンテンツリストのList<HashMap>を用意
-//            List<HashMap<String, String>> plitList = new ArrayList<>();
-//
-//            for (int i = 0; i<jsonArr.length(); i++) {
-//                // statusの値を取得し、Mapに格納
-//                HashMap<String, String> map = new HashMap<String, String>();
-//                // i番目のJSONArrayをJSONObjectに変換する
-//                JSONObject jsonObject = jsonArr.getJSONObject(i);
-//                for (int j = 0; j < listPritPara.length; j++) {
-//                    if (!jsonObject.isNull(listPritPara[j])) {
-//                        if (listPara[j] == VIDEORANK_LIST_PLICENSS) {
-//                            sendPlicenseList(jsonObject.getJSONArray(VIDEORANK_LIST_PLICENSS));
-//                        } else {
-//                            String para = jsonObject.getString(listPritPara[j]);
-//                            map.put(listPritPara[j], para);
-//                        }
-//                    }
-//                }
-//                // i番目のMapをListにadd
-//                plitList.add(map);
-//            }
-//            mVideoRankList.setVrPLITList(plitList);
-//        } catch (JSONException e) {
-//            throw new RuntimeException(e);
-//        } catch (Exception e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    public void sendPlicenseList(JSONArray jsonArr) {
-//        try {
-//            // コンテンツリストのList<HashMap>を用意
-//            List<HashMap<String, String>> plicenseList = new ArrayList<>();
-//
-//            for (int i = 0; i<jsonArr.length(); i++) {
-//                // statusの値を取得し、Mapに格納
-//                HashMap<String, String> map = new HashMap<String, String>();
-//                // i番目のJSONArrayをJSONObjectに変換する
-//                JSONObject jsonObject = jsonArr.getJSONObject(i);
-//                for (int j = 0; j < listPritPlicensePara.length; j++) {
-//                    if (!jsonObject.isNull(listPara[j])) {
-//                        String para = jsonObject.getString(listPritPlicensePara[j]);
-//                        map.put(listPritPlicensePara[j], para);
-//                    }
-//                }
-//                // i番目のMapをListにadd
-//                plicenseList.add(map);
-//            }
-//            mVideoRankList.setVrPlicenseList(plicenseList);
-//        } catch (JSONException e) {
-//            throw new RuntimeException(e);
-//        } catch (Exception e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-//    }
 }

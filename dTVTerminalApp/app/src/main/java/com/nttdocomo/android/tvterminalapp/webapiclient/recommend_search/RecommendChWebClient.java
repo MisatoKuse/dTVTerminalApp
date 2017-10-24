@@ -65,14 +65,7 @@ public class RecommendChWebClient extends WebApiBase implements WebApiCallback {
      */
     @Override
     public void onFinish(String responseData) {
-        //得られたXMLのパースを行う
-        RecommendChannelXmlParser recommendChannelXmlParser = new RecommendChannelXmlParser();
-        RecommendChList mRecommendChList =
-                recommendChannelXmlParser.getRecommendchannelList(responseData);
-
-        //TODO: テストサーバーが動作しない場合に使うダミーデータ
-        //RecommendChList mRecommendChList = recommendChannelXmlParser.getRecommendchannelList();
-
-        mRecommendChannelCallback.RecommendChannelCallback(mRecommendChList);
+        //得られたXMLのパースを行って、データを返す
+        new RecommendChannelXmlParser(mRecommendChannelCallback).execute(responseData);
     }
 }

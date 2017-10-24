@@ -4,9 +4,13 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser;
 
+import android.os.AsyncTask;
 import android.util.Xml;
 
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendVdList;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendChWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendVdWebClient;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -17,7 +21,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RecommendVideoXmlParser {
+public class RecommendVideoXmlParser extends AsyncTask<Object, Object, Object>{
+
+    private RecommendVdWebClient.RecommendVideoCallback mRecommendVideoCallback;
 
     public static final String RECOMMENDVIDEO_LIST_RECOMMENDCONTENT = "RecommendContent";
     public static final String RECOMMENDVIDEO_LIST_RECOMMENDORDER = "recommendOrder";
@@ -40,6 +46,22 @@ public class RecommendVideoXmlParser {
     public static final String RECOMMENDVIDEO_LIST_PAGEID = "pageId";
     public static final String RECOMMENDVIDEO_LIST_GROUPID = "groupId";
     public static final String RECOMMENDVIDEO_LIST_RECOMMENDMETHODID = "recommendMethodId";
+
+    public RecommendVideoXmlParser(RecommendVdWebClient.RecommendVideoCallback mRecommendVideoCallback){
+        this.mRecommendVideoCallback = mRecommendVideoCallback;
+    }
+
+    @Override
+    protected void onPostExecute(Object s) {
+        mRecommendVideoCallback.RecommendVideoCallback((RecommendVdList)s);
+    }
+
+    @Override
+    protected Object doInBackground(Object... strings) {
+        String result = (String)strings[0];
+        RecommendVdList resultList = getRecommendVideoList(result);
+        return resultList;
+    }
 
     /**
      * 受け取ったレスポンスデータからXMLをパースする

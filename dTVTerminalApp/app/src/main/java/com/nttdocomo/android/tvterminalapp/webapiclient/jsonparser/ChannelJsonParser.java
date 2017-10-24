@@ -4,7 +4,10 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
+import android.os.AsyncTask;
+
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,7 +18,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class ChannelJsonParser {
+public class ChannelJsonParser extends AsyncTask<Object, Object, Object>{
+
+    private ChannelWebClient.ChannelJsonParserCallback mChannelJsonParserCallback;
+
     // オブジェクトクラスの定義
     private ChannelList mChannelList;
 
@@ -125,9 +131,30 @@ public class ChannelJsonParser {
         }
     }
 
-    /*
-    * コンテンツのList<HashMap>をオブジェクトクラスに格納
+    /**
+     * コンストラクタ
+     *
+     * @param mChannelJsonParserCallback
      */
+    public ChannelJsonParser(ChannelWebClient.ChannelJsonParserCallback mChannelJsonParserCallback){
+        this.mChannelJsonParserCallback = mChannelJsonParserCallback;
+    }
+
+    @Override
+    protected void onPostExecute(Object s) {
+        mChannelJsonParserCallback.onChannelJsonParsed((List<ChannelList>)s);
+    }
+
+    @Override
+    protected Object doInBackground(Object... strings) {
+        String result = (String)strings[0];
+        List<ChannelList> resultList = CHANNELListSender(result);
+        return resultList;
+    }
+
+    /*
+        * コンテンツのList<HashMap>をオブジェクトクラスに格納
+         */
     public void sendVcList(JSONObject jsonObj) {
         try {
             if (!jsonObj.isNull(CHANNEL_LIST)) {
