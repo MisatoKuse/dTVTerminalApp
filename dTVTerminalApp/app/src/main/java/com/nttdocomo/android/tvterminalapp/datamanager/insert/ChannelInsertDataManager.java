@@ -8,7 +8,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ChannelListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.HomeDBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
@@ -38,7 +38,7 @@ public class ChannelInsertDataManager {
     public void insertChannelInsertList(ChannelList channelList) {
 
         //各種オブジェクト作成
-        HomeDBHelper channelListDBHelper = new HomeDBHelper(mContext);
+        DBHelper channelListDBHelper = new DBHelper(mContext);
         SQLiteDatabase db = channelListDBHelper.getWritableDatabase();
         ChannelListDao channelListDao = new ChannelListDao(db);
         List<HashMap<String,String>> hashMaps = channelList.getClList();

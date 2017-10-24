@@ -511,7 +511,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
 
         mSearchLastItem = firstVisibleItem + visibleItemCount - 1;
 
-        int pageMax = (mPageNumber+ 1)* SearchConstants.Search.requestMaxResultCount;
+        int pageMax = (mPageNumber+ 1) * SearchConstants.Search.requestMaxResultCount;
         int maxPage = mSearchTotalCount/SearchConstants.Search.requestMaxResultCount;
         if(firstVisibleItem + visibleItemCount>=pageMax && maxPage >=1+ mPageNumber ){
             setPageNumber(mPageNumber + 1);

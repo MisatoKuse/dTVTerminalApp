@@ -7,10 +7,10 @@ package com.nttdocomo.android.tvterminalapp.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class DateUtils {
@@ -24,6 +24,12 @@ public class DateUtils {
     //ChannelList取得日付キー
     public static final String CHANNEL_LAST_INSERT = "ChannelLastInsert";
 
+    //おすすめ番組取得日付キー
+    public static final String RECOMMEND_CH_LAST_INSERT = "RecommendChLastInsert";
+
+    //おすすめビデオ取得日付キー
+    public static final String RECOMMEND_VD_LAST_INSERT = "RecommendVdLastInsert";
+
     //TvScheduleList取得日付キー
     public static final String TvSchedule_LAST_INSERT = "TvScheduleLastInsert";
 
@@ -32,6 +38,18 @@ public class DateUtils {
 
     //WeeklyRank取得日付キー
     public static final String WEEKLY_RANK_LAST_INSERT = "WeeklyRankLastInsert";
+
+    //VideoRank取得日付キー
+    public static final String VIDEO_RANK_LAST_INSERT = "VideoRankLastInsert";
+
+    //おすすめdTV取得日付キー
+    public static final String RECOMMEND_DTV_LAST_INSERT = "RecommendDTVLastInsert";
+
+    //おすすめdTV取得日付キー
+    public static final String RECOMMEND_DCHANNEL_LAST_INSERT = "RecommendDCHLastInsert";
+
+    //おすすめdTV取得日付キー
+    public static final String RECOMMEND_DANIME_LAST_INSERT = "RecommendDAnimeLastInsert";
 
     //SharedPreferences用データ
     private static final String DATA_SAVE = "DataSave";
@@ -112,7 +130,7 @@ public class DateUtils {
 
         //
         boolean isExpired = false;
-        if (limit.compareTo(now) == 1) {
+        if (limit.compareTo(now) < 0) {
             isExpired = true;
         }
         return isExpired;

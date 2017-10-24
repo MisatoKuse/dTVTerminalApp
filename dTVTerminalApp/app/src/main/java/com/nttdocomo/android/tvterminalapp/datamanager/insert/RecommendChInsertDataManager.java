@@ -9,10 +9,9 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendChannelListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.HomeDBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -35,13 +34,13 @@ public class RecommendChInsertDataManager {
      *
      * @return
      */
-    public void insertVodClipInsertList(RecommendChList redChList) {
+    public void insertRecommendChInsertList(RecommendChList redChList) {
 
         //各種オブジェクト作成
-        HomeDBHelper recommemdChListDBHelper = new HomeDBHelper(mContext);
+        DBHelper recommemdChListDBHelper = new DBHelper(mContext);
         SQLiteDatabase db = recommemdChListDBHelper.getWritableDatabase();
         RecommendChannelListDao redChListDao = new RecommendChannelListDao(db);
-        List<HashMap<String,String>> hashMaps = redChList.getmRcList();
+        List<Map<String,String>> hashMaps = redChList.getmRcList();
 
         //DB保存前に前回取得したデータは全消去する
         redChListDao.delete();

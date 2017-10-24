@@ -4,7 +4,12 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
+import android.os.AsyncTask;
+
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.DailyRankWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvScheduleWebClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,7 +20,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class TvScheduleJsonParser {
+public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object> {
+
+    private TvScheduleWebClient.TvScheduleJsonParserCallback mTvScheduleJsonParserCallback;
+
     // オブジェクトクラスの定義
     private TvScheduleList mTvScheduleList;
 
@@ -71,7 +79,34 @@ public class TvScheduleJsonParser {
             TV_SCHEDULE_LIST_HDRFLG, TV_SCHEDULE_LIST_AVAIL_STATUS, TV_SCHEDULE_LIST_DELIVERY, TV_SCHEDULE_LIST_R_VALUE,
             TV_SCHEDULE_LIST_ADULT, TV_SCHEDULE_LIST_MS, TV_SCHEDULE_LIST_NG_FUNC, TV_SCHEDULE_LIST_GENRE_ID_ARRAY, TV_SCHEDULE_LIST_DTV};
 
-    public List<TvScheduleList> TV_SCHEDULEListSender(String jsonStr) {
+    /**
+     * コンストラクタ
+     *
+     * @param mTvScheduleJsonParserCallback
+     */
+    public TvScheduleJsonParser(TvScheduleWebClient.TvScheduleJsonParserCallback mTvScheduleJsonParserCallback) {
+        this.mTvScheduleJsonParserCallback = mTvScheduleJsonParserCallback;
+    }
+
+    @Override
+    protected void onPostExecute(Object s) {
+        mTvScheduleJsonParserCallback.onTvScheduleJsonParsed((List<TvScheduleList>) s);
+    }
+
+    @Override
+    protected Object doInBackground(Object... strings) {
+        String result = (String) strings[0];
+        List<TvScheduleList> resultList = TvScheduleListListSender(result);
+        return resultList;
+    }
+
+    /**
+     * CH毎番組Jsonデータを解析する
+     *
+     * @param jsonStr
+     * @return
+     */
+    public List<TvScheduleList> TvScheduleListListSender(String jsonStr) {
 
         mTvScheduleList = new TvScheduleList();
 
@@ -95,6 +130,11 @@ public class TvScheduleJsonParser {
         return null;
     }
 
+    /**
+     * statsの値をMapでオブジェクトクラスに渡す
+     *
+     * @param jsonObj
+     */
     public void sendStatus(JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
@@ -107,7 +147,7 @@ public class TvScheduleJsonParser {
             if (!jsonObj.isNull(TV_SCHEDULE_LIST_PAGER)) {
                 JSONObject pager = jsonObj.getJSONObject(TV_SCHEDULE_LIST_PAGER);
 
-                for (int i = 0; i < pagerPara.length; i++){
+                for (int i = 0; i < pagerPara.length; i++) {
                     if (!pager.isNull(pagerPara[i])) {
                         String para = pager.getString(pagerPara[i]);
                         map.put(pagerPara[i], para);
@@ -125,8 +165,10 @@ public class TvScheduleJsonParser {
         }
     }
 
-    /*
-    * コンテンツのList<HashMap>をオブジェクトクラスに格納
+    /**
+     * コンテンツのList<HashMap>をオブジェクトクラスに格納
+     *
+     * @param jsonObj
      */
     public void sendVcList(JSONObject jsonObj) {
         try {
@@ -138,18 +180,18 @@ public class TvScheduleJsonParser {
                 JSONArray jsonArr = jsonObj.getJSONArray(TV_SCHEDULE_LIST);
 
                 // リストの数だけまわす
-                for (int i = 0; i<jsonArr.length(); i++){
+                for (int i = 0; i < jsonArr.length(); i++) {
                     // 最初にHashMapを生成＆初期化
                     HashMap<String, String> vcListMap = new HashMap<String, String>();
 
                     // i番目のJSONArrayをJSONObjectに変換する
                     JSONObject jsonObject = jsonArr.getJSONObject(i);
 
-                    for (int j = 0; j < listPara.length; j++){
+                    for (int j = 0; j < listPara.length; j++) {
                         if (!jsonObject.isNull(listPara[j])) {
                             if (listPara[j] == TV_SCHEDULE_LIST_GENRE_ID_ARRAY) {
                                 String para = jsonObject.getString(listPara[j]);
-                                vcListMap.put(listPara[j], para.substring(1, (para.length() -1)));
+                                vcListMap.put(listPara[j], para.substring(1, (para.length() - 1)));
                             } else {
                                 String para = jsonObject.getString(listPara[j]);
                                 vcListMap.put(listPara[j], para);

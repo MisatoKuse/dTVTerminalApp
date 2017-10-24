@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
+import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser;
 
 import org.json.JSONArray;
@@ -36,15 +37,8 @@ public class TvScheduleWebClient
      */
     @Override
     public void onAnswer(ReturnCode returnCode) {
-        //パース後データ受け取り用
-        List<TvScheduleList> pursedData;
-
-        //JSONをパースする
-        TvScheduleJsonParser tvScheduleJsonParser = new TvScheduleJsonParser();
-        pursedData = tvScheduleJsonParser.TV_SCHEDULEListSender(returnCode.bodyData);
-
-        //パース後のデータを返す
-        mTvScheduleJsonParserCallback.onTvScheduleJsonParsed(pursedData);
+        //JSONをパースして、データを返す
+        new TvScheduleJsonParser(mTvScheduleJsonParserCallback).execute(returnCode.bodyData);
     }
 
     /**

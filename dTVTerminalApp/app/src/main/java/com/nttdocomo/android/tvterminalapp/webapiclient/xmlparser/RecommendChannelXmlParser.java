@@ -4,9 +4,13 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser;
 
+import android.os.AsyncTask;
 import android.util.Xml;
 
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendChWebClient;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -15,39 +19,11 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class RecommendChannelXmlParser  {
+public class RecommendChannelXmlParser extends AsyncTask<Object, Object, Object> {
 
-    String xmlResult = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
-            "<Object>\n" +
-            " <Result>0</Result>\n" +
-            " <RecommendContentsList>\n" +
-            "  <RecommendContent>\n" +
-            "   <recommendOrder>1</recommendOrder>\n" +
-            "   <serviceId>15</serviceId>\n" +
-            "   <categoryId>01</categoryId>\n" +
-            "   <channelId></channelId>\n" +
-            "   <contentsId>10010045</contentsId>\n" +
-            "   <title>24−TWENTY　FOUR−　リブ・アナザー・デイ</title>\n" +
-            "   <ctPicURL1>https://image5-a.beetv.jp/basic/img/title/10010045_top_hd_org.jpg</ctPicURL1>\n" +
-            "   <ctPicURL2></ctPicURL2>\n" +
-            "   <startViewing>20150401000000</startViewing>\n" +
-            "   <endViewing>20170930235900</endViewing>\n" +
-            "  </RecommendContent>\n" +
-            "  <RecommendContent>\n" +
-            "   <recommendOrder>2</recommendOrder>\n" +
-            "   <serviceId>15</serviceId>\n" +
-            "   <categoryId>01</categoryId>\n" +
-            "   <channelId></channelId>\n" +
-            "   <contentsId>10238503</contentsId>\n" +
-            "   <title>24　−TWENTY　FOUR−　レガシー</title>\n" +
-            "   <ctPicURL1>http://image5-a.beetv.jp/basic/img/title/10018486_v.jpg</ctPicURL1>\n" +
-            "   <ctPicURL2></ctPicURL2>\n" +
-            "   <startViewing>20150501000000</startViewing>\n" +
-            "   <endViewing>20180430235900</endViewing>\n" +
-            "  </RecommendContent>\n" +
-            " </RecommendContentsList>\n" +
-            "</Object>";
+    private RecommendChWebClient.RecommendChannelCallback mRecommendChannelCallback;
     public static final String RECOMMENDCHANNEL_LIST_RECOMMENDCONTENT = "RecommendContent";
     public static final String RECOMMENDCHANNEL_LIST_RECOMMENDORDER = "recommendOrder";
     public static final String RECOMMENDCHANNEL_LIST_SERVICEID = "serviceId";
@@ -70,13 +46,34 @@ public class RecommendChannelXmlParser  {
     public static final String RECOMMENDCHANNEL_LIST_GROUPID = "groupId";
     public static final String RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID = "recommendMethodId";
 
-    public RecommendChList getRecommendchannelList() {
+    public RecommendChannelXmlParser(RecommendChWebClient.RecommendChannelCallback mRecommendChannelCallback){
+        this.mRecommendChannelCallback = mRecommendChannelCallback;
+    }
+
+    @Override
+    protected void onPostExecute(Object s) {
+        mRecommendChannelCallback.RecommendChannelCallback((RecommendChList)s);
+    }
+
+    @Override
+    protected Object doInBackground(Object... strings) {
+        String result = (String)strings[0];
+        RecommendChList resultList = getRecommendchannelList(result);
+        return resultList;
+    }
+
+    /**
+     * 受け取ったレスポンスデータからXMLをパースする
+     * @param responseData レスポンスデータ
+     * @return パース後のデータ
+     */
+    public RecommendChList getRecommendchannelList(String responseData) {
         RecommendChList redChContents = null;
-        List<HashMap<String, String>> redChContentList = null;
+        List<Map<String, String>> redChContentList = null;
         HashMap<String, String> redChHashMap = null;
         XmlPullParser parser = Xml.newPullParser();
         try {
-            parser.setInput(new StringReader(xmlResult));
+            parser.setInput(new StringReader(responseData));
             int eventType = parser.getEventType();
             boolean endFlg = false;
             while (!endFlg) {
@@ -147,7 +144,7 @@ public class RecommendChannelXmlParser  {
                             redChHashMap.put(RECOMMENDCHANNEL_LIST_GROUPID,parser.getText()==null?"":parser.getText());
                         } else if(RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID.equals(parser.getName())) {
                             eventType = parser.next();
-                            redChHashMap.put(parser.getName(),parser.getText()==null?"":parser.getText());
+                            redChHashMap.put(RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID,parser.getText()==null?"":parser.getText());
                         }
                         break;
                     case XmlPullParser.END_TAG:

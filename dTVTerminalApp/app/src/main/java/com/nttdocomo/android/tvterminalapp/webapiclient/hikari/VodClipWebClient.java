@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
+import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser;
 
 import org.json.JSONException;
@@ -35,15 +36,8 @@ public class VodClipWebClient
      */
     @Override
     public void onAnswer(ReturnCode returnCode) {
-        //パース後データ受け取り用
-        List<VodClipList> pursedData;
-
-        //JSONをパースする
-        VodClipJsonParser vodClipJsonParser = new VodClipJsonParser();
-        pursedData = vodClipJsonParser.VodClipListSender(returnCode.bodyData);
-
-        //パース後のデータを返す
-        mVodClipJsonParserCallback.onVodClipJsonParsed(pursedData);
+        //JSONをパースして、データを返す
+        new VodClipJsonParser(mVodClipJsonParserCallback).execute(returnCode.bodyData);
     }
 
     /**

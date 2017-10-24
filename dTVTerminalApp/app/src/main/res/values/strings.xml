@@ -16,6 +16,14 @@
 
     <!-- Home -->
     <string name="now_on_air_list">NOW ON AIR</string>
+    <string name="recommend_list_title">おすすめ番組・ビデオ</string>
+    <string-array name="recommend_list_tab_names">
+        <item>テレビ</item>
+        <item>ビデオ</item>
+        <item>dTVチャンネル</item>
+        <item>dTV</item>
+        <item>dアニメ</item>
+    </string-array>
 
     <!-- TvProgram -->
 
@@ -37,8 +45,13 @@
 
     <!-- Ranking -->
     <string name="daily_tv_ranking_title">今日のテレビランキング</string>
-    <string name="weekly_tv_ranking_title">週刊テレビランキング</string>
+    <string name="weekly_tv_ranking_title">週間テレビランキング</string>
     <string name="video_ranking_title">ビデオランキング</string>
+
+    <!-- Home -->
+    <string name="home_label_recommend_program">おすすめ番組</string>
+    <string name="home_label_recommend_video">おすすめビデオ</string>
+    <string name="home_label_now_on_air">NOW ON AIR</string>
 
     <!-- Other -->
 

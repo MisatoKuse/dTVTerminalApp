@@ -8,7 +8,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvScheduleListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.HomeDBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
@@ -38,7 +38,7 @@ public class TvScheduleInsertDataManager {
     public void insertTvScheduleInsertList( TvScheduleList tvScheduleList) {
 
         //各種オブジェクト作成
-        HomeDBHelper tvScheduleListDBHelper = new HomeDBHelper(mContext);
+        DBHelper tvScheduleListDBHelper = new DBHelper(mContext);
         SQLiteDatabase db = tvScheduleListDBHelper.getWritableDatabase();
         TvScheduleListDao tvScheduleListDao = new TvScheduleListDao(db);
         List<HashMap<String,String>> hashMaps = tvScheduleList.geTvsList();
