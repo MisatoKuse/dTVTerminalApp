@@ -100,7 +100,12 @@ public class DailyRankJsonParser extends AsyncTask<Object,Object,Object> {
         return resultList;
     }
 
-    public List<DailyRankList> DAILYRANKListSender(String jsonStr) {
+    /**
+     * デイリーランキングJsonデータを解析する
+     * @param jsonStr
+     * @return
+     */
+    public List<DailyRankList> DailyRankListSender(String jsonStr) {
 
         mDailyRankList = new DailyRankList();
 
@@ -124,6 +129,10 @@ public class DailyRankJsonParser extends AsyncTask<Object,Object,Object> {
         return null;
     }
 
+    /**
+     * statusの値をMapでオブジェクトクラスに渡す
+     * @param jsonObj
+     */
     public void sendStatus(JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
@@ -154,8 +163,9 @@ public class DailyRankJsonParser extends AsyncTask<Object,Object,Object> {
         }
     }
 
-    /*
-    * コンテンツのList<HashMap>をオブジェクトクラスに格納
+    /**
+     * コンテンツのList<HashMap>をオブジェクトクラスに格納
+     * @param jsonObj
      */
     public void sendVcList(JSONObject jsonObj) {
         try {

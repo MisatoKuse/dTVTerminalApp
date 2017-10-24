@@ -99,6 +99,11 @@ public class VodClipJsonParser extends AsyncTask<Object, Object, Object>{
         return resultList;
     }
 
+    /**
+     * VodクリップJsonデータを解析する
+     * @param jsonStr
+     * @return
+     */
     public List<VodClipList> VodClipListSender(String jsonStr) {
 
         mVodClipList = new VodClipList();
@@ -123,6 +128,10 @@ public class VodClipJsonParser extends AsyncTask<Object, Object, Object>{
         return null;
     }
 
+    /**
+     * statusの値をMapでオブジェクトクラスに渡す
+     * @param jsonObj
+     */
     public void sendStatus(JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
@@ -153,8 +162,9 @@ public class VodClipJsonParser extends AsyncTask<Object, Object, Object>{
         }
     }
 
-    /*
-    * コンテンツのList<HashMap>をオブジェクトクラスに格納
+    /**
+     * コンテンツのList<HashMap>をオブジェクトクラスに格納
+     * @param jsonObj
      */
     public void sendVcList(JSONObject jsonObj) {
         try {

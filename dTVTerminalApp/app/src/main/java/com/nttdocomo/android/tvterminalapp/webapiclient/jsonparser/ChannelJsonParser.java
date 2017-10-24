@@ -77,6 +77,11 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object>{
             CHANNEL_LIST_HDRFLG, CHANNEL_LIST_AVAIL_STATUS, CHANNEL_LIST_DELIVERY, CHANNEL_LIST_R_VALUE,
             CHANNEL_LIST_ADULT, CHANNEL_LIST_MS, CHANNEL_LIST_NG_FUNC, CHANNEL_LIST_GENRE_ID_ARRAY, CHANNEL_LIST_DTV};
 
+    /**
+     * CH一覧Jsonデータを解析する
+     * @param jsonStr
+     * @return
+     */
     public List<ChannelList> CHANNELListSender(String jsonStr) {
 
         mChannelList = new ChannelList();
@@ -101,6 +106,10 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object>{
         return null;
     }
 
+    /**
+     * statusの値をMapでオブジェクトクラスに渡す
+     * @param jsonObj
+     */
     public void sendStatus(JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
@@ -152,9 +161,10 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object>{
         return resultList;
     }
 
-    /*
-        * コンテンツのList<HashMap>をオブジェクトクラスに格納
-         */
+    /**
+     * コンテンツのList<HashMap>をオブジェクトクラスに格納
+     * @param jsonObj
+     */
     public void sendVcList(JSONObject jsonObj) {
         try {
             if (!jsonObj.isNull(CHANNEL_LIST)) {

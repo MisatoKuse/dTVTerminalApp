@@ -100,7 +100,12 @@ public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object>{
         return resultList;
     }
 
-    public List<TvScheduleList> TV_SCHEDULEListSender(String jsonStr) {
+    /**
+     * CH毎番組Jsonデータを解析する
+     * @param jsonStr
+     * @return
+     */
+    public List<TvScheduleList> TvScheduleListListSender(String jsonStr) {
 
         mTvScheduleList = new TvScheduleList();
 
@@ -124,6 +129,10 @@ public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object>{
         return null;
     }
 
+    /**
+     * statsの値をMapでオブジェクトクラスに渡す
+     * @param jsonObj
+     */
     public void sendStatus(JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
@@ -154,8 +163,9 @@ public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object>{
         }
     }
 
-    /*
-    * コンテンツのList<HashMap>をオブジェクトクラスに格納
+    /**
+     * コンテンツのList<HashMap>をオブジェクトクラスに格納
+     * @param jsonObj
      */
     public void sendVcList(JSONObject jsonObj) {
         try {

@@ -71,6 +71,11 @@ public class UserInfoJsonParser {
         return null;
     }
 
+    /**
+     * ユーザ情報をList<HashMap>でオブジェクトクラスに格納
+     * @param jsonObj
+     * @return
+     */
     private List sendUiList(JSONObject jsonObj) {
         List<HashMap<String, String>> list = new ArrayList<>();
         HashMap<String, String> map = new HashMap<>();
