@@ -45,8 +45,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         DailyRankWebClient.DailyRankJsonParserCallback,
         ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback,
         RecommendChWebClient.RecommendChannelCallback,
-        RecommendVdWebClient.RecommendVideoCallback
-{
+        RecommendVdWebClient.RecommendVideoCallback {
 
     private Context mContext;
 
@@ -92,7 +91,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
 
     @Override
     public void RecommendChannelCallback(RecommendChList mRecommendChList) {
-        if (mRecommendChList != null && mRecommendChList.getmRcList()!=null &&
+        if (mRecommendChList != null && mRecommendChList.getmRcList() != null &&
                 mRecommendChList.getmRcList().size() > 0) {
             setStructDB(mRecommendChList);
         } else {
@@ -102,7 +101,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
 
     @Override
     public void RecommendVideoCallback(RecommendVdList mRecommendVdList) {
-        if (mRecommendVdList != null && mRecommendVdList.getmRvList()!=null &&
+        if (mRecommendVdList != null && mRecommendVdList.getmRvList() != null &&
                 mRecommendVdList.getmRvList().size() > 0) {
             setStructDB(mRecommendVdList);
         } else {
@@ -119,49 +118,49 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
          *
          * @param channelList
          */
-        void channelListCallback(List<Map<String,String>> channelList);
+        void channelListCallback(List<Map<String, String>> channelList);
 
         /**
          * デイリーランキング用コールバック
          *
          * @param dailyList
          */
-        void dailyRankListCallback(List<Map<String,String>> dailyList);
+        void dailyRankListCallback(List<Map<String, String>> dailyList);
 
         /**
          * ユーザ情報用コールバック
          *
          * @param userList
          */
-        void userInfoCallback(List<Map<String,String>> userList);
+        void userInfoCallback(List<Map<String, String>> userList);
 
         /**
          * クリップリスト用コールバック
          *
          * @param clipList
          */
-        void vodClipListCallback(List<Map<String,String>> clipList);
+        void vodClipListCallback(List<Map<String, String>> clipList);
 
         /**
          * ビデオランキング用コールバック
          *
          * @param weeklyList
          */
-        void videoRankCallback(List<Map<String,String>> weeklyList);
+        void videoRankCallback(List<Map<String, String>> weeklyList);
 
         /**
          * おすすめ番組用コールバック
          *
          * @param recChList
          */
-        void recommendChannelCallback(List<Map<String,String>> recChList);
+        void recommendChannelCallback(List<Map<String, String>> recChList);
 
         /**
          * おすすめビデオ用コールバック
          *
          * @param recVdList
          */
-        void recommemdVideoCallback(List<Map<String,String>> recVdList);
+        void recommemdVideoCallback(List<Map<String, String>> recVdList);
     }
 
     private ApiDataProviderCallback apiDataProviderCallback;
@@ -182,32 +181,32 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
     public void getHomeData() {
         //NOW ON AIR
         List<Map<String, String>> channelListData = getChannelListData();
-        if(channelListData != null && channelListData.size() > 0){
+        if (channelListData != null && channelListData.size() > 0) {
             sendChannelListData(channelListData);
         }
         //おすすめ番組
         List<Map<String, String>> recommendChListData = getRecommendChListData();
-        if(recommendChListData != null && recommendChListData.size() > 0){
+        if (recommendChListData != null && recommendChListData.size() > 0) {
             sendRecommendChListData(recommendChListData);
         }
         //おすすめビデオ
         List<Map<String, String>> recommendVdListData = getRecommendVdListData();
-        if(recommendVdListData != null && recommendVdListData.size() > 0){
+        if (recommendVdListData != null && recommendVdListData.size() > 0) {
             sendRecommendVdListData(recommendVdListData);
         }
         //今日のテレビランキング
         List<Map<String, String>> dailyRankList = getDailyRankListData();
-        if(dailyRankList != null && dailyRankList.size() > 0){
+        if (dailyRankList != null && dailyRankList.size() > 0) {
             sendDailyRankListData(dailyRankList);
         }
         //ビデオランキング
         List<Map<String, String>> VideoRankList = getVideoRankListData();
-        if(VideoRankList != null && VideoRankList.size() > 0){
+        if (VideoRankList != null && VideoRankList.size() > 0) {
             sendVideoRankListData(VideoRankList);
         }
         //クリップ
         List<Map<String, String>> vodClipList = getVodClipListData();
-        if(vodClipList != null && vodClipList.size() > 0){
+        if (vodClipList != null && vodClipList.size() > 0) {
             sendVodClipListData(vodClipList);
         }
     }
@@ -408,7 +407,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
 
             //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
             webClient.getContentsListPerGenreApi(limit, offset,
-                    filter, ageReq, genreId ,type,sort, this);
+                    filter, ageReq, genreId, type, sort, this);
         }
         return list;
     }

@@ -31,7 +31,7 @@ import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.WEEKLY_RANK_LA
 public class RankingTopDataProvider implements
         DailyRankWebClient.DailyRankJsonParserCallback,
         WeeklyRankWebClient.WeeklyRankJsonParserCallback,
-        ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback{
+        ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback {
 
     private Context mContext;
 
@@ -111,17 +111,17 @@ public class RankingTopDataProvider implements
     public void getRankingTopData() {
         //今日のランキング
         List<Map<String, String>> dailyRankList = getDailyRankListData();
-        if(dailyRankList != null && dailyRankList.size() > 0){
+        if (dailyRankList != null && dailyRankList.size() > 0) {
             sendDailyRankListData(dailyRankList);
         }
         //週刊のランキング
         List<Map<String, String>> weeklyRankList = getWeeklyRankListData();
-        if(weeklyRankList != null && weeklyRankList.size() > 0){
+        if (weeklyRankList != null && weeklyRankList.size() > 0) {
             sendWeeklyRankListData(weeklyRankList);
         }
         //ビデオのランキング
         List<Map<String, String>> videoRankList = getVideoRankListData();
-        if(videoRankList != null && videoRankList.size() > 0){
+        if (videoRankList != null && videoRankList.size() > 0) {
             sendVideoRankListData(videoRankList);
         }
     }
@@ -155,7 +155,6 @@ public class RankingTopDataProvider implements
 
     /**
      * 今日のランキングデータを取得する
-     *
      */
     private List<Map<String, String>> getDailyRankListData() {
         DateUtils dateUtils = new DateUtils(mContext);
@@ -202,7 +201,7 @@ public class RankingTopDataProvider implements
 
             //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
             webClient.getWeeklyRankApi(limit, offset,
-                    filter, ageReq, genreId , this);
+                    filter, ageReq, genreId, this);
         }
         return list;
     }
@@ -230,7 +229,7 @@ public class RankingTopDataProvider implements
 
             //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
             webClient.getContentsListPerGenreApi(limit, offset,
-                    filter, ageReq, genreId ,type,sort, this);
+                    filter, ageReq, genreId, type, sort, this);
         }
         return list;
     }

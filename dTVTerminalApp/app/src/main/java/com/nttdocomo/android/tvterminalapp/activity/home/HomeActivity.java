@@ -148,7 +148,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         agreementTextView.setOnClickListener(this);
         prImageView.setOnClickListener(this);
         //各コンテンツのビューを作成する
-        for(int i=CONTENT_LIST_START_INDEX;i<CONTENT_LIST_COUNT+CONTENT_LIST_START_INDEX;i++){
+        for (int i = CONTENT_LIST_START_INDEX; i < CONTENT_LIST_COUNT + CONTENT_LIST_START_INDEX; i++) {
             View view = LayoutInflater.from(this).inflate(R.layout.home_main_layout_item, null, false);
             RelativeLayout relativeLayout = view.findViewById(R.id.home_main_item_type_rl);
             LinearLayout.LayoutParams relIp = new LinearLayout.LayoutParams(
@@ -165,9 +165,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
      * 機能
      * コンテンツ一覧ビューを設定
      */
-    private void setRecyclerView(List<Map<String,String>> contentList, final int tag) {
+    private void setRecyclerView(List<Map<String, String>> contentList, final int tag) {
         String typeContentName = getContentTypeName(tag);
-        String resultCount =String.valueOf(contentList.size());
+        String resultCount = String.valueOf(contentList.size());
         View view = mLinearLayout.getChildAt(tag);
         view.setVisibility(View.VISIBLE);
         TextView typeTextView = view.findViewById(R.id.home_main_item_type_tx);
@@ -181,7 +181,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         });
         RecyclerView mRecyclerView = view.findViewById(R.id.home_main_item_recyclerview);
         //リサイクルビューの間隔
-        int spacingInPixels = (int)getDensity() * 4;
+        int spacingInPixels = (int) getDensity() * 4;
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(spacingInPixels));
         //コンテンツタイプを設定（NOW ON AIR）
         typeTextView.setText(typeContentName);
@@ -195,9 +195,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
      * 機能
      * コンテンツ一覧タイトル取得
      */
-    private String getContentTypeName (int tag){
+    private String getContentTypeName(int tag) {
         String typeName = "";
-        switch (tag){
+        switch (tag) {
             case 2:
                 typeName = getResources().getString(R.string.home_label_now_on_air);
                 break;
@@ -226,7 +226,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
      * 機能
      * コンテンツ一覧データを設定
      */
-    private void setRecyclerViewData(RecyclerView mRecyclerView, List<Map<String,String>> mList, final int index) {
+    private void setRecyclerViewData(RecyclerView mRecyclerView, List<Map<String, String>> mList, final int index) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mRecyclerView.setLayoutManager(linearLayoutManager);
@@ -278,49 +278,49 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     @Override
-    public void ChannelListCallback(List<Map<String,String>> channelList) {
+    public void channelListCallback(List<Map<String, String>> channelList) {
         if (channelList != null && channelList.size() > 0) {
             setRecyclerView(channelList, 2);
         }
     }
 
     @Override
-    public void DailyRankListCallback(List<Map<String,String>> dailyRankList) {
+    public void dailyRankListCallback(List<Map<String, String>> dailyRankList) {
         if (dailyRankList != null && dailyRankList.size() > 0) {
             setRecyclerView(dailyRankList, 5);
         }
     }
 
     @Override
-    public void VodClipListCallback(List<Map<String,String>> clipList) {
+    public void vodClipListCallback(List<Map<String, String>> clipList) {
         if (clipList != null && clipList.size() > 0) {
             setRecyclerView(clipList, 7);
         }
     }
 
     @Override
-    public void VideoRankCallback(List<Map<String,String>> videoRankList) {
+    public void videoRankCallback(List<Map<String, String>> videoRankList) {
         if (videoRankList != null && videoRankList.size() > 0) {
             setRecyclerView(videoRankList, 6);
         }
     }
 
     @Override
-    public void RecommendChannelCallback(List<Map<String,String>> redChList) {
+    public void recommendChannelCallback(List<Map<String, String>> redChList) {
         if (redChList != null && redChList.size() > 0) {
             setRecyclerView(redChList, 3);
         }
     }
 
     @Override
-    public void RecommemdVideoCallback(List<Map<String,String>> redVdList) {
+    public void recommemdVideoCallback(List<Map<String, String>> redVdList) {
         if (redVdList != null && redVdList.size() > 0) {
             setRecyclerView(redVdList, 4);
         }
     }
 
     @Override
-    public void UserInfoCallback(List<Map<String, String>> userList) {
+    public void userInfoCallback(List<Map<String, String>> userList) {
 
     }
 }
