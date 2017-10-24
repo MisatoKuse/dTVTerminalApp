@@ -5,8 +5,10 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,6 +31,7 @@ public class UserInfoJsonParser {
 
     /**
      * ユーザ情報Jsonデータ解析
+     *
      * @param jsonStr ユーザ情報情報一覧
      * @return userInfoList
      */
@@ -71,11 +74,17 @@ public class UserInfoJsonParser {
         return null;
     }
 
+    /**
+     * ユーザ情報をList<HashMap>でオブジェクトクラスに格納
+     *
+     * @param jsonObj
+     * @return
+     */
     private List sendUiList(JSONObject jsonObj) {
         List<HashMap<String, String>> list = new ArrayList<>();
         HashMap<String, String> map = new HashMap<>();
         try {
-            for (int i = 0; i < listPara.length; i++){
+            for (int i = 0; i < listPara.length; i++) {
                 if (!jsonObj.isNull(listPara[i])) {
                     if (!jsonObj.isNull(listPara[i])) {
                         String para = jsonObj.getString(listPara[i]);

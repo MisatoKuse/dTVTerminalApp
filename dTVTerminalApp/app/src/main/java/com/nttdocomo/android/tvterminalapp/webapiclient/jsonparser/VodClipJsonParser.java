@@ -4,7 +4,12 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
+import android.os.AsyncTask;
+
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,8 +20,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class VodClipJsonParser {
+public class VodClipJsonParser extends AsyncTask<Object, Object, Object> {
 
+    private VodClipWebClient.VodClipJsonParserCallback mVodClipJsonParserCallback;
     // オブジェクトクラスの定義
     private VodClipList mVodClipList;
 
@@ -72,6 +78,33 @@ public class VodClipJsonParser {
             VODCLIP_LIST_HDRFLG, VODCLIP_LIST_AVAIL_STATUS, VODCLIP_LIST_DELIVERY, VODCLIP_LIST_R_VALUE,
             VODCLIP_LIST_ADULT, VODCLIP_LIST_MS, VODCLIP_LIST_NG_FUNC, VODCLIP_LIST_GENRE_ID_ARRAY, VODCLIP_LIST_DTV};
 
+    /**
+     * コンストラクタ
+     *
+     * @param mVodClipJsonParserCallback
+     */
+    public VodClipJsonParser(VodClipWebClient.VodClipJsonParserCallback mVodClipJsonParserCallback) {
+        this.mVodClipJsonParserCallback = mVodClipJsonParserCallback;
+    }
+
+    @Override
+    protected void onPostExecute(Object s) {
+        mVodClipJsonParserCallback.onVodClipJsonParsed((List<VodClipList>) s);
+    }
+
+    @Override
+    protected Object doInBackground(Object... strings) {
+        String result = (String) strings[0];
+        List<VodClipList> resultList = VodClipListSender(result);
+        return resultList;
+    }
+
+    /**
+     * VodクリップJsonデータを解析する
+     *
+     * @param jsonStr
+     * @return
+     */
     public List<VodClipList> VodClipListSender(String jsonStr) {
 
         mVodClipList = new VodClipList();
@@ -96,6 +129,11 @@ public class VodClipJsonParser {
         return null;
     }
 
+    /**
+     * statusの値をMapでオブジェクトクラスに渡す
+     *
+     * @param jsonObj
+     */
     public void sendStatus(JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
@@ -108,7 +146,7 @@ public class VodClipJsonParser {
             if (!jsonObj.isNull(VODCLIP_LIST_PAGER)) {
                 JSONObject pager = jsonObj.getJSONObject(VODCLIP_LIST_PAGER);
 
-                for (int i = 0; i < pagerPara.length; i++){
+                for (int i = 0; i < pagerPara.length; i++) {
                     if (!pager.isNull(pagerPara[i])) {
                         String para = pager.getString(pagerPara[i]);
                         map.put(pagerPara[i], para);
@@ -126,8 +164,10 @@ public class VodClipJsonParser {
         }
     }
 
-    /*
-    * コンテンツのList<HashMap>をオブジェクトクラスに格納
+    /**
+     * コンテンツのList<HashMap>をオブジェクトクラスに格納
+     *
+     * @param jsonObj
      */
     public void sendVcList(JSONObject jsonObj) {
         try {
@@ -139,18 +179,18 @@ public class VodClipJsonParser {
                 JSONArray jsonArr = jsonObj.getJSONArray(VODCLIP_LIST);
 
                 // リストの数だけまわす
-                for (int i = 0; i<jsonArr.length(); i++){
+                for (int i = 0; i < jsonArr.length(); i++) {
                     // 最初にHashMapを生成＆初期化
                     HashMap<String, String> vcListMap = new HashMap<String, String>();
 
                     // i番目のJSONArrayをJSONObjectに変換する
                     JSONObject jsonObject = jsonArr.getJSONObject(i);
 
-                    for (int j = 0; j < listPara.length; j++){
+                    for (int j = 0; j < listPara.length; j++) {
                         if (!jsonObject.isNull(listPara[j])) {
                             if (listPara[j] == VODCLIP_LIST_GENRE_ID_ARRAY) {
                                 String para = jsonObject.getString(listPara[j]);
-                                vcListMap.put(listPara[j], para.substring(1, (para.length() -1)));
+                                vcListMap.put(listPara[j], para.substring(1, (para.length() - 1)));
                             } else {
                                 String para = jsonObject.getString(listPara[j]);
                                 vcListMap.put(listPara[j], para);

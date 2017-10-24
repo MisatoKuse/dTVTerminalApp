@@ -4,7 +4,12 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
+import android.os.AsyncTask;
+
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,7 +20,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class VideoRankJsonParser {
+public class VideoRankJsonParser extends AsyncTask<Object, Object, Object>{
+
+    private ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback mContentsListPerGenreJsonParserCallback;
     // オブジェクトクラスの定義
     private VideoRankList mVideoRankList;
 
@@ -69,6 +76,8 @@ public class VideoRankJsonParser {
     public static final String VIDEORANK_LIST_DTV = "dtv";
 
     public static final String VIDEORANK_LIST_PLIT = "PLIT";
+
+    // TODO Sprint4では未使用の為、定義のみ実施
     public static final String VIDEORANK_LIST_PLI_VIS = "pli_vis";
     public static final String VIDEORANK_LIST_PLI_VIE = "pli_vie";
 
@@ -98,11 +107,33 @@ public class VideoRankJsonParser {
             VIDEORANK_LIST_SYNOP, VIDEORANK_LIST_PUID, VIDEORANK_LIST_PRICE, VIDEORANK_LIST_QUNIT, VIDEORANK_LIST_PU_S,
             VIDEORANK_LIST_PU_E, VIDEORANK_LIST_CREDITS, VIDEORANK_LIST_RATING, VIDEORANK_LIST_DTV, VIDEORANK_LIST_PLIT};
 
+    // TODO Sprint4では未使用の為、コメントアウト
 //    public static final String[] listPritPara = {VIDEORANK_LIST_PLI_VIS, VIDEORANK_LIST_PLI_VIE, VIDEORANK_LIST_PLICENSS};
 //
 //    public static final String[] listPritPlicensePara = {VIDEORANK_LIST_PLI_PUID, VIDEORANK_LIST_PLI_CRID, VIDEORANK_LIST_PLI_TITLE,
 //            VIDEORANK_LIST_PLI_EPITITLE, VIDEORANK_LIST_PLI_DISP_TYPE, VIDEORANK_LIST_PLI_PRICE, VIDEORANK_LIST_PLI_QUNIT,
 //            VIDEORANK_LIST_PLI_GRANGE, VIDEORANK_LIST_PLI_PU_S, VIDEORANK_LIST_PLI_PU_E};
+
+    /**
+     * コンストラクタ
+     *
+     * @param mContentsListPerGenreJsonParserCallback
+     */
+    public VideoRankJsonParser(ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback mContentsListPerGenreJsonParserCallback) {
+        this.mContentsListPerGenreJsonParserCallback = mContentsListPerGenreJsonParserCallback;
+    }
+
+    @Override
+    protected void onPostExecute(Object s) {
+        mContentsListPerGenreJsonParserCallback.onContentsListPerGenreJsonParsed((List<VideoRankList>) s);
+    }
+
+    @Override
+    protected Object doInBackground(Object... strings) {
+        String result = (String) strings[0];
+        List<VideoRankList> resultList = VideoRankListSender(result);
+        return resultList;
+    }
 
     /**
      * ジャンル毎一覧Jsonデータを解析する
@@ -188,6 +219,7 @@ public class VideoRankJsonParser {
         }
     }
 
+    // TODO Sprint4では未使用の為、コメントアウト
 //    public void sendPLITList(JSONArray jsonArr) {
 //        try {
 //            // コンテンツリストのList<HashMap>を用意

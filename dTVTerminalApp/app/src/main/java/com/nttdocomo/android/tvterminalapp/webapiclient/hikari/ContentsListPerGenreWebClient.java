@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
+import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser;
 
 import org.json.JSONException;
@@ -15,7 +16,7 @@ import java.util.List;
 public class ContentsListPerGenreWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
-    //ジャンル毎コンテンツ数
+    //ジャンル毎コンテンツ一覧
 
     /**
      * コールバック
@@ -40,16 +41,8 @@ public class ContentsListPerGenreWebClient
      */
     @Override
     public void onAnswer(ReturnCode returnCode) {
-        //パース後データ受け取り用
-        List<VideoRankList> pursedData;
-
-        //JSONをパースする
-        VideoRankJsonParser contentsListPerGenreJsonParser = new VideoRankJsonParser();
-        pursedData = contentsListPerGenreJsonParser.VideoRankListSender(returnCode.bodyData);
-
-        //パース後のデータを返す
-        mContentsListPerGenreJsonParserCallback.
-                onContentsListPerGenreJsonParsed(pursedData);
+        //JSONをパースして、データを返す
+        new VideoRankJsonParser(mContentsListPerGenreJsonParserCallback).execute(returnCode.bodyData);
     }
 
     /**
@@ -63,13 +56,13 @@ public class ContentsListPerGenreWebClient
 
 
     /**
-     * ジャンル毎コンテンツ数取得
+     * ジャンル毎コンテンツ一覧取得
      *
      * @param limit                                  取得する最大件数(値は1以上)
      * @param offset                                 取得位置(値は1以上)
      * @param filter                                 フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
      * @param ageReq                                 年齢設定値1-17（ゼロの場合は1扱い）
-     * @param genreId                                ジャンルID
+     * @param genreId                                ジャンルID（ヌルや空文字ならば出力されず、無指定となる）
      * @param type                                   タイプ（hikaritv_vod/dtv_vod/hikaritv_and_dtv_vod/指定なしはすべてのVOD）
      * @param sort                                   ソート指定（titleruby_asc/avail_s_asc/avail_e_desc/play_count_desc
      * @param contentsListPerGenreJsonParserCallback コールバック
@@ -97,7 +90,7 @@ public class ContentsListPerGenreWebClient
             return false;
         }
 
-        //ジャンル毎コンテンツ数取得を呼び出す
+        //ジャンル毎コンテンツ一覧取得を呼び出す
         openUrl(API_NAME_LIST.CONTENTS_LIST_PER_GENRE_WEB_CLIENT.getString(), sendParameter, this);
 
         //今のところ失敗は無いので、trueで帰る
@@ -111,7 +104,7 @@ public class ContentsListPerGenreWebClient
      * @param offset                                 取得位置(値は1以上)
      * @param filter                                 フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
      * @param ageReq                                 年齢設定値1-17（ゼロの場合は1扱い）
-     * @param genreId                                ジャンルID
+     * @param genreId                                ジャンルID（ヌルや空文字ならば出力されず、無指定となる）
      * @param type                                   タイプ（hikaritv_vod/dtv_vod/hikaritv_and_dtv_vod/指定なしはすべてのVOD）
      * @param sort                                   ソート指定（titleruby_asc/avail_s_asc/avail_e_desc/play_count_desc
      * @param contentsListPerGenreJsonParserCallback コールバック

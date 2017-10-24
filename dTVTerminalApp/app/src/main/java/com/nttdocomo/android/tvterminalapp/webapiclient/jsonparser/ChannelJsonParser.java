@@ -4,7 +4,10 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
+import android.os.AsyncTask;
+
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,7 +18,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class ChannelJsonParser {
+public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
+
+    private ChannelWebClient.ChannelJsonParserCallback mChannelJsonParserCallback;
+
     // オブジェクトクラスの定義
     private ChannelList mChannelList;
 
@@ -71,6 +77,12 @@ public class ChannelJsonParser {
             CHANNEL_LIST_HDRFLG, CHANNEL_LIST_AVAIL_STATUS, CHANNEL_LIST_DELIVERY, CHANNEL_LIST_R_VALUE,
             CHANNEL_LIST_ADULT, CHANNEL_LIST_MS, CHANNEL_LIST_NG_FUNC, CHANNEL_LIST_GENRE_ID_ARRAY, CHANNEL_LIST_DTV};
 
+    /**
+     * CH一覧Jsonデータを解析する
+     *
+     * @param jsonStr
+     * @return
+     */
     public List<ChannelList> CHANNELListSender(String jsonStr) {
 
         mChannelList = new ChannelList();
@@ -95,6 +107,11 @@ public class ChannelJsonParser {
         return null;
     }
 
+    /**
+     * statusの値をMapでオブジェクトクラスに渡す
+     *
+     * @param jsonObj
+     */
     public void sendStatus(JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
@@ -107,7 +124,7 @@ public class ChannelJsonParser {
             if (!jsonObj.isNull(CHANNEL_LIST_PAGER)) {
                 JSONObject pager = jsonObj.getJSONObject(CHANNEL_LIST_PAGER);
 
-                for (int i = 0; i < pagerPara.length; i++){
+                for (int i = 0; i < pagerPara.length; i++) {
                     if (!pager.isNull(pagerPara[i])) {
                         String para = pager.getString(pagerPara[i]);
                         map.put(pagerPara[i], para);
@@ -125,8 +142,31 @@ public class ChannelJsonParser {
         }
     }
 
-    /*
-    * コンテンツのList<HashMap>をオブジェクトクラスに格納
+    /**
+     * コンストラクタ
+     *
+     * @param mChannelJsonParserCallback
+     */
+    public ChannelJsonParser(ChannelWebClient.ChannelJsonParserCallback mChannelJsonParserCallback) {
+        this.mChannelJsonParserCallback = mChannelJsonParserCallback;
+    }
+
+    @Override
+    protected void onPostExecute(Object s) {
+        mChannelJsonParserCallback.onChannelJsonParsed((List<ChannelList>) s);
+    }
+
+    @Override
+    protected Object doInBackground(Object... strings) {
+        String result = (String) strings[0];
+        List<ChannelList> resultList = CHANNELListSender(result);
+        return resultList;
+    }
+
+    /**
+     * コンテンツのList<HashMap>をオブジェクトクラスに格納
+     *
+     * @param jsonObj
      */
     public void sendVcList(JSONObject jsonObj) {
         try {
@@ -138,18 +178,18 @@ public class ChannelJsonParser {
                 JSONArray jsonArr = jsonObj.getJSONArray(CHANNEL_LIST);
 
                 // リストの数だけまわす
-                for (int i = 0; i<jsonArr.length(); i++){
+                for (int i = 0; i < jsonArr.length(); i++) {
                     // 最初にHashMapを生成＆初期化
                     HashMap<String, String> vcListMap = new HashMap<String, String>();
 
                     // i番目のJSONArrayをJSONObjectに変換する
                     JSONObject jsonObject = jsonArr.getJSONObject(i);
 
-                    for (int j = 0; j < listPara.length; j++){
+                    for (int j = 0; j < listPara.length; j++) {
                         if (!jsonObject.isNull(listPara[j])) {
                             if (listPara[j] == CHANNEL_LIST_GENRE_ID_ARRAY) {
                                 String para = jsonObject.getString(listPara[j]);
-                                vcListMap.put(listPara[j], para.substring(1, (para.length() -1)));
+                                vcListMap.put(listPara[j], para.substring(1, (para.length() - 1)));
                             } else {
                                 String para = jsonObject.getString(listPara[j]);
                                 vcListMap.put(listPara[j], para);

@@ -4,7 +4,12 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
+import android.os.AsyncTask;
+
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.DailyRankWebClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,7 +20,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class DailyRankJsonParser  {
+public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
+
+    private DailyRankWebClient.DailyRankJsonParserCallback mDailyRankJsonParserCallback;
 
     // オブジェクトクラスの定義
     private DailyRankList mDailyRankList;
@@ -72,7 +79,34 @@ public class DailyRankJsonParser  {
             DAILYRANK_LIST_HDRFLG, DAILYRANK_LIST_AVAIL_STATUS, DAILYRANK_LIST_DELIVERY, DAILYRANK_LIST_R_VALUE,
             DAILYRANK_LIST_ADULT, DAILYRANK_LIST_MS, DAILYRANK_LIST_NG_FUNC, DAILYRANK_LIST_GENRE_ID_ARRAY, DAILYRANK_LIST_DTV};
 
-    public List<DailyRankList> DAILYRANKListSender(String jsonStr) {
+    /**
+     * コンストラクタ
+     *
+     * @param mDailyRankJsonParserCallback
+     */
+    public DailyRankJsonParser(DailyRankWebClient.DailyRankJsonParserCallback mDailyRankJsonParserCallback) {
+        this.mDailyRankJsonParserCallback = mDailyRankJsonParserCallback;
+    }
+
+    @Override
+    protected void onPostExecute(Object s) {
+        mDailyRankJsonParserCallback.onDailyRankJsonParsed((List<DailyRankList>) s);
+    }
+
+    @Override
+    protected Object doInBackground(Object... strings) {
+        String result = (String) strings[0];
+        List<DailyRankList> resultList = DailyRankListSender(result);
+        return resultList;
+    }
+
+    /**
+     * デイリーランキングJsonデータを解析する
+     *
+     * @param jsonStr
+     * @return
+     */
+    public List<DailyRankList> DailyRankListSender(String jsonStr) {
 
         mDailyRankList = new DailyRankList();
 
@@ -96,6 +130,11 @@ public class DailyRankJsonParser  {
         return null;
     }
 
+    /**
+     * statusの値をMapでオブジェクトクラスに渡す
+     *
+     * @param jsonObj
+     */
     public void sendStatus(JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
@@ -108,7 +147,7 @@ public class DailyRankJsonParser  {
             if (!jsonObj.isNull(DAILYRANK_LIST_PAGER)) {
                 JSONObject pager = jsonObj.getJSONObject(DAILYRANK_LIST_PAGER);
 
-                for (int i = 0; i < pagerPara.length; i++){
+                for (int i = 0; i < pagerPara.length; i++) {
                     if (!pager.isNull(pagerPara[i])) {
                         String para = pager.getString(pagerPara[i]);
                         map.put(pagerPara[i], para);
@@ -126,8 +165,10 @@ public class DailyRankJsonParser  {
         }
     }
 
-    /*
-    * コンテンツのList<HashMap>をオブジェクトクラスに格納
+    /**
+     * コンテンツのList<HashMap>をオブジェクトクラスに格納
+     *
+     * @param jsonObj
      */
     public void sendVcList(JSONObject jsonObj) {
         try {
@@ -139,18 +180,18 @@ public class DailyRankJsonParser  {
                 JSONArray jsonArr = jsonObj.getJSONArray(DAILYRANK_LIST);
 
                 // リストの数だけまわす
-                for (int i = 0; i<jsonArr.length(); i++){
+                for (int i = 0; i < jsonArr.length(); i++) {
                     // 最初にHashMapを生成＆初期化
                     HashMap<String, String> vcListMap = new HashMap<String, String>();
 
                     // i番目のJSONArrayをJSONObjectに変換する
                     JSONObject jsonObject = jsonArr.getJSONObject(i);
 
-                    for (int j = 0; j < listPara.length; j++){
+                    for (int j = 0; j < listPara.length; j++) {
                         if (!jsonObject.isNull(listPara[j])) {
                             if (listPara[j] == DAILYRANK_LIST_GENRE_ID_ARRAY) {
                                 String para = jsonObject.getString(listPara[j]);
-                                vcListMap.put(listPara[j], para.substring(1, (para.length() -1)));
+                                vcListMap.put(listPara[j], para.substring(1, (para.length() - 1)));
                             } else {
                                 String para = jsonObject.getString(listPara[j]);
                                 vcListMap.put(listPara[j], para);

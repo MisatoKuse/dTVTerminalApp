@@ -7,10 +7,8 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser;
 import android.os.AsyncTask;
 import android.util.Xml;
 
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
-import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendChWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendWebClient;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -21,9 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RecommendChannelXmlParser extends AsyncTask<Object, Object, Object> {
+public class RecommendWebXmlParser extends AsyncTask<Object, Object, Object> {
 
-    private RecommendChWebClient.RecommendChannelCallback mRecommendChannelCallback;
+    private RecommendWebClient.RecommendCallback mRecommendCallback;
 
     public static final String RECOMMENDCHANNEL_LIST_RECOMMENDCONTENT = "RecommendContent";
     public static final String RECOMMENDCHANNEL_LIST_RECOMMENDORDER = "recommendOrder";
@@ -47,19 +45,19 @@ public class RecommendChannelXmlParser extends AsyncTask<Object, Object, Object>
     public static final String RECOMMENDCHANNEL_LIST_GROUPID = "groupId";
     public static final String RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID = "recommendMethodId";
 
-    public RecommendChannelXmlParser(RecommendChWebClient.RecommendChannelCallback mRecommendChannelCallback){
-        this.mRecommendChannelCallback = mRecommendChannelCallback;
+    public RecommendWebXmlParser(RecommendWebClient.RecommendCallback mRecommendCallback){
+        this.mRecommendCallback = mRecommendCallback;
     }
 
     @Override
     protected void onPostExecute(Object s) {
-        mRecommendChannelCallback.RecommendChannelCallback((RecommendChList)s);
+        mRecommendCallback.RecommendCallback((RecommendChList)s);
     }
 
     @Override
     protected Object doInBackground(Object... strings) {
         String result = (String)strings[0];
-        RecommendChList resultList = getRecommendchannelList(result);
+        RecommendChList resultList = getRecommendWebList(result);
         return resultList;
     }
 
@@ -68,7 +66,7 @@ public class RecommendChannelXmlParser extends AsyncTask<Object, Object, Object>
      * @param responseData レスポンスデータ
      * @return パース後のデータ
      */
-    public RecommendChList getRecommendchannelList(String responseData) {
+    public RecommendChList getRecommendWebList(String responseData) {
         RecommendChList redChContents = null;
         List<Map<String, String>> redChContentList = null;
         HashMap<String, String> redChHashMap = null;

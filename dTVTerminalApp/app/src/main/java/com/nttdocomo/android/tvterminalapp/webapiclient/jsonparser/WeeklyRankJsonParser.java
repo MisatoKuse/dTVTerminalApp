@@ -4,7 +4,12 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
+import android.os.AsyncTask;
+
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WeeklyRankList;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WeeklyRankWebClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,7 +20,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class WeeklyRankJsonParser {
+public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
+
+    private WeeklyRankWebClient.WeeklyRankJsonParserCallback mWeeklyRankJsonParserCallback;
     // オブジェクトクラスの定義
     public WeeklyRankList mWeeklyRankList;
 
@@ -59,6 +66,27 @@ public class WeeklyRankJsonParser {
             WEEKLYRANK_LIST_AVAII_STATUS, WEEKLYRANK_LIST_DELIVERY, WEEKLYRANK_LIST_R_VALUE};
 
     /**
+     * コンストラクタ
+     *
+     * @param mWeeklyRankJsonParserCallback
+     */
+    public WeeklyRankJsonParser(WeeklyRankWebClient.WeeklyRankJsonParserCallback mWeeklyRankJsonParserCallback) {
+        this.mWeeklyRankJsonParserCallback = mWeeklyRankJsonParserCallback;
+    }
+
+    @Override
+    protected void onPostExecute(Object s) {
+        mWeeklyRankJsonParserCallback.onWeeklyRankJsonParsed((List<WeeklyRankList>) s);
+    }
+
+    @Override
+    protected Object doInBackground(Object... strings) {
+        String result = (String) strings[0];
+        List<WeeklyRankList> resultList = WeeklyRankListSender(result);
+        return resultList;
+    }
+
+    /**
      * 週間ランキングJsonデータを解析する
      *
      * @param jsonStr String形式のJSONデータ
@@ -89,6 +117,11 @@ public class WeeklyRankJsonParser {
         return null;
     }
 
+    /**
+     * statusの値をMapでオブジェクトクラスに格納
+     *
+     * @param jsonObj
+     */
     public void sendStatus(JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
@@ -121,15 +154,15 @@ public class WeeklyRankJsonParser {
     /**
      * コンテンツリストをList<HashMap>の形式でObjectクラスへ格納する
      *
-     * @param arrayLlist JSONArray
+     * @param arrayList JSONArray
      */
-    public void senWrcList(JSONArray arrayLlist) {
+    public void senWrcList(JSONArray arrayList) {
         try {
             List<HashMap<String, String>> wrList = new ArrayList<>();
 
-            for (int i = 0; i < arrayLlist.length(); i++) {
+            for (int i = 0; i < arrayList.length(); i++) {
                 HashMap<String, String> wrListMap = new HashMap<String, String>();
-                JSONObject jsonObject = arrayLlist.getJSONObject(i);
+                JSONObject jsonObject = arrayList.getJSONObject(i);
                 for (int j = 0; j < listPara.length; j++) {
                     if (!jsonObject.isNull(listPara[j])) {
                         String para = jsonObject.getString(listPara[j]);
