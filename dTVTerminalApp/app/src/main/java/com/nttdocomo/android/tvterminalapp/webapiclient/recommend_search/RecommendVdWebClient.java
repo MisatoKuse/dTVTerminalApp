@@ -16,25 +16,29 @@ public class RecommendVdWebClient extends WebApiBase implements WebApiCallback {
     /**
      * 種別・ビデオ
      */
-    private static final String VIDEO_CATEGORY = "06,08,10&";
+    private static final String VIDEO_CATEGORY =
+            "15:01,15:02,17:01,43:02,43:03,44:05,44:06,44:08,44:10&";
 
     private RecommendVideoCallback mRecommendVideoCallback;
 
     public interface RecommendVideoCallback {
-        void RecommendVideoCallback(RecommendVdList mRecommendChList);
+        void RecommendVideoCallback(RecommendVdList mRecommendVdList);
     }
 
-    public RecommendVdWebClient(RecommendVideoCallback mRecommendVideoCallback){
+    public RecommendVdWebClient(RecommendVideoCallback mRecommendVideoCallback) {
         this.mRecommendVideoCallback = mRecommendVideoCallback;
     }
 
-    public void getRecommendChannelApi() {
+    public void getRecommendVideoApi() {
 
-        DTVTLogger.debug("getRecommendChannelApi");
-        LinkedHashMap queryItems=new LinkedHashMap();
+        DTVTLogger.debug("getRecommendVideoApi");
+        LinkedHashMap queryItems = new LinkedHashMap();
 
         //種別パラメータにテレビチャンネルを指定
         queryItems.put(RecommendWebClient.SERVICE_CATEGORY_ID, VIDEO_CATEGORY);
+
+        //開始位置
+        queryItems.put(RecommendWebClient.START_INDEX, RecommendWebClient.HOME_PAGE_START);
 
         //最大件数
         queryItems.put(RecommendWebClient.MAX_RESULT, RecommendWebClient.HOME_PAGE_MAX);
@@ -44,7 +48,7 @@ public class RecommendVdWebClient extends WebApiBase implements WebApiCallback {
 
         //パラメータがあるならば、URLの後ろに"?"をつける
         String sendUrlAdder;
-        if(queryItems.size() > 0) {
+        if (queryItems.size() > 0) {
             sendUrlAdder = "?";
         } else {
             sendUrlAdder = "";
@@ -61,9 +65,9 @@ public class RecommendVdWebClient extends WebApiBase implements WebApiCallback {
         RecommendVdList mRecommendVdList =
                 recommendVideoXmlParser.getRecommendVideoList(responseData);
 
-        //TODO: テストサーバーが正常に動作しなくなったので、再度ダミーデータを使用する
-        RecommendVdList dummyData = recommendVideoXmlParser.getRecommendVideoList();
+        //TODO: テストサーバーが動作しなくなった場合のダミーデータ
+        //RecommendVdList mRecommendVdList = recommendVideoXmlParser.getRecommendVideoList();
 
-        mRecommendVideoCallback.RecommendVideoCallback(dummyData);
+        mRecommendVideoCallback.RecommendVideoCallback(mRecommendVdList);
     }
 }

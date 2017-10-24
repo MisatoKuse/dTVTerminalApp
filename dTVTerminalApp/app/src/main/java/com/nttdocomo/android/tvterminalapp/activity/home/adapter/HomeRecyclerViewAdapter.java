@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
+
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_START_DATE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_THUMB;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_TITLE;
@@ -28,22 +29,24 @@ import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.Recomme
 import java.util.List;
 import java.util.Map;
 
-public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerViewAdapter.ViewHolder>
-{
+public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerViewAdapter.ViewHolder> {
     private LayoutInflater mInflater;
-    private List<Map<String,String>> mContentList;
+    private List<Map<String, String>> mContentList;
     private Context context;
     //サムネイル取得プロバイダー
     private ThumbnailProvider thumbnailProvider;
     //もっと見るフッター
     private View mFooterView;
+    //最大表示件数
+    private static final int MAX_COUNT = 10;
+    //ヘッダー
+    private static final int TYPE_HEADER = 0;
+    //フッター
+    private static final int TYPE_FOOTER = 1;
+    //普通
+    private static final int TYPE_NORMAL = 2;
 
-    public static final int TYPE_HEADER = 0;
-    public static final int TYPE_FOOTER = 1;
-    public static final int TYPE_NORMAL = 2;
-
-    public HomeRecyclerViewAdapter(Context context, List<Map<String,String>> mContentList)
-    {
+    public HomeRecyclerViewAdapter(Context context, List<Map<String, String>> mContentList) {
         mInflater = LayoutInflater.from(context);
         this.mContentList = mContentList;
         this.context = context;
@@ -57,10 +60,10 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0){
+        if (position == 0) {
             return TYPE_HEADER;
         }
-        if (position == getItemCount()-1){
+        if (position == getItemCount() - 1) {
             return TYPE_FOOTER;
         }
         return TYPE_NORMAL;
@@ -68,63 +71,66 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
 
 
     @Override
-    public int getItemCount()
-    {
-        if(mFooterView == null){
-            return mContentList.size();
-        }else{
-            return mContentList.size()+1;
+    public int getItemCount() {
+        int count = mContentList.size();
+        if (count > MAX_COUNT) {
+            count = MAX_COUNT;
+        }
+        if (mFooterView == null) {
+            return count;
+        } else {
+            return count + 1;
         }
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType)
-    {
-        if(mFooterView != null && viewType == TYPE_FOOTER){
+    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        if (mFooterView != null && viewType == TYPE_FOOTER) {
             return new ViewHolder(mFooterView);
         }
-        View view = mInflater.inflate(R.layout.home_main_layout_recyclerview_item,viewGroup, false);
+        View view = mInflater.inflate(R.layout.home_main_layout_recyclerview_item, viewGroup, false);
         ViewHolder viewHolder = new ViewHolder(view);
         viewHolder.mImage = view.findViewById(R.id.home_main_recyclerview_item_iv);
         //コンテンツキャッシュを幅さ、長さ初期化
         float widthPixels = context.getResources().getDisplayMetrics().widthPixels / 3 * 2;
         float heightPixels = widthPixels / 1.8f;
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                (int)widthPixels,
-                (int)heightPixels);
+                (int) widthPixels,
+                (int) heightPixels);
         view.setLayoutParams(lp);
-        viewHolder.mImage.setMaxWidth((int)widthPixels);
-        viewHolder.mImage.setMaxHeight((int)heightPixels);
+        viewHolder.mImage.setMaxWidth((int) widthPixels);
+        viewHolder.mImage.setMaxHeight((int) heightPixels);
         viewHolder.mContent = view.findViewById(R.id.home_main_recyclerview_item_tv_content);
         viewHolder.mTime = view.findViewById(R.id.home_main_recyclerview_item_tv_time);
+        viewHolder.mNew = view.findViewById(R.id.home_main_recyclerview_item_iv_new);
+        viewHolder.mNew.setVisibility(View.GONE);
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder viewHolder, final int i)
-    {
-        if(getItemViewType(i) == TYPE_FOOTER){
+    public void onBindViewHolder(final ViewHolder viewHolder, final int i) {
+        if (getItemViewType(i) == TYPE_FOOTER) {
             return;
         }
         String date = mContentList.get(i).get(VIDEORANK_LIST_START_DATE);
         String title = mContentList.get(i).get(VIDEORANK_LIST_TITLE);
-        if(TextUtils.isEmpty(title)){
+        if (TextUtils.isEmpty(title)) {
             title = mContentList.get(i).get(RECOMMENDCHANNEL_LIST_TITLE);
         }
         String thumbnail = mContentList.get(i).get(VIDEORANK_LIST_THUMB);
-        if(TextUtils.isEmpty(thumbnail)){
+        if (TextUtils.isEmpty(thumbnail)) {
             thumbnail = mContentList.get(i).get(RECOMMENDCHANNEL_LIST_CTPICURL1);
         }
-        if(!TextUtils.isEmpty(title)){
+        if (!TextUtils.isEmpty(title)) {
             viewHolder.mContent.setVisibility(View.VISIBLE);
             viewHolder.mContent.setText(title);
-        }else {
+        } else {
             viewHolder.mContent.setVisibility(View.GONE);
         }
-        if(!TextUtils.isEmpty(date)){
+        if (!TextUtils.isEmpty(date)) {
             viewHolder.mTime.setVisibility(View.VISIBLE);
             viewHolder.mTime.setText(date);
-        }else{
+        } else {
             viewHolder.mTime.setVisibility(View.GONE);
         }
         viewHolder.mImage.setImageResource(R.drawable.test_image);
@@ -140,7 +146,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             @Override
             public void onClick(View view) {
                 Intent mIntent = new Intent();
-                mIntent.setClass(context,TvPlayerActivity.class);
+                mIntent.setClass(context, TvPlayerActivity.class);
                 context.startActivity(mIntent);
             }
         });
@@ -149,16 +155,14 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     /**
      * コンテンツビューを初期化
      */
-    public class ViewHolder extends RecyclerView.ViewHolder
-    {
-        public ViewHolder(View itemView)
-        {
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        public ViewHolder(View itemView) {
             super(itemView);
-            if (itemView == mFooterView){
-            }
         }
+
         ImageView mImage;
         TextView mContent;
         TextView mTime;
+        TextView mNew;
     }
 }

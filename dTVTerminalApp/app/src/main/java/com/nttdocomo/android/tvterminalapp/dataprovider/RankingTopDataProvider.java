@@ -31,7 +31,7 @@ import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.WEEKLY_RANK_LA
 public class RankingTopDataProvider implements
         DailyRankWebClient.DailyRankJsonParserCallback,
         WeeklyRankWebClient.WeeklyRankJsonParserCallback,
-        ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback{
+        ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback {
 
     private Context mContext;
 
@@ -76,21 +76,21 @@ public class RankingTopDataProvider implements
          *
          * @param dailyHashMap
          */
-        void DailyRankListCallback(List<Map<String, String>> dailyHashMap);
+        void dailyRankListCallback(List<Map<String, String>> dailyHashMap);
 
         /**
          * 週間ランキング用コールバック
          *
          * @param weeklyHashMap
          */
-        void WeeklyRankCallback(List<Map<String, String>> weeklyHashMap);
+        void weeklyRankCallback(List<Map<String, String>> weeklyHashMap);
 
         /**
          * ビデオランキング用コールバック
          *
          * @param videoHashMap
          */
-        void VideoRankCallback(List<Map<String, String>> videoHashMap);
+        void videoRankCallback(List<Map<String, String>> videoHashMap);
     }
 
     private ApiDataProviderCallback apiDataProviderCallback;
@@ -111,17 +111,17 @@ public class RankingTopDataProvider implements
     public void getRankingTopData() {
         //今日のランキング
         List<Map<String, String>> dailyRankList = getDailyRankListData();
-        if(dailyRankList != null && dailyRankList.size() > 0){
+        if (dailyRankList != null && dailyRankList.size() > 0) {
             sendDailyRankListData(dailyRankList);
         }
         //週刊のランキング
         List<Map<String, String>> weeklyRankList = getWeeklyRankListData();
-        if(weeklyRankList != null && weeklyRankList.size() > 0){
+        if (weeklyRankList != null && weeklyRankList.size() > 0) {
             sendWeeklyRankListData(weeklyRankList);
         }
         //ビデオのランキング
         List<Map<String, String>> videoRankList = getVideoRankListData();
-        if(videoRankList != null && videoRankList.size() > 0){
+        if (videoRankList != null && videoRankList.size() > 0) {
             sendVideoRankListData(videoRankList);
         }
     }
@@ -132,7 +132,7 @@ public class RankingTopDataProvider implements
      * @param list
      */
     public void sendDailyRankListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.DailyRankListCallback(list);
+        apiDataProviderCallback.dailyRankListCallback(list);
     }
 
     /**
@@ -141,7 +141,7 @@ public class RankingTopDataProvider implements
      * @param list
      */
     public void sendWeeklyRankListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.WeeklyRankCallback(list);
+        apiDataProviderCallback.weeklyRankCallback(list);
     }
 
     /**
@@ -150,12 +150,11 @@ public class RankingTopDataProvider implements
      * @param list
      */
     public void sendVideoRankListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.VideoRankCallback(list);
+        apiDataProviderCallback.videoRankCallback(list);
     }
 
     /**
      * 今日のランキングデータを取得する
-     *
      */
     private List<Map<String, String>> getDailyRankListData() {
         DateUtils dateUtils = new DateUtils(mContext);
@@ -202,7 +201,7 @@ public class RankingTopDataProvider implements
 
             //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
             webClient.getWeeklyRankApi(limit, offset,
-                    filter, ageReq, genreId , this);
+                    filter, ageReq, genreId, this);
         }
         return list;
     }
@@ -230,7 +229,7 @@ public class RankingTopDataProvider implements
 
             //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
             webClient.getContentsListPerGenreApi(limit, offset,
-                    filter, ageReq, genreId ,type,sort, this);
+                    filter, ageReq, genreId, type, sort, this);
         }
         return list;
     }

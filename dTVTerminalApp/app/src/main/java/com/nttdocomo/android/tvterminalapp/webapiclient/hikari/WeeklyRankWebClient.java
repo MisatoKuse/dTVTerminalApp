@@ -129,7 +129,7 @@ public class WeeklyRankWebClient
         }
 
         //年齢情報の件0から17までの間以外はエラー
-        if(ageReq < 0 || ageReq > 17) {
+        if(ageReq < 1 || ageReq > 17) {
             return false;
         }
 

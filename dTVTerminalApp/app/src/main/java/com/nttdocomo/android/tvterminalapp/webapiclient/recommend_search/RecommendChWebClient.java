@@ -12,11 +12,11 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChann
 
 import java.util.LinkedHashMap;
 
-public class RecommendChWebClient extends WebApiBase implements WebApiCallback  {
+public class RecommendChWebClient extends WebApiBase implements WebApiCallback {
     /**
      * 種別・チャンネル
      */
-    private static final String CHANNEL_CATEGORY = "03,04,05&";
+    private static final String CHANNEL_CATEGORY = "43:01,44:03,44:04&";
 
     private RecommendChannelCallback mRecommendChannelCallback;
 
@@ -24,14 +24,14 @@ public class RecommendChWebClient extends WebApiBase implements WebApiCallback  
         void RecommendChannelCallback(RecommendChList mRecommendChList);
     }
 
-    public RecommendChWebClient(RecommendChannelCallback mRecommendChannelCallback){
+    public RecommendChWebClient(RecommendChannelCallback mRecommendChannelCallback) {
         this.mRecommendChannelCallback = mRecommendChannelCallback;
     }
 
     public void getRecommendChannelApi() {
 
         DTVTLogger.debug("getRecommendChannelApi");
-        LinkedHashMap queryItems=new LinkedHashMap();
+        LinkedHashMap queryItems = new LinkedHashMap();
 
         //種別パラメータにテレビチャンネルを指定
         queryItems.put(RecommendWebClient.SERVICE_CATEGORY_ID, CHANNEL_CATEGORY);
@@ -47,7 +47,7 @@ public class RecommendChWebClient extends WebApiBase implements WebApiCallback  
 
         //パラメータがあるならば、URLの後ろに"?"をつける
         String sendUrlAdder;
-        if(queryItems.size() > 0) {
+        if (queryItems.size() > 0) {
             sendUrlAdder = "?";
         } else {
             sendUrlAdder = "";
@@ -60,6 +60,7 @@ public class RecommendChWebClient extends WebApiBase implements WebApiCallback  
 
     /**
      * 通信終了後に呼ばれるコールバック
+     *
      * @param responseData
      */
     @Override
@@ -69,8 +70,9 @@ public class RecommendChWebClient extends WebApiBase implements WebApiCallback  
         RecommendChList mRecommendChList =
                 recommendChannelXmlParser.getRecommendchannelList(responseData);
 
-        //TODO: テストサーバーが正常に動作しなくなったので、再度ダミーデータを使用する
-        RecommendChList dummyData = recommendChannelXmlParser.getRecommendchannelList();
-        mRecommendChannelCallback.RecommendChannelCallback(dummyData);
+        //TODO: テストサーバーが動作しない場合に使うダミーデータ
+        //RecommendChList mRecommendChList = recommendChannelXmlParser.getRecommendchannelList();
+
+        mRecommendChannelCallback.RecommendChannelCallback(mRecommendChList);
     }
 }

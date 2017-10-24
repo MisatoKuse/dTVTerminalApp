@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.common.SpaceItemDecoration;
@@ -22,11 +23,17 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
 import java.util.List;
 import java.util.Map;
 
-public class RankingTopActivity extends BaseActivity implements View.OnClickListener, RankingTopDataProvider.ApiDataProviderCallback{
+public class RankingTopActivity extends BaseActivity implements View.OnClickListener, RankingTopDataProvider.ApiDataProviderCallback {
 
     private LinearLayout mLinearLayout;
     //コンテンツ一覧数
     private final static int CONTENT_LIST_COUNT = 3;
+    //UIの上下表示順(今日のテレビランキング)
+    private final static int TODAY_SORT = 0;
+    //UIの上下表示順(週刊のテレビランキング)
+    private final static int WEEK_SORT = 1;
+    //UIの上下表示順(ビデオランキング)
+    private final static int VIDEO_SORT = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +54,11 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
         mLinearLayout = findViewById(R.id.ranking_top_main_layout_linearLayout);
         ImageView menuImageView = findViewById(R.id.header_layout_menu);
         menuImageView.setVisibility(View.VISIBLE);
+        findViewById(R.id.header_layout_back).setVisibility(View.INVISIBLE);
         menuImageView.setOnClickListener(this);
         int height = getHeightDensity();
-        for(int i=0; i<CONTENT_LIST_COUNT; i++){
+        //各ランキングリストのUIをあらかじめ用意する
+        for (int i = 0; i < CONTENT_LIST_COUNT; i++) {
             View view = LayoutInflater.from(this).inflate(R.layout.home_main_layout_item, null, false);
             RelativeLayout relativeLayout = view.findViewById(R.id.home_main_item_type_rl);
             LinearLayout.LayoutParams relIp = new LinearLayout.LayoutParams(
@@ -66,9 +75,8 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
      * 機能
      * コンテンツ一覧ビューを設定
      */
-    private void setRecyclerView(List<Map<String,String>> contentsData, final int tag) {
+    private void setRecyclerView(List<Map<String, String>> contentsData, final int tag) {
         String typeContentName = getContentTypeName(tag);
-        String resultCount = String.valueOf(contentsData.size());
         View view = mLinearLayout.getChildAt(tag);
         view.setVisibility(View.VISIBLE);
         TextView typeTextView = view.findViewById(R.id.home_main_item_type_tx);
@@ -81,7 +89,7 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
             }
         });
         RecyclerView mRecyclerView = view.findViewById(R.id.home_main_item_recyclerview);
-        int spacingInPixels = (int)getDensity() * 5;
+        int spacingInPixels = (int) getDensity() * 5;
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(spacingInPixels));
         //コンテンツタイプを設定
         typeTextView.setText(typeContentName);
@@ -94,7 +102,7 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
      * 機能
      * コンテンツ一覧データを設定
      */
-    private void setRecyclerViewData(RecyclerView mRecyclerView, List<Map<String,String>> mList, final int index) {
+    private void setRecyclerViewData(RecyclerView mRecyclerView, List<Map<String, String>> mList, final int index) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mRecyclerView.setLayoutManager(linearLayoutManager);
@@ -155,9 +163,9 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
      * 機能
      * コンテンツ一覧タイトル取得
      */
-    private String getContentTypeName (int tag){
+    private String getContentTypeName(int tag) {
         String typeName = "";
-        switch (tag){
+        switch (tag) {
             case 0:
                 typeName = getResources().getString(R.string.daily_tv_ranking_title);
                 break;
@@ -174,23 +182,23 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
     }
 
     @Override
-    public void DailyRankListCallback(List<Map<String,String>> dailyMap) {
-        if (dailyMap!=null && dailyMap.size() > 0){
-            setRecyclerView(dailyMap, 0);
+    public void dailyRankListCallback(List<Map<String, String>> dailyMap) {
+        if (dailyMap != null && dailyMap.size() > 0) {
+            setRecyclerView(dailyMap, TODAY_SORT);
         }
     }
 
     @Override
-    public void WeeklyRankCallback(List<Map<String,String>> weeklyMap) {
-        if (weeklyMap!=null && weeklyMap.size() > 0){
-            setRecyclerView(weeklyMap, 1);
+    public void weeklyRankCallback(List<Map<String, String>> weeklyMap) {
+        if (weeklyMap != null && weeklyMap.size() > 0) {
+            setRecyclerView(weeklyMap, WEEK_SORT);
         }
     }
 
     @Override
-    public void VideoRankCallback(List<Map<String,String>> videoMap) {
-        if (videoMap!=null && videoMap.size() > 0){
-            setRecyclerView(videoMap, 2);
+    public void videoRankCallback(List<Map<String, String>> videoMap) {
+        if (videoMap != null && videoMap.size() > 0) {
+            setRecyclerView(videoMap, VIDEO_SORT);
         }
     }
 }
