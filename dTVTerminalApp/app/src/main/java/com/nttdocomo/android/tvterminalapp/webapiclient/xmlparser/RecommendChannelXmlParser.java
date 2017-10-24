@@ -153,7 +153,7 @@ public class RecommendChannelXmlParser  {
                             redChHashMap.put(RECOMMENDCHANNEL_LIST_GROUPID,parser.getText()==null?"":parser.getText());
                         } else if(RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID.equals(parser.getName())) {
                             eventType = parser.next();
-                            redChHashMap.put(RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID,parser.getText()==null?"":parser.getText());
+                            redChHashMap.put(parser.getName(),parser.getText()==null?"":parser.getText());
                         }
                         break;
                     case XmlPullParser.END_TAG:
