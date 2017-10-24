@@ -7,24 +7,25 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DailyRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendChInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendVdInsertDataManager;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.TvScheduleInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.VideoRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.VodClipInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.HomeDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.RankingTopDataManager;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendVdList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.DailyRankWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvScheduleWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendChWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendVdWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
@@ -33,15 +34,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.CHANNEL_LAST_INSERT;
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.DAILY_RANK_LAST_INSERT;
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.RECOMMEND_CH_LAST_INSERT;
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.RECOMMEND_VD_LAST_INSERT;
+import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.TvSchedule_LAST_INSERT;
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.VOD_LAST_INSERT;
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.VIDEO_RANK_LAST_INSERT;
 
 public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallback,
-        ChannelWebClient.ChannelJsonParserCallback,
+        TvScheduleWebClient.TvScheduleJsonParserCallback,
         DailyRankWebClient.DailyRankJsonParserCallback,
         ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback,
         RecommendChWebClient.RecommendChannelCallback,
@@ -60,9 +61,9 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
     }
 
     @Override
-    public void onChannelJsonParsed(List<ChannelList> channelLists) {
-        if (channelLists != null && channelLists.size() > 0) {
-            ChannelList list = channelLists.get(0);
+    public void onTvScheduleJsonParsed(List<TvScheduleList> tvScheduleList) {
+        if (tvScheduleList != null && tvScheduleList.size() > 0) {
+            TvScheduleList list = tvScheduleList.get(0);
             setStructDB(list);
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
@@ -118,7 +119,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
          *
          * @param channelList
          */
-        void channelListCallback(List<Map<String, String>> channelList);
+        void tvScheduleListCallback(List<Map<String, String>> channelList);
 
         /**
          * デイリーランキング用コールバック
@@ -180,9 +181,9 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      */
     public void getHomeData() {
         //NOW ON AIR
-        List<Map<String, String>> channelListData = getChannelListData();
-        if (channelListData != null && channelListData.size() > 0) {
-            sendChannelListData(channelListData);
+        List<Map<String, String>> tvScheduleListData = getTvScheduleListData();
+        if (tvScheduleListData != null && tvScheduleListData.size() > 0) {
+            sendTvScheduleListData(tvScheduleListData);
         }
         //おすすめ番組
         List<Map<String, String>> recommendChListData = getRecommendChListData();
@@ -216,8 +217,8 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      *
      * @param list
      */
-    public void sendChannelListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.channelListCallback(list);
+    public void sendTvScheduleListData(List<Map<String, String>> list) {
+        apiDataProviderCallback.tvScheduleListCallback(list);
     }
 
     /**
@@ -274,36 +275,43 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         apiDataProviderCallback.userInfoCallback(list);
     }
 
-    private List<Map<String, String>> getChannelListData() {
+    /**
+     * NOW ON AIR 情報取得
+     *
+     */
+    private List<Map<String, String>> getTvScheduleListData() {
         DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(CHANNEL_LAST_INSERT);
+        String lastDate = dateUtils.getLastDate(TvSchedule_LAST_INSERT);
 
         List<Map<String, String>> list = new ArrayList<>();
-        //Vodクリップ一覧のDB保存履歴と、有効期間を確認
+        //NO ON AIR一覧のDB保存履歴と、有効期間を確認
         if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
             //データをDBから取得する
             HomeDataManager homeDataManager = new HomeDataManager(mContext);
-            list = homeDataManager.selectChannelListHomeData();
+            list = homeDataManager.selectTvScheduleListHomeData();
         } else {
             //通信クラスにデータ取得要求を出す
-            ChannelWebClient webClient = new ChannelWebClient();
-            int ageReq = 1;
-            int upperPageLimit = 1;
+            TvScheduleWebClient webClient = new TvScheduleWebClient();
+            int []ageReq = {1};
+            String [] upperPageLimit = {WebApiBasePlala.DATE_NOW};
             String lowerPageLimit = "";
-            String pagerOffset = "";
             //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
-            webClient.getChannelApi(ageReq, upperPageLimit,
-                    lowerPageLimit, pagerOffset, this);
+            webClient.getTvScheduleApi(ageReq, upperPageLimit,
+                    lowerPageLimit, this);
         }
         return list;
     }
 
+    /**
+     * おすすめ番組情報取得
+     *
+     */
     private List<Map<String, String>> getRecommendChListData() {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(RECOMMEND_CH_LAST_INSERT);
 
         List<Map<String, String>> list = new ArrayList<>();
-        //Vodクリップ一覧のDB保存履歴と、有効期間を確認
+        //おすすめ番組一覧のDB保存履歴と、有効期間を確認
         if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
             //データをDBから取得する
             HomeDataManager homeDataManager = new HomeDataManager(mContext);
@@ -316,12 +324,16 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         return list;
     }
 
+    /**
+     * おすすめビデオ情報取得
+     *
+     */
     private List<Map<String, String>> getRecommendVdListData() {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(RECOMMEND_VD_LAST_INSERT);
 
         List<Map<String, String>> list = new ArrayList<>();
-        //Vodクリップ一覧のDB保存履歴と、有効期間を確認
+        //おすすめビデオのDB保存履歴と、有効期間を確認
         if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
             //データをDBから取得する
             HomeDataManager homeDataManager = new HomeDataManager(mContext);
@@ -360,12 +372,16 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         return list;
     }
 
+    /**
+     * 今日のテレビランキング情報取得
+     *
+     */
     private List<Map<String, String>> getDailyRankListData() {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DAILY_RANK_LAST_INSERT);
 
         List<Map<String, String>> list = new ArrayList<>();
-        //Vodクリップ一覧のDB保存履歴と、有効期間を確認
+        //今日のテレビランキング一覧のDB保存履歴と、有効期間を確認
         if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
             //データをDBから取得する
             HomeDataManager homeDataManager = new HomeDataManager(mContext);
@@ -384,6 +400,10 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         return list;
     }
 
+    /**
+     * ビデオランキング情報取得
+     *
+     */
     private List<Map<String, String>> getVideoRankListData() {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(VIDEO_RANK_LAST_INSERT);
@@ -415,14 +435,14 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
     /**
      * チャンネル一覧データをDBに格納する
      *
-     * @param channelList
+     * @param tvScheduleList
      */
-    public void setStructDB(ChannelList channelList) {
+    public void setStructDB(TvScheduleList tvScheduleList) {
         DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(CHANNEL_LAST_INSERT);
-        ChannelInsertDataManager dataManager = new ChannelInsertDataManager(mContext);
-        dataManager.insertChannelInsertList(channelList);
-        sendChannelListData(channelList.getClList());
+        dateUtils.addLastDate(TvSchedule_LAST_INSERT);
+        TvScheduleInsertDataManager dataManager = new TvScheduleInsertDataManager(mContext);
+        dataManager.insertTvScheduleInsertList(tvScheduleList);
+        sendTvScheduleListData(tvScheduleList.geTvsList());
     }
 
     /**

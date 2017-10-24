@@ -295,7 +295,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     @Override
-    public void channelListCallback(List<Map<String, String>> channelList) {
+    public void tvScheduleListCallback(List<Map<String, String>> channelList) {
         if (channelList != null && channelList.size() > 0) {
             setRecyclerView(channelList, CHANNEL_SORT);
         }
