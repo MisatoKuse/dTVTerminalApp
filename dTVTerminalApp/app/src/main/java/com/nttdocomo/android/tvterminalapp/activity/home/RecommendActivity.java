@@ -351,8 +351,6 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
         mSearchLastItem = firstVisibleItem + visibleItemCount - 1;
 
         int pageMax = (mCntPageing + 1) * SearchConstants.RecommendList.requestMaxCount_Recommend;
-//        int maxPage = mSearchTotalCount/SearchConstants.RecommendList.requestMaxCount_Recommend;
-//        if(firstVisibleItem + visibleItemCount>=pageMax && maxPage >=1+ mPageNumber ){
         Log.i(DTVTConstants.LOG_DEF_TAG, "onScroll.first:" + firstVisibleItem +
                 " .visible:" + visibleItemCount + " .total:" + totalItemCount +
                 " dataSize:" + fragment.mData.size());
