@@ -12,7 +12,6 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendVid
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendVdList;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;

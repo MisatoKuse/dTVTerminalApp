@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
 
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
@@ -198,7 +201,11 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-    /*インジケーター設置*/
+    /**
+     * インジケーター設置
+     *
+     * @param position
+     */
     public void setTab(int position) {
         if (mLinearLayout != null) {
             for (int i = 0; i < mTabNames.length; i++) {
@@ -269,6 +276,9 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
 
     }
 
+    /**
+     * フラグメントクリア
+     */
     public void clearAllFragment() {
 
         if (null != mRecommendViewPager) {
@@ -311,7 +321,6 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
      *
      * @param b
      */
-
     private void setPagingStatus(boolean b) {
         synchronized (this) {
             mIsPaging = b;
@@ -351,8 +360,6 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
         mSearchLastItem = firstVisibleItem + visibleItemCount - 1;
 
         int pageMax = (mCntPageing + 1) * SearchConstants.RecommendList.requestMaxCount_Recommend;
-//        int maxPage = mSearchTotalCount/SearchConstants.RecommendList.requestMaxCount_Recommend;
-//        if(firstVisibleItem + visibleItemCount>=pageMax && maxPage >=1+ mPageNumber ){
         Log.i(DTVTConstants.LOG_DEF_TAG, "onScroll.first:" + firstVisibleItem +
                 " .visible:" + visibleItemCount + " .total:" + totalItemCount +
                 " dataSize:" + fragment.mData.size());
