@@ -26,12 +26,12 @@ public class SearchConstants {
     }
 
     public static class RecommendTabPageNo {
-        public static final int RECOMMEND_PAGE_NO_OF_SERVICE_TELEBI = 0;                                                     // テレビ
-        public static final int RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO = RECOMMEND_PAGE_NO_OF_SERVICE_TELEBI + 1;          // ビデオ
-        public static final int RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL = RECOMMEND_PAGE_NO_OF_SERVICE_TELEBI + 2;   // dチャンネル
-        public static final int RECOMMEND_PAGE_NO_OF_SERVICE_DTV = RECOMMEND_PAGE_NO_OF_SERVICE_TELEBI + 3;            // dTV
-        public static final int RECOMMEND_PAGE_NO_OF_SERVICE_DANIME = RECOMMEND_PAGE_NO_OF_SERVICE_TELEBI + 4;         //  dアニメ
-        public static final int RECOMMEND_PAGE_NO_OF_SERVICE_UNKNOWN = RECOMMEND_PAGE_NO_OF_SERVICE_TELEBI + 99;       // その他
+        public static final int RECOMMEND_PAGE_NO_OF_SERVICE_TV = 0;                                                     // テレビ
+        public static final int RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO = RECOMMEND_PAGE_NO_OF_SERVICE_TV + 1;          // ビデオ
+        public static final int RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL = RECOMMEND_PAGE_NO_OF_SERVICE_TV + 2;   // dチャンネル
+        public static final int RECOMMEND_PAGE_NO_OF_SERVICE_DTV = RECOMMEND_PAGE_NO_OF_SERVICE_TV + 3;            // dTV
+        public static final int RECOMMEND_PAGE_NO_OF_SERVICE_DANIME = RECOMMEND_PAGE_NO_OF_SERVICE_TV + 4;         //  dアニメ
+        public static final int RECOMMEND_PAGE_NO_OF_SERVICE_UNKNOWN = RECOMMEND_PAGE_NO_OF_SERVICE_TV + 99;       // その他
 
     }
 }

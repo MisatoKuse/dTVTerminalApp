@@ -23,7 +23,6 @@ import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.RECOMMEND_DANI
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.RECOMMEND_DCHANNEL_LAST_INSERT;
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.RECOMMEND_DTV_LAST_INSERT;
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.RECOMMEND_VD_LAST_INSERT;
-import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.WEEKLY_RANK_LAST_INSERT;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1;
@@ -206,7 +205,7 @@ public class RecommendDataProvider implements
 
         List<RecommendContentInfo> resultList = null;
         switch (requestPageNo) {
-            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TELEBI: //テレビ
+            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV: //テレビ
                 resultList = getRecommendListDataCache
                         (RECOMMEND_CH_LAST_INSERT, requestPageNo, startIndex, maxResult);
                 if (resultList.size() < maxResult) { // キャッシュ内のデータ数が20件未満の場合
@@ -299,7 +298,7 @@ public class RecommendDataProvider implements
                     || categoryId == RECOMMEND_CATEGORY_ID_TELEVI[2]) {
 
                 setStructDB(recChList, RECOMMEND_CH_LAST_INSERT,
-                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TELEBI);
+                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV);
                 apiDataProviderCallback.RecommendChannelCallback(recommendContentInfoList);
                 return;
             } else if (categoryId == RECOMMEND_CATEGORY_ID_VIDEO[0]

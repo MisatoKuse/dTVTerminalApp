@@ -52,8 +52,10 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
     private int maxShowListSize = 100;
     // 表示中レコメンドコンテンツ件数
     private int showListSize = 0;
-    Handler mHandler = new Handler();
-
+    // 表示中の最後の行を保持
+    private int mSearchLastItem = 0;
+    // ページング判定
+    private boolean mIsPaging = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,25 +69,22 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
 
 
         initData();
-        initView();
         initRecommendListView();
         requestRecommendData();
     }
 
     /**
-     * おすすめ番組・ビデオ画面初期化
+     * データの初期化
      */
-    private void initView() {
-
-    }
-
     private void initData() {
         mTabNames = getResources().getStringArray(R.array.recommend_list_tab_names);
-
         mRecommendDataProvider = new RecommendDataProvider(this);
-
     }
 
+    /**
+     * 検索中フラグの変更
+     * @param b
+     */
     private void setSearchStart(boolean b) {
         synchronized (this) {
             mIsSearching = b;
@@ -100,7 +99,6 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
             Log.e(DTVTConstants.LOG_DEF_TAG, "RecommendActivity::setRecommendData, mRecommendDataProvider is null");
             return;
         }
-
         synchronized (this) {
             if (!mIsSearching) {
                 setSearchStart(true);
@@ -108,13 +106,6 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
                 return;
             }
         }
-//        RecommendBaseFragment b = getCurrentRecommendBaseFragment();
-//        if (null != b) {
-//
-//            b.clear();
-//            setPagingStatus(false);
-//        }
-
         if (null == mRecommendViewPager) {
             return;
         }
@@ -126,6 +117,9 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
                 requestService, startIndex, SearchConstants.RecommendList.requestMaxCount_Recommend);
     }
 
+    /**
+     * レコメンドのリストを初期化
+     */
     private void initRecommendListView() {
         if (null != mRecommendViewPager) {
             return;
@@ -210,6 +204,10 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * フラグメントの取得
+     * @return
+     */
     private RecommendBaseFragment getCurrentRecommendBaseFragment() {
         int currentPageNo = mRecommendViewPager.getCurrentItem();
         RecommendBaseFragment baseFragment = RecommendFragmentFactory.createFragment(currentPageNo, this);
@@ -217,6 +215,10 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
     }
 
 
+    /**
+     * レコメンド取得完了時の表示処理
+     * @param resultInfoList
+     */
     public void recommendDataProviderSuccess(List<RecommendContentInfo> resultInfoList) {
         RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
 
@@ -283,8 +285,11 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-    private int mSearchLastItem = 0;
-    private boolean mIsPaging = false;
+
+    /**
+     * ページング判定の変更
+     * @param b
+     */
 
     private void setPagingStatus(boolean b) {
         synchronized (this) {
@@ -330,10 +335,10 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
 //        int maxPage = mSearchTotalCount/SearchConstants.RecommendList.requestMaxCount_Recommend;
 //        if(firstVisibleItem + visibleItemCount>=pageMax && maxPage >=1+ mPageNumber ){
         Log.i(DTVTConstants.LOG_DEF_TAG, "onScroll.first:" + firstVisibleItem + " .visible:" + visibleItemCount + " .total:" + totalItemCount + " dataSize:" + fragment.mData.size());
-        if (maxShowListSize > fragment.mData.size() &&
-                fragment.mData.size() % SearchConstants.RecommendList.requestMaxCount_Recommend == 0 &&
-                totalItemCount != 0 &&
-                firstVisibleItem + visibleItemCount >= fragment.mData.size()) {
+        if (maxShowListSize > fragment.mData.size() && // システム制約最大値 100件
+                fragment.mData.size() % SearchConstants.RecommendList.requestMaxCount_Recommend == 0 && // 中途の件数判定
+                totalItemCount != 0 && // 取得結果0件以外
+                firstVisibleItem + visibleItemCount >= fragment.mData.size()) { // 表示中の最下まで行ったかの判定
             setPagingStatus(true);
             fragment.displayLoadMore(true);
 
@@ -355,7 +360,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void RecommendChannelCallback(List<RecommendContentInfo> recommendContentInfoList) {
         Log.d(DTVTConstants.LOG_DEF_TAG, "Chan Callback DataSize:" + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + mRecommendViewPager.getCurrentItem());
-        if (mRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TELEBI) {
+        if (mRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV) {
             recommendDataProviderSuccess(recommendContentInfoList);
         }
     }

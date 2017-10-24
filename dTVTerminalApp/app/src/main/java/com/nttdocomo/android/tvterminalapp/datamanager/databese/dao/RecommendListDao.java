@@ -109,7 +109,7 @@ public class RecommendListDao {
     private String getTableName(int tagPageNo) {
         String tableName = null;
         switch (tagPageNo) {
-            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TELEBI:
+            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV:
                 tableName = RECOMMEND_CHANNEL_LIST_TABLE_NAME;
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO:
