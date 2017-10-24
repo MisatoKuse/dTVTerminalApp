@@ -28,6 +28,12 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
     private LinearLayout mLinearLayout;
     //コンテンツ一覧数
     private final static int CONTENT_LIST_COUNT = 3;
+    //UIの上下表示順(今日のテレビランキング)
+    private final static int TODAY_SORT = 0;
+    //UIの上下表示順(週刊のテレビランキング)
+    private final static int WEEK_SORT = 1;
+    //UIの上下表示順(ビデオランキング)
+    private final static int VIDEO_SORT = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +57,7 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
         findViewById(R.id.header_layout_back).setVisibility(View.INVISIBLE);
         menuImageView.setOnClickListener(this);
         int height = getHeightDensity();
+        //各ランキングリストのUIをあらかじめ用意する
         for (int i = 0; i < CONTENT_LIST_COUNT; i++) {
             View view = LayoutInflater.from(this).inflate(R.layout.home_main_layout_item, null, false);
             RelativeLayout relativeLayout = view.findViewById(R.id.home_main_item_type_rl);
@@ -177,21 +184,21 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
     @Override
     public void dailyRankListCallback(List<Map<String, String>> dailyMap) {
         if (dailyMap != null && dailyMap.size() > 0) {
-            setRecyclerView(dailyMap, 0);
+            setRecyclerView(dailyMap, TODAY_SORT);
         }
     }
 
     @Override
     public void weeklyRankCallback(List<Map<String, String>> weeklyMap) {
         if (weeklyMap != null && weeklyMap.size() > 0) {
-            setRecyclerView(weeklyMap, 1);
+            setRecyclerView(weeklyMap, WEEK_SORT);
         }
     }
 
     @Override
     public void videoRankCallback(List<Map<String, String>> videoMap) {
         if (videoMap != null && videoMap.size() > 0) {
-            setRecyclerView(videoMap, 2);
+            setRecyclerView(videoMap, VIDEO_SORT);
         }
     }
 }
