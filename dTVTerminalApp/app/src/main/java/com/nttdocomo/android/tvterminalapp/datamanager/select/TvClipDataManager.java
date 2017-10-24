@@ -8,7 +8,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvClipListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.HomeDBHelper;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 
 import java.util.List;
 import java.util.Map;
@@ -42,7 +42,7 @@ public class TvClipDataManager {
                 TVCLIP_LIST_DISPLAY_START_DATE, TVCLIP_LIST_DISP_TYPE};
 
         //Daoクラス使用準備
-        HomeDBHelper homeDBHelper = new HomeDBHelper(mContext);
+        DBHelper homeDBHelper = new DBHelper(mContext);
         SQLiteDatabase db = homeDBHelper.getWritableDatabase();
         TvClipListDao tvClipListDao = new TvClipListDao(db);
 
