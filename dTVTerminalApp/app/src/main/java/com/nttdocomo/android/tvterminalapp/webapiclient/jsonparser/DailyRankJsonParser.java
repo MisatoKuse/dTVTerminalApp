@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class DailyRankJsonParser extends AsyncTask<Object,Object,Object> {
+public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
 
     private DailyRankWebClient.DailyRankJsonParserCallback mDailyRankJsonParserCallback;
 
@@ -84,24 +84,25 @@ public class DailyRankJsonParser extends AsyncTask<Object,Object,Object> {
      *
      * @param mDailyRankJsonParserCallback
      */
-    public DailyRankJsonParser(DailyRankWebClient.DailyRankJsonParserCallback mDailyRankJsonParserCallback){
+    public DailyRankJsonParser(DailyRankWebClient.DailyRankJsonParserCallback mDailyRankJsonParserCallback) {
         this.mDailyRankJsonParserCallback = mDailyRankJsonParserCallback;
     }
 
     @Override
     protected void onPostExecute(Object s) {
-        mDailyRankJsonParserCallback.onDailyRankJsonParsed((List<DailyRankList>)s);
+        mDailyRankJsonParserCallback.onDailyRankJsonParsed((List<DailyRankList>) s);
     }
 
     @Override
     protected Object doInBackground(Object... strings) {
-        String result = (String)strings[0];
+        String result = (String) strings[0];
         List<DailyRankList> resultList = DailyRankListSender(result);
         return resultList;
     }
 
     /**
      * デイリーランキングJsonデータを解析する
+     *
      * @param jsonStr
      * @return
      */
@@ -131,6 +132,7 @@ public class DailyRankJsonParser extends AsyncTask<Object,Object,Object> {
 
     /**
      * statusの値をMapでオブジェクトクラスに渡す
+     *
      * @param jsonObj
      */
     public void sendStatus(JSONObject jsonObj) {
@@ -145,7 +147,7 @@ public class DailyRankJsonParser extends AsyncTask<Object,Object,Object> {
             if (!jsonObj.isNull(DAILYRANK_LIST_PAGER)) {
                 JSONObject pager = jsonObj.getJSONObject(DAILYRANK_LIST_PAGER);
 
-                for (int i = 0; i < pagerPara.length; i++){
+                for (int i = 0; i < pagerPara.length; i++) {
                     if (!pager.isNull(pagerPara[i])) {
                         String para = pager.getString(pagerPara[i]);
                         map.put(pagerPara[i], para);
@@ -165,6 +167,7 @@ public class DailyRankJsonParser extends AsyncTask<Object,Object,Object> {
 
     /**
      * コンテンツのList<HashMap>をオブジェクトクラスに格納
+     *
      * @param jsonObj
      */
     public void sendVcList(JSONObject jsonObj) {
@@ -177,18 +180,18 @@ public class DailyRankJsonParser extends AsyncTask<Object,Object,Object> {
                 JSONArray jsonArr = jsonObj.getJSONArray(DAILYRANK_LIST);
 
                 // リストの数だけまわす
-                for (int i = 0; i<jsonArr.length(); i++){
+                for (int i = 0; i < jsonArr.length(); i++) {
                     // 最初にHashMapを生成＆初期化
                     HashMap<String, String> vcListMap = new HashMap<String, String>();
 
                     // i番目のJSONArrayをJSONObjectに変換する
                     JSONObject jsonObject = jsonArr.getJSONObject(i);
 
-                    for (int j = 0; j < listPara.length; j++){
+                    for (int j = 0; j < listPara.length; j++) {
                         if (!jsonObject.isNull(listPara[j])) {
                             if (listPara[j] == DAILYRANK_LIST_GENRE_ID_ARRAY) {
                                 String para = jsonObject.getString(listPara[j]);
-                                vcListMap.put(listPara[j], para.substring(1, (para.length() -1)));
+                                vcListMap.put(listPara[j], para.substring(1, (para.length() - 1)));
                             } else {
                                 String para = jsonObject.getString(listPara[j]);
                                 vcListMap.put(listPara[j], para);

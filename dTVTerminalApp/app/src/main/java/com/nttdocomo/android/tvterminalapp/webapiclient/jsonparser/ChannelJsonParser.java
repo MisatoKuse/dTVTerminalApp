@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class ChannelJsonParser extends AsyncTask<Object, Object, Object>{
+public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
 
     private ChannelWebClient.ChannelJsonParserCallback mChannelJsonParserCallback;
 
@@ -79,6 +79,7 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object>{
 
     /**
      * CH一覧Jsonデータを解析する
+     *
      * @param jsonStr
      * @return
      */
@@ -108,6 +109,7 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object>{
 
     /**
      * statusの値をMapでオブジェクトクラスに渡す
+     *
      * @param jsonObj
      */
     public void sendStatus(JSONObject jsonObj) {
@@ -122,7 +124,7 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object>{
             if (!jsonObj.isNull(CHANNEL_LIST_PAGER)) {
                 JSONObject pager = jsonObj.getJSONObject(CHANNEL_LIST_PAGER);
 
-                for (int i = 0; i < pagerPara.length; i++){
+                for (int i = 0; i < pagerPara.length; i++) {
                     if (!pager.isNull(pagerPara[i])) {
                         String para = pager.getString(pagerPara[i]);
                         map.put(pagerPara[i], para);
@@ -145,24 +147,25 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object>{
      *
      * @param mChannelJsonParserCallback
      */
-    public ChannelJsonParser(ChannelWebClient.ChannelJsonParserCallback mChannelJsonParserCallback){
+    public ChannelJsonParser(ChannelWebClient.ChannelJsonParserCallback mChannelJsonParserCallback) {
         this.mChannelJsonParserCallback = mChannelJsonParserCallback;
     }
 
     @Override
     protected void onPostExecute(Object s) {
-        mChannelJsonParserCallback.onChannelJsonParsed((List<ChannelList>)s);
+        mChannelJsonParserCallback.onChannelJsonParsed((List<ChannelList>) s);
     }
 
     @Override
     protected Object doInBackground(Object... strings) {
-        String result = (String)strings[0];
+        String result = (String) strings[0];
         List<ChannelList> resultList = CHANNELListSender(result);
         return resultList;
     }
 
     /**
      * コンテンツのList<HashMap>をオブジェクトクラスに格納
+     *
      * @param jsonObj
      */
     public void sendVcList(JSONObject jsonObj) {
@@ -175,18 +178,18 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object>{
                 JSONArray jsonArr = jsonObj.getJSONArray(CHANNEL_LIST);
 
                 // リストの数だけまわす
-                for (int i = 0; i<jsonArr.length(); i++){
+                for (int i = 0; i < jsonArr.length(); i++) {
                     // 最初にHashMapを生成＆初期化
                     HashMap<String, String> vcListMap = new HashMap<String, String>();
 
                     // i番目のJSONArrayをJSONObjectに変換する
                     JSONObject jsonObject = jsonArr.getJSONObject(i);
 
-                    for (int j = 0; j < listPara.length; j++){
+                    for (int j = 0; j < listPara.length; j++) {
                         if (!jsonObject.isNull(listPara[j])) {
                             if (listPara[j] == CHANNEL_LIST_GENRE_ID_ARRAY) {
                                 String para = jsonObject.getString(listPara[j]);
-                                vcListMap.put(listPara[j], para.substring(1, (para.length() -1)));
+                                vcListMap.put(listPara[j], para.substring(1, (para.length() - 1)));
                             } else {
                                 String para = jsonObject.getString(listPara[j]);
                                 vcListMap.put(listPara[j], para);

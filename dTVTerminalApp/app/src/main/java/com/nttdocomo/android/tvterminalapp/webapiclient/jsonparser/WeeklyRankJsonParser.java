@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object>{
+public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
 
     private WeeklyRankWebClient.WeeklyRankJsonParserCallback mWeeklyRankJsonParserCallback;
     // オブジェクトクラスの定義
@@ -70,18 +70,18 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object>{
      *
      * @param mWeeklyRankJsonParserCallback
      */
-    public WeeklyRankJsonParser(WeeklyRankWebClient.WeeklyRankJsonParserCallback mWeeklyRankJsonParserCallback){
+    public WeeklyRankJsonParser(WeeklyRankWebClient.WeeklyRankJsonParserCallback mWeeklyRankJsonParserCallback) {
         this.mWeeklyRankJsonParserCallback = mWeeklyRankJsonParserCallback;
     }
 
     @Override
     protected void onPostExecute(Object s) {
-        mWeeklyRankJsonParserCallback.onWeeklyRankJsonParsed((List<WeeklyRankList>)s);
+        mWeeklyRankJsonParserCallback.onWeeklyRankJsonParsed((List<WeeklyRankList>) s);
     }
 
     @Override
     protected Object doInBackground(Object... strings) {
-        String result = (String)strings[0];
+        String result = (String) strings[0];
         List<WeeklyRankList> resultList = WeeklyRankListSender(result);
         return resultList;
     }
@@ -117,6 +117,11 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object>{
         return null;
     }
 
+    /**
+     * statusの値をMapでオブジェクトクラスに格納
+     *
+     * @param jsonObj
+     */
     public void sendStatus(JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納

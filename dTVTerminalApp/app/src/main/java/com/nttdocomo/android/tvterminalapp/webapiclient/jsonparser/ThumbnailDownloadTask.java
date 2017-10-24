@@ -39,10 +39,10 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
             in = new BufferedInputStream(urlConnection.getInputStream(), 8 * 1024);
             Bitmap bitmap = BitmapFactory.decodeStream(in);
             // ディスクに保存する
-            thumbnailProvider.mThumbnailCacheManager.saveBitmapToDisk(imageUrl,bitmap);
+            thumbnailProvider.mThumbnailCacheManager.saveBitmapToDisk(imageUrl, bitmap);
             if (bitmap != null) {
                 // メモリにプッシュする
-                thumbnailProvider.mThumbnailCacheManager.putBitmapToMem(imageUrl,bitmap);
+                thumbnailProvider.mThumbnailCacheManager.putBitmapToMem(imageUrl, bitmap);
             }
             return bitmap;
         } catch (IOException e) {
@@ -65,11 +65,11 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
     @Override
     protected void onPostExecute(Bitmap result) {
         super.onPostExecute(result);
-        if (result != null && imageView!=null) {
+        if (result != null && imageView != null) {
             // 画像のpositionをズレないよう
             if (imageView.getTag() != null && imageView.getTag().equals(imageUrl)) {
                 imageView.setImageBitmap(result);
-                Log.i("dTV", "download end..... url="+imageUrl);
+                Log.i("dTV", "download end..... url=" + imageUrl);
             }
         }
         --thumbnailProvider.currentQueueCount;
