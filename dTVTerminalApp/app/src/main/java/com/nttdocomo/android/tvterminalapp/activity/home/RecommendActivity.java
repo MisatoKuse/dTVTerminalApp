@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
 
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
@@ -198,7 +201,11 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-    /*インジケーター設置*/
+    /**
+     * インジケーター設置
+     *
+     * @param position
+     */
     public void setTab(int position) {
         if (mLinearLayout != null) {
             for (int i = 0; i < mTabNames.length; i++) {
@@ -269,6 +276,9 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
 
     }
 
+    /**
+     * フラグメントクリア
+     */
     public void clearAllFragment() {
 
         if (null != mRecommendViewPager) {
@@ -311,7 +321,6 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
      *
      * @param b
      */
-
     private void setPagingStatus(boolean b) {
         synchronized (this) {
             mIsPaging = b;

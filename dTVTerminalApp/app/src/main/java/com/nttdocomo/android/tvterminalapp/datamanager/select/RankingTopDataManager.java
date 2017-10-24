@@ -8,7 +8,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VideoRankListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WeeklyRankListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 
 import java.util.List;
