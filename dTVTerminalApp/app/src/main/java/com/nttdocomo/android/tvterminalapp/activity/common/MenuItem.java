@@ -19,6 +19,7 @@ public enum MenuItem {
     RANKING,                 //ランキング
     CLIP,                    //クリップ
     BOUGHT_VIDEO,           //購入済みビデオ
+    WATCH_LISTEN_VIDEO,     //視聴中ビデオ
     RECORD_RESERVE,         //録画予約
     VIDEO,                   //ビデオ
     KEY_WORD_SEARCH,       //キーワードで探す

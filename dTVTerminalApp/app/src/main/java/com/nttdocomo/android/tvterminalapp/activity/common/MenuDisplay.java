@@ -22,6 +22,7 @@ import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecommendActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordReservationListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.WatchingVideoListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.other.NewsActivity;
 import com.nttdocomo.android.tvterminalapp.activity.other.SettingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.RankingTopActivity;
@@ -187,6 +188,13 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.VIDEO);
                     //4月時は非対応
                 }
+            } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_watch_listen_video))) {
+                if (null != mMenuDisplayEventListener) {
+                    mMenuDisplayEventListener.onMenuItemSelected(MenuItem.WATCH_LISTEN_VIDEO);
+                    if( !(mActivity instanceof WatchingVideoListActivity) ) {
+                        mActivity.startActivity(WatchingVideoListActivity.class, null);
+                    }
+                }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_record_reserve))) {
                 if (null != mMenuDisplayEventListener) {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.RECORD_RESERVE);
@@ -324,6 +332,10 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_video));
         mMenuItemCount.add(-1);
 
+        //視聴中ビデオ
+        mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_watch_listen_video));
+        mMenuItemCount.add(-1);
+
         //キーワードで探す
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_keyword_search));
         mMenuItemCount.add(-1);
@@ -367,6 +379,10 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_video));
         mMenuItemCount.add(-1);
 
+        //視聴中ビデオ
+        mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_watch_listen_video));
+        mMenuItemCount.add(-1);
+
         //キーワードで探す
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_keyword_search));
         mMenuItemCount.add(-1);
@@ -406,6 +422,10 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_video));
         mMenuItemCount.add(-1);
 
+        //視聴中ビデオ
+        mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_watch_listen_video));
+        mMenuItemCount.add(-1);
+
         //キーワードで探す
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_keyword_search));
         mMenuItemCount.add(-1);
@@ -443,6 +463,10 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
 
         //ビデオ
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_video));
+        mMenuItemCount.add(-1);
+
+        //視聴中ビデオ
+        mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_watch_listen_video));
         mMenuItemCount.add(-1);
 
         //キーワードで探す
