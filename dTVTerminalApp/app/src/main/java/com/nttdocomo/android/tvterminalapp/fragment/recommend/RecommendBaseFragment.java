@@ -29,13 +29,13 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
 
     public Context mActivity;
     public List mData;
-    private RecommendBaseFragmentScrollListener mRecommendBaseFragmentScrollListener=null;
+    private RecommendBaseFragmentScrollListener mRecommendBaseFragmentScrollListener = null;
     private View mLoadMoreView;
     private View mLoadCompleteView;
-	private RecommendListBaseAdapter mRecommendListBaseAdapter=null;
+    private RecommendListBaseAdapter mRecommendListBaseAdapter = null;
 
-    public void setRecommendBaseFragmentScrollListener(RecommendBaseFragmentScrollListener lis){
-        mRecommendBaseFragmentScrollListener=lis;
+    public void setRecommendBaseFragmentScrollListener(RecommendBaseFragmentScrollListener lis) {
+        mRecommendBaseFragmentScrollListener = lis;
     }
 
     @Override
@@ -59,8 +59,8 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     private View mRecommendFragmentView;
     private ListView mRecommendListview;
 
-    public View initView(){
-        if(null==mRecommendFragmentView) {
+    public View initView() {
+        if (null == mRecommendFragmentView) {
             mRecommendFragmentView = View.inflate(getActivity()
                     , R.layout.fragment_recommend_content, null);
             mRecommendListview = mRecommendFragmentView.findViewById(R.id.lv_recommend_list);
@@ -76,24 +76,24 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
         mRecommendListBaseAdapter = new RecommendListBaseAdapter(getContext(), mData, R.layout.item_recommend_list);
         mRecommendListview.setAdapter(mRecommendListBaseAdapter);
 
-                return mRecommendFragmentView;
+        return mRecommendFragmentView;
     }
 
-    public void notifyDataSetChanged(){
-        if(null!=mRecommendListBaseAdapter){
+    public void notifyDataSetChanged() {
+        if (null != mRecommendListBaseAdapter) {
             mRecommendListBaseAdapter.notifyDataSetChanged();
         }
     }
 
-    public void setSelection(int itemNo){
-        if(null!= mRecommendListview){
+    public void setSelection(int itemNo) {
+        if (null != mRecommendListview) {
             mRecommendListview.setSelection(itemNo);
         }
     }
 
-    public void displayLoadMore(boolean b){
-        if(null!= mRecommendListview && null!=mLoadMoreView){
-            if(b){
+    public void displayLoadMore(boolean b) {
+        if (null != mRecommendListview && null != mLoadMoreView) {
+            if (b) {
                 mRecommendListview.addFooterView(mLoadMoreView);
             } else {
                 mRecommendListview.removeFooterView(mLoadMoreView);
@@ -101,7 +101,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
         }
     }
 
-    public void clear(){
+    public void clear() {
         mData.clear();
     }
 
@@ -111,14 +111,14 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
 
     @Override
     public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if(null!=mRecommendBaseFragmentScrollListener){
+        if (null != mRecommendBaseFragmentScrollListener) {
             mRecommendBaseFragmentScrollListener.onScroll(this, absListView, firstVisibleItem, visibleItemCount, totalItemCount);
         }
     }
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        ((BaseActivity)mActivity).startActivity(TvPlayerActivity.class, null);
+        ((BaseActivity) mActivity).startActivity(TvPlayerActivity.class, null);
     }
 
 }

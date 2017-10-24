@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
+import com.nttdocomo.android.tvterminalapp.model.recommend.RecommendContentInfo;
 import com.nttdocomo.android.tvterminalapp.model.search.SearchContentInfo;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class RecommendListBaseAdapter extends BaseAdapter {
     private Context mContext = null;
     private List mData = null;
     //private int layoutid;
-    private ThumbnailProvider mThumbnailProvider=null;
+    private ThumbnailProvider mThumbnailProvider = null;
 
     public RecommendListBaseAdapter(Context context, List data, int id) {
         this.mContext = context;
@@ -52,9 +53,9 @@ public class RecommendListBaseAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup parent) {
-        SearchContentInfo searchContentInfo = (SearchContentInfo) mData.get(position);
+        RecommendContentInfo recommendContentInfo = (RecommendContentInfo) mData.get(position);
         ViewHolder holder;
-        if(null==view){
+        if (null == view) {
             view = View.inflate(mContext, R.layout.item_recommend_list, null);
             holder = new ViewHolder();
             holder.iv_thumbnail = view.findViewById(R.id.recommend_iv_thumbnail);
@@ -63,31 +64,31 @@ public class RecommendListBaseAdapter extends BaseAdapter {
             holder.bt_clip = view.findViewById(R.id.recommend_bt_clip);
             holder.bt_clip.setVisibility(View.GONE);
 
-            float mWidth = (float)mContext.getResources().getDisplayMetrics().widthPixels / 3;
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int)mWidth,(int)mWidth/2);
+            float mWidth = (float) mContext.getResources().getDisplayMetrics().widthPixels / 3;
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int) mWidth, (int) mWidth / 2);
             holder.iv_thumbnail.setLayoutParams(layoutParams);
             view.setTag(holder);
-        }else {
+        } else {
             holder = (ViewHolder) view.getTag();
         }
 
-        if(null != holder.tv_title){
-            holder.tv_title.setText(searchContentInfo.title);
+        if (null != holder.tv_title) {
+            holder.tv_title.setText(recommendContentInfo.title);
         }
 
-        if(null != holder.tv_des){
+        if (null != holder.tv_des) {
             holder.tv_des.setText("");
         }
 
-        if(searchContentInfo.clipFlag){
+        if (recommendContentInfo.clipFlag) {
 
         }
 
-        if(null!=holder.iv_thumbnail){
+        if (null != holder.iv_thumbnail) {
 
-            holder.iv_thumbnail.setTag(searchContentInfo.contentPictureUrl);
-            Bitmap bp= mThumbnailProvider.getThumbnailImage(holder.iv_thumbnail, searchContentInfo.contentPictureUrl);
-            if(null!=bp){
+            holder.iv_thumbnail.setTag(recommendContentInfo.contentPictureUrl);
+            Bitmap bp = mThumbnailProvider.getThumbnailImage(holder.iv_thumbnail, recommendContentInfo.contentPictureUrl);
+            if (null != bp) {
                 holder.iv_thumbnail.setImageBitmap(bp);
             }
         }

@@ -42,6 +42,15 @@ public class DateUtils {
     //VideoRank取得日付キー
     public static final String VIDEO_RANK_LAST_INSERT = "VideoRankLastInsert";
 
+    //おすすめdTV取得日付キー
+    public static final String RECOMMEND_DTV_LAST_INSERT = "RecommendDTVLastInsert";
+
+    //おすすめdTV取得日付キー
+    public static final String RECOMMEND_DCHANNEL_LAST_INSERT = "RecommendDCHLastInsert";
+
+    //おすすめdTV取得日付キー
+    public static final String RECOMMEND_DANIME_LAST_INSERT = "RecommendDAnimeLastInsert";
+
     //SharedPreferences用データ
     private static final String DATA_SAVE = "DataSave";
 

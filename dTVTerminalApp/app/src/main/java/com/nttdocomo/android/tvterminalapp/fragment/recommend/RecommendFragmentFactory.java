@@ -29,8 +29,8 @@ public class RecommendFragmentFactory {
         return fragment;
     }
 
-    public static synchronized int getFragmentCount(){
-        if(null!=mFragments){
+    public static synchronized int getFragmentCount() {
+        if (null != mFragments) {
             return mFragments.size();
         }
 

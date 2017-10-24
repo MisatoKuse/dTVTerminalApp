@@ -223,7 +223,6 @@ import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoR
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_DUR;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_DEMONG;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_DVFLG;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_4KFLG;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_HDRFLG;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_AVAIL_STATUS;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_DELIVERY;
@@ -502,8 +501,8 @@ public class DBConstants {
             RECOMMENDCHANNEL_LIST_RESERVED5 + " text, " +
             RECOMMENDCHANNEL_LIST_AGREEMENT + " text, " +
             RECOMMENDCHANNEL_LIST_VIEWABLE + " text, " +
-            RECOMMENDCHANNEL_LIST_PAGEID + " text " +
-            RECOMMENDCHANNEL_LIST_GROUPID + " text " +
+            RECOMMENDCHANNEL_LIST_PAGEID + " text, " +
+            RECOMMENDCHANNEL_LIST_GROUPID + " text, " +
             RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID + " text " +
             ")";
 
@@ -581,4 +580,85 @@ public class DBConstants {
             VIDEORANK_LIST_PLIT    + " text " +
             ")";
 
+    // レコメンド（dTV）データ格納用テーブル
+    public static final String RECOMMEND_LIST_DTV_TABLE_NAME = "recommend_dtv_list";
+    public static final String CREATE_TABLE_RECOMMEND_DTV_SQL = "" +
+            "create table " + RECOMMEND_LIST_DTV_TABLE_NAME + " (" +
+            ID_COLUMN + " integer primary key autoincrement, " +
+            RECOMMENDCHANNEL_LIST_RECOMMENDORDER + " text, " +
+            RECOMMENDCHANNEL_LIST_SERVICEID + " text, " +
+            RECOMMENDCHANNEL_LIST_CATEGORYID + " text, " +
+            RECOMMENDCHANNEL_LIST_CHANNELID + " text, " +
+            RECOMMENDCHANNEL_LIST_CONTENTSID + " text, " +
+            RECOMMENDCHANNEL_LIST_TITLE + " text, " +
+            RECOMMENDCHANNEL_LIST_CTPICURL1 + " text, " +
+            RECOMMENDCHANNEL_LIST_CTPICURL2 + " text, " +
+            RECOMMENDCHANNEL_LIST_STARTVIEWING + " text, " +
+            RECOMMENDCHANNEL_LIST_ENDVIEWING + " text, " +
+            RECOMMENDCHANNEL_LIST_RESERVED1 + " text, " +
+            RECOMMENDCHANNEL_LIST_RESERVED2 + " text, " +
+            RECOMMENDCHANNEL_LIST_RESERVED3 + " text, " +
+            RECOMMENDCHANNEL_LIST_RESERVED4 + " text, " +
+            RECOMMENDCHANNEL_LIST_RESERVED5 + " text, " +
+            RECOMMENDCHANNEL_LIST_AGREEMENT + " text, " +
+            RECOMMENDCHANNEL_LIST_VIEWABLE + " text, " +
+            RECOMMENDCHANNEL_LIST_PAGEID + " text ," +
+            RECOMMENDCHANNEL_LIST_GROUPID + " text, " +
+            RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID + " text " +
+            ")";
+
+    // レコメンド（dチャンネル）データ格納用テーブル
+    public static final String RECOMMEND_LIST_DCHANNEL_TABLE_NAME = "recommend_list_dchannel";
+    public static final String CREATE_TABLE_RECOMMEND_DCHANNEL_SQL = "" +
+            "create table " + RECOMMEND_LIST_DCHANNEL_TABLE_NAME + " (" +
+            ID_COLUMN + " integer primary key autoincrement, " +
+            RECOMMENDCHANNEL_LIST_RECOMMENDORDER + " text, " +
+            RECOMMENDCHANNEL_LIST_SERVICEID + " text, " +
+            RECOMMENDCHANNEL_LIST_CATEGORYID + " text, " +
+            RECOMMENDCHANNEL_LIST_CHANNELID + " text, " +
+            RECOMMENDCHANNEL_LIST_CONTENTSID + " text, " +
+            RECOMMENDCHANNEL_LIST_TITLE + " text, " +
+            RECOMMENDCHANNEL_LIST_CTPICURL1 + " text, " +
+            RECOMMENDCHANNEL_LIST_CTPICURL2 + " text, " +
+            RECOMMENDCHANNEL_LIST_STARTVIEWING + " text, " +
+            RECOMMENDCHANNEL_LIST_ENDVIEWING + " text, " +
+            RECOMMENDCHANNEL_LIST_RESERVED1 + " text, " +
+            RECOMMENDCHANNEL_LIST_RESERVED2 + " text, " +
+            RECOMMENDCHANNEL_LIST_RESERVED3 + " text, " +
+            RECOMMENDCHANNEL_LIST_RESERVED4 + " text, " +
+            RECOMMENDCHANNEL_LIST_RESERVED5 + " text, " +
+            RECOMMENDCHANNEL_LIST_AGREEMENT + " text, " +
+            RECOMMENDCHANNEL_LIST_VIEWABLE + " text, " +
+            RECOMMENDCHANNEL_LIST_PAGEID + " text, " +
+            RECOMMENDCHANNEL_LIST_GROUPID + " text, " +
+            RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID + " text " +
+            ")";
+
+
+    // レコメンド（dアニメ）データ格納用テーブル
+    public static final String RECOMMEND_LIST_DANIME_TABLE_NAME = "recommend_danime_list";
+    public static final String CREATE_TABLE_RECOMMEND_DANIME_SQL = "" +
+            "create table " + RECOMMEND_LIST_DANIME_TABLE_NAME + " (" +
+            ID_COLUMN + " integer primary key autoincrement, " +
+            RECOMMENDCHANNEL_LIST_RECOMMENDORDER + " text, " +
+            RECOMMENDCHANNEL_LIST_SERVICEID + " text, " +
+            RECOMMENDCHANNEL_LIST_CATEGORYID + " text, " +
+            RECOMMENDCHANNEL_LIST_CHANNELID + " text, " +
+            RECOMMENDCHANNEL_LIST_CONTENTSID + " text, " +
+            RECOMMENDCHANNEL_LIST_TITLE + " text, " +
+            RECOMMENDCHANNEL_LIST_CTPICURL1 + " text, " +
+            RECOMMENDCHANNEL_LIST_CTPICURL2 + " text, " +
+            RECOMMENDCHANNEL_LIST_STARTVIEWING + " text, " +
+            RECOMMENDCHANNEL_LIST_ENDVIEWING + " text, " +
+            RECOMMENDCHANNEL_LIST_RESERVED1 + " text, " +
+            RECOMMENDCHANNEL_LIST_RESERVED2 + " text, " +
+            RECOMMENDCHANNEL_LIST_RESERVED3 + " text, " +
+            RECOMMENDCHANNEL_LIST_RESERVED4 + " text, " +
+            RECOMMENDCHANNEL_LIST_RESERVED5 + " text, " +
+            RECOMMENDCHANNEL_LIST_AGREEMENT + " text, " +
+            RECOMMENDCHANNEL_LIST_VIEWABLE + " text, " +
+            RECOMMENDCHANNEL_LIST_PAGEID + " text, " +
+            RECOMMENDCHANNEL_LIST_GROUPID + " text, " +
+            RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID + " text " +
+            ")";
 }

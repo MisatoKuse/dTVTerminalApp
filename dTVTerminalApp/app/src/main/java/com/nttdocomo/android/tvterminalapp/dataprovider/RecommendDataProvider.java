@@ -1,18 +1,16 @@
-/*
- * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
- */
 
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 
 import android.content.Context;
+import android.util.Log;
 
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendChInsertDataManager;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendVdInsertDataManager;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendListDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendVdList;
 import com.nttdocomo.android.tvterminalapp.model.recommend.RecommendContentInfo;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendRequestData;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 
@@ -20,6 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.RECOMMEND_CH_LAST_INSERT;
+import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.RECOMMEND_DANIME_LAST_INSERT;
+import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.RECOMMEND_DCHANNEL_LAST_INSERT;
+import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.RECOMMEND_DTV_LAST_INSERT;
+import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.RECOMMEND_VD_LAST_INSERT;
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.WEEKLY_RANK_LAST_INSERT;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID;
@@ -29,25 +32,15 @@ import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.Recomme
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE;
 
 public class RecommendDataProvider implements
-        RecommendWebClient.RecommendCallback{
+        RecommendWebClient.RecommendCallback {
 
     private Context mContext;
     private static final String COMMA = ",";
     private static final String SEPARATOR = ":";
 
-    // 取得対象サービスID
-    private static final String SERVICE_ID = null;
-    // レコメンド取得ページ
-    private static final String GET_PAGE = "1";
-    // レコメンド取得開始位置
-    private static final String START_INDEX = "1";
-    // レコメンド取得最大件数
-    private static final String MAX_RESULT = "100";
-    // 画面ID
-    //TODO ダミーデータ
-    private static final String PAGE_ID = null;
-    // 放送時間考慮
-    private static final String AIRTIME = "1";
+    // ページング判定
+    private boolean mIsPaging = false;
+
 
     // 取得対象サービスID:カテゴリーID
     public enum recommendRequestId {
@@ -70,32 +63,26 @@ public class RecommendDataProvider implements
             this.serviceId = sId;
             this.categoryId = cId;
         }
+
         // サービスID
         public String getServiceId() {
             return this.serviceId;
         }
+
         // カテゴリID
         public String getCategoryId() {
             return this.categoryId;
         }
+
         // サービスID:カテゴリID
         public String getRequestSCId() {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(this.categoryId)
+            stringBuilder.append(this.serviceId)
                     .append(SEPARATOR)
-                    .append(this.serviceId);
+                    .append(this.categoryId);
             return stringBuilder.toString();
         }
     }
-
-    private int RECOMMEND_SERVICE_ID_TELEVI_VIDEO
-            = Integer.parseInt(recommendRequestId.HIKARITV_DOCOMO_IPTV.getServiceId());
-    private int RECOMMEND_SERVICE_ID_DCHANNEL
-            = Integer.parseInt(recommendRequestId.HIKARITV_DOCOMO_IPTV.getServiceId());
-    private int RECOMMEND_SERVICE_ID_DTV
-            = Integer.parseInt(recommendRequestId.HIKARITV_DOCOMO_IPTV.getServiceId());
-    private int RECOMMEND_SERVICE_ID_DANIME
-            = Integer.parseInt(recommendRequestId.HIKARITV_DOCOMO_IPTV.getServiceId());
 
     private int[] RECOMMEND_CATEGORY_ID_TELEVI
             = {Integer.parseInt(recommendRequestId.HIKARITV_DOCOMO_IPTV.getCategoryId()),
@@ -109,76 +96,18 @@ public class RecommendDataProvider implements
     };
 
 
-
-
-    // TODO レスポンス処理
     @Override
     public void RecommendCallback(RecommendChList mRecommendChList) {
         if (mRecommendChList != null &&
                 mRecommendChList.getmRcList() != null &&
                 mRecommendChList.getmRcList().size() > 0) {
-//            setStructDB(mRecommendChList);
-            sendRecommendChListData(mRecommendChList.getmRcList());
+            sendRecommendChListData(mRecommendChList);
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
+            apiDataProviderCallback.RecommendNGCallback();
         }
     }
 
-//    検討予定のコールバックをコメントアウト
-//    @Override
-//    public void RecommendVideoCallback(RecommendVdList mRecommendVdList) {
-//        if (mRecommendVdList != null && mRecommendVdList.getmRvList() != null &&
-//                mRecommendVdList.getmRvList().size() > 0) {
-////            setStructDB(mRecommendVdList);
-//            sendRecommendVdListData(mRecommendVdList.getmRvList());
-//        } else {
-//            //TODO:WEBAPIを取得できなかった時の処理を記載予定
-//        }
-//    }
-//
-//    @Override
-//    public void RecommendChannelCallback(RecommendChList mRecommendChList) {
-//        if (mRecommendChList != null && mRecommendChList.getmRcList() != null &&
-//                mRecommendChList.getmRcList().size() > 0) {
-////            setStructDB(mRecommendChList);
-//            sendRecommendChListData(mRecommendChList.getmRcList());
-//        } else {
-//            //TODO:WEBAPIを取得できなかった時の処理を記載予定
-//        }
-//    }
-//
-//    @Override
-//    public void RecommenddTVCallback(RecommenddTVList mRecommenddTVList) {
-//        if (mRecommenddTVList != null && mRecommenddTVList.getmRcList() != null &&
-//                mRecommenddTVList.getmRcList().size() > 0) {
-////            setStructDB(mRecommenddTVList);
-//            sendRecommenddTVListData(mRecommenddTVList.getmRcList());
-//        } else {
-//            //TODO:WEBAPIを取得できなかった時の処理を記載予定
-//        }
-//    }
-//
-//    @Override
-//    public void RecommenddAnimeCallback(RecommenddAnimeList mRecommenddAnimeList) {
-//        if (mRecommenddAnimeList != null && mRecommenddAnimeList.getmRcList() != null &&
-//                mRecommenddAnimeList.getmRcList().size() > 0) {
-////            setStructDB(mRecommenddAnimeList);
-//            sendRecommenddAnimeListData(mRecommenddAnimeList.getmRcList());
-//        } else {
-//            //TODO:WEBAPIを取得できなかった時の処理を記載予定
-//        }
-//    }
-//
-//    @Override
-//    public void RecommenddChCallback(RecommenddCHList mRecommenddCHList) {
-//        if (mRecommenddCHList != null && mRecommenddCHList.getmRcList() != null &&
-//                mRecommenddCHList.getmRcList().size() > 0) {
-////            setStructDB(mRecommenddCHList);
-//            sendRecommenddChListData(mRecommenddCHList.getmRcList());
-//        } else {
-//            //TODO:WEBAPIを取得できなかった時の処理を記載予定
-//        }
-//    }
 
     /**
      * Home画面用データを返却するためのコールバック
@@ -204,21 +133,26 @@ public class RecommendDataProvider implements
          *
          * @param recommendContentInfoList
          */
-        void RecommenddTVCallback(List<RecommendContentInfo> recommendContentInfoList);
+        void RecommendDTVCallback(List<RecommendContentInfo> recommendContentInfoList);
 
         /**
          * おすすめdアニメ用コールバック
          *
          * @param recommendContentInfoList
          */
-        void RecommenddAnimeCallback(List<RecommendContentInfo> recommendContentInfoList);
+        void RecommendDAnimeCallback(List<RecommendContentInfo> recommendContentInfoList);
 
         /**
          * おすすめdチャンネル用コールバック
          *
          * @param recommendContentInfoList
          */
-        void RecommenddChannelCallback(List<RecommendContentInfo> recommendContentInfoList);
+        void RecommendDChannelCallback(List<RecommendContentInfo> recommendContentInfoList);
+
+        /**
+         * 0件取得時のコールバック
+         */
+        void RecommendNGCallback();
     }
 
     private RecommendApiDataProviderCallback apiDataProviderCallback;
@@ -234,60 +168,118 @@ public class RecommendDataProvider implements
     }
 
     /**
+     * キャッシュからデータを取得
+     *
+     * @param cacheDateKey  日付キー
+     * @param requestPageNo タブNo
+     * @param startIndex    取得開始位置
+     * @param maxResult     最大取得件数
+     * @return
+     */
+    private List<RecommendContentInfo> getRecommendListDataCache(
+            String cacheDateKey, int requestPageNo, int startIndex, int maxResult) {
+
+        DateUtils dateUtils = new DateUtils(mContext);
+        String lastDate = dateUtils.getLastDate(cacheDateKey);
+
+        List<RecommendContentInfo> resultList = new ArrayList<>();
+        //Vodクリップ一覧のDB保存履歴と、有効期間を確認
+        if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
+            //データをDBから取得する
+            RecommendListDataManager recommendDataManager = new RecommendListDataManager(mContext);
+            resultList = recommendDataManager.selectRecommendList(requestPageNo, startIndex, maxResult);
+        } else {
+            // nop.
+        }
+        return resultList;
+    }
+
+    /**
      * Activityからのデータ取得要求受付
+     *
      * @param requestPageNo タブ種別 ,startIndex 取得開始位置, maxResult 最大取得件数
      */
-    public void startGetRecommendData(int requestPageNo,int startIndex,int maxResult) {
+    public void startGetRecommendData(int requestPageNo, int startIndex, int maxResult) {
+        Log.i(DTVTConstants.LOG_DEF_TAG, "requestPageNo:" + requestPageNo);
+        // RequestDataのインスタンス生成
+        RecommendRequestData requestData = new RecommendRequestData();
 
-        StringBuilder stringBuilder = new StringBuilder();
+        List<RecommendContentInfo> resultList = null;
         switch (requestPageNo) {
-            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TEREBI: //テレビ
-                getTerebiRequestSCIdStr();
-                // TODO リクエストデータクラスのインスタンス生成
-                // TODO WebClient.Api呼び出し
+            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TELEBI: //テレビ
+                resultList = getRecommendListDataCache
+                        (RECOMMEND_CH_LAST_INSERT, requestPageNo, startIndex, maxResult);
+                if (resultList.size() < maxResult) { // キャッシュ内のデータ数が20件未満の場合
+                    requestData.serviceCategoryId = getTerebiRequestSCIdStr();
+                } else {
+                    apiDataProviderCallback.RecommendChannelCallback(resultList);
+                    return;
+                }
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO: //ビデオ
-                getVideoRequestSCIdStr();
-                // TODO WebClient.Api呼び出し
+                resultList = getRecommendListDataCache
+                        (RECOMMEND_VD_LAST_INSERT, requestPageNo, startIndex, maxResult);
+                if (resultList.size() < maxResult) { // キャッシュ内のデータ数が20件未満の場合
+                    requestData.serviceCategoryId = getVideoRequestSCIdStr();
+                } else {
+                    apiDataProviderCallback.RecommendVideoCallback(resultList);
+                    return;
+                }
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL: //dTVチャンネル
-                getdCHRequestSCIdStr();
-                // TODO WebClient.Api呼び出し
+                resultList = getRecommendListDataCache
+                        (RECOMMEND_DCHANNEL_LAST_INSERT, requestPageNo, startIndex, maxResult);
+                if (resultList.size() < maxResult) { // キャッシュ内のデータ数が20件未満の場合
+                    requestData.serviceCategoryId = getDCHRequestSCIdStr();
+                } else {
+                    apiDataProviderCallback.RecommendDChannelCallback(resultList);
+                    return;
+                }
+
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV: //dTV
-                getdTVRequestSCIdStr();
-                // TODO WebClient.Api呼び出し
+                resultList = getRecommendListDataCache
+                        (RECOMMEND_DTV_LAST_INSERT, requestPageNo, startIndex, maxResult);
+                if (resultList.size() < maxResult) { // キャッシュ内のデータ数が20件未満の場合
+                    requestData.serviceCategoryId = getDTVRequestSCIdStr();
+                } else {
+                    apiDataProviderCallback.RecommendDTVCallback(resultList);
+                    return;
+                }
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME: //dアニメ
-                getdAnimeRequestSCIdStr();
-                // TODO WebClient.Api呼び出し
+                resultList = getRecommendListDataCache
+                        (RECOMMEND_DANIME_LAST_INSERT, requestPageNo, startIndex, maxResult);
+                if (resultList.size() < maxResult) { // キャッシュ内のデータ数が20件未満の場合
+                    requestData.serviceCategoryId = getDAnimeRequestSCIdStr();
+                } else {
+                    apiDataProviderCallback.RecommendDAnimeCallback(resultList);
+                    return;
+                }
                 break;
             default:
-                // TODO 全件呼び出し
                 break;
         }
-        try {
-//
-//            RecommendChWebClient mRecommendChWebClient = new RecommendChWebClient(this);
-//            mRecommendChWebClient.getRecommendChannelApi();
-//
-//            RecommendVdWebClient mRecommendChWebClient2 = new RecommendVdWebClient(this);
-//            mRecommendChWebClient2.getRecommendChannelApi();
-        } catch (Exception e) {
-        }
+        requestData.startIndex = String.valueOf(startIndex);
+        requestData.maxResult = String.valueOf(maxResult);
+        // サーバへリクエストを送信
+        RecommendWebClient webClient = new RecommendWebClient(this);
+        webClient.getRecommendApi(requestData);
     }
 
     // TODO レスポンス処理
-    /**
-     * おすすめ番組をHomeActivityに送る
-     *
-     * @param list
-     */
-    public void sendRecommendChListData(List<Map<String, String>> list) {
 
+    /**
+     * おすすめ番組データをServiceIdとCategoryIdを元にキャッシュし、Activityに送る
+     *
+     * @param recChList
+     */
+    public void sendRecommendChListData(RecommendChList recChList) {
+
+        List<Map<String, String>> recList = recChList.getmRcList();
         List<RecommendContentInfo> recommendContentInfoList = new ArrayList<RecommendContentInfo>();
 
-        for (Map<String, String> map : list) {
+        for (Map<String, String> map : recList) {
             RecommendContentInfo info = new RecommendContentInfo(
                     map.get(RECOMMENDCHANNEL_LIST_CONTENTSID),
                     Integer.parseInt(map.get(RECOMMENDCHANNEL_LIST_CATEGORYID)),
@@ -297,149 +289,79 @@ public class RecommendDataProvider implements
                     map.get(RECOMMENDCHANNEL_LIST_STARTVIEWING)
             );
             recommendContentInfoList.add(info);
-//            for(Map.Entry<String, String> entry : map.entrySet()) {
-//
-//            }
         }
         int serviceId = recommendContentInfoList.get(0).serviceId;
-        int televiServiceId = Integer.parseInt(recommendRequestId.HIKARITV_DOCOMO_IPTV.getServiceId());
+        int categoryId = recommendContentInfoList.get(0).categoryId;
 
         if (serviceId == Integer.parseInt(recommendRequestId.HIKARITV_DOCOMO_IPTV.getServiceId())) {
+            if (categoryId == RECOMMEND_CATEGORY_ID_TELEVI[0]
+                    || categoryId == RECOMMEND_CATEGORY_ID_TELEVI[1]
+                    || categoryId == RECOMMEND_CATEGORY_ID_TELEVI[2]) {
 
-            apiDataProviderCallback.RecommendChannelCallback(recommendContentInfoList);
+                setStructDB(recChList, RECOMMEND_CH_LAST_INSERT,
+                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TELEBI);
+                apiDataProviderCallback.RecommendChannelCallback(recommendContentInfoList);
+                return;
+            } else if (categoryId == RECOMMEND_CATEGORY_ID_VIDEO[0]
+                    || categoryId == RECOMMEND_CATEGORY_ID_VIDEO[1]
+                    || categoryId == RECOMMEND_CATEGORY_ID_VIDEO[2]) {
+                setStructDB(recChList, RECOMMEND_VD_LAST_INSERT,
+                        SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO);
+                apiDataProviderCallback.RecommendVideoCallback(recommendContentInfoList);
+                return;
+            }
         } else if ((serviceId == Integer.parseInt(recommendRequestId.DTVCHANNEL_BLOADCAST.getServiceId()))) {
-            apiDataProviderCallback.RecommenddChannelCallback(recommendContentInfoList);
+            setStructDB(recChList, RECOMMEND_DCHANNEL_LAST_INSERT,
+                    SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL);
+            apiDataProviderCallback.RecommendDChannelCallback(recommendContentInfoList);
+            return;
         } else if (serviceId == Integer.parseInt(recommendRequestId.DTV_SVOD.getServiceId())) {
-            apiDataProviderCallback.RecommenddTVCallback(recommendContentInfoList);
+            setStructDB(recChList, RECOMMEND_DTV_LAST_INSERT,
+                    SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV);
+            apiDataProviderCallback.RecommendDTVCallback(recommendContentInfoList);
+            return;
         } else if (serviceId == Integer.parseInt(recommendRequestId.DANIME.getServiceId())) {
-            apiDataProviderCallback.RecommenddAnimeCallback(recommendContentInfoList);
+            setStructDB(recChList, RECOMMEND_DANIME_LAST_INSERT,
+                    SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME);
+            apiDataProviderCallback.RecommendDAnimeCallback(recommendContentInfoList);
+            return;
         }
-//        switch (serviceId) {
-//            case 0:
-//                apiDataProviderCallback.RecommendChannelCallback(recommendContentInfoList);
-//                break;
-//            case 1:
-//                apiDataProviderCallback.RecommendVideoCallback(recommendContentInfoList);
-//                break;
-//            case 2:
-//                apiDataProviderCallback.RecommenddChannelCallback(recommendContentInfoList);
-//                break;
-//            case 3:
-//                apiDataProviderCallback.RecommenddTVCallback(recommendContentInfoList);
-//                break;
-//            case 4:
-//                apiDataProviderCallback.RecommenddAnimeCallback(recommendContentInfoList);
-//                break;
-//        }
-
-
-        apiDataProviderCallback.RecommendChannelCallback(recommendContentInfoList);
     }
 
-//    private List<Map<String, String>> getChannelListData() {
-//        DateUtils dateUtils = new DateUtils(mContext);
-//        String lastDate = dateUtils.getLastDate(CHANNEL_LAST_INSERT);
-//
-//        List<Map<String, String>> list = new ArrayList<>();
-//        //Vodクリップ一覧のDB保存履歴と、有効期間を確認
-//        if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
-//            //データをDBから取得する
-//            HomeDataManager homeDataManager = new HomeDataManager(mContext);
-//            list = homeDataManager.selectChannelListHomeData();
-//        } else {
-//            //通信クラスにデータ取得要求を出す
-//            ChannelWebClient webClient = new ChannelWebClient();
-//            int ageReq = 1;
-//            int upperPageLimit = 1;
-//            String lowerPageLimit = "";
-//            String pagerOffset = "";
-//            //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
-//            webClient.getChannelApi(ageReq, upperPageLimit,
-//                    lowerPageLimit, pagerOffset, this);
-//        }
-//        return list;
-//    }
 
-    // TODO キャッシュ処理
     /**
      * おすすめ番組をDBに保存する
      *
      * @param recommendChList
      */
-    public void setStructDB(RecommendChList recommendChList) {
+    public void setStructDB(RecommendChList recommendChList, String cacheDateKey, int tagPageNo) {
 
         DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(WEEKLY_RANK_LAST_INSERT);
-        RecommendChInsertDataManager dataManager = new RecommendChInsertDataManager(mContext);
-        dataManager.insertRecommendChInsertList(recommendChList);
+        dateUtils.addLastDate(cacheDateKey);
+        RecommendListDataManager dataManager = new RecommendListDataManager(mContext);
+        dataManager.insertRecommendInsertList(recommendChList, mIsPaging, tagPageNo);
     }
 
-    /**
-     * おすすめビデオをDBに保存する
-     *
-     * @param recommendVdList
-     */
-    public void setStructDB(RecommendVdList recommendVdList) {
-
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(WEEKLY_RANK_LAST_INSERT);
-        RecommendVdInsertDataManager dataManager = new RecommendVdInsertDataManager(mContext);
-        dataManager.insertRecommendVdInsertList(recommendVdList);
-    }
-
-//    /**
-//     * おすすめdTVをDBに保存する
-//     *
-//     * @param recommenddTVList
-//     */
-//    public void setStructDB(RecommendChList recommenddTVList) {
-//        DateUtils dateUtils = new DateUtils(mContext);
-//        dateUtils.addLastDate(WEEKLY_RANK_LAST_INSERT);
-//        RecommendVdInsertDataManager dataManager = new RecommendVdInsertDataManager(mContext);
-//        dataManager.insertVodClipInsertList(recommenddTVList);
-//    }
-//
-//    /**
-//     * おすすめdアニメをDBに保存する
-//     *
-//     * @param recommenddAnimeList
-//     */
-//    public void setStructDB(RecommendChList recommenddAnimeList) {
-//        DateUtils dateUtils = new DateUtils(mContext);
-//        dateUtils.addLastDate(WEEKLY_RANK_LAST_INSERT);
-//        RecommendVdInsertDataManager dataManager = new RecommendVdInsertDataManager(mContext);
-//        dataManager.insertVodClipInsertList(recommenddAnimeList);
-//    }
-//
-//    /**
-//     * おすすめdチャンネルをDBに保存する
-//     *
-//     * @param recommenddCHList
-//     */
-//    public void setStructDB(RecommendChList recommenddCHList) {
-//        DateUtils dateUtils = new DateUtils(mContext);
-//        dateUtils.addLastDate(WEEKLY_RANK_LAST_INSERT);
-//        RecommendVdInsertDataManager dataManager = new RecommendVdInsertDataManager(mContext);
-//        dataManager.insertVodClipInsertList(recommenddCHList);
-//    }
 
     /**
      * おすすめテレビの取得対象サービスID:カテゴリーID文字列生成
+     *
      * @return
      */
     private String getTerebiRequestSCIdStr() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(recommendRequestId.HIKARITV_DOCOMO_IPTV.getRequestSCId())
                 .append(COMMA)
-                .append(recommendRequestId.HIKARITV_DOCOMO_DTV_BLOADCAST)
+                .append(recommendRequestId.HIKARITV_DOCOMO_DTV_BLOADCAST.getRequestSCId())
                 .append(COMMA)
-                .append(recommendRequestId.HIKARITV_DOCOMO_DTV_MISS);
+                .append(recommendRequestId.HIKARITV_DOCOMO_DTV_MISS.getRequestSCId());
 
         return stringBuilder.toString();
     }
 
     /**
      * おすすめビデオの取得対象サービスID:カテゴリーID文字列生成
+     *
      * @return
      */
     private String getVideoRequestSCIdStr() {
@@ -455,9 +377,10 @@ public class RecommendDataProvider implements
 
     /**
      * おすすめdチャンネルの取得対象サービスID:カテゴリーID文字列生成
+     *
      * @return
      */
-    private String getdCHRequestSCIdStr() {
+    private String getDCHRequestSCIdStr() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(recommendRequestId.DTVCHANNEL_BLOADCAST.getRequestSCId())
                 .append(COMMA)
@@ -470,9 +393,10 @@ public class RecommendDataProvider implements
 
     /**
      * おすすめdTVの取得対象サービスID:カテゴリーID文字列生成
+     *
      * @return
      */
-    private String getdTVRequestSCIdStr() {
+    private String getDTVRequestSCIdStr() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(recommendRequestId.DTV_SVOD.getRequestSCId())
                 .append(COMMA)
@@ -483,9 +407,10 @@ public class RecommendDataProvider implements
 
     /**
      * おすすめdアニメの取得対象サービスID:カテゴリーID文字列生成
+     *
      * @return
      */
-    private String getdAnimeRequestSCIdStr() {
+    private String getDAnimeRequestSCIdStr() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(recommendRequestId.DANIME.getRequestSCId());
 

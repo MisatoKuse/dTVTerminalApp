@@ -14,12 +14,12 @@ public class RecommendContentInfo {
     public String title;
     public String startViewing;
 
-    public RecommendContentInfo(String contentId,int categoryId, int serviceId, String contentPictureUrl, String title,String startViewing){
-        this.contentId=contentId;
-        this.categoryId=categoryId;
-        this.serviceId=serviceId;
-        this.contentPictureUrl=contentPictureUrl;
-        this.title=title;
-        this.startViewing=startViewing;
+    public RecommendContentInfo(String contentId, int categoryId, int serviceId, String contentPictureUrl, String title, String startViewing) {
+        this.contentId = contentId;
+        this.categoryId = categoryId;
+        this.serviceId = serviceId;
+        this.contentPictureUrl = contentPictureUrl;
+        this.title = title;
+        this.startViewing = startViewing;
     }
 }
