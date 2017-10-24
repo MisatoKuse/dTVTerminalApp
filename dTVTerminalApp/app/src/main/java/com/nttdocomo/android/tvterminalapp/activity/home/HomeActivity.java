@@ -40,6 +40,18 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     private final static int CONTENT_LIST_COUNT = 6;
     //ヘッダのmargin
     private final static int CONTENT_LIST_START_INDEX = 2;
+    //UIの上下表示順(NOW ON AIR)
+    private final static int CHANNEL_SORT = 2;
+    //UIの上下表示順(おすすめ番組)
+    private final static int REDCH_SORT = 3;
+    //UIの上下表示順(おすすめビデオ)
+    private final static int REDVD_SORT = 4;
+    //UIの上下表示順(今日のテレビランキング)
+    private final static int TODAY_SORT = 5;
+    //UIの上下表示順(ビデオランキング)
+    private final static int VIDEO_SORT = 6;
+    //UIの上下表示順(クリップ)
+    private final static int CLIP_SORT = 7;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,7 +193,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         });
         RecyclerView mRecyclerView = view.findViewById(R.id.home_main_item_recyclerview);
         //リサイクルビューの間隔
-        int spacingInPixels = (int) getDensity() * 4;
+        int spacingInPixels = (int) getDensity() * 5;
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(spacingInPixels));
         //コンテンツタイプを設定（NOW ON AIR）
         typeTextView.setText(typeContentName);
@@ -280,42 +292,42 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     public void channelListCallback(List<Map<String, String>> channelList) {
         if (channelList != null && channelList.size() > 0) {
-            setRecyclerView(channelList, 2);
+            setRecyclerView(channelList, CHANNEL_SORT);
         }
     }
 
     @Override
     public void dailyRankListCallback(List<Map<String, String>> dailyRankList) {
         if (dailyRankList != null && dailyRankList.size() > 0) {
-            setRecyclerView(dailyRankList, 5);
+            setRecyclerView(dailyRankList, TODAY_SORT);
         }
     }
 
     @Override
     public void vodClipListCallback(List<Map<String, String>> clipList) {
         if (clipList != null && clipList.size() > 0) {
-            setRecyclerView(clipList, 7);
+            setRecyclerView(clipList, CLIP_SORT);
         }
     }
 
     @Override
     public void videoRankCallback(List<Map<String, String>> videoRankList) {
         if (videoRankList != null && videoRankList.size() > 0) {
-            setRecyclerView(videoRankList, 6);
+            setRecyclerView(videoRankList, VIDEO_SORT);
         }
     }
 
     @Override
     public void recommendChannelCallback(List<Map<String, String>> redChList) {
         if (redChList != null && redChList.size() > 0) {
-            setRecyclerView(redChList, 3);
+            setRecyclerView(redChList, REDCH_SORT);
         }
     }
 
     @Override
     public void recommemdVideoCallback(List<Map<String, String>> redVdList) {
         if (redVdList != null && redVdList.size() > 0) {
-            setRecyclerView(redVdList, 4);
+            setRecyclerView(redVdList, REDVD_SORT);
         }
     }
 
