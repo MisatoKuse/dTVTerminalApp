@@ -54,6 +54,8 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
     private int showListSize = 0;
     // 表示中の最後の行を保持
     private int mSearchLastItem = 0;
+    // ページングの回数
+    private int mCntPageing = 0;
     // ページング判定
     private boolean mIsPaging = false;
 
@@ -139,6 +141,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
                 clearAllFragment();
                 setPagingStatus(false);
                 showListSize = 0;
+                mCntPageing = 0;
                 requestRecommendData();
             }
         });
@@ -183,6 +186,8 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
                     int position = (int) view.getTag();
                     mRecommendViewPager.setCurrentItem(position);
                     setTab(position);
+                    showListSize = 0;
+                    mCntPageing = 0;
                     requestRecommendData();
                 }
             });
@@ -239,12 +244,25 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
 
             Log.d(DTVTConstants.LOG_DEF_TAG, "baseFragment.mData.size = " + baseFragment.mData.size());
 
-            // フラグメントの更新
-//             RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
-            baseFragment.notifyDataSetChanged();
-            baseFragment.setSelection(mSearchLastItem);
-            baseFragment.displayLoadMore(false);
-
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                    {
+                    /** UIスレッド内でListViewを更新 */
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // フラグメントの更新
+                            RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
+                            baseFragment.notifyDataSetChanged();
+                            baseFragment.setSelection(mSearchLastItem);
+                            baseFragment.displayLoadMore(false);
+                            ///アダプター更新
+                        }
+                    });
+                }
+            }).start();
         }
         setSearchStart(false);
     }
@@ -271,9 +289,9 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
                 setPagingStatus(false);
             } else {
                 baseFragment.clear();
+                clearAllFragment();
             }
         }
-        clearAllFragment();
         setSearchStart(false);
         Log.e(DTVTConstants.LOG_DEF_TAG, "onSearchDataProviderFinishNg");
     }
@@ -284,7 +302,6 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
             onSampleGlobalMenuButton_PairLoginOk();
         }
     }
-
 
     /**
      * ページング判定の変更
@@ -327,18 +344,16 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     public void onScroll(RecommendBaseFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-
         mSearchLastItem = firstVisibleItem + visibleItemCount - 1;
 
-//        int pageMax = (mPageNumber+ 1)* SearchConstants.RecommendList.requestMaxCount_Recommend;
+        int pageMax = (mCntPageing+ 1) * SearchConstants.RecommendList.requestMaxCount_Recommend;
 //        int maxPage = mSearchTotalCount/SearchConstants.RecommendList.requestMaxCount_Recommend;
 //        if(firstVisibleItem + visibleItemCount>=pageMax && maxPage >=1+ mPageNumber ){
         Log.i(DTVTConstants.LOG_DEF_TAG, "onScroll.first:" + firstVisibleItem + " .visible:" + visibleItemCount + " .total:" + totalItemCount + " dataSize:" + fragment.mData.size());
         if (maxShowListSize > fragment.mData.size() && // システム制約最大値 100件
-                fragment.mData.size() % SearchConstants.RecommendList.requestMaxCount_Recommend == 0 && // 中途の件数判定
-                totalItemCount != 0 && // 取得結果0件以外
-                firstVisibleItem + visibleItemCount >= fragment.mData.size()) { // 表示中の最下まで行ったかの判定
+                fragment.mData.size() != 0 && // 取得結果0件以外
+                firstVisibleItem + visibleItemCount >= pageMax) { // 表示中の最下まで行ったかの判定
+            mCntPageing += 1;
             setPagingStatus(true);
             fragment.displayLoadMore(true);
 
