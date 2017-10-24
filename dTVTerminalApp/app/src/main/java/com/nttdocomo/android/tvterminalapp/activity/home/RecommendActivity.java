@@ -85,6 +85,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
 
     /**
      * 検索中フラグの変更
+     *
      * @param b
      */
     private void setSearchStart(boolean b) {
@@ -131,9 +132,9 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
         initTabVIew();
 
         mRecommendViewPager.setAdapter(new RecommendActivity.TabAdpater(getSupportFragmentManager(), this));
+        // フリックによるtab切り替え
         mRecommendViewPager.addOnPageChangeListener(new ViewPager
                 .SimpleOnPageChangeListener() {
-            // タブ切り替え時
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
@@ -162,6 +163,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
         mLinearLayout.setGravity(Gravity.CENTER);
         mTabScrollView.addView(mLinearLayout);
 
+        // tabの設定
         for (int i = 0; i < mTabNames.length; i++) {
             TextView tabTextView = new TextView(this);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -180,6 +182,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
             if (i == 0) {
                 tabTextView.setBackgroundResource(R.drawable.indicating);
             }
+            // tabタップ時の処理
             tabTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -211,6 +214,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
 
     /**
      * フラグメントの取得
+     *
      * @return
      */
     private RecommendBaseFragment getCurrentRecommendBaseFragment() {
@@ -222,6 +226,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
 
     /**
      * レコメンド取得完了時の表示処理
+     *
      * @param resultInfoList
      */
     public void recommendDataProviderSuccess(List<RecommendContentInfo> resultInfoList) {
@@ -244,12 +249,9 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
 
             Log.d(DTVTConstants.LOG_DEF_TAG, "baseFragment.mData.size = " + baseFragment.mData.size());
 
-            new Thread(new Runnable()
-            {
+            new Thread(new Runnable() {
                 @Override
-                public void run()
-                    {
-                    /** UIスレッド内でListViewを更新 */
+                public void run() {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -258,13 +260,13 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
                             baseFragment.notifyDataSetChanged();
                             baseFragment.setSelection(mSearchLastItem);
                             baseFragment.displayLoadMore(false);
-                            ///アダプター更新
+                            setSearchStart(false);
                         }
                     });
                 }
             }).start();
         }
-        setSearchStart(false);
+
     }
 
     public void clearAllFragment() {
@@ -284,6 +286,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
     public void recommendDataProviderFinishNg() {
         RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
         synchronized (this) {
+            // ページング処理判定
             if (mIsPaging) {
                 baseFragment.displayLoadMore(false);
                 setPagingStatus(false);
@@ -305,6 +308,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
 
     /**
      * ページング判定の変更
+     *
      * @param b
      */
 
@@ -346,10 +350,12 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
     public void onScroll(RecommendBaseFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         mSearchLastItem = firstVisibleItem + visibleItemCount - 1;
 
-        int pageMax = (mCntPageing+ 1) * SearchConstants.RecommendList.requestMaxCount_Recommend;
+        int pageMax = (mCntPageing + 1) * SearchConstants.RecommendList.requestMaxCount_Recommend;
 //        int maxPage = mSearchTotalCount/SearchConstants.RecommendList.requestMaxCount_Recommend;
 //        if(firstVisibleItem + visibleItemCount>=pageMax && maxPage >=1+ mPageNumber ){
-        Log.i(DTVTConstants.LOG_DEF_TAG, "onScroll.first:" + firstVisibleItem + " .visible:" + visibleItemCount + " .total:" + totalItemCount + " dataSize:" + fragment.mData.size());
+        Log.i(DTVTConstants.LOG_DEF_TAG, "onScroll.first:" + firstVisibleItem +
+                " .visible:" + visibleItemCount + " .total:" + totalItemCount +
+                " dataSize:" + fragment.mData.size());
         if (maxShowListSize > fragment.mData.size() && // システム制約最大値 100件
                 fragment.mData.size() != 0 && // 取得結果0件以外
                 firstVisibleItem + visibleItemCount >= pageMax) { // 表示中の最下まで行ったかの判定
@@ -427,7 +433,8 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
      */
     @Override
     public void RecommendDChannelCallback(List<RecommendContentInfo> recommendContentInfoList) {
-        Log.d(DTVTConstants.LOG_DEF_TAG, "dCH Callback DataSize:" + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + mRecommendViewPager.getCurrentItem());
+        Log.d(DTVTConstants.LOG_DEF_TAG, "dCH Callback DataSize:"
+                + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + mRecommendViewPager.getCurrentItem());
         if (mRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL) {
             recommendDataProviderSuccess(recommendContentInfoList);
         }

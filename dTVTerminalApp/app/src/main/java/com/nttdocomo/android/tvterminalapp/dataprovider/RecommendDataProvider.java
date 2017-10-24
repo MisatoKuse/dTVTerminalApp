@@ -266,8 +266,6 @@ public class RecommendDataProvider implements
         webClient.getRecommendApi(requestData);
     }
 
-    // TODO レスポンス処理
-
     /**
      * おすすめ番組データをServiceIdとCategoryIdを元にキャッシュし、Activityに送る
      *
