@@ -16,7 +16,10 @@ public class RecommendChWebClient extends WebApiBase implements WebApiCallback {
     /**
      * 種別・チャンネル
      */
+    //TODO: ホーム画面におすすめ番組を表示する為の仮のカテゴリー
     private static final String CHANNEL_CATEGORY = "43:01,44:03,44:04&";
+    //TODO: 正当なカテゴリー値 サーバー側の準備が整った場合はこちらに変更する
+    //private static final String CHANNEL_CATEGORY = "44:03,44:04,44:05&";
 
     private RecommendChannelCallback mRecommendChannelCallback;
 
