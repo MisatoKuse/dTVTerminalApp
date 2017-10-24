@@ -82,7 +82,7 @@ public class RecommendListBaseAdapter extends BaseAdapter {
         if (recommendContentInfo.clipFlag) {
 
         }
-
+        holder.iv_thumbnail.setImageResource(R.drawable.test_image);
         if (null != holder.iv_thumbnail) {
 
             holder.iv_thumbnail.setTag(recommendContentInfo.contentPictureUrl);

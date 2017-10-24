@@ -256,24 +256,12 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
 
             Log.d(DTVTConstants.LOG_DEF_TAG, "baseFragment.mData.size = " + baseFragment.mData.size());
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            // フラグメントの更新
-                            RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
-                            baseFragment.notifyDataSetChanged();
-                            baseFragment.setSelection(mSearchLastItem);
-                            baseFragment.displayLoadMore(false);
-                            setSearchStart(false);
-                        }
-                    });
-                }
-            }).start();
+            // フラグメントの更新
+            baseFragment.notifyDataSetChanged();
+            baseFragment.setSelection(mSearchLastItem);
+            baseFragment.displayLoadMore(false);
+            setSearchStart(false);
         }
-
     }
 
     /**
