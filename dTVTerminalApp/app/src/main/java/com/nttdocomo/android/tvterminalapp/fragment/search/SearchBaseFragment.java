@@ -125,6 +125,9 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        if(mLoadMoreView==view){
+            return;
+        }
         ((BaseActivity)mActivity).startActivity(TvPlayerActivity.class, null);
     }
 

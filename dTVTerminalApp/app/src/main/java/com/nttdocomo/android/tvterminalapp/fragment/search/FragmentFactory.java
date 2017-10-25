@@ -9,9 +9,13 @@ import java.util.Map;
 
 public class FragmentFactory {
 
-    private static Map<Integer, SearchBaseFragment> mFragments = new HashMap<Integer, SearchBaseFragment>();
+    private Map<Integer, SearchBaseFragment> mFragments = new HashMap<Integer, SearchBaseFragment>();
 
-    public static synchronized SearchBaseFragment createFragment(int position, SearchBaseFragmentScrollListener lis) {
+    public FragmentFactory(){
+
+    }
+
+    public synchronized SearchBaseFragment createFragment(int position, SearchBaseFragmentScrollListener lis) {
         SearchBaseFragment fragment = null;
         fragment = mFragments.get(position);
 
@@ -26,7 +30,7 @@ public class FragmentFactory {
         return fragment;
     }
 
-    public static synchronized int getFragmentCount(){
+    public synchronized int getFragmentCount(){
         if(null!=mFragments){
             return mFragments.size();
         }

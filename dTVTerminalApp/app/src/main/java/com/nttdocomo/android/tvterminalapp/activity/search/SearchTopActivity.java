@@ -71,6 +71,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
     private ImageView mMenuImageView=null;
     private int mPageNumber=0;
     private boolean mIsSearching = false;
+    private FragmentFactory mFragmentFactory=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +92,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
         mTabNames = getResources().getStringArray(R.array.tab_names);
         setSearchNarrowCondition();
 
+        mFragmentFactory= new FragmentFactory();
         mSearchDataProvider = new SearchDataProvider();
     }
 
@@ -423,7 +425,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
 
     private SearchBaseFragment getCurrentSearchBaseFragment(){
         int currentPageNo = mSearchViewPager.getCurrentItem();
-        SearchBaseFragment baseFragment = (SearchBaseFragment)FragmentFactory.createFragment(currentPageNo, this);
+        SearchBaseFragment baseFragment = (SearchBaseFragment)mFragmentFactory.createFragment(currentPageNo, this);
         return baseFragment;
     }
 
@@ -436,7 +438,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
 
         String totalCountText=sSearchCountDefault;
 
-        SearchBaseFragment baseFragment = getCurrentSearchBaseFragment();//(SearchBaseFragment)FragmentFactory.createFragment(currentPageNo, this);
+        SearchBaseFragment baseFragment = getCurrentSearchBaseFragment();//(SearchBaseFragment)mFragmentFactory.createFragment(currentPageNo, this);
 
         synchronized (this) {
             if (mIsPaging) {
@@ -474,9 +476,9 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
     public void clearAllFragment() {
 
         if(null!=mSearchViewPager){
-            int sum=FragmentFactory.getFragmentCount();
+            int sum=mFragmentFactory.getFragmentCount();
             for(int i=0;i<sum;++i){
-                SearchBaseFragment baseFragment = FragmentFactory.createFragment(i, this);
+                SearchBaseFragment baseFragment = mFragmentFactory.createFragment(i, this);
                 baseFragment.clear();
             }
         }
@@ -542,7 +544,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
         @Override
         public Fragment getItem(int position) {
             synchronized (this) {
-                return FragmentFactory.createFragment(position, mSearchTopActivity);
+                return mFragmentFactory.createFragment(position, mSearchTopActivity);
             }
         }
 
