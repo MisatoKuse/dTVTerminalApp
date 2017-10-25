@@ -45,7 +45,7 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
     private TvClipDataProvider mTvClipDataProvider;
     private final int NUM_PER_PAGE=10;
     private boolean mIsCommunicating = false;
-
+    private ClipListFragmentFactory mClipListFragmentFactory=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +88,7 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
     }
 
     private boolean isSkipTv(TvClipContentInfo tvClipContentInfo){
-        ClipListBaseFragment b= ClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_TV, this);
+        ClipListBaseFragment b= mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_TV, this);
         if(null==b || null == b.mData || 0==b.mData.size()){
             return false;
         }
@@ -106,7 +106,7 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
     private static final int CLIP_LIST_PAGE_NO_OF_VOD = 1;
 
     private boolean isSkipVod(VodClipContentInfo vodClipContentInfo){
-        ClipListBaseFragment b= ClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_VOD, this);
+        ClipListBaseFragment b= mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_VOD, this);
         if(null==b || null == b.mData || 0==b.mData.size()){
             return false;
         }
@@ -124,14 +124,14 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
         mTabNames = getResources().getStringArray(R.array.tab_clip_names);
         mVodClipDataProvider = new VodClipDataProvider(this);
         mTvClipDataProvider = new TvClipDataProvider(this);
-
+        mClipListFragmentFactory = new ClipListFragmentFactory();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         for(int i=0;i<2; ++i){
-            ClipListBaseFragment b =ClipListFragmentFactory.createFragment(i, this);
+            ClipListBaseFragment b =mClipListFragmentFactory.createFragment(i, this);
             if(null!=b){
                 b.mData.clear();
             }
@@ -158,7 +158,7 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
             return;
         }
 
-        ClipListBaseFragment fragment = ClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_TV, this);
+        ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_TV, this);
 
         int pageNumber =  getCurrentNumber();
         for(int i= pageNumber*NUM_PER_PAGE;i<(pageNumber + 1)*NUM_PER_PAGE  && i<clipContentInfo.size();++i){
@@ -193,7 +193,7 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
             return;
         }
 
-        ClipListBaseFragment fragment = ClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_VOD, this);
+        ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_VOD, this);
 
         int pageNumber =  getCurrentNumber();
         for(int i= pageNumber*NUM_PER_PAGE;i<(pageNumber + 1)*NUM_PER_PAGE  && i<clipContentInfo.size();++i){
@@ -299,7 +299,7 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
 
         @Override
         public Fragment getItem(int position) {
-            return ClipListFragmentFactory.createFragment(position, getClipListActivity());
+            return mClipListFragmentFactory.createFragment(position, getClipListActivity());
         }
 
         @Override
@@ -342,14 +342,14 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
 
     private void setVod(){
 
-        ClipListBaseFragment fragment = ClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_VOD, this);
+        ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_VOD, this);
         //fragment.clearAllDatas();
         fragment.setMode(ClipMainAdapter.Mode.CLIP_LIST_MODE_VIDEO);
         mVodClipDataProvider.getClipData(1);
     }
 
     private void setTv(){
-        ClipListBaseFragment fragment = ClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_TV, this);
+        ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_TV, this);
         //fragment.clearAllDatas();
         fragment.setMode(ClipMainAdapter.Mode.CLIP_LIST_MODE_TV);
         mTvClipDataProvider.getClipData(1);
@@ -420,11 +420,10 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
         }
     }
 
-
     private ClipListBaseFragment getCurrentFragment(){
 
         int i= mViewPager.getCurrentItem();
-        return ClipListFragmentFactory.createFragment(i, this);
+        return mClipListFragmentFactory.createFragment(i, this);
     }
 
 }

@@ -9,9 +9,9 @@ import java.util.Map;
 
 public class ClipListFragmentFactory {
 
-    private static Map<Integer, ClipListBaseFragment> mFragments = new HashMap<Integer, ClipListBaseFragment>();
+    private  Map<Integer, ClipListBaseFragment> mFragments = new HashMap<Integer, ClipListBaseFragment>();
 
-    public static ClipListBaseFragment createFragment(int position, ClipListBaseFragmentScrollListener lis) {
+    public ClipListBaseFragment createFragment(int position, ClipListBaseFragmentScrollListener lis) {
         ClipListBaseFragment fragment = null;
         fragment = mFragments.get(position);
         if (fragment == null) {
@@ -26,6 +26,5 @@ public class ClipListFragmentFactory {
             }
         }
         return fragment;
-
     }
 }
