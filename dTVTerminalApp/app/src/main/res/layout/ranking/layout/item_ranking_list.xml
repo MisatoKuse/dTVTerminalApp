@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/background_dark">
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_marginBottom="10dp"
+		android:layout_marginLeft="16dp"
+		android:layout_marginTop="10dp">
+
+		<RelativeLayout
+			android:id="@+id/ranking_list_thumbnail_area"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerVertical="true">
+
+			<ImageView
+				android:id="@+id/ranking_list_item_thumbnail"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:background="@mipmap/loading" />
+
+			<TextView
+				android:id="@+id/ranking_list_item_ranking_no"
+				android:layout_width="30dp"
+				android:layout_height="20dp"
+				android:layout_marginLeft="5dp"
+				android:layout_marginTop="5dp"
+				android:background="@color/ranking_no_background"
+				android:gravity="center"
+				android:text="1"
+				android:textColor="@color/ranking_no_text"
+				android:textSize="10dp" />
+
+		</RelativeLayout>
+		<Button
+			android:id="@+id/ranking_list_item_clip_btn"
+			android:layout_width="25dp"
+			android:layout_height="25dp"
+			android:layout_alignParentRight="true"
+			android:layout_centerVertical="true"
+			android:layout_marginRight="10dp"
+			android:background="@android:color/white"/>
+
+		<TextView
+			android:id="@+id/ranking_list_item_title"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerVertical="true"
+			android:layout_marginLeft="10dp"
+			android:layout_marginRight="10dp"
+			android:layout_toLeftOf="@id/ranking_list_item_clip_btn"
+			android:layout_toRightOf="@id/ranking_list_thumbnail_area"
+			android:text="プリズン・ブレイク シーズン1第1話 マイケル"
+			android:textColor="@android:color/white"
+			/>
+		<TextView
+			android:id="@+id/ranking_list_item_time"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerVertical="true"
+			android:layout_marginLeft="10dp"
+			android:layout_marginRight="10dp"
+			android:layout_toLeftOf="@id/ranking_list_item_clip_btn"
+			android:layout_toRightOf="@id/ranking_list_thumbnail_area"
+			android:layout_above="@+id/ranking_list_item_title"
+			android:text="8/8(火)21:00"
+			android:textColor="@android:color/white"
+			/>
+
+		<RelativeLayout
+			android:id="@+id/ranking_list_rating_area"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerVertical="true"
+			android:layout_toRightOf="@id/ranking_list_thumbnail_area"
+			android:layout_toLeftOf="@id/ranking_list_item_clip_btn"
+			android:layout_below="@id/ranking_list_item_title"
+			>
+		<RatingBar
+			android:id="@+id/ranking_list_item_video_rating"
+			style="@style/ranking_ratingBar"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="10dp"
+			android:layout_marginRight="10dp"
+			android:layout_marginTop="5dp"
+			android:numStars="5"
+			android:rating="3.5"/>
+
+		<TextView
+			android:id="@+id/ranking_list_item_video_rating_count"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_toRightOf="@id/ranking_list_item_video_rating"
+
+			android:text="3.5"
+			android:textColor="@android:color/white"
+			android:textSize="10dp"
+			android:layout_alignBottom="@+id/ranking_list_item_video_rating" />
+		</RelativeLayout>
+
+
+	</RelativeLayout>
+
+</RelativeLayout>

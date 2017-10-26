@@ -93,6 +93,41 @@ public class RankingTopDataProvider implements
         void videoRankCallback(List<Map<String, String>> videoHashMap);
     }
 
+    /**
+     * WeeklyRanking用のコールバック
+     */
+
+    public interface WeeklyRankingApiDataProviderCallback {
+        /**
+         *  取得条件"総合"用コールバック
+         *
+         * @param weeklyHashMap
+         */
+        void weeklyRankSynthesisCallback(List<Map<String, String>> weeklyHashMap);
+
+        /**
+         * 取得条件"海外映画"用コールバック
+         *
+         * @param weeklyHashMap
+         */
+        void weeklyRankOverseasMovieCallback(List<Map<String, String>> weeklyHashMap);
+
+        /**
+         * 取得条件"国内映画"用コールバック
+         *
+         * @param weeklyHashMap
+         */
+        void weeklyRankDomesticMovieCallback(List<Map<String, String>> weeklyHashMap);
+
+        /**
+         * 取得条件"海外TV番組・ドラマ"用コールバック
+         *
+         * @param weeklyHashMap
+         */
+        void weeklyRankOverseasChannelCallback(List<Map<String, String>> weeklyHashMap);
+    }
+
+
     private ApiDataProviderCallback apiDataProviderCallback;
 
     /**
@@ -106,7 +141,7 @@ public class RankingTopDataProvider implements
     }
 
     /**
-     * Activityからのデータ取得要求受付
+     * RankingTopActivityからのデータ取得要求受付
      */
     public void getRankingTopData() {
         //今日のランキング

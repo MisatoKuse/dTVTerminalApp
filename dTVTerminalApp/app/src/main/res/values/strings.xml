@@ -59,6 +59,12 @@
     <string name="daily_tv_ranking_title">今日のテレビランキング</string>
     <string name="weekly_tv_ranking_title">週間テレビランキング</string>
     <string name="video_ranking_title">ビデオランキング</string>
+    <string-array name="ranking_tab_names">
+        <item>総合</item>
+        <item>海外映画</item>
+        <item>国内映画</item>
+        <item>海外TV番組・ドラマ</item>
+    </string-array>
 
     <!-- Home -->
     <string name="home_label_recommend_program">おすすめ番組</string>
