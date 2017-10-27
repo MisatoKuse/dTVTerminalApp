@@ -8,13 +8,33 @@ import android.util.Log;
 
 
 /**
- * 計測アプリ共通ログクラス.
+ * dTVTアプリ共通ログクラス.
  */
 public class DTVTLogger {
     /**
-     * ログレベル デバッグ 有効/無効(リリース版ではfalseにする事).
+     * ログレベル debug 有効/無効(リリース版ではfalseにする事).
      */
     private static final boolean ENABLE_LOG_DEBUG = true;
+
+    /**
+     * ログレベル 関数 有効/無効(リリース版ではfalseにする事).
+     */
+    private static final boolean ENABLE_LOG_METHOD_INOUT = true;
+
+    /**
+     * ログレベル info 有効/無効.
+     */
+    private static final boolean ENABLE_LOG_INFO = true;
+
+    /**
+     * ログレベル err 有効/無効.
+     */
+    private static final boolean ENABLE_LOG_WARNING = true;
+
+    /**
+     * ログレベル err 有効/無効.
+     */
+    private static final boolean ENABLE_LOG_ERR = true;
 
     /**
      * ログ出力用Tag名
@@ -27,7 +47,7 @@ public class DTVTLogger {
     private static final int TRACE_CALLER_COUNT = 2;
 
     /**
-     * ログ出力（内部情報 任意）.
+     * ログ出力（debugレベル、文字列あり）.開発時に動作を確認したい処理に利用する事.※リリース版では無効とする.
      * @param msg ログ出力文字列
      */
     public static void debug(String msg) {
@@ -37,7 +57,7 @@ public class DTVTLogger {
     }
 
     /**
-     * ログ出力（例外発生）.
+     * ログ出力（debugレベル 例外発生）.開発時に動作を確認したい処理に利用する事.※リリース版では無効とする.
      * @param e Exception
      */
     public static void debug(Exception e) {
@@ -48,7 +68,7 @@ public class DTVTLogger {
     }
 
     /**
-     * ログ出力 (内部情報/例外発生)
+     * ログ出力 (debugレベル 文字列あり/例外発生).開発時に動作を確認したい処理に利用する事.※リリース版では無効とする.
      * @param msg ログ出力文字列
      * @param e Exception
      */
@@ -60,78 +80,86 @@ public class DTVTLogger {
     }
 
     /**
-     * Startログ 出力関数
+     * 関数Startログ 出力 ※リリース版では無効とする.
      */
     public static void start() {
-        if (ENABLE_LOG_DEBUG) {
+        if (ENABLE_LOG_METHOD_INOUT) {
             Log.d(PACKAGE_TAG, getClassName() + getFunctionName() + "START.");
         }
     }
 
     /**
-     * Startログ 出力関数(出力文字列あり)
+     * 関数Startログ 出力(出力文字列あり) ※リリース版では無効とする.
      * @param msg ログ出力文字列
      */
     public static void start(String msg) {
-        if (ENABLE_LOG_DEBUG) {
+        if (ENABLE_LOG_METHOD_INOUT) {
             Log.d(PACKAGE_TAG, getClassName() + getFunctionName() + "START : " + nonNull(msg));
         }
     }
 
     /**
-     * Endログ 出力関数
+     * 関数Endログ 出力 ※リリース版では無効とする.
      */
     public static void end() {
-        if (ENABLE_LOG_DEBUG) {
+        if (ENABLE_LOG_METHOD_INOUT) {
             Log.d(PACKAGE_TAG, getClassName() + getFunctionName() + "END.");
         }
     }
 
     /**
-     * Endログ 出力関数(出力文字列あり)
+     * 関数Endログ 出力(出力文字列あり) ※リリース版では無効とする.
      * @param msg ログ出力文字列
      */
     public static void end(String msg) {
-        if (ENABLE_LOG_DEBUG) {
+        if (ENABLE_LOG_METHOD_INOUT) {
             Log.d(PACKAGE_TAG, getClassName() + getFunctionName() + "END  : " + nonNull(msg));
         }
     }
 
     /**
-     * Endログ 出力関数(Return値出力用)
+     * 関数Endログ 出力(Return値出力用) ※リリース版では無効とする.
      * @param msg Return値出力文字列
      */
     public static void end_ret(String msg) {
-        if (ENABLE_LOG_DEBUG) {
+        if (ENABLE_LOG_METHOD_INOUT) {
             Log.d(PACKAGE_TAG, getClassName() + getFunctionName() + "END  : RETURN :" + nonNull(msg));
         }
     }
 
     /**
-     * ログ出力（内部情報 任意）.
+     * ログ出力（内部情報 任意）.アプリ基幹制御に関わる重要な処理のログに利用する事.
      * @param msg ログ出力文字列
      */
     public static void info(String msg) {
-        Log.i(PACKAGE_TAG, getClassName() + getFunctionName() +  ": " + nonNull(msg));
+        if (ENABLE_LOG_INFO) {
+            Log.i(PACKAGE_TAG, getClassName() + getFunctionName() + ": " + nonNull(msg));
+        }
     }
 
 
     /**
-     * ログ出力（内部情報 任意）.
+     * ログ出力（内部情報 任意）.復旧可能なエラー発生時のログに利用する事.
      * @param msg ログ出力文字列
      */
     public static void warning(String msg) {
-        Log.w(PACKAGE_TAG, getClassName() + getFunctionName() + ": " + nonNull(msg));
+        if (ENABLE_LOG_WARNING) {
+            Log.w(PACKAGE_TAG, getClassName() + getFunctionName() + ": " + nonNull(msg));
+        }
     }
 
 
     /**
-     * ログ出力（内部情報 任意）.
+     * ログ出力（内部情報 任意）.復旧不可能なエラー発生時のログに利用する事.
      * @param msg ログ出力文字列
      */
     public static void error(String msg) {
-        Log.e(PACKAGE_TAG, getClassName() + getFunctionName() + ": " + nonNull(msg));
+        if (ENABLE_LOG_ERR) {
+            Log.e(PACKAGE_TAG, getClassName() + getFunctionName() + ": " + nonNull(msg));
+        }
     }
+
+    /* ログ用関数はここまで.下記は内部処理 */
 
     /**
      * 出力文字列Nullチェック関数
@@ -151,7 +179,8 @@ public class DTVTLogger {
      * @return クラス名
      */
     private static String getClassName() {
-        String fn = new Throwable().getStackTrace()[TRACE_CALLER_COUNT].getClassName();
+        Throwable th = new Throwable();
+        String fn = th.getStackTrace()[TRACE_CALLER_COUNT].getClassName();
         fn = fn.substring(fn.lastIndexOf(".") + 1) + " ";
         return fn;
     }
@@ -161,7 +190,7 @@ public class DTVTLogger {
      * @return 関数名
      */
     private static String getFunctionName() {
-        String fn = new Throwable().getStackTrace()[TRACE_CALLER_COUNT].getMethodName() + "() ";
-        return fn;
+        Throwable th = new Throwable();
+        return th.getStackTrace()[TRACE_CALLER_COUNT].getMethodName() + "() ";
     }
 }
