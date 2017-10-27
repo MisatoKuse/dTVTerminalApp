@@ -6,7 +6,9 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.widget.Switch;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DailyRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.VideoRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.WeeklyRankInsertDataManager;
@@ -15,6 +17,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.select.RankingTopDataMana
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WeeklyRankList;
+import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingConstants;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.DailyRankWebClient;
@@ -35,6 +38,10 @@ public class RankingTopDataProvider implements
 
     private Context mContext;
 
+    private ApiDataProviderCallback apiDataProviderCallback = null;
+    private WeeklyRankingApiDataProviderCallback weeklyRankingApiCallback = null;
+
+
     @Override
     public void onDailyRankJsonParsed(List<DailyRankList> dailyRankLists) {
         if (dailyRankLists != null && dailyRankLists.size() > 0) {
@@ -50,7 +57,9 @@ public class RankingTopDataProvider implements
     public void onWeeklyRankJsonParsed(List<WeeklyRankList> weeklyRankLists) {
         if (weeklyRankLists != null && weeklyRankLists.size() > 0) {
             WeeklyRankList list = weeklyRankLists.get(0);
+
             setStructDB(list);
+
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
         }
@@ -128,7 +137,6 @@ public class RankingTopDataProvider implements
     }
 
 
-    private ApiDataProviderCallback apiDataProviderCallback;
 
     /**
      * コンストラクタ
@@ -141,6 +149,14 @@ public class RankingTopDataProvider implements
     }
 
     /**
+     * 週間・ビデオ用コンストラクタ
+     */
+    public RankingTopDataProvider(Context mContext,int mMode) {
+        this.mContext = mContext;
+        this.weeklyRankingApiCallback = (WeeklyRankingApiDataProviderCallback) mContext;
+    }
+
+    /**
      * RankingTopActivityからのデータ取得要求受付
      */
     public void getRankingTopData() {
@@ -150,7 +166,8 @@ public class RankingTopDataProvider implements
             sendDailyRankListData(dailyRankList);
         }
         //週刊のランキング
-        List<Map<String, String>> weeklyRankList = getWeeklyRankListData();
+        List<Map<String, String>> weeklyRankList
+                = getWeeklyRankListData(RankingConstants.RANKING_GENRE_ID_SYNTHESIS);
         if (weeklyRankList != null && weeklyRankList.size() > 0) {
             sendWeeklyRankListData(weeklyRankList);
         }
@@ -158,6 +175,33 @@ public class RankingTopDataProvider implements
         List<Map<String, String>> videoRankList = getVideoRankListData();
         if (videoRankList != null && videoRankList.size() > 0) {
             sendVideoRankListData(videoRankList);
+        }
+    }
+
+    /**
+     * WeeklyTvRankingActivityからのデータ取得要求
+     */
+    public void getWeeklyRankingData(int tabPageNo) {
+        // TODO タブNo か ジャンルIDのどちらかで受け取る
+        String genreId = null;
+        switch (tabPageNo) {
+            case RankingConstants.RankingTabPageNo.RANKING_PAGE_NO_OF_SYNTHESIS :
+                // ジャンルID 指定なし
+                genreId = RankingConstants.RANKING_GENRE_ID_SYNTHESIS;
+                break;
+            case RankingConstants.RankingTabPageNo.RANKING_PAGE_NO_OF_OVERSEAS_MOVIE :
+                genreId = RankingConstants.RANKING_GENRE_ID_OVERSEAS_MOVIE;
+                break;
+            case RankingConstants.RankingTabPageNo.RANKING_PAGE_NO_OF_DOMESTIC_MOVIE :
+                genreId = RankingConstants.RANKING_GENRE_ID_DOMESTIC_MOVIE;
+                break;
+            case RankingConstants.RankingTabPageNo.RANKING_PAGE_NO_OF_OVERSEAS_CHANNEL :
+                genreId = RankingConstants.RANKING_GENRE_ID_OVERSEAS_CHANNEL;
+                break;
+        }
+        List<Map<String, String>> weeklyRankList = getWeeklyRankListData(genreId);
+        if (weeklyRankList != null && weeklyRankList.size() > 0) {
+            sendWeeklyGenreRankListData(weeklyRankList,genreId);
         }
     }
 
@@ -189,6 +233,18 @@ public class RankingTopDataProvider implements
     }
 
     /**
+     * 週間ランキングリストをWeeklyRankingActivityに送る
+     */
+    public void sendWeeklyGenreRankListData(List<Map<String,String>> list,String genreId) {
+        DTVTLogger.start("response genreId : " + genreId);
+        switch (genreId) {
+            case "":
+                weeklyRankingApiCallback.weeklyRankSynthesisCallback(list);
+                break;
+        }
+    }
+
+    /**
      * 今日のランキングデータを取得する
      */
     private List<Map<String, String>> getDailyRankListData() {
@@ -215,7 +271,7 @@ public class RankingTopDataProvider implements
         return list;
     }
 
-    private List<Map<String, String>> getWeeklyRankListData() {
+    private List<Map<String, String>> getWeeklyRankListData(String genreId) {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(WEEKLY_RANK_LAST_INSERT);
 
@@ -232,7 +288,6 @@ public class RankingTopDataProvider implements
             int offset = 1;
             String filter = "";
             int ageReq = 1;
-            String genreId = "";
 
             //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
             webClient.getWeeklyRankApi(limit, offset,
@@ -294,7 +349,11 @@ public class RankingTopDataProvider implements
         dateUtils.addLastDate(WEEKLY_RANK_LAST_INSERT);
         WeeklyRankInsertDataManager dataManager = new WeeklyRankInsertDataManager(mContext);
         dataManager.insertWeeklyRankInsertList(weeklyRankList);
-        sendWeeklyRankListData(weeklyRankList.getWrList());
+        if(apiDataProviderCallback != null) {
+            sendWeeklyRankListData(weeklyRankList.getWrList());
+        } else {
+            sendWeeklyGenreRankListData(weeklyRankList.getWrList(),weeklyRankList.getExtraData().getString("genreId"));
+        }
     }
 
     /**

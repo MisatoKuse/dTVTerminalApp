@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import android.os.Bundle;
+
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WeeklyRankList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser;
@@ -36,8 +38,14 @@ public class WeeklyRankWebClient
      */
     @Override
     public void onAnswer(ReturnCode returnCode) {
+        //
+        WeeklyRankJsonParser weeklyRankJsonParser = new WeeklyRankJsonParser(
+                mWeeklyRankJsonParserCallback,returnCode.extraData);
+
         //JSONをパースして、データを返す
-        new WeeklyRankJsonParser(mWeeklyRankJsonParserCallback).execute(returnCode.bodyData);
+        weeklyRankJsonParser.execute(returnCode.bodyData);
+
+        //new WeeklyRankJsonParser(mWeeklyRankJsonParserCallback).execute(returnCode.bodyData);
     }
 
     /**
@@ -80,9 +88,12 @@ public class WeeklyRankWebClient
             return false;
         }
 
+        //拡張情報の作成
+        Bundle bundle = new Bundle();
+        bundle.putString("genreId",genreId);
+
         //週毎ランク一覧を呼び出す
-        //TODO: 内部的には暫定措置としてVODクリップ一覧を呼び出す
-        openUrl(API_NAME_LIST.WEEKLY_RANK_LIST.getString(),sendParameter,this);
+        openUrlWithExtraData(API_NAME_LIST.WEEKLY_RANK_LIST.getString(),sendParameter,this,bundle);
 
         //今のところ失敗は無いので、trueで帰る
         return true;

@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.os.AsyncTask;
+import android.os.Bundle;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -120,6 +121,11 @@ public class WebApiBasePlala {
          */
         CONTENTS_LIST_PER_GENRE_WEB_CLIENT("genre/contents/list"),
 
+        /**
+         * 購入済みVOD一覧取得
+         */
+        PURCHASED_VOD_LIST_WEB_CLIENT("purchasedvod/list"),
+
         ;   //最後にセミコロンが必要
 
         //呼び出し先名の控え
@@ -144,7 +150,7 @@ public class WebApiBasePlala {
     /**
      * 内部エラー情報
      */
-    protected enum ERROR_TYPE {
+    private enum ERROR_TYPE {
         /**
          * 成功
          */
@@ -174,40 +180,40 @@ public class WebApiBasePlala {
     /**
      * フィルター用指定文字列・release
      */
-    public static final String FILTER_RELEASE = "release";
+    static final String FILTER_RELEASE = "release";
     /**
      * フィルター用指定文字列・testa
      */
-    public static final String FILTER_TESTA = "testa";
+    static final String FILTER_TESTA = "testa";
     /**
      * フィルター用指定文字列・demo
      */
-    public static final String FILTER_DEMO = "demo";
+    static final String FILTER_DEMO = "demo";
 
     /**
      * タイプ用指定文字列・ｄCh
      */
-    public static final String TYPE_D_CHANNEL = "dch";
+    static final String TYPE_D_CHANNEL = "dch";
     /**
      * タイプ用指定文字列・ひかりTV
      */
-    public static final String TYPE_HIKARI_TV = "hikaritv";
+    static final String TYPE_HIKARI_TV = "hikaritv";
     /**
      * タイプ用指定文字列・ひかりTVのVOD
      */
-    public static final String TYPE_HIKARI_TV_VOD = "hikaritv_vod";
+    static final String TYPE_HIKARI_TV_VOD = "hikaritv_vod";
     /**
      * タイプ用指定文字列・dTVのVOD
      */
-    public static final String TYPE_DTV_VOD = "dtv_vod";
+    static final String TYPE_DTV_VOD = "dtv_vod";
     /**
      * タイプ用指定文字列・ひかりTVのVODとdTVのVOD
      */
-    public static final String TYPE_HIKARI_TV_AND_DTV_VOD = "hikaritv_and_dtv_vod";
+    static final String TYPE_HIKARI_TV_AND_DTV_VOD = "hikaritv_and_dtv_vod";
     /**
      * タイプ用指定文字列・全て（指定なしは全てになる）
      */
-    public static final String TYPE_ALL = "";
+    static final String TYPE_ALL = "";
 
     /**
      * 日付指定文字列・現在時刻指定
@@ -217,24 +223,25 @@ public class WebApiBasePlala {
     /**
      * ソート用文字列・タイトルルビ昇順
      */
-    public static final String SORT_TITLE_RUBY_ASC = "titleruby_asc";
+    static final String SORT_TITLE_RUBY_ASC = "titleruby_asc";
     /**
      * ソート用文字列・配信開始日昇順
      */
-    public static final String SORT_AVAIL_S_ASC = "avail_s_asc";
+    static final String SORT_AVAIL_S_ASC = "avail_s_asc";
     /**
      * ソート用文字列・配信終了日降順
      */
-    public static final String SORT_AVAIL_E_DESC = "avail_e_desc";
+    static final String SORT_AVAIL_E_DESC = "avail_e_desc";
     /**
      * ソート用文字列・人気順（前日の視聴回数数降順）
      */
-    public static final String SORT_PLAY_COUNT_DESC = "play_count_desc";
+    static final String SORT_PLAY_COUNT_DESC = "play_count_desc";
 
     //戻り値用構造体
     static protected class ReturnCode {
         ERROR_TYPE errorType;
         String bodyData;
+        Bundle extraData;
 
         /**
          * コンストラクタ
@@ -242,6 +249,7 @@ public class WebApiBasePlala {
         ReturnCode() {
             errorType = ERROR_TYPE.SUCCESS;
             bodyData = "";
+            extraData = null;
         }
     }
     private ReturnCode mReturnCode = null;
@@ -319,6 +327,34 @@ public class WebApiBasePlala {
     public void openUrl(final String sourceUrl,String receivedParameters,
                               WebApiBasePlalaCallback webApiBasePlalaCallback) {
         CommunicationTask communicationTask = new CommunicationTask(sourceUrl,receivedParameters);
+
+        //コールバックの準備
+        mWebApiBasePlalaCallback = webApiBasePlalaCallback;
+
+        //結果格納構造体の作成
+        WebApiBasePlala.ReturnCode returnCode = new WebApiBasePlala.ReturnCode();
+
+        //通信本体の開始
+        communicationTask.execute(returnCode);
+    }
+
+    /**
+     * 指定したAPIで通信を開始する
+     * @param sourceUrl                 API呼び出し名
+     * @param webApiBasePlalaCallback コールバック
+     */
+    /**
+     * 指定したAPIで通信を開始する(拡張情報付き)
+     * @param sourceUrl API呼び出し名
+     * @param receivedParameters API呼び出し用パラメータ
+     * @param webApiBasePlalaCallback 結果のコールバック
+     * @param extraDataSrc 拡張情報
+     */
+    public void openUrlWithExtraData(final String sourceUrl,String receivedParameters,
+                        WebApiBasePlalaCallback webApiBasePlalaCallback,Bundle extraDataSrc) {
+        //拡張情報もセットする
+        CommunicationTask communicationTask = new CommunicationTask(sourceUrl,
+                receivedParameters,extraDataSrc);
 
         //コールバックの準備
         mWebApiBasePlalaCallback = webApiBasePlalaCallback;
@@ -437,14 +473,25 @@ public class WebApiBasePlala {
         //送るパラメータ
         final String mSendParameter;
 
+        //拡張データ
+        Bundle mExtraData = null;
+
         /**
          * コンストラクタ
          * @param sourceUrl             実行するAPIの名前
          * @param receivedParameters   送るパラメータ
          */
-        public CommunicationTask(String sourceUrl,String receivedParameters) {
+        CommunicationTask(String sourceUrl,String receivedParameters) {
             mSourceUrl = sourceUrl;
             mSendParameter =  receivedParameters;
+        }
+
+        CommunicationTask(String sourceUrl,String receivedParameters,Bundle extraDataSrc) {
+            mSourceUrl = sourceUrl;
+            mSendParameter =  receivedParameters;
+
+            //拡張データの確保
+            mExtraData = extraDataSrc;
         }
 
         /**
@@ -496,6 +543,11 @@ public class WebApiBasePlala {
          */
         @Override
         protected void onPostExecute(ReturnCode returnCode) {
+            //拡張情報があればそれも伝える
+            if(mExtraData != null) {
+                returnCode.extraData = mExtraData;
+            }
+
             //呼び出し元に伝える情報を判断する
             if(returnCode.errorType == ERROR_TYPE.SUCCESS) {
                 if(mAnswerBuffer.isEmpty()) {
@@ -568,7 +620,7 @@ public class WebApiBasePlala {
      * @param strings ひとまとめにしたい文字列
      * @return ひとまとめになった文字列
      */
-    protected List<String> makeStringArry(String... strings) {
+    List<String> makeStringArry(String... strings) {
         return  Arrays.asList(strings);
     }
 
@@ -577,7 +629,7 @@ public class WebApiBasePlala {
      * @param dateString 日付(yyyyMMdd)であることが期待される文字列
      * @return 日付ならばtrue
      */
-    protected boolean checkDateString(String dateString) {
+    boolean checkDateString(String dateString) {
         //日付フォーマットの設定
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd", Locale.JAPAN);
         dateFormat.setLenient(false);

@@ -1,12 +1,9 @@
-/*
- * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
- */
-
 package com.nttdocomo.android.tvterminalapp.fragment.ranking;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +14,8 @@ import android.widget.ListView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
-import com.nttdocomo.android.tvterminalapp.adapter.RankingAdapter;
-import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipContentInfo;
+import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,20 +26,22 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
     public Context mActivity;
     public List mData;
 
-    private View mRankingFragmentView;
-    private ListView mRankingListView;
+    private View mRankingFragmentView = null;
+    private ListView mRankingListView = null;
 
-    private RankingAdapter mRankingAdapter;
-    private RankingFragmentScrollListener mRankingBaseFragmentScrollListener=null;
+    private ContentsAdapter mContentsAdapter;
+    private RankingFragmentScrollListener mRankingBaseFragmentScrollListener = null;
 
     private View mLoadMoreView;
+    private int mRankingMode = 0;
 
 
     public RankingBaseFragment() {
-        if(mData == null){
+        if (mData == null) {
             mData = new ArrayList();
         }
     }
+
     @Override
     public Context getContext() {
         this.mActivity = getActivity();
@@ -53,14 +51,16 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //initData();//一時使うデータ
+        Log.d(DTVTConstants.LOG_DEF_TAG, "onCreateView");
+
         return initView();
     }
 
     /**
      * 各タブ画面は別々に実現して表示されること
      */
-    private View initView(){
-        if(mData == null){
+    private View initView() {
+        if (mData == null) {
             mData = new ArrayList();
         }
         if (null == mRankingFragmentView) {
@@ -73,64 +73,59 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
 
         }
         mLoadMoreView = LayoutInflater.from(getActivity()).inflate(R.layout.search_load_more, null);
-
+        initRankingView(mRankingMode);
         return mRankingFragmentView;
     }
 
 
-
-    public void setClipListBaseFragmentScrollListener(RankingFragmentScrollListener lis){
+    /**
+     * リスナーの設定
+     *
+     * @param lis
+     */
+    public void setClipListBaseFragmentScrollListener(RankingFragmentScrollListener lis) {
         mRankingBaseFragmentScrollListener = lis;
     }
 
     /**
      * 各ランキングページを判定
      */
-    public View initRankingView(int rankingMode){
+    public void initRankingView(int rankingMode) {
         switch (rankingMode) {
-            case RankingConstants.RankingModeNo.RANKING_MODE_NO_OF_WEEKLY : // 週間
+            case RankingConstants.RankingModeNo.RANKING_MODE_NO_OF_WEEKLY: // 週間
                 initWeeklyContentListView();
                 break;
-            case RankingConstants.RankingModeNo.RANKING_MODE_NO_OF_VIDEO : // ビデオ
+            case RankingConstants.RankingModeNo.RANKING_MODE_NO_OF_VIDEO: // ビデオ
                 break;
             default:
                 break;
         }
-        return mRankingFragmentView;
     }
 
-    public RankingAdapter getClipMainAdapter(){
-        return mRankingAdapter;
+    public ContentsAdapter getRankingAdapter() {
+        return mContentsAdapter;
     }
-
-    private View initLoadingContentView() {
-        View defaultView = View.inflate(getActivity(), R.layout.clip_list_default_loading_view, null);
-        return defaultView;
-    }
-
-
 
     /**
-     *  週間ランキングコンテンツ初期化
+     * 週間ランキングコンテンツ初期化
      */
     private void initWeeklyContentListView() {
 
-        ThumbnailProvider thumbnailProvider = new ThumbnailProvider(getActivity());
-        mRankingAdapter
-                = new RankingAdapter(getContext()
-                ,mData, R.layout.item_ranking_list,thumbnailProvider);
-        mRankingListView.setAdapter(mRankingAdapter);
+        mContentsAdapter
+                = new ContentsAdapter(getContext()
+                , mData, ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK);
+        mRankingListView.setAdapter(mContentsAdapter);
     }
 
-    public void noticeRefresh(){
-        if(null!= mRankingAdapter){
-            mRankingAdapter.notifyDataSetChanged();
+    public void noticeRefresh() {
+        if (null != mContentsAdapter) {
+            mContentsAdapter.notifyDataSetChanged();
         }
     }
 
     public void displayMoreData(boolean b) {
-        if(null!= mRankingListView){
-            if(b){
+        if (null != mRankingListView) {
+            if (b) {
                 mRankingListView.addFooterView(mLoadMoreView);
             } else {
                 mRankingListView.removeFooterView(mLoadMoreView);
@@ -138,44 +133,25 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
         }
     }
 
-    public void setMode(int mode){
-        if(null!= mRankingAdapter){
-            mRankingAdapter.setMode(mode);
-            mData.clear();
-        }
-    }
-
-
-    public void setDataWeekly(VodClipContentInfo.VodClipContentInfoItem clipContentInfoItem) {
-        if(mData == null){
-            mData = new ArrayList();
-        }
-        mData.add(clipContentInfoItem);
-    }
-
-    public void setDataVd() {
-        // TODO ビデオランキングの値を入れる
-    }
-
     @Override
     public void onScrollStateChanged(AbsListView absListView, int scrollState) {
-        if(null!=mRankingBaseFragmentScrollListener){
+        if (null != mRankingBaseFragmentScrollListener) {
             mRankingBaseFragmentScrollListener.onScrollStateChanged(this, absListView, scrollState);
         }
     }
 
     @Override
     public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if(null!=mRankingBaseFragmentScrollListener){
+        if (null != mRankingBaseFragmentScrollListener) {
             mRankingBaseFragmentScrollListener.onScroll(this, absListView, firstVisibleItem, visibleItemCount, totalItemCount);
         }
     }
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        if(mLoadMoreView == view){
+        if (mLoadMoreView == view) {
             return;
         }
-        ((BaseActivity)mActivity).startActivity(TvPlayerActivity.class, null);
+        ((BaseActivity) mActivity).startActivity(TvPlayerActivity.class, null);
     }
 }
