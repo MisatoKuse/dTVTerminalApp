@@ -399,6 +399,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
         } else {
             // nop.
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -414,6 +415,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
         } else {
             // nop.
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -429,6 +431,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
         } else {
             // nop.
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -443,6 +446,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
         } else {
             // nop.
         }
+        DTVTLogger.end();
     }
 
     /*検索結果タブ専用アダプター*/
