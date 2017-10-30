@@ -7,9 +7,9 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.ImageView;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 
 import java.io.BufferedInputStream;
@@ -46,7 +46,7 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
             }
             return bitmap;
         } catch (IOException e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -56,7 +56,7 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
                     in.close();
                 }
             } catch (final IOException e) {
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             }
         }
         return null;
@@ -69,7 +69,7 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
             // 画像のpositionをズレないよう
             if (imageView.getTag() != null && imageView.getTag().equals(imageUrl)) {
                 imageView.setImageBitmap(result);
-                Log.i("dTV", "download end..... url=" + imageUrl);
+                DTVTLogger.debug("download end..... url=" + imageUrl);
             }
         }
         --thumbnailProvider.currentQueueCount;

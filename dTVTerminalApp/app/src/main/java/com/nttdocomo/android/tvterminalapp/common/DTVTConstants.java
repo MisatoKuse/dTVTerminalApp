@@ -13,11 +13,6 @@ package com.nttdocomo.android.tvterminalapp.common;
  *
  */
 public class DTVTConstants {
-    
-    //=================================== Logメセッジ定義 Begin ==================================
-    public static final String LOG_DEF_TAG = "Common_Log";
-    //==================================== Logメセッジ定義 End ===================================
-
     //=================================== 定数定義 Begin ==================================
     public static final int SEARCH_SERVER_TIMEOUT = 1000;   //一秒
     public static final String SEARCH_STATUS_NG = "ng";

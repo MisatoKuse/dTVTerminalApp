@@ -5,9 +5,8 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 
-import android.util.Log;
-
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.model.ResultType;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 import com.nttdocomo.android.tvterminalapp.model.search.SearchContentInfo;
@@ -69,7 +68,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
         try {
             request.query = URLEncoder.encode(keyword, "utf-8");
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
 
         request.serviceId = getMappedData(serviceTypeArray, SearchDataProvider.comma);
@@ -86,7 +85,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
 
     public void cancelSearch() {
         setSearchState(SearchState.canceled);
-        Log.d(DTVTConstants.LOG_DEF_TAG, "SearchDataProvider::cancelSearch()");
+        DTVTLogger.debug("SearchDataProvider::cancelSearch()");
     }
 
     private String getMappedData(ArrayList<SearchServiceType> serviceTypeArray, String comma){
@@ -110,7 +109,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
             e.printStackTrace();
         }
         */
-        Log.d(DTVTConstants.LOG_DEF_TAG, "SearchDataProvider::onSuccess(), _state=" + _state.toString());
+        DTVTLogger.debug("SearchDataProvider::onSuccess(), _state=" + _state.toString());
         synchronized (this) {
             if (_state != SearchState.canceled) {
 

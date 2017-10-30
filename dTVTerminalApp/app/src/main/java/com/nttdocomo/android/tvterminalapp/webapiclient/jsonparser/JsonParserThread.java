@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
 import android.os.Handler;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
 import java.util.List;
@@ -41,7 +42,7 @@ public class JsonParserThread extends Thread{
             try {
                 ret = mJsonParser.parse(mJson);
             } catch (Exception e) {
-                e.printStackTrace();
+                DTVTLogger.debug(e);
                 mError=true;
             }
         }

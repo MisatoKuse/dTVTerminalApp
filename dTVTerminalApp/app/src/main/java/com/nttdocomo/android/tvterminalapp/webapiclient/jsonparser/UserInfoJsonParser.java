@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 
 import org.json.JSONException;
@@ -66,10 +67,10 @@ public class UserInfoJsonParser {
             }
         } catch (JSONException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
         return null;
     }
@@ -97,7 +98,7 @@ public class UserInfoJsonParser {
             throw new RuntimeException(e);
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
         return list;
     }

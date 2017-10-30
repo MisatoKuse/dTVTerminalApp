@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser;
 import android.os.AsyncTask;
 import android.util.Xml;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendWebClient;
 
@@ -160,9 +161,9 @@ public class RecommendWebXmlParser extends AsyncTask<Object, Object, Object> {
                 eventType = parser.next();
             }
         } catch (XmlPullParserException e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         } catch (Exception e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
         return redChContents;
     }

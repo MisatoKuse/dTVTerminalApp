@@ -6,9 +6,8 @@ package com.nttdocomo.android.tvterminalapp.webapiclient;
 
 
 import android.os.Handler;
-import android.util.Log;
 
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.HttpThread;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.WebApiCallback;
 
@@ -24,7 +23,6 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
         Handler handler = new Handler();
         String url=createUrlComponents(urlString, queryItems);
         mWebApiCallback=callback;
-        //Log.d(DCommon.LOG_DEF_TAG, "WebApiBase::get, url= " + url);
         new HttpThread(url, handler, this).start();
     }
 
@@ -41,16 +39,16 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
                         try {
                             v = queryItems.get(key);
                         }catch (Exception e){
-                            e.printStackTrace();
+                            DTVTLogger.debug(e);
                         }
                         if(null!=v){
                             u.append(key+ "=") ;
                             u.append(queryItems.get(key));
                         }else {
-                            Log.d(DTVTConstants.LOG_DEF_TAG, "WebApiBase::createUrlComponents, queryItems.get(key) is NULL");
+                            DTVTLogger.debug("WebApiBase::createUrlComponents, queryItems.get(key) is NULL");
                         }
                     } else {
-                        Log.d(DTVTConstants.LOG_DEF_TAG, "WebApiBase::createUrlComponents, queryItems has no key "+ key);
+                        DTVTLogger.debug("WebApiBase::createUrlComponents, queryItems has no key "+ key);
                     }
                 }
 
@@ -79,7 +77,7 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
 
             }*/
             //findbug 対応 end
-            Log.d(DTVTConstants.LOG_DEF_TAG, "WebApiBase::createUrlComponents, url=" + u.toString());
+            DTVTLogger.debug("WebApiBase::createUrlComponents, url=" + u.toString());
         }
         return u.toString();
     }

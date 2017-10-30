@@ -6,7 +6,6 @@ package com.nttdocomo.android.tvterminalapp.activity.home;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
@@ -19,7 +18,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.WatchListenVideoBaseAdapter;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.WatchListenVideoListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WatchListenVideoContentInfo;
 
@@ -109,7 +108,8 @@ public class WatchingVideoListActivity extends BaseActivity implements View.OnCl
     public void watchListenVideoListCallback(WatchListenVideoContentInfo watchListenVideoContentInfo) {
         if(null == watchListenVideoContentInfo){
             //通信とJSON Parseに関してerror処理
-            Log.d(DTVTConstants.LOG_DEF_TAG, "ClipListActivity::VodClipListCallback, クリップデータ取得失敗");
+            DTVTLogger.debug("ClipListActivity::VodClipListCallback, get data failed.");
+            // TODO:エラーメッセージ表示はリスト画面上に表示する
             Toast.makeText(this, "クリップデータ取得失敗", Toast.LENGTH_SHORT);
             resetPaging();
             resetCommunication();
@@ -152,7 +152,7 @@ public class WatchingVideoListActivity extends BaseActivity implements View.OnCl
             mData.add(watchListenVideoContentInfo.get(i ));
         }
 
-        Log.d(DTVTConstants.LOG_DEF_TAG, "WatchListenVideoCallback, mData.size=="+ mData.size());
+        DTVTLogger.debug("WatchListenVideoCallback, mData.size==" + mData.size());
 
         resetCommunication();
         mWatchListenVideoBaseAdapter.notifyDataSetChanged();
@@ -206,7 +206,7 @@ public class WatchingVideoListActivity extends BaseActivity implements View.OnCl
                     //&& page <= mMaxPage
                     //&& !mPagingStatus
                     ) {
-                Log.d(DTVTConstants.LOG_DEF_TAG, "onScroll, paging, firstVisibleItem=" + firstVisibleItem + ", totalItemCount=" + totalItemCount+ ", visibleItemCount=" + visibleItemCount);
+                DTVTLogger.debug("onScroll, paging, firstVisibleItem=" + firstVisibleItem + ", totalItemCount=" + totalItemCount + ", visibleItemCount=" + visibleItemCount);
                 //setSetPagingStatus(true);
             }
         }
@@ -232,7 +232,7 @@ public class WatchingVideoListActivity extends BaseActivity implements View.OnCl
                     return;
                 }
 
-                Log.d(DTVTConstants.LOG_DEF_TAG, "onScrollStateChanged, do paging");
+                DTVTLogger.debug("onScrollStateChanged, do paging");
 
                 displayMoreData(true);
                 setCommunicatingStatus(true);

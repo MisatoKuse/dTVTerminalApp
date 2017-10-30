@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WatchListenVideoList;
 
 import org.json.JSONArray;
@@ -89,10 +90,10 @@ public class WatchListenVideoListJsonParser {
             }
         } catch (JSONException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
         return null;
     }
@@ -123,7 +124,7 @@ public class WatchListenVideoListJsonParser {
             throw new RuntimeException(e);
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
     }
 
@@ -169,7 +170,7 @@ public class WatchListenVideoListJsonParser {
             throw new RuntimeException(e);
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
     }
 

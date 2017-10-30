@@ -11,9 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.HorizontalScrollView;
@@ -25,7 +23,7 @@ import android.widget.Toast;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ClipMainAdapter;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.TvClipDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VodClipDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvClipContentInfo;
@@ -142,7 +140,8 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
     public void tvClipListCallback(TvClipContentInfo clipContentInfo) {
         if(null == clipContentInfo || 0== clipContentInfo.size()){
             //通信とJSON Parseに関してerror処理
-            Log.d(DTVTConstants.LOG_DEF_TAG, "ClipListActivity::TvClipListCallback, クリップデータ取得失敗");
+            DTVTLogger.debug("ClipListActivity::TvClipListCallback, get data failed.");
+            // TODO:エラーメッセージ表示はリスト画面上に表示する
             Toast.makeText(this, "クリップデータ取得失敗", Toast.LENGTH_SHORT);
             return;
         }
@@ -167,7 +166,7 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
             }
         }
 
-        Log.d(DTVTConstants.LOG_DEF_TAG, "tvClipListCallback");
+        DTVTLogger.debug("tvClipListCallback");
 
         resetCommunication();
         fragment.noticeRefresh();
@@ -177,7 +176,8 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
     public void vodClipListCallback(VodClipContentInfo clipContentInfo) {
         if(null == clipContentInfo || 0== clipContentInfo.size()){
             //通信とJSON Parseに関してerror処理
-            Log.d(DTVTConstants.LOG_DEF_TAG, "ClipListActivity::VodClipListCallback, クリップデータ取得失敗");
+            DTVTLogger.debug("ClipListActivity::VodClipListCallback, get data failed");
+            // TODO:エラーメッセージ表示はリスト画面上に表示する
             Toast.makeText(this, "クリップデータ取得失敗", Toast.LENGTH_SHORT);
             return;
         }
@@ -202,7 +202,7 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
             }
         }
 
-        Log.d(DTVTConstants.LOG_DEF_TAG, "vodClipListCallback");
+        DTVTLogger.debug("vodClipListCallback");
 
         resetCommunication();
         fragment.noticeRefresh();
@@ -231,7 +231,7 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
             if (firstVisibleItem + visibleItemCount == totalItemCount
                     && 0 != totalItemCount
                     ) {
-                Log.d(DTVTConstants.LOG_DEF_TAG, "ClipListActivity::onScroll, paging, firstVisibleItem=" + firstVisibleItem + ", totalItemCount=" + totalItemCount+ ", visibleItemCount=" + visibleItemCount);
+                DTVTLogger.debug("ClipListActivity::onScroll, paging, firstVisibleItem=" + firstVisibleItem + ", totalItemCount=" + totalItemCount+ ", visibleItemCount=" + visibleItemCount);
             }
         }
     }
@@ -257,7 +257,7 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
                     return;
                 }
 
-                Log.d(DTVTConstants.LOG_DEF_TAG, "onScrollStateChanged, do paging");
+                DTVTLogger.debug("onScrollStateChanged, do paging");
 
 
                 fragment.displayMoreData(true);

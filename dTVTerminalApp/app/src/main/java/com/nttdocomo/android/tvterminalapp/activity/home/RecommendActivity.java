@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AbsListView;
@@ -24,6 +23,7 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecommendDataProvider;
 import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendBaseFragmentScrollListener;
@@ -102,7 +102,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
      */
     private void requestRecommendData() {
         if (null == mRecommendDataProvider) {
-            Log.e(DTVTConstants.LOG_DEF_TAG, "RecommendActivity::setRecommendData, mRecommendDataProvider is null");
+            DTVTLogger.debug("RecommendActivity::setRecommendData, mRecommendDataProvider is null");
             return;
         }
         synchronized (this) {
@@ -253,7 +253,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
                 showListSize += 1;
             }
 
-            Log.d(DTVTConstants.LOG_DEF_TAG, "baseFragment.mData.size = " + baseFragment.mData.size());
+            DTVTLogger.debug("baseFragment.mData.size = " + baseFragment.mData.size());
 
             // フラグメントの更新
             baseFragment.notifyDataSetChanged();
@@ -293,7 +293,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
             }
         }
         setSearchStart(false);
-        Log.e(DTVTConstants.LOG_DEF_TAG, "onSearchDataProviderFinishNg");
+        DTVTLogger.debug("onSearchDataProviderFinishNg");
     }
 
     @Override
@@ -347,7 +347,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
         mSearchLastItem = firstVisibleItem + visibleItemCount - 1;
 
         int pageMax = (mCntPageing + 1) * SearchConstants.RecommendList.requestMaxCount_Recommend;
-        Log.i(DTVTConstants.LOG_DEF_TAG, "onScroll.first:" + firstVisibleItem +
+        DTVTLogger.debug("onScroll.first:" + firstVisibleItem +
                 " .visible:" + visibleItemCount + " .total:" + totalItemCount +
                 " dataSize:" + fragment.mData.size());
         if (maxShowListSize > fragment.mData.size() && // システム制約最大値 100件
@@ -374,7 +374,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
      */
     @Override
     public void RecommendChannelCallback(List<RecommendContentInfo> recommendContentInfoList) {
-        Log.d(DTVTConstants.LOG_DEF_TAG, "Chan Callback DataSize:" + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + mRecommendViewPager.getCurrentItem());
+        DTVTLogger.debug("Chan Callback DataSize:" + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + mRecommendViewPager.getCurrentItem());
         if (mRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV) {
             recommendDataProviderSuccess(recommendContentInfoList);
         }
@@ -387,7 +387,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
      */
     @Override
     public void RecommendVideoCallback(List<RecommendContentInfo> recommendContentInfoList) {
-        Log.d(DTVTConstants.LOG_DEF_TAG, "vid Callback DataSize:" + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + mRecommendViewPager.getCurrentItem());
+        DTVTLogger.debug("vid Callback DataSize:" + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + mRecommendViewPager.getCurrentItem());
         if (mRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO) {
             recommendDataProviderSuccess(recommendContentInfoList);
         }
@@ -400,7 +400,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
      */
     @Override
     public void RecommendDTVCallback(List<RecommendContentInfo> recommendContentInfoList) {
-        Log.d(DTVTConstants.LOG_DEF_TAG, "dtv Callback DataSize:" + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + mRecommendViewPager.getCurrentItem());
+        DTVTLogger.debug("dtv Callback DataSize:" + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + mRecommendViewPager.getCurrentItem());
         if (mRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV) {
             recommendDataProviderSuccess(recommendContentInfoList);
         }
@@ -414,7 +414,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
      */
     @Override
     public void RecommendDAnimeCallback(List<RecommendContentInfo> recommendContentInfoList) {
-        Log.d(DTVTConstants.LOG_DEF_TAG, "ani Callback DataSize:" + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + mRecommendViewPager.getCurrentItem());
+        DTVTLogger.debug("ani Callback DataSize:" + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + mRecommendViewPager.getCurrentItem());
         if (mRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME) {
             recommendDataProviderSuccess(recommendContentInfoList);
         }
@@ -427,7 +427,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
      */
     @Override
     public void RecommendDChannelCallback(List<RecommendContentInfo> recommendContentInfoList) {
-        Log.d(DTVTConstants.LOG_DEF_TAG, "dCH Callback DataSize:"
+        DTVTLogger.debug("dCH Callback DataSize:"
                 + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + mRecommendViewPager.getCurrentItem());
         if (mRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL) {
             recommendDataProviderSuccess(recommendContentInfoList);

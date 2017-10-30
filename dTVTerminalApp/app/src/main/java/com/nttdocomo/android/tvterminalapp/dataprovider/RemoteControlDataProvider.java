@@ -4,9 +4,9 @@
 
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.io.IOException;
 import java.net.DatagramSocket;
@@ -122,9 +122,9 @@ public class RemoteControlDataProvider {
                     socket.send(packet);
                 }
             } catch (SocketException e) {
-                Log.i("KeycodeRerayTask", e.getMessage());
+                DTVTLogger.debug(e);
             } catch (IOException e ) {
-                Log.i("KeycodeRerayTask", e.getMessage());
+                DTVTLogger.debug(e);
             } finally {
                 if (socket != null) {
                     socket.close();

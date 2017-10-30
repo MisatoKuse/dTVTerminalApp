@@ -7,9 +7,8 @@ package com.nttdocomo.android.tvterminalapp.datamanager.insert;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvClipListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvClipList;
@@ -56,7 +55,7 @@ public class TvClipInsertDataManager {
         try{
             tvClipListDao.delete();
         }catch (Exception e){
-            Log.d(DTVTConstants.LOG_DEF_TAG, "TvClipInsertDataManager::insertTvClipInsertList, e.cause=" + e.getCause());
+            DTVTLogger.debug("TvClipInsertDataManager::insertTvClipInsertList, e.cause=" + e.getCause());
         }
 
         //HashMapの要素とキーを一行ずつ取り出し、DBに格納する

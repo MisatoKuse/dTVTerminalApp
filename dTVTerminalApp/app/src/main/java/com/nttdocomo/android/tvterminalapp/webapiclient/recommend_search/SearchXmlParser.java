@@ -6,10 +6,10 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
 
 import android.os.AsyncTask;
-import android.util.Log;
 import android.util.Xml;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -77,7 +77,7 @@ public class SearchXmlParser extends AsyncTask<String, Integer, String> {
         }
 
         if(0==strings[0].length()){
-            Log.d(DTVTConstants.LOG_DEF_TAG, "SearchXmlParser::doInBackground, str.length=0");
+            DTVTLogger.debug("SearchXmlParser::doInBackground, str.length=0");
             setOtherError();
         } else {
             parse(strings[0]);
@@ -93,7 +93,7 @@ public class SearchXmlParser extends AsyncTask<String, Integer, String> {
     @Override
     protected void onPostExecute(String aVoid) {
         super.onPostExecute(aVoid);
-        Log.d(DTVTConstants.LOG_DEF_TAG, "MyAsyncTask.onPostExecute aVoid=" + aVoid);
+        DTVTLogger.debug("MyAsyncTask.onPostExecute aVoid=" + aVoid);
 
         if(null!=mXMLParserFinishListener){
             if(null == searchError){
@@ -106,13 +106,13 @@ public class SearchXmlParser extends AsyncTask<String, Integer, String> {
 
     //2.parse
     private void parse(String responseData) {
-        Log.d(DTVTConstants.LOG_DEF_TAG, "parse");
+        DTVTLogger.debug("parse");
 
         XmlPullParser parser = Xml.newPullParser();
         try {
             parser.setInput(new StringReader(responseData));
         } catch (XmlPullParserException e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
             setOtherError();
             return;
         }
@@ -120,7 +120,7 @@ public class SearchXmlParser extends AsyncTask<String, Integer, String> {
         try {
             event = parser.getEventType();
         } catch (XmlPullParserException e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
             setOtherError();
             return;
         }
@@ -148,9 +148,9 @@ public class SearchXmlParser extends AsyncTask<String, Integer, String> {
                         try {
                             xmlValue = parser.nextText();
                         } catch (XmlPullParserException e) {
-                            //e.printStackTrace();
+                            DTVTLogger.debug(e);
                         } catch (IOException e) {
-                            //e.printStackTrace();
+                            DTVTLogger.debug(e);
                         }
 
                         if(name2 != null && 0<name2.length()){
@@ -178,7 +178,7 @@ public class SearchXmlParser extends AsyncTask<String, Integer, String> {
 
             }   //while end
         } catch (Exception e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
             if(null==searchError){
                 setOtherError();
             }
@@ -187,7 +187,7 @@ public class SearchXmlParser extends AsyncTask<String, Integer, String> {
     }
 
     public void parserDidStartDocument(/*SearchXmlParser parser*/) {
-        Log.d(DTVTConstants.LOG_DEF_TAG, "xml parse start");
+        DTVTLogger.debug("xml parse start");
 
         searchResponse = new TotalSearchResponseData();
         //searchError = new TotalSearchErrorData();
@@ -200,17 +200,17 @@ public class SearchXmlParser extends AsyncTask<String, Integer, String> {
     }
 
     public void parserDidEndDocument(/*SearchXmlParser parser*/) {
-        Log.d(DTVTConstants.LOG_DEF_TAG, "xml parse finished");
+        DTVTLogger.debug("xml parse finished");
     }
 
     public void parseProc(XmlPullParser parser, String tagName, String value) throws Exception {
 
         if(kStatus.equals(tagName)){
             if(kStatusOk.equals(value)){
-                Log.d(DTVTConstants.LOG_DEF_TAG, "parseProc, " + kStatusOk);
+                DTVTLogger.debug("parseProc, " + kStatusOk);
                 searchResponse.status = kStatusOk;
             }else if(kStatusNg.equals(value)) {
-                Log.d(DTVTConstants.LOG_DEF_TAG, "parseProc, " + kStatusNg);
+                DTVTLogger.debug("parseProc, " + kStatusNg);
                 ifNullCreate();
                 searchError.status=value;
             }

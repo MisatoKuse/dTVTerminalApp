@@ -7,9 +7,9 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.ImageView;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 
 import java.util.ArrayList;
@@ -50,14 +50,14 @@ public class ThumbnailProvider {
 		Bitmap bitmap = mThumbnailCacheManager.getBitmapFromMem(imageUrl);
 
 		if (bitmap != null) {
-			Log.i("dTV", "image exists in memory");
+			DTVTLogger.debug("image exists in memory");
 			return bitmap;
 		}
 
 		// ディスクから取得
 		bitmap = mThumbnailCacheManager.getBitmapFromDisk(imageUrl);
 		if (bitmap != null) {
-			Log.i("dTV", "image exists in file");
+			DTVTLogger.debug("image exists in file");
 			// メモリにプッシュする
 			mThumbnailCacheManager.putBitmapToMem(imageUrl, bitmap);
 			return bitmap;
@@ -65,7 +65,7 @@ public class ThumbnailProvider {
 
 		// サーバからQueueで取得
 		if (!TextUtils.isEmpty(imageUrl)) {
-            Log.i("dTV", "download start..... url="+imageUrl);
+			DTVTLogger.debug("download start..... url=" + imageUrl);
             if (TextUtils.isEmpty(imageUrl)) {
                 return null;
             }

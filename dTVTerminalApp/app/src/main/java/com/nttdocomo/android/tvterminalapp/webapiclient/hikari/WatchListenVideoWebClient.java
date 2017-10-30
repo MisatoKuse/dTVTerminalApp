@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.os.Handler;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvClipList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WatchListenVideoList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.JsonParserThread;
@@ -71,7 +72,7 @@ public class WatchListenVideoWebClient
             JsonParserThread t = new JsonParserThread(returnCode.bodyData, handler, this);
             t.start();
         } catch (Exception e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
             onError();
         }
     }

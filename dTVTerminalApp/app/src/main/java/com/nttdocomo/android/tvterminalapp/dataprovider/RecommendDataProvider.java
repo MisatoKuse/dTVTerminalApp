@@ -6,9 +6,9 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 
 import android.content.Context;
-import android.util.Log;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendListDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
 import com.nttdocomo.android.tvterminalapp.model.recommend.RecommendContentInfo;
@@ -202,7 +202,7 @@ public class RecommendDataProvider implements
      * @param requestPageNo タブ種別 ,startIndex 取得開始位置, maxResult 最大取得件数
      */
     public void startGetRecommendData(int requestPageNo, int startIndex, int maxResult) {
-        Log.i(DTVTConstants.LOG_DEF_TAG, "requestPageNo:" + requestPageNo);
+        DTVTLogger.debug("requestPageNo:" + requestPageNo);
         // RequestDataのインスタンス生成
         RecommendRequestData requestData = new RecommendRequestData();
 

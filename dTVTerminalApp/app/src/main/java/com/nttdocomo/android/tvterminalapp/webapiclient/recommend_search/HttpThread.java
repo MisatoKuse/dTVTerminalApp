@@ -8,6 +8,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -89,11 +90,11 @@ public class HttpThread extends Thread {
                 br.close();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
             setError(true);
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            DTVTLogger.debug(e);
             setError(true);
         }
 

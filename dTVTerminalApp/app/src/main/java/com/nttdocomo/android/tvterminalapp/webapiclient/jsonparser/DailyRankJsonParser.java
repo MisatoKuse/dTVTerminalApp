@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
 import android.os.AsyncTask;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
@@ -122,10 +123,10 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
             }
         } catch (JSONException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
         return null;
     }
@@ -161,7 +162,7 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
             throw new RuntimeException(e);
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
     }
 
@@ -209,7 +210,7 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
             throw new RuntimeException(e);
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
     }
 }

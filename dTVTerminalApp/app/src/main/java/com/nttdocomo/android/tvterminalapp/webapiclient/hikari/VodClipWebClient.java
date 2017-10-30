@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.os.Handler;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.JsonParserThread;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser;
@@ -71,7 +72,7 @@ public class VodClipWebClient
             JsonParserThread t = new JsonParserThread(returnCode.bodyData, handler, this);
             t.start();
         } catch (Exception e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
             onError();
         }
     }

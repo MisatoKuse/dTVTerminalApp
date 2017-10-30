@@ -8,7 +8,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.util.LruCache;
-import android.util.Log;
+
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -78,7 +79,7 @@ public class ThumbnailCacheManager {
             }
             return bitmap;
         } catch (Exception e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
         return null;
     }
@@ -121,7 +122,7 @@ public class ThumbnailCacheManager {
             File myFile = new File(context.getCacheDir() + THUMBNAIL_CACHE);
             if (!myFile.exists()){
                 if(!myFile.mkdir()){
-                    Log.i("dTV", "create file fail ");
+                    DTVTLogger.debug("create file fail ");
                 }
             }
             File[] files = myFile.listFiles();
@@ -141,7 +142,7 @@ public class ThumbnailCacheManager {
                 //古い情報を削除する
                 if(mListFile.get(0)!=null && mListFile.get(0).exists()){
                     if(!mListFile.get(0).delete()){
-                        Log.i("dTV", "delete file fail ");
+                        DTVTLogger.debug("delete file fail ");
                     }
                 }
             }
@@ -149,7 +150,7 @@ public class ThumbnailCacheManager {
             filename = hashKeyForDisk(filename);
             stream = new FileOutputStream(localPath + filename);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
         return bitmap.compress(format, quality, stream);
     }

@@ -7,9 +7,8 @@ package com.nttdocomo.android.tvterminalapp.datamanager.databese.helper;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CHANNEL_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_CHANNEL_SQL;
@@ -86,7 +85,7 @@ public class DBHelper extends SQLiteOpenHelper {
         try {
             sqLiteDatabase.execSQL(CREATE_TABLE_TVCLIP_LIST_SQL);   //クリップ一覧画面用
         }catch (Exception e){
-            Log.d(DTVTConstants.LOG_DEF_TAG, "HomeDBHelper::onCreate, create " + CREATE_TABLE_TVCLIP_LIST_SQL+ " table failed, cause=" + e.getCause());
+            DTVTLogger.debug("HomeDBHelper::onCreate, create " + CREATE_TABLE_TVCLIP_LIST_SQL+ " table failed, cause=" + e.getCause());
         }
 
     }
