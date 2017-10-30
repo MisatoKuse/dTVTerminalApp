@@ -9,17 +9,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * VODメタレスポンス（フル版）
  */
 
 public class VodMetaFullData implements Serializable {
+
+    private static final long serialVersionUID = 2793910456218850277L;
 
     public String getCrid() {
         return mCrid;
@@ -467,27 +465,27 @@ public class VodMetaFullData implements Serializable {
     /**
      * VODメタレスポンス（フル版）
      */
-    public VodMetaFullData(){
+    public VodMetaFullData() {
         mPlits = new ArrayList<Plit>();
     }
 
     /**
      * VODメタレスポンス（フル版）の json データをデータオブジェクトに変換
      *
-     * @param jsonObj　json データ
+     * @param jsonObj 　json データ
      */
-    public void setData(JSONObject jsonObj){
+    public void setData(JSONObject jsonObj) {
         // ライセンス/販売情報リスト
         Plit plit;
         try {
-            for (String item: mRootPara){
+            for (String item : mRootPara) {
                 setMember(item, jsonObj.get(item));
             }
             JSONArray plits = jsonObj.getJSONArray(VOD_META_FULL_DATA_PLIT);
-            if (plits.length() == 0){
+            if (plits.length() == 0) {
                 return;
             }
-            for (int i=0; i < plits.length(); i++){
+            for (int i = 0; i < plits.length(); i++) {
                 plit = new Plit();
                 plit.setPlitData(plits.getJSONObject(i));
                 mPlits.add(plit);
@@ -508,93 +506,133 @@ public class VodMetaFullData implements Serializable {
 
     /**
      * キーとキーの値をメンバーにセットする
-     * @param key
-     * @param data
+     *
+     * @param key キー
+     * @param data キーの値
      */
-    private void setMember(String key, Object data){
+    private void setMember(String key, Object data) {
 
-        if (key.isEmpty()){
+        if (key.isEmpty()) {
             return;
-        }else switch (key){
-            case VOD_META_FULL_DATA_CRID:                  mCrid = (String)data;                // crid
+        } else switch (key) {
+            case VOD_META_FULL_DATA_CRID:
+                mCrid = (String) data;                // crid
                 break;
-            case VOD_META_FULL_DATA_CID:                   mCid = (String)data;                 // コンテンツID
+            case VOD_META_FULL_DATA_CID:
+                mCid = (String) data;                 // コンテンツID
                 break;
-            case VOD_META_FULL_DATA_TITLE_ID:             mTitle_id = (String)data;            // タイトルID（dTV）
+            case VOD_META_FULL_DATA_TITLE_ID:
+                mTitle_id = (String) data;            // タイトルID（dTV）
                 break;
-            case VOD_META_FULL_DATA_EPISODE_ID:           mEpisode_id = (String)data;          // エピソードID（dTV）
+            case VOD_META_FULL_DATA_EPISODE_ID:
+                mEpisode_id = (String) data;          // エピソードID（dTV）
                 break;
-            case VOD_META_FULL_DATA_TITLE:                 mTitle = (String)data;               // タイトル
+            case VOD_META_FULL_DATA_TITLE:
+                mTitle = (String) data;               // タイトル
                 break;
-            case VOD_META_FULL_DATA_EPITITLE:              mEpititle = (String)data;            // エピソードタイトル
+            case VOD_META_FULL_DATA_EPITITLE:
+                mEpititle = (String) data;            // エピソードタイトル
                 break;
-            case VOD_META_FULL_DATA_TITLERUBY:             mTitleruby = (String)data;           // タイトルルビ
+            case VOD_META_FULL_DATA_TITLERUBY:
+                mTitleruby = (String) data;           // タイトルルビ
                 break;
-            case VOD_META_FULL_DATA_DISP_TYPE:             mDisp_type = (String)data;           // 表示タイプ
+            case VOD_META_FULL_DATA_DISP_TYPE:
+                mDisp_type = (String) data;           // 表示タイプ
                 break;
-            case VOD_META_FULL_DATA_DISPLAY_START_DATE:   mDisplay_start_date = (String)data;  // 表示開始日時
+            case VOD_META_FULL_DATA_DISPLAY_START_DATE:
+                mDisplay_start_date = (String) data;  // 表示開始日時
                 break;
-            case VOD_META_FULL_DATA_DISPLAY_END_DATE:     mDisplay_end_date = (String)data;    // 表示終了日時
+            case VOD_META_FULL_DATA_DISPLAY_END_DATE:
+                mDisplay_end_date = (String) data;    // 表示終了日時
                 break;
-            case VOD_META_FULL_DATA_AVAIL_START_DATE:     mAvail_start_date = (String)data;    // コンテンツ自体の有効開始日時(PITのみ)
+            case VOD_META_FULL_DATA_AVAIL_START_DATE:
+                mAvail_start_date = (String) data;    // コンテンツ自体の有効開始日時(PITのみ)
                 break;
-            case VOD_META_FULL_DATA_AVAIL_END_DATE:       mAvail_end_date = (String)data;      // コンテンツ自体の有効期限日時(PITのみ)
+            case VOD_META_FULL_DATA_AVAIL_END_DATE:
+                mAvail_end_date = (String) data;      // コンテンツ自体の有効期限日時(PITのみ)
                 break;
-            case VOD_META_FULL_DATA_PUBLISH_START_DATE:  mPublish_start_date = (String)data;  // 有効開始日時
+            case VOD_META_FULL_DATA_PUBLISH_START_DATE:
+                mPublish_start_date = (String) data;  // 有効開始日時
                 break;
-            case VOD_META_FULL_DATA_PUBLISH_END_DATE:    mPublish_end_date = (String)data;    // 有効期限日時
+            case VOD_META_FULL_DATA_PUBLISH_END_DATE:
+                mPublish_end_date = (String) data;    // 有効期限日時
                 break;
-            case VOD_META_FULL_DATA_NEWA_START_DATE:     mNewa_start_date = (String)data;     // 新着期間開始
+            case VOD_META_FULL_DATA_NEWA_START_DATE:
+                mNewa_start_date = (String) data;     // 新着期間開始
                 break;
-            case VOD_META_FULL_DATA_NEWA_END_DATE:       mNewa_end_date = (String)data;       // 新着期間終了
+            case VOD_META_FULL_DATA_NEWA_END_DATE:
+                mNewa_end_date = (String) data;       // 新着期間終了
                 break;
-            case VOD_META_FULL_DATA_COPYRIGHT:            mCopyright = (String)data;           // コピーライト
+            case VOD_META_FULL_DATA_COPYRIGHT:
+                mCopyright = (String) data;           // コピーライト
                 break;
-            case VOD_META_FULL_DATA_THUMB:                 mThumb = (String)data;               // サムネイル
+            case VOD_META_FULL_DATA_THUMB:
+                mThumb = (String) data;               // サムネイル
                 break;
-            case VOD_META_FULL_DATA_DUR:                   mDur = (String)data;                 // 尺長
+            case VOD_META_FULL_DATA_DUR:
+                mDur = (String) data;                 // 尺長
                 break;
-            case VOD_META_FULL_DATA_DEMONG:                mDemong = (String)data;              // デモフラグ
+            case VOD_META_FULL_DATA_DEMONG:
+                mDemong = (String) data;              // デモフラグ
                 break;
-            case VOD_META_FULL_DATA_BVFLG:                 mBvflg = (String)data;               // 見放題フラグ
+            case VOD_META_FULL_DATA_BVFLG:
+                mBvflg = (String) data;               // 見放題フラグ
                 break;
-            case VOD_META_FULL_DATA_4KFLG:                 m4kflg = (String)data;               // ４Kフラグ
+            case VOD_META_FULL_DATA_4KFLG:
+                m4kflg = (String) data;               // ４Kフラグ
                 break;
-            case VOD_META_FULL_DATA_HDRFLG:                mHdrflg = (String)data;              // HDRフラグ
+            case VOD_META_FULL_DATA_HDRFLG:
+                mHdrflg = (String) data;              // HDRフラグ
                 break;
-            case VOD_META_FULL_DATA_AVAIL_STATUS:         mAvail_status = (String)data;        // 配信ステータス
+            case VOD_META_FULL_DATA_AVAIL_STATUS:
+                mAvail_status = (String) data;        // 配信ステータス
                 break;
-            case VOD_META_FULL_DATA_DELIVERY:              mDelivery = (String)data;            // deliveryStatus
+            case VOD_META_FULL_DATA_DELIVERY:
+                mDelivery = (String) data;            // deliveryStatus
                 break;
-            case VOD_META_FULL_DATA_R_VALUE:               mR_value = (String)data;             // パレンタル情報
+            case VOD_META_FULL_DATA_R_VALUE:
+                mR_value = (String) data;             // パレンタル情報
                 break;
-            case VOD_META_FULL_DATA_ADULT:                 mAdult = (String)data;               // アダルトフラグ
+            case VOD_META_FULL_DATA_ADULT:
+                mAdult = (String) data;               // アダルトフラグ
                 break;
-            case VOD_META_FULL_DATA_MS:                     mMs = (String)data;                  // MS_OK/NGフラグ
+            case VOD_META_FULL_DATA_MS:
+                mMs = (String) data;                  // MS_OK/NGフラグ
                 break;
-            case VOD_META_FULL_DATA_NG_FUNC:               mNg_func = (String)data;             // NGファンク
+            case VOD_META_FULL_DATA_NG_FUNC:
+                mNg_func = (String) data;             // NGファンク
                 break;
             case VOD_META_FULL_DATA_GENRE_ID_ARRAY:       //mGenre_id_array = (String)data;      // ジャンル
                 break;
-            case VOD_META_FULL_DATA_SYNOP:                  mSynop = (String)data;               // あらすじ
+            case VOD_META_FULL_DATA_SYNOP:
+                mSynop = (String) data;               // あらすじ
                 break;
-            case VOD_META_FULL_DATA_PUID:                   mPuid = (String)data;                // パーチャスID
+            case VOD_META_FULL_DATA_PUID:
+                mPuid = (String) data;                // パーチャスID
                 break;
-            case VOD_META_FULL_DATA_PRICE:                  mPrice = (String)data;               // 価格(税込)
+            case VOD_META_FULL_DATA_PRICE:
+                mPrice = (String) data;               // 価格(税込)
                 break;
-            case VOD_META_FULL_DATA_QRANGE:                 mQrange = (String)data;              // 購入単位の期間(3日の3)
+            case VOD_META_FULL_DATA_QRANGE:
+                mQrange = (String) data;              // 購入単位の期間(3日の3)
                 break;
-            case VOD_META_FULL_DATA_QUNIT:                  mQunit = (String)data;               // 購入単位の単位(3日の「日」)
+            case VOD_META_FULL_DATA_QUNIT:
+                mQunit = (String) data;               // 購入単位の単位(3日の「日」)
                 break;
-            case VOD_META_FULL_DATA_PU_S:                   mPu_s = (String)data;                // 販売開始日時
+            case VOD_META_FULL_DATA_PU_S:
+                mPu_s = (String) data;                // 販売開始日時
                 break;
-            case VOD_META_FULL_DATA_PU_E:                   mPu_e = (String)data;                // 販売終了日時
+            case VOD_META_FULL_DATA_PU_E:
+                mPu_e = (String) data;                // 販売終了日時
                 break;
-            case VOD_META_FULL_DATA_CREDITS:                mCredits = (String)data;             // 出演者情報（ロール|出演者名）
+            case VOD_META_FULL_DATA_CREDITS:
+                mCredits = (String) data;             // 出演者情報（ロール|出演者名）
                 break;
-            case VOD_META_FULL_DATA_RATING:                 mRating = (String)data;              // レーティング値
+            case VOD_META_FULL_DATA_RATING:
+                mRating = (String) data;              // レーティング値
                 break;
-            case VOD_META_FULL_DATA_DTV:                     mDtv = (String)data;                 // dTVフラグ
+            case VOD_META_FULL_DATA_DTV:
+                mDtv = (String) data;                 // dTVフラグ
                 break;
             default:
         }
@@ -624,27 +662,28 @@ public class VodMetaFullData implements Serializable {
 
         private ArrayList<Plicense> mPlicenses;
 
-        private Plit (){
+        private Plit() {
             mPlicenses = new ArrayList<Plicense>();
         }
 
         /**
-         *  PLITの値をメンバーにセットする
-         * @param plit
+         * PLITの値をメンバーにセットする
+         *
+         * @param plit PLITの値(JSONObject)
          */
         void setPlitData(JSONObject plit) {
             // ライセンス詳細リスト
             Plicense plicense;
 
             try {
-                for (String item: mPlitPara){
+                for (String item : mPlitPara) {
                     setPlitMember(item, plit.get(item));
                 }
                 JSONArray plicenses = plit.getJSONArray(VOD_META_FULL_DATA_PLICENSE);
-                if (plicenses.length() == 0){
+                if (plicenses.length() == 0) {
                     return;
                 }
-                for (int i=0; i < plicenses.length(); i++){
+                for (int i = 0; i < plicenses.length(); i++) {
                     plicense = new Plicense();
                     plicense.setPlicenseData(plicenses.getJSONObject(i));
                     mPlicenses.add(plicense);
@@ -657,16 +696,19 @@ public class VodMetaFullData implements Serializable {
 
         /**
          * キーとキーの値をメンバーにセットする
-         * @param key
-         * @param data
+         *
+         * @param key キー
+         * @param data キーの値
          */
         private void setPlitMember(String key, Object data) {
-            if (key.isEmpty()){
+            if (key.isEmpty()) {
                 return;
-            }else switch (key){
-                case VOD_META_FULL_DATA_PLIT_PLI_VIS:   mPli_vis = (String)data;
+            } else switch (key) {
+                case VOD_META_FULL_DATA_PLIT_PLI_VIS:
+                    mPli_vis = (String) data;
                     break;
-                case VOD_META_FULL_DATA_PLIT_PLI_VIE:   mPli_vie = (String)data;
+                case VOD_META_FULL_DATA_PLIT_PLI_VIE:
+                    mPli_vie = (String) data;
                     break;
                 default:
             }
@@ -777,12 +819,13 @@ public class VodMetaFullData implements Serializable {
             }
 
             /**
-             *  Plicense の値をメンバーにセットする
-             * @param plicense
+             * Plicense の値をメンバーにセットする
+             *
+             * @param plicense Plicense の値(JSONObject)
              */
             void setPlicenseData(JSONObject plicense) {
                 try {
-                    for (String item: mPlicensePara){
+                    for (String item : mPlicensePara) {
                         setPlicenseMember(item, plicense.get(item));
                     }
                 } catch (JSONException e) {
@@ -792,32 +835,43 @@ public class VodMetaFullData implements Serializable {
 
             /**
              * キーとキーの値をメンバーにセットする
-             * @param key
-             * @param data
+             *
+             * @param key キー
+             * @param data キーの値
              */
             private void setPlicenseMember(String key, Object data) {
-                if (key.isEmpty()){
+                if (key.isEmpty()) {
                     return;
-                }else switch (key){
-                    case VOD_META_FULL_DATA_PLICENSE_PLI_PUID: mPli_puid = (String)data;
+                } else switch (key) {
+                    case VOD_META_FULL_DATA_PLICENSE_PLI_PUID:
+                        mPli_puid = (String) data;
                         break;
-                    case VOD_META_FULL_DATA_PLICENSE_PLI_CRID: mPli_crid = (String)data;
+                    case VOD_META_FULL_DATA_PLICENSE_PLI_CRID:
+                        mPli_crid = (String) data;
                         break;
-                    case VOD_META_FULL_DATA_PLICENSE_PLI_TITLE: mPli_title = (String)data;
+                    case VOD_META_FULL_DATA_PLICENSE_PLI_TITLE:
+                        mPli_title = (String) data;
                         break;
-                    case VOD_META_FULL_DATA_PLICENSE_PLI_EPITITLE: mPli_epititle = (String)data;
+                    case VOD_META_FULL_DATA_PLICENSE_PLI_EPITITLE:
+                        mPli_epititle = (String) data;
                         break;
-                    case VOD_META_FULL_DATA_PLICENSE_PLI_DISP_TYPE: mPli_disp_type = (String)data;
+                    case VOD_META_FULL_DATA_PLICENSE_PLI_DISP_TYPE:
+                        mPli_disp_type = (String) data;
                         break;
-                    case VOD_META_FULL_DATA_PLICENSE_PLI_PRICE: mPli_price= (String)data;
+                    case VOD_META_FULL_DATA_PLICENSE_PLI_PRICE:
+                        mPli_price = (String) data;
                         break;
-                    case VOD_META_FULL_DATA_PLICENSE_PLI_QUNIT: mPli_qunit = (String)data;
+                    case VOD_META_FULL_DATA_PLICENSE_PLI_QUNIT:
+                        mPli_qunit = (String) data;
                         break;
-                    case VOD_META_FULL_DATA_PLICENSE_PLI_QRANGE: mPli_qrange = (String)data;
+                    case VOD_META_FULL_DATA_PLICENSE_PLI_QRANGE:
+                        mPli_qrange = (String) data;
                         break;
-                    case VOD_META_FULL_DATA_PLICENSE_PLI_PU_S: mPli_pu_s = (String)data;
+                    case VOD_META_FULL_DATA_PLICENSE_PLI_PU_S:
+                        mPli_pu_s = (String) data;
                         break;
-                    case VOD_META_FULL_DATA_PLICENSE_PLI_PU_E: mPli_pu_e = (String)data;
+                    case VOD_META_FULL_DATA_PLICENSE_PLI_PU_E:
+                        mPli_pu_e = (String) data;
                         break;
                     default:
                 }

@@ -11,7 +11,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Created by sasaki yoshiaki on 2017/10/27.
+ * VODメタレスポンス（フル版）のテスト
  */
 public class VodMetaFullDataTest {
     private VodMetaFullData mVodMetaFullData;
@@ -92,12 +92,15 @@ public class VodMetaFullDataTest {
             "      ]\n" +
             "   }\n";
     private JSONObject json;
+
+    // VODメタレスポンス（フル版）をテスト
     @Before
     public void setUp() throws Exception {
         mVodMetaFullData = new VodMetaFullData();
         json = new JSONObject(mjson_data);
     }
 
+    // PLIT が1つ、plicense が２つのデータをテスト
     @Test
     public void setData() throws Exception {
         VodMetaFullData.Plit[] plits;
@@ -107,7 +110,8 @@ public class VodMetaFullDataTest {
         int plits_len = plits.length;
         plicenses = mVodMetaFullData.getPlits()[0].getPlicenses();
         int plicenses_len = plicenses.length;
-        assertEquals(1, plicenses_len, 0);
+        assertEquals("PLIT が1つをテスト", 1, plits_len, 0);
+        assertEquals("plicense が２つをテスト", 2, plicenses_len, 0);
     }
 
     @Test
