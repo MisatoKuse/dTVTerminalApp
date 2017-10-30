@@ -7,8 +7,6 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.RentalVodListJsonParser;
 
-import java.util.List;
-
 public class RentalVodListWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
@@ -38,7 +36,6 @@ public class RentalVodListWebClient
 
     @Override
     public void onError() {
-        // TODO: パーサー未完成の間はコメント化
         if(mRentalVodListJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
             mRentalVodListJsonParserCallback.onRentalVodListJsonParsed(null);
@@ -46,7 +43,7 @@ public class RentalVodListWebClient
     }
 
     /**
-     * 当日のクリップ数番組ランキング取得
+     * レンタルビデオ情報一覧取得
      *
      * @param rentalVodListJsonParserCallback コールバックTODO:
      *                                           （本WebAPIには通常のパラメータが無く、基底クラスで追加するサービストークのみとなる。）
@@ -61,11 +58,9 @@ public class RentalVodListWebClient
         }
 
         //コールバックのセット
-        // TODO: パーサー未完成の為コメント化
-        //mPurchasedVodListJsonParserCallback = purchasedVodListJsonParserCallback;
+        mRentalVodListJsonParserCallback = rentalVodListJsonParserCallback;
 
-        //日毎ランク一覧を呼び出す
-        //TODO: 内部的には暫定的にVOD一覧を呼んでいる
+        //レンタルビデオの情報を読み込むため、購入済みVOD一覧を呼び出す
         openUrl(API_NAME_LIST.RENTAL_VOD_LIST_WEB_CLIENT.getString(), "", this);
 
         //今のところ失敗していないので、trueを返す
