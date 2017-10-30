@@ -16,7 +16,11 @@ public class ChannelsInfo {
     private ArrayList<Channel> mChannels=null;
 
     public ChannelsInfo(){
-        mChannels=new ArrayList<Channel>();
+        mChannels=new ArrayList<>();
+    }
+
+    public ArrayList<Channel> getmChannels() {
+        return mChannels;
     }
 
     public int getChannelCount(){
@@ -30,7 +34,7 @@ public class ChannelsInfo {
         if(null==mChannels){
             return null;
         }
-        ArrayList<String> ret=new ArrayList<String>();
+        ArrayList<String> ret=new ArrayList<>();
         for(int i=0;i<mChannels.size();++i){
             ret.add(mChannels.get(i).getChannelName());
         }
@@ -90,14 +94,14 @@ public class ChannelsInfo {
     }
 
     public ArrayList<Schedule> getScheduleInfosForRecyclerView(int startChanellIndex, final int displayChannelCount){
-        ArrayList<Schedule> ret= new ArrayList<Schedule>();
+        ArrayList<Schedule> ret= new ArrayList<>();
 
-        mChannelHeight = new ArrayList<Integer>();
+        mChannelHeight = new ArrayList<>();
         for(int i=0;i<displayChannelCount;++i){
             mChannelHeight.add(0);
         }
 
-        mChannelOverCount= new ArrayList<Integer>();
+        mChannelOverCount= new ArrayList<>();
         for(int i=0;i<displayChannelCount;++i){
             mChannelOverCount.add(0);
         }
@@ -145,7 +149,6 @@ public class ChannelsInfo {
 
     private Schedule createBlankSchedule(int height){
         Schedule ret= new Schedule();
-        ret = new Schedule();
         ret.setContent("");
         ret.setImageUrl("");
         ret.setStartTime("");

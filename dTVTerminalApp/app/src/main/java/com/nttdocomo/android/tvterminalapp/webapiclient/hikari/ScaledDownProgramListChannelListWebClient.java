@@ -10,9 +10,9 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ScaledDownProgramCh
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.JsonParserThread;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ScaledDownProgramListChannelListJsonParser;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -76,16 +76,17 @@ public class ScaledDownProgramListChannelListWebClient
 
     /**
      * 縮小番組データ取得
-     * @param chList
-     * @param dateList
+     * @param pagetLimit
+     * @param pagerOffset
      * @param filter
+     * @param type
      * @param scaledDownProgramListJsonParserCallback
      * @return
      */
-    public boolean getScaledDownProgramListApi(ArrayList<String> chList, ArrayList<String> dateList, final String filter,
+    public boolean getScaledDownProgramListApi(int pagetLimit, int pagerOffset, String filter, String type,
                                  ScaledDownProgramChannelListJsonParserCallback scaledDownProgramListJsonParserCallback) {
         //パラメーターのチェック
-        if(!checkNormalParameter(chList, dateList, filter, scaledDownProgramListJsonParserCallback)) {
+        if(!checkNormalParameter(pagetLimit, pagerOffset, filter, type, scaledDownProgramListJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、ヌルで帰る
             return false;
         }
@@ -94,7 +95,7 @@ public class ScaledDownProgramListChannelListWebClient
         mScaledDownProgramChannelListJsonParserCallback = scaledDownProgramListJsonParserCallback;
 
         //送信用パラメータの作成
-        String sendParameter = makeSendParameter(chList, dateList, filter);
+        String sendParameter = makeSendParameter(pagetLimit, pagerOffset, filter, type);
 
         //JSONの組み立てに失敗していれば、ヌルで帰る
         if(sendParameter.isEmpty()) {
@@ -111,16 +112,31 @@ public class ScaledDownProgramListChannelListWebClient
 
     /**
      * 指定されたパラメータがおかしいかどうかのチェック
-     * @param chList
-     * @param dateList
+     * @param pagetLimit
+     * @param pagerOffset
      * @param filter
+     * @param type
      * @param scaledDownProgramListJsonParserCallback コールバック
      * @return
      */
-    private boolean checkNormalParameter(ArrayList<String> chList, ArrayList<String> dateList, final String filter,
+    private boolean checkNormalParameter(int pagetLimit, int pagerOffset, String filter, String type,
                                          ScaledDownProgramChannelListJsonParserCallback scaledDownProgramListJsonParserCallback) {
 
-        /* 2017/10/30日実装予定 */
+        // 各値が下限以下ならばfalse
+        if(pagetLimit < 1) {
+            return false;
+        }
+        if(pagerOffset < 1) {
+            return false;
+        }
+
+        //文字列がヌルならfalse
+        if(filter == null) {
+            return false;
+        }
+        if(type == null) {
+            return false;
+        }
 
         //コールバックが含まれていないならばエラー
         if(scaledDownProgramListJsonParserCallback == null) {
@@ -134,25 +150,33 @@ public class ScaledDownProgramListChannelListWebClient
 
     /**
      * 指定されたパラメータをJSONで組み立てて文字列にする
-     * @param chList
-     * @param dateList
+     * @param pagetLimit
+     * @param pagerOffset
      * @param filter
+     * @param type
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(ArrayList<String> chList, ArrayList<String> dateList, final String filter) {
+    private String makeSendParameter(int pagetLimit, int pagerOffset, String filter, String type) {
         JSONObject jsonObject = new JSONObject();
         String answerText="";
-        
-        /* 2017/10/30日実装予定 */
-        /*
+
         try {
-            
+            //ページャー部の作成
+            JSONObject jsonPagerObject = new JSONObject();
+            jsonPagerObject.put("limit",pagetLimit);
+            jsonPagerObject.put("offset",pagerOffset);
+            jsonObject.put("pager",jsonPagerObject);
+
+            //その他
+            jsonObject.put("filter", filter);
+            jsonObject.put("type", type);
+
+            answerText = jsonObject.toString();
 
         } catch (JSONException e) {
             //JSONの作成に失敗したので空文字とする
             answerText = "";
         }
-        */
         return answerText;
     }
 }

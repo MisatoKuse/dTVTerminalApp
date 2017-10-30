@@ -15,47 +15,61 @@ import java.util.ArrayList;
 public class Channel {
 
     private ArrayList<Schedule> mSchedules=null;
-    private String mName="";
-    private int mChannelId;
+    private String title="";
+    private int chno;
 
     /**
      * Channelを構造する
-     * @param channelName
-     * @param scheduleInfos
+     * @param title タイトル情報
+     * @param chno　チャンネルID
+     *
      */
-    public Channel(String channelName, int channelId, ArrayList<Schedule> scheduleInfos){
-        mName=channelName;
-        mChannelId = channelId;
+    public Channel(String title, int chno, ArrayList<Schedule> scheduleInfos){
+        this.title=title;
+        this.chno = chno;
         mSchedules = scheduleInfos;
     }
 
     /**
      * Channelタイトルを取得
-     * @return
+     *
      */
     public String getChannelName(){
-        return mName;
+        return title;
     }
 
     /**
      * Channel idを取得
-     * @return
      */
-    public int getChannelId() {
-        return mChannelId;
+    public int getChno() {
+        return chno;
     }
 
     /**
      *
-     * @param mChannelId
+     * @param chno チャンネルID
      */
-    public void setChannelId(int mChannelId) {
-        this.mChannelId = mChannelId;
+    public void setChno(int chno) {
+        this.chno = chno;
+    }
+
+    /**
+     * Channel 一覧を取得
+     */
+    public ArrayList<Schedule> getmSchedules() {
+        return mSchedules;
+    }
+
+    /**
+     *
+     * @param mSchedules 全チャンネル情報取得
+     */
+    public void setmSchedules(ArrayList<Schedule> mSchedules) {
+        this.mSchedules = mSchedules;
     }
 
     /**
      * 番組数を取得
-     * @return
      */
     public int getScheduleCount(){
         if(null==mSchedules){
@@ -67,8 +81,7 @@ public class Channel {
 
     /**
      * 番組を取得
-     * @param index
-     * @return
+     * @param index　チャンネルindex
      */
     public Schedule getSchedule(int index){
         if(null==mSchedules || 0>index || index>=mSchedules.size()){

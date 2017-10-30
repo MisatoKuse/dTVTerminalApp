@@ -11,6 +11,8 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ScaledDownProgramLi
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.JsonParserThread;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ScaledDownProgramListJsonParser;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -83,7 +85,7 @@ public class ScaledDownProgramListWebClient
      * @param scaledDownProgramListJsonParserCallback
      * @return
      */
-    public boolean getScaledDownProgramListApi(ArrayList<String> chList, ArrayList<String> dateList, final String filter,
+    public boolean getScaledDownProgramListApi(List<String> chList, List<String> dateList, final String filter,
                                  ScaledDownProgramListJsonParserCallback scaledDownProgramListJsonParserCallback) {
         //パラメーターのチェック
         if(!checkNormalParameter(chList, dateList, filter, scaledDownProgramListJsonParserCallback)) {
@@ -118,10 +120,39 @@ public class ScaledDownProgramListWebClient
      * @param scaledDownProgramListJsonParserCallback コールバック
      * @return
      */
-    private boolean checkNormalParameter(ArrayList<String> chList, ArrayList<String> dateList, final String filter,
+    private boolean checkNormalParameter(List<String> chList, List<String> dateList, final String filter,
                                          ScaledDownProgramListJsonParserCallback scaledDownProgramListJsonParserCallback) {
 
-        /* 2017/10/30日実装予定 */
+        //パラメーターのチェック
+        if(chList.size() == 0) {
+            //データが一つもなければエラー
+            return false;
+        }
+
+        if(dateList == null || dateList.size() == 0) {
+            //データが一つもなければエラー
+            return false;
+        }
+
+        for(String singleDate : dateList) {
+            if(!checkDateString(singleDate)) {
+                if(!singleDate.equals(DATE_NOW)) {
+                    //日付でも"now"でもない文字だったので、エラー
+                    return false;
+                }
+            }
+        }
+
+        //フィルター用の固定値をひとまとめにする
+        List<String> filterList = makeStringArry(FILTER_RELEASE,FILTER_TESTA,FILTER_DEMO);
+
+        //指定された文字がひとまとめにした中に含まれるか確認
+        if(filterList.indexOf(filter) == -1) {
+            //空文字ならば有効なので、それ以外はfalse
+            if(!filter.isEmpty()) {
+                return false;
+            }
+        }
 
         //コールバックが含まれていないならばエラー
         if(scaledDownProgramListJsonParserCallback == null) {
@@ -140,20 +171,35 @@ public class ScaledDownProgramListWebClient
      * @param filter
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(ArrayList<String> chList, ArrayList<String> dateList, final String filter) {
+    private String makeSendParameter(List<String> chList, List<String> dateList, final String filter) {
         JSONObject jsonObject = new JSONObject();
-        String answerText="";
-        
-        /* 2017/10/30日実装予定 */
-        /*
+        String answerText;
         try {
-            
+            //チャンネル番号配列の作成
+            JSONArray channelArray = new JSONArray();
+            for(String singleChannel : chList) {
+                channelArray.put(singleChannel);
+            }
+
+            jsonObject.put("ch_list",channelArray);
+
+            //日付配列の作成
+            JSONArray dateArray = new JSONArray();
+            for(String singleDate : dateList) {
+                dateArray.put(singleDate);
+            }
+
+            jsonObject.put("date_list",dateArray);
+
+            //その他
+            jsonObject.put("filter", filter);
+
+            answerText = jsonObject.toString();
 
         } catch (JSONException e) {
             //JSONの作成に失敗したので空文字とする
             answerText = "";
         }
-        */
         return answerText;
     }
 }

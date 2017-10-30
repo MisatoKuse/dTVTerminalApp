@@ -15,6 +15,7 @@ public class Schedule {
     private String mStartTime = "";
     private String mEndTime = "";
     private String mImageUrl = "";
+    private String mChno = "";
 
     private int mHeight = 0;
     private int mTopPadding = 0;
@@ -77,8 +78,22 @@ public class Schedule {
     }
 
     /*
-     * 高さを取得する
+     * チャンネルNOを取得する
      */
+    public String getmChno() {
+        return mChno;
+    }
+
+    /*
+     * チャンネルNOを設定する
+     */
+    public void setmChno(String mChno) {
+        this.mChno = mChno;
+    }
+
+    /*
+         * 高さを取得する
+         */
     public int getHeight() {
         return mHeight;
     }
