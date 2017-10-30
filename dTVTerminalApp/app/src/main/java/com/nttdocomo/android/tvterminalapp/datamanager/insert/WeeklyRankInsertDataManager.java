@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.datamanager.insert;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WeeklyRankListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WeeklyRankList;
@@ -19,12 +20,12 @@ import java.util.Map;
 
 public class WeeklyRankInsertDataManager {
 
-    private Context mContext;
+    final private Context mContext;
 
     /**
      * コンストラクタ
      *
-     * @param context
+     * @param context コンテキスト
      */
     public WeeklyRankInsertDataManager(Context context) {
         mContext = context;
@@ -32,8 +33,6 @@ public class WeeklyRankInsertDataManager {
 
     /**
      * WeeklyRankAPIの解析結果をDBに格納する。
-     *
-     * @return
      */
     public void insertWeeklyRankInsertList(WeeklyRankList weeklyRankList) {
 
@@ -41,7 +40,7 @@ public class WeeklyRankInsertDataManager {
         DBHelper weeklyRankListDBHelper = new DBHelper(mContext);
         SQLiteDatabase db = weeklyRankListDBHelper.getWritableDatabase();
         WeeklyRankListDao weeklyRankListDao = new WeeklyRankListDao(db);
-        List<HashMap<String,String>> hashMaps = weeklyRankList.getWrList();
+        List<HashMap<String, String>> hashMaps = weeklyRankList.getWrList();
 
         //DB保存前に前回取得したデータは全消去する
         weeklyRankListDao.delete();

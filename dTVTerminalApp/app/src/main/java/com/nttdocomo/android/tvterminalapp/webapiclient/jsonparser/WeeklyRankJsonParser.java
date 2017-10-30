@@ -23,10 +23,11 @@ import java.util.List;
 
 public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
 
-    private WeeklyRankWebClient.WeeklyRankJsonParserCallback mWeeklyRankJsonParserCallback;
+    final private WeeklyRankWebClient.WeeklyRankJsonParserCallback mWeeklyRankJsonParserCallback;
     // オブジェクトクラスの定義
-    public WeeklyRankList mWeeklyRankList;
+    private WeeklyRankList mWeeklyRankList;
 
+    // コミット時に警告が出るが、対外的なパラメータなので対応はしない
     public static final String WEEKLYRANK_LIST_STATUS = "status";
 
     public static final String WEEKLYRANK_LIST_PAGER = "pager";
@@ -56,6 +57,7 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
     public static final String WEEKLYRANK_LIST_DELIVERY = "delivery";
     public static final String WEEKLYRANK_LIST_R_VALUE = "r_value";
 
+    // **FindBugs** Bad practice FindBugは、"pagerPara"と"listPara"はpublicを外せと言うが、対外的なパラメータなので、対応は行わない。
     public static final String[] pagerPara = {WEEKLYRANK_LIST_PAGER_LIMIT, WEEKLYRANK_LIST_PAGER_OFFSET,
             WEEKLYRANK_LIST_PAGER_COUNT, WEEKLYRANK_LIST_PAGER_TOTAL};
 
@@ -69,7 +71,7 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
     /**
      * コンストラクタ
      *
-     * @param mWeeklyRankJsonParserCallback
+     * @param mWeeklyRankJsonParserCallback 値を返すコールバック
      */
     public WeeklyRankJsonParser(WeeklyRankWebClient.WeeklyRankJsonParserCallback mWeeklyRankJsonParserCallback) {
         this.mWeeklyRankJsonParserCallback = mWeeklyRankJsonParserCallback;
@@ -83,7 +85,7 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
     @Override
     protected Object doInBackground(Object... strings) {
         String result = (String) strings[0];
-        List<WeeklyRankList> resultList = WeeklyRankListSender(result);
+        List<WeeklyRankList> resultList = weeklyRankListSender(result);
         return resultList;
     }
 
@@ -93,12 +95,13 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
      * @param jsonStr String形式のJSONデータ
      * @return List<WeeklyRankList> ObjectクラスをList形式で返却
      */
-    public List<WeeklyRankList> WeeklyRankListSender(String jsonStr) {
+    private List<WeeklyRankList> weeklyRankListSender(String jsonStr) {
 
         mWeeklyRankList = new WeeklyRankList();
 
         try {
             JSONObject jsonObj = new JSONObject(jsonStr);
+            // **FindBugs** Bad practice FindBugはこのヌルチェックが無用と警告するが、将来的にcatch (Exception e)は消すはずなので残す
             if (jsonObj != null) {
                 sendStatus(jsonObj);
                 if (!jsonObj.isNull(WEEKLYRANK_LIST)) {
@@ -121,12 +124,12 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
     /**
      * statusの値をMapでオブジェクトクラスに格納
      *
-     * @param jsonObj
+     * @param jsonObj ステータスを含んだJSONオブジェクト
      */
-    public void sendStatus(JSONObject jsonObj) {
+    private void sendStatus(JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
-            HashMap<String, String> map = new HashMap<String, String>();
+            HashMap<String, String> map = new HashMap<>();
             if (!jsonObj.isNull(WEEKLYRANK_LIST_STATUS)) {
                 String status = jsonObj.getString(WEEKLYRANK_LIST_STATUS);
                 map.put(WEEKLYRANK_LIST_STATUS, status);
@@ -135,14 +138,17 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
             if (!jsonObj.isNull(WEEKLYRANK_LIST_PAGER)) {
                 JSONObject pager = jsonObj.getJSONObject(WEEKLYRANK_LIST_PAGER);
 
-                for (int i = 0; i < pagerPara.length; i++) {
-                    if (!pager.isNull(pagerPara[i])) {
-                        String para = pager.getString(pagerPara[i]);
-                        map.put(pagerPara[i], para);
+                for (String pagerBuffer : pagerPara) {
+                    if (!pager.isNull(pagerBuffer)) {
+                        String para = pager.getString(pagerBuffer);
+                        map.put(pagerBuffer, para);
                     }
                 }
             }
-            mWeeklyRankList.setWrMap(map);
+
+            if (mWeeklyRankList != null) {
+                mWeeklyRankList.setWrMap(map);
+            }
 
         } catch (JSONException e) {
             throw new RuntimeException(e);
@@ -157,22 +163,25 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
      *
      * @param arrayList JSONArray
      */
-    public void senWrcList(JSONArray arrayList) {
+    private void senWrcList(JSONArray arrayList) {
         try {
             List<HashMap<String, String>> wrList = new ArrayList<>();
 
             for (int i = 0; i < arrayList.length(); i++) {
-                HashMap<String, String> wrListMap = new HashMap<String, String>();
+                HashMap<String, String> wrListMap = new HashMap<>();
                 JSONObject jsonObject = arrayList.getJSONObject(i);
-                for (int j = 0; j < listPara.length; j++) {
-                    if (!jsonObject.isNull(listPara[j])) {
-                        String para = jsonObject.getString(listPara[j]);
-                        wrListMap.put(listPara[j], para);
+                for (String listBuffer : listPara) {
+                    if (!jsonObject.isNull(listBuffer)) {
+                        String para = jsonObject.getString(listBuffer);
+                        wrListMap.put(listBuffer, para);
                     }
                 }
                 wrList.add(wrListMap);
             }
-            mWeeklyRankList.setWrList(wrList);
+
+            if (mWeeklyRankList != null) {
+                mWeeklyRankList.setWrList(wrList);
+            }
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
