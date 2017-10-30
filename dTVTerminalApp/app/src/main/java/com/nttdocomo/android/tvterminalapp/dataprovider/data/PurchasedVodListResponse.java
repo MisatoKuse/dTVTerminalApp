@@ -19,6 +19,7 @@ public class PurchasedVodListResponse implements Serializable {
     private ArrayList<VodMetaFullData> mVodMetaFullData;  // 購入済みVOD一覧リスト
 
     public static final String VOD_META_FULL_RESPONSE_STATUS = "status";
+    public static final String VOD_META_FULL_RESPONSE_LIST = "list";
 
     public String getStatus() {
         return mStatus;
