@@ -46,7 +46,9 @@ public class VodMetaFullDataTest {
             "      \"ms\": \"\",\n" +
             "      \"ng_func\": \"\",\n" +
             "      \"genre_id_array\": [\n" +
-            "        \"0600\"\n" +
+            "        \"0600\",\n" +
+            "        \"0700\",\n" +
+            "        \"0800\"\n" +
             "      ],\n" +
             "      \"synop\": \"【吹替版】魔女の呪いによって野獣の姿に変えられてしまった王子。呪いを解く鍵は、魔法のバラの花びらが全て散る前に誰かを心から愛し、そして愛されること―。だが野獣の姿になった彼を愛するものなどいるはずがない。独り心を閉ざしていく中、心に孤独を抱えながらも、自分の輝きを信じて生きる、聡明で美しい女性、ベルと出会うが。。。\",\n" +
             "      \"puid\": \"\",\n" +
@@ -110,6 +112,8 @@ public class VodMetaFullDataTest {
         int plits_len = plits.length;
         plicenses = mVodMetaFullData.getPlits()[0].getPlicenses();
         int plicenses_len = plicenses.length;
+        String[] genre_id_array = mVodMetaFullData.getGenre_id_array();
+        assertEquals("genre_id_array が３つをテスト", 3, genre_id_array.length, 0);
         assertEquals("PLIT が1つをテスト", 1, plits_len, 0);
         assertEquals("plicense が２つをテスト", 2, plicenses_len, 0);
     }

@@ -251,11 +251,11 @@ public class VodMetaFullData implements Serializable {
         mNg_func = ng_func;
     }
 
-    public String getGenre_id_array() {
+    public String[] getGenre_id_array() {
         return mGenre_id_array;
     }
 
-    public void setGenre_id_array(String genre_id_array) {
+    public void setGenre_id_array(String[] genre_id_array) {
         mGenre_id_array = genre_id_array;
     }
 
@@ -368,7 +368,7 @@ public class VodMetaFullData implements Serializable {
     private String mAdult;                // アダルトフラグ
     private String mMs;                   // MS_OK/NGフラグ
     private String mNg_func;              // NGファンク
-    private String mGenre_id_array;       // ジャンル
+    private String[] mGenre_id_array;       // ジャンル
     private String mSynop;                // あらすじ
     private String mPuid;                 // パーチャスID
     private String mPrice;                // 価格(税込)
@@ -437,7 +437,7 @@ public class VodMetaFullData implements Serializable {
     public static final String VOD_META_FULL_DATA_PLICENSE_PLI_PU_S = "pli_pu_s";
     public static final String VOD_META_FULL_DATA_PLICENSE_PLI_PU_E = "pli_pu_e";
 
-    // キー名
+    // キー名：単一データ
     public static final String[] mRootPara = {VOD_META_FULL_DATA_CRID, VOD_META_FULL_DATA_CID, VOD_META_FULL_DATA_TITLE_ID,
             VOD_META_FULL_DATA_EPISODE_ID, VOD_META_FULL_DATA_TITLE, VOD_META_FULL_DATA_EPITITLE, VOD_META_FULL_DATA_TITLERUBY,
             VOD_META_FULL_DATA_DISP_TYPE, VOD_META_FULL_DATA_DISPLAY_START_DATE, VOD_META_FULL_DATA_DISPLAY_END_DATE,
@@ -446,9 +446,11 @@ public class VodMetaFullData implements Serializable {
             VOD_META_FULL_DATA_COPYRIGHT, VOD_META_FULL_DATA_THUMB, VOD_META_FULL_DATA_DUR, VOD_META_FULL_DATA_DEMONG,
             VOD_META_FULL_DATA_BVFLG, VOD_META_FULL_DATA_4KFLG, VOD_META_FULL_DATA_HDRFLG, VOD_META_FULL_DATA_AVAIL_STATUS,
             VOD_META_FULL_DATA_DELIVERY, VOD_META_FULL_DATA_R_VALUE, VOD_META_FULL_DATA_ADULT, VOD_META_FULL_DATA_MS,
-            VOD_META_FULL_DATA_NG_FUNC, VOD_META_FULL_DATA_GENRE_ID_ARRAY, VOD_META_FULL_DATA_SYNOP, VOD_META_FULL_DATA_PUID,
+            VOD_META_FULL_DATA_NG_FUNC, VOD_META_FULL_DATA_SYNOP, VOD_META_FULL_DATA_PUID,
             VOD_META_FULL_DATA_PRICE, VOD_META_FULL_DATA_QRANGE, VOD_META_FULL_DATA_QUNIT, VOD_META_FULL_DATA_PU_S,
             VOD_META_FULL_DATA_PU_E, VOD_META_FULL_DATA_CREDITS, VOD_META_FULL_DATA_RATING, VOD_META_FULL_DATA_DTV};
+    // キー名：配列データ
+    public static final String[] mRootArrayPara = {VOD_META_FULL_DATA_GENRE_ID_ARRAY};
     // ライセンス/販売情報リスト：キー名
     public static final String[] mPlitPara = {VOD_META_FULL_DATA_PLIT_PLI_VIS, VOD_META_FULL_DATA_PLIT_PLI_VIE};
     // ライセンス詳細リスト：キー名
@@ -466,6 +468,7 @@ public class VodMetaFullData implements Serializable {
      * VODメタレスポンス（フル版）
      */
     public VodMetaFullData() {
+        mGenre_id_array = new String[0];
         mPlits = new ArrayList<Plit>();
     }
 
@@ -478,8 +481,13 @@ public class VodMetaFullData implements Serializable {
         // ライセンス/販売情報リスト
         Plit plit;
         try {
+            // 単一データ
             for (String item : mRootPara) {
                 setMember(item, jsonObj.get(item));
+            }
+            // 配列データ
+            for (String item : mRootArrayPara) {
+                setMember(item, jsonObj.getJSONArray(item));
             }
             JSONArray plits = jsonObj.getJSONArray(VOD_META_FULL_DATA_PLIT);
             if (plits.length() == 0) {
@@ -507,7 +515,7 @@ public class VodMetaFullData implements Serializable {
     /**
      * キーとキーの値をメンバーにセットする
      *
-     * @param key キー
+     * @param key  キー
      * @param data キーの値
      */
     private void setMember(String key, Object data) {
@@ -602,7 +610,8 @@ public class VodMetaFullData implements Serializable {
             case VOD_META_FULL_DATA_NG_FUNC:
                 mNg_func = (String) data;             // NGファンク
                 break;
-            case VOD_META_FULL_DATA_GENRE_ID_ARRAY:       //mGenre_id_array = (String)data;      // ジャンル
+            case VOD_META_FULL_DATA_GENRE_ID_ARRAY:
+                mGenre_id_array = toStringArray((JSONArray) data);
                 break;
             case VOD_META_FULL_DATA_SYNOP:
                 mSynop = (String) data;               // あらすじ
@@ -697,7 +706,7 @@ public class VodMetaFullData implements Serializable {
         /**
          * キーとキーの値をメンバーにセットする
          *
-         * @param key キー
+         * @param key  キー
          * @param data キーの値
          */
         private void setPlitMember(String key, Object data) {
@@ -836,7 +845,7 @@ public class VodMetaFullData implements Serializable {
             /**
              * キーとキーの値をメンバーにセットする
              *
-             * @param key キー
+             * @param key  キー
              * @param data キーの値
              */
             private void setPlicenseMember(String key, Object data) {
@@ -881,4 +890,26 @@ public class VodMetaFullData implements Serializable {
 
     }
 
+    /**
+     * JSONArray to String[]
+     *
+     * @param array
+     * @return
+     */
+    public static String[] toStringArray(JSONArray array) {
+
+        String[] arr = null;
+        if (array == null) {
+            return null;
+        }
+        try {
+            arr = new String[array.length()];
+            for (int i = 0; i < arr.length; i++) {
+                arr[i] = array.optString(i);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return arr;
+    }
 }
