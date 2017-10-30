@@ -17,12 +17,12 @@ import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstan
 
 public class DailyRankListDao {
     // SQLiteDatabase
-    private SQLiteDatabase db;
+    private final SQLiteDatabase db;
 
     /**
      * コンストラクタ
      *
-     * @param db
+     * @param db データベース
      */
     public DailyRankListDao(SQLiteDatabase db) {
         this.db = db;
@@ -31,8 +31,8 @@ public class DailyRankListDao {
     /**
      * 配列で指定した列データをすべて取得
      *
-     * @param strings
-     * @return
+     * @param strings 欲しい列データの名前
+     * @return 列データ結果
      */
     public List<Map<String, String>> findById(String[] strings) {
         //特定IDのデータ取得はしない方針
@@ -53,9 +53,10 @@ public class DailyRankListDao {
         //データを一行ずつ格納する
         while (isEof) {
             HashMap<String, String> map = new HashMap<>();
-            for (int i = 0; i < strings.length; i++) {
-                map.put(strings[i], cursor.getString(cursor.getColumnIndex(strings[i])));
+            for (String stringBuffer : strings) {
+                map.put(stringBuffer, cursor.getString(cursor.getColumnIndex(stringBuffer)));
             }
+
             list.add(map);
 
             isEof = cursor.moveToNext();
@@ -68,8 +69,8 @@ public class DailyRankListDao {
     /**
      * データの登録
      *
-     * @param values
-     * @return
+     * @param values 格納するデータ
+     * @return 挿入データID
      */
     public long insert(ContentValues values) {
         return db.insert(DAILYRANK_LIST_TABLE_NAME, null, values);
@@ -83,7 +84,7 @@ public class DailyRankListDao {
     /**
      * データの削除
      *
-     * @return
+     * @return deleteの第2パラメータがヌルなのでゼロとなる
      */
     public int delete() {
         return db.delete(DAILYRANK_LIST_TABLE_NAME, null, null);

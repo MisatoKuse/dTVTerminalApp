@@ -6,9 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
 import android.os.AsyncTask;
 
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
-import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.DailyRankWebClient;
 
 import org.json.JSONArray;
@@ -22,11 +20,12 @@ import java.util.List;
 
 public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
 
-    private DailyRankWebClient.DailyRankJsonParserCallback mDailyRankJsonParserCallback;
+    final private DailyRankWebClient.DailyRankJsonParserCallback mDailyRankJsonParserCallback;
 
     // オブジェクトクラスの定義
     private DailyRankList mDailyRankList;
 
+    //コミット時に警告が出るが、対外的なパラメータと言う扱いなので、対応は行わない
     public static final String DAILYRANK_LIST_STATUS = "status";
 
     public static final String DAILYRANK_LIST_PAGER = "pager";
@@ -67,6 +66,7 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
     public static final String DAILYRANK_LIST_GENRE_ID_ARRAY = "genre_id_array";
     public static final String DAILYRANK_LIST_DTV = "dtv";
 
+    // **FindBugs** Bad practice FindBugは、"pagerPara"と"listPara"はpublicを外せと言うが、対外的なパラメータなので、対応は行わない。
     public static final String[] pagerPara = {DAILYRANK_LIST_PAGER_UPPER_LIMIT, DAILYRANK_LIST_PAGER_LOWER_LIMIT,
             DAILYRANK_LIST_PAGER_OFFSET, DAILYRANK_LIST_PAGER_COUNT};
 
@@ -82,36 +82,37 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
     /**
      * コンストラクタ
      *
-     * @param mDailyRankJsonParserCallback
+     * @param mDailyRankJsonParserCallback コールバック
      */
     public DailyRankJsonParser(DailyRankWebClient.DailyRankJsonParserCallback mDailyRankJsonParserCallback) {
         this.mDailyRankJsonParserCallback = mDailyRankJsonParserCallback;
     }
 
     @Override
-    protected void onPostExecute(Object s) {
-        mDailyRankJsonParserCallback.onDailyRankJsonParsed((List<DailyRankList>) s);
+    protected void onPostExecute(Object dailyLankListData) {
+        mDailyRankJsonParserCallback.onDailyRankJsonParsed((List<DailyRankList>) dailyLankListData);
     }
 
     @Override
     protected Object doInBackground(Object... strings) {
         String result = (String) strings[0];
-        List<DailyRankList> resultList = DailyRankListSender(result);
+        List<DailyRankList> resultList = dailyRankListSender(result);
         return resultList;
     }
 
     /**
      * デイリーランキングJsonデータを解析する
      *
-     * @param jsonStr
-     * @return
+     * @param jsonStr JSONデータ文字列
+     * @return パース後のJSONデータ
      */
-    public List<DailyRankList> DailyRankListSender(String jsonStr) {
+    private List<DailyRankList> dailyRankListSender(String jsonStr) {
 
         mDailyRankList = new DailyRankList();
 
         try {
             JSONObject jsonObj = new JSONObject(jsonStr);
+            // **FindBugs** Bad practice FindBugはこのヌルチェックが無用と警告するが、将来的にcatch (Exception e)は消すはずなので残す
             if (jsonObj != null) {
                 sendStatus(jsonObj);
                 sendVcList(jsonObj);
@@ -133,12 +134,12 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
     /**
      * statusの値をMapでオブジェクトクラスに渡す
      *
-     * @param jsonObj
+     * @param jsonObj 解析前ステータス
      */
-    public void sendStatus(JSONObject jsonObj) {
+    private void sendStatus(JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
-            HashMap<String, String> map = new HashMap<String, String>();
+            HashMap<String, String> map = new HashMap<>();
             if (!jsonObj.isNull(DAILYRANK_LIST_STATUS)) {
                 String status = jsonObj.getString(DAILYRANK_LIST_STATUS);
                 map.put(DAILYRANK_LIST_STATUS, status);
@@ -147,15 +148,17 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
             if (!jsonObj.isNull(DAILYRANK_LIST_PAGER)) {
                 JSONObject pager = jsonObj.getJSONObject(DAILYRANK_LIST_PAGER);
 
-                for (int i = 0; i < pagerPara.length; i++) {
-                    if (!pager.isNull(pagerPara[i])) {
-                        String para = pager.getString(pagerPara[i]);
-                        map.put(pagerPara[i], para);
+                for (String pagerBuffer : pagerPara) {
+                    if (!pager.isNull(pagerBuffer)) {
+                        String para = pager.getString(pagerBuffer);
+                        map.put(pagerBuffer, para);
                     }
                 }
             }
 
-            mDailyRankList.setDrMap(map);
+            if (mDailyRankList != null) {
+                mDailyRankList.setDrMap(map);
+            }
 
         } catch (JSONException e) {
             throw new RuntimeException(e);
@@ -168,9 +171,9 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
     /**
      * コンテンツのList<HashMap>をオブジェクトクラスに格納
      *
-     * @param jsonObj
+     * @param jsonObj 解析前リスト
      */
-    public void sendVcList(JSONObject jsonObj) {
+    private void sendVcList(JSONObject jsonObj) {
         try {
             if (!jsonObj.isNull(DAILYRANK_LIST)) {
                 // コンテンツリストのList<HashMap>を用意
@@ -182,19 +185,19 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
                 // リストの数だけまわす
                 for (int i = 0; i < jsonArr.length(); i++) {
                     // 最初にHashMapを生成＆初期化
-                    HashMap<String, String> vcListMap = new HashMap<String, String>();
+                    HashMap<String, String> vcListMap = new HashMap<>();
 
                     // i番目のJSONArrayをJSONObjectに変換する
                     JSONObject jsonObject = jsonArr.getJSONObject(i);
 
-                    for (int j = 0; j < listPara.length; j++) {
-                        if (!jsonObject.isNull(listPara[j])) {
-                            if (listPara[j] == DAILYRANK_LIST_GENRE_ID_ARRAY) {
-                                String para = jsonObject.getString(listPara[j]);
-                                vcListMap.put(listPara[j], para.substring(1, (para.length() - 1)));
+                    for (String listBuffer : listPara) {
+                        if (!jsonObject.isNull(listBuffer)) {
+                            if (listBuffer.equals(DAILYRANK_LIST_GENRE_ID_ARRAY)) {
+                                String para = jsonObject.getString(listBuffer);
+                                vcListMap.put(listBuffer, para.substring(1, (para.length() - 1)));
                             } else {
-                                String para = jsonObject.getString(listPara[j]);
-                                vcListMap.put(listPara[j], para);
+                                String para = jsonObject.getString(listBuffer);
+                                vcListMap.put(listBuffer, para);
                             }
                         }
                     }
@@ -202,8 +205,11 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
                     // i番目のMapをListにadd
                     vcList.add(vcListMap);
                 }
-                // リスト数ぶんの格納が終わったらオブジェクトクラスにList<HashMap>でset
-                mDailyRankList.setDrList(vcList);
+
+                if (mDailyRankList != null) {
+                    // リスト数ぶんの格納が終わったらオブジェクトクラスにList<HashMap>でset
+                    mDailyRankList.setDrList(vcList);
+                }
             }
         } catch (JSONException e) {
             throw new RuntimeException(e);

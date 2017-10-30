@@ -9,7 +9,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VideoRankListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WeeklyRankListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
@@ -21,12 +20,12 @@ import java.util.Map;
 
 public class VideoRankInsertDataManager {
 
-    private Context mContext;
+    final private Context mContext;
 
     /**
      * コンストラクタ
      *
-     * @param context
+     * @param context コンテキスト
      */
     public VideoRankInsertDataManager(Context context) {
         mContext = context;
@@ -34,8 +33,6 @@ public class VideoRankInsertDataManager {
 
     /**
      * WeeklyRankAPIの解析結果をDBに格納する。
-     *
-     * @return
      */
     public void insertVideoRankInsertList(VideoRankList videoRankList) {
 
@@ -43,7 +40,7 @@ public class VideoRankInsertDataManager {
         DBHelper videoRankListDBHelper = new DBHelper(mContext);
         SQLiteDatabase db = videoRankListDBHelper.getWritableDatabase();
         VideoRankListDao weeklyRankListDao = new VideoRankListDao(db);
-        List<HashMap<String,String>> hashMaps = videoRankList.getVrList();
+        List<HashMap<String, String>> hashMaps = videoRankList.getVrList();
 
         //DB保存前に前回取得したデータは全消去する
         weeklyRankListDao.delete();
