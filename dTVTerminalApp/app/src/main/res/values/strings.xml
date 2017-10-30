@@ -59,6 +59,7 @@
     <string name="daily_tv_ranking_title">今日のテレビランキング</string>
     <string name="weekly_tv_ranking_title">週間テレビランキング</string>
     <string name="video_ranking_title">ビデオランキング</string>
+    <string name="common_ranking_enter">\n</string>
 
     <!-- Home -->
     <string name="home_label_recommend_program">おすすめ番組</string>
@@ -93,4 +94,6 @@
         <string name="search_loading">loading...</string>
     <!--  検索画面 End  -->
 
+    <!-- レンタル -->
+    <string name="rental_title">レンタル</string>
 </resources>

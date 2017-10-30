@@ -22,6 +22,7 @@ import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecommendActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordReservationListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.RentalListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.WatchingVideoListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.other.NewsActivity;
 import com.nttdocomo.android.tvterminalapp.activity.other.SettingActivity;
@@ -216,6 +217,13 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                         mActivity.startActivity(SearchTopActivity.class, null);
                     }
                 }
+            } else if (menuName.equals(mActivity.getString(R.string.rental_title))) {
+                if (null != mMenuDisplayEventListener) {
+                    mMenuDisplayEventListener.onMenuItemSelected(MenuItem.KEY_WORD_SEARCH);
+                    if( !(mActivity instanceof RentalListActivity) ) {
+                        mActivity.startActivity(RentalListActivity.class, null);
+                    }
+                }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_notice))) {
                 if (null != mMenuDisplayEventListener) {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.NOTICE);
@@ -338,6 +346,10 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
 
         //キーワードで探す
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_keyword_search));
+        mMenuItemCount.add(-1);
+
+        //レンタル
+        mMenuItemTitles.add(mActivity.getString(R.string.rental_title));
         mMenuItemCount.add(-1);
 
         //お知らせ
