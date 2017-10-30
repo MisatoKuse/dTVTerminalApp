@@ -122,9 +122,9 @@ public class WebApiBasePlala {
         CONTENTS_LIST_PER_GENRE_WEB_CLIENT("genre/contents/list"),
 
         /**
-         * 購入済みVOD一覧取得
+         * 購入済みVOD一覧取得(レンタルビデオ用)
          */
-        PURCHASED_VOD_LIST_WEB_CLIENT("purchasedvod/list"),
+        RENTAL_VOD_LIST_WEB_CLIENT("purchasedvod/list"),
 
         ;   //最後にセミコロンが必要
 
@@ -150,7 +150,7 @@ public class WebApiBasePlala {
     /**
      * 内部エラー情報
      */
-    private enum ERROR_TYPE {
+    protected enum ERROR_TYPE {
         /**
          * 成功
          */
@@ -177,43 +177,44 @@ public class WebApiBasePlala {
 
 
     //指定文字列パラメータ群
+    //対外的なパラメータなので、現在は非使用の物にもpublicが必要になる。
     /**
      * フィルター用指定文字列・release
      */
-    static final String FILTER_RELEASE = "release";
+    public static final String FILTER_RELEASE = "release";
     /**
      * フィルター用指定文字列・testa
      */
-    static final String FILTER_TESTA = "testa";
+    public static final String FILTER_TESTA = "testa";
     /**
      * フィルター用指定文字列・demo
      */
-    static final String FILTER_DEMO = "demo";
+    public static final String FILTER_DEMO = "demo";
 
     /**
      * タイプ用指定文字列・ｄCh
      */
-    static final String TYPE_D_CHANNEL = "dch";
+    public static final String TYPE_D_CHANNEL = "dch";
     /**
      * タイプ用指定文字列・ひかりTV
      */
-    static final String TYPE_HIKARI_TV = "hikaritv";
+    public static final String TYPE_HIKARI_TV = "hikaritv";
     /**
      * タイプ用指定文字列・ひかりTVのVOD
      */
-    static final String TYPE_HIKARI_TV_VOD = "hikaritv_vod";
+    public static final String TYPE_HIKARI_TV_VOD = "hikaritv_vod";
     /**
      * タイプ用指定文字列・dTVのVOD
      */
-    static final String TYPE_DTV_VOD = "dtv_vod";
+    public static final String TYPE_DTV_VOD = "dtv_vod";
     /**
      * タイプ用指定文字列・ひかりTVのVODとdTVのVOD
      */
-    static final String TYPE_HIKARI_TV_AND_DTV_VOD = "hikaritv_and_dtv_vod";
+    public static final String TYPE_HIKARI_TV_AND_DTV_VOD = "hikaritv_and_dtv_vod";
     /**
      * タイプ用指定文字列・全て（指定なしは全てになる）
      */
-    static final String TYPE_ALL = "";
+    public static final String TYPE_ALL = "";
 
     /**
      * 日付指定文字列・現在時刻指定
@@ -223,19 +224,19 @@ public class WebApiBasePlala {
     /**
      * ソート用文字列・タイトルルビ昇順
      */
-    static final String SORT_TITLE_RUBY_ASC = "titleruby_asc";
+    public static final String SORT_TITLE_RUBY_ASC = "titleruby_asc";
     /**
      * ソート用文字列・配信開始日昇順
      */
-    static final String SORT_AVAIL_S_ASC = "avail_s_asc";
+    public static final String SORT_AVAIL_S_ASC = "avail_s_asc";
     /**
      * ソート用文字列・配信終了日降順
      */
-    static final String SORT_AVAIL_E_DESC = "avail_e_desc";
+    public static final String SORT_AVAIL_E_DESC = "avail_e_desc";
     /**
      * ソート用文字列・人気順（前日の視聴回数数降順）
      */
-    static final String SORT_PLAY_COUNT_DESC = "play_count_desc";
+    public static final String SORT_PLAY_COUNT_DESC = "play_count_desc";
 
     //戻り値用構造体
     static protected class ReturnCode {
@@ -339,11 +340,6 @@ public class WebApiBasePlala {
     }
 
     /**
-     * 指定したAPIで通信を開始する
-     * @param sourceUrl                 API呼び出し名
-     * @param webApiBasePlalaCallback コールバック
-     */
-    /**
      * 指定したAPIで通信を開始する(拡張情報付き)
      * @param sourceUrl API呼び出し名
      * @param receivedParameters API呼び出し用パラメータ
@@ -351,7 +347,7 @@ public class WebApiBasePlala {
      * @param extraDataSrc 拡張情報
      */
     public void openUrlWithExtraData(final String sourceUrl,String receivedParameters,
-                        WebApiBasePlalaCallback webApiBasePlalaCallback,Bundle extraDataSrc) {
+                                     WebApiBasePlalaCallback webApiBasePlalaCallback,Bundle extraDataSrc) {
         //拡張情報もセットする
         CommunicationTask communicationTask = new CommunicationTask(sourceUrl,
                 receivedParameters,extraDataSrc);
@@ -486,6 +482,12 @@ public class WebApiBasePlala {
             mSendParameter =  receivedParameters;
         }
 
+        /**
+         * コンストラクタ(拡張情報付き)
+         * @param sourceUrl 実行するAPIの名前
+         * @param receivedParameters 送るパラメータ
+         * @param extraDataSrc 受け渡す拡張情報
+         */
         CommunicationTask(String sourceUrl,String receivedParameters,Bundle extraDataSrc) {
             mSourceUrl = sourceUrl;
             mSendParameter =  receivedParameters;
