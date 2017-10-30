@@ -35,7 +35,7 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
      *
      * @param rentalVodListJsonParserCallback
      */
-    public RentalVodListJsonParser(RentalVodListWebClient.RentalVodListParserCallback rentalVodListJsonParserCallback) {
+    public RentalVodListJsonParser(RentalVodListWebClient.RentalVodListJsonParserCallback rentalVodListJsonParserCallback) {
         mRentalVodListJsonParserCallback = rentalVodListJsonParserCallback;
 
         mPurchasedVodListResponse = new PurchasedVodListResponse();
