@@ -38,7 +38,7 @@ public class PurchasedVodListResponse implements Serializable {
     }
 
     public PurchasedVodListResponse() {
-        mStatus = "OK";     // OK 固定値
+        mStatus = "";     // OK 固定値
         mVodMetaFullData = new ArrayList<VodMetaFullData>();  // 購入済みVOD一覧
     }
 }
