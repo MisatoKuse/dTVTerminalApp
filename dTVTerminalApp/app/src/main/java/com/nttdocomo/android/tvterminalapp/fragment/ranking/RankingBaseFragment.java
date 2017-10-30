@@ -3,7 +3,6 @@ package com.nttdocomo.android.tvterminalapp.fragment.ranking;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +23,7 @@ import java.util.List;
 public class RankingBaseFragment extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
 
     public Context mActivity;
-    public List mData;
+    public List mData = null;
 
     private View mRankingFragmentView = null;
     private ListView mRankingListView = null;
@@ -51,7 +50,7 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //initData();//一時使うデータ
-        Log.d(DTVTConstants.LOG_DEF_TAG, "onCreateView");
+        DTVTLogger.debug("onCreateView");
 
         return initView();
     }
@@ -83,7 +82,7 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
      *
      * @param lis
      */
-    public void setClipListBaseFragmentScrollListener(RankingFragmentScrollListener lis) {
+    public void setRankingBaseFragmentScrollListener(RankingFragmentScrollListener lis) {
         mRankingBaseFragmentScrollListener = lis;
     }
 
@@ -92,16 +91,20 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
      */
     public void initRankingView(int rankingMode) {
         switch (rankingMode) {
-            case RankingConstants.RankingModeNo.RANKING_MODE_NO_OF_WEEKLY: // 週間
+            case RankingConstants.RANKING_MODE_NO_OF_WEEKLY: // 週間
                 initWeeklyContentListView();
                 break;
-            case RankingConstants.RankingModeNo.RANKING_MODE_NO_OF_VIDEO: // ビデオ
+            case RankingConstants.RANKING_MODE_NO_OF_VIDEO: // ビデオ
                 break;
             default:
                 break;
         }
     }
 
+    /**
+     *  Adapterを取得
+     * @return
+     */
     public ContentsAdapter getRankingAdapter() {
         return mContentsAdapter;
     }
@@ -117,12 +120,19 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
         mRankingListView.setAdapter(mContentsAdapter);
     }
 
+    /**
+     * Adapterをリフレッシュする
+     */
     public void noticeRefresh() {
         if (null != mContentsAdapter) {
             mContentsAdapter.notifyDataSetChanged();
         }
     }
 
+    /**
+     * 読み込み表示を行う
+     * @param b
+     */
     public void displayMoreData(boolean b) {
         if (null != mRankingListView) {
             if (b) {

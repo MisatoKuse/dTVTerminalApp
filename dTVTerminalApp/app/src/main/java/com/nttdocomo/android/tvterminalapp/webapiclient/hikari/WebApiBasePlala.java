@@ -325,7 +325,7 @@ public class WebApiBasePlala {
      * @param webApiBasePlalaCallback コールバック
      */
     public void openUrl(final String sourceUrl,String receivedParameters,
-                              WebApiBasePlalaCallback webApiBasePlalaCallback) {
+                        WebApiBasePlalaCallback webApiBasePlalaCallback) {
         CommunicationTask communicationTask = new CommunicationTask(sourceUrl,receivedParameters);
 
         //コールバックの準備
@@ -431,8 +431,8 @@ public class WebApiBasePlala {
      * @param bufferedReader    バッファーストリーム
      */
     private void streamCloser(InputStream stream,
-                      InputStreamReader inputStreamReader,
-                      BufferedReader bufferedReader) {
+                              InputStreamReader inputStreamReader,
+                              BufferedReader bufferedReader) {
 
         if(stream != null) {
             try {
@@ -507,7 +507,7 @@ public class WebApiBasePlala {
                 mUrlConnection = (HttpURLConnection) url.openConnection();
 
                 //事前設定パラメータのセット
-               setParameters(mUrlConnection);
+                setParameters(mUrlConnection);
 
                 //通信開始
                 mUrlConnection.connect();

@@ -1,12 +1,7 @@
-/*
- * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
- */
-
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.widget.Switch;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DailyRankInsertDataManager;
@@ -37,8 +32,9 @@ public class RankingTopDataProvider implements
         ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback {
 
     private Context mContext;
-
+    // RakingTop画面用コールバック
     private ApiDataProviderCallback apiDataProviderCallback = null;
+    // WeeklyRanking用コールバック
     private WeeklyRankingApiDataProviderCallback weeklyRankingApiCallback = null;
 
 
@@ -79,7 +75,6 @@ public class RankingTopDataProvider implements
      * Ranking Top画面用データを返却するためのコールバック
      */
     public interface ApiDataProviderCallback {
-
         /**
          * デイリーランキング用コールバック
          *
@@ -105,10 +100,9 @@ public class RankingTopDataProvider implements
     /**
      * WeeklyRanking用のコールバック
      */
-
     public interface WeeklyRankingApiDataProviderCallback {
         /**
-         *  取得条件"総合"用コールバック
+         * 取得条件"総合"用コールバック
          *
          * @param weeklyHashMap
          */
@@ -136,8 +130,6 @@ public class RankingTopDataProvider implements
         void weeklyRankOverseasChannelCallback(List<Map<String, String>> weeklyHashMap);
     }
 
-
-
     /**
      * コンストラクタ
      *
@@ -151,7 +143,7 @@ public class RankingTopDataProvider implements
     /**
      * 週間・ビデオ用コンストラクタ
      */
-    public RankingTopDataProvider(Context mContext,int mMode) {
+    public RankingTopDataProvider(Context mContext, int mMode) {
         this.mContext = mContext;
         this.weeklyRankingApiCallback = (WeeklyRankingApiDataProviderCallback) mContext;
     }
@@ -182,26 +174,29 @@ public class RankingTopDataProvider implements
      * WeeklyTvRankingActivityからのデータ取得要求
      */
     public void getWeeklyRankingData(int tabPageNo) {
-        // TODO タブNo か ジャンルIDのどちらかで受け取る
+        // TODO ジャンルIDを設定する
         String genreId = null;
         switch (tabPageNo) {
-            case RankingConstants.RankingTabPageNo.RANKING_PAGE_NO_OF_SYNTHESIS :
+            case RankingConstants.RANKING_PAGE_NO_OF_SYNTHESIS: //総合
                 // ジャンルID 指定なし
                 genreId = RankingConstants.RANKING_GENRE_ID_SYNTHESIS;
                 break;
-            case RankingConstants.RankingTabPageNo.RANKING_PAGE_NO_OF_OVERSEAS_MOVIE :
+            case RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_MOVIE: // 海外映画
                 genreId = RankingConstants.RANKING_GENRE_ID_OVERSEAS_MOVIE;
                 break;
-            case RankingConstants.RankingTabPageNo.RANKING_PAGE_NO_OF_DOMESTIC_MOVIE :
+            case RankingConstants.RANKING_PAGE_NO_OF_DOMESTIC_MOVIE: // 国内映画
                 genreId = RankingConstants.RANKING_GENRE_ID_DOMESTIC_MOVIE;
                 break;
-            case RankingConstants.RankingTabPageNo.RANKING_PAGE_NO_OF_OVERSEAS_CHANNEL :
+            case RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_CHANNEL: // 海外TV番組・ドラマ
                 genreId = RankingConstants.RANKING_GENRE_ID_OVERSEAS_CHANNEL;
                 break;
+            default:
+                break;
         }
+        // データを取得
         List<Map<String, String>> weeklyRankList = getWeeklyRankListData(genreId);
         if (weeklyRankList != null && weeklyRankList.size() > 0) {
-            sendWeeklyGenreRankListData(weeklyRankList,genreId);
+            sendWeeklyGenreRankListData(weeklyRankList, genreId);
         }
     }
 
@@ -235,11 +230,14 @@ public class RankingTopDataProvider implements
     /**
      * 週間ランキングリストをWeeklyRankingActivityに送る
      */
-    public void sendWeeklyGenreRankListData(List<Map<String,String>> list,String genreId) {
+    public void sendWeeklyGenreRankListData(List<Map<String, String>> list, String genreId) {
         DTVTLogger.start("response genreId : " + genreId);
+        // TODO ジャンルID毎にコールバックを返す
         switch (genreId) {
             case "":
                 weeklyRankingApiCallback.weeklyRankSynthesisCallback(list);
+                break;
+            default:
                 break;
         }
     }
@@ -271,6 +269,11 @@ public class RankingTopDataProvider implements
         return list;
     }
 
+    /**
+     * 週間ランキングのデータ取得要求を行う
+     * @param genreId
+     * @return
+     */
     private List<Map<String, String>> getWeeklyRankListData(String genreId) {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(WEEKLY_RANK_LAST_INSERT);
@@ -296,6 +299,10 @@ public class RankingTopDataProvider implements
         return list;
     }
 
+    /**
+     * ビデオランキングのデータ取得要求を行う
+     * @return
+     */
     private List<Map<String, String>> getVideoRankListData() {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(VIDEO_RANK_LAST_INSERT);
@@ -344,15 +351,15 @@ public class RankingTopDataProvider implements
      * @param weeklyRankList
      */
     public void setStructDB(WeeklyRankList weeklyRankList) {
-
+        // TODO ジャンル毎のキャッシュ登録について検討
         DateUtils dateUtils = new DateUtils(mContext);
         dateUtils.addLastDate(WEEKLY_RANK_LAST_INSERT);
         WeeklyRankInsertDataManager dataManager = new WeeklyRankInsertDataManager(mContext);
         dataManager.insertWeeklyRankInsertList(weeklyRankList);
-        if(apiDataProviderCallback != null) {
+        if (apiDataProviderCallback != null) {
             sendWeeklyRankListData(weeklyRankList.getWrList());
         } else {
-            sendWeeklyGenreRankListData(weeklyRankList.getWrList(),weeklyRankList.getExtraData().getString("genreId"));
+            sendWeeklyGenreRankListData(weeklyRankList.getWrList(), weeklyRankList.getExtraData().getString("genreId"));
         }
     }
 
@@ -362,7 +369,7 @@ public class RankingTopDataProvider implements
      * @param videoRankList
      */
     public void setStructDB(VideoRankList videoRankList) {
-
+        // TODO ジャンル毎のキャッシュ登録について検討
         DateUtils dateUtils = new DateUtils(mContext);
         dateUtils.addLastDate(VIDEO_RANK_LAST_INSERT);
         VideoRankInsertDataManager dataManager = new VideoRankInsertDataManager(mContext);
