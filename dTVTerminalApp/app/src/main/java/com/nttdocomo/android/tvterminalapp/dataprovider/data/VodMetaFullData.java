@@ -19,6 +19,10 @@ public class VodMetaFullData implements Serializable {
 
     private static final long serialVersionUID = 2793910456218850277L;
 
+    public static String[] getRootPara() {
+        return mRootPara;
+    }
+
     public String getCrid() {
         return mCrid;
     }
@@ -644,6 +648,101 @@ public class VodMetaFullData implements Serializable {
                 mDtv = (String) data;                 // dTVフラグ
                 break;
             default:
+        }
+    }
+
+    /**
+     * キーの値を取得する
+     *
+     * @param key  キー
+     */
+    public Object getMember(String key) {
+
+        if (key.isEmpty()) {
+            return "";
+        } else switch (key) {
+            case VOD_META_FULL_DATA_CRID:
+                return mCrid;                // crid
+            case VOD_META_FULL_DATA_CID:
+                return mCid;                 // コンテンツID
+            case VOD_META_FULL_DATA_TITLE_ID:
+                return mTitle_id;            // タイトルID（dTV）
+            case VOD_META_FULL_DATA_EPISODE_ID:
+                return mEpisode_id;          // エピソードID（dTV）
+            case VOD_META_FULL_DATA_TITLE:
+                return mTitle;               // タイトル
+            case VOD_META_FULL_DATA_EPITITLE:
+                return mEpititle;            // エピソードタイトル
+            case VOD_META_FULL_DATA_TITLERUBY:
+                return mTitleruby;           // タイトルルビ
+            case VOD_META_FULL_DATA_DISP_TYPE:
+                return mDisp_type;           // 表示タイプ
+            case VOD_META_FULL_DATA_DISPLAY_START_DATE:
+                return mDisplay_start_date;  // 表示開始日時
+            case VOD_META_FULL_DATA_DISPLAY_END_DATE:
+                return mDisplay_end_date;    // 表示終了日時
+            case VOD_META_FULL_DATA_AVAIL_START_DATE:
+                return mAvail_start_date;    // コンテンツ自体の有効開始日時(PITのみ)
+            case VOD_META_FULL_DATA_AVAIL_END_DATE:
+                return mAvail_end_date;      // コンテンツ自体の有効期限日時(PITのみ)
+            case VOD_META_FULL_DATA_PUBLISH_START_DATE:
+                return mPublish_start_date;  // 有効開始日時
+            case VOD_META_FULL_DATA_PUBLISH_END_DATE:
+                return mPublish_end_date;    // 有効期限日時
+            case VOD_META_FULL_DATA_NEWA_START_DATE:
+                return mNewa_start_date;     // 新着期間開始
+            case VOD_META_FULL_DATA_NEWA_END_DATE:
+                return mNewa_end_date;       // 新着期間終了
+            case VOD_META_FULL_DATA_COPYRIGHT:
+                return mCopyright;           // コピーライト
+            case VOD_META_FULL_DATA_THUMB:
+                return mThumb;               // サムネイル
+            case VOD_META_FULL_DATA_DUR:
+                return mDur;                 // 尺長
+            case VOD_META_FULL_DATA_DEMONG:
+                return mDemong;              // デモフラグ
+            case VOD_META_FULL_DATA_BVFLG:
+                return mBvflg;               // 見放題フラグ
+            case VOD_META_FULL_DATA_4KFLG:
+                return m4kflg;               // ４Kフラグ
+            case VOD_META_FULL_DATA_HDRFLG:
+                return mHdrflg;              // HDRフラグ
+            case VOD_META_FULL_DATA_AVAIL_STATUS:
+                return mAvail_status;        // 配信ステータス
+            case VOD_META_FULL_DATA_DELIVERY:
+                return mDelivery;            // deliveryStatus
+            case VOD_META_FULL_DATA_R_VALUE:
+                return mR_value;             // パレンタル情報
+            case VOD_META_FULL_DATA_ADULT:
+                return mAdult;               // アダルトフラグ
+            case VOD_META_FULL_DATA_MS:
+                return mMs;                  // MS_OK/NGフラグ
+            case VOD_META_FULL_DATA_NG_FUNC:
+                return mNg_func;             // NGファンク
+            case VOD_META_FULL_DATA_GENRE_ID_ARRAY:
+                return mGenre_id_array.toString();
+            case VOD_META_FULL_DATA_SYNOP:
+                return mSynop;               // あらすじ
+            case VOD_META_FULL_DATA_PUID:
+                return mPuid;                // パーチャスID
+            case VOD_META_FULL_DATA_PRICE:
+                return mPrice;               // 価格(税込)
+            case VOD_META_FULL_DATA_QRANGE:
+                return mQrange;              // 購入単位の期間(3日の3)
+            case VOD_META_FULL_DATA_QUNIT:
+                return mQunit;               // 購入単位の単位(3日の「日」)
+            case VOD_META_FULL_DATA_PU_S:
+                return mPu_s;                // 販売開始日時
+            case VOD_META_FULL_DATA_PU_E:
+                return mPu_e;                // 販売終了日時
+            case VOD_META_FULL_DATA_CREDITS:
+                return mCredits;             // 出演者情報（ロール|出演者名）
+            case VOD_META_FULL_DATA_RATING:
+                return mRating;              // レーティング値
+            case VOD_META_FULL_DATA_DTV:
+                return mDtv;                 // dTVフラグ
+            default:
+                return "";
         }
     }
 
