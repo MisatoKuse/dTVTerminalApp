@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * 購入済みVOD一覧取得：正常時レスポンスデータ
  */
 
-public class VodMetaFullResponse implements Serializable {
+public class PurchasedVodListResponse implements Serializable {
 
     private static final long serialVersionUID = 11185212718261137L;
 
@@ -36,7 +36,7 @@ public class VodMetaFullResponse implements Serializable {
         mVodMetaFullData = vodMetaFullData;
     }
 
-    public VodMetaFullResponse() {
+    public PurchasedVodListResponse() {
         mStatus = "OK";     // OK 固定値
         mVodMetaFullData = new ArrayList<VodMetaFullData>();  // 購入済みVOD一覧
     }
