@@ -27,8 +27,6 @@ import static com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVod
 
 public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
     private RentalVodListWebClient.RentalVodListJsonParserCallback mRentalVodListJsonParserCallback;
-
-    private WeeklyRankWebClient.WeeklyRankJsonParserCallback mWeeklyRankJsonParserCallback;
     // オブジェクトクラスの定義
     private PurchasedVodListResponse mPurchasedVodListResponse;
 
