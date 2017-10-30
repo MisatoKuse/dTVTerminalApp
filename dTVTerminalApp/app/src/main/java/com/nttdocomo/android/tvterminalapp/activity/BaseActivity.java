@@ -4,12 +4,10 @@
 
 package com.nttdocomo.android.tvterminalapp.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -20,6 +18,7 @@ import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplayEventListener;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuItem;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuItemParam;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 
 /**
@@ -79,12 +78,14 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      */
     @Override
     public void setContentView(int resId) {
+        DTVTLogger.start("resId:" + resId);
         View view = getLayoutInflater().inflate(resId, null);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT);
         view.setLayoutParams(lp);
         baseLinearLayout.addView(view);
+        DTVTLogger.end();
     }
 
     /**
@@ -92,6 +93,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      *
      */
     private void initView(){
+        DTVTLogger.start();
         baseLinearLayout = findViewById(R.id.base_ll);
         headerLayout = findViewById(R.id.base_title);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -99,6 +101,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                 getHeightDensity() / 15);
         headerLayout.setLayoutParams(lp);
         titleTextView = findViewById(R.id.header_layout_text);
+        DTVTLogger.end();
     }
 
     /**
@@ -132,11 +135,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        DTVTLogger.start();
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_base);
         initView();
-        String TAG = getLocalClassName();
-        Log.i(TAG,TAG+"  OｎCreate()");
+        DTVTLogger.end();
     }
 
     private static final int MIN_CLICK_DELAY_TIME = 1000;
@@ -221,7 +224,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             try {
                 menu.setActivityAndListener(this, this);
             } catch (Exception e) {
-                e.printStackTrace();
+                DTVTLogger.debug(e);
                 return;
             }
             menu.changeUserState(param);
@@ -232,7 +235,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         try {
             MenuDisplay.getInstance().display();
         } catch (Exception e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
     }
 
