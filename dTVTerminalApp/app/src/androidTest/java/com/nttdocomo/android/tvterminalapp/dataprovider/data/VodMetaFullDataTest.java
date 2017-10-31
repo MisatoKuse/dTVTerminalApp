@@ -102,6 +102,13 @@ public class VodMetaFullDataTest {
         json = new JSONObject(mjson_data);
     }
 
+    @Test
+    public void setNullData() throws Exception {
+        json = null;
+        mVodMetaFullData.setData(json);
+        assertEquals("setData(null)", null, mVodMetaFullData.getCrid());
+    }
+
     // PLIT が1つ、plicense が２つのデータをテスト
     @Test
     public void setData() throws Exception {
