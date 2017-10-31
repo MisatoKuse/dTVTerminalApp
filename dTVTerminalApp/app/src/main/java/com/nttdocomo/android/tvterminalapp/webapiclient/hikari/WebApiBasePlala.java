@@ -121,9 +121,9 @@ public class WebApiBasePlala {
         CONTENTS_LIST_PER_GENRE_WEB_CLIENT("genre/contents/list"),
 
         /**
-         * 購入済みVOD一覧取得
+         * 購入済みVOD一覧取得(レンタルビデオ用)
          */
-        PURCHASED_VOD_LIST_WEB_CLIENT("purchasedvod/list"),
+        RENTAL_VOD_LIST_WEB_CLIENT("purchasedvod/list"),
 
         ;   //最後にセミコロンが必要
 
