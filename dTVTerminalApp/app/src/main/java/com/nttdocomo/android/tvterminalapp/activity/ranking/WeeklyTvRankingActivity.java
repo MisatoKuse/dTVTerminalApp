@@ -40,7 +40,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
 
     private ImageView mMenuImageView;
     private boolean mIsCommunicating = false;
-    private int NUM_PER_PAGE = 2;
+    private int NUM_PER_PAGE = 10;
     private String[] mTabNames;
     private RankingTopDataProvider mRankingDataProvider;
     private RankingFragmentFactory mRankingFragmentFactory = null;
@@ -94,6 +94,8 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
         RankingBaseFragment b = getCurrentFragment();
         if (null == b || null == b.mData || 0 == b.mData.size()) {
             return 0;
+        } else if(b.mData.size() < NUM_PER_PAGE){
+            return 1;
         }
         return b.mData.size() / NUM_PER_PAGE;
     }

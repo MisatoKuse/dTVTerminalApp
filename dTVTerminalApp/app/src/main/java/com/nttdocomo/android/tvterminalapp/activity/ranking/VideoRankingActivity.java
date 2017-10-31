@@ -95,6 +95,8 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
         RankingBaseFragment b = getCurrentFragment();
         if (null == b || null == b.mData || 0 == b.mData.size()) {
             return 0;
+        } else if(b.mData.size() < NUM_PER_PAGE){
+            return 1;
         }
         return b.mData.size() / NUM_PER_PAGE;
     }
