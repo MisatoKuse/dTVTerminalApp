@@ -77,6 +77,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
 
     /**
      * mIsCommunicationを変更
+     *
      * @param b
      */
     private void setCommunicatingStatus(boolean b) {
@@ -94,7 +95,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
         RankingBaseFragment b = getCurrentFragment();
         if (null == b || null == b.mData || 0 == b.mData.size()) {
             return 0;
-        } else if(b.mData.size() < NUM_PER_PAGE){
+        } else if (b.mData.size() < NUM_PER_PAGE) {
             return 1;
         }
         return b.mData.size() / NUM_PER_PAGE;
@@ -439,6 +440,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
      *
      * @param weeklyRankMapList
      */
+    @Override
     public void weeklyRankOverseasChannelCallback(List<Map<String, String>> weeklyRankMapList) {
         DTVTLogger.start("ResponseDataSize :" + weeklyRankMapList.size());
         if (mViewPager.getCurrentItem() == RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_CHANNEL) {
@@ -470,4 +472,5 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
             return mTabNames[position];
         }
     }
+}
 

@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RentalListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
@@ -57,7 +58,7 @@ public class RentalListInsertDataManager {
         try{
             rentalListDao.delete();
         }catch (Exception e){
-            Log.d(DTVTConstants.LOG_DEF_TAG, "RentalListInsertDataManager::insertRentalListInsertList, e.cause=" + e.getCause());
+            DTVTLogger.debug("RentalListInsertDataManager::insertRentalListInsertList, e.cause=" + e.getCause());
         }
 
         //HashMapの要素とキーを一行ずつ取り出し、DBに格納する

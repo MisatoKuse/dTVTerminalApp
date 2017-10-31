@@ -358,6 +358,7 @@ public class RankingTopDataProvider implements
      * ビデオランキングのデータ取得要求を行う
      * @return
      */
+    private List<Map<String, String>> getVideoRankListData(String genreId) {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(VIDEO_RANK_LAST_INSERT);
 
