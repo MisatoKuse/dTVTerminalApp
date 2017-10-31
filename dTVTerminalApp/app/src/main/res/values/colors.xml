@@ -5,13 +5,21 @@
     <color name="colorAccent">#FF4081</color>
     <color name="menuList">#000000</color>
     <color name="menuListProgramTitle">#FFFFFF</color>
+    <!-- キーワード検索 -->
     <color name="keyword_search_background">#EEEEEE</color>
     <color name="keyword_search_hint">#888888</color>
     <color name="keyword_search_text">#888888</color>
     <color name="keyword_search_result_background">#222222</color>
     <color name="keyword_search_header_background">#000000</color>
     <color name="keyword_search_result_text">#FFFFFF</color>
+    <!-- おすすめ一覧 -->
     <color name="recommend_list_background">#222222</color>
     <color name="recommend_list_text">#FFFFFF</color>
     <color name="recommend_list_border">#888888</color>
+    <!-- ランキング一覧 -->
+    <color name="ranking_list_background">#222222</color>
+    <color name="ranking_list_text">#FFFFFF</color>
+    <color name="ranking_list_border">#888888</color>
+    <color name="ranking_no_text">#FFFFFF</color>
+    <color name="ranking_no_background">#000000</color>
 </resources>

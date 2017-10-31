@@ -5,32 +5,18 @@
     style="@style/default_layout_style"
     android:orientation="vertical">
 
-    <RelativeLayout
-        android:id="@+id/home_main_layout_title"
+    <HorizontalScrollView
+        android:id="@+id/video_ranking_tab_strip_scroll"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="#FF0000">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="ランキング(ビデオランキング)"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:textSize="15sp"/>
-    </RelativeLayout>
+        android:layout_height="50dp"
+        android:background="@android:color/background_dark"
+        android:fillViewport="true"
+        android:foregroundGravity="center_horizontal"
+        android:scrollbars="none" />
 
-    <Button
-        android:id="@+id/button9"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp_video_ranking_result"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="contentsDetailButton"
-        android:text="コンテンツ詳細" />
-
-    <Button
-        android:id="@+id/button15"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="clipButton"
-        android:text="クリップ" />
+        android:layout_height="match_parent"
+        android:layout_below="@id/video_ranking_tab_strip_scroll" />
 </LinearLayout>
