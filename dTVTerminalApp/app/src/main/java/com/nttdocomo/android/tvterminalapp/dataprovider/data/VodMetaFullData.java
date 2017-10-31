@@ -485,22 +485,30 @@ public class VodMetaFullData implements Serializable {
         // ライセンス/販売情報リスト
         Plit plit;
         try {
-            // 単一データ
-            for (String item : mRootPara) {
-                setMember(item, jsonObj.get(item));
-            }
-            // 配列データ
-            for (String item : mRootArrayPara) {
-                setMember(item, jsonObj.getJSONArray(item));
-            }
-            JSONArray plits = jsonObj.getJSONArray(VOD_META_FULL_DATA_PLIT);
-            if (plits.length() == 0) {
-                return;
-            }
-            for (int i = 0; i < plits.length(); i++) {
-                plit = new Plit();
-                plit.setPlitData(plits.getJSONObject(i));
-                mPlits.add(plit);
+            if (jsonObj != null){
+                // 単一データ
+                for (String item : mRootPara) {
+                    if (!jsonObj.isNull(item)){
+                        setMember(item, jsonObj.get(item));
+                    }
+                }
+                // 配列データ
+                for (String item : mRootArrayPara) {
+                    if (!jsonObj.isNull(item)) {
+                        setMember(item, jsonObj.getJSONArray(item));
+                    }
+                }
+                if (!jsonObj.isNull(VOD_META_FULL_DATA_PLIT)) {
+                    JSONArray plits = jsonObj.getJSONArray(VOD_META_FULL_DATA_PLIT);
+                    if (plits.length() == 0) {
+                        return;
+                    }
+                    for (int i = 0; i < plits.length(); i++) {
+                        plit = new Plit();
+                        plit.setPlitData(plits.getJSONObject(i));
+                        mPlits.add(plit);
+                    }
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -784,19 +792,24 @@ public class VodMetaFullData implements Serializable {
             Plicense plicense;
 
             try {
-                for (String item : mPlitPara) {
-                    setPlitMember(item, plit.get(item));
+                if (plit != null){
+                    for (String item : mPlitPara) {
+                        if (!plit.isNull(item)) {
+                            setPlitMember(item, plit.get(item));
+                        }
+                    }
+                    if (!plit.isNull(VOD_META_FULL_DATA_PLICENSE)){
+                        JSONArray plicenses = plit.getJSONArray(VOD_META_FULL_DATA_PLICENSE);
+                        if (plicenses.length() == 0) {
+                            return;
+                        }
+                        for (int i = 0; i < plicenses.length(); i++) {
+                            plicense = new Plicense();
+                            plicense.setPlicenseData(plicenses.getJSONObject(i));
+                            mPlicenses.add(plicense);
+                        }
+                    }
                 }
-                JSONArray plicenses = plit.getJSONArray(VOD_META_FULL_DATA_PLICENSE);
-                if (plicenses.length() == 0) {
-                    return;
-                }
-                for (int i = 0; i < plicenses.length(); i++) {
-                    plicense = new Plicense();
-                    plicense.setPlicenseData(plicenses.getJSONObject(i));
-                    mPlicenses.add(plicense);
-                }
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -933,8 +946,10 @@ public class VodMetaFullData implements Serializable {
              */
             void setPlicenseData(JSONObject plicense) {
                 try {
-                    for (String item : mPlicensePara) {
-                        setPlicenseMember(item, plicense.get(item));
+                    if (plicense != null){
+                        for (String item : mPlicensePara) {
+                            setPlicenseMember(item, plicense.get(item));
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

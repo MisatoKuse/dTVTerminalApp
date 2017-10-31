@@ -743,7 +743,7 @@ public class DBConstants {
             VOD_META_FULL_DATA_DUR + " text, " +
             VOD_META_FULL_DATA_DEMONG + " text, " +
             VOD_META_FULL_DATA_BVFLG + " text, " +
-            VOD_META_FULL_DATA_4KFLG + " text, " +
+            UNDER_BAR_FOUR_K_FLG + " text, " +
             VOD_META_FULL_DATA_HDRFLG + " text, " +
             VOD_META_FULL_DATA_AVAIL_STATUS + " text, " +
             VOD_META_FULL_DATA_DELIVERY + " text, " +

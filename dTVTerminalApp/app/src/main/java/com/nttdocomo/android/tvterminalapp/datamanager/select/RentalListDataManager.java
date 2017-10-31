@@ -13,7 +13,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_DISPLAY_START_DATE;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_PUBLISH_END_DATE;
 import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_DISP_TYPE;
 import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_THUMB;
 import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_TITLE;
@@ -39,7 +39,7 @@ public class RentalListDataManager {
     public List<Map<String, String>> selectRentalListData() {
         //ホーム画面に必要な列を列挙する
         String[] columns = {VOD_META_FULL_DATA_THUMB, VOD_META_FULL_DATA_TITLE,
-                VOD_META_FULL_DATA_DISPLAY_START_DATE, VOD_META_FULL_DATA_DISP_TYPE};
+                VOD_META_FULL_DATA_PUBLISH_END_DATE, VOD_META_FULL_DATA_DISP_TYPE};
 
         //Daoクラス使用準備
         DBHelper homeDBHelper = new DBHelper(mContext);

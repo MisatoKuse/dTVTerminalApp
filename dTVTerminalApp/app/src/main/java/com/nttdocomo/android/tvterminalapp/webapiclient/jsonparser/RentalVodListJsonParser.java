@@ -64,12 +64,14 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
         mPurchasedVodListResponse = new PurchasedVodListResponse();
 
         try {
-            JSONObject jsonObj = new JSONObject(jsonStr);
-            if (jsonObj != null) {
-                sendStatus(jsonObj);
-                sendPurchasedVodListResponse(jsonObj);
+            if (jsonStr != null){
+                JSONObject jsonObj = new JSONObject(jsonStr);
+                if (jsonObj != null) {
+                    sendStatus(jsonObj);
+                    sendPurchasedVodListResponse(jsonObj);
 
-                return mPurchasedVodListResponse;
+                    return mPurchasedVodListResponse;
+                }
             }
         } catch (JSONException e) {
             // TODO Auto-generated catch block
