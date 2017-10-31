@@ -10,15 +10,17 @@ public class RankingFragmentFactory {
 
     /**
      * フラグメントクラスの生成、取得
+     *
      * @param position
      * @param lis
      * @return
      */
-    public RankingBaseFragment createFragment(int position, RankingFragmentScrollListener lis) {
+    public RankingBaseFragment createFragment(int mode, int position, RankingFragmentScrollListener lis) {
         RankingBaseFragment fragment = null;
         fragment = mFragments.get(position);
         if (fragment == null) {
             fragment = new RankingBaseFragment();
+            fragment.switchRankingMode(mode);
             fragment.setRankingBaseFragmentScrollListener(lis);
             mFragments.put(position, fragment);
         }

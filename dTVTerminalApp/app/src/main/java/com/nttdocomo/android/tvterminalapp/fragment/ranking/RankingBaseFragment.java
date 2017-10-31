@@ -72,10 +72,11 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
 
         }
         mLoadMoreView = LayoutInflater.from(getActivity()).inflate(R.layout.search_load_more, null);
-        initRankingView(mRankingMode);
+        if (mContentsAdapter == null) {
+            initRankingView();
+        }
         return mRankingFragmentView;
     }
-
 
     /**
      * リスナーの設定
@@ -89,12 +90,13 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
     /**
      * 各ランキングページを判定
      */
-    public void initRankingView(int rankingMode) {
-        switch (rankingMode) {
+    public void initRankingView() {
+        switch (mRankingMode) {
             case RankingConstants.RANKING_MODE_NO_OF_WEEKLY: // 週間
                 initWeeklyContentListView();
                 break;
             case RankingConstants.RANKING_MODE_NO_OF_VIDEO: // ビデオ
+                initVideoContentListView();
                 break;
             default:
                 break;
@@ -102,7 +104,19 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
     }
 
     /**
-     *  Adapterを取得
+     * 各ランキングページを切り替え
+     */
+    public void switchRankingMode(int rankingMode) {
+        mRankingMode = rankingMode;
+        mContentsAdapter = null;
+        if (mRankingListView != null) {
+            initRankingView();
+        }
+    }
+
+    /**
+     * Adapterを取得
+     *
      * @return
      */
     public ContentsAdapter getRankingAdapter() {
@@ -115,8 +129,17 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
     private void initWeeklyContentListView() {
 
         mContentsAdapter
-                = new ContentsAdapter(getContext()
-                , mData, ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK);
+                = new ContentsAdapter(getContext(),
+                mData, ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK);
+        mRankingListView.setAdapter(mContentsAdapter);
+    }
+
+    /**
+     * ビデオランキングコンテンツ初期化
+     */
+    private void initVideoContentListView() {
+        mContentsAdapter = new ContentsAdapter(getContext(),
+                mData, ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK);
         mRankingListView.setAdapter(mContentsAdapter);
     }
 
@@ -131,6 +154,7 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
 
     /**
      * 読み込み表示を行う
+     *
      * @param b
      */
     public void displayMoreData(boolean b) {

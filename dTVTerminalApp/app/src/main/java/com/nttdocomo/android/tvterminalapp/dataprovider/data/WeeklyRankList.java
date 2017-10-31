@@ -17,7 +17,7 @@ public class WeeklyRankList {
     /**
      * 拡張情報
      **/
-    private Bundle mExtraData = null;
+    private Bundle extraData = null;
 
     public HashMap geWrMap() {
         return mWrMap;
@@ -41,15 +41,15 @@ public class WeeklyRankList {
      * @param extraDataSrc 代入する拡張情報
      */
     public void setExtraData(Bundle extraDataSrc) {
-        mExtraData = extraDataSrc;
+        extraData = extraDataSrc;
     }
 
     /**
-     * 拡張情報のゲッター
+     * 拡張情報のセッター
      *
      * @return 拡張情報
      */
     public Bundle getExtraData() {
-        return mExtraData;
+        return extraData;
     }
 }

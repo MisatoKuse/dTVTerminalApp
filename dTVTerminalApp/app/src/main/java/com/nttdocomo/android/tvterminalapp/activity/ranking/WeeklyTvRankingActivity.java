@@ -40,7 +40,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
 
     private ImageView mMenuImageView;
     private boolean mIsCommunicating = false;
-    private int NUM_PER_PAGE = 2;
+    private int NUM_PER_PAGE = 10;
     private String[] mTabNames;
     private RankingTopDataProvider mRankingDataProvider;
     private RankingFragmentFactory mRankingFragmentFactory = null;
@@ -94,6 +94,8 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
         RankingBaseFragment b = getCurrentFragment();
         if (null == b || null == b.mData || 0 == b.mData.size()) {
             return 0;
+        } else if(b.mData.size() < NUM_PER_PAGE){
+            return 1;
         }
         return b.mData.size() / NUM_PER_PAGE;
     }
@@ -114,7 +116,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
         super.onDestroy();
         for (int i = 0; i < 4; ++i) { // タブの数だけ処理を行う
             RankingBaseFragment b = mRankingFragmentFactory.createFragment
-                    (i, this);
+                    (RankingConstants.RANKING_MODE_NO_OF_WEEKLY, i, this);
             if (null != b) {
                 b.mData.clear();
             }
@@ -226,7 +228,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
 
 
         RankingBaseFragment fragment = mRankingFragmentFactory.createFragment
-                (mViewPager.getCurrentItem(), this);
+                (RankingConstants.RANKING_MODE_NO_OF_WEEKLY, mViewPager.getCurrentItem(), this);
 
         int pageNumber = getCurrentNumber();
         for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE && i < rankingContentInfo.size(); ++i) {
@@ -259,10 +261,10 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
     private List<ContentsData> setWeeklyRankingContentData(List<Map<String, String>> weeklyRankMapList) {
         List<ContentsData> rankingContentsDataList = new ArrayList<ContentsData>();
 
-        ContentsData rankingContentInfo = new ContentsData();
+        ContentsData rankingContentInfo;
 
         for (int i = 0; i < weeklyRankMapList.size(); i++) {
-
+            rankingContentInfo = new ContentsData();
             rankingContentInfo.setRank(String.valueOf(i + 1));
             rankingContentInfo.setThumURL(weeklyRankMapList.get(i).get(WeeklyRankJsonParser.WEEKLYRANK_LIST_THUMB));
             rankingContentInfo.setTime(weeklyRankMapList.get(i).get(WeeklyRankJsonParser.WEEKLYRANK_LIST_LINEAR_START_DATE));
@@ -378,7 +380,8 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
     private RankingBaseFragment getCurrentFragment() {
 
         int i = mViewPager.getCurrentItem();
-        return mRankingFragmentFactory.createFragment(i, this);
+        return mRankingFragmentFactory.createFragment
+                (RankingConstants.RANKING_MODE_NO_OF_WEEKLY, i, this);
     }
 
     public WeeklyTvRankingActivity getWeeklyTvRankingActivity() {
@@ -399,7 +402,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
         } else {
             // nop.
         }
-        DTVTLogger.end();
     }
 
     /**
@@ -415,7 +417,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
         } else {
             // nop.
         }
-        DTVTLogger.end();
     }
 
     /**
@@ -431,7 +432,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
         } else {
             // nop.
         }
-        DTVTLogger.end();
     }
 
     /**
@@ -446,7 +446,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
         } else {
             // nop.
         }
-        DTVTLogger.end();
     }
 
     /*検索結果タブ専用アダプター*/
@@ -458,7 +457,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
         @Override
         public Fragment getItem(int position) {
             return mRankingFragmentFactory.createFragment
-                    (position, getWeeklyTvRankingActivity());
+                    (RankingConstants.RANKING_MODE_NO_OF_WEEKLY, position, getWeeklyTvRankingActivity());
         }
 
         @Override
@@ -471,4 +470,4 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
             return mTabNames[position];
         }
     }
-}
+

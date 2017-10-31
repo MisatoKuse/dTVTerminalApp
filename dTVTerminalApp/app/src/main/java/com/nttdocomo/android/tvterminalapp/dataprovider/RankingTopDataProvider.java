@@ -9,6 +9,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.insert.VideoRankInsertDat
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.WeeklyRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.HomeDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.RankingTopDataManager;
+import com.nttdocomo.android.tvterminalapp.dataprovider.callback.VideoRankingApiDataProviderCallback;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WeeklyRankList;
@@ -36,6 +37,8 @@ public class RankingTopDataProvider implements
     private ApiDataProviderCallback apiDataProviderCallback = null;
     // WeeklyRanking用コールバック
     private WeeklyRankingApiDataProviderCallback weeklyRankingApiCallback = null;
+    // VideoRanking用コールバック
+    private VideoRankingApiDataProviderCallback videoRankingApiDataProviderCallback = null;
 
 
     @Override
@@ -145,8 +148,13 @@ public class RankingTopDataProvider implements
      */
     public RankingTopDataProvider(Context mContext, int mMode) {
         this.mContext = mContext;
-        this.weeklyRankingApiCallback = (WeeklyRankingApiDataProviderCallback) mContext;
+        if(mMode == RankingConstants.RANKING_MODE_NO_OF_WEEKLY) {
+            this.weeklyRankingApiCallback = (WeeklyRankingApiDataProviderCallback) mContext;
+        } else if(mMode == RankingConstants.RANKING_MODE_NO_OF_VIDEO){
+            this.videoRankingApiDataProviderCallback = (VideoRankingApiDataProviderCallback) mContext;
+        }
     }
+
 
     /**
      * RankingTopActivityからのデータ取得要求受付
@@ -164,7 +172,7 @@ public class RankingTopDataProvider implements
             sendWeeklyRankListData(weeklyRankList);
         }
         //ビデオのランキング
-        List<Map<String, String>> videoRankList = getVideoRankListData();
+        List<Map<String, String>> videoRankList = getVideoRankListData(RankingConstants.RANKING_GENRE_ID_SYNTHESIS);
         if (videoRankList != null && videoRankList.size() > 0) {
             sendVideoRankListData(videoRankList);
         }
@@ -172,6 +180,7 @@ public class RankingTopDataProvider implements
 
     /**
      * WeeklyTvRankingActivityからのデータ取得要求
+     * @param tabPageNo
      */
     public void getWeeklyRankingData(int tabPageNo) {
         // TODO ジャンルIDを設定する
@@ -200,6 +209,36 @@ public class RankingTopDataProvider implements
         }
     }
 
+    /**
+     * VideoRankingActivityからのデータ取得要求
+     * @param tabPageNo
+     */
+    public void getVideoRankingData(int tabPageNo) {
+        // TODO ジャンルIDを設定する
+        String genreId = null;
+        switch (tabPageNo) {
+            case RankingConstants.RANKING_PAGE_NO_OF_SYNTHESIS: //総合
+                // ジャンルID 指定なし
+                genreId = RankingConstants.RANKING_GENRE_ID_SYNTHESIS;
+                break;
+            case RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_MOVIE: // 海外映画
+                genreId = RankingConstants.RANKING_GENRE_ID_OVERSEAS_MOVIE;
+                break;
+            case RankingConstants.RANKING_PAGE_NO_OF_DOMESTIC_MOVIE: // 国内映画
+                genreId = RankingConstants.RANKING_GENRE_ID_DOMESTIC_MOVIE;
+                break;
+            case RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_CHANNEL: // 海外TV番組・ドラマ
+                genreId = RankingConstants.RANKING_GENRE_ID_OVERSEAS_CHANNEL;
+                break;
+            default:
+                break;
+        }
+        // データを取得
+        List<Map<String, String>> videoRankList = getVideoRankListData(genreId);
+        if (videoRankList != null && videoRankList.size() > 0) {
+            sendVideoGenreRankListData(videoRankList, genreId);
+        }
+    }
     /**
      * 今日のランキングをRankingTopActivityに送る
      *
@@ -240,6 +279,22 @@ public class RankingTopDataProvider implements
             default:
                 break;
         }
+    }
+
+    /**
+     * ビデオランキングリストをVideoRankingActivityに送る
+     */
+    public void sendVideoGenreRankListData(List<Map<String, String>> list, String genreId) {
+        DTVTLogger.start("response genreId : " + genreId);
+        // TODO ジャンルID毎にコールバックを返す
+        switch (genreId) {
+            case "":
+                videoRankingApiDataProviderCallback.videoRankSynthesisCallback(list);
+                break;
+            default:
+                break;
+        }
+        DTVTLogger.end();
     }
 
     /**
@@ -303,7 +358,6 @@ public class RankingTopDataProvider implements
      * ビデオランキングのデータ取得要求を行う
      * @return
      */
-    private List<Map<String, String>> getVideoRankListData() {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(VIDEO_RANK_LAST_INSERT);
 
@@ -320,7 +374,6 @@ public class RankingTopDataProvider implements
             int offset = 1;
             String filter = "";
             int ageReq = 1;
-            String genreId = "";
             String type = "";
             String sort = "";
 

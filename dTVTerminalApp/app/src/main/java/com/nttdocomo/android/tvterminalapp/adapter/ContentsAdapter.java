@@ -176,7 +176,6 @@ public class ContentsAdapter extends BaseAdapter {
                 break;
             case TYPE_VIDEO_RANK:
                 holder.tv_time.setVisibility(View.GONE);
-                holder.tv_rank.setVisibility(View.GONE);
                 break;
             case TYPE_RENTAL_RANK:
                 holder.tv_rank.setVisibility(View.GONE);
