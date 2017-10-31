@@ -4,8 +4,9 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import android.os.Bundle;
+
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
-import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser;
 
 import org.json.JSONException;
@@ -41,8 +42,12 @@ public class ContentsListPerGenreWebClient
      */
     @Override
     public void onAnswer(ReturnCode returnCode) {
+        //拡張情報付きでパースを行う
+        VideoRankJsonParser videoRankJsonParser = new VideoRankJsonParser(
+                mContentsListPerGenreJsonParserCallback,returnCode.extraData);
+
         //JSONをパースして、データを返す
-        new VideoRankJsonParser(mContentsListPerGenreJsonParserCallback).execute(returnCode.bodyData);
+        videoRankJsonParser.execute(returnCode.bodyData);
     }
 
     /**
@@ -90,8 +95,13 @@ public class ContentsListPerGenreWebClient
             return false;
         }
 
+        //拡張情報を追加する
+        Bundle bundle = new Bundle();
+        bundle.putString("genreId",genreId);
+
         //ジャンル毎コンテンツ一覧取得を呼び出す
-        openUrl(API_NAME_LIST.CONTENTS_LIST_PER_GENRE_WEB_CLIENT.getString(), sendParameter, this);
+        openUrlWithExtraData(API_NAME_LIST.CONTENTS_LIST_PER_GENRE_WEB_CLIENT.getString(),
+                sendParameter, this,bundle);
 
         //今のところ失敗は無いので、trueで帰る
         return true;
