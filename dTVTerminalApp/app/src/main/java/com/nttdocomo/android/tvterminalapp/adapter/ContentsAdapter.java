@@ -57,7 +57,7 @@ public class ContentsAdapter extends BaseAdapter {
 
     /**
      * 機能
-     *      共通アダプター使う
+     * 共通アダプター使う
      */
     public enum ActivityTypeItem {
         TYPE_DAILY_RANK,          //今日のテレビランキング
@@ -71,7 +71,7 @@ public class ContentsAdapter extends BaseAdapter {
      *
      * @param mContext Activity
      * @param listData リストデータ
-     * @param type　項目コントロール
+     * @param type     　項目コントロール
      */
     public ContentsAdapter(Context mContext, List<ContentsData> listData, ActivityTypeItem type) {
         this.mContext = mContext;
@@ -168,15 +168,14 @@ public class ContentsAdapter extends BaseAdapter {
     /**
      * データの設定
      */
-    private void setData(ViewHolder holder){
-        switch (type){
+    private void setData(ViewHolder holder) {
+        switch (type) {
             case TYPE_DAILY_RANK:
             case TYPE_WEEKLY_RANK:
                 holder.ll_rating.setVisibility(View.GONE);
                 break;
             case TYPE_VIDEO_RANK:
                 holder.tv_time.setVisibility(View.GONE);
-                holder.tv_rank.setVisibility(View.GONE);
                 break;
             case TYPE_RENTAL_RANK:
                 holder.tv_rank.setVisibility(View.GONE);
@@ -212,4 +211,3 @@ public class ContentsAdapter extends BaseAdapter {
         TextView tv_line;
     }
 }
-
