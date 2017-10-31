@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class DateUtils {
@@ -52,9 +53,6 @@ public class DateUtils {
 
     //おすすめdTV取得日付キー
     public static final String RECOMMEND_DANIME_LAST_INSERT = "RecommendDAnimeLastInsert";
-
-    //レンタル一覧取得日付キー
-    public static final String RENTAL_LIST_LAST_INSERT = "RentalListLastInsert";
 
     //SharedPreferences用データ
     private static final String DATA_SAVE = "DataSave";

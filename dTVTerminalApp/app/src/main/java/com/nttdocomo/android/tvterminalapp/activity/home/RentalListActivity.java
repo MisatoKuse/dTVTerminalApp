@@ -53,7 +53,7 @@ public class RentalListActivity extends BaseActivity implements View.OnClickList
 
         initView();
         mRentalDataProvider = new RentalDataProvider(this);
-        mRentalDataProvider.getRentalData(true);
+        mRentalDataProvider.getRentalData(1);
     }
 
     /**
@@ -115,28 +115,28 @@ public class RentalListActivity extends BaseActivity implements View.OnClickList
     }
 
     @Override
-    public void rentalListCallback(List<ContentsData> dataList) {
-        if (null == dataList) {
+    public void rentalListCallback(List<ContentsData> contentsDataList) {
+        if (null == contentsDataList) {
             //通信とJSON Parseに関してerror処理
-            DTVTLogger.debug("RentalListActivity::rentalListCallback, レンタル一覧取得失敗");
-            Toast.makeText(this, "レンタル一覧取得失敗", Toast.LENGTH_SHORT);
+            DTVTLogger.debug("ClipListActivity::VodClipListCallback, クリップデータ取得失敗");
+            Toast.makeText(this, "クリップデータ取得失敗", Toast.LENGTH_SHORT);
             resetPaging();
             resetCommunication();
             return;
         }
 
-        if (0 == dataList.size()) {
+        if (0 == contentsDataList.size()) {
             resetCommunication();
             return;
         }
 
         int pageNumber = getCurrentNumber();
         for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE
-                && i < dataList.size(); i++) { //mPageNumber
-            mContentsList.add(dataList.get(i));
+                && i < contentsDataList.size(); i++) { //mPageNumber
+            mContentsList.add(contentsDataList.get(i));
         }
 
-        DTVTLogger.debug("rentalListCallback, mData.size==" + mContentsList.size());
+        DTVTLogger.debug("WatchListenVideoCallback, mData.size==" + mContentsList.size());
 
         resetCommunication();
         mContentsAdapter.notifyDataSetChanged();
@@ -193,12 +193,17 @@ public class RentalListActivity extends BaseActivity implements View.OnClickList
                 displayMoreData(true);
                 setCommunicatingStatus(true);
 
-                //再読み込み処理
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mRentalDataProvider.getRentalData(false);
+
+                        int offset = 0;
+                        if (null != mContentsList) {
+                            offset = mContentsList.size();
+                        }
+                        mRentalDataProvider.getRentalData(offset);
+
                     }
                 }, LOAD_PAGE_DELEY_TIME);
             }
