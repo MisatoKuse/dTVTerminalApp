@@ -31,6 +31,9 @@
             android:name="com.nttdocomo.android.tvterminalapp.activity.home.RecordReservationListActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name="com.nttdocomo.android.tvterminalapp.activity.home.RentalListActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name="com.nttdocomo.android.tvterminalapp.activity.home.WatchingVideoListActivity"
             android:screenOrientation="portrait" />
         <!-- ======================================  Home グループ End ====================================== -->
