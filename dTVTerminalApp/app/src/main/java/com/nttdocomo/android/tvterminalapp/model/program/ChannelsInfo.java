@@ -142,8 +142,22 @@ public class ChannelsInfo {
      * @param baseTime　開始タイム
      */
     public void rejustSchedulesForUi(int timeLineTotalHeight, int baseTime){
+        mTimeLineHeight=timeLineTotalHeight;
         for(Channel ch:mChannels){
             ch.rejustScheduleInfo(timeLineTotalHeight, baseTime);
         }
+    }
+
+    /**
+     * チャンネルを取得
+     * @param index　配列の番号
+     * @return
+     */
+    public Channel getChannel(int index){
+        if(null==mChannels || index>=mChannels.size()){
+            return null;
+        }
+
+        return mChannels.get(index);
     }
 }
