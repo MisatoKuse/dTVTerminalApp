@@ -268,6 +268,46 @@ import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoR
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_RATING;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_DTV;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_PLIT;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_CRID;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_CID;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_TITLE_ID;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_EPISODE_ID;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_TITLE;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_EPITITLE;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_TITLERUBY;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_DISP_TYPE;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_DISPLAY_START_DATE;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_DISPLAY_END_DATE;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_AVAIL_START_DATE;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_AVAIL_END_DATE;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_PUBLISH_START_DATE;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_PUBLISH_END_DATE;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_NEWA_START_DATE;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_NEWA_END_DATE;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_COPYRIGHT;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_THUMB;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_DUR;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_DEMONG;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_BVFLG;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_4KFLG;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_HDRFLG;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_AVAIL_STATUS;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_DELIVERY;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_R_VALUE;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_ADULT;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_MS;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_NG_FUNC;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_GENRE_ID_ARRAY;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_SYNOP;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_PUID;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_PRICE;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_QRANGE;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_QUNIT;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_PU_S;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_PU_E;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_CREDITS;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_RATING;
+import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_DTV;
 
 public class DBConstants {
 
@@ -715,5 +755,52 @@ public class DBConstants {
             TVCLIP_LIST_NG_FUNC + " text, " +
             TVCLIP_LIST_GENRE_ID_ARRAY + " text, " +
             TVCLIP_LIST_DTV + " text " +
+            ")";
+
+    // TABLE、レンタル一覧用
+    public static final String RENTAL_LIST_TABLE_NAME = "rental_list";
+    public static final String CREATE_TABLE_RENTAL_LIST_SQL = "" +
+            "create table " + RENTAL_LIST_TABLE_NAME + " (" +
+            ID_COLUMN + " integer primary key autoincrement, " +
+            VOD_META_FULL_DATA_CRID + " text, " +
+            VOD_META_FULL_DATA_CID + " text, " +
+            VOD_META_FULL_DATA_TITLE_ID + " text, " +
+            VOD_META_FULL_DATA_EPISODE_ID + " text, " +
+            VOD_META_FULL_DATA_TITLE + " text, " +
+            VOD_META_FULL_DATA_EPITITLE + " text, " +
+            VOD_META_FULL_DATA_TITLERUBY + " text, " +
+            VOD_META_FULL_DATA_DISP_TYPE + " text, " +
+            VOD_META_FULL_DATA_DISPLAY_START_DATE + " text, " +
+            VOD_META_FULL_DATA_DISPLAY_END_DATE + " text, " +
+            VOD_META_FULL_DATA_AVAIL_START_DATE + " text, " +
+            VOD_META_FULL_DATA_AVAIL_END_DATE + " text, " +
+            VOD_META_FULL_DATA_PUBLISH_START_DATE + " text, " +
+            VOD_META_FULL_DATA_PUBLISH_END_DATE + " text, " +
+            VOD_META_FULL_DATA_NEWA_START_DATE + " text, " +
+            VOD_META_FULL_DATA_NEWA_END_DATE + " text, " +
+            VOD_META_FULL_DATA_COPYRIGHT + " text, " +
+            VOD_META_FULL_DATA_THUMB + " text, " +
+            VOD_META_FULL_DATA_DUR + " text, " +
+            VOD_META_FULL_DATA_DEMONG + " text, " +
+            VOD_META_FULL_DATA_BVFLG + " text, " +
+            UNDER_BAR_FOUR_K_FLG + " text, " +
+            VOD_META_FULL_DATA_HDRFLG + " text, " +
+            VOD_META_FULL_DATA_AVAIL_STATUS + " text, " +
+            VOD_META_FULL_DATA_DELIVERY + " text, " +
+            VOD_META_FULL_DATA_R_VALUE + " text, " +
+            VOD_META_FULL_DATA_ADULT + " text, " +
+            VOD_META_FULL_DATA_MS + " text, " +
+            VOD_META_FULL_DATA_NG_FUNC + " text, " +
+            VOD_META_FULL_DATA_GENRE_ID_ARRAY + " text, " +
+            VOD_META_FULL_DATA_SYNOP + " text, " +
+            VOD_META_FULL_DATA_PUID + " text, " +
+            VOD_META_FULL_DATA_PRICE + " text, " +
+            VOD_META_FULL_DATA_QRANGE + " text, " +
+            VOD_META_FULL_DATA_QUNIT + " text, " +
+            VOD_META_FULL_DATA_PU_S + " text, " +
+            VOD_META_FULL_DATA_PU_E + " text, " +
+            VOD_META_FULL_DATA_CREDITS + " text, " +
+            VOD_META_FULL_DATA_RATING + " text, " +
+            VOD_META_FULL_DATA_DTV + " text, " +
             ")";
 }

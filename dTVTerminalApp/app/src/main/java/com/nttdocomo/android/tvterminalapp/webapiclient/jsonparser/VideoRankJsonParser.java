@@ -5,12 +5,11 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
 import android.os.AsyncTask;
+import android.os.Bundle;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
-import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -115,6 +114,9 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object>{
 //            VIDEORANK_LIST_PLI_EPITITLE, VIDEORANK_LIST_PLI_DISP_TYPE, VIDEORANK_LIST_PLI_PRICE, VIDEORANK_LIST_PLI_QUNIT,
 //            VIDEORANK_LIST_PLI_GRANGE, VIDEORANK_LIST_PLI_PU_S, VIDEORANK_LIST_PLI_PU_E};
 
+    /** 拡張情報 **/
+    Bundle mExtraData = null;
+
     /**
      * コンストラクタ
      *
@@ -124,8 +126,29 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object>{
         this.mContentsListPerGenreJsonParserCallback = mContentsListPerGenreJsonParserCallback;
     }
 
+    /**
+     * 拡張情報付きコンストラクタ
+     * @param contentsListPerGenreJsonParserCallback コールバック用
+     * @param extraDataSrc 拡張情報
+     */
+    public VideoRankJsonParser(ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback
+                                       contentsListPerGenreJsonParserCallback,Bundle extraDataSrc) {
+        this.mContentsListPerGenreJsonParserCallback = contentsListPerGenreJsonParserCallback;
+
+        //拡張情報の追加
+        mExtraData = extraDataSrc;
+    }
+
     @Override
     protected void onPostExecute(Object s) {
+        //拡張情報が存在すれば、入れ込む
+        List<VideoRankList> rankLists = (List<VideoRankList>) s;
+        if(mExtraData != null) {
+            for(VideoRankList rankList : rankLists) {
+                rankList.setExtraData(mExtraData);
+            }
+        }
+
         mContentsListPerGenreJsonParserCallback.onContentsListPerGenreJsonParsed((List<VideoRankList>) s);
     }
 

@@ -5,8 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.os.AsyncTask;
-
-import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import android.os.Bundle;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -123,9 +122,9 @@ public class WebApiBasePlala {
         CONTENTS_LIST_PER_GENRE_WEB_CLIENT("genre/contents/list"),
 
         /**
-         * 購入済みVOD一覧取得
+         * 購入済みVOD一覧取得(レンタルビデオ用)
          */
-        PURCHASED_VOD_LIST_WEB_CLIENT("purchasedvod/list"),
+        RENTAL_VOD_LIST_WEB_CLIENT("purchasedvod/list"),
 
         ;   //最後にセミコロンが必要
 
@@ -151,7 +150,7 @@ public class WebApiBasePlala {
     /**
      * 内部エラー情報
      */
-    private enum ERROR_TYPE {
+    protected enum ERROR_TYPE {
         /**
          * 成功
          */
@@ -178,43 +177,44 @@ public class WebApiBasePlala {
 
 
     //指定文字列パラメータ群
+    //対外的なパラメータなので、現在は非使用の物にもpublicが必要になる。
     /**
      * フィルター用指定文字列・release
      */
-    static final String FILTER_RELEASE = "release";
+    public static final String FILTER_RELEASE = "release";
     /**
      * フィルター用指定文字列・testa
      */
-    static final String FILTER_TESTA = "testa";
+    public static final String FILTER_TESTA = "testa";
     /**
      * フィルター用指定文字列・demo
      */
-    static final String FILTER_DEMO = "demo";
+    public static final String FILTER_DEMO = "demo";
 
     /**
      * タイプ用指定文字列・ｄCh
      */
-    static final String TYPE_D_CHANNEL = "dch";
+    public static final String TYPE_D_CHANNEL = "dch";
     /**
      * タイプ用指定文字列・ひかりTV
      */
-    static final String TYPE_HIKARI_TV = "hikaritv";
+    public static final String TYPE_HIKARI_TV = "hikaritv";
     /**
      * タイプ用指定文字列・ひかりTVのVOD
      */
-    static final String TYPE_HIKARI_TV_VOD = "hikaritv_vod";
+    public static final String TYPE_HIKARI_TV_VOD = "hikaritv_vod";
     /**
      * タイプ用指定文字列・dTVのVOD
      */
-    static final String TYPE_DTV_VOD = "dtv_vod";
+    public static final String TYPE_DTV_VOD = "dtv_vod";
     /**
      * タイプ用指定文字列・ひかりTVのVODとdTVのVOD
      */
-    static final String TYPE_HIKARI_TV_AND_DTV_VOD = "hikaritv_and_dtv_vod";
+    public static final String TYPE_HIKARI_TV_AND_DTV_VOD = "hikaritv_and_dtv_vod";
     /**
      * タイプ用指定文字列・全て（指定なしは全てになる）
      */
-    static final String TYPE_ALL = "";
+    public static final String TYPE_ALL = "";
 
     /**
      * 日付指定文字列・現在時刻指定
@@ -224,24 +224,25 @@ public class WebApiBasePlala {
     /**
      * ソート用文字列・タイトルルビ昇順
      */
-    static final String SORT_TITLE_RUBY_ASC = "titleruby_asc";
+    public static final String SORT_TITLE_RUBY_ASC = "titleruby_asc";
     /**
      * ソート用文字列・配信開始日昇順
      */
-    static final String SORT_AVAIL_S_ASC = "avail_s_asc";
+    public static final String SORT_AVAIL_S_ASC = "avail_s_asc";
     /**
      * ソート用文字列・配信終了日降順
      */
-    static final String SORT_AVAIL_E_DESC = "avail_e_desc";
+    public static final String SORT_AVAIL_E_DESC = "avail_e_desc";
     /**
      * ソート用文字列・人気順（前日の視聴回数数降順）
      */
-    static final String SORT_PLAY_COUNT_DESC = "play_count_desc";
+    public static final String SORT_PLAY_COUNT_DESC = "play_count_desc";
 
     //戻り値用構造体
     static protected class ReturnCode {
         ERROR_TYPE errorType;
         String bodyData;
+        Bundle extraData;
 
         /**
          * コンストラクタ
@@ -249,6 +250,7 @@ public class WebApiBasePlala {
         ReturnCode() {
             errorType = ERROR_TYPE.SUCCESS;
             bodyData = "";
+            extraData = null;
         }
     }
     private ReturnCode mReturnCode = null;
@@ -331,7 +333,30 @@ public class WebApiBasePlala {
         mWebApiBasePlalaCallback = webApiBasePlalaCallback;
 
         //結果格納構造体の作成
-        WebApiBasePlala.ReturnCode returnCode = new WebApiBasePlala.ReturnCode();
+        ReturnCode returnCode = new ReturnCode();
+
+        //通信本体の開始
+        communicationTask.execute(returnCode);
+    }
+
+    /**
+     * 指定したAPIで通信を開始する(拡張情報付き)
+     * @param sourceUrl API呼び出し名
+     * @param receivedParameters API呼び出し用パラメータ
+     * @param webApiBasePlalaCallback 結果のコールバック
+     * @param extraDataSrc 拡張情報
+     */
+    public void openUrlWithExtraData(final String sourceUrl,String receivedParameters,
+                                     WebApiBasePlalaCallback webApiBasePlalaCallback,Bundle extraDataSrc) {
+        //拡張情報もセットする
+        CommunicationTask communicationTask = new CommunicationTask(sourceUrl,
+                receivedParameters,extraDataSrc);
+
+        //コールバックの準備
+        mWebApiBasePlalaCallback = webApiBasePlalaCallback;
+
+        //結果格納構造体の作成
+        ReturnCode returnCode = new ReturnCode();
 
         //通信本体の開始
         communicationTask.execute(returnCode);
@@ -373,13 +398,13 @@ public class WebApiBasePlala {
         } catch (UnsupportedEncodingException e) {
             //HTTP通信エラーとして元に返す
             mReturnCode.errorType = ERROR_TYPE.OTHER_ERROR;
-            DTVTLogger.debug(e);
+            e.printStackTrace();
         } catch (IOException e) {
             //全通信停止発行済みならば、正常な動作となる
             if(!mIsStopAllConnections) {
                 //通信停止ではないので、通信エラー
                 mReturnCode.errorType = ERROR_TYPE.OTHER_ERROR;
-                DTVTLogger.debug(e);
+                e.printStackTrace();
             }
         } finally {
             //ストリームを閉じる
@@ -411,7 +436,7 @@ public class WebApiBasePlala {
             } catch (IOException e) {
                 //クローズ失敗は通信エラー
                 mReturnCode.errorType = ERROR_TYPE.OTHER_ERROR;
-                DTVTLogger.debug(e);
+                e.printStackTrace();
             }
         }
         if(inputStreamReader != null) {
@@ -420,7 +445,7 @@ public class WebApiBasePlala {
             } catch (IOException e) {
                 //クローズ失敗は通信エラー
                 mReturnCode.errorType = ERROR_TYPE.OTHER_ERROR;
-                DTVTLogger.debug(e);
+                e.printStackTrace();
             }
         }
         if(bufferedReader != null) {
@@ -429,7 +454,7 @@ public class WebApiBasePlala {
             } catch (IOException e) {
                 //クローズ失敗は通信エラー
                 mReturnCode.errorType = ERROR_TYPE.OTHER_ERROR;
-                DTVTLogger.debug(e);
+                e.printStackTrace();
             }
         }
     }
@@ -444,6 +469,9 @@ public class WebApiBasePlala {
         //送るパラメータ
         final String mSendParameter;
 
+        //拡張データ
+        Bundle mExtraData = null;
+
         /**
          * コンストラクタ
          * @param sourceUrl             実行するAPIの名前
@@ -452,6 +480,20 @@ public class WebApiBasePlala {
         CommunicationTask(String sourceUrl,String receivedParameters) {
             mSourceUrl = sourceUrl;
             mSendParameter =  receivedParameters;
+        }
+
+        /**
+         * コンストラクタ(拡張情報付き)
+         * @param sourceUrl 実行するAPIの名前
+         * @param receivedParameters 送るパラメータ
+         * @param extraDataSrc 受け渡す拡張情報
+         */
+        CommunicationTask(String sourceUrl,String receivedParameters,Bundle extraDataSrc) {
+            mSourceUrl = sourceUrl;
+            mSendParameter =  receivedParameters;
+
+            //拡張データの確保
+            mExtraData = extraDataSrc;
         }
 
         /**
@@ -488,7 +530,7 @@ public class WebApiBasePlala {
             } catch (IOException e) {
                 //通信エラー扱いとする
                 mReturnCode.errorType = ERROR_TYPE.COMMUNICATION_ERROR;
-                DTVTLogger.debug(e);
+                e.printStackTrace();
             } finally {
                 //最後なので初期化
                 mUrlConnection = null;
@@ -503,6 +545,11 @@ public class WebApiBasePlala {
          */
         @Override
         protected void onPostExecute(ReturnCode returnCode) {
+            //拡張情報があればそれも伝える
+            if(mExtraData != null) {
+                returnCode.extraData = mExtraData;
+            }
+
             //呼び出し元に伝える情報を判断する
             if(returnCode.errorType == ERROR_TYPE.SUCCESS) {
                 if(mAnswerBuffer.isEmpty()) {
@@ -556,14 +603,14 @@ public class WebApiBasePlala {
 
             } catch (IOException e) {
                 // POST送信エラー
-                DTVTLogger.debug(e);
+                e.printStackTrace();
                 //result="POST送信エラー";
             } finally {
                 if (dataOutputStream != null) {
                     try {
                         dataOutputStream.close();
                     } catch (IOException e1) {
-                        DTVTLogger.debug(e1);
+                        e1.printStackTrace();
                     }
                 }
             }

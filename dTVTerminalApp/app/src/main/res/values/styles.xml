@@ -24,4 +24,12 @@
         <item name="android:minHeight">10dp</item>
         <item name="android:maxHeight">10dp</item>
     </style>
+
+    <!--ビデオランキングRatingBar -->
+    <style name="ranking_ratingBar" parent="@android:style/Widget.RatingBar">
+        <item name="android:progressDrawable">@drawable/video_item_ratingbar</item>
+        <item name="android:minHeight">10dp</item>
+        <item name="android:maxHeight">10dp</item>
+    </style>
+
 </resources>

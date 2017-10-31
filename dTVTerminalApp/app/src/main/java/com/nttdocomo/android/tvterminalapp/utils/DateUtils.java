@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class DateUtils {
@@ -60,8 +59,10 @@ public class DateUtils {
     //番組表取得日付キー
     public static final String TVSCHEDULE_LAST_UPDATE = "TvScheduleLastUpdate";
 
-    //SharedPreferences用データ
-    private static final String DATA_SAVE = "DataSave";
+    //レンタル一覧取得日付キー
+    public static final String RENTAL_LIST_LAST_INSERT = "RentalListLastInsert";
+
+    //SharedPreferences用データ    private static final String DATA_SAVE = "DataSave";
 
     //日付フォーマット
     private static final String DATE_PATTERN = "yyyy/MM/dd HH:mm:ss";

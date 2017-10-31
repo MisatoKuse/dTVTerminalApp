@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
+import android.os.Bundle;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +13,11 @@ import java.util.List;
 public class WeeklyRankList {
     private HashMap<String, String> mWrMap = new HashMap<String, String>();
     private List<HashMap<String, String>> mWrList = new ArrayList<>();
+
+    /**
+     * 拡張情報
+     **/
+    private Bundle extraData = null;
 
     public HashMap geWrMap() {
         return mWrMap;
@@ -27,5 +34,22 @@ public class WeeklyRankList {
     public void setWrList(List wrList) {
         this.mWrList = wrList;
     }
-}
 
+    /**
+     * 拡張情報のセッター
+     *
+     * @param extraDataSrc 代入する拡張情報
+     */
+    public void setExtraData(Bundle extraDataSrc) {
+        extraData = extraDataSrc;
+    }
+
+    /**
+     * 拡張情報のセッター
+     *
+     * @return 拡張情報
+     */
+    public Bundle getExtraData() {
+        return extraData;
+    }
+}
