@@ -24,14 +24,14 @@ public class DbThread extends Thread {
          * @param resultSet     ResultSetがある場合、ResultSetを戻す。ResultSetはない場合、nullを戻す
          * @param operationId 多Threadオブジェクトを使用する時、Threadオブジェクトを区別する
          */
-        public void onDbOperationFinished(boolean isSuccessful, final List<Map<String, String>> resultSet, int operationId);
+         void onDbOperationFinished(boolean isSuccessful, final List<Map<String, String>> resultSet, int operationId);
 
         /**
          * DB操作をThread中で実行、操作内容はクラス外で決める(e.g. "select * from xxx where yy=zz ...,   delete from xxx")
          * @return
          * @throws Exception
          */
-        public List<Map<String, String>> dbOperation() throws Exception;
+         List<Map<String, String>> dbOperation(int operationId) throws Exception;
     }
 
     private Handler mHandle=null;
@@ -41,8 +41,8 @@ public class DbThread extends Thread {
 
     /**
      *
-     * @param handle
-     * @param lis
+     * @param handle 非同期処理ハンドラー
+     * @param lis　操作
      * @param operationId 多Threadオブジェクトを使用する時、Threadオブジェクトを区別する
      * @throws Exception
      */
@@ -63,7 +63,7 @@ public class DbThread extends Thread {
 
         if(null!=mDbOperationFinish){
             try {
-                ret = mDbOperationFinish.dbOperation();
+                ret = mDbOperationFinish.dbOperation(mOperationId);
             } catch (Exception e) {
                 e.printStackTrace();
                 mError=true;

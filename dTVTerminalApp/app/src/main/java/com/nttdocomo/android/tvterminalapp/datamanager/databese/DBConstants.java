@@ -4,35 +4,39 @@
 
 package com.nttdocomo.android.tvterminalapp.datamanager.databese;
 
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_ADULT;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_AVAIL_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_AVAIL_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_AVAIL_STATUS;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_BVFLG;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_CID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_COPYRIGHT;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_CRID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_DELIVERY;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_DEMONG;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_DISPLAY_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_DISPLAY_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_DISP_TYPE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_DTV;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_DUR;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_EPISODE_ID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_EPITITLE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_GENRE_ID_ARRAY;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_HDRFLG;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_MS;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_NEWA_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_NEWA_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_NG_FUNC;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_PUBLISH_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_PUBLISH_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_R_VALUE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_THUMB;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_CID;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_SERVER_ID;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_CHNO;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_TITLE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_TITLE_ID;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_TITLERUBY;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_DISP_TYPE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_SERVICE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_CH_TYPE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_AVAIL_START_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_AVAIL_END_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_THUMB;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_DEMONG;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_4KFLG;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_AVAIL_STATUS;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_DELIVERY;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_R_VALUE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_ADULT;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_NG_FUNC;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_GENRE_ARRAY;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_SYNOP;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_STAMP;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_CHSVOD;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_PUID;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_SUB_PUID;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_PRICE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_QRANGE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_QUINT;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_PU_S;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_PU_E;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_CHPACK;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.UNDER_LINE;
+
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_ADULT;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_AVAIL_END_DATE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_AVAIL_START_DATE;
@@ -91,35 +95,48 @@ import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClip
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_THUMB;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_TITLE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_TITLE_ID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_ADULT;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_AVAIL_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_AVAIL_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_AVAIL_STATUS;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_BVFLG;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_CID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_COPYRIGHT;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_CRID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_DELIVERY;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_DEMONG;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_DISPLAY_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_DISPLAY_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_DISP_TYPE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_DTV;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_DUR;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_EPISODE_ID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_EPITITLE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_GENRE_ID_ARRAY;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_HDRFLG;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_MS;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_NEWA_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_NEWA_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_NG_FUNC;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_PUBLISH_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_PUBLISH_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_R_VALUE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_THUMB;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_TITLE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_TITLE_ID;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_TITLERUBY;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_CID;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_SERVICE_ID;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_EVENT_ID;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_CHNO;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_DISP_TYPE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_LINEAR_START_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_LINEAR_END_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_VOD_START_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_VOD_END_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_THUMB;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_COPYRIGHT;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_DUR;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_DEMONG;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_AVAIL_STATUS;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_DELIVERY;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_R_VALUE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_MAIN_GENRE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_SECOND_GEBRE_ARRAY;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_SYNOP;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_CREDITS;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_CAPL;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_COPY;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_ADINFO;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_BILINGAL;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_LIVE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_FIRST_JAPAN;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_FIRST_TV;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_EXCLUSIVE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_PRE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_FIRST_CH;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_ORIGINAL;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_MASK;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_NONSCRAMBLE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_DOWNLOAD;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_STARTOVER;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_STAMP;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_RELATIONAL_ID_ARRAY;
+
+
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser.USER_INFO_LIST_CONTRACT_STATUS;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser.USER_INFO_LIST_H4D_AGE_REQ;
@@ -273,40 +290,52 @@ public class DBConstants {
     //Homeキャッシュデータ格納用テーブル
     public static final String CHANNEL_LIST_TABLE_NAME = "channel_list";
     public static final String ID_COLUMN = "row_id";
+    public static final String UPDATE_DATE = "update_date";
 
     public static final String CREATE_TABLE_CHANNEL_SQL = "" +
             "create table " + CHANNEL_LIST_TABLE_NAME + " (" +
             ID_COLUMN + " integer primary key autoincrement, " +
-            CHANNEL_LIST_CRID + " text, " +
-            CHANNEL_LIST_CID + " text, " +
-            CHANNEL_LIST_TITLE_ID + " text, " +
-            CHANNEL_LIST_EPISODE_ID + " text, " +
+            CHANNEL_LIST_CRID  + " text, " +
+            CHANNEL_LIST_CID  + " text, " +
+            CHANNEL_LIST_SERVER_ID  + " text, " +
+            CHANNEL_LIST_CHNO  + " text, " +
             CHANNEL_LIST_TITLE + " text, " +
-            CHANNEL_LIST_EPITITLE + " text, " +
-            CHANNEL_LIST_DISP_TYPE + " text, " +
-            CHANNEL_LIST_DISPLAY_START_DATE + " text, " +
-            CHANNEL_LIST_DISPLAY_END_DATE + " text, " +
-            CHANNEL_LIST_AVAIL_START_DATE + " text, " +
-            CHANNEL_LIST_AVAIL_END_DATE + " text, " +
-            CHANNEL_LIST_PUBLISH_START_DATE + " text, " +
-            CHANNEL_LIST_PUBLISH_END_DATE + " text, " +
-            CHANNEL_LIST_NEWA_START_DATE + " text, " +
-            CHANNEL_LIST_NEWA_END_DATE + " text, " +
-            CHANNEL_LIST_COPYRIGHT + " text, " +
-            CHANNEL_LIST_THUMB + " text, " +
-            CHANNEL_LIST_DUR + " text, " +
-            CHANNEL_LIST_DEMONG + " text, " +
-            CHANNEL_LIST_BVFLG + " text, " +
-            UNDER_BAR_FOUR_K_FLG + " text, " +
-            CHANNEL_LIST_HDRFLG + " text, " +
-            CHANNEL_LIST_AVAIL_STATUS + " text, " +
-            CHANNEL_LIST_DELIVERY + " text, " +
-            CHANNEL_LIST_R_VALUE + " text, " +
-            CHANNEL_LIST_ADULT + " text, " +
-            CHANNEL_LIST_MS + " text, " +
-            CHANNEL_LIST_NG_FUNC + " text, " +
-            CHANNEL_LIST_GENRE_ID_ARRAY + " text, " +
-            CHANNEL_LIST_DTV + " text " +
+            CHANNEL_LIST_TITLERUBY   + " text, " +
+            CHANNEL_LIST_DISP_TYPE  + " text, " +
+            CHANNEL_LIST_SERVICE  + " text, " +
+            CHANNEL_LIST_CH_TYPE  + " text, " +
+            CHANNEL_LIST_AVAIL_START_DATE  + " text, " +
+            CHANNEL_LIST_AVAIL_END_DATE  + " text, " +
+            CHANNEL_LIST_THUMB  + " text, " +
+            CHANNEL_LIST_DEMONG  + " text, " +
+            UNDER_BAR_FOUR_K_FLG  + " text, " +
+            CHANNEL_LIST_AVAIL_STATUS  + " text, " +
+            CHANNEL_LIST_DELIVERY  + " text, " +
+            CHANNEL_LIST_R_VALUE  + " text, " +
+            CHANNEL_LIST_ADULT  + " text, " +
+            CHANNEL_LIST_NG_FUNC  + " text, " +
+            CHANNEL_LIST_GENRE_ARRAY  + " text, " +
+            CHANNEL_LIST_SYNOP  + " text, " +
+            CHANNEL_LIST_STAMP  + " text, " +
+            CHANNEL_LIST_CHSVOD  + " text, " +
+            CHANNEL_LIST_PUID  + " text, " +
+            CHANNEL_LIST_SUB_PUID  + " text, " +
+            CHANNEL_LIST_PRICE  + " text, " +
+            CHANNEL_LIST_QRANGE  + " text, " +
+            CHANNEL_LIST_QUINT  + " text, " +
+            CHANNEL_LIST_PU_S  + " text, " +
+            CHANNEL_LIST_PU_E  + " text, " +
+            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_CRID + " text, " +
+            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_TITLE +" text, " +
+            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_DISP_TYPE +" text, " +
+            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_PUID +" text, " +
+            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_SUB_PUID +" text, " +
+            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_PRICE +" text, " +
+            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_QRANGE +" text, " +
+            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_QUINT +" text, " +
+            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_PU_S +" text, " +
+            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_PU_E +" text, " +
+            UPDATE_DATE + " text " +
             ")";
 
     //Homeキャッシュデータ格納用テーブル
@@ -351,36 +380,47 @@ public class DBConstants {
     public static final String CREATE_TABLE_TV_SCHEDULE_SQL = "" +
             "create table " + TV_SCHEDULE_LIST_TABLE_NAME + " (" +
             ID_COLUMN + " integer primary key autoincrement, " +
-            TV_SCHEDULE_LIST_CRID + " text, " +
-            TV_SCHEDULE_LIST_CID + " text, " +
-            TV_SCHEDULE_LIST_TITLE_ID + " text, " +
-            TV_SCHEDULE_LIST_EPISODE_ID + " text, " +
-            TV_SCHEDULE_LIST_TITLE + " text, " +
-            TV_SCHEDULE_LIST_EPITITLE + " text, " +
-            TV_SCHEDULE_LIST_DISP_TYPE + " text, " +
-            TV_SCHEDULE_LIST_DISPLAY_START_DATE + " text, " +
-            TV_SCHEDULE_LIST_DISPLAY_END_DATE + " text, " +
-            TV_SCHEDULE_LIST_AVAIL_START_DATE + " text, " +
-            TV_SCHEDULE_LIST_AVAIL_END_DATE + " text, " +
-            TV_SCHEDULE_LIST_PUBLISH_START_DATE + " text, " +
-            TV_SCHEDULE_LIST_PUBLISH_END_DATE + " text, " +
-            TV_SCHEDULE_LIST_NEWA_START_DATE + " text, " +
-            TV_SCHEDULE_LIST_NEWA_END_DATE + " text, " +
-            TV_SCHEDULE_LIST_COPYRIGHT + " text, " +
-            TV_SCHEDULE_LIST_THUMB + " text, " +
-            TV_SCHEDULE_LIST_DUR + " text, " +
-            TV_SCHEDULE_LIST_DEMONG + " text, " +
-            TV_SCHEDULE_LIST_BVFLG + " text, " +
-            UNDER_BAR_FOUR_K_FLG + " text, " +
-            TV_SCHEDULE_LIST_HDRFLG + " text, " +
-            TV_SCHEDULE_LIST_AVAIL_STATUS + " text, " +
-            TV_SCHEDULE_LIST_DELIVERY + " text, " +
-            TV_SCHEDULE_LIST_R_VALUE + " text, " +
-            TV_SCHEDULE_LIST_ADULT + " text, " +
-            TV_SCHEDULE_LIST_MS + " text, " +
-            TV_SCHEDULE_LIST_NG_FUNC + " text, " +
-            TV_SCHEDULE_LIST_GENRE_ID_ARRAY + " text, " +
-            TV_SCHEDULE_LIST_DTV + " text " +
+            TV_SCHEDULE_LIST_CRID  + " text, " +
+            TV_SCHEDULE_LIST_TITLE  + " text, " +
+            TV_SCHEDULE_LIST_TITLERUBY  + " text, " +
+            TV_SCHEDULE_LIST_CID  + " text, " +
+            TV_SCHEDULE_LIST_SERVICE_ID  + " text, " +
+            TV_SCHEDULE_LIST_EVENT_ID  + " text, " +
+            TV_SCHEDULE_LIST_CHNO  + " text, " +
+            TV_SCHEDULE_LIST_DISP_TYPE  + " text, " +
+            TV_SCHEDULE_LIST_LINEAR_START_DATE  + " text, " +
+            TV_SCHEDULE_LIST_LINEAR_END_DATE  + " text, " +
+            TV_SCHEDULE_LIST_VOD_START_DATE  + " text, " +
+            TV_SCHEDULE_LIST_VOD_END_DATE  + " text, " +
+            TV_SCHEDULE_LIST_THUMB  + " text, " +
+            TV_SCHEDULE_LIST_COPYRIGHT  + " text, " +
+            TV_SCHEDULE_LIST_DUR  + " text, " +
+            TV_SCHEDULE_LIST_DEMONG  + " text, " +
+            TV_SCHEDULE_LIST_AVAIL_STATUS  + " text, " +
+            TV_SCHEDULE_LIST_DELIVERY  + " text, " +
+            TV_SCHEDULE_LIST_R_VALUE  + " text, " +
+            TV_SCHEDULE_LIST_MAIN_GENRE  + " text, " +
+            TV_SCHEDULE_LIST_SECOND_GEBRE_ARRAY  + " text, " +
+            TV_SCHEDULE_LIST_SYNOP  + " text, " +
+            TV_SCHEDULE_LIST_CREDITS  + " text, " +
+            TV_SCHEDULE_LIST_CAPL  + " text, " +
+            TV_SCHEDULE_LIST_COPY  + " text, " +
+            TV_SCHEDULE_LIST_ADINFO  + " text, " +
+            TV_SCHEDULE_LIST_BILINGAL  + " text, " +
+            TV_SCHEDULE_LIST_LIVE   + " text, " +
+            TV_SCHEDULE_LIST_FIRST_JAPAN  + " text, " +
+            TV_SCHEDULE_LIST_FIRST_TV  + " text, " +
+            TV_SCHEDULE_LIST_EXCLUSIVE   + " text, " +
+            TV_SCHEDULE_LIST_PRE   + " text, " +
+            TV_SCHEDULE_LIST_FIRST_CH   + " text, " +
+            TV_SCHEDULE_LIST_ORIGINAL    + " text, " +
+            TV_SCHEDULE_LIST_MASK    + " text, " +
+            TV_SCHEDULE_LIST_NONSCRAMBLE    + " text, " +
+            TV_SCHEDULE_LIST_DOWNLOAD    + " text, " +
+            TV_SCHEDULE_LIST_STARTOVER     + " text, " +
+            TV_SCHEDULE_LIST_STAMP     + " text, " +
+            TV_SCHEDULE_LIST_RELATIONAL_ID_ARRAY     + " text, " +
+            UPDATE_DATE + " text " +
             ")";
 
     //Homeキャッシュデータ格納用テーブル

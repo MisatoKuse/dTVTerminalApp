@@ -7,6 +7,8 @@ package com.nttdocomo.android.tvterminalapp.datamanager.insert;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
+
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ChannelListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
@@ -16,6 +18,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_AVAIL_START_DATE;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.UPDATE_DATE;
 
 public class ChannelInsertDataManager {
 
@@ -33,7 +38,6 @@ public class ChannelInsertDataManager {
     /**
      * ChannelAPIの解析結果をDBに格納する。
      *
-     * @return
      */
     public void insertChannelInsertList(ChannelList channelList) {
 
@@ -54,6 +58,9 @@ public class ChannelInsertDataManager {
                 Map.Entry entry = (Map.Entry) entries.next();
                 String keyName = (String) entry.getKey();
                 String valName = (String) entry.getValue();
+                if(CHANNEL_LIST_AVAIL_START_DATE.equals(keyName)){
+                    values.put(UPDATE_DATE, !TextUtils.isEmpty(valName)?valName.substring(0,10):"");
+                }
                 values.put(DBUtils.fourKFlgConversion(keyName), valName);
             }
             channelListDao.insert(values);

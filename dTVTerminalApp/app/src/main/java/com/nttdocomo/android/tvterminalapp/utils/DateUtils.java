@@ -54,6 +54,12 @@ public class DateUtils {
     //おすすめdTV取得日付キー
     public static final String RECOMMEND_DANIME_LAST_INSERT = "RecommendDAnimeLastInsert";
 
+    //チャンネル取得日付キー
+    public static final String CHANNEL_LAST_UPDATE = "ChannelLastUpdate";
+
+    //番組表取得日付キー
+    public static final String TVSCHEDULE_LAST_UPDATE = "TvScheduleLastUpdate";
+
     //SharedPreferences用データ
     private static final String DATA_SAVE = "DataSave";
 
