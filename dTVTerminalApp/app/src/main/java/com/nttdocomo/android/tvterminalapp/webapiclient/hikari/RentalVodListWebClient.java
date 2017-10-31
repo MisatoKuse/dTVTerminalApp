@@ -4,59 +4,56 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
+import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.RentalVodListJsonParser;
 
-import java.util.List;
-
-public class PurchasedVodListWebClient
+public class RentalVodListWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
     /**
      * コールバック
      */
-    // TODO: パーサー未完成の間は他のパーサー用の物を仮置き
-    interface DailyRankJsonParserCallback {
+    public interface RentalVodListJsonParserCallback {
         /**
          * 正常に終了した場合に呼ばれるコールバック
          *
-         * @param dailyRankLists JSONパース後のデータ
+         * @param RentalVodListResponse JSONパース後のデータ
          */
-        void onDailyRankJsonParsed(List<DailyRankList> dailyRankLists);
+        void onRentalVodListJsonParsed(PurchasedVodListResponse RentalVodListResponse);
     }
 
     //コールバックのインスタンス
-    // TODO: パーサー未完成の間は他のパーサーを仮置き
-    private DailyRankJsonParserCallback mPurchasedVodListJsonParserCallback;
+    private RentalVodListJsonParserCallback mRentalVodListJsonParserCallback;
 
     @Override
     public void onAnswer(ReturnCode returnCode) {
-        // TODO: パーサー未完成の間はコメント化
-        //if(mPurchasedVodListJsonParserCallback != null) {
-        //JSONをパースして、データを返す
-        //new DailyRankJsonParser(mDailyRankJsonParserCallback).execute(returnCode.bodyData);
-        //}
+        if(mRentalVodListJsonParserCallback != null) {
+            //JSONをパースして、データを返す
+            new RentalVodListJsonParser(mRentalVodListJsonParserCallback)
+                    .execute(returnCode.bodyData);
+        }
     }
 
     @Override
     public void onError() {
         // TODO: パーサー未完成の間はコメント化
-//        if(mPurchasedVodListJsonParserCallback != null) {
-//            //エラーが発生したのでヌルを返す
-//            mPurchasedVodListJsonParserCallback.onDailyRankJsonParsed(null);
-//        }
+        if(mRentalVodListJsonParserCallback != null) {
+            //エラーが発生したのでヌルを返す
+            mRentalVodListJsonParserCallback.onRentalVodListJsonParsed(null);
+        }
     }
 
     /**
      * 当日のクリップ数番組ランキング取得
      *
-     * @param purchasedVodListJsonParserCallback コールバックTODO:
+     * @param rentalVodListJsonParserCallback コールバックTODO:
      *                                           （本WebAPIには通常のパラメータが無く、基底クラスで追加するサービストークのみとなる。）
      *                                           TODO: 仕様確定後に基底クラスへサービストークンの処理の追加が必要
      * @return パラメータエラー等が発生した場合はfalse
      */
-    public boolean getPurchasedVodListApi(DailyRankJsonParserCallback purchasedVodListJsonParserCallback) {
+    public boolean getRentalVodListApi(RentalVodListJsonParserCallback rentalVodListJsonParserCallback) {
         //パラメーターのチェック
-        if (!checkNormalParameter(purchasedVodListJsonParserCallback)) {
+        if (!checkNormalParameter(rentalVodListJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、falseで帰る
             return false;
         }
@@ -67,7 +64,7 @@ public class PurchasedVodListWebClient
 
         //日毎ランク一覧を呼び出す
         //TODO: 内部的には暫定的にVOD一覧を呼んでいる
-        openUrl(API_NAME_LIST.PURCHASED_VOD_LIST_WEB_CLIENT.getString(), "", this);
+        openUrl(API_NAME_LIST.RENTAL_VOD_LIST_WEB_CLIENT.getString(), "", this);
 
         //今のところ失敗していないので、trueを返す
         return true;
@@ -79,7 +76,7 @@ public class PurchasedVodListWebClient
      * @param purchasedVodListCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(DailyRankJsonParserCallback purchasedVodListCallback) {
+    private boolean checkNormalParameter(RentalVodListJsonParserCallback purchasedVodListCallback) {
         //コールバックが指定されていないならばfalse
         if (purchasedVodListCallback == null) {
             return false;

@@ -24,6 +24,7 @@ import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstan
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_WEEKLYRANK_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_RANKING_VIDEO_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_TVCLIP_LIST_SQL;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_RENTAL_LIST_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DAILYRANK_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATABASE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATABASE_VERSION;
@@ -37,6 +38,7 @@ import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstan
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.VODCLIP_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.WEEKLYRANK_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.TVCLIP_LIST_TABLE_NAME;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RENTAL_LIST_TABLE_NAME;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -59,6 +61,10 @@ public class DBHelper extends SQLiteOpenHelper {
      * 「tv clip list」テーブルの削除用SQL
      */
     private static final String DROP_TVCLIP_TABLE_SQL = "drop table if exists " + TVCLIP_LIST_TABLE_NAME;
+    /**
+     * 「レンタル一覧」テーブルの削除用SQL
+     */
+    private static final String DROP_RENTAL_TABLE_SQL = "drop table if exists " + RENTAL_LIST_TABLE_NAME;
 
     /**
      * コンストラクタ
@@ -87,6 +93,11 @@ public class DBHelper extends SQLiteOpenHelper {
         }catch (Exception e){
             DTVTLogger.debug("HomeDBHelper::onCreate, create " + CREATE_TABLE_TVCLIP_LIST_SQL+ " table failed, cause=" + e.getCause());
         }
+        try {
+            sqLiteDatabase.execSQL(CREATE_TABLE_RENTAL_LIST_SQL);   //レンタル一覧画面用
+        }catch (Exception e){
+            Log.d(DTVTConstants.LOG_DEF_TAG, "HomeDBHelper::onCreate, create " + CREATE_TABLE_RENTAL_LIST_SQL+ " table failed, cause=" + e.getCause());
+        }
 
     }
 
@@ -105,5 +116,6 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(DROP_RECOMMEND_DTV_TABLE_SQL);
         sqLiteDatabase.execSQL(DROP_RECOMMEND_DANIME_TABLE_SQL);
         sqLiteDatabase.execSQL(DROP_TVCLIP_TABLE_SQL);  //クリップ一覧画面用
+        sqLiteDatabase.execSQL(DROP_RENTAL_TABLE_SQL);  //レンタル一覧画面用
     }
 }
