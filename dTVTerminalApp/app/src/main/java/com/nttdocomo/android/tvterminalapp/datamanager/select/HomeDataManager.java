@@ -17,18 +17,21 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WeeklyRankLi
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_DISPLAY_START_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_AVAIL_START_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_AVAIL_END_DATE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_DISP_TYPE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_THUMB;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_TITLE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_CHNO;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_DISPLAY_START_DATE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_DISP_TYPE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_THUMB;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_TITLE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_DISPLAY_START_DATE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_VOD_START_DATE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_DISP_TYPE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_THUMB;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_TITLE;
@@ -88,8 +91,9 @@ public class HomeDataManager {
      */
     public List<Map<String, String>> selectChannelListHomeData() {
         //ホーム画面に必要な列を列挙する
-        String[] columns = {CHANNEL_LIST_THUMB, CHANNEL_LIST_TITLE,
-                CHANNEL_LIST_DISPLAY_START_DATE, CHANNEL_LIST_DISP_TYPE};
+        String[] columns = {CHANNEL_LIST_CHNO, CHANNEL_LIST_THUMB, CHANNEL_LIST_TITLE,
+                CHANNEL_LIST_AVAIL_START_DATE, CHANNEL_LIST_AVAIL_END_DATE,
+                CHANNEL_LIST_DISP_TYPE};
 
         //Daoクラス使用準備
         DBHelper channelListDBHelper = new DBHelper(mContext);
@@ -175,7 +179,7 @@ public class HomeDataManager {
     public List<Map<String, String>> selectTvScheduleListHomeData() {
         //ホーム画面に必要な列を列挙する
         String[] columns = {TV_SCHEDULE_LIST_THUMB, TV_SCHEDULE_LIST_TITLE,
-                TV_SCHEDULE_LIST_DISPLAY_START_DATE, TV_SCHEDULE_LIST_DISP_TYPE};
+                TV_SCHEDULE_LIST_VOD_START_DATE, TV_SCHEDULE_LIST_DISP_TYPE};
 
         //Daoクラス使用準備
         DBHelper tvScheduleListDBHelper = new DBHelper(mContext);

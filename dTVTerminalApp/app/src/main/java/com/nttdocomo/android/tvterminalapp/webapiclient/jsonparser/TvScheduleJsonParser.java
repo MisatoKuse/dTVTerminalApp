@@ -29,56 +29,56 @@ public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object> {
     private TvScheduleList mTvScheduleList;
 
     public static final String TV_SCHEDULE_LIST_STATUS = "status";
-
-    public static final String TV_SCHEDULE_LIST_PAGER = "pager";
-    public static final String TV_SCHEDULE_LIST_PAGER_UPPER_LIMIT = "upper_limit";
-    public static final String TV_SCHEDULE_LIST_PAGER_LOWER_LIMIT = "lower_limit";
-    public static final String TV_SCHEDULE_LIST_PAGER_OFFSET = "offset";
-    public static final String TV_SCHEDULE_LIST_PAGER_COUNT = "count";
-
     public static final String TV_SCHEDULE_LIST = "list";
+
     public static final String TV_SCHEDULE_LIST_CRID = "crid";
-    public static final String TV_SCHEDULE_LIST_CID = "cid";
-    public static final String TV_SCHEDULE_LIST_TITLE_ID = "title_id";
-    public static final String TV_SCHEDULE_LIST_EPISODE_ID = "episode_id";
     public static final String TV_SCHEDULE_LIST_TITLE = "title";
-    public static final String TV_SCHEDULE_LIST_EPITITLE = "epititle";
+    public static final String TV_SCHEDULE_LIST_TITLERUBY = "titleruby";
+    public static final String TV_SCHEDULE_LIST_CID = "cid";
+    public static final String TV_SCHEDULE_LIST_SERVICE_ID = "service_id";
+    public static final String TV_SCHEDULE_LIST_EVENT_ID = "event_id";
+    public static final String TV_SCHEDULE_LIST_CHNO = "chno";
     public static final String TV_SCHEDULE_LIST_DISP_TYPE = "disp_type";
-    public static final String TV_SCHEDULE_LIST_DISPLAY_START_DATE = "display_start_date";
-    public static final String TV_SCHEDULE_LIST_DISPLAY_END_DATE = "display_end_date";
-    public static final String TV_SCHEDULE_LIST_AVAIL_START_DATE = "avail_start_date";
-    public static final String TV_SCHEDULE_LIST_AVAIL_END_DATE = "avail_end_date";
-    public static final String TV_SCHEDULE_LIST_PUBLISH_START_DATE = "publish_start_date";
-    public static final String TV_SCHEDULE_LIST_PUBLISH_END_DATE = "publish_end_date";
-    public static final String TV_SCHEDULE_LIST_NEWA_START_DATE = "newa_start_date";
-    public static final String TV_SCHEDULE_LIST_NEWA_END_DATE = "newa_end_date";
-    public static final String TV_SCHEDULE_LIST_COPYRIGHT = "copyright";
+    public static final String TV_SCHEDULE_LIST_LINEAR_START_DATE = "linear_start_date";
+    public static final String TV_SCHEDULE_LIST_LINEAR_END_DATE = "linear_end_date";
+    public static final String TV_SCHEDULE_LIST_VOD_START_DATE = "vod_start_date";
+    public static final String TV_SCHEDULE_LIST_VOD_END_DATE = "vod_end_date";
     public static final String TV_SCHEDULE_LIST_THUMB = "thumb";
+    public static final String TV_SCHEDULE_LIST_COPYRIGHT = "copyright";
     public static final String TV_SCHEDULE_LIST_DUR = "dur";
     public static final String TV_SCHEDULE_LIST_DEMONG = "demong";
-    public static final String TV_SCHEDULE_LIST_BVFLG = "bvflg";
-    public static final String TV_SCHEDULE_LIST_4KFLG = "4kflg";
-    public static final String TV_SCHEDULE_LIST_HDRFLG = "hdrflg";
     public static final String TV_SCHEDULE_LIST_AVAIL_STATUS = "avail_status";
     public static final String TV_SCHEDULE_LIST_DELIVERY = "delivery";
     public static final String TV_SCHEDULE_LIST_R_VALUE = "r_value";
-    public static final String TV_SCHEDULE_LIST_ADULT = "adult";
-    public static final String TV_SCHEDULE_LIST_MS = "ms";
-    public static final String TV_SCHEDULE_LIST_NG_FUNC = "ng_func";
-    public static final String TV_SCHEDULE_LIST_GENRE_ID_ARRAY = "genre_id_array";
-    public static final String TV_SCHEDULE_LIST_DTV = "dtv";
+    public static final String TV_SCHEDULE_LIST_MAIN_GENRE = "main_genre";
+    public static final String TV_SCHEDULE_LIST_SECOND_GEBRE_ARRAY = "second_genre_array";
+    public static final String TV_SCHEDULE_LIST_SYNOP = "synop";
+    public static final String TV_SCHEDULE_LIST_CREDITS = "credits";
+    public static final String TV_SCHEDULE_LIST_CAPL = "capl";
+    public static final String TV_SCHEDULE_LIST_COPY = "copy";
+    public static final String TV_SCHEDULE_LIST_ADINFO = "adinfo";
+    public static final String TV_SCHEDULE_LIST_BILINGAL = "bilingal";
+    public static final String TV_SCHEDULE_LIST_LIVE  = "live";
+    public static final String TV_SCHEDULE_LIST_FIRST_JAPAN = "first_japan";
+    public static final String TV_SCHEDULE_LIST_FIRST_TV = "first_tv";
+    public static final String TV_SCHEDULE_LIST_EXCLUSIVE = "exclusive";
+    public static final String TV_SCHEDULE_LIST_PRE = "pre";
+    public static final String TV_SCHEDULE_LIST_FIRST_CH = "first_ch";
+    public static final String TV_SCHEDULE_LIST_ORIGINAL = "original";
+    public static final String TV_SCHEDULE_LIST_MASK = "mask";
+    public static final String TV_SCHEDULE_LIST_NONSCRAMBLE = "nonscramble";
+    public static final String TV_SCHEDULE_LIST_DOWNLOAD = "download";
+    public static final String TV_SCHEDULE_LIST_STARTOVER = "startover";
+    public static final String TV_SCHEDULE_LIST_STAMP = "stamp";
+    public static final String TV_SCHEDULE_LIST_RELATIONAL_ID_ARRAY = "relational_id_array";
 
-    public static final String[] pagerPara = {TV_SCHEDULE_LIST_PAGER_UPPER_LIMIT, TV_SCHEDULE_LIST_PAGER_LOWER_LIMIT,
-            TV_SCHEDULE_LIST_PAGER_OFFSET, TV_SCHEDULE_LIST_PAGER_COUNT};
-
-    public static final String[] listPara = {TV_SCHEDULE_LIST_CRID, TV_SCHEDULE_LIST_CID, TV_SCHEDULE_LIST_TITLE_ID,
-            TV_SCHEDULE_LIST_EPISODE_ID, TV_SCHEDULE_LIST_TITLE, TV_SCHEDULE_LIST_EPITITLE, TV_SCHEDULE_LIST_DISP_TYPE,
-            TV_SCHEDULE_LIST_DISPLAY_START_DATE, TV_SCHEDULE_LIST_DISPLAY_END_DATE, TV_SCHEDULE_LIST_AVAIL_START_DATE,
-            TV_SCHEDULE_LIST_AVAIL_END_DATE, TV_SCHEDULE_LIST_PUBLISH_START_DATE, TV_SCHEDULE_LIST_PUBLISH_END_DATE,
-            TV_SCHEDULE_LIST_NEWA_START_DATE, TV_SCHEDULE_LIST_NEWA_END_DATE, TV_SCHEDULE_LIST_COPYRIGHT,
-            TV_SCHEDULE_LIST_THUMB, TV_SCHEDULE_LIST_DUR, TV_SCHEDULE_LIST_DEMONG, TV_SCHEDULE_LIST_BVFLG, TV_SCHEDULE_LIST_4KFLG,
-            TV_SCHEDULE_LIST_HDRFLG, TV_SCHEDULE_LIST_AVAIL_STATUS, TV_SCHEDULE_LIST_DELIVERY, TV_SCHEDULE_LIST_R_VALUE,
-            TV_SCHEDULE_LIST_ADULT, TV_SCHEDULE_LIST_MS, TV_SCHEDULE_LIST_NG_FUNC, TV_SCHEDULE_LIST_GENRE_ID_ARRAY, TV_SCHEDULE_LIST_DTV};
+    public static final String[] listPara = {TV_SCHEDULE_LIST_CRID,TV_SCHEDULE_LIST_TITLE,TV_SCHEDULE_LIST_TITLERUBY,TV_SCHEDULE_LIST_CID, TV_SCHEDULE_LIST_SERVICE_ID,
+            TV_SCHEDULE_LIST_EVENT_ID, TV_SCHEDULE_LIST_CHNO,TV_SCHEDULE_LIST_DISP_TYPE,TV_SCHEDULE_LIST_LINEAR_START_DATE,TV_SCHEDULE_LIST_LINEAR_END_DATE,TV_SCHEDULE_LIST_VOD_START_DATE,
+            TV_SCHEDULE_LIST_VOD_END_DATE,TV_SCHEDULE_LIST_THUMB, TV_SCHEDULE_LIST_COPYRIGHT,TV_SCHEDULE_LIST_DUR,TV_SCHEDULE_LIST_DEMONG,TV_SCHEDULE_LIST_AVAIL_STATUS,TV_SCHEDULE_LIST_DELIVERY,
+            TV_SCHEDULE_LIST_R_VALUE,TV_SCHEDULE_LIST_MAIN_GENRE,TV_SCHEDULE_LIST_SECOND_GEBRE_ARRAY,TV_SCHEDULE_LIST_SYNOP,TV_SCHEDULE_LIST_CREDITS,TV_SCHEDULE_LIST_CAPL,
+            TV_SCHEDULE_LIST_COPY,TV_SCHEDULE_LIST_ADINFO,TV_SCHEDULE_LIST_BILINGAL,TV_SCHEDULE_LIST_LIVE,TV_SCHEDULE_LIST_FIRST_JAPAN,TV_SCHEDULE_LIST_FIRST_TV,TV_SCHEDULE_LIST_EXCLUSIVE,
+            TV_SCHEDULE_LIST_PRE,TV_SCHEDULE_LIST_FIRST_CH,TV_SCHEDULE_LIST_ORIGINAL,TV_SCHEDULE_LIST_MASK,TV_SCHEDULE_LIST_NONSCRAMBLE,TV_SCHEDULE_LIST_DOWNLOAD,TV_SCHEDULE_LIST_STARTOVER,
+            TV_SCHEDULE_LIST_STAMP,TV_SCHEDULE_LIST_RELATIONAL_ID_ARRAY};
 
     /**
      * コンストラクタ
@@ -139,21 +139,10 @@ public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object> {
     public void sendStatus(JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
-            HashMap<String, String> map = new HashMap<String, String>();
+            HashMap<String, String> map = new HashMap<>();
             if (!jsonObj.isNull(TV_SCHEDULE_LIST_STATUS)) {
                 String status = jsonObj.getString(TV_SCHEDULE_LIST_STATUS);
                 map.put(TV_SCHEDULE_LIST_STATUS, status);
-            }
-
-            if (!jsonObj.isNull(TV_SCHEDULE_LIST_PAGER)) {
-                JSONObject pager = jsonObj.getJSONObject(TV_SCHEDULE_LIST_PAGER);
-
-                for (int i = 0; i < pagerPara.length; i++) {
-                    if (!pager.isNull(pagerPara[i])) {
-                        String para = pager.getString(pagerPara[i]);
-                        map.put(pagerPara[i], para);
-                    }
-                }
             }
 
             mTvScheduleList.setTvsMap(map);
@@ -181,18 +170,26 @@ public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object> {
                 JSONArray jsonArr = jsonObj.getJSONArray(TV_SCHEDULE_LIST);
 
                 // リストの数だけまわす
-                for (int i = 0; i < jsonArr.length(); i++) {
+                for (int i = 0; i<jsonArr.length(); i++){
                     // 最初にHashMapを生成＆初期化
-                    HashMap<String, String> vcListMap = new HashMap<String, String>();
+                    HashMap<String, String> vcListMap = new HashMap<>();
 
                     // i番目のJSONArrayをJSONObjectに変換する
                     JSONObject jsonObject = jsonArr.getJSONObject(i);
 
-                    for (int j = 0; j < listPara.length; j++) {
+                    /* 2017/10/30日実装予定 */
+
+                    for (int j = 0; j < listPara.length; j++){
                         if (!jsonObject.isNull(listPara[j])) {
-                            if (listPara[j] == TV_SCHEDULE_LIST_GENRE_ID_ARRAY) {
-                                String para = jsonObject.getString(listPara[j]);
-                                vcListMap.put(listPara[j], para.substring(1, (para.length() - 1)));
+                            if (listPara[j].equals(TV_SCHEDULE_LIST_SECOND_GEBRE_ARRAY)) {
+                                JSONArray para = jsonObject.getJSONArray(listPara[j]);
+                                vcListMap.put(listPara[j], para.toString());
+                            }else if(listPara[j].equals(TV_SCHEDULE_LIST_CREDITS)){
+                                JSONArray para = jsonObject.getJSONArray(listPara[j]);
+                                vcListMap.put(listPara[j], para.toString());
+                            }else if(listPara[j].equals(TV_SCHEDULE_LIST_RELATIONAL_ID_ARRAY)){
+                                JSONArray para = jsonObject.getJSONArray(listPara[j]);
+                                vcListMap.put(listPara[j], para.toString());
                             } else {
                                 String para = jsonObject.getString(listPara[j]);
                                 vcListMap.put(listPara[j], para);
