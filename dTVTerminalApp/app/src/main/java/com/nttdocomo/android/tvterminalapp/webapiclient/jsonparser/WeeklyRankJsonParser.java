@@ -5,11 +5,11 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
 import android.os.AsyncTask;
+import android.os.Bundle;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WeeklyRankList;
-import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WeeklyRankWebClient;
 
 import org.json.JSONArray;
@@ -68,6 +68,9 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
             WEEKLYRANK_LIST_COPYRIGHT, WEEKLYRANK_LIST_DUR, WEEKLYRANK_LIST_DEMONG,
             WEEKLYRANK_LIST_AVAII_STATUS, WEEKLYRANK_LIST_DELIVERY, WEEKLYRANK_LIST_R_VALUE};
 
+    /** 拡張情報 **/
+    Bundle mExtraData = null;
+
     /**
      * コンストラクタ
      *
@@ -77,9 +80,30 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
         this.mWeeklyRankJsonParserCallback = mWeeklyRankJsonParserCallback;
     }
 
+    /**
+     * 拡張情報付きコンストラクタ
+     * @param mWeeklyRankJsonParserCallback コールバック用
+     * @param extraDataSrc 拡張情報
+     */
+    public WeeklyRankJsonParser(WeeklyRankWebClient.WeeklyRankJsonParserCallback
+                                        mWeeklyRankJsonParserCallback,Bundle extraDataSrc) {
+        this.mWeeklyRankJsonParserCallback = mWeeklyRankJsonParserCallback;
+
+        //拡張情報の追加
+        mExtraData = extraDataSrc;
+    }
+
     @Override
     protected void onPostExecute(Object s) {
-        mWeeklyRankJsonParserCallback.onWeeklyRankJsonParsed((List<WeeklyRankList>) s);
+        //拡張情報が存在すれば、入れ込む
+        List<WeeklyRankList> rankLists = (List<WeeklyRankList>) s;
+        if(mExtraData != null) {
+            for(WeeklyRankList rankList : rankLists) {
+                rankList.setExtraData(mExtraData);
+            }
+        }
+
+        mWeeklyRankJsonParserCallback.onWeeklyRankJsonParsed(rankLists);
     }
 
     @Override

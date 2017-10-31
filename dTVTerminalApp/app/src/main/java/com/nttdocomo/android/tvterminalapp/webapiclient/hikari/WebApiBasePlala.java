@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.os.AsyncTask;
+import android.os.Bundle;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
@@ -178,6 +179,7 @@ public class WebApiBasePlala {
 
 
     //指定文字列パラメータ群
+    //対外的なパラメータなので、現在は非使用の物にもpublicが必要になる。
     /**
      * フィルター用指定文字列・release
      */
@@ -242,6 +244,7 @@ public class WebApiBasePlala {
     static protected class ReturnCode {
         ERROR_TYPE errorType;
         String bodyData;
+        Bundle extraData;
 
         /**
          * コンストラクタ
@@ -249,6 +252,7 @@ public class WebApiBasePlala {
         ReturnCode() {
             errorType = ERROR_TYPE.SUCCESS;
             bodyData = "";
+            extraData = null;
         }
     }
     private ReturnCode mReturnCode = null;
@@ -326,6 +330,29 @@ public class WebApiBasePlala {
     public void openUrl(final String sourceUrl,String receivedParameters,
                         WebApiBasePlalaCallback webApiBasePlalaCallback) {
         CommunicationTask communicationTask = new CommunicationTask(sourceUrl,receivedParameters);
+
+        //コールバックの準備
+        mWebApiBasePlalaCallback = webApiBasePlalaCallback;
+
+        //結果格納構造体の作成
+        WebApiBasePlala.ReturnCode returnCode = new WebApiBasePlala.ReturnCode();
+
+        //通信本体の開始
+        communicationTask.execute(returnCode);
+    }
+
+    /**
+     * 指定したAPIで通信を開始する(拡張情報付き)
+     * @param sourceUrl API呼び出し名
+     * @param receivedParameters API呼び出し用パラメータ
+     * @param webApiBasePlalaCallback 結果のコールバック
+     * @param extraDataSrc 拡張情報
+     */
+    public void openUrlWithExtraData(final String sourceUrl,String receivedParameters,
+                                     WebApiBasePlalaCallback webApiBasePlalaCallback,Bundle extraDataSrc) {
+        //拡張情報もセットする
+        CommunicationTask communicationTask = new CommunicationTask(sourceUrl,
+                receivedParameters,extraDataSrc);
 
         //コールバックの準備
         mWebApiBasePlalaCallback = webApiBasePlalaCallback;
@@ -444,6 +471,9 @@ public class WebApiBasePlala {
         //送るパラメータ
         final String mSendParameter;
 
+        //拡張データ
+        Bundle mExtraData = null;
+
         /**
          * コンストラクタ
          * @param sourceUrl             実行するAPIの名前
@@ -452,6 +482,20 @@ public class WebApiBasePlala {
         CommunicationTask(String sourceUrl,String receivedParameters) {
             mSourceUrl = sourceUrl;
             mSendParameter =  receivedParameters;
+        }
+
+        /**
+         * コンストラクタ(拡張情報付き)
+         * @param sourceUrl 実行するAPIの名前
+         * @param receivedParameters 送るパラメータ
+         * @param extraDataSrc 受け渡す拡張情報
+         */
+        CommunicationTask(String sourceUrl,String receivedParameters,Bundle extraDataSrc) {
+            mSourceUrl = sourceUrl;
+            mSendParameter =  receivedParameters;
+
+            //拡張データの確保
+            mExtraData = extraDataSrc;
         }
 
         /**
@@ -503,6 +547,11 @@ public class WebApiBasePlala {
          */
         @Override
         protected void onPostExecute(ReturnCode returnCode) {
+            //拡張情報があればそれも伝える
+            if(mExtraData != null) {
+                returnCode.extraData = mExtraData;
+            }
+
             //呼び出し元に伝える情報を判断する
             if(returnCode.errorType == ERROR_TYPE.SUCCESS) {
                 if(mAnswerBuffer.isEmpty()) {
