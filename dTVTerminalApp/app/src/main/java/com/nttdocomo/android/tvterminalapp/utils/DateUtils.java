@@ -62,7 +62,8 @@ public class DateUtils {
     //レンタル一覧取得日付キー
     public static final String RENTAL_LIST_LAST_INSERT = "RentalListLastInsert";
 
-    //SharedPreferences用データ    private static final String DATA_SAVE = "DataSave";
+    //SharedPreferences用データ
+    private static final String DATA_SAVE = "DataSave";
 
     //日付フォーマット
     private static final String DATE_PATTERN = "yyyy/MM/dd HH:mm:ss";
