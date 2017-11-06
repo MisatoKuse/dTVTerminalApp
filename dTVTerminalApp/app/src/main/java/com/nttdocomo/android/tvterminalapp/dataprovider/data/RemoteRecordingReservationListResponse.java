@@ -12,7 +12,7 @@ public class RemoteRecordingReservationListResponse implements Serializable {
     private static final long serialVersionUID = -171253737402592759L;
 
     private String mStatus;// status
-    private String mCount;//count
+    private int mCount;//count
     private ArrayList<RemoteRecordingReservationMetaData> mRemoteRecordingReservationMetaData;  // リモート録画予約一覧リスト
 
     public static final String REMOTE_RECORDING_RESERVATION_META_RESPONSE_STATUS = "status";
@@ -23,7 +23,7 @@ public class RemoteRecordingReservationListResponse implements Serializable {
         return mStatus;
     }
 
-    public String getCount() {
+    public int getCount() {
         return mCount;
     }
 
@@ -31,7 +31,7 @@ public class RemoteRecordingReservationListResponse implements Serializable {
         mStatus = status;
     }
 
-    public void setCount(String count) {
+    public void setCount(int count) {
         mCount = count;
     }
 
@@ -45,7 +45,7 @@ public class RemoteRecordingReservationListResponse implements Serializable {
 
     public RemoteRecordingReservationListResponse() {
         mStatus = "";     // OK 固定値
-        mCount = "";      //取得した予約情報の件数
+        mCount = 0;      //取得した予約情報の件数
         mRemoteRecordingReservationMetaData = new ArrayList<RemoteRecordingReservationMetaData>();  // リモート録画予約一覧
     }
 }

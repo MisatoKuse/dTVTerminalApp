@@ -16,17 +16,17 @@ public class RemoteRecordingReservationMetaData implements Serializable {
     //仕様書の名前に合わせているので、フルスペルではない変数名もあります
     //mResvId,mResvType,mLoopTypeNum,mRValue,mSyncStatus,mSyncErrorReason
     private String mResvId;
-    private String mResvType;
-    private String mPlatformType;
+    private int mResvType;
+    private int mPlatformType;
     private String mServiceId;
     private String mEventId;
     private String mTitle;
-    private String mStartTime;
-    private String mDuration;
-    private String mLoopTypeNum;
-    private String mRValue;
-    private String mSyncStatus;
-    private String mSyncErrorReason;
+    private int mStartTime;
+    private int mDuration;
+    private int mLoopTypeNum;
+    private int mRValue;
+    private int mSyncStatus;
+    private int mSyncErrorReason;
 
     public static String[] getRootPara() {
         return mRootPara;
@@ -40,19 +40,19 @@ public class RemoteRecordingReservationMetaData implements Serializable {
         this.mResvId = mResvId;
     }
 
-    public String getResvType() {
+    public int getResvType() {
         return mResvType;
     }
 
-    public void setResvType(String mResvType) {
+    public void setResvType(int mResvType) {
         this.mResvType = mResvType;
     }
 
-    public String getPlatformType() {
+    public int getPlatformType() {
         return mPlatformType;
     }
 
-    public void setPlatformType(String mPlatformType) {
+    public void setPlatformType(int mPlatformType) {
         this.mPlatformType = mPlatformType;
     }
 
@@ -80,51 +80,51 @@ public class RemoteRecordingReservationMetaData implements Serializable {
         this.mTitle = mTitle;
     }
 
-    public String getStartTime() {
+    public int getStartTime() {
         return mStartTime;
     }
 
-    public void setStartTime(String mStartTime) {
+    public void setStartTime(int mStartTime) {
         this.mStartTime = mStartTime;
     }
 
-    public String getDuration() {
+    public int getDuration() {
         return mDuration;
     }
 
-    public void setDuration(String mDuration) {
+    public void setDuration(int mDuration) {
         this.mDuration = mDuration;
     }
 
-    public String getLoopTypeNum() {
+    public int getLoopTypeNum() {
         return mLoopTypeNum;
     }
 
-    public void setLoopTypeNum(String mLoopTypeNum) {
+    public void setLoopTypeNum(int mLoopTypeNum) {
         this.mLoopTypeNum = mLoopTypeNum;
     }
 
-    public String getRValue() {
+    public int getRValue() {
         return mRValue;
     }
 
-    public void setRValue(String mRValue) {
+    public void setRValue(int mRValue) {
         this.mRValue = mRValue;
     }
 
-    public String getSyncStatus() {
+    public int getSyncStatus() {
         return mSyncStatus;
     }
 
-    public void setSyncStatus(String mSyncStatus) {
+    public void setSyncStatus(int mSyncStatus) {
         this.mSyncStatus = mSyncStatus;
     }
 
-    public String getSyncErrorReason() {
+    public int getSyncErrorReason() {
         return mSyncErrorReason;
     }
 
-    public void setSyncErrorReason(String mSyncErrorReason) {
+    public void setSyncErrorReason(int mSyncErrorReason) {
         this.mSyncErrorReason = mSyncErrorReason;
     }
 
@@ -159,13 +159,13 @@ public class RemoteRecordingReservationMetaData implements Serializable {
                     mResvId = (String) data;                //resv_id
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_RESV_TYPE:
-                    mResvType = (String) data;              //resv_type
+                    mResvType = getNumeric(data);              //resv_type
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_RESV_PLATFORM_TYPE:
-                    mPlatformType = (String) data;          //platform_type
+                    mPlatformType = getNumeric(data);          //platform_type
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_SERVICE_ID:
-                    mServiceId = (String) data;             //service_id
+                    mServiceId = String.valueOf(data);             //service_id
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_EVENT_ID:
                     mEventId = (String) data;               //event_id
@@ -174,27 +174,43 @@ public class RemoteRecordingReservationMetaData implements Serializable {
                     mTitle = (String) data;                 //title
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_START_TIME:
-                    mStartTime = (String) data;             //start_time
+                    mStartTime = getNumeric(data);             //start_time
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_DURATION:
-                    mDuration = (String) data;              //duration
+                    mDuration = getNumeric(data);              //duration
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_LOOP_TYPE_NUM:
-                    mLoopTypeNum = (String) data;           //loop_type_num
+                    mLoopTypeNum = getNumeric(data);           //loop_type_num
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_R_VALUE:
-                    mRValue = (String) data;                //r_value
+                    mRValue = getNumeric(data);                //r_value
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_SYNC_STATUS:
-                    mSyncStatus = (String) data;            //sync_status
+                    mSyncStatus = getNumeric(data);            //sync_status
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_SYNC_ERROR_REASON:
-                    mSyncErrorReason = (String) data;       //sync_error_reason
+                    mSyncErrorReason = getNumeric(data);       //sync_error_reason
                     break;
                 default:
 
             }
         }
+    }
+
+    /**
+     * 数値取得
+     *
+     * @param data 　数値判定オブジェクト
+     * @return 数値
+     */
+    private int getNumeric(Object data) {
+        int i = 0;
+        if (data instanceof Integer) {
+            i = ((Integer) data);
+        } else if (data instanceof String) {
+            i = Integer.parseInt(String.valueOf(data));
+        }
+        return i;
     }
 
     public Object getMember(String key) {

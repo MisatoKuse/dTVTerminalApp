@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationMetaData;
+import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RemoteRecordingReservationListWebClient;
 
 import org.json.JSONArray;
@@ -101,9 +102,16 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
             }
             // countの値を取得しセットする
             if (!jsonObj.isNull(REMOTE_RECORDING_RESERVATION_META_RESPONSE_COUNT)) {
-                String count = null;
+                int count = 0;
                 try {
-                    count = jsonObj.getString(REMOTE_RECORDING_RESERVATION_META_RESPONSE_COUNT);
+                    //数字の場合のみ、値を採用する
+                    String stringBuffer = jsonObj.getString(
+                            REMOTE_RECORDING_RESERVATION_META_RESPONSE_COUNT);
+                    if(DBUtils.isNumber(stringBuffer)) {
+                        count = Integer.parseInt(stringBuffer);
+                    } else {
+                        throw new NumberFormatException();
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
