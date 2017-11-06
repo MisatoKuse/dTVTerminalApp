@@ -63,7 +63,8 @@ public class ContentsAdapter extends BaseAdapter {
         TYPE_DAILY_RANK,          //今日のテレビランキング
         TYPE_WEEKLY_RANK,         //週間テレビランキング
         TYPE_VIDEO_RANK,          //ビデオランキング
-        TYPE_RENTAL_RANK          //レンタル
+        TYPE_RENTAL_RANK,          //レンタル
+        TYPE_RECORDING_RESERVATION_LIST // 録画予約一覧
     }
 
     /**
@@ -98,9 +99,13 @@ public class ContentsAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup parent) {
-        ViewHolder holder;
+        ViewHolder holder = null;
+
         //ビューの再利用
         if (view == null) {
+            // TODO レイアウトパターンを設定
+//            view = setViewPattern(parent);
+//            holder = setListItemPattern(holder,view);
             view = mInflater.inflate(R.layout.item_common_result, parent, false);
             holder = new ViewHolder();
             holder.rl_thumbnail = view.findViewById(R.id.item_common_result_thumbnail_rl);
@@ -165,20 +170,66 @@ public class ContentsAdapter extends BaseAdapter {
         holder.tv_line.setLayoutParams(layoutParams);
     }
 
+    private View setViewPattern(View view, ViewGroup parent) {
+        // TODO 録画予約一覧以外のパターンの識別も可能にする
+        switch (type) {
+//            case TYPE_DAILY_RANK: // 今日のテレビランキング
+//            case TYPE_WEEKLY_RANK: // 週間ランキング
+//            case TYPE_VIDEO_RANK: // ビデオランキング
+//            case TYPE_RENTAL_RANK: // レンタル一覧
+//                view = mInflater.inflate(R.layout.item_common_result, parent, false);
+//                break;
+            case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
+                view = mInflater.inflate(R.layout.item_common_result, parent, false);
+                break;
+            default:
+                break;
+        }
+        return view;
+    }
+
+    /**
+     *  Itemのパターンを設定
+     */
+    private ViewHolder setListItemPattern(ViewHolder holder, View view) {
+        // TODO 録画予約一覧以外の画面のパターンの識別も可能にする
+        // TODO 別パターンとしてレイアウトを実装・inflate
+        switch (type) {
+//            case TYPE_DAILY_RANK: // 今日のテレビランキング
+//            case TYPE_WEEKLY_RANK: // 週間ランキング
+//            case TYPE_VIDEO_RANK: // ビデオランキング
+//            case TYPE_RENTAL_RANK: // レンタル一覧
+//                break;
+            case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
+                holder = new VhPtnRecodingReservation();
+                break;
+            default:
+                break;
+        }
+        return holder;
+    }
+
     /**
      * データの設定
      */
     private void setData(ViewHolder holder) {
         switch (type) {
-            case TYPE_DAILY_RANK:
-            case TYPE_WEEKLY_RANK:
+            case TYPE_DAILY_RANK: // 今日のテレビランキング
+            case TYPE_WEEKLY_RANK: // 週間ランキング
                 holder.ll_rating.setVisibility(View.GONE);
                 break;
-            case TYPE_VIDEO_RANK:
+            case TYPE_VIDEO_RANK: // ビデオランキング
                 holder.tv_time.setVisibility(View.GONE);
                 break;
-            case TYPE_RENTAL_RANK:
+            case TYPE_RENTAL_RANK: // レンタル一覧
                 holder.tv_rank.setVisibility(View.GONE);
+                break;
+            case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
+                holder.tv_clip.setVisibility(View.GONE);
+                holder.rl_thumbnail.setVisibility(View.GONE);
+                holder.iv_thumbnail.setVisibility(View.GONE);
+                holder.rb_rating.setVisibility(View.GONE);
+                holder.tv_rating_num.setVisibility(View.GONE);
                 break;
             default:
                 break;
@@ -186,7 +237,7 @@ public class ContentsAdapter extends BaseAdapter {
     }
 
     /**
-     * ビュー管理クラス
+     * ビュー管理クラス(Base・ランキング一覧)
      */
     private static class ViewHolder {
         //サムネイル親レイアウト
@@ -209,5 +260,13 @@ public class ContentsAdapter extends BaseAdapter {
         TextView tv_clip;
         //ライン
         TextView tv_line;
+    }
+
+    /**
+     * ビュー管理クラス（録画予約）
+     */
+    private static class VhPtnRecodingReservation extends ViewHolder {
+        //録画予約ステータス
+        TextView tv_recording_reservation;
     }
 }

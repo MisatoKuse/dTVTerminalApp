@@ -24,6 +24,7 @@
         <item>dTV</item>
         <item>dアニメ</item>
     </string-array>
+    <string name="recording_reservation_list_title">録画予約</string>
 
     <!-- クリップ一覧 -->
     <string name="str_clip_activity_title">クリップ</string>
