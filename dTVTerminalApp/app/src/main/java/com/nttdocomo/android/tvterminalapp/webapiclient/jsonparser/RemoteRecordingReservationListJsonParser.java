@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationMetaData;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RemoteRecordingReservationListWebClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,7 +22,9 @@ import static com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecord
 import static com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationListResponse.REMOTE_RECORDING_RESERVATION_META_RESPONSE_STATUS;
 
 public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, Object, Object> {
-    //    private RemoteRecordingReservationListWebClient.RemoteRecordingReservationListJsonParserCallback mRemoteRecordingReservationListJsonParserCallback;
+    private RemoteRecordingReservationListWebClient.
+            RemoteRecordingReservationListJsonParserCallback
+            mRemoteRecordingReservationListJsonParserCallback;
     // オブジェクトクラスの定義　
     private RemoteRecordingReservationListResponse mRemoteRecordingReservationListResponse;
 
@@ -30,19 +33,25 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
      * <p>
      * //     * @param remoteRecordingReservationListJsonParserCallback
      */
-//    public RemoteRecordingReservationListJsonParser(RemoteRecordingReservationListWebClient.RemoteRecordingReservationListJsonParserCallback remoteRecordingReservationListJsonParserCallback) {
-//        mRemoteRecordingReservationListJsonParserCallback = remoteRecordingReservationListJsonParserCallback;
-//        mRemoteRecordingReservationListResponse = new RemoteRecordingReservationListResponse();
-//    }
-//
-//    @Override
-//    protected void onPostExecute(Object s) {
-//        mRemoteRecordingReservationListJsonParserCallback.onRemoteRecordingReservationListJsonParsed(mRemoteRecordingReservationListResponse);
-//    }
+    public RemoteRecordingReservationListJsonParser(RemoteRecordingReservationListWebClient.
+        RemoteRecordingReservationListJsonParserCallback
+        remoteRecordingReservationListJsonParserCallback) {
+        mRemoteRecordingReservationListJsonParserCallback =
+                remoteRecordingReservationListJsonParserCallback;
+        mRemoteRecordingReservationListResponse = new RemoteRecordingReservationListResponse();
+    }
+
+    @Override
+    protected void onPostExecute(Object s) {
+        mRemoteRecordingReservationListJsonParserCallback
+                .onRemoteRecordingReservationListJsonParsed(
+                        mRemoteRecordingReservationListResponse);
+    }
     @Override
     protected Object doInBackground(Object... strings) {
         String result = (String) strings[0];
-        RemoteRecordingReservationListResponse response = remoteRecordingReservationListSender(result);
+        RemoteRecordingReservationListResponse response =
+                remoteRecordingReservationListSender(result);
         return response;
     }
 

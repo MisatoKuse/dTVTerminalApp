@@ -126,6 +126,11 @@ public class WebApiBasePlala {
          */
         RENTAL_VOD_LIST_WEB_CLIENT("purchasedvod/list"),
 
+        /**
+         * リモート録画予約一覧
+         */
+        REMOTE_RECORDING_RESERVATION_LIST_WEB_CLIENT("remoterecording/reservation/list"),
+
         ;   //最後にセミコロンが必要
 
         //呼び出し先名の控え
@@ -148,7 +153,7 @@ public class WebApiBasePlala {
         }
     }
     /**
-     * 内部エラー情報
+     * 内部エラー情報（継承先クラスで判定する場合の為にprotected指定）
      */
     protected enum ERROR_TYPE {
         /**
@@ -582,7 +587,8 @@ public class WebApiBasePlala {
             urlConnection.setDoOutput(true);
             urlConnection.setDoInput(true);
             urlConnection.setFixedLengthStreamingMode(sendParameterLength);
-            urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            urlConnection.setRequestProperty("Content-Type",
+                    "application/json; charset=UTF-8");
             mUrlConnection.setRequestProperty("Connection", "close");
         }
 
