@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<resources>
+
+    <!--Common-->
+    <dimen name="header_title_text_size">17sp</dimen>
+
+    <!--コンテンツ詳細-->
+    <dimen name="contents_header_height_size">40dp</dimen>
+    <dimen name="contents_back_key_size">50dp</dimen>
+    <dimen name="contents_close_key_size">50dp</dimen>
+    <dimen name="contents_key_padding_size">12dp</dimen>
+
+</resources>
