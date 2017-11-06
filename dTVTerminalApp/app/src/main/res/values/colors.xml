@@ -28,7 +28,12 @@
     <color name="ranking_list_border">#888888</color>
     <color name="ranking_no_text">#FFFFFF</color>
     <color name="ranking_no_background">#000000</color>
-
+    <!-- ランキング一覧 -->
+    <color name="recording_reservation_status_text_color_red">#FF0000</color>
+    <color name="recording_reservation_status_text_color_white">#FFFFFF</color>
+    <color name="recording_reservation_status_background_red">#FF0000</color>
+    <color name="recording_reservation_status_background_white">#FFFFFF</color>
+    <color name="recording_reservation_status_background_black">#000000</color>
     <!--コンテンツ詳細-->
     <color name="contents_header_background">#000000</color>
 </resources>

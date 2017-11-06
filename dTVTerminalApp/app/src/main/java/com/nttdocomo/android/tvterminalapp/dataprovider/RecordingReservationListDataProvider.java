@@ -7,43 +7,65 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationListResponse;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationMetaData;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RemoteRecordingReservationListWebClient;
 
+import java.util.ArrayList;
 import java.util.List;
 
 // TODO implement WebApiコールバック実装
-public class RecordingReservationListDataProvider {
+public class RecordingReservationListDataProvider
+        implements RemoteRecordingReservationListWebClient.RemoteRecordingReservationListJsonParserCallback {
 
     private Context mContext;
-//    private mDRemoteRecordingReservationList = null;
-//    private mSTBRecordingReservationList = null;
+    private ApiDataProviderCallback apiDataProviderCallback;
+    // ソート完了リスト
+    private List<ContentsData> mRecordingReservationList = null;
+    // dリモートレスポンス　
+    // TODO WebApi側が完成次第コメントアウトを外す
+//    private RecordingReservationListResponse mStbResponse = null;
+    // STBレスポンス
+    private RemoteRecordingReservationListResponse mDRemoteResponse = null;
+    // レスポンス突合後リスト
+    private List<ContentsData> mBuffMatchList = null;
 
-    // TODO コールバック関数(dリモート)
-    public void onDRemoteRecordingReservationListJsonParsed() {
+    // 録画予約ステータスの固定値
+    public static final int RECORD_RESERVATION_SYNC_STATUS_REFLECTS_WAITING = 1; // チューナー反映待ち
+    public static final int RECORD_RESERVATION_SYNC_STATUS_DURING_REFLECT = 2; // チューナー反映中
+    public static final int RECORD_RESERVATION_SYNC_STATUS_ALREADY_REFLECT = 3; // チューナー反映済み
+    public static final int RECORD_RESERVATION_SYNC_STATUS_REFLECT_FAILURE = 4; // チューナー反映失敗
+
+
+
+    @Override
+    public void onRemoteRecordingReservationListJsonParsed(RemoteRecordingReservationListResponse response) {
+        if (response != null) {
+            mDRemoteResponse = response;
+            // リモート側との同期
+            if (mDRemoteResponse != null) {
+                mRecordingReservationList = buttRecordingReservationListData();
+                apiDataProviderCallback.recordingReservationListCallback(mRecordingReservationList);
+            }
+        } else {
+            //TODO:WEBAPIを取得できなかった時の処理を記載予定
+        }
+    }
+
+    // TODO WebApi側が完成次第コメントアウトを外す
+//    @Override
+//    public void onRecordingReservationListJsonParsed(RecordingReservationListResponse response) {
 //        if (response != null) {
-              // TODO メンバ変数に値を格納
-//            sendRecordingReservationListData(response);
-                // TODO STB側のコールバックと同期
-//                if(mSTBRecordingReservationList != null) {
-//
-//                }
+//            mStbResponse = response;
+//            // STB側との同期
+//            if(mStbResponse != null) {
+//                mRecordingReservationList = buttRecordingReservationListData();
+//                apiDataProviderCallback.recordingReservationListCallback(mRecordingReservationList);
+//            }
 //        } else {
 //            //TODO:WEBAPIを取得できなかった時の処理を記載予定
 //        }
-    }
-
-    // TODO コールバック関数(STB)
-    public void onSTBRecordingReservationListJsonParsed() {
-        //        if (response != null) {
-        // TODO メンバ変数に値を格納
-//            sendRecordingReservationListData(response);
-        // TODO dリモート側のコールバックと同期
-//                if(mSTBRecordingReservationList != null) {
-//
-//                }
-//        } else {
-//            //TODO:WEBAPIを取得できなかった時の処理を記載予定
-//        }
-    }
+//    }
 
     /**
      * WebApiからのコールバックデータを返却するためのActivity実装用コールバック
@@ -58,7 +80,6 @@ public class RecordingReservationListDataProvider {
         void recordingReservationListCallback(List<ContentsData> list);
     }
 
-    private ApiDataProviderCallback apiDataProviderCallback;
 
     /**
      * コンストラクタ
@@ -72,42 +93,57 @@ public class RecordingReservationListDataProvider {
 
     /**
      * Activityからのデータ取得要求受付
-     *
      */
     public void requestRecordingReservationListData() {
-
-
+        getRecordingReservationListData();
     }
 
-    /**
-     * 一覧データをActivityに送る
-     *
-     * @param
-     */
-    public void sendRentalListData( ) {
-
-//        //ContentsList生成
-//        List<ContentsData> list = makeContentsData();
-//
-//        //レンタル一覧を送る
-//        apiDataProviderCallback.recordingReservationListCallback(list);
-    }
 
     /**
      * 録画予約一覧を取得する
      */
     private void getRecordingReservationListData() {
-        // TODO 通信クラスにデータ取得要求を出す(dリモート)
-//        WebClient webClient = new WebClient();
-//        webClient.getListApi(this);
+        RemoteRecordingReservationListWebClient remoteWebClient = new RemoteRecordingReservationListWebClient();
+        // TODO メソッド名の修正が入る
+//        remoteWebClient.getRentalVodListApi(this);
 
         // TODO 通信クラスにデータ取得要求を出す(STB)
-//        WebClient webClient = new WebClient();
-//        webClient.getListApi(this);
+        // TODO WebApi側が完成次第コメントアウトを外す
+//        RecordingReservationListWebClient stbWebClient = new RecordingReservationListWebClient();
+//        stbWebClient.getListApi(this);
+    }
+
+    /**
+     * ContentsDataを生成
+     *
+     * @param data
+     * @return
+     */
+    private ContentsData createContentsData(RemoteRecordingReservationMetaData data) {
+        ContentsData contentsData = new ContentsData();
+//        contentsData.setTitle(data.getmTitle());
+//        contentsData.setTime(data.getmStart_time());
+//        contentsData.setRecordingReservationStatus(data.getmSync_status());
+        return contentsData;
     }
 
     // TODO データの突合
     private List<ContentsData> buttRecordingReservationListData() {
+        mBuffMatchList = new ArrayList<ContentsData>();
+        ContentsData contentsData = null;
+        List<RemoteRecordingReservationMetaData> remoteList = mDRemoteResponse.getRemoteRecordingReservationMetaData();
+//        List<RecordingReservationMetaData> stbList = mStbResponse.getRecordingReservationMetaData();
+//        for(int i=0 ; i < remoteList.size() ; i++) {
+//            for(int j=0 ; j < stbList.size() ; j++) {
+//                if(remoteList.get(i).getmService_id().equals(stbList.get(j).getServiceId())
+//                        && remoteList.get(i).getmEvent_id().equals(stbList.get(j).getEventId())) {
+//                    contentsData = createContentsData(remoteList.get(i));
+//
+//                    mBuffMatchList.add();
+//                    break;
+//                }
+//            }
+//        }
         return null;
     }
 
