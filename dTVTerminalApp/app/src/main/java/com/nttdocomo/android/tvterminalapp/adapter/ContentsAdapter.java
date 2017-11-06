@@ -64,7 +64,8 @@ public class ContentsAdapter extends BaseAdapter {
         TYPE_WEEKLY_RANK,         //週間テレビランキング
         TYPE_VIDEO_RANK,          //ビデオランキング
         TYPE_RENTAL_RANK,          //レンタル
-        TYPE_RECORDING_RESERVATION_LIST // 録画予約一覧
+        TYPE_RECORDING_RESERVATION_LIST, // 録画予約一覧
+        TYPE_VIDEO_LIST             // ビデオコンテンツ一覧
     }
 
     /**
@@ -182,6 +183,9 @@ public class ContentsAdapter extends BaseAdapter {
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
                 view = mInflater.inflate(R.layout.item_common_result, parent, false);
                 break;
+            case TYPE_VIDEO_LIST: // ビデオコンテンツ一覧
+                view = mInflater.inflate(R.layout.item_common_result, parent, false);
+                break;
             default:
                 break;
         }
@@ -203,6 +207,9 @@ public class ContentsAdapter extends BaseAdapter {
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
                 holder = new VhPtnRecodingReservation();
                 break;
+            case TYPE_VIDEO_LIST: // ビデオコンテンツ一覧
+                holder = new ViewHolder();
+                break;
             default:
                 break;
         }
@@ -222,6 +229,7 @@ public class ContentsAdapter extends BaseAdapter {
                 holder.tv_time.setVisibility(View.GONE);
                 break;
             case TYPE_RENTAL_RANK: // レンタル一覧
+            case TYPE_VIDEO_LIST: // ビデオコンテンツ一覧
                 holder.tv_rank.setVisibility(View.GONE);
                 break;
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
