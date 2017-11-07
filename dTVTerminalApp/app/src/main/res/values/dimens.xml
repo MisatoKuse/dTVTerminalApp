@@ -13,5 +13,8 @@
     <dimen name="contents_back_key_size">50dp</dimen>
     <dimen name="contents_close_key_size">50dp</dimen>
     <dimen name="contents_key_padding_size">12dp</dimen>
+    <dimen name="contents_view_text_margin">10dp</dimen>
+    <dimen name="contents_tab_left_margin">30dp</dimen>
+    <dimen name="contents_tab_top_margin">10dp</dimen>
 
 </resources>
