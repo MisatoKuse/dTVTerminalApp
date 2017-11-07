@@ -32,6 +32,7 @@
         <item>dアニメ</item>
     </string-array>
     <string name="recording_reservation_list_title">録画予約</string>
+    <string name="recording_reservation_list_error_toast">録画予約一覧取得失敗</string>
 
     <!-- クリップ一覧 -->
     <string name="str_clip_activity_title">クリップ</string>

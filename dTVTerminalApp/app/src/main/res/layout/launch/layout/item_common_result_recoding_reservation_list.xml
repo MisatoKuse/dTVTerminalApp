@@ -8,6 +8,14 @@
     android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants">
 
+    <TextView
+        android:id="@+id/item_common_result_recording_reservation__channel_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/item_common_result_content_time"
+        android:textColor="@color/white_text"
+        android:background="@color/recording_reservation_status_background_black"
+        />
     <!-- item_common_result.xml を読み込む -->
     <include layout="@layout/item_common_result" />
 
