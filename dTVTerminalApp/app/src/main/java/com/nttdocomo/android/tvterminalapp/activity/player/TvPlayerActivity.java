@@ -17,6 +17,8 @@ public class TvPlayerActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tv_player_main_layout);
+        setStatusBarColor(R.color.contents_header_background);
+        setNoTitle();
     }
 
     /**
@@ -37,7 +39,7 @@ public class TvPlayerActivity extends BaseActivity {
         startActivity(RecommendPlayerActivity.class, null);
     }
 
-    public void channelButton(View view){
+    public void channelButton(View view) {
         startActivity(ChannelDetailPlayerActivity.class, null);
     }
 
@@ -50,7 +52,7 @@ public class TvPlayerActivity extends BaseActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final AlertDialog dialog = builder.create();
         View view1 = View.inflate(this, R.layout.schedule_rec_dialog_layout, null);
-        dialog.setView(view1,0,0,0,0);
+        dialog.setView(view1, 0, 0, 0, 0);
         dialog.show();
         view1.findViewById(R.id.video_ok).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,7 +60,7 @@ public class TvPlayerActivity extends BaseActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(TvPlayerActivity.this);
                 final AlertDialog dialog = builder.create();
                 View view1 = View.inflate(TvPlayerActivity.this, R.layout.schedule_rec_dialog_layout2, null);
-                dialog.setView(view1,0,0,0,0);
+                dialog.setView(view1, 0, 0, 0, 0);
                 dialog.show();
             }
         });
@@ -69,5 +71,9 @@ public class TvPlayerActivity extends BaseActivity {
             }
         });
 
+    }
+
+    private void setTitle() {
+        //TODO:コンテンツ詳細用タイトル設定
     }
 }
