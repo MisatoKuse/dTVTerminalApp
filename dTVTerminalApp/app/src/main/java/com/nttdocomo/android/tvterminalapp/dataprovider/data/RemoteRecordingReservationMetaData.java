@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
+import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -150,6 +152,12 @@ public class RemoteRecordingReservationMetaData implements Serializable {
             REMOTE_RECORDING_RESERVATION_META_DATA_R_VALUE, REMOTE_RECORDING_RESERVATION_META_DATA_SYNC_STATUS,
             REMOTE_RECORDING_RESERVATION_META_DATA_SYNC_ERROR_REASON};
 
+    /**
+     * キーとキーの値をメンバーにセットする
+     *
+     * @param key  キー
+     * @param data キーの値
+     */
     private void setMember(String key, Object data) {
         if (key.isEmpty()) {
             return;
@@ -159,10 +167,10 @@ public class RemoteRecordingReservationMetaData implements Serializable {
                     mResvId = (String) data;                //resv_id
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_RESV_TYPE:
-                    mResvType = getNumeric(data);              //resv_type
+                    mResvType = DBUtils.getNumeric(data);              //resv_type
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_RESV_PLATFORM_TYPE:
-                    mPlatformType = getNumeric(data);          //platform_type
+                    mPlatformType = DBUtils.getNumeric(data);          //platform_type
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_SERVICE_ID:
                     mServiceId = String.valueOf(data);             //service_id
@@ -174,22 +182,22 @@ public class RemoteRecordingReservationMetaData implements Serializable {
                     mTitle = (String) data;                 //title
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_START_TIME:
-                    mStartTime = getNumeric(data);             //start_time
+                    mStartTime = DBUtils.getNumeric(data);             //start_time
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_DURATION:
-                    mDuration = getNumeric(data);              //duration
+                    mDuration = DBUtils.getNumeric(data);              //duration
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_LOOP_TYPE_NUM:
-                    mLoopTypeNum = getNumeric(data);           //loop_type_num
+                    mLoopTypeNum = DBUtils.getNumeric(data);           //loop_type_num
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_R_VALUE:
-                    mRValue = getNumeric(data);                //r_value
+                    mRValue = DBUtils.getNumeric(data);                //r_value
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_SYNC_STATUS:
-                    mSyncStatus = getNumeric(data);            //sync_status
+                    mSyncStatus = DBUtils.getNumeric(data);            //sync_status
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_SYNC_ERROR_REASON:
-                    mSyncErrorReason = getNumeric(data);       //sync_error_reason
+                    mSyncErrorReason = DBUtils.getNumeric(data);       //sync_error_reason
                     break;
                 default:
 
@@ -198,21 +206,10 @@ public class RemoteRecordingReservationMetaData implements Serializable {
     }
 
     /**
-     * 数値取得
+     * キーの値を取得する
      *
-     * @param data 　数値判定オブジェクト
-     * @return 数値
+     * @param key  キー
      */
-    private int getNumeric(Object data) {
-        int i = 0;
-        if (data instanceof Integer) {
-            i = ((Integer) data);
-        } else if (data instanceof String) {
-            i = Integer.parseInt(String.valueOf(data));
-        }
-        return i;
-    }
-
     public Object getMember(String key) {
         if (key.isEmpty()) {
             return "";
@@ -248,6 +245,10 @@ public class RemoteRecordingReservationMetaData implements Serializable {
         }
     }
 
+    /**
+     * サーバから取得したデータをセット
+     * @param jsonObj Jsonオブジェクト
+     */
     public void setData(JSONObject jsonObj) {
         if (jsonObj != null) {
             // 単一データ
