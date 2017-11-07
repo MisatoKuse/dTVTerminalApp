@@ -114,7 +114,7 @@ public class RecordingReservationListDataProvider
     }
 
     /**
-     * ContentsDataを生成
+     * ContentsDataを生成(STB)
      *
      * @param data
      * @return
@@ -127,6 +127,20 @@ public class RecordingReservationListDataProvider
         return contentsData;
     }
 
+//    /**
+//     * ContentsDataを生成(dリモート)
+//     *
+//     * @param data
+//     * @return
+//     */
+//    private ContentsData createContentsData(RecordingReservationMetaData data) {
+//        ContentsData contentsData = new ContentsData();
+////        contentsData.setTitle(data.getmTitle());
+////        contentsData.setTime(data.getmStart_time());
+////        contentsData.setRecordingReservationStatus(data.getmSync_status());
+//        return contentsData;
+//    }
+
     // TODO データの突合
     private List<ContentsData> buttRecordingReservationListData() {
         mBuffMatchList = new ArrayList<ContentsData>();
@@ -134,21 +148,48 @@ public class RecordingReservationListDataProvider
         List<RemoteRecordingReservationMetaData> remoteList = mDRemoteResponse.getRemoteRecordingReservationMetaData();
 //        List<RecordingReservationMetaData> stbList = mStbResponse.getRecordingReservationMetaData();
 //        for(int i=0 ; i < remoteList.size() ; i++) {
+//            contentsData = null;
 //            for(int j=0 ; j < stbList.size() ; j++) {
 //                if(remoteList.get(i).getmService_id().equals(stbList.get(j).getServiceId())
 //                        && remoteList.get(i).getmEvent_id().equals(stbList.get(j).getEventId())) {
 //                    contentsData = createContentsData(remoteList.get(i));
 //
-//                    mBuffMatchList.add();
+//                    mBuffMatchList.add(contentsData);
 //                    break;
 //                }
+//            }
+//            if(j < stbList.size()) {
+//                contentsData = createContentsData(remoteList.get(i));
+//                mBuffMatchList.add(contentsData);
+//            }
+//        }
+//        for(int i=0 ; i < stbList.size() ; i++) {
+//            contentsData = null;
+//            for(int j=0 ; j < remoteList.size() ; j++) {
+//                if(remoteList.get(j).getmService_id().equals(stbList.get(i).getServiceId())
+//                        && remoteList.get(j).getmEvent_id().equals(stbList.get(i).getEventId())) {
+//                    break;
+//                }
+//            }
+//            if(j < remoteList.size()) {
+//                contentsData = createContentsData(stbList.get(i));
+//                mBuffMatchList.add(contentsData);
 //            }
 //        }
         return null;
     }
 
     // TODO データのソート（開始時刻順）
-    private List<ContentsData> sortRecordingReservationListData() {
+    private List<ContentsData> sortRecordingReservationListData(List<ContentsData> beforeList) {
+        mRecordingReservationList = new ArrayList<ContentsData>();
+        mRecordingReservationList.add(beforeList.get(0));
+        int i = 0;
+        for(ContentsData data : beforeList) {
+//            if(data.getTime() < mRecordingReservationList.get(i).getTime()) {
+//
+//            }
+        }
+
         return null;
     }
 }

@@ -32,4 +32,11 @@
         <item name="android:maxHeight">10dp</item>
     </style>
 
+    <!--コンテンツ詳細-->
+    <style name="ContentsDetailTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/contents_header_background</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
 </resources>

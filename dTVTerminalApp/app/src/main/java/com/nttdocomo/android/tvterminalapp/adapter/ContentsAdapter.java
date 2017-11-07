@@ -26,7 +26,6 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 
 import java.util.List;
 
-
 public class ContentsAdapter extends BaseAdapter {
 
     //各Activityインスタンス
@@ -67,7 +66,8 @@ public class ContentsAdapter extends BaseAdapter {
         TYPE_WEEKLY_RANK,         //週間テレビランキング
         TYPE_VIDEO_RANK,          //ビデオランキング
         TYPE_RENTAL_RANK,          //レンタル
-        TYPE_RECORDING_RESERVATION_LIST // 録画予約一覧
+        TYPE_RECORDING_RESERVATION_LIST, // 録画予約一覧
+        TYPE_VIDEO_CONTENT_LIST // ビデオコンテンツ一覧
     }
 
     /**
@@ -257,10 +257,11 @@ public class ContentsAdapter extends BaseAdapter {
             case TYPE_WEEKLY_RANK: // 週間ランキング
             case TYPE_VIDEO_RANK: // ビデオランキング
             case TYPE_RENTAL_RANK: // レンタル一覧
+            case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
                 view = mInflater.inflate(R.layout.item_common_result, parent, false);
                 break;
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
-                view = mInflater.inflate(R.layout.item_common_result_recoding_reservation_list, parent, false);
+                view = mInflater.inflate(R.layout.item_common_result, parent, false);
                 break;
             default:
                 break;
@@ -287,7 +288,7 @@ public class ContentsAdapter extends BaseAdapter {
     }
 
     /**
-     * Itemのパターンを設定
+     *  Itemのパターンを設定
      */
     private ViewHolder setListItemPattern(ViewHolder holder, View view) {
         // TODO 録画予約一覧以外のパターンも共通項目以外を抽出し、修正する
@@ -297,7 +298,7 @@ public class ContentsAdapter extends BaseAdapter {
             case TYPE_WEEKLY_RANK: // 週間ランキング
             case TYPE_VIDEO_RANK: // ビデオランキング
             case TYPE_RENTAL_RANK: // レンタル一覧
-                // nop.
+            case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
                 break;
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
                 holder.tv_recording_reservation =
@@ -322,10 +323,13 @@ public class ContentsAdapter extends BaseAdapter {
                 holder.tv_time.setVisibility(View.GONE);
                 break;
             case TYPE_RENTAL_RANK: // レンタル一覧
+            case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
                 holder.tv_rank.setVisibility(View.GONE);
                 break;
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
                 holder.tv_clip.setVisibility(View.GONE);
+                holder.rl_thumbnail.setVisibility(View.GONE);
+                holder.iv_thumbnail.setVisibility(View.GONE);
                 holder.rb_rating.setVisibility(View.GONE);
                 holder.tv_rating_num.setVisibility(View.GONE);
                 break;

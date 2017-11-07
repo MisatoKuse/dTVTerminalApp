@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
   -->
 
@@ -13,5 +12,14 @@
     <dimen name="contents_back_key_size">50dp</dimen>
     <dimen name="contents_close_key_size">50dp</dimen>
     <dimen name="contents_key_padding_size">12dp</dimen>
+    <dimen name="contents_view_text_margin">10dp</dimen>
+    <dimen name="contents_tab_left_margin">30dp</dimen>
+    <dimen name="contents_tab_top_margin">10dp</dimen>
+    <dimen name="contents_tab_height">50dp</dimen>
+
+    <!--ビデオ一覧-->
+    <dimen name="video_contents_genre_button_margin_end">8dp</dimen>
+    <dimen name="video_contents_genre_count_margin_end">3dp</dimen>
+    <dimen name="video_contents_genre_title_margin_strat">8dp</dimen>
 
 </resources>
