@@ -30,14 +30,16 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
      * <p>
      * //     * @param recordingReservationListJsonParserCallback
      */
-//    public RecordingReservationListJsonParser(RecordingReservationListWebClient.RecordingReservationListJsonParserCallback recordingReservationListJsonParserCallback) {
+//    public RecordingReservationListJsonParser(RecordingReservationListWebClient.
+//        RecordingReservationListJsonParserCallback recordingReservationListJsonParserCallback) {
 //        mRecordingReservationListJsonParserCallback = recordingReservationListJsonParserCallback;
 //        mRecordingReservationListResponse = new RecordingReservationListResponse();
 //    }
 //
 //    @Override
 //    protected void onPostExecute(Object s) {
-//        mRecordingReservationListJsonParserCallback.onRecordingReservationListJsonParsed(mRecordingReservationListResponse);
+//        mRecordingReservationListJsonParserCallback.
+//            onRecordingReservationListJsonParsed(mRecordingReservationListResponse);
 //    }
     @Override
     protected Object doInBackground(Object... strings) {
@@ -49,7 +51,7 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
     /**
      * 録画予約一覧Jsonデータを解析する
      *
-     * @param jsonStr リモート録画予約一覧Jsonデータ
+     * @param jsonStr 録画予約一覧Jsonデータ
      * @return 録画予約一覧取得：正常時レスポンスデータ
      */
     public RecordingReservationListResponse recordingReservationListSender(String jsonStr) {
@@ -76,7 +78,7 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
     }
 
     /**
-     * statusの値を録画予約一覧取得：正常時レスポンスデータオブジェクトに格納
+     * statusとpagerの値を録画予約一覧取得：正常時レスポンスデータオブジェクトに格納
      *
      * @param jsonObj APIレスポンス Jsonデータ
      */

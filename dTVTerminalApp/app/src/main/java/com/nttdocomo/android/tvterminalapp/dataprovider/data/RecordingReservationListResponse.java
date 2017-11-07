@@ -19,6 +19,7 @@ public class RecordingReservationListResponse {
     public static final String RECORDING_RESERVATION_META_RESPONSE_STATUS = "status";
     public static final String RECORDING_RESERVATION_META_RESPONSE_PAGER = "pager";
     public static final String RECORDING_RESERVATION_META_RESPONSE_RESERVATION_LIST = "reservation_list";
+    private static final String RECORDING_RESERVATION_FIXED_STATUS = "";
 
     public String getStatus() {
         return mStatus;
@@ -40,13 +41,20 @@ public class RecordingReservationListResponse {
         return mRecordingReservationMetaData;
     }
 
+    /**
+     * コンストラクタ
+     * @param recordingReservationMetaData　録画予約メタデータ
+     */
     public void setRecordingReservationMetaData(ArrayList<RecordingReservationMetaData> recordingReservationMetaData) {
         mRecordingReservationMetaData = recordingReservationMetaData;
     }
 
+    /**
+     * コンストラクタ
+     */
     public RecordingReservationListResponse() {
-        mStatus = "";     // OK 固定値
-        mPager = new String[0];
+        mStatus = RECORDING_RESERVATION_FIXED_STATUS;     // OK 固定値
+        mPager = new String[0];    //ページャ
         mRecordingReservationMetaData = new ArrayList<RecordingReservationMetaData>();  // 録画予約一覧
     }
 }

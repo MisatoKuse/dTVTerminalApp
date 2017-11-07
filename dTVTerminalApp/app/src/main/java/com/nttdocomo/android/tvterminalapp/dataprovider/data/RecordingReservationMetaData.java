@@ -5,6 +5,8 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
 
+import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,26 +15,26 @@ import java.io.Serializable;
 public class RecordingReservationMetaData implements Serializable {
 
     private static final long serialVersionUID = -930749879941574984L;
-    private String mLimit;
-    private String mOffset;
-    private String mCount;
-    private String mTotal;
-    private String mPriority;
+    private int mLimit;
+    private int mOffset;
+    private int mCount;
+    private int mTotal;
+    private int mPriority;
     private String mPlatformType;
     private String mDayOfTheWeek;
     private String mAdultAttributeOfChannel;
     private String mServiceId;
-    private String mStartScheduleTime;
-    private String mEndScheduleTime;
+    private long mStartScheduleTime;
+    private long mEndScheduleTime;
     private String mEventId;
     private String mTitle;
-    private String mParentalAgeAttributeOfProgram;
-
+    private int mParentalAgeAttributeOfProgram;
+    //ページャ詳細：キー名
     public static final String RECORDING_RESERVATION_META_DATA_PAGER_LIMIT = "limit"; //レスポンスの最大件数
     public static final String RECORDING_RESERVATION_META_DATA_PAGER_OFFSET = "offset"; //取得位置(0～)
     public static final String RECORDING_RESERVATION_META_DATA_PAGER_COUNT = "count"; //レスポンス(list)件数
     public static final String RECORDING_RESERVATION_META_DATA_PAGER_TOTAL = "total"; //全体の件数
-
+    //録画予約一覧リスト：キー名
     public static final String RECORDING_RESERVATION_META_DATA_PRIORITY = "priority"; //予約情報の優先度
     public static final String RECORDING_RESERVATION_META_DATA_PLATFORM_TYPE = "platform_type"; //予約されたサービス
     public static final String RECORDING_RESERVATION_META_DATA_DAY_OF_THE_WEEK = "day_of_the_week"; //予約日時タイプ
@@ -54,25 +56,31 @@ public class RecordingReservationMetaData implements Serializable {
             RECORDING_RESERVATION_META_DATA_EVENT_ID, RECORDING_RESERVATION_META_DATA_TITLE,
             RECORDING_RESERVATION_META_DATA_PARENTAL_AGE_ATTRIBUTE_OF_PROGRAM};
 
+    /**
+     * キーとキーの値をメンバーにセットする
+     *
+     * @param key  キー
+     * @param data キーの値
+     */
     private void setMember(String key, Object data) {
         if (key.isEmpty()) {
             return;
         } else {
             switch (key) {
                 case RECORDING_RESERVATION_META_DATA_PAGER_LIMIT:
-                    mLimit = (String) data;                //limit
+                    mLimit = DBUtils.getNumeric(data);           //limit
                     break;
                 case RECORDING_RESERVATION_META_DATA_PAGER_OFFSET:
-                    mOffset = (String) data;              //offset
+                    mOffset = DBUtils.getNumeric(data);         //offset
                     break;
                 case RECORDING_RESERVATION_META_DATA_PAGER_COUNT:
-                    mCount = (String) data;               //count
+                    mCount = DBUtils.getNumeric(data);          //count
                     break;
                 case RECORDING_RESERVATION_META_DATA_PAGER_TOTAL:
-                    mTotal = (String) data;               //total
+                    mTotal = DBUtils.getNumeric(data);           //total
                     break;
                 case RECORDING_RESERVATION_META_DATA_PRIORITY:
-                    mPriority = (String) data;            //priority
+                    mPriority = DBUtils.getNumeric(data);        //priority
                     break;
                 case RECORDING_RESERVATION_META_DATA_PLATFORM_TYPE:
                     mPlatformType = (String) data;        //platform_type
@@ -87,10 +95,10 @@ public class RecordingReservationMetaData implements Serializable {
                     mServiceId = (String) data;           //service_id
                     break;
                 case RECORDING_RESERVATION_META_DATA_START_SCHEDULE_TIME:
-                    mStartScheduleTime = (String) data;   //start_schedule_time
+                    mStartScheduleTime = (long)data;   //start_schedule_time
                     break;
                 case RECORDING_RESERVATION_META_DATA_END_SCHEDULE_TIME:
-                    mEndScheduleTime = (String) data;     //end_schedule_time
+                    mEndScheduleTime =  (long)data;     //end_schedule_time
                     break;
                 case RECORDING_RESERVATION_META_DATA_EVENT_ID:
                     mEventId = (String) data;             //event_id
@@ -99,14 +107,18 @@ public class RecordingReservationMetaData implements Serializable {
                     mTitle = (String) data;               //title
                     break;
                 case RECORDING_RESERVATION_META_DATA_PARENTAL_AGE_ATTRIBUTE_OF_PROGRAM:
-                    mParentalAgeAttributeOfProgram = (String) data; //parental_age_attribute_of_program
+                    mParentalAgeAttributeOfProgram = DBUtils.getNumeric(data); //parental_age_attribute_of_program
                     break;
                 default:
             }
 
         }
     }
-
+    /**
+     * キーの値を取得する
+     *
+     * @param key  キー
+     */
     public Object getMember(String key) {
         if (key.isEmpty()) {
             return "";
@@ -154,43 +166,43 @@ public class RecordingReservationMetaData implements Serializable {
         return mReservationListPara;
     }
 
-    public String getLimit() {
+    public int getLimit() {
         return mLimit;
     }
 
-    public void setLimit(String mLimit) {
+    public void setLimit(int mLimit) {
         this.mLimit = mLimit;
     }
 
-    public String getOffset() {
+    public int getOffset() {
         return mOffset;
     }
 
-    public void setOffset(String mOffset) {
+    public void setOffset(int mOffset) {
         this.mOffset = mOffset;
     }
 
-    public String getCount() {
+    public int getCount() {
         return mCount;
     }
 
-    public void setCount(String mCount) {
+    public void setCount(int mCount) {
         this.mCount = mCount;
     }
 
-    public String getTotal() {
+    public int getTotal() {
         return mTotal;
     }
 
-    public void setTotal(String mTotal) {
+    public void setTotal(int mTotal) {
         this.mTotal = mTotal;
     }
 
-    public String getPriority() {
+    public int getPriority() {
         return mPriority;
     }
 
-    public void setPriority(String mPriority) {
+    public void setPriority(int mPriority) {
         this.mPriority = mPriority;
     }
 
@@ -226,19 +238,19 @@ public class RecordingReservationMetaData implements Serializable {
         this.mServiceId = mServiceId;
     }
 
-    public String getStartScheduleTime() {
+    public long getStartScheduleTime() {
         return mStartScheduleTime;
     }
 
-    public void setStartScheduleTime(String mStartScheduleTime) {
+    public void setStartScheduleTime(int mStartScheduleTime) {
         this.mStartScheduleTime = mStartScheduleTime;
     }
 
-    public String getEndScheduleTime() {
+    public long getEndScheduleTime() {
         return mEndScheduleTime;
     }
 
-    public void setEndScheduleTime(String mEndScheduleTime) {
+    public void setEndScheduleTime(int mEndScheduleTime) {
         this.mEndScheduleTime = mEndScheduleTime;
     }
 
@@ -258,14 +270,18 @@ public class RecordingReservationMetaData implements Serializable {
         this.mTitle = mTitle;
     }
 
-    public String getParentalAgeAttributeOfProgram() {
+    public int getParentalAgeAttributeOfProgram() {
         return mParentalAgeAttributeOfProgram;
     }
 
-    public void setParentalAgeAttributeOfProgram(String mParentalAgeAttributeOfProgram) {
+    public void setParentalAgeAttributeOfProgram(int mParentalAgeAttributeOfProgram) {
         this.mParentalAgeAttributeOfProgram = mParentalAgeAttributeOfProgram;
     }
 
+    /**
+     * サーバから取得したデータをセット
+     * @param jsonObj Jsonオブジェクト
+     */
     public void setData(JSONObject jsonObj) {
         if (jsonObj != null) {
             // ページャデータ
@@ -278,7 +294,7 @@ public class RecordingReservationMetaData implements Serializable {
                     }
                 }
             }
-            //
+            //録画予約一覧データ
             for (String item : mReservationListPara) {
                 if (!jsonObj.isNull(item)) {
                     try {
