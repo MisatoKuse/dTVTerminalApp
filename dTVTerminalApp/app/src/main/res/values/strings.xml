@@ -112,4 +112,8 @@
 
     <!-- レンタル -->
     <string name="rental_title">レンタル</string>
+
+    <!--コンテンツ詳細-->
+    <string name="contents_info_text">作品情報</string>
+    <string name="contents_info_more_text">more</string>
 </resources>
