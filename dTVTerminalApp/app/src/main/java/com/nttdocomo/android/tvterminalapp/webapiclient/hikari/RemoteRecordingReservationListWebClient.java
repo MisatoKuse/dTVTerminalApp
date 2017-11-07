@@ -29,7 +29,7 @@ public class RemoteRecordingReservationListWebClient
 
     @Override
     public void onAnswer(ReturnCode returnCode) {
-        if(mRemoteRecordingReservationListJsonParserCallback != null) {
+        if (mRemoteRecordingReservationListJsonParserCallback != null) {
             //JSONをパースして、データを返す
             new RemoteRecordingReservationListJsonParser(
                     mRemoteRecordingReservationListJsonParserCallback)
@@ -39,7 +39,7 @@ public class RemoteRecordingReservationListWebClient
 
     @Override
     public void onError() {
-        if(mRemoteRecordingReservationListJsonParserCallback != null) {
+        if (mRemoteRecordingReservationListJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
             mRemoteRecordingReservationListJsonParserCallback
                     .onRemoteRecordingReservationListJsonParsed(null);
@@ -47,15 +47,16 @@ public class RemoteRecordingReservationListWebClient
     }
 
     /**
-     * レンタルビデオ情報一覧取得
+     * リモート録画予約一覧取得
      *
      * @param remoteRecordingReservationListJsonParserCallback コールバックTODO:
-     *（本WebAPIには通常のパラメータが無く、基底クラスで追加するサービストークンのみとなる。）
+     * 本WebAPIには通常のパラメータが無く、基底クラスで追加するサービストークンのみとなる。）
      * TODO: 仕様確定後に基底クラスへサービストークンの処理の追加が必要
      * @return パラメータエラー等が発生した場合はfalse
      */
-    public boolean getRentalVodListApi(RemoteRecordingReservationListJsonParserCallback
-                                               remoteRecordingReservationListJsonParserCallback) {
+    public boolean getRemoteRecordingReservationListApi(
+            RemoteRecordingReservationListJsonParserCallback
+                    remoteRecordingReservationListJsonParserCallback) {
         //パラメーターのチェック
         if (!checkNormalParameter(remoteRecordingReservationListJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、falseで帰る
@@ -66,7 +67,7 @@ public class RemoteRecordingReservationListWebClient
         mRemoteRecordingReservationListJsonParserCallback =
                 remoteRecordingReservationListJsonParserCallback;
 
-        //レンタルビデオの情報を読み込むため、購入済みVOD一覧を呼び出す
+        //リモート録画一覧の情報を読み込むため、リモート録画一覧を呼び出す
         openUrl(API_NAME_LIST.REMOTE_RECORDING_RESERVATION_LIST_WEB_CLIENT.getString(),
                 "", this);
 
@@ -77,13 +78,13 @@ public class RemoteRecordingReservationListWebClient
     /**
      * 指定されたパラメータがおかしいかどうかのチェック
      *
-     * @param purchasedVodListCallback コールバック
+     * @param remoteRecordingReservationListJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
     private boolean checkNormalParameter(RemoteRecordingReservationListJsonParserCallback
-                                                 purchasedVodListCallback) {
+                                                 remoteRecordingReservationListJsonParserCallback) {
         //コールバックが指定されていないならばfalse
-        if (purchasedVodListCallback == null) {
+        if (remoteRecordingReservationListJsonParserCallback == null) {
             return false;
         }
 
