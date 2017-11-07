@@ -23,7 +23,7 @@ public class RemoteRecordingReservationMetaData implements Serializable {
     private String mServiceId;
     private String mEventId;
     private String mTitle;
-    private int mStartTime;
+    private long mStartTime;
     private int mDuration;
     private int mLoopTypeNum;
     private int mRValue;
@@ -82,7 +82,7 @@ public class RemoteRecordingReservationMetaData implements Serializable {
         this.mTitle = mTitle;
     }
 
-    public int getStartTime() {
+    public long getStartTime() {
         return mStartTime;
     }
 
@@ -182,7 +182,7 @@ public class RemoteRecordingReservationMetaData implements Serializable {
                     mTitle = (String) data;                 //title
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_START_TIME:
-                    mStartTime = DBUtils.getNumeric(data);             //start_time
+                    mStartTime = (long)data;             //start_time
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_DURATION:
                     mDuration = DBUtils.getNumeric(data);              //duration
