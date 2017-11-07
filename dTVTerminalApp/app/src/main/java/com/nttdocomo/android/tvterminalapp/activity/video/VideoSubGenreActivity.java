@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.video;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -13,33 +14,26 @@ import com.nttdocomo.android.tvterminalapp.R;
 
 public class VideoSubGenreActivity extends BaseActivity implements View.OnClickListener{
 
-    private RelativeLayout mRelativeLayout1;
-    private RelativeLayout mRelativeLayout2;
-    private RelativeLayout mRelativeLayout3;
-    private RelativeLayout mRelativeLayout4;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.video_sub_genre_main_layout);
+
+        Intent intent = getIntent();
+        String genreId = intent.getStringExtra("genre_id");
+
         init();
     }
 
     private void init(){
-        mRelativeLayout1 = findViewById(R.id.video_sub_genre_main_layout_rl1);
-        mRelativeLayout2 = findViewById(R.id.video_sub_genre_main_layout_rl2);
-        mRelativeLayout3 = findViewById(R.id.video_sub_genre_main_layout_rl3);
-        mRelativeLayout4 = findViewById(R.id.video_sub_genre_main_layout_rl4);
-
-        mRelativeLayout1.setOnClickListener(this);
-        mRelativeLayout2.setOnClickListener(this);
-        mRelativeLayout3.setOnClickListener(this);
-        mRelativeLayout4.setOnClickListener(this);
 
     }
 
     @Override
     public void onClick(View view) {
+//        Intent intent = new Intent(this,VideoContentListActivity.class);
+//        intent.putExtra("genre_id", genre_id);
+//        startActivity(intent);
         switch (view.getId()){
             case R.id.video_sub_genre_main_layout_rl1:
             case R.id.video_sub_genre_main_layout_rl2:

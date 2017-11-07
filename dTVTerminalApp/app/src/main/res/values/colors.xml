@@ -28,6 +28,8 @@
     <color name="ranking_list_border">#888888</color>
     <color name="ranking_no_text">#FFFFFF</color>
     <color name="ranking_no_background">#000000</color>
+    <!-- ビデオ一覧 -->
+    <color name="video_list_text">#FFFFFF</color>
 
     <!--コンテンツ詳細-->
     <color name="contents_header_background">#000000</color>

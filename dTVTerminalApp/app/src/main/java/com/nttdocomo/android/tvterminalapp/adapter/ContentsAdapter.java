@@ -65,7 +65,7 @@ public class ContentsAdapter extends BaseAdapter {
         TYPE_VIDEO_RANK,          //ビデオランキング
         TYPE_RENTAL_RANK,          //レンタル
         TYPE_RECORDING_RESERVATION_LIST, // 録画予約一覧
-        TYPE_VIDEO_LIST             // ビデオコンテンツ一覧
+        TYPE_VIDEO_CONTENT_LIST // ビデオコンテンツ一覧
     }
 
     /**
@@ -174,16 +174,14 @@ public class ContentsAdapter extends BaseAdapter {
     private View setViewPattern(View view, ViewGroup parent) {
         // TODO 録画予約一覧以外のパターンの識別も可能にする
         switch (type) {
-//            case TYPE_DAILY_RANK: // 今日のテレビランキング
-//            case TYPE_WEEKLY_RANK: // 週間ランキング
-//            case TYPE_VIDEO_RANK: // ビデオランキング
-//            case TYPE_RENTAL_RANK: // レンタル一覧
-//                view = mInflater.inflate(R.layout.item_common_result, parent, false);
-//                break;
-            case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
+            case TYPE_DAILY_RANK: // 今日のテレビランキング
+            case TYPE_WEEKLY_RANK: // 週間ランキング
+            case TYPE_VIDEO_RANK: // ビデオランキング
+            case TYPE_RENTAL_RANK: // レンタル一覧
+            case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
                 view = mInflater.inflate(R.layout.item_common_result, parent, false);
                 break;
-            case TYPE_VIDEO_LIST: // ビデオコンテンツ一覧
+            case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
                 view = mInflater.inflate(R.layout.item_common_result, parent, false);
                 break;
             default:
@@ -193,22 +191,20 @@ public class ContentsAdapter extends BaseAdapter {
     }
 
     /**
-     *  Itemのパターンを設定
+     * Itemのパターンを設定
      */
     private ViewHolder setListItemPattern(ViewHolder holder, View view) {
         // TODO 録画予約一覧以外の画面のパターンの識別も可能にする
         // TODO 別パターンとしてレイアウトを実装・inflate
         switch (type) {
-//            case TYPE_DAILY_RANK: // 今日のテレビランキング
-//            case TYPE_WEEKLY_RANK: // 週間ランキング
-//            case TYPE_VIDEO_RANK: // ビデオランキング
-//            case TYPE_RENTAL_RANK: // レンタル一覧
-//                break;
+            case TYPE_DAILY_RANK: // 今日のテレビランキング
+            case TYPE_WEEKLY_RANK: // 週間ランキング
+            case TYPE_VIDEO_RANK: // ビデオランキング
+            case TYPE_RENTAL_RANK: // レンタル一覧
+            case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
+                break;
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
                 holder = new VhPtnRecodingReservation();
-                break;
-            case TYPE_VIDEO_LIST: // ビデオコンテンツ一覧
-                holder = new ViewHolder();
                 break;
             default:
                 break;
@@ -229,7 +225,7 @@ public class ContentsAdapter extends BaseAdapter {
                 holder.tv_time.setVisibility(View.GONE);
                 break;
             case TYPE_RENTAL_RANK: // レンタル一覧
-            case TYPE_VIDEO_LIST: // ビデオコンテンツ一覧
+            case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
                 holder.tv_rank.setVisibility(View.GONE);
                 break;
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
