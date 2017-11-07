@@ -13,7 +13,7 @@ import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstan
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.UNDER_BAR_FOUR_K_FLG;
 
 public class DBUtils {
-    final static  String NUMERICAL_DECISION = "^[0-9]*$";
+    final static String NUMERICAL_DECISION = "^[0-9]*$";
 
     /**
      * Jsonのキー名の"4kflg"によるDBエラー回避用
@@ -51,7 +51,8 @@ public class DBUtils {
 
     /**
      * 数値なのかを判定
-     * @param num　判定したい数値
+     *
+     * @param num 　判定したい数値
      * @return 数値の場合true
      */
 
@@ -60,5 +61,21 @@ public class DBUtils {
         Pattern p = Pattern.compile(NUMERICAL_DECISION);
         Matcher m = p.matcher(num);
         return m.find();
+    }
+
+    /**
+     * 数値取得
+     *
+     * @param data 　数値判定オブジェクト
+     * @return 数値
+     */
+    public static int getNumeric(Object data) {
+        int i = 0;
+        if (data instanceof Integer) {
+            i = ((Integer) data);
+        } else if (data instanceof String) {
+            i = Integer.parseInt(String.valueOf(data));
+        }
+        return i;
     }
 }
