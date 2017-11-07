@@ -8,9 +8,9 @@
     <!-- コンテンツ詳細用のヘッダ を読み込む -->
     <RelativeLayout
         android:id="@+id/contents_detail_header"
-        android:layout_alignParentTop="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true">
 
         <include layout="@layout/contents_detail_header_layout" />
     </RelativeLayout>
@@ -18,9 +18,9 @@
     <!--コンテンツ詳細のスクロール部分-->
     <ScrollView
         android:id="@+id/contents_detail_scroll_view"
-        android:layout_below="@+id/contents_detail_header"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/contents_detail_header">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -34,6 +34,15 @@
 
                 <!--TODO:ここにActivityからサムネイル又はプレイヤーをセット-->
             </RelativeLayout>
+
+            <HorizontalScrollView
+                android:id="@+id/contents_detail_tab_strip_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/contents_tab_height"
+                android:background="@android:color/background_dark"
+                android:fillViewport="true"
+                android:foregroundGravity="center_horizontal"
+                android:scrollbars="none" />
 
             <!--タブ用ViewPager-->
             <android.support.v4.view.ViewPager

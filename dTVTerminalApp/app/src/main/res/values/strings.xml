@@ -116,4 +116,7 @@
     <!--コンテンツ詳細-->
     <string name="contents_info_text">作品情報</string>
     <string name="contents_info_more_text">more</string>
+    <string-array name="other_contents_detail_tabs">
+        <item>作品情報</item>
+    </string-array>
 </resources>

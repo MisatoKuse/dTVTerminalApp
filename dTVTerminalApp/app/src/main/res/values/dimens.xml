@@ -16,5 +16,6 @@
     <dimen name="contents_view_text_margin">10dp</dimen>
     <dimen name="contents_tab_left_margin">30dp</dimen>
     <dimen name="contents_tab_top_margin">10dp</dimen>
+    <dimen name="contents_tab_height">50dp</dimen>
 
 </resources>
