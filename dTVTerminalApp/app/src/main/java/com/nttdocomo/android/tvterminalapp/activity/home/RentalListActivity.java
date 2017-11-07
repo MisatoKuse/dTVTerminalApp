@@ -117,9 +117,7 @@ public class RentalListActivity extends BaseActivity implements View.OnClickList
     @Override
     public void rentalListCallback(List<ContentsData> dataList) {
         if (null == dataList) {
-            //通信とJSON Parseに関してerror処理
-            DTVTLogger.debug("RentalListActivity::rentalListCallback, レンタル一覧取得失敗");
-            Toast.makeText(this, "レンタル一覧取得失敗", Toast.LENGTH_SHORT);
+            //TODO:データ取得失敗時の仕様が未定のため仮実装
             resetPaging();
             resetCommunication();
             return;
