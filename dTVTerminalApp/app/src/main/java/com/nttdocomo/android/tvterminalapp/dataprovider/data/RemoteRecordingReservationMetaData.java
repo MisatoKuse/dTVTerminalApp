@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
 import org.json.JSONException;
@@ -11,10 +12,10 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 
-
 public class RemoteRecordingReservationMetaData implements Serializable {
-
     private static final long serialVersionUID = -5113796911971449210L;
+    private final String CLASS_NAME = getClass().getSimpleName();
+    private static final String SET_DATA = ".setData";
     //仕様書の名前に合わせているので、フルスペルではない変数名もあります
     //mResvId,mResvType,mLoopTypeNum,mRValue,mSyncStatus,mSyncErrorReason
     private String mResvId;
@@ -208,7 +209,7 @@ public class RemoteRecordingReservationMetaData implements Serializable {
     /**
      * キーの値を取得する
      *
-     * @param key  キー
+     * @param key キー
      */
     public Object getMember(String key) {
         if (key.isEmpty()) {
@@ -247,6 +248,7 @@ public class RemoteRecordingReservationMetaData implements Serializable {
 
     /**
      * サーバから取得したデータをセット
+     *
      * @param jsonObj Jsonオブジェクト
      */
     public void setData(JSONObject jsonObj) {
@@ -257,7 +259,7 @@ public class RemoteRecordingReservationMetaData implements Serializable {
                     try {
                         setMember(item, jsonObj.get(item));
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        DTVTLogger.debug(CLASS_NAME + SET_DATA, e);
                     }
                 }
             }

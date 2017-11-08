@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
 import android.os.AsyncTask;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationMetaData;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
@@ -23,6 +24,13 @@ import static com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecord
 import static com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationListResponse.REMOTE_RECORDING_RESERVATION_META_RESPONSE_STATUS;
 
 public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, Object, Object> {
+    private final String CLASS_NAME = getClass().getSimpleName();
+    private static final String SEND_RESPONSE = ".sendRemoteRecordingReservationListResponse";
+    private static final String SEND_STATUS = ".sendStatus";
+    private static final String IS_NUMBER = ".isNumber";
+    private static final String RESPONSE = ".RemoteRecordingReservationListResponse";
+    private static final String JSON_OBJECT = ".JSONObject";
+
     private RemoteRecordingReservationListWebClient.
             RemoteRecordingReservationListJsonParserCallback
             mRemoteRecordingReservationListJsonParserCallback;
@@ -78,10 +86,10 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
             }
         } catch (JSONException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+           DTVTLogger.debug(CLASS_NAME + JSON_OBJECT,e);
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            DTVTLogger.debug(CLASS_NAME + RESPONSE,e);
         }
         return null;
     }
@@ -113,7 +121,7 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
                         throw new NumberFormatException();
                     }
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                   DTVTLogger.debug(CLASS_NAME + IS_NUMBER,e);
                 }
                 if (mRemoteRecordingReservationListResponse != null) {
                     mRemoteRecordingReservationListResponse.setCount(count);
@@ -123,7 +131,7 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
             throw new RuntimeException(e);
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            DTVTLogger.debug(CLASS_NAME + SEND_STATUS,e);
         }
     }
 
@@ -156,7 +164,7 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
             throw new RuntimeException(e);
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+          DTVTLogger.debug(CLASS_NAME + SEND_RESPONSE,e);
         }
     }
 
