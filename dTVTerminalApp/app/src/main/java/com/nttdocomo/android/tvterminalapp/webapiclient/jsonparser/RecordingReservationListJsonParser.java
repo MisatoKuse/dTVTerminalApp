@@ -94,7 +94,7 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
 
             //pagerの値を取得しセットする
             if (!jsonObj.isNull(RECORDING_RESERVATION_META_RESPONSE_PAGER)) {
-                JSONArray pager = jsonObj.getJSONArray(RECORDING_RESERVATION_META_RESPONSE_PAGER);
+                JSONObject pager = jsonObj.getJSONObject(RECORDING_RESERVATION_META_RESPONSE_PAGER);
                 mRecordingReservationListResponse.setPager(pager);
             }
 
