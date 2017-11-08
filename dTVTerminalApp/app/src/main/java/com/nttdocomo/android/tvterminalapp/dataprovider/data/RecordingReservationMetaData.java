@@ -95,10 +95,10 @@ public class RecordingReservationMetaData implements Serializable {
                     mServiceId = (String) data;           //service_id
                     break;
                 case RECORDING_RESERVATION_META_DATA_START_SCHEDULE_TIME:
-                    mStartScheduleTime = (long)data;   //start_schedule_time
+                    mStartScheduleTime = DBUtils.getLong(data);  //start_schedule_time
                     break;
                 case RECORDING_RESERVATION_META_DATA_END_SCHEDULE_TIME:
-                    mEndScheduleTime =  (long)data;     //end_schedule_time
+                    mEndScheduleTime = DBUtils.getLong(data);     //end_schedule_time
                     break;
                 case RECORDING_RESERVATION_META_DATA_EVENT_ID:
                     mEventId = (String) data;             //event_id
@@ -284,16 +284,6 @@ public class RecordingReservationMetaData implements Serializable {
      */
     public void setData(JSONObject jsonObj) {
         if (jsonObj != null) {
-            // ページャデータ
-            for (String item : mPagerPara) {
-                if (!jsonObj.isNull(item)) {
-                    try {
-                        setMember(item, jsonObj.get(item));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
             //録画予約一覧データ
             for (String item : mReservationListPara) {
                 if (!jsonObj.isNull(item)) {

@@ -78,4 +78,19 @@ public class DBUtils {
         }
         return i;
     }
+    /**
+     * long型数値取得
+     *
+     * @param data 　数値判定オブジェクト
+     * @return long型数値
+     */
+    public static long getLong(Object data) {
+        long i = 0;
+        if (data instanceof Integer) {
+            i = ((Integer) data).longValue();
+        } else if (data instanceof Long) {
+            i =  (Long) data;
+        }
+        return i;
+    }
 }

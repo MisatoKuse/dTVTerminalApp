@@ -182,7 +182,7 @@ public class RemoteRecordingReservationMetaData implements Serializable {
                     mTitle = (String) data;                 //title
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_START_TIME:
-                    mStartTime = (long)data;             //start_time
+                    mStartTime = DBUtils.getLong(data);             //start_time
                     break;
                 case REMOTE_RECORDING_RESERVATION_META_DATA_DURATION:
                     mDuration = DBUtils.getNumeric(data);              //duration
