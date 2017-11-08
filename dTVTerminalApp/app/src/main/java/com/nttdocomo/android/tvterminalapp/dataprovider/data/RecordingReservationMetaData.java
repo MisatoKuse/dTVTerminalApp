@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
 import org.json.JSONException;
@@ -13,12 +14,9 @@ import org.json.JSONObject;
 import java.io.Serializable;
 
 public class RecordingReservationMetaData implements Serializable {
-
     private static final long serialVersionUID = -930749879941574984L;
-    private int mLimit;
-    private int mOffset;
-    private int mCount;
-    private int mTotal;
+    private final String CLASS_NAME = getClass().getSimpleName();
+    private static final String SET_DATA = ".setData";
     private int mPriority;
     private String mPlatformType;
     private String mDayOfTheWeek;
@@ -29,6 +27,7 @@ public class RecordingReservationMetaData implements Serializable {
     private String mEventId;
     private String mTitle;
     private int mParentalAgeAttributeOfProgram;
+
     //ページャ詳細：キー名
     public static final String RECORDING_RESERVATION_META_DATA_PAGER_LIMIT = "limit"; //レスポンスの最大件数
     public static final String RECORDING_RESERVATION_META_DATA_PAGER_OFFSET = "offset"; //取得位置(0～)
@@ -67,18 +66,6 @@ public class RecordingReservationMetaData implements Serializable {
             return;
         } else {
             switch (key) {
-                case RECORDING_RESERVATION_META_DATA_PAGER_LIMIT:
-                    mLimit = DBUtils.getNumeric(data);           //limit
-                    break;
-                case RECORDING_RESERVATION_META_DATA_PAGER_OFFSET:
-                    mOffset = DBUtils.getNumeric(data);         //offset
-                    break;
-                case RECORDING_RESERVATION_META_DATA_PAGER_COUNT:
-                    mCount = DBUtils.getNumeric(data);          //count
-                    break;
-                case RECORDING_RESERVATION_META_DATA_PAGER_TOTAL:
-                    mTotal = DBUtils.getNumeric(data);           //total
-                    break;
                 case RECORDING_RESERVATION_META_DATA_PRIORITY:
                     mPriority = DBUtils.getNumeric(data);        //priority
                     break;
@@ -111,27 +98,19 @@ public class RecordingReservationMetaData implements Serializable {
                     break;
                 default:
             }
-
         }
     }
+
     /**
      * キーの値を取得する
      *
-     * @param key  キー
+     * @param key キー
      */
     public Object getMember(String key) {
         if (key.isEmpty()) {
             return "";
         } else {
             switch (key) {
-                case RECORDING_RESERVATION_META_DATA_PAGER_LIMIT:
-                    return mLimit;                //limit
-                case RECORDING_RESERVATION_META_DATA_PAGER_OFFSET:
-                    return mOffset;              //offset
-                case RECORDING_RESERVATION_META_DATA_PAGER_COUNT:
-                    return mCount;              //count
-                case RECORDING_RESERVATION_META_DATA_PAGER_TOTAL:
-                    return mTotal;               //total
                 case RECORDING_RESERVATION_META_DATA_PRIORITY:
                     return mPriority;            //priority
                 case RECORDING_RESERVATION_META_DATA_PLATFORM_TYPE:
@@ -164,38 +143,6 @@ public class RecordingReservationMetaData implements Serializable {
 
     public static String[] getReservationListPara() {
         return mReservationListPara;
-    }
-
-    public int getLimit() {
-        return mLimit;
-    }
-
-    public void setLimit(int mLimit) {
-        this.mLimit = mLimit;
-    }
-
-    public int getOffset() {
-        return mOffset;
-    }
-
-    public void setOffset(int mOffset) {
-        this.mOffset = mOffset;
-    }
-
-    public int getCount() {
-        return mCount;
-    }
-
-    public void setCount(int mCount) {
-        this.mCount = mCount;
-    }
-
-    public int getTotal() {
-        return mTotal;
-    }
-
-    public void setTotal(int mTotal) {
-        this.mTotal = mTotal;
     }
 
     public int getPriority() {
@@ -280,6 +227,7 @@ public class RecordingReservationMetaData implements Serializable {
 
     /**
      * サーバから取得したデータをセット
+     *
      * @param jsonObj Jsonオブジェクト
      */
     public void setData(JSONObject jsonObj) {
@@ -290,11 +238,10 @@ public class RecordingReservationMetaData implements Serializable {
                     try {
                         setMember(item, jsonObj.get(item));
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        DTVTLogger.debug(CLASS_NAME + SET_DATA,e);
                     }
                 }
             }
         }
     }
-
 }

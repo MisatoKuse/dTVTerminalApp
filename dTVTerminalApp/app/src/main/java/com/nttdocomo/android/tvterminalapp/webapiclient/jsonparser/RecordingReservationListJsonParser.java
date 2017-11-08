@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
 import android.os.AsyncTask;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationMetaData;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RecordingReservationListWebClient;
@@ -22,7 +23,13 @@ import static com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingRes
 import static com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationListResponse.RECORDING_RESERVATION_META_RESPONSE_STATUS;
 
 public class RecordingReservationListJsonParser extends AsyncTask<Object, Object, Object> {
-        private RecordingReservationListWebClient.RecordingReservationListJsonParserCallback
+    private final String CLASS_NAME = getClass().getSimpleName();
+    private static final String SEND_RESPONSE = ".sendRecordingReservationListResponse";
+    private static final String SEND_STATUS = ".sendStatus";
+    private static final String RESPONSE = ".RecordingReservationListResponse";
+    private static final String JSON_OBJECT = ".JSONObject";
+
+    private RecordingReservationListWebClient.RecordingReservationListJsonParserCallback
                 mRecordingReservationListJsonParserCallback;
     // オブジェクトクラスの定義　
     private RecordingReservationListResponse mRecordingReservationListResponse;
@@ -72,10 +79,10 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
             }
         } catch (JSONException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            DTVTLogger.debug(CLASS_NAME + JSON_OBJECT,e);
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            DTVTLogger.debug(CLASS_NAME + RESPONSE,e);
         }
         return null;
     }
@@ -106,7 +113,7 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
             throw new RuntimeException(e);
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            DTVTLogger.debug(CLASS_NAME + SEND_STATUS,e);
         }
     }
 
@@ -143,7 +150,7 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
             throw new RuntimeException(e);
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            DTVTLogger.debug(CLASS_NAME + SEND_RESPONSE,e);
         }
     }
 
