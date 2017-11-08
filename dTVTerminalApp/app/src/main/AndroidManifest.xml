@@ -95,6 +95,7 @@
         <activity android:name="com.nttdocomo.android.tvterminalapp.activity.player.ChannelDetailPlayerActivity" />
         <activity android:name="com.nttdocomo.android.tvterminalapp.activity.player.RecordedVideoPlayerActivity" />
         <activity android:name="com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity" />
+        <activity android:name="com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity" />
         <activity android:name="com.nttdocomo.android.tvterminalapp.activity.player.VideoPlayerActivity" />
         <activity
             android:name="com.nttdocomo.android.tvterminalapp.activity.player.RecommendPlayerActivity"

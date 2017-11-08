@@ -4,32 +4,53 @@
 
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import android.content.Context;
 
 public class OtherContentsDataProvider {
 
-    private HomeDataProvider.ApiDataProviderCallback apiDataProviderCallback;
+    private Context mContext;
+    // RakingTop画面用コールバック
+    private ApiDataProviderCallback apiDataProviderCallback = null;
 
+    /**
+     * Ranking Top画面用データを返却するためのコールバック
+     */
     public interface ApiDataProviderCallback {
         /**
-         * コンテンツ詳細表示データのコールバック
-         *
-         * @param detailData 　コンテンツ詳細データ
+         * デイリーランキング用コールバック
          */
-        void otherContentsDataCallback(OtherContentsDetailData detailData);
+        void otherContentsDetailCallback();
     }
 
     /**
-     * Activityからのデータ取得要求
+     * コンストラクタ
+     *
+     * @param context
      */
-    public void getOtherDetailContentsData() {
-
+    public OtherContentsDataProvider(Context context) {
+        this.mContext = context;
+        this.apiDataProviderCallback = (ApiDataProviderCallback) context;
     }
 
     /**
-     * コンテンツ詳細データをActivityに送る
+     * ContentsDetailActivityからのデータ取得要求
+     * @param tabPageNo
      */
-    private void sendOtherDetailContentsData() {
+    public void getContentsDetailData(int tabPageNo) {
+        // TODO：WebApi実装後に処理を作成する
+    }
+    /**
+     * コンテンツ詳細データをContentsDetailActivityに送る
+     *
+     */
+    public void sendContentsDetailData() {
+        // TODO：WebApi実装後に処理を作成する
+    }
 
+    /**
+     * コンテンツ詳細データを取得する
+     */
+    private void getContentsDetailData() {
+        // TODO：WebApi実装後に処理を作成する
     }
 }

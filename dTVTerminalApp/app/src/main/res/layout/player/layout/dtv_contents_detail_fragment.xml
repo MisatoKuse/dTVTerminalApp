@@ -16,7 +16,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:background="@drawable/contents_provider_shape_corner"
-        android:text="TextView" />
+        android:textColor="@color/white_text" />
 
     <TextView
         android:id="@+id/contents_title"
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/service_provider"
         android:layout_below="@+id/service_provider"
-        android:text="TextView" />
+        android:textColor="@color/white_text" />
 
     <TextView
         android:id="@+id/contents_detail_info"
@@ -34,7 +34,7 @@
         android:layout_below="@+id/contents_title"
         android:ellipsize="end"
         android:maxLines="4"
-        android:text="TextView" />
+        android:textColor="@color/white_text" />
 
     <TextView
         android:id="@+id/more_button"
@@ -43,5 +43,6 @@
         android:layout_below="@+id/contents_title"
         android:layout_toEndOf="@+id/contents_detail_info"
         android:clickable="true"
-        android:text="@string/contents_info_more_text" />
+        android:text="@string/contents_info_more_text"
+        android:textColor="@color/white_text" />
 </RelativeLayout>

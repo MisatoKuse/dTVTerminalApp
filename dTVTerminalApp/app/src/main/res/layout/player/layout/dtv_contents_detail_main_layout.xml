@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/default_layout_style"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- コンテンツ詳細用のヘッダ を読み込む -->
+    <RelativeLayout
+        android:id="@+id/contents_detail_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true">
+
+        <include layout="@layout/contents_detail_header_layout" />
+    </RelativeLayout>
+
+    <!--コンテンツ詳細のスクロール部分-->
+    <ScrollView
+        android:id="@+id/contents_detail_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/contents_detail_header">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!--サムネイル用レイアウト-->
+            <RelativeLayout android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <!--サムネイル画像-->
+                <ImageView
+                    android:id="@+id/dtv_contents_detail_thumbnail"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/contents_info_thumbnail_text"
+                    android:src="@mipmap/home_pr" />
+
+                <!--中央ボタン画像-->
+                <ImageView
+                    android:id="@+id/dtv_contents_view_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/contents_info_thumbnail_text"
+                    android:src="@mipmap/ic_launcher" />
+
+                <!--テキスト-->
+                <TextView
+                    android:id="@+id/description_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/dtv_contents_view_button"
+                    android:layout_centerHorizontal="true" />
+            </RelativeLayout>
+
+            <HorizontalScrollView
+                android:id="@+id/contents_detail_tab_strip_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@android:color/background_dark"
+                android:fillViewport="true"
+                android:foregroundGravity="center_horizontal"
+                android:scrollbars="none" />
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/contents_detail_result"
+                android:layout_width="match_parent"
+                android:layout_height="500dp"
+                android:layout_below="@id/contents_detail_tab_strip_scroll" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!--テレビで視聴するボタン用レイアウト-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/button5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/remote_control_start" />
+    </RelativeLayout>
+</RelativeLayout>
