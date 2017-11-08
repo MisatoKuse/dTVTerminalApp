@@ -33,6 +33,7 @@ public class WebApiBasePlala {
     interface WebApiBasePlalaCallback {
         /**
          * 正常終了時のコールバック
+         *
          * @param returnCode 値を返す構造体
          */
         void onAnswer(ReturnCode returnCode);
@@ -81,7 +82,6 @@ public class WebApiBasePlala {
 
         /**
          * 視聴中ビデオ一覧
-         *
          */
         WATCH_LISTEN_VIDEO_LIST("viewingvideo/list"),
 
@@ -131,13 +131,17 @@ public class WebApiBasePlala {
          */
         REMOTE_RECORDING_RESERVATION_LIST_WEB_CLIENT("remoterecording/reservation/list"),
 
-        ;   //最後にセミコロンが必要
+        /**
+         * 録画予約一覧
+         */
+        RECORDING_RESERVATION_LIST_WEB_CLIENT("recording/reservation/list"),;   //最後にセミコロンが必要
 
         //呼び出し先名の控え
         private final String apiName;
 
         /**
          * 指定されたAPIの呼び出し先を決定する
+         *
          * @param text API名
          */
         API_NAME_LIST(final String text) {
@@ -146,12 +150,14 @@ public class WebApiBasePlala {
 
         /**
          * 呼び出し先を聞かれた場合に値を返す
+         *
          * @return 呼び出し先名
          */
         public String getString() {
             return this.apiName;
         }
     }
+
     /**
      * 内部エラー情報（継承先クラスで判定する場合の為にprotected指定）
      */
@@ -258,6 +264,7 @@ public class WebApiBasePlala {
             extraData = null;
         }
     }
+
     private ReturnCode mReturnCode = null;
 
     /**
@@ -265,7 +272,7 @@ public class WebApiBasePlala {
      */
     public WebApiBasePlala() {
         //コネクション蓄積が存在しなければ作成する
-        if(mUrlConnections == null) {
+        if (mUrlConnections == null) {
             mUrlConnections = new ArrayList<>();
         }
 
@@ -275,11 +282,12 @@ public class WebApiBasePlala {
 
     /**
      * コネクションを蓄積して、後で止められるようにする
+     *
      * @param mUrlConnection コネクション
      */
     private void addUrlConnections(HttpURLConnection mUrlConnection) {
         //通信が終わり、ヌルが入れられる場合に備えたヌルチェック
-        if(mUrlConnections == null) {
+        if (mUrlConnections == null) {
             //既に削除されていたので、再度確保を行う
             mUrlConnections = new ArrayList<>();
         }
@@ -293,7 +301,7 @@ public class WebApiBasePlala {
      * TODO:実装予定のすべての通信を遮断するAPIで使用の予定
      */
     static public void stopAllConnections() {
-        if(mUrlConnections == null) {
+        if (mUrlConnections == null) {
             return;
         }
 
@@ -301,7 +309,7 @@ public class WebApiBasePlala {
         mIsStopAllConnections = true;
 
         //全てのコネクションにdisconnectを送る
-        for(HttpURLConnection stopConnection: mUrlConnections) {
+        for (HttpURLConnection stopConnection : mUrlConnections) {
             stopConnection.disconnect();
 
             //止めた物は消す
@@ -310,7 +318,8 @@ public class WebApiBasePlala {
     }
 
     /**
-     *  切断済みコネクションを蓄積から削除する
+     * 切断済みコネクションを蓄積から削除する
+     *
      * @param connection 削除したいコネクション
      */
     static private void removeConnections(HttpURLConnection connection) {
@@ -327,12 +336,13 @@ public class WebApiBasePlala {
 
     /**
      * 指定したAPIで通信を開始する
-     * @param sourceUrl                 API呼び出し名
+     *
+     * @param sourceUrl               API呼び出し名
      * @param webApiBasePlalaCallback コールバック
      */
-    public void openUrl(final String sourceUrl,String receivedParameters,
+    public void openUrl(final String sourceUrl, String receivedParameters,
                         WebApiBasePlalaCallback webApiBasePlalaCallback) {
-        CommunicationTask communicationTask = new CommunicationTask(sourceUrl,receivedParameters);
+        CommunicationTask communicationTask = new CommunicationTask(sourceUrl, receivedParameters);
 
         //コールバックの準備
         mWebApiBasePlalaCallback = webApiBasePlalaCallback;
@@ -346,16 +356,18 @@ public class WebApiBasePlala {
 
     /**
      * 指定したAPIで通信を開始する(拡張情報付き)
-     * @param sourceUrl API呼び出し名
-     * @param receivedParameters API呼び出し用パラメータ
+     *
+     * @param sourceUrl               API呼び出し名
+     * @param receivedParameters      API呼び出し用パラメータ
      * @param webApiBasePlalaCallback 結果のコールバック
-     * @param extraDataSrc 拡張情報
+     * @param extraDataSrc            拡張情報
      */
-    public void openUrlWithExtraData(final String sourceUrl,String receivedParameters,
-                                     WebApiBasePlalaCallback webApiBasePlalaCallback,Bundle extraDataSrc) {
+    public void openUrlWithExtraData(final String sourceUrl, String receivedParameters,
+                                     WebApiBasePlalaCallback webApiBasePlalaCallback,
+                                     Bundle extraDataSrc) {
         //拡張情報もセットする
         CommunicationTask communicationTask = new CommunicationTask(sourceUrl,
-                receivedParameters,extraDataSrc);
+                receivedParameters, extraDataSrc);
 
         //コールバックの準備
         mWebApiBasePlalaCallback = webApiBasePlalaCallback;
@@ -369,11 +381,12 @@ public class WebApiBasePlala {
 
     /**
      * ボディ部の読み込みを行う
+     *
      * @param statusCode コネクションの際のステータス
      * @return 読み込んだボディ部
      */
     private String readConnectionBody(int statusCode) {
-        if(statusCode != HttpURLConnection.HTTP_OK) {
+        if (statusCode != HttpURLConnection.HTTP_OK) {
             //HTTP通信エラーとして元に返す
             mReturnCode.errorType = ERROR_TYPE.HTTP_ERROR;
             return "";
@@ -406,19 +419,19 @@ public class WebApiBasePlala {
             e.printStackTrace();
         } catch (IOException e) {
             //全通信停止発行済みならば、正常な動作となる
-            if(!mIsStopAllConnections) {
+            if (!mIsStopAllConnections) {
                 //通信停止ではないので、通信エラー
                 mReturnCode.errorType = ERROR_TYPE.OTHER_ERROR;
                 e.printStackTrace();
             }
         } finally {
             //ストリームを閉じる
-            streamCloser(stream,inputStreamReader,bufferedReader);
+            streamCloser(stream, inputStreamReader, bufferedReader);
         }
 
         //蓄積したボディー部を返す
         String bodyData = "";
-        if(stringBuilder != null) {
+        if (stringBuilder != null) {
             bodyData = stringBuilder.toString();
         }
 
@@ -427,7 +440,8 @@ public class WebApiBasePlala {
 
     /**
      * 各ストリームを閉じる
-     * @param stream             コネクションから取得したストリーム
+     *
+     * @param stream            コネクションから取得したストリーム
      * @param inputStreamReader UTF-8を指定したストリーム
      * @param bufferedReader    バッファーストリーム
      */
@@ -435,7 +449,7 @@ public class WebApiBasePlala {
                               InputStreamReader inputStreamReader,
                               BufferedReader bufferedReader) {
 
-        if(stream != null) {
+        if (stream != null) {
             try {
                 stream.close();
             } catch (IOException e) {
@@ -444,7 +458,7 @@ public class WebApiBasePlala {
                 e.printStackTrace();
             }
         }
-        if(inputStreamReader != null) {
+        if (inputStreamReader != null) {
             try {
                 inputStreamReader.close();
             } catch (IOException e) {
@@ -453,7 +467,7 @@ public class WebApiBasePlala {
                 e.printStackTrace();
             }
         }
-        if(bufferedReader != null) {
+        if (bufferedReader != null) {
             try {
                 bufferedReader.close();
             } catch (IOException e) {
@@ -479,23 +493,25 @@ public class WebApiBasePlala {
 
         /**
          * コンストラクタ
-         * @param sourceUrl             実行するAPIの名前
-         * @param receivedParameters   送るパラメータ
+         *
+         * @param sourceUrl          実行するAPIの名前
+         * @param receivedParameters 送るパラメータ
          */
-        CommunicationTask(String sourceUrl,String receivedParameters) {
+        CommunicationTask(String sourceUrl, String receivedParameters) {
             mSourceUrl = sourceUrl;
-            mSendParameter =  receivedParameters;
+            mSendParameter = receivedParameters;
         }
 
         /**
          * コンストラクタ(拡張情報付き)
-         * @param sourceUrl 実行するAPIの名前
+         *
+         * @param sourceUrl          実行するAPIの名前
          * @param receivedParameters 送るパラメータ
-         * @param extraDataSrc 受け渡す拡張情報
+         * @param extraDataSrc       受け渡す拡張情報
          */
-        CommunicationTask(String sourceUrl,String receivedParameters,Bundle extraDataSrc) {
+        CommunicationTask(String sourceUrl, String receivedParameters, Bundle extraDataSrc) {
             mSourceUrl = sourceUrl;
-            mSendParameter =  receivedParameters;
+            mSendParameter = receivedParameters;
 
             //拡張データの確保
             mExtraData = extraDataSrc;
@@ -503,6 +519,7 @@ public class WebApiBasePlala {
 
         /**
          * 通信本体処理
+         *
          * @param strings 不使用
          * @return 不使用
          */
@@ -546,18 +563,19 @@ public class WebApiBasePlala {
 
         /**
          * 通信終了後の処理
+         *
          * @param returnCode 結果格納構造体
          */
         @Override
         protected void onPostExecute(ReturnCode returnCode) {
             //拡張情報があればそれも伝える
-            if(mExtraData != null) {
+            if (mExtraData != null) {
                 returnCode.extraData = mExtraData;
             }
 
             //呼び出し元に伝える情報を判断する
-            if(returnCode.errorType == ERROR_TYPE.SUCCESS) {
-                if(mAnswerBuffer.isEmpty()) {
+            if (returnCode.errorType == ERROR_TYPE.SUCCESS) {
+                if (mAnswerBuffer.isEmpty()) {
                     //エラーが無いので、失敗を伝える
                     mWebApiBasePlalaCallback.onError();
                 } else {
@@ -575,6 +593,7 @@ public class WebApiBasePlala {
 
         /**
          * HTTPリクエスト用のパラメータを指定する
+         *
          * @param urlConnection コネクション
          */
         void setParameters(HttpURLConnection urlConnection) throws ProtocolException {
@@ -594,17 +613,18 @@ public class WebApiBasePlala {
 
         /**
          * パラメータをストリームに書き込む
+         *
          * @param urlConnection 書き込み対象のコネクション
          */
         void setPostData(HttpURLConnection urlConnection) {
-            if(urlConnection == null) {
+            if (urlConnection == null) {
                 return;
             }
             // POSTデータ送信処理
             DataOutputStream dataOutputStream = null;
             try {
-                dataOutputStream =  new DataOutputStream(urlConnection.getOutputStream());
-                dataOutputStream.write( mSendParameter.getBytes("UTF-8") );
+                dataOutputStream = new DataOutputStream(urlConnection.getOutputStream());
+                dataOutputStream.write(mSendParameter.getBytes("UTF-8"));
                 dataOutputStream.flush();
 
             } catch (IOException e) {
@@ -625,15 +645,17 @@ public class WebApiBasePlala {
 
     /**
      * パラメータの比較用などの為に、与えられた文字列をひとまとめにする
+     *
      * @param strings ひとまとめにしたい文字列
      * @return ひとまとめになった文字列
      */
     List<String> makeStringArry(String... strings) {
-        return  Arrays.asList(strings);
+        return Arrays.asList(strings);
     }
 
     /**
      * 文字列の日付判定
+     *
      * @param dateString 日付(yyyyMMdd)であることが期待される文字列
      * @return 日付ならばtrue
      */

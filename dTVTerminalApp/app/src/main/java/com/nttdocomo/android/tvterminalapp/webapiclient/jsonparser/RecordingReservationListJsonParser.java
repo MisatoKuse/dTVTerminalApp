@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationMetaData;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RecordingReservationListWebClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,7 +22,8 @@ import static com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingRes
 import static com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationListResponse.RECORDING_RESERVATION_META_RESPONSE_STATUS;
 
 public class RecordingReservationListJsonParser extends AsyncTask<Object, Object, Object> {
-    //    private RecordingReservationListWebClient.RecordingReservationListJsonParserCallback mRecordingReservationListJsonParserCallback;
+        private RecordingReservationListWebClient.RecordingReservationListJsonParserCallback
+                mRecordingReservationListJsonParserCallback;
     // オブジェクトクラスの定義　
     private RecordingReservationListResponse mRecordingReservationListResponse;
 
@@ -30,17 +32,18 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
      * <p>
      * //     * @param recordingReservationListJsonParserCallback
      */
-//    public RecordingReservationListJsonParser(RecordingReservationListWebClient.
-//        RecordingReservationListJsonParserCallback recordingReservationListJsonParserCallback) {
-//        mRecordingReservationListJsonParserCallback = recordingReservationListJsonParserCallback;
-//        mRecordingReservationListResponse = new RecordingReservationListResponse();
-//    }
-//
-//    @Override
-//    protected void onPostExecute(Object s) {
-//        mRecordingReservationListJsonParserCallback.
-//            onRecordingReservationListJsonParsed(mRecordingReservationListResponse);
-//    }
+    public RecordingReservationListJsonParser(RecordingReservationListWebClient.
+        RecordingReservationListJsonParserCallback recordingReservationListJsonParserCallback) {
+        mRecordingReservationListJsonParserCallback =
+                recordingReservationListJsonParserCallback;
+        mRecordingReservationListResponse = new RecordingReservationListResponse();
+    }
+
+    @Override
+    protected void onPostExecute(Object s) {
+        mRecordingReservationListJsonParserCallback.
+            onRecordingReservationListJsonParsed(mRecordingReservationListResponse);
+    }
     @Override
     protected Object doInBackground(Object... strings) {
         String result = (String) strings[0];
@@ -94,7 +97,8 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
 
             //pagerの値を取得しセットする
             if (!jsonObj.isNull(RECORDING_RESERVATION_META_RESPONSE_PAGER)) {
-                JSONObject pager = jsonObj.getJSONObject(RECORDING_RESERVATION_META_RESPONSE_PAGER);
+                JSONObject pager = jsonObj.getJSONObject(
+                        RECORDING_RESERVATION_META_RESPONSE_PAGER);
                 mRecordingReservationListResponse.setPager(pager);
             }
 
@@ -113,22 +117,26 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
      */
     public void sendRecordingReservationListResponse(JSONObject jsonObj) {
         try {
-            ArrayList<RecordingReservationMetaData> recordingReservationMetaDataList = new ArrayList<RecordingReservationMetaData>();
+            ArrayList<RecordingReservationMetaData> recordingReservationMetaDataList =
+                    new ArrayList<RecordingReservationMetaData>();
             if (!jsonObj.isNull(RECORDING_RESERVATION_META_RESPONSE_RESERVATION_LIST)) {
                 // 録画予約一覧をJSONArrayにパースする
-                JSONArray lists = jsonObj.getJSONArray(RECORDING_RESERVATION_META_RESPONSE_RESERVATION_LIST);
+                JSONArray lists = jsonObj.getJSONArray(
+                        RECORDING_RESERVATION_META_RESPONSE_RESERVATION_LIST);
                 if (lists.length() == 0) {
                     return;
                 }
                 //録画予約一覧のデータオブジェクトArrayListを生成する
                 for (int i = 0; i < lists.length(); i++) {
-                    RecordingReservationMetaData recordingReservationMetaData = new RecordingReservationMetaData();
+                    RecordingReservationMetaData recordingReservationMetaData =
+                            new RecordingReservationMetaData();
                     recordingReservationMetaData.setData(lists.getJSONObject(i));
                     recordingReservationMetaDataList.add(recordingReservationMetaData);
                 }
                 if (mRecordingReservationListResponse != null) {
                     // 録画予約一覧リストをセットする
-                    mRecordingReservationListResponse.setRecordingReservationMetaData(recordingReservationMetaDataList);
+                    mRecordingReservationListResponse.setRecordingReservationMetaData(
+                            recordingReservationMetaDataList);
                 }
             }
         } catch (JSONException e) {

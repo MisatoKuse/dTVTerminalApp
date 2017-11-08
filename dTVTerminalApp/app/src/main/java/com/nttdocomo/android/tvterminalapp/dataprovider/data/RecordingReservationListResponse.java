@@ -31,9 +31,7 @@ public class RecordingReservationListResponse {
         mStatus = status;
     }
 
-    public void
-
-    setPager(JSONObject pager) {
+    public void setPager(JSONObject pager) {
         mPager = pager.toString();
     }
 
