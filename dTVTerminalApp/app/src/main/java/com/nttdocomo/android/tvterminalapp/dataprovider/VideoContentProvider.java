@@ -5,74 +5,35 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.datamanager.select.RankingTopDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingConstants;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.VIDEO_RANK_LAST_INSERT;
+
+/**
+ * ビデオ一覧専用DPクラス
+ */
 public class VideoContentProvider implements
         ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback {
     private Context mContext;
 
-    // ビデオコンテンツ用コールバック
-    private videoContentApiDataProviderCallback mVideoContentApiDataProviderCallback = null;
+    // ビデオコンテンツ画面用コールバック
+    private apiVideoContentDataProviderCallback mApiVideoContentDataProviderCallback = null;
 
-    // ジャンル一覧用コールバック
-    private videoGerneApiDataProviderCallback mVideoGerneApiDataProviderCallback = null;
-
-//    // コンテンツ数用コールバック
-//    private videoContentCountProviderCallback mVideoContentCountProviderCallback = null;
-
-    @Override
-    public void onContentsListPerGenreJsonParsed(List<VideoRankList> contentsListPerGenre) {
-        if (contentsListPerGenre != null && contentsListPerGenre.size() > 0) {
-            VideoRankList list = contentsListPerGenre.get(0);
-        } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
-        }
-    }
-
-    /**
-     * ビデオコンテンツリスト用のコールバック
-     */
-    public interface videoContentApiDataProviderCallback {
-        /**
-         * ビデオコンテンツ一覧用コールバック
-         *
-         * @param videoContentList
-         */
-        void videoContentApiDataProviderCallback(List<Map<String, String>> videoContentList);
-    }
-
-    /**
-     * ジャンル一覧用コールバック
-     */
-    public interface videoGerneApiDataProviderCallback {
-        /**
-         * ジャンル一覧用コールバック
-         *
-         * @param genreList
-         */
-        void videoGerneApiDataProviderCallback(List<Map<String, String>> genreList);
-    }
-//
-//    /**
-//     * コンテンツ数用コールバック
-//     */
-//    public interface videoContentCountProviderCallback {
-//        /**
-//         * コンテンツ数用コールバック
-//         *
-//         * @param contentCountList
-//         */
-//        void videoContentCountProviderCallback(List<Map<String, String>> contentCountList);
-//    }
+    public static final String SUB_GENRE_KEY = "sub";
 
     /**
      * コンストラクタ
@@ -81,57 +42,37 @@ public class VideoContentProvider implements
      */
     public VideoContentProvider(Context mContext) {
         this.mContext = mContext;
-        this.mVideoContentApiDataProviderCallback = (videoContentApiDataProviderCallback) mContext;
+        this.mApiVideoContentDataProviderCallback = (apiVideoContentDataProviderCallback) mContext;
     }
 
     /**
-     * VideoContentListActivityからのデータ取得要求
-     *
-     * @param genreId
+     * ビデオコンテンツ一覧画面用データを返却するためのコールバック
      */
-    public void getVideoData(String genreId) {
-        // ビデオコンテンツ一覧
-        List<Map<String, String>> contentList = getVideoContentListData(genreId);
-        if (contentList != null && contentList.size() > 0) {
-            sendVideoContentListData(contentList, genreId);
-        }
-        // ビデオジャンル一覧
-        List<Map<String, String>> videoGenreList = getVideoContentListData(genreId);
-        if (contentList != null && contentList.size() > 0) {
-            sendVideoContentListData(contentList, genreId);
-        }
-
-        // ビデオコンテンツ数
-        List<Map<String, String>> contentCount = getVideoContentListData(genreId);
-        if (contentList != null && contentList.size() > 0) {
-            sendVideoContentListData(contentList, genreId);
-        }
+    public interface apiVideoContentDataProviderCallback {
+        /**
+         * ビデオコンテンツ一覧用コールバック
+         *
+         * @param videoHashMap
+         */
+        void videoContentCallback(List<Map<String, String>> videoHashMap);
     }
 
     /**
-     * ビデオランキングリストをVideoRankingActivityに送る
+     * VideoContentListActivityからのデータ取得要求受付
      */
-    public void sendVideoContentListData(List<Map<String, String>> list, String genreId) {
-        DTVTLogger.start("response genreId : " + genreId);
-        // TODO ジャンルID毎にコールバックを返す
-        switch (genreId) {
-            case "":
-                mVideoContentApiDataProviderCallback.videoContentApiDataProviderCallback(list);
-                break;
-            default:
-                break;
-        }
-        DTVTLogger.end();
+    public void getVideoContentData() {
+            // コンテンツ数
+            List<Map<String, String>> videoContentCount = getVideoContentListData(SUB_GENRE_KEY);
+            if (videoContentCount != null && videoContentCount.size() > 0) {
+                getVideoContentListData(SUB_GENRE_KEY);
+            }
     }
 
-
     /**
-     * ビデオラコンテンツ一覧データ取得要求を行う
-     *
+     * ビデオコンテンツ一覧のデータ取得要求を行う
      * @return
      */
     private List<Map<String, String>> getVideoContentListData(String genreId) {
-        DateUtils dateUtils = new DateUtils(mContext);
         List<Map<String, String>> list = new ArrayList<>();
         //通信クラスにデータ取得要求を出す
         ContentsListPerGenreWebClient webClient = new ContentsListPerGenreWebClient();
@@ -147,51 +88,24 @@ public class VideoContentProvider implements
                 filter, ageReq, genreId, type, sort, this);
         return list;
     }
+
 
     /**
-     * ビデオジャンル一覧のデータ取得要求を行う
+     * ビデオコンテンツ一覧をVideoContentListActivityに送る
      *
-     * @return
+     * @param list
      */
-    private List<Map<String, String>> getVideoGenreListData(String genreId) {
-        DateUtils dateUtils = new DateUtils(mContext);
-        List<Map<String, String>> list = new ArrayList<>();
-        //通信クラスにデータ取得要求を出す
-        ContentsListPerGenreWebClient webClient = new ContentsListPerGenreWebClient();
-        int limit = 1;
-        int offset = 1;
-        String filter = "";
-        int ageReq = 1;
-        String type = "";
-        String sort = "";
-
-        //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
-        webClient.getContentsListPerGenreApi(limit, offset,
-                filter, ageReq, genreId, type, sort, this);
-        return list;
+    public void sendContentListData(List<Map<String, String>> list) {
+        mApiVideoContentDataProviderCallback.videoContentCallback(list);
     }
 
-    /**
-     * ビデオコンテンツ数データ取得要求を行う
-     *
-     * @return
-     */
-    private List<Map<String, String>> getVideoContentCountListData(String genreId) {
-        DateUtils dateUtils = new DateUtils(mContext);
-        List<Map<String, String>> list = new ArrayList<>();
-        //通信クラスにデータ取得要求を出す
-        ContentsListPerGenreWebClient webClient = new ContentsListPerGenreWebClient();
-        int limit = 1;
-        int offset = 1;
-        String filter = "";
-        int ageReq = 1;
-        String type = "";
-        String sort = "";
-
-        //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
-        webClient.getContentsListPerGenreApi(limit, offset,
-                filter, ageReq, genreId, type, sort, this);
-        return list;
+    @Override
+    public void onContentsListPerGenreJsonParsed(List<VideoRankList> contentsListPerGenre) {
+        if (contentsListPerGenre != null && contentsListPerGenre.size() > 0) {
+            VideoRankList list = contentsListPerGenre.get(0);
+            sendContentListData(list.getVrList());
+        } else {
+            //TODO:WEBAPIを取得できなかった時の処理を記載予定
+        }
     }
-
 }

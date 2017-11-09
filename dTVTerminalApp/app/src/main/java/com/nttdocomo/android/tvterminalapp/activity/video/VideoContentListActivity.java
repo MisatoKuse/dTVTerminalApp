@@ -4,7 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.video;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -20,7 +19,7 @@ import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.VideoContentProvider;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser;
 
 import java.util.ArrayList;
@@ -29,8 +28,7 @@ import java.util.Map;
 
 
 public class VideoContentListActivity extends BaseActivity implements View.OnClickListener,
-//        VideoContentProvider.videoContentCallback,
-        RankingTopDataProvider.ApiDataProviderCallback,
+        VideoContentProvider.apiVideoContentDataProviderCallback,
         AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
 
     // 最大表示件数
@@ -39,7 +37,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     private final static int LOAD_PAGE_DELAY_TIME = 1000;
 
     private ImageView mMenuImageView;
-    private RankingTopDataProvider mRankingTopDataProvider;
+    private VideoContentProvider mVideoContentProvider;
     private ContentsAdapter mContentsAdapter;
 
     private View mLoadMoreView;
@@ -67,8 +65,8 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         resetPaging();
 
         initView();
-        mRankingTopDataProvider = new RankingTopDataProvider(this);
-        mRankingTopDataProvider.getRankingTopData();
+        mVideoContentProvider = new VideoContentProvider(this);
+        mVideoContentProvider.getVideoContentData();
     }
 
     /**
@@ -197,7 +195,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mRankingTopDataProvider.getRankingTopData();
+                        mVideoContentProvider.getVideoContentData();
                     }
                 }, LOAD_PAGE_DELAY_TIME);
             }
@@ -258,23 +256,9 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         return videoContentsDataList;
     }
 
-//    @Override
-//    public void videoContentCallback(List<Map<String, String>> videoContentList) {
-//        setShowVideoContent(videoContentList);
-//    }
-
     @Override
-    public void dailyRankListCallback(List<Map<String, String>> dailyHashMap) {
-
-    }
-
-    @Override
-    public void weeklyRankCallback(List<Map<String, String>> weeklyHashMap) {
-
-    }
-
-    @Override
-    public void videoRankCallback(List<Map<String, String>> videoHashMap) {
+    public void videoContentCallback(List<Map<String, String>> videoHashMap) {
         setShowVideoContent(videoHashMap);
     }
+
 }

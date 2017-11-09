@@ -4,11 +4,15 @@
 
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
+import java.util.Map;
+
 public class VideoGenreList {
 
     private String mGenreId;
     private String mTitle;
     private String mContentCount;
+    private int mAllContentCount;
+    private Map<String, String> mMapCountList;
 
     public String getGenreId() {
         return mGenreId;
@@ -32,6 +36,22 @@ public class VideoGenreList {
 
     public void setContentCount(String contentCount) {
         this.mContentCount = contentCount;
+    }
+
+    public int getAllContentCount() {
+        return mAllContentCount;
+    }
+
+    public void setAllContentCount(int allContentCount) {
+        this.mAllContentCount = allContentCount;
+    }
+
+    public Map<String, String> getMapCountList() {
+        return mMapCountList;
+    }
+
+    public void setMapCountList(Map<String, String> mapCountList) {
+        this.mMapCountList = mapCountList;
     }
 
 }
