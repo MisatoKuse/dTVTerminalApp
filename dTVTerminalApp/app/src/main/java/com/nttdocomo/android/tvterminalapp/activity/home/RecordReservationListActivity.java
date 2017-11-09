@@ -65,6 +65,7 @@ public class RecordReservationListActivity extends BaseActivity
     }
 
     private void initView() {
+        DTVTLogger.start();
         // ContentsListAdapter設定
         mListView = findViewById(R.id.record_reservation_list_view);
         mListView.setOnItemClickListener(this);
@@ -76,6 +77,7 @@ public class RecordReservationListActivity extends BaseActivity
                 ContentsAdapter.ActivityTypeItem.TYPE_RECORDING_RESERVATION_LIST);
         mListView.setAdapter(mContentsAdapter);
         mLoadMoreView = LayoutInflater.from(this).inflate(R.layout.search_load_more, null);
+        DTVTLogger.end();
     }
 
     // スクロール処理(ページング)
@@ -191,6 +193,7 @@ public class RecordReservationListActivity extends BaseActivity
 
     @Override
     public void recordingReservationListCallback(List<ContentsData> dataList) {
+        DTVTLogger.start();
         if (null == dataList) {
             //通信とJSON Parseに関してのerror処理
             // TODO データ取得失敗時の仕様決定後に修正が必要
@@ -216,8 +219,8 @@ public class RecordReservationListActivity extends BaseActivity
         }
 
         DTVTLogger.debug("Callback, mData.size==" + mContentsList.size());
-
         resetCommunication();
         mContentsAdapter.notifyDataSetChanged();
+        DTVTLogger.end();
     }
 }
