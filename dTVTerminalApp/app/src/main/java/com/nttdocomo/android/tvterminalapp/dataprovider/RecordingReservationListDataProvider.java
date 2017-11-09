@@ -23,12 +23,11 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.TvSchedule_LAST_INSERT;
-
-// TODO implement WebApiコールバック実装
 public class RecordingReservationListDataProvider implements
         RemoteRecordingReservationListWebClient.RemoteRecordingReservationListJsonParserCallback,
         RecordingReservationListWebClient.RecordingReservationListJsonParserCallback,
@@ -82,7 +81,7 @@ public class RecordingReservationListDataProvider implements
     // 1日→秒
     private static int CONVERSION_ONE_DAY_TO_SEC = 86400;
 
-    public enum ReservationType {
+    private enum ReservationType {
         // STB/dリモート 定期予約タイプ対応定数
         TYPE_SINGLE(0, "0x00"), // 単発録画
         TYPE_EV_MONDAY(1, "0x02"), // 毎月曜
@@ -121,6 +120,8 @@ public class RecordingReservationListDataProvider implements
             mStbResponse = response;
             // CH一覧取得,リモート側との同期
             if (mStbResponse != null && mTvScheduleList != null && mTvScheduleList.size() != 0) {
+                buttRecordingReservationListData();
+                sortRecordingReservationListData();
                 apiDataProviderCallback.recordingReservationListCallback(mRecordingReservationList);
             }
         } else {
@@ -134,6 +135,8 @@ public class RecordingReservationListDataProvider implements
             mDRemoteResponse = response;
             // CH一覧取得,STB側との同期
             if (mStbResponse != null && mTvScheduleList != null && mTvScheduleList.size() != 0) {
+                buttRecordingReservationListData();
+                sortRecordingReservationListData();
                 apiDataProviderCallback.recordingReservationListCallback(mRecordingReservationList);
             }
         } else {
@@ -148,6 +151,8 @@ public class RecordingReservationListDataProvider implements
             mTvScheduleList = list.geTvsList();
             // 録画予約一覧取得との同期
             if (mStbResponse != null && mStbResponse != null) {
+                buttRecordingReservationListData();
+                sortRecordingReservationListData();
                 apiDataProviderCallback.recordingReservationListCallback(mRecordingReservationList);
                 setStructDB(list);
             }
@@ -164,7 +169,7 @@ public class RecordingReservationListDataProvider implements
         /**
          * 録画予約一覧返却用コールバック
          *
-         * @param list
+         * @param list コンテンツデータリスト
          */
         void recordingReservationListCallback(List<ContentsData> list);
     }
@@ -172,7 +177,7 @@ public class RecordingReservationListDataProvider implements
     /**
      * コンストラクタ
      *
-     * @param mContext
+     * @param mContext コンテキスト
      */
     public RecordingReservationListDataProvider(Context mContext) {
         this.mContext = mContext;
@@ -183,13 +188,8 @@ public class RecordingReservationListDataProvider implements
      * Activityからのデータ取得要求受付
      */
     public void requestRecordingReservationListData() {
-        getRecordingReservationListData();
-    }
+        initDataList();
 
-    /**
-     * 録画予約一覧を取得する
-     */
-    private void getRecordingReservationListData() {
         // STB側録画予約一覧取得要求
         RemoteRecordingReservationListWebClient remoteWebClient = new RemoteRecordingReservationListWebClient();
         remoteWebClient.getRemoteRecordingReservationListApi(this);
@@ -202,7 +202,17 @@ public class RecordingReservationListDataProvider implements
 
         // チャンネル一覧取得
         getTvScheduleListData();
+    }
 
+    /**
+     * 取得リストを初期化
+     */
+    private void initDataList() {
+        mStbResponse = null;
+        mDRemoteResponse = null;
+        mTvScheduleList = null;
+        mRecordingReservationList = null;
+        mBuffMatchListMap = null;
     }
 
     /**
@@ -225,14 +235,13 @@ public class RecordingReservationListDataProvider implements
         } else {
             mTvScheduleList = list;
         }
-
     }
 
     /**
      * ContentsDataを生成(STB)
      *
-     * @param data
-     * @return
+     * @param data レスポンスデータ
+     * @return コンテンツデータ
      */
     private ContentsData createContentsData(RemoteRecordingReservationMetaData data) {
         ContentsData contentsData = new ContentsData();
@@ -242,14 +251,15 @@ public class RecordingReservationListDataProvider implements
         contentsData.setChannelName(getChannelName(data.getServiceId()));
         // 録画予約ステータス
         contentsData.setRecordingReservationStatus(data.getSyncStatus());
+
         return contentsData;
     }
 
     /**
      * ContentsDataを生成(dリモート)
      *
-     * @param data
-     * @return
+     * @param data レスポンスデータ
+     * @return コンテンツデータ
      */
     private ContentsData createContentsData(RecordingReservationMetaData data) {
         ContentsData contentsData = new ContentsData();
@@ -259,6 +269,7 @@ public class RecordingReservationListDataProvider implements
         contentsData.setChannelName(getChannelName(data.getServiceId()));
         // 録画予約ステータス
         contentsData.setRecordingReservationStatus(RECORD_RESERVATION_SYNC_STATUS_ALREADY_REFLECT);
+
         return contentsData;
     }
 
@@ -279,7 +290,7 @@ public class RecordingReservationListDataProvider implements
                 }
             }
         }
-        SparseArray<List<RecordingReservationContentInfo>> sparseArray = mBuffMatchListMap;
+        SparseArray<List<RecordingReservationContentInfo>> sparseArray = mBuffMatchListMap.clone();
         boolean matchFlag = false;
         // STBが側データを格納
         for (RemoteRecordingReservationMetaData stbData : stbList) {
@@ -303,13 +314,11 @@ public class RecordingReservationListDataProvider implements
         for (RecordingReservationMetaData dRemoteData : dRemoteList) {
             matchFlag = false;
             for (int i = 0; i < sparseArray.size(); i++) {
-                List<RecordingReservationContentInfo> list = sparseArray.get(i, null);
-                if (list != null && list.size() != 0) {
-                    for (RecordingReservationContentInfo info : list) {
-                        if (dRemoteData.getServiceId().equals(info.getServiceId())
-                                && dRemoteData.getEventId().equals(info.getEventId())) {
-                            matchFlag = true;
-                        }
+                List<RecordingReservationContentInfo> list = getRecordingReservationContentInfoList(i);
+                for (RecordingReservationContentInfo info : list) {
+                    if (dRemoteData.getServiceId().equals(info.getServiceId())
+                            && dRemoteData.getEventId().equals(info.getEventId())) {
+                        matchFlag = true;
                     }
                 }
             }
@@ -322,7 +331,7 @@ public class RecordingReservationListDataProvider implements
     /**
      * STB側レスポンスデータをRecordingReservationContentInfoに設定
      *
-     * @param data
+     * @param data レスポンスデータ
      */
     private void setRecordingReservationContentInfo(RemoteRecordingReservationMetaData data) {
         RecordingReservationContentInfo contentInfo = new RecordingReservationContentInfo();
@@ -343,7 +352,7 @@ public class RecordingReservationListDataProvider implements
     /**
      * dリモート側レスポンスデータをRecordingReservationContentInfoに設定
      *
-     * @param data
+     * @param data レスポンスデータ
      */
     private void setRecordingReservationContentInfo(RecordingReservationMetaData data) {
         RecordingReservationContentInfo contentInfo = new RecordingReservationContentInfo();
@@ -364,8 +373,8 @@ public class RecordingReservationListDataProvider implements
     /**
      * 日付差毎のkey値を算出してMapにputする
      *
-     * @param startTime
-     * @param info
+     * @param startTime 開始時間（エポック秒：秒単位）
+     * @param info      　コンテンツデータ
      */
     private void putBuffMatchListMapSingle(long startTime, RecordingReservationContentInfo info) {
         // 本日の曜日
@@ -396,9 +405,9 @@ public class RecordingReservationListDataProvider implements
     /**
      * 単発録画予約以外のレスポンスに対して日付差毎のkey値を算出してMapにputする
      *
-     * @param loopTypeNum
-     * @param startTime
-     * @param info
+     * @param loopTypeNum 録画予約パターン
+     * @param startTime   開始時間（0時00分00秒からの秒数）
+     * @param info        コンテンツデータ
      */
     private void putBuffMatchListMap(int loopTypeNum, long startTime, RecordingReservationContentInfo info) {
         // 現在日の曜日
@@ -564,8 +573,8 @@ public class RecordingReservationListDataProvider implements
     /**
      * key値を元にSparseArrayからリストデータを取得
      *
-     * @param key
-     * @return
+     * @param key Mapのkey値
+     * @return keyの値で格納したRecordingReservationContentInfoリスト
      */
     private List<RecordingReservationContentInfo> getRecordingReservationContentInfoList(int key) {
         return mBuffMatchListMap.get(key, new ArrayList<RecordingReservationContentInfo>());
@@ -587,33 +596,23 @@ public class RecordingReservationListDataProvider implements
     }
 
     // TODO データのソート（開始時刻順）
-    private void sortRecordingReservationListData(List<ContentsData> beforeList) {
+    private void sortRecordingReservationListData() {
         mRecordingReservationList = new ArrayList<ContentsData>();
-        mRecordingReservationList.add(beforeList.get(0));
-        int i = 0;
-        for (ContentsData data : beforeList) {
-//            if(data.getTime() < mRecordingReservationList.get(i).getTime()) {
-//
-//            }
+//        mRecordingReservationList.add(.get(0));
+        for (int i = 0; i < mBuffMatchListMap.size(); i++) {
+            List<RecordingReservationContentInfo> infoList = getRecordingReservationContentInfoList(i);
+            Collections.sort(infoList, new ContentInfoComparator());
+            for (int j = 0; j < infoList.size(); j++) {
+                mRecordingReservationList.add(infoList.get(j).returnContentsData());
+            }
         }
     }
 
     /**
-     *  次回予約時間を エポック秒 に変換かつString値に変換
-     */
-    // TODO Utilに実装の可能性あり
-//    public static String getNextRecordingTime() {
-//        //現在日時を取得
-//        Calendar now = Calendar.getInstance();
-//
-//        return null;
-//    }
-
-    /**
      * CH一覧のレスポンスからチャンネル名を取得
      *
-     * @param serviceId
-     * @return
+     * @param serviceId サービスID
+     * @return チャンネル名
      */
     private String getChannelName(String serviceId) {
         String channelName = null;
@@ -623,17 +622,18 @@ public class RecordingReservationListDataProvider implements
                 break;
             }
         }
+
         return channelName;
     }
 
     /**
      * チャンネル一覧データをDBに格納する
      *
-     * @param tvScheduleList
+     * @param tvScheduleList 取得したチャンネル一覧データ
      */
-    public void setStructDB(TvScheduleList tvScheduleList) {
+    private void setStructDB(TvScheduleList tvScheduleList) {
         DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(TvSchedule_LAST_INSERT);
+        dateUtils.addLastDate(DateUtils.TvSchedule_LAST_INSERT);
         TvScheduleInsertDataManager dataManager = new TvScheduleInsertDataManager(mContext);
         dataManager.insertTvScheduleInsertList(tvScheduleList);
 
@@ -652,39 +652,63 @@ public class RecordingReservationListDataProvider implements
         // イベントID
         private String eventId = null;
 
-        public void setContentsData(ContentsData contentsData) {
+        private void setContentsData(ContentsData contentsData) {
             this.contentsData = contentsData;
         }
 
-        public void setStartTimeEpoch(long epochTime) {
+        private void setStartTimeEpoch(long epochTime) {
             this.startTimeEpoch = epochTime;
         }
 
-        public void setServiceId(String serviceId) {
+        private void setServiceId(String serviceId) {
             this.serviceId = serviceId;
         }
 
-        public void setEventId(String eventId) {
+        private void setEventId(String eventId) {
             this.eventId = eventId;
         }
 
-        public long getStartTimeEpoch() {
+        private long getStartTimeEpoch() {
             return this.startTimeEpoch;
         }
 
-        public String getServiceId() {
+        private String getServiceId() {
             return this.serviceId;
         }
 
-        public String getEventId() {
+        private String getEventId() {
             return this.eventId;
         }
 
-        public ContentsData returnContentsData() {
-            ContentsData contentsData = new ContentsData();
-            contentsData = this.contentsData;
+        /**
+         * 開始時間をエポック秒からFormatしてString値としてコンテンツデータに設定して返す
+         *
+         * @return コンテンツデータクラス
+         */
+        private ContentsData returnContentsData() {
+            ContentsData contentsData = this.contentsData;
             contentsData.setTime(DateUtils.formatEpochToString(this.startTimeEpoch));
             return contentsData;
+        }
+    }
+
+    /**
+     * ソート条件定義クラス
+     */
+    private class ContentInfoComparator implements Comparator<RecordingReservationContentInfo> {
+        @Override
+        public int compare(RecordingReservationContentInfo infoA, RecordingReservationContentInfo infoB) {
+            long infoA_StartTime = infoA.getStartTimeEpoch();
+            long infoB_StartTime = infoB.getStartTimeEpoch();
+
+            // RecordingReservationContentInfo.StartTimeEpochの昇順にソート
+            if (infoA_StartTime > infoB_StartTime) {
+                return 1;
+            } else if (infoA_StartTime == infoB_StartTime) {
+                return 0;
+            } else {
+                return -1;
+            }
         }
     }
 }
