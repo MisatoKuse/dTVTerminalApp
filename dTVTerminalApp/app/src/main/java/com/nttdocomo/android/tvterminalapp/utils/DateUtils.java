@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class DateUtils {
@@ -72,6 +73,18 @@ public class DateUtils {
     private static final int LIMIT_HOUR = 1;
 
     private Context mContext;
+
+    /**
+     * 曜日の固定値
+     */
+    public static final int DAY_OF_WEEK_SUNDAY = 1;
+    public static final int DAY_OF_WEEK_MONDAY = 2;
+    public static final int DAY_OF_WEEK_TUESDAY = 3;
+    public static final int DAY_OF_WEEK_WEDNESDAY = 4;
+    public static final int DAY_OF_WEEK_THURSDAY = 5;
+    public static final int DAY_OF_WEEK_FRIDAY = 6;
+    public static final int DAY_OF_WEEK_SATURDAY = 7;
+
 
     /**
      * コンテキスト
@@ -145,5 +158,81 @@ public class DateUtils {
             isExpired = true;
         }
         return isExpired;
+    }
+
+    /**
+     * エポック秒を YYYY/MM/DD かつString値に変換
+     */
+    public static String formatEpochToString(long epochTime) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_PATTERN);
+        return dateFormat.format(new Date(epochTime * 1000));
+    }
+
+    /**
+     * 現在日時エポック秒を取得
+     */
+    public static long getNowTimeFormatEpoch() {
+        Calendar nowTime = Calendar.getInstance();
+        return (nowTime.getTimeInMillis() / 1000);
+    }
+
+    /**
+     * 現在日の0時00分00秒をエポック秒で取得
+     */
+    public static long getTodayStartTimeFormatEpoch() {
+        Calendar nowTime = Calendar.getInstance();
+        nowTime.set(nowTime.YEAR, nowTime.MONTH, nowTime.DATE, 0, 0, 0);
+        nowTime.clear(nowTime.MILLISECOND);
+        return (nowTime.getTimeInMillis() / 1000);
+    }
+
+    /**
+     * 現在の曜日を取得
+     *
+     * @return 日:1 ～ 土:7
+     */
+    public static int getTodayDayOfWeek() {
+        Calendar nowTime = Calendar.getInstance();
+        return nowTime.get(Calendar.DAY_OF_WEEK);
+    }
+
+    /**
+     * 指定日（エポック秒：秒単位）から曜日を取得
+     *
+     * @param epochTime
+     * @return 日:1 ～ 土:7
+     */
+    public static int getDayOfWeek(long epochTime) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(epochTime * 1000);
+        return cal.get(Calendar.DAY_OF_WEEK);
+    }
+
+    /**
+     * 月曜日までの日数を取得
+     *
+     * @param dayOfWeek
+     * @return
+     */
+    public static int getNumberOfDaysUntilMonday(int dayOfWeek) {
+        if (DateUtils.DAY_OF_WEEK_MONDAY < dayOfWeek) {
+            return (DateUtils.DAY_OF_WEEK_MONDAY + 7) - dayOfWeek;
+        } else {
+            return DateUtils.DAY_OF_WEEK_MONDAY - dayOfWeek;
+        }
+    }
+
+    /**
+     * 日曜日までの日数を取得
+     *
+     * @param dayOfWeek
+     * @return
+     */
+    public static int getNumberOfDaysUntilSUNDAY(int dayOfWeek) {
+        if (DateUtils.DAY_OF_WEEK_SUNDAY < dayOfWeek) {
+            return (DateUtils.DAY_OF_WEEK_SUNDAY + 7) - dayOfWeek;
+        } else {
+            return DateUtils.DAY_OF_WEEK_SUNDAY - dayOfWeek;
+        }
     }
 }
