@@ -8,6 +8,7 @@ import android.content.Context;
 import android.util.SparseArray;
 
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.TvScheduleInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.HomeDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationListResponse;
@@ -116,6 +117,7 @@ public class RecordingReservationListDataProvider implements
 
     @Override
     public void onRemoteRecordingReservationListJsonParsed(RemoteRecordingReservationListResponse response) {
+        DTVTLogger.start();
         if (response != null) {
             mStbResponse = response;
             // CH一覧取得,リモート側との同期
@@ -125,12 +127,15 @@ public class RecordingReservationListDataProvider implements
                 apiDataProviderCallback.recordingReservationListCallback(mRecordingReservationList);
             }
         } else {
+            DTVTLogger.error("response is null");
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
         }
+        DTVTLogger.end();
     }
 
     @Override
     public void onRecordingReservationListJsonParsed(RecordingReservationListResponse response) {
+        DTVTLogger.start();
         if (response != null) {
             mDRemoteResponse = response;
             // CH一覧取得,STB側との同期
@@ -140,12 +145,15 @@ public class RecordingReservationListDataProvider implements
                 apiDataProviderCallback.recordingReservationListCallback(mRecordingReservationList);
             }
         } else {
+            DTVTLogger.error("response is null");
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
         }
+        DTVTLogger.end();
     }
 
     @Override
     public void onTvScheduleJsonParsed(List<TvScheduleList> tvScheduleList) {
+        DTVTLogger.start();
         if (tvScheduleList != null && tvScheduleList.size() > 0) {
             TvScheduleList list = tvScheduleList.get(0);
             mTvScheduleList = list.geTvsList();
@@ -157,8 +165,10 @@ public class RecordingReservationListDataProvider implements
                 setStructDB(list);
             }
         } else {
+            DTVTLogger.error("response is null");
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -188,6 +198,7 @@ public class RecordingReservationListDataProvider implements
      * Activityからのデータ取得要求受付
      */
     public void requestRecordingReservationListData() {
+        DTVTLogger.start();
         initDataList();
 
         // STB側録画予約一覧取得要求
@@ -202,12 +213,14 @@ public class RecordingReservationListDataProvider implements
 
         // チャンネル一覧取得
         getTvScheduleListData();
+        DTVTLogger.end();
     }
 
     /**
      * 取得リストを初期化
      */
     private void initDataList() {
+        DTVTLogger.debug("Init ListData");
         mStbResponse = null;
         mDRemoteResponse = null;
         mTvScheduleList = null;
@@ -219,6 +232,7 @@ public class RecordingReservationListDataProvider implements
      * CH一覧情報取得
      */
     private void getTvScheduleListData() {
+        DTVTLogger.start();
         List<Map<String, String>> list = new ArrayList<>();
         // チャンネル一覧（NO ON AIR一覧）のDB保存履歴と、有効期間を確認
         //データをDBから取得する
@@ -235,6 +249,7 @@ public class RecordingReservationListDataProvider implements
         } else {
             mTvScheduleList = list;
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -277,6 +292,8 @@ public class RecordingReservationListDataProvider implements
      * STB側とdリモート側のレスポンスを突合してSparseArrayに格納する
      */
     private void buttRecordingReservationListData() {
+        DTVTLogger.start();
+        DTVTLogger.debug("start buff");
         mBuffMatchListMap = new SparseArray<List<RecordingReservationContentInfo>>();
         List<RemoteRecordingReservationMetaData> stbList = mStbResponse.getRemoteRecordingReservationMetaData();
         List<RecordingReservationMetaData> dRemoteList = mDRemoteResponse.getRecordingReservationMetaData();
@@ -290,6 +307,7 @@ public class RecordingReservationListDataProvider implements
                 }
             }
         }
+        DTVTLogger.debug("end buff");
         SparseArray<List<RecordingReservationContentInfo>> sparseArray = mBuffMatchListMap.clone();
         boolean matchFlag = false;
         // STBが側データを格納
@@ -326,6 +344,7 @@ public class RecordingReservationListDataProvider implements
                 setRecordingReservationContentInfo(dRemoteData);
             }
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -377,6 +396,7 @@ public class RecordingReservationListDataProvider implements
      * @param info      　コンテンツデータ
      */
     private void putBuffMatchListMapSingle(long startTime, RecordingReservationContentInfo info) {
+        DTVTLogger.start();
         // 本日の曜日
         int todayDayOfWeek = DateUtils.getTodayDayOfWeek();
         // レスポンスデータの曜日
@@ -400,6 +420,7 @@ public class RecordingReservationListDataProvider implements
         List<RecordingReservationContentInfo> infoList = getRecordingReservationContentInfoList(key);
         infoList.add(info);
         mBuffMatchListMap.put(key, infoList);
+        DTVTLogger.end("key = " + key);
     }
 
     /**
@@ -410,6 +431,7 @@ public class RecordingReservationListDataProvider implements
      * @param info        コンテンツデータ
      */
     private void putBuffMatchListMap(int loopTypeNum, long startTime, RecordingReservationContentInfo info) {
+        DTVTLogger.start("loopTypeNum = " + loopTypeNum);
         // 現在日の曜日
         int todayDayOfWeek = DateUtils.getTodayDayOfWeek();
         // 現在日時（エポック秒：秒単位）
@@ -568,6 +590,7 @@ public class RecordingReservationListDataProvider implements
         List<RecordingReservationContentInfo> infoList = getRecordingReservationContentInfoList(key);
         infoList.add(info);
         mBuffMatchListMap.put(key, infoList);
+        DTVTLogger.end("key = " + key + " todayDayOfWeek = " + todayDayOfWeek);
     }
 
     /**
@@ -595,10 +618,12 @@ public class RecordingReservationListDataProvider implements
         }
     }
 
-    // TODO データのソート（開始時刻順）
+    /**
+     * リストデータを開始時間の昇順にソートを実施
+     */
     private void sortRecordingReservationListData() {
+        DTVTLogger.start();
         mRecordingReservationList = new ArrayList<ContentsData>();
-//        mRecordingReservationList.add(.get(0));
         for (int i = 0; i < mBuffMatchListMap.size(); i++) {
             List<RecordingReservationContentInfo> infoList = getRecordingReservationContentInfoList(i);
             Collections.sort(infoList, new ContentInfoComparator());
@@ -606,6 +631,7 @@ public class RecordingReservationListDataProvider implements
                 mRecordingReservationList.add(infoList.get(j).returnContentsData());
             }
         }
+        DTVTLogger.end("mRecordingReservationList.size() = " + mRecordingReservationList.size());
     }
 
     /**
@@ -615,6 +641,7 @@ public class RecordingReservationListDataProvider implements
      * @return チャンネル名
      */
     private String getChannelName(String serviceId) {
+        DTVTLogger.start();
         String channelName = null;
         for (Map<String, String> map : mTvScheduleList) {
             if (map.get(TvScheduleJsonParser.TV_SCHEDULE_LIST_SERVICE_ID).equals(serviceId)) {
@@ -622,7 +649,7 @@ public class RecordingReservationListDataProvider implements
                 break;
             }
         }
-
+        DTVTLogger.end();
         return channelName;
     }
 
@@ -632,10 +659,12 @@ public class RecordingReservationListDataProvider implements
      * @param tvScheduleList 取得したチャンネル一覧データ
      */
     private void setStructDB(TvScheduleList tvScheduleList) {
+        DTVTLogger.start();
         DateUtils dateUtils = new DateUtils(mContext);
         dateUtils.addLastDate(DateUtils.TvSchedule_LAST_INSERT);
         TvScheduleInsertDataManager dataManager = new TvScheduleInsertDataManager(mContext);
         dataManager.insertTvScheduleInsertList(tvScheduleList);
+        DTVTLogger.end();
 
     }
 
