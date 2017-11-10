@@ -22,8 +22,8 @@ public class TvClipWebClient
     @Override
     public void onParserFinished(Object parsedData) {
         //パース後のデータを返す
-        if(null!=mTvClipJsonParserCallback){
-            mTvClipJsonParserCallback.onTvClipJsonParsed((List<TvClipList>)parsedData);
+        if (null != mTvClipJsonParserCallback) {
+            mTvClipJsonParserCallback.onTvClipJsonParsed((List<TvClipList>) parsedData);
         }
     }
 
@@ -41,6 +41,7 @@ public class TvClipWebClient
     public interface TvClipJsonParserCallback {
         /**
          * 正常に終了した場合に呼ばれるコールバック
+         *
          * @param tvClipLists JSONパース後のデータ
          */
         void onTvClipJsonParsed(List<TvClipList> tvClipLists);
@@ -51,28 +52,15 @@ public class TvClipWebClient
 
     /**
      * 通信成功時のコールバック
+     *
      * @param returnCode 戻り値構造体
      */
     @Override
     public void onAnswer(ReturnCode returnCode) {
-        /*
-        //パース後データ受け取り用
-        List<TvClipList> pursedData;
-
-        //JSONをパースする
-        TvClipJsonParser tvClipJsonParser = new TvClipJsonParser();
-        pursedData = tvClipJsonParser.VodClipListSender(returnCode.bodyData);
-
-
-        //パース後のデータを返す
-        mTvClipJsonParserCallback.onTvClipJsonParsed(pursedData);
-        */
-        //parse(returnCode.bodyData);
-        //public JsonParserThread(String json, Handler handle, JsonParser lis)
-        Handler handler =new Handler();
+        Handler handler = new Handler();
         try {
-            JsonParserThread t = new JsonParserThread(returnCode.bodyData, handler, this);
-            t.start();
+            JsonParserThread thread = new JsonParserThread(returnCode.bodyData, handler, this);
+            thread.start();
         } catch (Exception e) {
             DTVTLogger.debug(e);
             onError();
@@ -90,19 +78,20 @@ public class TvClipWebClient
     }
 
     /**
-     * VODクリップ取得
-     * @param ageReq                         視聴年齢制限値（1から17までの値）
-     * @param upperPagetLimit               結果の最大件数（1以上）
-     * @param lowerPagetLimit　             結果の最小件数（1以上）
-     * @param pagerOffset                    取得位置
-     * @param tvClipJsonParserCallback    コールバック
+     * TVクリップ取得
+     *
+     * @param ageReq                   視聴年齢制限値（1から17までの値）
+     * @param upperPagetLimit          結果の最大件数（1以上）
+     * @param lowerPagetLimit          　             結果の最小件数（1以上）
+     * @param pagerOffset              取得位置
+     * @param tvClipJsonParserCallback コールバック
      * @return パラメータ等に問題があった場合はfalse
      */
     public boolean getTvClipApi(int ageReq, int upperPagetLimit, int lowerPagetLimit,
                                 int pagerOffset,
                                 TvClipJsonParserCallback tvClipJsonParserCallback) {
         //パラメーターのチェック
-        if(!checkNormalParameter(ageReq,upperPagetLimit, lowerPagetLimit,
+        if (!checkNormalParameter(ageReq, upperPagetLimit, lowerPagetLimit,
                 pagerOffset, tvClipJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、ヌルで帰る
             return false;
@@ -112,16 +101,16 @@ public class TvClipWebClient
         mTvClipJsonParserCallback = tvClipJsonParserCallback;
 
         //送信用パラメータの作成
-        String sendParameter = makeSendParameter(ageReq,upperPagetLimit,lowerPagetLimit,pagerOffset);
+        String sendParameter = makeSendParameter(ageReq, upperPagetLimit, lowerPagetLimit, pagerOffset);
 
         //JSONの組み立てに失敗していれば、ヌルで帰る
-        if(sendParameter.isEmpty()) {
+        if (sendParameter.isEmpty()) {
             return false;
         }
 
-        //VODクリップ一覧を呼び出す
+        //TVクリップ一覧を呼び出す
         openUrl(API_NAME_LIST.TV_CLIP_LIST.getString(),
-                sendParameter,this);
+                sendParameter, this);
 
         //今のところ正常なので、trueで帰る
         return true;
@@ -129,34 +118,35 @@ public class TvClipWebClient
 
     /**
      * 指定されたパラメータがおかしいかどうかのチェック
-     * @param ageReq                        視聴年齢制限値
-     * @param upperPagetLimit              結果の最大件数
-     * @param lowerPagetLimit　            結果の最小件数
-     * @param pagerOffset                   取得位置
-     * @param tvClipJsonParserCallback   コールバック
+     *
+     * @param ageReq                   視聴年齢制限値
+     * @param upperPagetLimit          結果の最大件数
+     * @param lowerPagetLimit          　            結果の最小件数
+     * @param pagerOffset              取得位置
+     * @param tvClipJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(int ageReq,int upperPagetLimit,int lowerPagetLimit,
+    private boolean checkNormalParameter(int ageReq, int upperPagetLimit, int lowerPagetLimit,
                                          int pagerOffset,
                                          TvClipJsonParserCallback tvClipJsonParserCallback) {
-        if(!(ageReq >= 1 && ageReq <= 17)) {
+        if (!(ageReq >= 1 && ageReq <= 17)) {
             //ageReqが1から17ではないならばfalse
             return false;
         }
 
         // 各値が下限以下ならばfalse
-        if(upperPagetLimit < 1) {
+        if (upperPagetLimit < 1) {
             return false;
         }
-        if(lowerPagetLimit < 1) {
+        if (lowerPagetLimit < 1) {
             return false;
         }
-        if(pagerOffset < 0) {
+        if (pagerOffset < 0) {
             return false;
         }
 
         //コールバックが含まれていないならばエラー
-        if(tvClipJsonParserCallback == null) {
+        if (tvClipJsonParserCallback == null) {
             return false;
         }
 
@@ -166,13 +156,14 @@ public class TvClipWebClient
 
     /**
      * 指定されたパラメータをJSONで組み立てて文字列にする
-     * @param ageReq            視聴年齢制限値
-     * @param upperPagetLimit  結果の最大件数
-     * @param lowerPagetLimit　結果の最小件数
-     * @param pagerOffset      取得位置
+     *
+     * @param ageReq          視聴年齢制限値
+     * @param upperPagetLimit 結果の最大件数
+     * @param lowerPagetLimit 　結果の最小件数
+     * @param pagerOffset     取得位置
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(int ageReq,int upperPagetLimit,int lowerPagetLimit,int pagerOffset) {
+    private String makeSendParameter(int ageReq, int upperPagetLimit, int lowerPagetLimit, int pagerOffset) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
@@ -180,11 +171,11 @@ public class TvClipWebClient
 
             JSONObject jsonPagerObject = new JSONObject();
 
-            jsonPagerObject.put("upper_limit",upperPagetLimit);
-            jsonPagerObject.put("lower_limit",lowerPagetLimit);
-            jsonPagerObject.put("offset",pagerOffset);
+            jsonPagerObject.put("upper_limit", upperPagetLimit);
+            jsonPagerObject.put("lower_limit", lowerPagetLimit);
+            jsonPagerObject.put("offset", pagerOffset);
 
-            jsonObject.put("pager",jsonPagerObject);
+            jsonObject.put("pager", jsonPagerObject);
 
             answerText = jsonObject.toString();
 
