@@ -38,7 +38,7 @@ public class DailyRankWebClient
 
     @Override
     public void onError() {
-        if(mDailyRankJsonParserCallback != null) {
+        if (mDailyRankJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
             mDailyRankJsonParserCallback.onDailyRankJsonParsed(null);
         }
@@ -74,7 +74,6 @@ public class DailyRankWebClient
         }
 
         //日毎ランク一覧を呼び出す
-        //TODO: 内部的には暫定的にVOD一覧を呼んでいる
         openUrl(API_NAME_LIST.DAILY_RANK_LIST.getString(), sendParameter, this);
 
         //今のところ失敗していないので、trueを返す
