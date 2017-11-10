@@ -64,9 +64,7 @@ public class GenreListJsonParser extends AsyncTask<Object, Object, Object> {
      * @return ジャンル一覧取得：正常時レスポンスデータ
      */
     public GenreListResponse genreListSender(String jsonStr) {
-
         mGenreListResponse = new GenreListResponse();
-
         try {
             if (jsonStr != null) {
                 JSONObject jsonObj = new JSONObject(jsonStr);
@@ -126,7 +124,7 @@ public class GenreListJsonParser extends AsyncTask<Object, Object, Object> {
                 }
                 JSONArray lists = jsonObj.getJSONArray(item);
                 if (lists.length() == 0) {
-                    return;
+                   continue;
                 }
                 genreListMetaDataList =
                         new ArrayList<GenreListMetaData>();
