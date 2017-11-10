@@ -6,202 +6,196 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetResponse;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.GenreCountGetWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.GenreListWebClient;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class VideoGenreProvider
-//        implements GenreListWebClient.GenreListJsonParserCallback
-{
+public class VideoGenreProvider implements
+        GenreListWebClient.GenreListJsonParserCallback,
+        GenreCountGetWebClient.GenreCountGetJsonParserCallback{
     private Context mContext;
 
-    private apiVideoGenreDataProviderCallback mApiVideoGenreDataProviderCallback = null;
+    private apiGenreListDataProviderCallback mApiGenreListDataProviderCallback = null;
+    private apiContentCountDataProviderCallback mApiContentCountDataProviderCallback = null;
 
-    public static final String GENRE_ID_KEY = "genreId";
-    public static final String TITLE_ID_KEY = "title";
-    public static final String COUNT_ID_KEY = "count";
+    @Override
+    public void onGenreListJsonParsed(GenreListResponse genreListResponse) {
 
-    /**
-     * コンストラクタ
-     *
-     * @param mContext
-     */
-    public VideoGenreProvider(Context mContext) {
-        this.mContext = mContext;
-        this.mApiVideoGenreDataProviderCallback = (apiVideoGenreDataProviderCallback) mContext;
     }
 
-//    @Override
-//    public void onGenreListJsonParsed(RemoteRecordingReservationListResponse genreListResponse) {
-//        if (genreListResponse != null && genreListResponse.size() > 0) {
-//            VideoRankList list = genreListResponse.get(0);
-//            sendContentCountData(list.getVrList());
-//        } else {
-//            //TODO:WEBAPIを取得できなかった時の処理を記載予定
-//        }
-//    }
+    @Override
+    public void onGenreCountGetJsonParsed(GenreCountGetResponse genreCountGetResponse) {
+
+    }
 
     /**
-     * ビデオコンテンツ一覧画面用データを返却するためのコールバック
+     * ジャンル一覧用データを返却するためのコールバック
      */
-    public interface apiVideoGenreDataProviderCallback {
+    public interface apiGenreListDataProviderCallback {
         /**
          * ジャンル一覧用コールバック
          *
-         * @param genreMap
+         * @param genreHashMap
          */
-        void videoGenreCallback(List<Map<String, String>> genreMap);
+        void genreListCallback(List<Map<String, String>> genreHashMap);
+    }
 
+    /**
+     * コンテンツ数用データを返却するためのコールバック
+     */
+    public interface apiContentCountDataProviderCallback {
         /**
          * コンテンツ数用コールバック
          *
-         * @param countMap
+         * @param countHashMap
          */
-        void videoContentCountCallback(List<Map<String, String>> countMap);
+        void contentCountCallback(List<Map<String, String>> countHashMap);
     }
 
     /**
-     * ジャンル一覧用
-     * VideoContentListActivityからのデータ取得要求受付
+     * ジャンル一覧
+     * コンストラクタ
      */
-    public void getVideoGenreData() {
-        // ジャンルリスト
-        List<Map<String, String>> videoGenreList = getVideoGenreListData();
-        if (videoGenreList != null && videoGenreList.size() > 0) {
-            sendGanreListData(videoGenreList);
-        }
-        // コンテンツ数
-        List<Map<String, String>> videoContentCount = getVideoContentCountData();
-        if (videoContentCount != null && videoContentCount.size() > 0) {
-            sendContentCountData(videoContentCount);
-        }
+    public VideoGenreProvider(Context mContext) {
+        this.mContext = mContext;
+        this.mApiGenreListDataProviderCallback = (apiGenreListDataProviderCallback) mContext;
     }
 
     /**
-     * サブジャンル一覧用
-     * VideoContentListActivityからのデータ取得要求受付
+     * コンテンツ数
+     * コンストラクタ
      */
-    public void getVideoGenreData(String genreId) {
-        // コンテンツ数
-        List<Map<String, String>> videoContentCount = getVideoContentCountData();
-        if (videoContentCount != null && videoContentCount.size() > 0) {
-            sendContentCountData(videoContentCount);
+    public VideoGenreProvider(Context mContext, String genreId) {
+        this.mContext = mContext;
+        this.mApiContentCountDataProviderCallback = (apiContentCountDataProviderCallback) mContext;
+    }
+
+    /**
+     * ジャンル一覧をVideoTopActivityに送る
+     *
+     * @param list
+     */
+    public void sendGenreListData(List<Map<String, String>> list) {
+        mApiGenreListDataProviderCallback.genreListCallback(list);
+    }
+
+    /**
+     * コンテンツ数をVideoTopActivityに送る
+     *
+     * @param list
+     */
+    public void sendContentCountListData(List<Map<String, String>> list) {
+        mApiContentCountDataProviderCallback.contentCountCallback(list);
+    }
+
+    /**
+     * ジャンル一覧
+     * VideoTopActivityからのデータ取得要求受付
+     */
+    public void getGenreListDataRequest() {
+        List<Map<String, String>> genreList = getGenreListData();
+        if (genreList != null && genreList.size() > 0) {
+            sendGenreListData(genreList);
         }
     }
 
     /**
-     * ビデオジャンル/サブジャンル一覧のデータ取得要求を行う
+     * コンテンツ数
+     * VideoTopActivityからのデータ取得要求受付
+     */
+    public void getContentCountDataRequest(List genreIdList) {
+        List<Map<String, String>> contentCountList = getContentCountListData(genreIdList);
+        if (contentCountList != null && contentCountList.size() > 0) {
+            sendContentCountListData(contentCountList);
+        }
+    }
+
+
+    /**
+     * ジャンル一覧のデータ取得要求を行う
      *
      * @return
      */
-    private List<Map<String, String>> getVideoGenreListData() {
+    private List<Map<String, String>> getGenreListData() {
         List<Map<String, String>> list = new ArrayList<>();
         //通信クラスにデータ取得要求を出す
-//        GenreListWebClient webClient = new GenreListWebClient();
+        // TODO WebAPI
+        GenreListWebClient webClient = new GenreListWebClient();
         int limit = 1;
         int offset = 1;
         String filter = "";
         int ageReq = 1;
-        String type = "";
-        String sort = "";
-
-//        webClient.getGenreListApi(limit, offset,
-//                filter, ageReq, genreId, type, sort, this);
-
+//        webClient.getGenreListApi(limit, offset, filter, ageReq, genreId, this);
         return list;
     }
 
     /**
      * コンテンツ数のデータ取得要求を行う
      *
+     * @param genreIdList
      * @return
      */
-    private List<Map<String, String>> getVideoContentCountData() {
+    private List getContentCountListData(List genreIdList) {
         List<Map<String, String>> list = new ArrayList<>();
-        // TODO まだサーバーから情報がとれない
         //通信クラスにデータ取得要求を出す
-//        ContentsListPerGenreWebClient webClient = new ContentsListPerGenreWebClient();
+        // TODO WebAPI
+        GenreCountGetWebClient webClient = new GenreCountGetWebClient();
         int limit = 1;
         int offset = 1;
         String filter = "";
         int ageReq = 1;
-        String type = "";
-        String sort = "";
-
-//        //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
-//        webClient.getContentsListPerGenreApi(limit, offset,
-//                filter, ageReq, genreId, type, sort, this);
-
+//        webClient.getContentDetailApi(limit, offset, filter, ageReq, genreId, this);
         return list;
     }
 
     /**
-     * ジャンル一覧をVideoContentListActivityに送る
-     *
-     * @param list
-     */
-    public void sendGanreListData(List<Map<String, String>> list) {
-        mApiVideoGenreDataProviderCallback.videoGenreCallback(list);
-    }
-
-    /**
-     * コンテンツ数をVideoContentListActivityに送る
-     *
-     * @param list
-     */
-    public void sendContentCountData(List<Map<String, String>> list) {
-        mApiVideoGenreDataProviderCallback.videoContentCountCallback(list);
-    }
-
-    /**
      * Mapリストの作成(Map<id, title>)
-     * @param list
+     *
+     * @param genreList
      * @return titleList
      */
-    public List<Map<String, String>> getContentTitleMap(List<Map<String, String>> list) {
-        // TODO 構造体とMap作成してシングルトンインスタンスに保持
-
-        Map<String, String> mapData = new HashMap<>();
-
+    public List<Map<String, String>> getContentTitleMap(List<Map<String, String>> genreList) {
+        VideoGenreList videoGenreList = new VideoGenreList();
+        Map<String, String> map = new HashMap<>();
         List<Map<String, String>> titleList = new ArrayList<>();
-
-        int allCount = 0;
-
-        for (int i = 0; i < list.size(); i++) {
-            Map<String, String> listMap = list.get(i);
-            mapData.put(listMap.get(GENRE_ID_KEY), listMap.get(TITLE_ID_KEY));
+        for (int i = 0; i < genreList.size(); i++) {
+            String id = genreList.get(i).get("genre_id");
+            String title = genreList.get(i).get("title");
+            map.put(id, title);
         }
-        titleList.add(mapData);
-
+        titleList.add(map);
+        videoGenreList.setTitleList(titleList);
         return titleList;
     }
 
     /**
      * Mapリストの作成(Map<id, count>)
-     * @param list
+     *
+     * @param countList
      * @return titleList
      */
-    public void getContentCountMap(List<Map<String, String>> list) {
-        // TODO 構造体とMap作成してシングルトンインスタンスに保持
-        Map<String, String> mapData = new HashMap<>();
+    public List<Map<String, String>> getContentCountMap(List<Map<String, String>> countList) {
         VideoGenreList videoGenreList = new VideoGenreList();
-        int count = 0;
+        Map<String, String> map = new HashMap<>();
+        List<Map<String, String>> countLst = new ArrayList<>();
         int allCount = 0;
-
-        for (int i = 0; i < list.size(); i++) {
-            count = 0;
-            Map<String, String> listMap = list.get(i);
-            count = Integer.parseInt(listMap.get(COUNT_ID_KEY));
-            mapData.put(listMap.get(GENRE_ID_KEY), listMap.get(COUNT_ID_KEY));
-            allCount = allCount + count;
+        for (int i = 0; i < countList.size(); i++) {
+            String id = countList.get(i).get("genre_id");
+            String count = countList.get(i).get("count");
+            map.put(id, count);
+            // [すべて]のコンテンツ数に追加していく
+            allCount = allCount + Integer.parseInt(count);
         }
-
-        videoGenreList.setMapCountList(mapData);
-        // for文を抜けたらすべてのコンテンツ数が加算され終えているのでオブジェクトに格納する。
-        // TODO まだ見直し必要
-        videoGenreList.setAllContentCount(allCount);
+        countLst.add(map);
+        videoGenreList.setAllContentCount(String.valueOf(allCount));
+        videoGenreList.setCountList(countLst);
+        return countLst;
     }
 }
