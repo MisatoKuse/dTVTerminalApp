@@ -50,10 +50,15 @@ public class VideoGenreAdapter extends BaseAdapter implements AbsListView.OnScro
             holder = new VideoGenreAdapter.ViewHolder();
             holder.genre_title = view.findViewById(R.id.genre_title);
             holder.genre_count = view.findViewById(R.id.genre_count);
+
+            // タップ時用にGenreIdを隠しておく
+            holder.genre_id = view.findViewById(R.id.genre_id);
             view.setTag(holder);
         } else {
             holder = (VideoGenreAdapter.ViewHolder) view.getTag();
         }
+
+        // TODO 各データのset
 
         if (null != holder.genre_title) {
             holder.genre_title.setText(videoGenreList.getTitle());
@@ -61,6 +66,10 @@ public class VideoGenreAdapter extends BaseAdapter implements AbsListView.OnScro
 
         if (null != holder.genre_count) {
             holder.genre_count.setText(videoGenreList.getGenreId());
+        }
+
+        if (null != holder.genre_id) {
+            holder.genre_id.setText(videoGenreList.getGenreId());
         }
 
         return view;
@@ -79,6 +88,6 @@ public class VideoGenreAdapter extends BaseAdapter implements AbsListView.OnScro
     static class ViewHolder {
         TextView genre_title;
         TextView genre_count;
+        TextView genre_id;
     }
 }
-

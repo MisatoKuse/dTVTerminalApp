@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
+import java.util.List;
 import java.util.Map;
 
 public class VideoGenreList {
@@ -11,8 +12,9 @@ public class VideoGenreList {
     private String mGenreId;
     private String mTitle;
     private String mContentCount;
-    private int mAllContentCount;
-    private Map<String, String> mMapCountList;
+    private String mAllContentCount;
+    private List<Map<String, String>> mCountList;
+    private List<Map<String, String>> mTitleList;
 
     public String getGenreId() {
         return mGenreId;
@@ -38,20 +40,28 @@ public class VideoGenreList {
         this.mContentCount = contentCount;
     }
 
-    public int getAllContentCount() {
+    public String getAllContentCount() {
         return mAllContentCount;
     }
 
-    public void setAllContentCount(int allContentCount) {
+    public void setAllContentCount(String allContentCount) {
         this.mAllContentCount = allContentCount;
     }
 
-    public Map<String, String> getMapCountList() {
-        return mMapCountList;
+    public List<Map<String, String>> getCountList() {
+        return mCountList;
     }
 
-    public void setMapCountList(Map<String, String> mapCountList) {
-        this.mMapCountList = mapCountList;
+    public void setCountList(List<Map<String, String>> countList) {
+        this.mCountList = countList;
+    }
+
+    public List<Map<String, String>> getTitleList() {
+        return mTitleList;
+    }
+
+    public void setTitleList(List<Map<String, String>> titleList) {
+        this.mTitleList = titleList;
     }
 
 }
