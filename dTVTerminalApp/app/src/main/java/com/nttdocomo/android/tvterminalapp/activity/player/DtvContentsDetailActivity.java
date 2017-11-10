@@ -21,6 +21,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.OtherContentsDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailFragmentFactory;
 
@@ -33,6 +34,12 @@ public class DtvContentsDetailActivity extends BaseActivity implements
     private HorizontalScrollView mTabScrollView;
     private LinearLayout mLinearLayout;
     private ViewPager mViewPager;
+    private OtherContentsDetailData mDetailData;
+
+    public static final String DTV_INFO_BUNDLE_KEY = "dTVInfoKey";
+    public static final int DTV_CONTENTS_SERVICE_ID = 15;
+    public static final int D_ANIMATION_CONTENTS_SERVICE_ID = 17;
+    public static final int DTV_CHANNEL_CONTENTS_SERVICE_ID = 43;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +47,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements
         setContentView(R.layout.dtv_contents_detail_main_layout);
         mMenuImageView = findViewById(R.id.header_layout_menu);
         mMenuImageView.setVisibility(View.VISIBLE);
+        mDetailData = getIntent().getParcelableExtra(DTV_INFO_BUNDLE_KEY);
         DTVTLogger.start();
         setNoTitle();
         initData();
@@ -73,6 +81,8 @@ public class DtvContentsDetailActivity extends BaseActivity implements
      * Viewの初期化
      */
     private void initView() {
+        TextView headerTitle = findViewById(R.id.header_layout_title);
+        headerTitle.setText(mDetailData.getTitle());
         mTabScrollView = findViewById(R.id.contents_detail_tab_strip_scroll);
         mViewPager = findViewById(R.id.contents_detail_result);
         ContentsDetailPagerAdapter contentsDetailPagerAdapter
@@ -191,7 +201,13 @@ public class DtvContentsDetailActivity extends BaseActivity implements
 
         @Override
         public Fragment getItem(int position) {
-            return mContentsDetailFragmentFactory.createFragment(position);
+            DtvContentsDetailBaseFragment fragment =
+                    mContentsDetailFragmentFactory.createFragment(position);
+            //Fragmentへデータを渡す
+            Bundle args = new Bundle();
+            args.putParcelable(DTV_INFO_BUNDLE_KEY, mDetailData);
+            fragment.setArguments(args);
+            return fragment;
         }
 
         @Override

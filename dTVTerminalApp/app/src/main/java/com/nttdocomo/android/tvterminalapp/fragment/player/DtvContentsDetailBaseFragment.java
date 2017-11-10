@@ -12,7 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +41,10 @@ public class DtvContentsDetailBaseFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        //コンテンツ詳細表示に必要なデータを取得する
+        OtherContentsDetailData detailData =
+                getArguments().getParcelable(DtvContentsDetailActivity.DTV_INFO_BUNDLE_KEY);
         return initView();
     }
 

@@ -21,8 +21,10 @@ import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplayEventListener;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuItem;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuItemParam;
+import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 
 /**
  * クラス機能：
@@ -70,8 +72,26 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     public void startActivity(Class<?> clz, Bundle bundle) {
         Intent intent = new Intent(this, clz);
         if (bundle != null) {
-            //intent.putExtra("bundle", bundle);
             intent.putExtras(bundle);
+
+            //コンテンツ種別によるコンテンツ詳細(プレイヤーあり/なし)起動判定
+            OtherContentsDetailData detailData =
+                    bundle.getParcelable(DtvContentsDetailActivity.DTV_INFO_BUNDLE_KEY);
+            if (detailData != null) {
+                int intServiceId = detailData.getServiceId();
+
+                switch (intServiceId) {
+                    case DtvContentsDetailActivity.DTV_CONTENTS_SERVICE_ID:
+                    case DtvContentsDetailActivity.D_ANIMATION_CONTENTS_SERVICE_ID:
+                    case DtvContentsDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID:
+                        Class<?> aClass = DtvContentsDetailActivity.class;
+                        intent = new Intent(this, aClass);
+                        intent.putExtra(DtvContentsDetailActivity.DTV_INFO_BUNDLE_KEY, detailData);
+                        startActivity(intent);
+                    default:
+                        //TODO:プレイヤー付きのコンテンツ詳細画面を起動
+                }
+            }
         }
         startActivity(intent);
     }

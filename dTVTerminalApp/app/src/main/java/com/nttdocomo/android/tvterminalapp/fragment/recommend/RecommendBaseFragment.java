@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.fragment.recommend;
 
 import android.content.Context;
@@ -12,14 +16,18 @@ import android.widget.ListView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.RecommendListBaseAdapter;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.model.recommend.RecommendContentInfo;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class RecommendBaseFragment extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
+public class RecommendBaseFragment extends Fragment implements AbsListView.OnScrollListener,
+        AdapterView.OnItemClickListener {
 
     public Context mActivity;
     public List mData;
@@ -72,7 +80,8 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
         }
 
         //SearchResultBaseAdapter searchResultBaseAdapter
-        mRecommendListBaseAdapter = new RecommendListBaseAdapter(getContext(), mData, R.layout.item_recommend_list);
+        mRecommendListBaseAdapter =
+                new RecommendListBaseAdapter(getContext(), mData, R.layout.item_recommend_list);
         mRecommendListview.setAdapter(mRecommendListBaseAdapter);
 
         return mRecommendFragmentView;
@@ -122,15 +131,36 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     }
 
     @Override
-    public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+    public void onScroll(AbsListView absListView,
+                         int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         if (null != mRecommendBaseFragmentScrollListener) {
-            mRecommendBaseFragmentScrollListener.onScroll(this, absListView, firstVisibleItem, visibleItemCount, totalItemCount);
+            mRecommendBaseFragmentScrollListener.onScroll(this, absListView,
+                    firstVisibleItem, visibleItemCount, totalItemCount);
         }
     }
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        ((BaseActivity) mActivity).startActivity(TvPlayerActivity.class, null);
+        RecommendContentInfo info = (RecommendContentInfo) mData.get(i);
+        Bundle args = new Bundle();
+        args.putParcelable(DtvContentsDetailActivity.DTV_INFO_BUNDLE_KEY,
+                getOtherContentsDetailData(info));
+        ((BaseActivity) mActivity).startActivity(TvPlayerActivity.class, args);
     }
 
+    /**
+     * コンテンツ詳細に必要なデータを返す
+     *
+     * @param info レコメンド情報
+     * @return
+     */
+    public OtherContentsDetailData getOtherContentsDetailData(RecommendContentInfo info) {
+        OtherContentsDetailData detailData = new OtherContentsDetailData();
+        detailData.setTitle(info.title);
+        detailData.setThumb(info.contentPictureUrl);
+        detailData.setDetail(info.contentsDetailInfo);
+        detailData.setServiceId(info.serviceId);
+
+        return detailData;
+    }
 }
