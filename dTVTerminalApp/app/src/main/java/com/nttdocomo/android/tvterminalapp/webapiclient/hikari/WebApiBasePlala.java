@@ -52,7 +52,7 @@ public class WebApiBasePlala {
 
     //仮のベースURL
     //TODO: 本物のサーバーが提供されるまでは、テストサーバーのアドレスとを指定する
-    private static final String baseUrl = "http://192.168.2.224/";
+    private static final String baseUrl = "http://192.168.2.224:1445/";
     //private static final String baseUrl = "http://192.168.2.127/";
 
     //通信停止用コネクション蓄積
@@ -69,6 +69,9 @@ public class WebApiBasePlala {
 
     //リクエスト種別・基本はPOST
     private static final String REQUEST_METHOD = "POST";
+
+    //WebAPI名の指定とファイル指定を切り替える為の識別文字列
+    private static final String FILE_SIGNATURE = "://";
 
     /**
      * API選択表・API名を指定すると、実際に呼び出すときの名前を取得できる
@@ -134,7 +137,17 @@ public class WebApiBasePlala {
         /**
          * 録画予約一覧
          */
-        RECORDING_RESERVATION_LIST_WEB_CLIENT("recording/reservation/list"),;   //最後にセミコロンが必要
+        RECORDING_RESERVATION_LIST_WEB_CLIENT("recording/reservation/list"),
+
+        /**
+         * ジャンル一覧リストファイル：こちらはAPIではなく、ファイルの直接読み込みとのこと。
+         * APIではないので、例外としてURL全体を指定する
+         * TODO: 当然後ほど変更する事となる。
+         */
+        GENRE_LIST_FILE("http://192.168.2.224:1445/genreList_sample_1445.json"),
+
+        //最後にセミコロンが必要
+        ;
 
         //呼び出し先名の控え
         private final String apiName;
@@ -526,8 +539,17 @@ public class WebApiBasePlala {
         @Override
         protected ReturnCode doInBackground(Object... strings) {
             try {
-                //ベースURLとAPIの名前を組み合わせてURLとして開く
-                URL url = new URL(baseUrl + mSourceUrl);
+                URL url;
+                //ファイル名のフル指定かどうかを判断する
+                if (mSourceUrl.contains(FILE_SIGNATURE)) {
+                    //ファイル指定なので、ベースURLを付けずに開く
+                    url = new URL(mSourceUrl);
+                } else {
+                    //ベースURLとAPIの名前を組み合わせてURLとして開く
+                    url = new URL(baseUrl + mSourceUrl);
+                }
+
+                //指定された名前で開く
                 mUrlConnection = (HttpURLConnection) url.openConnection();
 
                 //事前設定パラメータのセット
