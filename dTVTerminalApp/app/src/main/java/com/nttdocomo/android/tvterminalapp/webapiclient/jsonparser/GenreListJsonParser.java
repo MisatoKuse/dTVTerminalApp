@@ -19,11 +19,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListResponse.GENRE_LIST_RESPONSE_ARIB_LIST;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListResponse.GENRE_LIST_RESPONSE_NOD_LIST;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListResponse.GENRE_LIST_RESPONSE_PLALA_LIST;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListResponse.GENRE_LIST_RESPONSE_UPDATE_DATE;
-
 public class GenreListJsonParser extends AsyncTask<Object, Object, Object> {
     private final String CLASS_NAME = getClass().getSimpleName();
     private static final String SEND_RESPONSE = ".sendGenreListResponse";
@@ -48,11 +43,11 @@ public class GenreListJsonParser extends AsyncTask<Object, Object, Object> {
         mGenreListResponse = new GenreListResponse();
     }
 
-//    @Override
-//    protected void onPostExecute(Object s) {
-//        mGenreListJsonParserCallback.
-//                onGenreListJsonParsed(mGenreListResponse);
-//    }
+    @Override
+    protected void onPostExecute(Object s) {
+        mGenreListJsonParserCallback.
+                onGenreListJsonParsed(mGenreListResponse);
+    }
 
     @Override
     protected Object doInBackground(Object... strings) {
@@ -99,8 +94,9 @@ public class GenreListJsonParser extends AsyncTask<Object, Object, Object> {
     public void sendUpdateDate(JSONObject jsonObj) {
         try {
             // UpdateDateの値を取得しセットする
-            if (!jsonObj.isNull(GENRE_LIST_RESPONSE_UPDATE_DATE)) {
-                String UpdateDate = jsonObj.getString(GENRE_LIST_RESPONSE_UPDATE_DATE);
+            if (!jsonObj.isNull(GenreListResponse.GENRE_LIST_RESPONSE_UPDATE_DATE)) {
+                String UpdateDate = jsonObj.getString(
+                        GenreListResponse.GENRE_LIST_RESPONSE_UPDATE_DATE);
                 if (mGenreListResponse != null) {
                     mGenreListResponse.setUpdateDate(UpdateDate);
                 }
@@ -125,7 +121,7 @@ public class GenreListJsonParser extends AsyncTask<Object, Object, Object> {
             Iterator<String> iterator_key = jsonObj.keys();
             while (iterator_key.hasNext()) {
                 String item = iterator_key.next();
-                if (item.equals(GENRE_LIST_RESPONSE_UPDATE_DATE)) {
+                if (item.equals(GenreListResponse.GENRE_LIST_RESPONSE_UPDATE_DATE)) {
                     continue;
                 }
                 JSONArray lists = jsonObj.getJSONArray(item);
@@ -142,14 +138,8 @@ public class GenreListJsonParser extends AsyncTask<Object, Object, Object> {
                     genreListMetaDataList.add(genreListMetaData);
                 }
                 if (mGenreListResponse != null) {
-                    // ジャンル毎コンテンツをセットする
-                    if (item.equals(GENRE_LIST_RESPONSE_PLALA_LIST)) {
-                        mGenreListResponse.setmPLALA(genreListMetaDataList);
-                    } else if (item.equals(GENRE_LIST_RESPONSE_NOD_LIST)) {
-                        mGenreListResponse.setmNOD(genreListMetaDataList);
-                    } else if (item.equals(GENRE_LIST_RESPONSE_ARIB_LIST)) {
-                        mGenreListResponse.setmARIB(genreListMetaDataList);
-                    }
+                    //種別名をキーにしてジャンル毎コンテンツを蓄積する
+                    mGenreListResponse.addTypeList(item, genreListMetaDataList);
                 }
             }
         } catch (JSONException e) {

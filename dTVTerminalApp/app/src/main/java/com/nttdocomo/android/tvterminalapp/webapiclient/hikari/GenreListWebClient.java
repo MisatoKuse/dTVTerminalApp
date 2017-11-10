@@ -5,7 +5,8 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationListResponse;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListResponse;
+import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.GenreListJsonParser;
 
 public class GenreListWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
@@ -19,8 +20,7 @@ public class GenreListWebClient
          *
          * @param genreListResponse JSONパース後のデータ
          */
-        //TODO: JSONパーサー完成前なので、別のレスポンスを仮使用
-        void onGenreListJsonParsed(RemoteRecordingReservationListResponse genreListResponse);
+        void onGenreListJsonParsed(GenreListResponse genreListResponse);
     }
 
     //コールバックのインスタンス
@@ -30,11 +30,10 @@ public class GenreListWebClient
     @Override
     public void onAnswer(ReturnCode returnCode) {
         if (mGenreListJsonParserCallback != null) {
-            //TODO: JSONパーサー完成後にコメントを外す
             //JSONをパースして、データを返す
-//            new GenreListJsonParser(
-//                    mGenreListJsonParserCallback)
-//                    .execute(returnCode.bodyData);
+            new GenreListJsonParser(
+                    mGenreListJsonParserCallback)
+                    .execute(returnCode.bodyData);
         }
     }
 

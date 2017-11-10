@@ -6,44 +6,36 @@ package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class GenreListResponse implements Serializable {
     private static final long serialVersionUID = -1211331811012005279L;
     private String mUpdateDate; //UpdateDate
-    private ArrayList<GenreListMetaData> mPLALA;//PLALA
-    private ArrayList<GenreListMetaData> mNOD;//NOD
-    private ArrayList<GenreListMetaData> mARIB;//ARIB
 
-    public ArrayList<GenreListMetaData> getmPLALA() {
-        return mPLALA;
+    //複数のジャンルの種別を収めるハッシュマップ
+    private Map<String, ArrayList<GenreListMetaData>> mTypeList;
+
+    public Map<String, ArrayList<GenreListMetaData>> getTypeList() {
+        return mTypeList;
     }
 
-    public void setmPLALA(ArrayList<GenreListMetaData> mPLALA) {
-        this.mPLALA = mPLALA;
+    public void setTypeList(Map<String, ArrayList<GenreListMetaData>> typeList) {
+        mTypeList = typeList;
     }
 
-    public ArrayList<GenreListMetaData> getmNOD() {
-        return mNOD;
+    /**
+     * 種別リストに今の種別配列を追加する
+     *
+     * @param itemName リスト名
+     * @param typeList リスト情報
+     */
+    public void addTypeList(String itemName, ArrayList<GenreListMetaData> typeList) {
+        mTypeList.put(itemName, typeList);
     }
-
-    public void setmNOD(ArrayList<GenreListMetaData> mNOD) {
-        this.mNOD = mNOD;
-    }
-
-    public ArrayList<GenreListMetaData> getmARIB() {
-        return mARIB;
-    }
-
-    public void setmARIB(ArrayList<GenreListMetaData> mARIB) {
-        this.mARIB = mARIB;
-    }
-
 
     public static final String GENRE_LIST_RESPONSE_UPDATE_DATE = "UpdateDate";
-    public static final String GENRE_LIST_RESPONSE_PLALA_LIST = "PLALA";
-    public static final String GENRE_LIST_RESPONSE_NOD_LIST = "NOD";
-    public static final String GENRE_LIST_RESPONSE_ARIB_LIST = "ARIB";
 
     public String getUpdateDate() {
         return mUpdateDate;
@@ -56,5 +48,8 @@ public class GenreListResponse implements Serializable {
 
     public GenreListResponse() {
         mUpdateDate = GENRE_LIST_RESPONSE_UPDATE_DATE;     //UpdateDate
+
+        //複数ジャンル種別のマップの初期化
+        mTypeList = new HashMap<String, ArrayList<GenreListMetaData>>();
     }
 }
