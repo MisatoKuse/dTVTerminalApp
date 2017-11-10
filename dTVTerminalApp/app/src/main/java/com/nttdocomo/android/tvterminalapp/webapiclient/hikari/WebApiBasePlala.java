@@ -52,7 +52,7 @@ public class WebApiBasePlala {
 
     //仮のベースURL
     //TODO: 本物のサーバーが提供されるまでは、テストサーバーのアドレスとを指定する
-    private static final String baseUrl = "http://192.168.2.224:1445/";
+    private static final String baseUrl = "http://192.168.2.224/";
     //private static final String baseUrl = "http://192.168.2.127/";
 
     //通信停止用コネクション蓄積
@@ -145,6 +145,11 @@ public class WebApiBasePlala {
          * TODO: 当然後ほど変更する事となる。
          */
         GENRE_LIST_FILE("http://192.168.2.224:1445/genreList_sample_1445.json"),
+
+        /**
+         * ジャンル毎コンテンツ数取得
+         */
+        GENRE_COUNT_GET_WEB_CLIENT("genre/contents/count/get"),
 
         //最後にセミコロンが必要
         ;
@@ -261,6 +266,16 @@ public class WebApiBasePlala {
      * ソート用文字列・人気順（前日の視聴回数数降順）
      */
     public static final String SORT_PLAY_COUNT_DESC = "play_count_desc";
+
+    /**
+     * age_req(年齢設定値)の最小値
+     */
+    public static final int AGE_LOW_VALUE = 1;
+
+    /**
+     * age_req(年齢設定値)の最大値
+     */
+    public static final int AGE_HIGH_VALUE = 17;
 
     //戻り値用構造体
     static protected class ReturnCode {

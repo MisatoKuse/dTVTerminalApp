@@ -6,13 +6,18 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
 
 import android.os.AsyncTask;
+
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetResponse;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.GenreCountGetWebClient;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
+
 import static com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetResponse.GENRE_COUNT_GET_RESPONSE_LIST;
 import static com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetResponse.GENRE_COUNT_GET_RESPONSE_STATUS;
 
@@ -22,28 +27,31 @@ public class GenreCountGetJsonParser extends AsyncTask<Object, Object, Object> {
     private static final String SEND_STATUS = ".sendStatus";
     private static final String RESPONSE = ".GenreCountGetResponse";
     private static final String JSON_OBJECT = ".JSONObject";
-//    private GenreCountGetWebClient.GenreCountGetJsonParserCallback
-//            mGenreCountGetJsonParserCallback;
+    private GenreCountGetWebClient.GenreCountGetJsonParserCallback
+            mGenreCountGetJsonParserCallback;
     // オブジェクトクラスの定義　
     private GenreCountGetResponse mGenreCountGetResponse;
+
 
     /**
      * コンストラクタ
      * <p>
      * //     * @param genreCountGetJsonParserCallback
      */
-//    public GenreCountGetJsonParser(GenreCountGetWebClient.
-//                                           GenreCountGetJsonParserCallback
-//　　 genreCountGetJsonParserCallback) { mGenreCountGetJsonParserCallback =
-//                　　　　　　　　　　　　　genreCountGetJsonParserCallback;
-//        mGenreCountGetResponse = new GenreCountGetResponse();
-//    }
-//
-//    @Override
-//    protected void onPostExecute(Object s) {
-//        mGenreCountGetJsonParserCallback.
-//                onGenreCountGetJsonParsed(mGenreCountGetResponse);
-//    }
+    public GenreCountGetJsonParser(GenreCountGetWebClient.
+                                           GenreCountGetJsonParserCallback
+                                           genreCountGetJsonParserCallback) {
+        mGenreCountGetJsonParserCallback =
+                genreCountGetJsonParserCallback;
+        mGenreCountGetResponse = new GenreCountGetResponse();
+    }
+
+    @Override
+    protected void onPostExecute(Object s) {
+        mGenreCountGetJsonParserCallback.
+                onGenreCountGetJsonParsed(mGenreCountGetResponse);
+    }
+
     @Override
     protected Object doInBackground(Object... strings) {
         String result = (String) strings[0];
