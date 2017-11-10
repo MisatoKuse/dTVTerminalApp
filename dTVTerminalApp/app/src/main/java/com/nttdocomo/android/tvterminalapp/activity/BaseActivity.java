@@ -81,9 +81,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                 int intServiceId = detailData.getServiceId();
 
                 switch (intServiceId) {
-                    case DtvContentsDetailActivity.DTV_CONTENTS_SERVICE_ID:
-                    case DtvContentsDetailActivity.D_ANIMATION_CONTENTS_SERVICE_ID:
-                    case DtvContentsDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID:
+                    case OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID:
+                    case OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID:
+                    case OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID:
                         Class<?> aClass = DtvContentsDetailActivity.class;
                         intent = new Intent(this, aClass);
                         intent.putExtra(DtvContentsDetailActivity.DTV_INFO_BUNDLE_KEY, detailData);
