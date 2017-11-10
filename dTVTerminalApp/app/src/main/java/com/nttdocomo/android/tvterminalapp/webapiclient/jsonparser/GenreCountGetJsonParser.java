@@ -18,9 +18,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetResponse.GENRE_COUNT_GET_RESPONSE_LIST;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetResponse.GENRE_COUNT_GET_RESPONSE_STATUS;
-
 public class GenreCountGetJsonParser extends AsyncTask<Object, Object, Object> {
     private final String CLASS_NAME = getClass().getSimpleName();
     private static final String SEND_RESPONSE = ".sendGenreCountGetResponse";
@@ -96,8 +93,9 @@ public class GenreCountGetJsonParser extends AsyncTask<Object, Object, Object> {
     public void sendStatus(JSONObject jsonObj) {
         try {
             // statusの値を取得しセットする
-            if (!jsonObj.isNull(GENRE_COUNT_GET_RESPONSE_STATUS)) {
-                String status = jsonObj.getString(GENRE_COUNT_GET_RESPONSE_STATUS);
+            if (!jsonObj.isNull(GenreCountGetResponse.GENRE_COUNT_GET_RESPONSE_STATUS)) {
+                String status = jsonObj.getString(GenreCountGetResponse.
+                                                  GENRE_COUNT_GET_RESPONSE_STATUS);
                 if (mGenreCountGetResponse != null) {
                     mGenreCountGetResponse.setStatus(status);
                 }
@@ -119,10 +117,10 @@ public class GenreCountGetJsonParser extends AsyncTask<Object, Object, Object> {
         try {
             ArrayList<GenreCountGetMetaData> genreCountGetMetaDataList =
                     new ArrayList<GenreCountGetMetaData>();
-            if (!jsonObj.isNull(GENRE_COUNT_GET_RESPONSE_LIST)) {
+            if (!jsonObj.isNull(GenreCountGetResponse.GENRE_COUNT_GET_RESPONSE_LIST)) {
                 // ジャンル毎コンテンツ数取得一覧をJSONArrayにパースする
                 JSONArray lists = jsonObj.getJSONArray(
-                        GENRE_COUNT_GET_RESPONSE_LIST);
+                        GenreCountGetResponse.GENRE_COUNT_GET_RESPONSE_LIST);
                 if (lists.length() == 0) {
                     return;
                 }
