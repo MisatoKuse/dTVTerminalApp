@@ -9,6 +9,10 @@ import android.os.Parcelable;
 
 public class OtherContentsDetailData implements Parcelable {
 
+    public static final int DTV_CONTENTS_SERVICE_ID = 15;
+    public static final int D_ANIMATION_CONTENTS_SERVICE_ID = 17;
+    public static final int DTV_CHANNEL_CONTENTS_SERVICE_ID = 43;
+
     //変数名はぷららサーバインタフェース仕様書からの引用
     private String mTitle;
     private String mThumb;
@@ -72,14 +76,14 @@ public class OtherContentsDetailData implements Parcelable {
 
     public static final Creator<OtherContentsDetailData> CREATOR =
             new Creator<OtherContentsDetailData>() {
-        @Override
-        public OtherContentsDetailData createFromParcel(Parcel source) {
-            return new OtherContentsDetailData(source);
-        }
+                @Override
+                public OtherContentsDetailData createFromParcel(Parcel source) {
+                    return new OtherContentsDetailData(source);
+                }
 
-        @Override
-        public OtherContentsDetailData[] newArray(int size) {
-            return new OtherContentsDetailData[size];
-        }
-    };
+                @Override
+                public OtherContentsDetailData[] newArray(int size) {
+                    return new OtherContentsDetailData[size];
+                }
+            };
 }
