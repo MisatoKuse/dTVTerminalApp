@@ -70,7 +70,7 @@ public class GenreCountGetWebClient
      * @param genreCountGetJsonParserCallback コールバック
      * @return パラメータエラーの場合はfalse
      */
-    public boolean getContentDetailApi(String filter, int ageReq, String genreId, String type,
+    public boolean getGenreCountGetApi(String filter, int ageReq, String genreId, String type,
                                        GenreCountGetJsonParserCallback
                                                genreCountGetJsonParserCallback) {
 
