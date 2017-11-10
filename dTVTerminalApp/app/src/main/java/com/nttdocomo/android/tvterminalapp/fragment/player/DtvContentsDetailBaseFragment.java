@@ -34,6 +34,8 @@ public class DtvContentsDetailBaseFragment extends Fragment {
     private TextView mTxtTitleShortDetail;
     private TextView mTxtTitleAllDetail;
     private TextView mTxtMoreText;
+    private String mContentsDetailInfo;
+    private boolean mIsAllText = false;
 
     public DtvContentsDetailBaseFragment() {
         if (mContentsDetailData == null) {
@@ -78,12 +80,23 @@ public class DtvContentsDetailBaseFragment extends Fragment {
         mTxtTitleAllDetail = mContentsDetailFragmentView.findViewById(R.id.contents_detail_all_info);
         mTxtMoreText = mContentsDetailFragmentView.findViewById(R.id.more_button);
 
+        mTxtMoreText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //moreボタン押下で、全文表示に切り替える
+                mIsAllText = true;
+                mTxtTitleShortDetail.setVisibility(View.GONE);
+                mTxtTitleAllDetail.setVisibility(View.VISIBLE);
+                mTxtMoreText.setVisibility(View.GONE);
+            }
+        });
+
         txtTitleText.setText(mOtherContentsDetailData.getTitle());
         String strServiceName = util.getContentsServiceName(mOtherContentsDetailData.getServiceId());
         txtServiceName.setText(strServiceName);
-        String strTitleInfo = mOtherContentsDetailData.getDetail();
-        mTxtTitleShortDetail.setText(strTitleInfo);
-        mTxtTitleAllDetail.setText(strTitleInfo);
+        mContentsDetailInfo = mOtherContentsDetailData.getDetail();
+        mTxtTitleShortDetail.setText(mContentsDetailInfo);
+        mTxtTitleAllDetail.setText(mContentsDetailInfo);
         return mContentsDetailFragmentView;
     }
 
@@ -97,15 +110,19 @@ public class DtvContentsDetailBaseFragment extends Fragment {
                 final int DETAIL_INFO_TEXT_MAX_LINE = 4;
                 Layout layout = mTxtTitleAllDetail.getLayout();
 
-                int intTextViewCount = layout.getLineCount();
-                if (intTextViewCount > DETAIL_INFO_TEXT_MAX_LINE) {
-                    mTxtTitleShortDetail.setVisibility(View.VISIBLE);
-                    mTxtTitleAllDetail.setVisibility(View.GONE);
-                    mTxtMoreText.setVisibility(View.VISIBLE);
-                }else{
-                    mTxtTitleShortDetail.setVisibility(View.GONE);
-                    mTxtTitleAllDetail.setVisibility(View.VISIBLE);
-                    mTxtMoreText.setVisibility(View.GONE);
+                if (layout != null) {
+                    //コンテンツ情報の文字数が省略されているときは、省略文とmoreを表示する
+                    int intTextViewCount = layout.getLineCount();
+                    if (intTextViewCount > DETAIL_INFO_TEXT_MAX_LINE && !mIsAllText) {
+                        mTxtTitleShortDetail.setVisibility(View.VISIBLE);
+                        mTxtTitleAllDetail.setVisibility(View.GONE);
+                        mTxtMoreText.setVisibility(View.VISIBLE);
+                    } else {
+                        //コンテンツ情報の文字数が省略されていないときは、全文のみを表示する
+                        mTxtTitleShortDetail.setVisibility(View.GONE);
+                        mTxtTitleAllDetail.setVisibility(View.VISIBLE);
+                        mTxtMoreText.setVisibility(View.GONE);
+                    }
                 }
                 return true;
             }
