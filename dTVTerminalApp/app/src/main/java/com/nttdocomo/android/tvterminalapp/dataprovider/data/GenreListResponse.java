@@ -6,7 +6,7 @@ package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 
@@ -50,6 +50,6 @@ public class GenreListResponse implements Serializable {
         mUpdateDate = GENRE_LIST_RESPONSE_UPDATE_DATE;     //UpdateDate
 
         //複数ジャンル種別のマップの初期化
-        mTypeList = new HashMap<String, ArrayList<GenreListMetaData>>();
+        mTypeList = new LinkedHashMap<String, ArrayList<GenreListMetaData>>();
     }
 }
