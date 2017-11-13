@@ -105,22 +105,7 @@ public class DtvContentsDetailActivity extends BaseActivity {
         txtContentsText.setText(stringUtil.getConnectString(strings));
         headerTitle.setText(mDetailData.getTitle());
         mTabScrollView = findViewById(R.id.contents_detail_tab_strip_scroll);
-/*
-        final LinearLayout linearLayout = findViewById(R.id.contents_detail_scroll_layout);
-        final ScrollView scrollView = findViewById(R.id.contents_detail_scroll_view);
-        ViewTreeObserver observer = linearLayout.getViewTreeObserver();
-        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams)scrollView.getLayoutParams();
-                marginLayoutParams.height = linearLayout.getHeight();
-                scrollView.setLayoutParams(marginLayoutParams);
-                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(linearLayout.getWidth()
-                        , linearLayout.getHeight());
-                linearLayout.setLayoutParams(params);
-            }
-        });
-*/
+
         mViewPager = findViewById(R.id.contents_detail_result);
         ContentsDetailPagerAdapter contentsDetailPagerAdapter
                 = new ContentsDetailPagerAdapter(getSupportFragmentManager());
