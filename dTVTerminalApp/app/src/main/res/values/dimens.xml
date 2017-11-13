@@ -20,6 +20,7 @@
     <dimen name="contents_tab_height">50dp</dimen>
     <dimen name="contents_service_name_side_margin">10dp</dimen>
     <dimen name="contents_text_vertical_margin">10dp</dimen>
+    <dimen name="view_button_size">80dp</dimen>
 
     <!--ビデオ一覧-->
     <dimen name="video_contents_genre_button_margin_end">8dp</dimen>
