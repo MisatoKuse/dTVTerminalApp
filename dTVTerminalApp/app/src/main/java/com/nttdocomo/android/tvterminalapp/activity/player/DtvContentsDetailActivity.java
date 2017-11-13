@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.player;
 
+import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -21,27 +23,28 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.dataprovider.OtherContentsDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.view.ContentsDetailViewPager;
 
-public class DtvContentsDetailActivity extends BaseActivity implements
-        OtherContentsDataProvider.ApiDataProviderCallback {
+public class DtvContentsDetailActivity extends BaseActivity {
     private String[] mTabNames;
-    private OtherContentsDataProvider mContentsDetailDataProvider;
     private DtvContentsDetailFragmentFactory mContentsDetailFragmentFactory = null;
     private HorizontalScrollView mTabScrollView;
     private LinearLayout mLinearLayout;
-    private ViewPager mViewPager;
+    private ContentsDetailViewPager mViewPager;
     private OtherContentsDetailData mDetailData;
 
     public static final String DTV_INFO_BUNDLE_KEY = "dTVInfoKey";
     public static final int DTV_CONTENTS_SERVICE_ID = 15;
     public static final int D_ANIMATION_CONTENTS_SERVICE_ID = 17;
     public static final int DTV_CHANNEL_CONTENTS_SERVICE_ID = 43;
+    private static final int CONTENTS_DETAIL_TAB_TEXT_SIZE = 15;
+    private static final int CONTENTS_DETAIL_TAB_LEFT_MARGIN = 30;
+    private static final int CONTENTS_DETAIL_TAB_OTHER_MARGIN = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,22 +52,21 @@ public class DtvContentsDetailActivity extends BaseActivity implements
         setContentView(R.layout.dtv_contents_detail_main_layout);
         ImageView mMenuImageView = findViewById(R.id.header_layout_menu);
         mMenuImageView.setVisibility(View.VISIBLE);
-        mDetailData = getIntent().getParcelableExtra(DTV_INFO_BUNDLE_KEY);
+        final Intent intent = getIntent();
+        mDetailData = intent.getParcelableExtra(DTV_INFO_BUNDLE_KEY);
         DTVTLogger.start();
         setStatusBarColor(R.color.contents_header_background);
         setNoTitle();
         initData();
         initView();
-        getGenreData(mViewPager.getCurrentItem());
     }
 
     /**
      * データの初期化
      */
     private void initData() {
-        mTabNames = getResources().getStringArray(R.array.other_contents_detail_tabs);
-        mContentsDetailDataProvider =
-                new OtherContentsDataProvider(this);
+        final Resources resources = getResources();
+        mTabNames = resources.getStringArray(R.array.other_contents_detail_tabs);
         mContentsDetailFragmentFactory = new DtvContentsDetailFragmentFactory();
     }
 
@@ -72,7 +74,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        for (int i = 0; i < 4; ++i) { // タブの数だけ処理を行う
+        for (int i = 0; i < mTabNames.length; ++i) { // タブの数だけ処理を行う
             DtvContentsDetailBaseFragment b = mContentsDetailFragmentFactory.createFragment(i);
             if (null != b) {
                 b.mContentsDetailData.clear();
@@ -97,12 +99,28 @@ public class DtvContentsDetailActivity extends BaseActivity implements
         ViewHolder holder = new ViewHolder();
         holder.wl_thumbnail = findViewById(R.id.dtv_contents_detail_thumbnail);
         ThumbnailProvider mThumbnailProvider = new ThumbnailProvider(this);
-        Bitmap bp= mThumbnailProvider.getThumbnailImage(holder.wl_thumbnail, mDetailData.getThumb());
+        Bitmap bp = mThumbnailProvider.getThumbnailImage(holder.wl_thumbnail, mDetailData.getThumb());
         imageView.setImageBitmap(bp);
 
         txtContentsText.setText(stringUtil.getConnectString(strings));
         headerTitle.setText(mDetailData.getTitle());
         mTabScrollView = findViewById(R.id.contents_detail_tab_strip_scroll);
+/*
+        final LinearLayout linearLayout = findViewById(R.id.contents_detail_scroll_layout);
+        final ScrollView scrollView = findViewById(R.id.contents_detail_scroll_view);
+        ViewTreeObserver observer = linearLayout.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams)scrollView.getLayoutParams();
+                marginLayoutParams.height = linearLayout.getHeight();
+                scrollView.setLayoutParams(marginLayoutParams);
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(linearLayout.getWidth()
+                        , linearLayout.getHeight());
+                linearLayout.setLayoutParams(params);
+            }
+        });
+*/
         mViewPager = findViewById(R.id.contents_detail_result);
         ContentsDetailPagerAdapter contentsDetailPagerAdapter
                 = new ContentsDetailPagerAdapter(getSupportFragmentManager());
@@ -114,19 +132,9 @@ public class DtvContentsDetailActivity extends BaseActivity implements
                 // スクロールによるタブ切り替え
                 super.onPageSelected(position);
                 setTab(position);
-                getGenreData(mViewPager.getCurrentItem());
             }
         });
         initTabData();
-    }
-
-    /**
-     * タブ毎にリクエストを行う
-     *
-     * @param tabPageNo タブ番号
-     */
-    private void getGenreData(int tabPageNo) {
-        mContentsDetailDataProvider.getContentsDetailData(tabPageNo);
     }
 
     /**
@@ -150,16 +158,23 @@ public class DtvContentsDetailActivity extends BaseActivity implements
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.MATCH_PARENT);
             if (i != 0) {
-                params.setMargins(30, 0, 0, 0);
+                params.setMargins(CONTENTS_DETAIL_TAB_LEFT_MARGIN, CONTENTS_DETAIL_TAB_OTHER_MARGIN,
+                        CONTENTS_DETAIL_TAB_OTHER_MARGIN, CONTENTS_DETAIL_TAB_OTHER_MARGIN);
             }
             tabTextView.setLayoutParams(params);
             tabTextView.setText(mTabNames[i]);
-            tabTextView.setTextSize(15);
+            tabTextView.setTextSize(CONTENTS_DETAIL_TAB_TEXT_SIZE);
             tabTextView.setBackgroundColor(Color.BLACK);
-            tabTextView.setTextColor(Color.WHITE);
+            if (mTabNames.length <= 1 && i == 0) {
+                tabTextView.setTextColor(Color.GRAY);
+            } else {
+                tabTextView.setTextColor(Color.WHITE);
+            }
             tabTextView.setGravity(Gravity.CENTER_VERTICAL);
             tabTextView.setTag(i);
-            if (i == 0) {
+            if (i == 0 && mTabNames.length <= 1) {
+                tabTextView.setBackgroundResource(R.drawable.disable_indicating);
+            } else if (i == 0) {
                 tabTextView.setBackgroundResource(R.drawable.indicating);
             }
             tabTextView.setOnClickListener(new View.OnClickListener() {
@@ -176,14 +191,11 @@ public class DtvContentsDetailActivity extends BaseActivity implements
     }
 
     /**
-     * 取得結果の設定・表示
+     * インジケータ設置
+     *
+     * @param position タブポジション
      */
-/*    private void setShowContentsDetail() {
-        //TODO：WebApiからのデータを受け取ったデータを画面に設定する
-    }
-*/
-    /*インジケーター設置*/
-    public void setTab(int position) {
+    private void setTab(int position) {
         if (mLinearLayout != null) {
             for (int i = 0; i < mTabNames.length; i++) {
                 TextView mTextView = (TextView) mLinearLayout.getChildAt(i);
@@ -194,22 +206,6 @@ public class DtvContentsDetailActivity extends BaseActivity implements
                 }
             }
         }
-    }
-
-    /**
-     * Fragmentの取得
-     *
-     * @return コンテンツ詳細用フラグメント
-     */
-/*    private DtvContentsDetailBaseFragment getCurrentFragment() {
-
-        int i = mViewPager.getCurrentItem();
-        return mContentsDetailFragmentFactory.createFragment(i);
-    }
-*/
-    @Override
-    public void otherContentsDetailCallback() {
-
     }
 
     /**
