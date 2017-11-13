@@ -276,6 +276,25 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         }
     }
 
+    /**
+     * コンテンツ詳細の戻るボタン
+     *
+     * @param view
+     */
+    public void contentsDetailBackKey(View view) {
+        finish();
+    }
+
+    /**
+     * コンテンツ詳細のクローズボタン
+     *
+     * @param view
+     */
+    public void contentsDetailCloseKey(View view) {
+        //TODO:コンテンツ詳細系の画面をクローズする処理を記載する
+        finish();
+    }
+
     @Override
     public void onPreUserStateChange(UserState oldUserState, UserState newUserState) {
 

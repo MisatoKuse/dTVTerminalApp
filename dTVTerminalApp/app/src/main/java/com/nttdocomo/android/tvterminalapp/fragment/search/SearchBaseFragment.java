@@ -17,9 +17,12 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.SearchResultBaseAdapter;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.model.search.SearchContentInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +32,14 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
 
     public Context mActivity;
     public List mData;
-    private TextView mCountText=null;
-    private SearchBaseFragmentScrollListener mSearchBaseFragmentScrollListener=null;
+    private TextView mCountText = null;
+    private SearchBaseFragmentScrollListener mSearchBaseFragmentScrollListener = null;
     private View mLoadMoreView;
     private View mLoadCompleteView;
-	private SearchResultBaseAdapter mSearchResultBaseAdapter=null;
+    private SearchResultBaseAdapter mSearchResultBaseAdapter = null;
 
-    public void setSearchBaseFragmentScrollListener(SearchBaseFragmentScrollListener lis){
-        mSearchBaseFragmentScrollListener=lis;
+    public void setSearchBaseFragmentScrollListener(SearchBaseFragmentScrollListener lis) {
+        mSearchBaseFragmentScrollListener = lis;
     }
 
     @Override
@@ -60,8 +63,8 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
     private View mTeleviFragmentView;
     private ListView mTeveviListview;
 
-    public View initView(){
-        if(null==mTeleviFragmentView) {
+    public View initView() {
+        if (null == mTeleviFragmentView) {
             mTeleviFragmentView = View.inflate(getActivity()
                     , R.layout.fragment_televi_content, null);
             mTeveviListview = mTeleviFragmentView.findViewById(R.id.lv_searched_result);
@@ -77,29 +80,29 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         mSearchResultBaseAdapter = new SearchResultBaseAdapter(getContext(), mData, R.layout.item_search_result_televi);
         mTeveviListview.setAdapter(mSearchResultBaseAdapter);
 
-        if(null==mCountText) {
+        if (null == mCountText) {
             mCountText = mTeleviFragmentView.findViewById(R.id.tv_searched_result);
         }
 
         return mTeleviFragmentView;
     }
 
-    public void notifyDataSetChanged(String count){
-        if(null!=mSearchResultBaseAdapter){
+    public void notifyDataSetChanged(String count) {
+        if (null != mSearchResultBaseAdapter) {
             mSearchResultBaseAdapter.notifyDataSetChanged();
         }
         mCountText.setText(count);
     }
 
-    public void setSelection(int itemNo){
-        if(null!=mTeveviListview){
+    public void setSelection(int itemNo) {
+        if (null != mTeveviListview) {
             mTeveviListview.setSelection(itemNo);
         }
     }
 
-    public void displayLoadMore(boolean b){
-        if(null!=mTeveviListview && null!=mLoadMoreView){
-            if(b){
+    public void displayLoadMore(boolean b) {
+        if (null != mTeveviListview && null != mLoadMoreView) {
+            if (b) {
                 mTeveviListview.addFooterView(mLoadMoreView);
             } else {
                 mTeveviListview.removeFooterView(mLoadMoreView);
@@ -107,7 +110,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         }
     }
 
-    public void clear(){
+    public void clear() {
         mData.clear();
         notifyDataSetChanged(SearchTopActivity.sSearchCountDefault);
     }
@@ -118,17 +121,36 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
 
     @Override
     public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if(null!=mSearchBaseFragmentScrollListener){
+        if (null != mSearchBaseFragmentScrollListener) {
             mSearchBaseFragmentScrollListener.onScroll(this, absListView, firstVisibleItem, visibleItemCount, totalItemCount);
         }
     }
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        if(mLoadMoreView==view){
+        SearchContentInfo info = (SearchContentInfo) mData.get(i);
+        Bundle args = new Bundle();
+        args.putParcelable(DtvContentsDetailActivity.DTV_INFO_BUNDLE_KEY,
+                getOtherContentsDetailData(info));
+        if (mLoadMoreView == view) {
             return;
         }
-        ((BaseActivity)mActivity).startActivity(TvPlayerActivity.class, null);
+        ((BaseActivity) mActivity).startActivity(TvPlayerActivity.class, args);
     }
 
+    /**
+     * コンテンツ詳細に必要なデータを返す
+     *
+     * @param info レコメンド情報
+     * @return
+     */
+    public OtherContentsDetailData getOtherContentsDetailData(SearchContentInfo info) {
+        OtherContentsDetailData detailData = new OtherContentsDetailData();
+        detailData.setTitle(info.title);
+        detailData.setThumb(info.contentPictureUrl);
+        detailData.setDetail(info.contentsDetailInfo);
+        detailData.setServiceId(info.serviceId);
+
+        return detailData;
+    }
 }

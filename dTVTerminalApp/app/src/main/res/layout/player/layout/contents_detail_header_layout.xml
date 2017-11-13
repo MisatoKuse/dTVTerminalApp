@@ -10,10 +10,12 @@
     android:orientation="horizontal">
 
     <TextView
-        android:id="@+id/back_key"
+        android:id="@+id/contents_detail_back_key"
         android:layout_width="@dimen/contents_back_key_size"
         android:layout_height="match_parent"
+        android:clickable="true"
         android:gravity="center"
+        android:onClick="contentsDetailBackKey"
         android:text="@string/back_key"
         android:textColor="@color/white_text"
         android:textSize="@dimen/contents_header_back_button_size"
@@ -25,17 +27,19 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:ellipsize="end"
-        android:maxLines="1"
         android:gravity="center_horizontal"
+        android:maxLines="1"
         android:textColor="@color/white_text"
         android:textSize="@dimen/header_title_text_size"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/close_key"
+        android:id="@+id/contents_detailclose_key"
         android:layout_width="@dimen/contents_close_key_size"
         android:layout_height="match_parent"
+        android:clickable="true"
         android:gravity="center"
+        android:onClick="contentsDetailCloseKey"
         android:text="@string/close_key"
         android:textColor="@color/white_text"
         android:textSize="@dimen/contents_header_close_button_size"
