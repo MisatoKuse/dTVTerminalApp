@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -16,23 +17,23 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
 
 import java.util.List;
 
-public class VideoGenreAdapter extends BaseAdapter implements AbsListView.OnScrollListener {
+public class VideoGenreAdapter extends BaseAdapter implements  AbsListView.OnScrollListener {
     private Context mContext = null;
-    private List mContentsList = null;
+    private List mData = null;
 
     public VideoGenreAdapter(Context context, List data) {
         this.mContext = context;
-        this.mContentsList = data;
+        this.mData = data;
     }
 
     @Override
     public int getCount() {
-        return mContentsList.size();
+        return mData.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return mContentsList.get(i);
+        return mData.get(i);
     }
 
     @Override
@@ -43,33 +44,24 @@ public class VideoGenreAdapter extends BaseAdapter implements AbsListView.OnScro
 
     @Override
     public View getView(int position, View view, ViewGroup parent) {
-        VideoGenreAdapter.ViewHolder holder;
-        VideoGenreList videoGenreList = new VideoGenreList();
+        VideoGenreList videoGenreList = (VideoGenreList) mData.get(position);
+        ViewHolder holder;
         if (null == view) {
             view = View.inflate(mContext, R.layout.item_video_genre, null);
-            holder = new VideoGenreAdapter.ViewHolder();
+            holder = new ViewHolder();
             holder.genre_title = view.findViewById(R.id.genre_title);
-            holder.genre_count = view.findViewById(R.id.genre_count);
-
-            // タップ時用にGenreIdを隠しておく
-            holder.genre_id = view.findViewById(R.id.genre_id);
+            holder.content_count = view.findViewById(R.id.content_count);
             view.setTag(holder);
         } else {
-            holder = (VideoGenreAdapter.ViewHolder) view.getTag();
+            holder = (ViewHolder) view.getTag();
         }
 
-        // TODO 各データのset
-
-        if (null != holder.genre_title) {
+        if (!TextUtils.isEmpty(videoGenreList.getTitle())) {
             holder.genre_title.setText(videoGenreList.getTitle());
         }
 
-        if (null != holder.genre_count) {
-            holder.genre_count.setText(videoGenreList.getGenreId());
-        }
-
-        if (null != holder.genre_id) {
-            holder.genre_id.setText(videoGenreList.getGenreId());
+        if (!TextUtils.isEmpty(videoGenreList.getTitle())) {
+            holder.content_count.setText(videoGenreList.getContentCount());
         }
 
         return view;
@@ -86,8 +78,9 @@ public class VideoGenreAdapter extends BaseAdapter implements AbsListView.OnScro
     }
 
     static class ViewHolder {
+        // ジャンル名
         TextView genre_title;
-        TextView genre_count;
-        TextView genre_id;
+        // コンテンツ数
+        TextView content_count;
     }
 }

@@ -9,12 +9,9 @@ import java.util.Map;
 
 public class VideoGenreList {
 
-    private String mGenreId;
-    private String mTitle;
-    private String mContentCount;
-    private String mAllContentCount;
-    private List<Map<String, String>> mCountList;
-    private List<Map<String, String>> mTitleList;
+    public String mGenreId;
+    public String mTitle;
+    public String mContentCount;
 
     public String getGenreId() {
         return mGenreId;
@@ -38,30 +35,6 @@ public class VideoGenreList {
 
     public void setContentCount(String contentCount) {
         this.mContentCount = contentCount;
-    }
-
-    public String getAllContentCount() {
-        return mAllContentCount;
-    }
-
-    public void setAllContentCount(String allContentCount) {
-        this.mAllContentCount = allContentCount;
-    }
-
-    public List<Map<String, String>> getCountList() {
-        return mCountList;
-    }
-
-    public void setCountList(List<Map<String, String>> countList) {
-        this.mCountList = countList;
-    }
-
-    public List<Map<String, String>> getTitleList() {
-        return mTitleList;
-    }
-
-    public void setTitleList(List<Map<String, String>> titleList) {
-        this.mTitleList = titleList;
     }
 
 }

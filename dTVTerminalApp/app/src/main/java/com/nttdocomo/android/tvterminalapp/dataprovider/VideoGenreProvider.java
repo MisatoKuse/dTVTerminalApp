@@ -110,12 +110,15 @@ public class VideoGenreProvider implements
      * コンテンツ数
      * VideoTopActivityからのデータ取得要求受付
      */
-    public void getContentCountDataRequest(List genreIdList) {
-        List<Map<String, String>> contentCountList = getContentCountListData(genreIdList);
+    public void getContentCountDataRequest(String genreId) {
+        List<Map<String, String>> contentCountList = getContentCountListData(genreId);
         if (contentCountList != null && contentCountList.size() > 0) {
             sendContentCountListData(contentCountList);
         }
     }
+
+
+
 
 
     /**
@@ -132,17 +135,17 @@ public class VideoGenreProvider implements
         int offset = 1;
         String filter = "";
         int ageReq = 1;
-//        webClient.getGenreListApi(limit, offset, filter, ageReq, genreId, this);
+        webClient.getGenreListApi(this);
         return list;
     }
 
     /**
      * コンテンツ数のデータ取得要求を行う
      *
-     * @param genreIdList
+     * @param genreId
      * @return
      */
-    private List getContentCountListData(List genreIdList) {
+    private List getContentCountListData(String genreId) {
         List<Map<String, String>> list = new ArrayList<>();
         //通信クラスにデータ取得要求を出す
         // TODO WebAPI
@@ -150,8 +153,9 @@ public class VideoGenreProvider implements
         int limit = 1;
         int offset = 1;
         String filter = "";
+        String type = "";
         int ageReq = 1;
-//        webClient.getContentDetailApi(limit, offset, filter, ageReq, genreId, this);
+        webClient.getGenreCountGetApi(filter, ageReq, genreId, type, this);
         return list;
     }
 
@@ -171,7 +175,7 @@ public class VideoGenreProvider implements
             map.put(id, title);
         }
         titleList.add(map);
-        videoGenreList.setTitleList(titleList);
+//        videoGenreList.setTitleList(titleList);
         return titleList;
     }
 
@@ -194,8 +198,8 @@ public class VideoGenreProvider implements
             allCount = allCount + Integer.parseInt(count);
         }
         countLst.add(map);
-        videoGenreList.setAllContentCount(String.valueOf(allCount));
-        videoGenreList.setCountList(countLst);
+//        videoGenreList.setAllContentCount(String.valueOf(allCount));
+//        videoGenreList.setCountList(countLst);
         return countLst;
     }
 }
