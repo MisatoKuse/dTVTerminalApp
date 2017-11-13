@@ -133,8 +133,8 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 }
                 float marginTop = itemSchedule.get(i).getMarginTop(lastEndDate);
                 float myHeight = itemSchedule.get(i).getMyHeight();
-                itemViewHolder.layoutParams.height = (int)(myHeight * (screenHeight / 3));
-                itemViewHolder.layoutParams.setMargins(0,(int)(marginTop * (screenHeight / 3)),0,0);
+                itemViewHolder.layoutParams.height = (int)(myHeight * (screenHeight / 3)+0.5);
+                itemViewHolder.layoutParams.setMargins(0,(int)(marginTop * (screenHeight / 3)+0.5),0,0);
                 itemViewHolder.view.setLayoutParams(itemViewHolder.layoutParams);
                 String startTime = itemSchedule.get(i).getStartTime();
                 String endTime = itemSchedule.get(i).getEndTime();
@@ -165,14 +165,18 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 if(i == itemSchedule.size()-1){
                     if(date1.compareTo(date2) == -1){
                         itemViewHolder.view.setBackgroundResource(R.drawable.program_end_gray);
+                        itemViewHolder.view.setTag(0);
                     } else {
                         itemViewHolder.view.setBackgroundResource(R.drawable.program_rectangele_end);
+                        itemViewHolder.view.setTag(1);
                     }
                 } else {
                     if(date1.compareTo(date2) == -1){
                         itemViewHolder.view.setBackgroundResource(R.drawable.program_start_gray);
+                        itemViewHolder.view.setTag(0);
                     } else {
                         itemViewHolder.view.setBackgroundResource(R.drawable.program_rectangele_start);
+                        itemViewHolder.view.setTag(1);
                     }
                 }
                 holder.layout.addView(itemViewHolder.view);
@@ -181,9 +185,11 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 itemViewHolder.view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent intent = new Intent();
-                        intent.setClass(mContext, TvPlayerActivity.class);
-                        mContext.startActivity(intent);
+                        if((int)view.getTag() == 1){
+                            Intent intent = new Intent();
+                            intent.setClass(mContext, TvPlayerActivity.class);
+                            mContext.startActivity(intent);
+                        }
                     }
                 });
             }
