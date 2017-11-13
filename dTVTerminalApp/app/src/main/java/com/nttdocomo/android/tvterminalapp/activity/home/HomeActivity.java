@@ -324,9 +324,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void recommendChannelCallback(List<Map<String, String>> redChList) {
-        /*if (redChList != null && redChList.size() > 0) {
+        if (redChList != null && redChList.size() > 0) {
             setRecyclerView(redChList, REDCH_SORT);
-        }*/
+        }
     }
 
     @Override
