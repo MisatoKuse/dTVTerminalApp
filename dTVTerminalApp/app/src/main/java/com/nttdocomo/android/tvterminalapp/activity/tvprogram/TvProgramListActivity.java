@@ -448,7 +448,7 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
                 break;
             case R.id.tv_program_list_main_layout_changemode_rl:
                 //番組表モード切替
-                // TODO: 2017/11/09 拡大・縮小番組表切替
+                // TODO: 拡大・縮小番組表切替
                 break;
             default:
                 break;
