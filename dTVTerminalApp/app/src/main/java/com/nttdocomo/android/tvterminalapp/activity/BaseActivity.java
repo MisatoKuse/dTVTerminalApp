@@ -87,7 +87,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                         Class<?> aClass = DtvContentsDetailActivity.class;
                         intent = new Intent(this, aClass);
                         intent.putExtra(DtvContentsDetailActivity.DTV_INFO_BUNDLE_KEY, detailData);
-                        startActivity(intent);
                     default:
                         //TODO:プレイヤー付きのコンテンツ詳細画面を起動
                 }
