@@ -10,7 +10,9 @@ import android.content.SharedPreferences;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 public class DateUtils {
 
@@ -68,6 +70,9 @@ public class DateUtils {
     //日付フォーマット
     private static final String DATE_PATTERN = "yyyy/MM/dd HH:mm:ss";
 
+    //日付フォーマット
+    private static final String DATE_YYYY_MM_DD = "yyyy/MM/dd";
+
     //DB保存期限
     private static final int LIMIT_HOUR = 1;
 
@@ -95,19 +100,44 @@ public class DateUtils {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.HOUR_OF_DAY, LIMIT_HOUR);
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
+        saveDataToSharePre(key, sdf.format(c.getTime()));
 
+    }
+
+    /**
+     * 現在日時に1日加算した後に永続化
+     *
+     * @param key name
+     * @param value value
+     */
+    private void saveDataToSharePre(String key, String value){
         //データ永続化
         SharedPreferences data = mContext.getSharedPreferences(DATA_SAVE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = data.edit();
-        editor.putString(key, sdf.format(c.getTime()));
+        editor.putString(key, value);
         editor.apply();
+    }
+
+    /**
+     * 現在日時に1日加算した後に永続化
+     *
+     * @param key
+     */
+    public void addLastProgramDate(
+            String key) {
+
+        // TODO:DBには取得日時を格納しておき、現在時刻よりもデータが未来の場合,キャッシュ切れと判断すべき
+        //現在日時を取得
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_YYYY_MM_DD, Locale.JAPAN);
+        saveDataToSharePre(key, sdf.format(c.getTime()));
     }
 
     /**
      * 前回取得日時を返却
      *
-     * @param key
-     * @return
+     * @param key ファイル名(KEY)
+     * @return date 前回取得した時刻を返却
      */
     public String getLastDate(String key) {
         SharedPreferences data = mContext.getSharedPreferences(DATA_SAVE, Context.MODE_PRIVATE);
@@ -142,6 +172,32 @@ public class DateUtils {
         //
         boolean isExpired = false;
         if (limit.compareTo(now) < 0) {
+            isExpired = true;
+        }
+        return isExpired;
+    }
+
+    /**
+     * 日付が期限内か判定
+     *
+     * @param lastStr 前回取得できた日付
+     * @return 現在日付と前回の比較の判定
+     */
+    public boolean isBeforeProgramLimitDate(String lastStr) {
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_YYYY_MM_DD, Locale.JAPAN);
+        //日付の比較
+        Calendar calendar = Calendar.getInstance();
+        String nowStr = sdf.format(calendar.getTime());
+        Date lastDate = new Date();
+        Date nowDate = new Date();
+        try {
+            lastDate = sdf.parse(lastStr);
+            nowDate = sdf.parse(nowStr);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        boolean isExpired = false;
+        if (lastDate.compareTo(nowDate) != 0) {
             isExpired = true;
         }
         return isExpired;

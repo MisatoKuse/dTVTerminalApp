@@ -32,7 +32,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     private LinearLayout baseLinearLayout;
     private RelativeLayout headerLayout;
-    private TextView titleTextView;
+    protected TextView titleTextView;
 
     /**
      * Created on 2017/09/21.

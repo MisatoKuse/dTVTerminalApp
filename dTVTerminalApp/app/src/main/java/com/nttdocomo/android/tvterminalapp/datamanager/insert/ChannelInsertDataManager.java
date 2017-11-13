@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATE_TYPE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_AVAIL_START_DATE;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.UPDATE_DATE;
 
@@ -39,16 +40,17 @@ public class ChannelInsertDataManager {
      * ChannelAPIの解析結果をDBに格納する。
      *
      */
-    public void insertChannelInsertList(ChannelList channelList) {
+    public void insertChannelInsertList(ChannelList channelList, String display_type) {
 
         //各種オブジェクト作成
         DBHelper channelListDBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = channelListDBHelper.getWritableDatabase();
-        ChannelListDao channelListDao = new ChannelListDao(db);
+        DataBaseManager.initializeInstance(channelListDBHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        ChannelListDao channelListDao = new ChannelListDao(database);
         List<HashMap<String,String>> hashMaps = channelList.getClList();
 
         //DB保存前に前回取得したデータは全消去する
-        channelListDao.delete();
+        channelListDao.deleteByType(display_type);
 
         //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
         for (int i = 0; i < hashMaps.size(); i++) {
@@ -62,8 +64,10 @@ public class ChannelInsertDataManager {
                     values.put(UPDATE_DATE, !TextUtils.isEmpty(valName)?valName.substring(0,10):"");
                 }
                 values.put(DBUtils.fourKFlgConversion(keyName), valName);
+                values.put(DATE_TYPE, "program");
             }
             channelListDao.insert(values);
         }
+        DataBaseManager.getInstance().closeDatabase();
     }
 }

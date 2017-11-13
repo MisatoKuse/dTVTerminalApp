@@ -4,8 +4,11 @@
 
 package com.nttdocomo.android.tvterminalapp.model.program;
 
+import android.text.TextUtils;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /* 作成中 */
 /*
@@ -15,172 +18,125 @@ import java.util.Date;
 public class Schedule {
 
     //タイトル
-    private String mTitle = "";
+    private String title;
     //開始時間
-    private String mStartTime = "";
+    private String startTime;
     //終了時間
-    private String mEndTime = "";
-    //thumbnail url
-    private String mImageUrl = "";
-    //channel no
-    private String mChno = "";
-    //episode info
-    private String mEpisode;
-    //高さ
-    private int mHeight = 0;
-    //一日の秒数
-    private static final int secondsOneDay=24*60*60;
-    //タイムラインの高さ
-    private int mTimeLineTotalHeight=1;
-    //タイムラインは何時から
-    private int mBaseTime=0;
-
-    /**
-     * クラス構造
-     */
-    public Schedule(){
-    }
-
-    /**
-     * ScheduleはDataProviderにて生成したので、UIはScheduleを使う前に、UIのラインタイム情報をScheduleに設定
-     * @param timeLineTotalHeight タイムライン高さ
-     * @param baseTime　開始タイム
-     */
-    public void rejustScheduleInfo(int timeLineTotalHeight, int baseTime){
-        mTimeLineTotalHeight = timeLineTotalHeight;
-        mBaseTime = baseTime;
-    }
-
-    /**
-     * mEpisodeを取得
-     * @return episode情報
-     */
-    public String getEpisode() {
-        return mEpisode;
-    }
-
-    /**
-     * mEpisodeを設定
-     * @param mEpisode episode情報
-     */
-    public void setEpisode(String mEpisode) {
-        this.mEpisode = mEpisode;
-    }
+    private String endTime;
+    //サムネイル url
+    private String imageUrl;
+    //チャンネル ID
+    private String chNo;
+    //時間単価換算
+    private static final int FORMAT = 1000 * 60 * 60;
+    //日付format
+    private static final String DATE_FORMAT = "yyyy-MM-ddHH:mm:ss";
 
     /*
      * タイトルを取得する
      */
     public String getTitle() {
-        return mTitle;
+        return title;
     }
 
     /*
      * タイトルを設定する
      */
-    public void setTitle(String content) {
-        mTitle = content;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     /*
      * 開始時間を取得する
      */
     public String getStartTime() {
-        return mStartTime;
+        return startTime;
     }
 
     /*
      * 開始時間を設定する
      */
     public void setStartTime(String startTime) {
-        mStartTime = startTime;
+        this.startTime = startTime;
     }
 
     /*
      * 終了時間を取得する
      */
     public String getEndTime() {
-        return mEndTime;
+        return endTime;
     }
 
     /*
      * 終了時間を設定する
      */
     public void setEndTime(String endTime) {
-        mEndTime = endTime;
+        this.endTime = endTime;
     }
 
     /*
      * Thumbnailを取得する
      */
     public String getImageUrl() {
-        return mImageUrl;
+        return imageUrl;
     }
 
     /*
      * Thumbnailを設定する
      */
     public void setImageUrl(String imageUrl) {
-        mImageUrl = imageUrl;
+        this.imageUrl = imageUrl;
     }
 
     /*
      * チャンネルNOを取得する
      */
-    public String getmChno() {
-        return mChno;
+    public String getChNo() {
+        return chNo;
     }
 
     /*
      * チャンネルNOを設定する
      */
-    public void setmChno(String mChno) {
-        this.mChno = mChno;
+    public void setChNo(String chNo) {
+        this.chNo = chNo;
     }
 
-    /*
-         * 高さを取得する
-         */
-    public int getHeight() {
-        return mHeight;
-    }
 
-    /*
-     * 高さを設定する
+    /**
+     * 開始時間よりmarginの取得
+     *
+     * @return 前の間隔
      */
-    public void setHeight(int height) {
-        mHeight = height;
+    public float getMarginTop(String lastEndDate) {
+        String standardTime = "";
+        if ("".equals(lastEndDate)) {
+            if (startTime != null) {
+                String curStartDay = startTime.substring(0, 10);
+                standardTime = curStartDay + "04:00:00";
+            }
+        } else {
+            standardTime = getFormatDate(lastEndDate);
+        }
+        Date startTime = stringToDate(standardTime);
+        Date endTime = stringToDate(getFormatDate(this.startTime));
+        float diffHours = (endTime.getTime() - startTime.getTime()) / (float) (FORMAT);
+        if (diffHours < 0) {
+            diffHours = 0;
+        }
+        return diffHours;
     }
 
     /**
-     * 0時から開始時間までの秒数を取得
-     * @return 開始タイムの秒数
+     * StringをDateに変換
+     *
+     * @return date
      */
-    private int getStartTimeSeconds(){
-        Date time = strToDate(mStartTime);
-        if(null==time){
-            return 0;
-        }
-        int hourSub = time.getHours() - mBaseTime;
-        if(0>hourSub){
-            hourSub+=24;
-        }
-        return hourSub*60*60 + time.getMinutes()*60 + time.getSeconds();
-    }
-
-    /**
-     * 文字列の日付を日付へ変換し、戻す
-     * @param str　変換情報
-     * @return 日付
-     */
-    private static Date strToDate(String str) {
-        if(null==str || str.length()<20){
-            return null;
-        }
-        str= str.substring(0, 10) + str.substring(11, 19);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss");  //2017-10-12T08:00:00+09:00
+    private Date stringToDate(String strDate) {
+        SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT, Locale.JAPAN);  //2017-10-12T08:00:00+09:00
         Date date = null;
         try {
-            date = format.parse(str);
+            date = format.parse(strDate);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -188,17 +144,26 @@ public class Schedule {
     }
 
     /**
-     * カレントSchduleの上のpaddingを取得
-     * @return top padding
+     * Stringを切り取る
+     *
+     * @return 変換後のデータ
      */
-    public int getTopPadding(){
-        if(0== mTimeLineTotalHeight){
-            return 0;
+    private String getFormatDate(String date) {
+        return date.substring(0, 10) + date.substring(11, 19);
+    }
+
+    /**
+     * 番組高さ取得
+     *
+     * @return 高さ
+     */
+    public float getMyHeight() {
+        Date startTime = stringToDate(getFormatDate(this.startTime));
+        Date endTime = stringToDate(getFormatDate(this.endTime));
+        float diffHours = (endTime.getTime() - startTime.getTime()) / (float) (FORMAT);
+        if (diffHours < 0) {
+            diffHours = 0;
         }
-        int seconds = getStartTimeSeconds();
-        if(0>seconds){
-            seconds=0;
-        }
-        return (int) ((double)(seconds)/(double)(secondsOneDay) * mTimeLineTotalHeight);
+        return diffHours;
     }
 }

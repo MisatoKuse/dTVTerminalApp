@@ -38,7 +38,12 @@
     <string name="str_watching_video_activity_title">視聴中ビデオ一覧</string>
 
     <!-- TvProgram -->
-
+    <string-array name="tv_program_list_tab_names">
+        <item>MY番組表</item>
+        <item>ひかり</item>
+        <item>dTVチャンネル</item>
+    </string-array>
+    <string name="tv_program_change_mode">&lt; &gt;</string>
     <!-- Video -->
 
     <!-- Search -->

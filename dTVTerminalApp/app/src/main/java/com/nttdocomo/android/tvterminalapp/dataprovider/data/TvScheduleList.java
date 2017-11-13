@@ -7,9 +7,8 @@ package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 public class TvScheduleList{
-    private HashMap<String, String> mTvsMap = new HashMap<String, String>();
+    private HashMap<String, String> mTvsMap = new HashMap<>();
     private List<HashMap<String, String>> mTvsList = new ArrayList<>();
 
     public HashMap getTvsMap() {

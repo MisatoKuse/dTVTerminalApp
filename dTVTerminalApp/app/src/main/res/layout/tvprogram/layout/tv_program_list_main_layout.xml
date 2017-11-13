@@ -1,53 +1,90 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="#000000">
 
-    <RelativeLayout
-        android:id="@+id/home_main_layout_title"
+    <HorizontalScrollView
+        android:id="@+id/tv_program_list_main_layout_tab_hs"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="#FF0000">
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:fillViewport="true"
+        android:foregroundGravity="center_horizontal"
+        android:scrollbars="none" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_program_list_main_layout_tab_hs"
+        android:splitMotionEvents="false">
+
+        <ImageView
+            android:id="@+id/tv_program_list_main_layout_curtime_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#222222"
+            android:contentDescription="@null"
+            android:padding="10dp"
+            android:scaleType="fitCenter" />
+
+        <com.nttdocomo.android.tvterminalapp.model.program.ProgramScrollView
+            android:id="@+id/tv_program_list_main_layout_time_sl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_program_list_main_layout_curtime_iv"
+            android:scrollbars="none" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/tv_program_list_main_layout_channel_rv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/tv_program_list_main_layout_curtime_iv"
+            android:scrollbars="none" />
+
+        <com.nttdocomo.android.tvterminalapp.model.program.ProgramScrollView
+            android:id="@+id/tv_program_list_main_layout_channeldetail_sl"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_below="@id/tv_program_list_main_layout_channel_rv"
+            android:layout_toEndOf="@id/tv_program_list_main_layout_time_sl"
+            android:scrollbars="none">
+
+            <com.nttdocomo.android.tvterminalapp.model.program.ProgramRecyclerView
+                android:id="@+id/tv_program_list_main_layout_channeldetail_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#000000"
+                android:divider="#ffff0000"
+                android:dividerHeight="10dp"
+                android:fadingEdge="none"
+                android:fadingEdgeLength="0dp"
+                android:overScrollMode="never" />
+        </com.nttdocomo.android.tvterminalapp.model.program.ProgramScrollView>
+    </RelativeLayout>
+
+	<!-- 仕様通りに表示させるため、一時↓のように構成 07/11/13 -->
+    <com.nttdocomo.android.tvterminalapp.model.program.ChangeModeActionButton
+        android:id="@+id/tv_program_list_main_layout_changemode_rl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:contentDescription="@null"
+            android:src="@mipmap/ic_fiber_manual_record_white_24dp" />
+
         <TextView
+            android:id="@+id/tv_program_list_main_layout_changemode_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="番組表画面"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:textSize="15sp"/>
-    </RelativeLayout>
-
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="戻る"
-        android:id="@+id/btn_back" />
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="番組表縮小版へ"
-        android:id="@+id/btn_mode" />
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        android:id="@+id/btn_channel_info"
-        android:text="チャンネル詳細画面へ"
-        android:gravity="center">
-
-    </Button>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/btn_tv_info"
-        android:text="コンテンツ詳細画面へ"/>
-   <Button
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:id="@+id/btn_video_dialog"
-       android:text="録画予約ダイアログ表示"/>
-</LinearLayout>
+            android:text="@string/tv_program_change_mode"
+            android:textColor="@android:color/holo_red_dark"
+            android:textStyle="bold" />
+    </com.nttdocomo.android.tvterminalapp.model.program.ChangeModeActionButton>
+</RelativeLayout>

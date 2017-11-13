@@ -329,8 +329,9 @@ public class DBConstants {
 
     //Homeキャッシュデータ格納用テーブル
     public static final String CHANNEL_LIST_TABLE_NAME = "channel_list";
-    public static final String ID_COLUMN = "row_id";
+    private static final String ID_COLUMN = "row_id";
     public static final String UPDATE_DATE = "update_date";
+    public static final String DATE_TYPE = "date_type";
 
     public static final String CREATE_TABLE_CHANNEL_SQL = "" +
             "create table " + CHANNEL_LIST_TABLE_NAME + " (" +
@@ -375,6 +376,7 @@ public class DBConstants {
             CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_QUINT +" text, " +
             CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_PU_S +" text, " +
             CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_PU_E +" text, " +
+            DATE_TYPE + " text, " +
             UPDATE_DATE + " text " +
             ")";
 
@@ -460,6 +462,7 @@ public class DBConstants {
             TV_SCHEDULE_LIST_STARTOVER     + " text, " +
             TV_SCHEDULE_LIST_STAMP     + " text, " +
             TV_SCHEDULE_LIST_RELATIONAL_ID_ARRAY     + " text, " +
+            DATE_TYPE + " text, " +
             UPDATE_DATE + " text " +
             ")";
 

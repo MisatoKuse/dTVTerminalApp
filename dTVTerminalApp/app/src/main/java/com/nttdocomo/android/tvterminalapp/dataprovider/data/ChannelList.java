@@ -8,10 +8,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 public class ChannelList implements Serializable {
 
-    private HashMap<String, String> mClMap = new HashMap<String, String>();
+    private HashMap<String, String> mClMap = new HashMap<>();
     private List<HashMap<String, String>> mClList = new ArrayList<>();
 
     public HashMap getClMap() {
