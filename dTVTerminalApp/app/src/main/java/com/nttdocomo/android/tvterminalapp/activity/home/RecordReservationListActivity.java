@@ -42,7 +42,7 @@ public class RecordReservationListActivity extends BaseActivity
     private List mContentsList = null;
     private View mLoadMoreView = null;
     private boolean mIsCommunicating = false;
-    private final int NUM_PER_PAGE = 7;
+    private final int NUM_PER_PAGE = 20;
     private final int LOAD_PAGE_DELAY_TIME = 1000;
 
     @Override
