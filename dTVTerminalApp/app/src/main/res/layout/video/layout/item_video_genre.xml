@@ -13,6 +13,7 @@
         android:layout_centerVertical="true"
         android:layout_marginStart="@dimen/video_contents_genre_title_margin_start"
         android:ellipsize="end"
+        android:textSize="@dimen/video_contents_genre_text_size"
         android:textColor="@color/video_list_text" />
 
     <TextView
@@ -22,6 +23,7 @@
         android:layout_centerVertical="true"
         android:layout_marginEnd="@dimen/video_contents_genre_count_margin_end"
         android:layout_toLeftOf="@+id/genre_button"
+        android:textSize="@dimen/video_contents_genre_text_size"
         android:textColor="@color/video_list_text" />
 
     <TextView
@@ -32,6 +34,7 @@
         android:layout_centerVertical="true"
         android:layout_marginEnd="@dimen/video_contents_genre_button_margin_end"
         android:text="@string/list_transition"
+        android:textSize="@dimen/video_contents_genre_text_size"
         android:textColor="@color/video_list_text" />
 
     <TextView

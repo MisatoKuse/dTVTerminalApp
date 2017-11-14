@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 public class VideoGenreList {
-
     public String mGenreId;
     public String mTitle;
     public String mContentCount;
@@ -36,5 +35,4 @@ public class VideoGenreList {
     public void setContentCount(String contentCount) {
         this.mContentCount = contentCount;
     }
-
 }
