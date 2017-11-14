@@ -81,6 +81,10 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         curDate = sdf.format(c.getTime());
     }
 
+    /**
+     * 機能
+     * 同じビュー重複利用しないよう
+     */
     private ItemViewHolder getUnused(){
         for(ItemViewHolder view: mItemViews){
             if(!view.inUsage){

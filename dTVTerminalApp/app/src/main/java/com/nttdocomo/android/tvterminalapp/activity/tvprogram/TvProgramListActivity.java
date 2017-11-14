@@ -285,7 +285,6 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
             }
             tabTextView.setLayoutParams(params);
             tabTextView.setText(programTabNames[i]);
-            tabTextView.setTextSize(getDensity() * 7);
             tabTextView.setBackgroundColor(Color.BLACK);
             tabTextView.setTextColor(Color.WHITE);
             tabTextView.setGravity(Gravity.CENTER_VERTICAL);
@@ -395,7 +394,6 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
                 curTime = curTime - STANDARD_TIME;
             }
             tabTextView.setText(String.valueOf(curTime));
-            tabTextView.setTextSize(getDensity() * 8);
             tabTextView.setPadding(0, (int) getDensity() * 8, 0, 0);
             tabTextView.setBackgroundColor(Color.BLACK);
             if (i == STANDARD_TIME + START_TIME - 1) {
