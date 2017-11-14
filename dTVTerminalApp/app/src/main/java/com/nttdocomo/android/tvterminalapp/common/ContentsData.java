@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.common;
 
+import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
 
 public class ContentsData {
 
@@ -17,6 +18,10 @@ public class ContentsData {
     private String ratStar = null;
     //サムネイルURL
     private String thumURL = null;
+    // 録画予約ステータス
+    private int recordingReservationStatus = RecordingReservationListDataProvider.RECORD_RESERVATION_SYNC_STATUS_ALREADY_REFLECT;
+    // チャンネル名
+    private String channelName = null;
 
     public String getRank() {
         return rank;
@@ -57,4 +62,21 @@ public class ContentsData {
     public void setThumURL(String thumURL) {
         this.thumURL = thumURL;
     }
+
+    public void setRecordingReservationStatus(int status) {
+        recordingReservationStatus = status;
+    }
+
+    public int getRecordingReservationStatus() {
+        return recordingReservationStatus;
+    }
+
+    public String getChannelName() {
+        return channelName;
+    }
+
+    public void setChannelName(String channelName) {
+        this.channelName = channelName;
+    }
+
 }

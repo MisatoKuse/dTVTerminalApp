@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<resources>
+
+    <!--Common-->
+    <dimen name="header_title_text_size">17sp</dimen>
+    <dimen name="list_item_title_text_size">15sp</dimen>
+    <dimen name="list_item_time_text_size">11sp</dimen>
+    <dimen name="list_item_rank_num_text_size">10sp</dimen>
+    <dimen name="list_item_rating_num_text_size">9sp</dimen>
+
+    <!--コンテンツ詳細-->
+    <dimen name="contents_header_close_button_size">24sp</dimen>
+    <dimen name="contents_header_back_button_size">20sp</dimen>
+    <dimen name="contents_header_height_size">40dp</dimen>
+    <dimen name="contents_back_key_size">50sp</dimen>
+    <dimen name="contents_close_key_size">50sp</dimen>
+    <dimen name="contents_key_padding_size">12dp</dimen>
+    <dimen name="contents_view_text_margin">10dp</dimen>
+    <dimen name="contents_tab_side_margin">20dp</dimen>
+    <dimen name="contents_tab_top_margin">0dp</dimen>
+    <dimen name="contents_tab_height">50dp</dimen>
+    <dimen name="contents_service_name_side_margin">10dp</dimen>
+    <dimen name="contents_text_vertical_margin">10dp</dimen>
+    <dimen name="view_button_size">80dp</dimen>
+    <dimen name="contents_detail_tabs_height">30dp</dimen>
+    <dimen name="tab_under_indicator">1.5dp</dimen>
+
+    <!--ビデオ一覧-->
+    <dimen name="video_contents_genre_button_margin_end">15dp</dimen>
+    <dimen name="video_contents_genre_count_margin_end">15dp</dimen>
+    <dimen name="video_contents_genre_title_margin_start">15dp</dimen>
+    <dimen name="video_contents_genre_title_margin_top">25dp</dimen>
+    <dimen name="video_contents_genre_text_size">14dp</dimen>
+    <dimen name="video_contents_genre_num_size">13dp</dimen>
+    <dimen name="video_contents_divider_radius">1dp</dimen>
+    <dimen name="video_contents_divider_inset_left">15sp</dimen>
+    <dimen name="video_contents_divider_inset_right">0sp</dimen>
+    <dimen name="video_contents_divider_divider_height">1dp</dimen>
+
+    <!--録画予約一覧-->
+    <dimen name="recording_reservation_list_status_width">50dp</dimen>
+    <dimen name="recording_reservation_list_status_height">25dp</dimen>
+    <dimen name="recording_reservation_list_status_margin_end">8dp</dimen>
+    <dimen name="list_item_channel_name_text_size">13sp</dimen>
+    <dimen name="list_item_recording_reservation_status_text_size">12sp</dimen>
+
+</resources>

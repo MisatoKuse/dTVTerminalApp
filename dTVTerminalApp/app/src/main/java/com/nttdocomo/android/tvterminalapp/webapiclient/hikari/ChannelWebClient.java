@@ -78,7 +78,6 @@ public class ChannelWebClient
         }
 
         //チャンネル一覧を呼び出す
-        //TODO: 内部的には暫定的にVOD一覧を呼んでいる
         openUrl(API_NAME_LIST.CHANNEL_LIST.getString(),sendParameter,this);
 
         //現状失敗は無いのでtrue

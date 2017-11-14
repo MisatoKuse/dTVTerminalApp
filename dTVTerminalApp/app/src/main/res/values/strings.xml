@@ -1,7 +1,14 @@
+<!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
 <resources>
 
     <!-- Common -->
     <string name="app_name">dTVTerminalApp</string>
+    <string name="back_key">く</string>
+    <string name="close_key">×</string>
+    <string name="list_transition">></string>
 
     <!-- Launch -->
     <string name="str_launch_title">起動画面</string>
@@ -24,6 +31,11 @@
         <item>dTV</item>
         <item>dアニメ</item>
     </string-array>
+    <string name="recording_reservation_list_title">録画予約</string>
+    <string name="recording_reservation_list_error_toast">録画予約一覧取得失敗</string>
+    <string name="recording_reservation_status_accepting">受付中</string>
+    <string name="recording_reservation_status_accept_failure">受付失敗</string>
+    <string name="recording_reservation_list_update_time">現在</string>
 
     <!-- クリップ一覧 -->
     <string name="str_clip_activity_title">クリップ</string>
@@ -45,6 +57,8 @@
     </string-array>
     <string name="tv_program_change_mode">&lt; &gt;</string>
     <!-- Video -->
+    <string name="video_content_top_title">ビデオ</string>
+    <string name="video_content_sub_genre_title">全ての作品</string>
 
     <!-- Search -->
     <string name="keyword_search_title">キーワード検索</string>
@@ -71,6 +85,9 @@
         <item>国内映画</item>
         <item>海外TV番組・ドラマ</item>
     </string-array>
+
+    <string name="tv_icon_description">テレビアイコン</string>
+    <string name="menu_icon_description">メニューアイコン</string>
 
     <!-- Home -->
     <string name="home_label_recommend_program">おすすめ番組</string>
@@ -107,4 +124,23 @@
 
     <!-- レンタル -->
     <string name="rental_title">レンタル</string>
+
+    <!--コンテンツ詳細-->
+    <string name="contents_info_text">作品情報</string>
+    <string name="contents_info_more_text">more</string>
+    <string name="dtv_contents_service_name">dTV</string>
+    <string name="d_animation_contents_service_name">dアニメ</string>
+    <string name="dtv_channel_contents_service_name">dTVチャンネル</string>
+    <string name="hikari_tv_contents_service_name">ひかりTV</string>
+    <string name="contents_viewing_text">で視聴する</string>
+    <string name="contents_info_thumbnail_text">コンテンツ詳細のサムネイル画像</string>
+    <string name="contents_info_thumbnail_button">コンテンツ詳細のサムネイル画像上のボタン</string>
+    <string name="contents_detail_plane_button">コンテンツ詳細</string>
+    <string name="contents_detail_recommend_button">コンテンツ詳細(おすすめ作品)</string>
+    <string name="contents_detail_channel_button">チャンネル</string>
+    <string name="contents_detail_record_reserve_button">録画予約する</string>
+    <string name="contents_detail_tv_view_button">テレビで視聴する</string>
+    <string-array name="other_contents_detail_tabs">
+        <item>作品情報</item>
+    </string-array>
 </resources>

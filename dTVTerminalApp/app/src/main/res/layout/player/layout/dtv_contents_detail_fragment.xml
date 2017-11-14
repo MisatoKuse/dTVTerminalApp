@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/contents_detail_fragment_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/contents_tab_side_margin"
+    android:paddingRight="@dimen/contents_tab_side_margin"
+    android:paddingTop="@dimen/contents_tab_top_margin">
+
+    <TextView
+        android:id="@+id/service_provider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/contents_provider_shape_corner"
+        android:paddingLeft="@dimen/contents_service_name_side_margin"
+        android:paddingRight="@dimen/contents_service_name_side_margin"
+        android:textColor="@color/white_text" />
+
+    <TextView
+        android:id="@+id/contents_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/contents_text_vertical_margin"
+        android:textColor="@color/white_text"
+        android:textSize="@dimen/header_title_text_size" />
+
+    <TextView
+        android:id="@+id/contents_detail_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/contents_text_vertical_margin"
+        android:ellipsize="end"
+        android:maxLines="4"
+        android:textColor="@color/white_text"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/contents_detail_all_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/contents_text_vertical_margin"
+        android:textColor="@color/white_text"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/more_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:gravity="end"
+        android:text="@string/contents_info_more_text"
+        android:textColor="@color/white_text" />
+</LinearLayout>

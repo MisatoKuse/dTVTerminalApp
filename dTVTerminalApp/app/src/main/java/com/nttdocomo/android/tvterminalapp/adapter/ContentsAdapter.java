@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -20,6 +21,8 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 
 import java.util.List;
@@ -63,7 +66,9 @@ public class ContentsAdapter extends BaseAdapter {
         TYPE_DAILY_RANK,          //今日のテレビランキング
         TYPE_WEEKLY_RANK,         //週間テレビランキング
         TYPE_VIDEO_RANK,          //ビデオランキング
-        TYPE_RENTAL_RANK          //レンタル
+        TYPE_RENTAL_RANK,          //レンタル
+        TYPE_RECORDING_RESERVATION_LIST, // 録画予約一覧
+        TYPE_VIDEO_CONTENT_LIST // ビデオコンテンツ一覧
     }
 
     /**
@@ -98,45 +103,88 @@ public class ContentsAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup parent) {
-        ViewHolder holder;
+        ViewHolder holder = null;
+
         //ビューの再利用
         if (view == null) {
-            view = mInflater.inflate(R.layout.item_common_result, parent, false);
             holder = new ViewHolder();
-            holder.rl_thumbnail = view.findViewById(R.id.item_common_result_thumbnail_rl);
-            holder.iv_thumbnail = view.findViewById(R.id.item_common_result_thumbnail_iv);
-            holder.tv_clip = view.findViewById(R.id.item_common_result_clip_tv);
-            holder.tv_rank = view.findViewById(R.id.item_common_result_rank_num);
-            holder.tv_time = view.findViewById(R.id.item_common_result_content_time);
-            holder.tv_title = view.findViewById(R.id.item_common_result_content_title);
-            holder.ll_rating = view.findViewById(R.id.item_common_result_content_rating);
-            holder.rb_rating = view.findViewById(R.id.item_common_result_content_rating_star);
-            holder.tv_rating_num = view.findViewById(R.id.item_common_result_content_rating_num);
-            holder.tv_line = view.findViewById(R.id.item_common_result_line);
+            view = setViewPattern(parent);
+            holder = setListItemPattern(holder, view);
+
             //ディスプレイ基づいて、画像の長さと幅さを設定
             setView(holder);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
         }
-        setData(holder);
-        //各アイアムデータ取得してから、設定
+        setShowDataVisiblity(holder);
+        //各アイテムデータを取得
         ContentsData listContentInfo = listData.get(position);
+        // アイテムデータを設定する
+        setContentsData(holder, listContentInfo);
+
+        return view;
+    }
+
+    /**
+     * 各コンテンツデータを設定
+     *
+     * @param holder
+     * @param listContentInfo
+     */
+    private void setContentsData(ViewHolder holder, ContentsData listContentInfo) {
+        setRankData(holder, listContentInfo);
+        setTitleData(holder, listContentInfo);
+        setTimeData(holder, listContentInfo);
+        setThumbnailData(holder, listContentInfo);
+        setRatStarData(holder, listContentInfo);
+        setRecodingReservationStatusData(holder, listContentInfo);
+        setChannelName(holder, listContentInfo);
+    }
+
+    /**
+     * データの設定（ランク）
+     */
+    private void setRankData(ViewHolder holder, ContentsData listContentInfo) {
         if (!TextUtils.isEmpty(listContentInfo.getRank())) {//ランク
             holder.tv_rank.setText(listContentInfo.getRank());
         }
-        if (!TextUtils.isEmpty(listContentInfo.getTime())) {//時間
-            holder.tv_time.setText(listContentInfo.getTime());
-        }
+    }
+
+    /**
+     * データの設定（タイトル）
+     */
+    private void setTitleData(ViewHolder holder, ContentsData listContentInfo) {
         if (!TextUtils.isEmpty(listContentInfo.getTitle())) {//タイトル
             String title = listContentInfo.getTitle() + mContext.getResources().getString(R.string.common_ranking_enter);
             holder.tv_title.setText(title);
         }
+    }
+
+    /**
+     * データの設定（開始時刻）
+     */
+    private void setTimeData(ViewHolder holder, ContentsData listContentInfo) {
+        if (!TextUtils.isEmpty(listContentInfo.getTime())) {//時間
+            holder.tv_time.setText(listContentInfo.getTime());
+        }
+    }
+
+    /**
+     * データの設定（評価）
+     */
+    private void setRatStarData(ViewHolder holder, ContentsData listContentInfo) {
         if (!TextUtils.isEmpty(listContentInfo.getRatStar())) {//評価
             holder.rb_rating.setNumStars(NUM_STARS_TOTAL);
             holder.rb_rating.setRating(Float.parseFloat(listContentInfo.getRatStar()));
             holder.tv_rating_num.setText(listContentInfo.getRatStar());
         }
+    }
+
+    /**
+     * データの設定（サムネイル）
+     */
+    private void setThumbnailData(ViewHolder holder, ContentsData listContentInfo) {
         if (!TextUtils.isEmpty(listContentInfo.getThumURL())) {//サムネイル
             holder.rl_thumbnail.setVisibility(View.VISIBLE);
             holder.iv_thumbnail.setTag(listContentInfo.getThumURL());
@@ -147,7 +195,61 @@ public class ContentsAdapter extends BaseAdapter {
         } else {
             holder.rl_thumbnail.setVisibility(View.GONE);
         }
-        return view;
+    }
+
+    /**
+     * データの設定（録画予約ステータス）
+     */
+    private void setRecodingReservationStatusData(ViewHolder holder, ContentsData listContentInfo) {
+        DTVTLogger.start("status = " + listContentInfo.getRecordingReservationStatus());
+        if(holder.tv_recording_reservation != null) {// 録画予約ステータス
+            int status = listContentInfo.getRecordingReservationStatus();
+            switch (status) {
+                case RecordingReservationListDataProvider.RECORD_RESERVATION_SYNC_STATUS_REFLECTS_WAITING:
+                case RecordingReservationListDataProvider.RECORD_RESERVATION_SYNC_STATUS_DURING_REFLECT:
+                    // 受付中
+                    holder.tv_recording_reservation.setVisibility(View.VISIBLE);
+                    holder.tv_recording_reservation.setTextColor
+                            (ContextCompat.getColor(mContext,R.color.recording_reservation_status_text_color_red));
+                    holder.tv_recording_reservation.setBackgroundColor
+                            (ContextCompat.getColor(mContext,R.color.recording_reservation_status_background_white));
+                    holder.tv_recording_reservation.setText(R.string.recording_reservation_status_accepting);
+                    break;
+                case RecordingReservationListDataProvider.RECORD_RESERVATION_SYNC_STATUS_REFLECT_FAILURE:
+                    // 受付失敗
+                    holder.tv_recording_reservation.setVisibility(View.VISIBLE);
+                    holder.tv_recording_reservation .setTextColor
+                            (ContextCompat.getColor(mContext, R.color.recording_reservation_status_text_color_white));
+                    holder.tv_recording_reservation.setBackgroundColor
+                            (ContextCompat.getColor(mContext,R.color.recording_reservation_status_background_red));
+                    holder.tv_recording_reservation.setText(R.string.recording_reservation_status_accept_failure);
+                    break;
+                case RecordingReservationListDataProvider.RECORD_RESERVATION_SYNC_STATUS_ALREADY_REFLECT:
+                    // 受信完了
+                    holder.tv_recording_reservation.setVisibility(View.INVISIBLE);
+                    holder.tv_recording_reservation.setBackgroundColor
+                            (ContextCompat.getColor(mContext,R.color.recording_reservation_status_background_black));
+                    break;
+                default:
+                    holder.tv_recording_reservation.setVisibility(View.INVISIBLE);
+                    holder.tv_recording_reservation.setBackgroundColor
+                            (ContextCompat.getColor(mContext,R.color.recording_reservation_status_background_black));
+                    break;
+            }
+            DTVTLogger.end();
+        }
+    }
+
+    /**
+     * データの設定（チャンネル名）
+     */
+    private void setChannelName(ViewHolder holder, ContentsData listContentInfo) {
+        DTVTLogger.start("ChannelName = " +listContentInfo.getChannelName());
+        if(holder.tv_recording_reservation != null) {
+            holder.tv_channel_name.setVisibility(View.VISIBLE);
+            holder.tv_channel_name.setText(listContentInfo.getChannelName());
+        }
+        DTVTLogger.end();
     }
 
     /**
@@ -165,20 +267,91 @@ public class ContentsAdapter extends BaseAdapter {
         holder.tv_line.setLayoutParams(layoutParams);
     }
 
+    private View setViewPattern(ViewGroup parent) {
+        // TODO 録画予約一覧以外のパターンも共通項目以外を抽出し、修正する
+        View view = null;
+        switch (type) {
+            case TYPE_DAILY_RANK: // 今日のテレビランキング
+            case TYPE_WEEKLY_RANK: // 週間ランキング
+            case TYPE_VIDEO_RANK: // ビデオランキング
+            case TYPE_RENTAL_RANK: // レンタル一覧
+            case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
+                view = mInflater.inflate(R.layout.item_common_result, parent, false);
+                break;
+            case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
+                view = mInflater.inflate(R.layout.item_common_result, parent, false);
+                break;
+            default:
+                break;
+        }
+        return view;
+    }
+
+    /**
+     * 共通Itemの設定
+     */
+    private ViewHolder setCommonListItem(ViewHolder holder, View view) {
+        holder.rl_thumbnail = view.findViewById(R.id.item_common_result_thumbnail_rl);
+        holder.iv_thumbnail = view.findViewById(R.id.item_common_result_thumbnail_iv);
+        holder.tv_clip = view.findViewById(R.id.item_common_result_clip_tv);
+        holder.tv_rank = view.findViewById(R.id.item_common_result_rank_num);
+        holder.tv_time = view.findViewById(R.id.item_common_result_content_time);
+        holder.tv_title = view.findViewById(R.id.item_common_result_content_title);
+        holder.ll_rating = view.findViewById(R.id.item_common_result_content_rating);
+        holder.rb_rating = view.findViewById(R.id.item_common_result_content_rating_star);
+        holder.tv_rating_num = view.findViewById(R.id.item_common_result_content_rating_num);
+        holder.tv_line = view.findViewById(R.id.item_common_result_line);
+
+        return holder;
+    }
+
+    /**
+     *  Itemのパターンを設定
+     */
+    private ViewHolder setListItemPattern(ViewHolder holder, View view) {
+        // TODO 録画予約一覧以外のパターンも共通項目以外を抽出し、修正する
+        holder = setCommonListItem(holder, view);
+        switch (type) {
+            case TYPE_DAILY_RANK: // 今日のテレビランキング
+            case TYPE_WEEKLY_RANK: // 週間ランキング
+            case TYPE_VIDEO_RANK: // ビデオランキング
+            case TYPE_RENTAL_RANK: // レンタル一覧
+            case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
+                break;
+            case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
+                holder.tv_recording_reservation =
+                        view.findViewById(R.id.item_common_result_recording_reservation_status);
+                holder.tv_channel_name = view.findViewById(R.id.item_common_result_channel_name);
+                break;
+            default:
+                break;
+        }
+        return holder;
+    }
+
     /**
      * データの設定
      */
-    private void setData(ViewHolder holder) {
+    private void setShowDataVisiblity(ViewHolder holder) {
         switch (type) {
-            case TYPE_DAILY_RANK:
-            case TYPE_WEEKLY_RANK:
+            case TYPE_DAILY_RANK: // 今日のテレビランキング
+            case TYPE_WEEKLY_RANK: // 週間ランキング
                 holder.ll_rating.setVisibility(View.GONE);
                 break;
-            case TYPE_VIDEO_RANK:
+            case TYPE_VIDEO_RANK: // ビデオランキング
                 holder.tv_time.setVisibility(View.GONE);
                 break;
-            case TYPE_RENTAL_RANK:
+            case TYPE_RENTAL_RANK: // レンタル一覧
+            case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
                 holder.tv_rank.setVisibility(View.GONE);
+                break;
+            case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
+                holder.tv_clip.setVisibility(View.GONE);
+                holder.rl_thumbnail.setVisibility(View.GONE);
+                holder.iv_thumbnail.setVisibility(View.GONE);
+                holder.rb_rating.setVisibility(View.GONE);
+                holder.tv_rating_num.setVisibility(View.GONE);
+                holder.tv_channel_name.setVisibility(View.VISIBLE);
                 break;
             default:
                 break;
@@ -209,5 +382,9 @@ public class ContentsAdapter extends BaseAdapter {
         TextView tv_clip;
         //ライン
         TextView tv_line;
+        // 録画予約ステータス
+        TextView tv_recording_reservation = null;
+        // チャンネル名
+        TextView tv_channel_name = null;
     }
 }

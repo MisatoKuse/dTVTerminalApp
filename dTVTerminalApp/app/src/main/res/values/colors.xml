@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
 <resources>
+    <!--Common-->
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#FF0000</color>
     <color name="colorAccent">#FF4081</color>
     <color name="menuList">#000000</color>
     <color name="menuListProgramTitle">#FFFFFF</color>
+    <color name="white_text">#FFFFFF</color>
+    <color name="gray_text">#7f7f7f</color>
+    <color name="disable_tab_background">#111111</color>
+    <color name="list_item_background">#000000</color>
+
     <!-- キーワード検索 -->
     <color name="keyword_search_background">#EEEEEE</color>
     <color name="keyword_search_hint">#888888</color>
@@ -22,4 +32,16 @@
     <color name="ranking_list_border">#888888</color>
     <color name="ranking_no_text">#FFFFFF</color>
     <color name="ranking_no_background">#000000</color>
+    <!-- ランキング一覧 -->
+    <color name="recording_reservation_status_text_color_red">#FF0000</color>
+    <color name="recording_reservation_status_text_color_white">#FFFFFF</color>
+    <color name="recording_reservation_status_background_red">#FF0000</color>
+    <color name="recording_reservation_status_background_white">#FFFFFF</color>
+    <color name="recording_reservation_status_background_black">#000000</color>
+    <!-- ビデオ一覧 -->
+    <color name="video_list_text">#FFFFFF</color>
+    <color name="video_list_line">#424242</color>
+
+    <!--コンテンツ詳細-->
+    <color name="contents_header_background">#000000</color>
 </resources>

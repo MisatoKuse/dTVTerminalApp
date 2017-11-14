@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -20,7 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class RankingBaseFragment extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
+public class RankingBaseFragment extends Fragment implements AbsListView.OnScrollListener,
+        AdapterView.OnItemClickListener, AdapterView.OnTouchListener {
 
     public Context mActivity;
     public List mData = null;
@@ -34,6 +36,14 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
     private View mLoadMoreView;
     private int mRankingMode = 0;
 
+    //スクロール位置の記録
+    private int mFirstVisibleItem = 0;
+
+    //最後のスクロール方向が上ならばtrue
+    private boolean mLastScrollUp = false;
+
+    //指を置いたY座標
+    private float mStartY = 0;
 
     public RankingBaseFragment() {
         if (mData == null) {
@@ -48,7 +58,8 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         //initData();//一時使うデータ
         DTVTLogger.debug("onCreateView");
 
@@ -70,8 +81,12 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
             mRankingListView.setOnScrollListener(this);
             mRankingListView.setOnItemClickListener(this);
 
+            //スクロールの上下方向検知用のリスナーを設定
+            mRankingListView.setOnTouchListener(this);
+
         }
-        mLoadMoreView = LayoutInflater.from(getActivity()).inflate(R.layout.search_load_more, null);
+        mLoadMoreView = LayoutInflater.from(getActivity()).inflate(R.layout.search_load_more,
+                null);
         if (mContentsAdapter == null) {
             initRankingView();
         }
@@ -127,20 +142,23 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
      * 週間ランキングコンテンツ初期化
      */
     private void initWeeklyContentListView() {
-
-        mContentsAdapter
-                = new ContentsAdapter(getContext(),
-                mData, ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK);
-        mRankingListView.setAdapter(mContentsAdapter);
+        if (mData != null) {
+            mContentsAdapter
+                    = new ContentsAdapter(getContext(),
+                    mData, ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK);
+            mRankingListView.setAdapter(mContentsAdapter);
+        }
     }
 
     /**
      * ビデオランキングコンテンツ初期化
      */
     private void initVideoContentListView() {
-        mContentsAdapter = new ContentsAdapter(getContext(),
-                mData, ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK);
-        mRankingListView.setAdapter(mContentsAdapter);
+        if (mData != null) {
+            mContentsAdapter = new ContentsAdapter(getContext(),
+                    mData, ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK);
+            mRankingListView.setAdapter(mContentsAdapter);
+        }
     }
 
     /**
@@ -161,6 +179,10 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
         if (null != mRankingListView) {
             if (b) {
                 mRankingListView.addFooterView(mLoadMoreView);
+
+                //スクロール位置を最下段にすることで、追加した更新フッターを画面内に入れる
+                mRankingListView.setSelection(mRankingListView.getMaxScrollAmount());
+
             } else {
                 mRankingListView.removeFooterView(mLoadMoreView);
             }
@@ -169,23 +191,67 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
 
     @Override
     public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+        //スクロール位置がリストの先頭で上スクロールだった場合は、更新をせずに帰る
+        if (mFirstVisibleItem == 0 && mLastScrollUp) {
+            return;
+        }
+
         if (null != mRankingBaseFragmentScrollListener) {
-            mRankingBaseFragmentScrollListener.onScrollStateChanged(this, absListView, scrollState);
+            mRankingBaseFragmentScrollListener.onScrollStateChanged(this, absListView,
+                    scrollState);
         }
     }
 
     @Override
-    public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+    public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount,
+                         int totalItemCount) {
         if (null != mRankingBaseFragmentScrollListener) {
-            mRankingBaseFragmentScrollListener.onScroll(this, absListView, firstVisibleItem, visibleItemCount, totalItemCount);
+            mRankingBaseFragmentScrollListener.onScroll(this, absListView, firstVisibleItem,
+                    visibleItemCount, totalItemCount);
         }
+
+        //現在のスクロール位置の記録
+        mFirstVisibleItem = firstVisibleItem;
     }
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        if (mLoadMoreView == view) {
+        if (mLoadMoreView == view || mActivity == null) {
             return;
         }
         ((BaseActivity) mActivity).startActivity(TvPlayerActivity.class, null);
+    }
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        if (!(view instanceof ListView)) {
+            //今回はリストビューの事しか考えないので、他のビューならば帰る
+            return false;
+        }
+
+        //指を動かした方向を検知する
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                //指を降ろしたので、位置を記録
+                mStartY = motionEvent.getY();
+                break;
+            case MotionEvent.ACTION_UP:
+                //指を離したので、位置を記録
+                float mEndY = motionEvent.getY();
+
+                mLastScrollUp = false;
+
+                //スクロール方向の判定
+                if (mStartY < mEndY) {
+                    //終了時のY座標の方が大きいので、上スクロール
+                    mLastScrollUp = true;
+                }
+
+                break;
+            default:
+                //現状処理は無い・警告対応
+        }
+
+        return false;
     }
 }

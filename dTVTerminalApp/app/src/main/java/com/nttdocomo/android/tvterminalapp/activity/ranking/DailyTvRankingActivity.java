@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.activity.ranking;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -29,7 +30,8 @@ import java.util.Map;
 
 public class DailyTvRankingActivity extends BaseActivity implements View.OnClickListener,
         RankingTopDataProvider.ApiDataProviderCallback,
-        AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
+        AbsListView.OnScrollListener, AdapterView.OnItemClickListener,
+        AbsListView.OnTouchListener {
 
     // 最大表示件数
     private final static int NUM_PER_PAGE = 10;
@@ -45,6 +47,15 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
     private List mContentsList;
 
     private boolean mIsCommunicating = false;
+
+    //スクロール位置の記録
+    private int mFirstVisibleItem = 0;
+
+    //最後のスクロール方向が上ならばtrue
+    private boolean mLastScrollUp = false;
+
+    //指を置いたY座標
+    private float mStartY = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,12 +83,18 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
         mListView = findViewById(R.id.tv_rank_list);
         mListView.setOnItemClickListener(this);
         mListView.setOnScrollListener(this);
-        mContentsAdapter = new ContentsAdapter(
-                this,
-                mContentsList,
-                ContentsAdapter.ActivityTypeItem.TYPE_DAILY_RANK
-        );
-        mListView.setAdapter(mContentsAdapter);
+
+        //スクロールの上下方向検知用のリスナーを設定
+        mListView.setOnTouchListener(this);
+
+        //アナライズの警告対応のsynchronized
+        synchronized (this) {
+            mContentsAdapter = new ContentsAdapter(
+                    this,
+                    mContentsList,
+                    ContentsAdapter.ActivityTypeItem.TYPE_DAILY_RANK);
+            mListView.setAdapter(mContentsAdapter);
+        }
         mLoadMoreView = LayoutInflater.from(this).inflate(R.layout.search_load_more, null);
     }
 
@@ -98,6 +115,10 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
         if (null != mListView) {
             if (bool) {
                 mListView.addFooterView(mLoadMoreView);
+
+                //スクロール位置を最下段にすることで、追加した更新フッターを画面内に入れる
+                mListView.setSelection(mListView.getMaxScrollAmount());
+
             } else {
                 mListView.removeFooterView(mLoadMoreView);
             }
@@ -154,12 +175,49 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
     }
 
     @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        if (!(view instanceof ListView)) {
+            //今回はリストビューの事しか考えないので、他のビューならば帰る
+            return false;
+        }
+
+        //指を動かした方向を検知する
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                //指を降ろしたので、位置を記録
+                mStartY = motionEvent.getY();
+                break;
+            case MotionEvent.ACTION_UP:
+                //指を離したので、位置を記録
+                float mEndY = motionEvent.getY();
+
+                mLastScrollUp = false;
+
+                //スクロール方向の判定
+                if (mStartY < mEndY) {
+                    //終了時のY座標の方が大きいので、上スクロール
+                    mLastScrollUp = true;
+                }
+
+                break;
+
+            default:
+                //現状処理は無い・警告対応
+        }
+
+        return false;
+    }
+
+    @Override
     public void onScroll(AbsListView absListView, int firstVisibleItem,
                          int visibleItemCount, int totalItemCount) {
         synchronized (this) {
             if (null == mContentsAdapter) {
                 return;
             }
+
+            //現在のスクロール位置の記録
+            mFirstVisibleItem = firstVisibleItem;
 
             if (firstVisibleItem + visibleItemCount == totalItemCount && 0 != totalItemCount) {
                 DTVTLogger.debug(
@@ -181,6 +239,12 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
                 if (mIsCommunicating) {
                     return;
                 }
+
+                //スクロール位置がリストの先頭で上スクロールだった場合は、更新をせずに帰る
+                if (mFirstVisibleItem == 0 && mLastScrollUp) {
+                    return;
+                }
+
                 DTVTLogger.debug("onScrollStateChanged, do paging");
                 displayMoreData(true);
                 setCommunicatingStatus(true);
@@ -217,6 +281,12 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
         }
         List<ContentsData> rankingContentInfo = setDailyRankContentData(dailyRankMapList);
 
+        //既に元のデータ以上の件数があれば足す物は無いので、更新せずに帰る
+        if (null != mContentsList && mContentsList.size() >= rankingContentInfo.size()) {
+            displayMoreData(false);
+            return;
+        }
+
         int pageNumber = getCurrentNumber();
         for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1)
                 * NUM_PER_PAGE && i < rankingContentInfo.size(); ++i) {
@@ -224,9 +294,11 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
             if (null != mContentsList) {
                 mContentsList.add(rankingContentInfo.get(i));
             }
+            resetCommunication();
+            synchronized (this) {
+                mContentsAdapter.notifyDataSetChanged();
+            }
         }
-        resetCommunication();
-        mContentsAdapter.notifyDataSetChanged();
     }
 
     /**

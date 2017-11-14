@@ -7,6 +7,9 @@ package com.nttdocomo.android.tvterminalapp.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -69,6 +72,7 @@ public class DateUtils {
 
     //日付フォーマット
     private static final String DATE_PATTERN = "yyyy/MM/dd HH:mm:ss";
+    private static final String DATE_PATTERN_RECORDING_RESERVATION = "MM/dd (E) HH:mm";
 
     //日付フォーマット
     private static final String DATE_YYYY_MM_DD = "yyyy/MM/dd";
@@ -76,7 +80,22 @@ public class DateUtils {
     //DB保存期限
     private static final int LIMIT_HOUR = 1;
 
+    // 曜日配列
+    private static final String[] STRING_DAY_OF_WEEK = {null,"日","月","火","水","木","金","土"};
+
     private Context mContext;
+
+    /**
+     * 曜日の固定値
+     */
+    public static final int DAY_OF_WEEK_SUNDAY = 1;
+    public static final int DAY_OF_WEEK_MONDAY = 2;
+    public static final int DAY_OF_WEEK_TUESDAY = 3;
+    public static final int DAY_OF_WEEK_WEDNESDAY = 4;
+    public static final int DAY_OF_WEEK_THURSDAY = 5;
+    public static final int DAY_OF_WEEK_FRIDAY = 6;
+    public static final int DAY_OF_WEEK_SATURDAY = 7;
+
 
     /**
      * コンテキスト
@@ -201,5 +220,106 @@ public class DateUtils {
             isExpired = true;
         }
         return isExpired;
+    }
+
+    /**
+     * エポック秒を YYYY/MM/DD かつString値に変換
+     */
+    public static String formatEpochToString(long epochTime) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_PATTERN);
+        return dateFormat.format(new Date(epochTime * 1000));
+    }
+
+    /**
+     * 現在日時エポック秒を取得
+     */
+    public static long getNowTimeFormatEpoch() {
+        Calendar nowTime = Calendar.getInstance();
+        return (nowTime.getTimeInMillis() / 1000);
+    }
+
+    /**
+     * 現在日の0時00分00秒をエポック秒で取得
+     */
+    public static long getTodayStartTimeFormatEpoch() {
+        Calendar nowTime = Calendar.getInstance();
+
+        //年月日データ以外をゼロにして、本日の0時0分0秒とする
+        nowTime.set(Calendar.HOUR_OF_DAY,0);
+        nowTime.set(Calendar.MINUTE,0);
+        nowTime.set(Calendar.SECOND,0);
+        nowTime.set(Calendar.MILLISECOND,0);
+
+        return (nowTime.getTimeInMillis() / 1000);
+    }
+
+    /**
+     * 現在の曜日を取得
+     *
+     * @return 日:1 ～ 土:7
+     */
+    public static int getTodayDayOfWeek() {
+        Calendar nowTime = Calendar.getInstance();
+        return nowTime.get(Calendar.DAY_OF_WEEK);
+    }
+
+    /**
+     * 指定日（エポック秒：秒単位）から曜日を取得
+     *
+     * @param epochTime
+     * @return 日:1 ～ 土:7
+     */
+    public static int getDayOfWeek(long epochTime) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(epochTime * 1000);
+        return cal.get(Calendar.DAY_OF_WEEK);
+    }
+
+    /**
+     * 月曜日までの日数を取得
+     *
+     * @param dayOfWeek
+     * @return
+     */
+    public static int getNumberOfDaysUntilMonday(int dayOfWeek) {
+        if (DateUtils.DAY_OF_WEEK_MONDAY < dayOfWeek) {
+            return (DateUtils.DAY_OF_WEEK_MONDAY + 7) - dayOfWeek;
+        } else {
+            return DateUtils.DAY_OF_WEEK_MONDAY - dayOfWeek;
+        }
+    }
+
+    /**
+     * 日曜日までの日数を取得
+     *
+     * @param dayOfWeek
+     * @return
+     */
+    public static int getNumberOfDaysUntilSunday(int dayOfWeek) {
+        if (DateUtils.DAY_OF_WEEK_SUNDAY < dayOfWeek) {
+            return (DateUtils.DAY_OF_WEEK_SUNDAY + 7) - dayOfWeek;
+        } else {
+            return DateUtils.DAY_OF_WEEK_SUNDAY - dayOfWeek;
+        }
+    }
+
+    /**
+     * 引数の日付(エポック秒)を M/d (DAY_OF_WEEK) hh:mm のString型に変換(録画予約一覧ListItem用)
+     */
+    public static String getRecordShowListItem(long time) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(time*1000);
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN_RECORDING_RESERVATION);
+        String text = sdf.format(new Date(cal.getTimeInMillis()));
+
+        DTVTLogger.debug("NowTime = " + cal.toString());
+        return text;
+    }
+
+    /**
+     * 引数の曜日（int型）をStringに変換する
+     */
+    public static String getStringDayOfWeek(int dayOfWeek) {
+        return STRING_DAY_OF_WEEK[dayOfWeek];
     }
 }
