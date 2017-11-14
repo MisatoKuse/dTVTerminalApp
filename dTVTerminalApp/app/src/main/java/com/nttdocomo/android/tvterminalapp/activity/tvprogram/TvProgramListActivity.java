@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.tvprogram;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -75,6 +76,7 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
     private ProgramChannelAdapter programChannelAdapter;
     private ArrayList<Channel> channelInfo;
     private ArrayList<Channel> channels;
+    private boolean isFromBackFlag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,8 +140,12 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
     @Override
     protected void onResume() {
         super.onResume();
-        //タイトル設定
-        setTitle();
+        if(!isFromBackFlag){
+            //タイトル設定
+            setTitle();
+        }else{
+            isFromBackFlag = false;
+        }
     }
 
     /**
@@ -543,6 +549,12 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
             String dateList[] = {selectDateStr};
             scaledDownProgramListDataProvider.getProgram(channelNos, dateList, tab_index);
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        isFromBackFlag = true;
     }
 
     /**

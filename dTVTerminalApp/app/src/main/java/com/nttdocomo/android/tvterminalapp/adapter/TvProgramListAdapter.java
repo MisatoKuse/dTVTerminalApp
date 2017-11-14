@@ -4,12 +4,11 @@
 
 package com.nttdocomo.android.tvterminalapp.adapter;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +32,7 @@ import java.util.Locale;
 
 public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdapter.MyViewHolder> {
 
-    private Context mContext = null;
+    private Activity mContext = null;
     //ディスプレイ幅さ
     private int screenWidth = 0;
     //ディスプレイ高さ
@@ -48,7 +47,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     //番組データ
     private List<Channel> mProgramList = null;
 
-    public TvProgramListAdapter(Context mContext, ArrayList<Channel> mProgramList, int totalCount) {
+    public TvProgramListAdapter(Activity mContext, ArrayList<Channel> mProgramList, int totalCount) {
         this.mProgramList = mProgramList;
         this.mContext = mContext;
         screenWidth = mContext.getResources().getDisplayMetrics().widthPixels;
@@ -188,7 +187,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                         if((int)view.getTag() == 1){
                             Intent intent = new Intent();
                             intent.setClass(mContext, TvPlayerActivity.class);
-                            mContext.startActivity(intent);
+                            mContext.startActivityForResult(intent,0);
                         }
                     }
                 });
