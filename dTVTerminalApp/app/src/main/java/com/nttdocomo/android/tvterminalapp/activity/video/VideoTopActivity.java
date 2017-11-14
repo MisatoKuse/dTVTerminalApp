@@ -15,6 +15,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.adapter.VideoGenreAdapter;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VideoGenreProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreListData;
 
@@ -26,8 +27,8 @@ import java.util.Map;
  * ビデオ＞ジャンル/サブジャンル一覧 Activityクラス
  */
 public class VideoTopActivity extends BaseActivity implements View.OnClickListener,
-        VideoGenreProvider.apiContentCountDataProviderCallback,
         VideoGenreProvider.apiGenreListDataProviderCallback,
+        VideoGenreProvider.apiContentCountDataProviderCallback,
         AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
 
     private ImageView mMenuImageView;
@@ -36,6 +37,12 @@ public class VideoTopActivity extends BaseActivity implements View.OnClickListen
 
     private VideoGenreAdapter mVideoGenreAdapter;
     private VideoGenreProvider mVideoGenreProvider;
+
+    private OtherContentsDetailData mDetailData;
+    private VideoGenreListData mVideoGenreListData;
+
+    // 最終階層サブジャンルフラグ
+    private boolean endGenreFlag = false;
 
     // ジャンルIDのIntent KEY
     public static final String VIDEO_CONTENTS_BUNDLE_KEY = "videoContentKey";
@@ -46,15 +53,14 @@ public class VideoTopActivity extends BaseActivity implements View.OnClickListen
         setContentView(R.layout.video_genre_main_layout);
         mContentsList = new ArrayList();
         mMenuImageView = findViewById(R.id.header_layout_menu);
+
         mMenuImageView.setVisibility(View.VISIBLE);
         mMenuImageView.setOnClickListener(this);
 
-        mVideoGenreProvider = new VideoGenreProvider(this);
+        mDetailData = getIntent().getParcelableExtra(VIDEO_CONTENTS_BUNDLE_KEY);
 
-        String genreId = getIntent().getStringExtra(VIDEO_CONTENTS_BUNDLE_KEY);
-
-        if (null != genreId) {
-            // サブジャンル画面のタイトル
+        if (null != mDetailData) {
+            // TODO サブジャンル画面のタイトル
 //            setTitleText(getString(map.get(GENRE_ID_INTENT_KEY)));
         } else {
             // ジャンル画面のタイトル
@@ -63,39 +69,9 @@ public class VideoTopActivity extends BaseActivity implements View.OnClickListen
             mVideoGenreProvider.getGenreListDataRequest();
         }
 
-        // TODO コンテンツ数のリクエスト
-//        mVideoGenreProvider.getContentCountDataRequest();
-
-        // TODO 後で消す
-        test();
+//        getCountData();
 
         initView();
-    }
-
-    // TODO 後で消す
-    public void test() {
-        List<VideoGenreList> contentsDataList = new ArrayList<>();
-        VideoGenreList videoGenreList;
-
-        videoGenreList = new VideoGenreList();
-        videoGenreList.setTitle("あにめ");
-        videoGenreList.setContentCount("146");
-        contentsDataList.add(videoGenreList);
-
-        videoGenreList = new VideoGenreList();
-        videoGenreList.setTitle("どらま");
-        videoGenreList.setContentCount("21421");
-        contentsDataList.add(videoGenreList);
-
-        videoGenreList = new VideoGenreList();
-        videoGenreList.setTitle("洋画");
-        videoGenreList.setContentCount("243");
-        contentsDataList.add(videoGenreList);
-
-        for (int i = 0; i < contentsDataList.size(); ++i) {
-            mContentsList.add(contentsDataList.get(i));
-        }
-
     }
 
     private void initView() {
@@ -112,15 +88,16 @@ public class VideoTopActivity extends BaseActivity implements View.OnClickListen
         mListView.setAdapter(mVideoGenreAdapter);
     }
 
+    private void getCountData(String GenreId){
+        // TODO ジャンルIDの取得
+        mVideoGenreProvider.getContentCountDataRequest(GenreId);
+    }
+
     /**
      * 取得結果の設定・表示
      */
-    private void setVideoGenre(List<Map<String, String>> videoGenreList) {
-        if (null == videoGenreList || 0 == videoGenreList.size()) {
-            return;
-        }
-        List<VideoGenreList> videoGenreListData = setVideoGenreList(videoGenreList);
-
+    private void setVideoGenre(Map<String, String> titleMap, Map<String, String> countMap) {
+        List<VideoGenreList> videoGenreListData = setVideoGenreList(titleMap, countMap);
         for (int i = 0; i < videoGenreListData.size(); ++i) {
             if (null != mContentsList) {
                 mContentsList.add(videoGenreListData.get(i));
@@ -131,25 +108,23 @@ public class VideoTopActivity extends BaseActivity implements View.OnClickListen
     /**
      * 取得したリストマップをContentsDataクラスへ入れる
      *
-     * @param contentList コンテンツリストデータ
      * @return dataList 読み込み表示フラグ
      */
-    private List<VideoGenreList> setVideoGenreList(
-            List<Map<String, String>> contentList) {
+    private List<VideoGenreList> setVideoGenreList(Map<String, String> titleMap,
+                                                   Map<String, String> countMap) {
         List<VideoGenreList> contentsDataList = new ArrayList<>();
-
         VideoGenreList videoGenreList;
 
-        for (int i = 0; i < contentList.size(); i++) {
-            videoGenreList = new VideoGenreList();
-            // TODO ひとまず仮でKEYをセット
-            videoGenreList.setTitle(contentList.get(i)
-                    .get("title"));
-            videoGenreList.setContentCount(contentList.get(i)
-                    .get("count"));
-            videoGenreList.setGenreId(contentList.get(i)
-                    .get("genre_id"));
+        if ((null == titleMap || 0 == titleMap.size())
+                && (null == countMap || 0 == countMap.size())) {
+            return null;
+        }
 
+        for (int i = 0; i < titleMap.size(); i++) {
+            videoGenreList = new VideoGenreList();
+            videoGenreList.setTitle(titleMap.get("title"));
+            videoGenreList.setGenreId(titleMap.get("genre_id"));
+            videoGenreList.setContentCount(countMap.get("count"));
             contentsDataList.add(videoGenreList);
         }
 
@@ -168,7 +143,13 @@ public class VideoTopActivity extends BaseActivity implements View.OnClickListen
         Bundle bundle = new Bundle();
         VideoGenreListData videoGenreListData = (VideoGenreListData) mContentsList.get(position);
         bundle.putParcelable(VIDEO_CONTENTS_BUNDLE_KEY, videoGenreListData);
-        startActivity(VideoTopActivity.class, bundle);
+
+        // サブジャンル最終階層の場合は、コンテンツ一覧画面に遷移
+        if (endGenreFlag) {
+            startActivity(VideoContentListActivity.class, bundle);
+        } else {
+            startActivity(VideoTopActivity.class, bundle);
+        }
     }
 
     @Override
@@ -182,12 +163,13 @@ public class VideoTopActivity extends BaseActivity implements View.OnClickListen
     }
 
     @Override
-    public void genreListCallback(List<Map<String, String>> genreHashMap) {
+    public void genreListCallback(Map<String, String> titleMap, Map<String, String> subTitleMap) {
 
     }
 
     @Override
-    public void contentCountCallback(List<Map<String, String>> countHashMap) {
-
+    public void contentCountCallback(Map<String, String> mapData) {
+        Map<String, String> subTitleMap;
+//        setVideoGenre(mapData, subTitleMap);
     }
 }

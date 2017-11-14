@@ -6,20 +6,20 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetResponse;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListResponse;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.GenreCountGetWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.GenreListWebClient;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class VideoGenreProvider implements
         GenreListWebClient.GenreListJsonParserCallback,
-        GenreCountGetWebClient.GenreCountGetJsonParserCallback{
+        GenreCountGetWebClient.GenreCountGetJsonParserCallback {
     private Context mContext;
 
     private apiGenreListDataProviderCallback mApiGenreListDataProviderCallback = null;
@@ -27,12 +27,12 @@ public class VideoGenreProvider implements
 
     @Override
     public void onGenreListJsonParsed(GenreListResponse genreListResponse) {
-
+        getContentTitleMap(genreListResponse);
     }
 
     @Override
     public void onGenreCountGetJsonParsed(GenreCountGetResponse genreCountGetResponse) {
-
+        getContentCountMap(genreCountGetResponse);
     }
 
     /**
@@ -42,9 +42,9 @@ public class VideoGenreProvider implements
         /**
          * ジャンル一覧用コールバック
          *
-         * @param genreHashMap
+         * @param titleMap, subTitleMap
          */
-        void genreListCallback(List<Map<String, String>> genreHashMap);
+        void genreListCallback(Map<String, String> titleMap, Map<String, String> subTitleMap);
     }
 
     /**
@@ -54,9 +54,9 @@ public class VideoGenreProvider implements
         /**
          * コンテンツ数用コールバック
          *
-         * @param countHashMap
+         * @param mapData
          */
-        void contentCountCallback(List<Map<String, String>> countHashMap);
+        void contentCountCallback(Map<String, String> mapData);
     }
 
     /**
@@ -80,19 +80,19 @@ public class VideoGenreProvider implements
     /**
      * ジャンル一覧をVideoTopActivityに送る
      *
-     * @param list
+     * @param titleMap, subTitleMap
      */
-    public void sendGenreListData(List<Map<String, String>> list) {
-        mApiGenreListDataProviderCallback.genreListCallback(list);
+    public void sendGenreListData(Map<String, String> titleMap, Map<String, String> subTitleMap) {
+        mApiGenreListDataProviderCallback.genreListCallback(titleMap, subTitleMap);
     }
 
     /**
      * コンテンツ数をVideoTopActivityに送る
      *
-     * @param list
+     * @param mapData
      */
-    public void sendContentCountListData(List<Map<String, String>> list) {
-        mApiContentCountDataProviderCallback.contentCountCallback(list);
+    public void sendContentCountListData(Map<String, String> mapData) {
+        mApiContentCountDataProviderCallback.contentCountCallback(mapData);
     }
 
     /**
@@ -100,10 +100,7 @@ public class VideoGenreProvider implements
      * VideoTopActivityからのデータ取得要求受付
      */
     public void getGenreListDataRequest() {
-        List<Map<String, String>> genreList = getGenreListData();
-        if (genreList != null && genreList.size() > 0) {
-            sendGenreListData(genreList);
-        }
+        getGenreListData();
     }
 
     /**
@@ -111,32 +108,21 @@ public class VideoGenreProvider implements
      * VideoTopActivityからのデータ取得要求受付
      */
     public void getContentCountDataRequest(String genreId) {
-        List<Map<String, String>> contentCountList = getContentCountListData(genreId);
-        if (contentCountList != null && contentCountList.size() > 0) {
-            sendContentCountListData(contentCountList);
-        }
+        getContentCountListData(genreId);
     }
-
-
-
-
 
     /**
      * ジャンル一覧のデータ取得要求を行う
      *
      * @return
      */
-    private List<Map<String, String>> getGenreListData() {
-        List<Map<String, String>> list = new ArrayList<>();
-        //通信クラスにデータ取得要求を出す
-        // TODO WebAPI
+    private void getGenreListData() {
         GenreListWebClient webClient = new GenreListWebClient();
         int limit = 1;
         int offset = 1;
         String filter = "";
         int ageReq = 1;
         webClient.getGenreListApi(this);
-        return list;
     }
 
     /**
@@ -145,61 +131,61 @@ public class VideoGenreProvider implements
      * @param genreId
      * @return
      */
-    private List getContentCountListData(String genreId) {
-        List<Map<String, String>> list = new ArrayList<>();
+    private void getContentCountListData(String genreId) {
         //通信クラスにデータ取得要求を出す
-        // TODO WebAPI
         GenreCountGetWebClient webClient = new GenreCountGetWebClient();
-        int limit = 1;
-        int offset = 1;
-        String filter = "";
+        String filter = "release";
         String type = "";
         int ageReq = 1;
         webClient.getGenreCountGetApi(filter, ageReq, genreId, type, this);
-        return list;
     }
 
     /**
      * Mapリストの作成(Map<id, title>)
      *
-     * @param genreList
-     * @return titleList
+     * @param genreListResponse
      */
-    public List<Map<String, String>> getContentTitleMap(List<Map<String, String>> genreList) {
-        VideoGenreList videoGenreList = new VideoGenreList();
-        Map<String, String> map = new HashMap<>();
-        List<Map<String, String>> titleList = new ArrayList<>();
-        for (int i = 0; i < genreList.size(); i++) {
-            String id = genreList.get(i).get("genre_id");
-            String title = genreList.get(i).get("title");
-            map.put(id, title);
+    public void getContentTitleMap(GenreListResponse genreListResponse) {
+        Map<String, String> titleMap = new HashMap<>();
+        Map<String, String> subMap = new HashMap<>();
+        GenreListMetaData genreListMetaData = new GenreListMetaData();
+        ArrayList<GenreListMetaData> listData = genreListResponse.getTypeList().get("PLALA");
+
+        for (int i = 0; i > listData.size(); i++) {
+            String genreId = String.valueOf(listData.get(i).getMember(genreListMetaData.GENRE_LIST_META_DATA_ID));
+            String title = String.valueOf(listData.get(i).getMember(genreListMetaData.GENRE_LIST_META_DATA_TITLE));
+            titleMap.put(genreId, title);
+
+//            ArrayList<GenreListMetaData.SubContent> sub = (ArrayList<GenreListMetaData.SubContent>)
+//                    listData.get(i).getMember(genreListMetaData.GENRE_LIST_META_DATA_SUB);
+//
+//            String subGenreId = sub.get(i).getId();
+//            String subTitle = sub.get(i).getTitle();
+//
+//            subMap.put(subGenreId, subTitle);
         }
-        titleList.add(map);
-//        videoGenreList.setTitleList(titleList);
-        return titleList;
+        sendGenreListData(titleMap, subMap);
     }
 
     /**
      * Mapリストの作成(Map<id, count>)
      *
-     * @param countList
-     * @return titleList
+     * @param genreCountGetResponse
      */
-    public List<Map<String, String>> getContentCountMap(List<Map<String, String>> countList) {
-        VideoGenreList videoGenreList = new VideoGenreList();
+    public void getContentCountMap(GenreCountGetResponse genreCountGetResponse) {
         Map<String, String> map = new HashMap<>();
-        List<Map<String, String>> countLst = new ArrayList<>();
-        int allCount = 0;
-        for (int i = 0; i < countList.size(); i++) {
-            String id = countList.get(i).get("genre_id");
-            String count = countList.get(i).get("count");
-            map.put(id, count);
-            // [すべて]のコンテンツ数に追加していく
-            allCount = allCount + Integer.parseInt(count);
+        ArrayList<GenreCountGetMetaData> responseData = genreCountGetResponse.getGenreCountGetMetaData();
+        for (int i = 0; i > responseData.size(); i++) {
+            String genreId = responseData.get(i).getGenreId();
+
+            // TODO IDが同じものならmapにPut
+//            if (genreId == ) {
+                String count = String.valueOf(responseData.get(i).getCount());
+                map.put(genreId, count);
+//            } else {
+                // IDが違うならmapに格納しない
+//            }
         }
-        countLst.add(map);
-//        videoGenreList.setAllContentCount(String.valueOf(allCount));
-//        videoGenreList.setCountList(countLst);
-        return countLst;
+        sendContentCountListData(map);
     }
 }

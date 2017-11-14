@@ -13,7 +13,8 @@ public class VideoGenreListData implements Parcelable {
     private HashMap<String, String> mCountMap;
     private HashMap<String, String> mTitleMap;
 
-    public VideoGenreListData(HashMap<String, String> count, HashMap<String, String> title) {
+    public VideoGenreListData(HashMap<String, String> count, HashMap<String, String> title,
+                              HashMap<String, String> sub) {
         this.mCountMap = count;
         this.mTitleMap = title;
     }
@@ -42,7 +43,7 @@ public class VideoGenreListData implements Parcelable {
         this.mTitleMap = (HashMap<String, String>) in.readSerializable();
     }
 
-    public static final Parcelable.Creator<VideoGenreListData> CREATOR = new Parcelable.Creator<VideoGenreListData>() {
+    public static final Creator<VideoGenreListData> CREATOR = new Creator<VideoGenreListData>() {
         @Override
         public VideoGenreListData createFromParcel(Parcel source) {
             return new VideoGenreListData(source);

@@ -20,6 +20,7 @@ import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VideoContentProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser;
 
 import java.util.ArrayList;
@@ -27,6 +28,9 @@ import java.util.List;
 import java.util.Map;
 
 
+/**
+ * ビデオコンテンツ一覧画面
+ */
 public class VideoContentListActivity extends BaseActivity implements View.OnClickListener,
         VideoContentProvider.apiVideoContentDataProviderCallback,
         AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
@@ -46,8 +50,10 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
 
     private boolean mIsCommunicating = false;
 
-    // TODO データサンプル
-    public static final String ID_SANPLE = "";
+    private OtherContentsDetailData mDetailData;
+
+    // ジャンルIDのIntent KEY
+    public static final String VIDEO_CONTENTS_BUNDLE_KEY = "videoContentKey";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +65,9 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         mMenuImageView.setOnClickListener(this);
         setTitleText(getString(R.string.video_content_sub_genre_title));
 
-//        Intent intent = getIntent();
-//        String genreId = intent.getStringExtra("genre_id");
+        // TODO VideoTopActivityからジャンルIDの受け取り
+//        // IntentからGenreIdを受け取る
+//        mDetailData = getIntent().getParcelableExtra(VIDEO_CONTENTS_BUNDLE_KEY);
 
         resetPaging();
 
