@@ -140,7 +140,7 @@ public class GenreListMetaData implements Serializable {
     }
 
     //サブジャンルコンテンツ
-    static class SubContent implements Serializable {
+    public static class SubContent implements Serializable {
 
         private static final long serialVersionUID = 9019948926533001525L;
         private String mId;

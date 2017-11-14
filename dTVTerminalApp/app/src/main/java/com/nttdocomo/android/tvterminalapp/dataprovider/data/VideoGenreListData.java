@@ -7,20 +7,24 @@ package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class VideoGenreListData implements Parcelable {
-    private HashMap<String, String> mCountMap;
     private HashMap<String, String> mTitleMap;
+    private ArrayList<GenreListMetaData.SubContent> mSubGenre;
 
-    public VideoGenreListData(HashMap<String, String> count, HashMap<String, String> title,
+    public VideoGenreListData(HashMap<String, String> title,
                               HashMap<String, String> sub) {
-        this.mCountMap = count;
         this.mTitleMap = title;
     }
 
-    public HashMap<String, String> getContentMap() {
-        return mCountMap;
+    public ArrayList<GenreListMetaData.SubContent> getSubGenre() {
+        return mSubGenre;
+    }
+
+    public void setSubGenre(ArrayList<GenreListMetaData.SubContent> subGenre) {
+        this.mSubGenre = subGenre;
     }
 
     public HashMap<String, String> getTitleMap() {
@@ -34,16 +38,17 @@ public class VideoGenreListData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeSerializable(this.mCountMap);
         dest.writeSerializable(this.mTitleMap);
+        dest.writeList(this.mSubGenre);
     }
 
     protected VideoGenreListData(Parcel in) {
-        this.mCountMap = (HashMap<String, String>) in.readSerializable();
         this.mTitleMap = (HashMap<String, String>) in.readSerializable();
+        this.mSubGenre = new ArrayList<GenreListMetaData.SubContent>();
+        in.readList(this.mSubGenre, GenreListMetaData.SubContent.class.getClassLoader());
     }
 
-    public static final Creator<VideoGenreListData> CREATOR = new Creator<VideoGenreListData>() {
+    public static final Parcelable.Creator<VideoGenreListData> CREATOR = new Parcelable.Creator<VideoGenreListData>() {
         @Override
         public VideoGenreListData createFromParcel(Parcel source) {
             return new VideoGenreListData(source);

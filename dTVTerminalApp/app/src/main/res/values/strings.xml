@@ -8,7 +8,7 @@
     <string name="app_name">dTVTerminalApp</string>
     <string name="back_key">く</string>
     <string name="close_key">×</string>
-    <string name="list_transition">＞</string>
+    <string name="list_transition">></string>
 
     <!-- Launch -->
     <string name="str_launch_title">起動画面</string>

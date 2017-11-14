@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.activity.video;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -20,7 +21,6 @@ import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VideoContentProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser;
 
 import java.util.ArrayList;
@@ -33,7 +33,8 @@ import java.util.Map;
  */
 public class VideoContentListActivity extends BaseActivity implements View.OnClickListener,
         VideoContentProvider.apiVideoContentDataProviderCallback,
-        AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
+        AbsListView.OnScrollListener, AdapterView.OnItemClickListener,
+        AbsListView.OnTouchListener {
 
     // 最大表示件数
     private final static int NUM_PER_PAGE = 10;
@@ -50,7 +51,16 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
 
     private boolean mIsCommunicating = false;
 
-    private OtherContentsDetailData mDetailData;
+    String mGenreId;
+
+    //スクロール位置の記録
+    private int mFirstVisibleItem = 0;
+
+    //最後のスクロール方向が上ならばtrue
+    private boolean mLastScrollUp = false;
+
+    //指を置いたY座標
+    private float mStartY = 0;
 
     // ジャンルIDのIntent KEY
     public static final String VIDEO_CONTENTS_BUNDLE_KEY = "videoContentKey";
@@ -66,14 +76,14 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         setTitleText(getString(R.string.video_content_sub_genre_title));
 
         // TODO VideoTopActivityからジャンルIDの受け取り
-//        // IntentからGenreIdを受け取る
-//        mDetailData = getIntent().getParcelableExtra(VIDEO_CONTENTS_BUNDLE_KEY);
+        // IntentからGenreIdを受け取る
+        mGenreId = getIntent().getStringExtra(VIDEO_CONTENTS_BUNDLE_KEY);
 
         resetPaging();
 
         initView();
         mVideoContentProvider = new VideoContentProvider(this);
-        mVideoContentProvider.getVideoContentData();
+        mVideoContentProvider.getVideoContentData(mGenreId);
     }
 
     /**
@@ -86,6 +96,19 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         mListView = findViewById(R.id.tv_rank_list);
         mListView.setOnItemClickListener(this);
         mListView.setOnScrollListener(this);
+
+        //スクロールの上下方向検知用のリスナーを設定
+        mListView.setOnTouchListener(this);
+
+        //アナライズの警告対応のsynchronized
+        synchronized (this) {
+            mContentsAdapter = new ContentsAdapter(
+                    this,
+                    mContentsList,
+                    ContentsAdapter.ActivityTypeItem.TYPE_DAILY_RANK);
+            mListView.setAdapter(mContentsAdapter);
+        }
+
         mContentsAdapter = new ContentsAdapter(
                 this,
                 mContentsList,
@@ -112,6 +135,8 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         if (null != mListView) {
             if (bool) {
                 mListView.addFooterView(mLoadMoreView);
+                //スクロール位置を最下段にすることで、追加した更新フッターを画面内に入れる
+                mListView.setSelection(mListView.getMaxScrollAmount());
             } else {
                 mListView.removeFooterView(mLoadMoreView);
             }
@@ -175,6 +200,9 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
                 return;
             }
 
+            //現在のスクロール位置の記録
+            mFirstVisibleItem = firstVisibleItem;
+
             if (firstVisibleItem + visibleItemCount == totalItemCount && 0 != totalItemCount) {
                 DTVTLogger.debug(
                         "Activity::onScroll, paging, firstVisibleItem=" + firstVisibleItem
@@ -195,6 +223,12 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
                 if (mIsCommunicating) {
                     return;
                 }
+
+                //スクロール位置がリストの先頭で上スクロールだった場合は、更新をせずに帰る
+                if (mFirstVisibleItem == 0 && mLastScrollUp) {
+                    return;
+                }
+
                 DTVTLogger.debug("onScrollStateChanged, do paging");
                 displayMoreData(true);
                 setCommunicatingStatus(true);
@@ -202,7 +236,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mVideoContentProvider.getVideoContentData();
+                        mVideoContentProvider.getVideoContentData(mGenreId);
                     }
                 }, LOAD_PAGE_DELAY_TIME);
             }
@@ -227,6 +261,12 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         }
         List<ContentsData> videoContentInfo = setVideoContentData(videoContentMapList);
 
+        //既に元のデータ以上の件数があれば足す物は無いので、更新せずに帰る
+        if (null != mContentsList && mContentsList.size() >= videoContentInfo.size()) {
+            displayMoreData(false);
+            return;
+        }
+
         int pageNumber = getCurrentNumber();
         for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1)
                 * NUM_PER_PAGE && i < videoContentInfo.size(); ++i) {
@@ -236,7 +276,9 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
             }
         }
         resetCommunication();
-        mContentsAdapter.notifyDataSetChanged();
+        synchronized (this) {
+            mContentsAdapter.notifyDataSetChanged();
+        }
     }
 
     /**
@@ -268,4 +310,31 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         setShowVideoContent(videoHashMap);
     }
 
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        if (!(view instanceof ListView)) {
+            //今回はリストビューの事しか考えないので、他のビューならば帰る
+            return false;
+        }
+        //指を動かした方向を検知する
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                //指を降ろしたので、位置を記録
+                mStartY = motionEvent.getY();
+                break;
+            case MotionEvent.ACTION_UP:
+                //指を離したので、位置を記録
+                float mEndY = motionEvent.getY();
+                mLastScrollUp = false;
+                //スクロール方向の判定
+                if (mStartY < mEndY) {
+                    //終了時のY座標の方が大きいので、上スクロール
+                    mLastScrollUp = true;
+                }
+                break;
+            default:
+                //現状処理は無い・警告対応
+        }
+        return false;
+    }
 }
