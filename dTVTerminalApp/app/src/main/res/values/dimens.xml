@@ -12,7 +12,7 @@
     <dimen name="list_item_rating_num_text_size">9sp</dimen>
 
     <!--コンテンツ詳細-->
-    <dimen name="contents_header_close_button_size">20sp</dimen>
+    <dimen name="contents_header_close_button_size">24sp</dimen>
     <dimen name="contents_header_back_button_size">20sp</dimen>
     <dimen name="contents_header_height_size">40dp</dimen>
     <dimen name="contents_back_key_size">50sp</dimen>
