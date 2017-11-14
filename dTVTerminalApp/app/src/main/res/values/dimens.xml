@@ -6,6 +6,10 @@
 
     <!--Common-->
     <dimen name="header_title_text_size">17sp</dimen>
+    <dimen name="list_item_title_text_size">15sp</dimen>
+    <dimen name="list_item_time_text_size">11sp</dimen>
+    <dimen name="list_item_rank_num_text_size">10sp</dimen>
+    <dimen name="list_item_rating_num_text_size">9sp</dimen>
 
     <!--コンテンツ詳細-->
     <dimen name="contents_header_close_button_size">20sp</dimen>
@@ -29,5 +33,11 @@
     <dimen name="video_contents_genre_count_margin_end">3dp</dimen>
     <dimen name="video_contents_genre_title_margin_start">8dp</dimen>
     <dimen name="video_contents_genre_text_size">20dp</dimen>
+
+    <!--録画予約一覧-->
+    <dimen name="recording_reservation_list_status_width">50dp</dimen>
+    <dimen name="recording_reservation_list_status_height">25dp</dimen>
+    <dimen name="recording_reservation_list_status_margin_end">8dp</dimen>
+    <dimen name="list_item_channel_name_text_size">15sp</dimen>
 
 </resources>

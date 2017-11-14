@@ -52,7 +52,7 @@ public class WebApiBasePlala {
 
     //仮のベースURL
     //TODO: 本物のサーバーが提供されるまでは、テストサーバーのアドレスとを指定する
-    private static final String baseUrl = "http://192.168.2.224/";
+    private static final String baseUrl = "http://192.168.2.224:1445/";
     //private static final String baseUrl = "http://192.168.2.127/";
 
     //通信停止用コネクション蓄積

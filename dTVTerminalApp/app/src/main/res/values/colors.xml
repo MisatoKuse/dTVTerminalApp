@@ -13,6 +13,8 @@
     <color name="white_text">#FFFFFF</color>
     <color name="gray_text">#7f7f7f</color>
     <color name="disable_tab_background">#111111</color>
+    <color name="list_item_background">#000000</color>
+
     <!-- キーワード検索 -->
     <color name="keyword_search_background">#EEEEEE</color>
     <color name="keyword_search_hint">#888888</color>

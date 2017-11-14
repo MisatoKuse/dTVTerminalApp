@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
@@ -23,6 +24,7 @@ import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +34,7 @@ public class RecordReservationListActivity extends BaseActivity
         implements View.OnClickListener, AdapterView.OnItemClickListener, AbsListView.OnScrollListener,
         RecordingReservationListDataProvider.ApiDataProviderCallback {
 
-    private RelativeLayout mLinearLayout = null;
+    private RelativeLayout mRelativeLayout = null;
     private ImageView mMenuImageView = null;
     private RecordingReservationListDataProvider mProvider = null;
     private ContentsAdapter mContentsAdapter = null;
@@ -40,7 +42,7 @@ public class RecordReservationListActivity extends BaseActivity
     private List mContentsList = null;
     private View mLoadMoreView = null;
     private boolean mIsCommunicating = false;
-    private final int NUM_PER_PAGE = 20;
+    private final int NUM_PER_PAGE = 7;
     private final int LOAD_PAGE_DELAY_TIME = 1000;
 
     @Override
@@ -50,7 +52,7 @@ public class RecordReservationListActivity extends BaseActivity
         mMenuImageView = findViewById(R.id.header_layout_menu);
         mMenuImageView.setVisibility(View.VISIBLE);
         mMenuImageView.setOnClickListener(this);
-        setTitleText(getString(R.string.rental_title));
+        setTitleText(getString(R.string.recording_reservation_list_title));
         mProvider = new RecordingReservationListDataProvider(this);
         mContentsList = new ArrayList();
         initView();
@@ -68,6 +70,7 @@ public class RecordReservationListActivity extends BaseActivity
         DTVTLogger.start();
         // ContentsListAdapter設定
         mListView = findViewById(R.id.record_reservation_list_view);
+        setUpdateTime();
         mListView.setOnItemClickListener(this);
         mListView.setOnScrollListener(this);
         if (mContentsList == null) {
@@ -78,6 +81,17 @@ public class RecordReservationListActivity extends BaseActivity
         mListView.setAdapter(mContentsAdapter);
         mLoadMoreView = LayoutInflater.from(this).inflate(R.layout.search_load_more, null);
         DTVTLogger.end();
+    }
+
+    /**
+     * リストの更新時間を取得
+     */
+    private void setUpdateTime() {
+        TextView textView = findViewById(R.id.record_reservation_list_update_time);
+        StringBuilder strBuilder = new StringBuilder();
+        strBuilder.append(DateUtils.getRecordShowListItem(DateUtils.getNowTimeFormatEpoch()))
+                .append(getString(R.string.recording_reservation_list_update_time));
+        textView.setText(strBuilder.toString());
     }
 
     // スクロール処理(ページング)
@@ -217,7 +231,7 @@ public class RecordReservationListActivity extends BaseActivity
                 mContentsList.add(dataList.get(i));
             }
         }
-
+        setUpdateTime();
         DTVTLogger.debug("Callback, mData.size==" + mContentsList.size());
         resetCommunication();
         mContentsAdapter.notifyDataSetChanged();

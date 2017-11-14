@@ -72,7 +72,7 @@ public class ContentsData {
     }
 
     public String getChannelName() {
-        return thumURL;
+        return channelName;
     }
 
     public void setChannelName(String channelName) {

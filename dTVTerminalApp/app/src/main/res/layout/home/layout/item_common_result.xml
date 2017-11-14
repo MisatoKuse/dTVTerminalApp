@@ -34,17 +34,32 @@
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:textColor="@android:color/white"
-            android:textSize="10dp" />
+            android:textSize="@dimen/list_item_rank_num_text_size" />
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/item_common_result_clip_tv"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+    <RelativeLayout
+        android:id="@+id/item_common_result_show_status_area"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="8dp"
-        android:background="#FFFFFF" />
+        android:layout_centerVertical="true">
+
+        <TextView
+            android:id="@+id/item_common_result_clip_tv"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginEnd="8dp"
+            android:background="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/item_common_result_recording_reservation_status"
+            android:layout_width="@dimen/recording_reservation_list_status_width"
+            android:layout_height="@dimen/recording_reservation_list_status_height"
+            android:layout_marginEnd="@dimen/recording_reservation_list_status_margin_end"
+            android:gravity="center_vertical"
+            android:background="#FFFFFF"
+            android:visibility="gone" />
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/item_common_result_contents"
@@ -53,11 +68,20 @@
         android:layout_centerVertical="true"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="15dp"
-        android:layout_toStartOf="@id/item_common_result_clip_tv"
+        android:layout_toStartOf="@id/item_common_result_show_status_area"
         android:layout_toEndOf="@id/item_common_result_thumbnail_rl"
         android:orientation="vertical"
         android:paddingBottom="5dp"
         android:paddingTop="5dp">
+
+        <TextView
+            android:id="@+id/item_common_result_channel_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white_text"
+            android:background="@color/recording_reservation_status_background_black"
+            android:textSize="@dimen/list_item_channel_name_text_size"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/item_common_result_content_time"
@@ -66,7 +90,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="#AAAAAA"
-            android:textSize="11dp" />
+            android:textSize="@dimen/list_item_time_text_size" />
 
         <TextView
             android:id="@+id/item_common_result_content_title"
@@ -75,7 +99,7 @@
             android:ellipsize="end"
             android:maxLines="2"
             android:textColor="@android:color/white"
-            android:textSize="15dp" />
+            android:textSize="@dimen/list_item_title_text_size" />
 
         <LinearLayout
             android:id="@+id/item_common_result_content_rating"
@@ -97,7 +121,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="2dp"
                 android:textColor="@android:color/white"
-                android:textSize="9dp" />
+                android:textSize="@dimen/list_item_rating_num_text_size" />
         </LinearLayout>
     </LinearLayout>
 
@@ -107,4 +131,5 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="#222222" />
+
 </RelativeLayout>
