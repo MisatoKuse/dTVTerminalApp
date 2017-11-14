@@ -4,13 +4,14 @@
 
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
-import java.util.List;
-import java.util.Map;
+import java.util.ArrayList;
 
 public class VideoGenreList {
-    public String mGenreId;
-    public String mTitle;
-    public String mContentCount;
+    private String mGenreId;
+    private String mTitle;
+    private String mContentCount;
+    private ArrayList<GenreListMetaData.SubContent> mSubGenre;
+
 
     public String getGenreId() {
         return mGenreId;
@@ -34,5 +35,13 @@ public class VideoGenreList {
 
     public void setContentCount(String contentCount) {
         this.mContentCount = contentCount;
+    }
+
+    public ArrayList<GenreListMetaData.SubContent> getSubGenre() {
+        return mSubGenre;
+    }
+
+    public void setSubGenre(ArrayList<GenreListMetaData.SubContent> subGenre) {
+        this.mSubGenre = subGenre;
     }
 }

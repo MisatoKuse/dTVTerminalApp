@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:insetLeft="@dimen/video_contents_divider_inset_left"
+    android:insetRight="@dimen/video_contents_divider_inset_right">
+
+    <shape>
+        <solid android:color="@color/video_list_line" />
+        <corners android:radius="@dimen/video_contents_divider_radius" />
+    </shape>
+
+</inset>

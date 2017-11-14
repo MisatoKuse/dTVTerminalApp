@@ -10,8 +10,8 @@
         android:id="@+id/genre_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="@drawable/list_item_divider"
-        android:dividerHeight="1dp">
+        android:divider="@drawable/video_list_item_divider"
+        android:dividerHeight="@dimen/video_contents_divider_divider_height">
     </ListView>
 
 </LinearLayout>

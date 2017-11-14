@@ -40,6 +40,7 @@
     <color name="recording_reservation_status_background_black">#000000</color>
     <!-- ビデオ一覧 -->
     <color name="video_list_text">#FFFFFF</color>
+    <color name="video_list_line">#424242</color>
 
     <!--コンテンツ詳細-->
     <color name="contents_header_background">#000000</color>

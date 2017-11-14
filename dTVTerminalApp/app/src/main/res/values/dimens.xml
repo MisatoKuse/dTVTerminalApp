@@ -29,10 +29,16 @@
     <dimen name="tab_under_indicator">1.5dp</dimen>
 
     <!--ビデオ一覧-->
-    <dimen name="video_contents_genre_button_margin_end">8dp</dimen>
-    <dimen name="video_contents_genre_count_margin_end">3dp</dimen>
-    <dimen name="video_contents_genre_title_margin_start">8dp</dimen>
-    <dimen name="video_contents_genre_text_size">20dp</dimen>
+    <dimen name="video_contents_genre_button_margin_end">15dp</dimen>
+    <dimen name="video_contents_genre_count_margin_end">15dp</dimen>
+    <dimen name="video_contents_genre_title_margin_start">15dp</dimen>
+    <dimen name="video_contents_genre_title_margin_top">25dp</dimen>
+    <dimen name="video_contents_genre_text_size">14dp</dimen>
+    <dimen name="video_contents_genre_num_size">13dp</dimen>
+    <dimen name="video_contents_divider_radius">1dp</dimen>
+    <dimen name="video_contents_divider_inset_left">15sp</dimen>
+    <dimen name="video_contents_divider_inset_right">0sp</dimen>
+    <dimen name="video_contents_divider_divider_height">1dp</dimen>
 
     <!--録画予約一覧-->
     <dimen name="recording_reservation_list_status_width">50dp</dimen>

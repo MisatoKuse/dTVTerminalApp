@@ -19,7 +19,7 @@ import java.util.List;
 
 public class VideoGenreAdapter extends BaseAdapter implements AbsListView.OnScrollListener {
     private Context mContext = null;
-    private List mData = null;
+    public List mData = null;
 
     public VideoGenreAdapter(Context context, List data) {
         this.mContext = context;

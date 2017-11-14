@@ -5,19 +5,10 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
-import android.text.TextUtils;
 
-import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.datamanager.select.RankingTopDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
-import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingConstants;
-import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
 
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,8 +23,6 @@ public class VideoContentProvider implements
 
     // ビデオコンテンツ画面用コールバック
     private apiVideoContentDataProviderCallback mApiVideoContentDataProviderCallback = null;
-
-    public static final String SUB_GENRE_KEY = "sub";
 
     /**
      * コンストラクタ
@@ -60,20 +49,17 @@ public class VideoContentProvider implements
     /**
      * VideoContentListActivityからのデータ取得要求受付
      */
-    public void getVideoContentData() {
-            // コンテンツ数
-            List<Map<String, String>> videoContentCount = getVideoContentListData(SUB_GENRE_KEY);
-            if (videoContentCount != null && videoContentCount.size() > 0) {
-                getVideoContentListData(SUB_GENRE_KEY);
-            }
+    public void getVideoContentData(String genreId) {
+        // コンテンツ数
+        getVideoContentListData(genreId);
     }
 
     /**
      * ビデオコンテンツ一覧のデータ取得要求を行う
+     *
      * @return
      */
-    private List<Map<String, String>> getVideoContentListData(String genreId) {
-        List<Map<String, String>> list = new ArrayList<>();
+    private void getVideoContentListData(String genreId) {
         //通信クラスにデータ取得要求を出す
         ContentsListPerGenreWebClient webClient = new ContentsListPerGenreWebClient();
         int limit = 1;
@@ -86,9 +72,7 @@ public class VideoContentProvider implements
         //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
         webClient.getContentsListPerGenreApi(limit, offset,
                 filter, ageReq, genreId, type, sort, this);
-        return list;
     }
-
 
     /**
      * ビデオコンテンツ一覧をVideoContentListActivityに送る
