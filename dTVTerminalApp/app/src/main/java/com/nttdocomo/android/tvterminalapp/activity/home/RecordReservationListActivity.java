@@ -29,7 +29,6 @@ import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO スクロールリスナー設定, DPコールバック設定
 public class RecordReservationListActivity extends BaseActivity
         implements View.OnClickListener, AdapterView.OnItemClickListener, AbsListView.OnScrollListener,
         RecordingReservationListDataProvider.ApiDataProviderCallback {
