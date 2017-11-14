@@ -37,10 +37,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class VideoRankingActivity extends BaseActivity implements View.OnClickListener, VideoRankingApiDataProviderCallback, RankingFragmentScrollListener {
+public class VideoRankingActivity extends BaseActivity implements View.OnClickListener,
+        VideoRankingApiDataProviderCallback, RankingFragmentScrollListener {
     private ImageView mMenuImageView;
     private boolean mIsCommunicating = false;
-    private int NUM_PER_PAGE = 2;
+    private final int NUM_PER_PAGE = 2;
     private String[] mTabNames;
     private RankingTopDataProvider mRankingDataProvider;
     private RankingFragmentFactory mRankingFragmentFactory = null;
@@ -48,6 +49,15 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
     private LinearLayout mLinearLayout;
     private ViewPager mViewPager;
     private static final int sLoadPageDelayTime = 1000;
+
+    //標準タブ数
+    private static final int DEFAULT_TAB_MAX = 4;
+
+    //設定するマージンのピクセル数
+    private static final int LEFT_MARGIN = 30;
+    //設定する文字サイズ
+    private static final int TEXT_SIZE = 15;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +105,7 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
         RankingBaseFragment b = getCurrentFragment();
         if (null == b || null == b.mData || 0 == b.mData.size()) {
             return 0;
-        } else if(b.mData.size() < NUM_PER_PAGE){
+        } else if (b.mData.size() < NUM_PER_PAGE) {
             return 1;
         }
         return b.mData.size() / NUM_PER_PAGE;
@@ -115,7 +125,18 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        for (int i = 0; i < 4; ++i) { // タブの数だけ処理を行う
+
+        //タブ数の取得
+        int tabCount;
+        if (mTabNames != null) {
+            //通常はタブ名の数を取得して対処
+            tabCount = mTabNames.length;
+        } else {
+            //取得できなかった場合はデフォルト数で指定
+            tabCount = DEFAULT_TAB_MAX;
+        }
+
+        for (int i = 0; i < tabCount; ++i) { // タブの数だけ処理を行う
             RankingBaseFragment b = mRankingFragmentFactory.createFragment
                     (RankingConstants.RANKING_MODE_NO_OF_VIDEO, i, this);
             if (null != b) {
@@ -176,11 +197,11 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.MATCH_PARENT);
             if (i != 0) {
-                params.setMargins(30, 0, 0, 0);
+                params.setMargins(LEFT_MARGIN, 0, 0, 0);
             }
             tabTextView.setLayoutParams(params);
             tabTextView.setText(mTabNames[i]);
-            tabTextView.setTextSize(15);
+            tabTextView.setTextSize(TEXT_SIZE);
             tabTextView.setBackgroundColor(Color.BLACK);
             tabTextView.setTextColor(Color.WHITE);
             tabTextView.setGravity(Gravity.CENTER_VERTICAL);
@@ -207,7 +228,8 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
     private void setShowVideoRanking(List<Map<String, String>> videoRankMapList) {
         if (null == videoRankMapList || 0 == videoRankMapList.size()) {
             //通信とJSON Parseに関してerror処理
-            Toast.makeText(this, "ランキングデータ取得失敗", Toast.LENGTH_SHORT);
+            //TODO: エラー表示は検討の必要あり
+            Toast.makeText(this, "ランキングデータ取得失敗", Toast.LENGTH_SHORT).show();
             return;
         }
         List<ContentsData> rankingContentInfo = setVideoRankingContentData(videoRankMapList);
@@ -216,8 +238,15 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
         RankingBaseFragment fragment = mRankingFragmentFactory.createFragment
                 (RankingConstants.RANKING_MODE_NO_OF_VIDEO, mViewPager.getCurrentItem(), this);
 
+        //既に元のデータ以上の件数があれば足す物は無いので、更新せずに帰る
+        if (null != fragment.mData && fragment.mData.size() >= rankingContentInfo.size()) {
+            fragment.displayMoreData(false);
+            return;
+        }
+
         int pageNumber = getCurrentNumber();
-        for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE && i < rankingContentInfo.size(); ++i) {
+        for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE &&
+                i < rankingContentInfo.size(); ++i) {
             DTVTLogger.debug("i = " + i);
             if (null != fragment.mData) {
                 fragment.mData.add(rankingContentInfo.get(i));
@@ -245,7 +274,8 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
     /**
      * 取得したリストマップをContentsDataクラスへ入れる
      */
-    private List<ContentsData> setVideoRankingContentData(List<Map<String, String>> videoRankMapList) {
+    private List<ContentsData> setVideoRankingContentData(
+            List<Map<String, String>> videoRankMapList) {
         List<ContentsData> rankingContentsDataList = new ArrayList<ContentsData>();
 
         ContentsData rankingContentInfo;
@@ -253,9 +283,12 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
         for (int i = 0; i < videoRankMapList.size(); i++) {
             rankingContentInfo = new ContentsData();
             rankingContentInfo.setRank(String.valueOf(i + 1));
-            rankingContentInfo.setThumURL(videoRankMapList.get(i).get(VideoRankJsonParser.VIDEORANK_LIST_THUMB));
-            rankingContentInfo.setTitle(videoRankMapList.get(i).get(VideoRankJsonParser.VIDEORANK_LIST_TITLE));
-            rankingContentInfo.setRatStar(videoRankMapList.get(i).get(VideoRankJsonParser.VIDEORANK_LIST_RATING));
+            rankingContentInfo.setThumURL(videoRankMapList.get(i)
+                    .get(VideoRankJsonParser.VIDEORANK_LIST_THUMB));
+            rankingContentInfo.setTitle(videoRankMapList.get(i)
+                    .get(VideoRankJsonParser.VIDEORANK_LIST_TITLE));
+            rankingContentInfo.setRatStar(videoRankMapList.get(i)
+                    .get(VideoRankJsonParser.VIDEORANK_LIST_RATING));
 
             rankingContentsDataList.add(rankingContentInfo);
             DTVTLogger.info("RankingContentInfo " + rankingContentInfo.getRank());
@@ -290,7 +323,8 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
     }
 
     @Override
-    public void onScroll(RankingBaseFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+    public void onScroll(RankingBaseFragment fragment, AbsListView absListView,
+                         int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         synchronized (this) {
             RankingBaseFragment b = getCurrentFragment();
             if (null == b || null == fragment.getRankingAdapter()) {
@@ -303,14 +337,17 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
             if (firstVisibleItem + visibleItemCount == totalItemCount
                     && 0 != totalItemCount
                     ) {
-                DTVTLogger.debug("Activity::onScroll, paging, firstVisibleItem=" + firstVisibleItem + ", totalItemCount=" + totalItemCount + ", visibleItemCount=" + visibleItemCount);
+                DTVTLogger.debug("Activity::onScroll, paging, firstVisibleItem="
+                        + firstVisibleItem + ", totalItemCount=" + totalItemCount
+                        + ", visibleItemCount=" + visibleItemCount);
 
             }
         }
     }
 
     @Override
-    public void onScrollStateChanged(RankingBaseFragment fragment, AbsListView absListView, int scrollState) {
+    public void onScrollStateChanged(RankingBaseFragment fragment, AbsListView absListView,
+                                     int scrollState) {
         synchronized (this) {
 
             RankingBaseFragment b = getCurrentFragment();
@@ -322,7 +359,8 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
             }
 
             if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE &&
-                    absListView.getLastVisiblePosition() == fragment.getRankingAdapter().getCount() - 1) {
+                    absListView.getLastVisiblePosition()
+                            == fragment.getRankingAdapter().getCount() - 1) {
 
                 if (mIsCommunicating) {
                     return;
@@ -401,7 +439,8 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void videoRankOverseasMovieCallback(List<Map<String, String>> videoRankMapList) {
         DTVTLogger.start("ResponseDataSize :" + videoRankMapList.size());
-        if (mViewPager.getCurrentItem() == RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_MOVIE) {
+        if (mViewPager.getCurrentItem() ==
+                RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_MOVIE) {
             setShowVideoRanking(videoRankMapList);
         } else {
             // nop.
@@ -417,7 +456,8 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void videoRankDomesticMovieCallback(List<Map<String, String>> videoRankMapList) {
         DTVTLogger.start("ResponseDataSize :" + videoRankMapList.size());
-        if (mViewPager.getCurrentItem() == RankingConstants.RANKING_PAGE_NO_OF_DOMESTIC_MOVIE) {
+        if (mViewPager.getCurrentItem() ==
+                RankingConstants.RANKING_PAGE_NO_OF_DOMESTIC_MOVIE) {
             setShowVideoRanking(videoRankMapList);
         } else {
             // nop.
@@ -433,7 +473,8 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void videoRankOverseasChannelCallback(List<Map<String, String>> videoRankMapList) {
         DTVTLogger.start("ResponseDataSize :" + videoRankMapList.size());
-        if (mViewPager.getCurrentItem() == RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_CHANNEL) {
+        if (mViewPager.getCurrentItem() ==
+                RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_CHANNEL) {
             setShowVideoRanking(videoRankMapList);
         } else {
             // nop.
@@ -450,7 +491,8 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
         @Override
         public Fragment getItem(int position) {
             return mRankingFragmentFactory.createFragment
-                    (RankingConstants.RANKING_MODE_NO_OF_VIDEO, position, getVideoRankingActivity());
+                    (RankingConstants.RANKING_MODE_NO_OF_VIDEO,
+                            position, getVideoRankingActivity());
         }
 
         @Override
