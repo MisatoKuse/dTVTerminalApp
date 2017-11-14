@@ -473,7 +473,7 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
         for (Channel mChannel : channelInfo) {
             totalCount += mChannel.getSchedules().size();
         }
-        tvProgramListAdapter = new TvProgramListAdapter(this, channelInfo, totalCount);
+        tvProgramListAdapter = new TvProgramListAdapter(this, channelInfo);
         programRecyclerView.setAdapter(tvProgramListAdapter);
         programRecyclerView.setItemViewCacheSize(channelInfo.size());
         programRecyclerView.getRecycledViewPool().setMaxRecycledViews(tvProgramListAdapter.getItemViewType(0), 3);
