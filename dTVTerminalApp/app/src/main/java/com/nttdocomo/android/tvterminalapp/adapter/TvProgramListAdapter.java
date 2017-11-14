@@ -47,15 +47,28 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     //番組データ
     private List<Channel> mProgramList = null;
 
-    public TvProgramListAdapter(Activity mContext, ArrayList<Channel> mProgramList, int totalCount) {
+    public TvProgramListAdapter(Activity mContext, ArrayList<Channel> mProgramList) {
         this.mProgramList = mProgramList;
         this.mContext = mContext;
         screenWidth = mContext.getResources().getDisplayMetrics().widthPixels;
         screenHeight = mContext.getResources().getDisplayMetrics().heightPixels;
         thumbnailProvider = new ThumbnailProvider(mContext);
         getCurTime();
-        for(int i=0;i< totalCount; i++) {
-            mItemViews.add(new ItemViewHolder());
+        for(int i=0;i<mProgramList.size();i++){
+            Channel itemChannel =  mProgramList.get(i);
+            boolean isLast = false;
+            if (itemChannel != null && itemChannel.getSchedules() != null) {
+                ArrayList<Schedule> itemSchedules=  itemChannel.getSchedules();
+                for (int j = 0; j < itemSchedules.size(); j++) {
+                    Schedule itemSchedule = itemSchedules.get(j);
+                    if(j == itemSchedules.size()-1){
+                        isLast = true;
+                    }
+                    ItemViewHolder itemViewHolder = new ItemViewHolder();
+                    setView(itemViewHolder, itemSchedule, isLast);
+                    mItemViews.add(itemViewHolder);
+                }
+            }
         }
     }
 
@@ -100,7 +113,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             startM = view.findViewById(R.id.tv_program_item_panel_clip_tv);
             content = view.findViewById(R.id.tv_program_item_panel_content_des_tv);
             thumbnail = view.findViewById(R.id.tv_program_item_panel_content_thumbnail_iv);
-            layoutParams = new RelativeLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
             inUsage=false;
         }
     }
@@ -125,23 +138,18 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         }
         if (itemChannel != null && itemChannel.getSchedules() != null) {
             ArrayList<Schedule> itemSchedule =  itemChannel.getSchedules();
-            String lastEndDate = "";
+            boolean isLast = false;
             for (int i = 0; i < itemSchedule.size(); i++) {
                 ItemViewHolder itemViewHolder =getUnused();
                 if(itemViewHolder == null){
                     itemViewHolder = new ItemViewHolder();
+                    if(i == itemSchedule.size()-1){
+                        isLast = true;
+                    }
+                    setView(itemViewHolder, itemSchedule.get(i), isLast);
                 }
-                float marginTop = itemSchedule.get(i).getMarginTop();
-                float myHeight = itemSchedule.get(i).getMyHeight();
-                itemViewHolder.layoutParams.height = (int)(myHeight * (screenHeight / 3)+0.5);
-                itemViewHolder.layoutParams.setMargins(0,(int)(marginTop * (screenHeight / 3)+0.5),0,0);
-                itemViewHolder.view.setLayoutParams(itemViewHolder.layoutParams);
-                String startTime = itemSchedule.get(i).getStartTime();
-                String endTime = itemSchedule.get(i).getEndTime();
-                if(!TextUtils.isEmpty(startTime)){
-                    itemViewHolder.startM.setText(startTime.substring(14,16));
-                }
-                itemViewHolder.content.setText(itemSchedule.get(i).getTitle());
+                itemViewHolder.setUsing();
+                holder.layout.addView(itemViewHolder.view);
                 itemViewHolder.thumbnail.setImageResource(R.drawable.test_image);
                 //URLによって、サムネイル取得
                 String thumbnailURL = itemSchedule.get(i).getImageUrl();
@@ -152,47 +160,63 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                         itemViewHolder.thumbnail.setImageBitmap(bitmap);
                     }
                 }
-                String end = endTime.substring(0, 10) + endTime.substring(11, 19);
-                Date date1 = new Date();
-                Date date2 = new Date();
-                SimpleDateFormat format = new SimpleDateFormat(CUR_TIME_FORMAT, Locale.JAPAN);
-                try {
-                    date1 = format.parse(end);
-                    date2 = format.parse(curDate);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if(i == itemSchedule.size()-1){
-                    if(date1.compareTo(date2) == -1){
-                        itemViewHolder.view.setBackgroundResource(R.drawable.program_end_gray);
-                        itemViewHolder.view.setTag(0);
-                    } else {
-                        itemViewHolder.view.setBackgroundResource(R.drawable.program_rectangele_end);
-                        itemViewHolder.view.setTag(1);
-                    }
-                } else {
-                    if(date1.compareTo(date2) == -1){
-                        itemViewHolder.view.setBackgroundResource(R.drawable.program_start_gray);
-                        itemViewHolder.view.setTag(0);
-                    } else {
-                        itemViewHolder.view.setBackgroundResource(R.drawable.program_rectangele_start);
-                        itemViewHolder.view.setTag(1);
-                    }
-                }
-                holder.layout.addView(itemViewHolder.view);
-                itemViewHolder.setUsing();
-                itemViewHolder.view.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if((int)view.getTag() == 1){
-                            Intent intent = new Intent();
-                            intent.setClass(mContext, TvPlayerActivity.class);
-                            mContext.startActivityForResult(intent,0);
-                        }
-                    }
-                });
             }
         }
+    }
+
+    /**
+     * 機能
+     * ビューを設定
+     */
+    private void setView(ItemViewHolder itemViewHolder, Schedule itemSchedule, boolean isLast){
+        float marginTop = itemSchedule.getMarginTop();
+        float myHeight = itemSchedule.getMyHeight();
+        itemViewHolder.layoutParams.height = (int)(myHeight * (screenHeight / 3)+0.5);
+        itemViewHolder.layoutParams.setMargins(0,(int)(marginTop * (screenHeight / 3)+0.5),0,0);
+        itemViewHolder.view.setLayoutParams(itemViewHolder.layoutParams);
+        String startTime = itemSchedule.getStartTime();
+        String endTime = itemSchedule.getEndTime();
+        if(!TextUtils.isEmpty(startTime)){
+            itemViewHolder.startM.setText(startTime.substring(14,16));
+        }
+        itemViewHolder.content.setText(itemSchedule.getTitle());
+        String end = endTime.substring(0, 10) + endTime.substring(11, 19);
+        Date date1 = new Date();
+        Date date2 = new Date();
+        SimpleDateFormat format = new SimpleDateFormat(CUR_TIME_FORMAT, Locale.JAPAN);
+        try {
+            date1 = format.parse(end);
+            date2 = format.parse(curDate);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if(isLast){
+            if(date1.compareTo(date2) == -1){
+                itemViewHolder.view.setBackgroundResource(R.drawable.program_end_gray);
+                itemViewHolder.view.setTag(0);
+            } else {
+                itemViewHolder.view.setBackgroundResource(R.drawable.program_rectangele_end);
+                itemViewHolder.view.setTag(1);
+            }
+        } else {
+            if(date1.compareTo(date2) == -1){
+                itemViewHolder.view.setBackgroundResource(R.drawable.program_start_gray);
+                itemViewHolder.view.setTag(0);
+            } else {
+                itemViewHolder.view.setBackgroundResource(R.drawable.program_rectangele_start);
+                itemViewHolder.view.setTag(1);
+            }
+        }
+        itemViewHolder.view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if((int)view.getTag() == 1){
+                    Intent intent = new Intent();
+                    intent.setClass(mContext, TvPlayerActivity.class);
+                    mContext.startActivityForResult(intent,0);
+                }
+            }
+        });
     }
 
     @Override
