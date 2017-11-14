@@ -199,14 +199,14 @@ public class RecordingReservationListDataProvider implements
         initDataList();
 
         // STB側録画予約一覧取得要求
-        RemoteRecordingReservationListWebClient remoteWebClient = new RemoteRecordingReservationListWebClient();
-        remoteWebClient.getRemoteRecordingReservationListApi(this);
+        RemoteRecordingReservationListWebClient stbWebClient = new RemoteRecordingReservationListWebClient();
+        stbWebClient.getRemoteRecordingReservationListApi(this);
 
         // dリモート側録画予約一覧取得要求
-        RecordingReservationListWebClient stbWebClient = new RecordingReservationListWebClient();
+        RecordingReservationListWebClient dRemoteWebClient= new RecordingReservationListWebClient();
         int limit = 0;
         int offset = 0;
-        stbWebClient.getRecordingReservationListApi(limit, offset, this);
+        dRemoteWebClient.getRecordingReservationListApi(limit, offset, this);
 
         // チャンネル一覧取得
         getTvScheduleListData();

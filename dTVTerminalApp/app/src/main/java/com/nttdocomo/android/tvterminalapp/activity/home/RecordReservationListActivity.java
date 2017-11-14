@@ -29,7 +29,6 @@ import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO スクロールリスナー設定, DPコールバック設定
 public class RecordReservationListActivity extends BaseActivity
         implements View.OnClickListener, AdapterView.OnItemClickListener, AbsListView.OnScrollListener,
         RecordingReservationListDataProvider.ApiDataProviderCallback {
@@ -42,7 +41,7 @@ public class RecordReservationListActivity extends BaseActivity
     private List mContentsList = null;
     private View mLoadMoreView = null;
     private boolean mIsCommunicating = false;
-    private final int NUM_PER_PAGE = 7;
+    private final int NUM_PER_PAGE = 20;
     private final int LOAD_PAGE_DELAY_TIME = 1000;
 
     @Override
