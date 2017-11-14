@@ -469,10 +469,6 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         programRecyclerView.setLayoutManager(linearLayoutManager);
-        int totalCount = 0;
-        for (Channel mChannel : channelInfo) {
-            totalCount += mChannel.getSchedules().size();
-        }
         tvProgramListAdapter = new TvProgramListAdapter(this, channelInfo);
         programRecyclerView.setAdapter(tvProgramListAdapter);
         programRecyclerView.setItemViewCacheSize(channelInfo.size());
