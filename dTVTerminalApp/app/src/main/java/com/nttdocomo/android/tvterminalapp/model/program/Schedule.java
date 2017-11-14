@@ -29,7 +29,7 @@ public class Schedule {
     //チャンネル ID
     private String chNo;
     //時間単価換算
-    private static final int FORMAT = 1000 * 60 * 60;
+    private static final float FORMAT = 1000 * 60 * 60;
     //日付format
     private static final String DATE_FORMAT = "yyyy-MM-ddHH:mm:ss";
     private static final String PROGRAM_FORMAT = "yyyy-MM-dd";
@@ -132,7 +132,7 @@ public class Schedule {
         }
         Date startTime = stringToDate(standardTime);
         Date endTime = stringToDate(getFormatDate(this.startTime));
-        float diffHours = (endTime.getTime() - startTime.getTime()) / (float) (FORMAT);
+        float diffHours = (endTime.getTime() - startTime.getTime()) / FORMAT;
         if (diffHours < 0) {
             diffHours = 0;
         }
@@ -172,7 +172,7 @@ public class Schedule {
     public float getMyHeight() {
         Date startTime = stringToDate(getFormatDate(this.startTime));
         Date endTime = stringToDate(getFormatDate(this.endTime));
-        float diffHours = (endTime.getTime() - startTime.getTime()) / (float) (FORMAT);
+        float diffHours = (endTime.getTime() - startTime.getTime()) / FORMAT;
         if (diffHours < 0) {
             diffHours = 0;
         }

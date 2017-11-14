@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -169,11 +168,6 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * ビューを設定
      */
     private void setView(ItemViewHolder itemViewHolder, Schedule itemSchedule, boolean isLast){
-        float marginTop = itemSchedule.getMarginTop();
-        float myHeight = itemSchedule.getMyHeight();
-        itemViewHolder.layoutParams.height = (int)(myHeight * (screenHeight / 3)+0.5);
-        itemViewHolder.layoutParams.setMargins(0,(int)(marginTop * (screenHeight / 3)+0.5),0,0);
-        itemViewHolder.view.setLayoutParams(itemViewHolder.layoutParams);
         String startTime = itemSchedule.getStartTime();
         String endTime = itemSchedule.getEndTime();
         if(!TextUtils.isEmpty(startTime)){
@@ -190,6 +184,12 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         } catch (Exception e) {
             e.printStackTrace();
         }
+        float marginTop = itemSchedule.getMarginTop();
+        float myHeight = itemSchedule.getMyHeight();
+        itemViewHolder.layoutParams.height = (int)(myHeight * (screenHeight / 3));
+        itemViewHolder.view.setLayoutParams(itemViewHolder.layoutParams);
+        itemViewHolder.view.setY(marginTop * (screenHeight / 3));
+
         if(isLast){
             if(date1.compareTo(date2) == -1){
                 itemViewHolder.view.setBackgroundResource(R.drawable.program_end_gray);
