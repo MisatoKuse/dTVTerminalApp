@@ -1,89 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/default_layout_style"
+<!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    style="@style/default_layout_style"
     android:orientation="vertical">
 
-    <!-- コンテンツ詳細用のヘッダ を読み込む -->
     <RelativeLayout
-        android:id="@+id/contents_detail_header"
+        android:id="@+id/home_main_layout_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true">
-
-        <include layout="@layout/contents_detail_header_layout" />
+        android:layout_height="40dp"
+        android:background="#FF0000">
+        <TextView
+            android:id="@+id/contents_detail_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/contents_detail_plane_button"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="15sp"/>
     </RelativeLayout>
 
-    <!--コンテンツ詳細のスクロール部分-->
-    <ScrollView
-        android:id="@+id/contents_detail_scroll_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/contents_detail_header">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-            <!--サムネイル用レイアウト-->
-            <RelativeLayout
-                android:id="@+id/contents_detail_thumbnail"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <!--TODO:ここにActivityからサムネイル又はプレイヤーをセット-->
-            </RelativeLayout>
-
-            <HorizontalScrollView
-                android:id="@+id/contents_detail_tab_strip_scroll"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/contents_tab_height"
-                android:background="@android:color/background_dark"
-                android:fillViewport="true"
-                android:foregroundGravity="center_horizontal"
-                android:scrollbars="none" />
-
-            <!--タブ用ViewPager-->
-            <android.support.v4.view.ViewPager
-                android:id="@+id/dtv_contents_detail_tab"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </LinearLayout>
-    </ScrollView>
-
-    <!--テレビで視聴するボタン用レイアウト-->
-    <RelativeLayout
+    <Button
+        android:id="@+id/button6"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:onClick="recommendButton"
+        android:text="@string/contents_detail_recommend_button" />
 
-        <Button
-            android:id="@+id/button6"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="recommendButton"
-            android:text="コンテンツ詳細(おすすめ作品)" />
+    <Button
+        android:id="@+id/button18"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="channelButton"
+        android:text="@string/contents_detail_channel_button" />
 
-        <Button
-            android:id="@+id/button18"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="channelButton"
-            android:text="チャンネル" />
+    <Button
+        android:id="@+id/button17"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="scheduleRecButton"
+        android:text="@string/contents_detail_record_reserve_button" />
 
-        <Button
-            android:id="@+id/button17"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="scheduleRecButton"
-            android:text="録画予約する" />
+    <Button
+        android:id="@+id/button5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="remoteControlButton"
+        android:text="@string/contents_detail_tv_view_button" />
 
-        <Button
-            android:id="@+id/button5"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="remoteControlButton"
-            android:text="テレビで視聴する" />
-    </RelativeLayout>
-</RelativeLayout>
+</LinearLayout>

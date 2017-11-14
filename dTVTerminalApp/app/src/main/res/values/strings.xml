@@ -127,6 +127,11 @@
     <string name="contents_viewing_text">で視聴する</string>
     <string name="contents_info_thumbnail_text">コンテンツ詳細のサムネイル画像</string>
     <string name="contents_info_thumbnail_button">コンテンツ詳細のサムネイル画像上のボタン</string>
+    <string name="contents_detail_plane_button">コンテンツ詳細</string>
+    <string name="contents_detail_recommend_button">コンテンツ詳細(おすすめ作品)</string>
+    <string name="contents_detail_channel_button">チャンネル</string>
+    <string name="contents_detail_record_reserve_button">録画予約する</string>
+    <string name="contents_detail_tv_view_button">テレビで視聴する</string>
     <string-array name="other_contents_detail_tabs">
         <item>作品情報</item>
     </string-array>

@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.other.RemoteControlActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
@@ -191,6 +192,15 @@ public class DtvContentsDetailActivity extends BaseActivity {
                 }
             }
         }
+    }
+
+    /**
+     * リモコン画面への遷移
+     *
+     * @param view
+     */
+    public void remoteControlButton(View view) {
+        startActivity(RemoteControlActivity.class, null);
     }
 
     /**
