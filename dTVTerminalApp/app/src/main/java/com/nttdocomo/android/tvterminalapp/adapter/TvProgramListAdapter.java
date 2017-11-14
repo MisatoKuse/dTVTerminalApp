@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -89,7 +90,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         TextView startM;
         TextView content;
         ImageView thumbnail;
-        LinearLayout.LayoutParams layoutParams;
+        RelativeLayout.LayoutParams layoutParams;
 
         void setUsing(){
             inUsage=true;
@@ -100,7 +101,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             startM = view.findViewById(R.id.tv_program_item_panel_clip_tv);
             content = view.findViewById(R.id.tv_program_item_panel_content_des_tv);
             thumbnail = view.findViewById(R.id.tv_program_item_panel_content_thumbnail_iv);
-            layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            layoutParams = new RelativeLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
             inUsage=false;
         }
     }
@@ -109,10 +110,10 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.tv_program_item, parent, false);
         MyViewHolder holder = new MyViewHolder(view);
-        holder.layout = (LinearLayout) view;
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams((screenWidth - screenWidth / 9) / 2,
+        holder.layout = (RelativeLayout) view;
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((screenWidth - screenWidth / 9) / 2,
                 screenHeight / 3 * 24);
-        layoutParams.gravity = Gravity.CENTER;
+        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
         holder.layout.setLayoutParams(layoutParams);
         return holder;
     }
@@ -131,7 +132,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 if(itemViewHolder == null){
                     itemViewHolder = new ItemViewHolder();
                 }
-                float marginTop = itemSchedule.get(i).getMarginTop(lastEndDate);
+                float marginTop = itemSchedule.get(i).getMarginTop();
                 float myHeight = itemSchedule.get(i).getMyHeight();
                 itemViewHolder.layoutParams.height = (int)(myHeight * (screenHeight / 3)+0.5);
                 itemViewHolder.layoutParams.setMargins(0,(int)(marginTop * (screenHeight / 3)+0.5),0,0);
@@ -181,7 +182,6 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 }
                 holder.layout.addView(itemViewHolder.view);
                 itemViewHolder.setUsing();
-                lastEndDate = itemSchedule.get(i).getEndTime();
                 itemViewHolder.view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -207,6 +207,6 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             super(view);
         }
 
-        LinearLayout layout;
+        RelativeLayout layout;
     }
 }

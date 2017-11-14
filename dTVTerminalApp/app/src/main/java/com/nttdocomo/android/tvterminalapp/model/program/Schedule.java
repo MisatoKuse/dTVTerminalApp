@@ -4,11 +4,12 @@
 
 package com.nttdocomo.android.tvterminalapp.model.program;
 
-import android.text.TextUtils;
-
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
 
 /* 作成中 */
 /*
@@ -31,6 +32,7 @@ public class Schedule {
     private static final int FORMAT = 1000 * 60 * 60;
     //日付format
     private static final String DATE_FORMAT = "yyyy-MM-ddHH:mm:ss";
+    private static final String PROGRAM_FORMAT = "yyyy-MM-dd";
 
     /*
      * タイトルを取得する
@@ -108,15 +110,25 @@ public class Schedule {
      *
      * @return 前の間隔
      */
-    public float getMarginTop(String lastEndDate) {
+    public float getMarginTop() {
         String standardTime = "";
-        if ("".equals(lastEndDate)) {
-            if (startTime != null) {
-                String curStartDay = startTime.substring(0, 10);
-                standardTime = curStartDay + "04:00:00";
+        if (startTime != null) {
+            String curStartDay = startTime.substring(0, 10);
+            int hour = Integer.parseInt(startTime.substring(11,13));
+            if( hour>=0 && hour < 4){
+                SimpleDateFormat sdf = new SimpleDateFormat(PROGRAM_FORMAT, Locale.JAPAN);
+                Date date = new Date();
+                try {
+                    date=sdf.parse(curStartDay);
+                }catch (ParseException e){
+                    e.printStackTrace();
+                }
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(date);
+                calendar.add(Calendar.DAY_OF_MONTH, -1);
+                curStartDay = sdf.format(calendar.getTime());
             }
-        } else {
-            standardTime = getFormatDate(lastEndDate);
+            standardTime = curStartDay + "04:00:00";
         }
         Date startTime = stringToDate(standardTime);
         Date endTime = stringToDate(getFormatDate(this.startTime));

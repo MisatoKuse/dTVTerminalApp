@@ -9,15 +9,19 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ChannelListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvScheduleListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.UPDATE_DATE;
@@ -27,11 +31,12 @@ import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvSche
 public class TvScheduleInsertDataManager {
 
     private Context mContext;
+    private static final String DATE_FORMAT = "yyyy-MM-dd";
 
     /**
      * コンストラクタ
      *
-     * @param context
+     * @param context Activity
      */
     public TvScheduleInsertDataManager(Context context) {
         mContext = context;
@@ -39,8 +44,6 @@ public class TvScheduleInsertDataManager {
 
     /**
      * TvScheduleAPIの解析結果をDBに格納する。
-     *
-     * @return
      */
     public void insertTvScheduleInsertList(TvScheduleList tvScheduleList) {
 
@@ -75,9 +78,7 @@ public class TvScheduleInsertDataManager {
     }
 
     /**
-     * TvScheduleAPIの解析結果をDBに格納する。
-     *
-     * @return
+     * TvScheduleAPIの解析結果をDBに格納する
      */
     public void insertTvScheduleInsertList( TvScheduleList tvScheduleList, String display_type) {
 
@@ -100,7 +101,26 @@ public class TvScheduleInsertDataManager {
                 String keyName = (String) entry.getKey();
                 String valName = (String) entry.getValue();
                 if(TV_SCHEDULE_LIST_LINEAR_START_DATE.equals(keyName)){
-                    values.put(UPDATE_DATE, !TextUtils.isEmpty(valName)?valName.substring(0,10):"");
+                    if(!TextUtils.isEmpty(valName)){
+                        String update = valName.substring(0,10);
+                        int hour = Integer.parseInt(valName.substring(11,13));
+                        if( hour>=0 && hour < 4){
+                            SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.JAPAN);
+                            Date date = new Date();
+                            try {
+                                date=sdf.parse(update);
+                            }catch (ParseException e){
+                                e.printStackTrace();
+                            }
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.setTime(date);
+                            calendar.add(Calendar.DAY_OF_MONTH, -1);
+                            update = sdf.format(calendar.getTime());
+                            values.put(UPDATE_DATE, update);
+                        }else{
+                            values.put(UPDATE_DATE, update);
+                        }
+                    }
                 }
                 values.put(DBUtils.fourKFlgConversion(keyName), valName);
             }
