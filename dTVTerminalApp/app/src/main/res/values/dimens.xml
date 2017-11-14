@@ -38,6 +38,7 @@
     <dimen name="recording_reservation_list_status_width">50dp</dimen>
     <dimen name="recording_reservation_list_status_height">25dp</dimen>
     <dimen name="recording_reservation_list_status_margin_end">8dp</dimen>
-    <dimen name="list_item_channel_name_text_size">15sp</dimen>
+    <dimen name="list_item_channel_name_text_size">13sp</dimen>
+    <dimen name="list_item_recording_reservation_status_text_size">12sp</dimen>
 
 </resources>

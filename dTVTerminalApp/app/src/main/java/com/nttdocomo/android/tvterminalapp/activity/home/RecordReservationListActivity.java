@@ -199,10 +199,7 @@ public class RecordReservationListActivity extends BaseActivity
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        if (mLoadMoreView == view) {
-            return;
-        }
-        startActivity(TvPlayerActivity.class, null);
+        // 録画予約一覧画面ではItemのタップで画面遷移しない
     }
 
     @Override

@@ -280,7 +280,6 @@ public class ContentsAdapter extends BaseAdapter {
                 break;
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
                 view = mInflater.inflate(R.layout.item_common_result, parent, false);
-//                view = mInflater.inflate(R.layout.item_common_result_recording_reservation_list, parent, false);
                 break;
             default:
                 break;
@@ -306,21 +305,6 @@ public class ContentsAdapter extends BaseAdapter {
         return holder;
     }
 
-    private ViewHolder setRecordingReservationListItem(ViewHolder holder, View view) {
-//        holder.rl_thumbnail = view.findViewById(R.id.item_common_result_inc_rec_reservation_list).findViewById(R.id.item_common_result_thumbnail_rl);
-//        holder.iv_thumbnail = view.findViewById(R.id.item_common_result_inc_rec_reservation_list).findViewById(R.id.item_common_result_thumbnail_iv);
-//        holder.tv_clip = view.findViewById(R.id.item_common_result_inc_rec_reservation_list).findViewById(R.id.item_common_result_clip_tv);
-//        holder.tv_rank = view.findViewById(R.id.item_common_result_inc_rec_reservation_list).findViewById(R.id.item_common_result_rank_num);
-//        holder.tv_time = view.findViewById(R.id.item_common_result_inc_rec_reservation_list).findViewById(R.id.item_common_result_content_time);
-//        holder.tv_title = view.findViewById(R.id.item_common_result_inc_rec_reservation_list).findViewById(R.id.item_common_result_content_title);
-//        holder.ll_rating = view.findViewById(R.id.item_common_result_inc_rec_reservation_list).findViewById(R.id.item_common_result_content_rating);
-//        holder.rb_rating = view.findViewById(R.id.item_common_result_inc_rec_reservation_list).findViewById(R.id.item_common_result_content_rating_star);
-//        holder.tv_rating_num = view.findViewById(R.id.item_common_result_inc_rec_reservation_list).findViewById(R.id.item_common_result_content_rating_num);
-//        holder.tv_line = view.findViewById(R.id.item_common_result_inc_rec_reservation_list).findViewById(R.id.item_common_result_line);
-
-        return holder;
-    }
-
     /**
      *  Itemのパターンを設定
      */
@@ -335,14 +319,9 @@ public class ContentsAdapter extends BaseAdapter {
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
                 break;
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
-//                setRecordingReservationListItem(holder, view);
-//                holder = setRecordingReservationListItem(holder,view);
                 holder.tv_recording_reservation =
                         view.findViewById(R.id.item_common_result_recording_reservation_status);
                 holder.tv_channel_name = view.findViewById(R.id.item_common_result_channel_name);
-//                holder.tv_recording_reservation =
-//                        view.findViewById(R.id.item_recording_reservation_inc).findViewById(R.id.item_common_result_recording_reservation_status);
-//                holder.tv_channel_name = view.findViewById(R.id.item_recording_reservation_inc).findViewById(R.id.item_common_result_recording_reservation__channel_name);
                 break;
             default:
                 break;

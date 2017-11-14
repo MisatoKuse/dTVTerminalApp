@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -70,6 +71,7 @@ public class DateUtils {
 
     //日付フォーマット
     private static final String DATE_PATTERN = "yyyy/MM/dd HH:mm:ss";
+    private static final String DATE_PATTERN_RECORDING_RESERVATION = "MM/dd (E) HH:mm";
 
     //DB保存期限
     private static final int LIMIT_HOUR = 1;
@@ -252,19 +254,11 @@ public class DateUtils {
     public static String getRecordShowListItem(long time) {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(time*1000);
-        DTVTLogger.start("NowTime = " + cal.toString());
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN_RECORDING_RESERVATION);
+        String text = sdf.format(new Date(cal.getTimeInMillis()));
 
-        StringBuilder strBuilder = new StringBuilder();
-        strBuilder.append(cal.get(Calendar.MONTH))
-                .append("/")
-                .append(cal.get(Calendar.DATE))
-                .append(" (")
-                .append(getStringDayOfWeek(cal.get(Calendar.DAY_OF_WEEK)))
-                .append(") ")
-                .append(cal.get(Calendar.HOUR_OF_DAY))
-                .append(":")
-                .append(cal.get(Calendar.MINUTE));
-        return strBuilder.toString();
+        DTVTLogger.debug("NowTime = " + cal.toString());
+        return text;
     }
 
     /**
