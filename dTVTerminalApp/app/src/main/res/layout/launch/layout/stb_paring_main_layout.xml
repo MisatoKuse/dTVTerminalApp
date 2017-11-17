@@ -1,53 +1,53 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/default_layout_style"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <RelativeLayout
+        android:id="@+id/relativeLayout1"
         android:layout_width="match_parent"
-        android:layout_height="46dp"
-        android:background="#FF0000">
-        <TextView
-            android:id="@+id/button0StbParingInvitationActivity"
+        android:layout_height="100dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="40dp">
+
+        <ImageView
+            android:id="@+id/paring_connecting_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/str_stb_pair_invitation_title"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:textSize="18sp"/>
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            android:baselineAlignBottom="true"
+            android:src="@drawable/paring_connecting_icon" />
+
     </RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/content"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
+    <TextView
+        android:id="@+id/connect_result_text"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="bottom"
-        android:orientation="vertical">
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/relativeLayout1"
+        android:gravity="center"
+        android:text="@string/str_stb_pair_invitation_text"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        android:visibility="visible" />
 
-        <Button
-            android:id="@+id/useWithoutPairingSTBParingInvitationActivity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
-            android:text="ペアリングしないでアプリを利用する" />
+    <Button
+        android:id="@+id/useWithoutPairingSTBParingInvitationActivity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:text="@string/str_stb_no_pair_use_text"
+        android:textColor="#000000"
+        android:textSize="15sp" />
 
-        <Button
-            android:id="@+id/returnSTBParingInvitationActivity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
-            android:text="戻る" />
-
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>

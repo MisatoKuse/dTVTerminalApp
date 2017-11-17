@@ -7,79 +7,59 @@ package com.nttdocomo.android.tvterminalapp.activity.launch;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 
 public class STBParingInvitationActivity extends BaseActivity implements View.OnClickListener {
 
-    private static boolean mIsFirstDisplay=true;
-
-    private Button mUseWithoutPairingSTBParingInvitationActivity=null;
-    private Button mReturnSTBParingInvitationActivity=null;
+    private static boolean mIsFirstDisplay = true;
+    private Button mUseWithoutPairingSTBParingInvitationActivity = null;
+    private ImageView mParingImageView;
+    private TextView mBackIcon;
+    private final static String STATUS = "status";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.stb_paring_main_layout);
-
+        setTitleText(getString(R.string.str_app_title));
+        mBackIcon = findViewById(R.id.header_layout_back);
+        mBackIcon.setVisibility(View.GONE);
+        mParingImageView = findViewById(R.id.header_layout_menu);
+        mParingImageView.setImageResource(R.drawable.tvicon);
+        mParingImageView.setVisibility(View.VISIBLE);
         setContents();
     }
-
-    @Override
-    public void onBackPressed() {
-        //super.onBackPressed();
-    }
-
     private void setContents() {
-
-        /*
-         * ペアリング勧誘
-         * ※一度表示されたら以降表示されない
+        DTVTLogger.start();
+        //TODO SharedPreferenceから初回表示判定を取得する
+        /**
+         *  ペアリング勧誘
+         *  一度表示されたら以降表示されない
          */
-        if(!mIsFirstDisplay){
-            Bundle b= new Bundle();
-            b.putString("state", LaunchActivity.mStateToHomePairingNg);
+        if (!mIsFirstDisplay) {
+            Bundle b = new Bundle();
+            b.putString(STATUS, LaunchActivity.mStateToHomePairingNg);
             startActivity(HomeActivity.class, b);
             return;
         }
-
-        TextView title= (TextView)findViewById(R.id.button0StbParingInvitationActivity);
-        title.setText(getScreenTitle());
-
-        mUseWithoutPairingSTBParingInvitationActivity=(Button)findViewById(R.id.useWithoutPairingSTBParingInvitationActivity);
+        mUseWithoutPairingSTBParingInvitationActivity =
+                findViewById(R.id.useWithoutPairingSTBParingInvitationActivity);
         mUseWithoutPairingSTBParingInvitationActivity.setOnClickListener(this);
-
-        mReturnSTBParingInvitationActivity=(Button)findViewById(R.id.returnSTBParingInvitationActivity);
-        mReturnSTBParingInvitationActivity.setOnClickListener(this);
-
-        mIsFirstDisplay=false;
-    }
-
-    @Override
-    public String getScreenTitle() {
-        return getString(R.string.str_stb_pair_invitation_title);
+        mIsFirstDisplay = false;
+        DTVTLogger.end();
     }
 
     @Override
     public void onClick(View v) {
-        if(v.equals(mUseWithoutPairingSTBParingInvitationActivity)) {
-            onUseWithoutPairingButton();
-        } else if(v.equals(mReturnSTBParingInvitationActivity)){
-            onReturnButton();
-        }
-    }
-
-    private void onReturnButton() {
-        startActivity(STBSelectActivity.class, null);
-    }
-
-    private void onUseWithoutPairingButton() {
-        Bundle b=new Bundle();
-        b.putString("state", LaunchActivity.mStateToHomePairingNg);
+        Bundle b = new Bundle();
+        b.putString(STATUS, LaunchActivity.mStateToHomePairingNg);
         startActivity(HomeActivity.class, b);
     }
 }
