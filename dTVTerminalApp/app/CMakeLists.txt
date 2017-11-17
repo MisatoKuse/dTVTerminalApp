@@ -109,6 +109,9 @@ add_library(
      dtvtlib # dynamic lib name
      SHARED  # share
      ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaJniCast.cpp
+     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/Dlna.cpp
+     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaDevXmlParser.cpp
+     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaRecVideoXmlParser.cpp
      )
 
 # 目標ライブラリをリンク
