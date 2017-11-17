@@ -20,31 +20,35 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 public class STBConnectActivity extends BaseActivity {
     private Context mContext;
     private boolean isStbConnected = false;
-    private static final int DELAYED_TIME = 1500;
+    private static final int DELAYED_TIME = 3000;
     private TextView mConnectResult;
     private ImageView mParingImageView;
     private TextView mBackIcon;
     private final static String STATUS = "status";
+    private final static String DTVT = "dTVTerminal";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.stb_connect_main_layout);
+        setContents();
+        //TODO ユーザー情報を保存する
+    }
+
+    /**
+     *画面上の表示をセットする
+     */
+    private void setContents() {
         mBackIcon = findViewById(R.id.header_layout_back);
         mBackIcon.setVisibility(View.GONE);
         mParingImageView = findViewById(R.id.header_layout_menu);
         mParingImageView.setImageResource(R.drawable.tvicon);
         mParingImageView.setVisibility(View.VISIBLE);
         setTitleText(getString(R.string.str_app_title));
-        setContents();
-    }
-
-    private void setContents() {
         mConnectResult = findViewById(R.id.connect_result_text);
         mConnectResult.setVisibility(View.VISIBLE);
         mConnectResult.setText(R.string.str_stb_connect_success_text);
         handler.postDelayed(runnable, DELAYED_TIME);
-        //TODO ユーザー情報を保存する
     }
 
     /**
@@ -52,24 +56,20 @@ public class STBConnectActivity extends BaseActivity {
      */
     Handler handler = new Handler();
     Runnable runnable = new Runnable() {
-
         @Override
         public void run() {
             DTVTLogger.start();
             try {
                 if (!isStbConnected) {
-                    isStbConnected = true;
-                    handler.postDelayed(this, DELAYED_TIME);
-                } else {
-                    handler.removeCallbacks(runnable);
                     Bundle b = new Bundle();
                     b.putString(STATUS, LaunchActivity.mStateToHomePairingOk);
                     startActivity(HomeActivity.class, b);
                 }
             } catch (Exception e) {
                 // TODO Auto-generated catch block
-                DTVTLogger.end();
+                DTVTLogger.error(DTVT);
             }
+            DTVTLogger.end();
         }
     };
 }

@@ -39,10 +39,8 @@ public class STBParingInvitationActivity extends BaseActivity implements View.On
     private void setContents() {
         DTVTLogger.start();
         //TODO SharedPreferenceから初回表示判定を取得する
-        /**
-         *  ペアリング勧誘
-         *  一度表示されたら以降表示されない
-         */
+        //ペアリング勧誘
+        //一度表示されたら以降表示されない
         if (!mIsFirstDisplay) {
             Bundle b = new Bundle();
             b.putString(STATUS, LaunchActivity.mStateToHomePairingNg);
@@ -56,6 +54,10 @@ public class STBParingInvitationActivity extends BaseActivity implements View.On
         DTVTLogger.end();
     }
 
+    /**
+     * ペアリングしない状態でホームActivityを起動する
+     * @param v ビュー
+     */
     @Override
     public void onClick(View v) {
         Bundle b = new Bundle();
