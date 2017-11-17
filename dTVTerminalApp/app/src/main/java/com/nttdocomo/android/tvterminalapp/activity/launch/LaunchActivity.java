@@ -12,6 +12,8 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 
 public class LaunchActivity extends BaseActivity implements View.OnClickListener {
@@ -19,19 +21,12 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     public static final String mStateFromTutorialActivity="fromTutorialActivity";
     public static final String mStateToHomePairingOk="ホーム画面（ペアリング済）";
     public static final String mStateToHomePairingNg="ホーム画面（未ペアリング）";
+    private final static String STATUS = "status";
 
     private static boolean mIsFirstRun=true;
 
     Button firstLanchLanchYesActivity=null;
     Button firstLanchLanchNoActivity=null;
-
-    Button pairYesLanchActivity=null;
-    Button pairNoLanchActivity=null;
-
-    Button mStbWifiYesLanchActivity=null;
-    Button mStbWifiNoLanchActivity=null;
-
-
 
     private String mState="";
 
@@ -43,28 +38,19 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         setContens();
     }
 
+    /**
+     * 画面設定を行う
+     */
     private void setContens() {
         TextView title= (TextView)findViewById(R.id.titleLanchActivity);
         title.setText(getScreenTitle());
 
+        // TODO チュートリアル実装時に判定処理を入れる
         firstLanchLanchYesActivity= (Button)findViewById(R.id.firstLanchLanchYesActivity);
         firstLanchLanchYesActivity.setOnClickListener(this);
 
         firstLanchLanchNoActivity= (Button)findViewById(R.id.firstLanchLanchNoActivity);
         firstLanchLanchNoActivity.setOnClickListener(this);
-
-        pairYesLanchActivity= (Button)findViewById(R.id.pairYesLanchActivity);
-        pairYesLanchActivity.setOnClickListener(this);
-
-        pairNoLanchActivity= (Button)findViewById(R.id.pairNoLanchActivity);
-        pairNoLanchActivity.setOnClickListener(this);
-
-        mStbWifiYesLanchActivity= (Button)findViewById(R.id.stbWifiYesLanchActivity);
-        mStbWifiYesLanchActivity.setOnClickListener(this);
-
-        mStbWifiNoLanchActivity= (Button)findViewById(R.id.stbWifiNoLanchActivity);
-        mStbWifiNoLanchActivity.setOnClickListener(this);
-
 
         Bundle b= getIntent().getExtras();
         try {
@@ -86,7 +72,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         if(!mIsFirstRun){
             firstLanchLanchYesActivity.setVisibility(View.GONE);
         }
-
         super.onResume();
     }
 
@@ -94,7 +79,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     public void onBackPressed() {
         //super.onBackPressed();
     }
-
 
     @Override
     public String getScreenID() {
@@ -108,58 +92,26 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
-        if(v.equals(firstLanchLanchYesActivity)){
+        if (v.equals(firstLanchLanchYesActivity)) {
             onFirstLanchYesButton();
         } else if (v.equals(firstLanchLanchNoActivity)) {
             onFirstLanchNoButton();
-        } else if (v.equals(pairYesLanchActivity)) {
-            onPairYesButton();
-        } else if(v.equals(pairNoLanchActivity)) {
-            onPairNoButton();
-        } else if (v.equals(mStbWifiYesLanchActivity)) {
-            onStbWifiYesButton();
-        } else if(v.equals(mStbWifiNoLanchActivity)) {
-            onStbWifiNoButton();
         }
     }
 
+    /**
+     * 初回起動判定
+     * @return
+     */
     public static boolean isFirstRun() {
         return mIsFirstRun;
     }
 
+    /**
+     * 初回起動判定値設定
+     */
     public static void setNotFirstRun() {
         LaunchActivity.mIsFirstRun = false;
-    }
-
-    /**
-     * STB選択画面へ
-     */
-    private void onStbWifiYesButton() {
-        startActivity(STBSelectActivity.class, null);
-    }
-
-    /**
-     * ペアリング勧誘
-     * ※一度表示されたら以降表示されない
-     */
-    private void onStbWifiNoButton() {
-        startActivity(STBParingInvitationActivity.class, null);
-    }
-
-    private void onPairNoButton() {
-        //showDAccountYesNoButtons(View.VISIBLE);
-        showPairYesNoButtons(View.GONE);
-        showStbWifiYesNoButtons(View.VISIBLE);
-    }
-
-
-    /**
-     * HOME(ペアリング済)画面へ遷移
-     */
-    private void onPairYesButton() {
-        Bundle b=new Bundle();
-        b.putString("state", mStateToHomePairingOk);
-        startActivity(HomeActivity.class, b);
     }
 
     /**
@@ -169,25 +121,35 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         startActivity(TutorialActivity.class, null);
     }
 
+    /**
+     * 初回起動ではない
+     */
     private void onFirstLanchNoButton() {
-        //mIsFirstLanch=false;
-        showPairYesNoButtons(View.VISIBLE);
-        hideFirstLanchButtons(View.GONE);
+        doScreenTransition();
     }
 
-    private void showPairYesNoButtons(int visibility){
-        pairYesLanchActivity.setVisibility(visibility);
-        pairNoLanchActivity.setVisibility(visibility);
+    /**
+     * 次画面遷移判定
+     */
+    private void doScreenTransition() {
+        DTVTLogger.start();
+        if(SharedPreferencesUtils.getSharedPreferencesStbConnect(this)) {
+            // ペアリング済み HOME画面遷移
+            Bundle b = new Bundle();
+            b.putString(STATUS, mStateToHomePairingOk);
+            DTVTLogger.debug("ParingOK Start HomeActivity");
+            startActivity(HomeActivity.class, b);
+        } else if(SharedPreferencesUtils.getSharedPreferencesStbSelect(this)){
+            // 未ペアリング HOME画面遷移
+            Bundle b = new Bundle();
+            b.putString(STATUS, mStateToHomePairingNg);
+            startActivity(HomeActivity.class, b);
+            DTVTLogger.debug("ParingNG Start HomeActivity");
+        } else {
+            // STB選択画面へ遷移
+            startActivity(STBSelectActivity.class, null);
+            DTVTLogger.debug("Start STBSelectActivity");
+        }
+        DTVTLogger.end();
     }
-
-    private void hideFirstLanchButtons(int visibility){
-        firstLanchLanchYesActivity.setVisibility(visibility);
-        firstLanchLanchNoActivity.setVisibility(visibility);
-    }
-
-    private void showStbWifiYesNoButtons(int visibility){
-        mStbWifiYesLanchActivity.setVisibility(visibility);
-        mStbWifiNoLanchActivity.setVisibility(visibility);
-    }
-
 }
