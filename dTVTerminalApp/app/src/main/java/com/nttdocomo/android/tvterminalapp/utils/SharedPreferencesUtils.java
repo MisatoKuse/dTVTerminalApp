@@ -14,6 +14,7 @@ import java.util.GregorianCalendar;
 
 public class SharedPreferencesUtils {
 
+    // SharedPreferences ペアリング情報保存キー 親キー
     private static final String SHARED_KEY_PAIRING_INFOMATION = "pairing_info";
     // STB選択画面"次回以降表示しない" 選択保存キー
     private static final String SHARED_KEY_STB_SELECT_UNNECESSARY_NEXT_TIME = "unnecessary_next_time";
@@ -21,6 +22,8 @@ public class SharedPreferencesUtils {
     private static final String SHARED_KEY_STB_CONNECT_SUCCESS = "connect_success";
     // ペアリング STB情報 保存キー
     private static final String SHARED_KEY_STB_DATA_INFOMATION = "stb_data_info";
+    // ペアリング勧誘画面表示済み判定情報 保存キー
+    private static final String SHARED_KEY_PARING_INVITATION_IS_DISPLAYED = "paring_invitation_is_displayed";
 
     /**
      * STB選択画面"次回以降表示しない" 状態を保存
@@ -32,7 +35,7 @@ public class SharedPreferencesUtils {
                 SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = data.edit();
         editor.putBoolean(SHARED_KEY_STB_SELECT_UNNECESSARY_NEXT_TIME,selectedUnnecessary);
-        editor.commit();
+        editor.apply();
     }
 
     /**
@@ -45,8 +48,20 @@ public class SharedPreferencesUtils {
                 SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = data.edit();
         editor.putBoolean(SHARED_KEY_STB_CONNECT_SUCCESS, stbConnectSuccess);
-        editor.commit();
+        editor.apply();
+    }
 
+    /**
+     * ペアリング勧誘画面表示済み判定情報を保存
+     * @param context コンテキスト
+     * @param isDisplayed true:表示済み false:未表示
+     */
+    public static void setSharedPreferencesParingInvitationIsDisplayed(Context context, boolean isDisplayed) {
+        SharedPreferences data = context.getSharedPreferences(
+                SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putBoolean(SHARED_KEY_PARING_INVITATION_IS_DISPLAYED, isDisplayed);
+        editor.apply();
     }
 
     /**
@@ -61,7 +76,7 @@ public class SharedPreferencesUtils {
         // TODO 情報をJSONに変換して保存予定
 //        Gson gson = new Gson();
 //        editor.put(SHARED_KEY_STB_DATA_INFOMATION, )
-        editor.commit();
+        editor.apply();
     }
 
     /**
@@ -86,4 +101,16 @@ public class SharedPreferencesUtils {
                 SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
         return data.getBoolean(SHARED_KEY_STB_CONNECT_SUCCESS,false);
     }
+
+    /**
+     * ペアリング勧誘画面表示済み判定情報を取得
+     * @param context コンテキスト
+     * @return true:表示済み false:未表示
+     */
+    public static boolean getSharedPreferencesParingInvitationIsDisplayed(Context context) {
+        SharedPreferences data = context.getSharedPreferences(
+                SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
+        return data.getBoolean(SHARED_KEY_PARING_INVITATION_IS_DISPLAYED,false);
+    }
+
 }
