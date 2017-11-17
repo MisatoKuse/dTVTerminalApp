@@ -4,7 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -15,10 +14,10 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 
 public class STBConnectActivity extends BaseActivity {
-    private Context mContext;
     private boolean isStbConnected = false;
     private static final int DELAYED_TIME = 3000;
     private TextView mConnectResult;
@@ -31,12 +30,13 @@ public class STBConnectActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.stb_connect_main_layout);
+        //TODO SharedPreferenceにSTB接続完了をセット
+        SharedPreferencesUtils.setSharedPreferencesStbConnect(this, true);
         setContents();
-        //TODO ユーザー情報を保存する
     }
 
     /**
-     *画面上の表示をセットする
+     * 画面上の表示をセットする
      */
     private void setContents() {
         mBackIcon = findViewById(R.id.header_layout_back);

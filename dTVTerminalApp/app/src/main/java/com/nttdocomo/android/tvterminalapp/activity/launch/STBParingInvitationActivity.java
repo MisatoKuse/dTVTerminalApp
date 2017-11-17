@@ -14,11 +14,11 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 
 public class STBParingInvitationActivity extends BaseActivity implements View.OnClickListener {
 
-    private static boolean mIsFirstDisplay = true;
     private Button mUseWithoutPairingSTBParingInvitationActivity = null;
     private ImageView mParingImageView;
     private TextView mBackIcon;
@@ -28,20 +28,24 @@ public class STBParingInvitationActivity extends BaseActivity implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.stb_paring_main_layout);
+        setContents();
+    }
+
+    /**
+     * 画面上の表示をセットする
+     */
+    private void setContents() {
+        DTVTLogger.start();
         setTitleText(getString(R.string.str_app_title));
         mBackIcon = findViewById(R.id.header_layout_back);
         mBackIcon.setVisibility(View.GONE);
         mParingImageView = findViewById(R.id.header_layout_menu);
         mParingImageView.setImageResource(R.drawable.tvicon);
         mParingImageView.setVisibility(View.VISIBLE);
-        setContents();
-    }
-    private void setContents() {
-        DTVTLogger.start();
         //TODO SharedPreferenceから初回表示判定を取得する
         //ペアリング勧誘
         //一度表示されたら以降表示されない
-        if (!mIsFirstDisplay) {
+        if (SharedPreferencesUtils.getSharedPreferencesParingInvitationIsDisplayed(this)) {
             Bundle b = new Bundle();
             b.putString(STATUS, LaunchActivity.mStateToHomePairingNg);
             startActivity(HomeActivity.class, b);
@@ -50,12 +54,13 @@ public class STBParingInvitationActivity extends BaseActivity implements View.On
         mUseWithoutPairingSTBParingInvitationActivity =
                 findViewById(R.id.useWithoutPairingSTBParingInvitationActivity);
         mUseWithoutPairingSTBParingInvitationActivity.setOnClickListener(this);
-        mIsFirstDisplay = false;
+        SharedPreferencesUtils.setSharedPreferencesParingInvitationIsDisplayed(this, true);
         DTVTLogger.end();
     }
 
     /**
      * ペアリングしない状態でホームActivityを起動する
+     *
      * @param v ビュー
      */
     @Override
