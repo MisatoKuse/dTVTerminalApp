@@ -23,10 +23,17 @@ namespace dtvt {
         du_byte_zero((du_uint8 *) &mDMP, sizeof(dmp));
         du_bool isInitOk = dupnp_init(&mDMP.upnp, 0, 0);
         bool ok = (true == isInitOk);
-        if (ok) {
-
-        }
+        mDlnaDevXmlParser = (DlnaXmlParserBase*)new DlnaDevXmlParser();
+        IfNullGoTo(mDlnaDevXmlParser, error_1);
+        mDlnaRecVideoXmlParser = (DlnaXmlParserBase*)new DlnaRecVideoXmlParser();;
+        IfNullGoTo(mDlnaRecVideoXmlParser, error_2);
         return ok;
+
+        error_2:
+            delete mDlnaDevXmlParser;
+            mDlnaDevXmlParser = NULL;
+        error_1:
+            return false;
     }
 
     void Dlna::uninit() {
@@ -36,6 +43,9 @@ namespace dtvt {
             dupnp_free(&mDMP.upnp);
         }
         mDMP.upnp._impl = NULL;
+
+        DelIfNotNull(mDlnaDevXmlParser);
+        DelIfNotNull(mDlnaRecVideoXmlParser);
     }
 
     bool Dlna::start(JNIEnv *env, jobject obj) {
@@ -349,7 +359,11 @@ namespace dtvt {
         if (NULL == arg) {
             return;
         }
+        DlnaRecVideoXmlParser* parser=NULL;
         Dlna *thiz = (Dlna *) arg;
+        IfNullReturn(thiz);
+        IfNullReturn(thiz->mDlnaRecVideoXmlParser);
+
         std::vector<std::vector<std::string> > vv;
         dmp *d = &thiz->mDMP;
 
@@ -360,7 +374,8 @@ namespace dtvt {
             goto error;
         }
 
-        thiz->mDlnaRecVideoXmlParser.parse((void *) response->body, vv);
+        parser = (DlnaRecVideoXmlParser*)thiz->mDlnaRecVideoXmlParser;
+        parser->parse((void *) response->body, vv);
         if(0==vv.size()){
             return;
         }
@@ -670,6 +685,8 @@ namespace dtvt {
             return;
         }
         Dlna *thiz = (Dlna *) arg;
+        IfNullReturn(thiz);
+        IfNullReturn(thiz->mDlnaDevXmlParser);
 
         std::string content((char *) dvcdsc->location);
 

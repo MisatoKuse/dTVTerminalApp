@@ -55,8 +55,8 @@ namespace dtvt {
         dmp mDMP;
         DLNA_STATE mDLNA_STATE = DLNA_STATE_STOP;
         Event mEvent;
-        DlnaDevXmlParser mDlnaDevXmlParser;
-        DlnaRecVideoXmlParser mDlnaRecVideoXmlParser;
+        DlnaXmlParserBase* mDlnaDevXmlParser;
+        DlnaXmlParserBase* mDlnaRecVideoXmlParser;
 
     public:
         Dlna();

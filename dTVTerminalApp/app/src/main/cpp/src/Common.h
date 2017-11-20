@@ -53,8 +53,9 @@ namespace dtvt {
     const char * const Dlna_Java_String_Path = "java/lang/String";    //"Ljava/lang/String;";
 
     #define IfNullGoTo(var, where) { if (NULL == (var) ) { goto  where; } }
-    #define IfGoTo(var, where) { if ( !(var) ) { goto  where; } }
+    //#define IfGoTo(var, where) { if ( !(var) ) { goto  where; } }
     #define IfNullReturn(var) { if (NULL == (var) ) { return; } }
+    #define DelIfNotNull(obj) {  if(NULL!=(obj)) { delete obj; obj = NULL; }  }
 
 } //namespace dtvt
 
