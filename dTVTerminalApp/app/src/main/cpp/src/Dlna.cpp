@@ -688,10 +688,6 @@ namespace dtvt {
         IfNullReturn(thiz);
         IfNullReturn(thiz->mDlnaDevXmlParser);
 
-        std::string content((char *) dvcdsc->location);
-
-        content.append((char *) dvcdsc->xml);
-
         std::vector<std::vector<std::string> > vv;
         DlnaDevXmlParser* parser= (DlnaDevXmlParser*)thiz->mDlnaDevXmlParser;
         parser->parse(device, vv);
