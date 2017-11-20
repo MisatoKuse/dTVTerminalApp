@@ -11,7 +11,7 @@
 #include <dupnp_soap.h>
 #include <cstring>
 #include "Dlna.h"
-
+#include "DmsInfo.h"
 
 namespace dtvt {
 
@@ -224,7 +224,6 @@ namespace dtvt {
         }
 
         // set a callback function which is called before the device information are stored in the device manager when new devices join to the network.
-        //dupnp_cp_dvcmgr_set_allow_join_handler(&mDMP.deviceManager, allowJoinHandler, 0);
         dupnp_cp_dvcmgr_set_allow_join_handler(&mDMP.deviceManager, Dlna::allowJoinHandler, this);
 
         // set a callback function which is called after the device information are stored in the device manager when new devices join to the network.
@@ -630,11 +629,41 @@ namespace dtvt {
         return sendSoap(ctl);
     }
 
+    /**
+     * デバイスディスクリプションを解析してデバイス情報を設定する
+     *
+     * @param x
+     * @param device
+     * @param dvcdsc
+     * @param arg
+     * @return このデバイスをデバイスマネージャーが管理するリストに追加する場合 1 追加しない場合 0
+     */
     /*static*/ du_bool Dlna::allowJoinHandler(dupnp_cp_dvcmgr *x, dupnp_cp_dvcmgr_device *device,
                                               dupnp_cp_dvcmgr_dvcdsc *dvcdsc, void *arg) {
+        dms_info* info;
+
+        // イスディスクリプションを解析
+        info = createDmsInfoXmlDoc(dvcdsc->xml, dvcdsc->xml_len, device->udn, device->device_type, device->location);
+        if (!info){
+            return 0; // このデバイスをデバイスマネージャーの管理リストに追加しません
+        }
+        // 特定のDMS に限定する場合は friendly_name を指定する
+        if (NULL == strstr((char*)info->friendly_name, "特定のDMSのfriendly_name")){
+//        return 0; // このデバイスをデバイスマネージャーの管理リストに追加しません
+        }
+        device->user_data = (void*)info; // デバイスディスクリプションの解析情報 ※leaveHandlerで解放すること
+
         return 1;
     }
 
+    /**
+     * デバイス検出
+     *
+     * @param x
+     * @param device
+     * @param dvcdsc
+     * @param arg
+     */
     /*static*/ void Dlna::joinHandler(dupnp_cp_dvcmgr *x, dupnp_cp_dvcmgr_device *device,
                                       dupnp_cp_dvcmgr_dvcdsc *dvcdsc, void *arg) {
         if (NULL == arg || NULL == dvcdsc || NULL == dvcdsc->xml) {
@@ -647,7 +676,7 @@ namespace dtvt {
         content.append((char *) dvcdsc->xml);
 
         std::vector<std::vector<std::string> > vv;
-        thiz->mDlnaDevXmlParser.parse(dvcdsc, vv);
+        thiz->mDlnaDevXmlParser.parse(device, vv);
         if(0==vv.size()){
             return;
         }
@@ -655,14 +684,25 @@ namespace dtvt {
         thiz->notify(DLNA_MSG_ID_DEV_DISP_JOIN, content);
     }
 
+    /**
+     * デバイスの停止：デバイス情報の解放
+     *
+     * @param x
+     * @param device
+     * @param arg
+     * @return
+     */
     /*static*/ du_bool
     Dlna::leaveHandler(dupnp_cp_dvcmgr *x, dupnp_cp_dvcmgr_device *device, void *arg) {
         if (NULL == arg || NULL == device || NULL == device->udn) {
             return 1;
         }
         Dlna *thiz = (Dlna *) arg;
+        dms_info *info = (dms_info*)device->user_data;
 
         std::string content((char *) device->udn);
+        freeDmsInfoXmlDoc(info);    // allowJoinHandler#createDmsInfoXmlDoc で取得したデバイス情報の解放
+
         thiz->notify(DLNA_MSG_ID_DEV_DISP_LEAVE, content);
 
         return 1;

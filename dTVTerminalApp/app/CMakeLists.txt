@@ -112,6 +112,7 @@ add_library(
      ${CMAKE_SOURCE_DIR}/src/main/cpp/src/Dlna.cpp
      ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaDevXmlParser.cpp
      ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaRecVideoXmlParser.cpp
+     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DmsInfo.c
      )
 
 # 目標ライブラリをリンク
