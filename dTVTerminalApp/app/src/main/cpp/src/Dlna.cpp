@@ -693,12 +693,13 @@ namespace dtvt {
         content.append((char *) dvcdsc->xml);
 
         std::vector<std::vector<std::string> > vv;
-        thiz->mDlnaDevXmlParser.parse(device, vv);
+        DlnaDevXmlParser* parser= (DlnaDevXmlParser*)thiz->mDlnaDevXmlParser;
+        parser->parse(device, vv);
         if(0==vv.size()){
             return;
         }
 
-        thiz->notify(DLNA_MSG_ID_DEV_DISP_JOIN, content);
+        thiz->notifyObject(Dlna::DLNA_MSG_ID_DEV_DISP_JOIN, vv);
     }
 
     /**

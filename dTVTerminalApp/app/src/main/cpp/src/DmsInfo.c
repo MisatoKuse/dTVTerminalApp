@@ -343,31 +343,6 @@ void freeDmsInfoXmlDoc(dms_info* info) {
     du_alloc_free(info);
 }
 
-/*
-dms_info* cloneDmsInfo(dms_info* info) {
-    dms_info* i;
-
-    i = du_alloc_zero(sizeof(dms_info));
-    if (!du_str_clone(info->udn, &i->udn)){
-        goto error;
-    }
-    if (!du_str_clone(info->friendly_name, &i->friendly_name)){
-        goto error;
-    }
-    if (!du_str_clone(info->cds.control_url, &i->cds.control_url)){
-        goto error;
-    }
-    if (!du_str_clone(info->cds.event_sub_url, &i->cds.event_sub_url)){
-        goto error;
-    }
-    return i;
-
-error:
-    freeDmsInfoXmlDoc(i);
-    return 0;
-}
-*/
-
 #ifdef __cplusplus
 }
 #endif
