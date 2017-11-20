@@ -14,6 +14,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.temp.DAccountAppliActivity;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 
 public class STBSelectActivity extends BaseActivity implements View.OnClickListener {
@@ -188,14 +189,13 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void onUseWithoutPairingButton() {
-        Bundle b=new Bundle();
-        b.putString("state", LaunchActivity.mStateToHomePairingNg);
+        SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
+                this, SharedPreferencesUtils.STATE_TO_HOME_PAIRING_NG);
         if(mIsNextTimeHide){
-            startActivity(HomeActivity.class, b);
+            startActivity(HomeActivity.class, null);
         } else {
-            startActivity(STBParingInvitationActivity.class, b);
+            startActivity(STBParingInvitationActivity.class, null);
         }
-
     }
 
 //    private void dAccountState(){

@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -25,11 +26,13 @@ public class STBConnectActivity extends BaseActivity {
     private TextView mBackIcon;
     private final static String STATUS = "status";
     private final static String DTVT = "dTVTerminal";
+    private Context mContext = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.stb_connect_main_layout);
+        mContext = this;
         //TODO SharedPreferenceにSTB接続完了をセット
         SharedPreferencesUtils.setSharedPreferencesStbConnect(this, true);
         setContents();
@@ -61,9 +64,8 @@ public class STBConnectActivity extends BaseActivity {
             DTVTLogger.start();
             try {
                 if (!isStbConnected) {
-                    Bundle b = new Bundle();
-                    b.putString(STATUS, LaunchActivity.mStateToHomePairingOk);
-                    startActivity(HomeActivity.class, b);
+                    SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
+                            mContext, SharedPreferencesUtils.STATE_TO_HOME_PAIRING_OK);
                 }
             } catch (Exception e) {
                 // TODO Auto-generated catch block

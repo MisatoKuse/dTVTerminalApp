@@ -135,15 +135,15 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         DTVTLogger.start();
         if(SharedPreferencesUtils.getSharedPreferencesStbConnect(this)) {
             // ペアリング済み HOME画面遷移
-            Bundle b = new Bundle();
-            b.putString(STATUS, mStateToHomePairingOk);
+            SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
+                    this, SharedPreferencesUtils.STATE_TO_HOME_PAIRING_OK);
+            startActivity(HomeActivity.class, null);
             DTVTLogger.debug("ParingOK Start HomeActivity");
-            startActivity(HomeActivity.class, b);
         } else if(SharedPreferencesUtils.getSharedPreferencesStbSelect(this)){
             // 未ペアリング HOME画面遷移
-            Bundle b = new Bundle();
-            b.putString(STATUS, mStateToHomePairingNg);
-            startActivity(HomeActivity.class, b);
+            SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
+                    this, SharedPreferencesUtils.STATE_TO_HOME_PAIRING_NG);
+            startActivity(HomeActivity.class, null);
             DTVTLogger.debug("ParingNG Start HomeActivity");
         } else {
             // STB選択画面へ遷移

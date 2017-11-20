@@ -13,6 +13,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.temp.GoogleStoreActivity;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 
 public class DAccountSettingActivity extends BaseActivity implements View.OnClickListener {
@@ -64,8 +65,8 @@ public class DAccountSettingActivity extends BaseActivity implements View.OnClic
     }
 
     private void mDLoginNoUseButton() {
-        Bundle b=new Bundle();
-        b.putString("state", LaunchActivity.mStateToHomePairingNg);
-        startActivity(HomeActivity.class, b);
+        SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
+                this, SharedPreferencesUtils.STATE_TO_HOME_PAIRING_NG);
+        startActivity(HomeActivity.class, null);
     }
 }

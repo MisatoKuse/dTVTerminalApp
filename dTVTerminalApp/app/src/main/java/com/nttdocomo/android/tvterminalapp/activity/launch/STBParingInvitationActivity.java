@@ -46,9 +46,9 @@ public class STBParingInvitationActivity extends BaseActivity implements View.On
         //ペアリング勧誘
         //一度表示されたら以降表示されない
         if (SharedPreferencesUtils.getSharedPreferencesParingInvitationIsDisplayed(this)) {
-            Bundle b = new Bundle();
-            b.putString(STATUS, LaunchActivity.mStateToHomePairingNg);
-            startActivity(HomeActivity.class, b);
+            SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
+                    this, SharedPreferencesUtils.STATE_TO_HOME_PAIRING_NG);
+            startActivity(HomeActivity.class, null);
             return;
         }
         mUseWithoutPairingSTBParingInvitationActivity =
@@ -65,8 +65,8 @@ public class STBParingInvitationActivity extends BaseActivity implements View.On
      */
     @Override
     public void onClick(View v) {
-        Bundle b = new Bundle();
-        b.putString(STATUS, LaunchActivity.mStateToHomePairingNg);
-        startActivity(HomeActivity.class, b);
+        SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
+                this, SharedPreferencesUtils.STATE_TO_HOME_PAIRING_NG);
+        startActivity(HomeActivity.class, null);
     }
 }
