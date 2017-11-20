@@ -44,4 +44,9 @@
 
     <!--コンテンツ詳細-->
     <color name="contents_header_background">#000000</color>
+
+    <!--//STB選択-->
+    <drawable name="color_white">#ffffff</drawable>
+    <drawable name="color_black">#000000</drawable>
+    <drawable name="color_gray">#555555</drawable>
 </resources>

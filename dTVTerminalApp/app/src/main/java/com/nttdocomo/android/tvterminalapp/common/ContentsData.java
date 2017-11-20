@@ -23,6 +23,17 @@ public class ContentsData {
     // チャンネル名
     private String channelName = null;
 
+    //デバイス名
+    private String deviceName = null;
+
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
+    }
+
     public String getRank() {
         return rank;
     }

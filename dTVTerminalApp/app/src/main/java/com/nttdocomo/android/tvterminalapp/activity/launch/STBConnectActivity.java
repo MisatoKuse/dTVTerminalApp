@@ -45,7 +45,7 @@ public class STBConnectActivity extends BaseActivity {
         mBackIcon = findViewById(R.id.header_layout_back);
         mBackIcon.setVisibility(View.GONE);
         mParingImageView = findViewById(R.id.header_layout_menu);
-        mParingImageView.setImageResource(R.drawable.tvicon);
+        mParingImageView.setImageResource(R.mipmap.ic_personal_video_white_24dp);
         mParingImageView.setVisibility(View.VISIBLE);
         setTitleText(getString(R.string.str_app_title));
         mConnectResult = findViewById(R.id.connect_result_text);

@@ -132,5 +132,17 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="#222222" />
+    <Button
+        android:id="@+id/item_common_result_device_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="dcdcddc"
+        android:background="@drawable/selector_btn_click_bg"
+        android:textColor="@drawable/selector_text_click_bg"
+        android:layout_marginBottom="4dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:visibility="gone"
+        />
 
 </RelativeLayout>

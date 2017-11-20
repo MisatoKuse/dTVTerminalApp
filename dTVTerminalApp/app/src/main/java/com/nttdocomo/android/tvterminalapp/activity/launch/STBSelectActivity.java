@@ -5,19 +5,42 @@
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.temp.DAccountAppliActivity;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
+
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
+import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 
-public class STBSelectActivity extends BaseActivity implements View.OnClickListener {
+public class STBSelectActivity extends BaseActivity implements View.OnClickListener, AdapterView.OnItemClickListener, DlnaDevListListener{
 
     public static final String StateModeRepair="Repair";
 
@@ -34,24 +57,58 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     Button mDAccountAppliNoSTBSelectActivity=null;
     Button mDAccountSameYesSTBSelectActivity=null;
     Button mDAccountSameNoSTBSelectActivity=null;
+    private TextView mBackIcon;
+    private ImageView mParingImageView;
+    private ListView mDeviceListView;
+    private List<DlnaDmsItem> mDeviceList;
+    List<ContentsData> mContentsList;
+    private ContentsAdapter mContentsAdapter;
+    private View mLoadMoreView = null;
+    private DlnaProvDevList mDlnaProvDevList = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.stb_select_main_layout);
-
+        mContentsList = new ArrayList();
+        mBackIcon = findViewById(R.id.header_layout_back);
+        mBackIcon.setVisibility(View.GONE);
+        mParingImageView = findViewById(R.id.header_layout_menu);
+        mParingImageView.setImageResource(R.mipmap.ic_personal_video_white_24dp);
+        mParingImageView.setVisibility(View.VISIBLE);
+        setTitleText(getString(R.string.str_app_title));
         setContents();
+        initView();
+        setDevListener();
     }
 
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
     }
+    private void initView(){
+        if (mContentsList == null) {
+            mContentsList = new ArrayList();
+        }
+
+        mDeviceListView = findViewById(R.id.stb_device_name_list);
+        mContentsAdapter = new ContentsAdapter(this,mContentsList,ContentsAdapter.ActivityTypeItem.TYPE_STB_SELECT_LIST );
+        mDeviceListView.setAdapter(mContentsAdapter);
+        mDeviceListView.setOnItemClickListener(this);
+        mLoadMoreView = LayoutInflater.from(this).inflate(R.layout.search_load_more, null);
+    }
+
+    private void setDevListener() {
+        // TODO DLNA側と連携次第コメントアウトを外す
+        mDlnaProvDevList = new DlnaProvDevList();
+//        mDlnaProvDevList.start(this);
+    }
 
     private void setContents() {
 
-        TextView title= (TextView)findViewById(R.id.titleStbSelectActivity);
-        title.setText(getScreenTitle());
+
+//        TextView title= (TextView)findViewById(R.id.titleStbSelectActivity);
+//        title.setText(getScreenTitle());
 
         mUseWithoutPairingSTBParingInvitationActivity=(Button)findViewById(R.id.useWithoutPairingSTBParingInvitationActivity);
         mUseWithoutPairingSTBParingInvitationActivity.setOnClickListener(this);
@@ -185,10 +242,14 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private void onStbSelected() {
         //dAccountState();
         //setDAccountLoginButtonsVisibility(View.VISIBLE);
+        // TODO DLNA側と連携次第コメントアウトを外す
+//        mDlnaProvDevList.stopListen();
         startActivity(DAccountRegConfirmationActivity.class, null);
     }
 
     private void onUseWithoutPairingButton() {
+        // TODO DLNA側と連携次第コメントアウトを外す
+//        mDlnaProvDevList.stopListen();
         SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
                 this, SharedPreferencesUtils.STATE_TO_HOME_PAIRING_NG);
         if(mIsNextTimeHide){
@@ -230,5 +291,95 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private void setDAccountSameButtonsVisibility(int visibility){
         mDAccountSameYesSTBSelectActivity.setVisibility(visibility);
         mDAccountSameNoSTBSelectActivity.setVisibility(visibility);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        startActivity(STBConnectActivity.class, null);
+    }
+
+
+
+    @Override
+    public void onDeviceJoin(DlnaDMSInfo curInfo, DlnaDmsItem newItem) {
+        DTVTLogger.start();
+
+        if(newItem != null) {
+            if(mDeviceList == null) {
+                mDeviceList = new ArrayList<DlnaDmsItem>();
+                mDeviceList.add(newItem);
+            } else {
+                mDeviceList.add(newItem);
+            }
+            updateDeviceList();
+        } else {
+            DTVTLogger.debug("DeviceInfo is NULL");
+        }
+
+        DTVTLogger.end();
+    }
+
+    @Override
+    public void onDeviceLeave(DlnaDMSInfo curInfo, String leaveDmsUdn) {
+        DTVTLogger.start();
+        if(leaveDmsUdn != null) {
+            if(mDeviceList != null) {
+                int i;
+                for(i = 0; i < mDeviceList.size(); i++) {
+                    if(mDeviceList.get(i).mUdn.equals(leaveDmsUdn)) {
+                        mDeviceList.remove(i);
+                        break;
+                    }
+                }
+                if(i >= mDeviceList.size()) {
+                    updateDeviceList();
+                }
+            } else {
+                // nop.
+            }
+        } else {
+            DTVTLogger.debug("DeviceInfo is NULL");
+        }
+        DTVTLogger.end();
+    }
+
+    @Override
+    public void onError(String msg) {
+        DTVTLogger.error("DevListListener error msg" + msg);
+    }
+
+    private void updateDeviceList() {
+
+        if(mDeviceList != null && mDeviceList.size() != 0) {
+            displayMoreData(false);
+            mContentsList.clear();
+            for (int i=0; i < mDeviceList.size(); i++) {
+                ContentsData data = new ContentsData();
+                data.setDeviceName(mDeviceList.get(i).mFriendlyName);
+                mContentsList.add(data);
+            }
+        } else {
+            mContentsList.clear();
+            displayMoreData(true);
+        }
+
+        synchronized (this) {
+            mContentsAdapter.notifyDataSetChanged();
+        }
+    }
+
+    /**
+     * 再読み込み時のダイアログ表示処理
+     *
+     * @param b
+     */
+    private void displayMoreData(boolean b) {
+        if (null != mDeviceListView && null != mLoadMoreView) {
+            if (b) {
+                mDeviceListView.addFooterView(mLoadMoreView);
+            } else {
+                mDeviceListView.removeFooterView(mLoadMoreView);
+            }
+        }
     }
 }
