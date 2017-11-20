@@ -15,12 +15,6 @@ cmake_minimum_required(VERSION 3.4.1)
 include_directories( ${CMAKE_SOURCE_DIR}/src/main/cpp/include/dixim)
 
 # ライブラリを使う
-add_library(libdixim_upnp STATIC IMPORTED)
-set_target_properties(libdixim_upnp
-  PROPERTIES IMPORTED_LOCATION
-  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/libdixim_upnp.a)
-
-# ライブラリを使う
 add_library(libcunit STATIC IMPORTED)
 set_target_properties(libcunit
   PROPERTIES IMPORTED_LOCATION
@@ -74,6 +68,13 @@ set_target_properties(libdixim_printer
   PROPERTIES IMPORTED_LOCATION
   ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/libdixim_printer.a)
 
+
+# ライブラリを使う
+add_library(libdixim_upnp STATIC IMPORTED)
+set_target_properties(libdixim_upnp
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/libdixim_upnp.a)
+
 # ライブラリを使う
 add_library(libdixim_util STATIC IMPORTED)
 set_target_properties(libdixim_util
@@ -109,12 +110,14 @@ add_library(
      dtvtlib # dynamic lib name
      SHARED  # share
      ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaJniCast.cpp
+     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/Dlna.cpp
+     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaDevXmlParser.cpp
+     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaRecVideoXmlParser.cpp
      )
 
 # 目標ライブラリをリンク
 target_link_libraries(
     dtvtlib
-    libdixim_upnp
     libcunit
     libdixim_av
     libdixim_char_util
@@ -124,6 +127,7 @@ target_link_libraries(
     libdixim_media_detector
     libdixim_mrd
     libdixim_printer
+    libdixim_upnp
     libdixim_util
     libexpat
     libonig
