@@ -15,7 +15,7 @@
 
 namespace dtvt {
 
-    Dlna::Dlna() {
+    Dlna::Dlna(): mDlnaDevXmlParser(NULL), mDlnaRecVideoXmlParser(NULL) {
         mDMP.upnp._impl = NULL;
     }
 
