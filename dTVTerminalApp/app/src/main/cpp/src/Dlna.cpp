@@ -19,6 +19,10 @@ namespace dtvt {
         mDMP.upnp._impl = NULL;
     }
 
+    /**
+     *
+     * @return
+     */
     bool Dlna::init() {
         du_byte_zero((du_uint8 *) &mDMP, sizeof(dmp));
         du_bool isInitOk = dupnp_init(&mDMP.upnp, 0, 0);
@@ -36,6 +40,9 @@ namespace dtvt {
             return false;
     }
 
+    /**
+     *
+     */
     void Dlna::uninit() {
         soapUninit();
 
@@ -48,6 +55,12 @@ namespace dtvt {
         DelIfNotNull(mDlnaRecVideoXmlParser);
     }
 
+    /**
+     *
+     * @param env
+     * @param obj
+     * @return
+     */
     bool Dlna::start(JNIEnv *env, jobject obj) {
         du_bool isStartOk = false;
 
@@ -150,6 +163,9 @@ namespace dtvt {
             return false;
     }
 
+    /**
+     *
+     */
     void Dlna::stop() {
         if (DLNA_STATE_STARTED != mDLNA_STATE) {
             return;
@@ -181,6 +197,10 @@ namespace dtvt {
         mDLNA_STATE = DLNA_STATE_STOP;
     }
 
+    /**
+     *
+     * @return
+     */
     bool Dlna::enableFunction() {
         du_bool ret = dupnp_enable_netif_monitor(&mDMP.upnp, 1);
         if (!ret) {
@@ -205,6 +225,10 @@ namespace dtvt {
         return true;
     }
 
+    /**
+     *
+     * @return
+     */
     bool Dlna::initDevEnv() {
         bool ret = false;
         if (mDLNA_STATE != DLNA_STATE_STARTED) {
@@ -263,6 +287,10 @@ namespace dtvt {
             return false;
     }
 
+    /**
+     *
+     * @return
+     */
     bool Dlna::soapInit() {
 
         du_byte_zero((du_uint8 *) &mDMP.soap, sizeof(soap));
@@ -292,12 +320,19 @@ namespace dtvt {
         return false;
     }
 
+    /**
+     *
+     */
     void Dlna::soapUninit() {
         du_str_array_free(&mDMP.soap.request_header);
         du_mutex_free(&mDMP.soap.mutex);
         du_sync_free(&mDMP.soap.sync);
     }
 
+    /**
+     *
+     * @return
+     */
     bool Dlna::startDmgrAndEmgr() {
         if (!dupnp_cp_evtmgr_start(&mDMP.eventManager)) {
             goto error;
@@ -314,6 +349,11 @@ namespace dtvt {
             return false;
     }
 
+    /**
+     *
+     * @param response
+     * @return
+     */
     static du_bool checkSoapResponseError(dupnp_http_response *response) {
         du_str_array param_array;
 
@@ -354,6 +394,11 @@ namespace dtvt {
             return false;
     }
 
+    /**
+     *
+     * @param response
+     * @param arg
+     */
     /*static*/ void  Dlna::browseDirectChildrenResponseHandler(dupnp_http_response *response, void *arg) {
         if (NULL == arg) {
             return;
@@ -391,6 +436,11 @@ namespace dtvt {
             du_mutex_unlock(&d->soap.mutex);
     }
 
+    /**
+     *
+     * @param ctl
+     * @return
+     */
     bool Dlna::sendSoap(const du_uchar *ctl) {
         if (NULL == ctl || 0 == strlen((const char *) ctl)) {
             return false;
@@ -436,6 +486,11 @@ namespace dtvt {
             return false;
     }
 
+    /**
+     *
+     * @param msg
+     * @param content
+     */
     void Dlna::notify(int msg, std::string content) {
         JNIEnv *env = NULL;
         int status = mEvent.mJavaVM->GetEnv((void **) &env, JNI_VERSION_1_6);
@@ -458,6 +513,16 @@ namespace dtvt {
         mEvent.mJavaVM->DetachCurrentThread();
     }
 
+    /**
+     *
+     * @param env
+     * @param cls
+     * @param fieldName
+     * @param classPath
+     * @param value
+     * @param obj
+     * @return
+     */
     bool setJavaObjectField(JNIEnv *env, jclass cls, const char* const  fieldName, const char* const classPath, string& value, jobject obj){
         if(NULL==env || NULL == cls || NULL==fieldName
            || NULL==classPath || NULL==obj || NULL ==value.c_str()){
@@ -476,6 +541,15 @@ namespace dtvt {
         return true;
     }
 
+    /**
+     *
+     * @param env
+     * @param cl
+     * @param cons
+     * @param datas
+     * @param objOut
+     * @return
+     */
     bool addDmsInfo(JNIEnv *env, jclass cl, jmethodID cons, StringVector& datas, jobject objOut) {
         StringVector::iterator i=datas.begin();
 
@@ -506,6 +580,15 @@ namespace dtvt {
         return true;
     }
 
+    /**
+     *
+     * @param env
+     * @param cl
+     * @param cons
+     * @param datas
+     * @param objOut
+     * @return
+     */
     bool addRecVideoItem(JNIEnv *env, jclass cl, jmethodID cons, StringVector& datas, jobject objOut) {
         StringVector::iterator i=datas.begin();
 
@@ -536,6 +619,15 @@ namespace dtvt {
         return true;
     }
 
+    /**
+     *
+     * @param env
+     * @param cl
+     * @param cons
+     * @param datas
+     * @param objOut
+     * @return
+     */
     bool addRecVideoItems(JNIEnv *env, jclass cl, jmethodID cons, vector<StringVector>& datas, jobject objOut) {
         bool ret=true;
 
@@ -549,6 +641,11 @@ namespace dtvt {
         return ret;
     }
 
+    /**
+     *
+     * @param msg
+     * @param vecVecContents
+     */
     void Dlna::notifyObject(int msg, vector<StringVector> & vecVecContents) {
         JNIEnv *env = NULL;
         jobject itemObj = NULL;
@@ -639,6 +736,11 @@ namespace dtvt {
             }
     }
 
+    /**
+     *
+     * @param ctl
+     * @return
+     */
     bool Dlna::browseDms(const du_uchar *ctl) {
         return sendSoap(ctl);
     }
