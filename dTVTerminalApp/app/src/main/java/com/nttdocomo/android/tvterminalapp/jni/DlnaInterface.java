@@ -98,10 +98,6 @@ public class DlnaInterface {
      */
     public void setDlnaDevListListener(DlnaDevListListener lis){
         synchronized (this) {
-            if(0==mNativeDlna){
-                mNativeDlna = nativeCreateDlnaObject();
-            }
-
             mDlnaDevListListener = lis;
         }
     }
@@ -112,18 +108,25 @@ public class DlnaInterface {
      */
     public void setDlnaRecVideoBaseListener(DlnaRecVideoListener lis){
         synchronized (this) {
-            if(0==mNativeDlna){
-                mNativeDlna = nativeCreateDlnaObject();
-            }
-
             mDlnaRecVideoListener = lis;
         }
     }
 
+    /**
+     * 機能：Dlna機能を開始
+     * @return
+     */
     public boolean startDlna(){
         synchronized (this) {
             if(mIsDlnaRunning){
                 return true;
+            }
+
+            if(0==mNativeDlna){
+                mNativeDlna = nativeCreateDlnaObject();
+            }
+            if(0==mNativeDlna){
+                return false;
             }
 
             mDMSInfo.clear();
