@@ -125,20 +125,24 @@ public class DlnaInterface {
             if(mIsDlnaRunning){
                 return true;
             }
+
+            mDMSInfo.clear();
+            mIsDlnaRunning = nativeStartDlna(mNativeDlna);
+            return mIsDlnaRunning;
         }
-        mDMSInfo.clear();
-        return nativeStartDlna(mNativeDlna);
     }
 
     public void stopDlna(){
         synchronized (this) {
-            if(mIsDlnaRunning){
+            if(!mIsDlnaRunning){
                 return;
             }
+
+            nativeStopDlna(mNativeDlna);
+            mDMSInfo.clear();
+            mNativeDlna=0;
+            mIsDlnaRunning=false;
         }
-        nativeStopDlna(mNativeDlna);
-        mDMSInfo.clear();
-        mNativeDlna=0;
     }
 
     /**
