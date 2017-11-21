@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
   -->
 
@@ -14,7 +13,9 @@
     <color name="gray_text">#7f7f7f</color>
     <color name="disable_tab_background">#111111</color>
     <color name="list_item_background">#000000</color>
-
+    <color name="thumbnail_background">#888888</color>
+    <color name="content_time_text">#AAAAAA</color>
+    <color name="result_line">#222222</color>
     <!-- キーワード検索 -->
     <color name="keyword_search_background">#EEEEEE</color>
     <color name="keyword_search_hint">#888888</color>
@@ -41,7 +42,9 @@
     <!-- ビデオ一覧 -->
     <color name="video_list_text">#FFFFFF</color>
     <color name="video_list_line">#424242</color>
-
     <!--コンテンツ詳細-->
     <color name="contents_header_background">#000000</color>
+    <!--録画番組一覧-->
+    <color name="recorded_background">#000000</color>
+    <color name="recorded_contents_background">#222222</color>
 </resources>

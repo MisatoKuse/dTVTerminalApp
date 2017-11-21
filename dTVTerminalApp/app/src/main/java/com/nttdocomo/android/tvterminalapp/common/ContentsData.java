@@ -22,6 +22,8 @@ public class ContentsData {
     private int recordingReservationStatus = RecordingReservationListDataProvider.RECORD_RESERVATION_SYNC_STATUS_ALREADY_REFLECT;
     // チャンネル名
     private String channelName = null;
+    // 録画番組用のチャンネル名
+    private String recordedChannelName = null;
 
     public String getRank() {
         return rank;
@@ -79,4 +81,11 @@ public class ContentsData {
         this.channelName = channelName;
     }
 
+    public String getRecordedChannelName() {
+        return recordedChannelName;
+    }
+
+    public void setRecordedChannelName(String channelName) {
+        this.recordedChannelName = channelName;
+    }
 }

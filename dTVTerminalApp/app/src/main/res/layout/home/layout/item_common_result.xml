@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
   -->
 
@@ -17,9 +16,10 @@
             android:id="@+id/item_common_result_thumbnail_iv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
             android:adjustViewBounds="true"
-            android:background="#888888"
+            android:background="@color/thumbnail_background"
             android:contentDescription="@null"
             android:scaleType="fitCenter" />
 
@@ -27,13 +27,13 @@
             android:id="@+id/item_common_result_rank_num"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginStart="@dimen/recorded_rank_num_margin_start"
+            android:layout_marginTop="@dimen/list_item_common_result_rank_num_top_margin"
             android:background="@drawable/rank_shape_corner"
             android:gravity="center"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:textColor="@android:color/white"
+            android:paddingStart="@dimen/recorded_rank_num_left_padding"
+            android:paddingEnd="@dimen/list_item_common_result_rank_num_right_padding"
+            android:textColor="@color/white_text"
             android:textSize="@dimen/list_item_rank_num_text_size" />
     </RelativeLayout>
 
@@ -46,18 +46,18 @@
 
         <TextView
             android:id="@+id/item_common_result_clip_tv"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginEnd="8dp"
-            android:background="#FFFFFF" />
+            android:layout_width="@dimen/recorded_clip_tv_width"
+            android:layout_height="@dimen/recorded_clip_tv_height"
+            android:layout_marginEnd="@dimen/recorded_clip_tv_margin_end"
+            android:background="@color/list_item_background" />
 
         <TextView
             android:id="@+id/item_common_result_recording_reservation_status"
             android:layout_width="@dimen/recording_reservation_list_status_width"
             android:layout_height="@dimen/recording_reservation_list_status_height"
             android:layout_marginEnd="@dimen/recording_reservation_list_status_margin_end"
+            android:background="@color/list_item_background"
             android:gravity="center_vertical|center_horizontal"
-            android:background="#FFFFFF"
             android:textSize="@dimen/list_item_recording_reservation_status_text_size"
             android:visibility="gone" />
     </RelativeLayout>
@@ -67,31 +67,60 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerVertical="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="15dp"
-        android:layout_toStartOf="@id/item_common_result_show_status_area"
+        android:layout_marginEnd="@dimen/list_item_result_contents_margin_end"
+        android:layout_marginStart="@dimen/list_item_result_contents_margin_start"
         android:layout_toEndOf="@id/item_common_result_thumbnail_rl"
+        android:layout_toStartOf="@id/item_common_result_show_status_area"
         android:orientation="vertical"
-        android:paddingBottom="5dp"
-        android:paddingTop="5dp">
+        android:paddingBottom="@dimen/list_item_result_contents_bottom_padding"
+        android:paddingTop="@dimen/list_item_result_contents_top_padding">
 
         <TextView
             android:id="@+id/item_common_result_channel_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/white_text"
             android:background="@color/recording_reservation_status_background_black"
+            android:textColor="@color/white_text"
             android:textSize="@dimen/list_item_channel_name_text_size"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/item_common_result_content_time"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textColor="#AAAAAA"
-            android:textSize="@dimen/list_item_time_text_size" />
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/item_common_result_content_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/content_time_text"
+                android:textSize="@dimen/list_item_time_text_size" />
+
+            <TextView
+                android:id="@+id/item_common_result_recorded_content_hyphen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/list_item_time_start_margin"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/contents_hyphen"
+                android:textColor="@color/content_time_text"
+                android:textSize="@dimen/list_item_time_text_size"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/item_common_result_recorded_content_channel_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/list_item_time_start_margin"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/content_time_text"
+                android:textSize="@dimen/list_item_time_text_size"
+                android:visibility="gone" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/item_common_result_content_title"
@@ -99,7 +128,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
-            android:textColor="@android:color/white"
+            android:textColor="@color/white_text"
             android:textSize="@dimen/list_item_title_text_size" />
 
         <LinearLayout
@@ -120,8 +149,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="2dp"
-                android:textColor="@android:color/white"
+                android:layout_marginStart="@dimen/list_item_rank_num_start_margin"
+                android:textColor="@color/white_text"
                 android:textSize="@dimen/list_item_rating_num_text_size" />
         </LinearLayout>
     </LinearLayout>
@@ -131,6 +160,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="#222222" />
+        android:background="@color/result_line" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:gravity="bottom|end">
+
+        <ImageView
+            android:id="@+id/item_common_result_sort_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="25dp"
+            android:layout_marginEnd="25dp"
+            android:contentDescription="@null"
+            android:scaleType="center" />
+    </LinearLayout>
 </RelativeLayout>

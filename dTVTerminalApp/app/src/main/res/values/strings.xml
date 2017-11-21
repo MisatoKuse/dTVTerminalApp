@@ -9,6 +9,7 @@
     <string name="back_key">く</string>
     <string name="close_key">×</string>
     <string name="list_transition">></string>
+    <string name="contents_hyphen">-</string>
 
     <!-- Launch -->
     <string name="str_launch_title">起動画面</string>
@@ -54,6 +55,12 @@
         <item>MY番組表</item>
         <item>ひかり</item>
         <item>dTVチャンネル</item>
+    </string-array>
+
+    <!-- 録画番組 -->
+    <string-array name="record_list_tab_names">
+        <item>すべて</item>
+        <item>持ち出し</item>
     </string-array>
     <string name="tv_program_change_mode">&lt; &gt;</string>
     <!-- Video -->
