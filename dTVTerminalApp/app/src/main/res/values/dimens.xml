@@ -9,6 +9,7 @@
     <dimen name="launch_text_layout_high_size">40dp</dimen>
     <dimen name="launch_image_bottom_margin">10dp</dimen>
     <dimen name="launch_text_size">15sp</dimen>
+    <dimen name="launch_text_bottom_margin">4dp</dimen>
 
     <!--Common-->
     <dimen name="header_title_text_size">17sp</dimen>

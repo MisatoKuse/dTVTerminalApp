@@ -8,7 +8,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -27,6 +29,7 @@ public class STBConnectActivity extends BaseActivity {
     private final static String STATUS = "status";
     private final static String DTVT = "dTVTerminal";
     private Context mContext = null;
+    private RelativeLayout mRelativeLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +55,13 @@ public class STBConnectActivity extends BaseActivity {
         mConnectResult.setVisibility(View.VISIBLE);
         mConnectResult.setText(R.string.str_stb_connect_success_text);
         handler.postDelayed(runnable, DELAYED_TIME);
+
+        mRelativeLayout = findViewById(R.id.relativeLayout1);
+
+        float mHight = getHeightDensity();
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, (int) (mHight / 5));
+        mRelativeLayout.setLayoutParams(params);
     }
 
     /**
@@ -66,6 +76,7 @@ public class STBConnectActivity extends BaseActivity {
                 if (!isStbConnected) {
                     SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
                             mContext, SharedPreferencesUtils.STATE_TO_HOME_PAIRING_OK);
+                    startActivity(HomeActivity.class, null);
                 }
             } catch (Exception e) {
                 // TODO Auto-generated catch block

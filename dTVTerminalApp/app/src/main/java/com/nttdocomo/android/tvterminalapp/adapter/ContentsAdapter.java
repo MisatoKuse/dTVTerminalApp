@@ -378,12 +378,10 @@ public class ContentsAdapter extends BaseAdapter {
                 holder.iv_thumbnail.setVisibility(View.GONE);
                 holder.rb_rating.setVisibility(View.GONE);
                 holder.tv_rating_num.setVisibility(View.GONE);
-                holder.tv_channel_name.setVisibility(View.GONE);
                 holder.tv_rank.setVisibility(View.GONE);
                 holder.tv_time.setVisibility(View.GONE);
                 holder.tv_title.setVisibility(View.GONE);
                 holder.tv_line.setVisibility(View.GONE);
-                holder.tv_recording_reservation.setVisibility(View.GONE);
                 holder.stb_device_name.setVisibility(View.VISIBLE);
                 break;
             default:
@@ -420,6 +418,6 @@ public class ContentsAdapter extends BaseAdapter {
         // チャンネル名
         TextView tv_channel_name = null;
         // STBデバイス名
-        Button stb_device_name = null;
+        TextView stb_device_name = null;
     }
 }

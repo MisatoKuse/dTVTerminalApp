@@ -7,7 +7,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/launch_relative_layout_high_size"
+        android:layout_height="wrap_content"
         android:id="@+id/relativeLayout1">
         <ImageView
             android:id="@+id/paring_search_image"
@@ -32,41 +32,8 @@
     <ListView
         android:id="@+id/stb_device_name_list"
         android:layout_width="match_parent"
-        android:layout_height="300dp">
+        android:layout_height="wrap_content">
     </ListView>
-
-    <!--TODO 仮実装削除予定-->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <Button
-            android:id="@+id/button1STBSelectActivity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/selector_btn_click_bg"
-            android:textColor="@drawable/selector_text_click_bg"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"
-            android:layout_marginBottom="4dp"
-            android:text="docomo STB1" />
-
-        <Button
-            android:id="@+id/button2STBSelectActivity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
-            android:text="docomo STB2" />
-
-        <Button
-            android:id="@+id/button3STBSelectActivity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
-            android:text="docomo STB3" />
-
-
-    </LinearLayout>
 
     <Button
         android:id="@+id/dAccountLoginYesSTBSelectActivity"

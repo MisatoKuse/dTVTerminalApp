@@ -15,21 +15,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.temp.DAccountAppliActivity;
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
-
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -39,24 +30,27 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 
-public class STBSelectActivity extends BaseActivity implements View.OnClickListener, AdapterView.OnItemClickListener, DlnaDevListListener{
 
-    public static final String StateModeRepair="Repair";
+public class STBSelectActivity extends BaseActivity implements View.OnClickListener, AdapterView.OnItemClickListener, DlnaDevListListener {
 
-    private static boolean mIsNextTimeHide=false;
+    public static final String StateModeRepair = "Repair";
 
-    CheckBox mCheckBoxSTBSelectActivity=null;
-    Button mUseWithoutPairingSTBParingInvitationActivity=null;
-    Button mButton1STBSelectActivity=null;
-    Button mButton2STBSelectActivity=null;
-    Button mButton3STBSelectActivity=null;
-    Button mDAccountLoginYesSTBSelectActivity=null;
-    Button mDAccountLoginNoSTBSelectActivity=null;
-    Button mDAccountAppliYesSTBSelectActivity=null;
-    Button mDAccountAppliNoSTBSelectActivity=null;
-    Button mDAccountSameYesSTBSelectActivity=null;
-    Button mDAccountSameNoSTBSelectActivity=null;
+    private static boolean mIsNextTimeHide = false;
+
+    CheckBox mCheckBoxSTBSelectActivity = null;
+    Button mUseWithoutPairingSTBParingInvitationActivity = null;
+    Button mButton1STBSelectActivity = null;
+    Button mButton2STBSelectActivity = null;
+    Button mButton3STBSelectActivity = null;
+    Button mDAccountLoginYesSTBSelectActivity = null;
+    Button mDAccountLoginNoSTBSelectActivity = null;
+    Button mDAccountAppliYesSTBSelectActivity = null;
+    Button mDAccountAppliNoSTBSelectActivity = null;
+    Button mDAccountSameYesSTBSelectActivity = null;
+    Button mDAccountSameNoSTBSelectActivity = null;
     private TextView mBackIcon;
     private ImageView mParingImageView;
     private ListView mDeviceListView;
@@ -65,6 +59,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private ContentsAdapter mContentsAdapter;
     private View mLoadMoreView = null;
     private DlnaProvDevList mDlnaProvDevList = null;
+    private RelativeLayout mRelativeLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,16 +81,34 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     public void onBackPressed() {
         //super.onBackPressed();
     }
-    private void initView(){
+
+    private void initView() {
         if (mContentsList == null) {
             mContentsList = new ArrayList();
         }
+        //TODO 仮データ削除予定
+        for (int i = 0; i < 10; i++) {
+            ContentsData aa = new ContentsData();
+            aa.setDeviceName("STB" + i);
+            mContentsList.add(aa);
+        }
 
         mDeviceListView = findViewById(R.id.stb_device_name_list);
-        mContentsAdapter = new ContentsAdapter(this,mContentsList,ContentsAdapter.ActivityTypeItem.TYPE_STB_SELECT_LIST );
+        mContentsAdapter = new ContentsAdapter(this, mContentsList,
+                ContentsAdapter.ActivityTypeItem.TYPE_STB_SELECT_LIST);
         mDeviceListView.setAdapter(mContentsAdapter);
         mDeviceListView.setOnItemClickListener(this);
         mLoadMoreView = LayoutInflater.from(this).inflate(R.layout.search_load_more, null);
+
+
+        float mHight = getHeightDensity();
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, (int) (mHight / 2));
+        mDeviceListView.setLayoutParams(layoutParams);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, (int) (mHight / 5));
+        mRelativeLayout.setLayoutParams(params);
+        setContents();
     }
 
     private void setDevListener() {
@@ -106,41 +119,42 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 
     private void setContents() {
 
-
+        mRelativeLayout = findViewById(R.id.relativeLayout1);
 //        TextView title= (TextView)findViewById(R.id.titleStbSelectActivity);
 //        title.setText(getScreenTitle());
 
-        mUseWithoutPairingSTBParingInvitationActivity=(Button)findViewById(R.id.useWithoutPairingSTBParingInvitationActivity);
+        mUseWithoutPairingSTBParingInvitationActivity = (Button) findViewById(
+                R.id.useWithoutPairingSTBParingInvitationActivity);
         mUseWithoutPairingSTBParingInvitationActivity.setOnClickListener(this);
 
-        mCheckBoxSTBSelectActivity=(CheckBox)findViewById(R.id.checkBoxSTBSelectActivity);
+        mCheckBoxSTBSelectActivity = (CheckBox) findViewById(R.id.checkBoxSTBSelectActivity);
         mCheckBoxSTBSelectActivity.setOnClickListener(this);
 
-        mButton1STBSelectActivity=(Button)findViewById(R.id.button1STBSelectActivity);
-        mButton1STBSelectActivity.setOnClickListener(this);
+//        mButton1STBSelectActivity=(Button)findViewById(R.id.button1STBSelectActivity);
+//        mButton1STBSelectActivity.setOnClickListener(this);
+//
+//        mButton2STBSelectActivity=(Button)findViewById(R.id.button2STBSelectActivity);
+//        mButton2STBSelectActivity.setOnClickListener(this);
+//
+//        mButton3STBSelectActivity=(Button)findViewById(R.id.button3STBSelectActivity);
+//        mButton3STBSelectActivity.setOnClickListener(this);
 
-        mButton2STBSelectActivity=(Button)findViewById(R.id.button2STBSelectActivity);
-        mButton2STBSelectActivity.setOnClickListener(this);
-
-        mButton3STBSelectActivity=(Button)findViewById(R.id.button3STBSelectActivity);
-        mButton3STBSelectActivity.setOnClickListener(this);
-
-        mDAccountLoginYesSTBSelectActivity=(Button)findViewById(R.id.dAccountLoginYesSTBSelectActivity);
+        mDAccountLoginYesSTBSelectActivity = (Button) findViewById(R.id.dAccountLoginYesSTBSelectActivity);
         mDAccountLoginYesSTBSelectActivity.setOnClickListener(this);
 
-        mDAccountLoginNoSTBSelectActivity=(Button)findViewById(R.id.dAccountLoginNoSTBSelectActivity);
+        mDAccountLoginNoSTBSelectActivity = (Button) findViewById(R.id.dAccountLoginNoSTBSelectActivity);
         mDAccountLoginNoSTBSelectActivity.setOnClickListener(this);
 
-        mDAccountAppliYesSTBSelectActivity=(Button)findViewById(R.id.dAccountAppliYesSTBSelectActivity);
+        mDAccountAppliYesSTBSelectActivity = (Button) findViewById(R.id.dAccountAppliYesSTBSelectActivity);
         mDAccountAppliYesSTBSelectActivity.setOnClickListener(this);
 
-        mDAccountAppliNoSTBSelectActivity=(Button)findViewById(R.id.dAccountAppliNoSTBSelectActivity);
+        mDAccountAppliNoSTBSelectActivity = (Button) findViewById(R.id.dAccountAppliNoSTBSelectActivity);
         mDAccountAppliNoSTBSelectActivity.setOnClickListener(this);
 
-        mDAccountSameYesSTBSelectActivity=(Button)findViewById(R.id.dAccountSameYesSTBSelectActivity);
+        mDAccountSameYesSTBSelectActivity = (Button) findViewById(R.id.dAccountSameYesSTBSelectActivity);
         mDAccountSameYesSTBSelectActivity.setOnClickListener(this);
 
-        mDAccountSameNoSTBSelectActivity=(Button)findViewById(R.id.dAccountSameNoSTBSelectActivity);
+        mDAccountSameNoSTBSelectActivity = (Button) findViewById(R.id.dAccountSameNoSTBSelectActivity);
         mDAccountSameNoSTBSelectActivity.setOnClickListener(this);
 
         setDAccountButtonVisibility(View.GONE);
@@ -149,15 +163,15 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void repair() {
-        Bundle b= getIntent().getExtras();
-        String state="";
+        Bundle b = getIntent().getExtras();
+        String state = "";
         try {
             state = b.getString("state");
         } catch (Exception e) {
 
         }
 
-        if(state.equals(StateModeRepair)){
+        if (state.equals(StateModeRepair)) {
             onStbSelected();
         }
 
@@ -170,23 +184,23 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        if(v.equals(mUseWithoutPairingSTBParingInvitationActivity)){
+        if (v.equals(mUseWithoutPairingSTBParingInvitationActivity)) {
             onUseWithoutPairingButton();
-        } else if(v.equals(mCheckBoxSTBSelectActivity)) {
-            mIsNextTimeHide=mCheckBoxSTBSelectActivity.isChecked();
-        } else if(v.equals(mButton1STBSelectActivity) || v.equals(mButton2STBSelectActivity) || v.equals(mButton3STBSelectActivity) ){
+        } else if (v.equals(mCheckBoxSTBSelectActivity)) {
+            mIsNextTimeHide = mCheckBoxSTBSelectActivity.isChecked();
+        } else if (v.equals(mButton1STBSelectActivity) || v.equals(mButton2STBSelectActivity) || v.equals(mButton3STBSelectActivity)) {
             onStbSelected();
-        } else if(v.equals(mDAccountLoginYesSTBSelectActivity) ) {
+        } else if (v.equals(mDAccountLoginYesSTBSelectActivity)) {
             onDAccountLoginYesButton();
-        } else if(v.equals(mDAccountLoginNoSTBSelectActivity) ) {
+        } else if (v.equals(mDAccountLoginNoSTBSelectActivity)) {
             onDAccountLoginNoButton();
-        } else if(v.equals(mDAccountAppliYesSTBSelectActivity) ) {
+        } else if (v.equals(mDAccountAppliYesSTBSelectActivity)) {
             onDAccountAppliYesButton();
-        } else if(v.equals(mDAccountAppliNoSTBSelectActivity) ) {
+        } else if (v.equals(mDAccountAppliNoSTBSelectActivity)) {
             onDAccountAppliNoButton();
-        } else if(v.equals(mDAccountSameYesSTBSelectActivity) ) {
+        } else if (v.equals(mDAccountSameYesSTBSelectActivity)) {
             onDAccountSameYesButton();
-        } else if(v.equals(mDAccountSameNoSTBSelectActivity) ) {
+        } else if (v.equals(mDAccountSameNoSTBSelectActivity)) {
             onDAccountSameNoButton();
         }
     }
@@ -252,7 +266,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 //        mDlnaProvDevList.stopListen();
         SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
                 this, SharedPreferencesUtils.STATE_TO_HOME_PAIRING_NG);
-        if(mIsNextTimeHide){
+        if (mIsNextTimeHide) {
             startActivity(HomeActivity.class, null);
         } else {
             startActivity(STBParingInvitationActivity.class, null);
@@ -267,7 +281,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 //        mButton3STBSelectActivity.setVisibility(View.GONE);
 //    }
 
-    private void setDAccountButtonVisibility(int visibility){
+    private void setDAccountButtonVisibility(int visibility) {
         mDAccountLoginYesSTBSelectActivity.setVisibility(visibility);
         mDAccountLoginNoSTBSelectActivity.setVisibility(visibility);
 
@@ -278,34 +292,42 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         mDAccountSameNoSTBSelectActivity.setVisibility(visibility);
     }
 
-    private void setDAccountLoginButtonsVisibility(int visibility){
+    private void setDAccountLoginButtonsVisibility(int visibility) {
         mDAccountLoginYesSTBSelectActivity.setVisibility(visibility);
         mDAccountLoginNoSTBSelectActivity.setVisibility(visibility);
     }
 
-    private void setDAccountAppliButtonsVisibility(int visibility){
+    private void setDAccountAppliButtonsVisibility(int visibility) {
         mDAccountAppliYesSTBSelectActivity.setVisibility(visibility);
         mDAccountAppliNoSTBSelectActivity.setVisibility(visibility);
     }
 
-    private void setDAccountSameButtonsVisibility(int visibility){
+    private void setDAccountSameButtonsVisibility(int visibility) {
         mDAccountSameYesSTBSelectActivity.setVisibility(visibility);
         mDAccountSameNoSTBSelectActivity.setVisibility(visibility);
     }
 
+    /**
+     * STB選択画面でデバイス名Itemがタップされた時に画面遷移する
+     */
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         startActivity(STBConnectActivity.class, null);
     }
 
 
-
+    /**
+     * 新しいデバイスが見つかった時にリストに追加する
+     *
+     * @param curInfo カレントDlnaDMSInfo
+     * @param newItem 新しいDms情報
+     */
     @Override
     public void onDeviceJoin(DlnaDMSInfo curInfo, DlnaDmsItem newItem) {
         DTVTLogger.start();
 
-        if(newItem != null) {
-            if(mDeviceList == null) {
+        if (newItem != null) {
+            if (mDeviceList == null) {
                 mDeviceList = new ArrayList<DlnaDmsItem>();
                 mDeviceList.add(newItem);
             } else {
@@ -319,19 +341,25 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.end();
     }
 
+    /**
+     * デバイスが消える時リストから削除する
+     *
+     * @param curInfo     　　　カレントDlnaDMSInfo
+     * @param leaveDmsUdn 　消えるDmsのudn名
+     */
     @Override
     public void onDeviceLeave(DlnaDMSInfo curInfo, String leaveDmsUdn) {
         DTVTLogger.start();
-        if(leaveDmsUdn != null) {
-            if(mDeviceList != null) {
+        if (leaveDmsUdn != null) {
+            if (mDeviceList != null) {
                 int i;
-                for(i = 0; i < mDeviceList.size(); i++) {
-                    if(mDeviceList.get(i).mUdn.equals(leaveDmsUdn)) {
+                for (i = 0; i < mDeviceList.size(); i++) {
+                    if (mDeviceList.get(i).mUdn.equals(leaveDmsUdn)) {
                         mDeviceList.remove(i);
                         break;
                     }
                 }
-                if(i >= mDeviceList.size()) {
+                if (i >= mDeviceList.size()) {
                     updateDeviceList();
                 }
             } else {
@@ -343,17 +371,25 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.end();
     }
 
+    /**
+     * エラー発生時のログ出力
+     *
+     * @param msg エラー情報
+     */
     @Override
     public void onError(String msg) {
         DTVTLogger.error("DevListListener error msg" + msg);
     }
 
+    /**
+     * デバイスリスト情報を更新する
+     */
     private void updateDeviceList() {
 
-        if(mDeviceList != null && mDeviceList.size() != 0) {
+        if (mDeviceList != null && mDeviceList.size() != 0) {
             displayMoreData(false);
             mContentsList.clear();
-            for (int i=0; i < mDeviceList.size(); i++) {
+            for (int i = 0; i < mDeviceList.size(); i++) {
                 ContentsData data = new ContentsData();
                 data.setDeviceName(mDeviceList.get(i).mFriendlyName);
                 mContentsList.add(data);

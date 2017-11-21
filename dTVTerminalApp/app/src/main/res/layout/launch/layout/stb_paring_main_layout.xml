@@ -11,7 +11,7 @@
     <RelativeLayout
         android:id="@+id/relativeLayout1"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/launch_relative_layout_high_size">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/paring_connecting_icon"

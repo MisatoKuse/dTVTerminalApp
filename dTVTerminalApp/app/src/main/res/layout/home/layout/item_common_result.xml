@@ -132,16 +132,14 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="#222222" />
-    <Button
+    <TextView
         android:id="@+id/item_common_result_device_name"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="dcdcddc"
+        android:layout_height="@dimen/launch_text_layout_high_size"
+        android:gravity="center"
         android:background="@drawable/selector_btn_click_bg"
         android:textColor="@drawable/selector_text_click_bg"
-        android:layout_marginBottom="4dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="@dimen/launch_text_bottom_margin"
         android:visibility="gone"
         />
 

@@ -6,8 +6,11 @@ package com.nttdocomo.android.tvterminalapp.activity.launch;
 
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -23,11 +26,17 @@ public class STBParingInvitationActivity extends BaseActivity implements View.On
     private ImageView mParingImageView;
     private TextView mBackIcon;
     private final static String STATUS = "status";
+    private RelativeLayout mRelativeLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.stb_paring_main_layout);
+        mRelativeLayout = findViewById(R.id.relativeLayout1);
+        float mHight = getHeightDensity();
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, (int) (mHight / 5));
+        mRelativeLayout.setLayoutParams(params);
         setContents();
     }
 
