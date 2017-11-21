@@ -69,19 +69,18 @@ namespace dtvt {
         if (0 != ret || NULL == mEvent.mJavaVM) {
             goto error_1;
         }
-
-        mEvent.mJClassDlna = env->FindClass("com/nttdocomo/android/tvterminalapp/jniDlnaInterface");
+        mEvent.mJClassDlna = env->FindClass("com/nttdocomo/android/tvterminalapp/jni/DlnaInterface");
         if (NULL == mEvent.mJClassDlna) {
             goto error_2;
         }
 
-        tmpDMSItem = env->FindClass("com/nttdocomo/android/tvterminalapp/jniDlnaDmsItem");
+        tmpDMSItem = env->FindClass("com/nttdocomo/android/tvterminalapp/jni/DlnaDmsItem");
         mEvent.mJClassDmsItem = (jclass)env->NewGlobalRef(tmpDMSItem);
         if (NULL == mEvent.mJClassDmsItem) {
             goto error_2;
         }
 
-        tmpDlnaRecVideoItem = env->FindClass("com/nttdocomo/android/tvterminalapp/jniDlnaRecVideoItem");
+        tmpDlnaRecVideoItem = env->FindClass("com/nttdocomo/android/tvterminalapp/jni/DlnaRecVideoItem");
         mEvent.mJClassRecVideoItem = (jclass)env->NewGlobalRef(tmpDlnaRecVideoItem);
         if (NULL == mEvent.mJClassRecVideoItem) {
             goto error_2;
