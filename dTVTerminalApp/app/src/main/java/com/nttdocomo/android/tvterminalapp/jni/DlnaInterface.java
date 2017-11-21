@@ -31,6 +31,8 @@ public class DlnaInterface {
 
     private DlnaRecVideoListener mDlnaRecVideoListener;
 
+    private boolean mIsDlnaRunning = false;
+
     /**
      * 機能：デフォールト構造を禁止
      */
@@ -119,11 +121,21 @@ public class DlnaInterface {
     }
 
     public boolean startDlna(){
+        synchronized (this) {
+            if(mIsDlnaRunning){
+                return true;
+            }
+        }
         mDMSInfo.clear();
         return nativeStartDlna(mNativeDlna);
     }
 
     public void stopDlna(){
+        synchronized (this) {
+            if(mIsDlnaRunning){
+                return;
+            }
+        }
         nativeStopDlna(mNativeDlna);
         mDMSInfo.clear();
         mNativeDlna=0;
@@ -198,6 +210,10 @@ public class DlnaInterface {
         if(null!=mDMSInfo && mDMSInfo.exists(curDmsUdn)){
             mCurrentDmsUdn=curDmsUdn;
         }
+    }
+
+    private synchronized void setDlnaStatus(boolean status){
+        mIsDlnaRunning = status;
     }
 
     //jni関数
