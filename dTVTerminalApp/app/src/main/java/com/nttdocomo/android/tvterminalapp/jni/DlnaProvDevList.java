@@ -38,6 +38,9 @@ public class DlnaProvDevList {
         if(null==di){
             return false;
         }
+        if(!di.startDlna()){
+            return false;
+        }
         di.setDlnaDevListListener(lis);
         return true;
     }
