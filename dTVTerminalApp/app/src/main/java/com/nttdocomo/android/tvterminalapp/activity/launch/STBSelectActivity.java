@@ -181,9 +181,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         if (v.equals(mUseWithoutPairingSTBParingInvitationActivity)) {
             onUseWithoutPairingButton();
         } else if (v.equals(mCheckBoxSTBSelectActivity)) {
-            //STB選択画面"次回以降表示しない" 状態をSharedPreferenceに保存
-            mIsNextTimeHide = mCheckBoxSTBSelectActivity.isChecked();
-            SharedPreferencesUtils.setSharedPreferencesStbSelect(this, mIsNextTimeHide);
         } else if (v.equals(mButton1STBSelectActivity) || v.equals(mButton2STBSelectActivity)
                 || v.equals(mButton3STBSelectActivity)) {
             onStbSelected();
@@ -257,9 +254,11 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private void onUseWithoutPairingButton() {
         DTVTLogger.start();
         mDlnaProvDevList.stopListen();
+        //STB選択画面"次回以降表示しない" 状態をSharedPreferenceに保存
+        SharedPreferencesUtils.setSharedPreferencesStbSelect(this, mIsNextTimeHide);
         SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
                 this, SharedPreferencesUtils.STATE_TO_HOME_PAIRING_NG);
-        if (SharedPreferencesUtils.getSharedPreferencesStbSelect(this)) {
+        if (SharedPreferencesUtils.getSharedPreferencesParingInvitationIsDisplayed(this)) {
             startActivity(HomeActivity.class, null);
         } else {
             startActivity(STBParingInvitationActivity.class, null);
