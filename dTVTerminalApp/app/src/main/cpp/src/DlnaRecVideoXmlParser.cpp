@@ -6,10 +6,19 @@
 
 namespace dtvt {
 
+    /**
+     *
+     * @return
+     */
     DlnaRecVideoXmlParser::DlnaRecVideoXmlParser(){
 
     }
 
+    /**
+     *
+     * @param fileStr
+     * @param out
+     */
     void DlnaRecVideoXmlParser::parse(void *fileStr, vector<StringVector>& out){
         //to do: Device Dispcription Fileのdvcdscを解析
         IfNullReturn(fileStr);
@@ -39,6 +48,9 @@ namespace dtvt {
 //              ...
     }
 
+    /**
+     *
+     */
     DlnaRecVideoXmlParser::~DlnaRecVideoXmlParser(){
 
     }

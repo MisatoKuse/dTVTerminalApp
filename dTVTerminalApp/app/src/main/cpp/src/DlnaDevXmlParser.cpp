@@ -7,6 +7,10 @@
 
 namespace dtvt {
 
+    /**
+     *
+     * @return
+     */
     DlnaDevXmlParser::DlnaDevXmlParser(){
 
     }
