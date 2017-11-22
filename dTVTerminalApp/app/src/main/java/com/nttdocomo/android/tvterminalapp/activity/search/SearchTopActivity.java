@@ -432,7 +432,6 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
     public void onSearchDataProviderFinishOk(ResultType<TotalSearchContentInfo> resultType) {
         TotalSearchContentInfo content= resultType.getResultType();
 
-        
         mSearchTotalCount = content.totalCount;
 
         String totalCountText=sSearchCountDefault;

@@ -27,6 +27,9 @@ public class RecordedBaseFrgament extends Fragment implements AbsListView.OnScro
     public List<ContentsData> mContentsData;
     private View mLoadMoreView;
     private ContentsAdapter mContentsAdapter = null;
+    private RecordedBaseFragmentScrollListener mRecordedBaseFragmentScrollListener = null;
+
+    // TODO DPからのコールバックを受ける
 
     @Override
     public Context getContext() {
@@ -41,7 +44,9 @@ public class RecordedBaseFrgament extends Fragment implements AbsListView.OnScro
         return initView();
     }
 
-    //モックデータ
+    /**
+     * モックデータ
+     */
     private void initData() {
         mContentsData = new ArrayList();
     }
@@ -49,6 +54,10 @@ public class RecordedBaseFrgament extends Fragment implements AbsListView.OnScro
     private View mRecordedFragmentView;
     private ListView mRecordedListview;
 
+    /**
+     * viewの生成
+     * @return
+     */
     public View initView() {
         if (null == mRecordedFragmentView) {
             mRecordedFragmentView = View.inflate(getActivity()
@@ -71,12 +80,12 @@ public class RecordedBaseFrgament extends Fragment implements AbsListView.OnScro
         return mRecordedFragmentView;
     }
 
-    // TODO　テスト用メソッド
+    // TODO 後で消す. テスト用メソッド
     public void setDeta() {
         mContentsData = new ArrayList<>();
         ContentsData contentsData;
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
             contentsData = new ContentsData();
             contentsData.setRank(String.valueOf(i + 1));
             contentsData.setTitle("大晦日だよ! ドラえもんのび太の宇宙漂流記　シーズン" + i);
@@ -86,21 +95,33 @@ public class RecordedBaseFrgament extends Fragment implements AbsListView.OnScro
         }
     }
 
-    public void notifyDataSetChanged() {
+    /**
+     * リスト全体を更新する
+     * @param count
+     */
+    public void notifyDataSetChanged(String count) {
         if (null != mContentsAdapter) {
             mContentsAdapter.notifyDataSetChanged();
         }
     }
 
+    /**
+     * カーソルを指定の位置する
+     * @param itemNo
+     */
     public void setSelection(int itemNo) {
         if (null != mRecordedListview) {
             mRecordedListview.setSelection(itemNo);
         }
     }
 
-    public void displayLoadMore(boolean b) {
+    /**
+     * リストの最後に更新中の行を追加、または追加した行の削除
+     * @param bool
+     */
+    public void displayLoadMore(boolean bool) {
         if (null != mRecordedListview && null != mLoadMoreView) {
-            if (b) {
+            if (bool) {
                 mRecordedListview.addFooterView(mLoadMoreView);
             } else {
                 mRecordedListview.removeFooterView(mLoadMoreView);
@@ -108,6 +129,9 @@ public class RecordedBaseFrgament extends Fragment implements AbsListView.OnScro
         }
     }
 
+    /**
+     * mContentsDataのすべての要素を削除する
+     */
     public void clear() {
         mContentsData.clear();
     }
@@ -118,9 +142,13 @@ public class RecordedBaseFrgament extends Fragment implements AbsListView.OnScro
 
     @Override
     public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        if (null != mRecordedBaseFragmentScrollListener) {
+            mRecordedBaseFragmentScrollListener.onScroll(this, absListView, firstVisibleItem, visibleItemCount, totalItemCount);
+        }
     }
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        // TODO コンテンツタップで再生画面(縦)へ
     }
 }
