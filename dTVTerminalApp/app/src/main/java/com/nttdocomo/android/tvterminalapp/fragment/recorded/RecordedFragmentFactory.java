@@ -23,7 +23,6 @@ public class RecordedFragmentFactory {
             fragment = new RecordedBaseFrgament();
             if (fragment != null) {
                 mFragments.put(position, fragment);
-//                fragment.setSearchBaseFragmentScrollListener(lis);
             }
         }
 
