@@ -94,7 +94,9 @@
         <!-- ====================================== Player グループ Begin ====================================== -->
         <activity android:name="com.nttdocomo.android.tvterminalapp.activity.player.ChannelDetailPlayerActivity" />
         <activity android:name="com.nttdocomo.android.tvterminalapp.activity.player.RecordedVideoPlayerActivity" />
-        <activity android:name="com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity" />
+        <activity
+            android:name="com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity"
+            android:configChanges="keyboardHidden|keyboard|orientation|screenSize"/>
         <activity android:name="com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity" />
         <activity android:name="com.nttdocomo.android.tvterminalapp.activity.player.VideoPlayerActivity" />
         <activity

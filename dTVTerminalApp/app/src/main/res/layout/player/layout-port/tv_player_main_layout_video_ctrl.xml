@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent">
+
+	<TextView
+		android:id="@+id/tv_player_main_layout_video_ctrl_player_now_on_air_tv"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginLeft="10dp"
+		android:layout_marginTop="10dp"
+		android:background="@android:color/holo_red_light"
+		android:paddingBottom="5dp"
+		android:paddingLeft="10dp"
+		android:paddingRight="10dp"
+		android:paddingTop="5dp"
+		android:text="NOW ON AIR"
+		android:textColor="@android:color/white"/>
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_centerVertical="true">
+
+		<ImageView
+			android:id="@+id/tv_player_main_layout_video_ctrl_player_pause_iv"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerHorizontal="true"
+			android:layout_centerVertical="true"
+			android:background="@mipmap/ic_tvplayer_player_pause"/>
+
+		<ImageView
+			android:id="@+id/tv_player_main_layout_video_ctrl_back_iv"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerVertical="true"
+			android:background="@mipmap/ic_tvplayer_player_back"/>
+
+		<ImageView
+			android:id="@+id/tv_player_main_layout_video_ctrl_forward_iv"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:layout_centerVertical="true"
+			android:background="@mipmap/ic_tvplayer_player_forward"/>
+
+		<RelativeLayout
+			android:id="@+id/tv_player_main_layout_video_ctrl_rewind_left_iv"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignBottom="@id/tv_player_main_layout_video_ctrl_player_pause_iv"
+			android:layout_alignTop="@id/tv_player_main_layout_video_ctrl_player_pause_iv"
+			android:layout_toLeftOf="@id/tv_player_main_layout_video_ctrl_player_pause_iv"
+			android:layout_toRightOf="@id/tv_player_main_layout_video_ctrl_back_iv">
+
+			<ImageView
+				android:layout_width="20dp"
+				android:layout_height="wrap_content"
+				android:layout_centerHorizontal="true"
+				android:layout_gravity="center"
+				android:background="@mipmap/ic_tvplayer_rewind_left"/>
+
+		</RelativeLayout>
+
+		<RelativeLayout
+			android:id="@+id/tv_player_main_layout_video_ctrl_fast_right_iv"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignBottom="@id/tv_player_main_layout_video_ctrl_player_pause_iv"
+			android:layout_alignTop="@id/tv_player_main_layout_video_ctrl_player_pause_iv"
+			android:layout_toLeftOf="@id/tv_player_main_layout_video_ctrl_forward_iv"
+			android:layout_toRightOf="@id/tv_player_main_layout_video_ctrl_player_pause_iv">
+
+			<ImageView
+				android:layout_width="20dp"
+				android:layout_height="wrap_content"
+				android:layout_centerHorizontal="true"
+				android:layout_gravity="center"
+				android:background="@mipmap/ic_tvplayer_fast_right"/>
+		</RelativeLayout>
+
+	</RelativeLayout>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:orientation="vertical">
+
+		<RelativeLayout
+			android:id="@+id/activity_player_info_bar_rl"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="10dp">
+
+			<ImageView
+				android:id="@+id/tv_player_main_layout_video_ctrl_replay_iv"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:background="@mipmap/ic_tvplayer_cued_replay"
+				android:visibility="gone"/>
+
+			<TextView
+				android:id="@+id/tv_player_main_layout_video_ctrl_cur_time_tv"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="10:22"
+				android:textColor="@android:color/white"/>
+
+			<!-- ソース上で設置すること-->
+			<RelativeLayout
+				android:layout_width="170dp"
+				android:layout_height="wrap_content"
+				android:layout_alignParentRight="true">
+
+				<ImageView
+					android:id="@+id/tv_player_main_layout_video_ctrl_full_screen_iv"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentRight="true"
+					android:background="@mipmap/ic_tvplayer_full_screen"/>
+
+				<TextView
+					android:id="@+id/tv_player_main_layout_video_ctrl_total_during_tv"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignBottom="@id/tv_player_main_layout_video_ctrl_full_screen_iv"
+					android:layout_alignTop="@id/tv_player_main_layout_video_ctrl_full_screen_iv"
+					android:text="49:30"
+					android:textColor="@android:color/white"/>
+
+				<TextView
+					android:id="@+id/tv_player_main_layout_video_ctrl_rapid_tv"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignBottom="@id/tv_player_main_layout_video_ctrl_full_screen_iv"
+					android:layout_alignTop="@id/tv_player_main_layout_video_ctrl_full_screen_iv"
+					android:layout_marginLeft="20dp"
+					android:layout_toRightOf="@id/tv_player_main_layout_video_ctrl_total_during_tv"
+					android:background="@android:color/white"
+					android:text="x1.5"
+					android:textColor="@android:color/black"/>
+			</RelativeLayout>
+
+		</RelativeLayout>
+
+		<SeekBar
+			android:id="@+id/tv_player_main_layout_video_ctrl_seek_bar_sb"
+			android:layout_width="match_parent"
+			android:layout_height="3dp"
+			android:layout_alignParentBottom="true"
+			android:layout_marginBottom="20dp"
+			android:max="100"
+			android:thumb="@null"
+			android:paddingEnd="0dp"
+			android:paddingStart="0dp"
+			android:progressDrawable="@drawable/player_progress_style"
+			android:progress="30"/>
+	</LinearLayout>
+
+</RelativeLayout>

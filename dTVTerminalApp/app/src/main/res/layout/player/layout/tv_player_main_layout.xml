@@ -2,55 +2,24 @@
 <!--
   ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
   -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    style="@style/default_layout_style"
-    android:orientation="vertical">
+	<RelativeLayout
+		android:id="@+id/tv_player_main_layout_player_rl"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:id="@+id/home_main_layout_title"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="#FF0000">
-        <TextView
-            android:id="@+id/contents_detail_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/contents_detail_plane_button"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:textSize="15sp"/>
-    </RelativeLayout>
+		<VideoView
+			android:id="@+id/tv_player_main_layout_player_vv"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"/>
 
-    <Button
-        android:id="@+id/button6"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="recommendButton"
-        android:text="@string/contents_detail_recommend_button" />
-
-    <Button
-        android:id="@+id/button18"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="channelButton"
-        android:text="@string/contents_detail_channel_button" />
-
-    <Button
-        android:id="@+id/button17"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="scheduleRecButton"
-        android:text="@string/contents_detail_record_reserve_button" />
-
-    <Button
-        android:id="@+id/button5"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="remoteControlButton"
-        android:text="@string/contents_detail_tv_view_button" />
-
-</LinearLayout>
+		<!--<include
+			android:id="@+id/tv_player_main_layout_ctrl_root_rl"
+			layout="@layout/tv_player_main_layout_video_ctrl"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"/>-->
+	</RelativeLayout>
+</RelativeLayout>
