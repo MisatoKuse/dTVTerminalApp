@@ -12,6 +12,7 @@ import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.RelativeLayout;
@@ -25,8 +26,8 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 
 public class TvPlayerActivity extends BaseActivity implements View.OnClickListener {
 
+    private static final int REFRESH_TV_VIEW = 1;
     private VideoView mPlayerView;
-    private RelativeLayout mCtrlView;
     private ImageView mplayPause;
     private RelativeLayout mPlayerViewLayout;
     private TextView mNowOnAir;
@@ -40,30 +41,41 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
     private TextView mTotalDur;
     private TextView mRapid;
     private SeekBar mProgress;
-    private static final int REFRESH_VIEW = 0;
+    private static final int REFRESH_VIDEO_VIEW = 0;
     private long lastTime;
-    private static final int NOW_ON_AIR = 0;
-    private static final int VIDEO_RECORDING = 1;
+    private static final int NOW_ON_AIR_MODE = 1;
+    private static final int VIDEO_RECORDING_MODE = 2;
+    private int curMode = VIDEO_RECORDING_MODE;
+    private RelativeLayout mTvCtrlView;
+    private RelativeLayout mRecordCtrlView;
+    private ImageView mTvBack;
+    private ImageView mTvForwar;
+    private ImageView mTvReplay;
+    private ImageView mTvFullScreen;
+    private TextView mTvRapid;
+    private SeekBar mTvSeekBar;
+    private FrameLayout mVideoPlayPause;
+    private TextView mVideoCurTime;
+    private ImageView mVideoFullScreen;
+    private TextView mVideoRapid;
+    private TextView mVideoTotalTime;
+    private SeekBar mVideoSeekBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tv_player_main_layout);
         initView();
-        setCtrlEvent();
         tempUriData();
-        //初期化の時点から、handlerにmsgを送る
-        viewRefresher.sendEmptyMessage(REFRESH_VIEW);
     }
 
-    private void setCtrlEvent() {
-
+    private void setCtrlEvent(final RelativeLayout ctrlView) {
         mPlayerView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent me) {
                 switch (me.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        mCtrlView.setVisibility(View.VISIBLE);
+                        ctrlView.setVisibility(View.VISIBLE);
                         break;
                     case MotionEvent.ACTION_MOVE:
                         break;
@@ -74,25 +86,6 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                         break;
                 }
                 return true;
-            }
-        });
-
-        mProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                time2TextViewFormat(mCurTime, i);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                viewRefresher.removeMessages(REFRESH_VIEW);
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                int progress = seekBar.getProgress();
-                mPlayerView.seekTo(progress);
-                viewRefresher.sendEmptyMessage(REFRESH_VIEW);
             }
         });
     }
@@ -107,35 +100,64 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
 
     private void initView() {
         mPlayerView = findViewById(R.id.tv_player_main_layout_player_vv);//表示されるため、一時VideoViewを使っている
-        //mCtrlView = findViewById(R.id.tv_player_main_layout_ctrl_root_rl);
         mPlayerViewLayout = findViewById(R.id.tv_player_main_layout_player_rl);
-        mCtrlView = (RelativeLayout) LayoutInflater.from(this).inflate(
-                R.layout.tv_player_main_layout_video_ctrl, null, false);
-        mplayPause = mCtrlView.findViewById(R.id.tv_player_main_layout_video_ctrl_player_pause_iv);
-        mNowOnAir = mCtrlView.findViewById(R.id.tv_player_main_layout_video_ctrl_player_now_on_air_tv);
-        mForLast = mCtrlView.findViewById(R.id.tv_player_main_layout_video_ctrl_back_iv);
-        mForNext = mCtrlView.findViewById(R.id.tv_player_main_layout_video_ctrl_forward_iv);
-        mRewindLeft = mCtrlView.findViewById(R.id.tv_player_main_layout_video_ctrl_rewind_left_iv);
-        mFastRight = mCtrlView.findViewById(R.id.tv_player_main_layout_video_ctrl_fast_right_iv);
-        mReplay = mCtrlView.findViewById(R.id.tv_player_main_layout_video_ctrl_replay_iv);
-        mCurTime = mCtrlView.findViewById(R.id.tv_player_main_layout_video_ctrl_cur_time_tv);
-        mFullScreen = mCtrlView.findViewById(R.id.tv_player_main_layout_video_ctrl_full_screen_iv);
-        mTotalDur = mCtrlView.findViewById(R.id.tv_player_main_layout_video_ctrl_total_during_tv);
-        mRapid = mCtrlView.findViewById(R.id.tv_player_main_layout_video_ctrl_rapid_tv);
-        mProgress = mCtrlView.findViewById(R.id.tv_player_main_layout_video_ctrl_seek_bar_sb);
-        mplayPause.setOnClickListener(this);
-        mFullScreen.setOnClickListener(this);
-        mForLast.setOnClickListener(this);
-        mForNext.setOnClickListener(this);
-        mRewindLeft.setOnClickListener(this);
-        mFastRight.setOnClickListener(this);
         RelativeLayout.LayoutParams playerParams = (RelativeLayout.LayoutParams) mPlayerView.getLayoutParams();
         playerParams.height = getHeightDensity() * 4 / 11;
         mPlayerView.setLayoutParams(playerParams);
-        mCtrlView.setLayoutParams(playerParams);
-        mPlayerViewLayout.addView(mCtrlView);
+        if(getCurMode() == NOW_ON_AIR_MODE){//リニア放送中
+            mTvCtrlView = (RelativeLayout) LayoutInflater.from(this)
+                    .inflate(R.layout.tv_player_ctrl_now_on_air, null, false);
+            mTvBack = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_back_iv);
+            mTvForwar = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_forward_iv);
+            mTvReplay = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_replay_iv);
+            mTvFullScreen = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_full_screen_iv);
+            mTvRapid = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_rapid_tv);
+            mTvSeekBar = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_seek_bar_sb);
+            mTvFullScreen.setOnClickListener(this);
+            mTvCtrlView.setLayoutParams(playerParams);
+            mPlayerViewLayout.addView(mTvCtrlView);
+            //初期化の時点から、handlerにmsgを送る
+            viewRefresher.sendEmptyMessage(REFRESH_TV_VIEW);
+            setCtrlEvent(mTvCtrlView);
+        }else if(getCurMode() == VIDEO_RECORDING_MODE){//録画
+            mRecordCtrlView = (RelativeLayout) LayoutInflater.from(this)
+                    .inflate(R.layout.tv_player_ctrl_video_record, null, false);
+            mVideoPlayPause = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_player_pause_fl);
+            mVideoCurTime = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_cur_time_tv);
+            mVideoFullScreen = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_full_screen_iv);
+            mVideoRapid = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_rapid_tv);
+            mVideoTotalTime = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_total_time_tv);
+            mVideoSeekBar = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_seek_bar_sb);
+            mVideoPlayPause.setOnClickListener(this);
+            mVideoFullScreen.setOnClickListener(this);
+            setVideoSeekBarListener(mVideoSeekBar);
+            mRecordCtrlView.setLayoutParams(playerParams);
+            mPlayerViewLayout.addView(mRecordCtrlView);
+            //初期化の時点から、handlerにmsgを送る
+            viewRefresher.sendEmptyMessage(REFRESH_VIDEO_VIEW);
+            setCtrlEvent(mRecordCtrlView);
+        }
+    }
 
-        //mCtrlView.setVisibility(View.GONE);
+    private void setVideoSeekBarListener(SeekBar seekBar) {
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                time2TextViewFormat(mVideoCurTime, i);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                viewRefresher.removeMessages(REFRESH_VIDEO_VIEW);
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                int progress = seekBar.getProgress();
+                mPlayerView.seekTo(progress);
+                viewRefresher.sendEmptyMessage(REFRESH_VIDEO_VIEW);
+            }
+        });
     }
 
     @Override
@@ -173,36 +195,15 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.tv_player_main_layout_video_ctrl_player_pause_iv:
+            case R.id.tv_player_ctrl_video_record_player_pause_fl:
                 // TODO: 2017/11/21 表示テストのため VideoViewApiを使う
-                if (mPlayerView.isPlaying()) {
-                    mPlayerView.pause();
-                    mplayPause.setImageResource(R.mipmap.ic_tvplayer_player_play);
-                } else {
-                    mPlayerView.start();
-                    mplayPause.setImageResource(R.mipmap.ic_tvplayer_player_pause);
-                    if (mReplay.getVisibility() == View.VISIBLE) {
-                        mReplay.setVisibility(View.INVISIBLE);
-                        mCurTime.setVisibility(View.VISIBLE);
-                    }
-                }
                 break;
-            case R.id.tv_player_main_layout_video_ctrl_full_screen_iv:
+            case R.id.tv_player_ctrl_now_on_air_full_screen_iv:
                 Toast.makeText(this, "フルスクリーンに変更されています", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.tv_player_main_layout_video_ctrl_back_iv:
+            case R.id.tv_player_ctrl_now_on_air_back_iv:
                 break;
-            case R.id.tv_player_main_layout_video_ctrl_forward_iv:
-                break;
-            case R.id.tv_player_main_layout_video_ctrl_rewind_left_iv:
-                /*int rewindPos = mPlayerView.getCurrentPosition();
-                rewindPos -= 10*1000;
-                mPlayerView.seekTo(rewindPos);*/
-                break;
-            case R.id.tv_player_main_layout_video_ctrl_fast_right_iv:
-                /*int fastPos = mPlayerView.getCurrentPosition();
-                fastPos += 30*1000;
-                mPlayerView.seekTo(fastPos);*/
+            case R.id.tv_player_ctrl_now_on_air_forward_iv:
                 break;
             default:
                 break;
@@ -234,27 +235,59 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if (msg.what == REFRESH_VIEW) {
+            if(msg.what == REFRESH_TV_VIEW){//NOW ON AIR
                 int currentPosition = mPlayerView.getCurrentPosition();
                 int totalDur = mPlayerView.getDuration();
-                time2TextViewFormat(mCurTime, currentPosition);
-                time2TextViewFormat(mTotalDur, totalDur);
-                mProgress.setMax(totalDur);
-                mProgress.setProgress(currentPosition);
+                //time2TextViewFormat(mCurTime, currentPosition);
+                //time2TextViewFormat(mTotalDur, totalDur);
+                mTvSeekBar.setMax(totalDur);
+                mTvSeekBar.setProgress(currentPosition);
+                //3秒以上無操作であれば消える
+                if (System.currentTimeMillis() - lastTime > 3 * 1000
+                        && mTvCtrlView.getVisibility() == View.VISIBLE) {
+                    mTvCtrlView.setVisibility(View.INVISIBLE);
+                }
+                viewRefresher.sendEmptyMessageDelayed(REFRESH_TV_VIEW, 500);
+            }
+            if (msg.what == REFRESH_VIDEO_VIEW) {//録画
+                int currentPosition = mPlayerView.getCurrentPosition();
+                int totalDur = mPlayerView.getDuration();
+                time2TextViewFormat(mVideoCurTime, currentPosition);
+                time2TextViewFormat(mVideoTotalTime, totalDur);
+                mVideoSeekBar.setMax(totalDur);
+                mVideoSeekBar.setProgress(currentPosition);
                 //録画コンテンツを終端まで再生した後は、シークバーを先頭に戻し、先頭で一時停止状態とする
                 if (currentPosition == totalDur) {
-                    mProgress.setProgress(0);
-                    mCurTime.setVisibility(View.INVISIBLE);
-                    mReplay.setVisibility(View.VISIBLE);
+                    mVideoSeekBar.setProgress(0);
+                    /*mVideoCurTime.setVisibility(View.INVISIBLE);
+                    mReplay.setVisibility(View.VISIBLE);*/
                     // TODO: 2017/11/21 pause/playIcon変更
                 }
                 //3秒以上無操作であれば消える
                 if (System.currentTimeMillis() - lastTime > 3 * 1000
-                        && mCtrlView.getVisibility() == View.VISIBLE) {
-                    mCtrlView.setVisibility(View.INVISIBLE);
+                        && mRecordCtrlView.getVisibility() == View.VISIBLE) {
+                    mRecordCtrlView.setVisibility(View.INVISIBLE);
                 }
-                viewRefresher.sendEmptyMessageDelayed(REFRESH_VIEW, 500);
+                viewRefresher.sendEmptyMessageDelayed(REFRESH_VIDEO_VIEW, 500);
             }
         }
     };
+
+    /**
+     * 現在時点のモードを取得する
+     * @return
+     */
+    public int getCurMode() {
+        return curMode;
+    }
+
+    /**
+     * 外部でモード設定
+     * @param curMode
+     * NOW_ON_AIR_MODE = 1;
+     * VIDEO_RECORDING_MODE = 2;
+     */
+    public void setCurMode(int curMode){
+        this.curMode = curMode;
+    }
 }

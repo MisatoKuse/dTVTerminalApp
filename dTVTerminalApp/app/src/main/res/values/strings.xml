@@ -98,6 +98,7 @@
 
     <!-- Player -->
     <string name="remote_control_start">テレビで視聴する</string>
+    <string name="now_on_air">NOW ON AIR</string>
 
     <!-- MenuDisplay Begin -->
     <string name="nav_menu_item_home">ホーム</string>
