@@ -56,8 +56,8 @@ public class STBConnectActivity extends BaseActivity {
         mConnectResult.setText(R.string.str_stb_connect_success_text);
         handler.postDelayed(runnable, DELAYED_TIME);
 
-        mRelativeLayout = findViewById(R.id.relativeLayout1);
-
+        //STBペアリング画像表示の高さを定義する
+        mRelativeLayout = findViewById(R.id.stb_icon_relative_layout);
         float mHight = getHeightDensity();
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, (int) (mHight / 5));

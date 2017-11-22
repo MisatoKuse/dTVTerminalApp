@@ -22,7 +22,7 @@ import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 public class STBParingInvitationActivity extends BaseActivity implements View.OnClickListener {
 
-    private Button mUseWithoutPairingSTBParingInvitationActivity = null;
+    private TextView mUseWithoutPairingSTBParingInvitationActivity = null;
     private ImageView mParingImageView;
     private TextView mBackIcon;
     private final static String STATUS = "status";
@@ -32,7 +32,9 @@ public class STBParingInvitationActivity extends BaseActivity implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.stb_paring_main_layout);
-        mRelativeLayout = findViewById(R.id.relativeLayout1);
+
+        //STBペアリング画像表示の高さを定義する
+        mRelativeLayout = findViewById(R.id.stb_icon_relative_layout);
         float mHight = getHeightDensity();
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, (int) (mHight / 5));

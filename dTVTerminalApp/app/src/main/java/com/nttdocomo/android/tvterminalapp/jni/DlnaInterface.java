@@ -223,6 +223,10 @@ public class DlnaInterface {
         mIsDlnaRunning = status;
     }
 
+    static {
+        System.loadLibrary("dtvtlib");
+    }
+
     //jni関数
     private native long nativeCreateDlnaObject();
     private native boolean nativeStartDlna(long prt);

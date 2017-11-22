@@ -341,12 +341,4 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     public void userInfoCallback(List<Map<String, String>> userList) {
 
     }
-    static {
-        System.loadLibrary("dtvtlib");
-    }
-    /**
-     * A native method that is implemented by the 'dtvtlib' native library,
-     * which is packaged with this application.
-     */
-    public native void initDummyJNI();
 }

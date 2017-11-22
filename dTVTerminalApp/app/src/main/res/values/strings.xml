@@ -15,13 +15,13 @@
     <string name="str_launch_title">起動画面</string>
     <string name="str_tutorial_title">チュートリアル画面</string>
     <string name="str_stb_select_title">STB選択</string>
-    <string name="str_stb_select_result_text">ペアリング可能なデバイスが見つかりました。</string>
+    <string name="str_stb_select_result_text">ペアリング可能なデバイスが\n見つかりました。</string>
     <string name="str_stb_next_not_display_text">次回以降表示しない</string>
     <string name="str_stb_connect_title">STB接続</string>
     <string name="str_stb_connect_success_text">STBとペアリングしました</string>
     <string name="str_stb_pair_invitation_title">STBペアリング勧誘</string>
     <string name="str_stb_no_pair_use_text">ペアリングしないでアプリを利用する</string>
-    <string name="str_stb_pair_invitation_text">dリモートアプリは、STBとのペアリングによってご利用いただきます。</string>
+    <string name="str_stb_pair_invitation_text">dリモートアプリは、STBとのペアリングによって\nご利用いただきます。</string>
     <string name="str_d_account_setting_title">dアカウントアプリ誘導</string>
     <string name="str_d_account_resetting_title">dアカウント再設定</string>
     <string name="str_d_account_setting_help_title">dアカウント設定ヘルプ</string>

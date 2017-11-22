@@ -8,7 +8,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/relativeLayout1">
+        android:id="@+id/stb_icon_relative_layout">
         <ImageView
             android:id="@+id/paring_search_image"
             android:layout_width="wrap_content"
@@ -26,9 +26,9 @@
         android:text="@string/str_stb_select_result_text"
         android:textColor="#ffffff"
         android:gravity="center"
+        android:layout_marginBottom="@dimen/launch_image_bottom_margin"
         android:textSize="@dimen/launch_text_size"/>
 
-    <!--　　//TODO 取得したデバイス名をリストに設定する-->
     <ListView
         android:id="@+id/stb_device_name_list"
         android:layout_width="match_parent"
@@ -86,6 +86,7 @@
     </LinearLayout>
 
     <LinearLayout
+
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="bottom"
@@ -94,15 +95,18 @@
         <CheckBox
             android:id="@+id/checkBoxSTBSelectActivity"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#ffffff"
+            android:layout_height="@dimen/launch_text_layout_high_size"
+            android:theme="@style/CheckBox"
+            android:textColor="#FFFFFF"
             android:text="@string/str_stb_next_not_display_text" />
 
-        <Button
+        <TextView
             android:id="@+id/useWithoutPairingSTBParingInvitationActivity"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/launch_text_layout_high_size"
             android:textColor="#000000"
+            android:background="#FFFFFF"
+            android:gravity="center"
             android:text="@string/str_stb_no_pair_use_text" />
     </LinearLayout>
 

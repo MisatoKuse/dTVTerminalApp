@@ -34,14 +34,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class STBSelectActivity extends BaseActivity implements View.OnClickListener, AdapterView.OnItemClickListener, DlnaDevListListener {
-
+public class STBSelectActivity extends BaseActivity implements View.OnClickListener,
+        AdapterView.OnItemClickListener, DlnaDevListListener {
     public static final String StateModeRepair = "Repair";
-
-    private static boolean mIsNextTimeHide = false;
-
+    private boolean mIsNextTimeHide = false;
     CheckBox mCheckBoxSTBSelectActivity = null;
-    Button mUseWithoutPairingSTBParingInvitationActivity = null;
+    TextView mUseWithoutPairingSTBParingInvitationActivity = null;
     Button mButton1STBSelectActivity = null;
     Button mButton2STBSelectActivity = null;
     Button mButton3STBSelectActivity = null;
@@ -82,17 +80,13 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         //super.onBackPressed();
     }
 
+    /**
+     * 画面上に表示するコンテンツの初期化を行う
+     */
     private void initView() {
         if (mContentsList == null) {
             mContentsList = new ArrayList();
         }
-        //TODO 仮データ削除予定
-        for (int i = 0; i < 10; i++) {
-            ContentsData aa = new ContentsData();
-            aa.setDeviceName("STB" + i);
-            mContentsList.add(aa);
-        }
-
         mDeviceListView = findViewById(R.id.stb_device_name_list);
         mContentsAdapter = new ContentsAdapter(this, mContentsList,
                 ContentsAdapter.ActivityTypeItem.TYPE_STB_SELECT_LIST);
@@ -100,30 +94,35 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         mDeviceListView.setOnItemClickListener(this);
         mLoadMoreView = LayoutInflater.from(this).inflate(R.layout.search_load_more, null);
 
-
+        //デバイ一覧スリスト表示の高さ定義する
         float mHight = getHeightDensity();
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, (int) (mHight / 2));
+                ViewGroup.LayoutParams.MATCH_PARENT, (int) (2 * mHight / 5));
         mDeviceListView.setLayoutParams(layoutParams);
+        //STBペアリング画像表示の高さを定義する
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, (int) (mHight / 5));
         mRelativeLayout.setLayoutParams(params);
         setContents();
     }
 
+    /**
+     * デバイスListenerを設定する
+     */
     private void setDevListener() {
-        // TODO DLNA側と連携次第コメントアウトを外す
         mDlnaProvDevList = new DlnaProvDevList();
-//        mDlnaProvDevList.start(this);
+        mDlnaProvDevList.start(this);
     }
 
+    /**
+     * 画面上に表示するコンテンツを設定する
+     */
     private void setContents() {
 
-        mRelativeLayout = findViewById(R.id.relativeLayout1);
+        mRelativeLayout = findViewById(R.id.stb_icon_relative_layout);
 //        TextView title= (TextView)findViewById(R.id.titleStbSelectActivity);
 //        title.setText(getScreenTitle());
-
-        mUseWithoutPairingSTBParingInvitationActivity = (Button) findViewById(
+        mUseWithoutPairingSTBParingInvitationActivity = (TextView) findViewById(
                 R.id.useWithoutPairingSTBParingInvitationActivity);
         mUseWithoutPairingSTBParingInvitationActivity.setOnClickListener(this);
 
@@ -168,18 +167,12 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         try {
             state = b.getString("state");
         } catch (Exception e) {
-
+            DTVTLogger.debug(e);
         }
 
         if (state.equals(StateModeRepair)) {
             onStbSelected();
         }
-
-    }
-
-    @Override
-    public String getScreenTitle() {
-        return getString(R.string.str_stb_select_title);
     }
 
     @Override
@@ -188,7 +181,8 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             onUseWithoutPairingButton();
         } else if (v.equals(mCheckBoxSTBSelectActivity)) {
             mIsNextTimeHide = mCheckBoxSTBSelectActivity.isChecked();
-        } else if (v.equals(mButton1STBSelectActivity) || v.equals(mButton2STBSelectActivity) || v.equals(mButton3STBSelectActivity)) {
+        } else if (v.equals(mButton1STBSelectActivity) || v.equals(mButton2STBSelectActivity)
+                || v.equals(mButton3STBSelectActivity)) {
             onStbSelected();
         } else if (v.equals(mDAccountLoginYesSTBSelectActivity)) {
             onDAccountLoginYesButton();
@@ -254,16 +248,12 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 
 
     private void onStbSelected() {
-        //dAccountState();
-        //setDAccountLoginButtonsVisibility(View.VISIBLE);
-        // TODO DLNA側と連携次第コメントアウトを外す
-//        mDlnaProvDevList.stopListen();
+        mDlnaProvDevList.stopListen();
         startActivity(DAccountRegConfirmationActivity.class, null);
     }
 
     private void onUseWithoutPairingButton() {
-        // TODO DLNA側と連携次第コメントアウトを外す
-//        mDlnaProvDevList.stopListen();
+        mDlnaProvDevList.stopListen();
         SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
                 this, SharedPreferencesUtils.STATE_TO_HOME_PAIRING_NG);
         if (mIsNextTimeHide) {
@@ -312,9 +302,9 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      */
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        mDlnaProvDevList.stopListen();
         startActivity(STBConnectActivity.class, null);
     }
-
 
     /**
      * 新しいデバイスが見つかった時にリストに追加する
@@ -325,13 +315,14 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onDeviceJoin(DlnaDMSInfo curInfo, DlnaDmsItem newItem) {
         DTVTLogger.start();
-
         if (newItem != null) {
             if (mDeviceList == null) {
                 mDeviceList = new ArrayList<DlnaDmsItem>();
                 mDeviceList.add(newItem);
             } else {
-                mDeviceList.add(newItem);
+                if (!exists(newItem.mUdn)) {
+                    mDeviceList.add(newItem);
+                }
             }
             updateDeviceList();
         } else {
@@ -352,9 +343,10 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start();
         if (leaveDmsUdn != null) {
             if (mDeviceList != null) {
+                List<DlnaDmsItem> tmpList = mDeviceList;
                 int i;
-                for (i = 0; i < mDeviceList.size(); i++) {
-                    if (mDeviceList.get(i).mUdn.equals(leaveDmsUdn)) {
+                for (i = 0; i < tmpList.size(); i++) {
+                    if (tmpList.get(i).mUdn.equals(leaveDmsUdn)) {
                         mDeviceList.remove(i);
                         break;
                     }
@@ -385,9 +377,8 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      * デバイスリスト情報を更新する
      */
     private void updateDeviceList() {
-
         if (mDeviceList != null && mDeviceList.size() != 0) {
-            displayMoreData(false);
+            /*displayMoreData(false);*/
             mContentsList.clear();
             for (int i = 0; i < mDeviceList.size(); i++) {
                 ContentsData data = new ContentsData();
@@ -395,13 +386,15 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 mContentsList.add(data);
             }
         } else {
-            mContentsList.clear();
-            displayMoreData(true);
+            /*mContentsList.clear();*/
+            /*displayMoreData(true);*/
         }
-
-        synchronized (this) {
-            mContentsAdapter.notifyDataSetChanged();
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mContentsAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     /**
@@ -417,5 +410,26 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 mDeviceListView.removeFooterView(mLoadMoreView);
             }
         }
+    }
+
+    /**
+     * 機能：udnでDmsが存在するかを戻す
+     *
+     * @param udn und name
+     * @return 成功true
+     */
+    public boolean exists(String udn) {
+        if (null == mDeviceList) {
+            return false;
+        }
+        boolean ret = false;
+
+        for (DlnaDmsItem item : mDeviceList) {
+            if (udn.equals(item.mUdn)) {
+                ret = true;
+                break;
+            }
+        }
+        return ret;
     }
 }

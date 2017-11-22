@@ -39,4 +39,12 @@
         <item name="colorPrimaryDark">@color/contents_header_background</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
+    <!--Launch画面-->
+    <style name="CheckBox" parent="Theme.AppCompat.Light">
+        <!-- 枠線 -->
+        <item name="colorControlNormal">@color/white_text</item>
+        <!-- チェック時の色 -->
+        <item name="colorControlActivated">@color/white_text</item>
+    </style>
 </resources>
