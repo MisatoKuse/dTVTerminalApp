@@ -14,9 +14,8 @@ public class DlnaProvRecVideo {
 
     /**
      * 機能：DlnaProvRecVideoを構造
-     * @param udn udn name
      */
-    public DlnaProvRecVideo(String udn) {
+    public DlnaProvRecVideo() {
 
     }
 
@@ -39,6 +38,9 @@ public class DlnaProvRecVideo {
     public boolean start(String udn, DlnaRecVideoListener lis){
         DlnaInterface di= DlnaInterface.getInstance();
         if(null==di){
+            return false;
+        }
+        if(!di.startDlna()){
             return false;
         }
         di.registerCurrentDms(udn);

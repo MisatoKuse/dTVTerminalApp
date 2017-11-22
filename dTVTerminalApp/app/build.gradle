@@ -25,10 +25,28 @@ android {
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            externalNativeBuild {
+                cmake {
+                    cppFlags.add("-DENABLE_LOG_DEBUG")
+                    cppFlags.add("-DENABLE_LOG_INFO")
+                    cppFlags.add("-DENABLE_LOG_ERROR")
+                    cFlags.add("-DENABLE_LOG_DEBUG")
+                    cFlags.add("-DENABLE_LOG_INFO")
+                    cFlags.add("-DENABLE_LOG_ERROR")
+                }
+            }
         }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            externalNativeBuild {
+                cmake {
+                    cppFlags.add("-DENABLE_LOG_INFO")
+                    cppFlags.add("-DENABLE_LOG_ERROR")
+                    cFlags.add("-DENABLE_LOG_INFO")
+                    cFlags.add("-DENABLE_LOG_ERROR")
+                }
+            }
         }
     }
 

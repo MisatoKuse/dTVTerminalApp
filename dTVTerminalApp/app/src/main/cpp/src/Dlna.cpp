@@ -11,14 +11,18 @@
 #include <dupnp_soap.h>
 #include <cstring>
 #include "Dlna.h"
-
+#include "DmsInfo.h"
 
 namespace dtvt {
 
-    Dlna::Dlna() {
+    Dlna::Dlna(): mDlnaDevXmlParser(NULL), mDlnaRecVideoXmlParser(NULL) {
         mDMP.upnp._impl = NULL;
     }
 
+    /**
+     *
+     * @return
+     */
     bool Dlna::init() {
         du_byte_zero((du_uint8 *) &mDMP, sizeof(dmp));
         du_bool isInitOk = dupnp_init(&mDMP.upnp, 0, 0);
@@ -36,6 +40,9 @@ namespace dtvt {
             return false;
     }
 
+    /**
+     *
+     */
     void Dlna::uninit() {
         soapUninit();
 
@@ -48,6 +55,12 @@ namespace dtvt {
         DelIfNotNull(mDlnaRecVideoXmlParser);
     }
 
+    /**
+     *
+     * @param env
+     * @param obj
+     * @return
+     */
     bool Dlna::start(JNIEnv *env, jobject obj) {
         du_bool isStartOk = false;
 
@@ -69,19 +82,18 @@ namespace dtvt {
         if (0 != ret || NULL == mEvent.mJavaVM) {
             goto error_1;
         }
-
-        mEvent.mJClassDlna = env->FindClass("com/nttdocomo/android/tvterminalapp/jniDlnaInterface");
+        mEvent.mJClassDlna = env->FindClass("com/nttdocomo/android/tvterminalapp/jni/DlnaInterface");
         if (NULL == mEvent.mJClassDlna) {
             goto error_2;
         }
 
-        tmpDMSItem = env->FindClass("com/nttdocomo/android/tvterminalapp/jniDlnaDmsItem");
+        tmpDMSItem = env->FindClass("com/nttdocomo/android/tvterminalapp/jni/DlnaDmsItem");
         mEvent.mJClassDmsItem = (jclass)env->NewGlobalRef(tmpDMSItem);
         if (NULL == mEvent.mJClassDmsItem) {
             goto error_2;
         }
 
-        tmpDlnaRecVideoItem = env->FindClass("com/nttdocomo/android/tvterminalapp/jniDlnaRecVideoItem");
+        tmpDlnaRecVideoItem = env->FindClass("com/nttdocomo/android/tvterminalapp/jni/DlnaRecVideoItem");
         mEvent.mJClassRecVideoItem = (jclass)env->NewGlobalRef(tmpDlnaRecVideoItem);
         if (NULL == mEvent.mJClassRecVideoItem) {
             goto error_2;
@@ -151,6 +163,9 @@ namespace dtvt {
             return false;
     }
 
+    /**
+     *
+     */
     void Dlna::stop() {
         if (DLNA_STATE_STARTED != mDLNA_STATE) {
             return;
@@ -182,6 +197,10 @@ namespace dtvt {
         mDLNA_STATE = DLNA_STATE_STOP;
     }
 
+    /**
+     *
+     * @return
+     */
     bool Dlna::enableFunction() {
         du_bool ret = dupnp_enable_netif_monitor(&mDMP.upnp, 1);
         if (!ret) {
@@ -206,6 +225,10 @@ namespace dtvt {
         return true;
     }
 
+    /**
+     *
+     * @return
+     */
     bool Dlna::initDevEnv() {
         bool ret = false;
         if (mDLNA_STATE != DLNA_STATE_STARTED) {
@@ -234,7 +257,6 @@ namespace dtvt {
         }
 
         // set a callback function which is called before the device information are stored in the device manager when new devices join to the network.
-        //dupnp_cp_dvcmgr_set_allow_join_handler(&mDMP.deviceManager, allowJoinHandler, 0);
         dupnp_cp_dvcmgr_set_allow_join_handler(&mDMP.deviceManager, Dlna::allowJoinHandler, this);
 
         // set a callback function which is called after the device information are stored in the device manager when new devices join to the network.
@@ -265,6 +287,10 @@ namespace dtvt {
             return false;
     }
 
+    /**
+     *
+     * @return
+     */
     bool Dlna::soapInit() {
 
         du_byte_zero((du_uint8 *) &mDMP.soap, sizeof(soap));
@@ -294,12 +320,19 @@ namespace dtvt {
         return false;
     }
 
+    /**
+     *
+     */
     void Dlna::soapUninit() {
         du_str_array_free(&mDMP.soap.request_header);
         du_mutex_free(&mDMP.soap.mutex);
         du_sync_free(&mDMP.soap.sync);
     }
 
+    /**
+     *
+     * @return
+     */
     bool Dlna::startDmgrAndEmgr() {
         if (!dupnp_cp_evtmgr_start(&mDMP.eventManager)) {
             goto error;
@@ -316,6 +349,11 @@ namespace dtvt {
             return false;
     }
 
+    /**
+     *
+     * @param response
+     * @return
+     */
     static du_bool checkSoapResponseError(dupnp_http_response *response) {
         du_str_array param_array;
 
@@ -356,6 +394,11 @@ namespace dtvt {
             return false;
     }
 
+    /**
+     *
+     * @param response
+     * @param arg
+     */
     /*static*/ void  Dlna::browseDirectChildrenResponseHandler(dupnp_http_response *response, void *arg) {
         if (NULL == arg) {
             return;
@@ -393,6 +436,11 @@ namespace dtvt {
             du_mutex_unlock(&d->soap.mutex);
     }
 
+    /**
+     *
+     * @param ctl
+     * @return
+     */
     bool Dlna::sendSoap(const du_uchar *ctl) {
         if (NULL == ctl || 0 == strlen((const char *) ctl)) {
             return false;
@@ -438,6 +486,11 @@ namespace dtvt {
             return false;
     }
 
+    /**
+     *
+     * @param msg
+     * @param content
+     */
     void Dlna::notify(int msg, std::string content) {
         JNIEnv *env = NULL;
         int status = mEvent.mJavaVM->GetEnv((void **) &env, JNI_VERSION_1_6);
@@ -460,6 +513,16 @@ namespace dtvt {
         mEvent.mJavaVM->DetachCurrentThread();
     }
 
+    /**
+     *
+     * @param env
+     * @param cls
+     * @param fieldName
+     * @param classPath
+     * @param value
+     * @param obj
+     * @return
+     */
     bool setJavaObjectField(JNIEnv *env, jclass cls, const char* const  fieldName, const char* const classPath, string& value, jobject obj){
         if(NULL==env || NULL == cls || NULL==fieldName
            || NULL==classPath || NULL==obj || NULL ==value.c_str()){
@@ -478,6 +541,15 @@ namespace dtvt {
         return true;
     }
 
+    /**
+     *
+     * @param env
+     * @param cl
+     * @param cons
+     * @param datas
+     * @param objOut
+     * @return
+     */
     bool addDmsInfo(JNIEnv *env, jclass cl, jmethodID cons, StringVector& datas, jobject objOut) {
         StringVector::iterator i=datas.begin();
 
@@ -508,6 +580,15 @@ namespace dtvt {
         return true;
     }
 
+    /**
+     *
+     * @param env
+     * @param cl
+     * @param cons
+     * @param datas
+     * @param objOut
+     * @return
+     */
     bool addRecVideoItem(JNIEnv *env, jclass cl, jmethodID cons, StringVector& datas, jobject objOut) {
         StringVector::iterator i=datas.begin();
 
@@ -538,6 +619,15 @@ namespace dtvt {
         return true;
     }
 
+    /**
+     *
+     * @param env
+     * @param cl
+     * @param cons
+     * @param datas
+     * @param objOut
+     * @return
+     */
     bool addRecVideoItems(JNIEnv *env, jclass cl, jmethodID cons, vector<StringVector>& datas, jobject objOut) {
         bool ret=true;
 
@@ -551,6 +641,11 @@ namespace dtvt {
         return ret;
     }
 
+    /**
+     *
+     * @param msg
+     * @param vecVecContents
+     */
     void Dlna::notifyObject(int msg, vector<StringVector> & vecVecContents) {
         JNIEnv *env = NULL;
         jobject itemObj = NULL;
@@ -641,15 +736,50 @@ namespace dtvt {
             }
     }
 
+    /**
+     *
+     * @param ctl
+     * @return
+     */
     bool Dlna::browseDms(const du_uchar *ctl) {
         return sendSoap(ctl);
     }
 
+    /**
+     * デバイスディスクリプションを解析してデバイス情報を設定する
+     *
+     * @param x
+     * @param device
+     * @param dvcdsc
+     * @param arg
+     * @return このデバイスをデバイスマネージャーが管理するリストに追加する場合 1 追加しない場合 0
+     */
     /*static*/ du_bool Dlna::allowJoinHandler(dupnp_cp_dvcmgr *x, dupnp_cp_dvcmgr_device *device,
                                               dupnp_cp_dvcmgr_dvcdsc *dvcdsc, void *arg) {
+        dms_info* info;
+
+        // イスディスクリプションを解析
+        info = createDmsInfoXmlDoc(dvcdsc->xml, dvcdsc->xml_len, device->udn, device->device_type, device->location);
+        if (!info){
+            return 0; // このデバイスをデバイスマネージャーの管理リストに追加しません
+        }
+        // 特定のDMS に限定する場合は friendly_name を指定する
+        if (NULL == strstr((char*)info->friendly_name, "特定のDMSのfriendly_name")){
+//        return 0; // このデバイスをデバイスマネージャーの管理リストに追加しません
+        }
+        device->user_data = (void*)info; // デバイスディスクリプションの解析情報 ※leaveHandlerで解放すること
+
         return 1;
     }
 
+    /**
+     * デバイス検出
+     *
+     * @param x
+     * @param device
+     * @param dvcdsc
+     * @param arg
+     */
     /*static*/ void Dlna::joinHandler(dupnp_cp_dvcmgr *x, dupnp_cp_dvcmgr_device *device,
                                       dupnp_cp_dvcmgr_dvcdsc *dvcdsc, void *arg) {
         if (NULL == arg || NULL == dvcdsc || NULL == dvcdsc->xml) {
@@ -659,28 +789,35 @@ namespace dtvt {
         IfNullReturn(thiz);
         IfNullReturn(thiz->mDlnaDevXmlParser);
 
-        std::string content((char *) dvcdsc->location);
-
-        content.append((char *) dvcdsc->xml);
-
         std::vector<std::vector<std::string> > vv;
         DlnaDevXmlParser* parser= (DlnaDevXmlParser*)thiz->mDlnaDevXmlParser;
-        parser->parse(dvcdsc, vv);
+        parser->parse(device, vv);
         if(0==vv.size()){
             return;
         }
 
-        thiz->notify(DLNA_MSG_ID_DEV_DISP_JOIN, content);
+        thiz->notifyObject(Dlna::DLNA_MSG_ID_DEV_DISP_JOIN, vv);
     }
 
+    /**
+     * デバイスの停止：デバイス情報の解放
+     *
+     * @param x
+     * @param device
+     * @param arg
+     * @return
+     */
     /*static*/ du_bool
     Dlna::leaveHandler(dupnp_cp_dvcmgr *x, dupnp_cp_dvcmgr_device *device, void *arg) {
         if (NULL == arg || NULL == device || NULL == device->udn) {
             return 1;
         }
         Dlna *thiz = (Dlna *) arg;
+        dms_info *info = (dms_info*)device->user_data;
 
         std::string content((char *) device->udn);
+        freeDmsInfoXmlDoc(info);    // allowJoinHandler#createDmsInfoXmlDoc で取得したデバイス情報の解放
+
         thiz->notify(DLNA_MSG_ID_DEV_DISP_LEAVE, content);
 
         return 1;

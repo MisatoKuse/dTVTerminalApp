@@ -39,7 +39,7 @@ namespace dtvt {
 
     //DlnaDmsItem フィールド定義
     const char * const DmsItem_Field_mUdn           ="mUdn";
-    const char * const DmsItem_Field_mControlUrl    ="mContFalserolUrl";
+    const char * const DmsItem_Field_mControlUrl    ="mControlUrl";
     const char * const DmsItem_Field_mHttp          ="mHttp";
     const char * const DmsItem_Field_mFriendlyName  ="mFriendlyName";
 
