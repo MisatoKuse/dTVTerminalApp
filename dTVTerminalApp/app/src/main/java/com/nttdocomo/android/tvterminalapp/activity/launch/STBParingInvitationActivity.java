@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.activity.launch;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -55,16 +56,16 @@ public class STBParingInvitationActivity extends BaseActivity implements View.On
         //TODO SharedPreferenceから初回表示判定を取得する
         //ペアリング勧誘
         //一度表示されたら以降表示されない
-        if (SharedPreferencesUtils.getSharedPreferencesParingInvitationIsDisplayed(this)) {
+        if (SharedPreferencesUtils.getSharedPreferencesIsDisplayedParingInvitation(this)) {
             SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
-                    this, SharedPreferencesUtils.STATE_TO_HOME_PAIRING_NG);
+                    this, false);
             startActivity(HomeActivity.class, null);
             return;
         }
         mUseWithoutPairingSTBParingInvitationActivity =
                 findViewById(R.id.useWithoutPairingSTBParingInvitationActivity);
         mUseWithoutPairingSTBParingInvitationActivity.setOnClickListener(this);
-        SharedPreferencesUtils.setSharedPreferencesParingInvitationIsDisplayed(this, true);
+        SharedPreferencesUtils.setSharedPreferencesIsDisplayedParingInvitation(this, true);
         DTVTLogger.end();
     }
 
@@ -75,10 +76,8 @@ public class STBParingInvitationActivity extends BaseActivity implements View.On
      */
     @Override
     public void onClick(View v) {
-        DTVTLogger.start();
         SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
-                this, SharedPreferencesUtils.STATE_TO_HOME_PAIRING_NG);
+                this, false);
         startActivity(HomeActivity.class, null);
-        DTVTLogger.end();
     }
 }

@@ -66,7 +66,7 @@ public class DAccountSettingActivity extends BaseActivity implements View.OnClic
 
     private void mDLoginNoUseButton() {
         SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
-                this, SharedPreferencesUtils.STATE_TO_HOME_PAIRING_NG);
+                this, false);
         startActivity(HomeActivity.class, null);
     }
 }

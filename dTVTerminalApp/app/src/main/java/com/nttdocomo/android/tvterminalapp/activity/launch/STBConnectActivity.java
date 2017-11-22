@@ -77,7 +77,7 @@ public class STBConnectActivity extends BaseActivity {
             try {
                 if (!isStbConnected) {
                     SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
-                            mContext, SharedPreferencesUtils.STATE_TO_HOME_PAIRING_OK);
+                            mContext, true);
                     startActivity(HomeActivity.class, null);
                 }
             } catch (Exception e) {

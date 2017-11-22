@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,8 @@ import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class STBSelectActivity extends BaseActivity implements View.OnClickListener,
@@ -40,9 +43,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private boolean mIsNextTimeHide = false;
     CheckBox mCheckBoxSTBSelectActivity = null;
     TextView mUseWithoutPairingSTBParingInvitationActivity = null;
-    Button mButton1STBSelectActivity = null;
-    Button mButton2STBSelectActivity = null;
-    Button mButton3STBSelectActivity = null;
     Button mDAccountLoginYesSTBSelectActivity = null;
     Button mDAccountLoginNoSTBSelectActivity = null;
     Button mDAccountAppliYesSTBSelectActivity = null;
@@ -57,10 +57,12 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private View mLoadMoreView = null;
     private DlnaProvDevList mDlnaProvDevList = null;
     private RelativeLayout mRelativeLayout;
+    private StbInfoCallBackTimer mCallbackTimer = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DTVTLogger.start();
         setContentView(R.layout.stb_select_main_layout);
         mContentsList = new ArrayList();
         mBackIcon = findViewById(R.id.header_layout_back);
@@ -71,7 +73,9 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         setTitleText(getString(R.string.str_app_title));
         setContents();
         initView();
+        startCallbackTimer();
         setDevListener();
+        DTVTLogger.end();
     }
     //TODO 削除する予定
 //    @Override
@@ -130,6 +134,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         mCheckBoxSTBSelectActivity = (CheckBox) findViewById(R.id.checkBoxSTBSelectActivity);
         mCheckBoxSTBSelectActivity.setOnClickListener(this);
 
+        // TODO dアカウント取得画面実装時に削除
         mDAccountLoginYesSTBSelectActivity = (Button) findViewById(R.id.dAccountLoginYesSTBSelectActivity);
         mDAccountLoginYesSTBSelectActivity.setOnClickListener(this);
 
@@ -150,40 +155,91 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 
         setDAccountButtonVisibility(View.GONE);
 
-        repair();
         DTVTLogger.end();
     }
 
-    private void repair() {
+    @Override
+    public void onResume() {
+        super.onResume();
         DTVTLogger.start();
-        Bundle b = getIntent().getExtras();
-        String state = "";
-        try {
-            state = b.getString("state");
-        } catch (Exception e) {
-            DTVTLogger.debug(e);
+        if(mCallbackTimer == null) {
+            mContentsList.clear();
+            setDevListener();
+            startCallbackTimer();
         }
+        DTVTLogger.end();
+    }
 
-        if (state.equals(StateModeRepair)) {
-            onStbSelected();
-        }
+    @Override
+    public void onPause() {
+        super.onPause();
+        DTVTLogger.start();
+        leaveActivity();
+        DTVTLogger.end();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        DTVTLogger.start();
+        leaveActivity();
         DTVTLogger.end();
     }
 
     /**
-     * ボタン押されたとこの動作
+     * 画面から離れる場合の処理
+     */
+    public void leaveActivity() {
+        DTVTLogger.start();
+        stopCallbackTimer();
+        mCallbackTimer = null;
+        mDlnaProvDevList.stopListen();
+        DTVTLogger.end();
+    }
+
+    /**
+     * STB検索中の画面表示を設定
+     */
+    private void showSearchingView() {
+        DTVTLogger.start();
+        // STB検索中文言表示
+        TextView statusTextView = (TextView)findViewById(R.id.stb_select_status_text);
+        statusTextView.setText(R.string.str_stb_select_result_text_search);
+
+        // STBが見つかるまで非表示
+        mCheckBoxSTBSelectActivity.setVisibility(View.INVISIBLE);
+        TextView checkBoxText = (TextView)findViewById(R.id.useWithoutPairingSTBParingInvitation);
+        checkBoxText.setVisibility(View.INVISIBLE);
+        DTVTLogger.end();
+    }
+
+    /**
+     * STBが見つかった際の画面表示を設定
+     */
+    private void showResultCompleteView() {
+        DTVTLogger.start();
+        // STB検索中文言表示
+        TextView statusTextView = (TextView)findViewById(R.id.stb_select_status_text);
+        statusTextView.setText(R.string.str_stb_select_result_text);
+
+        // STBが見つかったため表示する
+        mCheckBoxSTBSelectActivity.setVisibility(View.VISIBLE);
+        TextView checkBoxText = (TextView)findViewById(R.id.useWithoutPairingSTBParingInvitation);
+        checkBoxText.setVisibility(View.VISIBLE);
+        DTVTLogger.end();
+    }
+
+    /**
+     * ボタン押されたときの動作
      *
      * @param v
      */
     @Override
     public void onClick(View v) {
+        // TODO dアカウント取得画面実装時に一部を除いて削除
         DTVTLogger.start();
         if (v.equals(mUseWithoutPairingSTBParingInvitationActivity)) {
             onUseWithoutPairingButton();
-        } else if (v.equals(mCheckBoxSTBSelectActivity)) {
-        } else if (v.equals(mButton1STBSelectActivity) || v.equals(mButton2STBSelectActivity)
-                || v.equals(mButton3STBSelectActivity)) {
-            onStbSelected();
         } else if (v.equals(mDAccountLoginYesSTBSelectActivity)) {
             onDAccountLoginYesButton();
         } else if (v.equals(mDAccountLoginNoSTBSelectActivity)) {
@@ -200,6 +256,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.end();
     }
 
+    // TODO dアカウント取得画面実装時に削除
     /**
      * STBに同じdアカウントが登録されていない
      */
@@ -207,6 +264,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         startActivity(DAccountReSettingActivity.class, null);
     }
 
+    // TODO dアカウント取得画面実装時に削除
     /**
      * STBに同じdアカウントが登録されている
      */
@@ -214,6 +272,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         startActivity(STBConnectActivity.class, null);
     }
 
+    // TODO dアカウント取得画面実装時に削除
     /**
      * 端末内にdアカウントアプリがあるか --> ない
      * dアカウントアプリ誘導画面へ
@@ -222,6 +281,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         startActivity(DAccountSettingActivity.class, null);
     }
 
+    // TODO dアカウント取得画面実装時に削除
     /**
      * 端末内にdアカウントアプリがあるか --> ある
      */
@@ -230,6 +290,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         startActivity(DAccountAppliActivity.class, null);
     }
 
+    // TODO dアカウント取得画面実装時に削除
     /**
      * dアカウント登録状態チェック --> 未ログイン
      */
@@ -238,6 +299,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         setDAccountLoginButtonsVisibility(View.GONE);
     }
 
+    // TODO dアカウント取得画面実装時に削除
     /**
      * dアカウント登録状態チェック --> ログイン済
      */
@@ -246,19 +308,14 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         setDAccountSameButtonsVisibility(View.VISIBLE);
     }
 
-    private void onStbSelected() {
-        mDlnaProvDevList.stopListen();
-        startActivity(DAccountRegConfirmationActivity.class, null);
-    }
-
     private void onUseWithoutPairingButton() {
         DTVTLogger.start();
         mDlnaProvDevList.stopListen();
         //STB選択画面"次回以降表示しない" 状態をSharedPreferenceに保存
         SharedPreferencesUtils.setSharedPreferencesStbSelect(this, mIsNextTimeHide);
         SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
-                this, SharedPreferencesUtils.STATE_TO_HOME_PAIRING_NG);
-        if (SharedPreferencesUtils.getSharedPreferencesParingInvitationIsDisplayed(this)) {
+                this, false);
+        if (SharedPreferencesUtils.getSharedPreferencesIsDisplayedParingInvitation(this)) {
             startActivity(HomeActivity.class, null);
         } else {
             startActivity(STBParingInvitationActivity.class, null);
@@ -299,6 +356,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         DTVTLogger.start();
+        // TODO SharedにDataを保存
         mDlnaProvDevList.stopListen();
         startActivity(STBConnectActivity.class, null);
         DTVTLogger.end();
@@ -354,7 +412,17 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mContentsAdapter.notifyDataSetChanged();
+                // 0件の場合タイムアウトを設定する
+                if(mContentsList.size() <= 0) {
+                    mContentsAdapter.notifyDataSetChanged();
+                    startCallbackTimer();
+                } else if(mCallbackTimer.timerTaskExecuted()){ // 30秒以内にSTBの通知あり
+                    stopCallbackTimer();
+                    showResultCompleteView();
+                    mContentsAdapter.notifyDataSetChanged();
+                } else { // 既にタイムアウトとなっていた場合
+                    // nop.
+                }
             }
         });
         DTVTLogger.end();
@@ -375,5 +443,120 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             }
         }
         DTVTLogger.end();
+    }
+
+    /**
+     * STB情報取得のタイムアウト時間を設定
+     */
+    private void startCallbackTimer() {
+        DTVTLogger.start();
+        showSearchingView();
+        displayMoreData(true);
+        if(mCallbackTimer == null) {
+            mCallbackTimer = new StbInfoCallBackTimer();
+        }
+        mCallbackTimer.executeTimerTask();
+        DTVTLogger.end();
+    }
+
+    /**
+     * タイムアウト時間設定を解除
+     */
+    private void stopCallbackTimer() {
+        DTVTLogger.start();
+        displayMoreData(false);
+        mCallbackTimer.cancel();
+        DTVTLogger.end();
+    }
+
+    /**
+     * タイムアウト時の画面表示
+     */
+    private void showTimeoutView() {
+        DTVTLogger.start();
+        displayMoreData((false));
+        // STB検索タイムアウト文言表示
+        TextView statusTextView = (TextView)findViewById(R.id.stb_select_status_text);
+        statusTextView.setText(R.string.str_stb_select_result_text_failed);
+
+        // STB未検出のため非表示
+        mCheckBoxSTBSelectActivity.setVisibility(View.INVISIBLE);
+        TextView checkBoxText = (TextView)findViewById(R.id.useWithoutPairingSTBParingInvitation);
+        checkBoxText.setVisibility(View.INVISIBLE);
+        // リストを非表示
+        mDeviceListView.setVisibility(View.GONE);
+        mDlnaProvDevList.stopListen();
+        DTVTLogger.end();
+    }
+
+    // タイムアウト設定クラス
+    private class StbInfoCallBackTimer extends Timer {
+        // STB検出タイムアウト時間
+        private final long STB_SEARCH_TIMEOUT = 30000;
+        private TimerTask mTimerTask = null;
+        // タイムアウト判定
+        private boolean mTimeout = false;
+
+        public StbInfoCallBackTimer() {}
+
+        /**
+         * TimerTask実行予約処理
+         */
+        public void executeTimerTask() {
+            DTVTLogger.start();
+            setTimerTask();
+            schedule(mTimerTask,STB_SEARCH_TIMEOUT);
+            DTVTLogger.end();
+        }
+
+        /**
+         * TimerTask処理の設定
+         */
+        private void setTimerTask() {
+            DTVTLogger.start();
+            mTimerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    // タイムアウト処理
+                    final Handler handler = new Handler();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            showTimeoutView();
+                            mTimeout = true;
+                        }
+                    });
+                }
+            };
+            DTVTLogger.end();
+        }
+
+        /**
+         * TimerTask実行後判定
+         * @return
+         */
+        public boolean timerTaskExecuted() {
+            DTVTLogger.debug("timerTaskExecuted");
+            return mTimeout;
+        }
+
+        /**
+         * TimerTaskキャンセル処理
+         */
+        public void timerTaskCancel(){
+            DTVTLogger.start();
+            mTimerTask.cancel();
+            DTVTLogger.end();
+        }
+
+        @Override
+        public void cancel() {
+            DTVTLogger.start();
+            if(mTimeout) {
+                timerTaskCancel();
+            }
+            super.cancel();
+            DTVTLogger.end();
+        }
     }
 }

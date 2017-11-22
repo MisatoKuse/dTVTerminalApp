@@ -7,6 +7,9 @@ package com.nttdocomo.android.tvterminalapp.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -20,14 +23,27 @@ public class SharedPreferencesUtils {
     private static final String SHARED_KEY_STB_SELECT_UNNECESSARY_NEXT_TIME = "unnecessary_next_time";
     // STB接続画面 接続成功 保存キー
     private static final String SHARED_KEY_STB_CONNECT_SUCCESS = "connect_success";
-    // ペアリング STB情報 保存キー
-    private static final String SHARED_KEY_STB_DATA_INFOMATION = "stb_data_info";
     // ペアリング勧誘画面表示済み判定情報 保存キー
-    private static final String SHARED_KEY_PARING_INVITATION_IS_DISPLAYED = "paring_invitation_is_displayed";
+    private static final String SHARED_KEY_IS_DISPLAYED_PARING_INVITATION = "is_displayed_paring_invitation";
     // ホーム画面ペアリング済み判定 保存キー
     private static final String SHARED_KEY_DECISION_PARING_SETTLED = "decision_paring_settled";
-    public static final String STATE_TO_HOME_PAIRING_OK="ホーム画面（ペアリング済）";
-    public static final String STATE_TO_HOME_PAIRING_NG="ホーム画面（未ペアリング）";
+    // 接続済み STB情報 保存キー
+    // STB情報 親キー
+    private static final String SHARED_KEY_SELECTED_STB_DATA_INFOMATION = "stb_data_info";
+    // UDN
+    private static final String SHARED_KEY_SELECTED_STB_DATA_INFOMATION_UDN = "selected_stb_udn";
+    // コントロールURL
+    private static final String SHARED_KEY_SELECTED_STB_DATA_INFOMATION_CONTROL_URL = "selected_stb_control_url";
+    // HTTP
+    private static final String SHARED_KEY_SELECTED_STB_DATA_INFOMATION_HTTP = "selected_stb_http";
+    // Friendly名
+    private static final String SHARED_KEY_SELECTED_STB_DATA_INFOMATION_FRIENDLY_NAME = "selected_stb_friendly_name";
+    // getString 初期値
+    private static final String SHARED_GET_STRING_DEFAULT = "";
+    // 画面情報保存 親キー
+    private static final String SHARED_KEY_SCREEN_INFORMATION = "screen_information";
+    // LaunchActivity チュートリアル表示済み判定 保存キー
+    private static final String SHARED_KEY_IS_DISPLAYED_TUTORIAL = "is_displayed_tutorial";
 
     /**
      * STB選択画面"次回以降表示しない" 状態を保存
@@ -35,11 +51,13 @@ public class SharedPreferencesUtils {
      * @param selectedUnnecessary true:チェック済み false:チェックなし
      */
     public static void setSharedPreferencesStbSelect(Context context, boolean selectedUnnecessary) {
+        DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = data.edit();
         editor.putBoolean(SHARED_KEY_STB_SELECT_UNNECESSARY_NEXT_TIME,selectedUnnecessary);
         editor.apply();
+        DTVTLogger.end();
     }
 
     /**
@@ -48,11 +66,13 @@ public class SharedPreferencesUtils {
      * @param stbConnectSuccess true:接続完了済み false:接続未完了
      */
     public static void setSharedPreferencesStbConnect(Context context, boolean stbConnectSuccess) {
+        DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = data.edit();
         editor.putBoolean(SHARED_KEY_STB_CONNECT_SUCCESS, stbConnectSuccess);
         editor.apply();
+        DTVTLogger.end();
     }
 
     /**
@@ -60,27 +80,31 @@ public class SharedPreferencesUtils {
      * @param context コンテキスト
      * @param isDisplayed true:表示済み false:未表示
      */
-    public static void setSharedPreferencesParingInvitationIsDisplayed(Context context, boolean isDisplayed) {
+    public static void setSharedPreferencesIsDisplayedParingInvitation(Context context, boolean isDisplayed) {
+        DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = data.edit();
-        editor.putBoolean(SHARED_KEY_PARING_INVITATION_IS_DISPLAYED, isDisplayed);
+        editor.putBoolean(SHARED_KEY_IS_DISPLAYED_PARING_INVITATION, isDisplayed);
         editor.apply();
+        DTVTLogger.end();
     }
 
     /**
-     * STBの情報を保存
+     * 接続済みSTBの情報を保存
      * @param context コンテキスト
      */
-    public static void setSharedPreferencesStbInfo(Context context) {
+    public static void setSharedPreferencesStbInfo(Context context, DlnaDmsItem item) {
+        DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
-                SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
+                SHARED_KEY_SELECTED_STB_DATA_INFOMATION, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = data.edit();
-        // TODO STB情報クラスの値を参照
-        // TODO 情報をJSONに変換して保存予定
-//        Gson gson = new Gson();
-//        editor.put(SHARED_KEY_STB_DATA_INFOMATION, )
+        editor.putString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_UDN,item.mUdn);
+        editor.putString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_CONTROL_URL,item.mControlUrl);
+        editor.putString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_HTTP,item.mHttp);
+        editor.putString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_FRIENDLY_NAME,item.mFriendlyName);
         editor.apply();
+        DTVTLogger.end();
     }
 
     /**
@@ -89,8 +113,10 @@ public class SharedPreferencesUtils {
      * @return  true:表示なし false:表示
      */
     public static boolean getSharedPreferencesStbSelect(Context context) {
+        DTVTLogger.debug("getSharedPreferencesStbSelect");
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
+
         return data.getBoolean(SHARED_KEY_STB_SELECT_UNNECESSARY_NEXT_TIME,false);
 
     }
@@ -101,8 +127,10 @@ public class SharedPreferencesUtils {
      * @return true:完了済み false:未完了
      */
     public static boolean getSharedPreferencesStbConnect(Context context) {
+        DTVTLogger.debug("getSharedPreferencesStbConnect");
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
+
         return data.getBoolean(SHARED_KEY_STB_CONNECT_SUCCESS,false);
     }
 
@@ -111,30 +139,81 @@ public class SharedPreferencesUtils {
      * @param context コンテキスト
      * @return true:表示済み false:未表示
      */
-    public static boolean getSharedPreferencesParingInvitationIsDisplayed(Context context) {
+    public static boolean getSharedPreferencesIsDisplayedParingInvitation(Context context) {
+        DTVTLogger.debug("getSharedPreferencesParingInvitationIsDisplayed");
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
-        return data.getBoolean(SHARED_KEY_PARING_INVITATION_IS_DISPLAYED,false);
+
+        return data.getBoolean(SHARED_KEY_IS_DISPLAYED_PARING_INVITATION,false);
     }
 
     /**
      *  ペアリング状態を保存(Home画面用)
      * @param paringStatus
      */
-    public static void setSharedPreferencesDecisionParingSettled(Context context, String paringStatus) {
+    public static void setSharedPreferencesDecisionParingSettled(Context context, boolean paringStatus) {
+        DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = data.edit();
-        editor.putString(SHARED_KEY_DECISION_PARING_SETTLED, paringStatus);
+        editor.putBoolean(SHARED_KEY_DECISION_PARING_SETTLED, paringStatus);
         editor.apply();
+        DTVTLogger.end();
     }
 
     /**
      *  ペアリング状態を取得(Home画面用)
      */
-    public static String getSharedPreferencesDecisionParingSettled(Context context) {
+    public static boolean getSharedPreferencesDecisionParingSettled(Context context) {
+        DTVTLogger.debug("getSharedPreferencesDecisionParingSettled");
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
-        return data.getString(SHARED_KEY_DECISION_PARING_SETTLED, STATE_TO_HOME_PAIRING_NG);
+
+        return data.getBoolean(SHARED_KEY_DECISION_PARING_SETTLED, false);
     }
+
+    /**
+     * 接続済みSTB情報を取得
+     */
+    public static DlnaDmsItem getSharedPreferencesStbInfo(Context context) {
+        DTVTLogger.debug("getSharedPreferencesStbInfo");
+        DlnaDmsItem item = new DlnaDmsItem();
+        SharedPreferences data = context.getSharedPreferences(
+                SHARED_KEY_SELECTED_STB_DATA_INFOMATION, Context.MODE_PRIVATE);
+
+        item.mUdn = data.getString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_UDN,SHARED_GET_STRING_DEFAULT);
+        item.mControlUrl = data.getString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_CONTROL_URL,SHARED_GET_STRING_DEFAULT);
+        item.mHttp = data.getString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_HTTP,SHARED_GET_STRING_DEFAULT);
+        item.mFriendlyName = data.getString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_FRIENDLY_NAME,SHARED_GET_STRING_DEFAULT);
+
+        return item;
+    }
+
+    /**
+     * チュートリアル画面表示済み情報を設定
+     * @param context コンテキスト
+     * @param isDisplayed true:表示済み false:未表示
+     */
+    public static void setSharedPreferencesIsDisplayedTutorial(Context context, boolean isDisplayed) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                SHARED_KEY_SCREEN_INFORMATION, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putBoolean(SHARED_KEY_IS_DISPLAYED_TUTORIAL, isDisplayed);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     *  チュートリアル画面表示済み情報を取得
+     */
+    public static boolean getSharedPreferencesIsDisplayedTutorial(Context context) {
+        DTVTLogger.debug("getSharedPreferencesIsDisplayedTutorial");
+        SharedPreferences data = context.getSharedPreferences(
+                SHARED_KEY_SCREEN_INFORMATION, Context.MODE_PRIVATE);
+
+        return data.getBoolean(SHARED_KEY_IS_DISPLAYED_TUTORIAL, false);
+    }
+
+
 }

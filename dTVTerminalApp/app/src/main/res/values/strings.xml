@@ -26,6 +26,8 @@
     <string name="str_d_account_resetting_title">dアカウント再設定</string>
     <string name="str_d_account_setting_help_title">dアカウント設定ヘルプ</string>
     <string name="str_d_account_reg_confirmation_title">dアカウント登録確認</string>
+    <string name="str_stb_select_result_text_failed">ドコモテレビターミナルがネットワークに接続されていないか、\nドコモテレビターミナルのバージョンアップが必要です</string>
+    <string name="str_stb_select_result_text_search">STB検索中</string>
 
     <!-- Home -->
     <string name="now_on_air_list">NOW ON AIR</string>

@@ -19,8 +19,7 @@ import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 public class LaunchActivity extends BaseActivity implements View.OnClickListener {
 
     public static final String mStateFromTutorialActivity="fromTutorialActivity";
-    public static final String mStateToHomePairingOk="ホーム画面（ペアリング済）";
-    public static final String mStateToHomePairingNg="ホーム画面（未ペアリング）";
+
     private final static String STATUS = "status";
 
     private static boolean mIsFirstRun=true;
@@ -35,36 +34,27 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.launch_main_layout);
 
-        setContens();
+        setContents();
     }
 
     /**
      * 画面設定を行う
      */
-    private void setContens() {
+    private void setContents() {
         TextView title= (TextView)findViewById(R.id.titleLanchActivity);
         title.setText(getScreenTitle());
 
-        // TODO チュートリアル実装時に判定処理を入れる
         firstLanchLanchYesActivity= (Button)findViewById(R.id.firstLanchLanchYesActivity);
         firstLanchLanchYesActivity.setOnClickListener(this);
 
         firstLanchLanchNoActivity= (Button)findViewById(R.id.firstLanchLanchNoActivity);
         firstLanchLanchNoActivity.setOnClickListener(this);
-
-        Bundle b= getIntent().getExtras();
-        try {
-            mState = b.getString("state");
-        } catch (Exception e) {
-
-        }
-        if(mState.equals(mStateFromTutorialActivity)){
-            state1();
-        }
-    }
-
-    private void state1(){
-        onFirstLanchNoButton();
+        // TODO チュートリアル実装時にコメントアウトを外す
+//        if(SharedPreferencesUtils.getSharedPreferencesIsDisplayedTutorial(this)) {
+//            doScreenTransition();
+//        } else {
+//            startActivity(TutorialActivity.class, null);
+//        }
     }
 
     @Override
@@ -90,12 +80,13 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         return getString(R.string.str_launch_title);
     }
 
+    // TODO チュートリアル画面作成時に削除
     @Override
     public void onClick(View v) {
         if (v.equals(firstLanchLanchYesActivity)) {
-            onFirstLanchYesButton();
+            onFirstLaunchYesButton();
         } else if (v.equals(firstLanchLanchNoActivity)) {
-            onFirstLanchNoButton();
+            doScreenTransition();
         }
     }
 
@@ -114,18 +105,13 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         LaunchActivity.mIsFirstRun = false;
     }
 
+
     /**
      * チュートリアル画面へ遷移
      */
-    private void onFirstLanchYesButton(){
+    // TODO チュートリアル画面作成時に削除
+    private void onFirstLaunchYesButton(){
         startActivity(TutorialActivity.class, null);
-    }
-
-    /**
-     * 初回起動ではない
-     */
-    private void onFirstLanchNoButton() {
-        doScreenTransition();
     }
 
     /**
@@ -136,13 +122,14 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         if(SharedPreferencesUtils.getSharedPreferencesStbConnect(this)) {
             // ペアリング済み HOME画面遷移
             SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
-                    this, SharedPreferencesUtils.STATE_TO_HOME_PAIRING_OK);
+                    this, true);
             startActivity(HomeActivity.class, null);
             DTVTLogger.debug("ParingOK Start HomeActivity");
         } else if(SharedPreferencesUtils.getSharedPreferencesStbSelect(this)){
+            // 次回から表示しないをチェック済み
             // 未ペアリング HOME画面遷移
             SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
-                    this, SharedPreferencesUtils.STATE_TO_HOME_PAIRING_NG);
+                    this, false);
             startActivity(HomeActivity.class, null);
             DTVTLogger.debug("ParingNG Start HomeActivity");
         } else {
