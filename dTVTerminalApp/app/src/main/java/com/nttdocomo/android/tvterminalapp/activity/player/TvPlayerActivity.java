@@ -114,6 +114,7 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
             mTvRapid = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_rapid_tv);
             mTvSeekBar = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_seek_bar_sb);
             mTvFullScreen.setOnClickListener(this);
+            mTvReplay.setOnClickListener(this);
             mTvCtrlView.setLayoutParams(playerParams);
             mPlayerViewLayout.addView(mTvCtrlView);
             //初期化の時点から、handlerにmsgを送る
@@ -130,6 +131,7 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
             mVideoSeekBar = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_seek_bar_sb);
             mVideoPlayPause.setOnClickListener(this);
             mVideoFullScreen.setOnClickListener(this);
+            mVideoRapid.setOnClickListener(this);
             setVideoSeekBarListener(mVideoSeekBar);
             mRecordCtrlView.setLayoutParams(playerParams);
             mPlayerViewLayout.addView(mRecordCtrlView);
@@ -201,9 +203,11 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
             case R.id.tv_player_ctrl_now_on_air_full_screen_iv:
                 Toast.makeText(this, "フルスクリーンに変更されています", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.tv_player_ctrl_now_on_air_back_iv:
+            case R.id.tv_player_ctrl_now_on_air_replay_iv:
+                Toast.makeText(this, "タップで頭出し再生", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.tv_player_ctrl_now_on_air_forward_iv:
+            case R.id.tv_player_ctrl_now_on_air_rapid_tv:
+                Toast.makeText(this,"タップで倍速で再生",Toast.LENGTH_SHORT).show();
                 break;
             default:
                 break;
