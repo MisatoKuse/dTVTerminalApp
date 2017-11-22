@@ -7,11 +7,11 @@ package com.nttdocomo.android.tvterminalapp.fragment.recorded;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FragmentFactory {
+public class RecordedFragmentFactory {
 
     private Map<Integer, RecordedBaseFrgament> mFragments = new HashMap<Integer, RecordedBaseFrgament>();
 
-    public FragmentFactory() {
+    public RecordedFragmentFactory() {
 
     }
 

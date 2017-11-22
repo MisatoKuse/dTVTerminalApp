@@ -21,9 +21,11 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.adapter.ClipMainAdapter;
+import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragmentScrollListener;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFrgament;
-import com.nttdocomo.android.tvterminalapp.fragment.recorded.FragmentFactory;
+import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedFragmentFactory;
 
 public class RecordedListActivity extends BaseActivity implements View.OnClickListener, RecordedBaseFragmentScrollListener {
 
@@ -33,7 +35,12 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private ImageView mMenuImageView;
     private ViewPager mViewPager;
 
-    private FragmentFactory mFragmentFactory = null;
+    private RecordedFragmentFactory mRecordedFragmentFactory = null;
+
+    private ContentsAdapter mContentsAdapter;
+
+    public static final int RECORDED_MODE_NO_OF_ALL = 0; // すべて
+    public static final int RECORDED_MODE_NO_OF_TAKE_OUT = 1; // 持ち出し
 
     // TODO この辺りはタブUI共通の値であれば、styleに定義しましょう。 コード上で動的にstyle適用させるにはコツがいるようですが。
     //設定するマージンのピクセル数
@@ -57,7 +64,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void initView() {
-        mFragmentFactory = new FragmentFactory();
+        mRecordedFragmentFactory = new RecordedFragmentFactory();
         mTabView = findViewById(R.id.record_list_main_layout_scroll);
         mViewPager = findViewById(R.id.record_list_main_layout_viewpagger);
     }
@@ -71,18 +78,35 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 super.onPageSelected(position);
                 setTab(position);
 
-                /*clearAllFragment();
-                setPagingStatus(false);
-
-                if(null!=mSearchView){
-                    setPageNumber(0);
-                    CharSequence searchText= mSearchView.getQuery();
-                    if(0 < searchText.length()){
-                        setSearchData(searchText.toString());
-                    }
-                }*/
+                switch (mViewPager.getCurrentItem()) {
+                    case 0:
+                        setRecordedAllContents();
+                        break;
+                    case 1:
+                        setRecordedTakeOutContents();
+                        break;
+                }
             }
         });
+    }
+
+    private void setRecordedAllContents() {
+        RecordedBaseFrgament recordedBaseFrgament = mRecordedFragmentFactory.createFragment(RECORDED_MODE_NO_OF_ALL, this);
+//        setMode(ContentsAdapter.Mode.CLIP_LIST_MODE_VIDEO);
+        // TODO DPからデータを取得
+    }
+
+    private void setRecordedTakeOutContents() {
+        RecordedBaseFrgament recordedBaseFrgament = mRecordedFragmentFactory.createFragment(RECORDED_MODE_NO_OF_TAKE_OUT, this);
+//        setMode(ContentsAdapter.Mode.CLIP_LIST_MODE_TV);
+        // TODO DPからデータを取得
+    }
+
+    public void setMode(ClipMainAdapter.Mode mode){
+        if(null!=mContentsAdapter){
+//            mContentsAdapter.setMode(mode);
+//            mData.clear();
+        }
     }
 
     @Override
@@ -174,7 +198,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         @Override
         public Fragment getItem(int position) {
             synchronized (this) {
-                return mFragmentFactory.createFragment(position, RecordedListActivity.this);
+                return mRecordedFragmentFactory.createFragment(position, RecordedListActivity.this);
             }
         }
 

@@ -338,7 +338,7 @@ public class ContentsAdapter extends BaseAdapter {
                 break;
             case TYPE_RECORDED_LIST: // 録画番組一覧
                 holder.tv_recorded_hyphen = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
-                holder.tv_recorded_ch_name = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
+                holder.tv_recorded_ch_name = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
                 break;
             default:
                 break;
