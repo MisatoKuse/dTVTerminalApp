@@ -136,11 +136,13 @@
         android:id="@+id/item_common_result_device_name"
         android:layout_width="match_parent"
         android:layout_height="@dimen/launch_text_layout_high_size"
-        android:gravity="center"
+        android:gravity="center_vertical|start"
         android:background="@drawable/selector_btn_click_bg"
         android:textColor="@drawable/selector_text_click_bg"
         android:layout_marginBottom="@dimen/launch_text_bottom_margin"
         android:visibility="gone"
+        android:paddingStart="@dimen/launch_text_left_padding"
+        android:paddingEnd="@dimen/launch_text_end_padding"
         />
 
 </RelativeLayout>

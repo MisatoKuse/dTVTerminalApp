@@ -45,6 +45,7 @@ public class STBConnectActivity extends BaseActivity {
      * 画面上の表示をセットする
      */
     private void setContents() {
+        DTVTLogger.start();
         mBackIcon = findViewById(R.id.header_layout_back);
         mBackIcon.setVisibility(View.GONE);
         mParingImageView = findViewById(R.id.header_layout_menu);
@@ -62,6 +63,7 @@ public class STBConnectActivity extends BaseActivity {
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, (int) (mHight / 5));
         mRelativeLayout.setLayoutParams(params);
+        DTVTLogger.end();
     }
 
     /**
