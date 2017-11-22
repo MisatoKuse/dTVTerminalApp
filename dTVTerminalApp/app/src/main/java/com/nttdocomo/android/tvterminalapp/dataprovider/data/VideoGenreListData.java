@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class VideoGenreListData implements Parcelable {
+
+    //TODO:ジャンル名、コンテンツ数、サブジャンルのリストのみを扱うデータクラスとする
+    private String mGenreName = "";
     private HashMap<String, String> mTitleMap;
     private ArrayList<GenreListMetaData.SubContent> mSubGenre;
 
@@ -27,8 +30,16 @@ public class VideoGenreListData implements Parcelable {
         this.mSubGenre = subGenre;
     }
 
+    //TODO:↓削除予定
     public HashMap<String, String> getTitleMap() {
         return mTitleMap;
+    }
+    public String getGenreName() {
+        return mGenreName;
+    }
+
+    public void setGenreName(String mGenreName) {
+        this.mGenreName = mGenreName;
     }
 
     @Override
@@ -38,11 +49,13 @@ public class VideoGenreListData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.mGenreName);
         dest.writeSerializable(this.mTitleMap);
         dest.writeList(this.mSubGenre);
     }
 
     protected VideoGenreListData(Parcel in) {
+        this.mGenreName = in.readString();
         this.mTitleMap = (HashMap<String, String>) in.readSerializable();
         this.mSubGenre = new ArrayList<GenreListMetaData.SubContent>();
         in.readList(this.mSubGenre, GenreListMetaData.SubContent.class.getClassLoader());

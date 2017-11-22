@@ -166,6 +166,8 @@ public class VideoGenreProvider implements
             genreList.setSubGenre(genreMetaDataList.get(i).getSubContent());
             mVideoGenreList.add(genreList);
         }
+
+        //TODO:ジャンル毎コンテンツ数取得のリクエストは1回のみ(引数はGenreIdのリストとする
         for (int i = 0; i < mVideoGenreList.size(); i++) {
             getContentCountDataRequest(mVideoGenreList.get(i).getGenreId());
         }
@@ -177,6 +179,9 @@ public class VideoGenreProvider implements
      * @param genreCountGetResponse
      */
     public void getContent(GenreCountGetResponse genreCountGetResponse) {
+        //TODO:ジャンル、サブジャンル関連データのみのデータクラスを作成し、Activityに送る
+        //TODO:ここでは既に取得したジャンル一覧とジャンルごとのコンテンツ数を合わせてActivityに送るのみとする
+        //TODO:詳細はVideoGenreListDataクラス参照
         ArrayList<GenreCountGetMetaData> dataArrayList = genreCountGetResponse.getGenreCountGetMetaData();
         if (mVideoGenreList != null && mVideoGenreList.size() > 0) {
             // サブジャンル一覧表示の時
