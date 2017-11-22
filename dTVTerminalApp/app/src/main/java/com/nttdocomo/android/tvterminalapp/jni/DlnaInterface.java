@@ -31,6 +31,8 @@ public class DlnaInterface {
 
     private DlnaRecVideoListener mDlnaRecVideoListener;
 
+    private boolean mIsDlnaRunning = false;
+
     /**
      * 機能：デフォールト構造を禁止
      */
@@ -44,43 +46,44 @@ public class DlnaInterface {
         return sDlnaInterface;
     }
 
-    public interface DlnaListener{
-        /**
-         * 機能：Listenerに、録画一覧情報が届く時、コールされる
-         * @param content content
-         */
-        void onVideoBrows(String content);
-
-        /**
-         * 機能：Listenerに、新しいDms情報が届く時、コールされる
-         * @param curInfo カレントDlnaDMSInfo
-         * @param newItem 新しいDms情報
-         */
-        void onDeviceJoin(DlnaDMSInfo curInfo, DlnaDmsItem newItem);
-
-        /**
-         * 機能：Listenerに、Dmsが消える時、コールされる
-         * @param curInfo　　　カレントDlnaDMSInfo
-         * @param leaveDmsUdn　消えるDmsのudn名
-         */
-        void onDeviceLeave(DlnaDMSInfo curInfo, String leaveDmsUdn);
-
-        /**
-         * 機能：Listenerに、エラーメセッジを送信
-         * @param msgId  エラー
-         * @param msg     エラー情報
-         */
-        void onError(int msgId, String msg);
-
-        /**
-         * 機能：各DlnaProviderに、使用しているDmsを戻す
-         * 　　　この設計の理由は使用しているDms以外のDmsは、ネットワークに加入と消える時、
-         * 　　　DlnaProviderにイベントを通知しないよう
-         * 　　　例外はDms一覧用のDlnaProviderである。
-         * @return 使用しているDmsのudn名
-         */
-         String getCurrentDmsUdn();
-    }
+//下記のListenerは将来使う可能ですので、一時保留している。
+//    public interface DlnaListener{
+//        /**
+//         * 機能：Listenerに、録画一覧情報が届く時、コールされる
+//         * @param content content
+//         */
+//        void onVideoBrows(String content);
+//
+//        /**
+//         * 機能：Listenerに、新しいDms情報が届く時、コールされる
+//         * @param curInfo カレントDlnaDMSInfo
+//         * @param newItem 新しいDms情報
+//         */
+//        void onDeviceJoin(DlnaDMSInfo curInfo, DlnaDmsItem newItem);
+//
+//        /**
+//         * 機能：Listenerに、Dmsが消える時、コールされる
+//         * @param curInfo　　　カレントDlnaDMSInfo
+//         * @param leaveDmsUdn　消えるDmsのudn名
+//         */
+//        void onDeviceLeave(DlnaDMSInfo curInfo, String leaveDmsUdn);
+//
+//        /**
+//         * 機能：Listenerに、エラーメセッジを送信
+//         * @param msgId  エラー
+//         * @param msg     エラー情報
+//         */
+//        void onError(int msgId, String msg);
+//
+//        /**
+//         * 機能：各DlnaProviderに、使用しているDmsを戻す
+//         * 　　　この設計の理由は使用しているDms以外のDmsは、ネットワークに加入と消える時、
+//         * 　　　DlnaProviderにイベントを通知しないよう
+//         * 　　　例外はDms一覧用のDlnaProviderである。
+//         * @return 使用しているDmsのudn名
+//         */
+//         String getCurrentDmsUdn();
+//    }
 
     public boolean isDmsAvailable(String udn){
         return mDMSInfo.exists(udn);
@@ -118,14 +121,28 @@ public class DlnaInterface {
     }
 
     public boolean startDlna(){
-        mDMSInfo.clear();
-        return nativeStartDlna(mNativeDlna);
+        synchronized (this) {
+            if(mIsDlnaRunning){
+                return true;
+            }
+
+            mDMSInfo.clear();
+            mIsDlnaRunning = nativeStartDlna(mNativeDlna);
+            return mIsDlnaRunning;
+        }
     }
 
     public void stopDlna(){
-        nativeStopDlna(mNativeDlna);
-        mDMSInfo.clear();
-        mNativeDlna=0;
+        synchronized (this) {
+            if(!mIsDlnaRunning){
+                return;
+            }
+
+            nativeStopDlna(mNativeDlna);
+            mDMSInfo.clear();
+            mNativeDlna=0;
+            mIsDlnaRunning=false;
+        }
     }
 
     /**
@@ -197,6 +214,10 @@ public class DlnaInterface {
         if(null!=mDMSInfo && mDMSInfo.exists(curDmsUdn)){
             mCurrentDmsUdn=curDmsUdn;
         }
+    }
+
+    private synchronized void setDlnaStatus(boolean status){
+        mIsDlnaRunning = status;
     }
 
     //jni関数

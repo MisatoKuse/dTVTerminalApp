@@ -11,11 +11,11 @@
 #include <dupnp_soap.h>
 #include <cstring>
 #include "Dlna.h"
-
+#include "DmsInfo.h"
 
 namespace dtvt {
 
-    Dlna::Dlna() {
+    Dlna::Dlna(): mDlnaDevXmlParser(NULL), mDlnaRecVideoXmlParser(NULL) {
         mDMP.upnp._impl = NULL;
     }
 
@@ -23,10 +23,17 @@ namespace dtvt {
         du_byte_zero((du_uint8 *) &mDMP, sizeof(dmp));
         du_bool isInitOk = dupnp_init(&mDMP.upnp, 0, 0);
         bool ok = (true == isInitOk);
-        if (ok) {
-
-        }
+        mDlnaDevXmlParser = (DlnaXmlParserBase*)new DlnaDevXmlParser();
+        IfNullGoTo(mDlnaDevXmlParser, error_1);
+        mDlnaRecVideoXmlParser = (DlnaXmlParserBase*)new DlnaRecVideoXmlParser();;
+        IfNullGoTo(mDlnaRecVideoXmlParser, error_2);
         return ok;
+
+        error_2:
+            delete mDlnaDevXmlParser;
+            mDlnaDevXmlParser = NULL;
+        error_1:
+            return false;
     }
 
     void Dlna::uninit() {
@@ -36,6 +43,9 @@ namespace dtvt {
             dupnp_free(&mDMP.upnp);
         }
         mDMP.upnp._impl = NULL;
+
+        DelIfNotNull(mDlnaDevXmlParser);
+        DelIfNotNull(mDlnaRecVideoXmlParser);
     }
 
     bool Dlna::start(JNIEnv *env, jobject obj) {
@@ -59,19 +69,18 @@ namespace dtvt {
         if (0 != ret || NULL == mEvent.mJavaVM) {
             goto error_1;
         }
-
-        mEvent.mJClassDlna = env->FindClass("com/nttdocomo/android/tvterminalapp/jniDlnaInterface");
+        mEvent.mJClassDlna = env->FindClass("com/nttdocomo/android/tvterminalapp/jni/DlnaInterface");
         if (NULL == mEvent.mJClassDlna) {
             goto error_2;
         }
 
-        tmpDMSItem = env->FindClass("com/nttdocomo/android/tvterminalapp/jniDlnaDmsItem");
+        tmpDMSItem = env->FindClass("com/nttdocomo/android/tvterminalapp/jni/DlnaDmsItem");
         mEvent.mJClassDmsItem = (jclass)env->NewGlobalRef(tmpDMSItem);
         if (NULL == mEvent.mJClassDmsItem) {
             goto error_2;
         }
 
-        tmpDlnaRecVideoItem = env->FindClass("com/nttdocomo/android/tvterminalapp/jniDlnaRecVideoItem");
+        tmpDlnaRecVideoItem = env->FindClass("com/nttdocomo/android/tvterminalapp/jni/DlnaRecVideoItem");
         mEvent.mJClassRecVideoItem = (jclass)env->NewGlobalRef(tmpDlnaRecVideoItem);
         if (NULL == mEvent.mJClassRecVideoItem) {
             goto error_2;
@@ -224,7 +233,6 @@ namespace dtvt {
         }
 
         // set a callback function which is called before the device information are stored in the device manager when new devices join to the network.
-        //dupnp_cp_dvcmgr_set_allow_join_handler(&mDMP.deviceManager, allowJoinHandler, 0);
         dupnp_cp_dvcmgr_set_allow_join_handler(&mDMP.deviceManager, Dlna::allowJoinHandler, this);
 
         // set a callback function which is called after the device information are stored in the device manager when new devices join to the network.
@@ -350,7 +358,11 @@ namespace dtvt {
         if (NULL == arg) {
             return;
         }
+        DlnaRecVideoXmlParser* parser=NULL;
         Dlna *thiz = (Dlna *) arg;
+        IfNullReturn(thiz);
+        IfNullReturn(thiz->mDlnaRecVideoXmlParser);
+
         std::vector<std::vector<std::string> > vv;
         dmp *d = &thiz->mDMP;
 
@@ -361,7 +373,8 @@ namespace dtvt {
             goto error;
         }
 
-        thiz->mDlnaRecVideoXmlParser.parse((void *) response->body, vv);
+        parser = (DlnaRecVideoXmlParser*)thiz->mDlnaRecVideoXmlParser;
+        parser->parse((void *) response->body, vv);
         if(0==vv.size()){
             return;
         }
@@ -630,39 +643,79 @@ namespace dtvt {
         return sendSoap(ctl);
     }
 
+    /**
+     * デバイスディスクリプションを解析してデバイス情報を設定する
+     *
+     * @param x
+     * @param device
+     * @param dvcdsc
+     * @param arg
+     * @return このデバイスをデバイスマネージャーが管理するリストに追加する場合 1 追加しない場合 0
+     */
     /*static*/ du_bool Dlna::allowJoinHandler(dupnp_cp_dvcmgr *x, dupnp_cp_dvcmgr_device *device,
                                               dupnp_cp_dvcmgr_dvcdsc *dvcdsc, void *arg) {
+        dms_info* info;
+
+        // イスディスクリプションを解析
+        info = createDmsInfoXmlDoc(dvcdsc->xml, dvcdsc->xml_len, device->udn, device->device_type, device->location);
+        if (!info){
+            return 0; // このデバイスをデバイスマネージャーの管理リストに追加しません
+        }
+        // 特定のDMS に限定する場合は friendly_name を指定する
+        if (NULL == strstr((char*)info->friendly_name, "特定のDMSのfriendly_name")){
+//        return 0; // このデバイスをデバイスマネージャーの管理リストに追加しません
+        }
+        device->user_data = (void*)info; // デバイスディスクリプションの解析情報 ※leaveHandlerで解放すること
+
         return 1;
     }
 
+    /**
+     * デバイス検出
+     *
+     * @param x
+     * @param device
+     * @param dvcdsc
+     * @param arg
+     */
     /*static*/ void Dlna::joinHandler(dupnp_cp_dvcmgr *x, dupnp_cp_dvcmgr_device *device,
                                       dupnp_cp_dvcmgr_dvcdsc *dvcdsc, void *arg) {
         if (NULL == arg || NULL == dvcdsc || NULL == dvcdsc->xml) {
             return;
         }
         Dlna *thiz = (Dlna *) arg;
-
-        std::string content((char *) dvcdsc->location);
-
-        content.append((char *) dvcdsc->xml);
+        IfNullReturn(thiz);
+        IfNullReturn(thiz->mDlnaDevXmlParser);
 
         std::vector<std::vector<std::string> > vv;
-        thiz->mDlnaDevXmlParser.parse(dvcdsc, vv);
+        DlnaDevXmlParser* parser= (DlnaDevXmlParser*)thiz->mDlnaDevXmlParser;
+        parser->parse(device, vv);
         if(0==vv.size()){
             return;
         }
 
-        thiz->notify(DLNA_MSG_ID_DEV_DISP_JOIN, content);
+        thiz->notifyObject(Dlna::DLNA_MSG_ID_DEV_DISP_JOIN, vv);
     }
 
+    /**
+     * デバイスの停止：デバイス情報の解放
+     *
+     * @param x
+     * @param device
+     * @param arg
+     * @return
+     */
     /*static*/ du_bool
     Dlna::leaveHandler(dupnp_cp_dvcmgr *x, dupnp_cp_dvcmgr_device *device, void *arg) {
         if (NULL == arg || NULL == device || NULL == device->udn) {
             return 1;
         }
         Dlna *thiz = (Dlna *) arg;
+        dms_info *info = (dms_info*)device->user_data;
 
         std::string content((char *) device->udn);
+        freeDmsInfoXmlDoc(info);    // allowJoinHandler#createDmsInfoXmlDoc で取得したデバイス情報の解放
+
         thiz->notify(DLNA_MSG_ID_DEV_DISP_LEAVE, content);
 
         return 1;

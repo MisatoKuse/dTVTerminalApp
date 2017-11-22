@@ -39,7 +39,7 @@ namespace dtvt {
 
     //DlnaDmsItem フィールド定義
     const char * const DmsItem_Field_mUdn           ="mUdn";
-    const char * const DmsItem_Field_mControlUrl    ="mContFalserolUrl";
+    const char * const DmsItem_Field_mControlUrl    ="mControlUrl";
     const char * const DmsItem_Field_mHttp          ="mHttp";
     const char * const DmsItem_Field_mFriendlyName  ="mFriendlyName";
 
@@ -53,8 +53,9 @@ namespace dtvt {
     const char * const Dlna_Java_String_Path = "java/lang/String";    //"Ljava/lang/String;";
 
     #define IfNullGoTo(var, where) { if (NULL == (var) ) { goto  where; } }
-    #define IfGoTo(var, where) { if ( !(var) ) { goto  where; } }
+    //#define IfGoTo(var, where) { if ( !(var) ) { goto  where; } }
     #define IfNullReturn(var) { if (NULL == (var) ) { return; } }
+    #define DelIfNotNull(obj) {  if(NULL!=(obj)) { delete obj; obj = NULL; }  }
 
 } //namespace dtvt
 

@@ -17,7 +17,7 @@ namespace dtvt {
      * 機能：DLNA objectを作成
      */
     extern "C" jlong
-    Java_test_jni_jni_DlnaInterface_nativeCreateDlnaObject(JNIEnv *env, jobject obj) {
+    Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterface_nativeCreateDlnaObject(JNIEnv *env, jobject obj) {
         jlong result;
         result = (jlong) new Dlna();
         return result;
@@ -27,7 +27,7 @@ namespace dtvt {
      * 機能：DLNAを開始
      */
     extern "C" jboolean JNICALL
-    Java_test_jni_jni_DlnaInterface_nativeStartDlna(JNIEnv *env, jobject obj, jlong thiz) {
+    Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterface_nativeStartDlna(JNIEnv *env, jobject obj, jlong thiz) {
         unsigned char ret = 0;
         Dlna *dlnaPtr = (Dlna *) thiz;
         if (NULL == dlnaPtr) {
@@ -44,7 +44,7 @@ namespace dtvt {
      * 機能：DLNAを停止
      */
     extern "C" void JNICALL
-    Java_test_jni_jni_DlnaInterface_nativeStopDlna(JNIEnv *env, jobject obj, jlong thiz) {
+    Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterface_nativeStopDlna(JNIEnv *env, jobject obj, jlong thiz) {
         Dlna *dlnaPtr = (Dlna *) thiz;
         if (NULL == dlnaPtr) {
             return;
@@ -57,7 +57,7 @@ namespace dtvt {
      * 機能：コンテンツ一覧を取得
      */
     extern "C" jboolean JNICALL
-    Java_test_jni_jni_DlnaInterface_browseRecVideoDms__JLjava_lang_String_2(JNIEnv *env, jobject instance,
+    Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterface_browseRecVideoDms(JNIEnv *env, jobject instance,
                                                                     jlong thiz, jstring ctl_) {
         if (NULL == ctl_) {
             return JNI_FALSE;
