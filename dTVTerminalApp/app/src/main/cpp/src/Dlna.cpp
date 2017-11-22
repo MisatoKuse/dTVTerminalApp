@@ -693,7 +693,7 @@ namespace dtvt {
     }
 
     bool Dlna::browseDms(std::string controlUrl) {
-        return sendSoap(controlUrl);
+        return sendSoap(controlUrl, "/external/video/media/all_videos");
     }
 
     /**
