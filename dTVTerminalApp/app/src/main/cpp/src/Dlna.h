@@ -65,7 +65,7 @@ namespace dtvt {
 
         void stop();
 
-        bool browseDms(const du_uchar *udn);
+        bool browseDms(std::string controlUrl);
 
         static du_bool allowJoinHandler(dupnp_cp_dvcmgr *x, dupnp_cp_dvcmgr_device *device,
                                         dupnp_cp_dvcmgr_dvcdsc *dvcdsc, void *arg);
@@ -92,7 +92,7 @@ namespace dtvt {
 
         bool initDevEnv();
 
-        bool sendSoap(const du_uchar *ctl);
+        bool sendSoap(std::string controlUrl, std::string objectId="0", const int startingIndex=0, const int requestCount=0, std::string browseFlag="BrowseDirectChildren");
 
         void notify(int msg, std::string content);
         void notifyObject(int msg, vector<StringVector> & vecVecContents);
