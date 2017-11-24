@@ -139,10 +139,14 @@
         android:gravity="center_vertical|start"
         android:background="@drawable/selector_btn_click_bg"
         android:textColor="@drawable/selector_text_click_bg"
+        android:layout_marginRight="@dimen/launch_stb_list_start_margin"
+        android:layout_marginLeft="@dimen/launch_stb_list_start_margin"
         android:layout_marginBottom="@dimen/launch_text_bottom_margin"
         android:visibility="gone"
         android:paddingStart="@dimen/launch_text_left_padding"
-        android:paddingEnd="@dimen/launch_text_end_padding"
+        android:paddingEnd="@dimen/launch_text_right_padding"
+        android:maxLines="1"
+        android:ellipsize="end"
         />
 
 </RelativeLayout>

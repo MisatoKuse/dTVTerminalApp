@@ -486,8 +486,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         displayMoreData((false));
         // STB検索タイムアウト文言表示
         TextView statusTextView = (TextView) findViewById(R.id.stb_select_status_text);
-        // TODO TextSizeとHeight を調整 size=13dp height= 65
-        statusTextView.setHeight((int) getResources().getDimension(R.dimen.launch_stb_paring_fail_layout_high));
         statusTextView.setText(R.string.str_stb_select_result_text_failed);
 
         // STB未検出のため非表示

@@ -26,9 +26,10 @@
     <TextView
         android:id="@+id/connect_result_text"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/launch_text_left_padding"
+        android:layout_height="@dimen/launch_stb_paring_result_layout"
         android:text="@string/str_stb_connect_success_text"
         android:textColor="#FFFFFF"
+        android:gravity="center"
         android:textSize="@dimen/launch_text_size"
         android:layout_below="@+id/stb_icon_relative_layout"
         android:layout_centerHorizontal="true" />
