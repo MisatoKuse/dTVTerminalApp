@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.TotalSearchResponseData;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -215,5 +216,14 @@ public class SharedPreferencesUtils {
         return data.getBoolean(SHARED_KEY_IS_DISPLAYED_TUTORIAL, false);
     }
 
+    /**
+     * SharedPreferences内の接続済みSTBのデータをクリア
+     */
+    public static void resetSharedPreferencesStbInfo(Context context) {
+        DTVTLogger.debug("resetSharedPreferencesStbInfo");
+        SharedPreferences data = context.getSharedPreferences(
+                SHARED_KEY_SELECTED_STB_DATA_INFOMATION, Context.MODE_PRIVATE);
+        data.edit().clear().apply();
+    }
 
 }

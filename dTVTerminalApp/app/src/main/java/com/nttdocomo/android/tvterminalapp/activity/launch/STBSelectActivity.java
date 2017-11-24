@@ -42,7 +42,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     public static final String StateModeRepair = "Repair";
     private boolean mIsNextTimeHide = false;
     CheckBox mCheckBoxSTBSelectActivity = null;
-    TextView mUseWithoutPairingSTBParingInvitationActivity = null;
+    TextView useWithoutPairingSTBParingInvitationTextView = null;
     Button mDAccountLoginYesSTBSelectActivity = null;
     Button mDAccountLoginNoSTBSelectActivity = null;
     Button mDAccountAppliYesSTBSelectActivity = null;
@@ -58,6 +58,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private DlnaProvDevList mDlnaProvDevList = null;
     private RelativeLayout mRelativeLayout;
     private StbInfoCallBackTimer mCallbackTimer = null;
+    private DlnaDMSInfo mDlnaDMSInfo = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +108,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, (int) (mHight / 5));
         mRelativeLayout.setLayoutParams(params);
-        setContents();
+
         DTVTLogger.end();
     }
 
@@ -127,9 +128,9 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private void setContents() {
         DTVTLogger.start();
         mRelativeLayout = findViewById(R.id.stb_icon_relative_layout);
-        mUseWithoutPairingSTBParingInvitationActivity = (TextView) findViewById(
-                R.id.useWithoutPairingSTBParingInvitationActivity);
-        mUseWithoutPairingSTBParingInvitationActivity.setOnClickListener(this);
+        useWithoutPairingSTBParingInvitationTextView = (TextView) findViewById(
+                R.id.useWithoutPairingSTBParingInvitation);
+        useWithoutPairingSTBParingInvitationTextView.setOnClickListener(this);
 
         mCheckBoxSTBSelectActivity = (CheckBox) findViewById(R.id.checkBoxSTBSelectActivity);
         mCheckBoxSTBSelectActivity.setOnClickListener(this);
@@ -162,8 +163,12 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     public void onResume() {
         super.onResume();
         DTVTLogger.start();
+        // この画面に来た時点でSharedPreferencesのSTB情報をリセットする
+        SharedPreferencesUtils.resetSharedPreferencesStbInfo(this);
         if(mCallbackTimer == null) {
+            mDeviceListView.setVisibility(View.VISIBLE);
             mContentsList.clear();
+
             setDevListener();
             startCallbackTimer();
         }
@@ -191,8 +196,10 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      */
     public void leaveActivity() {
         DTVTLogger.start();
-        stopCallbackTimer();
-        mCallbackTimer = null;
+        if(mCallbackTimer != null) {
+            stopCallbackTimer();
+            mCallbackTimer = null;
+        }
         mDlnaProvDevList.stopListen();
         DTVTLogger.end();
     }
@@ -208,8 +215,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 
         // STBが見つかるまで非表示
         mCheckBoxSTBSelectActivity.setVisibility(View.INVISIBLE);
-        TextView checkBoxText = (TextView)findViewById(R.id.useWithoutPairingSTBParingInvitation);
-        checkBoxText.setVisibility(View.INVISIBLE);
+
         DTVTLogger.end();
     }
 
@@ -238,7 +244,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     public void onClick(View v) {
         // TODO dアカウント取得画面実装時に一部を除いて削除
         DTVTLogger.start();
-        if (v.equals(mUseWithoutPairingSTBParingInvitationActivity)) {
+        if (v.equals(useWithoutPairingSTBParingInvitationTextView)) {
             onUseWithoutPairingButton();
         } else if (v.equals(mDAccountLoginYesSTBSelectActivity)) {
             onDAccountLoginYesButton();
@@ -356,9 +362,15 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         DTVTLogger.start();
-        // TODO SharedにDataを保存
-        mDlnaProvDevList.stopListen();
-        startActivity(STBConnectActivity.class, null);
+        if(!mCallbackTimer.timerTaskExecuted() ) {
+            // SharedPreferencesにSTBデータを保存
+            if(mDlnaDMSInfo != null) {
+                SharedPreferencesUtils.setSharedPreferencesStbInfo(this, mDlnaDMSInfo.get(i));
+            }
+            mDlnaProvDevList.stopListen();
+            // TODO dアカウントクラス実装時に遷移先を修正
+            startActivity(STBConnectActivity.class, null);
+        }
         DTVTLogger.end();
     }
 
@@ -409,6 +421,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             data.setDeviceName(info.get(i).mFriendlyName);
             mContentsList.add(data);
         }
+        mDlnaDMSInfo = info;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -434,13 +447,18 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      * @param b
      */
     private void displayMoreData(boolean b) {
-        DTVTLogger.start();
+        DTVTLogger.start("displayMoreData:" + b);
         if (null != mDeviceListView && null != mLoadMoreView) {
             if (b) {
                 mDeviceListView.addFooterView(mLoadMoreView);
             } else {
                 mDeviceListView.removeFooterView(mLoadMoreView);
             }
+        } else if(null == mDeviceListView){
+            DTVTLogger.debug("mDeviceListView is Null");
+
+        } else {
+            DTVTLogger.debug("mLoadMoreView is Null");
         }
         DTVTLogger.end();
     }
@@ -453,7 +471,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         showSearchingView();
         displayMoreData(true);
         if(mCallbackTimer == null) {
-            mCallbackTimer = new StbInfoCallBackTimer();
+            mCallbackTimer = new StbInfoCallBackTimer(new Handler());
         }
         mCallbackTimer.executeTimerTask();
         DTVTLogger.end();
@@ -465,6 +483,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private void stopCallbackTimer() {
         DTVTLogger.start();
         displayMoreData(false);
+        mCallbackTimer.mTimeout = false;
         mCallbackTimer.cancel();
         DTVTLogger.end();
     }
@@ -477,12 +496,12 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         displayMoreData((false));
         // STB検索タイムアウト文言表示
         TextView statusTextView = (TextView)findViewById(R.id.stb_select_status_text);
+        // TODO TextSizeとHeight を調整 size=13dp height= 65
         statusTextView.setText(R.string.str_stb_select_result_text_failed);
 
         // STB未検出のため非表示
         mCheckBoxSTBSelectActivity.setVisibility(View.INVISIBLE);
-        TextView checkBoxText = (TextView)findViewById(R.id.useWithoutPairingSTBParingInvitation);
-        checkBoxText.setVisibility(View.INVISIBLE);
+
         // リストを非表示
         mDeviceListView.setVisibility(View.GONE);
         mDlnaProvDevList.stopListen();
@@ -495,9 +514,12 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         private final long STB_SEARCH_TIMEOUT = 30000;
         private TimerTask mTimerTask = null;
         // タイムアウト判定
-        private boolean mTimeout = false;
+        private boolean mTimeout = true;
+        private Handler mHandler = null;
 
-        public StbInfoCallBackTimer() {}
+        public StbInfoCallBackTimer(Handler handler) {
+            mHandler = handler;
+        }
 
         /**
          * TimerTask実行予約処理
@@ -518,8 +540,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 @Override
                 public void run() {
                     // タイムアウト処理
-                    final Handler handler = new Handler();
-                    handler.post(new Runnable() {
+                    mHandler.post(new Runnable() {
                         @Override
                         public void run() {
                             showTimeoutView();
