@@ -5,7 +5,6 @@
 package com.nttdocomo.android.tvterminalapp.common;
 
 
-
 public class UrlConstants {
 
     public class WebApiUrl {
@@ -18,5 +17,12 @@ public class UrlConstants {
         public static final String RECOMMEND_LIST_GET_URL =
                 //"http://ve.m.support2.smt.docomo.ne.jp/srermd/recommend/index.do";
                 "https://ve.m.support2.smt.docomo.ne.jp/srermd/recommend/index.do";
+
+        //TODO: 本物のぷららサーバーが提供されるまでは、テストサーバーのアドレスを指定する
+        /**
+         * ぷららサーバーAPIアクセス用のベースURL
+         */
+        public static final String plalaBaseUrl = "http://192.168.2.3/";
+
     }
 }
