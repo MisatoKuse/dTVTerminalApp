@@ -7,6 +7,8 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -48,12 +50,6 @@ public class WebApiBasePlala {
      * コールバックのインスタンス
      */
     private WebApiBasePlalaCallback mWebApiBasePlalaCallback;
-
-
-    //仮のベースURL
-    //TODO: 本物のサーバーが提供されるまでは、テストサーバーのアドレスとを指定する
-    private static final String baseUrl = "http://192.168.2.224:1445/";
-    //private static final String baseUrl = "http://192.168.2.127/";
 
     //通信停止用コネクション蓄積
     private volatile static List<HttpURLConnection> mUrlConnections = null;
@@ -144,7 +140,7 @@ public class WebApiBasePlala {
          * APIではないので、例外としてURL全体を指定する
          * TODO: 当然後ほど変更する事となる。
          */
-        GENRE_LIST_FILE("http://192.168.2.224:1445/genreList_sample_1445.json"),
+        GENRE_LIST_FILE(UrlConstants.WebApiUrl.plalaBaseUrl + "genreList_sample_1445.json"),
 
         /**
          * ジャンル毎コンテンツ数取得
@@ -561,7 +557,7 @@ public class WebApiBasePlala {
                     url = new URL(mSourceUrl);
                 } else {
                     //ベースURLとAPIの名前を組み合わせてURLとして開く
-                    url = new URL(baseUrl + mSourceUrl);
+                    url = new URL(UrlConstants.WebApiUrl.plalaBaseUrl + mSourceUrl);
                 }
 
                 //指定された名前で開く
