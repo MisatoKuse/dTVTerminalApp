@@ -16,7 +16,7 @@
     <string name="str_tutorial_title">チュートリアル画面</string>
     <string name="str_stb_select_title">STB選択</string>
     <string name="str_stb_select_result_text">ペアリング可能なデバイスが\n見つかりました。</string>
-    <string name="str_stb_next_not_display_text">\t\t次回以降表示しない</string>
+    <string name="str_stb_next_not_display_text">\t次回以降表示しない</string>
     <string name="str_stb_connect_title">STB接続</string>
     <string name="str_stb_connect_success_text">STBとペアリングしました</string>
     <string name="str_stb_pair_invitation_title">STBペアリング勧誘</string>
