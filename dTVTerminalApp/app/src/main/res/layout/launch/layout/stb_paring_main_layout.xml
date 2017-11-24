@@ -11,7 +11,7 @@
     <RelativeLayout
         android:id="@+id/stb_icon_relative_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="@dimen/launch_relative_layout_high_size">
 
         <ImageView
             android:id="@+id/paring_connecting_icon"
@@ -28,7 +28,7 @@
     <TextView
         android:id="@+id/connect_result_text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/launch_stb_paring_result_layout"
         android:gravity="center"
         android:text="@string/str_stb_pair_invitation_text"
         android:textColor="#FFFFFF"
