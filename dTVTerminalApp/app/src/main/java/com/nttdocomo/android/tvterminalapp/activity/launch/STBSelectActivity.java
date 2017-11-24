@@ -150,6 +150,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         // この画面に来た時点でSharedPreferencesのSTB情報をリセットする
         SharedPreferencesUtils.resetSharedPreferencesStbInfo(this);
         if (mCallbackTimer == null) {
+            mContentsList = new ArrayList();
             setContents();
             initView();
             mDeviceListView.setVisibility(View.VISIBLE);
@@ -182,6 +183,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start();
         if (mCallbackTimer != null) {
             stopCallbackTimer();
+            mCallbackTimer.cancel();
             mCallbackTimer = null;
         }
         mDlnaProvDevList.stopListen();
@@ -474,7 +476,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start();
         displayMoreData(false);
         mCallbackTimer.mTimeout = false;
-        mCallbackTimer.cancel();
+        mCallbackTimer.timerTaskCancel();
         DTVTLogger.end();
     }
 
