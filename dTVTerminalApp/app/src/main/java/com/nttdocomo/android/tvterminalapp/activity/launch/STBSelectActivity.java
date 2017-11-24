@@ -150,9 +150,9 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         // この画面に来た時点でSharedPreferencesのSTB情報をリセットする
         SharedPreferencesUtils.resetSharedPreferencesStbInfo(this);
         if (mCallbackTimer == null) {
+            setContents();
+            initView();
             mDeviceListView.setVisibility(View.VISIBLE);
-            mContentsList.clear();
-
             setDevListener();
             startCallbackTimer();
         }
