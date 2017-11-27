@@ -4,6 +4,7 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/tv_player_main_layout_video_ctrl_player_video_root"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent">
@@ -38,6 +39,7 @@
 		android:textSize="20dp"/>
 
 	<ImageView
+		android:id="@+id/tv_player_ctrl_video_record_rewind_iv"
 		android:layout_width="20dp"
 		android:layout_height="wrap_content"
 		android:layout_centerInParent="true"
@@ -57,6 +59,7 @@
 		android:textSize="20dp"/>
 
 	<ImageView
+		android:id="@+id/tv_player_ctrl_video_record_fast_iv"
 		android:layout_width="20dp"
 		android:layout_height="wrap_content"
 		android:layout_centerInParent="true"

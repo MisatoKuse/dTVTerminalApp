@@ -10,6 +10,7 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.os.PowerManager;
 import android.util.Log;
@@ -45,6 +46,7 @@ import java.util.Map;
 public class TvPlayerActivity extends BaseActivity implements View.OnClickListener, MediaPlayerController.OnStateChangeListener, MediaPlayerController.OnFormatChangeListener, MediaPlayerController.OnPlayerEventListener, MediaPlayerController.OnErrorListener, MediaPlayerController.OnCaptionDataListener {
 
     private static final int REFRESH_TV_VIEW = 1;
+    private static final long HIDE_IN_3_SECOND = 3*1000;
     private ImageView mplayPause;
     private RelativeLayout mPlayerViewLayout;
     private TextView mNowOnAir;
@@ -59,7 +61,6 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
     private TextView mRapid;
     private SeekBar mProgress;
     private static final int REFRESH_VIDEO_VIEW = 0;
-    private long lastTime;
     private static final int NOW_ON_AIR_MODE = 1;
     private static final int VIDEO_RECORDING_MODE = 2;
     private int curMode = VIDEO_RECORDING_MODE;
@@ -86,6 +87,19 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
 
     private final static int ACTIVATION_REQUEST_CODE = 1;
     private final static int ACTIVATION_REQUEST_MAX_CNT= 3;
+    private RelativeLayout mVideoCtrlRootView;
+    private TextView mVideoRewind10;
+    private ImageView mVideoRewind;
+    private TextView mVideofast30;
+    private ImageView mVideofast;
+    private RelativeLayout mVideoCtrlBar;
+    private Handler mTvCtrlHandler = new Handler(Looper.getMainLooper());
+    private Runnable mHideVideoViewThread = new Runnable() {
+        @Override
+        public void run() {
+            hideVideoCtrlView(View.INVISIBLE);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -273,27 +287,6 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
         );
     }
 
-    private void setCtrlEvent(final RelativeLayout ctrlView) {
-        mSecureVideoPlayer.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent me) {
-                switch (me.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        ctrlView.setVisibility(View.VISIBLE);
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        lastTime = System.currentTimeMillis();
-                        break;
-                    default:
-                        break;
-                }
-                return true;
-            }
-        });
-    }
-
     private void initView() {
         mPlayerViewLayout = findViewById(R.id.tv_player_main_layout_player_rl);
         RelativeLayout.LayoutParams playerParams = (RelativeLayout.LayoutParams) mSecureVideoPlayer.getLayoutParams();
@@ -314,11 +307,16 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
             mPlayerViewLayout.addView(mTvCtrlView);
             //初期化の時点から、handlerにmsgを送る
             viewRefresher.sendEmptyMessage(REFRESH_TV_VIEW);
-            setCtrlEvent(mTvCtrlView);
         }else if(getCurMode() == VIDEO_RECORDING_MODE){//録画
             mRecordCtrlView = (RelativeLayout) LayoutInflater.from(this)
                     .inflate(R.layout.tv_player_ctrl_video_record, null, false);
             mVideoPlayPause = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_player_pause_fl);
+            mVideoCtrlRootView = mRecordCtrlView.findViewById(R.id.tv_player_main_layout_video_ctrl_player_video_root);
+            mVideoRewind10 = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_10_tv);
+            mVideoRewind = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_rewind_iv);
+            mVideofast30 = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_30_tv);
+            mVideofast = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_fast_iv);
+            mVideoCtrlBar = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_control_bar_iv);
             mVideoCurTime = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_cur_time_tv);
             mVideoFullScreen = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_full_screen_iv);
             mVideoRapid = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_rapid_tv);
@@ -327,12 +325,13 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
             mVideoPlayPause.setOnClickListener(this);
             mVideoFullScreen.setOnClickListener(this);
             mVideoRapid.setOnClickListener(this);
+            mVideoCtrlRootView.setOnClickListener(this);
             setVideoSeekBarListener(mVideoSeekBar);
             mRecordCtrlView.setLayoutParams(playerParams);
             mPlayerViewLayout.addView(mRecordCtrlView);
             //初期化の時点から、handlerにmsgを送る
             viewRefresher.sendEmptyMessage(REFRESH_VIDEO_VIEW);
-            setCtrlEvent(mRecordCtrlView);
+            hideVideoCtrlView(View.INVISIBLE);
         }
         pauseButton();
     }
@@ -422,9 +421,34 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
             case R.id.tv_player_ctrl_now_on_air_rapid_tv:
                 Toast.makeText(this,"タップで倍速で再生",Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.tv_player_main_layout_video_ctrl_player_video_root:
+                if(mVideoPlayPause.getVisibility() == View.VISIBLE){
+                    hideVideoCtrlView(View.INVISIBLE);
+                }else {
+                    mVideoPlayPause.setVisibility(View.VISIBLE);
+                    mVideoRewind10.setVisibility(View.VISIBLE);
+                    mVideoRewind.setVisibility(View.VISIBLE);
+                    mVideofast30.setVisibility(View.VISIBLE);
+                    mVideofast.setVisibility(View.VISIBLE);
+                    mVideoCtrlBar.setVisibility(View.VISIBLE);
+                }
+                if(mTvCtrlHandler != null){
+                    mTvCtrlHandler.removeCallbacks(mHideVideoViewThread);
+                }
+                mTvCtrlHandler.postDelayed(mHideVideoViewThread,HIDE_IN_3_SECOND);
+                break;
             default:
                 break;
         }
+    }
+
+    private void hideVideoCtrlView(int invisible) {
+        mVideoPlayPause.setVisibility(invisible);
+        mVideoRewind10.setVisibility(invisible);
+        mVideoRewind.setVisibility(invisible);
+        mVideofast30.setVisibility(invisible);
+        mVideofast.setVisibility(invisible);
+        mVideoCtrlBar.setVisibility(invisible);
     }
 
     /**
@@ -463,11 +487,6 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                 //time2TextViewFormat(mTotalDur, totalDur);
                 mTvSeekBar.setMax(totalDur);
                 mTvSeekBar.setProgress(currentPosition);
-                //3秒以上無操作であれば消える
-                if (System.currentTimeMillis() - lastTime > 3 * 1000
-                        && mTvCtrlView.getVisibility() == View.VISIBLE) {
-                    mTvCtrlView.setVisibility(View.INVISIBLE);
-                }
                 viewRefresher.sendEmptyMessageDelayed(REFRESH_TV_VIEW, 500);
             }
             if (msg.what == REFRESH_VIDEO_VIEW) {//録画
@@ -483,11 +502,6 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                     /*mVideoCurTime.setVisibility(View.INVISIBLE);
                     mReplay.setVisibility(View.VISIBLE);*/
                     // TODO: 2017/11/21 pause/playIcon変更
-                }
-                //3秒以上無操作であれば消える
-                if (System.currentTimeMillis() - lastTime > 3 * 1000
-                        && mRecordCtrlView.getVisibility() == View.VISIBLE) {
-                    mRecordCtrlView.setVisibility(View.INVISIBLE);
                 }
                 viewRefresher.sendEmptyMessageDelayed(REFRESH_VIDEO_VIEW, 500);
             }
