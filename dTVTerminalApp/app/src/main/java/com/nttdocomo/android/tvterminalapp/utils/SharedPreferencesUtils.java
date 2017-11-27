@@ -104,7 +104,7 @@ public class SharedPreferencesUtils {
         editor.putString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_CONTROL_URL, item.mControlUrl);
         editor.putString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_HTTP, item.mHttp);
         editor.putString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_FRIENDLY_NAME, item.mFriendlyName);
-//        editor.putString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_IPV6_ADDRESS, item.mIPAddress);
+        editor.putString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_IPV6_ADDRESS, item.mIPAddress);
         editor.apply();
         DTVTLogger.end();
     }
@@ -191,7 +191,7 @@ public class SharedPreferencesUtils {
         item.mControlUrl = data.getString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_CONTROL_URL, SHARED_GET_STRING_DEFAULT);
         item.mHttp = data.getString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_HTTP, SHARED_GET_STRING_DEFAULT);
         item.mFriendlyName = data.getString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_FRIENDLY_NAME, SHARED_GET_STRING_DEFAULT);
-//        item.mIPAddress = data.getString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_IPV6_ADDRESS, SHARED_GET_STRING_DEFAULT);
+        item.mIPAddress = data.getString(SHARED_KEY_SELECTED_STB_DATA_INFOMATION_IPV6_ADDRESS, SHARED_GET_STRING_DEFAULT);
 
         return item;
     }
