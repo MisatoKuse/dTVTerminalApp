@@ -357,7 +357,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         DTVTLogger.start();
-        if (!mCallbackTimer.timerTaskExecuted()) {
+        if (mCallbackTimer.timerTaskExecuted()) {
             // SharedPreferencesにSTBデータを保存
             if (mDlnaDMSInfo != null) {
                 SharedPreferencesUtils.setSharedPreferencesStbInfo(this, mDlnaDMSInfo.get(i));
