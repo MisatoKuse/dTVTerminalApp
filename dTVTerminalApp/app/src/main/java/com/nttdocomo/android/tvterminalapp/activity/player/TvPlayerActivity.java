@@ -21,6 +21,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.digion.dixim.android.secureplayer.SecureVideoView;
+import com.digion.dixim.android.secureplayer.SecuredMediaPlayerController;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 
@@ -60,13 +62,17 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
     private TextView mVideoRapid;
     private TextView mVideoTotalTime;
     private SeekBar mVideoSeekBar;
+    private SecureVideoView mSecureVideoPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tv_player_main_layout);
-        initView();
-        tempUriData();
+        mSecureVideoPlayer = findViewById(R.id.tv_player_main_layout_player_vv);
+        SecuredMediaPlayerController mPlayerController = new SecuredMediaPlayerController(this,true,true,true);
+        mSecureVideoPlayer.init(mPlayerController);
+        mPlayerController.start();
+
     }
 
     private void setCtrlEvent(final RelativeLayout ctrlView) {
@@ -88,14 +94,6 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                 return true;
             }
         });
-    }
-
-    private void tempUriData() {
-        mPlayerView.setVideoURI(Uri.parse("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"));
-        MediaController ctr = new MediaController(this);
-        mPlayerView.setMediaController(ctr);
-        ctr.setMediaPlayer(mPlayerView);
-        mPlayerView.start();
     }
 
     private void initView() {

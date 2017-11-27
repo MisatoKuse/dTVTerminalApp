@@ -11,7 +11,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
 
-		<VideoView
+		<com.digion.dixim.android.secureplayer.SecureVideoView
 			android:id="@+id/tv_player_main_layout_player_vv"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"/>
