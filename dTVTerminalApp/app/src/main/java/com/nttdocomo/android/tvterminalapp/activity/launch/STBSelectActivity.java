@@ -416,6 +416,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             ContentsData data = new ContentsData();
             data.setDeviceName(info.get(i).mFriendlyName);
             DTVTLogger.debug("ContentsList.size = " + info.get(i).mFriendlyName);
+//            DTVTLogger.debug("DlnaDMSInfo.mIPAddress = " + info.get(i).mIPAddress);
             mContentsList.add(data);
         }
         mDlnaDMSInfo = info;
