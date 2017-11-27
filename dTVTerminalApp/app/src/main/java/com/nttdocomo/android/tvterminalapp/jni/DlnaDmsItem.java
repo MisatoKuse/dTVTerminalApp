@@ -21,6 +21,8 @@ public class DlnaDmsItem {
     public String mHttp="";
     //Friendly名
     public String mFriendlyName="";
+    //IPアドレス
+    public String mIPAddress="";
 
     //to do: 使用する必要があれば、新しいフィールドをここで追加
 
