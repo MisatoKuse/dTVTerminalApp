@@ -374,9 +374,8 @@ public class ContentsAdapter extends BaseAdapter {
     /**
      * データの設定
      */
-    private void setShowDataVisiblity(ViewHolder holder) {
-        DTVTLogger.start();
     private void setShowDataVisibility(ViewHolder holder) {
+        DTVTLogger.start();
         switch (type) {
             case TYPE_DAILY_RANK: // 今日のテレビランキング
             case TYPE_WEEKLY_RANK: // 週間ランキング
