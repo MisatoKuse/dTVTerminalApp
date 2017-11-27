@@ -109,6 +109,11 @@ public class VideoTopActivity extends BaseActivity implements View.OnClickListen
         Bundle bundle = new Bundle();
         VideoGenreList videoGenreList = (VideoGenreList) mContentsList.get(position);
 
+        //"すべて"は画面遷移なし
+        if(videoGenreList.getTitle().equals(getString(R.string.video_content_all_title))){
+            return;
+        }
+
         // サブジャンル有無フラグ設定
         boolean endGenreFlag = false;
         ArrayList<GenreListMetaData.SubContent> subGenre = videoGenreList.getSubGenre();
