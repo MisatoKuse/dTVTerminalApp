@@ -29,7 +29,6 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 public class TvPlayerActivity extends BaseActivity implements View.OnClickListener {
 
     private static final int REFRESH_TV_VIEW = 1;
-    private VideoView mPlayerView;
     private ImageView mplayPause;
     private RelativeLayout mPlayerViewLayout;
     private TextView mNowOnAir;
@@ -63,20 +62,22 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
     private TextView mVideoTotalTime;
     private SeekBar mVideoSeekBar;
     private SecureVideoView mSecureVideoPlayer;
+    private SecuredMediaPlayerController mPlayerController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tv_player_main_layout);
         mSecureVideoPlayer = findViewById(R.id.tv_player_main_layout_player_vv);
-        SecuredMediaPlayerController mPlayerController = new SecuredMediaPlayerController(this,true,true,true);
+        initView();
+        mPlayerController = new SecuredMediaPlayerController(this,true,true,true);
         mSecureVideoPlayer.init(mPlayerController);
         mPlayerController.start();
 
     }
 
     private void setCtrlEvent(final RelativeLayout ctrlView) {
-        mPlayerView.setOnTouchListener(new View.OnTouchListener() {
+        mSecureVideoPlayer.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent me) {
                 switch (me.getAction()) {
@@ -97,11 +98,10 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void initView() {
-        mPlayerView = findViewById(R.id.tv_player_main_layout_player_vv);//表示されるため、一時VideoViewを使っている
         mPlayerViewLayout = findViewById(R.id.tv_player_main_layout_player_rl);
-        RelativeLayout.LayoutParams playerParams = (RelativeLayout.LayoutParams) mPlayerView.getLayoutParams();
+        RelativeLayout.LayoutParams playerParams = (RelativeLayout.LayoutParams) mSecureVideoPlayer.getLayoutParams();
         playerParams.height = getHeightDensity() * 4 / 11;
-        mPlayerView.setLayoutParams(playerParams);
+        mSecureVideoPlayer.setLayoutParams(playerParams);
         if(getCurMode() == NOW_ON_AIR_MODE){//リニア放送中
             mTvCtrlView = (RelativeLayout) LayoutInflater.from(this)
                     .inflate(R.layout.tv_player_ctrl_now_on_air, null, false);
@@ -154,7 +154,7 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 int progress = seekBar.getProgress();
-                mPlayerView.seekTo(progress);
+                mPlayerController.seekTo(progress);
                 viewRefresher.sendEmptyMessage(REFRESH_VIDEO_VIEW);
             }
         });
@@ -238,8 +238,8 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if(msg.what == REFRESH_TV_VIEW){//NOW ON AIR
-                int currentPosition = mPlayerView.getCurrentPosition();
-                int totalDur = mPlayerView.getDuration();
+                int currentPosition = mPlayerController.getCurrentPosition();
+                int totalDur = mPlayerController.getDuration();
                 //time2TextViewFormat(mCurTime, currentPosition);
                 //time2TextViewFormat(mTotalDur, totalDur);
                 mTvSeekBar.setMax(totalDur);
@@ -252,8 +252,8 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                 viewRefresher.sendEmptyMessageDelayed(REFRESH_TV_VIEW, 500);
             }
             if (msg.what == REFRESH_VIDEO_VIEW) {//録画
-                int currentPosition = mPlayerView.getCurrentPosition();
-                int totalDur = mPlayerView.getDuration();
+                int currentPosition = mPlayerController.getCurrentPosition();
+                int totalDur = mPlayerController.getDuration();
                 time2TextViewFormat(mVideoCurTime, currentPosition);
                 time2TextViewFormat(mVideoTotalTime, totalDur);
                 mVideoSeekBar.setMax(totalDur);
