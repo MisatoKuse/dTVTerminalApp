@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 
 public class TutorialActivity extends BaseActivity implements View.OnClickListener {
@@ -57,11 +58,8 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void onSkipOrFinish() {
-        Bundle b=new Bundle();
-        b.putString("state", LaunchActivity.mStateFromTutorialActivity);
-        startActivity(LaunchActivity.class, b);
-
-        LaunchActivity.setNotFirstRun();
+        SharedPreferencesUtils.setSharedPreferencesIsDisplayedTutorial(this,true);
+        startActivity(LaunchActivity.class, null);;
         finish();
     }
 }

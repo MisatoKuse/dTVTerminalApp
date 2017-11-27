@@ -546,7 +546,13 @@ namespace dtvt {
         }
 
         //mFriendlyName
-        ret= setJavaObjectField(env, cl, DmsItem_Field_mFriendlyName, Dlna_Java_String_Path,  *i, objOut);
+        ret= setJavaObjectField(env, cl, DmsItem_Field_mFriendlyName, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //mIPAddress
+        ret= setJavaObjectField(env, cl, DmsItem_Field_mIPAddress, Dlna_Java_String_Path,  *i, objOut);
         if(!ret){
             return false;
         }

@@ -25,6 +25,17 @@ public class ContentsData {
     // 録画番組用のチャンネル名
     private String recordedChannelName = null;
 
+    //デバイス名
+    private String deviceName = null;
+
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
+    }
+
     public String getRank() {
         return rank;
     }

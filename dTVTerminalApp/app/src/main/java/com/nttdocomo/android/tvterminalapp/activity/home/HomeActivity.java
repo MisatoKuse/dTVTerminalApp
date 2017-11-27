@@ -56,6 +56,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // TODO Bundle内の"state"ではなくSharedPreferencesからペアリング状態を取得する
         setContentView(R.layout.home_main_layout);
         setTitleText("ホーム");
         //ビューの初期化処理
@@ -340,12 +341,4 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     public void userInfoCallback(List<Map<String, String>> userList) {
 
     }
-    static {
-        System.loadLibrary("dtvtlib");
-    }
-    /**
-     * A native method that is implemented by the 'dtvtlib' native library,
-     * which is packaged with this application.
-     */
-    public native void initDummyJNI();
 }

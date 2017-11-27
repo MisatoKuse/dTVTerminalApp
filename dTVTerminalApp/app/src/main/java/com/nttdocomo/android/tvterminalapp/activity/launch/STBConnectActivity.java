@@ -4,71 +4,77 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.widget.Button;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 
 public class STBConnectActivity extends BaseActivity {
-
-    private Button mInfoSTBConnectActivity=null;
-    private boolean isStbConnected=false;
+    private boolean isStbConnected = false;
+    private static final int DELAYED_TIME = 3000;
+    private TextView mConnectResult;
+    private ImageView mParingImageView;
+    private TextView mBackIcon;
+    private final static String STATUS = "status";
+    private final static String DTVT = "dTVTerminal";
+    private Context mContext = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.stb_connect_main_layout);
-
+        mContext = this;
+        //TODO SharedPreferenceにSTB接続完了をセット
+        SharedPreferencesUtils.setSharedPreferencesStbConnect(this, true);
         setContents();
     }
 
-    @Override
-    public void onBackPressed() {
-        //super.onBackPressed();
-    }
-
-    @Override
-    public String getScreenTitle() {
-        return getString(R.string.str_stb_connect_title);
-    }
-
+    /**
+     * 画面上の表示をセットする
+     */
     private void setContents() {
-        TextView title= (TextView)findViewById(R.id.titleSTBConnectActivity);
-        title.setText(getScreenTitle());
-
-
-        mInfoSTBConnectActivity= (Button)findViewById(R.id.infoSTBConnectActivity);
-
-        handler.postDelayed(runnable, 2500);
+        DTVTLogger.start();
+        mBackIcon = findViewById(R.id.header_layout_back);
+        mBackIcon.setVisibility(View.GONE);
+        mParingImageView = findViewById(R.id.header_layout_menu);
+        mParingImageView.setImageResource(R.mipmap.ic_personal_video_white_24dp);
+        mParingImageView.setVisibility(View.VISIBLE);
+        setTitleText(getString(R.string.str_app_title));
+        mConnectResult = findViewById(R.id.connect_result_text);
+        mConnectResult.setVisibility(View.VISIBLE);
+        mConnectResult.setText(R.string.str_stb_connect_success_text);
+        handler.postDelayed(runnable, DELAYED_TIME);
+        DTVTLogger.end();
     }
 
-
+    /**
+     * STB接続できたら、ホーム画面に自動遷移する
+     */
     Handler handler = new Handler();
     Runnable runnable = new Runnable() {
-
         @Override
         public void run() {
+            DTVTLogger.start();
             try {
-                if(!isStbConnected) {
-                    mInfoSTBConnectActivity.setText("STBとペアリングしました。\n(ホーム画面に自動遷移)");
-                    isStbConnected=true;
-                    handler.postDelayed(this, 2500);
-                } else {
-                    handler.removeCallbacks(runnable);
-                    Bundle b=new Bundle();
-                    b.putString("state", LaunchActivity.mStateToHomePairingOk);
-                    startActivity(HomeActivity.class, b);
+                if (!isStbConnected) {
+                    SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
+                            mContext, true);
+                    startActivity(HomeActivity.class, null);
                 }
             } catch (Exception e) {
                 // TODO Auto-generated catch block
-                DTVTLogger.debug(e);
+                DTVTLogger.error(DTVT);
             }
+            DTVTLogger.end();
         }
     };
 }

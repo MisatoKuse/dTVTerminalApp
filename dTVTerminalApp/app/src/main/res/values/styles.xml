@@ -49,4 +49,12 @@
         <item name="android:gravity">center_vertical</item>
         <item name="android:layout_marginTop">@dimen/recorded_scroll_top_margin</item>
     </style>
+
+    <!--Launch画面-->
+    <style name="CheckBox" parent="Theme.AppCompat.Light">
+        <!-- 枠線 -->
+        <item name="colorControlNormal">@color/white_text</item>
+        <!-- チェック時の色 -->
+        <item name="colorControlActivated">@color/white_text</item>
+    </style>
 </resources>
