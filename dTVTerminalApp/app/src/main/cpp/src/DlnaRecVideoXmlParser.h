@@ -6,6 +6,8 @@
 #define DLNA_REC_VIDEO_PARSER_H
 
 #include "DlnaXmlParserBase.h"
+#include <dav_cds.h>
+#include <du_str.h>
 
 #ifdef __cplusplus
 extern "C" {

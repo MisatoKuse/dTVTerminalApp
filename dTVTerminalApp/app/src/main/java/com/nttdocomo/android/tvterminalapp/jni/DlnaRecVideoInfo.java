@@ -64,4 +64,7 @@ public class DlnaRecVideoInfo {
         return info;
     }
 
+    public ArrayList<DlnaRecVideoItem> getRecordVideoLists() {
+        return mRecordVideoLists;
+    }
 }

@@ -134,6 +134,7 @@ public class ContentsAdapter extends BaseAdapter {
      * @param listContentInfo
      */
     private void setContentsData(ViewHolder holder, ContentsData listContentInfo) {
+        DTVTLogger.start();
         setRankData(holder, listContentInfo);
         setTitleData(holder, listContentInfo);
         setTimeData(holder, listContentInfo);
@@ -258,6 +259,7 @@ public class ContentsAdapter extends BaseAdapter {
      * データの設定（録画番組用チャンネル名）
      */
     private void setRedordedRankData(ViewHolder holder, ContentsData listContentInfo) {
+        DTVTLogger.start();
         if (!TextUtils.isEmpty(listContentInfo.getRecordedChannelName())) {//ランク
             holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
             holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
@@ -269,6 +271,7 @@ public class ContentsAdapter extends BaseAdapter {
      * ビューの設定
      */
     private void setView(ViewHolder holder) {
+        DTVTLogger.start();
         DisplayMetrics DisplayMetrics = mContext.getResources().getDisplayMetrics();
         float density = DisplayMetrics.density;
         float mWidth = (float) DisplayMetrics.widthPixels / THUMBNAIL_WIDTH;
@@ -281,6 +284,7 @@ public class ContentsAdapter extends BaseAdapter {
     }
 
     private View setViewPattern(ViewGroup parent) {
+        DTVTLogger.start();
         // TODO 録画予約一覧以外のパターンも共通項目以外を抽出し、修正する
         View view = null;
         switch (type) {
@@ -305,6 +309,7 @@ public class ContentsAdapter extends BaseAdapter {
      * 共通Itemの設定
      */
     private ViewHolder setCommonListItem(ViewHolder holder, View view) {
+        DTVTLogger.start();
         holder.rl_thumbnail = view.findViewById(R.id.item_common_result_thumbnail_rl);
         holder.iv_thumbnail = view.findViewById(R.id.item_common_result_thumbnail_iv);
         holder.tv_clip = view.findViewById(R.id.item_common_result_clip_tv);
@@ -322,6 +327,7 @@ public class ContentsAdapter extends BaseAdapter {
      * Itemのパターンを設定
      */
     private ViewHolder setListItemPattern(ViewHolder holder, View view) {
+        DTVTLogger.start();
         // TODO 録画予約一覧以外のパターンも共通項目以外を抽出し、修正する
         holder = setCommonListItem(holder, view);
         switch (type) {
@@ -350,6 +356,7 @@ public class ContentsAdapter extends BaseAdapter {
      * データの設定
      */
     private void setShowDataVisiblity(ViewHolder holder) {
+        DTVTLogger.start();
         switch (type) {
             case TYPE_DAILY_RANK: // 今日のテレビランキング
             case TYPE_WEEKLY_RANK: // 週間ランキング

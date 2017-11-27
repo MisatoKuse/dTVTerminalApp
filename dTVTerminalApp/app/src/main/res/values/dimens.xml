@@ -3,7 +3,6 @@
   -->
 
 <resources>
-
     <!--Common-->
     <dimen name="header_title_text_size">17sp</dimen>
     <dimen name="list_item_title_text_size">15sp</dimen>
@@ -80,6 +79,7 @@
     <dimen name="recorded_filtering_icon_margin_end">5dp</dimen>
 
     <!--タブ共通UI-->
+    <dimen name="list_tab_start_margin_left">20dp</dimen>
     <dimen name="list_tab_margin_left">15dp</dimen>
     <dimen name="list_tab_margin_top">0dp</dimen>
     <dimen name="list_tab_margin_right">0dp</dimen>

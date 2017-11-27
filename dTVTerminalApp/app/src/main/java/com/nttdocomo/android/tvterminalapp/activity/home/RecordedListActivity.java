@@ -5,16 +5,13 @@
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
 
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
@@ -26,18 +23,22 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
+import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragmentScrollListener;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFrgament;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedFragmentFactory;
-import com.nttdocomo.android.tvterminalapp.model.search.SearchServiceType;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaProvRecVideo;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoInfo;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoItem;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecordedListActivity extends BaseActivity implements View.OnClickListener, RecordedBaseFragmentScrollListener {
-
+public class RecordedListActivity extends BaseActivity implements View.OnClickListener, RecordedBaseFragmentScrollListener
+        , DlnaRecVideoListener {
     private LinearLayout mTabLinearLayout;
     private String[] mTabNames;
     private ImageView mMenuImageView;
@@ -52,11 +53,19 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private HorizontalScrollView mTabScrollView;
     private RecordedFragmentFactory mRecordedFragmentFactory = null;
     private ContentsAdapter mContentsAdapter;
+    private int screenWidth;
 
-    private static final int RECORDED_MODE_NO_OF_ALL = 0;                                        // すべて
-    private static final int RECORDED_MODE_NO_OF_TAKE_OUT = RECORDED_MODE_NO_OF_ALL + 1;    // 持ち出し
+    private static final int SCREEN_TIME_WIDTH_PERCENT = 9;
+    private static final int MARGIN_ZERO = 0;
+    private static final int MARGIN_LEFT_TAB = 5;
+    private static final int MARGIN_LEFT_NOT_INDEX = 15;
 
-    // TODO この辺りはタブUI共通の値であれば、styleに定義しましょう。 コード上で動的にstyle適用させるにはコツがいるようですが。
+    // タブTYPE：すべて
+    private static final int RECORDED_MODE_NO_OF_ALL = 0;
+    // タブTYPE：持ち出し
+    private static final int RECORDED_MODE_NO_OF_TAKE_OUT = 2;
+
+    // TODO タブUI共通の値であれば、styleに定義
     //設定するマージンのピクセル数
     private static final int LEFT_MARGIN = 30;
     private static final int ZERO_MARGIN = 0;
@@ -65,22 +74,23 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DTVTLogger.start();
         setContentView(R.layout.record_list_main_layout);
         mMenuImageView = findViewById(R.id.header_layout_menu);
         mMenuImageView.setVisibility(View.VISIBLE);
         mMenuImageView.setOnClickListener(this);
         setTitleText(getString(R.string.nav_menu_item_recorder_program));
-        mTabNames = getResources().getStringArray(R.array.record_list_tab_names);
-        mRecordedFragmentFactory = new RecordedFragmentFactory();
-        mSearchView = findViewById(R.id.record_list_main_layout_searchview);
         // TODO DPクラスをここでnewする
 
         initView();
-        setSearchViewState();
+        initTabVIew();
+        setPagerAdapter();
+//        setSearchViewState();
+        DTVTLogger.end();
     }
 
     /**
-     * TODO 検索バーの内部処理は別タスクの為、まだ実装しない
+     * TODO 検索バーの内部処理はSprint7では実装しない
      */
     private void setSearchViewState() {
     }
@@ -91,40 +101,41 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      * @param pageNumber
      */
     private void setPageNumber(int pageNumber) {
+        DTVTLogger.start();
         mPageNumber = pageNumber;
         mPageNumber = (mPageNumber < 0 ? 0 : mPageNumber);
     }
 
-    /**
-     * タブの種別に沿ってListを変更
-     *
-     * @return
-     */
-    private ArrayList<SearchServiceType> getTypeArray() {
-        // TODO タイプclass検討する
-        ArrayList<SearchServiceType> ret = new ArrayList<SearchServiceType>();
-        if (null == mViewPager) {
-            return ret;
-        }
-        int pageIndex = mViewPager.getCurrentItem();
-        switch (pageIndex) {
-            case RECORDED_MODE_NO_OF_ALL: // すべて
-//                ret.add(new SearchServiceType(SearchServiceType.ServiceId.hikariTVForDocomo));
-//                ret.add(new SearchServiceType(SearchServiceType.ServiceId.dTVChannel));
-                break;
-            case RECORDED_MODE_NO_OF_TAKE_OUT: // 持ち出し
-//                ret.add(new SearchServiceType(SearchServiceType.ServiceId.hikariTVForDocomo));
-//                ret.add(new SearchServiceType(SearchServiceType.ServiceId.dTV));
-//                ret.add(new SearchServiceType(SearchServiceType.ServiceId.dAnime));
-                break;
-            default:
-                break;
-        }
-        return ret;
-    }
+//    /**
+//     * タブのタイプ別にList一覧を出しわける
+//     *
+//     * @return
+//     */
+//    private ArrayList<SearchServiceType> getTypeArray() {
+//        // TODO タイプclass検討する
+//        ArrayList<SearchServiceType> ret = new ArrayList<SearchServiceType>();
+//        if (null == mViewPager) {
+//            return ret;
+//        }
+//        int pageIndex = mViewPager.getCurrentItem();
+//        switch (pageIndex) {
+//            case RECORDED_MODE_NO_OF_ALL: // すべて
+////                ret.add(new SearchServiceType(SearchServiceType.ServiceId.hikariTVForDocomo));
+////                ret.add(new SearchServiceType(SearchServiceType.ServiceId.dTVChannel));
+//                break;
+//            case RECORDED_MODE_NO_OF_TAKE_OUT: // 持ち出し
+////                ret.add(new SearchServiceType(SearchServiceType.ServiceId.hikariTVForDocomo));
+////                ret.add(new SearchServiceType(SearchServiceType.ServiceId.dTV));
+////                ret.add(new SearchServiceType(SearchServiceType.ServiceId.dAnime));
+//                break;
+//            default:
+//                break;
+//        }
+//        return ret;
+//    }
 
     /**
-     * TODO 検索バーの内部処理は別タスクの為、まだ実装しない
+     * TODO 検索バーの内部処理はSprint7では実装しない
      *
      * @param searchText
      */
@@ -135,31 +146,48 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      * 画面描画
      */
     private void initView() {
-        if (null != mViewPager) {
-            return;
-        }
+        DTVTLogger.start();
+//        if (null != mViewPager) {
+//            return;
+//        }
         mViewPager = findViewById(R.id.record_list_main_layout_viewpagger);
         mTabScrollView = findViewById(R.id.record_list_main_layout_scroll);
-        initTabVIew();
+        mTabNames = getResources().getStringArray(R.array.record_list_tab_names);
+        mRecordedFragmentFactory = new RecordedFragmentFactory();
+        mSearchView = findViewById(R.id.record_list_main_layout_searchview);
+        DlnaProvRecVideo dlnaProvRecVideo = new DlnaProvRecVideo();
+//        boolean startFlag =  dlnaProvRecVideo.start("uuid:aad079ae-0ea4-431a-b88f-a47174cd5601",this);
+//        boolean startFlag =  dlnaProvRecVideo.start("uuid:aad079ae-0ea4-431a-b88f-020000000000",this);
+        //boolean startFlag =  dlnaProvRecVideo.start("uuid:4f154baf-7827-24b2-ffff-ffff97fdca80",this);
+        boolean startFlag = dlnaProvRecVideo.start("uuid:da769f7c-3650-dabc-ffff-ffffb853d273", this); //b002
 
-        mViewPager.setAdapter(new RecordedListActivity.MainAdpater(getSupportFragmentManager(), this));
+        if (startFlag) {
+            //dlnaProvRecVideo.browseRecVideoDms("http://192.168.11.10:58645/dev/4f154baf-7827-24b2-ffff-ffff97fdca80/svc/upnp-org/ContentDirectory/action"); //bubule 1
+            dlnaProvRecVideo.browseRecVideoDms("http://192.168.11.15:58645/dev/da769f7c-3650-dabc-ffff-ffffb853d273/svc/upnp-org/ContentDirectory/action"); //b0021
+//            dlnaProvRecVideo.browseRecVideoDms("http://192.168.11.10:58645/dev/4f154baf-7827-24b2-ffff-ffff97fdca80/svc/upnp-org/ContentDirectory/action");
+
+//            dlnaProvRecVideo.browseRecVideoDms("http://192.168.11.8:50001/ContentDirectory/control");
+            //dlnaProvRecVideo.browseRecVideoDms("http://192.168.11.15:50000/ContentDirectory/control");
+        }
+    }
+
+    private void setPagerAdapter() {
+        DTVTLogger.start();
+        mViewPager.setAdapter(new RecordedListActivity.MainAdpater(getSupportFragmentManager()));
         mViewPager.addOnPageChangeListener(new ViewPager
                 .SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 setTab(position);
-                setTab(position);
 
-                clearAllFragment();
-                setPagingStatus(false);
-
-                if (null != mSearchView) {
-                    setPageNumber(0);
-                    CharSequence searchText = mSearchView.getQuery();
-                    if (0 < searchText.length()) {
-                        setSearchData(searchText.toString());
-                    }
+                switch (mViewPager.getCurrentItem()) {
+                    case 0:
+                        setRecordedAllContents();
+                        break;
+                    case 1:
+                        setRecordedTakeOutContents();
+                        break;
                 }
             }
         });
@@ -170,49 +198,33 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      * タブの設定
      */
     private void initTabVIew() {
+        DTVTLogger.start();
+        screenWidth = getWidthDensity();
         mTabScrollView.removeAllViews();
         mTabLinearLayout = new LinearLayout(this);
-        // TODO このあたりもアプリ共通であれば、処理で算出しなくてよい部分だけでもstyleで定義しましょう。画面ごとに同じ処理があったり最悪バラバラな設定になるのはNG
-        LinearLayout.LayoutParams layoutParams
-                = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT
-                , LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                screenWidth / SCREEN_TIME_WIDTH_PERCENT + (int) getDensity() * MARGIN_LEFT_TAB);
         mTabLinearLayout.setLayoutParams(layoutParams);
-        mTabLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
-        mTabLinearLayout.setBackgroundColor(Color.BLACK);
-        mTabLinearLayout.setGravity(Gravity.CENTER);
+        mTabLinearLayout.setBackgroundResource(R.drawable.rectangele_all);
         mTabScrollView.addView(mTabLinearLayout);
-
         for (int i = 0; i < mTabNames.length; i++) {
-            // TODO この辺りも極力style化すべきかと。
             TextView tabTextView = new TextView(this);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.MATCH_PARENT);
-
             if (i != 0) {
-                params.setMargins(
-                        getResources().getDimensionPixelSize(R.dimen.list_tab_margin_left),
-                        getResources().getDimensionPixelSize(R.dimen.list_tab_margin_top),
-                        getResources().getDimensionPixelSize(R.dimen.list_tab_margin_right),
-                        getResources().getDimensionPixelSize(R.dimen.list_tab_margin_bottom));
-            } else {
-                params.setMargins(
-                        getResources().getDimensionPixelSize(R.dimen.list_tab_margin_left),
-                        getResources().getDimensionPixelSize(R.dimen.list_tab_margin_top),
-                        getResources().getDimensionPixelSize(R.dimen.list_tab_margin_right),
-                        getResources().getDimensionPixelSize(R.dimen.list_tab_margin_bottom));
+                params.setMargins((int) getDensity() * MARGIN_LEFT_NOT_INDEX, MARGIN_ZERO, MARGIN_ZERO, MARGIN_ZERO);
             }
             tabTextView.setLayoutParams(params);
             tabTextView.setText(mTabNames[i]);
             tabTextView.setTag(i);
             tabTextView.setBackgroundResource(0);
             tabTextView.setTextColor(ContextCompat.getColor(this, R.color.white_text));
-
             if (i == 0) {
-                tabTextView.setBackgroundResource(R.drawable.indicating);
+                tabTextView.setBackgroundResource(R.drawable.rectangele);
                 tabTextView.setTextColor(ContextCompat.getColor(this, R.color.gray_text));
             }
-
             tabTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -232,6 +244,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      * @param position タブインデックス
      */
     private void setTab(int position) {
+        DTVTLogger.start();
         if (mTabLinearLayout != null) {
             for (int i = 0; i < mTabNames.length; i++) {
                 TextView mTextView = (TextView) mTabLinearLayout.getChildAt(i);
@@ -246,7 +259,23 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         }
     }
 
+    private void setRecordedAllContents() {
+        DTVTLogger.start();
+        RecordedBaseFrgament recordedBaseFrgament = mRecordedFragmentFactory.createFragment(RECORDED_MODE_NO_OF_ALL, this);
+    }
+
+    private void setRecordedTakeOutContents() {
+        DTVTLogger.start();
+        RecordedBaseFrgament recordedBaseFrgament = mRecordedFragmentFactory.createFragment(RECORDED_MODE_NO_OF_TAKE_OUT, this);
+    }
+
+    /**
+     * フラグメント生成
+     *
+     * @return
+     */
     private RecordedBaseFrgament getCurrentRecordedBaseFrgament() {
+        DTVTLogger.start();
         int currentPageNo = mViewPager.getCurrentItem();
         RecordedBaseFrgament baseFragment = (RecordedBaseFrgament) mRecordedFragmentFactory.createFragment(currentPageNo, this);
         return baseFragment;
@@ -256,6 +285,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      * フラグメントをクリア
      */
     public void clearAllFragment() {
+        DTVTLogger.start();
         if (null != mViewPager) {
             int sum = mRecordedFragmentFactory.getFragmentCount();
             for (int i = 0; i < sum; ++i) {
@@ -267,6 +297,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public void onClick(View view) {
+        DTVTLogger.start();
         if (view == mMenuImageView) {
             onSampleGlobalMenuButton_PairLoginOk();
         }
@@ -278,6 +309,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      * @param bool
      */
     private void setPagingStatus(boolean bool) {
+        DTVTLogger.start();
         synchronized (this) {
             mIsPaging = bool;
         }
@@ -285,26 +317,46 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public void onScroll(RecordedBaseFrgament fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        // TODO loading処理
-        mSearchLastItem = firstVisibleItem + visibleItemCount - 1;
+        DTVTLogger.start();
+    }
 
-        // TODO Constantsクラス検討
-        int pageMax = (mPageNumber + 1) * SearchConstants.Search.requestMaxResultCount;
-        int maxPage = mSearchTotalCount / SearchConstants.Search.requestMaxResultCount;
-        if (firstVisibleItem + visibleItemCount >= pageMax && maxPage >= 1 + mPageNumber) {
-            setPageNumber(mPageNumber + 1);
-            DTVTLogger.debug("page no=" + (mPageNumber + 1));
-            setPagingStatus(true);
-            fragment.displayLoadMore(true);
-
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
+    @Override
+    public void onVideoBrows(DlnaRecVideoInfo curInfo) {
+        DTVTLogger.start();
+        DTVTLogger.debug("curInfo = " + curInfo);
+        if (curInfo != null && curInfo.getRecordVideoLists() != null) {
+            final RecordedBaseFrgament baseFrgament = getCurrentRecordedBaseFrgament();
+            List<ContentsData> listData = baseFrgament.getContentsData();
+            ArrayList<DlnaRecVideoItem> list = curInfo.getRecordVideoLists();
+            for (int i = 0; i < list.size(); i++) {
+                DlnaRecVideoItem dlnaRecVideoItem = list.get(i);
+                ContentsData data = new ContentsData();
+                data.setTitle(dlnaRecVideoItem.mTitle);
+                listData.add(data);
+            }
+            runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    setSearchData(null);
+                    baseFrgament.notifyDataSetChanged();
                 }
-            }, mLoadPageDelayTime);
+            });
         }
+    }
+
+    @Override
+    public void onDeviceLeave(DlnaDMSInfo curInfo, String leaveDmsUdn) {
+        DTVTLogger.start();
+    }
+
+    @Override
+    public void onError(String msg) {
+        DTVTLogger.start(msg);
+    }
+
+    @Override
+    public String getCurrentDmsUdn() {
+        DTVTLogger.start();
+        return null;
     }
 
     /**
@@ -312,33 +364,34 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      */
     private class MainAdpater extends FragmentStatePagerAdapter {
 
-        private RecordedListActivity mRecordedListActivity = null;
-
-        MainAdpater(FragmentManager fm, RecordedListActivity top) {
+        MainAdpater(FragmentManager fm) {
             super(fm);
-            mRecordedListActivity = top;
         }
 
         @Override
         public Fragment getItem(int position) {
             synchronized (this) {
-                return mRecordedFragmentFactory.createFragment(position, mRecordedListActivity);
+                DTVTLogger.start();
+                return mRecordedFragmentFactory.createFragment(position, RecordedListActivity.this);
             }
         }
 
         @Override
         public int getCount() {
+            DTVTLogger.start();
             return mTabNames.length;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
+            DTVTLogger.start();
             return mTabNames[position];
         }
     }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
+        DTVTLogger.start();
         View currentView = getCurrentFocus();
         if (currentView != null && currentView instanceof SearchView) {
         } else {
@@ -347,14 +400,4 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         }
         return super.dispatchTouchEvent(event);
     }
-
-    /**
-     * 年齢制限にフィルターをかける
-     *
-     * @param listData
-     */
-    private void setTab(List listData) {
-        // TODO 年齢制限があるコンテンツをフィルター処理
-    }
-
 }

@@ -42,6 +42,7 @@
 
     <!--タブUI共通-->
     <style name="tabTextView">
+        <item name="android:orientation">horizontal</item>
         <item name="android:background">@color/list_item_background</item>
         <item name="android:textSize">@dimen/list_item_title_text_size</item>
         <item name="android:textColor">@color/white_text</item>

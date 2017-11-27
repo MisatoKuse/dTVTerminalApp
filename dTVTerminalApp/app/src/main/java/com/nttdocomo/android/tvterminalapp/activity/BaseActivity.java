@@ -295,6 +295,17 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         finish();
     }
 
+    /**
+     * 年齢制限判定
+     *
+     * @return 年齢制限フィルター対象 true
+     */
+    private Boolean ageLimitDecision() {
+        // TODO upnp:ratingの返却値で判断
+
+        return false;
+    }
+
     @Override
     public void onPreUserStateChange(UserState oldUserState, UserState newUserState) {
 

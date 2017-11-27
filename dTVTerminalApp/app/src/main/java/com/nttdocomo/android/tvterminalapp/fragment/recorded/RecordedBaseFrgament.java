@@ -17,6 +17,7 @@ import android.widget.ListView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,12 +28,10 @@ public class RecordedBaseFrgament extends Fragment implements AbsListView.OnScro
     public List<ContentsData> mContentsData;
     private View mLoadMoreView;
     private ContentsAdapter mContentsAdapter = null;
-    private RecordedBaseFragmentScrollListener mRecordedBaseFragmentScrollListener = null;
-
-    // TODO DPからのコールバックを受ける
 
     @Override
     public Context getContext() {
+        DTVTLogger.start();
         this.mActivity = getActivity();
         return mActivity;
     }
@@ -40,25 +39,22 @@ public class RecordedBaseFrgament extends Fragment implements AbsListView.OnScro
     @Override
     public View onCreateView(LayoutInflater inflater
             , ViewGroup container, Bundle savedInstanceState) {
+        DTVTLogger.start();
         initData();
         return initView();
     }
 
-    /**
-     * モックデータ
-     */
+    //モックデータ
     private void initData() {
+        DTVTLogger.start();
         mContentsData = new ArrayList();
     }
 
     private View mRecordedFragmentView;
     private ListView mRecordedListview;
 
-    /**
-     * viewの生成
-     * @return
-     */
     public View initView() {
+        DTVTLogger.start();
         if (null == mRecordedFragmentView) {
             mRecordedFragmentView = View.inflate(getActivity()
                     , R.layout.record_contents_list_layout, null);
@@ -71,7 +67,7 @@ public class RecordedBaseFrgament extends Fragment implements AbsListView.OnScro
             mLoadMoreView = LayoutInflater.from(mActivity).inflate(R.layout.search_load_more, null);
         }
 
-        setDeta();
+//        setDeta();
 
         mContentsAdapter = new ContentsAdapter(getContext(),
                 mContentsData, ContentsAdapter.ActivityTypeItem.TYPE_RECORDED_LIST);
@@ -80,48 +76,40 @@ public class RecordedBaseFrgament extends Fragment implements AbsListView.OnScro
         return mRecordedFragmentView;
     }
 
-    // TODO 後で消す. テスト用メソッド
+    // TODO　テスト用メソッド
     public void setDeta() {
+        DTVTLogger.start();
         mContentsData = new ArrayList<>();
         ContentsData contentsData;
 
-        for (int i = 0; i < 100; i++) {
+        /*for (int i = 0; i < 10; i++) {
             contentsData = new ContentsData();
             contentsData.setRank(String.valueOf(i + 1));
             contentsData.setTitle("大晦日だよ! ドラえもんのび太の宇宙漂流記　シーズン" + i);
             contentsData.setRecordedChannelName("FOX HD");
             contentsData.setTime("8/31 (木) 21：00");
             mContentsData.add(contentsData);
-        }
+        }*/
     }
 
-    /**
-     * リスト全体を更新する
-     * @param count
-     */
-    public void notifyDataSetChanged(String count) {
+    public void notifyDataSetChanged() {
+        DTVTLogger.start();
         if (null != mContentsAdapter) {
             mContentsAdapter.notifyDataSetChanged();
         }
     }
 
-    /**
-     * カーソルを指定の位置する
-     * @param itemNo
-     */
     public void setSelection(int itemNo) {
+        DTVTLogger.start();
         if (null != mRecordedListview) {
             mRecordedListview.setSelection(itemNo);
         }
     }
 
-    /**
-     * リストの最後に更新中の行を追加、または追加した行の削除
-     * @param bool
-     */
-    public void displayLoadMore(boolean bool) {
+    public void displayLoadMore(boolean b) {
+        DTVTLogger.start();
         if (null != mRecordedListview && null != mLoadMoreView) {
-            if (bool) {
+            if (b) {
                 mRecordedListview.addFooterView(mLoadMoreView);
             } else {
                 mRecordedListview.removeFooterView(mLoadMoreView);
@@ -129,11 +117,14 @@ public class RecordedBaseFrgament extends Fragment implements AbsListView.OnScro
         }
     }
 
-    /**
-     * mContentsDataのすべての要素を削除する
-     */
     public void clear() {
+        DTVTLogger.start();
         mContentsData.clear();
+    }
+
+    public List<ContentsData> getContentsData() {
+        DTVTLogger.start();
+        return mContentsData;
     }
 
     @Override
@@ -142,13 +133,9 @@ public class RecordedBaseFrgament extends Fragment implements AbsListView.OnScro
 
     @Override
     public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if (null != mRecordedBaseFragmentScrollListener) {
-            mRecordedBaseFragmentScrollListener.onScroll(this, absListView, firstVisibleItem, visibleItemCount, totalItemCount);
-        }
     }
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        // TODO コンテンツタップで再生画面(縦)へ
     }
 }
