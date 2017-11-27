@@ -118,6 +118,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 
         mCheckBoxSTBSelectActivity = (CheckBox) findViewById(R.id.checkBoxSTBSelectActivity);
         mCheckBoxSTBSelectActivity.setOnClickListener(this);
+        mCheckBoxSTBSelectActivity.setChecked(false);
 
         // TODO dアカウント取得画面実装時に削除
         mDAccountLoginYesSTBSelectActivity = (Button) findViewById(R.id.dAccountLoginYesSTBSelectActivity);
@@ -244,6 +245,8 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             onDAccountSameYesButton();
         } else if (v.equals(mDAccountSameNoSTBSelectActivity)) {
             onDAccountSameNoButton();
+        } else if (v.equals(mCheckBoxSTBSelectActivity)) {
+            mIsNextTimeHide = mCheckBoxSTBSelectActivity.isChecked();
         }
         DTVTLogger.end();
     }
@@ -411,10 +414,11 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         for (int i = 0; i < info.size(); i++) {
             ContentsData data = new ContentsData();
             data.setDeviceName(info.get(i).mFriendlyName);
+            DTVTLogger.debug("ContentsList.size = " + info.get(i).mFriendlyName);
             mContentsList.add(data);
         }
         mDlnaDMSInfo = info;
-        DTVTLogger.debug("ContentsList.size = "+ mContentsList.size());
+        DTVTLogger.debug("ContentsList.size = " + mContentsList.size());
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -422,12 +426,15 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 if (mContentsList.size() <= 0) {
                     mContentsAdapter.notifyDataSetChanged();
                     startCallbackTimer();
-                } else if (mCallbackTimer.timerTaskExecuted()) { // 30秒以内にSTBの通知あり
+                    DTVTLogger.debug("ContentsList.size <= 0 ");
+                } else if (!mCallbackTimer.timerTaskExecuted()) { // 30秒以内にSTBの通知あり
                     stopCallbackTimer();
                     showResultCompleteView();
                     mContentsAdapter.notifyDataSetChanged();
+                    DTVTLogger.debug("TimerTaskNotExecuted");
                 } else { // 既にタイムアウトとなっていた場合
                     // nop.
+                    DTVTLogger.debug("TimerTaskExecuted");
                 }
             }
         });
@@ -508,17 +515,17 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         private final long STB_SEARCH_TIMEOUT = 30000;
         private TimerTask mTimerTask = null;
         // タイムアウト判定
-        private boolean mTimeout = true;
+        private boolean mTimeout = false;
         private Handler mHandler = null;
 
-        public StbInfoCallBackTimer(Handler handler) {
+        private StbInfoCallBackTimer(Handler handler) {
             mHandler = handler;
         }
 
         /**
          * TimerTask実行予約処理
          */
-        public void executeTimerTask() {
+        private void executeTimerTask() {
             DTVTLogger.start();
             setTimerTask();
             schedule(mTimerTask, STB_SEARCH_TIMEOUT);
@@ -549,9 +556,9 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         /**
          * TimerTask実行後判定
          *
-         * @return
+         * @return mTimeout:タイムアウト処理実行済み判定 true:済み false:キャンセル
          */
-        public boolean timerTaskExecuted() {
+        private boolean timerTaskExecuted() {
             DTVTLogger.debug("timerTaskExecuted");
             return mTimeout;
         }
@@ -559,7 +566,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         /**
          * TimerTaskキャンセル処理
          */
-        public void timerTaskCancel() {
+        private void timerTaskCancel() {
             DTVTLogger.start();
             mTimerTask.cancel();
             DTVTLogger.end();
