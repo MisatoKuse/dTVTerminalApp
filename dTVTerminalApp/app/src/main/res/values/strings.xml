@@ -65,6 +65,7 @@
     <string name="tv_program_change_mode">&lt; &gt;</string>
     <!-- Video -->
     <string name="video_content_top_title">ビデオ</string>
+    <string name="video_content_all_title">すべて</string>
     <string name="video_content_sub_genre_title">全ての作品</string>
 
     <!-- Search -->

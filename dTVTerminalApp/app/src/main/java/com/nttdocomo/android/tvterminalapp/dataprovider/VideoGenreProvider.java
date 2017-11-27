@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 
+import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListMetaData;
@@ -138,9 +139,20 @@ public class VideoGenreProvider implements
         Map<String, ArrayList<GenreListMetaData>> listMap = genreListResponse.getTypeList();
         ArrayList<GenreListMetaData> genreMetaDataList = new ArrayList<>();
 
-        genreMetaDataList.addAll(listMap.get(VIDEO_GENRE_KEY_PLALA));
-        genreMetaDataList.addAll(listMap.get(VIDEO_GENRE_KEY_NOD));
-        genreMetaDataList.addAll(listMap.get(VIDEO_GENRE_KEY_ARIB));
+        //PLALAコンテンツデータをすべて取得
+        if (listMap.get(VIDEO_GENRE_KEY_PLALA) != null) {
+            genreMetaDataList.addAll(listMap.get(VIDEO_GENRE_KEY_PLALA));
+        }
+
+        //NODコンテンツデータをすべて取得
+        if (listMap.get(VIDEO_GENRE_KEY_NOD) != null) {
+            genreMetaDataList.addAll(listMap.get(VIDEO_GENRE_KEY_NOD));
+        }
+
+        //ARIBコンテンツデータをすべて取得
+        if (listMap.get(VIDEO_GENRE_KEY_ARIB) != null) {
+            genreMetaDataList.addAll(listMap.get(VIDEO_GENRE_KEY_ARIB));
+        }
 
         HashMap<String, String> map = new HashMap<>();
         GenreListMetaData metaData;
@@ -159,14 +171,34 @@ public class VideoGenreProvider implements
         }
         VideoGenreListData videoGenreListData = new VideoGenreListData(map, map);
         genreListMapCallback.genreListMapCallback(videoGenreListData);
-        for (int i = 0; i < genreMetaDataList.size(); i++) {
+        if (genreMetaDataList.size() > 1) {
+            //コンテンツデータが複数ある時は、ジャンルIDとサブジャンルIDを関連付けて保存
+            for (int i = 0; i < genreMetaDataList.size(); i++) {
+                VideoGenreList genreList = new VideoGenreList();
+                genreList.setGenreId(genreMetaDataList.get(i).getId());
+                genreList.setTitle(genreMetaDataList.get(i).getTitle());
+                genreList.setSubGenre(genreMetaDataList.get(i).getSubContent());
+                mVideoGenreList.add(genreList);
+            }
+        } else if (genreMetaDataList.size() > 0) {
+            //コンテンツデータが一つの時はジャンルIDとサブジャンルIDを同列に扱う
             VideoGenreList genreList = new VideoGenreList();
-            genreList.setGenreId(genreMetaDataList.get(i).getId());
-            genreList.setTitle(genreMetaDataList.get(i).getTitle());
-            genreList.setSubGenre(genreMetaDataList.get(i).getSubContent());
+            genreList.setGenreId(genreMetaDataList.get(0).getId());
+            genreList.setTitle(mContext.getString(R.string.video_content_all_title));
             mVideoGenreList.add(genreList);
+            ArrayList<GenreListMetaData.SubContent> list = genreMetaDataList.get(0).getSubContent();
+            for (int i = 0; i < list.size(); i++) {
+                genreList = new VideoGenreList();
+                genreList.setTitle(list.get(i).getTitle());
+                genreList.setGenreId(list.get(i).getId());
+                mVideoGenreList.add(genreList);
+            }
         }
+
+        //TODO:ジャンル毎コンテンツ数取得のリクエストは1回のみ(引数はGenreIdのリストとする
+        ArrayList<String> arrayList = new ArrayList<>();
         for (int i = 0; i < mVideoGenreList.size(); i++) {
+            arrayList.add(mVideoGenreList.get(i).getGenreId());
             getContentCountDataRequest(mVideoGenreList.get(i).getGenreId());
         }
     }
@@ -177,6 +209,9 @@ public class VideoGenreProvider implements
      * @param genreCountGetResponse
      */
     public void getContent(GenreCountGetResponse genreCountGetResponse) {
+        //TODO:ジャンル、サブジャンル関連データのみのデータクラスを作成し、Activityに送る
+        //TODO:ここでは既に取得したジャンル一覧とジャンルごとのコンテンツ数を合わせてActivityに送るのみとする
+        //TODO:詳細はVideoGenreListDataクラス参照
         ArrayList<GenreCountGetMetaData> dataArrayList = genreCountGetResponse.getGenreCountGetMetaData();
         if (mVideoGenreList != null && mVideoGenreList.size() > 0) {
             // サブジャンル一覧表示の時
@@ -212,6 +247,7 @@ public class VideoGenreProvider implements
 
     /**
      * mVideoGenreListDataの保持
+     *
      * @param mVideoGenreListData
      */
     public void setVideoGenreListData(VideoGenreListData mVideoGenreListData) {

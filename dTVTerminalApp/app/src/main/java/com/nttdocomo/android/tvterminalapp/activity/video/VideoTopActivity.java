@@ -16,6 +16,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.adapter.VideoGenreAdapter;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VideoGenreProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreListData;
 
@@ -109,7 +110,11 @@ public class VideoTopActivity extends BaseActivity implements View.OnClickListen
         VideoGenreList videoGenreList = (VideoGenreList) mContentsList.get(position);
 
         // サブジャンル有無フラグ設定
-        boolean endGenreFlag = SUB_GENRE_NOTHING_BORDER > videoGenreList.getSubGenre().size();
+        boolean endGenreFlag = false;
+        ArrayList<GenreListMetaData.SubContent> subGenre = videoGenreList.getSubGenre();
+        if(subGenre == null || SUB_GENRE_NOTHING_BORDER > subGenre.size()){
+            endGenreFlag = true;
+        }
 
         mVideoGenreListData.setSubGenre(videoGenreList.getSubGenre());
 

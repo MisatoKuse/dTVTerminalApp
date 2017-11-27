@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class VideoGenreListData implements Parcelable {
+
     private HashMap<String, String> mTitleMap;
     private ArrayList<GenreListMetaData.SubContent> mSubGenre;
 
