@@ -4,11 +4,15 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.player;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.PowerManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,12 +25,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.digion.dixim.android.activation.ActivationClientDefinition;
+import com.digion.dixim.android.secureplayer.MediaPlayerController;
+import com.digion.dixim.android.secureplayer.MediaPlayerDefinitions;
 import com.digion.dixim.android.secureplayer.SecureVideoView;
 import com.digion.dixim.android.secureplayer.SecuredMediaPlayerController;
+import com.digion.dixim.android.secureplayer.helper.CaptionDrawCommands;
+import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.model.player.MediaVideoInfo;
 
-public class TvPlayerActivity extends BaseActivity implements View.OnClickListener {
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+public class TvPlayerActivity extends BaseActivity implements View.OnClickListener, MediaPlayerController.OnStateChangeListener, MediaPlayerController.OnFormatChangeListener, MediaPlayerController.OnPlayerEventListener, MediaPlayerController.OnErrorListener, MediaPlayerController.OnCaptionDataListener {
 
     private static final int REFRESH_TV_VIEW = 1;
     private ImageView mplayPause;
@@ -64,16 +80,197 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
     private SecureVideoView mSecureVideoPlayer;
     private SecuredMediaPlayerController mPlayerController;
 
+    private boolean mCanPlay=false;
+    private MediaVideoInfo mCurrentMediaInfo;
+    private int mActivationTimes=0;
+
+    private final static int ACTIVATION_REQUEST_CODE = 1;
+    private final static int ACTIVATION_REQUEST_MAX_CNT= 3;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tv_player_main_layout);
         mSecureVideoPlayer = findViewById(R.id.tv_player_main_layout_player_vv);
-        initView();
-        mPlayerController = new SecuredMediaPlayerController(this,true,true,true);
-        mSecureVideoPlayer.init(mPlayerController);
-        mPlayerController.start();
+        //initView();
 
+        initDatas();
+        setCurrentMediaInfo();
+        //initSecureplayer();
+
+        //mPlayerController = new SecuredMediaPlayerController(this,true,true,true);
+        //mSecureVideoPlayer.init(mPlayerController);
+        //mPlayerController.start();
+
+    }
+
+    private void initDatas() {
+        mActivationTimes=0;
+    }
+
+    private void setCanPlay(boolean state){
+        synchronized (this){
+            mCanPlay= state;
+        }
+    }
+
+    private void playStart(){
+        synchronized (this) {
+            if(mCanPlay){
+                playButton();
+                //mVideoPlayPause.setBackgroundResource(R.mipmap.ic_tvplayer_player_pause);
+                mPlayerController.start();
+            }
+        }
+    }
+
+    private void playButton(){
+        if(null==mVideoPlayPause){
+            return;
+        }
+        mVideoPlayPause.getChildAt(0).setVisibility(View.GONE);
+        mVideoPlayPause.getChildAt(1).setVisibility(View.VISIBLE);
+    }
+
+    private void pauseButton(){
+        if(null==mVideoPlayPause){
+            return;
+        }
+        mVideoPlayPause.getChildAt(0).setVisibility(View.VISIBLE);
+        mVideoPlayPause.getChildAt(1).setVisibility(View.GONE);
+    }
+
+
+    private void playPause(){
+        synchronized (this) {
+            if(mCanPlay){
+                pauseButton();
+                mPlayerController.pause();
+            }
+        }
+    }
+
+    private void initSecureplayer() {
+        setCanPlay(false);
+
+        mPlayerController = new SecuredMediaPlayerController(this, true,  true , true);
+        mPlayerController.setOnStateChangeListener(this);
+        mPlayerController.setOnFormatChangeListener(this);
+        mPlayerController.setOnPlayerEventListener(this);
+        mPlayerController.setOnErrorListener(this);
+        mPlayerController.setWakeMode(this, PowerManager.FULL_WAKE_LOCK);
+
+        mPlayerController.setCaptionDataListener(this);
+        {
+            mPlayerController.setCurrentCaption(0); // start caption.
+        }
+
+        boolean ret = isActivited();
+        if (!ret) {
+            DTVTLogger.debug("TvPlayerActivity::initSecureplayer(), return false"); //SP_SECUREPLAYER_NEED_ACTIVATION_ERROR = 1001;
+            return;
+        }
+
+        preparePlayer();
+    }
+
+    private void preparePlayer() {
+        final Map<String, String> additionalHeaders = new HashMap<>();
+        try {
+            mPlayerController.setDataSource(mCurrentMediaInfo, additionalHeaders, 0);
+        } catch (IOException e) {
+            e.printStackTrace();
+            setCanPlay(false);
+            return;
+        }
+        mPlayerController.setScreenOnWhilePlaying(true);
+        mSecureVideoPlayer.init(mPlayerController);
+        initView();
+        setCanPlay(true);
+        playStart();
+    }
+
+
+    private boolean isActivited(){
+        String path=getPrivateDataHome();
+        File dir= new File(path);
+        if(!dir.exists()){
+            boolean ok=dir.mkdir();
+            if(!ok){
+                DTVTLogger.debug("TvPlayerActivity::isActivited(), Make dir " + path + " failed");
+                return false;
+            }
+        }
+        int ret = mPlayerController.dtcpInit(path);
+        if (ret == MediaPlayerDefinitions.SP_SUCCESS) {
+            return true;
+        } else {
+            activate();
+        }
+        return false;
+    }
+
+    private void activate(){
+        if(mActivationTimes>=ACTIVATION_REQUEST_MAX_CNT){
+            return;
+        }
+        Intent intent = new Intent();
+        intent.setClassName(TvPlayerActivity.this.getPackageName(),
+                ActivationClientDefinition.activationActivity);
+        intent.putExtra(ActivationClientDefinition.EXTRA_DEVICE_KEY,
+                EnvironmentUtil.getPrivateDataHome(TvPlayerActivity.this,
+                        EnvironmentUtil.ACTIVATE_DATA_HOME.PLAYER));
+        startActivityForResult(intent,ACTIVATION_REQUEST_CODE);
+        ++mActivationTimes;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == ACTIVATION_REQUEST_CODE) {
+            DTVTLogger.debug("TvPlayerActivity::onActivityResult(), activation resultCode = " + resultCode);
+            if(Activity.RESULT_OK == resultCode){
+                String path=getPrivateDataHome();
+                int ret= mPlayerController.dtcpInit(path);
+                if (ret != MediaPlayerDefinitions.SP_SUCCESS) {
+                    Log.d("", "SecureMediaPlayerController init failed");
+                    DTVTLogger.debug("TvPlayerActivity::onActivityResult(), SecureMediaPlayerController init failed");
+                    Toast.makeText(getApplicationContext(), "DLNA Player初期化失敗しました",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    preparePlayer();
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    /**
+     * 機能：プレバイトデータフォルダを戻す
+     * @return プレバイトデータフォルダ
+     */
+    private String getPrivateDataHome() {
+        return EnvironmentUtil.getPrivateDataHome(this,
+                EnvironmentUtil.ACTIVATE_DATA_HOME.PLAYER);
+    }
+
+    private void setCurrentMediaInfo() {
+        String url = "http://192.168.11.12:5001/get/364/20131211_103918-1280x720p60.ts";
+        Uri uri = url == null ? null: Uri.parse(url);
+        mCurrentMediaInfo = new MediaVideoInfo(
+                uri, //uri,   dv.mp4 by camera
+                "video/mp4", //extras.getString(Definitions.RESOURCE_MIMETYPE),
+                94000000, //extras.getLong(Definitions.SIZE),
+                41000, //extras.getLong(Definitions.DURATION),
+                0, //extras.getInt(Definitions.BITRATE),
+                false, //extras.getBoolean(Definitions.IS_SUPPORTED_BYTE_SEEK),
+                false, //extras.getBoolean(Definitions.IS_SUPPORTED_TIME_SEEK),
+                false, //extras.getBoolean(Definitions.IS_AVAILABLE_CONNECTION_STALLING),
+                false, //extras.getBoolean(Definitions.IS_LIVE_MODE),
+                false, //extras.getBoolean(Definitions.IS_REMOTE),
+                "title",  //extras.getString(Definitions.TITLE),
+                "contentFormat" //extras.getString(Definitions.CONTENT_FORMAT)
+        );
     }
 
     private void setCtrlEvent(final RelativeLayout ctrlView) {
@@ -137,6 +334,7 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
             viewRefresher.sendEmptyMessage(REFRESH_VIDEO_VIEW);
             setCtrlEvent(mRecordCtrlView);
         }
+        pauseButton();
     }
 
     private void setVideoSeekBarListener(SeekBar seekBar) {
@@ -163,12 +361,20 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
     @Override
     protected void onResume() {
         super.onResume();
+
+        initSecureplayer();
+        //initView();
         // TODO: 2017/11/22 横縦処理
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if(null!=mPlayerController){
+            mPlayerController.setCaptionDataListener(null);
+            mPlayerController.release();
+            mPlayerController = null;
+        }
         // TODO: 2017/11/22 横縦処理
     }
 
@@ -194,6 +400,15 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
+        if(mVideoPlayPause==v){
+            if(!mPlayerController.isPlaying()){
+                playStart();
+            } else {
+                playPause();
+            }
+            return;
+        }
+
         switch (v.getId()) {
             case R.id.tv_player_ctrl_video_record_player_pause_fl:
                 // TODO: 2017/11/21 表示テストのため VideoViewApiを使う
@@ -237,6 +452,10 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            if(null==mPlayerController){
+                return;
+            }
+
             if(msg.what == REFRESH_TV_VIEW){//NOW ON AIR
                 int currentPosition = mPlayerController.getCurrentPosition();
                 int totalDur = mPlayerController.getDuration();
@@ -291,5 +510,60 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
      */
     public void setCurMode(int curMode){
         this.curMode = curMode;
+    }
+
+    @Override
+    public void onStateChanged(MediaPlayerController mediaPlayerController, int i) {
+
+    }
+
+    @Override
+    public void onFormatChanged(MediaPlayerController mediaPlayerController) {
+
+    }
+
+    @Override
+    public void onPlayerEvent(MediaPlayerController mediaPlayerController, int event, long arg) {
+        switch (event) {
+            case MediaPlayerDefinitions.PE_OPENED:
+                playButton();
+                break;
+            case MediaPlayerDefinitions.PE_COMPLETED:
+                pauseButton();
+                break;
+            case MediaPlayerDefinitions.PE_START_NETWORK_CONNECTION:
+                break;
+            case MediaPlayerDefinitions.PE_START_AUTHENTICATION:
+                Toast.makeText(getApplicationContext(), "PE_START_AUTHENTICATION",
+                        Toast.LENGTH_SHORT).show();
+                break;
+            case MediaPlayerDefinitions.PE_START_BUFFERING:
+                Toast.makeText(getApplicationContext(), "PE_START_BUFFERING",
+                        Toast.LENGTH_SHORT).show();
+                break;
+            case MediaPlayerDefinitions.PE_START_RENDERING:
+                Toast.makeText(getApplicationContext(), "PE_START_RENDERING",
+                        Toast.LENGTH_SHORT).show();
+                break;
+            case MediaPlayerDefinitions.PE_FIRST_FRAME_RENDERED:
+                Toast.makeText(getApplicationContext(), "PE_FIRST_FRAME_RENDERED",
+                        Toast.LENGTH_SHORT).show();
+                break;
+        }
+    }
+
+    @Override
+    public void onError(MediaPlayerController mediaPlayerController, int i, long l) {
+
+    }
+
+    @Override
+    public void onCaptionData(MediaPlayerController mediaPlayerController, CaptionDrawCommands captionDrawCommands) {
+
+    }
+
+    @Override
+    public void onSuperData(MediaPlayerController mediaPlayerController, CaptionDrawCommands captionDrawCommands) {
+
     }
 }

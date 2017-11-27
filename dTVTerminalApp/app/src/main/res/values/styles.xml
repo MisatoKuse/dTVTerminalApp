@@ -39,4 +39,7 @@
         <item name="colorPrimaryDark">@color/contents_header_background</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
+    <!--TvPlayerActivity-->
+    <style name="DiximPlayerPanelTheme" parent="@android:style/Theme.Holo.Light.Panel" />
 </resources>
