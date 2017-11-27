@@ -414,6 +414,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             mContentsList.add(data);
         }
         mDlnaDMSInfo = info;
+        DTVTLogger.debug("ContentsList.size = "+ mContentsList.size());
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -464,6 +465,8 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         displayMoreData(true);
         if (mCallbackTimer == null) {
             mCallbackTimer = new StbInfoCallBackTimer(new Handler());
+        } else {
+            mCallbackTimer.mTimeout = true;
         }
         mCallbackTimer.executeTimerTask();
         DTVTLogger.end();
