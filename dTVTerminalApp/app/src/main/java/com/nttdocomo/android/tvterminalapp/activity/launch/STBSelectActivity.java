@@ -66,7 +66,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         mBackIcon.setVisibility(View.GONE);
         mParingImageView = findViewById(R.id.header_layout_menu);
         mParingImageView.setImageResource(R.mipmap.ic_personal_video_white_24dp);
-        mParingImageView.setVisibility(View.VISIBLE);
+        mParingImageView.setVisibility(View.INVISIBLE);
         setTitleText(getString(R.string.str_app_title));
         setContents();
         initView();
@@ -202,7 +202,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 
         // STBが見つかるまで非表示
         mCheckBoxSTBSelectActivity.setVisibility(View.INVISIBLE);
-
+        mParingImageView.setVisibility(View.INVISIBLE);
         DTVTLogger.end();
     }
 
@@ -216,6 +216,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         statusTextView.setText(R.string.str_stb_select_result_text);
 
         // STBが見つかったため表示する
+        mParingImageView.setVisibility(View.VISIBLE);
         mCheckBoxSTBSelectActivity.setVisibility(View.VISIBLE);
         TextView checkBoxText = (TextView) findViewById(R.id.useWithoutPairingSTBParingInvitation);
         checkBoxText.setVisibility(View.VISIBLE);

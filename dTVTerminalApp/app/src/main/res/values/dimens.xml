@@ -13,6 +13,7 @@
     <dimen name="launch_text_bottom_margin">4dp</dimen>
     <dimen name="launch_stb_list_start_margin">10dp</dimen>
     <dimen name="launch_stb_checkbox_bottom_margin">10dp</dimen>
+    <dimen name="launch_stb_checkbox_top_margin">6dp</dimen>
     <dimen name="launch_stb_paring_result_layout">65dp</dimen>
     <dimen name="launch_text_left_padding">30dp</dimen>
     <dimen name="launch_text_right_padding">10dp</dimen>
