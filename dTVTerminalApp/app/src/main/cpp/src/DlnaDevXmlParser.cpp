@@ -23,14 +23,14 @@ namespace dtvt {
      * @param ipstr
      * @return
      */
-/*
     static int getIpAddressString(const du_ip* ip, du_uchar* ipstr){
-        if (du_ip_get(ip, 0, ipstr, 0)){
-            return 1;
+        if (NULL != ip && NULL != ipstr){
+            if (du_ip_get(ip, 0, ipstr, 0)){
+                return 1;
+            }
         }
         return 0;
     }
-*/
 
     /**
      * 期限の時刻文字列を取得する
@@ -58,6 +58,7 @@ namespace dtvt {
      * @param out
      */
     void DlnaDevXmlParser::parse(void *info, vector<StringVector>& out){
+        du_uchar ipaddress[DU_IP_STR_SIZE] = {'\0'};    // IP アドレス
         //to do: Device information の device->user_data を解析
         IfNullReturn(info);
         dupnp_cp_dvcmgr_device *device = (dupnp_cp_dvcmgr_device*)info;
@@ -68,16 +69,13 @@ namespace dtvt {
         std::string dms1_url = (char*)device->location;    // ベースURL
         std::string dms1_http = (char*)device_info->cds.control_url; // CDS情報：コントロール URL
         std::string dms1_friend = (char*)device_info->friendly_name;  // フレンドリー名
-
+        getIpAddressString(&device->ip, ipaddress);
+        std::string dms1_ipaddress = (char*)ipaddress;  // IPアドレス
 /*
         // todo: その他の user_data 項目 ※必要な場合に使用する
 
         // デバイスタイプ
         std::string dms1_device_type = (char*)device->device_type;
-        // IP アドレス
-        du_uchar ip_address[DU_IP_STR_SIZE] = {'\0'};
-        getIpAddressString(&device->ip, ip_address);
-        std::string dms1_ipaddress = (char*)ip_address;
         // 有効期限
         char expiration_str[32];
         getExpirationString(&device->expiration, expiration_str);
@@ -88,6 +86,7 @@ namespace dtvt {
         v1.push_back(dms1_url);
         v1.push_back(dms1_http);
         v1.push_back(dms1_friend);
+        v1.push_back(dms1_ipaddress);
         out.push_back(v1);
     }
 

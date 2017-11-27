@@ -19,10 +19,6 @@ namespace dtvt {
         mDMP.upnp._impl = NULL;
     }
 
-    /**
-     *
-     * @return
-     */
     bool Dlna::init() {
         du_byte_zero((du_uint8 *) &mDMP, sizeof(dmp));
         du_bool isInitOk = dupnp_init(&mDMP.upnp, 0, 0);
@@ -40,9 +36,6 @@ namespace dtvt {
             return false;
     }
 
-    /**
-     *
-     */
     void Dlna::uninit() {
         soapUninit();
 
@@ -55,12 +48,6 @@ namespace dtvt {
         DelIfNotNull(mDlnaRecVideoXmlParser);
     }
 
-    /**
-     *
-     * @param env
-     * @param obj
-     * @return
-     */
     bool Dlna::start(JNIEnv *env, jobject obj) {
         du_bool isStartOk = false;
 
@@ -163,9 +150,6 @@ namespace dtvt {
             return false;
     }
 
-    /**
-     *
-     */
     void Dlna::stop() {
         if (DLNA_STATE_STARTED != mDLNA_STATE) {
             return;
@@ -197,10 +181,6 @@ namespace dtvt {
         mDLNA_STATE = DLNA_STATE_STOP;
     }
 
-    /**
-     *
-     * @return
-     */
     bool Dlna::enableFunction() {
         du_bool ret = dupnp_enable_netif_monitor(&mDMP.upnp, 1);
         if (!ret) {
@@ -225,10 +205,6 @@ namespace dtvt {
         return true;
     }
 
-    /**
-     *
-     * @return
-     */
     bool Dlna::initDevEnv() {
         bool ret = false;
         if (mDLNA_STATE != DLNA_STATE_STARTED) {
@@ -287,10 +263,6 @@ namespace dtvt {
             return false;
     }
 
-    /**
-     *
-     * @return
-     */
     bool Dlna::soapInit() {
 
         du_byte_zero((du_uint8 *) &mDMP.soap, sizeof(soap));
@@ -320,19 +292,12 @@ namespace dtvt {
         return false;
     }
 
-    /**
-     *
-     */
     void Dlna::soapUninit() {
         du_str_array_free(&mDMP.soap.request_header);
         du_mutex_free(&mDMP.soap.mutex);
         du_sync_free(&mDMP.soap.sync);
     }
 
-    /**
-     *
-     * @return
-     */
     bool Dlna::startDmgrAndEmgr() {
         if (!dupnp_cp_evtmgr_start(&mDMP.eventManager)) {
             goto error;
@@ -349,11 +314,6 @@ namespace dtvt {
             return false;
     }
 
-    /**
-     *
-     * @param response
-     * @return
-     */
     static du_bool checkSoapResponseError(dupnp_http_response *response) {
         du_str_array param_array;
 
@@ -394,11 +354,6 @@ namespace dtvt {
             return false;
     }
 
-    /**
-     *
-     * @param response
-     * @param arg
-     */
     /*static*/ void  Dlna::browseDirectChildrenResponseHandler(dupnp_http_response *response, void *arg) {
         if (NULL == arg) {
             return;
@@ -419,7 +374,7 @@ namespace dtvt {
         }
 
         parser = (DlnaRecVideoXmlParser*)thiz->mDlnaRecVideoXmlParser;
-        parser->parse((void *) response->body, vv);
+        parser->parse((void *) response, vv);
         if(0==vv.size()){
             return;
         }
@@ -436,27 +391,25 @@ namespace dtvt {
             du_mutex_unlock(&d->soap.mutex);
     }
 
-    /**
-     *
-     * @param ctl
-     * @return
-     */
-    bool Dlna::sendSoap(const du_uchar *ctl) {
-        if (NULL == ctl || 0 == strlen((const char *) ctl)) {
+    //bool Dlna::sendSoap(std::string controlUrl, std::string objectId="0", const int startingIndex=0, const int requestCount=0, std::string browseFlag="BrowseDirectChildren"){
+    bool Dlna::sendSoap(std::string controlUrl, std::string objectId, const int startingIndex, const int requestCount, std::string browseFlag){
+        if (0 == controlUrl.length() || 0==browseFlag.length() || 0==objectId.length()) {
             return false;
         }
+        int index=max(startingIndex, 0);
+        int count=max(requestCount, 0);
         du_uchar_array request_body;
         du_uchar_array_init(&request_body);
         du_mutex_lock(&mDMP.soap.mutex);
 
         if (!dav_cds_make_browse(&request_body,
-             1,
-             DU_UCHAR_CONST("0"), //root dir
-             DU_UCHAR_CONST("BrowseDirectChildren"),
-             BDC_FILTER,
-             0,
-             0,
-             DU_UCHAR_CONST(""))) {
+                                 1,
+                                 (const du_uchar *) objectId.c_str(),
+                                 (const du_uchar *) browseFlag.c_str(), //DU_UCHAR_CONST("BrowseDirectChildren") or DU_UCHAR_CONST("BrowseMetadata"),
+                                 BDC_FILTER,
+                                 index,
+                                 count,
+                                 DU_UCHAR_CONST(""))) {
             goto error_1;
         }
 
@@ -466,14 +419,14 @@ namespace dtvt {
         }
 
         if (!dupnp_http_soap(&mDMP.upnp,
-             ctl,
-             &mDMP.soap.request_header,
-             du_uchar_array_get(&request_body),
-             du_uchar_array_length(&request_body),
-             READ_TIMEOUT_MS,
-             Dlna::browseDirectChildrenResponseHandler,
-             this,
-             &mDMP.soap.id)) {
+                             (const du_uchar *) controlUrl.c_str(),
+                             &mDMP.soap.request_header,
+                             du_uchar_array_get(&request_body),
+                             du_uchar_array_length(&request_body),
+                             READ_TIMEOUT_MS,
+                             Dlna::browseDirectChildrenResponseHandler,
+                             this,
+                             &mDMP.soap.id)) {
             return false;
         }
 
@@ -482,15 +435,55 @@ namespace dtvt {
         return true;
 
         error_1:
-            du_mutex_unlock(&mDMP.soap.mutex);
-            return false;
+        du_mutex_unlock(&mDMP.soap.mutex);
+        return false;
     }
 
-    /**
-     *
-     * @param msg
-     * @param content
-     */
+//    bool Dlna::sendSoap(const du_uchar *ctl) {
+//        if (NULL == ctl || 0 == strlen((const char *) ctl)) {
+//            return false;
+//        }
+//        du_uchar_array request_body;
+//        du_uchar_array_init(&request_body);
+//        du_mutex_lock(&mDMP.soap.mutex);
+//
+//        if (!dav_cds_make_browse(&request_body,
+//             1,
+//             DU_UCHAR_CONST("0"), //root dir
+//             DU_UCHAR_CONST("BrowseDirectChildren"),
+//             BDC_FILTER,
+//             0,
+//             0,
+//             DU_UCHAR_CONST(""))) {
+//            goto error_1;
+//        }
+//
+//        if (!dupnp_soap_header_set_soapaction(&mDMP.soap.request_header, dav_urn_cds(1),
+//                                              DU_UCHAR_CONST("Browse"))) {
+//            goto error_1;
+//        }
+//
+//        if (!dupnp_http_soap(&mDMP.upnp,
+//             ctl,
+//             &mDMP.soap.request_header,
+//             du_uchar_array_get(&request_body),
+//             du_uchar_array_length(&request_body),
+//             READ_TIMEOUT_MS,
+//             Dlna::browseDirectChildrenResponseHandler,
+//             this,
+//             &mDMP.soap.id)) {
+//            return false;
+//        }
+//
+//        du_mutex_unlock(&mDMP.soap.mutex);
+//
+//        return true;
+//
+//        error_1:
+//            du_mutex_unlock(&mDMP.soap.mutex);
+//            return false;
+//    }
+
     void Dlna::notify(int msg, std::string content) {
         JNIEnv *env = NULL;
         int status = mEvent.mJavaVM->GetEnv((void **) &env, JNI_VERSION_1_6);
@@ -513,16 +506,6 @@ namespace dtvt {
         mEvent.mJavaVM->DetachCurrentThread();
     }
 
-    /**
-     *
-     * @param env
-     * @param cls
-     * @param fieldName
-     * @param classPath
-     * @param value
-     * @param obj
-     * @return
-     */
     bool setJavaObjectField(JNIEnv *env, jclass cls, const char* const  fieldName, const char* const classPath, string& value, jobject obj){
         if(NULL==env || NULL == cls || NULL==fieldName
            || NULL==classPath || NULL==obj || NULL ==value.c_str()){
@@ -541,15 +524,6 @@ namespace dtvt {
         return true;
     }
 
-    /**
-     *
-     * @param env
-     * @param cl
-     * @param cons
-     * @param datas
-     * @param objOut
-     * @return
-     */
     bool addDmsInfo(JNIEnv *env, jclass cl, jmethodID cons, StringVector& datas, jobject objOut) {
         StringVector::iterator i=datas.begin();
 
@@ -572,7 +546,13 @@ namespace dtvt {
         }
 
         //mFriendlyName
-        ret= setJavaObjectField(env, cl, DmsItem_Field_mFriendlyName, Dlna_Java_String_Path,  *i, objOut);
+        ret= setJavaObjectField(env, cl, DmsItem_Field_mFriendlyName, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //mIPAddress
+        ret= setJavaObjectField(env, cl, DmsItem_Field_mIPAddress, Dlna_Java_String_Path,  *i, objOut);
         if(!ret){
             return false;
         }
@@ -580,16 +560,7 @@ namespace dtvt {
         return true;
     }
 
-    /**
-     *
-     * @param env
-     * @param cl
-     * @param cons
-     * @param datas
-     * @param objOut
-     * @return
-     */
-    bool addRecVideoItem(JNIEnv *env, jclass cl, jmethodID cons, StringVector& datas, jobject objOut) {
+    bool addRecVideoItem(JNIEnv *env, jclass cl, jmethodID cons, StringVector& datas, jobject objOut, jobject listObj, jmethodID listAddId) {
         StringVector::iterator i=datas.begin();
 
         //mTitle
@@ -616,36 +587,30 @@ namespace dtvt {
             return false;
         }
 
-        return true;
+        ret=env->CallBooleanMethod(listObj , listAddId , objOut);
+
+        return ret;
     }
 
-    /**
-     *
-     * @param env
-     * @param cl
-     * @param cons
-     * @param datas
-     * @param objOut
-     * @return
-     */
-    bool addRecVideoItems(JNIEnv *env, jclass cl, jmethodID cons, vector<StringVector>& datas, jobject objOut) {
+    bool addRecVideoItems(JNIEnv *env, jclass cl, jmethodID cons, vector<StringVector>& datas, jobject listObj, jmethodID listAddId, jclass recVideoItemClass, jmethodID recVideoItemConstructor) {
         bool ret=true;
 
         for(vector<StringVector>::iterator i=datas.begin(); i!=datas.end(); ++i){
-            if(!addRecVideoItem(env, cl, cons, *i, objOut)){
+            jobject objOut= env->NewObject(recVideoItemClass , recVideoItemConstructor);
+            if(NULL==objOut){
+                return false;
+            }
+            if(!addRecVideoItem(env, cl, cons, *i, objOut, listObj, listAddId)){
                 ret=false;
+                env->DeleteLocalRef(objOut);
                 break;
             }
+            env->DeleteLocalRef(objOut);
         }
 
         return ret;
     }
 
-    /**
-     *
-     * @param msg
-     * @param vecVecContents
-     */
     void Dlna::notifyObject(int msg, vector<StringVector> & vecVecContents) {
         JNIEnv *env = NULL;
         jobject itemObj = NULL;
@@ -691,22 +656,19 @@ namespace dtvt {
                 if(!addDmsInfo(env, mEvent.mJClassDmsItem, itemCostruct, datas, itemObj)){
                     goto error_or_return;
                 }
+                env->CallBooleanMethod(listObj , listAddId , itemObj);
                 break;
             case DLNA_MSG_ID_BROWSE_SOAP:
                 itemCostruct = env->GetMethodID(mEvent.mJClassRecVideoItem, "<init>", "()V");
                 IfNullGoTo(itemCostruct, error_or_return);
-                itemObj = env->NewObject(mEvent.mJClassRecVideoItem , itemCostruct);
-                IfNullGoTo(itemObj, error_or_return);
-                if(0==vecVecContents.size() || NULL==itemObj){
+                if(0==vecVecContents.size() ){
                     goto error_or_return;
                 }
-                if(!addRecVideoItems(env, mEvent.mJClassRecVideoItem, itemCostruct, vecVecContents, itemObj) ){
+                if(!addRecVideoItems(env, mEvent.mJClassRecVideoItem, itemCostruct, vecVecContents, listObj, listAddId, mEvent.mJClassRecVideoItem, itemCostruct) ){
                     goto error_or_return;
                 }
                 break;
         }
-
-        env->CallBooleanMethod(listObj , listAddId , itemObj);
 
         listActivityClazz = env->GetObjectClass(mEvent.mJObject);
         method = env->GetMethodID(listActivityClazz, "notifyObjFromNative", "(ILjava/util/ArrayList;)V");
@@ -736,13 +698,8 @@ namespace dtvt {
             }
     }
 
-    /**
-     *
-     * @param ctl
-     * @return
-     */
-    bool Dlna::browseDms(const du_uchar *ctl) {
-        return sendSoap(ctl);
+    bool Dlna::browseDms(std::string controlUrl) {
+        return sendSoap(controlUrl, "/external/video/media/all_videos");
     }
 
     /**

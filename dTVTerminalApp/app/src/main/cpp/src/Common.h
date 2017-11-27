@@ -42,6 +42,7 @@ namespace dtvt {
     const char * const DmsItem_Field_mControlUrl    ="mControlUrl";
     const char * const DmsItem_Field_mHttp          ="mHttp";
     const char * const DmsItem_Field_mFriendlyName  ="mFriendlyName";
+    const char * const DmsItem_Field_mIPAddress     ="mIPAddress";
 
     //DlnaRecVideoItem フィールド定義
     const char * const RecVideoItem_Field_mTitle    ="mTitle";

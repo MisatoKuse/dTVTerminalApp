@@ -70,7 +70,7 @@ namespace dtvt {
             return JNI_FALSE;
         }
 
-        bool ret = dlnaPtr->browseDms(udn);
+        bool ret = dlnaPtr->browseDms(std::string((char*)udn));
         env->ReleaseStringUTFChars(ctl_, (const char *) udn);
 
         return ret;
