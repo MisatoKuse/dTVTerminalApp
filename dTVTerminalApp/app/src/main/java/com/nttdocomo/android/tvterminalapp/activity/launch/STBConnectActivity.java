@@ -8,7 +8,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -22,7 +21,6 @@ public class STBConnectActivity extends BaseActivity {
     private boolean isStbConnected = false;
     private static final int DELAYED_TIME = 3000;
     private TextView mConnectResult;
-    private ImageView mParingImageView;
     private TextView mBackIcon;
     private final static String STATUS = "status";
     private final static String DTVT = "dTVTerminal";
@@ -45,9 +43,6 @@ public class STBConnectActivity extends BaseActivity {
         DTVTLogger.start();
         mBackIcon = findViewById(R.id.header_layout_back);
         mBackIcon.setVisibility(View.GONE);
-        mParingImageView = findViewById(R.id.header_layout_menu);
-        mParingImageView.setImageResource(R.mipmap.ic_personal_video_white_24dp);
-        mParingImageView.setVisibility(View.VISIBLE);
         setTitleText(getString(R.string.str_app_title));
         mConnectResult = findViewById(R.id.connect_result_text);
         mConnectResult.setVisibility(View.VISIBLE);
