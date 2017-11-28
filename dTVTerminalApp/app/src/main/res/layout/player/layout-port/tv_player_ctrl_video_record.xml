@@ -121,13 +121,16 @@
 		<SeekBar
 			android:id="@+id/tv_player_ctrl_now_on_air_seek_bar_sb"
 			android:layout_width="match_parent"
-			android:layout_height="3dp"
+			android:layout_height="wrap_content"
 			android:layout_below="@id/tv_player_ctrl_now_on_air_replay_iv"
 			android:layout_marginBottom="20dp"
 			android:layout_marginTop="40dp"
 			android:max="100"
 			android:paddingEnd="0dp"
 			android:paddingStart="0dp"
+			android:maxHeight="1dp"
+			android:minHeight="1dp"
+			android:thumb="@drawable/seek_bar_thumb_style"
 			android:progressDrawable="@drawable/player_progress_style"/>
 	</RelativeLayout>
 
