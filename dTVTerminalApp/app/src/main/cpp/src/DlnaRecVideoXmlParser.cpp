@@ -12,21 +12,15 @@ namespace dtvt {
     }
     void parseXmlNode(const xmlNodePtr & xmlRootNode, vector<StringVector>& out, StringVector& v1);
     void DlnaRecVideoXmlParser::parse(void *response, vector<StringVector>& out){
-
-        /*IfNullReturn(response);*/
+        //録画一覧XMLパーサー
+        IfNullReturn(response);
         dupnp_http_response *newRes = ((dupnp_http_response *) response);
-        /*IfNullReturn((char*)(newRes->body);
-        IfNullReturn((char*)(newRes->url);*/
-        //to do: フォルダー階層がある場合
-        char* xml= (char*)(newRes->body);
-        char* controlUrl= (char*)(newRes->url);
-
+        IfNullReturn((char*)(newRes->body));
         const du_uchar* result;
         du_str_array param_array;
         du_uint32 number_returned;
         du_uint32 total_matches;
         du_uint32 update_id;
-
         std::vector<std::string> recordVectorTmp;
         du_str_array_init(&param_array);
         if(!dav_cds_parse_browse_response(
@@ -39,7 +33,6 @@ namespace dtvt {
                 &update_id)){
             goto error1;
         }
-        /*du_str_array_free(&param_array);*/
         xmlDocPtr didl_doc;
         xmlNodePtr root;
         didl_doc = dav_didl_libxml_make_doc(result, du_str_len(result));
@@ -48,6 +41,8 @@ namespace dtvt {
             goto error2;
         }
         parseXmlNode(root, out, recordVectorTmp);
+        du_str_array_free(&param_array);
+        xmlFreeDoc(didl_doc);
         return;
         error1:
         du_str_array_free(&param_array);
@@ -56,6 +51,7 @@ namespace dtvt {
         xmlFreeDoc(didl_doc);
     }
 
+    bool isVideo = false;
     void parseXmlNode(const xmlNodePtr & xmlRootNode, vector<StringVector>& out, StringVector& v1)
     {
         xmlNodePtr xmlChildNode = xmlRootNode->xmlChildrenNode;
@@ -64,41 +60,50 @@ namespace dtvt {
             if(xmlChildNode->xmlChildrenNode != NULL)
             {
                 std::vector<std::string> recordVectorTmp;
-                bool isNew=false;
-                if (!xmlStrcmp(xmlChildNode->name, (const xmlChar*)"item"))
+                bool isItem=false;
+                if (!xmlStrcmp(xmlChildNode->name, (const xmlChar*)RecVideoParse_Field_Item))
                 {
-                    isNew=true;
+                    isItem=true;
+                    recordVectorTmp.push_back((char*)xmlGetProp(xmlChildNode, (const xmlChar*)RecVideoParse_Field_Id));
                 }
-                if (!xmlStrcmp(xmlChildNode->name, (const xmlChar*)"title"))
-                {
-                    v1.push_back((char*)xmlNodeGetContent(xmlChildNode));
-                    v1.push_back("2017-11-22 17:36:00");
-                }
-                if (!xmlStrcmp(xmlChildNode->name, (const xmlChar*)"date"))
+                if (!xmlStrcmp(xmlChildNode->name, (const xmlChar*)RecVideoParse_Field_Title))
                 {
                     v1.push_back((char*)xmlNodeGetContent(xmlChildNode));
                 }
-                if (!xmlStrcmp(xmlChildNode->name, (const xmlChar*)"class"))
+                if (!xmlStrcmp(xmlChildNode->name, (const xmlChar*)RecVideoParse_Field_Res))
                 {
-                    if(!xmlStrcmp(xmlNodeGetContent(xmlChildNode), (const xmlChar*)"object.item.videoItem")){
-
+                    std::string protocolInfo((char *)xmlGetProp(xmlChildNode, (const xmlChar*)RecVideoParse_Field_ProtocolInfo));
+                    if(protocolInfo.find(RecVideoType_Field_Mp4)!=string::npos ||
+                            protocolInfo.find(RecVideoType_Field_Mpeg)!=string::npos){
+                        v1.push_back((char*)xmlGetProp(xmlChildNode, (const xmlChar*)RecVideoParse_Field_Size));
+                        v1.push_back((char*)xmlGetProp(xmlChildNode, (const xmlChar*)RecVideoParse_Field_Duration));
+                        v1.push_back((char*)xmlGetProp(xmlChildNode, (const xmlChar*)RecVideoParse_Field_Resolution));
+                        v1.push_back((char*)xmlGetProp(xmlChildNode, (const xmlChar*)RecVideoParse_Field_Bitrate));
+                        isVideo = true;
                     }
                 }
-                if (!xmlStrcmp(xmlChildNode->name, (const xmlChar*)"albumArtURI"))
+                if (!xmlStrcmp(xmlChildNode->name, (const xmlChar*)RecVideoParse_Field_AlbumArtURI))
+                {
+                    if(!xmlStrcmp((const xmlChar*)xmlGetProp(xmlChildNode, (const xmlChar*)RecVideoParse_Field_ProfileID), (const xmlChar*)RecVideoParse_Field_PNG_LRG)){
+                        v1.push_back((char*)xmlNodeGetContent(xmlChildNode));
+                    }
+                }
+                if (!xmlStrcmp(xmlChildNode->name, (const xmlChar*)RecVideoParse_Field_Date))
                 {
                     v1.push_back((char*)xmlNodeGetContent(xmlChildNode));
                 }
-                if (!xmlStrcmp(xmlChildNode->name, (const xmlChar*)"res"))
+                if (!xmlStrcmp(xmlChildNode->name, (const xmlChar*)RecVideoParse_Field_Class))
                 {
-                    v1.push_back((char*)xmlNodeGetContent(xmlChildNode));
-                    out.push_back(v1);
+                    if(!xmlStrcmp(xmlNodeGetContent(xmlChildNode), (const xmlChar*)RecVideoParse_Field_VideoItem) && isVideo){
+                        out.push_back(v1);
+                    }
+                    isVideo = false;
                 }
-                if(isNew){
+                if(isItem){
                     parseXmlNode(xmlChildNode, out, recordVectorTmp);
                 }
             }
             xmlChildNode = xmlChildNode->next;
-
         }
         return ;
     }
