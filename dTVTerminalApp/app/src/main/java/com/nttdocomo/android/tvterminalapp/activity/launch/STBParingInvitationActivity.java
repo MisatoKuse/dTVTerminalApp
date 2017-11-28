@@ -6,7 +6,6 @@ package com.nttdocomo.android.tvterminalapp.activity.launch;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -19,7 +18,6 @@ import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 public class STBParingInvitationActivity extends BaseActivity implements View.OnClickListener {
 
     private TextView mUseWithoutPairingSTBParingInvitationActivity = null;
-    private ImageView mParingImageView;
     private TextView mBackIcon;
     private final static String STATUS = "status";
 
@@ -38,9 +36,6 @@ public class STBParingInvitationActivity extends BaseActivity implements View.On
         setTitleText(getString(R.string.str_app_title));
         mBackIcon = findViewById(R.id.header_layout_back);
         mBackIcon.setVisibility(View.GONE);
-        mParingImageView = findViewById(R.id.header_layout_menu);
-        mParingImageView.setImageResource(R.drawable.tvicon);
-        mParingImageView.setVisibility(View.VISIBLE);
         //TODO SharedPreferenceから初回表示判定を取得する
         //ペアリング勧誘
         //一度表示されたら以降表示されない

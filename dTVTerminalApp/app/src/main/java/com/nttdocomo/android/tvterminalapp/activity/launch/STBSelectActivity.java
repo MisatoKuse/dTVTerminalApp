@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -47,7 +46,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     Button mDAccountSameYesSTBSelectActivity = null;
     Button mDAccountSameNoSTBSelectActivity = null;
     private TextView mBackIcon;
-    private ImageView mParingImageView;
     private ListView mDeviceListView;
     List<ContentsData> mContentsList;
     private ContentsAdapter mContentsAdapter;
@@ -71,9 +69,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         mContentsList = new ArrayList();
         mBackIcon = findViewById(R.id.header_layout_back);
         mBackIcon.setVisibility(View.GONE);
-        mParingImageView = findViewById(R.id.header_layout_menu);
-        mParingImageView.setImageResource(R.mipmap.ic_personal_video_white_24dp);
-        mParingImageView.setVisibility(View.INVISIBLE);
         setTitleText(getString(R.string.str_app_title));
 
         DTVTLogger.end();
@@ -212,7 +207,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 
         // STBが見つかるまで非表示
         mCheckBoxSTBSelectActivity.setVisibility(View.INVISIBLE);
-        mParingImageView.setVisibility(View.INVISIBLE);
         DTVTLogger.end();
     }
 
@@ -226,7 +220,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         statusTextView.setText(R.string.str_stb_select_result_text);
 
         // STBが見つかったため表示する
-        mParingImageView.setVisibility(View.VISIBLE);
         mCheckBoxSTBSelectActivity.setVisibility(View.VISIBLE);
         TextView checkBoxText = (TextView) findViewById(R.id.useWithoutPairingSTBParingInvitation);
         checkBoxText.setVisibility(View.VISIBLE);
