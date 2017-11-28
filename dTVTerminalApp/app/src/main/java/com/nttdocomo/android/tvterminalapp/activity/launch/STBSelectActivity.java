@@ -89,7 +89,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private void initView() {
         DTVTLogger.start();
-        mContentsList = new ArrayList();
         mDeviceListView = findViewById(R.id.stb_device_name_list);
         mContentsAdapter = new ContentsAdapter(this, mContentsList,
                 ContentsAdapter.ActivityTypeItem.TYPE_STB_SELECT_LIST);
@@ -105,8 +104,12 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private void setDevListener() {
         DTVTLogger.start();
-        mDlnaProvDevList = new DlnaProvDevList();
+        if(null==mDlnaProvDevList){
+            mDlnaProvDevList = new DlnaProvDevList();
+
+        }
         mDlnaProvDevList.start(this);
+        updateDeviceList(mDlnaProvDevList.getDlnaDMSInfo());
         DTVTLogger.end();
     }
 
@@ -155,7 +158,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         SharedPreferencesUtils.resetSharedPreferencesStbInfo(this);
         setContents();
         initView();
-        startCallbackTimer();
         setDevListener();
 
         DTVTLogger.end();
@@ -165,7 +167,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     public void onPause() {
         DTVTLogger.start();
         leaveActivity();
-        displayMoreData(false);
+         displayMoreData(false);
         DTVTLogger.end();
         super.onPause();
     }

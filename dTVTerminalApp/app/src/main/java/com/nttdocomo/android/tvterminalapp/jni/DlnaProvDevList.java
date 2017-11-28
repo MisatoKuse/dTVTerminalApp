@@ -26,7 +26,14 @@ public class DlnaProvDevList {
             return;
         }
         di.setDlnaDevListListener(null);
-        di.stopDlna();
+    }
+
+    public DlnaDMSInfo getDlnaDMSInfo(){
+        DlnaInterface di= DlnaInterface.getInstance();
+        if(null==di){
+            return null;
+        }
+        return di.getDlnaDMSInfo();
     }
 
     /**

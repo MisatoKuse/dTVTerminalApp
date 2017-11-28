@@ -102,6 +102,10 @@ public class DlnaInterface {
         }
     }
 
+    public DlnaDMSInfo getDlnaDMSInfo(){
+        return mDMSInfo;
+    }
+
     /**
      * 機能：DlnaListenerを設定
      * @param lis listener
