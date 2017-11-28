@@ -95,7 +95,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         mDeviceListView.setAdapter(mContentsAdapter);
         mDeviceListView.setOnItemClickListener(this);
         mDeviceListView.setVisibility(View.VISIBLE);
-        mLoadMoreView = LayoutInflater.from(this).inflate(R.layout.search_load_more, null);
+        mLoadMoreView = LayoutInflater.from(this).inflate(R.layout.device_search_progress, null);
         DTVTLogger.end();
     }
 

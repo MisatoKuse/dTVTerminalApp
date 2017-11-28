@@ -395,6 +395,7 @@ public class ContentsAdapter extends BaseAdapter {
                 break;
             case TYPE_STB_SELECT_LIST:  //STBデバイス名一覧
                 holder.stb_device_name = view.findViewById(R.id.item_common_result_device_name);
+                view.findViewById(R.id.item_common_result_sort_button).setVisibility(View.GONE);
                 break;
             default:
                 break;
