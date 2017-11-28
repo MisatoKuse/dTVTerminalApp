@@ -176,7 +176,7 @@ public class VideoGenreProvider implements
      * サブジャンルあり/なしそれぞれの場合でのデータを作成する
      * ジャンルごとコンテンツ数一覧へのリクエストを実施
      *
-     * @param genreMetaDataList　ジャンル一覧
+     * @param genreMetaDataList 　ジャンル一覧
      */
     private void contentsCountRequest(ArrayList<GenreListMetaData> genreMetaDataList) {
         if (genreMetaDataList.size() > 1) {
@@ -218,6 +218,7 @@ public class VideoGenreProvider implements
      */
     private void getContent(GenreCountGetResponse genreCountGetResponse) {
         ArrayList<GenreCountGetMetaData> dataArrayList = genreCountGetResponse.getGenreCountGetMetaData();
+        List<VideoGenreList> videoGenreList = new ArrayList<>();
         if (mVideoGenreList != null && mVideoGenreList.size() > 0) {
             // ジャンル一覧データ作成
             for (int i = 0; i < mVideoGenreList.size(); i++) {
@@ -230,7 +231,14 @@ public class VideoGenreProvider implements
                     }
                 }
             }
+
+            //コンテンツ数が0のリストを削除する
+            for (int i = 0; i < mVideoGenreList.size(); i++) {
+                if (Integer.parseInt(mVideoGenreList.get(i).getContentCount()) > 0) {
+                    videoGenreList.add(mVideoGenreList.get(i));
+                }
+            }
         }
-        sendGenreListData(mVideoGenreList);
+        sendGenreListData(videoGenreList);
     }
 }
