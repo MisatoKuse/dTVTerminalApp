@@ -40,6 +40,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+	<!--TvPlayerActivity-->
+    <style name="DiximPlayerPanelTheme" parent="@android:style/Theme.Holo.Light.Panel" />
     <!--タブUI共通-->
     <style name="tabTextView">
         <item name="android:orientation">horizontal</item>
@@ -57,4 +59,4 @@
         <!-- チェック時の色 -->
         <item name="colorControlActivated">@color/white_text</item>
     </style>
-</resources>
+</resources></resources>

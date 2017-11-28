@@ -2,9 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.nttdocomo.android.tvterminalapp">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="false"
@@ -95,12 +97,20 @@
         <!-- ====================================== Player グループ Begin ====================================== -->
         <activity android:name="com.nttdocomo.android.tvterminalapp.activity.player.ChannelDetailPlayerActivity" />
         <activity android:name="com.nttdocomo.android.tvterminalapp.activity.player.RecordedVideoPlayerActivity" />
-        <activity android:name="com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity" />
+        <activity
+            android:name="com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity"
+            android:configChanges="keyboardHidden|keyboard|orientation|screenSize"/>
         <activity android:name="com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity" />
         <activity android:name="com.nttdocomo.android.tvterminalapp.activity.player.VideoPlayerActivity" />
         <activity
             android:name="com.nttdocomo.android.tvterminalapp.activity.player.RecommendPlayerActivity"
             android:launchMode="singleTop" />
+        <activity
+            android:name="com.digion.dixim.android.activation.ActivationActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="Activation"
+            android:theme="@style/DiximPlayerPanelTheme" >
+        </activity>
         <!-- ======================================  Player グループ End ====================================== -->
 
 

@@ -14,11 +14,11 @@ android {
         externalNativeBuild {
             cmake {
                 cppFlags ""
-                abiFilters "armeabi-v7a" //, "armeabi"
+                abiFilters  "armeabi" //, "armeabi-v7a"
             }
         }
         ndk {
-            abiFilters 'armeabi-v7a'
+            abiFilters 'armeabi' //'armeabi-v7a'
         }
     }
     buildTypes {
@@ -74,6 +74,8 @@ android {
     }
 }
 
+repositories { flatDir { dirs 'libs' } }
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -84,4 +86,10 @@ dependencies {
     compile 'com.android.support:support-v4:26.+'
     compile 'com.android.support:design:26.+'
     testCompile 'junit:junit:4.12'
+    //DiXiM SecurePlayer SDK
+    compile(name: 'dixim-android-activation-lib', ext: 'aar')
+    compile(name: 'dixim-android-player-lib', ext: 'aar')
+    compile(name: 'dixim-android-player-secure-nativecodec', ext: 'aar')
+    compile(name: 'dixim-android-player-secure-openmaxal', ext: 'aar')
+    compile(name: 'dixim-android-util2', ext: 'aar')
 }
