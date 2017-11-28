@@ -593,8 +593,14 @@ namespace dtvt {
             return false;
         }
 
-        //mThumbnail
-        ret= setJavaObjectField(env, cl, RecVideoItem_Field_mThumbnail, Dlna_Java_String_Path,  *i++, objOut);
+        //mUpnpIcon
+        ret= setJavaObjectField(env, cl, RecVideoItem_Field_mResUrl, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //mUpnpIcon
+        ret= setJavaObjectField(env, cl, RecVideoItem_Field_mUpnpIcon, Dlna_Java_String_Path,  *i++, objOut);
         if(!ret){
             return false;
         }
@@ -717,7 +723,7 @@ namespace dtvt {
     }
 
     bool Dlna::browseDms(std::string controlUrl) {
-        return sendSoap(controlUrl, "246");
+        return sendSoap(controlUrl, "13121");
     }
 
     /**

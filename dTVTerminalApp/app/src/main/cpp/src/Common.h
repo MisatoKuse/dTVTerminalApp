@@ -51,7 +51,8 @@ namespace dtvt {
     const char * const RecVideoItem_Field_mDuration   ="mDuration";
     const char * const RecVideoItem_Field_mResolution ="mResolution";
     const char * const RecVideoItem_Field_mBitrate    ="mBitrate";
-    const char * const RecVideoItem_Field_mThumbnail  ="mThumbnail";
+    const char * const RecVideoItem_Field_mResUrl     ="mResUrl";
+    const char * const RecVideoItem_Field_mUpnpIcon   ="mUpnpIcon";
     const char * const RecVideoItem_Field_mDate       ="mDate";
 
     //java string path

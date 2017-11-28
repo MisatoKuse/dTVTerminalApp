@@ -151,7 +151,8 @@ public class RecordedBaseFrgament extends Fragment implements AbsListView.OnScro
         detailData.setDuration(videoItem.mDuration);
         detailData.setResolution(videoItem.mResolution);
         detailData.setSize(videoItem.mSize);
-        detailData.setThumbnail(videoItem.mThumbnail);
+        detailData.setResUrl(videoItem.mResUrl);
+        detailData.setUpnpIcon(videoItem.mUpnpIcon);
         return detailData;
     }
 }

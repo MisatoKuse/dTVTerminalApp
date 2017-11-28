@@ -13,7 +13,8 @@ public class RecordedContentsDetailData implements Parcelable {
     private String mDuration;
     private String mResolution;
     private String mBitrate;
-    private String mThumbnail;
+    private String mResUrl;
+    private String mUpnpIcon;
 
     public void setSize(String mSize) {
         this.mSize = mSize;
@@ -47,12 +48,20 @@ public class RecordedContentsDetailData implements Parcelable {
         return mBitrate;
     }
 
-    public void setThumbnail(String mThumbnail) {
-        this.mThumbnail = mThumbnail;
+    public String getResUrl() {
+        return mResUrl;
     }
 
-    public String getThumbnail() {
-        return mThumbnail;
+    public void setResUrl(String mResUrl) {
+        this.mResUrl = mResUrl;
+    }
+
+    public String getUpnpIcon() {
+        return mUpnpIcon;
+    }
+
+    public void setUpnpIcon(String mUpnpIcon) {
+        this.mUpnpIcon = mUpnpIcon;
     }
 
     public RecordedContentsDetailData() {
@@ -63,7 +72,8 @@ public class RecordedContentsDetailData implements Parcelable {
         mDuration = in.readString();
         mResolution = in.readString();
         mBitrate = in.readString();
-        mThumbnail = in.readString();
+        mResUrl = in.readString();
+        mUpnpIcon = in.readString();
     }
 
     public static final Creator<RecordedContentsDetailData> CREATOR = new Creator<RecordedContentsDetailData>() {
@@ -89,6 +99,7 @@ public class RecordedContentsDetailData implements Parcelable {
         dest.writeString(mDuration);
         dest.writeString(mResolution);
         dest.writeString(mBitrate);
-        dest.writeString(mThumbnail);
+        dest.writeString(mResUrl);
+        dest.writeString(mUpnpIcon);
     }
 }

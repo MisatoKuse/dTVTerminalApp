@@ -16,6 +16,8 @@ namespace dtvt {
         IfNullReturn(response);
         dupnp_http_response *newRes = ((dupnp_http_response *) response);
         IfNullReturn((char*)(newRes->body));
+        /*char* xml= (char*)(newRes->body);
+        char* controlUrl= (char*)(newRes->url);*/
         const du_uchar* result;
         du_str_array param_array;
         du_uint32 number_returned;
@@ -79,6 +81,7 @@ namespace dtvt {
                         v1.push_back((char*)xmlGetProp(xmlChildNode, (const xmlChar*)RecVideoParse_Field_Duration));
                         v1.push_back((char*)xmlGetProp(xmlChildNode, (const xmlChar*)RecVideoParse_Field_Resolution));
                         v1.push_back((char*)xmlGetProp(xmlChildNode, (const xmlChar*)RecVideoParse_Field_Bitrate));
+                        v1.push_back((char*)xmlNodeGetContent(xmlChildNode));
                         isVideo = true;
                     }
                 }
