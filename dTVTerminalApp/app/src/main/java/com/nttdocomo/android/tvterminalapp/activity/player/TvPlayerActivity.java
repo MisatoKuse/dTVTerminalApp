@@ -371,6 +371,8 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
             mTvSeekBar = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_seek_bar_sb);
             mTvFullScreen.setOnClickListener(this);
             mTvReplay.setOnClickListener(this);
+            mTvBack.setOnClickListener(this);
+            mTvForward.setOnClickListener(this);
             mTvCtrlView.setLayoutParams(playerParams);
             mPlayerViewLayout.addView(mTvCtrlView);
             //初期化の時点から、handlerにmsgを送る
@@ -449,7 +451,6 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                         if(mVideoPlayPause.getVisibility() == View.VISIBLE){
                             if(isHideOperate){
                                 hideVideoCtrlView(View.INVISIBLE);
-                                isHideOperate = true;
                             }
                         }else {
                             mVideoPlayPause.setVisibility(View.VISIBLE);
@@ -556,7 +557,15 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                 hideCtrlViewAfterOperate();
                 break;
             case R.id.tv_player_ctrl_now_on_air_rapid_tv:
-                Toast.makeText(this,"タップで倍速で再生",Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,"タップで倍速で再生", Toast.LENGTH_SHORT).show();
+                hideCtrlViewAfterOperate();
+                break;
+            case R.id.tv_player_ctrl_now_on_air_back_iv:
+                Toast.makeText(this, "前のCH", Toast.LENGTH_SHORT).show();
+                hideCtrlViewAfterOperate();
+                break;
+            case R.id.tv_player_ctrl_now_on_air_forward_iv:
+                Toast.makeText(this, "次のCH", Toast.LENGTH_SHORT).show();
                 hideCtrlViewAfterOperate();
                 break;
             default:
