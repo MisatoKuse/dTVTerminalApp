@@ -47,30 +47,30 @@ import java.util.TimerTask;
 
 public class SearchTopActivity extends BaseActivity implements SearchDataProvider.SearchDataProviderListener, View.OnClickListener, SearchBaseFragmentScrollListener {
 
-    private static final int PAGE_NO_OF_SERVICE_TEREBI =0;                                         //テレビ
+    private static final int PAGE_NO_OF_SERVICE_TEREBI = 0;                                         //テレビ
     private static final int PAGE_NO_OF_SERVICE_VIDEO = PAGE_NO_OF_SERVICE_TEREBI + 1;         //ビデオ
     private static final int PAGE_NO_OF_SERVICE_DTV_CHANNEL = PAGE_NO_OF_SERVICE_TEREBI + 2;  //dTVチャンネル
-    private static final int PAGE_NO_OF_SERVICE_DTV =PAGE_NO_OF_SERVICE_TEREBI + 3;            //dTV
-    private static final int PAGE_NO_OF_SERVICE_DANIME =PAGE_NO_OF_SERVICE_TEREBI + 4;        //dアニメ
+    private static final int PAGE_NO_OF_SERVICE_DTV = PAGE_NO_OF_SERVICE_TEREBI + 3;            //dTV
+    private static final int PAGE_NO_OF_SERVICE_DANIME = PAGE_NO_OF_SERVICE_TEREBI + 4;        //dアニメ
 
     public final static int sSearchDisplayCountOnce = 20;
     private final static long SEARCH_INTERVAL = 1000;
-    public final static String sSearchCountDefault ="検索結果:0件";
+    public final static String sSearchCountDefault = "検索結果:0件";
 
     private SearchView mSearchView;
     private final static int TEXT_SIZE = 15;
     private String[] mTabNames;
     private LinearLayout mLinearLayout;
     private HorizontalScrollView mTabScrollView;
-    private ViewPager mSearchViewPager=null;
+    private ViewPager mSearchViewPager = null;
 
-    SearchNarrowCondition mSearchNarrowCondition=null;
-    SearchSortKind mSearchSortKind= new SearchSortKind("SearchSortKindNone");
+    SearchNarrowCondition mSearchNarrowCondition = null;
+    SearchSortKind mSearchSortKind = new SearchSortKind("SearchSortKindNone");
 
-    private ImageView mMenuImageView=null;
-    private int mPageNumber=0;
+    private ImageView mMenuImageView = null;
+    private int mPageNumber = 0;
     private boolean mIsSearching = false;
-    private FragmentFactory mFragmentFactory=null;
+    private FragmentFactory mFragmentFactory = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +91,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
         mTabNames = getResources().getStringArray(R.array.tab_names);
         setSearchNarrowCondition();
 
-        mFragmentFactory= new FragmentFactory();
+        mFragmentFactory = new FragmentFactory();
         mSearchDataProvider = new SearchDataProvider();
     }
 
@@ -100,7 +100,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
         mSearchView = findViewById(R.id.keyword_search_form);
     }
 
-    private static String sKeywordText="";
+    private static String sKeywordText = "";
 
     /*検索フォームの設定*/
     private void setSearchViewState() {
@@ -112,6 +112,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
 
         mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
             Timer mTimer = null;
+
             @Override
             public void onFocusChange(View view, boolean isFocus) {
                 if (isFocus) {
@@ -131,9 +132,9 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
                         public boolean onQueryTextSubmit(String s) {
                             // 決定ボタンがタップされた時
                             long submit_time = System.currentTimeMillis();
-                            mInputText=s;
+                            mInputText = s;
                             DTVTLogger.debug("onQueryTextSubmit");
-                            if((mSearchTime+SEARCH_INTERVAL) > submit_time) {
+                            if ((mSearchTime + SEARCH_INTERVAL) > submit_time) {
                                 mTimer.cancel();
                                 mTimer = null;
                             }
@@ -163,7 +164,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
                                                 public void run() {
                                                     DTVTLogger.debug("1 sencond passed");
                                                     mSearchTime = System.currentTimeMillis();
-                                                    if(mInputText != mBeforeText) {
+                                                    if (mInputText != mBeforeText) {
                                                         // 文字列に変化があった場合
                                                         DTVTLogger.debug("Start IncrementalSearch:" + mInputText);
                                                         initSearchedResultView();
@@ -179,11 +180,11 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
                                     }, SEARCH_INTERVAL, SEARCH_INTERVAL);
                                     mSearchView.setSubmitButtonEnabled(true);
                                     //setSearchData(s);
-                                } else{
+                                } else {
                                     // nop.
                                 }
                             } else {
-                                if(mTimer != null) {
+                                if (mTimer != null) {
                                     mTimer.cancel();
                                     mTimer = null;
                                 }
@@ -195,7 +196,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
                         }
                     });
                 } else {
-                    if(mTimer != null) {
+                    if (mTimer != null) {
                         mTimer.cancel();
                         mTimer = null;
                     }
@@ -211,20 +212,20 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
         searchAutoComplete.setTextSize(TEXT_SIZE);
     }
 
-    private void setPageNumber(int pageNumber){
+    private void setPageNumber(int pageNumber) {
         mPageNumber = pageNumber;
-        mPageNumber = (mPageNumber <0? 0: mPageNumber);
+        mPageNumber = (mPageNumber < 0 ? 0 : mPageNumber);
     }
 
-    private ArrayList<SearchServiceType> getCurrentSearchServiceTypeArray(){
+    private ArrayList<SearchServiceType> getCurrentSearchServiceTypeArray() {
 
-        ArrayList<SearchServiceType> ret=new ArrayList<SearchServiceType>();
-        if(null==mSearchViewPager){
+        ArrayList<SearchServiceType> ret = new ArrayList<SearchServiceType>();
+        if (null == mSearchViewPager) {
             return ret;
         }
-        int pageIndex= mSearchViewPager.getCurrentItem();
+        int pageIndex = mSearchViewPager.getCurrentItem();
 
-        switch (pageIndex){
+        switch (pageIndex) {
             case PAGE_NO_OF_SERVICE_TEREBI: //テレビ
                 ret.add(new SearchServiceType(SearchServiceType.ServiceId.hikariTVForDocomo));
                 ret.add(new SearchServiceType(SearchServiceType.ServiceId.dTVChannel));
@@ -243,15 +244,17 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
             case PAGE_NO_OF_SERVICE_DANIME: //dアニメ
                 ret.add(new SearchServiceType(SearchServiceType.ServiceId.dAnime));
                 break;
+            default:
+                break;
         }
 
         return ret;
     }
 
-    private void setSearchNarrowCondition(){
-        if(null==mSearchNarrowCondition){
+    private void setSearchNarrowCondition() {
+        if (null == mSearchNarrowCondition) {
 
-            ArrayList<SearchFilterTypeMappable> arr=new ArrayList<SearchFilterTypeMappable>();
+            ArrayList<SearchFilterTypeMappable> arr = new ArrayList<SearchFilterTypeMappable>();
 
             SearchGenreType genreType = new SearchGenreType("SearchGenreTypeActive_001");      //映画
             SearchDubbedType dubbedType = new SearchDubbedType("SearchDubbedTypeBoth");         //字幕
@@ -260,19 +263,21 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
 
             arr.add(genreType);
             arr.add(dubbedType);
-            mSearchNarrowCondition=new SearchNarrowCondition(arr);
+            mSearchNarrowCondition = new SearchNarrowCondition(arr);
         }
     }
 
-	private void setSearchStart(boolean b){
+    private void setSearchStart(boolean b) {
         synchronized (this) {
             mIsSearching = b;
         }
     }
-    private static String mCurrentSearchText="";
-    SearchDataProvider mSearchDataProvider=null;
+
+    private static String mCurrentSearchText = "";
+    SearchDataProvider mSearchDataProvider = null;
+
     private void setSearchData(String searchText) {
-        if(null==mSearchDataProvider){
+        if (null == mSearchDataProvider) {
             DTVTLogger.debug("SearchTopActivity::setSearchData, mSearchDataProvider is null");
             return;
         }
@@ -280,11 +285,11 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
         synchronized (this) {
             if (!mIsSearching) {
                 setSearchStart(true);
-            }else {
+            } else {
                 return;
             }
         }
-        if(null!=searchText){
+        if (null != searchText) {
             /*
             if(false ==mCurrentSearchText.equals(searchText)){
                 SearchBaseFragment b=getCurrentSearchBaseFragment();
@@ -295,8 +300,8 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
                 }
             }
             */
-            SearchBaseFragment b=getCurrentSearchBaseFragment();
-            if(null!=b){
+            SearchBaseFragment b = getCurrentSearchBaseFragment();
+            if (null != b) {
                 b.clear();
                 setPageNumber(0);
                 setPagingStatus(false);
@@ -304,12 +309,12 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
             mCurrentSearchText = searchText;
         }
 
-        if(mCurrentSearchText.length()==0){
+        if (mCurrentSearchText.length() == 0) {
             return;
         }
 
         //SearchDataProvider dp=new SearchDataProvider();
-        ArrayList<SearchServiceType> serviceTypeArray=getCurrentSearchServiceTypeArray();
+        ArrayList<SearchServiceType> serviceTypeArray = getCurrentSearchServiceTypeArray();
         mSearchDataProvider.startSearchWith(
                 mCurrentSearchText,
                 serviceTypeArray,
@@ -329,7 +334,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
     }
 
     private void initSearchedResultView() {
-        if(null!=mSearchViewPager){
+        if (null != mSearchViewPager) {
             return;
         }
 
@@ -350,12 +355,12 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
                 setTab(position);
 
                 clearAllFragment();
-				setPagingStatus(false);
+                setPagingStatus(false);
 
-                if(null!=mSearchView){
+                if (null != mSearchView) {
                     setPageNumber(0);
-                    CharSequence searchText= mSearchView.getQuery();
-                    if(0 < searchText.length()){
+                    CharSequence searchText = mSearchView.getQuery();
+                    if (0 < searchText.length()) {
                         setSearchData(searchText.toString());
                     }
                 }
@@ -422,19 +427,19 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
 
     private int mSearchTotalCount = 0;
 
-    private SearchBaseFragment getCurrentSearchBaseFragment(){
+    private SearchBaseFragment getCurrentSearchBaseFragment() {
         int currentPageNo = mSearchViewPager.getCurrentItem();
-        SearchBaseFragment baseFragment = (SearchBaseFragment)mFragmentFactory.createFragment(currentPageNo, this);
+        SearchBaseFragment baseFragment = (SearchBaseFragment) mFragmentFactory.createFragment(currentPageNo, this);
         return baseFragment;
     }
 
     @Override
     public void onSearchDataProviderFinishOk(ResultType<TotalSearchContentInfo> resultType) {
-        TotalSearchContentInfo content= resultType.getResultType();
+        TotalSearchContentInfo content = resultType.getResultType();
 
         mSearchTotalCount = content.totalCount;
 
-        String totalCountText=sSearchCountDefault;
+        String totalCountText = sSearchCountDefault;
 
         SearchBaseFragment baseFragment = getCurrentSearchBaseFragment();//(SearchBaseFragment)mFragmentFactory.createFragment(currentPageNo, this);
 
@@ -444,20 +449,20 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
                 setPagingStatus(false);
             } else {
                 //if(0==mPageNumber) {
-                    baseFragment.clear();
+                baseFragment.clear();
                 //}
             }
         }
 
-        if(0<mSearchTotalCount){
+        if (0 < mSearchTotalCount) {
 
-            totalCountText="検索結果:"+ mSearchTotalCount +"件";
+            totalCountText = "検索結果:" + mSearchTotalCount + "件";
 
             int thisTimeTotal = content.searchContentInfo.size();
-            for(int i=0; i<thisTimeTotal; ++i){
+            for (int i = 0; i < thisTimeTotal; ++i) {
                 SearchContentInfo ci = content.searchContentInfo.get(i);
 
-                SearchContentInfo searchContentInfo=new SearchContentInfo(false, ci.contentId, ci. serviceId, ci.contentPictureUrl, ci.title);
+                SearchContentInfo searchContentInfo = new SearchContentInfo(false, ci.contentId, ci.serviceId, ci.contentPictureUrl, ci.title);
                 baseFragment.mData.add(searchContentInfo);
             }
             DTVTLogger.debug("baseFragment.mData.size = " + baseFragment.mData.size());
@@ -473,9 +478,9 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
 
     public void clearAllFragment() {
 
-        if(null!=mSearchViewPager){
-            int sum=mFragmentFactory.getFragmentCount();
-            for(int i=0;i<sum;++i){
+        if (null != mSearchViewPager) {
+            int sum = mFragmentFactory.getFragmentCount();
+            for (int i = 0; i < sum; ++i) {
                 SearchBaseFragment baseFragment = mFragmentFactory.createFragment(i, this);
                 baseFragment.clear();
             }
@@ -484,23 +489,23 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
 
     @Override
     public void onSearchDataProviderFinishNg(ResultType<SearchResultError> resultType) {
-		clearAllFragment();
+        clearAllFragment();
         DTVTLogger.debug("onSearchDataProviderFinishNg");
     }
 
     @Override
     public void onClick(View view) {
-        if(view ==mMenuImageView){
+        if (view == mMenuImageView) {
             onSampleGlobalMenuButton_PairLoginOk();
         }
     }
 
-    private int mSearchLastItem =0;
-    private boolean mIsPaging=false;
+    private int mSearchLastItem = 0;
+    private boolean mIsPaging = false;
 
-    private void setPagingStatus(boolean b){
-        synchronized (this){
-            mIsPaging=b;
+    private void setPagingStatus(boolean b) {
+        synchronized (this) {
+            mIsPaging = b;
         }
     }
 
@@ -511,9 +516,9 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
 
         mSearchLastItem = firstVisibleItem + visibleItemCount - 1;
 
-        int pageMax = (mPageNumber+ 1) * SearchConstants.Search.requestMaxResultCount;
-        int maxPage = mSearchTotalCount/SearchConstants.Search.requestMaxResultCount;
-        if(firstVisibleItem + visibleItemCount>=pageMax && maxPage >=1+ mPageNumber ){
+        int pageMax = (mPageNumber + 1) * SearchConstants.Search.requestMaxResultCount;
+        int maxPage = mSearchTotalCount / SearchConstants.Search.requestMaxResultCount;
+        if (firstVisibleItem + visibleItemCount >= pageMax && maxPage >= 1 + mPageNumber) {
             setPageNumber(mPageNumber + 1);
             DTVTLogger.debug("page no=" + (mPageNumber + 1));
             setPagingStatus(true);
@@ -534,9 +539,10 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
     private class MainAdpater extends FragmentStatePagerAdapter {
 
         private SearchTopActivity mSearchTopActivity = null;
+
         MainAdpater(FragmentManager fm, SearchTopActivity top) {
             super(fm);
-            mSearchTopActivity=top;
+            mSearchTopActivity = top;
         }
 
         @Override

@@ -16,21 +16,29 @@ public class DlnaRecVideoItem {
      * ２．フィールドは追加すると、setとget方法をjavaとc側両方で増やさないよう
      */
 
+    //mItemId
+    public String mItemId = "";
     //録画のタイトル
-    public String mTitle="";
+    public String mTitle = "";
+    //protocolInfo start
+    public String mSize = "";
+    public String mDuration = "";
+    public String mResolution = "";
+    public String mBitrate = "";
+    public String mThumbnail = "";
+    //protocolInfo end
     //録画の日付
-    public String mDate="";
-    //録画のアイオン
-    public String mUpnpIcon="";
-    //録画のurl
-    public String mResUrl="";
+    public String mDate = "";
 
     //to do: 使用する必要があれば、新しいフィールドをここで追加
+
+    //TODO コピー残り回数（まだ取得できない為ダミー）
+    public int mAllowedUse = 0;
 
     /**
      * 機能：DlnaRecVideoItem情報クラスを構造
      */
-    public DlnaRecVideoItem(){
+    public DlnaRecVideoItem() {
 
     }
 

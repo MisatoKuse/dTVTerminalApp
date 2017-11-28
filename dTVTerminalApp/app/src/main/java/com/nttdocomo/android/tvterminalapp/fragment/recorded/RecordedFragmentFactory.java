@@ -24,9 +24,7 @@ public class RecordedFragmentFactory {
 
         if (null == fragment) {
             fragment = new RecordedBaseFrgament();
-            if (fragment != null) {
-                mFragments.put(position, fragment);
-            }
+            mFragments.put(position, fragment);
         }
 
         return fragment;

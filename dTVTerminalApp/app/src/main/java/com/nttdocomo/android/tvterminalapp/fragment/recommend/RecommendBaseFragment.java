@@ -21,6 +21,7 @@ import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.RecommendListBaseAdapter;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.model.recommend.RecommendContentInfo;
+import com.nttdocomo.android.tvterminalapp.utils.ClassNameUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -142,10 +143,12 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         RecommendContentInfo info = (RecommendContentInfo) mData.get(i);
+        ClassNameUtils classNameUtils = new ClassNameUtils();
+        Class<?> className = classNameUtils.getContentsService(info.serviceId);
         Bundle args = new Bundle();
         args.putParcelable(DtvContentsDetailActivity.DTV_INFO_BUNDLE_KEY,
                 getOtherContentsDetailData(info));
-        ((BaseActivity) mActivity).startActivity(TvPlayerActivity.class, args);
+        ((BaseActivity) mActivity).startActivity(className, args);
     }
 
     /**

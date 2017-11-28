@@ -4,8 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
-
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -29,31 +29,35 @@ import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragmen
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFrgament;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvRecVideo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoListener;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class RecordedListActivity extends BaseActivity implements View.OnClickListener, RecordedBaseFragmentScrollListener
-        , DlnaRecVideoListener {
+public class RecordedListActivity extends BaseActivity implements View.OnClickListener,
+        RecordedBaseFragmentScrollListener, DlnaRecVideoListener {
     private LinearLayout mTabLinearLayout;
     private String[] mTabNames;
     private ImageView mMenuImageView;
     private ViewPager mViewPager;
     private SearchView mSearchView;
-    private int mPageNumber = 0;
-    private int mSearchLastItem = 0;
-    private int mSearchTotalCount = 0;
-    private static final int mLoadPageDelayTime = 500;
-    private boolean mIsPaging = false;
-    private boolean mIsSearching = false;
     private HorizontalScrollView mTabScrollView;
     private RecordedFragmentFactory mRecordedFragmentFactory = null;
-    private ContentsAdapter mContentsAdapter;
-    private int screenWidth;
+
+    private final static long SEARCH_INTERVAL = 1000;
+
+    private final static int TEXT_SIZE = 15;
 
     private static final int SCREEN_TIME_WIDTH_PERCENT = 9;
     private static final int MARGIN_ZERO = 0;
@@ -63,13 +67,15 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     // タブTYPE：すべて
     private static final int RECORDED_MODE_NO_OF_ALL = 0;
     // タブTYPE：持ち出し
-    private static final int RECORDED_MODE_NO_OF_TAKE_OUT = 2;
+    private static final int RECORDED_MODE_NO_OF_TAKE_OUT = 1;
 
-    // TODO タブUI共通の値であれば、styleに定義
+    public static final String RECORD_LIST__KEY = "recordListKey";
+
+    private DlnaProvRecVideo dlnaProvRecVideo;
+
     //設定するマージンのピクセル数
-    private static final int LEFT_MARGIN = 30;
-    private static final int ZERO_MARGIN = 0;
-    private static final int TAB_NAME_DENSITY = 15;
+    private static final String DATE_FORMAT = "yyyy/MM/ddHH:mm:ss";
+    private String date[] = {"日", "月", "火", "水", "木", "金", "土"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,12 +86,12 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         mMenuImageView.setVisibility(View.VISIBLE);
         mMenuImageView.setOnClickListener(this);
         setTitleText(getString(R.string.nav_menu_item_recorder_program));
-        // TODO DPクラスをここでnewする
 
         initView();
+        initData();
         initTabVIew();
         setPagerAdapter();
-//        setSearchViewState();
+        setSearchViewState();
         DTVTLogger.end();
     }
 
@@ -93,53 +99,120 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      * TODO 検索バーの内部処理はSprint7では実装しない
      */
     private void setSearchViewState() {
+        mSearchView.setIconifiedByDefault(false);
+        SearchView.SearchAutoComplete searchAutoComplete
+                = findViewById(android.support.v7.appcompat.R.id.search_src_text);
+
+        //mSearchView.set
+
+        mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            Timer mTimer = null;
+
+            @Override
+            public void onFocusChange(View view, boolean isFocus) {
+                if (isFocus) {
+                    DTVTLogger.debug("SearchView Focus");
+                    // フォーカスが当たった時
+                    mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+                        private Handler mHandler = new Handler();
+                        // 次回検索日時
+                        long mSearchTime = 0;
+                        // 前回文字列
+                        private String mBeforeText = null;
+                        // 入力文字列
+                        private String mInputText = null;
+
+                        @Override
+                        public boolean onQueryTextSubmit(String s) {
+                            // 決定ボタンがタップされた時
+                            long submit_time = System.currentTimeMillis();
+                            mInputText = s;
+                            DTVTLogger.debug("onQueryTextSubmit");
+                            if ((mSearchTime + SEARCH_INTERVAL) > submit_time) {
+                                mTimer.cancel();
+                                mTimer = null;
+                            }
+                            // 検索処理実行
+//                            initSearchedResultView();
+                            setSearchData(mInputText);
+                            mSearchView.clearFocus();
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onQueryTextChange(String s) {
+                            // 検索フォームに文字が入力された時
+                            //一時検索画面が表示される
+//                            initSearchedResultView();
+                            if (s.length() > 0) {
+                                mInputText = s;
+                                mSearchTime = System.currentTimeMillis();
+                                // result用画面に切り替え
+                                if (mTimer == null) {
+                                    mTimer = new Timer();
+                                    mTimer.schedule(new TimerTask() {
+                                        @Override
+                                        public void run() {
+                                            mHandler.post(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    DTVTLogger.debug("1 sencond passed");
+                                                    mSearchTime = System.currentTimeMillis();
+                                                    if (mInputText != mBeforeText) {
+                                                        // 文字列に変化があった場合
+                                                        DTVTLogger.debug("Start IncrementalSearch:" + mInputText);
+//                                                        initSearchedResultView();
+                                                        setSearchData(mInputText);
+                                                        mBeforeText = mInputText;
+                                                    } else {
+                                                        // nop.
+                                                        DTVTLogger.debug("Don't Start IncrementalSearch I=" + mInputText + ":B=" + mBeforeText);
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    }, SEARCH_INTERVAL, SEARCH_INTERVAL);
+                                    mSearchView.setSubmitButtonEnabled(true);
+                                    //setSearchData(s);
+                                } else {
+                                    // nop.
+                                }
+                            } else {
+                                if (mTimer != null) {
+                                    mTimer.cancel();
+                                    mTimer = null;
+                                }
+                                mSearchView.setSubmitButtonEnabled(false);
+                                clearAllFragment();
+                            }
+                            //setSearchData(s);
+                            return false;
+                        }
+                    });
+                } else {
+                    if (mTimer != null) {
+                        mTimer.cancel();
+                        mTimer = null;
+                    }
+                    // フォーカスが外れた時
+                    mSearchView.clearFocus();
+                }
+            }
+        });
+        mSearchView.setFocusable(false);
+        searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.keyword_search_text));
+        searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.keyword_search_hint));
+        searchAutoComplete.setHint(R.string.keyword_search_hint);
+        searchAutoComplete.setTextSize(TEXT_SIZE);
     }
 
     /**
-     * ページ数を変数に格納
-     *
-     * @param pageNumber
-     */
-    private void setPageNumber(int pageNumber) {
-        DTVTLogger.start();
-        mPageNumber = pageNumber;
-        mPageNumber = (mPageNumber < 0 ? 0 : mPageNumber);
-    }
-
-//    /**
-//     * タブのタイプ別にList一覧を出しわける
-//     *
-//     * @return
-//     */
-//    private ArrayList<SearchServiceType> getTypeArray() {
-//        // TODO タイプclass検討する
-//        ArrayList<SearchServiceType> ret = new ArrayList<SearchServiceType>();
-//        if (null == mViewPager) {
-//            return ret;
-//        }
-//        int pageIndex = mViewPager.getCurrentItem();
-//        switch (pageIndex) {
-//            case RECORDED_MODE_NO_OF_ALL: // すべて
-////                ret.add(new SearchServiceType(SearchServiceType.ServiceId.hikariTVForDocomo));
-////                ret.add(new SearchServiceType(SearchServiceType.ServiceId.dTVChannel));
-//                break;
-//            case RECORDED_MODE_NO_OF_TAKE_OUT: // 持ち出し
-////                ret.add(new SearchServiceType(SearchServiceType.ServiceId.hikariTVForDocomo));
-////                ret.add(new SearchServiceType(SearchServiceType.ServiceId.dTV));
-////                ret.add(new SearchServiceType(SearchServiceType.ServiceId.dAnime));
-//                break;
-//            default:
-//                break;
-//        }
-//        return ret;
-//    }
-
-    /**
-     * TODO 検索バーの内部処理はSprint7では実装しない
-     *
+     * 検索処理実行
      * @param searchText
      */
     private void setSearchData(String searchText) {
+        // TODO 検索バーの内部処理はSprint7では実装しない
     }
 
     /**
@@ -155,19 +228,17 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         mTabNames = getResources().getStringArray(R.array.record_list_tab_names);
         mRecordedFragmentFactory = new RecordedFragmentFactory();
         mSearchView = findViewById(R.id.record_list_main_layout_searchview);
+    }
+
+    /**
+     * 画面描画
+     */
+    private void initData() {
         DlnaProvRecVideo dlnaProvRecVideo = new DlnaProvRecVideo();
-//        boolean startFlag =  dlnaProvRecVideo.start("uuid:aad079ae-0ea4-431a-b88f-a47174cd5601",this);
-//        boolean startFlag =  dlnaProvRecVideo.start("uuid:aad079ae-0ea4-431a-b88f-020000000000",this);
-        //boolean startFlag =  dlnaProvRecVideo.start("uuid:4f154baf-7827-24b2-ffff-ffff97fdca80",this);
-        boolean startFlag = dlnaProvRecVideo.start("uuid:da769f7c-3650-dabc-ffff-ffffb853d273", this); //b002
-
+        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
+        boolean startFlag = dlnaProvRecVideo.start(dlnaDmsItem.mUdn, this); //b002
         if (startFlag) {
-            //dlnaProvRecVideo.browseRecVideoDms("http://192.168.11.10:58645/dev/4f154baf-7827-24b2-ffff-ffff97fdca80/svc/upnp-org/ContentDirectory/action"); //bubule 1
-            dlnaProvRecVideo.browseRecVideoDms("http://192.168.11.15:58645/dev/da769f7c-3650-dabc-ffff-ffffb853d273/svc/upnp-org/ContentDirectory/action"); //b0021
-//            dlnaProvRecVideo.browseRecVideoDms("http://192.168.11.10:58645/dev/4f154baf-7827-24b2-ffff-ffff97fdca80/svc/upnp-org/ContentDirectory/action");
-
-//            dlnaProvRecVideo.browseRecVideoDms("http://192.168.11.8:50001/ContentDirectory/control");
-            //dlnaProvRecVideo.browseRecVideoDms("http://192.168.11.15:50000/ContentDirectory/control");
+            dlnaProvRecVideo.browseRecVideoDms(dlnaDmsItem.mControlUrl);
         }
     }
 
@@ -188,6 +259,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                     case 1:
                         setRecordedTakeOutContents();
                         break;
+                    default:
+                        break;
                 }
             }
         });
@@ -199,7 +272,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      */
     private void initTabVIew() {
         DTVTLogger.start();
-        screenWidth = getWidthDensity();
+        int screenWidth = getWidthDensity();
         mTabScrollView.removeAllViews();
         mTabLinearLayout = new LinearLayout(this);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
@@ -269,15 +342,37 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         RecordedBaseFrgament recordedBaseFrgament = mRecordedFragmentFactory.createFragment(RECORDED_MODE_NO_OF_TAKE_OUT, this);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (dlnaProvRecVideo != null) {
+            dlnaProvRecVideo.stopListen();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getData();
+    }
+
+    private void getData() {
+        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
+        if (dlnaProvRecVideo != null) {
+            dlnaProvRecVideo = new DlnaProvRecVideo();
+        }
+        if (dlnaProvRecVideo.start(dlnaDmsItem.mUdn, this)) {
+            dlnaProvRecVideo.browseRecVideoDms(dlnaDmsItem.mControlUrl);
+        }
+    }
+
     /**
      * フラグメント生成
-     *
-     * @return
      */
     private RecordedBaseFrgament getCurrentRecordedBaseFrgament() {
         DTVTLogger.start();
         int currentPageNo = mViewPager.getCurrentItem();
-        RecordedBaseFrgament baseFragment = (RecordedBaseFrgament) mRecordedFragmentFactory.createFragment(currentPageNo, this);
+        RecordedBaseFrgament baseFragment = mRecordedFragmentFactory.createFragment(currentPageNo, this);
         return baseFragment;
     }
 
@@ -303,18 +398,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         }
     }
 
-    /**
-     * ページング判定の変更
-     *
-     * @param bool
-     */
-    private void setPagingStatus(boolean bool) {
-        DTVTLogger.start();
-        synchronized (this) {
-            mIsPaging = bool;
-        }
-    }
-
     @Override
     public void onScroll(RecordedBaseFrgament fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         DTVTLogger.start();
@@ -322,17 +405,51 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public void onVideoBrows(DlnaRecVideoInfo curInfo) {
-        DTVTLogger.start();
-        DTVTLogger.debug("curInfo = " + curInfo);
         if (curInfo != null && curInfo.getRecordVideoLists() != null) {
             final RecordedBaseFrgament baseFrgament = getCurrentRecordedBaseFrgament();
             List<ContentsData> listData = baseFrgament.getContentsData();
+            listData.clear();
             ArrayList<DlnaRecVideoItem> list = curInfo.getRecordVideoLists();
+
+            getTakeOutContents(list);
+
+            SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.JAPAN);
             for (int i = 0; i < list.size(); i++) {
+                // TODO 年齢取得未実装の為、固定値を返却
+                boolean isAge = true;
                 DlnaRecVideoItem dlnaRecVideoItem = list.get(i);
                 ContentsData data = new ContentsData();
-                data.setTitle(dlnaRecVideoItem.mTitle);
-                listData.add(data);
+                int currentPageNo = mViewPager.getCurrentItem();
+                if (isAge) {
+                    data.setTitle(dlnaRecVideoItem.mTitle);
+                    data.setAllowedUse(dlnaRecVideoItem.mAllowedUse);
+                    String time = dlnaRecVideoItem.mDate.replaceAll("-", "/").replace("T", "");
+                    try {
+                        Calendar calendar = Calendar.getInstance(Locale.JAPAN);
+                        calendar.setTime(sdf.parse(time));
+                        int week = calendar.get(Calendar.DAY_OF_WEEK);
+                        int day = calendar.get(Calendar.DAY_OF_MONTH);
+                        int month = calendar.get(Calendar.MONTH);
+                        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                        int minute = calendar.get(Calendar.MINUTE);
+                        StringBuilder selectDate = new StringBuilder();
+                        selectDate.append(month);
+                        selectDate.append("/");
+                        selectDate.append(day);
+                        selectDate.append("  (");
+                        selectDate.append(date[week - 1]);
+                        selectDate.append(")  ");
+                        selectDate.append(hour);
+                        selectDate.append(":");
+                        selectDate.append(minute);
+                        data.setTime(selectDate.toString());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    listData.add(data);
+                } else {
+                    // TODO 年齢制限のフィルターに引っかかった時の処理
+                }
             }
             runOnUiThread(new Runnable() {
                 @Override
@@ -399,5 +516,42 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             mSearchView.clearFocus();
         }
         return super.dispatchTouchEvent(event);
+    }
+
+    /**
+     * すべてListの生成
+     *
+     * @return すべてList
+     */
+    private List<String> getTakeOutContents(ArrayList<DlnaRecVideoItem> allList) {
+        // 持ち出し
+        ArrayList<String> all = new ArrayList<>();
+        all.add("a");
+        all.add("b");
+        all.add("c");
+        all.add("d");
+        // すべて
+        ArrayList<String> take = new ArrayList<>();
+        take.add("a");
+        take.add("b");
+        take.add("c");
+        take.add("e");
+        List<String> dataList = all; // allList
+        if (all != null && take != null) {
+            for (int i = 0; i < take.size(); i++) {
+                int getPosition = -1;
+                boolean isExist = false;
+                for (int j = 0; j < dataList.size(); j++) {
+                    if (take.get(i).equals(all.get(j))) {
+                        isExist = true;
+                        break;
+                    }
+                }
+                if (!isExist) {
+                    all.add(take.get(i));
+                }
+            }
+        }
+        return dataList;
     }
 }

@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.fragment.recorded;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -15,9 +16,19 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
+import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoItem;
+import com.nttdocomo.android.tvterminalapp.model.recommend.RecommendContentInfo;
+import com.nttdocomo.android.tvterminalapp.model.search.SearchContentInfo;
+import com.nttdocomo.android.tvterminalapp.utils.ClassNameUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,29 +78,11 @@ public class RecordedBaseFrgament extends Fragment implements AbsListView.OnScro
             mLoadMoreView = LayoutInflater.from(mActivity).inflate(R.layout.search_load_more, null);
         }
 
-//        setDeta();
-
         mContentsAdapter = new ContentsAdapter(getContext(),
                 mContentsData, ContentsAdapter.ActivityTypeItem.TYPE_RECORDED_LIST);
         mRecordedListview.setAdapter(mContentsAdapter);
 
         return mRecordedFragmentView;
-    }
-
-    // TODO　テスト用メソッド
-    public void setDeta() {
-        DTVTLogger.start();
-        mContentsData = new ArrayList<>();
-        ContentsData contentsData;
-
-        /*for (int i = 0; i < 10; i++) {
-            contentsData = new ContentsData();
-            contentsData.setRank(String.valueOf(i + 1));
-            contentsData.setTitle("大晦日だよ! ドラえもんのび太の宇宙漂流記　シーズン" + i);
-            contentsData.setRecordedChannelName("FOX HD");
-            contentsData.setTime("8/31 (木) 21：00");
-            mContentsData.add(contentsData);
-        }*/
     }
 
     public void notifyDataSetChanged() {
@@ -137,5 +130,28 @@ public class RecordedBaseFrgament extends Fragment implements AbsListView.OnScro
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        DlnaRecVideoItem videoItem = new DlnaRecVideoItem();
+        Bundle args = new Bundle();
+        args.putParcelable(RecordedListActivity.RECORD_LIST__KEY,
+                getRecordedContentsDetailData(videoItem));
+        if (null != mActivity) {
+            ((BaseActivity) mActivity).startActivity(TvPlayerActivity.class, args);
+        }
+    }
+
+    /**
+     * コンテンツ詳細に必要なデータを返す
+     *
+     * @param videoItem レコメンド情報
+     * @return
+     */
+    public RecordedContentsDetailData getRecordedContentsDetailData(DlnaRecVideoItem videoItem) {
+        RecordedContentsDetailData detailData = new RecordedContentsDetailData();
+        detailData.setBitrate(videoItem.mBitrate);
+        detailData.setDuration(videoItem.mDuration);
+        detailData.setResolution(videoItem.mResolution);
+        detailData.setSize(videoItem.mSize);
+        detailData.setThumbnail(videoItem.mThumbnail);
+        return detailData;
     }
 }

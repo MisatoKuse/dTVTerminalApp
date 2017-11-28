@@ -22,8 +22,10 @@ public class ContentsData {
     private int recordingReservationStatus = RecordingReservationListDataProvider.RECORD_RESERVATION_SYNC_STATUS_ALREADY_REFLECT;
     // チャンネル名
     private String channelName = null;
-    // 録画番組用のチャンネル名
+    // 録画番組用 チャンネル名
     private String recordedChannelName = null;
+    // 録画番組用 コピー残り回数
+    private int allowedUse = 0;
 
     //デバイス名
     private String deviceName = null;
@@ -98,5 +100,12 @@ public class ContentsData {
 
     public void setRecordedChannelName(String channelName) {
         this.recordedChannelName = channelName;
+    }
+    public int getAllowedUse() {
+        return allowedUse;
+    }
+
+    public void setAllowedUse(int allowedUse) {
+        this.allowedUse = allowedUse;
     }
 }

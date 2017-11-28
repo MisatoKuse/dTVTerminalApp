@@ -21,10 +21,8 @@ import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplayEventListener;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuItem;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuItemParam;
-import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 
 /**
  * クラス機能：
@@ -75,7 +73,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             intent.putExtras(bundle);
 
             //コンテンツ種別によるコンテンツ詳細(プレイヤーあり/なし)起動判定
-            OtherContentsDetailData detailData =
+            /*OtherContentsDetailData detailData =
                     bundle.getParcelable(DtvContentsDetailActivity.DTV_INFO_BUNDLE_KEY);
             if (detailData != null) {
                 int intServiceId = detailData.getServiceId();
@@ -90,7 +88,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                     default:
                         //TODO:プレイヤー付きのコンテンツ詳細画面を起動
                 }
-            }
+            }*/
         }
         startActivity(intent);
     }
@@ -165,7 +163,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     private static final int MIN_CLICK_DELAY_TIME = 1000;
-    private static long lastClickTime;
+    private  long lastClickTime;
 
     /**
      * 機能
@@ -233,7 +231,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         return "Test User";
     }
 
-    private static UserState sUserState = UserState.LOGIN_NG;
+    private UserState sUserState = UserState.LOGIN_NG;
 
     public UserState getUserState() {
         return sUserState;
@@ -296,13 +294,13 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * 年齢制限判定
+     * 録画コンテンツダウンロード済みかどうか
      *
-     * @return 年齢制限フィルター対象 true
+     * @return DL済み true
      */
-    private Boolean ageLimitDecision() {
-        // TODO upnp:ratingの返却値で判断
-
+    public Boolean getDownloadContentsFalag() {
+        // TODO DL済み/未　判定
+        // 現時点データが取得できない為、固定でfalseを返却
         return false;
     }
 
