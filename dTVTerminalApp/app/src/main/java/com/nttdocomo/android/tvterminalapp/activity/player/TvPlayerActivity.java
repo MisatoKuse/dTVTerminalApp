@@ -14,17 +14,16 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.PowerManager;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.digion.dixim.android.activation.ActivationClientDefinition;
 import com.digion.dixim.android.secureplayer.MediaPlayerController;
@@ -47,19 +46,7 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
 
     private static final int REFRESH_TV_VIEW = 1;
     private static final long HIDE_IN_3_SECOND = 3*1000;
-    private ImageView mplayPause;
     private RelativeLayout mPlayerViewLayout;
-    private TextView mNowOnAir;
-    private ImageView mForLast;
-    private ImageView mForNext;
-    private RelativeLayout mRewindLeft;
-    private RelativeLayout mFastRight;
-    private ImageView mReplay;
-    private TextView mCurTime;
-    private ImageView mFullScreen;
-    private TextView mTotalDur;
-    private TextView mRapid;
-    private SeekBar mProgress;
     private static final int REFRESH_VIDEO_VIEW = 0;
     private static final int NOW_ON_AIR_MODE = 1;
     private static final int VIDEO_RECORDING_MODE = 2;
@@ -80,7 +67,6 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
     private SeekBar mVideoSeekBar;
     private SecureVideoView mSecureVideoPlayer;
     private SecuredMediaPlayerController mPlayerController;
-
     private boolean mCanPlay=false;
     private MediaVideoInfo mCurrentMediaInfo;
     private int mActivationTimes=0;
@@ -90,10 +76,12 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
     private RelativeLayout mVideoCtrlRootView;
     private TextView mVideoRewind10;
     private ImageView mVideoRewind;
-    private TextView mVideofast30;
-    private ImageView mVideofast;
+    private TextView mVideoFast30;
+    private ImageView mVideoFast;
     private RelativeLayout mVideoCtrlBar;
     private Handler mTvCtrlHandler = new Handler(Looper.getMainLooper());
+    private GestureDetector mGestureDetector;
+    private int mScreenWidth;
     private Runnable mHideVideoViewThread = new Runnable() {
         @Override
         public void run() {
@@ -106,15 +94,33 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tv_player_main_layout);
         mSecureVideoPlayer = findViewById(R.id.tv_player_main_layout_player_vv);
-        //initView();
-
+        mScreenWidth = getWidthDensity();
         initDatas();
         setCurrentMediaInfo();
-        //initSecureplayer();
-
-        //mPlayerController = new SecuredMediaPlayerController(this,true,true,true);
-        //mSecureVideoPlayer.init(mPlayerController);
-        //mPlayerController.start();
+        mGestureDetector = new GestureDetector(this,new GestureDetector.SimpleOnGestureListener(){
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                if(e1.getY()>mRecordCtrlView.getHeight()/3
+                        &&e2.getY()<mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight()/3
+                        &&e2.getY()>mRecordCtrlView.getHeight()/3
+                        &&e1.getY()<mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight()/3){
+                    if(e1.getX()>e2.getX()
+                            &&e1.getX()< mScreenWidth /2-mVideoPlayPause.getWidth()/2){
+                        /*long pos = mPlayerView.getCurrentPosition();
+                        pos -= 10*1000;
+                        mPlayerController.seekTo(pos);*/
+                        Toast.makeText(TvPlayerActivity.this,"←10秒",Toast.LENGTH_SHORT).show();
+                    }else if(e1.getX()<e2.getX()
+                            &&e1.getX()> mScreenWidth /2+mVideoPlayPause.getWidth()/2){
+                        /*long pos = mPlayerView.getCurrentPosition();
+                        pos += 30*1000;
+                        mPlayerController.seekTo(pos);*/
+                        Toast.makeText(TvPlayerActivity.this,"30→",Toast.LENGTH_SHORT).show();
+                    }
+                }
+                return super.onFling(e1, e2, velocityX, velocityY);
+            }
+        });
 
     }
 
@@ -132,7 +138,6 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
         synchronized (this) {
             if(mCanPlay){
                 playButton();
-                //mVideoPlayPause.setBackgroundResource(R.mipmap.ic_tvplayer_player_pause);
                 mPlayerController.start();
             }
         }
@@ -153,7 +158,6 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
         mVideoPlayPause.getChildAt(0).setVisibility(View.VISIBLE);
         mVideoPlayPause.getChildAt(1).setVisibility(View.GONE);
     }
-
 
     private void playPause(){
         synchronized (this) {
@@ -314,8 +318,8 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
             mVideoCtrlRootView = mRecordCtrlView.findViewById(R.id.tv_player_main_layout_video_ctrl_player_video_root);
             mVideoRewind10 = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_10_tv);
             mVideoRewind = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_rewind_iv);
-            mVideofast30 = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_30_tv);
-            mVideofast = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_fast_iv);
+            mVideoFast30 = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_30_tv);
+            mVideoFast = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_fast_iv);
             mVideoCtrlBar = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_control_bar_iv);
             mVideoCurTime = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_cur_time_tv);
             mVideoFullScreen = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_full_screen_iv);
@@ -360,10 +364,36 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
     @Override
     protected void onResume() {
         super.onResume();
-
         initSecureplayer();
-        //initView();
+        setPlayerEvent();
         // TODO: 2017/11/22 横縦処理
+    }
+
+    private void setPlayerEvent() {
+            mRecordCtrlView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                        mGestureDetector.onTouchEvent(motionEvent);
+                    if(motionEvent.getAction() == MotionEvent.ACTION_UP){
+                        if(mVideoPlayPause.getVisibility() == View.VISIBLE){
+                            //hideVideoCtrlView(View.INVISIBLE);
+                        }else {
+                            mVideoPlayPause.setVisibility(View.VISIBLE);
+                            mVideoRewind10.setVisibility(View.VISIBLE);
+                            mVideoRewind.setVisibility(View.VISIBLE);
+                            mVideoFast30.setVisibility(View.VISIBLE);
+                            mVideoFast.setVisibility(View.VISIBLE);
+                            mVideoCtrlBar.setVisibility(View.VISIBLE);
+                            //setPlayEvent();
+                        }
+                        if(mTvCtrlHandler != null){
+                            mTvCtrlHandler.removeCallbacks(mHideVideoViewThread);
+                        }
+                        mTvCtrlHandler.postDelayed(mHideVideoViewThread,HIDE_IN_3_SECOND);
+                    }
+                    return true;
+                }
+            });
     }
 
     @Override
@@ -399,18 +429,13 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-        if(mVideoPlayPause==v){
-            if(!mPlayerController.isPlaying()){
-                playStart();
-            } else {
-                playPause();
-            }
-            return;
-        }
-
         switch (v.getId()) {
             case R.id.tv_player_ctrl_video_record_player_pause_fl:
-                // TODO: 2017/11/21 表示テストのため VideoViewApiを使う
+                if (!mPlayerController.isPlaying()) {
+                    playStart();
+                } else {
+                    playPause();
+                }
                 break;
             case R.id.tv_player_ctrl_now_on_air_full_screen_iv:
                 Toast.makeText(this, "フルスクリーンに変更されています", Toast.LENGTH_SHORT).show();
@@ -422,20 +447,21 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                 Toast.makeText(this,"タップで倍速で再生",Toast.LENGTH_SHORT).show();
                 break;
             case R.id.tv_player_main_layout_video_ctrl_player_video_root:
-                if(mVideoPlayPause.getVisibility() == View.VISIBLE){
-                    hideVideoCtrlView(View.INVISIBLE);
-                }else {
-                    mVideoPlayPause.setVisibility(View.VISIBLE);
-                    mVideoRewind10.setVisibility(View.VISIBLE);
-                    mVideoRewind.setVisibility(View.VISIBLE);
-                    mVideofast30.setVisibility(View.VISIBLE);
-                    mVideofast.setVisibility(View.VISIBLE);
-                    mVideoCtrlBar.setVisibility(View.VISIBLE);
-                }
+                /*if(mVideoPlayPause.getVisibility() == View.VISIBLE){
+                hideVideoCtrlView(View.INVISIBLE);
+            }else {
+                mVideoPlayPause.setVisibility(View.VISIBLE);
+                mVideoRewind10.setVisibility(View.VISIBLE);
+                mVideoRewind.setVisibility(View.VISIBLE);
+                mVideoFast30.setVisibility(View.VISIBLE);
+                mVideoFast.setVisibility(View.VISIBLE);
+                mVideoCtrlBar.setVisibility(View.VISIBLE);
+                //setPlayEvent();
+            }
                 if(mTvCtrlHandler != null){
                     mTvCtrlHandler.removeCallbacks(mHideVideoViewThread);
-                }
-                mTvCtrlHandler.postDelayed(mHideVideoViewThread,HIDE_IN_3_SECOND);
+                }*/
+                //mTvCtrlHandler.postDelayed(mHideVideoViewThread,HIDE_IN_3_SECOND);
                 break;
             default:
                 break;
@@ -446,8 +472,8 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
         mVideoPlayPause.setVisibility(invisible);
         mVideoRewind10.setVisibility(invisible);
         mVideoRewind.setVisibility(invisible);
-        mVideofast30.setVisibility(invisible);
-        mVideofast.setVisibility(invisible);
+        mVideoFast30.setVisibility(invisible);
+        mVideoFast.setVisibility(invisible);
         mVideoCtrlBar.setVisibility(invisible);
     }
 
@@ -499,9 +525,6 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                 //録画コンテンツを終端まで再生した後は、シークバーを先頭に戻し、先頭で一時停止状態とする
                 if (currentPosition == totalDur) {
                     mVideoSeekBar.setProgress(0);
-                    /*mVideoCurTime.setVisibility(View.INVISIBLE);
-                    mReplay.setVisibility(View.VISIBLE);*/
-                    // TODO: 2017/11/21 pause/playIcon変更
                 }
                 viewRefresher.sendEmptyMessageDelayed(REFRESH_VIDEO_VIEW, 500);
             }
