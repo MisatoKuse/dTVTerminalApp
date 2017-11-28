@@ -4,7 +4,7 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:color="@drawable/color_white" android:state_enabled="true" android:state_focused="false" android:state_pressed="false" />
-    <item android:drawable="@drawable/color_white" android:state_enabled="false" />
+    <item android:color="@drawable/color_white" android:state_enabled="false" />
     <item android:color="@drawable/color_black" android:state_pressed="true" />
     <item android:color="@drawable/color_black" android:state_focused="true" />
 </selector>

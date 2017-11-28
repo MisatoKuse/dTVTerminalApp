@@ -89,7 +89,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private void initView() {
         DTVTLogger.start();
-        mContentsList = new ArrayList();
         mDeviceListView = findViewById(R.id.stb_device_name_list);
         mContentsAdapter = new ContentsAdapter(this, mContentsList,
                 ContentsAdapter.ActivityTypeItem.TYPE_STB_SELECT_LIST);
@@ -105,8 +104,12 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private void setDevListener() {
         DTVTLogger.start();
-        mDlnaProvDevList = new DlnaProvDevList();
+        if (null == mDlnaProvDevList) {
+            mDlnaProvDevList = new DlnaProvDevList();
+
+        }
         mDlnaProvDevList.start(this);
+        updateDeviceList(mDlnaProvDevList.getDlnaDMSInfo());
         DTVTLogger.end();
     }
 
@@ -155,7 +158,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         SharedPreferencesUtils.resetSharedPreferencesStbInfo(this);
         setContents();
         initView();
-        startCallbackTimer();
         setDevListener();
 
         DTVTLogger.end();
@@ -431,6 +433,10 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+
+                if (mCallbackTimer == null) {
+                    mCallbackTimer = new StbInfoCallBackTimer(new Handler());
+                }
                 // 0件の場合タイムアウトを設定する
                 if (mContentsList.size() <= 0) {
                     mContentsAdapter.notifyDataSetChanged();
@@ -480,7 +486,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private void startCallbackTimer() {
         DTVTLogger.start();
         showSearchingView();
-        displayMoreData(true);
         if (mCallbackTimer == null) {
             mCallbackTimer = new StbInfoCallBackTimer(new Handler());
         }
@@ -493,7 +498,9 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private void stopCallbackTimer() {
         DTVTLogger.start();
-        mCallbackTimer.timerTaskCancel();
+        if (mCallbackTimer.getTimerStatus() == TimerStatus.TIMER_STATUS_DURING_STARTUP) {
+            mCallbackTimer.timerTaskCancel();
+        }
         DTVTLogger.end();
     }
 

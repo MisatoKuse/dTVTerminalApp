@@ -14,17 +14,17 @@ import java.util.ArrayList;
 public class DlnaInterface {
 
     //Singleton
-    private static DlnaInterface sDlnaInterface= new DlnaInterface();
+    private static DlnaInterface sDlnaInterface = new DlnaInterface();
 
     //Browseコンテンツ
-    private static final int DLNA_MSG_ID_BROWSE_SOAP=0;
+    private static final int DLNA_MSG_ID_BROWSE_SOAP = 0;
     //デバイスjoin
-    private static final int DLNA_MSG_ID_DEV_DISP_JOIN= DLNA_MSG_ID_BROWSE_SOAP + 1;
+    private static final int DLNA_MSG_ID_DEV_DISP_JOIN = DLNA_MSG_ID_BROWSE_SOAP + 1;
     //デバイスleave
-    private static final int DLNA_MSG_ID_DEV_DISP_LEAVE=DLNA_MSG_ID_BROWSE_SOAP + 2;
+    private static final int DLNA_MSG_ID_DEV_DISP_LEAVE = DLNA_MSG_ID_BROWSE_SOAP + 2;
 
     //DMS情報
-    private DlnaDMSInfo mDMSInfo=new DlnaDMSInfo();
+    private DlnaDMSInfo mDMSInfo = new DlnaDMSInfo();
 
     //current dms udn
     private String mCurrentDmsUdn;
@@ -36,13 +36,15 @@ public class DlnaInterface {
     /**
      * 機能：デフォールト構造を禁止
      */
-    private DlnaInterface(){}
+    private DlnaInterface() {
+    }
 
     /**
      * 機能：インスタンスを戻す
+     *
      * @return インスタンス
      */
-    public static DlnaInterface getInstance(){
+    public static DlnaInterface getInstance() {
         return sDlnaInterface;
     }
 
@@ -85,28 +87,34 @@ public class DlnaInterface {
 //         String getCurrentDmsUdn();
 //    }
 
-    public boolean isDmsAvailable(String udn){
+    public boolean isDmsAvailable(String udn) {
         return mDMSInfo.exists(udn);
     }
 
-    private DlnaDevListListener mDlnaDevListListener=null;
-    private long mNativeDlna=0;
+    private DlnaDevListListener mDlnaDevListListener = null;
+    private long mNativeDlna = 0;
 
     /**
      * 機能：DlnaListenerを設定
+     *
      * @param lis listener
      */
-    public void setDlnaDevListListener(DlnaDevListListener lis){
+    public void setDlnaDevListListener(DlnaDevListListener lis) {
         synchronized (this) {
             mDlnaDevListListener = lis;
         }
     }
 
+    public DlnaDMSInfo getDlnaDMSInfo() {
+        return mDMSInfo;
+    }
+
     /**
      * 機能：DlnaListenerを設定
+     *
      * @param lis listener
      */
-    public void setDlnaRecVideoBaseListener(DlnaRecVideoListener lis){
+    public void setDlnaRecVideoBaseListener(DlnaRecVideoListener lis) {
         synchronized (this) {
             mDlnaRecVideoListener = lis;
         }
@@ -114,18 +122,19 @@ public class DlnaInterface {
 
     /**
      * 機能：Dlna機能を開始
+     *
      * @return
      */
-    public boolean startDlna(){
+    public boolean startDlna() {
         synchronized (this) {
-            if(mIsDlnaRunning){
+            if (mIsDlnaRunning) {
                 return true;
             }
 
-            if(0==mNativeDlna){
+            if (0 == mNativeDlna) {
                 mNativeDlna = nativeCreateDlnaObject();
             }
-            if(0==mNativeDlna){
+            if (0 == mNativeDlna) {
                 return false;
             }
 
@@ -135,40 +144,41 @@ public class DlnaInterface {
         }
     }
 
-    public void stopDlna(){
+    public void stopDlna() {
         synchronized (this) {
-            if(!mIsDlnaRunning){
+            if (!mIsDlnaRunning) {
                 return;
             }
 
             nativeStopDlna(mNativeDlna);
             mDMSInfo.clear();
-            mNativeDlna=0;
-            mIsDlnaRunning=false;
+            mNativeDlna = 0;
+            mIsDlnaRunning = false;
         }
     }
 
     /**
      * 機能：録画ヴィデオ一覧を発見
+     *
      * @param ctl ControlUrl
      * @return 成功true
      */
-    public boolean browseRecVideoDms(String ctl){
+    public boolean browseRecVideoDms(String ctl) {
         return browseRecVideoDms(mNativeDlna, ctl);
     }
 
-    public void notifyFromNative(int msg, String content){
+    public void notifyFromNative(int msg, String content) {
         Log.d("", "msg=" + msg + ", content=" + content);
-        switch(msg) {
+        switch (msg) {
             case DLNA_MSG_ID_DEV_DISP_LEAVE:
                 removeDms(content);
                 break;
         }
     }
 
-    public void notifyObjFromNative(int msg, ArrayList<Object> content){
+    public void notifyObjFromNative(int msg, ArrayList<Object> content) {
         Log.d("", "msg=" + msg + ", content=" + content);
-        switch(msg) {
+        switch (msg) {
             case DLNA_MSG_ID_BROWSE_SOAP:
                 onRecVideo(content);
                 break;
@@ -179,31 +189,31 @@ public class DlnaInterface {
         }
     }
 
-    private void onRecVideo(ArrayList<Object> content){
-        if(null!=mDlnaRecVideoListener){
-            DlnaRecVideoInfo info=DlnaRecVideoInfo.fromArrayList(content);
-            if(null!=info){
+    private void onRecVideo(ArrayList<Object> content) {
+        if (null != mDlnaRecVideoListener) {
+            DlnaRecVideoInfo info = DlnaRecVideoInfo.fromArrayList(content);
+            if (null != info) {
                 mDlnaRecVideoListener.onVideoBrows(info);
             }
         }
     }
 
     private void onDeviceJoin(ArrayList<Object> content) {
-        if(null==content || 0==content.size()){
+        if (null == content || 0 == content.size()) {
             return;
         }
 
-        DlnaDmsItem item= (DlnaDmsItem)content.get(0);
+        DlnaDmsItem item = (DlnaDmsItem) content.get(0);
         mDMSInfo.add(item);
 
-        if(null!=mDlnaDevListListener){
+        if (null != mDlnaDevListListener) {
             mDlnaDevListListener.onDeviceJoin(mDMSInfo, item);
         }
     }
 
-    private void removeDms(String content){
+    private void removeDms(String content) {
         mDMSInfo.remove(content);
-        if(null!=mDlnaDevListListener){
+        if (null != mDlnaDevListListener) {
             mDlnaDevListListener.onDeviceLeave(mDMSInfo, content);
         }
     }
@@ -211,15 +221,16 @@ public class DlnaInterface {
     /**
      * 機能：使用しているDmsをDlaninterfaceクラスに通知し、
      * 　　　Dlaninterfaceクラスはそのdms以外のdms変動情報をDlnaProviderRecoredVideoに通知しない
+     *
      * @param curDmsUdn 使用しているDmsのudn
      */
-    public void registerCurrentDms(String curDmsUdn){
-        if(null!=mDMSInfo && mDMSInfo.exists(curDmsUdn)){
-            mCurrentDmsUdn=curDmsUdn;
+    public void registerCurrentDms(String curDmsUdn) {
+        if (null != mDMSInfo && mDMSInfo.exists(curDmsUdn)) {
+            mCurrentDmsUdn = curDmsUdn;
         }
     }
 
-    private synchronized void setDlnaStatus(boolean status){
+    private synchronized void setDlnaStatus(boolean status) {
         mIsDlnaRunning = status;
     }
 
@@ -229,7 +240,10 @@ public class DlnaInterface {
 
     //jni関数
     private native long nativeCreateDlnaObject();
+
     private native boolean nativeStartDlna(long prt);
+
     private native boolean nativeStopDlna(long prt);
+
     private native boolean browseRecVideoDms(long prt, String ctl);
 }
