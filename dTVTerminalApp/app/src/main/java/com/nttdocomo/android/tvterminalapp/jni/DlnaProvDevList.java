@@ -26,6 +26,7 @@ public class DlnaProvDevList {
             return;
         }
         di.setDlnaDevListListener(null);
+        di.stopDlna();
     }
 
     /**
