@@ -59,4 +59,4 @@
         <!-- チェック時の色 -->
         <item name="colorControlActivated">@color/white_text</item>
     </style>
-</resources></resources>
+</resources>
