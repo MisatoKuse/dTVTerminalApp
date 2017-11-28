@@ -73,7 +73,7 @@ public class ContentsAdapter extends BaseAdapter {
         TYPE_RECORDING_RESERVATION_LIST, // 録画予約一覧
         TYPE_VIDEO_CONTENT_LIST, // ビデオコンテンツ一覧
         TYPE_RECORDED_LIST, // 録画番組一覧
-        TYPE_STB_SELECT_LIST
+        TYPE_STB_SELECT_LIST // STB選択デバイスリスト
     }
 
     /**
@@ -122,7 +122,7 @@ public class ContentsAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) view.getTag();
         }
-        setShowDataVisiblity(holder);
+        setShowDataVisibility(holder);
         //各アイテムデータを取得
         ContentsData listContentInfo = listData.get(position);
         // アイテムデータを設定する
@@ -148,6 +148,16 @@ public class ContentsAdapter extends BaseAdapter {
         setChannelName(holder, listContentInfo);
         setRedordedRankData(holder, listContentInfo);
         setRedordedDownloadIcon(holder, listContentInfo);
+        setDeviceName(holder,listContentInfo);
+    }
+
+    /**
+     * データ設定（STBデバイス名）
+     */
+    private void setDeviceName(ViewHolder holder, ContentsData listContentInfo) {
+        if(holder.stb_device_name != null){
+            holder.stb_device_name.setText(listContentInfo.getDeviceName());
+        }
     }
 
     /**
@@ -334,8 +344,8 @@ public class ContentsAdapter extends BaseAdapter {
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
                 view = mInflater.inflate(R.layout.item_common_result, parent, false);
                 break;
-            case TYPE_STB_SELECT_LIST:
-                break;
+            case TYPE_STB_SELECT_LIST: //STBデバイス名一覧
+                view = mInflater.inflate(R.layout.item_common_result, parent, false);
             default:
                 break;
         }
@@ -383,7 +393,8 @@ public class ContentsAdapter extends BaseAdapter {
                 holder.tv_recorded_hyphen = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
                 holder.tv_recorded_ch_name = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
                 break;
-            case TYPE_STB_SELECT_LIST:
+            case TYPE_STB_SELECT_LIST:  //STBデバイス名一覧
+                holder.stb_device_name = view.findViewById(R.id.item_common_result_device_name);
                 break;
             default:
                 break;
@@ -394,7 +405,7 @@ public class ContentsAdapter extends BaseAdapter {
     /**
      * データの設定
      */
-    private void setShowDataVisiblity(ViewHolder holder) {
+    private void setShowDataVisibility(ViewHolder holder) {
         DTVTLogger.start();
         switch (type) {
             case TYPE_DAILY_RANK: // 今日のテレビランキング
@@ -422,7 +433,18 @@ public class ContentsAdapter extends BaseAdapter {
                 holder.iv_thumbnail.setVisibility(View.GONE);
                 holder.rb_rating.setVisibility(View.GONE);
                 break;
-            case TYPE_STB_SELECT_LIST:
+            case TYPE_STB_SELECT_LIST: //STBデバイス名一覧
+                holder.ll_rating.setVisibility(View.GONE);
+                holder.tv_clip.setVisibility(View.GONE);
+                holder.rl_thumbnail.setVisibility(View.GONE);
+                holder.iv_thumbnail.setVisibility(View.GONE);
+                holder.rb_rating.setVisibility(View.GONE);
+                holder.tv_rating_num.setVisibility(View.GONE);
+                holder.tv_rank.setVisibility(View.GONE);
+                holder.tv_time.setVisibility(View.GONE);
+                holder.tv_title.setVisibility(View.GONE);
+                holder.tv_line.setVisibility(View.GONE);
+                holder.stb_device_name.setVisibility(View.VISIBLE);
                 break;
             default:
                 break;
@@ -461,5 +483,7 @@ public class ContentsAdapter extends BaseAdapter {
         TextView tv_recorded_hyphen;
         // 録画番組用チャンネル名
         TextView tv_recorded_ch_name;
+        // STBデバイス名
+        TextView stb_device_name = null;
     }
 }
