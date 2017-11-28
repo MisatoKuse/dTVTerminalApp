@@ -54,7 +54,7 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
     private RelativeLayout mTvCtrlView;
     private RelativeLayout mRecordCtrlView;
     private ImageView mTvBack;
-    private ImageView mTvForwar;
+    private ImageView mTvForward;
     private ImageView mTvReplay;
     private ImageView mTvFullScreen;
     private TextView mTvRapid;
@@ -79,13 +79,18 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
     private TextView mVideoFast30;
     private ImageView mVideoFast;
     private RelativeLayout mVideoCtrlBar;
-    private Handler mTvCtrlHandler = new Handler(Looper.getMainLooper());
+    private Handler mCtrlHandler = new Handler(Looper.getMainLooper());
     private GestureDetector mGestureDetector;
     private int mScreenWidth;
-    private Runnable mHideVideoViewThread = new Runnable() {
+    private TextView mTvNow;
+    private Runnable mHideCtrlViewThread = new Runnable() {
         @Override
         public void run() {
-            hideVideoCtrlView(View.INVISIBLE);
+            if(getCurMode() == NOW_ON_AIR_MODE){
+                hideTvCtrlView(View.INVISIBLE);
+            }else if(getCurMode() == VIDEO_RECORDING_MODE){
+                hideVideoCtrlView(View.INVISIBLE);
+            }
         }
     };
 
@@ -299,8 +304,9 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
         if(getCurMode() == NOW_ON_AIR_MODE){//リニア放送中
             mTvCtrlView = (RelativeLayout) LayoutInflater.from(this)
                     .inflate(R.layout.tv_player_ctrl_now_on_air, null, false);
+            mTvNow = mTvCtrlView.findViewById(R.id.tv_player_main_layout_video_ctrl_player_now_on_air_tv);
             mTvBack = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_back_iv);
-            mTvForwar = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_forward_iv);
+            mTvForward = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_forward_iv);
             mTvReplay = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_replay_iv);
             mTvFullScreen = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_full_screen_iv);
             mTvRapid = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_rapid_tv);
@@ -311,6 +317,7 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
             mPlayerViewLayout.addView(mTvCtrlView);
             //初期化の時点から、handlerにmsgを送る
             viewRefresher.sendEmptyMessage(REFRESH_TV_VIEW);
+            hideTvCtrlView(View.INVISIBLE);
         }else if(getCurMode() == VIDEO_RECORDING_MODE){//録画
             mRecordCtrlView = (RelativeLayout) LayoutInflater.from(this)
                     .inflate(R.layout.tv_player_ctrl_video_record, null, false);
@@ -370,10 +377,13 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void setPlayerEvent() {
+        if(getCurMode() == VIDEO_RECORDING_MODE){
             mRecordCtrlView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View view, MotionEvent motionEvent) {
+                    if(mVideoPlayPause.getVisibility() == View.VISIBLE){
                         mGestureDetector.onTouchEvent(motionEvent);
+                    }
                     if(motionEvent.getAction() == MotionEvent.ACTION_UP){
                         if(mVideoPlayPause.getVisibility() == View.VISIBLE){
                             //hideVideoCtrlView(View.INVISIBLE);
@@ -386,14 +396,43 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                             mVideoCtrlBar.setVisibility(View.VISIBLE);
                             //setPlayEvent();
                         }
-                        if(mTvCtrlHandler != null){
-                            mTvCtrlHandler.removeCallbacks(mHideVideoViewThread);
+                        if(mCtrlHandler != null){
+                            mCtrlHandler.removeCallbacks(mHideCtrlViewThread);
                         }
-                        mTvCtrlHandler.postDelayed(mHideVideoViewThread,HIDE_IN_3_SECOND);
+                        mCtrlHandler.postDelayed(mHideCtrlViewThread,HIDE_IN_3_SECOND);
                     }
                     return true;
                 }
             });
+        }else if(getCurMode() == NOW_ON_AIR_MODE){
+            mTvCtrlView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    if(mTvNow.getVisibility() == View.VISIBLE){
+                        //チャンネル遷移GestureDetector
+                    }
+                    if(motionEvent.getAction() == MotionEvent.ACTION_UP){
+                        if(mTvNow.getVisibility() == View.VISIBLE){
+                            //hideVideoCtrlView(View.INVISIBLE);
+                        }else {
+                            mTvNow.setVisibility(View.VISIBLE);
+                            mTvBack.setVisibility(View.VISIBLE);
+                            mTvForward.setVisibility(View.VISIBLE);
+                            mTvReplay.setVisibility(View.VISIBLE);
+                            mTvRapid.setVisibility(View.VISIBLE);
+                            mTvSeekBar.setVisibility(View.VISIBLE);
+                            mTvFullScreen.setVisibility(View.VISIBLE);
+                            //setPlayEvent();
+                        }
+                        if(mCtrlHandler != null){
+                            mCtrlHandler.removeCallbacks(mHideCtrlViewThread);
+                        }
+                        mCtrlHandler.postDelayed(mHideCtrlViewThread,HIDE_IN_3_SECOND);
+                    }
+                    return true;
+                }
+            });
+        }
     }
 
     @Override
@@ -475,6 +514,16 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
         mVideoFast30.setVisibility(invisible);
         mVideoFast.setVisibility(invisible);
         mVideoCtrlBar.setVisibility(invisible);
+    }
+
+    private void hideTvCtrlView(int invisible) {
+        mTvNow.setVisibility(invisible);
+        mTvBack.setVisibility(invisible);
+        mTvForward.setVisibility(invisible);
+        mTvReplay.setVisibility(invisible);
+        mTvRapid.setVisibility(invisible);
+        mTvSeekBar.setVisibility(invisible);
+        mTvFullScreen.setVisibility(invisible);
     }
 
     /**
