@@ -146,6 +146,7 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                             &&e.getX()>mScreenWidth/6){//10秒戻し
                         int pos = mPlayerController.getCurrentPosition();
                         pos -= REWIND_SECOND;
+                        pos = pos < 0 ? 0 : pos;
                         mPlayerController.seekTo(pos);
                         isHideOperate = false;
                         Toast.makeText(TvPlayerActivity.this, "←10", Toast.LENGTH_SHORT).show();
@@ -154,6 +155,7 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                             &&e.getX()<mScreenWidth-mScreenWidth/6){//30秒送り
                         int pos = mPlayerController.getCurrentPosition();
                         pos += FAST_SECOND;
+                        pos = pos > mPlayerController.getDuration() ? mPlayerController.getDuration() : pos;
                         mPlayerController.seekTo(pos);
                         isHideOperate = false;
                         Toast.makeText(TvPlayerActivity.this, "30→", Toast.LENGTH_SHORT).show();
@@ -171,12 +173,14 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                     if(e1.getX()>e2.getX() && e1.getX()<mScreenWidth /2-mVideoPlayPause.getWidth()/2){
                         int pos = mPlayerController.getCurrentPosition();
                         pos -= REWIND_SECOND;
+                        pos = pos < 0 ? 0 : pos;
                         mPlayerController.seekTo(pos);
                         isHideOperate = false;
                         Toast.makeText(TvPlayerActivity.this, "←10", Toast.LENGTH_SHORT).show();
                     }else if(e1.getX()<e2.getX() && e1.getX()>mScreenWidth /2+mVideoPlayPause.getWidth()/2){
                         int pos = mPlayerController.getCurrentPosition();
                         pos += FAST_SECOND;
+                        pos = pos > mPlayerController.getDuration() ? mPlayerController.getDuration() : pos;
                         mPlayerController.seekTo(pos);
                         isHideOperate = false;
                         Toast.makeText(TvPlayerActivity.this, "30→", Toast.LENGTH_SHORT).show();
