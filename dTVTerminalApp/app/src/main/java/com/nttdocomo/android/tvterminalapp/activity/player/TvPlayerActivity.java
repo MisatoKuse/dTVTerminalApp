@@ -5,17 +5,23 @@
 package com.nttdocomo.android.tvterminalapp.activity.player;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.other.RemoteControlActivity;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 
 public class TvPlayerActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent =getIntent();
+        /*Bundle bundle = intent.getBundleExtra(RecordedListActivity.RECORD_LIST__KEY);*/
+        RecordedContentsDetailData a = intent.getParcelableExtra(RecordedListActivity.RECORD_LIST__KEY);
         setContentView(R.layout.tv_player_main_layout);
     }
 

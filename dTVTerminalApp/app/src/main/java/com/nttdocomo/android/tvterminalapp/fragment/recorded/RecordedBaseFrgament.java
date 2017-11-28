@@ -5,7 +5,6 @@
 package com.nttdocomo.android.tvterminalapp.fragment.recorded;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -18,17 +17,12 @@ import android.widget.ListView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoItem;
-import com.nttdocomo.android.tvterminalapp.model.recommend.RecommendContentInfo;
-import com.nttdocomo.android.tvterminalapp.model.search.SearchContentInfo;
-import com.nttdocomo.android.tvterminalapp.utils.ClassNameUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -130,7 +124,7 @@ public class RecordedBaseFrgament extends Fragment implements AbsListView.OnScro
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        DlnaRecVideoItem videoItem = new DlnaRecVideoItem();
+        DlnaRecVideoItem videoItem = ((RecordedListActivity)getActivity()).list.get(i);
         Bundle args = new Bundle();
         args.putParcelable(RecordedListActivity.RECORD_LIST__KEY,
                 getRecordedContentsDetailData(videoItem));

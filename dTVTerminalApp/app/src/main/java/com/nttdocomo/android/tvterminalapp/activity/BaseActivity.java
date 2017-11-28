@@ -71,24 +71,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         Intent intent = new Intent(this, clz);
         if (bundle != null) {
             intent.putExtras(bundle);
-
-            //コンテンツ種別によるコンテンツ詳細(プレイヤーあり/なし)起動判定
-            /*OtherContentsDetailData detailData =
-                    bundle.getParcelable(DtvContentsDetailActivity.DTV_INFO_BUNDLE_KEY);
-            if (detailData != null) {
-                int intServiceId = detailData.getServiceId();
-
-                switch (intServiceId) {
-                    case OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID:
-                    case OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID:
-                    case OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID:
-                        Class<?> aClass = DtvContentsDetailActivity.class;
-                        intent = new Intent(this, aClass);
-                        intent.putExtra(DtvContentsDetailActivity.DTV_INFO_BUNDLE_KEY, detailData);
-                    default:
-                        //TODO:プレイヤー付きのコンテンツ詳細画面を起動
-                }
-            }*/
         }
         startActivity(intent);
     }

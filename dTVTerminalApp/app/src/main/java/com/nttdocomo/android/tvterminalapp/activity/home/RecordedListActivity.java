@@ -22,7 +22,6 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragmentScrollListener;
@@ -53,6 +52,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private ViewPager mViewPager;
     private SearchView mSearchView;
     private HorizontalScrollView mTabScrollView;
+    private DlnaProvRecVideo mDlnaProvRecVideo;
     private RecordedFragmentFactory mRecordedFragmentFactory = null;
 
     private final static long SEARCH_INTERVAL = 1000;
@@ -71,11 +71,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     public static final String RECORD_LIST__KEY = "recordListKey";
 
-    private DlnaProvRecVideo dlnaProvRecVideo;
-
     //設定するマージンのピクセル数
     private static final String DATE_FORMAT = "yyyy/MM/ddHH:mm:ss";
     private String date[] = {"日", "月", "火", "水", "木", "金", "土"};
+    public ArrayList<DlnaRecVideoItem> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +87,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         setTitleText(getString(R.string.nav_menu_item_recorder_program));
 
         initView();
+        getData();
         initData();
         initTabVIew();
         setPagerAdapter();
@@ -288,6 +288,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                     LinearLayout.LayoutParams.MATCH_PARENT);
             if (i != 0) {
                 params.setMargins((int) getDensity() * MARGIN_LEFT_NOT_INDEX, MARGIN_ZERO, MARGIN_ZERO, MARGIN_ZERO);
+            } else {
+                params.setMargins((int) getResources().getDimension(R.dimen.recorded_searchview_left_margin), MARGIN_ZERO, MARGIN_ZERO, MARGIN_ZERO);
             }
             tabTextView.setLayoutParams(params);
             tabTextView.setText(mTabNames[i]);
@@ -334,35 +336,39 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     private void setRecordedAllContents() {
         DTVTLogger.start();
-        RecordedBaseFrgament recordedBaseFrgament = mRecordedFragmentFactory.createFragment(RECORDED_MODE_NO_OF_ALL, this);
+        // NOP
     }
 
     private void setRecordedTakeOutContents() {
         DTVTLogger.start();
-        RecordedBaseFrgament recordedBaseFrgament = mRecordedFragmentFactory.createFragment(RECORDED_MODE_NO_OF_TAKE_OUT, this);
+        RecordedBaseFrgament f = getCurrentRecordedBaseFrgament();
+        List<ContentsData> list = f.getContentsData();
+        if (null != list) {
+            list.clear();
+            ContentsData contentsData = new ContentsData();
+            contentsData.setTitle("aaaa");
+            contentsData.setTime("111111");
+            list.add(contentsData);
+            f.notifyDataSetChanged();
+        }
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (dlnaProvRecVideo != null) {
-            dlnaProvRecVideo.stopListen();
+        if (mDlnaProvRecVideo != null) {
+            mDlnaProvRecVideo.stopListen();
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getData();
     }
 
     private void getData() {
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-        if (dlnaProvRecVideo != null) {
-            dlnaProvRecVideo = new DlnaProvRecVideo();
+        if (mDlnaProvRecVideo == null) {
+            mDlnaProvRecVideo = new DlnaProvRecVideo();
         }
-        if (dlnaProvRecVideo.start(dlnaDmsItem.mUdn, this)) {
-            dlnaProvRecVideo.browseRecVideoDms(dlnaDmsItem.mControlUrl);
+        if (mDlnaProvRecVideo.start(dlnaDmsItem.mUdn, this)) {
+            mDlnaProvRecVideo.browseRecVideoDms(dlnaDmsItem.mControlUrl);
         }
     }
 
@@ -409,20 +415,17 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             final RecordedBaseFrgament baseFrgament = getCurrentRecordedBaseFrgament();
             List<ContentsData> listData = baseFrgament.getContentsData();
             listData.clear();
-            ArrayList<DlnaRecVideoItem> list = curInfo.getRecordVideoLists();
-
-            getTakeOutContents(list);
-
+            list = getTakeOutContents(curInfo.getRecordVideoLists());
             SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.JAPAN);
             for (int i = 0; i < list.size(); i++) {
                 // TODO 年齢取得未実装の為、固定値を返却
                 boolean isAge = true;
                 DlnaRecVideoItem dlnaRecVideoItem = list.get(i);
-                ContentsData data = new ContentsData();
+                ContentsData contentsData = new ContentsData();
                 int currentPageNo = mViewPager.getCurrentItem();
                 if (isAge) {
-                    data.setTitle(dlnaRecVideoItem.mTitle);
-                    data.setAllowedUse(dlnaRecVideoItem.mAllowedUse);
+                    contentsData.setTitle(dlnaRecVideoItem.mTitle);
+                    contentsData.setAllowedUse(dlnaRecVideoItem.mAllowedUse);
                     String time = dlnaRecVideoItem.mDate.replaceAll("-", "/").replace("T", "");
                     try {
                         Calendar calendar = Calendar.getInstance(Locale.JAPAN);
@@ -442,13 +445,13 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                         selectDate.append(hour);
                         selectDate.append(":");
                         selectDate.append(minute);
-                        data.setTime(selectDate.toString());
+                        contentsData.setTime(selectDate.toString());
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-                    listData.add(data);
+                    listData.add(contentsData);
                 } else {
-                    // TODO 年齢制限のフィルターに引っかかった時の処理
+                    // NOP
                 }
             }
             runOnUiThread(new Runnable() {
@@ -519,39 +522,30 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     /**
-     * すべてListの生成
+     * [すべて]のListと[持ち出し]Listをマージ
      *
-     * @return すべてList
+     * @return list　生成した[すべて]一覧に表示するリスト
      */
-    private List<String> getTakeOutContents(ArrayList<DlnaRecVideoItem> allList) {
-        // 持ち出し
-        ArrayList<String> all = new ArrayList<>();
-        all.add("a");
-        all.add("b");
-        all.add("c");
-        all.add("d");
-        // すべて
-        ArrayList<String> take = new ArrayList<>();
-        take.add("a");
-        take.add("b");
-        take.add("c");
-        take.add("e");
-        List<String> dataList = all; // allList
-        if (all != null && take != null) {
-            for (int i = 0; i < take.size(); i++) {
+    private ArrayList<DlnaRecVideoItem> getTakeOutContents(ArrayList<DlnaRecVideoItem> list) {
+        // 持ち出しLIST
+        ArrayList<DlnaRecVideoItem> takeoutList = new ArrayList<>();
+        // 返却するリスト
+        ArrayList<DlnaRecVideoItem> allList = list;
+        if (allList != null && takeoutList != null) {
+            for (int i = 0; i < takeoutList.size(); i++) {
                 int getPosition = -1;
                 boolean isExist = false;
-                for (int j = 0; j < dataList.size(); j++) {
-                    if (take.get(i).equals(all.get(j))) {
+                for (int j = 0; j < allList.size(); j++) {
+                    if (takeoutList.get(i).equals(allList.get(j))) {
                         isExist = true;
                         break;
                     }
                 }
                 if (!isExist) {
-                    all.add(take.get(i));
+                    allList.add(takeoutList.get(i));
                 }
             }
         }
-        return dataList;
+        return allList;
     }
 }
