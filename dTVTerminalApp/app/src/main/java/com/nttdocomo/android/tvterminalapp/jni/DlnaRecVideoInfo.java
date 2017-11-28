@@ -4,13 +4,11 @@
 
 package com.nttdocomo.android.tvterminalapp.jni;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
 public class DlnaRecVideoInfo {
-
 
     private ArrayList<DlnaRecVideoItem> mRecordVideoLists = new ArrayList();
 
@@ -64,4 +62,7 @@ public class DlnaRecVideoInfo {
         return info;
     }
 
+    public ArrayList<DlnaRecVideoItem> getRecordVideoLists() {
+        return mRecordVideoLists;
+    }
 }

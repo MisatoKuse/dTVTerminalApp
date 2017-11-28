@@ -8,9 +8,11 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.GenreCountGetJsonParser;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GenreCountGetWebClient
@@ -70,7 +72,7 @@ public class GenreCountGetWebClient
      * @param genreCountGetJsonParserCallback コールバック
      * @return パラメータエラーの場合はfalse
      */
-    public boolean getGenreCountGetApi(String filter, int ageReq, String genreId, String type,
+    public boolean getGenreCountGetApi(String filter, int ageReq, ArrayList<String> genreId, String type,
                                        GenreCountGetJsonParserCallback
                                                genreCountGetJsonParserCallback) {
 
@@ -117,7 +119,7 @@ public class GenreCountGetWebClient
      * @param parserCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(String filter, int ageReq, String genreId, String type,
+    private boolean checkNormalParameter(String filter, int ageReq, ArrayList<String> genreId, String type,
                                          GenreCountGetJsonParserCallback parserCallback) {
 
         //フィルターはヌルや空文字が有効なので、先に判定する
@@ -168,7 +170,7 @@ public class GenreCountGetWebClient
      * @param type    タイプ（hikaritv_vod/dtv_vod/hikaritv_and_dtv_vodのいずれかを指定。ヌルや空文字の場合は全てのVODとなる）
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(String filter, int ageReq, String genreId, String type) {
+    private String makeSendParameter(String filter, int ageReq, ArrayList<String> genreId, String type) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
@@ -189,9 +191,13 @@ public class GenreCountGetWebClient
             jsonObject.put(AGE_REQ_STR, ageReq);
 
             //ジャンルIDはリストの中に入れなければならない
-            JSONObject genreJson = new JSONObject();
-            genreJson.put(GENRE_ID_STR, genreId);
-            jsonObject.put(LIST_STR, genreJson);
+            JSONArray array = new JSONArray();
+            for(int i = 0;i<genreId.size();i++){
+                JSONObject genreJson = new JSONObject();
+                genreJson.put(GENRE_ID_STR, genreId.get(i));
+                array.put(genreJson);
+            }
+            jsonObject.put(LIST_STR, array);
 
             if (!(type == null || type.isEmpty())) {
                 //タイプはヌルや空文字以外ならば出力する

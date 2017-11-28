@@ -23,6 +23,7 @@ import com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.SearchResultBaseAdapter;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.model.search.SearchContentInfo;
+import com.nttdocomo.android.tvterminalapp.utils.ClassNameUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -129,13 +130,15 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         SearchContentInfo info = (SearchContentInfo) mData.get(i);
+        ClassNameUtils classNameUtils = new ClassNameUtils();
+        Class<?> className = classNameUtils.getContentsService(info.serviceId);
         Bundle args = new Bundle();
         args.putParcelable(DtvContentsDetailActivity.DTV_INFO_BUNDLE_KEY,
                 getOtherContentsDetailData(info));
         if (mLoadMoreView == view) {
             return;
         }
-        ((BaseActivity) mActivity).startActivity(TvPlayerActivity.class, args);
+        ((BaseActivity) mActivity).startActivity(className, args);
     }
 
     /**

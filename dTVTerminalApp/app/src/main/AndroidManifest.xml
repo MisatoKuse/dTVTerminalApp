@@ -149,16 +149,13 @@
             android:name="com.nttdocomo.android.tvterminalapp.activity.video.VideoContentListActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.nttdocomo.android.tvterminalapp.activity.video.VideoSubGenreActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name="com.nttdocomo.android.tvterminalapp.activity.video.VideoTopActivity"
             android:screenOrientation="portrait" />
         <!-- ======================================  Video グループ End ====================================== -->
 
         <activity android:name="com.nttdocomo.android.tvterminalapp.activity.temp.DAccountAppliActivity" />
         <activity android:name="com.nttdocomo.android.tvterminalapp.activity.temp.GoogleStoreActivity" />
-        <activity android:name="com.nttdocomo.android.tvterminalapp.activity.launch.DAccountRegConfirmationActivity"/>
+        <activity android:name="com.nttdocomo.android.tvterminalapp.activity.launch.DAccountRegConfirmationActivity" />
     </application>
 
 </manifest>

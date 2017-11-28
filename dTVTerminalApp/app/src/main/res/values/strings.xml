@@ -9,6 +9,7 @@
     <string name="back_key">く</string>
     <string name="close_key">×</string>
     <string name="list_transition">></string>
+    <string name="contents_hyphen">-</string>
 
     <!-- Launch -->
     <string name="str_app_title">dリモート</string>
@@ -63,9 +64,16 @@
         <item>ひかり</item>
         <item>dTVチャンネル</item>
     </string-array>
+
+    <!-- 録画番組 -->
+    <string-array name="record_list_tab_names">
+        <item>すべて</item>
+        <item>持ち出し</item>
+    </string-array>
     <string name="tv_program_change_mode">&lt; &gt;</string>
     <!-- Video -->
     <string name="video_content_top_title">ビデオ</string>
+    <string name="video_content_all_title">すべて</string>
     <string name="video_content_sub_genre_title">全ての作品</string>
 
     <!-- Search -->

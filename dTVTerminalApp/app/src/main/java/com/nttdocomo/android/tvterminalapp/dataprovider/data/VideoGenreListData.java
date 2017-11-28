@@ -10,12 +10,15 @@ import android.os.Parcelable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * ビデオ一覧用データクラス
+ */
 public class VideoGenreListData implements Parcelable {
+
     private HashMap<String, String> mTitleMap;
     private ArrayList<GenreListMetaData.SubContent> mSubGenre;
 
-    public VideoGenreListData(HashMap<String, String> title,
-                              HashMap<String, String> sub) {
+    public VideoGenreListData(HashMap<String, String> title) {
         this.mTitleMap = title;
     }
 

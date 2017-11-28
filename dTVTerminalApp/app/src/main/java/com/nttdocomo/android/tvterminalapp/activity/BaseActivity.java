@@ -21,10 +21,8 @@ import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplayEventListener;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuItem;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuItemParam;
-import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 
 /**
  * クラス機能：
@@ -73,24 +71,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         Intent intent = new Intent(this, clz);
         if (bundle != null) {
             intent.putExtras(bundle);
-
-            //コンテンツ種別によるコンテンツ詳細(プレイヤーあり/なし)起動判定
-            OtherContentsDetailData detailData =
-                    bundle.getParcelable(DtvContentsDetailActivity.DTV_INFO_BUNDLE_KEY);
-            if (detailData != null) {
-                int intServiceId = detailData.getServiceId();
-
-                switch (intServiceId) {
-                    case OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID:
-                    case OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID:
-                    case OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID:
-                        Class<?> aClass = DtvContentsDetailActivity.class;
-                        intent = new Intent(this, aClass);
-                        intent.putExtra(DtvContentsDetailActivity.DTV_INFO_BUNDLE_KEY, detailData);
-                    default:
-                        //TODO:プレイヤー付きのコンテンツ詳細画面を起動
-                }
-            }
         }
         startActivity(intent);
     }
@@ -165,7 +145,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     private static final int MIN_CLICK_DELAY_TIME = 1000;
-    private static long lastClickTime;
+    private  long lastClickTime;
 
     /**
      * 機能
@@ -233,7 +213,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         return "Test User";
     }
 
-    private static UserState sUserState = UserState.LOGIN_NG;
+    private UserState sUserState = UserState.LOGIN_NG;
 
     public UserState getUserState() {
         return sUserState;
@@ -293,6 +273,17 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     public void contentsDetailCloseKey(View view) {
         //TODO:コンテンツ詳細系の画面をクローズする処理を記載する
         finish();
+    }
+
+    /**
+     * 録画コンテンツダウンロード済みかどうか
+     *
+     * @return DL済み true
+     */
+    public Boolean getDownloadContentsFalag() {
+        // TODO DL済み/未　判定
+        // 現時点データが取得できない為、固定でfalseを返却
+        return false;
     }
 
     @Override

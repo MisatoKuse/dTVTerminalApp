@@ -45,10 +45,15 @@ namespace dtvt {
     const char * const DmsItem_Field_mIPAddress     ="mIPAddress";
 
     //DlnaRecVideoItem フィールド定義
-    const char * const RecVideoItem_Field_mTitle    ="mTitle";
-    const char * const RecVideoItem_Field_mDate     ="mDate";
-    const char * const RecVideoItem_Field_mUpnpIcon ="mUpnpIcon";
-    const char * const RecVideoItem_Field_mResUrl   ="mResUrl";
+    const char * const RecVideoItem_Field_mItemId     ="mItemId";
+    const char * const RecVideoItem_Field_mTitle      ="mTitle";
+    const char * const RecVideoItem_Field_mSize       ="mSize";
+    const char * const RecVideoItem_Field_mDuration   ="mDuration";
+    const char * const RecVideoItem_Field_mResolution ="mResolution";
+    const char * const RecVideoItem_Field_mBitrate    ="mBitrate";
+    const char * const RecVideoItem_Field_mResUrl     ="mResUrl";
+    const char * const RecVideoItem_Field_mUpnpIcon   ="mUpnpIcon";
+    const char * const RecVideoItem_Field_mDate       ="mDate";
 
     //java string path
     const char * const Dlna_Java_String_Path = "java/lang/String";    //"Ljava/lang/String;";

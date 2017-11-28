@@ -546,13 +546,7 @@ namespace dtvt {
         }
 
         //mFriendlyName
-        ret= setJavaObjectField(env, cl, DmsItem_Field_mFriendlyName, Dlna_Java_String_Path,  *i++, objOut);
-        if(!ret){
-            return false;
-        }
-
-        //mIPAddress
-        ret= setJavaObjectField(env, cl, DmsItem_Field_mIPAddress, Dlna_Java_String_Path,  *i, objOut);
+        ret= setJavaObjectField(env, cl, DmsItem_Field_mFriendlyName, Dlna_Java_String_Path,  *i, objOut);
         if(!ret){
             return false;
         }
@@ -563,14 +557,44 @@ namespace dtvt {
     bool addRecVideoItem(JNIEnv *env, jclass cl, jmethodID cons, StringVector& datas, jobject objOut, jobject listObj, jmethodID listAddId) {
         StringVector::iterator i=datas.begin();
 
-        //mTitle
-        bool ret= setJavaObjectField(env, cl, RecVideoItem_Field_mTitle, Dlna_Java_String_Path,  *i++, objOut);
+        //mItemId
+        bool ret= setJavaObjectField(env, cl, RecVideoItem_Field_mItemId, Dlna_Java_String_Path,  *i++, objOut);
         if(!ret){
             return false;
         }
 
-        //mDate
-        ret= setJavaObjectField(env, cl, RecVideoItem_Field_mDate, Dlna_Java_String_Path,  *i++, objOut);
+        //mTitle
+        ret= setJavaObjectField(env, cl, RecVideoItem_Field_mTitle, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //mSize
+        ret= setJavaObjectField(env, cl, RecVideoItem_Field_mSize, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //mDuration
+        ret= setJavaObjectField(env, cl, RecVideoItem_Field_mDuration, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //mResolution
+        ret= setJavaObjectField(env, cl, RecVideoItem_Field_mResolution, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //mBitrate
+        ret= setJavaObjectField(env, cl, RecVideoItem_Field_mBitrate, Dlna_Java_String_Path, *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //mUpnpIcon
+        ret= setJavaObjectField(env, cl, RecVideoItem_Field_mResUrl, Dlna_Java_String_Path,  *i++, objOut);
         if(!ret){
             return false;
         }
@@ -581,8 +605,8 @@ namespace dtvt {
             return false;
         }
 
-        //mResUrl
-        ret= setJavaObjectField(env, cl, RecVideoItem_Field_mResUrl, Dlna_Java_String_Path,  *i, objOut);
+        //mDate
+        ret= setJavaObjectField(env, cl, RecVideoItem_Field_mDate, Dlna_Java_String_Path,  *i, objOut);
         if(!ret){
             return false;
         }
@@ -699,7 +723,7 @@ namespace dtvt {
     }
 
     bool Dlna::browseDms(std::string controlUrl) {
-        return sendSoap(controlUrl, "/external/video/media/all_videos");
+        return sendSoap(controlUrl, "13121");
     }
 
     /**

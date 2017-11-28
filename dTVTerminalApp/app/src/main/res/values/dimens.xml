@@ -26,6 +26,18 @@
     <dimen name="list_item_time_text_size">11sp</dimen>
     <dimen name="list_item_rank_num_text_size">10sp</dimen>
     <dimen name="list_item_rating_num_text_size">9sp</dimen>
+    <dimen name="list_item_time_start_margin">3dp</dimen>
+    <dimen name="list_item_common_result_rank_num_top_margin">5dp</dimen>
+    <dimen name="list_item_common_result_rank_num_right_padding">5dp</dimen>
+    <dimen name="list_item_result_contents_margin_end">15dp</dimen>
+    <dimen name="list_item_result_contents_margin_start">10dp</dimen>
+    <dimen name="list_item_result_contents_bottom_padding">5dp</dimen>
+    <dimen name="list_item_result_contents_top_padding">5dp</dimen>
+    <dimen name="list_item_rank_num_start_margin">2dp</dimen>
+    <dimen name="list_item_sort_button_layout_width">40dp</dimen>
+    <dimen name="list_item_sort_button_layout_height">40dp</dimen>
+    <dimen name="list_item_sort_button_bottom_margin">25dp</dimen>
+    <dimen name="list_item_sort_button_right_margin">25dp</dimen>
 
     <!--コンテンツ詳細-->
     <dimen name="contents_header_close_button_size">24sp</dimen>
@@ -63,4 +75,30 @@
     <dimen name="list_item_channel_name_text_size">13sp</dimen>
     <dimen name="list_item_recording_reservation_status_text_size">12sp</dimen>
 
+    <!--録画番組-->
+    <dimen name="recorded_contents_dividerHeight">1dp</dimen>
+    <dimen name="recorded_searchview_height">40dp</dimen>
+    <dimen name="recorded_searchview_bottom_margin">10dp</dimen>
+    <dimen name="recorded_searchview_left_margin">20dp</dimen>
+    <dimen name="recorded_searchview_right_margin">20dp</dimen>
+    <dimen name="recorded_searchview_top_margin">10dp</dimen>
+    <dimen name="recorded_scroll_height">50dp</dimen>
+    <dimen name="recorded_scroll_top_margin">10dp</dimen>
+    <dimen name="recorded_rank_num_margin_start">5dp</dimen>
+    <dimen name="recorded_rank_num_left_padding">5dp</dimen>
+    <dimen name="recorded_clip_tv_top_margin">10dp</dimen>
+    <dimen name="recorded_clip_tv_width">25dp</dimen>
+    <dimen name="recorded_clip_tv_height">25dp</dimen>
+    <dimen name="recorded_clip_tv_margin_end">8dp</dimen>
+    <dimen name="recorded_filtering_icon_width">80dp</dimen>
+    <dimen name="recorded_filtering_icon_height">80dp</dimen>
+    <dimen name="recorded_filtering_icon_margin_bottom">5dp</dimen>
+    <dimen name="recorded_filtering_icon_margin_end">5dp</dimen>
+
+    <!--タブ共通UI-->
+    <dimen name="list_tab_start_margin_left">20dp</dimen>
+    <dimen name="list_tab_margin_left">15dp</dimen>
+    <dimen name="list_tab_margin_top">0dp</dimen>
+    <dimen name="list_tab_margin_right">0dp</dimen>
+    <dimen name="list_tab_margin_bottom">0dp</dimen>
 </resources>

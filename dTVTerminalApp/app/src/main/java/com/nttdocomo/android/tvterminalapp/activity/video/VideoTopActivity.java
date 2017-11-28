@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.video;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AbsListView;
@@ -15,6 +16,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.adapter.VideoGenreAdapter;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VideoGenreProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreListData;
 
@@ -30,18 +32,16 @@ public class VideoTopActivity extends BaseActivity implements View.OnClickListen
 
     private ImageView mMenuImageView;
     private List mContentsList;
-    private ListView mListView;
 
     private VideoGenreAdapter mVideoGenreAdapter;
-    private VideoGenreProvider mVideoGenreProvider;
     private VideoGenreListData mVideoGenreListData;
 
-    // 最終階層サブジャンルフラグ
-    private boolean endGenreFlag = false;
-
     // ジャンルIDのIntent KEY
-    public static final String VIDEO_CONTENTS_BUNDLE_KEY = "videoContentKey";
-    public static final String GET_GENRE_MAP_BUNDLE_KEY = "getGenreMapBundleKey";
+    private static final String VIDEO_CONTENTS_BUNDLE_KEY = "videoContentKey";
+    private static final String GET_GENRE_MAP_BUNDLE_KEY = "getGenreMapBundleKey";
+
+    // サブジャンル有無判定用
+    private static final int SUB_GENRE_NOTHING_BORDER = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,51 +52,46 @@ public class VideoTopActivity extends BaseActivity implements View.OnClickListen
         mMenuImageView.setVisibility(View.VISIBLE);
         mMenuImageView.setOnClickListener(this);
 
-        mVideoGenreProvider = new VideoGenreProvider(this);
+        VideoGenreProvider videoGenreProvider = new VideoGenreProvider(this);
 
-        String genreId = getIntent().getStringExtra(VIDEO_CONTENTS_BUNDLE_KEY);
-        mVideoGenreListData = getIntent().getParcelableExtra(GET_GENRE_MAP_BUNDLE_KEY);
+        Intent intent = getIntent();
+        String genreId = intent.getStringExtra(VIDEO_CONTENTS_BUNDLE_KEY);
+        mVideoGenreListData = intent.getParcelableExtra(GET_GENRE_MAP_BUNDLE_KEY);
 
         if (null != genreId) {
             // サブジャンル画面のタイトル
             setTitleText(mVideoGenreListData.getTitleMap().get(genreId));
-            mVideoGenreProvider.setVideoGenreListData(mVideoGenreListData);
-            mVideoGenreProvider.getContentCountDataRequest(genreId);
         } else {
             // ジャンル画面のタイトル
             setTitleText(getString(R.string.video_content_top_title));
-            // ジャンル一覧取得のリクエスト
-            mVideoGenreProvider.getGenreListDataRequest();
         }
+
+        //ジャンル一覧表示データ取得要求開始
+        videoGenreProvider.getGenreListDataRequest();
         initView();
     }
 
+    /**
+     * レイアウト初期化
+     */
     private void initView() {
         if (mContentsList == null) {
             mContentsList = new ArrayList();
         }
-        mListView = findViewById(R.id.genre_list);
-        mListView.setOnItemClickListener(this);
-        mListView.setOnScrollListener(this);
+        ListView listView = findViewById(R.id.genre_list);
+        listView.setOnItemClickListener(this);
+        listView.setOnScrollListener(this);
         mVideoGenreAdapter = new VideoGenreAdapter(
                 this,
                 mContentsList
         );
-        mListView.setAdapter(mVideoGenreAdapter);
+        listView.setAdapter(mVideoGenreAdapter);
     }
 
     /**
-     * 取得結果の設定・表示
+     * List更新処理
      */
-    private void setVideoGenre(List<VideoGenreList> listData) {
-        for (int i = 0; i < listData.size(); ++i) {
-            if (null != mContentsList) {
-                mContentsList.add(listData.get(i));
-            }
-        }
-    }
-
-    public void noticeRefresh() {
+    private void noticeRefresh() {
         if (null != mVideoGenreAdapter) {
             mVideoGenreAdapter.notifyDataSetChanged();
         }
@@ -114,10 +109,16 @@ public class VideoTopActivity extends BaseActivity implements View.OnClickListen
         Bundle bundle = new Bundle();
         VideoGenreList videoGenreList = (VideoGenreList) mContentsList.get(position);
 
-        if (null == videoGenreList.getSubGenre()) {
+        //"すべて"は画面遷移なし
+        if(videoGenreList.getTitle().equals(getString(R.string.video_content_all_title))){
+            return;
+        }
+
+        // サブジャンル有無フラグ設定
+        boolean endGenreFlag = false;
+        ArrayList<GenreListMetaData.SubContent> subGenre = videoGenreList.getSubGenre();
+        if(subGenre == null || SUB_GENRE_NOTHING_BORDER > subGenre.size()){
             endGenreFlag = true;
-        } else {
-            endGenreFlag = false;
         }
 
         mVideoGenreListData.setSubGenre(videoGenreList.getSubGenre());
@@ -127,8 +128,10 @@ public class VideoTopActivity extends BaseActivity implements View.OnClickListen
 
         // サブジャンル最終階層の場合は、コンテンツ一覧画面に遷移
         if (endGenreFlag) {
+            // サブジャンルがなければコンテンツ一覧を表示する
             startActivity(VideoContentListActivity.class, bundle);
         } else {
+            // サブジャンルがあればサブジャンル一覧を表示する
             startActivity(VideoTopActivity.class, bundle);
         }
     }
@@ -145,6 +148,7 @@ public class VideoTopActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void genreListCallback(List<VideoGenreList> genreList) {
+        // ジャンル情報取得後はリストを更新
         mContentsList = genreList;
         mVideoGenreAdapter.mData = genreList;
         noticeRefresh();

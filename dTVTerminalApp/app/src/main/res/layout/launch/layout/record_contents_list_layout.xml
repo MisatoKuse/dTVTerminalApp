@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/recorded_contents_background">
+
+    <ListView
+        android:id="@+id/recorded_contents_result"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tv_searched_result"
+        android:divider="@drawable/list_item_divider"
+        android:dividerHeight="@dimen/recorded_contents_dividerHeight">
+    </ListView>
+</RelativeLayout>
