@@ -643,7 +643,7 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void onError(MediaPlayerController mediaPlayerController, int i, long l) {
-
+        Toast.makeText(getApplicationContext(), "" + i, Toast.LENGTH_SHORT).show();
     }
 
     @Override
