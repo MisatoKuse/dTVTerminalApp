@@ -167,7 +167,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     public void onPause() {
         DTVTLogger.start();
         leaveActivity();
-         displayMoreData(false);
+        displayMoreData(false);
         DTVTLogger.end();
         super.onPause();
     }
@@ -433,6 +433,10 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+
+                if(mCallbackTimer == null) {
+                    mCallbackTimer = new StbInfoCallBackTimer(new Handler());
+                }
                 // 0件の場合タイムアウトを設定する
                 if (mContentsList.size() <= 0) {
                     mContentsAdapter.notifyDataSetChanged();
@@ -445,9 +449,9 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                     showResultCompleteView();
                     mContentsAdapter.notifyDataSetChanged();
                     DTVTLogger.debug("TimerTaskNotExecuted");
-                } else { // 既にタイムアウトとなっていた場合
-                    // nop.
-                    DTVTLogger.debug("TimerTaskExecuted");
+                }else{ // 既にタイムアウトとなっていた場合
+                        // nop.
+                        DTVTLogger.debug("TimerTaskExecuted");
                 }
             }
         });
@@ -482,7 +486,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private void startCallbackTimer() {
         DTVTLogger.start();
         showSearchingView();
-        displayMoreData(true);
         if (mCallbackTimer == null) {
             mCallbackTimer = new StbInfoCallBackTimer(new Handler());
         }
@@ -495,7 +498,9 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private void stopCallbackTimer() {
         DTVTLogger.start();
-        mCallbackTimer.timerTaskCancel();
+        if(mCallbackTimer.getTimerStatus() == TimerStatus.TIMER_STATUS_DURING_STARTUP) {
+            mCallbackTimer.timerTaskCancel();
+        }
         DTVTLogger.end();
     }
 
