@@ -104,7 +104,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private void setDevListener() {
         DTVTLogger.start();
-        if(null==mDlnaProvDevList){
+        if (null == mDlnaProvDevList) {
             mDlnaProvDevList = new DlnaProvDevList();
 
         }
@@ -434,7 +434,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void run() {
 
-                if(mCallbackTimer == null) {
+                if (mCallbackTimer == null) {
                     mCallbackTimer = new StbInfoCallBackTimer(new Handler());
                 }
                 // 0件の場合タイムアウトを設定する
@@ -449,9 +449,9 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                     showResultCompleteView();
                     mContentsAdapter.notifyDataSetChanged();
                     DTVTLogger.debug("TimerTaskNotExecuted");
-                }else{ // 既にタイムアウトとなっていた場合
-                        // nop.
-                        DTVTLogger.debug("TimerTaskExecuted");
+                } else { // 既にタイムアウトとなっていた場合
+                    // nop.
+                    DTVTLogger.debug("TimerTaskExecuted");
                 }
             }
         });
@@ -498,7 +498,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private void stopCallbackTimer() {
         DTVTLogger.start();
-        if(mCallbackTimer.getTimerStatus() == TimerStatus.TIMER_STATUS_DURING_STARTUP) {
+        if (mCallbackTimer.getTimerStatus() == TimerStatus.TIMER_STATUS_DURING_STARTUP) {
             mCallbackTimer.timerTaskCancel();
         }
         DTVTLogger.end();

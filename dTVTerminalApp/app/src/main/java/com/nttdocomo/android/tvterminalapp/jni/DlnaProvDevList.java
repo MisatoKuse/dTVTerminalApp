@@ -13,24 +13,24 @@ public class DlnaProvDevList {
     /**
      * 機能：DlnaProvDevListを構造
      */
-    public DlnaProvDevList()  {
+    public DlnaProvDevList() {
 
     }
 
     /**
      * 機能：Listenを停止
      */
-    public void stopListen(){
-        DlnaInterface di= DlnaInterface.getInstance();
-        if(null==di){
+    public void stopListen() {
+        DlnaInterface di = DlnaInterface.getInstance();
+        if (null == di) {
             return;
         }
         di.setDlnaDevListListener(null);
     }
 
-    public DlnaDMSInfo getDlnaDMSInfo(){
-        DlnaInterface di= DlnaInterface.getInstance();
-        if(null==di){
+    public DlnaDMSInfo getDlnaDMSInfo() {
+        DlnaInterface di = DlnaInterface.getInstance();
+        if (null == di) {
             return null;
         }
         return di.getDlnaDMSInfo();
@@ -38,15 +38,16 @@ public class DlnaProvDevList {
 
     /**
      * 機能：DMSデバイスを取り始める
+     *
      * @param lis listener
      * @return 成功 true
      */
-    public boolean start(DlnaDevListListener lis){
-        DlnaInterface di= DlnaInterface.getInstance();
-        if(null==di){
+    public boolean start(DlnaDevListListener lis) {
+        DlnaInterface di = DlnaInterface.getInstance();
+        if (null == di) {
             return false;
         }
-        if(!di.startDlna()){
+        if (!di.startDlna()) {
             return false;
         }
         di.setDlnaDevListListener(lis);
