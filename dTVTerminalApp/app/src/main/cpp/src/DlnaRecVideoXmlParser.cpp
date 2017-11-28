@@ -10,8 +10,10 @@ namespace dtvt {
     DlnaRecVideoXmlParser::DlnaRecVideoXmlParser(){
 
     }
-    void parseXmlNode(const xmlNodePtr & xmlRootNode, vector<StringVector>& out, StringVector& v1);
-    void DlnaRecVideoXmlParser::parse(void *response, vector<StringVector>& out){
+    void DlnaRecVideoXmlParser::parse(void *fileStr, vector<StringVector>& out){}
+    void parseXmlNode(const xmlNodePtr & xmlRootNode, vector<StringVector>& out, StringVector& v1, std::string &containerId);
+    void DlnaRecVideoXmlParser::parseXml(void *response, vector<StringVector>& out, std::string &containerId){
+
         //録画一覧XMLパーサー
         IfNullReturn(response);
         dupnp_http_response *newRes = ((dupnp_http_response *) response);
@@ -42,7 +44,7 @@ namespace dtvt {
         if(!root){
             goto error2;
         }
-        parseXmlNode(root, out, recordVectorTmp);
+        parseXmlNode(root, out, recordVectorTmp, containerId);
         du_str_array_free(&param_array);
         xmlFreeDoc(didl_doc);
         return;
@@ -54,7 +56,8 @@ namespace dtvt {
     }
 
     bool isVideo = false;
-    void parseXmlNode(const xmlNodePtr & xmlRootNode, vector<StringVector>& out, StringVector& v1)
+    bool isContainerId = false;
+    void parseXmlNode(const xmlNodePtr & xmlRootNode, vector<StringVector>& out, StringVector& v1, std::string &containerId)
     {
         xmlNodePtr xmlChildNode = xmlRootNode->xmlChildrenNode;
         while(NULL != xmlChildNode)
@@ -63,14 +66,27 @@ namespace dtvt {
             {
                 std::vector<std::string> recordVectorTmp;
                 bool isItem=false;
+                if (!xmlStrcmp(xmlChildNode->name, (const xmlChar*)RecVideoParse_Field_Container))
+                {
+                    if(!isContainerId){
+                        containerId = (char*)xmlGetProp(xmlChildNode, (const xmlChar*)RecVideoParse_Field_Id);
+                    }
+                    isItem = true;
+                }
                 if (!xmlStrcmp(xmlChildNode->name, (const xmlChar*)RecVideoParse_Field_Item))
                 {
-                    isItem=true;
+                    isItem = true;
                     recordVectorTmp.push_back((char*)xmlGetProp(xmlChildNode, (const xmlChar*)RecVideoParse_Field_Id));
                 }
                 if (!xmlStrcmp(xmlChildNode->name, (const xmlChar*)RecVideoParse_Field_Title))
                 {
-                    v1.push_back((char*)xmlNodeGetContent(xmlChildNode));
+                    std::string title((char*)xmlNodeGetContent(xmlChildNode));
+                    if(title.find(RecVideoParse_Field_Videos) != string::npos){
+                        isContainerId = true;
+                        return;
+                    }else{
+                        v1.push_back(title);
+                    }
                 }
                 if (!xmlStrcmp(xmlChildNode->name, (const xmlChar*)RecVideoParse_Field_Res))
                 {
@@ -103,7 +119,7 @@ namespace dtvt {
                     isVideo = false;
                 }
                 if(isItem){
-                    parseXmlNode(xmlChildNode, out, recordVectorTmp);
+                    parseXmlNode(xmlChildNode, out, recordVectorTmp, containerId);
                 }
             }
             xmlChildNode = xmlChildNode->next;

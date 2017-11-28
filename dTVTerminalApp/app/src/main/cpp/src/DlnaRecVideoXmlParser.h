@@ -28,10 +28,13 @@ namespace dtvt {
          */
         void parse(void *fileStr, vector<StringVector>& out);
 
+        void parseXml(void *fileStr, vector<StringVector>& out, std::string &containerId);
+
         virtual ~DlnaRecVideoXmlParser();
     };
 
     //DlnaRecVideoParse フィールド定義
+    const char * const RecVideoParse_Field_Container    ="container";
     const char * const RecVideoParse_Field_Item         ="item";
     const char * const RecVideoParse_Field_Id           ="id";
     const char * const RecVideoParse_Field_Title        ="title";
@@ -47,6 +50,7 @@ namespace dtvt {
     const char * const RecVideoParse_Field_Date         ="date";
     const char * const RecVideoParse_Field_Class        ="class";
     const char * const RecVideoParse_Field_VideoItem    ="object.item.videoItem";
+    const char * const RecVideoParse_Field_Videos       ="Videos";
 
     //ビデオ種類
     const char * const RecVideoType_Field_Mp4           ="http-get:*:video/mp4";
