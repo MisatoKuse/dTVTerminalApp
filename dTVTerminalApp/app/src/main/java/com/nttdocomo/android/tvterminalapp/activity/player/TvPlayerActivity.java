@@ -104,19 +104,39 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
         setCurrentMediaInfo();
         mGestureDetector = new GestureDetector(this,new GestureDetector.SimpleOnGestureListener(){
             @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                if(e1.getY()>mRecordCtrlView.getHeight()/3
-                        &&e2.getY()<mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight()/3
-                        &&e2.getY()>mRecordCtrlView.getHeight()/3
-                        &&e1.getY()<mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight()/3){
-                    if(e1.getX()>e2.getX()
-                            &&e1.getX()< mScreenWidth /2-mVideoPlayPause.getWidth()/2){
+            public boolean onSingleTapUp(MotionEvent e) {
+                if(e.getY()>mRecordCtrlView.getHeight()/3
+                        &&e.getY()<mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight()/3){
+                    if(e.getX()< mScreenWidth /2-mVideoPlayPause.getWidth()/2
+                            &&e.getX()>mScreenWidth/6){//10秒戻し
                         /*long pos = mPlayerView.getCurrentPosition();
                         pos -= 10*1000;
                         mPlayerController.seekTo(pos);*/
                         Toast.makeText(TvPlayerActivity.this,"←10秒",Toast.LENGTH_SHORT).show();
-                    }else if(e1.getX()<e2.getX()
-                            &&e1.getX()> mScreenWidth /2+mVideoPlayPause.getWidth()/2){
+                    }
+                    if(e.getX()>mScreenWidth /2+mVideoPlayPause.getWidth()/2
+                            &&e.getX()<mScreenWidth-mScreenWidth/6){//30秒送り
+                        /*long pos = mPlayerView.getCurrentPosition();
+                        pos += 30*1000;
+                        mPlayerController.seekTo(pos);*/
+                        Toast.makeText(TvPlayerActivity.this,"30→",Toast.LENGTH_SHORT).show();
+                    }
+                }
+                return super.onSingleTapUp(e);
+            }
+
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                if(e1.getY()>mRecordCtrlView.getHeight()/3
+                        &&e2.getY()>mRecordCtrlView.getHeight()/3
+                        &&e2.getY()<mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight()/3
+                        &&e1.getY()<mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight()/3){
+                    if(e1.getX()>e2.getX() && e1.getX()<mScreenWidth /2-mVideoPlayPause.getWidth()/2){
+                        /*long pos = mPlayerView.getCurrentPosition();
+                        pos -= 10*1000;
+                        mPlayerController.seekTo(pos);*/
+                        Toast.makeText(TvPlayerActivity.this,"←10秒",Toast.LENGTH_SHORT).show();
+                    }else if(e1.getX()<e2.getX() && e1.getX()>mScreenWidth /2+mVideoPlayPause.getWidth()/2){
                         /*long pos = mPlayerView.getCurrentPosition();
                         pos += 30*1000;
                         mPlayerController.seekTo(pos);*/
@@ -396,10 +416,7 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                             mVideoCtrlBar.setVisibility(View.VISIBLE);
                             //setPlayEvent();
                         }
-                        if(mCtrlHandler != null){
-                            mCtrlHandler.removeCallbacks(mHideCtrlViewThread);
-                        }
-                        mCtrlHandler.postDelayed(mHideCtrlViewThread,HIDE_IN_3_SECOND);
+                        hideCtrlViewAfterOperate();
                     }
                     return true;
                 }
@@ -424,15 +441,19 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                             mTvFullScreen.setVisibility(View.VISIBLE);
                             //setPlayEvent();
                         }
-                        if(mCtrlHandler != null){
-                            mCtrlHandler.removeCallbacks(mHideCtrlViewThread);
-                        }
-                        mCtrlHandler.postDelayed(mHideCtrlViewThread,HIDE_IN_3_SECOND);
+                        hideCtrlViewAfterOperate();
                     }
                     return true;
                 }
             });
         }
+    }
+
+    private void hideCtrlViewAfterOperate() {
+        if(mCtrlHandler != null){
+            mCtrlHandler.removeCallbacks(mHideCtrlViewThread);
+        }
+        mCtrlHandler.postDelayed(mHideCtrlViewThread,HIDE_IN_3_SECOND);
     }
 
     @Override
@@ -475,32 +496,19 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                 } else {
                     playPause();
                 }
+                hideCtrlViewAfterOperate();
                 break;
             case R.id.tv_player_ctrl_now_on_air_full_screen_iv:
                 Toast.makeText(this, "フルスクリーンに変更されています", Toast.LENGTH_SHORT).show();
+                hideCtrlViewAfterOperate();
                 break;
             case R.id.tv_player_ctrl_now_on_air_replay_iv:
                 Toast.makeText(this, "タップで頭出し再生", Toast.LENGTH_SHORT).show();
+                hideCtrlViewAfterOperate();
                 break;
             case R.id.tv_player_ctrl_now_on_air_rapid_tv:
                 Toast.makeText(this,"タップで倍速で再生",Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.tv_player_main_layout_video_ctrl_player_video_root:
-                /*if(mVideoPlayPause.getVisibility() == View.VISIBLE){
-                hideVideoCtrlView(View.INVISIBLE);
-            }else {
-                mVideoPlayPause.setVisibility(View.VISIBLE);
-                mVideoRewind10.setVisibility(View.VISIBLE);
-                mVideoRewind.setVisibility(View.VISIBLE);
-                mVideoFast30.setVisibility(View.VISIBLE);
-                mVideoFast.setVisibility(View.VISIBLE);
-                mVideoCtrlBar.setVisibility(View.VISIBLE);
-                //setPlayEvent();
-            }
-                if(mTvCtrlHandler != null){
-                    mTvCtrlHandler.removeCallbacks(mHideVideoViewThread);
-                }*/
-                //mTvCtrlHandler.postDelayed(mHideVideoViewThread,HIDE_IN_3_SECOND);
+                hideCtrlViewAfterOperate();
                 break;
             default:
                 break;
