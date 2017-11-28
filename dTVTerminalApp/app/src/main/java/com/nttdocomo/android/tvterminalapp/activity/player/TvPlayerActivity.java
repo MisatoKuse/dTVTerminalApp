@@ -109,16 +109,16 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                         &&e.getY()<mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight()/3){
                     if(e.getX()< mScreenWidth /2-mVideoPlayPause.getWidth()/2
                             &&e.getX()>mScreenWidth/6){//10秒戻し
-                        /*long pos = mPlayerView.getCurrentPosition();
+                        int pos = mPlayerController.getCurrentPosition();
                         pos -= 10*1000;
-                        mPlayerController.seekTo(pos);*/
+                        mPlayerController.seekTo(pos);
                         Toast.makeText(TvPlayerActivity.this,"←10秒",Toast.LENGTH_SHORT).show();
                     }
                     if(e.getX()>mScreenWidth /2+mVideoPlayPause.getWidth()/2
                             &&e.getX()<mScreenWidth-mScreenWidth/6){//30秒送り
-                        /*long pos = mPlayerView.getCurrentPosition();
+                        int pos = mPlayerController.getCurrentPosition();
                         pos += 30*1000;
-                        mPlayerController.seekTo(pos);*/
+                        mPlayerController.seekTo(pos);
                         Toast.makeText(TvPlayerActivity.this,"30→",Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -132,14 +132,14 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                         &&e2.getY()<mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight()/3
                         &&e1.getY()<mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight()/3){
                     if(e1.getX()>e2.getX() && e1.getX()<mScreenWidth /2-mVideoPlayPause.getWidth()/2){
-                        /*long pos = mPlayerView.getCurrentPosition();
+                        int pos = mPlayerController.getCurrentPosition();
                         pos -= 10*1000;
-                        mPlayerController.seekTo(pos);*/
+                        mPlayerController.seekTo(pos);
                         Toast.makeText(TvPlayerActivity.this,"←10秒",Toast.LENGTH_SHORT).show();
                     }else if(e1.getX()<e2.getX() && e1.getX()>mScreenWidth /2+mVideoPlayPause.getWidth()/2){
-                        /*long pos = mPlayerView.getCurrentPosition();
+                        int pos = mPlayerController.getCurrentPosition();
                         pos += 30*1000;
-                        mPlayerController.seekTo(pos);*/
+                        mPlayerController.seekTo(pos);
                         Toast.makeText(TvPlayerActivity.this,"30→",Toast.LENGTH_SHORT).show();
                     }
                 }
