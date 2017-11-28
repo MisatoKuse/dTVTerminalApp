@@ -89,9 +89,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private void initView() {
         DTVTLogger.start();
-        if (mContentsList == null) {
-            mContentsList = new ArrayList();
-        }
+        mContentsList = new ArrayList();
         mDeviceListView = findViewById(R.id.stb_device_name_list);
         mContentsAdapter = new ContentsAdapter(this, mContentsList,
                 ContentsAdapter.ActivityTypeItem.TYPE_STB_SELECT_LIST);
@@ -165,18 +163,20 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     public void onPause() {
-        super.onPause();
         DTVTLogger.start();
         leaveActivity();
+        displayMoreData(false);
         DTVTLogger.end();
+        super.onPause();
     }
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         DTVTLogger.start();
         leaveActivity();
+        displayMoreData(false);
         DTVTLogger.end();
+        super.onDestroy();
     }
 
     /**
@@ -371,8 +371,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             if (mDlnaDMSInfo != null) {
                 SharedPreferencesUtils.setSharedPreferencesStbInfo(this, mDlnaDMSInfo.get(i));
             }
-//            mDlnaProvDevList.stopListen();
-            leaveActivity();
             // TODO dアカウントクラス実装時に遷移先を修正
             startActivity(STBConnectActivity.class, null);
         }
