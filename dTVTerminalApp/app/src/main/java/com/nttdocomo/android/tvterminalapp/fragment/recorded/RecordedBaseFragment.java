@@ -27,7 +27,7 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoItem;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecordedBaseFrgament extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
+public class RecordedBaseFragment extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
 
     public Context mActivity;
     public List<ContentsData> mContentsData;

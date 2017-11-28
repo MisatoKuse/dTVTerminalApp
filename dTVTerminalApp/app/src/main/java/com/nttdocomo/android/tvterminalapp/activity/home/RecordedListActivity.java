@@ -25,7 +25,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragmentScrollListener;
-import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFrgament;
+import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
@@ -341,7 +341,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     private void setRecordedTakeOutContents() {
         DTVTLogger.start();
-        RecordedBaseFrgament f = getCurrentRecordedBaseFrgament();
+        RecordedBaseFragment f = getCurrentRecordedBaseFragment();
         List<ContentsData> list = f.getContentsData();
         if (null != list) {
             list.clear();
@@ -375,10 +375,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     /**
      * フラグメント生成
      */
-    private RecordedBaseFrgament getCurrentRecordedBaseFrgament() {
+    private RecordedBaseFragment getCurrentRecordedBaseFragment() {
         DTVTLogger.start();
         int currentPageNo = mViewPager.getCurrentItem();
-        RecordedBaseFrgament baseFragment = mRecordedFragmentFactory.createFragment(currentPageNo, this);
+        RecordedBaseFragment baseFragment = mRecordedFragmentFactory.createFragment(currentPageNo, this);
         return baseFragment;
     }
 
@@ -390,7 +390,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         if (null != mViewPager) {
             int sum = mRecordedFragmentFactory.getFragmentCount();
             for (int i = 0; i < sum; ++i) {
-                RecordedBaseFrgament baseFragment = mRecordedFragmentFactory.createFragment(i, this);
+                RecordedBaseFragment baseFragment = mRecordedFragmentFactory.createFragment(i, this);
                 baseFragment.clear();
             }
         }
@@ -405,14 +405,14 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     @Override
-    public void onScroll(RecordedBaseFrgament fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+    public void onScroll(RecordedBaseFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         DTVTLogger.start();
     }
 
     @Override
     public void onVideoBrows(DlnaRecVideoInfo curInfo) {
         if (curInfo != null && curInfo.getRecordVideoLists() != null) {
-            final RecordedBaseFrgament baseFrgament = getCurrentRecordedBaseFrgament();
+            final RecordedBaseFragment baseFrgament = getCurrentRecordedBaseFragment();
             List<ContentsData> listData = baseFrgament.getContentsData();
             listData.clear();
             list = getTakeOutContents(curInfo.getRecordVideoLists());

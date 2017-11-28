@@ -11,19 +11,19 @@ import java.util.Map;
 
 public class RecordedFragmentFactory {
 
-    private Map<Integer, RecordedBaseFrgament> mFragments = new HashMap<Integer, RecordedBaseFrgament>();
+    private Map<Integer, RecordedBaseFragment> mFragments = new HashMap<Integer, RecordedBaseFragment>();
 
     public RecordedFragmentFactory() {
 
     }
 
-    public synchronized RecordedBaseFrgament createFragment(int position, RecordedBaseFragmentScrollListener lis) {
+    public synchronized RecordedBaseFragment createFragment(int position, RecordedBaseFragmentScrollListener lis) {
         DTVTLogger.start();
-        RecordedBaseFrgament fragment = null;
+        RecordedBaseFragment fragment = null;
         fragment = mFragments.get(position);
 
         if (null == fragment) {
-            fragment = new RecordedBaseFrgament();
+            fragment = new RecordedBaseFragment();
             mFragments.put(position, fragment);
         }
 
