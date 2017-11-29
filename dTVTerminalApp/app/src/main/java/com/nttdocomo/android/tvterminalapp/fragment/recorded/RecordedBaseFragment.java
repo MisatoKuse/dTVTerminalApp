@@ -16,13 +16,11 @@ import android.widget.ListView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +29,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
 
     public Context mActivity;
     public List<ContentsData> mContentsData;
+    public List<RecordedContentsDetailData> mContentsList;
     private View mLoadMoreView;
     private ContentsAdapter mContentsAdapter = null;
 
@@ -124,29 +123,10 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        DlnaRecVideoItem videoItem = ((RecordedListActivity)getActivity()).list.get(i);
         Bundle args = new Bundle();
-        args.putParcelable(RecordedListActivity.RECORD_LIST__KEY,
-                getRecordedContentsDetailData(videoItem));
+        List<RecordedContentsDetailData> text = mContentsList;
         if (null != mActivity) {
             ((BaseActivity) mActivity).startActivity(TvPlayerActivity.class, args);
         }
-    }
-
-    /**
-     * コンテンツ詳細に必要なデータを返す
-     *
-     * @param videoItem レコメンド情報
-     * @return
-     */
-    public RecordedContentsDetailData getRecordedContentsDetailData(DlnaRecVideoItem videoItem) {
-        RecordedContentsDetailData detailData = new RecordedContentsDetailData();
-        detailData.setBitrate(videoItem.mBitrate);
-        detailData.setDuration(videoItem.mDuration);
-        detailData.setResolution(videoItem.mResolution);
-        detailData.setSize(videoItem.mSize);
-        detailData.setResUrl(videoItem.mResUrl);
-        detailData.setUpnpIcon(videoItem.mUpnpIcon);
-        return detailData;
     }
 }
