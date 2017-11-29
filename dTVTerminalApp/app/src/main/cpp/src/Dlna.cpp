@@ -368,22 +368,26 @@ namespace dtvt {
 
         du_mutex_lock(&d->soap.mutex);
         d->soap.id = DUPNP_INVALID_ID;
-
+        std::string containerId;
         if (!checkSoapResponseError(response)) {
             goto error;
         }
 
         parser = (DlnaRecVideoXmlParser*)thiz->mDlnaRecVideoXmlParser;
-        parser->parse((void *) response, vv);
-        if(0==vv.size()){
-            return;
+        parser->parseXml((void *) response, vv, containerId);
+        if(containerId.length() != 0){
+            thiz->sendSoap((char*)response->url, containerId);
+        } else {
+            if(0==vv.size()){
+                du_mutex_unlock(&d->soap.mutex);
+                return;
+            }
+
+            thiz->notifyObject(Dlna::DLNA_MSG_ID_BROWSE_SOAP, vv);
+
+            du_sync_notify(&d->soap.sync);
         }
-
-        thiz->notifyObject(Dlna::DLNA_MSG_ID_BROWSE_SOAP, vv);
-
-        du_sync_notify(&d->soap.sync);
         du_mutex_unlock(&d->soap.mutex);
-
         return;
 
         error:
@@ -427,6 +431,7 @@ namespace dtvt {
                              Dlna::browseDirectChildrenResponseHandler,
                              this,
                              &mDMP.soap.id)) {
+            du_mutex_unlock(&mDMP.soap.mutex);
             return false;
         }
 
@@ -723,7 +728,7 @@ namespace dtvt {
     }
 
     bool Dlna::browseDms(std::string controlUrl) {
-        return sendSoap(controlUrl, "13121");
+        return sendSoap(controlUrl, "0");
     }
 
     /**
@@ -772,6 +777,7 @@ namespace dtvt {
 
         std::vector<std::vector<std::string> > vv;
         DlnaDevXmlParser* parser= (DlnaDevXmlParser*)thiz->mDlnaDevXmlParser;
+        std::string containerId;
         parser->parse(device, vv);
         if(0==vv.size()){
             return;

@@ -24,6 +24,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragmentScrollListener;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedFragmentFactory;
@@ -69,12 +70,12 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     // タブTYPE：持ち出し
     private static final int RECORDED_MODE_NO_OF_TAKE_OUT = 1;
 
-    public static final String RECORD_LIST__KEY = "recordListKey";
+    public static final String RECORD_LIST_KEY = "recordListKey";
 
     //設定するマージンのピクセル数
     private static final String DATE_FORMAT = "yyyy/MM/ddHH:mm:ss";
     private String date[] = {"日", "月", "火", "水", "木", "金", "土"};
-    public ArrayList<DlnaRecVideoItem> list;
+    public ArrayList<DlnaRecVideoItem> mList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -242,6 +243,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         }
     }
 
+    /**
+     * タブの指定が持ち出しリストの時、持ち出しリストの生成を行う
+     */
     private void setPagerAdapter() {
         DTVTLogger.start();
         mViewPager.setAdapter(new RecordedListActivity.MainAdpater(getSupportFragmentManager()));
@@ -339,17 +343,19 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         // NOP
     }
 
+    /**
+     * 持ち出しリスト生成
+     */
     private void setRecordedTakeOutContents() {
         DTVTLogger.start();
-        RecordedBaseFragment f = getCurrentRecordedBaseFragment();
-        List<ContentsData> list = f.getContentsData();
+        RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment();
+        List<ContentsData> curInfo = baseFragment.getContentsData();
+        List<ContentsData> list = baseFragment.getContentsData();
         if (null != list) {
             list.clear();
             ContentsData contentsData = new ContentsData();
-            contentsData.setTitle("aaaa");
-            contentsData.setTime("111111");
             list.add(contentsData);
-            f.notifyDataSetChanged();
+            baseFragment.notifyDataSetChanged();
         }
 
     }
@@ -362,6 +368,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         }
     }
 
+    /**
+     * DMSデバイスを取り始める
+     */
     private void getData() {
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
         if (mDlnaProvRecVideo == null) {
@@ -413,14 +422,25 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     public void onVideoBrows(DlnaRecVideoInfo curInfo) {
         if (curInfo != null && curInfo.getRecordVideoLists() != null) {
             final RecordedBaseFragment baseFrgament = getCurrentRecordedBaseFragment();
+            RecordedContentsDetailData detailData = new RecordedContentsDetailData();
+            baseFrgament.mContentsList = new ArrayList<RecordedContentsDetailData>();
+            for (int i = 0; i < curInfo.size(); ++i) {
+                detailData.setUpnpIcon(curInfo.getRecordVideoLists().get(i).mUpnpIcon);
+                detailData.setSize(curInfo.getRecordVideoLists().get(i).mSize);
+                detailData.setResUrl(curInfo.getRecordVideoLists().get(i).mResUrl);
+                detailData.setResolution(curInfo.getRecordVideoLists().get(i).mResolution);
+                detailData.setBitrate(curInfo.getRecordVideoLists().get(i).mBitrate);
+                detailData.setDuration(curInfo.getRecordVideoLists().get(i).mDuration);
+                baseFrgament.mContentsList.add(detailData);
+            }
             List<ContentsData> listData = baseFrgament.getContentsData();
             listData.clear();
-            list = getTakeOutContents(curInfo.getRecordVideoLists());
+            mList = getTakeOutContents(curInfo.getRecordVideoLists());
             SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.JAPAN);
-            for (int i = 0; i < list.size(); i++) {
+            for (int i = 0; i < mList.size(); i++) {
                 // TODO 年齢取得未実装の為、固定値を返却
                 boolean isAge = true;
-                DlnaRecVideoItem dlnaRecVideoItem = list.get(i);
+                DlnaRecVideoItem dlnaRecVideoItem = mList.get(i);
                 ContentsData contentsData = new ContentsData();
                 int currentPageNo = mViewPager.getCurrentItem();
                 if (isAge) {
