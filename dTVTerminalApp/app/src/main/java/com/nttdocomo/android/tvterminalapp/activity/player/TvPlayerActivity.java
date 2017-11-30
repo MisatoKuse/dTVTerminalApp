@@ -63,12 +63,12 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
     private ImageView mTvForward;
     private ImageView mTvReplay;
     private ImageView mTvFullScreen;
-    private TextView mTvRapid;
+    //private TextView mTvRapid;
     private SeekBar mTvSeekBar;
     private FrameLayout mVideoPlayPause;
     private TextView mVideoCurTime;
     private ImageView mVideoFullScreen;
-    private TextView mVideoRapid;
+    //private TextView mVideoRapid;
     private TextView mVideoTotalTime;
     private SeekBar mVideoSeekBar;
     private SecureVideoView mSecureVideoPlayer;
@@ -114,6 +114,7 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
             DTVTLogger.start();
             super.handleMessage(msg);
             if(null==mPlayerController){
+                DTVTLogger.end();
                 return;
             }
 
@@ -144,8 +145,10 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
     };
 
     private void setProgress0(){
+        DTVTLogger.start();
         mVideoSeekBar.setProgress(0);
         playButton();
+        DTVTLogger.end();
     }
 
     /**
@@ -165,11 +168,13 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
             errorExit();
             mIsOncreateOk=false;
             finish();
+            DTVTLogger.end();
             return;
         }
         mGestureDetector = new GestureDetector(this,new GestureDetector.SimpleOnGestureListener(){
             @Override
             public boolean onSingleTapUp(MotionEvent e) {
+                DTVTLogger.start();
                 if(e.getY()>mRecordCtrlView.getHeight()/3
                         &&e.getY()<mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight()/3){
                     if(e.getX()< mScreenWidth /2-mVideoPlayPause.getWidth()/2
@@ -182,7 +187,7 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                         }
                         mPlayerController.seekTo(pos);
                         isHideOperate = false;
-                        Toast.makeText(TvPlayerActivity.this, "←10", Toast.LENGTH_SHORT).show();
+                        showMessage("←10");
                     }
                     if(e.getX()>mScreenWidth /2+mVideoPlayPause.getWidth()/2
                             &&e.getX()<mScreenWidth-mScreenWidth/6){//30秒送り
@@ -196,14 +201,16 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                         }
                         mPlayerController.seekTo(pos);
                         isHideOperate = false;
-                        Toast.makeText(TvPlayerActivity.this, "30→", Toast.LENGTH_SHORT).show();
+                        showMessage("30→");
                     }
                 }
+                DTVTLogger.end();
                 return super.onSingleTapUp(e);
             }
 
             @Override
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                DTVTLogger.start();
                 if(e1.getY()>mRecordCtrlView.getHeight()/3
                         &&e2.getY()>mRecordCtrlView.getHeight()/3
                         &&e2.getY()<mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight()/3
@@ -214,16 +221,17 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                         pos = pos < 0 ? 0 : pos;
                         mPlayerController.seekTo(pos);
                         isHideOperate = false;
-                        Toast.makeText(TvPlayerActivity.this, "←10", Toast.LENGTH_SHORT).show();
+                        showMessage("←10");
                     }else if(e1.getX()<e2.getX() && e1.getX()>mScreenWidth /2+mVideoPlayPause.getWidth()/2){
                         int pos = mPlayerController.getCurrentPosition();
                         pos += FAST_SECOND;
                         pos = pos > mPlayerController.getDuration() ? mPlayerController.getDuration() : pos;
                         mPlayerController.seekTo(pos);
                         isHideOperate = false;
-                        Toast.makeText(TvPlayerActivity.this, "30→", Toast.LENGTH_SHORT).show();
+                        showMessage("30→");
                     }
                 }
+                DTVTLogger.end();
                 return super.onFling(e1, e2, velocityX, velocityY);
             }
         });
@@ -243,7 +251,7 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
 
     /**
      * set can play
-     * @param state
+     * @param state state
      */
     private void setCanPlay(boolean state){
         DTVTLogger.start();
@@ -275,8 +283,14 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
         if(null==mVideoPlayPause){
             return;
         }
-        mVideoPlayPause.getChildAt(0).setVisibility(View.GONE);
-        mVideoPlayPause.getChildAt(1).setVisibility(View.VISIBLE);
+        View child0= mVideoPlayPause.getChildAt(0);
+        View child1= mVideoPlayPause.getChildAt(1);
+        if(null!=child0){
+            child0.setVisibility(View.GONE);
+        }
+        if(null!=child1){
+            child1.setVisibility(View.VISIBLE);
+        }
         DTVTLogger.end();
     }
 
@@ -408,9 +422,9 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
 
     /**
      * activity result event function
-     * @param requestCode
-     * @param resultCode
-     * @param data
+     * @param requestCode requestCode
+     * @param resultCode resultCode
+     * @param data data
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -423,8 +437,7 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                 if (ret != MediaPlayerDefinitions.SP_SUCCESS) {
                     Log.d("", "SecureMediaPlayerController init failed");
                     DTVTLogger.debug("TvPlayerActivity::onActivityResult(), SecureMediaPlayerController init failed");
-                    Toast.makeText(getApplicationContext(), "DLNA Player初期化失敗しました",
-                            Toast.LENGTH_SHORT).show();
+                    showMessage("DLNA Player初期化失敗しました");
                     super.onActivityResult(requestCode, resultCode, data);
                     finish();
                     DTVTLogger.end();
@@ -454,12 +467,12 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
 
     /**
      * set current player info
-     * @return
+     * @return whether succeedered
      */
     private boolean setCurrentMediaInfo() {
         DTVTLogger.start();
         Intent intent = getIntent();
-        RecordedContentsDetailData datas = (RecordedContentsDetailData)intent.getParcelableExtra(RecordedListActivity.RECORD_LIST_KEY);
+        RecordedContentsDetailData datas = intent.getParcelableExtra(RecordedListActivity.RECORD_LIST_KEY);
         if(null==datas){
             DTVTLogger.end();
             return false;
@@ -480,7 +493,7 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
             size= duration*bitRate;
         }
 
-        Uri uri = ( url == null ? null: Uri.parse(url) );
+        Uri uri = Uri.parse(url);
         mCurrentMediaInfo = new MediaVideoInfo(
                 uri,                //uri
                 "video/mp4",      //RESOURCE_MIMETYPE
@@ -501,7 +514,7 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
 
     /**
      * 機能：「duration="0:00:42.000"」/「duration="0:00:42"」からmsへ変換
-     * @param durationStr
+     * @param durationStr durationStr
      * @return duration in ms
      */
     private long getDuration(final String durationStr){
@@ -560,7 +573,7 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
             mTvForward = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_forward_iv);
             mTvReplay = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_replay_iv);
             mTvFullScreen = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_full_screen_iv);
-            mTvRapid = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_rapid_tv);
+            //mTvRapid = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_rapid_tv);
             mTvSeekBar = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_seek_bar_sb);
             mTvFullScreen.setOnClickListener(this);
             mTvReplay.setOnClickListener(this);
@@ -583,12 +596,12 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
             mVideoCtrlBar = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_control_bar_iv);
             mVideoCurTime = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_cur_time_tv);
             mVideoFullScreen = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_full_screen_iv);
-            mVideoRapid = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_rapid_tv);
+            //mVideoRapid = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_rapid_tv);
             mVideoTotalTime = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_total_time_tv);
             mVideoSeekBar = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_seek_bar_sb);
             mVideoPlayPause.setOnClickListener(this);
             mVideoFullScreen.setOnClickListener(this);
-            mVideoRapid.setOnClickListener(this);
+            //mVideoRapid.setOnClickListener(this);
             mVideoCtrlRootView.setOnClickListener(this);
             setVideoSeekBarListener(mVideoSeekBar);
             mRecordCtrlView.setLayoutParams(playerParams);
@@ -711,7 +724,7 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                             mTvBack.setVisibility(View.VISIBLE);
                             mTvForward.setVisibility(View.VISIBLE);
                             mTvReplay.setVisibility(View.VISIBLE);
-                            mTvRapid.setVisibility(View.VISIBLE);
+                            //mTvRapid.setVisibility(View.VISIBLE);
                             mTvSeekBar.setVisibility(View.VISIBLE);
                             mTvFullScreen.setVisibility(View.VISIBLE);
                             //setPlayEvent();
@@ -808,10 +821,10 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                 Toast.makeText(this, "タップで頭出し再生", Toast.LENGTH_SHORT).show();
                 hideCtrlViewAfterOperate();
                 break;
-            case R.id.tv_player_ctrl_now_on_air_rapid_tv:
-                Toast.makeText(this,"タップで倍速で再生", Toast.LENGTH_SHORT).show();
-                hideCtrlViewAfterOperate();
-                break;
+//            case R.id.tv_player_ctrl_now_on_air_rapid_tv:
+//                Toast.makeText(this,"タップで倍速で再生", Toast.LENGTH_SHORT).show();
+//                hideCtrlViewAfterOperate();
+//                break;
             case R.id.tv_player_ctrl_now_on_air_back_iv:
                 Toast.makeText(this, "前のCH", Toast.LENGTH_SHORT).show();
                 hideCtrlViewAfterOperate();
@@ -851,7 +864,7 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
         mTvBack.setVisibility(invisible);
         mTvForward.setVisibility(invisible);
         mTvReplay.setVisibility(invisible);
-        mTvRapid.setVisibility(invisible);
+        //mTvRapid.setVisibility(invisible);
         mTvSeekBar.setVisibility(invisible);
         mTvFullScreen.setVisibility(invisible);
         DTVTLogger.end();
