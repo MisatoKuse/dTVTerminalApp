@@ -369,12 +369,13 @@ namespace dtvt {
         du_mutex_lock(&d->soap.mutex);
         d->soap.id = DUPNP_INVALID_ID;
         std::string containerId;
+        std::string isContainerId = "0";
         if (!checkSoapResponseError(response)) {
             goto error;
         }
 
         parser = (DlnaRecVideoXmlParser*)thiz->mDlnaRecVideoXmlParser;
-        parser->parseXml((void *) response, vv, containerId);
+        parser->parseXml((void *) response, vv, containerId, isContainerId);
         if(containerId.length() != 0){
             thiz->sendSoap((char*)response->url, containerId);
         } else {

@@ -35,6 +35,7 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoListener;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -89,7 +90,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
         initView();
         getData();
-        initData();
         initTabVIew();
         setPagerAdapter();
         setSearchViewState();
@@ -232,18 +232,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     /**
-     * 画面描画
-     */
-    private void initData() {
-        DlnaProvRecVideo dlnaProvRecVideo = new DlnaProvRecVideo();
-        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-        boolean startFlag = dlnaProvRecVideo.start(dlnaDmsItem.mUdn, this); //b002
-        if (startFlag) {
-            dlnaProvRecVideo.browseRecVideoDms(dlnaDmsItem.mControlUrl);
-        }
-    }
-
-    /**
      * タブの指定が持ち出しリストの時、持ち出しリストの生成を行う
      */
     private void setPagerAdapter() {
@@ -261,7 +249,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                         setRecordedAllContents();
                         break;
                     case 1:
-                        setRecordedTakeOutContents();
+                        //setRecordedTakeOutContents();
                         break;
                     default:
                         break;
@@ -422,9 +410,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     public void onVideoBrows(DlnaRecVideoInfo curInfo) {
         if (curInfo != null && curInfo.getRecordVideoLists() != null) {
             final RecordedBaseFragment baseFrgament = getCurrentRecordedBaseFragment();
-            RecordedContentsDetailData detailData = new RecordedContentsDetailData();
             baseFrgament.mContentsList = new ArrayList<RecordedContentsDetailData>();
-            for (int i = 0; i < curInfo.size(); ++i) {
+            for (int i = 0; i < curInfo.getRecordVideoLists().size(); ++i) {
+                RecordedContentsDetailData detailData = new RecordedContentsDetailData();
                 detailData.setUpnpIcon(curInfo.getRecordVideoLists().get(i).mUpnpIcon);
                 detailData.setSize(curInfo.getRecordVideoLists().get(i).mSize);
                 detailData.setResUrl(curInfo.getRecordVideoLists().get(i).mResUrl);
@@ -450,22 +438,14 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                     try {
                         Calendar calendar = Calendar.getInstance(Locale.JAPAN);
                         calendar.setTime(sdf.parse(time));
-                        int week = calendar.get(Calendar.DAY_OF_WEEK);
-                        int day = calendar.get(Calendar.DAY_OF_MONTH);
-                        int month = calendar.get(Calendar.MONTH);
-                        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                        int minute = calendar.get(Calendar.MINUTE);
-                        StringBuilder selectDate = new StringBuilder();
-                        selectDate.append(month);
-                        selectDate.append("/");
-                        selectDate.append(day);
-                        selectDate.append("  (");
-                        selectDate.append(date[week - 1]);
-                        selectDate.append(")  ");
-                        selectDate.append(hour);
-                        selectDate.append(":");
-                        selectDate.append(minute);
-                        contentsData.setTime(selectDate.toString());
+                        StringUtil util = new StringUtil(this);
+                        String[] strings = {String.valueOf(calendar.get(Calendar.MONTH)),"/",
+                                String.valueOf(calendar.get(Calendar.DAY_OF_MONTH))," (",
+                                date[calendar.get(Calendar.DAY_OF_WEEK) - 1],") ",
+                                String.valueOf(calendar.get(Calendar.HOUR_OF_DAY)),":",
+                                String.valueOf(calendar.get(Calendar.MINUTE))};
+                        String selectDate = util.getConnectString(strings);
+                        contentsData.setTime(selectDate);
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }

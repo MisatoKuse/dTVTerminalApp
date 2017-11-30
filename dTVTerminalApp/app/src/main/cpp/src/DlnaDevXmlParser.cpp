@@ -66,8 +66,8 @@ namespace dtvt {
 
         std::vector<std::string> v1;
         std::string dms1_udn = (char*)device->udn;  // ユニーク・デバイス名
-        std::string dms1_url = (char*)device->location;    // ベースURL
-        std::string dms1_http = (char*)device_info->cds.control_url; // CDS情報：コントロール URL
+        std::string dms1_url = (char*)device_info->cds.control_url;    // CDS情報：コントロール URL
+        std::string dms1_http = (char*)device->location; // ベースURL
         std::string dms1_friend = (char*)device_info->friendly_name;  // フレンドリー名
         getIpAddressString(&device->ip, ipaddress);
         std::string dms1_ipaddress = (char*)ipaddress;  // IPアドレス

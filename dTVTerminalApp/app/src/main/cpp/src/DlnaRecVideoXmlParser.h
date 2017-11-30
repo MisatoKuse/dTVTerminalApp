@@ -28,7 +28,7 @@ namespace dtvt {
          */
         void parse(void *fileStr, vector<StringVector>& out);
 
-        void parseXml(void *fileStr, vector<StringVector>& out, std::string &containerId);
+        void parseXml(void *fileStr, vector<StringVector>& out, std::string &containerId, std::string &isContainerId);
 
         virtual ~DlnaRecVideoXmlParser();
     };

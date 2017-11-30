@@ -11,8 +11,8 @@ namespace dtvt {
 
     }
     void DlnaRecVideoXmlParser::parse(void *fileStr, vector<StringVector>& out){}
-    void parseXmlNode(const xmlNodePtr & xmlRootNode, vector<StringVector>& out, StringVector& v1, std::string &containerId);
-    void DlnaRecVideoXmlParser::parseXml(void *response, vector<StringVector>& out, std::string &containerId){
+    void parseXmlNode(const xmlNodePtr & xmlRootNode, vector<StringVector>& out, StringVector& v1, std::string &containerId, std::string &isContainerId);
+    void DlnaRecVideoXmlParser::parseXml(void *response, vector<StringVector>& out, std::string &containerId, std::string &isContainerId){
 
         //録画一覧XMLパーサー
         IfNullReturn(response);
@@ -44,7 +44,7 @@ namespace dtvt {
         if(!root){
             goto error2;
         }
-        parseXmlNode(root, out, recordVectorTmp, containerId);
+        parseXmlNode(root, out, recordVectorTmp, containerId, isContainerId);
         du_str_array_free(&param_array);
         xmlFreeDoc(didl_doc);
         return;
@@ -56,8 +56,7 @@ namespace dtvt {
     }
 
     bool isVideo = false;
-    bool isContainerId = false;
-    void parseXmlNode(const xmlNodePtr & xmlRootNode, vector<StringVector>& out, StringVector& v1, std::string &containerId)
+    void parseXmlNode(const xmlNodePtr & xmlRootNode, vector<StringVector>& out, StringVector& v1, std::string &containerId, std::string &isContainerId)
     {
         xmlNodePtr xmlChildNode = xmlRootNode->xmlChildrenNode;
         while(NULL != xmlChildNode)
@@ -68,7 +67,7 @@ namespace dtvt {
                 bool isItem=false;
                 if (!xmlStrcmp(xmlChildNode->name, (const xmlChar*)RecVideoParse_Field_Container))
                 {
-                    if(!isContainerId){
+                    if(isContainerId.find("0")!=string::npos){
                         containerId = (char*)xmlGetProp(xmlChildNode, (const xmlChar*)RecVideoParse_Field_Id);
                     }
                     isItem = true;
@@ -82,7 +81,7 @@ namespace dtvt {
                 {
                     std::string title((char*)xmlNodeGetContent(xmlChildNode));
                     if(title.find(RecVideoParse_Field_Videos) != string::npos){
-                        isContainerId = true;
+                        isContainerId = "1";
                         return;
                     }else{
                         v1.push_back(title);
@@ -119,7 +118,7 @@ namespace dtvt {
                     isVideo = false;
                 }
                 if(isItem){
-                    parseXmlNode(xmlChildNode, out, recordVectorTmp, containerId);
+                    parseXmlNode(xmlChildNode, out, recordVectorTmp, containerId, isContainerId);
                 }
             }
             xmlChildNode = xmlChildNode->next;
