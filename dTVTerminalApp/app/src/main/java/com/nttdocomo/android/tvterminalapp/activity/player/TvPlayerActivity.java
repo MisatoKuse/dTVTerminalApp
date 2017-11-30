@@ -34,7 +34,9 @@ import com.digion.dixim.android.secureplayer.helper.CaptionDrawCommands;
 import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.model.player.MediaVideoInfo;
 
 import java.io.File;
@@ -85,20 +87,31 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
     private int mScreenWidth;
     private TextView mTvNow;
     private boolean isHideOperate = true;
+    private boolean mIsOncreateOk=false;
     private Runnable mHideCtrlViewThread = new Runnable() {
+
+        /**
+         * run
+         */
         @Override
         public void run() {
+            DTVTLogger.start();
             if(getCurMode() == NOW_ON_AIR_MODE){
                 hideTvCtrlView(View.INVISIBLE);
             }else if(getCurMode() == VIDEO_RECORDING_MODE){
                 hideVideoCtrlView(View.INVISIBLE);
             }
+            DTVTLogger.end();
         }
     };
-    /*UIを更新するハンドラー*/
+
+    /**
+     * UIを更新するハンドラー
+     * */
     private Handler viewRefresher = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+            DTVTLogger.start();
             super.handleMessage(msg);
             if(null==mPlayerController){
                 return;
@@ -122,21 +135,38 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                 mVideoSeekBar.setProgress(currentPosition);
                 //録画コンテンツを終端まで再生した後は、シークバーを先頭に戻し、先頭で一時停止状態とする
                 if (currentPosition == totalDur) {
-                    mVideoSeekBar.setProgress(0);
+                    setProgress0();
                 }
                 viewRefresher.sendEmptyMessageDelayed(REFRESH_VIDEO_VIEW, 500);
             }
+            DTVTLogger.end();
         }
     };
 
+    private void setProgress0(){
+        mVideoSeekBar.setProgress(0);
+        playButton();
+    }
+
+    /**
+     * creator
+     * @param savedInstanceState status
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        DTVTLogger.start();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tv_player_main_layout);
         mSecureVideoPlayer = findViewById(R.id.tv_player_main_layout_player_vv);
         mScreenWidth = getWidthDensity();
         initDatas();
-        setCurrentMediaInfo();
+        boolean ok=setCurrentMediaInfo();
+        if(!ok){
+            errorExit();
+            mIsOncreateOk=false;
+            finish();
+            return;
+        }
         mGestureDetector = new GestureDetector(this,new GestureDetector.SimpleOnGestureListener(){
             @Override
             public boolean onSingleTapUp(MotionEvent e) {
@@ -146,7 +176,10 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                             &&e.getX()>mScreenWidth/6){//10秒戻し
                         int pos = mPlayerController.getCurrentPosition();
                         pos -= REWIND_SECOND;
-                        pos = pos < 0 ? 0 : pos;
+                        if(pos<0){
+                            pos=0;
+                            setProgress0();
+                        }
                         mPlayerController.seekTo(pos);
                         isHideOperate = false;
                         Toast.makeText(TvPlayerActivity.this, "←10", Toast.LENGTH_SHORT).show();
@@ -155,7 +188,12 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                             &&e.getX()<mScreenWidth-mScreenWidth/6){//30秒送り
                         int pos = mPlayerController.getCurrentPosition();
                         pos += FAST_SECOND;
-                        pos = pos > mPlayerController.getDuration() ? mPlayerController.getDuration() : pos;
+                        //pos = pos > mPlayerController.getDuration() ? mPlayerController.getDuration() : pos;
+                        int allDu= mPlayerController.getDuration();
+                        if(pos >= allDu){
+                            setProgress0();
+                            pos= 0;
+                        }
                         mPlayerController.seekTo(pos);
                         isHideOperate = false;
                         Toast.makeText(TvPlayerActivity.this, "30→", Toast.LENGTH_SHORT).show();
@@ -190,53 +228,90 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
             }
         });
 
+        mIsOncreateOk=true;
+        DTVTLogger.end();
     }
 
+    /**
+     * init function
+     */
     private void initDatas() {
+        DTVTLogger.start();
         mActivationTimes=0;
+        DTVTLogger.end();
     }
 
+    /**
+     * set can play
+     * @param state
+     */
     private void setCanPlay(boolean state){
+        DTVTLogger.start();
         synchronized (this){
             mCanPlay= state;
         }
+        DTVTLogger.end();
     }
 
+    /**
+     * start playing
+     */
     private void playStart(){
+        DTVTLogger.start();
         synchronized (this) {
             if(mCanPlay){
                 playButton();
                 mPlayerController.start();
             }
         }
+        DTVTLogger.end();
     }
 
+    /**
+     * play button function
+     */
     private void playButton(){
+        DTVTLogger.start();
         if(null==mVideoPlayPause){
             return;
         }
         mVideoPlayPause.getChildAt(0).setVisibility(View.GONE);
         mVideoPlayPause.getChildAt(1).setVisibility(View.VISIBLE);
+        DTVTLogger.end();
     }
 
+    /**
+     * pause button function
+     */
     private void pauseButton(){
+        DTVTLogger.start();
         if(null==mVideoPlayPause){
             return;
         }
         mVideoPlayPause.getChildAt(0).setVisibility(View.VISIBLE);
         mVideoPlayPause.getChildAt(1).setVisibility(View.GONE);
+        DTVTLogger.end();
     }
 
+    /**
+     * palying pause
+     */
     private void playPause(){
+        DTVTLogger.start();
         synchronized (this) {
             if(mCanPlay){
                 pauseButton();
                 mPlayerController.pause();
             }
         }
+        DTVTLogger.end();
     }
 
+    /**
+     * init player
+     */
     private void initSecureplayer() {
+        DTVTLogger.start();
         setCanPlay(false);
 
         mPlayerController = new SecuredMediaPlayerController(this, true,  true , true);
@@ -254,19 +329,26 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
         boolean ret = isActivited();
         if (!ret) {
             DTVTLogger.debug("TvPlayerActivity::initSecureplayer(), return false"); //SP_SECUREPLAYER_NEED_ACTIVATION_ERROR = 1001;
+            DTVTLogger.end();
             return;
         }
 
         preparePlayer();
+        DTVTLogger.end();
     }
 
+    /**
+     * prepair player
+     */
     private void preparePlayer() {
+        DTVTLogger.start();
         final Map<String, String> additionalHeaders = new HashMap<>();
         try {
             mPlayerController.setDataSource(mCurrentMediaInfo, additionalHeaders, 0);
         } catch (IOException e) {
             e.printStackTrace();
             setCanPlay(false);
+            DTVTLogger.end();
             return;
         }
         mPlayerController.setScreenOnWhilePlaying(true);
@@ -274,29 +356,43 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
         initView();
         setCanPlay(true);
         playStart();
+        DTVTLogger.end();
     }
 
+    /**
+     * is activated
+     * @return if it is activated
+     */
     private boolean isActivited(){
+        DTVTLogger.start();
         String path=getPrivateDataHome();
         File dir= new File(path);
         if(!dir.exists()){
             boolean ok=dir.mkdir();
             if(!ok){
                 DTVTLogger.debug("TvPlayerActivity::isActivited(), Make dir " + path + " failed");
+                DTVTLogger.end();
                 return false;
             }
         }
         int ret = mPlayerController.dtcpInit(path);
         if (ret == MediaPlayerDefinitions.SP_SUCCESS) {
+            DTVTLogger.end();
             return true;
         } else {
             activate();
         }
+        DTVTLogger.end();
         return false;
     }
 
+    /**
+     * activate
+     */
     private void activate(){
+        DTVTLogger.start();
         if(mActivationTimes>=ACTIVATION_REQUEST_MAX_CNT){
+            DTVTLogger.end();
             return;
         }
         Intent intent = new Intent();
@@ -307,10 +403,18 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                         EnvironmentUtil.ACTIVATE_DATA_HOME.PLAYER));
         startActivityForResult(intent,ACTIVATION_REQUEST_CODE);
         ++mActivationTimes;
+        DTVTLogger.end();
     }
 
+    /**
+     * activity result event function
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        DTVTLogger.start();
         if (requestCode == ACTIVATION_REQUEST_CODE) {
             DTVTLogger.debug("TvPlayerActivity::onActivityResult(), activation resultCode = " + resultCode);
             if(Activity.RESULT_OK == resultCode){
@@ -321,13 +425,19 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                     DTVTLogger.debug("TvPlayerActivity::onActivityResult(), SecureMediaPlayerController init failed");
                     Toast.makeText(getApplicationContext(), "DLNA Player初期化失敗しました",
                             Toast.LENGTH_SHORT).show();
+                    super.onActivityResult(requestCode, resultCode, data);
+                    finish();
+                    DTVTLogger.end();
                     return;
                 } else {
                     preparePlayer();
+                    showMessage("DLNAをActivateしまして、プレイヤーをもう一回実行してください。");
                 }
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+        finish();
+        DTVTLogger.end();
     }
 
     /**
@@ -335,30 +445,109 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
      * @return プレバイトデータフォルダ
      */
     private String getPrivateDataHome() {
-        return EnvironmentUtil.getPrivateDataHome(this,
+        DTVTLogger.start();
+        String ret= EnvironmentUtil.getPrivateDataHome(this,
                 EnvironmentUtil.ACTIVATE_DATA_HOME.PLAYER);
+        DTVTLogger.end();
+        return ret;
     }
 
-    private void setCurrentMediaInfo() {
-        String url = "http://192.168.11.12:5001/get/364/20131211_103918-1280x720p60.ts";
-        Uri uri = url == null ? null: Uri.parse(url);
+    /**
+     * set current player info
+     * @return
+     */
+    private boolean setCurrentMediaInfo() {
+        DTVTLogger.start();
+        Intent intent = getIntent();
+        RecordedContentsDetailData datas = (RecordedContentsDetailData)intent.getParcelableExtra(RecordedListActivity.RECORD_LIST_KEY);
+        if(null==datas){
+            DTVTLogger.end();
+            return false;
+        }
+        String url = datas.getResUrl();
+        if(null==url || 0==url.length()){
+            showMessage("プレイヤーは「null」コンテンツを再生できない");
+            DTVTLogger.end();
+            return false;
+        }
+        long size =Integer.parseInt(datas.getSize());
+
+        String durationStr=datas.getDuration();
+        long duration =getDuration(durationStr);
+
+        int bitRate = Integer.parseInt(datas.getBitrate());
+        if(0==size){
+            size= duration*bitRate;
+        }
+
+        Uri uri = ( url == null ? null: Uri.parse(url) );
         mCurrentMediaInfo = new MediaVideoInfo(
-                uri, //uri,   dv.mp4 by camera
-                "video/mp4", //extras.getString(Definitions.RESOURCE_MIMETYPE),
-                94000000, //extras.getLong(Definitions.SIZE),
-                41000, //extras.getLong(Definitions.DURATION),
-                0, //extras.getInt(Definitions.BITRATE),
-                false, //extras.getBoolean(Definitions.IS_SUPPORTED_BYTE_SEEK),
-                false, //extras.getBoolean(Definitions.IS_SUPPORTED_TIME_SEEK),
-                false, //extras.getBoolean(Definitions.IS_AVAILABLE_CONNECTION_STALLING),
-                false, //extras.getBoolean(Definitions.IS_LIVE_MODE),
-                false, //extras.getBoolean(Definitions.IS_REMOTE),
-                "title",  //extras.getString(Definitions.TITLE),
-                "contentFormat" //extras.getString(Definitions.CONTENT_FORMAT)
+                uri,                //uri
+                "video/mp4",      //RESOURCE_MIMETYPE
+                size,               //SIZE
+                duration,           //DURATION
+                bitRate,            //BITRATE
+                true,               //IS_SUPPORTED_BYTE_SEEK
+                true,               //IS_SUPPORTED_TIME_SEEK
+                true,               //IS_AVAILABLE_CONNECTION_STALLING
+                true,               //IS_LIVE_MODE
+                true,               //IS_REMOTE
+                "title",           //TITLE
+                "contentFormat"   //CONTENT_FORMAT
         );
+        DTVTLogger.end();
+        return true;
     }
 
+    /**
+     * 機能：「duration="0:00:42.000"」/「duration="0:00:42"」からmsへ変換
+     * @param durationStr
+     * @return duration in ms
+     */
+    private long getDuration(final String durationStr){
+        DTVTLogger.start();
+        long ret=0;
+        boolean ok=true;
+
+        String[] strs1=durationStr.split(":");
+        String[] strs2;
+        if(3== strs1.length){
+            try{
+                ret = 60 * 60 * 1000 * Integer.parseInt(strs1[0]) + 60 * 1000 * Integer.parseInt(strs1[1]);
+
+                String ss= strs1[2];
+                int i= ss.indexOf('.');
+                if(i<=0){
+                    ret += 1000*Integer.parseInt(ss);
+                } else {
+                    String ss1 = ss.substring(0, i);
+                    String ss2 = ss.substring(i+1, ss.length());
+                    ret += 1000*Integer.parseInt(ss1);
+
+                    try{
+                        ret += Integer.parseInt(ss2);
+                    }catch (Exception e2){
+                        DTVTLogger.debug("TvPlayerActivity::getDuration(), skip ms");
+                    }
+                }
+            }catch (Exception e){
+                ok=false;
+            }
+        }
+
+        if(!ok){
+            ret=0;
+        }
+
+        DTVTLogger.end();
+        return ret;
+    }
+
+    /**
+     * init view
+     */
     private void initView() {
+        DTVTLogger.start();
         mPlayerViewLayout = findViewById(R.id.tv_player_main_layout_player_rl);
         RelativeLayout.LayoutParams playerParams = (RelativeLayout.LayoutParams) mSecureVideoPlayer.getLayoutParams();
         playerParams.height = getHeightDensity() * 4 / 11;
@@ -409,45 +598,74 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
             hideVideoCtrlView(View.INVISIBLE);
         }
         pauseButton();
+        DTVTLogger.end();
     }
 
+    /**
+     * set seek bar listener
+     * @param seekBar
+     */
     private void setVideoSeekBarListener(SeekBar seekBar) {
+        DTVTLogger.start();
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                DTVTLogger.start();
                 time2TextViewFormat(mVideoCurTime, i);
+                DTVTLogger.end();
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
+                DTVTLogger.start();
                 viewRefresher.removeMessages(REFRESH_VIDEO_VIEW);
+                DTVTLogger.end();
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                DTVTLogger.start();
                 int progress = seekBar.getProgress();
                 mPlayerController.seekTo(progress);
                 viewRefresher.sendEmptyMessage(REFRESH_VIDEO_VIEW);
+                DTVTLogger.end();
             }
         });
+        DTVTLogger.end();
     }
 
+    /**
+     * onResume
+     */
     @Override
     protected void onResume() {
+        DTVTLogger.start();
         super.onResume();
+
+        if(!mIsOncreateOk){
+            DTVTLogger.end();
+            return;
+        }
+
         initSecureplayer();
         setPlayerEvent();
-        // TODO: 2017/11/22 横縦処理
+        DTVTLogger.end();
     }
 
+    /**
+     * set player event
+     */
     private void setPlayerEvent() {
+        DTVTLogger.start();
         if(getCurMode() == VIDEO_RECORDING_MODE){
             if(null == mRecordCtrlView){
+                DTVTLogger.end();
                 return;
             }
             mRecordCtrlView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View view, MotionEvent motionEvent) {
+                    DTVTLogger.start();
                     if(mVideoPlayPause.getVisibility() == View.VISIBLE){
                         mGestureDetector.onTouchEvent(motionEvent);
                     }
@@ -467,16 +685,19 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                         }
                         hideCtrlViewAfterOperate();
                     }
+                    DTVTLogger.end();
                     return true;
                 }
             });
         }else if(getCurMode() == NOW_ON_AIR_MODE){
             if(null == mTvCtrlView){
+                DTVTLogger.end();
                 return;
             }
             mTvCtrlView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View view, MotionEvent motionEvent) {
+                    DTVTLogger.start();
                     if(mTvNow.getVisibility() == View.VISIBLE){
                         //チャンネル遷移GestureDetector
                     }
@@ -497,39 +718,59 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                         }
                         hideCtrlViewAfterOperate();
                     }
+                    DTVTLogger.end();
                     return true;
                 }
             });
         }
+
+        DTVTLogger.end();
     }
 
+    /**
+     * hide ctrl view
+     */
     private void hideCtrlViewAfterOperate() {
+        DTVTLogger.start();
         if(mCtrlHandler != null){
             mCtrlHandler.removeCallbacks(mHideCtrlViewThread);
         }
         mCtrlHandler.postDelayed(mHideCtrlViewThread,HIDE_IN_3_SECOND);
         isHideOperate = true;
+        DTVTLogger.end();
     }
 
+    /**
+     * onDestroy
+     */
     @Override
     protected void onDestroy() {
+        DTVTLogger.start();
         super.onDestroy();
-        if(null!=mPlayerController){
-            mPlayerController.setCaptionDataListener(null);
-            mPlayerController.release();
-            mPlayerController = null;
+        if(mIsOncreateOk){
+            if(null!=mPlayerController){
+                mPlayerController.setCaptionDataListener(null);
+                mPlayerController.release();
+                mPlayerController = null;
+            }
         }
-        // TODO: 2017/11/22 横縦処理
+        DTVTLogger.end();
     }
 
+    /**
+     * onConfigurationChanged
+     * @param newConfig new param
+     */
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
+        DTVTLogger.start();
         super.onConfigurationChanged(newConfig);
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             //横処理
         } else {
             //縦処理
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -538,11 +779,18 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
      * @param view
      */
     public void recommendButton(View view) {
+        DTVTLogger.start();
         startActivity(RecommendPlayerActivity.class, null);
+        DTVTLogger.end();
     }
 
+    /**
+     * on click event function
+     * @param v
+     */
     @Override
     public void onClick(View v) {
+        DTVTLogger.start();
         switch (v.getId()) {
             case R.id.tv_player_ctrl_video_record_player_pause_fl:
                 if (!mPlayerController.isPlaying()) {
@@ -575,18 +823,30 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
             default:
                 break;
         }
+        DTVTLogger.end();
     }
 
+    /**
+     * hide video ctrl view
+     * @param invisible
+     */
     private void hideVideoCtrlView(int invisible) {
+        DTVTLogger.start();
         mVideoPlayPause.setVisibility(invisible);
         mVideoRewind10.setVisibility(invisible);
         mVideoRewind.setVisibility(invisible);
         mVideoFast30.setVisibility(invisible);
         mVideoFast.setVisibility(invisible);
         mVideoCtrlBar.setVisibility(invisible);
+        DTVTLogger.end();
     }
 
+    /**
+     * hide tv ctrl view
+     * @param invisible
+     */
     private void hideTvCtrlView(int invisible) {
+        DTVTLogger.start();
         mTvNow.setVisibility(invisible);
         mTvBack.setVisibility(invisible);
         mTvForward.setVisibility(invisible);
@@ -594,6 +854,7 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
         mTvRapid.setVisibility(invisible);
         mTvSeekBar.setVisibility(invisible);
         mTvFullScreen.setVisibility(invisible);
+        DTVTLogger.end();
     }
 
     /**
@@ -603,6 +864,7 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
      * @param millisecond
      */
     public void time2TextViewFormat(TextView textView, int millisecond) {
+        DTVTLogger.start();
         int second = millisecond / 1000;
         int hh = second / 3600;
         int mm = second % 3600 / 60;
@@ -614,6 +876,7 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
             str = String.format("%02d:%02d", mm, ss);
         }
         textView.setText(str);
+        DTVTLogger.end();
     }
 
     /**
@@ -621,6 +884,8 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
      * @return
      */
     public int getCurMode() {
+        DTVTLogger.start();
+        DTVTLogger.end();
         return curMode;
     }
 
@@ -631,21 +896,41 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
      * VIDEO_RECORDING_MODE = 2;
      */
     public void setCurMode(int curMode){
+        DTVTLogger.start();
         this.curMode = curMode;
+        DTVTLogger.end();
     }
 
+    /**
+     * onStateChanged
+     * @param mediaPlayerController controller
+     * @param i i
+     */
     @Override
     public void onStateChanged(MediaPlayerController mediaPlayerController, int i) {
-
+        DTVTLogger.start();
+        DTVTLogger.end();
     }
 
+    /**
+     * onFormatChanged
+     * @param mediaPlayerController controller
+     */
     @Override
     public void onFormatChanged(MediaPlayerController mediaPlayerController) {
-
+        DTVTLogger.start();
+        DTVTLogger.end();
     }
 
+    /**
+     * onPlayerEvent
+     * @param mediaPlayerController
+     * @param event
+     * @param arg
+     */
     @Override
     public void onPlayerEvent(MediaPlayerController mediaPlayerController, int event, long arg) {
+        DTVTLogger.start();
         switch (event) {
             case MediaPlayerDefinitions.PE_OPENED:
                 playButton();
@@ -656,36 +941,73 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
             case MediaPlayerDefinitions.PE_START_NETWORK_CONNECTION:
                 break;
             case MediaPlayerDefinitions.PE_START_AUTHENTICATION:
-                Toast.makeText(getApplicationContext(), "PE_START_AUTHENTICATION",
-                        Toast.LENGTH_SHORT).show();
+                showMessage("PE_START_AUTHENTICATION");
                 break;
             case MediaPlayerDefinitions.PE_START_BUFFERING:
-                Toast.makeText(getApplicationContext(), "PE_START_BUFFERING",
-                        Toast.LENGTH_SHORT).show();
+                showMessage("バッファー開始");
                 break;
             case MediaPlayerDefinitions.PE_START_RENDERING:
-                Toast.makeText(getApplicationContext(), "PE_START_RENDERING",
-                        Toast.LENGTH_SHORT).show();
+                showMessage("再生開始");
                 break;
             case MediaPlayerDefinitions.PE_FIRST_FRAME_RENDERED:
-                Toast.makeText(getApplicationContext(), "PE_FIRST_FRAME_RENDERED",
-                        Toast.LENGTH_SHORT).show();
+                //showMessage("PE_FIRST_FRAME_RENDERED");
                 break;
         }
+        DTVTLogger.end();
     }
 
+    /**
+     * showMessage
+     * @param msg
+     */
+    private void showMessage(String msg){
+        DTVTLogger.start();
+        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+        DTVTLogger.end();
+    }
+
+    /**
+     * errorExit
+     */
+    private void errorExit(){
+        DTVTLogger.start();
+        showMessage("ビデオ情報はただしくないです。もう一回試してください。");
+        setCanPlay(false);
+        DTVTLogger.end();
+    }
+
+    /**
+     * onError
+     * @param mediaPlayerController controller
+     * @param i i
+     * @param l l
+     */
     @Override
     public void onError(MediaPlayerController mediaPlayerController, int i, long l) {
-        Toast.makeText(getApplicationContext(), "" + i, Toast.LENGTH_SHORT).show();
+        DTVTLogger.start();
+        showMessage("" + i);
+        DTVTLogger.end();
     }
 
+    /**
+     * onCaptionData
+     * @param mediaPlayerController
+     * @param captionDrawCommands
+     */
     @Override
     public void onCaptionData(MediaPlayerController mediaPlayerController, CaptionDrawCommands captionDrawCommands) {
-
+        DTVTLogger.start();
+        DTVTLogger.end();
     }
 
+    /**
+     * onSuperData
+     * @param mediaPlayerController controller
+     * @param captionDrawCommands commands
+     */
     @Override
     public void onSuperData(MediaPlayerController mediaPlayerController, CaptionDrawCommands captionDrawCommands) {
-
+        DTVTLogger.start();
+        DTVTLogger.end();
     }
 }
