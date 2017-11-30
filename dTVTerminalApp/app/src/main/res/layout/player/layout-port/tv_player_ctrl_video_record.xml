@@ -94,26 +94,11 @@
 			android:background="@mipmap/ic_tvplayer_full_screen"/>
 
 		<TextView
-			android:id="@+id/tv_player_ctrl_now_on_air_rapid_tv"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignBottom="@id/tv_player_ctrl_now_on_air_cur_time_tv"
-			android:layout_alignTop="@id/tv_player_ctrl_now_on_air_cur_time_tv"
-			android:layout_marginEnd="20dp"
-			android:layout_toStartOf="@id/tv_player_ctrl_now_on_air_full_screen_iv"
-			android:background="@android:color/white"
-			android:gravity="center"
-			android:paddingEnd="5dp"
-			android:paddingStart="5dp"
-			android:text="x1.5"
-			android:textColor="@android:color/black"/>
-
-		<TextView
 			android:id="@+id/tv_player_ctrl_now_on_air_total_time_tv"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginEnd="10dp"
-			android:layout_toStartOf="@id/tv_player_ctrl_now_on_air_rapid_tv"
+			android:layout_toStartOf="@id/tv_player_ctrl_now_on_air_full_screen_iv"
 			android:background="@android:color/transparent"
 			android:text="59:22"
 			android:textColor="@android:color/white"/>
