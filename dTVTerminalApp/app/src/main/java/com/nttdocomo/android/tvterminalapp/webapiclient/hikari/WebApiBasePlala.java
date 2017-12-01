@@ -147,6 +147,11 @@ public class WebApiBasePlala {
          */
         GENRE_COUNT_GET_WEB_CLIENT("genre/contents/count/get"),
 
+        /**
+         * コンテンツ詳細取得
+         */
+        CONTENTS_DETAIL_GET_WEB_CLIENT("contents/specifics/get"),
+
         //最後にセミコロンが必要
         ;
 
@@ -217,6 +222,11 @@ public class WebApiBasePlala {
     public static final String FILTER_DEMO = "demo";
 
     /**
+     * フィルター用指定文字列・フィルターのパラメータ名
+     */
+    public static final String FILTER_PARAM = "filter";
+
+    /**
      * タイプ用指定文字列・ｄCh
      */
     public static final String TYPE_D_CHANNEL = "dch";
@@ -272,6 +282,21 @@ public class WebApiBasePlala {
      * age_req(年齢設定値)の最大値
      */
     public static final int AGE_HIGH_VALUE = 17;
+
+    /**
+     * age_req(年齢設定値)のパラメータ作成用文字列
+     */
+    public static final String AGE_REQ_STRING = "age_req";
+
+    /**
+     * コンテンツ識別ID作成文字列
+     */
+    public static final String CRID_STRING = "crid";
+
+    /**
+     * リスト作成文字列
+     */
+    public static final String LIST_STRING = "list";
 
     //戻り値用構造体
     static protected class ReturnCode {
