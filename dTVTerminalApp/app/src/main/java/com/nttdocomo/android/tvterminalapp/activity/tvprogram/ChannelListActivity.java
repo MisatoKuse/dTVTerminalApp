@@ -6,110 +6,183 @@ package com.nttdocomo.android.tvterminalapp.activity.tvprogram;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.ChannelDetailPlayerActivity;
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+
+import java.util.ArrayList;
 
 public class ChannelListActivity extends BaseActivity implements View.OnClickListener {
-    private Button btnBack,btnChannelInfo;
-    private HorizontalScrollView mHorizontalScrollView;
-    private List<String> tabNames;
-    private LinearLayout mLinearLayout;
-    private ListView mListView;
-    private TextView channel1,channel2,channel3,channel4,channel5;
+
+    private static final int SCREEN_TIME_WIDTH_PERCENT = 9;
+    private LinearLayout mTabsLayout;
+    private String[] mTabNames;
+    private int screenWidth;
+    private ArrayList hikariList;
+    private ArrayList terrestrialList;
+    private ArrayList bSList;
+    private ArrayList dtvChannelList;
+    private ViewPager mChannelBodyViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.cannel_list_main_layout);
+        setContentView(R.layout.channel_list_main_layout);
+        screenWidth = getWidthDensity();
+        initData();
         initView();
     }
 
+    private void initData() {
+        hikariList = new ArrayList();
+        terrestrialList = new ArrayList();
+        bSList = new ArrayList();
+        dtvChannelList = new ArrayList();
+        for (int i = 0; i < 50; i++) {
+            View channelItemView = View.inflate(this, R.layout.channel_list_item, null);
+            hikariList.add(channelItemView);
+        }
+        for (int i = 0; i < 50; i++) {
+            View channelItemView = View.inflate(this, R.layout.channel_list_item, null);
+            terrestrialList.add(channelItemView);
+        }
+        for (int i = 0; i < 50; i++) {
+            View channelItemView = View.inflate(this, R.layout.channel_list_item, null);
+            bSList.add(channelItemView);
+        }
+        for (int i = 0; i < 50; i++) {
+            View channelItemView = View.inflate(this, R.layout.channel_list_item, null);
+            dtvChannelList.add(channelItemView);
+        }
+    }
+
+
     private void initView() {
-        tabNames = new ArrayList<>();
-        tabNames.add("ひかりTV");
-        tabNames.add("地上波");
-        tabNames.add("BS");
-        tabNames.add("dチャンネル");
-        tabNames.add("test1");
-        tabNames.add("test2");
+        HorizontalScrollView channelList = findViewById(R.id.channel_list_main_layout_channel_titles_hs);
+        mChannelBodyViewPager = findViewById(R.id.channel_list_main_layout_channel_body_vp);
+        initChannelListTab(channelList);
+        mChannelBodyViewPager.setAdapter(new ChannelListAdapter(getSupportFragmentManager()));
+        mChannelBodyViewPager.addOnPageChangeListener(new ViewPager
+                .SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                setTab(position);
+            }
+        });
+    }
 
-        mHorizontalScrollView = (HorizontalScrollView)findViewById(R.id.mHorizontalScrollView);
-        mHorizontalScrollView.removeAllViews();
-        mLinearLayout = new LinearLayout(this);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.MATCH_PARENT);
-        mLinearLayout.setLayoutParams(layoutParams);
-        mLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
-        mLinearLayout.setGravity(Gravity.CENTER);
-        mHorizontalScrollView.addView(mLinearLayout);
-
-
-        for (int i = 0;i < tabNames.size();i++){
+    private void initChannelListTab(HorizontalScrollView channelList) {
+        mTabNames = getResources().getStringArray(R.array.channel_list_tab_names);
+        channelList.removeAllViews();
+        mTabsLayout = new LinearLayout(this);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                screenWidth / SCREEN_TIME_WIDTH_PERCENT + (int) getDensity() * 5);
+        mTabsLayout.setLayoutParams(layoutParams);
+        mTabsLayout.setOrientation(LinearLayout.HORIZONTAL);
+        mTabsLayout.setGravity(Gravity.CENTER);
+        mTabsLayout.setBackgroundColor(Color.BLACK);
+        mTabsLayout.setBackgroundResource(R.drawable.rectangele_all);
+        channelList.addView(mTabsLayout);
+        for (int i = 0; i < mTabNames.length; i++) {
             TextView tabTextView = new TextView(this);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
-            if(i != 0){
-                params.setMargins(35,0,0,0);
-            }
+                    LinearLayout.LayoutParams.MATCH_PARENT);
+            params.setMargins((int) getDensity() * 30, 0, 0, 0);
             tabTextView.setLayoutParams(params);
-            tabTextView.setText(tabNames.get(i));
-            tabTextView.setTextSize(20);
-//            tabTextView.setBackgroundColor(Color.BLACK);
+            tabTextView.setText(mTabNames[i]);
+            tabTextView.setBackgroundColor(Color.BLACK);
             tabTextView.setTextColor(Color.WHITE);
             tabTextView.setGravity(Gravity.CENTER_VERTICAL);
-
-            mLinearLayout.addView(tabTextView);
+            tabTextView.setTag(i);
+            tabTextView.setBackgroundResource(0);
+            tabTextView.setTextColor(Color.WHITE);
+            if (i == 0) {
+                tabTextView.setBackgroundResource(R.drawable.rectangele);
+                tabTextView.setTextColor(Color.GRAY);
+            }
+            tabTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int tab_index = (int) view.getTag();
+                    setTab(tab_index);
+                    mChannelBodyViewPager.setCurrentItem(tab_index);
+                    // TODO: 2017/11/30 clear,getデータ
+                    //clearData();
+                    //getChannelData();
+                }
+            });
+            mTabsLayout.addView(tabTextView);
         }
+    }
 
-
-        btnBack = (Button)findViewById(R.id.btn_back);
-        btnChannelInfo = (Button)findViewById(R.id.btn_channel_info);
-        channel1= (TextView)findViewById(R.id.channel1);
-        channel2= (TextView)findViewById(R.id.channel2);
-        channel3= (TextView)findViewById(R.id.channel3);
-        channel4= (TextView)findViewById(R.id.channel4);
-        channel5= (TextView)findViewById(R.id.channel5);
-        btnBack.setOnClickListener(this);
-        btnChannelInfo.setOnClickListener(this);
-        channel1.setOnClickListener(this);
-        channel2.setOnClickListener(this);
-        channel3.setOnClickListener(this);
-        channel4.setOnClickListener(this);
-        channel5.setOnClickListener(this);
-
-
+    private void setTab(int position) {
+        if (mTabsLayout != null) {
+            for (int i = 0; i < mTabNames.length; i++) {
+                TextView mTextView = (TextView) mTabsLayout.getChildAt(i);
+                if (position == i) {
+                    mTextView.setBackgroundResource(R.drawable.rectangele);
+                    mTextView.setTextColor(Color.GRAY);
+                } else {
+                    mTextView.setBackgroundResource(0);
+                    mTextView.setTextColor(Color.WHITE);
+                }
+            }
+        }
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.btn_back:
-                startActivity(HomeActivity.class,null);
-                break;
-            case R.id.btn_channel_info:
-            case R.id.channel1:
-            case R.id.channel2:
-            case R.id.channel3:
-            case R.id.channel4:
-            case R.id.channel5:
-                startActivity(ChannelDetailPlayerActivity.class,null);
-                break;
-            default:
-                break;
+    public void onClick(View view) {
 
+    }
+
+    /*チャンネルリストアダプター*/
+    private class ChannelListAdapter extends FragmentStatePagerAdapter {
+
+        ChannelListAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            ChannelListFragment channelListFragment1 = new ChannelListFragment(hikariList);
+            ChannelListFragment channelListFragment2 = new ChannelListFragment(terrestrialList);
+            ChannelListFragment channelListFragment3 = new ChannelListFragment(bSList);
+            ChannelListFragment channelListFragment4 = new ChannelListFragment(dtvChannelList);
+            if (position == 0) {
+                return channelListFragment1;
+            }
+            if (position == 1) {
+                return channelListFragment2;
+            }
+            if (position == 2) {
+                return channelListFragment3;
+            }
+            if (position == 3) {
+                return channelListFragment4;
+            }
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            return mTabNames.length;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mTabNames[position];
         }
     }
 }
