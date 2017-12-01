@@ -102,7 +102,7 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
         screenHeight = getHeightDensity();
         screenWidth = getWidthDensity();
         ImageView menuImage = findViewById(R.id.header_layout_menu);
-        ImageView tvImage = findViewById(R.id.header_layout_display);
+        ImageView tvImage = findViewById(R.id.header_stb_status_icon);
         findViewById(R.id.header_layout_back).setVisibility(View.INVISIBLE);
         timeScrollView = findViewById(R.id.tv_program_list_main_layout_time_sl);
         channelRecyclerView = findViewById(R.id.tv_program_list_main_layout_channel_rv);

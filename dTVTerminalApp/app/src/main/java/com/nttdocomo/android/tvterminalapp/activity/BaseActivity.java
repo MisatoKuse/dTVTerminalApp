@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -35,6 +36,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     private LinearLayout baseLinearLayout;
     private RelativeLayout headerLayout;
     protected TextView titleTextView;
+    private ImageView mStbStatusIcon;
 
     /**
      * Created on 2017/09/21.
@@ -105,6 +107,53 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         headerLayout.setLayoutParams(lp);
         titleTextView = findViewById(R.id.header_layout_text);
         DTVTLogger.end();
+        mStbStatusIcon= findViewById(R.id.header_stb_status_icon);
+    }
+
+    //stb status icon状態
+    private final int sStbStatusOn=0xff;
+    private final int sStbStatusOff=0xfe;
+    /**
+     * 機能：STBステータスを変更
+     * @param isOn true: stb接続中   false: stb未接続
+     */
+    protected void setStbStatus(boolean isOn){
+        if(null!=mStbStatusIcon){
+            try {
+                if (isOn) {
+                    mStbStatusIcon.setImageResource(R.mipmap.ic_stb_status_icon_white);
+                    mStbStatusIcon.setId(sStbStatusOn);
+                } else {
+                    mStbStatusIcon.setImageResource(R.mipmap.ic_stb_status_icon_gray);
+                    mStbStatusIcon.setId(sStbStatusOff);
+                }
+            }catch (Exception e) {
+                DTVTLogger.debug("BaseActivity::setStbStatus, stb status png file not found");
+                return;
+            }
+            mStbStatusIcon.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * 機能：STB接続ステータスを戻す
+     * @return true: stb接続中   false: stb未接続
+     */
+    protected boolean getStbStatus(){
+        boolean ret=false;
+        if(null==mStbStatusIcon){
+            return ret;
+        }
+        int id= mStbStatusIcon.getId();
+        switch(id){
+            case sStbStatusOn:
+                ret=true;
+                break;
+            case sStbStatusOff:
+                ret=false;
+                break;
+        }
+        return ret;
     }
 
     /**
