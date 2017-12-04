@@ -8,9 +8,7 @@ import android.os.AsyncTask;
 import android.util.Xml;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
-import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendChWebClient;
 
 import org.xmlpull.v1.XmlPullParser;
