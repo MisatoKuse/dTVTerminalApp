@@ -318,6 +318,8 @@ public class DBConstants {
             JsonContents.META_RESPONSE_AVAIL_START_DATE  + " text, " +
             JsonContents.META_RESPONSE_AVAIL_END_DATE  + " text, " +
             JsonContents.META_RESPONSE_DEFAULT_THUMB  + " text, " +
+            JsonContents.META_RESPONSE_THUMB_640  + " text, " +
+            JsonContents.META_RESPONSE_THUMB_448  + " text, " +
             JsonContents.META_RESPONSE_DEMONG  + " text, " +
             UNDER_BAR_FOUR_K_FLG  + " text, " +
             JsonContents.META_RESPONSE_AVAIL_STATUS  + " text, " +
