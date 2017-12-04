@@ -16,9 +16,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvScheduleLi
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VodClipListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WeeklyRankListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,10 +33,6 @@ import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodCli
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_THUMB;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_TITLE;
 
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_LINEAR_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_THUMB;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_TITLE;
-
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CTPICURL1;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_TITLE;
 
@@ -50,16 +44,16 @@ public class HomeDataManager {
     /**
      * コンストラクタ
      *
-     * @param mContext
+     * @param context
      */
-    public HomeDataManager(Context mContext) {
-        this.mContext = mContext;
+    public HomeDataManager(Context context) {
+        this.mContext = context;
     }
 
     /**
      * ホーム画面用クリップデータを返却する
      *
-     * @return
+     * @return list
      */
     public List<Map<String, String>> selectClipHomeData() {
         //ホーム画面に必要な列を列挙する
@@ -81,7 +75,7 @@ public class HomeDataManager {
     /**
      * ホーム画面用CH一覧データを返却する
      *
-     * @return
+     * @return list
      */
     public List<Map<String, String>> selectChannelListHomeData() {
         //ホーム画面に必要な列を列挙する
@@ -104,7 +98,7 @@ public class HomeDataManager {
     /**
      * ホーム画面用おすすめ番組一覧データを返却する
      *
-     * @return
+     * @return list
      */
     public List<Map<String, String>> selectRecommendChListHomeData() {
         //ホーム画面に必要な列を列挙する
@@ -125,7 +119,7 @@ public class HomeDataManager {
     /**
      * ホーム画面用おすすめビデオ一覧データを返却する
      *
-     * @return
+     * @return list
      */
     public List<Map<String, String>> selectRecommendVdListHomeData() {
         //ホーム画面に必要な列を列挙する
@@ -146,7 +140,7 @@ public class HomeDataManager {
     /**
      * ホーム画面用今日のランキング一覧データを返却する
      *
-     * @return
+     * @return list
      */
     public List<Map<String, String>> selectDailyRankListHomeData() {
         //ホーム画面に必要な列を列挙する
@@ -168,7 +162,7 @@ public class HomeDataManager {
     /**
      * ホーム画面用CH毎番組表データを返却する
      *
-     * @return
+     * @return list
      */
     public List<Map<String, String>> selectTvScheduleListHomeData() {
         //ホーム画面に必要な列を列挙する
@@ -190,12 +184,12 @@ public class HomeDataManager {
     /**
      * ホーム画面用週間ランキングデータを返却する
      *
-     * @return
+     * @return list
      */
     public List<Map<String, String>> selectWeeklyRankListHomeData() {
         //ホーム画面に必要な列を列挙する
-        String[] columns = {WEEKLYRANK_LIST_THUMB, WEEKLYRANK_LIST_TITLE,
-                WEEKLYRANK_LIST_LINEAR_START_DATE};
+        String[] columns = {JsonContents.META_RESPONSE_THUMB_448, JsonContents.META_RESPONSE_TITLE,
+                JsonContents.META_RESPONSE_AVAIL_START_DATE};
 
         //Daoクラス使用準備
         DBHelper weeklyRankListDBHelper = new DBHelper(mContext);

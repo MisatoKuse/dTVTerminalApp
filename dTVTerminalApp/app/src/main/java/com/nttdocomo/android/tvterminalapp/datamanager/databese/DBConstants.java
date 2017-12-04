@@ -8,35 +8,6 @@ import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.UNDER_LINE;
 
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_ADULT;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_AVAIL_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_AVAIL_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_AVAIL_STATUS;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_BVFLG;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_CID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_COPYRIGHT;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_CRID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_DELIVERY;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_DEMONG;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_DISPLAY_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_DISPLAY_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_DISP_TYPE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_DTV;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_DUR;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_EPISODE_ID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_EPITITLE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_GENRE_ID_ARRAY;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_HDRFLG;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_MS;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_NEWA_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_NEWA_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_NG_FUNC;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_PUBLISH_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_PUBLISH_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_R_VALUE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_THUMB;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_TITLE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_TITLE_ID;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_ADULT;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_AVAIL_END_DATE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_AVAIL_START_DATE;
@@ -141,25 +112,6 @@ import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodCli
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_THUMB;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_TITLE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_TITLE_ID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_AVAII_STATUS;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_CHNO;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_CID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_COPYRIGHT;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_CRID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_DELIVERY;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_DEMONG;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_DISP_TYPE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_DUR;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_EVENT_ID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_LINEAR_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_LINEAR_START_END;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_MISSED_VOD;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_R_VALUE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_SERVICE_ID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_THUMB;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_TITLE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_VOD_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_VOD_START_DATE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_AGREEMENT;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID;
@@ -260,7 +212,6 @@ import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullD
 import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_DUR;
 import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_DEMONG;
 import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_BVFLG;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_4KFLG;
 import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_HDRFLG;
 import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_AVAIL_STATUS;
 import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_DELIVERY;
@@ -356,36 +307,66 @@ public class DBConstants {
     public static final String CREATE_TABLE_DAILY_RANK_SQL = "" +
             "create table " + DAILYRANK_LIST_TABLE_NAME + " (" +
             ID_COLUMN + " integer primary key autoincrement, " +
-            DAILYRANK_LIST_CRID + " text, " +
-            DAILYRANK_LIST_CID + " text, " +
-            DAILYRANK_LIST_TITLE_ID + " text, " +
-            DAILYRANK_LIST_EPISODE_ID + " text, " +
-            DAILYRANK_LIST_TITLE + " text, " +
-            DAILYRANK_LIST_EPITITLE + " text, " +
-            DAILYRANK_LIST_DISP_TYPE + " text, " +
-            DAILYRANK_LIST_DISPLAY_START_DATE + " text, " +
-            DAILYRANK_LIST_DISPLAY_END_DATE + " text, " +
-            DAILYRANK_LIST_AVAIL_START_DATE + " text, " +
-            DAILYRANK_LIST_AVAIL_END_DATE + " text, " +
-            DAILYRANK_LIST_PUBLISH_START_DATE + " text, " +
-            DAILYRANK_LIST_PUBLISH_END_DATE + " text, " +
-            DAILYRANK_LIST_NEWA_START_DATE + " text, " +
-            DAILYRANK_LIST_NEWA_END_DATE + " text, " +
-            DAILYRANK_LIST_COPYRIGHT + " text, " +
-            DAILYRANK_LIST_THUMB + " text, " +
-            DAILYRANK_LIST_DUR + " text, " +
-            DAILYRANK_LIST_DEMONG + " text, " +
-            DAILYRANK_LIST_BVFLG + " text, " +
+            JsonContents.META_RESPONSE_CRID + " text, " +
+            JsonContents.META_RESPONSE_CID + " text, " +
+            JsonContents.META_RESPONSE_TITLE_ID + " text, " +
+            JsonContents.META_RESPONSE_EPISODE_ID + " text, " +
+            JsonContents.META_RESPONSE_TITLE + " text, " +
+            JsonContents.META_RESPONSE_EPITITLE + " text, " +
+            JsonContents.META_RESPONSE_TITLERUBY + " text, " +
+            JsonContents.META_RESPONSE_DISP_TYPE + " text, " +
+            JsonContents.META_RESPONSE_DISPLAY_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_DISPLAY_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_AVAIL_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_AVAIL_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUBLISH_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUBLISH_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_NEWA_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_NEWA_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_THUMB_640 + " text, " +
+            JsonContents.META_RESPONSE_THUMB_448 + " text, " +
+            JsonContents.META_RESPONSE_DTV_THUMB_640 + " text, " +
+            JsonContents.META_RESPONSE_DTV_THUMB_448 + " text, " +
+            JsonContents.META_RESPONSE_COPYRIGHT + " text, " +
+            JsonContents.META_RESPONSE_DUR + " text, " +
+            JsonContents.META_RESPONSE_DEMONG + " text, " +
+            JsonContents.META_RESPONSE_BVFLG + " text, " +
             UNDER_BAR_FOUR_K_FLG + " text, " +
-            DAILYRANK_LIST_HDRFLG + " text, " +
-            DAILYRANK_LIST_AVAIL_STATUS + " text, " +
-            DAILYRANK_LIST_DELIVERY + " text, " +
-            DAILYRANK_LIST_R_VALUE + " text, " +
-            DAILYRANK_LIST_ADULT + " text, " +
-            DAILYRANK_LIST_MS + " text, " +
-            DAILYRANK_LIST_NG_FUNC + " text, " +
-            DAILYRANK_LIST_GENRE_ID_ARRAY + " text, " +
-            DAILYRANK_LIST_DTV + " text" +
+            JsonContents.META_RESPONSE_HDRFLG + " text, " +
+            JsonContents.META_RESPONSE_DELIVERY + " text, " +
+            JsonContents.META_RESPONSE_R_VALUE + " text, " +
+            JsonContents.META_RESPONSE_ADULT + " text, " +
+            JsonContents.META_RESPONSE_GENRE_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_SYNOP + " text, " +
+            JsonContents.META_RESPONSE_SYNOP_SHORT + " text, " +
+            JsonContents.META_RESPONSE_PUID + " text, " +
+            JsonContents.META_RESPONSE_PRICE + " text, " +
+            JsonContents.META_RESPONSE_QRANGE + " text, " +
+            JsonContents.META_RESPONSE_QUNIT + " text, " +
+            JsonContents.META_RESPONSE_PU_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_PU_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_CREDIT_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_RATING + " text, " +
+            JsonContents.META_RESPONSE_DTV + " text, " +
+            JsonContents.META_RESPONSE_CHSVOD + " text, " +
+            JsonContents.META_RESPONSE_SEARCH_OK + " text, " +
+            JsonContents.META_RESPONSE_LIINF_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_PUINF + " text, " +
+            JsonContents.META_RESPONSE_CAPL + " text, " +
+            JsonContents.META_RESPONSE_BILINGAL + " text, " +
+            JsonContents.META_RESPONSE_TV_CID + " text, " +
+            JsonContents.META_RESPONSE_SERVICE_ID + " text, " +
+            JsonContents.META_RESPONSE_EVENT_ID + " text, " +
+            JsonContents.META_RESPONSE_CHNO + " text, " +
+            JsonContents.META_RESPONSE_TV_SERVICE + " text, " +
+            JsonContents.META_RESPONSE_CONTENT_TYPE + " text, " +
+            JsonContents.META_RESPONSE_VOD_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_VOD_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_MAIN_GENRE + " text, " +
+            JsonContents.META_RESPONSE_SECOND_GENRE_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_COPY + " text, " +
+            JsonContents.META_RESPONSE_ADINFO_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_RELATIONAL_ID_ARRAY + " text " +
             ")";
 
     //Homeキャッシュデータ格納用テーブル
@@ -490,25 +471,76 @@ public class DBConstants {
     public static final String CREATE_TABLE_WEEKLYRANK_SQL = "" +
             "create table " + WEEKLYRANK_LIST_TABLE_NAME + " (" +
             ID_COLUMN + " integer primary key autoincrement, " +
-            WEEKLYRANK_LIST_CRID + " text, " +
-            WEEKLYRANK_LIST_CID + " text, " +
-            WEEKLYRANK_LIST_TITLE + " text, " +
-            WEEKLYRANK_LIST_SERVICE_ID + " text, " +
-            WEEKLYRANK_LIST_EVENT_ID + " text, " +
-            WEEKLYRANK_LIST_CHNO + " text, " +
-            WEEKLYRANK_LIST_DISP_TYPE + " text, " +
-            WEEKLYRANK_LIST_MISSED_VOD + " text, " +
-            WEEKLYRANK_LIST_LINEAR_START_DATE + " text, " +
-            WEEKLYRANK_LIST_LINEAR_START_END + " text, " +
-            WEEKLYRANK_LIST_VOD_START_DATE + " text, " +
-            WEEKLYRANK_LIST_VOD_END_DATE + " text, " +
-            WEEKLYRANK_LIST_THUMB + " text, " +
-            WEEKLYRANK_LIST_COPYRIGHT + " text, " +
-            WEEKLYRANK_LIST_DUR + " text, " +
-            WEEKLYRANK_LIST_DEMONG + " text, " +
-            WEEKLYRANK_LIST_AVAII_STATUS + " text, " +
-            WEEKLYRANK_LIST_DELIVERY + " text, " +
-            WEEKLYRANK_LIST_R_VALUE + " text " +
+            JsonContents.META_RESPONSE_CRID + " text, " +
+            JsonContents.META_RESPONSE_CID + " text, " +
+            JsonContents.META_RESPONSE_TITLE_ID + " text, " +
+            JsonContents.META_RESPONSE_EPISODE_ID + " text, " +
+            JsonContents.META_RESPONSE_TITLE + " text, " +
+            JsonContents.META_RESPONSE_EPITITLE + " text, " +
+            JsonContents.META_RESPONSE_TITLERUBY + " text, " +
+            JsonContents.META_RESPONSE_DISP_TYPE + " text, " +
+            JsonContents.META_RESPONSE_DISPLAY_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_DISPLAY_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_AVAIL_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_AVAIL_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUBLISH_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUBLISH_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_NEWA_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_NEWA_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_THUMB_640 + " text, " +
+            JsonContents.META_RESPONSE_THUMB_448 + " text, " +
+            JsonContents.META_RESPONSE_DTV_THUMB_640 + " text, " +
+            JsonContents.META_RESPONSE_DTV_THUMB_448 + " text, " +
+            JsonContents.META_RESPONSE_COPYRIGHT + " text, " +
+            JsonContents.META_RESPONSE_DUR + " text, " +
+            JsonContents.META_RESPONSE_DEMONG + " text, " +
+            JsonContents.META_RESPONSE_BVFLG + " text, " +
+            UNDER_BAR_FOUR_K_FLG + " text, " +
+            JsonContents.META_RESPONSE_HDRFLG + " text, " +
+            JsonContents.META_RESPONSE_DELIVERY + " text, " +
+            JsonContents.META_RESPONSE_R_VALUE + " text, " +
+            JsonContents.META_RESPONSE_ADULT + " text, " +
+            JsonContents.META_RESPONSE_GENRE_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_SYNOP + " text, " +
+            JsonContents.META_RESPONSE_SYNOP_SHORT + " text, " +
+            JsonContents.META_RESPONSE_PUID + " text, " +
+            JsonContents.META_RESPONSE_PRICE + " text, " +
+            JsonContents.META_RESPONSE_QRANGE + " text, " +
+            JsonContents.META_RESPONSE_QUNIT + " text, " +
+            JsonContents.META_RESPONSE_PU_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_PU_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_CREDIT_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_RATING + " text, " +
+            JsonContents.META_RESPONSE_DTV + " text, " +
+            JsonContents.META_RESPONSE_CHSVOD + " text, " +
+            JsonContents.META_RESPONSE_SEARCH_OK + " text, " +
+            JsonContents.META_RESPONSE_LIINF_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_PUID + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_TITLE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_EPITITLE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_DISP_TYPE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_CHSVOD + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_PRICE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_QUNIT + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_QRANGE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_PU_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_PU_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_CAPL + " text, " +
+            JsonContents.META_RESPONSE_BILINGAL + " text, " +
+            JsonContents.META_RESPONSE_TV_CID + " text, " +
+            JsonContents.META_RESPONSE_SERVICE_ID + " text, " +
+            JsonContents.META_RESPONSE_EVENT_ID + " text, " +
+            JsonContents.META_RESPONSE_CHNO + " text, " +
+            JsonContents.META_RESPONSE_TV_SERVICE + " text, " +
+            JsonContents.META_RESPONSE_CONTENT_TYPE + " text, " +
+            JsonContents.META_RESPONSE_VOD_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_VOD_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_MAIN_GENRE + " text, " +
+            JsonContents.META_RESPONSE_SECOND_GENRE_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_COPY + " text, " +
+            JsonContents.META_RESPONSE_ADINFO_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_RELATIONAL_ID_ARRAY + " text " +
             ")";
 
     //Homeキャッシュデータ格納用テーブル

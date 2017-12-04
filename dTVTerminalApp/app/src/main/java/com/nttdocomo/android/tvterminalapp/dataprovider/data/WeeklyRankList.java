@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class WeeklyRankList {
-    private HashMap<String, String> mWrMap = new HashMap<String, String>();
+    private HashMap<String, String> mWrMap = new HashMap<>();
     private List<HashMap<String, String>> mWrList = new ArrayList<>();
 
     /**
