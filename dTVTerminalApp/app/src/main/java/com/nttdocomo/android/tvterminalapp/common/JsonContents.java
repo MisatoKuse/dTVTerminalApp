@@ -160,7 +160,7 @@ public class JsonContents {
     // NGファンク
     public static final String META_RESPONSE_NG_FUNC = "ng_func";
     // ジャンル（ARIB）
-    public static final String META_RESPONSE_GENRE_ARAY = "genre_array";
+    public static final String META_RESPONSE_GENRE_ARRAY = "genre_array";
     // あらすじ（long）
     public static final String META_RESPONSE_SYNOP = "synop";
     // あらすじ（short）
@@ -174,7 +174,7 @@ public class JsonContents {
     // 購入単位の期間(3日の3)
     public static final String META_RESPONSE_QRANGE = "qrange";
     // 購入単位の単位(3日の「日」)
-    public static final String META_RESPONSE_GUNIT = "qunit";
+    public static final String META_RESPONSE_QUNIT = "qunit";
     // 販売開始日時
     public static final String META_RESPONSE_PU_START_DATE = "pu_start_date";
     // 販売終了日時
@@ -206,7 +206,7 @@ public class JsonContents {
     // 尺長
     public static final String META_RESPONSE_DUR = "dur";
     // 見放題フラグ
-    public static final String META_RESPONSE_DVFLG = "bvflg";
+    public static final String META_RESPONSE_BVFLG = "bvflg";
     // HDRフラグ
     public static final String META_RESPONSE_HDRFLG = "hdrflg";
     // 出演者情報（ロール|出演者名）
@@ -226,7 +226,7 @@ public class JsonContents {
     // 字幕
     public static final String META_RESPONSE_CAPL = "capl";
     // 二ヶ国語
-    public static final String META_RESPONSE_DILINGAL = "bilingal";
+    public static final String META_RESPONSE_BILINGAL = "bilingal";
     // コンテンツID（見逃し、関連VOD用）
     public static final String META_RESPONSE_TV_CID = "tv_cid";
     // イベントID

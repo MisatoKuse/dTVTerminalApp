@@ -4,16 +4,14 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListResponse;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ContentsDetailGetResponse;
+import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ContentsDetailJsonParser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
-
-//import com.nttdocomo.android.tvterminalapp.dataprovider.data.ContentsDetailGetResponse;
-//import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ContentsDetailJsonParser;
 
 public class ContentsDetailGetWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
@@ -27,8 +25,7 @@ public class ContentsDetailGetWebClient
          *
          * @param ContentsDetailLists JSONパース後のデータ
          */
-        //TODO: 今回はWebAPIだけのコミットなので、レスポンスはビルドエラー抑止用の仮の物
-        void onContentsDetailJsonParsed(GenreListResponse ContentsDetailLists);
+        void onContentsDetailJsonParsed(ContentsDetailGetResponse ContentsDetailLists);
     }
 
     //コールバックのインスタンス
@@ -42,9 +39,8 @@ public class ContentsDetailGetWebClient
     @Override
     public void onAnswer(ReturnCode returnCode) {
         //JSONをパースして、データを返す
-        //TODO: 今回はWebAPIだけなので、パーサーはコメント化
-//        new ContentsDetailJsonParser(mContentsDetailJsonParserCallback).
-//                execute(returnCode.bodyData);
+        new ContentsDetailJsonParser(mContentsDetailJsonParserCallback).
+                execute(returnCode.bodyData);
     }
 
     /**
@@ -53,7 +49,7 @@ public class ContentsDetailGetWebClient
     @Override
     public void onError() {
         //エラーが発生したのでヌルを返す
-        if(mContentsDetailJsonParserCallback != null) {
+        if (mContentsDetailJsonParserCallback != null) {
             mContentsDetailJsonParserCallback.onContentsDetailJsonParsed(null);
         }
     }
