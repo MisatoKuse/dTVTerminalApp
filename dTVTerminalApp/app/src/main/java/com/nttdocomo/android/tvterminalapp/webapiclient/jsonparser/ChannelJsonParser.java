@@ -39,6 +39,7 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
             JsonContents.META_RESPONSE_DISP_TYPE, JsonContents.META_RESPONSE_SERVICE,
             JsonContents.META_RESPONSE_CH_TYPE, JsonContents.META_RESPONSE_AVAIL_START_DATE,
             JsonContents.META_RESPONSE_AVAIL_END_DATE, JsonContents.META_RESPONSE_DEFAULT_THUMB,
+            JsonContents.META_RESPONSE_THUMB_640, JsonContents.META_RESPONSE_THUMB_448,
             JsonContents.META_RESPONSE_DEMONG, JsonContents.META_RESPONSE_4KFLG,
             JsonContents.META_RESPONSE_AVAIL_STATUS,JsonContents.META_RESPONSE_DELIVERY,
             JsonContents.META_RESPONSE_R_VALUE, JsonContents.META_RESPONSE_ADULT,
