@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 
 import org.json.JSONArray;
@@ -195,11 +196,11 @@ public class VodProgramMetaFullData implements Serializable {
         mCopyright = copyright;
     }
 
-    public String getDur() {
+    public int getDur() {
         return mDur;
     }
 
-    public void setDur(String dur) {
+    public void setDur(int dur) {
         mDur = dur;
     }
 
@@ -219,11 +220,11 @@ public class VodProgramMetaFullData implements Serializable {
         mBvflg = bvflg;
     }
 
-    public String getM4kflg() {
+    public int getM4kflg() {
         return m4kflg;
     }
 
-    public void setM4kflg(String m4kflg) {
+    public void setM4kflg(int m4kflg) {
         this.m4kflg = m4kflg;
     }
 
@@ -251,11 +252,11 @@ public class VodProgramMetaFullData implements Serializable {
         mR_value = r_value;
     }
 
-    public String getAdult() {
+    public int getAdult() {
         return mAdult;
     }
 
-    public void setAdult(String adult) {
+    public void setAdult(int adult) {
         mAdult = adult;
     }
 
@@ -332,11 +333,11 @@ public class VodProgramMetaFullData implements Serializable {
         this.mCredit_array = credit_array.clone();
     }
 
-    public String getRating() {
+    public double getRating() {
         return mRating;
     }
 
-    public void setRating(String rating) {
+    public void setRating(double rating) {
         mRating = rating;
     }
 
@@ -521,14 +522,14 @@ public class VodProgramMetaFullData implements Serializable {
     private String mDtv_thumb_640_360;  // dtvサムネイル（640＊360）
     private String mDtv_thumb_448_252;  // dtvサムネイル（448＊252）
     private String mCopyright;           // コピーライト
-    private String mDur;                  // 尺長
+    private int mDur;                    // 尺長
     private String mDemong;               // デモフラグ
     private String mBvflg;                // 見放題フラグ
-    private String m4kflg;                // ４Kフラグ
+    private int m4kflg;                  // ４Kフラグ
     private String mHdrflg;               // HDRフラグ
     private String mDelivery;             // 配信ステータス
     private String mR_value;              // パレンタル情報
-    private String mAdult;                // アダルトフラグ
+    private int mAdult;                   // アダルトフラグ
     private String[] mGenre_array;        // ジャンル
     private String mSynop;                 // あらすじ(long)(数値ではなく長いの意味の方)
     private String mPuid;                  // パーチャスID
@@ -538,7 +539,7 @@ public class VodProgramMetaFullData implements Serializable {
     private long mPu_start_date;          // 販売開始日時(EPOC秒なので数値)
     private long mPu_end_date;            // 販売終了日時(EPOC秒なので数値)
     private String[] mCredit_array;         // 出演者情報（ロール|出演者名）
-    private String mRating;                 // レーティング値
+    private double mRating;                 // レーティング値
     private String mDtv;                    // dTVフラグ
     private String mChsvod;                 // CHSVOD
     private String mSearch_ok;              // クリップ判定に利用(※一部コンテンツはこれだけでは判定不可)
@@ -598,12 +599,12 @@ public class VodProgramMetaFullData implements Serializable {
             this.mEpititle = mEpititle;
         }
 
-        public String getmDisp_typ() {
-            return mDisp_typ;
+        public String getmDisp_type() {
+            return mDisp_type;
         }
 
-        public void setmDisp_typ(String mDisp_typ) {
-            this.mDisp_typ = mDisp_typ;
+        public void setmDisp_type(String mDisp_typ) {
+            this.mDisp_type = mDisp_typ;
         }
 
         public String getmChsvod() {
@@ -658,7 +659,7 @@ public class VodProgramMetaFullData implements Serializable {
         private String mCrid;           // ライセンスIDのCRID
         private String mTitle;          // ライセンスIDのタイトル
         private String mEpititle;       // ライセンスIDのエピソードタイトル
-        private String mDisp_typ;       // 表示タイプ
+        private String mDisp_type;      // 表示タイプ
         private String mChsvod;         // CHSVOD
         private String mPrice;          // ライセンス価格
         private String mQunit;          // ライセンス購入単位の期間(3日の3)
@@ -740,9 +741,9 @@ public class VodProgramMetaFullData implements Serializable {
                         // 表示タイプ
                         mPu_end_date = StringUtil.changeString2Long(data);
                         break;
-                    case JsonContents.META_RESPONSE_TYPE:
+                    case JsonContents.META_RESPONSE_DISP_TYPE:
                         // 表示タイプ
-                        mDisp_typ = (String) data;
+                        mDisp_type = (String) data;
                         break;
                     default:
                         //何もしない
@@ -961,7 +962,7 @@ public class VodProgramMetaFullData implements Serializable {
                     break;
                 case JsonContents.META_RESPONSE_DUR:
                     // 尺長
-                    mDur = (String) data;
+                    mDur = StringUtil.changeString2Int(data);
                     break;
                 case JsonContents.META_RESPONSE_DEMONG:
                     // デモフラグ
@@ -973,7 +974,7 @@ public class VodProgramMetaFullData implements Serializable {
                     break;
                 case JsonContents.META_RESPONSE_4KFLG:
                     // ４Kフラグ
-                    m4kflg = (String) data;
+                    m4kflg = StringUtil.changeString2Int(data);
                     break;
                 case JsonContents.META_RESPONSE_HDRFLG:
                     // HDRフラグ
@@ -989,7 +990,7 @@ public class VodProgramMetaFullData implements Serializable {
                     break;
                 case JsonContents.META_RESPONSE_ADULT:
                     // アダルトフラグ
-                    mAdult = (String) data;
+                    mAdult = StringUtil.changeString2Int(data);
                     break;
                 case JsonContents.META_RESPONSE_GENRE_ARRAY:
                     // ジャンル情報
@@ -1029,7 +1030,7 @@ public class VodProgramMetaFullData implements Serializable {
                     break;
                 case JsonContents.META_RESPONSE_RATING:
                     // レーティング値
-                    mRating = (String) data;
+                    mRating = DBUtils.getDecimal(data);
                     break;
                 case JsonContents.META_RESPONSE_DTV:
                     // dTVフラグ
