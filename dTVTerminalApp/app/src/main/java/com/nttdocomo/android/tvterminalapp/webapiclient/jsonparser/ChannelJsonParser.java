@@ -43,17 +43,17 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
             JsonContents.META_RESPONSE_DEMONG, JsonContents.META_RESPONSE_4KFLG,
             JsonContents.META_RESPONSE_AVAIL_STATUS,JsonContents.META_RESPONSE_DELIVERY,
             JsonContents.META_RESPONSE_R_VALUE, JsonContents.META_RESPONSE_ADULT,
-            JsonContents.META_RESPONSE_NG_FUNC, JsonContents.META_RESPONSE_GENRE_ARAY,
+            JsonContents.META_RESPONSE_NG_FUNC, JsonContents.META_RESPONSE_GENRE_ARRAY,
             JsonContents.META_RESPONSE_SYNOP, JsonContents.META_RESPONSE_CHSVOD,
             JsonContents.META_RESPONSE_PUID, JsonContents.META_RESPONSE_SUB_PUID,
             JsonContents.META_RESPONSE_PRICE, JsonContents.META_RESPONSE_QRANGE,
-            JsonContents.META_RESPONSE_GUNIT,JsonContents.META_RESPONSE_PU_START_DATE,
+            JsonContents.META_RESPONSE_QUNIT,JsonContents.META_RESPONSE_PU_START_DATE,
             JsonContents.META_RESPONSE_PU_END_DATE, JsonContents.META_RESPONSE_CHPACK};
     public static final String[] chpackList = {JsonContents.META_RESPONSE_CRID,
             JsonContents.META_RESPONSE_TITLE, JsonContents.META_RESPONSE_DISP_TYPE,
             JsonContents.META_RESPONSE_PUID, JsonContents.META_RESPONSE_SUB_PUID,
             JsonContents.META_RESPONSE_PRICE, JsonContents.META_RESPONSE_QRANGE,
-            JsonContents.META_RESPONSE_GUNIT, JsonContents.META_RESPONSE_PU_START_DATE,
+            JsonContents.META_RESPONSE_QUNIT, JsonContents.META_RESPONSE_PU_START_DATE,
             JsonContents.META_RESPONSE_PU_END_DATE};
 
     /**
@@ -168,7 +168,7 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
 
                     for (int j = 0; j < listPara.length; j++) {
                         if (!jsonObject.isNull(listPara[j])) {
-                            if (listPara[j].equals(JsonContents.META_RESPONSE_GENRE_ARAY)) {
+                            if (listPara[j].equals(JsonContents.META_RESPONSE_GENRE_ARRAY)) {
                                 JSONArray para = jsonObject.getJSONArray(listPara[j]);
                                 vcListMap.put(listPara[j], para.toString());
                             } else if (listPara[j].equals(JsonContents.META_RESPONSE_CHPACK)) {
