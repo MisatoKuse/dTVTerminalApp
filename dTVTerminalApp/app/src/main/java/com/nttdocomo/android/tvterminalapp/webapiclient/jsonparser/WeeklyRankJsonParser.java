@@ -8,7 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WeeklyRankList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WeeklyRankWebClient;
 
@@ -27,48 +27,54 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
     // オブジェクトクラスの定義
     private WeeklyRankList mWeeklyRankList;
 
-    // コミット時に警告が出るが、対外的なパラメータなので対応はしない
-    public static final String WEEKLYRANK_LIST_STATUS = "status";
-
-    public static final String WEEKLYRANK_LIST_PAGER = "pager";
-    public static final String WEEKLYRANK_LIST_PAGER_LIMIT = "limit";
-    public static final String WEEKLYRANK_LIST_PAGER_OFFSET = "offset";
-    public static final String WEEKLYRANK_LIST_PAGER_COUNT = "count";
-    public static final String WEEKLYRANK_LIST_PAGER_TOTAL = "total";
-
-    public static final String WEEKLYRANK_LIST = "list";
-    public static final String WEEKLYRANK_LIST_CRID = "crid";
-    public static final String WEEKLYRANK_LIST_TITLE = "title";
-    public static final String WEEKLYRANK_LIST_CID = "cid";
-    public static final String WEEKLYRANK_LIST_SERVICE_ID = "service_id";
-    public static final String WEEKLYRANK_LIST_EVENT_ID = "event_id";
-    public static final String WEEKLYRANK_LIST_CHNO = "chno";
-    public static final String WEEKLYRANK_LIST_DISP_TYPE = "disp_type";
-    public static final String WEEKLYRANK_LIST_MISSED_VOD = "missed_vod";
-    public static final String WEEKLYRANK_LIST_LINEAR_START_DATE = "linear_start_date";
-    public static final String WEEKLYRANK_LIST_LINEAR_START_END = "linear_start_end";
-    public static final String WEEKLYRANK_LIST_VOD_START_DATE = "vod_start_date";
-    public static final String WEEKLYRANK_LIST_VOD_END_DATE = "vod_end_date";
-    public static final String WEEKLYRANK_LIST_THUMB = "thumb";
-    public static final String WEEKLYRANK_LIST_COPYRIGHT = "copyright";
-    public static final String WEEKLYRANK_LIST_DUR = "dur";
-    public static final String WEEKLYRANK_LIST_DEMONG = "demong";
-    public static final String WEEKLYRANK_LIST_AVAII_STATUS = "avail_status";
-    public static final String WEEKLYRANK_LIST_DELIVERY = "delivery";
-    public static final String WEEKLYRANK_LIST_R_VALUE = "r_value";
+    public static final String UNDER_LINE = "_";
 
     // **FindBugs** Bad practice FindBugは、"pagerPara"と"listPara"はpublicを外せと言うが、対外的なパラメータなので、対応は行わない。
-    public static final String[] pagerPara = {WEEKLYRANK_LIST_PAGER_LIMIT, WEEKLYRANK_LIST_PAGER_OFFSET,
-            WEEKLYRANK_LIST_PAGER_COUNT, WEEKLYRANK_LIST_PAGER_TOTAL};
+    public static final String[] pagerPara = {JsonContents.META_RESPONSE_PAGER_LIMIT, JsonContents.META_RESPONSE_OFFSET,
+            JsonContents.META_RESPONSE_COUNT, JsonContents.META_RESPONSE_TOTAL};
 
-    public static final String[] listPara = {WEEKLYRANK_LIST_CRID, WEEKLYRANK_LIST_TITLE, WEEKLYRANK_LIST_CID,
-            WEEKLYRANK_LIST_SERVICE_ID, WEEKLYRANK_LIST_EVENT_ID, WEEKLYRANK_LIST_CHNO, WEEKLYRANK_LIST_DISP_TYPE,
-            WEEKLYRANK_LIST_MISSED_VOD, WEEKLYRANK_LIST_LINEAR_START_DATE, WEEKLYRANK_LIST_LINEAR_START_END,
-            WEEKLYRANK_LIST_VOD_START_DATE, WEEKLYRANK_LIST_VOD_END_DATE, WEEKLYRANK_LIST_THUMB,
-            WEEKLYRANK_LIST_COPYRIGHT, WEEKLYRANK_LIST_DUR, WEEKLYRANK_LIST_DEMONG,
-            WEEKLYRANK_LIST_AVAII_STATUS, WEEKLYRANK_LIST_DELIVERY, WEEKLYRANK_LIST_R_VALUE};
+    public static final String[] listPara = {JsonContents.META_RESPONSE_CRID,
+            JsonContents.META_RESPONSE_CID, JsonContents.META_RESPONSE_TITLE_ID,
+            JsonContents.META_RESPONSE_EPISODE_ID, JsonContents.META_RESPONSE_TITLE,
+            JsonContents.META_RESPONSE_EPITITLE, JsonContents.META_RESPONSE_TITLERUBY,
+            JsonContents.META_RESPONSE_DISP_TYPE, JsonContents.META_RESPONSE_DISPLAY_START_DATE,
+            JsonContents.META_RESPONSE_DISPLAY_END_DATE, JsonContents.META_RESPONSE_AVAIL_START_DATE,
+            JsonContents.META_RESPONSE_AVAIL_END_DATE, JsonContents.META_RESPONSE_PUBLISH_START_DATE,
+            JsonContents.META_RESPONSE_PUBLISH_END_DATE, JsonContents.META_RESPONSE_NEWA_START_DATE,
+            JsonContents.META_RESPONSE_NEWA_END_DATE, JsonContents.META_RESPONSE_THUMB_640,
+            JsonContents.META_RESPONSE_THUMB_448, JsonContents.META_RESPONSE_DTV_THUMB_640,
+            JsonContents.META_RESPONSE_DTV_THUMB_448, JsonContents.META_RESPONSE_COPYRIGHT,
+            JsonContents.META_RESPONSE_DUR, JsonContents.META_RESPONSE_DEMONG,
+            JsonContents.META_RESPONSE_BVFLG, JsonContents.META_RESPONSE_4KFLG,
+            JsonContents.META_RESPONSE_HDRFLG, JsonContents.META_RESPONSE_DELIVERY,
+            JsonContents.META_RESPONSE_R_VALUE, JsonContents.META_RESPONSE_ADULT,
+            JsonContents.META_RESPONSE_GENRE_ARRAY, JsonContents.META_RESPONSE_SYNOP,
+            JsonContents.META_RESPONSE_SYNOP_SHORT, JsonContents.META_RESPONSE_PUID,
+            JsonContents.META_RESPONSE_PRICE, JsonContents.META_RESPONSE_QRANGE,
+            JsonContents.META_RESPONSE_QUNIT, JsonContents.META_RESPONSE_PU_START_DATE,
+            JsonContents.META_RESPONSE_PU_END_DATE, JsonContents.META_RESPONSE_CREDIT_ARRAY,
+            JsonContents.META_RESPONSE_RATING, JsonContents.META_RESPONSE_DTV,
+            JsonContents.META_RESPONSE_CHSVOD, JsonContents.META_RESPONSE_SEARCH_OK,
+            JsonContents.META_RESPONSE_LIINF_ARRAY, JsonContents.META_RESPONSE_PUINF,
+            JsonContents.META_RESPONSE_CAPL, JsonContents.META_RESPONSE_BILINGAL,
+            JsonContents.META_RESPONSE_TV_CID, JsonContents.META_RESPONSE_SERVICE_ID,
+            JsonContents.META_RESPONSE_EVENT_ID, JsonContents.META_RESPONSE_CHNO,
+            JsonContents.META_RESPONSE_TV_SERVICE, JsonContents.META_RESPONSE_CONTENT_TYPE,
+            JsonContents.META_RESPONSE_VOD_START_DATE, JsonContents.META_RESPONSE_VOD_END_DATE,
+            JsonContents.META_RESPONSE_MAIN_GENRE, JsonContents.META_RESPONSE_SECOND_GENRE_ARRAY,
+            JsonContents.META_RESPONSE_COPY, JsonContents.META_RESPONSE_ADINFO_ARRAY,
+            JsonContents.META_RESPONSE_RELATIONAL_ID_ARRAY};
 
-    /** 拡張情報 **/
+    public static final String[] puinfPara = {JsonContents.META_RESPONSE_PUID,
+            JsonContents.META_RESPONSE_CRID, JsonContents.META_RESPONSE_TITLE,
+            JsonContents.META_RESPONSE_EPITITLE, JsonContents.META_RESPONSE_DISP_TYPE,
+            JsonContents.META_RESPONSE_CHSVOD, JsonContents.META_RESPONSE_PRICE,
+            JsonContents.META_RESPONSE_QUNIT, JsonContents.META_RESPONSE_QRANGE,
+            JsonContents.META_RESPONSE_PU_START_DATE, JsonContents.META_RESPONSE_PU_END_DATE};
+
+    /**
+     * 拡張情報
+     **/
     Bundle mExtraData = null;
 
     /**
@@ -82,11 +88,12 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
 
     /**
      * 拡張情報付きコンストラクタ
+     *
      * @param mWeeklyRankJsonParserCallback コールバック用
-     * @param extraDataSrc 拡張情報
+     * @param extraDataSrc                  拡張情報
      */
     public WeeklyRankJsonParser(WeeklyRankWebClient.WeeklyRankJsonParserCallback
-                                        mWeeklyRankJsonParserCallback,Bundle extraDataSrc) {
+                                        mWeeklyRankJsonParserCallback, Bundle extraDataSrc) {
         this.mWeeklyRankJsonParserCallback = mWeeklyRankJsonParserCallback;
 
         //拡張情報の追加
@@ -94,11 +101,11 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     @Override
-    protected void onPostExecute(Object s) {
+    protected void onPostExecute(Object object) {
         //拡張情報が存在すれば、入れ込む
-        List<WeeklyRankList> rankLists = (List<WeeklyRankList>) s;
-        if(mExtraData != null) {
-            for(WeeklyRankList rankList : rankLists) {
+        List<WeeklyRankList> rankLists = (List<WeeklyRankList>) object;
+        if (mExtraData != null) {
+            for (WeeklyRankList rankList : rankLists) {
                 rankList.setExtraData(mExtraData);
             }
         }
@@ -126,15 +133,13 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
         try {
             JSONObject jsonObj = new JSONObject(jsonStr);
             // **FindBugs** Bad practice FindBugはこのヌルチェックが無用と警告するが、将来的にcatch (Exception e)は消すはずなので残す
-            if (jsonObj != null) {
-                sendStatus(jsonObj);
-                if (!jsonObj.isNull(WEEKLYRANK_LIST)) {
-                    JSONArray arrayLlist = jsonObj.getJSONArray(WEEKLYRANK_LIST);
-                    senWrcList(arrayLlist);
-                }
-                List<WeeklyRankList> wrList = Arrays.asList(mWeeklyRankList);
-                return wrList;
+            sendStatus(jsonObj);
+            if (!jsonObj.isNull(JsonContents.META_RESPONSE_LIST)) {
+                JSONArray arrayList = jsonObj.getJSONArray(JsonContents.META_RESPONSE_LIST);
+                senWrcList(arrayList);
             }
+            List<WeeklyRankList> wrList = Arrays.asList(mWeeklyRankList);
+            return wrList;
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             DTVTLogger.debug(e);
@@ -154,13 +159,13 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
         try {
             // statusの値を取得し、Mapに格納
             HashMap<String, String> map = new HashMap<>();
-            if (!jsonObj.isNull(WEEKLYRANK_LIST_STATUS)) {
-                String status = jsonObj.getString(WEEKLYRANK_LIST_STATUS);
-                map.put(WEEKLYRANK_LIST_STATUS, status);
+            if (!jsonObj.isNull(JsonContents.META_RESPONSE_STATUS)) {
+                String status = jsonObj.getString(JsonContents.META_RESPONSE_STATUS);
+                map.put(JsonContents.META_RESPONSE_STATUS, status);
             }
 
-            if (!jsonObj.isNull(WEEKLYRANK_LIST_PAGER)) {
-                JSONObject pager = jsonObj.getJSONObject(WEEKLYRANK_LIST_PAGER);
+            if (!jsonObj.isNull(JsonContents.META_RESPONSE_PAGER)) {
+                JSONObject pager = jsonObj.getJSONObject(JsonContents.META_RESPONSE_PAGER);
 
                 for (String pagerBuffer : pagerPara) {
                     if (!pager.isNull(pagerBuffer)) {
@@ -190,14 +195,21 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
     private void senWrcList(JSONArray arrayList) {
         try {
             List<HashMap<String, String>> wrList = new ArrayList<>();
-
             for (int i = 0; i < arrayList.length(); i++) {
                 HashMap<String, String> wrListMap = new HashMap<>();
                 JSONObject jsonObject = arrayList.getJSONObject(i);
                 for (String listBuffer : listPara) {
                     if (!jsonObject.isNull(listBuffer)) {
-                        String para = jsonObject.getString(listBuffer);
-                        wrListMap.put(listBuffer, para);
+                        if (listBuffer.equals(JsonContents.META_RESPONSE_PUINF)) {
+                            JSONObject puinfObj = jsonObject.getJSONObject(JsonContents.META_RESPONSE_PUINF);
+                            for (String puinfBuffer : puinfPara) {
+                                String para = puinfObj.getString(puinfBuffer);
+                                wrListMap.put(JsonContents.META_RESPONSE_PUINF + UNDER_LINE + puinfBuffer, para);
+                            }
+                        } else {
+                            String para = jsonObject.getString(listBuffer);
+                            wrListMap.put(listBuffer, para);
+                        }
                     }
                 }
                 wrList.add(wrListMap);
