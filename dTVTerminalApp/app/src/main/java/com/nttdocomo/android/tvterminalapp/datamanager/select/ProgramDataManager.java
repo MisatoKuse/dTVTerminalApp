@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.datamanager.select;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ChannelListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvScheduleListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
@@ -15,12 +16,6 @@ import com.nttdocomo.android.tvterminalapp.datamanager.insert.DataBaseManager;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_AVAIL_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_AVAIL_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_CHNO;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_DISP_TYPE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_THUMB;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_TITLE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_CHNO;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_LINEAR_END_DATE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_LINEAR_START_DATE;
@@ -48,9 +43,9 @@ public class ProgramDataManager {
      */
     public List<Map<String, String>> selectChannelListProgramData(String displayType) {
         //ホーム画面に必要な列を列挙する
-        String[] columns = {CHANNEL_LIST_CHNO, CHANNEL_LIST_THUMB, CHANNEL_LIST_TITLE,
-                CHANNEL_LIST_AVAIL_START_DATE, CHANNEL_LIST_AVAIL_END_DATE,
-                CHANNEL_LIST_DISP_TYPE};
+        String[] columns = {JsonContents.META_RESPONSE_CHNO, JsonContents.META_RESPONSE_DEFAULT_THUMB, JsonContents.META_RESPONSE_TITLE,
+                JsonContents.META_RESPONSE_AVAIL_START_DATE, JsonContents.META_RESPONSE_AVAIL_END_DATE,
+                JsonContents.META_RESPONSE_DISP_TYPE};
 
         //Daoクラス使用準備
         DBHelper channelListDBHelper = new DBHelper(mContext);

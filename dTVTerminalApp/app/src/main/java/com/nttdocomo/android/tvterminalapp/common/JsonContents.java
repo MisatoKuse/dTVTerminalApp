@@ -135,6 +135,8 @@ public class JsonContents {
     public static final String META_RESPONSE_AVAIL_START_DATE = "avail_start_date";
     // 有効期限日時
     public static final String META_RESPONSE_AVAIL_END_DATE = "avail_end_date";
+    // サムネイル(
+    public static final String META_RESPONSE_DEFAULT_THUMB = "thumb";
     // サムネイル（640＊360）
     public static final String META_RESPONSE_THUMB_640 = "thumb_640_360";
     // サムネイル（448＊252）
@@ -147,12 +149,16 @@ public class JsonContents {
     public static final String META_RESPONSE_DEMONG = "demong";
     // 4Kフラグ
     public static final String META_RESPONSE_4KFLG = "4kflg";
+    // 配信ステータス(チャンネルメタレスポンス)
+    public static final String META_RESPONSE_AVAIL_STATUS = "avail_status";
     // 配信ステータス
     public static final String META_RESPONSE_DELIVERY = "delivery";
     // パレンタル情報
     public static final String META_RESPONSE_R_VALUE = "r_value";
     // アダルトフラグ
     public static final String META_RESPONSE_ADULT = "adult";
+    // NGファンク
+    public static final String META_RESPONSE_NG_FUNC = "ng_func";
     // ジャンル（ARIB）
     public static final String META_RESPONSE_GENRE_ARAY = "genre_array";
     // あらすじ（long）

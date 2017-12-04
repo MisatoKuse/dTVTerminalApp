@@ -4,37 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.datamanager.databese;
 
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_CRID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_CID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_SERVER_ID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_CHNO;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_TITLE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_TITLERUBY;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_DISP_TYPE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_SERVICE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_CH_TYPE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_AVAIL_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_AVAIL_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_THUMB;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_DEMONG;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_4KFLG;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_AVAIL_STATUS;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_DELIVERY;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_R_VALUE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_ADULT;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_NG_FUNC;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_GENRE_ARRAY;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_SYNOP;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_STAMP;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_CHSVOD;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_PUID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_SUB_PUID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_PRICE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_QRANGE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_QUINT;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_PU_S;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_PU_E;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_CHPACK;
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.UNDER_LINE;
 
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_ADULT;
@@ -336,46 +307,44 @@ public class DBConstants {
     public static final String CREATE_TABLE_CHANNEL_SQL = "" +
             "create table " + CHANNEL_LIST_TABLE_NAME + " (" +
             ID_COLUMN + " integer primary key autoincrement, " +
-            CHANNEL_LIST_CRID  + " text, " +
-            CHANNEL_LIST_CID  + " text, " +
-            CHANNEL_LIST_SERVER_ID  + " text, " +
-            CHANNEL_LIST_CHNO  + " text, " +
-            CHANNEL_LIST_TITLE + " text, " +
-            CHANNEL_LIST_TITLERUBY   + " text, " +
-            CHANNEL_LIST_DISP_TYPE  + " text, " +
-            CHANNEL_LIST_SERVICE  + " text, " +
-            CHANNEL_LIST_CH_TYPE  + " text, " +
-            CHANNEL_LIST_AVAIL_START_DATE  + " text, " +
-            CHANNEL_LIST_AVAIL_END_DATE  + " text, " +
-            CHANNEL_LIST_THUMB  + " text, " +
-            CHANNEL_LIST_DEMONG  + " text, " +
+            JsonContents.META_RESPONSE_CRID + " text, " +
+            JsonContents.META_RESPONSE_SERVICE_ID  + " text, " +
+            JsonContents.META_RESPONSE_CHNO  + " text, " +
+            JsonContents.META_RESPONSE_TITLE + " text, " +
+            JsonContents.META_RESPONSE_TITLERUBY   + " text, " +
+            JsonContents.META_RESPONSE_DISP_TYPE  + " text, " +
+            JsonContents.META_RESPONSE_SERVICE  + " text, " +
+            JsonContents.META_RESPONSE_CH_TYPE  + " text, " +
+            JsonContents.META_RESPONSE_AVAIL_START_DATE  + " text, " +
+            JsonContents.META_RESPONSE_AVAIL_END_DATE  + " text, " +
+            JsonContents.META_RESPONSE_DEFAULT_THUMB  + " text, " +
+            JsonContents.META_RESPONSE_DEMONG  + " text, " +
             UNDER_BAR_FOUR_K_FLG  + " text, " +
-            CHANNEL_LIST_AVAIL_STATUS  + " text, " +
-            CHANNEL_LIST_DELIVERY  + " text, " +
-            CHANNEL_LIST_R_VALUE  + " text, " +
-            CHANNEL_LIST_ADULT  + " text, " +
-            CHANNEL_LIST_NG_FUNC  + " text, " +
-            CHANNEL_LIST_GENRE_ARRAY  + " text, " +
-            CHANNEL_LIST_SYNOP  + " text, " +
-            CHANNEL_LIST_STAMP  + " text, " +
-            CHANNEL_LIST_CHSVOD  + " text, " +
-            CHANNEL_LIST_PUID  + " text, " +
-            CHANNEL_LIST_SUB_PUID  + " text, " +
-            CHANNEL_LIST_PRICE  + " text, " +
-            CHANNEL_LIST_QRANGE  + " text, " +
-            CHANNEL_LIST_QUINT  + " text, " +
-            CHANNEL_LIST_PU_S  + " text, " +
-            CHANNEL_LIST_PU_E  + " text, " +
-            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_CRID + " text, " +
-            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_TITLE +" text, " +
-            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_DISP_TYPE +" text, " +
-            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_PUID +" text, " +
-            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_SUB_PUID +" text, " +
-            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_PRICE +" text, " +
-            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_QRANGE +" text, " +
-            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_QUINT +" text, " +
-            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_PU_S +" text, " +
-            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_PU_E +" text, " +
+            JsonContents.META_RESPONSE_AVAIL_STATUS  + " text, " +
+            JsonContents.META_RESPONSE_DELIVERY  + " text, " +
+            JsonContents.META_RESPONSE_R_VALUE  + " text, " +
+            JsonContents.META_RESPONSE_ADULT  + " text, " +
+            JsonContents.META_RESPONSE_NG_FUNC  + " text, " +
+            JsonContents.META_RESPONSE_GENRE_ARAY  + " text, " +
+            JsonContents.META_RESPONSE_SYNOP  + " text, " +
+            JsonContents.META_RESPONSE_CHSVOD  + " text, " +
+            JsonContents.META_RESPONSE_PUID  + " text, " +
+            JsonContents.META_RESPONSE_SUB_PUID  + " text, " +
+            JsonContents.META_RESPONSE_PRICE  + " text, " +
+            JsonContents.META_RESPONSE_QRANGE  + " text, " +
+            JsonContents.META_RESPONSE_GUNIT  + " text, " +
+            JsonContents.META_RESPONSE_PU_START_DATE  + " text, " +
+            JsonContents.META_RESPONSE_PU_END_DATE  + " text, " +
+            JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
+            JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_TITLE +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_DISP_TYPE +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_PUID +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_SUB_PUID +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_PRICE +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_QRANGE +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_GUNIT +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_PU_START_DATE +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_PU_END_DATE +" text, " +
             DATE_TYPE + " text, " +
             UPDATE_DATE + " text " +
             ")";

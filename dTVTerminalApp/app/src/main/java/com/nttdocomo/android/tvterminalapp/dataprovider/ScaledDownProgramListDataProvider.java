@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.text.TextUtils;
 
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.TvScheduleInsertDataManager;
@@ -31,8 +32,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_CHNO;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_TITLE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_TITLE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_CHNO;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_THUMB;
@@ -90,8 +89,8 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                     ArrayList<Channel> channels = new ArrayList<>();
                     for (int i = 0; i < resultSet.size(); i++) {
                         Map<String, String> hashMap = resultSet.get(i);
-                        String chNo = hashMap.get(CHANNEL_LIST_CHNO);
-                        String title = hashMap.get(CHANNEL_LIST_TITLE);
+                        String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
+                        String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
                         if (!TextUtils.isEmpty(chNo)) {
                             Channel channel = new Channel();
                             channel.setChNo(Integer.parseInt(chNo));
@@ -305,8 +304,8 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
     private void setChannelData(ArrayList<Channel> channels, List<HashMap<String, String>> channelList) {
         for (int i = 0; i < channelList.size(); i++) {
             HashMap<String, String> hashMap = channelList.get(i);
-            String chNo = hashMap.get(CHANNEL_LIST_CHNO);
-            String title = hashMap.get(CHANNEL_LIST_TITLE);
+            String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
+            String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
             if (!TextUtils.isEmpty(chNo)) {
                 Channel channel = new Channel();
                 channel.setTitle(title);
