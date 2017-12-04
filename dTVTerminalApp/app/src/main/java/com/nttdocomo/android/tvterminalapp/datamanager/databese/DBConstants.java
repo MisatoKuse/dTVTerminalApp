@@ -327,14 +327,14 @@ public class DBConstants {
             JsonContents.META_RESPONSE_R_VALUE  + " text, " +
             JsonContents.META_RESPONSE_ADULT  + " text, " +
             JsonContents.META_RESPONSE_NG_FUNC  + " text, " +
-            JsonContents.META_RESPONSE_GENRE_ARAY  + " text, " +
+            JsonContents.META_RESPONSE_GENRE_ARRAY  + " text, " +
             JsonContents.META_RESPONSE_SYNOP  + " text, " +
             JsonContents.META_RESPONSE_CHSVOD  + " text, " +
             JsonContents.META_RESPONSE_PUID  + " text, " +
             JsonContents.META_RESPONSE_SUB_PUID  + " text, " +
             JsonContents.META_RESPONSE_PRICE  + " text, " +
             JsonContents.META_RESPONSE_QRANGE  + " text, " +
-            JsonContents.META_RESPONSE_GUNIT  + " text, " +
+            JsonContents.META_RESPONSE_QUNIT  + " text, " +
             JsonContents.META_RESPONSE_PU_START_DATE  + " text, " +
             JsonContents.META_RESPONSE_PU_END_DATE  + " text, " +
             JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
@@ -344,7 +344,7 @@ public class DBConstants {
             JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_SUB_PUID +" text, " +
             JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_PRICE +" text, " +
             JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_QRANGE +" text, " +
-            JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_GUNIT +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_QUNIT +" text, " +
             JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_PU_START_DATE +" text, " +
             JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_PU_END_DATE +" text, " +
             DATE_TYPE + " text, " +
