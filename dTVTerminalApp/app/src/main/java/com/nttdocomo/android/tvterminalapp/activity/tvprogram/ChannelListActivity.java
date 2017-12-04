@@ -79,6 +79,8 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
                 setTab(position);
             }
         });
+        enableGlobalMenuIcon(true);
+        enableStbStatusIcon(true);
     }
 
     private void initChannelListTab(HorizontalScrollView channelList) {
@@ -144,7 +146,7 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void onClick(View view) {
-
+        super.onClick(view);
     }
 
     /*チャンネルリストアダプター*/

@@ -28,6 +28,23 @@ public class DlnaProvDevList {
         di.setDlnaDevListListener(null);
     }
 
+    /**
+     * 機能：指定するudnのdmsが存在しるか
+     * @param udn udn
+     * @return 存在しるか
+     */
+    public boolean isDmsAvailable(String udn) {
+        DlnaInterface di = DlnaInterface.getInstance();
+        if (null == di) {
+            return false;
+        }
+        return di.isDmsAvailable(udn);
+    }
+
+    /**
+     * 機能：カレントDMSInfoを戻す
+     * @return カレントDMSInfo
+     */
     public DlnaDMSInfo getDlnaDMSInfo() {
         DlnaInterface di = DlnaInterface.getInstance();
         if (null == di) {
