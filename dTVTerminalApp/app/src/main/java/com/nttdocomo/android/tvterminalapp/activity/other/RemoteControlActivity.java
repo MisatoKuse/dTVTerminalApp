@@ -11,10 +11,10 @@ import android.widget.Button;
 import com.nttdocomo.android.tvterminalapp.R;
 
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.dataprovider.RemoteControlDataProvider;
+import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 
 public class RemoteControlActivity extends BaseActivity {
-    private RemoteControlDataProvider mRemoteControlDataProvider;
+    private RemoteControlRelayClient mRemoteControlRelayClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +35,7 @@ public class RemoteControlActivity extends BaseActivity {
         setButtonOnClickListener((Button)findViewById(R.id.keycode_channel_up));
         setButtonOnClickListener((Button)findViewById(R.id.keycode_channel_down));
 
-        mRemoteControlDataProvider = new RemoteControlDataProvider(this);
+        mRemoteControlRelayClient = new RemoteControlRelayClient(this);
 
     }
 
@@ -44,7 +44,7 @@ public class RemoteControlActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 // Code here executes on main thread after user presses button
-                mRemoteControlDataProvider.sendKeycode(v.getId());
+                mRemoteControlRelayClient.sendKeycode(v.getId());
             }
         });
     }

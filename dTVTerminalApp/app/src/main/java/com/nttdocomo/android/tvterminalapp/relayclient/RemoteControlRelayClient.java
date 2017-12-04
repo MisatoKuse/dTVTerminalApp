@@ -2,7 +2,7 @@
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-package com.nttdocomo.android.tvterminalapp.dataprovider;
+package com.nttdocomo.android.tvterminalapp.relayclient;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * キーコードをSTBへ送信する
  */
-public class RemoteControlDataProvider {
+public class RemoteControlRelayClient {
 
     static final int SERVER_PORT = 3000;    // udp 受信ポート
     static final int KEYCODE_UNKNOWN = 0;
@@ -61,14 +61,14 @@ public class RemoteControlDataProvider {
     private InetSocketAddress mRemoteAddress = null;
     private Context mContext;
     private String mKeycodeName;
-    private String ｍRemoteHost = "192.168.11.30";
+    private String ｍRemoteHost = "192.168.11.32";
 //    private String ｍRemoteHost = "127.0.0.1";
 
     /**
      * データプロバイダ初期化
      * @param context
      */
-    public RemoteControlDataProvider(Context context) {
+    public RemoteControlRelayClient(Context context) {
         mRemoteAddress = new InetSocketAddress(ｍRemoteHost, SERVER_PORT);
         mContext = context;
     }
