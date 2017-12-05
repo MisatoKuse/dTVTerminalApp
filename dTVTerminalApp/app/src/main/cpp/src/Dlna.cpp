@@ -15,7 +15,7 @@
 
 namespace dtvt {
 
-    Dlna::Dlna(): mDlnaDevXmlParser(NULL), mDlnaRecVideoXmlParser(NULL) {
+    Dlna::Dlna(): mDlnaDevXmlParser(NULL), mDlnaRecVideoXmlParser(NULL), mRecursionXmlParser(NULL){
         mDMP.upnp._impl = NULL;
     }
 
@@ -25,7 +25,7 @@ namespace dtvt {
         bool ok = (true == isInitOk);
         mDlnaDevXmlParser = (DlnaXmlParserBase*)new DlnaDevXmlParser();
         IfNullGoTo(mDlnaDevXmlParser, error_1);
-        mDlnaRecVideoXmlParser = (DlnaXmlParserBase*)new DlnaRecVideoXmlParser();;
+        mDlnaRecVideoXmlParser = (DlnaXmlParserBase*)new DlnaRecVideoXmlParser();
         IfNullGoTo(mDlnaRecVideoXmlParser, error_2);
         return ok;
 
@@ -46,6 +46,7 @@ namespace dtvt {
 
         DelIfNotNull(mDlnaDevXmlParser);
         DelIfNotNull(mDlnaRecVideoXmlParser);
+        DelIfNotNull(mRecursionXmlParser);
     }
 
     bool Dlna::start(JNIEnv *env, jobject obj) {
@@ -358,10 +359,11 @@ namespace dtvt {
         if (NULL == arg) {
             return;
         }
-        DlnaRecVideoXmlParser* parser=NULL;
+        //DlnaRecVideoXmlParser* parser=NULL;
+        DlnaXmlParserBase* parser=NULL;
         Dlna *thiz = (Dlna *) arg;
         IfNullReturn(thiz);
-        IfNullReturn(thiz->mDlnaRecVideoXmlParser);
+        IfNullReturn(thiz->mRecursionXmlParser);
 
         std::vector<std::vector<std::string> > vv;
         dmp *d = &thiz->mDMP;
@@ -374,20 +376,24 @@ namespace dtvt {
             goto error;
         }
 
-        parser = (DlnaRecVideoXmlParser*)thiz->mDlnaRecVideoXmlParser;
-        parser->parseXml((void *) response, vv, containerId, isContainerId);
+        //parser = (DlnaRecVideoXmlParser*)thiz->mDlnaRecVideoXmlParser;
+        //parser->parseXml((void *) response, vv, containerId, isContainerId);
+        parser = thiz->mRecursionXmlParser;
+        parser->parse((void *) response, vv, containerId, isContainerId);
         if(containerId.length() != 0){
             thiz->sendSoap((char*)response->url, containerId);
         } else {
             if(0==vv.size()){
+                du_sync_notify(&d->soap.sync);
                 du_mutex_unlock(&d->soap.mutex);
                 return;
             }
 
             thiz->notifyObject(Dlna::DLNA_MSG_ID_BROWSE_SOAP, vv);
 
-            du_sync_notify(&d->soap.sync);
+            //du_sync_notify(&d->soap.sync);
         }
+        du_sync_notify(&d->soap.sync);
         du_mutex_unlock(&d->soap.mutex);
         return;
 
@@ -729,6 +735,10 @@ namespace dtvt {
     }
 
     bool Dlna::browseDms(std::string controlUrl) {
+        if(NULL==mRecursionXmlParser){
+            mRecursionXmlParser=(DlnaXmlParserBase*)new DlnaRecVideoXmlParser();
+            IfNullReturnFalse(mRecursionXmlParser);
+        }
         return sendSoap(controlUrl, "0");
     }
 

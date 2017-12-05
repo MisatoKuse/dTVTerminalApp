@@ -28,10 +28,10 @@ public class DlnaInterface {
 
     //current dms udn
     private String mCurrentDmsUdn;
-
     private DlnaRecVideoListener mDlnaRecVideoListener;
-
     private boolean mIsDlnaRunning = false;
+    private DlnaDevListListener mDlnaDevListListener = null;
+    private long mNativeDlna = 0;
 
     /**
      * 機能：デフォールト構造を禁止
@@ -48,51 +48,14 @@ public class DlnaInterface {
         return sDlnaInterface;
     }
 
-//下記のListenerは将来使う可能ですので、一時保留している。
-//    public interface DlnaListener{
-//        /**
-//         * 機能：Listenerに、録画一覧情報が届く時、コールされる
-//         * @param content content
-//         */
-//        void onVideoBrows(String content);
-//
-//        /**
-//         * 機能：Listenerに、新しいDms情報が届く時、コールされる
-//         * @param curInfo カレントDlnaDMSInfo
-//         * @param newItem 新しいDms情報
-//         */
-//        void onDeviceJoin(DlnaDMSInfo curInfo, DlnaDmsItem newItem);
-//
-//        /**
-//         * 機能：Listenerに、Dmsが消える時、コールされる
-//         * @param curInfo　　　カレントDlnaDMSInfo
-//         * @param leaveDmsUdn　消えるDmsのudn名
-//         */
-//        void onDeviceLeave(DlnaDMSInfo curInfo, String leaveDmsUdn);
-//
-//        /**
-//         * 機能：Listenerに、エラーメセッジを送信
-//         * @param msgId  エラー
-//         * @param msg     エラー情報
-//         */
-//        void onError(int msgId, String msg);
-//
-//        /**
-//         * 機能：各DlnaProviderに、使用しているDmsを戻す
-//         * 　　　この設計の理由は使用しているDms以外のDmsは、ネットワークに加入と消える時、
-//         * 　　　DlnaProviderにイベントを通知しないよう
-//         * 　　　例外はDms一覧用のDlnaProviderである。
-//         * @return 使用しているDmsのudn名
-//         */
-//         String getCurrentDmsUdn();
-//    }
-
+    /**
+     * 機能：指定するudnのdmsが存在しるか
+     * @param udn udn
+     * @return 存在しるか
+     */
     public boolean isDmsAvailable(String udn) {
         return mDMSInfo.exists(udn);
     }
-
-    private DlnaDevListListener mDlnaDevListListener = null;
-    private long mNativeDlna = 0;
 
     /**
      * 機能：DlnaListenerを設定
@@ -105,6 +68,10 @@ public class DlnaInterface {
         }
     }
 
+    /**
+     * 機能：カレントDMSInfoを戻す
+     * @return カレントDMSInfo
+     */
     public DlnaDMSInfo getDlnaDMSInfo() {
         return mDMSInfo;
     }
@@ -144,6 +111,9 @@ public class DlnaInterface {
         }
     }
 
+    /**
+     * 機能：Dlna機能を停止
+     */
     public void stopDlna() {
         synchronized (this) {
             if (!mIsDlnaRunning) {
@@ -153,7 +123,7 @@ public class DlnaInterface {
             nativeStopDlna(mNativeDlna);
             mDMSInfo.clear();
             mNativeDlna = 0;
-            mIsDlnaRunning = false;
+            setDlnaStatus(false);
         }
     }
 
@@ -167,6 +137,11 @@ public class DlnaInterface {
         return browseRecVideoDms(mNativeDlna, ctl);
     }
 
+    /**
+     * 機能：jni c/c++からの通知を処理
+     * @param msg msg
+     * @param content content
+     */
     public void notifyFromNative(int msg, String content) {
         Log.d("", "msg=" + msg + ", content=" + content);
         switch (msg) {
@@ -176,6 +151,11 @@ public class DlnaInterface {
         }
     }
 
+    /**
+     * 機能：jni c/c++からのobj通知を処理
+     * @param msg msg
+     * @param content content
+     */
     public void notifyObjFromNative(int msg, ArrayList<Object> content) {
         Log.d("", "msg=" + msg + ", content=" + content);
         switch (msg) {
@@ -189,6 +169,10 @@ public class DlnaInterface {
         }
     }
 
+    /**
+     * 機能：jni c/c++からの録画情報を処理
+     * @param content content
+     */
     private void onRecVideo(ArrayList<Object> content) {
         if (null != mDlnaRecVideoListener) {
             DlnaRecVideoInfo info = DlnaRecVideoInfo.fromArrayList(content);
@@ -198,6 +182,10 @@ public class DlnaInterface {
         }
     }
 
+    /**
+     * 機能：jni c/c++からの新しいdms加入を処理
+     * @param content content
+     */
     private void onDeviceJoin(ArrayList<Object> content) {
         if (null == content || 0 == content.size()) {
             return;
@@ -211,6 +199,10 @@ public class DlnaInterface {
         }
     }
 
+    /**
+     * 機能：dmsを削除
+     * @param content content to remove
+     */
     private void removeDms(String content) {
         mDMSInfo.remove(content);
         if (null != mDlnaDevListListener) {
@@ -230,20 +222,42 @@ public class DlnaInterface {
         }
     }
 
+    /**
+     * 機能：dlna statusを設定する
+     * @param status　status
+     */
     private synchronized void setDlnaStatus(boolean status) {
         mIsDlnaRunning = status;
     }
 
+    /*
+     * 機能：libをロードする
+     */
     static {
         System.loadLibrary("dtvtlib");
     }
 
-    //jni関数
+    /**
+     * 機能：jni関数
+     * @return c++ dlna object
+     */
     private native long nativeCreateDlnaObject();
 
+    /**
+     * 機能：jni関数
+     * @return 操作結果
+     */
     private native boolean nativeStartDlna(long prt);
 
+    /**
+     * 機能：jni関数
+     * @return 操作結果
+     */
     private native boolean nativeStopDlna(long prt);
 
+    /**
+     * 機能：jni関数
+     * @return 操作結果
+     */
     private native boolean browseRecVideoDms(long prt, String ctl);
 }

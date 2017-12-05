@@ -11,10 +11,12 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
 
 public class SettingActivity extends BaseActivity implements View.OnClickListener {
     private TextView tv_toSettingDetail;
     private Button bt_back1;
+    private Button mBtnToStbSelect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +27,8 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         tv_toSettingDetail.setClickable(true);
         bt_back1.setOnClickListener(this);
         tv_toSettingDetail.setOnClickListener(this);
+        mBtnToStbSelect=findViewById(R.id.setting_activity_btn_to_stb_select);
+        mBtnToStbSelect.setOnClickListener(this);
     }
 
     @Override
@@ -35,6 +39,9 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 break;
             case R.id.tv_setting:
                 startActivity(SettingDetailActivity.class,null);
+                break;
+            case R.id.setting_activity_btn_to_stb_select:
+                startActivity(STBSelectActivity.class, null);
                 break;
             default:
                 break;

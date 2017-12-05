@@ -57,6 +57,7 @@ namespace dtvt {
         Event mEvent;
         DlnaXmlParserBase* mDlnaDevXmlParser;
         DlnaXmlParserBase* mDlnaRecVideoXmlParser;
+        DlnaXmlParserBase* mRecursionXmlParser;
 
     public:
         Dlna();

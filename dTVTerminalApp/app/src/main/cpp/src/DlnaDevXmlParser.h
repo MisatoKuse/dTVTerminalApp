@@ -26,6 +26,16 @@ namespace dtvt {
          */
         void parse(void *info, vector<StringVector>& out);
 
+        /**
+         * 機能：dmsのdescription fileは再帰する必要はないので、空で実現
+         * @param children
+         * @param out
+         * @param v1
+         * @param containerId
+         * @param isContainerId
+         */
+        void parseXmlNode(const xmlNodePtr & xmlRootNode, vector<StringVector>& out, StringVector& v1, std::string &containerId, std::string &isContainerId){}
+
         virtual ~DlnaDevXmlParser();
     };
 

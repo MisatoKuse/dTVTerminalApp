@@ -2,17 +2,17 @@
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-#include "DlnaRecVideoXmlParser.h"
+#include "DlnaBSDigitalXmlParser.h"
 
 
 namespace dtvt {
 
-    DlnaRecVideoXmlParser::DlnaRecVideoXmlParser(){
+    DlnaBSDigitalXmlParser::DlnaBSDigitalXmlParser(){
 
     }
-    void DlnaRecVideoXmlParser::parse(void *fileStr, vector<StringVector>& out){}
+    void DlnaBSDigitalXmlParser::parse(void *fileStr, vector<StringVector>& out){}
     //void parseXmlNode(const xmlNodePtr & xmlRootNode, vector<StringVector>& out, StringVector& v1, std::string &containerId, std::string &isContainerId);
-//    void DlnaRecVideoXmlParser::parseXml(void *response, vector<StringVector>& out, std::string &containerId, std::string &isContainerId){
+//    void DlnaBSDigitalXmlParser::parseXml(void *response, vector<StringVector>& out, std::string &containerId, std::string &isContainerId){
 //
 //        //録画一覧XMLパーサー
 //        IfNullReturn(response);
@@ -55,8 +55,8 @@ namespace dtvt {
 //        xmlFreeDoc(didl_doc);
 //    }
 
-    bool isVideo = false;
-    void DlnaRecVideoXmlParser::parseXmlNode(const xmlNodePtr & xmlRootNode, vector<StringVector>& out, StringVector& v1, std::string &containerId, std::string &isContainerId)
+    static bool isVideo = false;
+    void DlnaBSDigitalXmlParser::parseXmlNode(const xmlNodePtr & xmlRootNode, vector<StringVector>& out, StringVector& v1, std::string &containerId, std::string &isContainerId)
     {
         xmlNodePtr xmlChildNode = xmlRootNode->xmlChildrenNode;
         while(NULL != xmlChildNode)
@@ -126,7 +126,7 @@ namespace dtvt {
         return ;
     }
 
-    DlnaRecVideoXmlParser::~DlnaRecVideoXmlParser(){
+    DlnaBSDigitalXmlParser::~DlnaBSDigitalXmlParser(){
 
     }
 
