@@ -9,6 +9,7 @@ import android.util.SparseArray;
 
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationMetaData;
@@ -18,7 +19,6 @@ import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RecordingReservationListWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RemoteRecordingReservationListWebClient;
-import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -184,11 +184,11 @@ public class RecordingReservationListDataProvider implements
     /**
      * コンストラクタ
      *
-     * @param mContext コンテキスト
+     * @param context コンテキスト
      */
-    public RecordingReservationListDataProvider(Context mContext) {
-        this.mContext = mContext;
-        this.apiDataProviderCallback = (ApiDataProviderCallback) mContext;
+    public RecordingReservationListDataProvider(Context context) {
+        this.mContext = context;
+        this.apiDataProviderCallback = (ApiDataProviderCallback) context;
     }
 
     /**
@@ -667,12 +667,11 @@ public class RecordingReservationListDataProvider implements
         DTVTLogger.start("serviceId = " + serviceId + " TvScheduleList.size = " + mTvScheduleList.size());
         String channelName = null;
         for (Map<String, String> map : mTvScheduleList) {
-            if (map != null && serviceId.equals(map.get(TvScheduleJsonParser.TV_SCHEDULE_LIST_SERVICE_ID))) {
-                channelName = map.get(TvScheduleJsonParser.TV_SCHEDULE_LIST_TITLE);
-                DTVTLogger.debug("channel = " + map.get(TvScheduleJsonParser.TV_SCHEDULE_LIST_TITLE));
+            if (map != null && serviceId.equals(map.get(JsonContents.META_RESPONSE_SERVICE_ID))) {
+                channelName = map.get(JsonContents.META_RESPONSE_TITLE);
+                DTVTLogger.debug("channel = " + map.get(JsonContents.META_RESPONSE_TITLE));
                 break;
             }
-            DTVTLogger.debug("map.serviceId = " + map.get(TvScheduleJsonParser.TV_SCHEDULE_LIST_SERVICE_ID));
         }
         DTVTLogger.end();
         return channelName;

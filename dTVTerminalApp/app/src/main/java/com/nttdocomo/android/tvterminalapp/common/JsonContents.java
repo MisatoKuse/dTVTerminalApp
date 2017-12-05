@@ -9,6 +9,8 @@ package com.nttdocomo.android.tvterminalapp.common;
  */
 public class JsonContents {
 
+    public static final String UNDER_LINE = "_";
+
     /**
      * VOD＆EPGマージメタレスポンス（縮小版）
      * listパラメータ
