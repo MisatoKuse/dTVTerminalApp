@@ -195,4 +195,17 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     public String getCurrentDmsUdn() {
         return null;
     }
+
+    /**
+     * 関数機能：
+     * Activityを起動する
+     *
+     * @param serviceId
+     * @param bundle
+     */
+    public void startActivityByServiceId(int serviceId, Bundle bundle) {
+        ClassNameUtils classNameUtils = new ClassNameUtils();
+        Class<?> className = classNameUtils.getContentsService(serviceId);
+        startActivity(className, bundle);
+    }
 }
