@@ -19,6 +19,9 @@ public class OtherContentsDetailData implements Parcelable {
     private int mServiceId;
     private String mDetail;
 
+    //コンテンツIDを追加
+    private String mContentId;
+
     public String getTitle() {
         return mTitle;
     }
@@ -51,6 +54,14 @@ public class OtherContentsDetailData implements Parcelable {
         this.mDetail = detail;
     }
 
+    public String getContentId() {
+        return mContentId;
+    }
+
+    public void setContentId(String mContentId) {
+        this.mContentId = mContentId;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -62,6 +73,9 @@ public class OtherContentsDetailData implements Parcelable {
         dest.writeString(this.mThumb);
         dest.writeInt(this.mServiceId);
         dest.writeString(this.mDetail);
+
+        //contentIdを追加
+        dest.writeString(this.mContentId);
     }
 
     public OtherContentsDetailData() {
@@ -72,6 +86,9 @@ public class OtherContentsDetailData implements Parcelable {
         this.mThumb = in.readString();
         this.mServiceId = in.readInt();
         this.mDetail = in.readString();
+
+        //contentIdを追加
+        this.mContentId = in.readString();
     }
 
     public static final Creator<OtherContentsDetailData> CREATOR =
