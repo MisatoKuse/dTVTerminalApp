@@ -13,6 +13,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 
@@ -33,6 +34,14 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.launch_main_layout);
+
+        boolean isDlnaOk=startDlna();
+        if(!isDlnaOk){
+            DTVTLogger.debug("BaseActivity");
+            /*
+             * to do: DLNA起動失敗の場合、仕様はないので、ここで将来対応
+             */
+        }
 
         setContents();
     }
@@ -55,6 +64,21 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 //        } else {
 //            startActivity(TutorialActivity.class, null);
 //        }
+    }
+
+    /**
+     * 機能： Dlnaを開始
+     * @return true: 成功　　false: 失敗
+     */
+    private boolean startDlna() {
+        DlnaInterface di=DlnaInterface.getInstance();
+        boolean ret=false;
+        if(null==di){
+            ret=false;
+        } else {
+            ret=di.startDlna();
+        }
+        return ret;
     }
 
     @Override

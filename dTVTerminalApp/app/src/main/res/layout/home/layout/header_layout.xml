@@ -28,12 +28,12 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/header_layout_display"
+            android:id="@+id/header_stb_status_icon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
             android:contentDescription="@null"
-            android:src="@mipmap/ic_personal_video_white_24dp"
+            android:src="@mipmap/ic_stb_status_icon_white"
             android:visibility="invisible" />
 
         <ImageView
