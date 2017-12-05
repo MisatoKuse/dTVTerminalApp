@@ -39,8 +39,10 @@ public class ContentsDetailGetWebClient
     @Override
     public void onAnswer(ReturnCode returnCode) {
         //JSONをパースして、データを返す
-        new ContentsDetailJsonParser(mContentsDetailJsonParserCallback).
-                execute(returnCode.bodyData);
+        if (mContentsDetailJsonParserCallback != null) {
+            new ContentsDetailJsonParser(mContentsDetailJsonParserCallback).
+                    execute(returnCode.bodyData);
+        }
     }
 
     /**
