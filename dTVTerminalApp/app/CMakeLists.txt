@@ -111,6 +111,7 @@ add_library(
      SHARED  # share
      ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaJniCast.cpp
      ${CMAKE_SOURCE_DIR}/src/main/cpp/src/Dlna.cpp
+     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaXmlParserBase.cpp
      ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaDevXmlParser.cpp
      ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaRecVideoXmlParser.cpp
      ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DmsInfo.c

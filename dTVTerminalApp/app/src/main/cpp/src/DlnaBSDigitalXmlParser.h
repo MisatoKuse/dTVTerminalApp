@@ -2,12 +2,12 @@
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-#ifndef DLNA_REC_VIDEO_PARSER_H
-#define DLNA_REC_VIDEO_PARSER_H
+#ifndef DLNA_BS_DIGITAL_PARSER_H
+#define DLNA_BS_DIGITAL_PARSER_H
 
-#include "DlnaXmlParserBase.h"
 #include <dav_cds.h>
 #include <du_str.h>
+#include "DlnaXmlParserBase.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,10 +17,10 @@ namespace dtvt {
 
     using namespace std;
 
-    class DlnaRecVideoXmlParser :public DlnaXmlParserBase{
+    class DlnaBSDigitalXmlParser :public DlnaXmlParserBase{
 
     public:
-        DlnaRecVideoXmlParser();
+        DlnaBSDigitalXmlParser();
 
         /**
          * 機能：Dlnaのxml parserライブラリを使って、コンテンツ一覧を解析して、値を戻す
@@ -28,11 +28,9 @@ namespace dtvt {
          */
         void parse(void *fileStr, vector<StringVector>& out);
 
-        void parseXmlNode(const xmlNodePtr & xmlRootNode, vector<StringVector>& out, StringVector& v1, std::string &containerId, std::string &isContainerId);
+        void parseXml(void *fileStr, vector<StringVector>& out, std::string &containerId, std::string &isContainerId);
 
-        //void parseXml(void *fileStr, vector<StringVector>& out, std::string &containerId, std::string &isContainerId);
-
-        virtual ~DlnaRecVideoXmlParser();
+        virtual ~DlnaBSDigitalXmlParser();
     };
 
     //DlnaRecVideoParse フィールド定義
@@ -65,4 +63,4 @@ namespace dtvt {
 #endif /* __cplusplus */
 
 
-#endif //DLNA_REC_VIDEO_PARSER_H
+#endif //DLNA_BS_DIGITAL_PARSER_H
