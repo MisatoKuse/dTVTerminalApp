@@ -30,47 +30,8 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
     public static final String UNDER_LINE = "_";
 
     // **FindBugs** Bad practice FindBugは、"pagerPara"と"listPara"はpublicを外せと言うが、対外的なパラメータなので、対応は行わない。
-    public static final String[] pagerPara = {JsonContents.META_RESPONSE_PAGER_LIMIT, JsonContents.META_RESPONSE_OFFSET,
+    public static final String[] PAGER_PARA = {JsonContents.META_RESPONSE_PAGER_LIMIT, JsonContents.META_RESPONSE_OFFSET,
             JsonContents.META_RESPONSE_COUNT, JsonContents.META_RESPONSE_TOTAL};
-
-    public static final String[] listPara = {JsonContents.META_RESPONSE_CRID,
-            JsonContents.META_RESPONSE_CID, JsonContents.META_RESPONSE_TITLE_ID,
-            JsonContents.META_RESPONSE_EPISODE_ID, JsonContents.META_RESPONSE_TITLE,
-            JsonContents.META_RESPONSE_EPITITLE, JsonContents.META_RESPONSE_TITLERUBY,
-            JsonContents.META_RESPONSE_DISP_TYPE, JsonContents.META_RESPONSE_DISPLAY_START_DATE,
-            JsonContents.META_RESPONSE_DISPLAY_END_DATE, JsonContents.META_RESPONSE_AVAIL_START_DATE,
-            JsonContents.META_RESPONSE_AVAIL_END_DATE, JsonContents.META_RESPONSE_PUBLISH_START_DATE,
-            JsonContents.META_RESPONSE_PUBLISH_END_DATE, JsonContents.META_RESPONSE_NEWA_START_DATE,
-            JsonContents.META_RESPONSE_NEWA_END_DATE, JsonContents.META_RESPONSE_THUMB_640,
-            JsonContents.META_RESPONSE_THUMB_448, JsonContents.META_RESPONSE_DTV_THUMB_640,
-            JsonContents.META_RESPONSE_DTV_THUMB_448, JsonContents.META_RESPONSE_COPYRIGHT,
-            JsonContents.META_RESPONSE_DUR, JsonContents.META_RESPONSE_DEMONG,
-            JsonContents.META_RESPONSE_BVFLG, JsonContents.META_RESPONSE_4KFLG,
-            JsonContents.META_RESPONSE_HDRFLG, JsonContents.META_RESPONSE_DELIVERY,
-            JsonContents.META_RESPONSE_R_VALUE, JsonContents.META_RESPONSE_ADULT,
-            JsonContents.META_RESPONSE_GENRE_ARRAY, JsonContents.META_RESPONSE_SYNOP,
-            JsonContents.META_RESPONSE_SYNOP_SHORT, JsonContents.META_RESPONSE_PUID,
-            JsonContents.META_RESPONSE_PRICE, JsonContents.META_RESPONSE_QRANGE,
-            JsonContents.META_RESPONSE_QUNIT, JsonContents.META_RESPONSE_PU_START_DATE,
-            JsonContents.META_RESPONSE_PU_END_DATE, JsonContents.META_RESPONSE_CREDIT_ARRAY,
-            JsonContents.META_RESPONSE_RATING, JsonContents.META_RESPONSE_DTV,
-            JsonContents.META_RESPONSE_CHSVOD, JsonContents.META_RESPONSE_SEARCH_OK,
-            JsonContents.META_RESPONSE_LIINF_ARRAY, JsonContents.META_RESPONSE_PUINF,
-            JsonContents.META_RESPONSE_CAPL, JsonContents.META_RESPONSE_BILINGAL,
-            JsonContents.META_RESPONSE_TV_CID, JsonContents.META_RESPONSE_SERVICE_ID,
-            JsonContents.META_RESPONSE_EVENT_ID, JsonContents.META_RESPONSE_CHNO,
-            JsonContents.META_RESPONSE_TV_SERVICE, JsonContents.META_RESPONSE_CONTENT_TYPE,
-            JsonContents.META_RESPONSE_VOD_START_DATE, JsonContents.META_RESPONSE_VOD_END_DATE,
-            JsonContents.META_RESPONSE_MAIN_GENRE, JsonContents.META_RESPONSE_SECOND_GENRE_ARRAY,
-            JsonContents.META_RESPONSE_COPY, JsonContents.META_RESPONSE_ADINFO_ARRAY,
-            JsonContents.META_RESPONSE_RELATIONAL_ID_ARRAY};
-
-    public static final String[] puinfPara = {JsonContents.META_RESPONSE_PUID,
-            JsonContents.META_RESPONSE_CRID, JsonContents.META_RESPONSE_TITLE,
-            JsonContents.META_RESPONSE_EPITITLE, JsonContents.META_RESPONSE_DISP_TYPE,
-            JsonContents.META_RESPONSE_CHSVOD, JsonContents.META_RESPONSE_PRICE,
-            JsonContents.META_RESPONSE_QUNIT, JsonContents.META_RESPONSE_QRANGE,
-            JsonContents.META_RESPONSE_PU_START_DATE, JsonContents.META_RESPONSE_PU_END_DATE};
 
     /**
      * 拡張情報
@@ -167,7 +128,7 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
             if (!jsonObj.isNull(JsonContents.META_RESPONSE_PAGER)) {
                 JSONObject pager = jsonObj.getJSONObject(JsonContents.META_RESPONSE_PAGER);
 
-                for (String pagerBuffer : pagerPara) {
+                for (String pagerBuffer : PAGER_PARA) {
                     if (!pager.isNull(pagerBuffer)) {
                         String para = pager.getString(pagerBuffer);
                         map.put(pagerBuffer, para);
@@ -198,11 +159,11 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
             for (int i = 0; i < arrayList.length(); i++) {
                 HashMap<String, String> wrListMap = new HashMap<>();
                 JSONObject jsonObject = arrayList.getJSONObject(i);
-                for (String listBuffer : listPara) {
+                for (String listBuffer : JsonContents.LIST_PARA) {
                     if (!jsonObject.isNull(listBuffer)) {
                         if (listBuffer.equals(JsonContents.META_RESPONSE_PUINF)) {
-                            JSONObject puinfObj = jsonObject.getJSONObject(JsonContents.META_RESPONSE_PUINF);
-                            for (String puinfBuffer : puinfPara) {
+                            JSONObject puinfObj = jsonObject.getJSONObject(listBuffer);
+                            for (String puinfBuffer : JsonContents.PUINF_PARA) {
                                 String para = puinfObj.getString(puinfBuffer);
                                 wrListMap.put(JsonContents.META_RESPONSE_PUINF + UNDER_LINE + puinfBuffer, para);
                             }

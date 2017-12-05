@@ -88,11 +88,11 @@ public class TvClipWebClient
      * @return パラメータ等に問題があった場合はfalse
      */
     public boolean getTvClipApi(int ageReq, int upperPagetLimit, int lowerPagetLimit,
-                                int pagerOffset,
+                                int pagerOffset, String pagerDirection,
                                 TvClipJsonParserCallback tvClipJsonParserCallback) {
         //パラメーターのチェック
         if (!checkNormalParameter(ageReq, upperPagetLimit, lowerPagetLimit,
-                pagerOffset, tvClipJsonParserCallback)) {
+                pagerOffset, pagerDirection, tvClipJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、ヌルで帰る
             return false;
         }
@@ -101,7 +101,7 @@ public class TvClipWebClient
         mTvClipJsonParserCallback = tvClipJsonParserCallback;
 
         //送信用パラメータの作成
-        String sendParameter = makeSendParameter(ageReq, upperPagetLimit, lowerPagetLimit, pagerOffset);
+        String sendParameter = makeSendParameter(ageReq, upperPagetLimit, lowerPagetLimit, pagerOffset, pagerDirection);
 
         //JSONの組み立てに失敗していれば、ヌルで帰る
         if (sendParameter.isEmpty()) {
@@ -127,7 +127,7 @@ public class TvClipWebClient
      * @return 値がおかしいならばfalse
      */
     private boolean checkNormalParameter(int ageReq, int upperPagetLimit, int lowerPagetLimit,
-                                         int pagerOffset,
+                                         int pagerOffset, String pagerDirection,
                                          TvClipJsonParserCallback tvClipJsonParserCallback) {
         if (!(ageReq >= 1 && ageReq <= 17)) {
             //ageReqが1から17ではないならばfalse
@@ -163,7 +163,7 @@ public class TvClipWebClient
      * @param pagerOffset     取得位置
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(int ageReq, int upperPagetLimit, int lowerPagetLimit, int pagerOffset) {
+    private String makeSendParameter(int ageReq, int upperPagetLimit, int lowerPagetLimit, int pagerOffset, String pagerDirection) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
@@ -174,6 +174,7 @@ public class TvClipWebClient
             jsonPagerObject.put("upper_limit", upperPagetLimit);
             jsonPagerObject.put("lower_limit", lowerPagetLimit);
             jsonPagerObject.put("offset", pagerOffset);
+            jsonPagerObject.put("direction", pagerDirection);
 
             jsonObject.put("pager", jsonPagerObject);
 
