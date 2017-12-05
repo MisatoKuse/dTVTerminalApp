@@ -35,7 +35,8 @@ public class RemoteControlActivity extends BaseActivity {
         setButtonOnClickListener((Button)findViewById(R.id.keycode_channel_up));
         setButtonOnClickListener((Button)findViewById(R.id.keycode_channel_down));
 
-        mRemoteControlRelayClient = new RemoteControlRelayClient(this);
+        // リモコン中継アプリクライアントのインスタンスを取得する
+        mRemoteControlRelayClient = RemoteControlRelayClient.getInstance();
 
     }
 
@@ -45,6 +46,9 @@ public class RemoteControlActivity extends BaseActivity {
             public void onClick(View v) {
                 // Code here executes on main thread after user presses button
                 mRemoteControlRelayClient.sendKeycode(v.getId());
+// アプリ起動要求を受信してインテントをSTBへ送信する
+//                String contentsId = "21335";
+//                mRemoteControlRelayClient.startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE, contentsId);
             }
         });
     }
