@@ -19,7 +19,7 @@ public class WeeklyRankList {
      **/
     private Bundle extraData = null;
 
-    public HashMap geWrMap() {
+    public HashMap getWrMap() {
         return mWrMap;
     }
 
