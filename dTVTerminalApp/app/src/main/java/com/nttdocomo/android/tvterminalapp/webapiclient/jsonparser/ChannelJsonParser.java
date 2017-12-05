@@ -27,8 +27,6 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
     // オブジェクトクラスの定義
     private ChannelList mChannelList;
 
-    public static final String UNDER_LINE = "_";
-
     public static final String[] pagerPara = {JsonContents.META_RESPONSE_PAGER_LIMIT,
             JsonContents.META_RESPONSE_OFFSET, JsonContents.META_RESPONSE_COUNT,
             JsonContents.META_RESPONSE_TOTAL};
@@ -41,13 +39,13 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
             JsonContents.META_RESPONSE_AVAIL_END_DATE, JsonContents.META_RESPONSE_DEFAULT_THUMB,
             JsonContents.META_RESPONSE_THUMB_640, JsonContents.META_RESPONSE_THUMB_448,
             JsonContents.META_RESPONSE_DEMONG, JsonContents.META_RESPONSE_4KFLG,
-            JsonContents.META_RESPONSE_AVAIL_STATUS,JsonContents.META_RESPONSE_DELIVERY,
+            JsonContents.META_RESPONSE_AVAIL_STATUS, JsonContents.META_RESPONSE_DELIVERY,
             JsonContents.META_RESPONSE_R_VALUE, JsonContents.META_RESPONSE_ADULT,
             JsonContents.META_RESPONSE_NG_FUNC, JsonContents.META_RESPONSE_GENRE_ARRAY,
             JsonContents.META_RESPONSE_SYNOP, JsonContents.META_RESPONSE_CHSVOD,
             JsonContents.META_RESPONSE_PUID, JsonContents.META_RESPONSE_SUB_PUID,
             JsonContents.META_RESPONSE_PRICE, JsonContents.META_RESPONSE_QRANGE,
-            JsonContents.META_RESPONSE_QUNIT,JsonContents.META_RESPONSE_PU_START_DATE,
+            JsonContents.META_RESPONSE_QUNIT, JsonContents.META_RESPONSE_PU_START_DATE,
             JsonContents.META_RESPONSE_PU_END_DATE, JsonContents.META_RESPONSE_CHPACK};
     public static final String[] chpackList = {JsonContents.META_RESPONSE_CRID,
             JsonContents.META_RESPONSE_TITLE, JsonContents.META_RESPONSE_DISP_TYPE,
@@ -99,7 +97,6 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
                 String status = jsonObj.getString(JsonContents.META_RESPONSE_STATUS);
                 map.put(JsonContents.META_RESPONSE_STATUS, status);
             }
-
 
             if (!jsonObj.isNull(JsonContents.META_RESPONSE_PAGER)) {
                 JSONObject pager = jsonObj.getJSONObject(JsonContents.META_RESPONSE_PAGER);
@@ -165,7 +162,6 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
                     // i番目のJSONArrayをJSONObjectに変換する
                     JSONObject jsonObject = jsonArr.getJSONObject(i);
 
-
                     for (int j = 0; j < listPara.length; j++) {
                         if (!jsonObject.isNull(listPara[j])) {
                             if (listPara[j].equals(JsonContents.META_RESPONSE_GENRE_ARRAY)) {
@@ -176,7 +172,7 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
                                 for (int c = 0; c < chpackList.length; c++) {
                                     if (!jsonObject.isNull(chpackList[c])) {
                                         String value = para.getString(chpackList[c]);
-                                        vcListMap.put(listPara[j] + UNDER_LINE + chpackList[c], value);
+                                        vcListMap.put(listPara[j] + JsonContents.UNDER_LINE + chpackList[c], value);
                                     }
                                 }
                             } else {

@@ -9,6 +9,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvScheduleListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
@@ -26,7 +27,6 @@ import java.util.Map;
 
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.UPDATE_DATE;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATE_TYPE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_LINEAR_START_DATE;
 
 public class TvScheduleInsertDataManager {
 
@@ -66,7 +66,7 @@ public class TvScheduleInsertDataManager {
                 Map.Entry entry = (Map.Entry) entries.next();
                 String keyName = (String) entry.getKey();
                 String valName = (String) entry.getValue();
-                if(TV_SCHEDULE_LIST_LINEAR_START_DATE.equals(keyName)){
+                if(JsonContents.META_RESPONSE_AVAIL_START_DATE.equals(keyName)){
                     values.put(UPDATE_DATE, !TextUtils.isEmpty(valName)?valName.substring(0,10):"");
                 }
                 values.put(DBUtils.fourKFlgConversion(keyName), valName);
@@ -100,7 +100,7 @@ public class TvScheduleInsertDataManager {
                 Map.Entry entry = (Map.Entry) entries.next();
                 String keyName = (String) entry.getKey();
                 String valName = (String) entry.getValue();
-                if(TV_SCHEDULE_LIST_LINEAR_START_DATE.equals(keyName)){
+                if(JsonContents.META_RESPONSE_AVAIL_START_DATE.equals(keyName)){
                     if(!TextUtils.isEmpty(valName)){
                         String update = valName.substring(0,10);
                         int hour = Integer.parseInt(valName.substring(11,13));
