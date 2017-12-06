@@ -11,7 +11,9 @@ import java.util.List;
 
 public class WatchListenVideoList implements Serializable {
 
-    private HashMap<String, String> mVcMap = new HashMap<String, String>();
+    private static final long serialVersionUID = 9013746905348284666L;
+
+    private HashMap<String, String> mVcMap = new HashMap<>();
     private List<HashMap<String, String>> mVcList = new ArrayList<>();
 
     public HashMap getVcMap() {
