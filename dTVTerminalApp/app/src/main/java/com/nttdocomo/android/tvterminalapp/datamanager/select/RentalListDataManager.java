@@ -7,16 +7,12 @@ package com.nttdocomo.android.tvterminalapp.datamanager.select;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RentalListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 
 import java.util.List;
 import java.util.Map;
-
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_PUBLISH_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_DISP_TYPE;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_THUMB;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_TITLE;
 
 public class RentalListDataManager {
 
@@ -25,7 +21,7 @@ public class RentalListDataManager {
     /**
      * コンストラクタ
      *
-     * @param mContext
+     * @param mContext コンテキスト
      */
     public RentalListDataManager(Context mContext) {
         this.mContext = mContext;
@@ -34,12 +30,12 @@ public class RentalListDataManager {
     /**
      * レンタル一覧画面用クリップデータを返却する
      *
-     * @return
+     * @return クリップデータリスト
      */
     public List<Map<String, String>> selectRentalListData() {
         //ホーム画面に必要な列を列挙する
-        String[] columns = {VOD_META_FULL_DATA_THUMB, VOD_META_FULL_DATA_TITLE,
-                VOD_META_FULL_DATA_PUBLISH_END_DATE, VOD_META_FULL_DATA_DISP_TYPE};
+        String[] columns = {JsonContents.META_RESPONSE_THUMB_448, JsonContents.META_RESPONSE_TITLE,
+                JsonContents.META_RESPONSE_PUBLISH_END_DATE, JsonContents.META_RESPONSE_DISP_TYPE};
 
         //Daoクラス使用準備
         DBHelper homeDBHelper = new DBHelper(mContext);

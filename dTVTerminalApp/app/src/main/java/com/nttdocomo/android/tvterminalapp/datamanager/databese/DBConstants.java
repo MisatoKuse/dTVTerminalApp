@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.datamanager.databese;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser.USER_INFO_LIST_CONTRACT_STATUS;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ;
@@ -50,45 +51,6 @@ import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.Recomme
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_STARTVIEWING;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_TITLE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_VIEWABLE;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_CRID;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_CID;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_TITLE_ID;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_EPISODE_ID;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_TITLE;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_EPITITLE;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_TITLERUBY;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_DISP_TYPE;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_DISPLAY_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_DISPLAY_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_AVAIL_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_AVAIL_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_PUBLISH_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_PUBLISH_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_NEWA_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_NEWA_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_COPYRIGHT;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_THUMB;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_DUR;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_DEMONG;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_BVFLG;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_HDRFLG;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_AVAIL_STATUS;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_DELIVERY;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_R_VALUE;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_ADULT;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_MS;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_NG_FUNC;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_GENRE_ID_ARRAY;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_SYNOP;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_PUID;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_PRICE;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_QRANGE;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_QUNIT;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_PU_S;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_PU_E;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_CREDITS;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_RATING;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_DTV;
 
 public class DBConstants {
 
@@ -113,6 +75,13 @@ public class DBConstants {
     private static final String ID_COLUMN = "row_id";
     public static final String UPDATE_DATE = "update_date";
     public static final String DATE_TYPE = "date_type";
+
+    //SQL共通項目
+    private static final String CREATE_TABLE_TEXT = "create table ";
+    private static final String TEXT_WITH_COMMA_TEXT = " text, ";
+    private static final String TEXT_WITHOUT_COMMA_TEXT = " text ";
+    private static final String OPEN_BRACKETS_TEXT = " (";
+    private static final String CLOSE_BRACKETS_TEXT = ")";
 
     public static final String CREATE_TABLE_CHANNEL_SQL = "" +
             "create table " + CHANNEL_LIST_TABLE_NAME + " (" +
@@ -771,49 +740,61 @@ public class DBConstants {
             ")";
 
     // TABLE、レンタル一覧用
+    private static final String RENTAL_LIST_KEY_NAME =
+            " integer primary key autoincrement, ";
     public static final String RENTAL_LIST_TABLE_NAME = "rental_list";
-    public static final String CREATE_TABLE_RENTAL_LIST_SQL = "" +
-            "create table " + RENTAL_LIST_TABLE_NAME + " (" +
-            ID_COLUMN + " integer primary key autoincrement, " +
-            VOD_META_FULL_DATA_CRID + " text, " +
-            VOD_META_FULL_DATA_CID + " text, " +
-            VOD_META_FULL_DATA_TITLE_ID + " text, " +
-            VOD_META_FULL_DATA_EPISODE_ID + " text, " +
-            VOD_META_FULL_DATA_TITLE + " text, " +
-            VOD_META_FULL_DATA_EPITITLE + " text, " +
-            VOD_META_FULL_DATA_TITLERUBY + " text, " +
-            VOD_META_FULL_DATA_DISP_TYPE + " text, " +
-            VOD_META_FULL_DATA_DISPLAY_START_DATE + " text, " +
-            VOD_META_FULL_DATA_DISPLAY_END_DATE + " text, " +
-            VOD_META_FULL_DATA_AVAIL_START_DATE + " text, " +
-            VOD_META_FULL_DATA_AVAIL_END_DATE + " text, " +
-            VOD_META_FULL_DATA_PUBLISH_START_DATE + " text, " +
-            VOD_META_FULL_DATA_PUBLISH_END_DATE + " text, " +
-            VOD_META_FULL_DATA_NEWA_START_DATE + " text, " +
-            VOD_META_FULL_DATA_NEWA_END_DATE + " text, " +
-            VOD_META_FULL_DATA_COPYRIGHT + " text, " +
-            VOD_META_FULL_DATA_THUMB + " text, " +
-            VOD_META_FULL_DATA_DUR + " text, " +
-            VOD_META_FULL_DATA_DEMONG + " text, " +
-            VOD_META_FULL_DATA_BVFLG + " text, " +
-            UNDER_BAR_FOUR_K_FLG + " text, " +
-            VOD_META_FULL_DATA_HDRFLG + " text, " +
-            VOD_META_FULL_DATA_AVAIL_STATUS + " text, " +
-            VOD_META_FULL_DATA_DELIVERY + " text, " +
-            VOD_META_FULL_DATA_R_VALUE + " text, " +
-            VOD_META_FULL_DATA_ADULT + " text, " +
-            VOD_META_FULL_DATA_MS + " text, " +
-            VOD_META_FULL_DATA_NG_FUNC + " text, " +
-            VOD_META_FULL_DATA_GENRE_ID_ARRAY + " text, " +
-            VOD_META_FULL_DATA_SYNOP + " text, " +
-            VOD_META_FULL_DATA_PUID + " text, " +
-            VOD_META_FULL_DATA_PRICE + " text, " +
-            VOD_META_FULL_DATA_QRANGE + " text, " +
-            VOD_META_FULL_DATA_QUNIT + " text, " +
-            VOD_META_FULL_DATA_PU_S + " text, " +
-            VOD_META_FULL_DATA_PU_E + " text, " +
-            VOD_META_FULL_DATA_CREDITS + " text, " +
-            VOD_META_FULL_DATA_RATING + " text, " +
-            VOD_META_FULL_DATA_DTV + " text, " +
-            ")";
+    private static final String CREATE_TABLE_RENTAL_LIST_SQL_NAMES[] = {
+            "",
+            CREATE_TABLE_TEXT, RENTAL_LIST_TABLE_NAME, OPEN_BRACKETS_TEXT,
+            ID_COLUMN, RENTAL_LIST_KEY_NAME,
+            JsonContents.META_RESPONSE_CRID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_TITLE_ID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_EPISODE_ID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_TITLE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_EPITITLE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_TITLERUBY, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_DISP_TYPE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_DISPLAY_START_DATE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_DISPLAY_END_DATE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_AVAIL_START_DATE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_AVAIL_END_DATE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_PUBLISH_START_DATE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_PUBLISH_END_DATE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_NEWA_START_DATE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_NEWA_END_DATE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_THUMB_640 + TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_THUMB_448 + TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_DTV_THUMB_640 + TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_DTV_THUMB_448 + TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_COPYRIGHT, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_DUR, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_DEMONG, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_BVFLG, TEXT_WITH_COMMA_TEXT,
+            UNDER_BAR_FOUR_K_FLG, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_HDRFLG, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_AVAIL_STATUS, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_DELIVERY, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_R_VALUE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_ADULT, TEXT_WITH_COMMA_TEXT,
+            //VOD&番組マージでは廃止されたデータ
+            //JsonContents.MSDATA_VOD_META_FULL_DATA_MS , TEXT_WITH_COMMA_TEXT ,
+            //JsonContents.META_RESPONSE_NG_FUNC , CREATE_TEXT_WITH_COMMA_TEXT ,
+            JsonContents.META_RESPONSE_GENRE_ARRAY, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_SYNOP, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_PUID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_PRICE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_QRANGE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_QUNIT, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_PU_START_DATE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_PU_END_DATE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CREDIT_ARRAY, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_RATING, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_DTV, TEXT_WITHOUT_COMMA_TEXT,
+            CLOSE_BRACKETS_TEXT
+    };
+
+    public static final String CREATE_TABLE_RENTAL_LIST_SQL = StringUtil.getConnectString(
+            CREATE_TABLE_RENTAL_LIST_SQL_NAMES);
+
 }
