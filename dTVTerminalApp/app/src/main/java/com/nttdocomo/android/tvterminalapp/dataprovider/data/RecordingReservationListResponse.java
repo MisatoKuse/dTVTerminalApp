@@ -14,8 +14,6 @@ public class RecordingReservationListResponse {
     private String mPager;//pager
     private ArrayList<RecordingReservationMetaData> mRecordingReservationMetaData;  // 録画予約一覧リスト
 
-    public static final String RECORDING_RESERVATION_META_RESPONSE_STATUS = "status";
-    public static final String RECORDING_RESERVATION_META_RESPONSE_PAGER = "pager";
     public static final String RECORDING_RESERVATION_META_RESPONSE_RESERVATION_LIST = "reservation_list";
     private static final String RECORDING_RESERVATION_FIXED = "";
 
