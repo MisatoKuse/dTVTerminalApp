@@ -20,6 +20,7 @@ import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser;
 
@@ -317,11 +318,11 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
             rankingContentInfo = new ContentsData();
             rankingContentInfo.setRank(String.valueOf(i + 1));
             rankingContentInfo.setThumURL(dailyRankMapList.get(i)
-                    .get(VideoRankJsonParser.VIDEORANK_LIST_THUMB));
+                    .get(JsonContents.META_RESPONSE_THUMB_448));
             rankingContentInfo.setTitle(dailyRankMapList.get(i)
-                    .get(VideoRankJsonParser.VIDEORANK_LIST_TITLE));
+                    .get(JsonContents.META_RESPONSE_TITLE));
             rankingContentInfo.setRatStar(dailyRankMapList.get(i)
-                    .get(VideoRankJsonParser.VIDEORANK_LIST_RATING));
+                    .get(JsonContents.META_RESPONSE_RATING));
 
             rankingContentsDataList.add(rankingContentInfo);
             DTVTLogger.info("RankingContentInfo " + rankingContentInfo.getRank());
