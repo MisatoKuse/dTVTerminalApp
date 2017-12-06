@@ -76,10 +76,8 @@ public class GenreCountGetJsonParser extends AsyncTask<Object, Object, Object> {
                 }
             }
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(CLASS_NAME + JSON_OBJECT, e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(CLASS_NAME + RESPONSE, e);
         }
         return null;
@@ -95,7 +93,7 @@ public class GenreCountGetJsonParser extends AsyncTask<Object, Object, Object> {
             // statusの値を取得しセットする
             if (!jsonObj.isNull(GenreCountGetResponse.GENRE_COUNT_GET_RESPONSE_STATUS)) {
                 String status = jsonObj.getString(GenreCountGetResponse.
-                                                  GENRE_COUNT_GET_RESPONSE_STATUS);
+                        GENRE_COUNT_GET_RESPONSE_STATUS);
                 if (mGenreCountGetResponse != null) {
                     mGenreCountGetResponse.setStatus(status);
                 }
@@ -103,7 +101,6 @@ public class GenreCountGetJsonParser extends AsyncTask<Object, Object, Object> {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(CLASS_NAME + SEND_STATUS, e);
         }
     }
@@ -140,9 +137,7 @@ public class GenreCountGetJsonParser extends AsyncTask<Object, Object, Object> {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(CLASS_NAME + SEND_RESPONSE, e);
         }
     }
-
 }

@@ -62,7 +62,7 @@ public class VodClipJsonParser2 {
             if (!jsonObj.isNull(JsonContents.META_RESPONSE_PAGER)) {
                 JSONObject pager = jsonObj.getJSONObject(JsonContents.META_RESPONSE_PAGER);
 
-                for (String pagerBuffer : PAGER_PARA){
+                for (String pagerBuffer : PAGER_PARA) {
                     if (!pager.isNull(pagerBuffer)) {
                         String para = pager.getString(pagerBuffer);
                         map.put(pagerBuffer, para);
@@ -86,29 +86,29 @@ public class VodClipJsonParser2 {
     public void sendVcList(JSONArray arrayList) {
         try {
             List<HashMap<String, String>> vcList = new ArrayList<>();
-                // リストの数だけまわす
-                for (int i = 0; i < arrayList.length(); i++) {
-                    // 最初にHashMapを生成＆初期化
-                    HashMap<String, String> vcListMap = new HashMap<>();
-                    // i番目のJSONArrayをJSONObjectに変換する
-                    JSONObject jsonObject = arrayList.getJSONObject(i);
-                    for (String listBuffer : JsonContents.LIST_PARA){
-                        if (!jsonObject.isNull(listBuffer)) {
-                            if (listBuffer.equals(JsonContents.META_RESPONSE_PUINF)) {
-                                JSONObject puinfObj = jsonObject.getJSONObject(listBuffer);
-                                for (String puinfBuffer : JsonContents.PUINF_PARA) {
-                                    String para = puinfObj.getString(puinfBuffer);
-                                    vcListMap.put(JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + puinfBuffer, para);
-                                }
-                            } else {
-                                String para = jsonObject.getString(listBuffer);
-                                vcListMap.put(listBuffer, para);
+            // リストの数だけまわす
+            for (int i = 0; i < arrayList.length(); i++) {
+                // 最初にHashMapを生成＆初期化
+                HashMap<String, String> vcListMap = new HashMap<>();
+                // i番目のJSONArrayをJSONObjectに変換する
+                JSONObject jsonObject = arrayList.getJSONObject(i);
+                for (String listBuffer : JsonContents.LIST_PARA) {
+                    if (!jsonObject.isNull(listBuffer)) {
+                        if (listBuffer.equals(JsonContents.META_RESPONSE_PUINF)) {
+                            JSONObject puinfObj = jsonObject.getJSONObject(listBuffer);
+                            for (String puinfBuffer : JsonContents.PUINF_PARA) {
+                                String para = puinfObj.getString(puinfBuffer);
+                                vcListMap.put(JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + puinfBuffer, para);
                             }
+                        } else {
+                            String para = jsonObject.getString(listBuffer);
+                            vcListMap.put(listBuffer, para);
                         }
                     }
-                    // i番目のMapをListにadd
-                    vcList.add(vcListMap);
                 }
+                // i番目のMapをListにadd
+                vcList.add(vcListMap);
+            }
             // リスト数ぶんの格納が終わったらオブジェクトクラスにList<HashMap>でset
             if (mVodClipList != null) {
                 mVodClipList.setVcList(vcList);
@@ -120,5 +120,4 @@ public class VodClipJsonParser2 {
             DTVTLogger.debug(e);
         }
     }
-
 }

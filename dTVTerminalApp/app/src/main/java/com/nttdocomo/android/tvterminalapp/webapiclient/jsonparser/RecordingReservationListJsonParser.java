@@ -30,7 +30,7 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
     private static final String JSON_OBJECT = ".JSONObject";
 
     private RecordingReservationListWebClient.RecordingReservationListJsonParserCallback
-                mRecordingReservationListJsonParserCallback;
+            mRecordingReservationListJsonParserCallback;
     // オブジェクトクラスの定義　
     private RecordingReservationListResponse mRecordingReservationListResponse;
 
@@ -51,6 +51,7 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
         mRecordingReservationListJsonParserCallback.
             onRecordingReservationListJsonParsed(mRecordingReservationListResponse);
     }
+
     @Override
     protected Object doInBackground(Object... strings) {
         String result = (String) strings[0];
@@ -78,11 +79,9 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
                 }
             }
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + JSON_OBJECT,e);
+            DTVTLogger.debug(CLASS_NAME + JSON_OBJECT, e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + RESPONSE,e);
+            DTVTLogger.debug(CLASS_NAME + RESPONSE, e);
         }
         return null;
     }
@@ -112,8 +111,7 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + SEND_STATUS,e);
+            DTVTLogger.debug(CLASS_NAME + SEND_STATUS, e);
         }
     }
 
@@ -149,9 +147,7 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + SEND_RESPONSE,e);
+            DTVTLogger.debug(CLASS_NAME + SEND_RESPONSE, e);
         }
     }
-
 }

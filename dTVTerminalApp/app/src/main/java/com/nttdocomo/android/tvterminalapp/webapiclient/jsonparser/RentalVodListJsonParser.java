@@ -64,7 +64,7 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
         mPurchasedVodListResponse = new PurchasedVodListResponse();
 
         try {
-            if (jsonStr != null){
+            if (jsonStr != null) {
                 JSONObject jsonObj = new JSONObject(jsonStr);
                 if (jsonObj != null) {
                     sendStatus(jsonObj);
@@ -74,10 +74,8 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
                 }
             }
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return null;
@@ -98,7 +96,6 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -129,9 +126,7 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
-
 }

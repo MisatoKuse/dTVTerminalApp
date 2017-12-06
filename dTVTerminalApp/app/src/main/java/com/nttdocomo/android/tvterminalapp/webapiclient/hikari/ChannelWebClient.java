@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser;
 
@@ -155,13 +156,13 @@ public class ChannelWebClient
         try {
             //ページャー部の作成
             JSONObject jsonPagerObject = new JSONObject();
-            jsonPagerObject.put("limit",pagetLimit);
-            jsonPagerObject.put("offset",pagerOffset);
-            jsonObject.put("pager",jsonPagerObject);
+            jsonPagerObject.put(JsonContents.META_RESPONSE_PAGER_LIMIT,pagetLimit);
+            jsonPagerObject.put(JsonContents.META_RESPONSE_OFFSET,pagerOffset);
+            jsonObject.put(JsonContents.META_RESPONSE_PAGER,jsonPagerObject);
 
             //その他
-            jsonObject.put("filter", filter);
-            jsonObject.put("type", type);
+            jsonObject.put(JsonContents.META_RESPONSE_FILTER, filter);
+            jsonObject.put(JsonContents.META_RESPONSE_TYPE, type);
 
             answerText = jsonObject.toString();
 
@@ -172,5 +173,4 @@ public class ChannelWebClient
 
         return answerText;
     }
-
 }

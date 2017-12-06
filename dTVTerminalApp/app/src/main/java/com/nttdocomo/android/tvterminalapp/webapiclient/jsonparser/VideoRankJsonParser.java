@@ -52,22 +52,21 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
     public VideoRankJsonParser(ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback
                                        contentsListPerGenreJsonParserCallback, Bundle extraDataSrc) {
         this.mContentsListPerGenreJsonParserCallback = contentsListPerGenreJsonParserCallback;
-
         //拡張情報の追加
         mExtraData = extraDataSrc;
     }
 
     @Override
-    protected void onPostExecute(Object s) {
+    protected void onPostExecute(Object object) {
         //拡張情報が存在すれば、入れ込む
-        List<VideoRankList> rankLists = (List<VideoRankList>) s;
+        List<VideoRankList> rankLists = (List<VideoRankList>) object;
         if (mExtraData != null) {
             for (VideoRankList rankList : rankLists) {
                 rankList.setExtraData(mExtraData);
             }
         }
 
-        mContentsListPerGenreJsonParserCallback.onContentsListPerGenreJsonParsed((List<VideoRankList>) s);
+        mContentsListPerGenreJsonParserCallback.onContentsListPerGenreJsonParsed((List<VideoRankList>) object);
     }
 
     @Override
@@ -98,10 +97,8 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
             List<VideoRankList> vrList = Arrays.asList(mVideoRankList);
             return vrList;
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
         return null;
@@ -139,7 +136,6 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
     }
@@ -178,7 +174,6 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
     }

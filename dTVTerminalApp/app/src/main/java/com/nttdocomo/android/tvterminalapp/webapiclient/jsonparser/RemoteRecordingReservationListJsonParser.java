@@ -85,11 +85,9 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
                 }
             }
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
-           DTVTLogger.debug(CLASS_NAME + JSON_OBJECT,e);
+            DTVTLogger.debug(CLASS_NAME + JSON_OBJECT, e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + RESPONSE,e);
+            DTVTLogger.debug(CLASS_NAME + RESPONSE, e);
         }
         return null;
     }
@@ -115,13 +113,13 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
                     //数字の場合のみ、値を採用する
                     String stringBuffer = jsonObj.getString(
                             REMOTE_RECORDING_RESERVATION_META_RESPONSE_COUNT);
-                    if(DBUtils.isNumber(stringBuffer)) {
+                    if (DBUtils.isNumber(stringBuffer)) {
                         count = Integer.parseInt(stringBuffer);
                     } else {
                         throw new NumberFormatException();
                     }
                 } catch (JSONException e) {
-                   DTVTLogger.debug(CLASS_NAME + IS_NUMBER,e);
+                    DTVTLogger.debug(CLASS_NAME + IS_NUMBER, e);
                 }
                 if (mRemoteRecordingReservationListResponse != null) {
                     mRemoteRecordingReservationListResponse.setCount(count);
@@ -130,8 +128,7 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + SEND_STATUS,e);
+            DTVTLogger.debug(CLASS_NAME + SEND_STATUS, e);
         }
     }
 
@@ -163,9 +160,7 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-          DTVTLogger.debug(CLASS_NAME + SEND_RESPONSE,e);
+            DTVTLogger.debug(CLASS_NAME + SEND_RESPONSE, e);
         }
     }
-
 }

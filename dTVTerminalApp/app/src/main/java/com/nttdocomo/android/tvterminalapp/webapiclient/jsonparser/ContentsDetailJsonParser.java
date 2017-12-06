@@ -137,5 +137,4 @@ public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> 
             throw new RuntimeException(e);
         }
     }
-
 }

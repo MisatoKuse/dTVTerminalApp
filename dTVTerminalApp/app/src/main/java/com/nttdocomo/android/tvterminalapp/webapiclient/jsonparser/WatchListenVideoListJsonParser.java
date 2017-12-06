@@ -39,10 +39,8 @@ public class WatchListenVideoListJsonParser {
             }
             return Arrays.asList(mWatchListenVideoList);
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
         return null;
@@ -60,7 +58,7 @@ public class WatchListenVideoListJsonParser {
             if (!jsonObj.isNull(JsonContents.META_RESPONSE_PAGER)) {
                 JSONObject pager = jsonObj.getJSONObject(JsonContents.META_RESPONSE_PAGER);
 
-                for (String pagerBuffer : PAGER_PARA){
+                for (String pagerBuffer : PAGER_PARA) {
                     if (!pager.isNull(pagerBuffer)) {
                         String para = pager.getString(pagerBuffer);
                         map.put(pagerBuffer, para);
@@ -73,7 +71,6 @@ public class WatchListenVideoListJsonParser {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
     }
@@ -85,7 +82,7 @@ public class WatchListenVideoListJsonParser {
         try {
             List<HashMap<String, String>> vcList = new ArrayList<>();
             // リストの数だけまわす
-            for (int i = 0; i<arrayList.length(); i++) {
+            for (int i = 0; i < arrayList.length(); i++) {
                 // 最初にHashMapを生成＆初期化
                 HashMap<String, String> vcListMap = new HashMap<>();
                 // i番目のJSONArrayをJSONObjectに変換する
@@ -114,9 +111,7 @@ public class WatchListenVideoListJsonParser {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
     }
-
 }
