@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.GenreListJsonParser;
 
@@ -69,7 +70,7 @@ public class GenreListWebClient
                 genreListJsonParserCallback;
 
         //ジャンル一覧ファイルを読み込む
-        openUrl(API_NAME_LIST.GENRE_LIST_FILE.getString(), "", this);
+        openUrl(UrlConstants.WebApiUrl.GENRE_LIST_FILE, "", this);
 
         DTVTLogger.end();
         //今のところ失敗していないので、trueを返す

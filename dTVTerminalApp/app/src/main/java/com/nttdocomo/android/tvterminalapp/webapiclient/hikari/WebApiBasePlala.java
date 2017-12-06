@@ -66,117 +66,6 @@ public class WebApiBasePlala {
     //リクエスト種別・基本はPOST
     private static final String REQUEST_METHOD = "POST";
 
-    //WebAPI名の指定とファイル指定を切り替える為の識別文字列
-    private static final String FILE_SIGNATURE = "://";
-
-    /**
-     * API選択表・API名を指定すると、実際に呼び出すときの名前を取得できる
-     * TODO: 本物のサーバーが提供されるまでは、テストサーバーの名前を指定する
-     */
-    protected enum API_NAME_LIST {
-        /**
-         * VODクリップ一覧の呼び出し先
-         */
-        VOD_CLIP_LIST("vod_clip/list"),
-
-        /**
-         * 視聴中ビデオ一覧
-         */
-        WATCH_LISTEN_VIDEO_LIST("viewingvideo/list"),
-
-        /**
-         * TVクリップ一覧の呼び出し先
-         */
-        TV_CLIP_LIST("tv_clip/list"),
-
-        /**
-         * チャンネル一覧の呼び出し先
-         */
-        CHANNEL_LIST("channel/list"),
-
-        /**
-         * チャンネル毎番組一覧の呼び出し先
-         */
-        TV_SCHEDULE_LIST("channel/program/get"),
-
-        /**
-         * 日毎ランク一覧の呼び出し先
-         */
-        DAILY_RANK_LIST("dayclip/count/programranking/get"),
-
-        /**
-         * 週毎ランク一覧の呼び出し先
-         * TODO: 現状の仕様では使わない想定
-         */
-        WEEKLY_RANK_LIST("weekclip/count/programranking/get"),
-
-        /**
-         * ジャンル毎コンテンツ数
-         */
-        CONTENTS_NUMBER_PER_GENRE_WEB_CLIENT("genre/contents/count/get"),
-
-        /**
-         * ジャンル毎コンテンツ一覧
-         */
-        CONTENTS_LIST_PER_GENRE_WEB_CLIENT("genre/contents/list"),
-
-        /**
-         * 購入済みVOD一覧取得(レンタルビデオ用)
-         */
-        RENTAL_VOD_LIST_WEB_CLIENT("purchasedvod/list"),
-
-        /**
-         * リモート録画予約一覧
-         */
-        REMOTE_RECORDING_RESERVATION_LIST_WEB_CLIENT("remoterecording/reservation/list"),
-
-        /**
-         * 録画予約一覧
-         */
-        RECORDING_RESERVATION_LIST_WEB_CLIENT("recording/reservation/list"),
-
-        /**
-         * ジャンル一覧リストファイル：こちらはAPIではなく、ファイルの直接読み込みとのこと。
-         * APIではないので、例外としてURL全体を指定する
-         * TODO: 当然後ほど変更する事となる。
-         */
-        GENRE_LIST_FILE(UrlConstants.WebApiUrl.plalaBaseUrl + "genreList_sample_1445.json"),
-
-        /**
-         * ジャンル毎コンテンツ数取得
-         */
-        GENRE_COUNT_GET_WEB_CLIENT("genre/contents/count/get"),
-
-        /**
-         * コンテンツ詳細取得
-         */
-        CONTENTS_DETAIL_GET_WEB_CLIENT("contents/specifics/get"),
-
-        //最後にセミコロンが必要
-        ;
-
-        //呼び出し先名の控え
-        private final String apiName;
-
-        /**
-         * 指定されたAPIの呼び出し先を決定する
-         *
-         * @param text API名
-         */
-        API_NAME_LIST(final String text) {
-            this.apiName = text;
-        }
-
-        /**
-         * 呼び出し先を聞かれた場合に値を返す
-         *
-         * @return 呼び出し先名
-         */
-        public String getString() {
-            return this.apiName;
-        }
-    }
-
     /**
      * 内部エラー情報（継承先クラスで判定する場合の為にprotected指定）
      */
@@ -575,15 +464,8 @@ public class WebApiBasePlala {
         @Override
         protected ReturnCode doInBackground(Object... strings) {
             try {
-                URL url;
-                //ファイル名のフル指定かどうかを判断する
-                if (mSourceUrl.contains(FILE_SIGNATURE)) {
-                    //ファイル指定なので、ベースURLを付けずに開く
-                    url = new URL(mSourceUrl);
-                } else {
-                    //ベースURLとAPIの名前を組み合わせてURLとして開く
-                    url = new URL(UrlConstants.WebApiUrl.plalaBaseUrl + mSourceUrl);
-                }
+                //指定された名前でURLを作成する
+                URL url = new URL(mSourceUrl);
 
                 //指定された名前で開く
                 mUrlConnection = (HttpURLConnection) url.openConnection();

@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser;
 
@@ -75,7 +76,7 @@ public class DailyRankWebClient
         }
 
         //日毎ランク一覧を呼び出す
-        openUrl(API_NAME_LIST.DAILY_RANK_LIST.getString(), sendParameter, this);
+        openUrl(UrlConstants.WebApiUrl.DAILY_RANK_LIST, sendParameter, this);
 
         //今のところ失敗していないので、trueを返す
         return true;

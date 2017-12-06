@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.os.Bundle;
 
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser;
 
@@ -100,7 +101,7 @@ public class ContentsListPerGenreWebClient
         bundle.putString("genreId",genreId);
 
         //ジャンル毎コンテンツ一覧取得を呼び出す
-        openUrlWithExtraData(API_NAME_LIST.CONTENTS_LIST_PER_GENRE_WEB_CLIENT.getString(),
+        openUrlWithExtraData(UrlConstants.WebApiUrl.CONTENTS_LIST_PER_GENRE_WEB_CLIENT,
                 sendParameter, this,bundle);
 
         //今のところ失敗は無いので、trueで帰る
