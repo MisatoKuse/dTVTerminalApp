@@ -12,10 +12,13 @@
 #include <cstring>
 #include "Dlna.h"
 #include "DmsInfo.h"
+#include "DlnaBSDigitalXmlParser.h"
+#include "DlnaTerChXmlParser.h"
+#include "DlnaHikariChXmlParser.h"
 
 namespace dtvt {
 
-    Dlna::Dlna(): mDlnaDevXmlParser(NULL), mDlnaRecVideoXmlParser(NULL), mRecursionXmlParser(NULL){
+    Dlna::Dlna(): mDLNA_STATE(DLNA_STATE_STOP), mDlnaDevXmlParser(NULL), mRecursionXmlParser(NULL), mDlnaRecVideoXmlParser(NULL), mBsDigitalXmlParser(NULL), mTerChXmlParser(NULL), mHikariChXmlParser(NULL){
         mDMP.upnp._impl = NULL;
     }
 
@@ -43,10 +46,13 @@ namespace dtvt {
             dupnp_free(&mDMP.upnp);
         }
         mDMP.upnp._impl = NULL;
+        mRecursionXmlParser=NULL;
 
         DelIfNotNull(mDlnaDevXmlParser);
         DelIfNotNull(mDlnaRecVideoXmlParser);
-        DelIfNotNull(mRecursionXmlParser);
+        DelIfNotNull(mBsDigitalXmlParser);
+        DelIfNotNull(mTerChXmlParser);
+        DelIfNotNull(mHikariChXmlParser);
     }
 
     bool Dlna::start(JNIEnv *env, jobject obj) {
@@ -54,6 +60,9 @@ namespace dtvt {
 
         jclass tmpDMSItem=NULL;
         jclass tmpDlnaRecVideoItem=NULL;
+        jclass tmpDlnaBsChListItem=NULL;
+        jclass tmpDlnaTerChListItem=NULL;
+        jclass tmpDlnaHikariChListItem=NULL;
 
         jint ret = 0;
         bool ok = false;
@@ -84,6 +93,24 @@ namespace dtvt {
         tmpDlnaRecVideoItem = env->FindClass("com/nttdocomo/android/tvterminalapp/jni/DlnaRecVideoItem");
         mEvent.mJClassRecVideoItem = (jclass)env->NewGlobalRef(tmpDlnaRecVideoItem);
         if (NULL == mEvent.mJClassRecVideoItem) {
+            goto error_2;
+        }
+
+        tmpDlnaBsChListItem = env->FindClass("com/nttdocomo/android/tvterminalapp/jni/DlnaBsChListItem");
+        mEvent.mJClassBsChListItem = (jclass)env->NewGlobalRef(tmpDlnaBsChListItem);
+        if (NULL == mEvent.mJClassBsChListItem) {
+            goto error_2;
+        }
+
+        tmpDlnaTerChListItem = env->FindClass("com/nttdocomo/android/tvterminalapp/jni/DlnaTerChListItem");
+        mEvent.mJClassTerChListItem = (jclass)env->NewGlobalRef(tmpDlnaTerChListItem);
+        if (NULL == mEvent.mJClassTerChListItem) {
+            goto error_2;
+        }
+
+        tmpDlnaHikariChListItem = env->FindClass("com/nttdocomo/android/tvterminalapp/jni/DlnaHikariChListItem");
+        mEvent.mJClassHikariChListItem = (jclass)env->NewGlobalRef(tmpDlnaHikariChListItem);
+        if (NULL == mEvent.mJClassHikariChListItem) {
             goto error_2;
         }
 
@@ -142,6 +169,18 @@ namespace dtvt {
                 if(mEvent.mJClassRecVideoItem){
                     env->DeleteGlobalRef(mEvent.mJClassRecVideoItem);
                     mEvent.mJClassRecVideoItem=NULL;
+                }
+                if(mEvent.mJClassBsChListItem){
+                    env->DeleteGlobalRef(mEvent.mJClassBsChListItem);
+                    mEvent.mJClassBsChListItem=NULL;
+                }
+                if(mEvent.mJClassTerChListItem){
+                    env->DeleteGlobalRef(mEvent.mJClassTerChListItem);
+                    mEvent.mJClassTerChListItem=NULL;
+                }
+                if(mEvent.mJClassHikariChListItem){
+                    env->DeleteGlobalRef(mEvent.mJClassHikariChListItem);
+                    mEvent.mJClassHikariChListItem=NULL;
                 }
             }
             mEvent.mJavaVM = NULL;
@@ -359,7 +398,7 @@ namespace dtvt {
         if (NULL == arg) {
             return;
         }
-        //DlnaRecVideoXmlParser* parser=NULL;
+
         DlnaXmlParserBase* parser=NULL;
         Dlna *thiz = (Dlna *) arg;
         IfNullReturn(thiz);
@@ -376,8 +415,6 @@ namespace dtvt {
             goto error;
         }
 
-        //parser = (DlnaRecVideoXmlParser*)thiz->mDlnaRecVideoXmlParser;
-        //parser->parseXml((void *) response, vv, containerId, isContainerId);
         parser = thiz->mRecursionXmlParser;
         parser->parse((void *) response, vv, containerId, isContainerId);
         if(containerId.length() != 0){
@@ -389,7 +426,7 @@ namespace dtvt {
                 return;
             }
 
-            thiz->notifyObject(Dlna::DLNA_MSG_ID_BROWSE_SOAP, vv);
+            thiz->notifyObject(parser->getMsgId(), vv);
 
             //du_sync_notify(&d->soap.sync);
         }
@@ -450,51 +487,6 @@ namespace dtvt {
         du_mutex_unlock(&mDMP.soap.mutex);
         return false;
     }
-
-//    bool Dlna::sendSoap(const du_uchar *ctl) {
-//        if (NULL == ctl || 0 == strlen((const char *) ctl)) {
-//            return false;
-//        }
-//        du_uchar_array request_body;
-//        du_uchar_array_init(&request_body);
-//        du_mutex_lock(&mDMP.soap.mutex);
-//
-//        if (!dav_cds_make_browse(&request_body,
-//             1,
-//             DU_UCHAR_CONST("0"), //root dir
-//             DU_UCHAR_CONST("BrowseDirectChildren"),
-//             BDC_FILTER,
-//             0,
-//             0,
-//             DU_UCHAR_CONST(""))) {
-//            goto error_1;
-//        }
-//
-//        if (!dupnp_soap_header_set_soapaction(&mDMP.soap.request_header, dav_urn_cds(1),
-//                                              DU_UCHAR_CONST("Browse"))) {
-//            goto error_1;
-//        }
-//
-//        if (!dupnp_http_soap(&mDMP.upnp,
-//             ctl,
-//             &mDMP.soap.request_header,
-//             du_uchar_array_get(&request_body),
-//             du_uchar_array_length(&request_body),
-//             READ_TIMEOUT_MS,
-//             Dlna::browseDirectChildrenResponseHandler,
-//             this,
-//             &mDMP.soap.id)) {
-//            return false;
-//        }
-//
-//        du_mutex_unlock(&mDMP.soap.mutex);
-//
-//        return true;
-//
-//        error_1:
-//            du_mutex_unlock(&mDMP.soap.mutex);
-//            return false;
-//    }
 
     void Dlna::notify(int msg, std::string content) {
         JNIEnv *env = NULL;
@@ -628,7 +620,195 @@ namespace dtvt {
         return ret;
     }
 
-    bool addRecVideoItems(JNIEnv *env, jclass cl, jmethodID cons, vector<StringVector>& datas, jobject listObj, jmethodID listAddId, jclass recVideoItemClass, jmethodID recVideoItemConstructor) {
+    bool addBsChListItem(JNIEnv *env, jclass cl, jmethodID cons, StringVector& datas, jobject objOut, jobject listObj, jmethodID listAddId) {
+        StringVector::iterator i=datas.begin();
+
+        //DlnaBsChListItem_Field_mChannelNo
+        bool ret= setJavaObjectField(env, cl, DlnaBsChListItem_Field_mChannelNo, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //DlnaBsChListItem_Field_mTitle
+        ret= setJavaObjectField(env, cl, DlnaBsChListItem_Field_mTitle, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //DlnaBsChListItem_Field_mSize
+        ret= setJavaObjectField(env, cl, DlnaBsChListItem_Field_mSize, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //DlnaBsChListItem_Field_mDuration
+        ret= setJavaObjectField(env, cl, DlnaBsChListItem_Field_mDuration, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //DlnaBsChListItem_Field_mResolution
+        ret= setJavaObjectField(env, cl, DlnaBsChListItem_Field_mResolution, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //DlnaBsChListItem_Field_mBitrate
+        ret= setJavaObjectField(env, cl, DlnaBsChListItem_Field_mBitrate, Dlna_Java_String_Path, *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //DlnaBsChListItem_Field_mResUrl
+        ret= setJavaObjectField(env, cl, DlnaBsChListItem_Field_mResUrl, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //DlnaBsChListItem_Field_mThumbnail
+        ret= setJavaObjectField(env, cl, DlnaBsChListItem_Field_mThumbnail, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //DlnaBsChListItem_Field_mDate
+        ret= setJavaObjectField(env, cl, DlnaBsChListItem_Field_mDate, Dlna_Java_String_Path,  *i, objOut);
+        if(!ret){
+            return false;
+        }
+
+        ret=env->CallBooleanMethod(listObj , listAddId , objOut);
+
+        return ret;
+    }
+
+    bool addTerChListItem(JNIEnv *env, jclass cl, jmethodID cons, StringVector& datas, jobject objOut, jobject listObj, jmethodID listAddId) {
+        StringVector::iterator i=datas.begin();
+
+        //DlnaTerChListItem_Field_mChannelNo
+        bool ret= setJavaObjectField(env, cl, DlnaTerChListItem_Field_mChannelNo, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //DlnaTerChListItem_Field_mTitle
+        ret= setJavaObjectField(env, cl, DlnaTerChListItem_Field_mTitle, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //DlnaTerChListItem_Field_mSize
+        ret= setJavaObjectField(env, cl, DlnaTerChListItem_Field_mSize, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //DlnaTerChListItem_Field_mDuration
+        ret= setJavaObjectField(env, cl, DlnaTerChListItem_Field_mDuration, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //DlnaTerChListItem_Field_mResolution
+        ret= setJavaObjectField(env, cl, DlnaTerChListItem_Field_mResolution, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //DlnaTerChListItem_Field_mBitrate
+        ret= setJavaObjectField(env, cl, DlnaTerChListItem_Field_mBitrate, Dlna_Java_String_Path, *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //DlnaTerChListItem_Field_mResUrl
+        ret= setJavaObjectField(env, cl, DlnaTerChListItem_Field_mResUrl, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //DlnaTerChListItem_Field_mThumbnail
+        ret= setJavaObjectField(env, cl, DlnaTerChListItem_Field_mThumbnail, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //DlnaTerChListItem_Field_mDate
+        ret= setJavaObjectField(env, cl, DlnaTerChListItem_Field_mDate, Dlna_Java_String_Path,  *i, objOut);
+        if(!ret){
+            return false;
+        }
+
+        ret=env->CallBooleanMethod(listObj , listAddId , objOut);
+
+        return ret;
+    }
+
+    bool addHikariChListItem(JNIEnv *env, jclass cl, jmethodID cons, StringVector& datas, jobject objOut, jobject listObj, jmethodID listAddId) {
+        StringVector::iterator i=datas.begin();
+
+        //DlnaHikariChListItem_Field_mChannelNo
+        bool ret= setJavaObjectField(env, cl, DlnaHikariChListItem_Field_mChannelNo, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //DlnaHikariChListItem_Field_mTitle
+        ret= setJavaObjectField(env, cl, DlnaHikariChListItem_Field_mTitle, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //DlnaHikariChListItem_Field_mSize
+        ret= setJavaObjectField(env, cl, DlnaHikariChListItem_Field_mSize, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //DlnaHikariChListItem_Field_mDuration
+        ret= setJavaObjectField(env, cl, DlnaHikariChListItem_Field_mDuration, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //DlnaHikariChListItem_Field_mResolution
+        ret= setJavaObjectField(env, cl, DlnaHikariChListItem_Field_mResolution, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //DlnaHikariChListItem_Field_mBitrate
+        ret= setJavaObjectField(env, cl, DlnaHikariChListItem_Field_mBitrate, Dlna_Java_String_Path, *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //DlnaHikariChListItem_Field_mResUrl
+        ret= setJavaObjectField(env, cl, DlnaHikariChListItem_Field_mResUrl, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //DlnaHikariChListItem_Field_mThumbnail
+        ret= setJavaObjectField(env, cl, DlnaHikariChListItem_Field_mThumbnail, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //DlnaHikariChListItem_Field_mDate
+        ret= setJavaObjectField(env, cl, DlnaHikariChListItem_Field_mDate, Dlna_Java_String_Path,  *i, objOut);
+        if(!ret){
+            return false;
+        }
+
+        ret=env->CallBooleanMethod(listObj , listAddId , objOut);
+
+        return ret;
+    }
+
+    bool addListItems(DLNA_MSG_ID msg, JNIEnv *env, jclass cl, jmethodID cons,
+                      vector<StringVector> &datas, jobject listObj, jmethodID listAddId,
+                      jclass recVideoItemClass, jmethodID recVideoItemConstructor) {
         bool ret=true;
 
         for(vector<StringVector>::iterator i=datas.begin(); i!=datas.end(); ++i){
@@ -636,10 +816,39 @@ namespace dtvt {
             if(NULL==objOut){
                 return false;
             }
-            if(!addRecVideoItem(env, cl, cons, *i, objOut, listObj, listAddId)){
-                ret=false;
-                env->DeleteLocalRef(objOut);
-                break;
+            switch (msg) {
+                case DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST:
+                    if (!addRecVideoItem(env, cl, cons, *i, objOut, listObj, listAddId)) {
+                        ret = false;
+                        env->DeleteLocalRef(objOut);
+                        break;
+                    }
+                    break;
+                case DLNA_MSG_ID_BS_CHANNEL_LIST:
+                    if (!addBsChListItem(env, cl, cons, *i, objOut, listObj, listAddId)) {
+                        ret = false;
+                        env->DeleteLocalRef(objOut);
+                        break;
+                    }
+                    break;
+                case DLNA_MSG_ID_TER_CHANNEL_LIST:
+                    if (!addTerChListItem(env, cl, cons, *i, objOut, listObj, listAddId)) {
+                        ret = false;
+                        env->DeleteLocalRef(objOut);
+                        break;
+                    }
+                    break;
+                case DLNA_MSG_ID_HIKARI_CHANNEL_LIST:
+                    if (!addHikariChListItem(env, cl, cons, *i, objOut, listObj, listAddId)) {
+                        ret = false;
+                        env->DeleteLocalRef(objOut);
+                        break;
+                    }
+                    break;
+                case DLNA_MSG_ID_DEV_DISP_JOIN:
+                case DLNA_MSG_ID_DEV_DISP_LEAVE:
+                case DLNA_MSG_ID_INVALID:
+                    break;
             }
             env->DeleteLocalRef(objOut);
         }
@@ -647,7 +856,8 @@ namespace dtvt {
         return ret;
     }
 
-    void Dlna::notifyObject(int msg, vector<StringVector> & vecVecContents) {
+
+    void Dlna::notifyObject(DLNA_MSG_ID msg, vector<StringVector> & vecContents) {
         JNIEnv *env = NULL;
         jobject itemObj = NULL;
         StringVector datas;
@@ -685,24 +895,65 @@ namespace dtvt {
                 IfNullGoTo(itemCostruct, error_or_return);
                 itemObj = env->NewObject(mEvent.mJClassDmsItem , itemCostruct);
                 IfNullGoTo(itemObj, error_or_return);
-                if(0==vecVecContents.size() || NULL==itemObj){
+                if(0==vecContents.size() || NULL==itemObj){
                     goto error_or_return;
                 }
-                datas= *vecVecContents.begin();
+                datas= *vecContents.begin();
                 if(!addDmsInfo(env, mEvent.mJClassDmsItem, itemCostruct, datas, itemObj)){
                     goto error_or_return;
                 }
                 env->CallBooleanMethod(listObj , listAddId , itemObj);
                 break;
-            case DLNA_MSG_ID_BROWSE_SOAP:
+            case DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST:
                 itemCostruct = env->GetMethodID(mEvent.mJClassRecVideoItem, "<init>", "()V");
                 IfNullGoTo(itemCostruct, error_or_return);
-                if(0==vecVecContents.size() ){
+                if(0==vecContents.size() ){
                     goto error_or_return;
                 }
-                if(!addRecVideoItems(env, mEvent.mJClassRecVideoItem, itemCostruct, vecVecContents, listObj, listAddId, mEvent.mJClassRecVideoItem, itemCostruct) ){
+                if(!addListItems(DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST, env, mEvent.mJClassRecVideoItem,
+                                 itemCostruct, vecContents, listObj, listAddId,
+                                 mEvent.mJClassRecVideoItem, itemCostruct) ){
                     goto error_or_return;
                 }
+                break;
+            case DLNA_MSG_ID_BS_CHANNEL_LIST:
+                itemCostruct = env->GetMethodID(mEvent.mJClassBsChListItem, "<init>", "()V");
+                IfNullGoTo(itemCostruct, error_or_return);
+                if(0==vecContents.size() ){
+                    goto error_or_return;
+                }
+                if(!addListItems(DLNA_MSG_ID_BS_CHANNEL_LIST, env, mEvent.mJClassBsChListItem,
+                                 itemCostruct, vecContents, listObj, listAddId,
+                                 mEvent.mJClassBsChListItem, itemCostruct) ){
+                    goto error_or_return;
+                }
+                break;
+            case DLNA_MSG_ID_TER_CHANNEL_LIST:
+                itemCostruct = env->GetMethodID(mEvent.mJClassTerChListItem, "<init>", "()V");
+                IfNullGoTo(itemCostruct, error_or_return);
+                if(0==vecContents.size() ){
+                    goto error_or_return;
+                }
+                if(!addListItems(DLNA_MSG_ID_TER_CHANNEL_LIST, env, mEvent.mJClassTerChListItem,
+                                 itemCostruct, vecContents, listObj, listAddId,
+                                 mEvent.mJClassTerChListItem, itemCostruct) ){
+                    goto error_or_return;
+                }
+                break;
+            case DLNA_MSG_ID_HIKARI_CHANNEL_LIST:
+                itemCostruct = env->GetMethodID(mEvent.mJClassHikariChListItem, "<init>", "()V");
+                IfNullGoTo(itemCostruct, error_or_return);
+                if(0==vecContents.size() ){
+                    goto error_or_return;
+                }
+                if(!addListItems(DLNA_MSG_ID_HIKARI_CHANNEL_LIST, env, mEvent.mJClassHikariChListItem,
+                                 itemCostruct, vecContents, listObj, listAddId,
+                                 mEvent.mJClassHikariChListItem, itemCostruct) ){
+                    goto error_or_return;
+                }
+                break;
+            case DLNA_MSG_ID_DEV_DISP_LEAVE:
+            case DLNA_MSG_ID_INVALID:
                 break;
         }
 
@@ -734,13 +985,42 @@ namespace dtvt {
             }
     }
 
-    bool Dlna::browseDms(std::string controlUrl) {
-        if(NULL==mRecursionXmlParser){
-            mRecursionXmlParser=(DlnaXmlParserBase*)new DlnaRecVideoXmlParser();
-            IfNullReturnFalse(mRecursionXmlParser);
+    bool Dlna::browseRecVideoListDms(std::string controlUrl) {
+        if(NULL==mDlnaRecVideoXmlParser){
+            mDlnaRecVideoXmlParser=(DlnaXmlParserBase*)new DlnaRecVideoXmlParser();
+            IfNullReturnFalse(mBsDigitalXmlParser);
         }
+        mRecursionXmlParser=mDlnaRecVideoXmlParser;
         return sendSoap(controlUrl, "0");
     }
+
+    bool Dlna::browseBsChListDms(std::string controlUrl) {
+        if(NULL==mBsDigitalXmlParser){
+            mBsDigitalXmlParser=(DlnaXmlParserBase*)new DlnaBSDigitalXmlParser();
+            IfNullReturnFalse(mBsDigitalXmlParser);
+        }
+        mRecursionXmlParser=mBsDigitalXmlParser;
+        return sendSoap(controlUrl, "0");
+    }
+
+    bool Dlna::browseTerChListDms(std::string controlUrl) {
+        if(NULL==mTerChXmlParser){
+            mTerChXmlParser=(DlnaXmlParserBase*)new DlnaTerChXmlParser();
+            IfNullReturnFalse(mTerChXmlParser);
+        }
+        mRecursionXmlParser=mTerChXmlParser;
+        return sendSoap(controlUrl, "0");
+    }
+
+    bool Dlna::browseHikariChListDms(std::string controlUrl) {
+        if(NULL==mHikariChXmlParser){
+            mHikariChXmlParser=(DlnaXmlParserBase*)new DlnaHikariChXmlParser();
+            IfNullReturnFalse(mHikariChXmlParser);
+        }
+        mRecursionXmlParser=mHikariChXmlParser;
+        return sendSoap(controlUrl, "0");
+    }
+
 
     /**
      * デバイスディスクリプションを解析してデバイス情報を設定する
@@ -794,7 +1074,7 @@ namespace dtvt {
             return;
         }
 
-        thiz->notifyObject(Dlna::DLNA_MSG_ID_DEV_DISP_JOIN, vv);
+        thiz->notifyObject(DLNA_MSG_ID_DEV_DISP_JOIN, vv);
     }
 
     /**

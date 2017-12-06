@@ -7,7 +7,7 @@
 
 namespace dtvt {
 
-    DlnaRecVideoXmlParser::DlnaRecVideoXmlParser(){
+    DlnaRecVideoXmlParser::DlnaRecVideoXmlParser(): DlnaXmlParserBase(DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST){
 
     }
     void DlnaRecVideoXmlParser::parse(void *fileStr, vector<StringVector>& out){}
@@ -55,7 +55,7 @@ namespace dtvt {
 //        xmlFreeDoc(didl_doc);
 //    }
 
-    bool isVideo = false;
+    static bool isVideo = false;
     void DlnaRecVideoXmlParser::parseXmlNode(const xmlNodePtr & xmlRootNode, vector<StringVector>& out, StringVector& v1, std::string &containerId, std::string &isContainerId)
     {
         xmlNodePtr xmlChildNode = xmlRootNode->xmlChildrenNode;
@@ -92,12 +92,50 @@ namespace dtvt {
                     std::string protocolInfo((char *)xmlGetProp(xmlChildNode, (const xmlChar*)RecVideoParse_Field_ProtocolInfo));
                     if(protocolInfo.find(RecVideoType_Field_Mp4)!=string::npos ||
                             protocolInfo.find(RecVideoType_Field_Mpeg)!=string::npos){
-                        v1.push_back((char*)xmlGetProp(xmlChildNode, (const xmlChar*)RecVideoParse_Field_Size));
-                        v1.push_back((char*)xmlGetProp(xmlChildNode, (const xmlChar*)RecVideoParse_Field_Duration));
-                        v1.push_back((char*)xmlGetProp(xmlChildNode, (const xmlChar*)RecVideoParse_Field_Resolution));
-                        v1.push_back((char*)xmlGetProp(xmlChildNode, (const xmlChar*)RecVideoParse_Field_Bitrate));
-                        v1.push_back((char*)xmlNodeGetContent(xmlChildNode));
-                        isVideo = true;
+
+                        //v1.push_back((char*)xmlGetProp(xmlChildNode, (const xmlChar*)RecVideoParse_Field_Size));
+                        char* tmpP= (char*)xmlGetProp(xmlChildNode, (const xmlChar*)RecVideoParse_Field_Size);
+                        if(NULL==tmpP){
+                            v1.push_back("0");
+                        } else {
+                            v1.push_back(tmpP);
+                        }
+
+                        //v1.push_back((char*)xmlGetProp(xmlChildNode, (const xmlChar*)RecVideoParse_Field_Duration));
+                        tmpP= (char*)xmlGetProp(xmlChildNode, (const xmlChar*)RecVideoParse_Field_Duration);
+                        if(NULL==tmpP){
+                            v1.push_back("");
+                        } else {
+                            v1.push_back(tmpP);
+                        }
+
+                        //v1.push_back((char*)xmlGetProp(xmlChildNode, (const xmlChar*)RecVideoParse_Field_Resolution));
+                        tmpP = (char*)xmlGetProp(xmlChildNode, (const xmlChar*)RecVideoParse_Field_Resolution);
+                        if(NULL==tmpP){
+                            v1.push_back("");
+                        } else {
+                            v1.push_back(tmpP);
+                        }
+
+                        //v1.push_back((char*)xmlGetProp(xmlChildNode, (const xmlChar*)RecVideoParse_Field_Bitrate));
+                        tmpP = (char*)xmlGetProp(xmlChildNode, (const xmlChar*)RecVideoParse_Field_Bitrate);
+                        if(NULL==tmpP){
+                            v1.push_back("");
+                        } else {
+                            v1.push_back(tmpP);
+                        }
+
+                        //v1.push_back((char*)xmlNodeGetContent(xmlChildNode));
+                        tmpP = (char*)xmlNodeGetContent(xmlChildNode);
+                        if(NULL==tmpP){
+                            v1.push_back("");
+                            isVideo = false;
+                        } else {
+                            v1.push_back(tmpP);
+                            isVideo = true;
+                        }
+
+                        //isVideo = true;
                     }
                 }
                 if (!xmlStrcmp(xmlChildNode->name, (const xmlChar*)RecVideoParse_Field_AlbumArtURI))

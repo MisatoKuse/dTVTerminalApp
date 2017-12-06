@@ -12,26 +12,33 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.adapter.ChannelListAdapter;
+import com.nttdocomo.android.tvterminalapp.fragment.channellist.ChannelListFragment;
+import com.nttdocomo.android.tvterminalapp.fragment.channellist.ChannelListFragmentFactory;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaProvRecVideo;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoInfo;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoListener;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
-import java.util.ArrayList;
-
-public class ChannelListActivity extends BaseActivity implements View.OnClickListener {
+public class ChannelListActivity extends BaseActivity implements View.OnClickListener, ChannelListFragment.ChannelListFragmentListener, DlnaRecVideoListener {
 
     private static final int SCREEN_TIME_WIDTH_PERCENT = 9;
     private LinearLayout mTabsLayout;
     private String[] mTabNames;
     private int screenWidth;
-    private ArrayList hikariList;
-    private ArrayList terrestrialList;
-    private ArrayList bSList;
-    private ArrayList dtvChannelList;
-    private ViewPager mChannelBodyViewPager;
+    private ViewPager mViewPager;
+    private ChannelListFragmentFactory mFactory;
+    private HorizontalScrollView mHorizontalScrollView;
+
+    private DlnaProvRecVideo mDlnaProvRecVideo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,38 +47,38 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
         screenWidth = getWidthDensity();
         initData();
         initView();
+
+        //getBsData();
+    }
+
+    @Override
+    protected void onResume(){
+        if(null==mDlnaProvRecVideo) {
+            mDlnaProvRecVideo = new DlnaProvRecVideo();
+        }
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mDlnaProvRecVideo != null) {
+            mDlnaProvRecVideo.stopListen();
+        }
     }
 
     private void initData() {
-        hikariList = new ArrayList();
-        terrestrialList = new ArrayList();
-        bSList = new ArrayList();
-        dtvChannelList = new ArrayList();
-        for (int i = 0; i < 50; i++) {
-            View channelItemView = View.inflate(this, R.layout.channel_list_item, null);
-            hikariList.add(channelItemView);
-        }
-        for (int i = 0; i < 50; i++) {
-            View channelItemView = View.inflate(this, R.layout.channel_list_item, null);
-            terrestrialList.add(channelItemView);
-        }
-        for (int i = 0; i < 50; i++) {
-            View channelItemView = View.inflate(this, R.layout.channel_list_item, null);
-            bSList.add(channelItemView);
-        }
-        for (int i = 0; i < 50; i++) {
-            View channelItemView = View.inflate(this, R.layout.channel_list_item, null);
-            dtvChannelList.add(channelItemView);
-        }
+        mFactory= new ChannelListFragmentFactory();
     }
 
 
     private void initView() {
-        HorizontalScrollView channelList = findViewById(R.id.channel_list_main_layout_channel_titles_hs);
-        mChannelBodyViewPager = findViewById(R.id.channel_list_main_layout_channel_body_vp);
-        initChannelListTab(channelList);
-        mChannelBodyViewPager.setAdapter(new ChannelListAdapter(getSupportFragmentManager()));
-        mChannelBodyViewPager.addOnPageChangeListener(new ViewPager
+        mHorizontalScrollView = findViewById(R.id.channel_list_main_layout_channel_titles_hs);
+        mViewPager = findViewById(R.id.channel_list_main_layout_channel_body_vp);
+        initChannelListTab(mHorizontalScrollView);
+        ChannelListPagerAdapter adp= new ChannelListPagerAdapter(getSupportFragmentManager());
+        mViewPager.setAdapter(adp);
+        mViewPager.addOnPageChangeListener(new ViewPager
                 .SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
@@ -81,6 +88,16 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
         });
         enableGlobalMenuIcon(true);
         enableStbStatusIcon(true);
+    }
+
+    private void getBsData(){
+        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
+        if (mDlnaProvRecVideo == null) {
+            mDlnaProvRecVideo = new DlnaProvRecVideo();
+        }
+        if (mDlnaProvRecVideo.start(dlnaDmsItem.mUdn, this)) {
+            mDlnaProvRecVideo.browseRecVideoDms(dlnaDmsItem.mControlUrl);
+        }
     }
 
     private void initChannelListTab(HorizontalScrollView channelList) {
@@ -119,7 +136,7 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
                 public void onClick(View view) {
                     int tab_index = (int) view.getTag();
                     setTab(tab_index);
-                    mChannelBodyViewPager.setCurrentItem(tab_index);
+                    mViewPager.setCurrentItem(tab_index);
                     // TODO: 2017/11/30 clear,getデータ
                     //clearData();
                     //getChannelData();
@@ -144,37 +161,104 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
         }
     }
 
+    ChannelListActivity getActivity(){
+        return this;
+    }
+
     @Override
     public void onClick(View view) {
         super.onClick(view);
     }
 
-    /*チャンネルリストアダプター*/
-    private class ChannelListAdapter extends FragmentStatePagerAdapter {
+    @Override
+    public void onScroll(ChannelListFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
-        ChannelListAdapter(FragmentManager fm) {
+    }
+
+    @Override
+    public void onScrollStateChanged(ChannelListFragment fragment, AbsListView absListView, int scrollState) {
+
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser, ChannelListFragment fragment){
+        if(!isVisibleToUser){
+            fragment.clearDatas();
+            fragment.noticeRefresh();
+            return;
+        }
+
+        ChannelListAdapter.ChListDataType type= fragment.getChListDataType();
+        switch (type){
+            case CH_LIST_DATA_TYPE_BS:
+                getBsData();
+                break;
+            case CH_LIST_DATA_TYPE_TER:
+
+                break;
+            case CH_LIST_DATA_TYPE_HIKARI:
+
+                break;
+            case CH_LIST_DATA_TYPE_DTV:
+
+                break;
+            case CH_LIST_DATA_TYPE_INVALID:
+                break;
+        }
+    }
+
+    @Override
+    public void onVideoBrows(DlnaRecVideoInfo curInfo) {
+        int pos=mViewPager.getCurrentItem();
+        final ChannelListFragment fragment= mFactory.createFragment(pos, this, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS);
+        for(int i=0;i<curInfo.size();++i){
+            fragment.addData(curInfo.get(i));
+        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                fragment.noticeRefresh();
+            }
+        });
+    }
+
+    @Override
+    public String getCurrentDmsUdn() {
+        return null;
+    }
+
+    private ChannelListAdapter.ChListDataType getTypeFromViewPagerIndex(int viewPagerIndex){
+        ChannelListAdapter.ChListDataType ret=ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_INVALID;
+        switch (viewPagerIndex){
+            case 0:
+                ret= ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI;
+                break;
+            case 1:
+                ret = ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER;
+                break;
+            case 2:
+                ret = ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS;
+                break;
+            case 3:
+                ret = ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_DTV;
+                break;
+        }
+        return ret;
+    }
+
+    /*チャンネルリストアダプター*/
+    private class ChannelListPagerAdapter extends FragmentStatePagerAdapter {
+
+        ChannelListPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
         public Fragment getItem(int position) {
-            ChannelListFragment channelListFragment1 = new ChannelListFragment(hikariList);
-            ChannelListFragment channelListFragment2 = new ChannelListFragment(terrestrialList);
-            ChannelListFragment channelListFragment3 = new ChannelListFragment(bSList);
-            ChannelListFragment channelListFragment4 = new ChannelListFragment(dtvChannelList);
-            if (position == 0) {
-                return channelListFragment1;
+            if(null==mFactory){
+                return null;
             }
-            if (position == 1) {
-                return channelListFragment2;
-            }
-            if (position == 2) {
-                return channelListFragment3;
-            }
-            if (position == 3) {
-                return channelListFragment4;
-            }
-            return null;
+            return mFactory.createFragment(position, getActivity(), getTypeFromViewPagerIndex(position));
         }
 
         @Override

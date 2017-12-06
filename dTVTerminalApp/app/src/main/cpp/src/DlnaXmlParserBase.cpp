@@ -9,6 +9,12 @@
 
 namespace dtvt {
 
+    DlnaXmlParserBase::DlnaXmlParserBase(DLNA_MSG_ID id):mDlnaMsgIdD(id) {}
+
+    DLNA_MSG_ID DlnaXmlParserBase::getMsgId(){
+        return mDlnaMsgIdD;
+    }
+
     void DlnaXmlParserBase::parse(void *response, vector<StringVector>& out, std::string &containerId, std::string &isContainerId){
         //録画一覧XMLパーサー
         IfNullReturn(response);
