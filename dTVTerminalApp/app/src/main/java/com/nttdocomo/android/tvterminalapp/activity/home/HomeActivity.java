@@ -331,7 +331,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     @Override
-    public void recommemdVideoCallback(List<Map<String, String>> redVdList) {
+    public void recommendVideoCallback(List<Map<String, String>> redVdList) {
         if (redVdList != null && redVdList.size() > 0) {
             setRecyclerView(redVdList, REDVD_SORT);
         }

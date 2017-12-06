@@ -7,9 +7,9 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.JsonParserThread;
-import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser2;
 
 import org.json.JSONException;
@@ -93,15 +93,16 @@ public class VodClipWebClient
      * @param upperPagetLimit               結果の最大件数（1以上）
      * @param lowerPagetLimit　             結果の最小件数（1以上）
      * @param pagerOffset                    取得位置
+     * @param  pagerDirection               取得方向
      * @param vodClipJsonParserCallback    コールバック
      * @return パラメータ等に問題があった場合はfalse
      */
     public boolean getVodClipApi(int ageReq,int upperPagetLimit,int lowerPagetLimit,
-                                 int pagerOffset,
+                                 int pagerOffset, String pagerDirection,
                                  VodClipJsonParserCallback vodClipJsonParserCallback) {
         //パラメーターのチェック
-        if(!checkNormalParameter(ageReq,upperPagetLimit,lowerPagetLimit,
-                pagerOffset,vodClipJsonParserCallback)) {
+        if(!checkNormalParameter(ageReq, upperPagetLimit, lowerPagetLimit,
+                pagerOffset, pagerDirection, vodClipJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、ヌルで帰る
             return false;
         }
@@ -110,7 +111,7 @@ public class VodClipWebClient
         mVodClipJsonParserCallback = vodClipJsonParserCallback;
 
         //送信用パラメータの作成
-        String sendParameter = makeSendParameter(ageReq,upperPagetLimit,lowerPagetLimit,pagerOffset);
+        String sendParameter = makeSendParameter(ageReq, upperPagetLimit, lowerPagetLimit, pagerOffset, pagerDirection);
 
         //JSONの組み立てに失敗していれば、ヌルで帰る
         if(sendParameter.isEmpty()) {
@@ -131,11 +132,12 @@ public class VodClipWebClient
      * @param upperPagetLimit              結果の最大件数
      * @param lowerPagetLimit　            結果の最小件数
      * @param pagerOffset                   取得位置
+     * @param pagerDirection               取得方向
      * @param vodClipJsonParserCallback   コールバック
      * @return 値がおかしいならばfalse
      */
     private boolean checkNormalParameter(int ageReq,int upperPagetLimit,int lowerPagetLimit,
-                                         int pagerOffset,
+                                         int pagerOffset, String pagerDirection,
                                          VodClipJsonParserCallback vodClipJsonParserCallback) {
         if(!(ageReq >= 1 && ageReq <= 17)) {
             //ageReqが1から17ではないならばfalse
@@ -168,21 +170,24 @@ public class VodClipWebClient
      * @param upperPagetLimit  結果の最大件数
      * @param lowerPagetLimit　結果の最小件数
      * @param pagerOffset      取得位置
+     * @param pagerDirection   取得方向
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(int ageReq,int upperPagetLimit,int lowerPagetLimit,int pagerOffset) {
+    private String makeSendParameter(int ageReq,int upperPagetLimit,int lowerPagetLimit,
+                                     int pagerOffset, String pagerDirection) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
-            jsonObject.put("age_req", ageReq);
+            jsonObject.put(JsonContents.META_RESPONSE_AGE_REQ, ageReq);
 
             JSONObject jsonPagerObject = new JSONObject();
 
-            jsonPagerObject.put("upper_limit",upperPagetLimit);
-            jsonPagerObject.put("lower_limit",lowerPagetLimit);
-            jsonPagerObject.put("offset",pagerOffset);
+            jsonPagerObject.put(JsonContents.META_RESPONSE_UPPER_LIMIT, upperPagetLimit);
+            jsonPagerObject.put(JsonContents.META_RESPONSE_LOWER_LIMIT, lowerPagetLimit);
+            jsonPagerObject.put(JsonContents.META_RESPONSE_OFFSET, pagerOffset);
+            jsonPagerObject.put(JsonContents.META_RESPONSE_DIRECTION, pagerDirection);
 
-            jsonObject.put("pager",jsonPagerObject);
+            jsonObject.put(JsonContents.META_RESPONSE_PAGER,jsonPagerObject);
 
             answerText = jsonObject.toString();
 
