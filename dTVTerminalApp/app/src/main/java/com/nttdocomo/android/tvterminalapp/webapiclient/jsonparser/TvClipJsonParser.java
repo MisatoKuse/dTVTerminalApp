@@ -42,6 +42,7 @@ public class TvClipJsonParser {
         } catch (JSONException e) {
             DTVTLogger.debug(e);
         } catch (Exception e) {
+            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
         return null;
@@ -69,6 +70,7 @@ public class TvClipJsonParser {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
+            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
     }
@@ -105,6 +107,7 @@ public class TvClipJsonParser {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
+            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
     }

@@ -81,7 +81,6 @@ public class VodClipJsonParser extends AsyncTask<Object, Object, Object> {
             List<VodClipList> vodClipList = Arrays.asList(mVodClipList);
             return vodClipList;
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         } catch (Exception e) {
             // TODO Auto-generated catch block
