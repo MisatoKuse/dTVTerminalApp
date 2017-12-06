@@ -7,11 +7,9 @@ package com.nttdocomo.android.tvterminalapp.relayclient;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
-import java.io.IOException;
-import java.net.DatagramSocket;
-import java.net.DatagramPacket;
-import java.net.InetSocketAddress;
-import java.net.SocketException;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,9 +18,9 @@ import java.util.Map;
  */
 public class RemoteControlRelayClient {
 
-    private static final int SERVER_PORT = 3000;    // udp 受信ポート
     private static final int KEYCODE_UNKNOWN = 0;
-    private String ｍRemoteHost = "192.168.11.32";
+    // TODO: STBがDMSとして動作しないためDMS機能が実装されるまで固定IPを使用する
+    private String ｍRemoteHost = "192.168.11.23";
 
     // 受信キーコード名に対応する STBキーコード
     private static final Map<Integer, String> keyCodeNameMap = new HashMap<Integer, String>() {
@@ -159,7 +157,7 @@ public class RemoteControlRelayClient {
 
     // シングルトン
     private static RemoteControlRelayClient mInstance = new RemoteControlRelayClient();
-    private InetSocketAddress mRemoteAddress = new InetSocketAddress(ｍRemoteHost, SERVER_PORT);
+//    private InetSocketAddress mRemoteAddress = new InetSocketAddress(ｍRemoteHost, SERVER_PORT);
 
     /**
      * アプリ起動要求種別
@@ -177,9 +175,19 @@ public class RemoteControlRelayClient {
     private static final String STB_APPLICATION_DTV = "dTV";  // dTV
     private static final String STB_APPLICATION_DANIMESTORE = "dANIMESTORE";  // dアニメストア
     private static final String STB_APPLICATION_DTVCHANNEL = "dTVCHANNEL";  // dTVチャンネル
+    //
+    private static final String RERAY_COMMAND = "COMMAND";
+    private static final String RERAY_COMMAND_TITLE_DETAIL = "TITLE_DETAIL";
+    private static final String RERAY_COMMAND_APPLICATION_ID = "APP_ID";
+    private static final String RERAY_COMMAND_CONTENTS_ID = "CONTENTS_ID";
+    private static final String RERAY_RESULT = "RESULT";
+    private static final String RERAY_RESULT_OK = "0";
+    private static final String RERAY_RESULT_ERROR = "1";
+    private static final String RERAY_RESULT_MESSAGE = "MESSAGE";
+
 
     // アプリ起動要求種別に対応するするアプリ名シンボル
-    private static final Map<STB_APPLICATION_TYPES, String> StbApplicationSymbolMap = new HashMap<STB_APPLICATION_TYPES, String>() {
+    private static final Map<STB_APPLICATION_TYPES, String> mStbApplicationSymbolMap = new HashMap<STB_APPLICATION_TYPES, String>() {
         {
             put(STB_APPLICATION_TYPES.DTV, STB_APPLICATION_DTV);    // dTV
         }
@@ -192,9 +200,6 @@ public class RemoteControlRelayClient {
             put(STB_APPLICATION_TYPES.DTVCHANNEL, STB_APPLICATION_DTVCHANNEL);  // dTVチャンネル
         }
     };
-
-    private String mApplicationId;
-    private String mContentsId;
 
     /**
      * シングルトン
@@ -222,7 +227,6 @@ public class RemoteControlRelayClient {
         if (keyCodeNameMap.containsKey(keycodeRid)) {
             keyCodeName = keyCodeNameMap.get(keycodeRid);
         }
-//        Log.i("RemoteControl", "convertKeycode:" + keycodeRid + "=" +keyCodeName);
         return keyCodeName;
     }
 
@@ -250,42 +254,36 @@ public class RemoteControlRelayClient {
         }
 
         /**
-         * キーコード
          * キーコードをSTBへ送信する
          */
         @Override
         public void run() {
-            DatagramSocket socket = null;
-            try {
-                if (mSendKeycodeName != null) {
-                    byte[] buff = mSendKeycodeName.getBytes();
-                    DatagramPacket packet = new DatagramPacket(buff, buff.length, mRemoteAddress);
-                    socket = new DatagramSocket();
-                    socket.send(packet);
-                }
-            } catch (SocketException e) {
-                DTVTLogger.debug(e);
-            } catch (IOException e) {
-                DTVTLogger.debug(e);
-            } finally {
-                if (socket != null) {
-                    socket.close();
-                }
+            StbConnectRelayClient stbDatagram = StbConnectRelayClient.getInstance();  // Socket通信
+            stbDatagram.setRemoteIp(ｍRemoteHost);
+            if (mSendKeycodeName != null) {
+                stbDatagram.sendDatagram(mSendKeycodeName);
             }
         }
     }
 
     /**
      * アプリ起動要求を受信してインテントをSTBへ送信する
+     *
+     * @param applicationType
+     * @param contentsId
+     * @return
      */
     public boolean startApplicationRequest(STB_APPLICATION_TYPES applicationType, String contentsId) {
-        mApplicationId = getApplicationId(applicationType);
-        mContentsId = contentsId;
+        String applicationId = getApplicationId(applicationType);
+        String requestParam;
 
-        if (mApplicationId != null && mContentsId != null) {
-            // アプリ起動要求を受信してインテントをSTBへ送信する
-            sendStartApplicationRequest();
-            return true;
+        if (applicationId != null && contentsId != null) {
+            requestParam = setTitleDetailRequest(applicationId, contentsId);
+            if (requestParam != null) {
+                // アプリ起動要求を受信してインテントをSTBへ送信する
+                sendStartApplicationRequest(requestParam);
+                return true;
+            }
         }
         return false;
     }
@@ -298,52 +296,92 @@ public class RemoteControlRelayClient {
      */
     private String getApplicationId(STB_APPLICATION_TYPES applicationType) {
         String applicationId = null;
-        if (StbApplicationSymbolMap.containsKey(applicationType)) {
-            applicationId = StbApplicationSymbolMap.get(applicationType);
+        if (mStbApplicationSymbolMap.containsKey(applicationType)) {
+            applicationId = mStbApplicationSymbolMap.get(applicationType);
         }
-//        Log.i("RemoteControl", "getApplicationType:" + applicationType + "=" +applicationId);
         return applicationId;
     }
 
+    /**
+     * アプリ起動要求をSTBへ送信するスレッド
+     */
     private class StartApplicationRequestTask implements Runnable {
-        private String mContentsId;
-        private String mApplicationId;
 
-        public StartApplicationRequestTask(String applicationId, String contentsId) {
-            mApplicationId = applicationId;
-            mContentsId = contentsId;
+        private String mRequestParam;
+
+        public StartApplicationRequestTask(String requestParam) {
+            mRequestParam = requestParam;
         }
 
         /**
-         * キーコード
-         * キーコードをSTBへ送信する
+         * アプリ起動要求をSTBへ送信して処理結果応答を取得する
          */
         @Override
         public void run() {
-            DatagramSocket socket = null;
-            try {
-                if (mApplicationId != null && mContentsId != null) {
-                    byte[] buff = mApplicationId.getBytes();
-                    DatagramPacket packet = new DatagramPacket(buff, buff.length, mRemoteAddress);
-                    socket = new DatagramSocket();
-                    socket.send(packet);
-                }
-            } catch (SocketException e) {
-                DTVTLogger.debug(e);
-            } catch (IOException e) {
-                DTVTLogger.debug(e);
-            } finally {
-                if (socket != null) {
-                    socket.close();
+            StbConnectRelayClient stbConnection = StbConnectRelayClient.getInstance();  // Socket通信
+            String recvData;
+            String message = null;
+
+            if (mRequestParam != null) {
+                stbConnection.setRemoteIp(ｍRemoteHost);
+                // アプリ起動要求をSTBへ送信して処理結果応答を取得する
+                if (stbConnection.connect()) {
+                    if (stbConnection.send(mRequestParam)) {
+                        recvData = stbConnection.recv();
+                        message = getRecvResult(recvData);
+                        if (message != null) {
+                            DTVTLogger.debug(message);
+                        }
+                    }
+                    stbConnection.disconnect();
+                } else {
+                    DTVTLogger.debug("STBとの接続に失敗しました。");
                 }
             }
+        }
+
+        private String getRecvResult(String recvResult) {
+            JSONObject recvJson = new JSONObject();
+            String message = null;
+            try {
+                if (recvResult != null) {
+                    recvJson = new JSONObject(recvResult);
+                }
+                if (!RERAY_RESULT_OK.equals(recvJson.get(RERAY_RESULT).toString())) {
+                    message = recvJson.get(RERAY_RESULT_MESSAGE).toString();
+                }
+            } catch (JSONException e) {
+                DTVTLogger.debug(e);
+            }
+            return message;
         }
     }
 
     /**
-     *
+     * アプリ起動要求送信スレッドを開始
      */
-    private void sendStartApplicationRequest() {
-//        new Thread(new StartApplicationRequestTask(mKeycodeName)).start();
+    private void sendStartApplicationRequest(String requestParam) {
+        new Thread(new StartApplicationRequestTask(requestParam)).start();
+    }
+
+    /**
+     * アプリ起動要求のメッセージ（JSON形式）を作成する
+     *
+     * @param applicationId
+     * @param contentsId
+     * @return
+     */
+    private static String setTitleDetailRequest(String applicationId, String contentsId) {
+        JSONObject requestJson = new JSONObject();
+        String jsonStr = null;
+        try {
+            requestJson.put(RERAY_COMMAND, RERAY_COMMAND_TITLE_DETAIL);
+            requestJson.put(RERAY_COMMAND_APPLICATION_ID, applicationId);
+            requestJson.put(RERAY_COMMAND_CONTENTS_ID, contentsId);
+            jsonStr = requestJson.toString();
+        } catch (JSONException e) {
+            DTVTLogger.debug(e);
+        }
+        return jsonStr;
     }
 }
