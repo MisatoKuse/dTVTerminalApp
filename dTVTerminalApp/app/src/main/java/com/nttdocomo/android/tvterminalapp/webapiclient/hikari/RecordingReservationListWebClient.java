@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationListResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.RecordingReservationListJsonParser;
 
@@ -80,7 +81,7 @@ public class RecordingReservationListWebClient
         String sendParameter = makeSendParameter(limit, offset);
 
         //録画一覧の情報を読み込むため、録画一覧APIを呼び出す
-        openUrl(API_NAME_LIST.RECORDING_RESERVATION_LIST_WEB_CLIENT.getString(),
+        openUrl(UrlConstants.WebApiUrl.RECORDING_RESERVATION_LIST_WEB_CLIENT,
                 sendParameter, this);
 
         //今のところ失敗していないので、trueを返す

@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.GenreCountGetJsonParser;
 
@@ -100,7 +101,7 @@ public class GenreCountGetWebClient
         }
 
         //ジャンル毎コンテンツ数取得情報を読み込むためにAPIを呼び出す
-        openUrl(API_NAME_LIST.GENRE_COUNT_GET_WEB_CLIENT.getString(),
+        openUrl(UrlConstants.WebApiUrl.GENRE_COUNT_GET_WEB_CLIENT,
                 sendParameter, this);
 
         DTVTLogger.end();

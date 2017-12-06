@@ -8,6 +8,7 @@ import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WatchListenVideoList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.JsonParserThread;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WatchListenVideoListJsonParser;
@@ -110,7 +111,7 @@ public class WatchListenVideoWebClient
         }
 
         //視聴中ビデオ一覧を呼び出す
-        openUrl(API_NAME_LIST.WATCH_LISTEN_VIDEO_LIST.getString(),
+        openUrl(UrlConstants.WebApiUrl.WATCH_LISTEN_VIDEO_LIST,
                 sendParameter, this);
 
         //今のところ正常なので、trueで帰る

@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser;
 
@@ -79,7 +80,7 @@ public class TvScheduleWebClient
         }
 
         //チャンネル毎番組一覧を呼び出す
-        openUrl(API_NAME_LIST.TV_SCHEDULE_LIST.getString(), sendParameter, this);
+        openUrl(UrlConstants.WebApiUrl.TV_SCHEDULE_LIST, sendParameter, this);
 
         //今のところ失敗は無いので、trueで帰る
         return true;

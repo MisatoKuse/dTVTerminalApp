@@ -8,6 +8,7 @@ import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.JsonParserThread;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser2;
@@ -119,7 +120,7 @@ public class VodClipWebClient
         }
 
         //VODクリップ一覧を呼び出す
-        openUrl(API_NAME_LIST.VOD_CLIP_LIST.getString(),
+        openUrl(UrlConstants.WebApiUrl.VOD_CLIP_LIST,
                 sendParameter,this);
 
         //今のところ正常なので、trueで帰る
