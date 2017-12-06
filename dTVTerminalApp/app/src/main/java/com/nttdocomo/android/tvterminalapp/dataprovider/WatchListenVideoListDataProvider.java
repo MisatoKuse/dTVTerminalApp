@@ -84,7 +84,7 @@ public class WatchListenVideoListDataProvider implements WatchListenVideoWebClie
 
         for (int i = 0; i < list.size(); i++) {
             title = list.get(i).get(JsonContents.META_RESPONSE_TITLE);
-            ratingValue = list.get(i).get(JsonContents.META_RESPONSE_R_VALUE);
+            ratingValue = list.get(i).get(JsonContents.META_RESPONSE_RATING);
             picUrl = list.get(i).get(JsonContents.META_RESPONSE_THUMB_448);
 
             WatchListenVideoContentInfo.WatchListenVideoContentInfoItem item=tmpClipContentInfo.new WatchListenVideoContentInfoItem(picUrl, title, ratingValue);

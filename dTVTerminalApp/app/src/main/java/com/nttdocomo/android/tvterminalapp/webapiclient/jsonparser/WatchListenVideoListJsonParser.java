@@ -24,7 +24,7 @@ public class WatchListenVideoListJsonParser {
 
     private static final String[] PAGER_PARA = {JsonContents.META_RESPONSE_UPPER_LIMIT,
             JsonContents.META_RESPONSE_LOWER_LIMIT, JsonContents.META_RESPONSE_OFFSET,
-            JsonContents.META_RESPONSE_DIRECTION};
+            JsonContents.META_RESPONSE_COUNT};
 
     public List<WatchListenVideoList> watchListenVideoListSender(String jsonStr) {
         mWatchListenVideoList = new WatchListenVideoList();
@@ -33,8 +33,8 @@ public class WatchListenVideoListJsonParser {
             JSONObject jsonObj = new JSONObject(jsonStr);
             sendStatus(jsonObj);
             // **FindBugs** Bad practice FindBugはこのヌルチェックが無用と警告するが、将来的にcatch (Exception e)は消すはずなので残す
-            if (!jsonObj.isNull(JsonContents.META_RESPONSE_LIST)) {
-                JSONArray arrayList = jsonObj.getJSONArray(JsonContents.META_RESPONSE_LIST);
+            if (!jsonObj.isNull(JsonContents.META_RESPONSE_METADATE_LIST)) {
+                JSONArray arrayList = jsonObj.getJSONArray(JsonContents.META_RESPONSE_METADATE_LIST);
                 sendVcList(arrayList);
             }
             return Arrays.asList(mWatchListenVideoList);
