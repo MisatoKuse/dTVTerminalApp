@@ -41,7 +41,7 @@ public class RentalDataProvider implements RentalVodListWebClient.RentalVodListJ
         /**
          * レンタル一覧用コールバック
          *
-         * @param list
+         * @param list コンテンツリスト
          */
         void rentalListCallback(List<ContentsData> list);
     }
@@ -51,7 +51,7 @@ public class RentalDataProvider implements RentalVodListWebClient.RentalVodListJ
     /**
      * コンストラクタ
      *
-     * @param mContext
+     * @param mContext コンテキスト
      */
     public RentalDataProvider(Context mContext) {
         this.mContext = mContext;
@@ -73,7 +73,7 @@ public class RentalDataProvider implements RentalVodListWebClient.RentalVodListJ
     /**
      * レンタル一覧データをRentalListActivityに送る
      *
-     * @param response
+     * @param response 購入済みVOD一覧データ
      */
     public void sendRentalListData(PurchasedVodListResponse response) {
 
@@ -94,14 +94,14 @@ public class RentalDataProvider implements RentalVodListWebClient.RentalVodListJ
         RentalVodListWebClient webClient = new RentalVodListWebClient();
         webClient.getRentalVodListApi(this);
 
-        //Display用ダミーデータ(消去予定)ここから
+        //TODO: Display用ダミーデータ(消去予定)ここから
         ArrayList<VodMetaFullData> list = new ArrayList<>();
         for (int i = 0; i < 30; i++) {
             VodMetaFullData vodMetaFullData = new VodMetaFullData();
             vodMetaFullData.setTitle("title" + i);
-            vodMetaFullData.setThumb("https://www.nhk.or.jp/prog/img/944/g944.jpg");
-            vodMetaFullData.setAvail_end_date("2017/12/01");
-            vodMetaFullData.setRating(String.valueOf(i));
+            vodMetaFullData.setmThumb_448_252("https://www.nhk.or.jp/prog/img/944/g944.jpg");
+            vodMetaFullData.setAvail_end_date(1512054000);//"2017/12/01"
+            vodMetaFullData.setRating(i);
             list.add(vodMetaFullData);
         }
         response.setVodMetaFullData(list);
@@ -112,7 +112,7 @@ public class RentalDataProvider implements RentalVodListWebClient.RentalVodListJ
     /**
      * DB保存
      *
-     * @param response
+     * @param response 購入済みVOD一覧データ
      */
     public void setStructDB(PurchasedVodListResponse response) {
         if (mSetDB) {
@@ -127,8 +127,8 @@ public class RentalDataProvider implements RentalVodListWebClient.RentalVodListJ
     /**
      * ContentsData生成
      *
-     * @param response
-     * @return
+     * @param response 購入済みVOD一覧データ
+     * @return コンテンツリスト
      */
     private List<ContentsData> makeContentsData(PurchasedVodListResponse response) {
         List<ContentsData> list = new ArrayList<>();
@@ -136,9 +136,10 @@ public class RentalDataProvider implements RentalVodListWebClient.RentalVodListJ
         for (int i = 0; i < response.getVodMetaFullData().size(); i++) {
             ContentsData data = new ContentsData();
             data.setTitle(metaFullData.get(i).getTitle());
-            data.setTime(metaFullData.get(i).getAvail_end_date());
-            data.setRatStar(metaFullData.get(i).getRating());
-            data.setThumURL(metaFullData.get(i).getThumb());
+            //エポック秒から文字に変換
+            data.setTime(DateUtils.formatEpochToString(metaFullData.get(i).getAvail_end_date()));
+            data.setRatStar(String.valueOf(metaFullData.get(i).getRating()));
+            data.setThumURL(metaFullData.get(i).getmThumb_448_252());
             list.add(data);
         }
         return list;

@@ -7,15 +7,14 @@ package com.nttdocomo.android.tvterminalapp.datamanager.insert;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RentalListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 
 import java.util.ArrayList;
 
@@ -35,7 +34,7 @@ public class RentalListInsertDataManager {
     /**
      * コンストラクタ
      *
-     * @param context
+     * @param context コンテキスト
      */
     public RentalListInsertDataManager(Context context) {
         mContext = context;
@@ -44,7 +43,6 @@ public class RentalListInsertDataManager {
     /**
      * RentalListAPIの解析結果をDBに格納する。
      *
-     * @return
      */
     public void insertRentalListInsertList(PurchasedVodListResponse rentalList) {
 
@@ -68,7 +66,8 @@ public class RentalListInsertDataManager {
 
             for (String item:vodMetaFullData. getRootPara()) {
                 String keyName = item;
-                String valName = (String)vodMetaFullData.getMember(item);
+                //データがString型だけではなくなったので、変換を行ってから蓄積する
+                String valName = StringUtil.changeObject2String(vodMetaFullData.getMember(item));
                 values.put(DBUtils.fourKFlgConversion(keyName), valName);
             }
             rentalListDao.insert(values);

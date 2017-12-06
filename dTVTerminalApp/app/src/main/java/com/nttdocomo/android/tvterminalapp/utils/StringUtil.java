@@ -47,7 +47,7 @@ public class StringUtil {
      * @param strings 連結したい文字列配列
      * @return 連結後の文字列
      */
-    public String getConnectString(String[] strings) {
+    public static String getConnectString(String[] strings) {
         StringBuilder builder = new StringBuilder();
         String conString = null;
         for (String string : strings) {
@@ -144,4 +144,40 @@ public class StringUtil {
         //変換できなかったのでゼロ
         return 0;
     }
+
+    /**
+     * 与えられたオブジェクトをチェックし、文字列に変換する
+     *
+     * @param data オブジェクト
+     * @return 長整数変換後の値。変換できなければゼロ
+     */
+    public static String changeObject2String(Object data) {
+        //Strinかどうかを見る
+        if (data instanceof String) {
+            //そのまま返す
+            return (String)data;
+        }
+
+        //intかどうかを判定
+        if(data instanceof Integer) {
+            //intを文字に変換して返す
+            return String.valueOf((int)data);
+        }
+
+        //longかどうかを判定
+        if(data instanceof Long) {
+            //longを文字に変換して返す
+            return String.valueOf((long)data);
+        }
+
+        //doubleかどうかを判定
+        if(data instanceof Double) {
+            //doubleを文字に変換して返す
+            return String.valueOf((double)data);
+        }
+
+        //変換できなかったので空文字
+        return "";
+    }
+
 }
