@@ -6,13 +6,13 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.VodClipInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.VodClipDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipContentInfo;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
-import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,11 +90,11 @@ public class VodClipDataProvider implements VodClipWebClient.VodClipJsonParserCa
         VodClipContentInfo tmpClipContentInfo=new VodClipContentInfo();
 
         for (int i = 0; i < list.size(); i++) {
-            title = list.get(i).get(VodClipJsonParser.VODCLIP_LIST_TITLE);
-            contentTime = list.get(i).get(VodClipJsonParser.VODCLIP_LIST_DISPLAY_START_DATE);
-            picUrl = list.get(i).get(VodClipJsonParser.VODCLIP_LIST_THUMB);
-            contentId = list.get(i).get(VodClipJsonParser.VODCLIP_LIST_DISP_TYPE);
-            ratingValue = list.get(i).get(VodClipJsonParser.VODCLIP_LIST_R_VALUE);
+            title = list.get(i).get(JsonContents.META_RESPONSE_TITLE);
+            contentTime = list.get(i).get(JsonContents.META_RESPONSE_DISPLAY_START_DATE);
+            picUrl = list.get(i).get(JsonContents.META_RESPONSE_THUMB_448);
+            contentId = list.get(i).get(JsonContents.META_RESPONSE_DISP_TYPE);
+            ratingValue = list.get(i).get(JsonContents.META_RESPONSE_R_VALUE);
 
             //ClipContentInfoItem(boolean clipFlag, String contentPictureUrl, String title, String rating)
 
@@ -131,8 +131,10 @@ public class VodClipDataProvider implements VodClipWebClient.VodClipJsonParserCa
             int upperPageLimit = 1;
             int lowerPageLimit = 1;
             //int pagerOffset = 1;
+            String direction = "";
+
             webClient.getVodClipApi(ageReq, upperPageLimit,
-                    lowerPageLimit, pagerOffset, this);
+                    lowerPageLimit, pagerOffset, direction, this);
         }
         return list;
     }

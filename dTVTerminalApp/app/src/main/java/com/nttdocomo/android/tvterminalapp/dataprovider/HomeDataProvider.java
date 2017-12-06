@@ -161,7 +161,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
          *
          * @param recVdList
          */
-        void recommemdVideoCallback(List<Map<String, String>> recVdList);
+        void recommendVideoCallback(List<Map<String, String>> recVdList);
     }
 
     private ApiDataProviderCallback apiDataProviderCallback;
@@ -236,7 +236,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param list
      */
     public void sendRecommendVdListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.recommemdVideoCallback(list);
+        apiDataProviderCallback.recommendVideoCallback(list);
     }
 
     /**
@@ -366,8 +366,10 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
             int upperPageLimit = 1;
             int lowerPageLimit = 1;
             int pagerOffset = 1;
+            String pagerDirection = "";
+
             webClient.getVodClipApi(ageReq, upperPageLimit,
-                    lowerPageLimit, pagerOffset, this);
+                    lowerPageLimit, pagerOffset, pagerDirection, this);
         }
         return list;
     }
