@@ -6,10 +6,10 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WatchListenVideoContentInfo;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WatchListenVideoList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WatchListenVideoWebClient;
-import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WatchListenVideoListJsonParser;
 
 import java.util.List;
 import java.util.Map;
@@ -24,10 +24,10 @@ public class WatchListenVideoListDataProvider implements WatchListenVideoWebClie
             WatchListenVideoList list = watchListenVideoList.get(0);
             sendTvClipListData(list.getVcList());
         } else {
-            if(null!=mApiDataProviderCallback){
+            if ( null != mApiDataProviderCallback){
                 mApiDataProviderCallback.watchListenVideoListCallback(null);
             }
-        }      
+        }
     }
 
     /**
@@ -47,11 +47,11 @@ public class WatchListenVideoListDataProvider implements WatchListenVideoWebClie
     /**
      * コンストラクタ
      *
-     * @param mContext
+     * @param context
      */
-    public WatchListenVideoListDataProvider(Context mContext) {
-        this.mContext = mContext;
-        this.mApiDataProviderCallback = (WatchListenVideoListProviderCallback) mContext;
+    public WatchListenVideoListDataProvider(Context context) {
+        this.mContext = context;
+        this.mApiDataProviderCallback = (WatchListenVideoListProviderCallback) context;
     }
 
     /**
@@ -63,8 +63,10 @@ public class WatchListenVideoListDataProvider implements WatchListenVideoWebClie
         int upperPageLimit = 1;
         int lowerPageLimit = 1;
         //int pagerOffset = 1;
+        String pagerDirection = "";
+
         webClient.getWatchListenVideoApi(ageReq, upperPageLimit,
-                lowerPageLimit, pagerOffset, this);
+                lowerPageLimit, pagerOffset, pagerDirection, this);
     }
 
     /**
@@ -75,15 +77,15 @@ public class WatchListenVideoListDataProvider implements WatchListenVideoWebClie
     public void sendTvClipListData(List<Map<String, String>> list) {
 
         WatchListenVideoContentInfo clipContentInfo = new WatchListenVideoContentInfo();
-        String title="";
-        String ratingValue="";
-        String picUrl ="";
-        WatchListenVideoContentInfo tmpClipContentInfo=new WatchListenVideoContentInfo();
+        String title = "";
+        String ratingValue = "";
+        String picUrl = "";
+        WatchListenVideoContentInfo tmpClipContentInfo = new WatchListenVideoContentInfo();
 
         for (int i = 0; i < list.size(); i++) {
-            title = list.get(i).get(WatchListenVideoListJsonParser.WATCH_LISTEN_VIDEO_LIST_TITLE);
-            ratingValue = list.get(i).get(WatchListenVideoListJsonParser.WATCH_LISTEN_VIDEO_LIST_R_VALUE);
-            picUrl = list.get(i).get(WatchListenVideoListJsonParser.WATCH_LISTEN_VIDEO_LIST_THUMB);
+            title = list.get(i).get(JsonContents.META_RESPONSE_TITLE);
+            ratingValue = list.get(i).get(JsonContents.META_RESPONSE_R_VALUE);
+            picUrl = list.get(i).get(JsonContents.META_RESPONSE_THUMB_448);
 
             WatchListenVideoContentInfo.WatchListenVideoContentInfoItem item=tmpClipContentInfo.new WatchListenVideoContentInfoItem(picUrl, title, ratingValue);
             clipContentInfo.add(item);
