@@ -20,11 +20,11 @@ public class ContentsDetailGetResponse implements Serializable {
     /**
      * VOD＆番組マージメタデータ（フル版）
      */
-    private ArrayList<VodProgramMetaFullData> mVodProgramMetaData;
+    private ArrayList<VodMetaFullData> mVodProgramMetaData;
 
     public static final String GENRE_COUNT_GET_RESPONSE_STATUS = "status";
     public static final String GENRE_COUNT_GET_RESPONSE_LIST = "list";
-    public static final String RECORDING_RESERVATION_FIXED = "";
+    private static final String RECORDING_RESERVATION_FIXED = "";
 
     public String getStatus() {
         return mStatus;
@@ -34,11 +34,11 @@ public class ContentsDetailGetResponse implements Serializable {
         mStatus = status;
     }
 
-    public ArrayList<VodProgramMetaFullData> getVodProgramMetaFullData() {
+    public ArrayList<VodMetaFullData> getVodMetaFullData() {
         return mVodProgramMetaData;
     }
 
-    public void setVodProgramMetaFullData(ArrayList<VodProgramMetaFullData> vodMetaData) {
+    public void setVodMetaFullData(ArrayList<VodMetaFullData> vodMetaData) {
         this.mVodProgramMetaData = vodMetaData;
     }
 
