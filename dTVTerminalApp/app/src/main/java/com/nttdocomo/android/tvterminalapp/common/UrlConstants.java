@@ -22,7 +22,7 @@ public class UrlConstants {
         /**
          * ぷららサーバーAPIアクセス用のベースURL
          */
-        public static final String plalaBaseUrl = "http://192.168.2.3/";
+        public static final String plalaBaseUrl = "http://192.168.2.3:1445/";
 
     }
 }

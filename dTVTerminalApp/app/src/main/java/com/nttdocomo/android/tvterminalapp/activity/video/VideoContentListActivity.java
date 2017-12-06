@@ -20,6 +20,7 @@ import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VideoContentProvider;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser;
 
@@ -295,9 +296,9 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
 
         for (int i = 0; i < videoContentMapList.size(); i++) {
             contentsData = new ContentsData();
-            contentsData.setThumURL(videoContentMapList.get(i).get(VideoRankJsonParser.VIDEORANK_LIST_THUMB));
-            contentsData.setTitle(videoContentMapList.get(i).get(VideoRankJsonParser.VIDEORANK_LIST_TITLE));
-            contentsData.setRatStar(videoContentMapList.get(i).get(VideoRankJsonParser.VIDEORANK_LIST_RATING));
+            contentsData.setThumURL(videoContentMapList.get(i).get(JsonContents.META_RESPONSE_THUMB_448));
+            contentsData.setTitle(videoContentMapList.get(i).get(JsonContents.META_RESPONSE_TITLE));
+            contentsData.setRatStar(videoContentMapList.get(i).get(JsonContents.META_RESPONSE_RATING));
 
             videoContentsDataList.add(contentsData);
         }
