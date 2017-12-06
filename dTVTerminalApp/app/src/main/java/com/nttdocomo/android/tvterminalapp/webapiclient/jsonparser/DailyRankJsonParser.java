@@ -70,10 +70,8 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
             List<DailyRankList> drList = Arrays.asList(mDailyRankList);
             return drList;
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
         return null;
@@ -111,7 +109,6 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
     }
@@ -150,7 +147,6 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
     }

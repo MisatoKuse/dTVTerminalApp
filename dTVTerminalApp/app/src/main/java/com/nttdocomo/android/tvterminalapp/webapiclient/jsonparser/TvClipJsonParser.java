@@ -40,10 +40,8 @@ public class TvClipJsonParser {
             List<TvClipList> tvClipList = Arrays.asList(mTvClipList);
             return tvClipList;
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
         return null;
@@ -71,7 +69,6 @@ public class TvClipJsonParser {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
     }
@@ -108,9 +105,7 @@ public class TvClipJsonParser {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
     }
-
 }

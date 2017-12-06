@@ -11,10 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class VideoRankList {
-    private HashMap<String, String> mVrMap = new HashMap<String, String>();
+    private HashMap<String, String> mVrMap = new HashMap<>();
     private List<HashMap<String, String>> mVrList = new ArrayList<>();
-    private List<HashMap<String, String>> mVrPLITList = new ArrayList<>();
-    private List<HashMap<String, String>> mVrPlicenseList = new ArrayList<>();
 
     /**
      * 拡張情報
@@ -54,21 +52,5 @@ public class VideoRankList {
     public Bundle getExtraData() {
         return mExtraData;
     }
-
-//    public List getVrPLITList() {
-//        return mVrPLITList;
-//    }
-//
-//    public void setVrPLITList(List rPLITList) {
-//        this.mVrPLITList = rPLITList;
-//    }
-//
-//    public List getVrPlicenseList() {
-//        return mVrPlicenseList;
-//    }
-//
-//    public void setVrPlicenseList(List vrPlicenseList) {
-//        this.mVrPlicenseList = vrPlicenseList;
-//    }
 
 }

@@ -75,10 +75,8 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
                 return clList;
             }
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
         return null;
@@ -114,7 +112,6 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
     }
@@ -129,8 +126,8 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     @Override
-    protected void onPostExecute(Object s) {
-        mChannelJsonParserCallback.onChannelJsonParsed((List<ChannelList>) s);
+    protected void onPostExecute(Object object) {
+        mChannelJsonParserCallback.onChannelJsonParsed((List<ChannelList>) object);
     }
 
     @Override
@@ -190,7 +187,6 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
     }

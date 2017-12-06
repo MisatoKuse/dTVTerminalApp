@@ -170,5 +170,4 @@ public class VodClipJsonParser extends AsyncTask<Object, Object, Object> {
             DTVTLogger.debug(e);
         }
     }
-
 }
