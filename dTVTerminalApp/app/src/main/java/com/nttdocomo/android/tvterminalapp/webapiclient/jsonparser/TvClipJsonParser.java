@@ -22,8 +22,6 @@ public class TvClipJsonParser {
     // オブジェクトクラスの定義
     private TvClipList mTvClipList;
 
-    public static final String UNDER_LINE = "_";
-
     public static final String[] PAGER_PARA = {JsonContents.META_RESPONSE_UPPER_LIMIT,
             JsonContents.META_RESPONSE_LOWER_LIMIT, JsonContents.META_RESPONSE_OFFSET,
             JsonContents.META_RESPONSE_COUNT};
@@ -93,7 +91,7 @@ public class TvClipJsonParser {
                             JSONObject puinfObj = jsonObject.getJSONObject(listBuffer);
                             for (String puinfBuffer : JsonContents.PUINF_PARA) {
                                 String para = puinfObj.getString(puinfBuffer);
-                                tcListMap.put(JsonContents.META_RESPONSE_PUINF + UNDER_LINE + puinfBuffer, para);
+                                tcListMap.put(JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + puinfBuffer, para);
                             }
                         } else {
                             String para = jsonObject.getString(listBuffer);

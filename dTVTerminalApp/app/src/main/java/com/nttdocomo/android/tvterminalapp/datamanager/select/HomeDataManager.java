@@ -24,10 +24,6 @@ import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyR
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_DISP_TYPE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_THUMB;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_TITLE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_VOD_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_DISP_TYPE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_THUMB;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_TITLE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_DISPLAY_START_DATE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_DISP_TYPE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_THUMB;
@@ -166,8 +162,8 @@ public class HomeDataManager {
      */
     public List<Map<String, String>> selectTvScheduleListHomeData() {
         //ホーム画面に必要な列を列挙する
-        String[] columns = {TV_SCHEDULE_LIST_THUMB, TV_SCHEDULE_LIST_TITLE,
-                TV_SCHEDULE_LIST_VOD_START_DATE, TV_SCHEDULE_LIST_DISP_TYPE};
+        String[] columns = {JsonContents.META_RESPONSE_THUMB_448, JsonContents.META_RESPONSE_TITLE,
+                JsonContents.META_RESPONSE_AVAIL_START_DATE, JsonContents.META_RESPONSE_AVAIL_END_DATE};
 
         //Daoクラス使用準備
         DBHelper tvScheduleListDBHelper = new DBHelper(mContext);

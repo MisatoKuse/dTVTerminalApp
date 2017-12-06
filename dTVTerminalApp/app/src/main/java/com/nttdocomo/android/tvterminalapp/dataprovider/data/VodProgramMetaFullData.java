@@ -564,7 +564,7 @@ public class VodProgramMetaFullData implements Serializable {
     /**
      * 販売情報リストの内容
      */
-    static class PUINF_class implements Serializable {
+    public static class PUINF_class implements Serializable {
         private static final long serialVersionUID = 147899028985473046L;
 
         public String getmPuid() {
@@ -718,19 +718,19 @@ public class VodProgramMetaFullData implements Serializable {
                         mEpititle = (String) data;
                         break;
                     case JsonContents.META_RESPONSE_CHSVOD:
-                        //
+                        //CHSVOD
                         mChsvod = (String) data;
                         break;
                     case JsonContents.META_RESPONSE_PRICE:
-                        //
+                        // 価格(税込)
                         mPrice = (String) data;
                         break;
                     case JsonContents.META_RESPONSE_QUNIT:
-                        //
+                        // 購入単位の期間(3日の3)
                         mQunit = (String) data;
                         break;
                     case JsonContents.META_RESPONSE_QRANGE:
-                        //
+                        // 購入単位の単位(3日の「日」)
                         mQrange = (String) data;
                         break;
                     case JsonContents.META_RESPONSE_PU_START_DATE:
@@ -750,9 +750,50 @@ public class VodProgramMetaFullData implements Serializable {
                 }
             }
         }
+
+        /**
+         * キーの値を取得する
+         *
+         * @param key 取得したい値のキー
+         */
+        public Object getMember(String key) {
+
+            if (key == null || key.isEmpty()) {
+                //キーが無いので、空文字を返す
+                return "";
+            } else {
+                // 指定された項目名の値を返却する
+                switch (key) {
+                    case JsonContents.META_RESPONSE_PUID:
+                        return mPuid;
+                    case JsonContents.META_RESPONSE_CRID:
+                        return mCrid;
+                    case JsonContents.META_RESPONSE_TITLE:
+                        return mTitle;
+                    case JsonContents.META_RESPONSE_EPITITLE:
+                        return mEpititle;
+                    case JsonContents.META_RESPONSE_DISP_TYPE:
+                        return mDisp_type;
+                    case JsonContents.META_RESPONSE_CHSVOD:
+                        return mChsvod;
+                    case JsonContents.META_RESPONSE_PRICE:
+                        return mPrice;
+                    case JsonContents.META_RESPONSE_QUNIT:
+                        return mQunit;
+                    case JsonContents.META_RESPONSE_QRANGE:
+                        return mQrange;
+                    case JsonContents.META_RESPONSE_PU_START_DATE:
+                        return mPu_start_date;
+                    case JsonContents.META_RESPONSE_PU_END_DATE:
+                        return mPu_end_date;
+                    default:
+                        return "";
+                }
+            }
+        }
     }
 
-    // キー名：単一データ
+    // キー名：単一データ(順番が分かりやすいように配列とリストの情報も残してある)
     private static final String[] mRootPara = {
             JsonContents.META_RESPONSE_CRID, JsonContents.META_RESPONSE_CID,
             JsonContents.META_RESPONSE_TITLE_ID, JsonContents.META_RESPONSE_EPISODE_ID,
@@ -1048,14 +1089,6 @@ public class VodProgramMetaFullData implements Serializable {
                 case JsonContents.META_RESPONSE_LIINF_ARRAY:
                     //ライセンス情報リスト
                     mLiinf_array = StringUtil.JSonArray2StringArray((JSONArray) data);
-                    break;
-                case JsonContents.META_RESPONSE_PUINF:
-                    //販売情報リスト
-                    if (data == null || !(data instanceof ArrayList)) {
-                        mPUINF = new ArrayList();
-                    } else {
-                        mPUINF = (List<VodProgramMetaFullData.PUINF_class>) data;
-                    }
                     break;
                 case JsonContents.META_RESPONSE_CAPL:
                     //字幕

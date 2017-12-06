@@ -6,8 +6,6 @@ package com.nttdocomo.android.tvterminalapp.datamanager.databese;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.UNDER_LINE;
-
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_ADULT;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_AVAIL_END_DATE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_AVAIL_START_DATE;
@@ -37,47 +35,6 @@ import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyR
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_THUMB;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_TITLE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_TITLE_ID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_CRID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_TITLE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_TITLERUBY;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_CID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_SERVICE_ID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_EVENT_ID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_CHNO;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_DISP_TYPE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_LINEAR_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_LINEAR_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_VOD_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_VOD_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_THUMB;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_COPYRIGHT;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_DUR;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_DEMONG;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_AVAIL_STATUS;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_DELIVERY;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_R_VALUE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_MAIN_GENRE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_SECOND_GEBRE_ARRAY;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_SYNOP;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_CREDITS;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_CAPL;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_COPY;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_ADINFO;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_BILINGAL;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_LIVE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_FIRST_JAPAN;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_FIRST_TV;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_EXCLUSIVE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_PRE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_FIRST_CH;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_ORIGINAL;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_MASK;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_NONSCRAMBLE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_DOWNLOAD;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_STARTOVER;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_STAMP;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_RELATIONAL_ID_ARRAY;
-
 
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser.USER_INFO_LIST_CONTRACT_STATUS;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ;
@@ -288,16 +245,16 @@ public class DBConstants {
             JsonContents.META_RESPONSE_QUNIT  + " text, " +
             JsonContents.META_RESPONSE_PU_START_DATE  + " text, " +
             JsonContents.META_RESPONSE_PU_END_DATE  + " text, " +
-            JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
-            JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_TITLE +" text, " +
-            JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_DISP_TYPE +" text, " +
-            JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_PUID +" text, " +
-            JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_SUB_PUID +" text, " +
-            JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_PRICE +" text, " +
-            JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_QRANGE +" text, " +
-            JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_QUNIT +" text, " +
-            JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_PU_START_DATE +" text, " +
-            JsonContents.META_RESPONSE_CHPACK  + UNDER_LINE + JsonContents.META_RESPONSE_PU_END_DATE +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_TITLE +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_DISP_TYPE +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_SUB_PUID +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PRICE +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QRANGE +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QUNIT +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_START_DATE +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_END_DATE +" text, " +
             DATE_TYPE + " text, " +
             UPDATE_DATE + " text " +
             ")";
@@ -344,48 +301,76 @@ public class DBConstants {
     public static final String CREATE_TABLE_TV_SCHEDULE_SQL = "" +
             "create table " + TV_SCHEDULE_LIST_TABLE_NAME + " (" +
             ID_COLUMN + " integer primary key autoincrement, " +
-            TV_SCHEDULE_LIST_CRID  + " text, " +
-            TV_SCHEDULE_LIST_TITLE  + " text, " +
-            TV_SCHEDULE_LIST_TITLERUBY  + " text, " +
-            TV_SCHEDULE_LIST_CID  + " text, " +
-            TV_SCHEDULE_LIST_SERVICE_ID  + " text, " +
-            TV_SCHEDULE_LIST_EVENT_ID  + " text, " +
-            TV_SCHEDULE_LIST_CHNO  + " text, " +
-            TV_SCHEDULE_LIST_DISP_TYPE  + " text, " +
-            TV_SCHEDULE_LIST_LINEAR_START_DATE  + " text, " +
-            TV_SCHEDULE_LIST_LINEAR_END_DATE  + " text, " +
-            TV_SCHEDULE_LIST_VOD_START_DATE  + " text, " +
-            TV_SCHEDULE_LIST_VOD_END_DATE  + " text, " +
-            TV_SCHEDULE_LIST_THUMB  + " text, " +
-            TV_SCHEDULE_LIST_COPYRIGHT  + " text, " +
-            TV_SCHEDULE_LIST_DUR  + " text, " +
-            TV_SCHEDULE_LIST_DEMONG  + " text, " +
-            TV_SCHEDULE_LIST_AVAIL_STATUS  + " text, " +
-            TV_SCHEDULE_LIST_DELIVERY  + " text, " +
-            TV_SCHEDULE_LIST_R_VALUE  + " text, " +
-            TV_SCHEDULE_LIST_MAIN_GENRE  + " text, " +
-            TV_SCHEDULE_LIST_SECOND_GEBRE_ARRAY  + " text, " +
-            TV_SCHEDULE_LIST_SYNOP  + " text, " +
-            TV_SCHEDULE_LIST_CREDITS  + " text, " +
-            TV_SCHEDULE_LIST_CAPL  + " text, " +
-            TV_SCHEDULE_LIST_COPY  + " text, " +
-            TV_SCHEDULE_LIST_ADINFO  + " text, " +
-            TV_SCHEDULE_LIST_BILINGAL  + " text, " +
-            TV_SCHEDULE_LIST_LIVE   + " text, " +
-            TV_SCHEDULE_LIST_FIRST_JAPAN  + " text, " +
-            TV_SCHEDULE_LIST_FIRST_TV  + " text, " +
-            TV_SCHEDULE_LIST_EXCLUSIVE   + " text, " +
-            TV_SCHEDULE_LIST_PRE   + " text, " +
-            TV_SCHEDULE_LIST_FIRST_CH   + " text, " +
-            TV_SCHEDULE_LIST_ORIGINAL    + " text, " +
-            TV_SCHEDULE_LIST_MASK    + " text, " +
-            TV_SCHEDULE_LIST_NONSCRAMBLE    + " text, " +
-            TV_SCHEDULE_LIST_DOWNLOAD    + " text, " +
-            TV_SCHEDULE_LIST_STARTOVER     + " text, " +
-            TV_SCHEDULE_LIST_STAMP     + " text, " +
-            TV_SCHEDULE_LIST_RELATIONAL_ID_ARRAY     + " text, " +
-            DATE_TYPE + " text, " +
-            UPDATE_DATE + " text " +
+            JsonContents.META_RESPONSE_CRID + " text, " +
+            JsonContents.META_RESPONSE_CID + " text, " +
+            JsonContents.META_RESPONSE_TITLE_ID + " text, " +
+            JsonContents.META_RESPONSE_EPISODE_ID + " text, " +
+            JsonContents.META_RESPONSE_TITLE + " text, " +
+            JsonContents.META_RESPONSE_EPITITLE + " text, " +
+            JsonContents.META_RESPONSE_TITLERUBY + " text, " +
+            JsonContents.META_RESPONSE_DISP_TYPE + " text, " +
+            JsonContents.META_RESPONSE_DISPLAY_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_DISPLAY_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_AVAIL_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_AVAIL_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUBLISH_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUBLISH_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_NEWA_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_NEWA_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_THUMB_640 + " text, " +
+            JsonContents.META_RESPONSE_THUMB_448 + " text, " +
+            JsonContents.META_RESPONSE_DTV_THUMB_640 + " text, " +
+            JsonContents.META_RESPONSE_DTV_THUMB_448 + " text, " +
+            JsonContents.META_RESPONSE_COPYRIGHT + " text, " +
+            JsonContents.META_RESPONSE_DUR + " text, " +
+            JsonContents.META_RESPONSE_DEMONG + " text, " +
+            JsonContents.META_RESPONSE_BVFLG + " text, " +
+            UNDER_BAR_FOUR_K_FLG + " text, " +
+            JsonContents.META_RESPONSE_HDRFLG + " text, " +
+            JsonContents.META_RESPONSE_DELIVERY + " text, " +
+            JsonContents.META_RESPONSE_R_VALUE + " text, " +
+            JsonContents.META_RESPONSE_ADULT + " text, " +
+            JsonContents.META_RESPONSE_GENRE_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_SYNOP + " text, " +
+            JsonContents.META_RESPONSE_SYNOP_SHORT + " text, " +
+            JsonContents.META_RESPONSE_PUID + " text, " +
+            JsonContents.META_RESPONSE_PRICE + " text, " +
+            JsonContents.META_RESPONSE_QRANGE + " text, " +
+            JsonContents.META_RESPONSE_QUNIT + " text, " +
+            JsonContents.META_RESPONSE_PU_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_PU_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_CREDIT_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_RATING + " text, " +
+            JsonContents.META_RESPONSE_DTV + " text, " +
+            JsonContents.META_RESPONSE_CHSVOD + " text, " +
+            JsonContents.META_RESPONSE_SEARCH_OK + " text, " +
+            JsonContents.META_RESPONSE_LIINF_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_TITLE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_EPITITLE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_DISP_TYPE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CHSVOD + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PRICE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QUNIT + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QRANGE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_CAPL + " text, " +
+            JsonContents.META_RESPONSE_BILINGAL + " text, " +
+            JsonContents.META_RESPONSE_TV_CID + " text, " +
+            JsonContents.META_RESPONSE_SERVICE_ID + " text, " +
+            JsonContents.META_RESPONSE_EVENT_ID + " text, " +
+            JsonContents.META_RESPONSE_CHNO + " text, " +
+            JsonContents.META_RESPONSE_TV_SERVICE + " text, " +
+            JsonContents.META_RESPONSE_CONTENT_TYPE + " text, " +
+            JsonContents.META_RESPONSE_VOD_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_VOD_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_MAIN_GENRE + " text, " +
+            JsonContents.META_RESPONSE_SECOND_GENRE_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_COPY + " text, " +
+            JsonContents.META_RESPONSE_ADINFO_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_RELATIONAL_ID_ARRAY + " text " +
             ")";
 
     //Homeキャッシュデータ格納用テーブル
@@ -485,17 +470,17 @@ public class DBConstants {
             JsonContents.META_RESPONSE_CHSVOD + " text, " +
             JsonContents.META_RESPONSE_SEARCH_OK + " text, " +
             JsonContents.META_RESPONSE_LIINF_ARRAY + " text, " +
-            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_PUID + " text, " +
-            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
-            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_TITLE + " text, " +
-            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_EPITITLE + " text, " +
-            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_DISP_TYPE + " text, " +
-            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_CHSVOD + " text, " +
-            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_PRICE + " text, " +
-            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_QUNIT + " text, " +
-            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_QRANGE + " text, " +
-            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_PU_START_DATE + " text, " +
-            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_PU_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_TITLE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_EPITITLE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_DISP_TYPE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CHSVOD + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PRICE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QUNIT + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QRANGE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_END_DATE + " text, " +
             JsonContents.META_RESPONSE_CAPL + " text, " +
             JsonContents.META_RESPONSE_BILINGAL + " text, " +
             JsonContents.META_RESPONSE_TV_CID + " text, " +
@@ -745,17 +730,17 @@ public class DBConstants {
             JsonContents.META_RESPONSE_CHSVOD + " text, " +
             JsonContents.META_RESPONSE_SEARCH_OK + " text, " +
             JsonContents.META_RESPONSE_LIINF_ARRAY + " text, " +
-            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_PUID + " text, " +
-            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
-            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_TITLE + " text, " +
-            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_EPITITLE + " text, " +
-            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_DISP_TYPE + " text, " +
-            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_CHSVOD + " text, " +
-            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_PRICE + " text, " +
-            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_QUNIT + " text, " +
-            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_QRANGE + " text, " +
-            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_PU_START_DATE + " text, " +
-            JsonContents.META_RESPONSE_PUINF  + UNDER_LINE + JsonContents.META_RESPONSE_PU_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_TITLE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_EPITITLE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_DISP_TYPE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CHSVOD + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PRICE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QUNIT + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QRANGE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_END_DATE + " text, " +
             JsonContents.META_RESPONSE_CAPL + " text, " +
             JsonContents.META_RESPONSE_BILINGAL + " text, " +
             JsonContents.META_RESPONSE_TV_CID + " text, " +

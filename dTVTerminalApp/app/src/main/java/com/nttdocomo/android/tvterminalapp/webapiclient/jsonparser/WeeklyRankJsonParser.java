@@ -27,8 +27,6 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
     // オブジェクトクラスの定義
     private WeeklyRankList mWeeklyRankList;
 
-    public static final String UNDER_LINE = "_";
-
     // **FindBugs** Bad practice FindBugは、"pagerPara"と"listPara"はpublicを外せと言うが、対外的なパラメータなので、対応は行わない。
     public static final String[] PAGER_PARA = {JsonContents.META_RESPONSE_PAGER_LIMIT, JsonContents.META_RESPONSE_OFFSET,
             JsonContents.META_RESPONSE_COUNT, JsonContents.META_RESPONSE_TOTAL};
@@ -97,7 +95,7 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
             sendStatus(jsonObj);
             if (!jsonObj.isNull(JsonContents.META_RESPONSE_LIST)) {
                 JSONArray arrayList = jsonObj.getJSONArray(JsonContents.META_RESPONSE_LIST);
-                senWrcList(arrayList);
+                sendWrList(arrayList);
             }
             List<WeeklyRankList> wrList = Arrays.asList(mWeeklyRankList);
             return wrList;
@@ -153,7 +151,7 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
      *
      * @param arrayList JSONArray
      */
-    private void senWrcList(JSONArray arrayList) {
+    private void sendWrList(JSONArray arrayList) {
         try {
             List<HashMap<String, String>> wrList = new ArrayList<>();
             for (int i = 0; i < arrayList.length(); i++) {
@@ -165,7 +163,7 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
                             JSONObject puinfObj = jsonObject.getJSONObject(listBuffer);
                             for (String puinfBuffer : JsonContents.PUINF_PARA) {
                                 String para = puinfObj.getString(puinfBuffer);
-                                wrListMap.put(JsonContents.META_RESPONSE_PUINF + UNDER_LINE + puinfBuffer, para);
+                                wrListMap.put(JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + puinfBuffer, para);
                             }
                         } else {
                             String para = jsonObject.getString(listBuffer);

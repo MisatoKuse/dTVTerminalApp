@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ContentsDetailGetResponse;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodProgramMetaFullData;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsDetailGetWebClient;
 
@@ -21,9 +20,9 @@ import java.util.ArrayList;
 
 public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> {
     private final String CLASS_NAME = getClass().getSimpleName();
-    private static final String SEND_RESPONSE = ".sendGenreCountGetResponse";
+    private static final String SEND_RESPONSE = ".sendContentDetailGetResponse";
     private static final String SEND_STATUS = ".sendStatus";
-    private static final String RESPONSE = ".GenreCountGetResponse";
+    private static final String RESPONSE = ".ContentDetailGetResponse";
     private static final String JSON_OBJECT = ".JSONObject";
     private final ContentsDetailGetWebClient.ContentsDetailJsonParserCallback
             mContentsDetailJsonParserCallback;
@@ -87,8 +86,8 @@ public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> 
     public void sendStatus(JSONObject jsonObj) {
         try {
             // statusの値を取得しセットする
-            if (!jsonObj.isNull(GenreCountGetResponse.GENRE_COUNT_GET_RESPONSE_STATUS)) {
-                String status = jsonObj.getString(GenreCountGetResponse.
+            if (!jsonObj.isNull(ContentsDetailGetResponse.GENRE_COUNT_GET_RESPONSE_STATUS)) {
+                String status = jsonObj.getString(ContentsDetailGetResponse.
                         GENRE_COUNT_GET_RESPONSE_STATUS);
                 if (mContentsDetailGetResponse != null) {
                     mContentsDetailGetResponse.setStatus(status);
@@ -108,10 +107,10 @@ public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> 
         try {
             ArrayList<VodProgramMetaFullData> vodProgramMetaFullDataArrayList =
                     new ArrayList<>();
-            if (!jsonObj.isNull(GenreCountGetResponse.GENRE_COUNT_GET_RESPONSE_LIST)) {
+            if (!jsonObj.isNull(ContentsDetailGetResponse.GENRE_COUNT_GET_RESPONSE_LIST)) {
                 // VOD＆番組マージメタデータ（フル版）をJSONArrayにパースする
                 JSONArray lists = jsonObj.getJSONArray(
-                        GenreCountGetResponse.GENRE_COUNT_GET_RESPONSE_LIST);
+                        ContentsDetailGetResponse.GENRE_COUNT_GET_RESPONSE_LIST);
                 if (lists.length() == 0) {
                     return;
                 }

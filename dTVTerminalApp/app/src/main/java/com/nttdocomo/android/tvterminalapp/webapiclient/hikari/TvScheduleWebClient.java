@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser;
 
@@ -50,7 +51,6 @@ public class TvScheduleWebClient
         //エラーが発生したのでヌルを返す
         mTvScheduleJsonParserCallback.onTvScheduleJsonParsed(null);
     }
-
 
     /**
      * チャンネル毎番組一覧取得
@@ -154,7 +154,7 @@ public class TvScheduleWebClient
                 channelArray.put(singleChannel);
             }
 
-            jsonObject.put("ch_list", channelArray);
+            jsonObject.put(JsonContents.META_RESPONSE_CH_LIST, channelArray);
 
             //日付配列の作成
             JSONArray dateArray = new JSONArray();
@@ -162,10 +162,10 @@ public class TvScheduleWebClient
                 dateArray.put(singleDate);
             }
 
-            jsonObject.put("date_list", dateArray);
+            jsonObject.put(JsonContents.META_RESPONSE_DATE_LIST, dateArray);
 
             //その他
-            jsonObject.put("filter", filter);
+            jsonObject.put(JsonContents.META_RESPONSE_FILTER, filter);
 
             answerText = jsonObject.toString();
 

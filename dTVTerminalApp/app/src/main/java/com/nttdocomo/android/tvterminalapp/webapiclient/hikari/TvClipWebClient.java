@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvClipList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.JsonParserThread;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser;
@@ -167,16 +168,16 @@ public class TvClipWebClient
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
-            jsonObject.put("age_req", ageReq);
+            jsonObject.put(JsonContents.META_RESPONSE_AGE_REQ, ageReq);
 
             JSONObject jsonPagerObject = new JSONObject();
 
-            jsonPagerObject.put("upper_limit", upperPagetLimit);
-            jsonPagerObject.put("lower_limit", lowerPagetLimit);
-            jsonPagerObject.put("offset", pagerOffset);
-            jsonPagerObject.put("direction", pagerDirection);
+            jsonPagerObject.put(JsonContents.META_RESPONSE_UPPER_LIMIT, upperPagetLimit);
+            jsonPagerObject.put(JsonContents.META_RESPONSE_LOWER_LIMIT, lowerPagetLimit);
+            jsonPagerObject.put(JsonContents.META_RESPONSE_OFFSET, pagerOffset);
+            jsonPagerObject.put(JsonContents.META_RESPONSE_DIRECTION, pagerDirection);
 
-            jsonObject.put("pager", jsonPagerObject);
+            jsonObject.put(JsonContents.META_RESPONSE_PAGER, jsonPagerObject);
 
             answerText = jsonObject.toString();
 

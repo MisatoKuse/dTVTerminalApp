@@ -16,13 +16,6 @@ import com.nttdocomo.android.tvterminalapp.datamanager.insert.DataBaseManager;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_CHNO;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_LINEAR_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_LINEAR_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_THUMB;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_TITLE;
-
-
 public class ProgramDataManager {
 
     private Context mContext;
@@ -66,9 +59,9 @@ public class ProgramDataManager {
      */
     public List<Map<String, String>> selectTvScheduleListProgramData(String display_type, String update) {
         //ホーム画面に必要な列を列挙する
-        String[] columns = {TV_SCHEDULE_LIST_THUMB, TV_SCHEDULE_LIST_TITLE,
-                TV_SCHEDULE_LIST_LINEAR_START_DATE, TV_SCHEDULE_LIST_LINEAR_END_DATE,
-                TV_SCHEDULE_LIST_CHNO};
+        String[] columns = {JsonContents.META_RESPONSE_THUMB_448, JsonContents.META_RESPONSE_TITLE,
+                JsonContents.META_RESPONSE_AVAIL_START_DATE, JsonContents.META_RESPONSE_AVAIL_END_DATE,
+                JsonContents.META_RESPONSE_CHNO};
 
         //Daoクラス使用準備
         DBHelper channelListDBHelper = new DBHelper(mContext);
