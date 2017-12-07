@@ -4,6 +4,9 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
+
+import android.os.Handler;
+
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
@@ -24,6 +27,7 @@ public class HttpThread extends Thread {
     }
 
     private String mUrl = null;
+    private Handler mHandler = null;
     private String mXmlStr="";
     private HttpThreadFinish mHttpThreadFinish=null;
 
@@ -36,6 +40,13 @@ public class HttpThread extends Thread {
     }
 
     public HttpThread(String url, HttpThreadFinish httpThreadFinish) {
+        mUrl = url;
+        mHttpThreadFinish=httpThreadFinish;
+        clearStatus();
+    }
+
+    public HttpThread(String url, Handler handler, HttpThreadFinish httpThreadFinish) {
+        mHandler = handler;
         mUrl = url;
         mHttpThreadFinish=httpThreadFinish;
         clearStatus();
@@ -93,13 +104,30 @@ public class HttpThread extends Thread {
             setError(true);
         }
 
-        if(null != mHttpThreadFinish){
-            if (mError){
-                mXmlStr = "";
-            } else {
-                mXmlStr = sb.toString();
+        if (mHandler != null) {
+            mHandler.post(new Runnable() {
+
+                @Override
+                public void run() {
+                    if (null != mHttpThreadFinish) {
+                        if (mError) {
+                            mXmlStr = "";
+                        } else {
+                            mXmlStr = sb.toString();
+                        }
+                        mHttpThreadFinish.onHttpThreadFinish(mXmlStr);
+                    }
+                }
+            });
+        } else {
+            if (null != mHttpThreadFinish) {
+                if (mError) {
+                    mXmlStr = "";
+                } else {
+                    mXmlStr = sb.toString();
+                }
+                mHttpThreadFinish.onHttpThreadFinish(mXmlStr);
             }
-            mHttpThreadFinish.onHttpThreadFinish(mXmlStr);
         }
     }
 }

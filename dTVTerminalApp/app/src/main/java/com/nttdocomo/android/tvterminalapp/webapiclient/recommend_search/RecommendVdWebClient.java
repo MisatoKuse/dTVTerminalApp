@@ -59,7 +59,7 @@ public class RecommendVdWebClient extends WebApiBase implements WebApiCallback {
         }
 
         //サーバーへおすすめ情報取得を依頼する
-        get(UrlConstants.WebApiUrl.RECOMMEND_LIST_GET_URL + sendUrlAdder, queryItems, this);
+        getReccomendInfo(UrlConstants.WebApiUrl.RECOMMEND_LIST_GET_URL + sendUrlAdder, queryItems, this);
     }
 
     @Override
