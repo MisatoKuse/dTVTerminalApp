@@ -147,7 +147,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     private static final int MIN_CLICK_DELAY_TIME = 1000;
-    private  long lastClickTime;
+    private long lastClickTime;
 
     /**
      * 機能
