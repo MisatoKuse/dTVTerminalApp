@@ -4,9 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient;
 
-
-import android.os.Handler;
-
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.HttpThread;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.WebApiCallback;
@@ -20,10 +17,9 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
     private WebApiCallback mWebApiCallback=null;
 
     public void get(String urlString, LinkedHashMap<String, String> queryItems, WebApiCallback callback){
-        Handler handler = new Handler();
-        String url=createUrlComponents(urlString, queryItems);
-        mWebApiCallback=callback;
-        new HttpThread(url, handler, this).start();
+        String url = createUrlComponents(urlString, queryItems);
+        mWebApiCallback = callback;
+        new HttpThread(url, this).start();
     }
 
     private String createUrlComponents(String url, Map<String, String> queryItems) {
