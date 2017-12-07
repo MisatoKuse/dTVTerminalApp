@@ -4,7 +4,10 @@
 
 package com.nttdocomo.android.tvterminalapp.jni;
 
+import android.os.Handler;
 import android.util.Log;
+
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 import java.util.ArrayList;
 
@@ -39,7 +42,13 @@ public class DlnaInterface {
     private boolean mIsDlnaRunning = false;
     private DlnaDevListListener mDlnaDevListListener = null;
     private long mNativeDlna = 0;
-    private DlnaDmsItem mCurrentDlnaDmsItem;
+    private DlnaDmsItem mCurrentDmsItem;
+
+    //Dlna info
+    private DlnaRecVideoInfo mDlnaRecVideoInfo = new DlnaRecVideoInfo();
+    private DlnaBsChListInfo mDlnaBsChListInfo;
+    private DlnaTerChListItem mDlnaTerChListItem;
+    private Handler mHandler= new Handler();
 
     /**
      * 機能：デフォールト構造を禁止
@@ -168,6 +177,8 @@ public class DlnaInterface {
         }
     }
 
+    private final int DLNA_IF_THREAD_DELAY=200;
+
     /**
      * 機能：録画ヴィデオ一覧を発見
      *
@@ -175,10 +186,24 @@ public class DlnaInterface {
      */
     public boolean browseRecVideoDms() {
         //return browseRecVideoDms(mNativeDlna, ctl);
-        if(null==mCurrentDlnaDmsItem || null==mCurrentDlnaDmsItem.mControlUrl || 1>mCurrentDlnaDmsItem.mControlUrl.length()){
+        DTVTLogger.start();
+        if(null== mCurrentDmsItem || null== mCurrentDmsItem.mControlUrl || 1> mCurrentDmsItem.mControlUrl.length()){
             return false;
         }
-        boolean ret= browseRecVideoDms(mNativeDlna, mCurrentDlnaDmsItem.mControlUrl);
+        if(null!=mDlnaRecVideoInfo && 0<mDlnaRecVideoInfo.size()){
+            final ArrayList<Object> content= DlnaRecVideoInfo.toArrayList(mDlnaRecVideoInfo);
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    notifyObjFromNative(DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST, content);
+                }
+            }, DLNA_IF_THREAD_DELAY);
+            DTVTLogger.end();
+            return true;
+        }
+        boolean ret= browseRecVideoDms(mNativeDlna, mCurrentDmsItem.mControlUrl);
+        DTVTLogger.debug("call c++ browseRecVideoDms");
+        DTVTLogger.end();
         return ret;
     }
 
@@ -188,10 +213,10 @@ public class DlnaInterface {
      * @return 成功:true 失敗: false
      */
     public boolean browseBsChListDms() {
-        if(null==mCurrentDlnaDmsItem || null==mCurrentDlnaDmsItem.mControlUrl || 1>mCurrentDlnaDmsItem.mControlUrl.length()){
+        if(null== mCurrentDmsItem || null== mCurrentDmsItem.mControlUrl || 1> mCurrentDmsItem.mControlUrl.length()){
             return false;
         }
-        boolean ret= browseBsChListDms(mNativeDlna, mCurrentDlnaDmsItem.mControlUrl);
+        boolean ret= browseBsChListDms(mNativeDlna, mCurrentDmsItem.mControlUrl);
         return ret;
     }
 
@@ -220,10 +245,10 @@ public class DlnaInterface {
      */
     public boolean browseTerChListDms() {
         //return browseTerChListDms(mNativeDlna, ctl);
-        if(null==mCurrentDlnaDmsItem || null==mCurrentDlnaDmsItem.mControlUrl || 1>mCurrentDlnaDmsItem.mControlUrl.length()){
+        if(null== mCurrentDmsItem || null== mCurrentDmsItem.mControlUrl || 1> mCurrentDmsItem.mControlUrl.length()){
             return false;
         }
-        boolean ret= browseTerChListDms(mNativeDlna, mCurrentDlnaDmsItem.mControlUrl);
+        boolean ret= browseTerChListDms(mNativeDlna, mCurrentDmsItem.mControlUrl);
         return ret;
     }
 
@@ -234,10 +259,10 @@ public class DlnaInterface {
      */
     public boolean browseHikariChListDms() {
         //return browseHikariChListDms(mNativeDlna, ctl);
-        if(null==mCurrentDlnaDmsItem || null==mCurrentDlnaDmsItem.mControlUrl || 1>mCurrentDlnaDmsItem.mControlUrl.length()){
+        if(null== mCurrentDmsItem || null== mCurrentDmsItem.mControlUrl || 1> mCurrentDmsItem.mControlUrl.length()){
             return false;
         }
-        boolean ret= browseHikariChListDms(mNativeDlna, mCurrentDlnaDmsItem.mControlUrl);
+        boolean ret= browseHikariChListDms(mNativeDlna, mCurrentDmsItem.mControlUrl);
         return ret;
     }
 
@@ -265,22 +290,22 @@ public class DlnaInterface {
         switch (msg) {
             case DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST:
                 onRecVideo(content);
-                notifyDeviceJoinInv(content, mCurrentDlnaDmsItem);
+                notifyDeviceJoinInv(content, mCurrentDmsItem);
                 break;
             case DLNA_MSG_ID_DEV_DISP_JOIN:
                 onDeviceJoin(content);
                 break;
             case DLNA_MSG_ID_BS_CHANNEL_LIST:
                 onBsChList(content);
-                notifyDeviceJoinInv(content, mCurrentDlnaDmsItem);
+                notifyDeviceJoinInv(content, mCurrentDmsItem);
                 break;
             case DLNA_MSG_ID_TER_CHANNEL_LIST:
                 onTerChList(content);
-                notifyDeviceJoinInv(content, mCurrentDlnaDmsItem);
+                notifyDeviceJoinInv(content, mCurrentDmsItem);
                 break;
             case DLNA_MSG_ID_HIKARI_CHANNEL_LIST:
                 onHikariChList(content);
-                notifyDeviceJoinInv(content, mCurrentDlnaDmsItem);
+                notifyDeviceJoinInv(content, mCurrentDmsItem);
                 break;
         }
     }
@@ -293,7 +318,8 @@ public class DlnaInterface {
         if (null != mDlnaRecVideoListener) {
             DlnaRecVideoInfo info = DlnaRecVideoInfo.fromArrayList(content);
             if (null != info) {
-                mDlnaRecVideoListener.onVideoBrows(info);
+                mDlnaRecVideoInfo=info;
+                mDlnaRecVideoListener.onVideoBrows(mDlnaRecVideoInfo);
             }
         }
     }
@@ -359,6 +385,11 @@ public class DlnaInterface {
      * @param content content to remove
      */
     private void removeDms(String content) {
+        if(null!=mCurrentDmsItem && 0<mCurrentDmsItem.mUdn.length() && null!=content && 0<content.length()){
+            if(mCurrentDmsItem.mUdn.equals(content)){
+                mDlnaRecVideoInfo.clearAll();
+            }
+        }
         mDMSInfo.remove(content);
         if (null != mDlnaDevListListener) {
             mDlnaDevListListener.onDeviceLeave(mDMSInfo, content);
@@ -373,7 +404,7 @@ public class DlnaInterface {
      */
     public boolean registerCurrentDms(DlnaDmsItem item) {
         if (null != mDMSInfo && null!=item) {
-            mCurrentDlnaDmsItem = item;
+            mCurrentDmsItem = item;
             return true;
         }
         return false;

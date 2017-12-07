@@ -136,7 +136,10 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
         public void run() {
             DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
             if (mDlnaProvRecVideo.start(dlnaDmsItem, getActivity())) {
-                mDlnaProvRecVideo.browseRecVideoDms();
+                boolean ret=mDlnaProvRecVideo.browseRecVideoDms();
+                if(!ret){
+                    onError("Get recoreded video datas failed");
+                }
             }
             testType=ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS;   //test
         }
