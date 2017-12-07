@@ -275,6 +275,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             DTVTLogger.start();
+
             float flingY = e2.getY() - e1.getY();
             if (flingY > mScrollHeight / 4 && isTop) {
                 DTVTLogger.debug("Down");

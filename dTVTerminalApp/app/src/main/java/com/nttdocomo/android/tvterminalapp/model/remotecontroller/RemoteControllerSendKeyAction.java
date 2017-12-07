@@ -268,7 +268,7 @@ public class RemoteControllerSendKeyAction {
                     break;
             }
             DTVTLogger.end();
-            return false;
+            return true;
         }
     };
 
