@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DailyRankInsertDataManager;
@@ -180,37 +181,49 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * Activityからのデータ取得要求受付
      */
     public void getHomeData() {
-        //NOW ON AIR
-        List<Map<String, String>> tvScheduleListData = getTvScheduleListData();
-        if (tvScheduleListData != null && tvScheduleListData.size() > 0) {
-            sendTvScheduleListData(tvScheduleListData);
-        }
-        //おすすめ番組
-        List<Map<String, String>> recommendChListData = getRecommendChListData();
-        if (recommendChListData != null && recommendChListData.size() > 0) {
-            sendRecommendChListData(recommendChListData);
-        }
-        //おすすめビデオ
-        List<Map<String, String>> recommendVdListData = getRecommendVdListData();
-        if (recommendVdListData != null && recommendVdListData.size() > 0) {
-            sendRecommendVdListData(recommendVdListData);
-        }
-        //今日のテレビランキング
-        List<Map<String, String>> dailyRankList = getDailyRankListData();
-        if (dailyRankList != null && dailyRankList.size() > 0) {
-            sendDailyRankListData(dailyRankList);
-        }
-        //ビデオランキング
-        List<Map<String, String>> VideoRankList = getVideoRankListData();
-        if (VideoRankList != null && VideoRankList.size() > 0) {
-            sendVideoRankListData(VideoRankList);
-        }
-        //クリップ
-        List<Map<String, String>> vodClipList = getVodClipListData();
-        if (vodClipList != null && vodClipList.size() > 0) {
-            sendVodClipListData(vodClipList);
-        }
+        //非同期処理でデータの取得を行う
+        homeDataDownloadTask.execute();
     }
+
+    /**
+     * 非同期処理でHOME画面に表示するデータの取得を行う
+     */
+    private AsyncTask<Void, Void, Void>homeDataDownloadTask = new AsyncTask<Void, Void, Void>() {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            //NOW ON AIR
+            List<Map<String, String>> tvScheduleListData = getTvScheduleListData();
+            if (tvScheduleListData != null && tvScheduleListData.size() > 0) {
+                sendTvScheduleListData(tvScheduleListData);
+            }
+            //おすすめ番組
+            List<Map<String, String>> recommendChListData = getRecommendChListData();
+            if (recommendChListData != null && recommendChListData.size() > 0) {
+                sendRecommendChListData(recommendChListData);
+            }
+            //おすすめビデオ
+            List<Map<String, String>> recommendVdListData = getRecommendVdListData();
+            if (recommendVdListData != null && recommendVdListData.size() > 0) {
+                sendRecommendVdListData(recommendVdListData);
+            }
+            //今日のテレビランキング
+            List<Map<String, String>> dailyRankList = getDailyRankListData();
+            if (dailyRankList != null && dailyRankList.size() > 0) {
+                sendDailyRankListData(dailyRankList);
+            }
+            //ビデオランキング
+            List<Map<String, String>> VideoRankList = getVideoRankListData();
+            if (VideoRankList != null && VideoRankList.size() > 0) {
+                sendVideoRankListData(VideoRankList);
+            }
+            //クリップ
+            List<Map<String, String>> vodClipList = getVodClipListData();
+            if (vodClipList != null && vodClipList.size() > 0) {
+                sendVodClipListData(vodClipList);
+            }
+            return null;
+        }
+    };
 
     /**
      * NOW ON AIRをHomeActivityに送る
@@ -277,7 +290,6 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
 
     /**
      * NOW ON AIR 情報取得
-     *
      */
     private List<Map<String, String>> getTvScheduleListData() {
         DateUtils dateUtils = new DateUtils(mContext);
@@ -287,6 +299,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         //NO ON AIR一覧のDB保存履歴と、有効期間を確認
         if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
             //データをDBから取得する
+            //TODO データがDBに無い場合や壊れていた場合の処理が必要
             HomeDataManager homeDataManager = new HomeDataManager(mContext);
             list = homeDataManager.selectTvScheduleListHomeData();
         } else {
