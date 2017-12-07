@@ -313,4 +313,12 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         remoteControllerView.init(this);
         layout.setVisibility(View.VISIBLE);
     }
+
+    @Override
+    protected void onPause() {
+        if(remoteControllerView != null && remoteControllerView.isTopRemoteControllerUI()) {
+            remoteControllerView.closeRemoteControllerUI();
+        }
+        super.onPause();
+    }
 }

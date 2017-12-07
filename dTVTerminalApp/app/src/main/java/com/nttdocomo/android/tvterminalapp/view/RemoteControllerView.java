@@ -299,7 +299,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     /**
      * リモコンUI画面を閉じる処理
      */
-    private void closeRemoteControllerUI(){
+    public void closeRemoteControllerUI(){
         mScroller.startScroll(0, getScrollY(), 0, -getScrollY());
         postInvalidate();
         movedY = 0;
@@ -311,6 +311,13 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         mTextView = findViewById(R.id.watch_by_tv);
         mTextView.setVisibility(VISIBLE);
         remoteControllerSendKeyAction.cancelTimer();
+    }
+
+    /**
+     * isTopのboolean値を返す
+     */
+    public boolean isTopRemoteControllerUI() {
+        return isTop;
     }
 }
 
