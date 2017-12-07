@@ -17,9 +17,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE;
@@ -143,9 +145,8 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         viewHolder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent mIntent = new Intent();
-                mIntent.setClass(context, TvPlayerActivity.class);
-                context.startActivity(mIntent);
+                ((BaseActivity)context).startActivityByServiceId(OtherContentsDetailData.
+                        DTV_CONTENTS_SERVICE_ID, null);
             }
         });
     }
