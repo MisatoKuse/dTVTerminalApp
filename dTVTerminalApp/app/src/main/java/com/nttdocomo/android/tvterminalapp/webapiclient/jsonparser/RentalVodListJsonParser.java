@@ -4,10 +4,13 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
 
 import android.os.AsyncTask;
 
+import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalVodListWebClient;
 
 import org.json.JSONArray;
@@ -15,11 +18,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
-// 購入済みVOD一覧取得：正常時レスポンスデータの定数
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse.VOD_META_FULL_RESPONSE_LIST;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse.VOD_META_FULL_RESPONSE_STATUS;
 
 /**
  * レンタル一覧（Jsonパーサー）
@@ -33,7 +34,7 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
     /**
      * コンストラクタ
      *
-     * @param rentalVodListJsonParserCallback
+     * @param rentalVodListJsonParserCallback コールバックの飛び先
      */
     public RentalVodListJsonParser(RentalVodListWebClient.RentalVodListJsonParserCallback rentalVodListJsonParserCallback) {
         mRentalVodListJsonParserCallback = rentalVodListJsonParserCallback;
@@ -69,14 +70,12 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
                 if (jsonObj != null) {
                     sendStatus(jsonObj);
                     sendPurchasedVodListResponse(jsonObj);
+                    sendActiveListResponse(jsonObj);
 
                     return mPurchasedVodListResponse;
                 }
             }
         } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return null;
@@ -90,15 +89,13 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
     public void sendStatus(JSONObject jsonObj) {
         try {
             // statusの値を取得しセットする
-            if (!jsonObj.isNull(VOD_META_FULL_RESPONSE_STATUS)) {
-                String status = jsonObj.getString(VOD_META_FULL_RESPONSE_STATUS);
+            if (!jsonObj.isNull(JsonContents.META_RESPONSE_STATUS)) {
+                String status = jsonObj.getString(
+                        JsonContents.META_RESPONSE_STATUS);
                 mPurchasedVodListResponse.setStatus(status);
             }
         } catch (JSONException e) {
             throw new RuntimeException(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
     }
 
@@ -110,9 +107,10 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
     public void sendPurchasedVodListResponse(JSONObject jsonObj) {
         try {
             ArrayList<VodMetaFullData> vodMetaFullDataList = new ArrayList<VodMetaFullData>();
-            if (!jsonObj.isNull(VOD_META_FULL_RESPONSE_LIST)) {
+            if (!jsonObj.isNull(JsonContents.META_RESPONSE_METADATE_LIST)) {
                 // 購入済みVOD一覧をJSONArrayにパースする
-                JSONArray lists = jsonObj.getJSONArray(VOD_META_FULL_RESPONSE_LIST);
+                JSONArray lists = jsonObj.getJSONArray(
+                        JsonContents.META_RESPONSE_METADATE_LIST);
                 if (lists.length() == 0) {
                     return;
                 }
@@ -127,9 +125,44 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
             }
         } catch (JSONException e) {
             throw new RuntimeException(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        }
+    }
+    /**
+     * 有効期限一覧の取得：正常時レスポンスデータオブジェクトに格納
+     *
+     * @param jsonObj APIレスポンス Jsonデータ
+     */
+    public void sendActiveListResponse(JSONObject jsonObj) {
+        try {
+            ArrayList<ActiveData> vodActiveDataList =
+                    new ArrayList<ActiveData>();
+            if (!jsonObj.isNull(JsonContents.META_RESPONSE_ACTIVE_LIST)) {
+                // 購入済みVOD一覧をJSONArrayにパースする
+                JSONArray lists = jsonObj.getJSONArray(
+                        JsonContents.META_RESPONSE_ACTIVE_LIST);
+                if (lists.length() == 0) {
+                    return;
+                }
+                // VODメタレスポンス（フル版）のデータオブジェクトArrayListを生成する
+                for (int i = 0; i < lists.length(); i++) {
+                    JSONObject listData = (JSONObject) lists.get(i);
+
+                    ActiveData activeData = new ActiveData();
+
+                    //データを取得する
+                    activeData.setLicenseId(listData.getString(
+                            JsonContents.META_RESPONSE_LICENSE_ID));
+                    activeData.setValidEndDate(StringUtil.changeString2Long(listData.getLong(
+                            JsonContents.META_RESPONSE_VAILD_END_DATE)));
+
+                    vodActiveDataList.add(activeData);
+                }
+
+                // 有効期限一覧リストをセットする
+                mPurchasedVodListResponse.setVodActiveData(vodActiveDataList);
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
         }
     }
 }
