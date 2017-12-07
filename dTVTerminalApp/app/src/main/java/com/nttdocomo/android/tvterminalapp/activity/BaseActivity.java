@@ -25,6 +25,7 @@ import com.nttdocomo.android.tvterminalapp.activity.common.MenuItemParam;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
+import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
@@ -129,7 +130,8 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     protected void enableStbStatusIcon(boolean isOn){
         if(this instanceof STBSelectActivity
                 || this instanceof LaunchActivity
-                || this instanceof RecordedListActivity){
+                //|| this instanceof RecordedListActivity
+                || this instanceof TvPlayerActivity){
             return;
         }
         if(null!=mStbStatusIcon){
@@ -157,8 +159,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     //stb status icon状態
-    private final int sStbStatusOn=0xff;
-    private final int sStbStatusOff=0xfe;
+    private boolean mIsStbStatusOn=false;
     /**
      * 機能：STBステータスを変更
      * @param isOn true: stb接続中   false: stb未接続
@@ -170,12 +171,14 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                 @Override
                 public void run() {
                     try {
-                        if (isOn) {
-                            mStbStatusIcon.setImageResource(R.mipmap.ic_stb_status_icon_white);
-                            mStbStatusIcon.setId(sStbStatusOn);
-                        } else {
-                            mStbStatusIcon.setImageResource(R.mipmap.ic_stb_status_icon_gray);
-                            mStbStatusIcon.setId(sStbStatusOff);
+                        synchronized (this) {
+                            if (isOn) {
+                                mStbStatusIcon.setImageResource(R.mipmap.ic_stb_status_icon_white);
+                                mIsStbStatusOn = true;
+                            } else {
+                                mStbStatusIcon.setImageResource(R.mipmap.ic_stb_status_icon_gray);
+                                mIsStbStatusOn = false;
+                            }
                         }
                     }catch (Exception e) {
                         DTVTLogger.debug("BaseActivity::setStbStatus, stb status png file not found");
@@ -191,16 +194,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      * @return true: stb接続中   false: stb未接続
      */
     protected boolean getStbStatus(){
-        boolean ret=false;
-        if(null==mDlnaProvDevListForBase){
-            return ret;
-        }
-        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-        if(null==dlnaDmsItem){
-            return ret;
-        }
-        ret= mDlnaProvDevListForBase.isDmsAvailable(dlnaDmsItem.mUdn);
-        return ret;
+        return mIsStbStatusOn;
     }
 
     /**
@@ -286,7 +280,8 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         DTVTLogger.start();
         if(this instanceof STBSelectActivity
                 || this instanceof LaunchActivity
-                || this instanceof RecordedListActivity){
+                //|| this instanceof RecordedListActivity
+                || this instanceof TvPlayerActivity){
             DTVTLogger.end();
             return;
         }

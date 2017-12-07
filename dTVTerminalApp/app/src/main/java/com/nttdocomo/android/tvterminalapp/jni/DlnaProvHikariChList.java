@@ -35,7 +35,7 @@ public class DlnaProvHikariChList {
      * @param lis listener
      * @return 成功true
      */
-    public boolean start(String udn, DlnaHikariChListListener lis){
+    public boolean start(DlnaDmsItem item, DlnaHikariChListListener lis){
         DlnaInterface di= DlnaInterface.getInstance();
         if(null==di){
             return false;
@@ -43,21 +43,23 @@ public class DlnaProvHikariChList {
         if(!di.startDlna()){
             return false;
         }
-        di.registerCurrentDms(udn);
+        boolean ret = di.registerCurrentDms(item);
+        if(!ret){
+            return false;
+        }
         di.setDlnaHikariChListListener(lis);
         return true;
     }
 
     /**
      * 機能：録画ヴィデオ一覧を発見
-     * @param ctl ControlUrl
      * @return 成功true
      */
-    public boolean browseBsChListDms(String ctl){
+    public boolean browseBsChListDms(){
         DlnaInterface di= DlnaInterface.getInstance();
         if(null==di){
             return false;
         }
-        return di.browseBsChListDms(ctl);
+        return di.browseBsChListDms();
     }
 }

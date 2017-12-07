@@ -110,7 +110,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
     private View mLoadMoreView;
 
     public void displayMoreData(boolean b) {
-        if(null!= mListview && null!= mListview){
+        if(null!= mListview){
             if(b){
                 mListview.addFooterView(mLoadMoreView);
             } else {

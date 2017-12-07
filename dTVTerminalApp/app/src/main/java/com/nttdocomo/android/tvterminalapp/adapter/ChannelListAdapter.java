@@ -14,8 +14,11 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaHikariChListItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoItem;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ChannelListAdapter extends BaseAdapter {
@@ -81,31 +84,10 @@ public class ChannelListAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        String chName=null;
-        String thumbnail=null;
-        if(null!=mData) {
-            switch (mChListDataType) {
-                case CH_LIST_DATA_TYPE_BS:
-                    DlnaRecVideoItem bsItem = (DlnaRecVideoItem) mData.get(position);
-                    if(null!=bsItem){
-                        chName=bsItem.mTitle;
-                        thumbnail=bsItem.mUpnpIcon;
-                    }
-
-                    break;
-                case CH_LIST_DATA_TYPE_TER:
-
-                    break;
-                case CH_LIST_DATA_TYPE_HIKARI:
-
-                    break;
-                case CH_LIST_DATA_TYPE_DTV:
-
-                    break;
-                case CH_LIST_DATA_TYPE_INVALID:
-                    break;
-            }
-        }
+        ArrayList<String> nameThumbnail=new ArrayList();
+        getDatas(nameThumbnail, position);
+        String chName=nameThumbnail.get(0);
+        String thumbnail=nameThumbnail.get(1);
 
         if(null != holder.mChannelName && null!=chName){
             holder.mChannelName.setText(chName);
@@ -120,6 +102,47 @@ public class ChannelListAdapter extends BaseAdapter {
         }
 
         return convertView;
+    }
+
+    private void getDatas(ArrayList<String> nameThumbnailOut, int position){
+        String chName=null;
+        String thumbnail=null;
+        if(null!=mData) {
+            switch (mChListDataType) {
+                case CH_LIST_DATA_TYPE_BS:
+                    DlnaRecVideoItem bsItem = (DlnaRecVideoItem) mData.get(position);
+                    if (null != bsItem) {
+                        chName = bsItem.mTitle;
+                        thumbnail = bsItem.mUpnpIcon;
+                    }
+                    break;
+                case CH_LIST_DATA_TYPE_TER:
+                    DlnaRecVideoItem terItem = (DlnaRecVideoItem) mData.get(position);
+                    if (null != terItem) {
+                        chName = terItem.mTitle;
+                        thumbnail = terItem.mUpnpIcon;
+                    }
+                    break;
+                case CH_LIST_DATA_TYPE_HIKARI:
+                    DlnaRecVideoItem hItem = (DlnaRecVideoItem) mData.get(position);
+                    if (null != hItem) {
+                        chName = hItem.mTitle;
+                        thumbnail = hItem.mUpnpIcon;
+                    }
+                    break;
+                case CH_LIST_DATA_TYPE_DTV:
+                    DlnaRecVideoItem bsItem2 = (DlnaRecVideoItem) mData.get(position);
+                    if (null != bsItem2) {
+                        chName = bsItem2.mTitle;
+                        thumbnail = bsItem2.mUpnpIcon;
+                    }
+                    break;
+                case CH_LIST_DATA_TYPE_INVALID:
+                    break;
+            }
+        }
+        nameThumbnailOut.add(chName);
+        nameThumbnailOut.add(thumbnail);
     }
 
     class ViewHolder {

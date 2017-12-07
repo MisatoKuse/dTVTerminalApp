@@ -364,8 +364,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         if (mDlnaProvRecVideo == null) {
             mDlnaProvRecVideo = new DlnaProvRecVideo();
         }
-        if (mDlnaProvRecVideo.start(dlnaDmsItem.mUdn, this)) {
-            mDlnaProvRecVideo.browseRecVideoDms(dlnaDmsItem.mControlUrl);
+        if (mDlnaProvRecVideo.start(dlnaDmsItem, this)) {
+            mDlnaProvRecVideo.browseRecVideoDms();
         }
     }
 
@@ -419,6 +419,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 detailData.setResolution(curInfo.getRecordVideoLists().get(i).mResolution);
                 detailData.setBitrate(curInfo.getRecordVideoLists().get(i).mBitrate);
                 detailData.setDuration(curInfo.getRecordVideoLists().get(i).mDuration);
+                detailData.setTitle(curInfo.getRecordVideoLists().get(i).mTitle);
                 baseFrgament.mContentsList.add(detailData);
             }
             List<ContentsData> listData = baseFrgament.getContentsData();

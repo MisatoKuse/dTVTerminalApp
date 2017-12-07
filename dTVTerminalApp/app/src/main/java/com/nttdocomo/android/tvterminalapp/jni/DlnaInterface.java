@@ -32,8 +32,6 @@ public class DlnaInterface {
     //DMS情報
     private DlnaDMSInfo mDMSInfo = new DlnaDMSInfo();
 
-    //current dms udn
-    private String mCurrentDmsUdn;
     private DlnaRecVideoListener mDlnaRecVideoListener;
     private DlnaBsChListListener mDlnaBsChListListener;
     private DlnaTerChListListener mDlnaTerChListListener;
@@ -41,6 +39,7 @@ public class DlnaInterface {
     private boolean mIsDlnaRunning = false;
     private DlnaDevListListener mDlnaDevListListener = null;
     private long mNativeDlna = 0;
+    private DlnaDmsItem mCurrentDlnaDmsItem;
 
     /**
      * 機能：デフォールト構造を禁止
@@ -67,7 +66,7 @@ public class DlnaInterface {
     }
 
     /**
-     * 機能：DlnaListenerを設定
+     * 機能：Listenerを設定
      *
      * @param lis listener
      */
@@ -77,18 +76,33 @@ public class DlnaInterface {
         }
     }
 
+    /**
+     * 機能：Listenerを設定
+     *
+     * @param lis listener
+     */
     public void setDlnaBsChListListener(DlnaBsChListListener lis) {
         synchronized (this) {
             mDlnaBsChListListener = lis;
         }
     }
 
+    /**
+     * 機能：Listenerを設定
+     *
+     * @param lis listener
+     */
     public void setDlnaTerChListListener(DlnaTerChListListener lis) {
         synchronized (this) {
             mDlnaTerChListListener = lis;
         }
     }
 
+    /**
+     * 機能：Listenerを設定
+     *
+     * @param lis listener
+     */
     public void setDlnaHikariChListListener(DlnaHikariChListListener lis) {
         synchronized (this) {
             mDlnaHikariChListListener = lis;
@@ -157,29 +171,74 @@ public class DlnaInterface {
     /**
      * 機能：録画ヴィデオ一覧を発見
      *
-     * @param ctl ControlUrl
-     * @return 成功true
+     * @return 成功:true 失敗: false
      */
-    public boolean browseRecVideoDms(String ctl) {
-        return browseRecVideoDms(mNativeDlna, ctl);
+    public boolean browseRecVideoDms() {
+        //return browseRecVideoDms(mNativeDlna, ctl);
+        if(null==mCurrentDlnaDmsItem || null==mCurrentDlnaDmsItem.mControlUrl || 1>mCurrentDlnaDmsItem.mControlUrl.length()){
+            return false;
+        }
+        boolean ret= browseRecVideoDms(mNativeDlna, mCurrentDlnaDmsItem.mControlUrl);
+        return ret;
     }
 
     /**
      * 機能：BSデジタルに関して、チャンネルリストを発見
      *
-     * @param ctl ControlUrl
-     * @return 成功true
+     * @return 成功:true 失敗: false
      */
-    public boolean browseBsChListDms(String ctl) {
-        return browseBsChListDms(mNativeDlna, ctl);
+    public boolean browseBsChListDms() {
+        if(null==mCurrentDlnaDmsItem || null==mCurrentDlnaDmsItem.mControlUrl || 1>mCurrentDlnaDmsItem.mControlUrl.length()){
+            return false;
+        }
+        boolean ret= browseBsChListDms(mNativeDlna, mCurrentDlnaDmsItem.mControlUrl);
+        return ret;
     }
 
-    public boolean browseTerChListDms(String ctl) {
-        return browseTerChListDms(mNativeDlna, ctl);
+    /**
+     * 機能：dmsが存在すると、画面に通知する
+     * @param content content
+     * @param item dms item
+     */
+    private void notifyDeviceJoinInv(ArrayList<Object> content, DlnaDmsItem item){
+        if(null==content || 0==content.size() || null==item || null==item.mUdn || 1>item.mUdn.length()){
+            return;
+        }
+        boolean has= mDMSInfo.exists(item.mUdn);
+        if(!has){
+            mDMSInfo.add(item);
+            ArrayList<Object> dmss=new ArrayList<>();
+            dmss.add(item);
+            onDeviceJoin(dmss);
+        }
     }
 
-    public boolean browseHikariChListDms(String ctl) {
-        return browseHikariChListDms(mNativeDlna, ctl);
+    /**
+     * 機能：地上波に関して、チャンネルリストを発見
+     *
+     * @return 成功:true 失敗: false
+     */
+    public boolean browseTerChListDms() {
+        //return browseTerChListDms(mNativeDlna, ctl);
+        if(null==mCurrentDlnaDmsItem || null==mCurrentDlnaDmsItem.mControlUrl || 1>mCurrentDlnaDmsItem.mControlUrl.length()){
+            return false;
+        }
+        boolean ret= browseTerChListDms(mNativeDlna, mCurrentDlnaDmsItem.mControlUrl);
+        return ret;
+    }
+
+    /**
+     * 機能：ひかりTVに関して、チャンネルリストを発見
+     *
+     * @return 成功:true 失敗: false
+     */
+    public boolean browseHikariChListDms() {
+        //return browseHikariChListDms(mNativeDlna, ctl);
+        if(null==mCurrentDlnaDmsItem || null==mCurrentDlnaDmsItem.mControlUrl || 1>mCurrentDlnaDmsItem.mControlUrl.length()){
+            return false;
+        }
+        boolean ret= browseHikariChListDms(mNativeDlna, mCurrentDlnaDmsItem.mControlUrl);
+        return ret;
     }
 
     /**
@@ -206,10 +265,22 @@ public class DlnaInterface {
         switch (msg) {
             case DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST:
                 onRecVideo(content);
+                notifyDeviceJoinInv(content, mCurrentDlnaDmsItem);
                 break;
             case DLNA_MSG_ID_DEV_DISP_JOIN:
                 onDeviceJoin(content);
-                //addDms(content);
+                break;
+            case DLNA_MSG_ID_BS_CHANNEL_LIST:
+                onBsChList(content);
+                notifyDeviceJoinInv(content, mCurrentDlnaDmsItem);
+                break;
+            case DLNA_MSG_ID_TER_CHANNEL_LIST:
+                onTerChList(content);
+                notifyDeviceJoinInv(content, mCurrentDlnaDmsItem);
+                break;
+            case DLNA_MSG_ID_HIKARI_CHANNEL_LIST:
+                onHikariChList(content);
+                notifyDeviceJoinInv(content, mCurrentDlnaDmsItem);
                 break;
         }
     }
@@ -227,6 +298,10 @@ public class DlnaInterface {
         }
     }
 
+    /**
+     * 機能：jni c/c++からのチャンネルを処理
+     * @param content content
+     */
     private void onBsChList(ArrayList<Object> content) {
         if (null != mDlnaBsChListListener) {
             DlnaBsChListInfo info = DlnaBsChListInfo.fromArrayList(content);
@@ -236,6 +311,10 @@ public class DlnaInterface {
         }
     }
 
+    /**
+     * 機能：jni c/c++からのチャンネルを処理
+     * @param content content
+     */
     private void onTerChList(ArrayList<Object> content) {
         if (null != mDlnaTerChListListener) {
             DlnaTerChListInfo info = DlnaTerChListInfo.fromArrayList(content);
@@ -245,6 +324,10 @@ public class DlnaInterface {
         }
     }
 
+    /**
+     * 機能：jni c/c++からのチャンネルを処理
+     * @param content content
+     */
     private void onHikariChList(ArrayList<Object> content) {
         if (null != mDlnaHikariChListListener) {
             DlnaHikariChListInfo info = DlnaHikariChListInfo.fromArrayList(content);
@@ -286,12 +369,14 @@ public class DlnaInterface {
      * 機能：使用しているDmsをDlaninterfaceクラスに通知し、
      * 　　　Dlaninterfaceクラスはそのdms以外のdms変動情報をDlnaProviderRecoredVideoに通知しない
      *
-     * @param curDmsUdn 使用しているDmsのudn
+     * @param item 使用しているDlnaDmsItem
      */
-    public void registerCurrentDms(String curDmsUdn) {
-        if (null != mDMSInfo && mDMSInfo.exists(curDmsUdn)) {
-            mCurrentDmsUdn = curDmsUdn;
+    public boolean registerCurrentDms(DlnaDmsItem item) {
+        if (null != mDMSInfo && null!=item) {
+            mCurrentDlnaDmsItem = item;
+            return true;
         }
+        return false;
     }
 
     /**

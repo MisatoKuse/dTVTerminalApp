@@ -35,7 +35,7 @@ public class DlnaProvTerChList {
      * @param lis listener
      * @return 成功true
      */
-    public boolean start(String udn, DlnaTerChListListener lis){
+    public boolean start(DlnaDmsItem item, DlnaTerChListListener lis){
         DlnaInterface di= DlnaInterface.getInstance();
         if(null==di){
             return false;
@@ -43,21 +43,23 @@ public class DlnaProvTerChList {
         if(!di.startDlna()){
             return false;
         }
-        di.registerCurrentDms(udn);
+        boolean ret = di.registerCurrentDms(item);
+        if(!ret){
+            return false;
+        }
         di.setDlnaTerChListListener(lis);
         return true;
     }
 
     /**
      * 機能：録画ヴィデオ一覧を発見
-     * @param ctl ControlUrl
      * @return 成功true
      */
-    public boolean browseBsChListDms(String ctl){
+    public boolean browseChListDms(){
         DlnaInterface di= DlnaInterface.getInstance();
         if(null==di){
             return false;
         }
-        return di.browseBsChListDms(ctl);
+        return di.browseBsChListDms();
     }
 }

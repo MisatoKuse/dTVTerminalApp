@@ -35,7 +35,7 @@ public class DlnaProvRecVideo {
      * @param lis listener
      * @return 成功true
      */
-    public boolean start(String udn, DlnaRecVideoListener lis){
+    public boolean start(DlnaDmsItem item, DlnaRecVideoListener lis){
         DlnaInterface di= DlnaInterface.getInstance();
         if(null==di){
             return false;
@@ -43,21 +43,23 @@ public class DlnaProvRecVideo {
         if(!di.startDlna()){
             return false;
         }
-        di.registerCurrentDms(udn);
+        boolean ret = di.registerCurrentDms(item);
+        if(!ret){
+            return false;
+        }
         di.setDlnaRecVideoBaseListener(lis);
         return true;
     }
 
     /**
      * 機能：録画ヴィデオ一覧を発見
-     * @param ctl ControlUrl
      * @return 成功true
      */
-    public boolean browseRecVideoDms(String ctl){
+    public boolean browseRecVideoDms(){
         DlnaInterface di= DlnaInterface.getInstance();
         if(null==di){
             return false;
         }
-        return di.browseRecVideoDms(ctl);
+        return di.browseRecVideoDms();
     }
 }
