@@ -25,132 +25,138 @@ public class RemoteControlRelayClient {
     // 受信キーコード名に対応する STBキーコード
     private static final Map<Integer, String> keyCodeNameMap = new HashMap<Integer, String>() {
         {
-            put(R.id.keycode_dpad_up, "KEYCODE_DPAD_UP");
+            put(R.id.remote_controller_bt_up, "KEYCODE_DPAD_UP");
         }         // カーソル (上下左右)
 
         {
-            put(R.id.keycode_dpad_down, "KEYCODE_DPAD_DOWN");
+            put(R.id.remote_controller_bt_down, "KEYCODE_DPAD_DOWN");
         }
 
         {
-            put(R.id.keycode_dpad_left, "KEYCODE_DPAD_LEFT");
+            put(R.id.remote_controller_bt_left, "KEYCODE_DPAD_LEFT");
         }
 
         {
-            put(R.id.keycode_dpad_right, "KEYCODE_DPAD_RIGHT");
+            put(R.id.remote_controller_bt_right, "KEYCODE_DPAD_RIGHT");
         }
 
         {
-            put(R.id.keycode_dpad_home, "KEYCODE_HOME");
+            put(R.id.remote_controller_bt_toHome, "KEYCODE_HOME");
         }       // ホーム
 
         {
-            put(KEYCODE_UNKNOWN, "KEYCODE_0");
+            put(R.id.remote_controller_bt_ten, "KEYCODE_0");
         }    // チャンネル (1～12) ※ チャンネル (10)は未定義
 
         {
-            put(R.id.keycode_1, "KEYCODE_1");
+            put(R.id.remote_controller_bt_one, "KEYCODE_1");
         }
 
         {
-            put(R.id.keycode_2, "KEYCODE_2");
+            put(R.id.remote_controller_bt_two, "KEYCODE_2");
         }
 
         {
-            put(R.id.keycode_3, "KEYCODE_3");
+            put(R.id.remote_controller_bt_three, "KEYCODE_3");
         }
 
         {
-            put(KEYCODE_UNKNOWN, "KEYCODE_4");
+            put(R.id.remote_controller_bt_four, "KEYCODE_4");
         }
 
         {
-            put(KEYCODE_UNKNOWN, "KEYCODE_5");
+            put(R.id.remote_controller_bt_five, "KEYCODE_5");
         }
 
         {
-            put(KEYCODE_UNKNOWN, "KEYCODE_6");
+            put(R.id.remote_controller_bt_six, "KEYCODE_6");
         }
 
         {
-            put(KEYCODE_UNKNOWN, "KEYCODE_7");
+            put(R.id.remote_controller_bt_seven, "KEYCODE_7");
         }
 
         {
-            put(KEYCODE_UNKNOWN, "KEYCODE_8");
+            put(R.id.remote_controller_bt_eight, "KEYCODE_8");
         }
 
         {
-            put(KEYCODE_UNKNOWN, "KEYCODE_9");
+            put(R.id.remote_controller_bt_nine, "KEYCODE_9");
         }
 
         {
-            put(KEYCODE_UNKNOWN, "KEYCODE_11");
+            put(R.id.remote_controller_bt_eleven, "KEYCODE_11");
         }
 
         {
-            put(KEYCODE_UNKNOWN, "KEYCODE_12");
+            put(R.id.remote_controller_bt_twelve, "KEYCODE_12");
         }
 
         {
-            put(KEYCODE_UNKNOWN, "KEYCODE_TV_TERRESTRIAL_DIGITAL");
+            put(R.id.remote_controller_bt_degital, "KEYCODE_TV_TERRESTRIAL_DIGITAL");
         }  // 地デジ
 
         {
-            put(KEYCODE_UNKNOWN, "KEYCODE_TV_SATELLITE_BS");
+            put(R.id.remote_controller_bt_bs, "KEYCODE_TV_SATELLITE_BS");
         }  // BS
 
         {
-            put(KEYCODE_UNKNOWN, "KEYCODE_TV");
+            put(R.id.remote_controller_bt_iptv, "KEYCODE_TV");
         } // IPTV
 
         {
-            put(KEYCODE_UNKNOWN, "KEYCODE_GUIDE");
+            put(R.id.remote_controller_bt_tv_program, "KEYCODE_GUIDE");
         }  // 番組表
 
         {
-            put(R.id.keycode_dpad_center, "KEYCODE_DPAD_CENTER");
+            put(R.id.remote_controller_bt_decide, "KEYCODE_DPAD_CENTER");
         }  // 決定
 
         {
-            put(R.id.keycode_dpad_back, "KEYCODE_BACK");
+            put(R.id.remote_controller_bt_back, "KEYCODE_BACK");
         }  // 戻る
 
         {
-            put(KEYCODE_UNKNOWN, "KEYCODE_MEDIA_PLAY_PAUSE");
+            put(R.id.remote_controller_iv_playOrStop, "KEYCODE_MEDIA_PLAY_PAUSE");
         } // 再生/停止
 
         {
-            put(KEYCODE_UNKNOWN, "KEYCODE_MEDIA_SKIP_BACKWARD");
+            put(R.id.remote_controller_iv_blue, "KEYCODE_MEDIA_SKIP_BACKWARD");
         }  // カラー (青)/10秒戻し
 
         {
-            put(KEYCODE_UNKNOWN, "KEYCODE_MEDIA_REWIND");
+            put(R.id.remote_controller_iv_red, "KEYCODE_MEDIA_REWIND");
         }  // カラー (赤)/巻き戻し
 
         {
-            put(KEYCODE_UNKNOWN, "KEYCODE_MEDIA_FAST_FORWARD");
+            put(R.id.remote_controller_iv_green, "KEYCODE_MEDIA_FAST_FORWARD");
         }  // カラー (緑)/早送り
 
         {
-            put(KEYCODE_UNKNOWN, "KEYCODE_MEDIA_SKIP_FORWARD");
+            put(R.id.remote_controller_iv_yellow, "KEYCODE_MEDIA_SKIP_FORWARD");
         }  // カラー (黄)/30秒送り
 
         {
-            put(R.id.keycode_channel_up, "KEYCODE_CHANNEL_UP");
+            put(R.id.remote_controller_bt_channel_plus, "KEYCODE_CHANNEL_UP");
         }  // チャンネル (上下)
 
         {
-            put(R.id.keycode_channel_down, "KEYCODE_CHANNEL_DOWN");
+            put(R.id.remote_controller_bt_channel_minus, "KEYCODE_CHANNEL_DOWN");
         }
 
         {
-            put(KEYCODE_UNKNOWN, "KEYCODE_INFO");
+            put(R.id.remote_controller_bt_notice, "KEYCODE_INFO");
         }  // お知らせ
 
         {
-            put(KEYCODE_UNKNOWN, "KEYCODE_TV_DATA_SERVICE");
+            put(R.id.remote_controller_bt_ddata, "KEYCODE_TV_DATA_SERVICE");
         }  // dデータ
+        {
+            put(R.id.remote_controller_bt_tv_program, "KEYCODE_TV_PROGRAM");
+        }  // 電源
+        {
+            put(R.id.remote_controller_bt_record_list, "KEYCODE_RECORD_LIST");
+        }  // 録画リスト
     };
     //    private Context mContext;
     private String mKeycodeName;

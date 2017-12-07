@@ -23,6 +23,7 @@ import com.nttdocomo.android.tvterminalapp.activity.common.MenuItem;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuItemParam;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
+import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 
 /**
  * クラス機能：
@@ -35,6 +36,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     private LinearLayout baseLinearLayout;
     private RelativeLayout headerLayout;
     protected TextView titleTextView;
+    private RemoteControllerView remoteControllerView = null;
 
     /**
      * Created on 2017/09/21.
@@ -173,9 +175,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     /**
      * 機能
-     * ディスプレイ幅さ取得
+     * ディスプレイ横幅取得
      *
-     * @return ディスプレイ幅さ
+     * @return ディスプレイ横幅
      */
     protected int getWidthDensity() {
         return getDisplayMetrics().widthPixels;
@@ -183,9 +185,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     /**
      * 機能
-     * ディスプレイ幅さ取得
+     * ディスプレイ縦幅取得
      *
-     * @return ディスプレイ幅さ
+     * @return ディスプレイ縦幅
      */
     protected int getHeightDensity() {
         return getDisplayMetrics().heightPixels;
@@ -299,5 +301,16 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     @Override
     public void onMenuItemSelected(MenuItem menuItem) {
 
+    }
+
+    /**
+     * リモコン画面を生成する
+     */
+    public void createRemoteControllerView() {
+        // TODO リモコン表示Viewの作成を行う
+        RelativeLayout layout = findViewById(R.id.remote_controller_rl);
+        remoteControllerView = layout.findViewById(R.id.msv);
+        remoteControllerView.init(this);
+        layout.setVisibility(View.VISIBLE);
     }
 }

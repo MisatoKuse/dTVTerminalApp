@@ -63,6 +63,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         initView();
         HomeDataProvider homeDataProvider = new HomeDataProvider(this);
         homeDataProvider.getHomeData();
+        createRemoteControllerView();
     }
 
     @Override
