@@ -54,4 +54,8 @@
     <drawable name="color_white">#ffffff</drawable>
     <drawable name="color_black">#000000</drawable>
     <drawable name="color_gray">#555555</drawable>
+
+    <!--//リモコン画面-->
+    <drawable name="color_blue">#0099ff</drawable>
+    <drawable name="color_little_gray">#E5E5E5</drawable>
 </resources>
