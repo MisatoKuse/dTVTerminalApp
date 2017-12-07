@@ -18,6 +18,12 @@ public class Channel {
     private String title;
     //チャンネルのチャンネルID
     private int chNo;
+    //チャンネルのサービスID
+    private String serviceId;
+    //チャンネルの開始時間
+    private String startDate;
+    //チャンネルの終了時間
+    private String endDate;
 
     /**
      * Channelタイトルを取得
@@ -48,6 +54,52 @@ public class Channel {
      */
     public void setChNo(int chNo) {
         this.chNo = chNo;
+    }
+
+    /**
+     * serviceIdを取得
+     * @return serviceId
+     */
+    public String getServiceId() {
+        return serviceId;
+    }
+
+    /**
+     * serviceIdを設定
+     * @param serviceId チャンネルID
+     */
+    public void setServiceId(String serviceId) {
+        this.serviceId = serviceId;
+    }
+
+    /**
+     * startDateを取得
+     * @return startDate
+     */
+    public String getStartDate() {
+        return startDate;
+    }
+    /**
+     * startDateを設定
+     * @param startDate チャンネルID
+     */
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    /**
+     * endDateを取得
+     * @return endDate
+     */
+    public String getEndDate() {
+        return endDate;
+    }
+    /**
+     * endDateを設定
+     * @param endDate チャンネルID
+     */
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 
     /**
