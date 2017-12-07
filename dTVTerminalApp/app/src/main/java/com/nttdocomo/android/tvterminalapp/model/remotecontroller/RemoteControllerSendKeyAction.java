@@ -272,10 +272,18 @@ public class RemoteControllerSendKeyAction {
         }
     };
 
+    /**
+     * キーコードを送信する
+     * @param viewId
+     */
     private void sendKeyCode(int viewId) {
         mRemoteControlRelayClient.sendKeycode(viewId);
     }
 
+
+    /**
+     * 連続送信タイマークラス
+     */
     private class RepeatStateManagement extends Timer {
         private Handler mHandler = null;
         // 状態管理変数
@@ -370,60 +378,12 @@ public class RemoteControllerSendKeyAction {
     }
 
     /**
-     * プレイヤー操作UIのリスナーを解除
-     * @param pViewHolder
-     * @return
+     * UI画面が閉じられた際タイマーをキャンセルする
      */
-//    private RemoteControllerPlayerViewHolder removeRemoteControllerPlayerViewHolderListener(RemoteControllerPlayerViewHolder pViewHolder) {
-//        DTVTLogger.start();
-//        pViewHolder.remote_controller_bt_record_list.setOnTouchListener(null);
-//        pViewHolder.remote_controller_bt_channel_minus.setOnTouchListener(null);
-//        pViewHolder.remote_controller_bt_decide.setOnTouchListener(null);
-//        pViewHolder.remote_controller_bt_up.setOnTouchListener(null);
-//        pViewHolder.remote_controller_bt_left.setOnTouchListener(null);
-//        pViewHolder.remote_controller_bt_down.setOnTouchListener(null);
-//        pViewHolder.remote_controller_bt_right.setOnTouchListener(null);
-//        pViewHolder.remote_controller_bt_back.setOnTouchListener(null);
-//        pViewHolder.remote_controller_bt_toHome.setOnTouchListener(null);
-//        pViewHolder.remote_controller_iv_playOrStop.setOnTouchListener(null);
-//        pViewHolder.remote_controller_iv_blue.setOnTouchListener(null);
-//        pViewHolder.remote_controller_iv_red.setOnTouchListener(null);
-//        pViewHolder.remote_controller_iv_green.setOnTouchListener(null);
-//        pViewHolder.remote_controller_iv_yellow.setOnTouchListener(null);
-//
-//        DTVTLogger.end();
-//        return pViewHolder;
-//    }
-
-    /**
-     * チャンネル操作UIのリスナーを解除
-     * @param cViewHolder
-     * @return
-     */
-//    private RemoteControllerChannelViewHolder removeRemoteControllerChannelViewHolderListener(RemoteControllerChannelViewHolder cViewHolder) {
-//        DTVTLogger.start();
-//        cViewHolder.remote_controller_iv_power.setOnTouchListener(null);
-//        cViewHolder.remote_controller_bt_degital.setOnTouchListener(null);
-//        cViewHolder.remote_controller_bt_bs.setOnTouchListener(null);
-//        cViewHolder.remote_controller_bt_iptv.setOnTouchListener(null);
-//        cViewHolder.remote_controller_bt_two.setOnTouchListener(null);
-//        cViewHolder.remote_controller_bt_one.setOnTouchListener(null);
-//        cViewHolder.remote_controller_bt_three.setOnTouchListener(null);
-//        cViewHolder.remote_controller_bt_four.setOnTouchListener(null);
-//        cViewHolder.remote_controller_bt_five.setOnTouchListener(null);
-//        cViewHolder.remote_controller_bt_six.setOnTouchListener(null);
-//        cViewHolder.remote_controller_bt_seven.setOnTouchListener(null);
-//        cViewHolder.remote_controller_bt_eight.setOnTouchListener(null);
-//        cViewHolder.remote_controller_bt_nine.setOnTouchListener(null);
-//        cViewHolder.remote_controller_bt_ten.setOnTouchListener(null);
-//        cViewHolder.remote_controller_bt_eleven.setOnTouchListener(null);
-//        cViewHolder.remote_controller_bt_twelve.setOnTouchListener(null);
-//        cViewHolder.remote_controller_bt_channel_plus.setOnTouchListener(null);
-//        cViewHolder.remote_controller_bt_channel_minus.setOnTouchListener(null);
-//        cViewHolder.remote_controller_bt_notice.setOnTouchListener(null);
-//        cViewHolder.remote_controller_bt_ddata.setOnTouchListener(null);
-//
-//        DTVTLogger.end();
-//        return cViewHolder;
-//    }
+    public void cancelTimer() {
+        if(mRepeatStateManagement != null) {
+            mRepeatStateManagement.repeatCancel();
+            mRepeatStateManagement = null;
+        }
+    }
 }

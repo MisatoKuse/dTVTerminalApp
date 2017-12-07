@@ -185,16 +185,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                     mTextView = findViewById(R.id.watch_by_tv);
                     mTextView.setVisibility(INVISIBLE);
                 } else {
-                    mScroller.startScroll(0, getScrollY(), 0, -getScrollY());
-                    postInvalidate();
-                    movedY = 0;
-                    isTop = false;
-                    mPowerButton = (ImageButton) findViewById(R.id.remote_controller_iv_power);
-                    mPowerButton.setVisibility(INVISIBLE);
-                    mFragmentLayout = findViewById(R.id.header_watch_by_tv);
-                    mFragmentLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.color_blue, null));
-                    mTextView = findViewById(R.id.watch_by_tv);
-                    mTextView.setVisibility(VISIBLE);
+                    closeRemoteControllerUI();
                 }
                 break;
         }
@@ -287,16 +278,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
             float flingY = e2.getY() - e1.getY();
             if (flingY > mScrollHeight / 4 && isTop) {
                 DTVTLogger.debug("Down");
-                mScroller.startScroll(0, getScrollY(), 0, -getScrollY());
-                postInvalidate();
-                movedY = 0;
-                isTop = false;
-                mPowerButton = (ImageButton) findViewById(R.id.remote_controller_iv_power);
-                mPowerButton.setVisibility(INVISIBLE);
-                mFragmentLayout = findViewById(R.id.header_watch_by_tv);
-                mFragmentLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.color_blue, null));
-                mTextView = findViewById(R.id.watch_by_tv);
-                mTextView.setVisibility(VISIBLE);
+                closeRemoteControllerUI();
                 DTVTLogger.end();
                 return true;
             }
@@ -314,5 +296,21 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         }
     };
 
+    /**
+     * リモコンUI画面を閉じる処理
+     */
+    private void closeRemoteControllerUI(){
+        mScroller.startScroll(0, getScrollY(), 0, -getScrollY());
+        postInvalidate();
+        movedY = 0;
+        isTop = false;
+        mPowerButton = (ImageButton) findViewById(R.id.remote_controller_iv_power);
+        mPowerButton.setVisibility(INVISIBLE);
+        mFragmentLayout = findViewById(R.id.header_watch_by_tv);
+        mFragmentLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.color_blue, null));
+        mTextView = findViewById(R.id.watch_by_tv);
+        mTextView.setVisibility(VISIBLE);
+        remoteControllerSendKeyAction.cancelTimer();
+    }
 }
 
