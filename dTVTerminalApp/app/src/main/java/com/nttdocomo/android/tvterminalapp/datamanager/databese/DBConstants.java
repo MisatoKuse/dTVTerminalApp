@@ -281,7 +281,9 @@ public class DBConstants {
             JsonContents.META_RESPONSE_SECOND_GENRE_ARRAY + " text, " +
             JsonContents.META_RESPONSE_COPY + " text, " +
             JsonContents.META_RESPONSE_ADINFO_ARRAY + " text, " +
-            JsonContents.META_RESPONSE_RELATIONAL_ID_ARRAY + " text " +
+            JsonContents.META_RESPONSE_RELATIONAL_ID_ARRAY + " text, " +
+            DATE_TYPE + " text, " +
+            UPDATE_DATE + " text " +
             ")";
 
     //Homeキャッシュデータ格納用テーブル
