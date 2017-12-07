@@ -163,7 +163,6 @@ public class RemoteControlRelayClient {
 
     // シングルトン
     private static RemoteControlRelayClient mInstance = new RemoteControlRelayClient();
-//    private InetSocketAddress mRemoteAddress = new InetSocketAddress(ｍRemoteHost, SERVER_PORT);
 
     /**
      * アプリ起動要求種別
@@ -389,5 +388,15 @@ public class RemoteControlRelayClient {
             DTVTLogger.debug(e);
         }
         return jsonStr;
+    }
+
+    /**
+     * Socket通信／データグラム送信の送信先のIPアドレスを設定
+     * TODO: デバッグ用
+     *
+     * @param remoteIp
+     */
+    public void setDebugRemoteIp(String remoteIp) {
+        ｍRemoteHost = remoteIp;
     }
 }
