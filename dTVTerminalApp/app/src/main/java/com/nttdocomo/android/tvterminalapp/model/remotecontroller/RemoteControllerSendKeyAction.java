@@ -126,6 +126,7 @@ public class RemoteControllerSendKeyAction {
         ImageView remote_controller_iv_green = null;
         ImageView remote_controller_iv_yellow = null;
     }
+
     // チャンネル操作UI
     private static class RemoteControllerChannelViewHolder {
         ImageView remote_controller_iv_power = null;
@@ -152,6 +153,7 @@ public class RemoteControllerSendKeyAction {
 
     /**
      * リモコンUI（プレイヤー操作）の各ボタンにリスナーを設定
+     *
      * @param pViewHolder
      * @return
      */
@@ -178,6 +180,7 @@ public class RemoteControllerSendKeyAction {
 
     /**
      * リモコンUI（チャンネル操作）の各ボタンにリスナーを設定
+     *
      * @param cViewHolder
      * @return
      */
@@ -244,7 +247,8 @@ public class RemoteControllerSendKeyAction {
                     DTVTLogger.debug("MotionEvemt ACTION_CANCEL");
                     mRepeatStateManagement.resetCounter();
                     mRepeatStateManagement.setRepeatTaskStatus(RepeatTaskStatus.REPEAT_STATUS_STAND_BY);
-                    break;
+                    return true;
+//                    break;
                 case MotionEvent.ACTION_OUTSIDE:
                     DTVTLogger.debug("MotionEvemt ACTION_OUTSIDE");
                     mRepeatStateManagement.resetCounter();
@@ -322,6 +326,7 @@ public class RemoteControllerSendKeyAction {
                 @Override
                 public void run() {
                     DTVTLogger.start();
+                    DTVTLogger.debug("status" + mStatus.toString());
                     // 連打フラグをみて処理を続けるか判断する
                     if (execution_counter >= 10 && mStatus != RepeatTaskStatus.REPEAT_STATUS_EXECUTION) {
                         DTVTLogger.debug("CHANGE_STATUS EXECUTION");

@@ -6,9 +6,11 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,6 +22,7 @@ import android.widget.Scroller;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.model.remotecontroller.RemoteControllerSendKeyAction;
 
 import java.util.ArrayList;
@@ -44,6 +47,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     private FrameLayout mFragmentLayout;
     private RemoteControllerSendKeyAction remoteControllerSendKeyAction;
     private ImageButton mPowerButton;
+    private GestureDetector mGestureDetector = null;
 
 
     public RemoteControllerView(Context context) {
@@ -78,6 +82,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
     /**
      * viewの初期化
+     *
      * @param context
      */
     public void init(Context context) {
@@ -107,15 +112,13 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-
-
                 mSysTime = System.currentTimeMillis();
 
                 downY = (int) event.getY();
-                if(downY < mScrollHeight - mVisibilityHeight && !isTop){
-                   return false;
+                if (downY < mScrollHeight - mVisibilityHeight && !isTop) {
+                    return false;
                 }
-                if(viewList.size() == 0) {
+                if (viewList.size() == 0) {
                     setPager();
                 }
                 return true;
@@ -162,7 +165,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                     postInvalidate();
                     movedY = mScrollHeight;
                     isTop = true;
-                    mPowerButton = (ImageButton)findViewById(R.id.remote_controller_iv_power);
+                    mPowerButton = (ImageButton) findViewById(R.id.remote_controller_iv_power);
                     mPowerButton.setVisibility(VISIBLE);
                     mFragmentLayout = findViewById(R.id.header_watch_by_tv);
                     mFragmentLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.color_little_gray, null));
@@ -175,7 +178,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                     invalidate();
                     movedY = mScrollHeight;
                     isTop = true;
-                    mPowerButton = (ImageButton)findViewById(R.id.remote_controller_iv_power);
+                    mPowerButton = (ImageButton) findViewById(R.id.remote_controller_iv_power);
                     mPowerButton.setVisibility(VISIBLE);
                     mFragmentLayout = findViewById(R.id.header_watch_by_tv);
                     mFragmentLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.color_little_gray, null));
@@ -186,7 +189,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                     postInvalidate();
                     movedY = 0;
                     isTop = false;
-                    mPowerButton = (ImageButton)findViewById(R.id.remote_controller_iv_power);
+                    mPowerButton = (ImageButton) findViewById(R.id.remote_controller_iv_power);
                     mPowerButton.setVisibility(INVISIBLE);
                     mFragmentLayout = findViewById(R.id.header_watch_by_tv);
                     mFragmentLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.color_blue, null));
@@ -222,6 +225,9 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         mRemokonAdapter = new ViewPagerAdapter();
         mViewPager.setAdapter(mRemokonAdapter);
         mViewPager.addOnPageChangeListener(this);
+
+        mGestureDetector = new GestureDetector(this.getContext(), mGestureListener);
+        mViewPager.setOnTouchListener(mOnTouchListener);
 
         setRemoteControllerViewAction();
     }
@@ -270,5 +276,43 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         remoteControllerSendKeyAction.initRemoteControllerPlayerView(this);
         remoteControllerSendKeyAction.initRemoteControllerChannelView(this);
     }
+
+    /**
+     * リモコンUI画面 onFling処理
+     */
+    private GestureDetector.OnGestureListener mGestureListener = new GestureDetector.SimpleOnGestureListener() {
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            DTVTLogger.start();
+            float flingY = e2.getY() - e1.getY();
+            if (flingY > mScrollHeight / 4 && isTop) {
+                DTVTLogger.debug("Down");
+                mScroller.startScroll(0, getScrollY(), 0, -getScrollY());
+                postInvalidate();
+                movedY = 0;
+                isTop = false;
+                mPowerButton = (ImageButton) findViewById(R.id.remote_controller_iv_power);
+                mPowerButton.setVisibility(INVISIBLE);
+                mFragmentLayout = findViewById(R.id.header_watch_by_tv);
+                mFragmentLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.color_blue, null));
+                mTextView = findViewById(R.id.watch_by_tv);
+                mTextView.setVisibility(VISIBLE);
+                DTVTLogger.end();
+                return true;
+            }
+            DTVTLogger.end();
+            return false;
+        }
+    };
+    /**
+     * リモコンUI画面のonFlingを取得する
+     */
+    private OnTouchListener mOnTouchListener = new OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            return mGestureDetector.onTouchEvent(event);
+        }
+    };
+
 }
 
