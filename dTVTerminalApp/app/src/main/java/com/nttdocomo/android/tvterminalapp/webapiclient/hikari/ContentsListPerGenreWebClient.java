@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.os.Bundle;
 
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser;
@@ -201,32 +202,32 @@ public class ContentsListPerGenreWebClient
         try {
             //ページャー部の作成
             JSONObject jsonPagerObject = new JSONObject();
-            jsonPagerObject.put("limit", limit);
-            jsonPagerObject.put("offset", offset);
-            jsonObject.put("pager", jsonPagerObject);
+            jsonPagerObject.put(JsonContents.META_RESPONSE_PAGER_LIMIT, limit);
+            jsonPagerObject.put(JsonContents.META_RESPONSE_OFFSET, offset);
+            jsonObject.put(JsonContents.META_RESPONSE_PAGER, jsonPagerObject);
 
             //その他
-            jsonObject.put("filter", filter);
+            jsonObject.put(JsonContents.META_RESPONSE_FILTER, filter);
 
             //数字がゼロの場合は無指定と判断して1にする
             if (ageReq == 0) {
                 ageReq = 1;
             }
 
-            jsonObject.put("age_req", ageReq);
+            jsonObject.put(JsonContents.META_RESPONSE_AGE_REQ, ageReq);
 
             //ヌルや空文字ではないならば、値を出力する
             if (genreId != null && !genreId.isEmpty()) {
-                jsonObject.put("genre_id", genreId);
+                jsonObject.put(JsonContents.META_RESPONSE_GENRE_ID, genreId);
             }
 
             //ヌルではないならば、値を出力する
             if (type != null) {
-                jsonObject.put("type", type);
+                jsonObject.put(JsonContents.META_RESPONSE_TYPE, type);
             }
 
             if (sort != null) {
-                jsonObject.put("sort", sort);
+                jsonObject.put(JsonContents.META_RESPONSE_SORT, sort);
             }
 
             //結果の出力
