@@ -33,10 +33,10 @@ namespace dtvt {
         return ok;
 
         error_2:
-            delete mDlnaDevXmlParser;
-            mDlnaDevXmlParser = NULL;
+        delete mDlnaDevXmlParser;
+        mDlnaDevXmlParser = NULL;
         error_1:
-            return false;
+        return false;
     }
 
     void Dlna::uninit() {
@@ -150,44 +150,44 @@ namespace dtvt {
         return ok;
 
         error_3:
-            mEvent.mJmethodID = NULL;
-            uninit();
+        mEvent.mJmethodID = NULL;
+        uninit();
         error_2:
-            if (env) {
-                if (mEvent.mJClassDlna) {
-                    env->DeleteLocalRef(mEvent.mJClassDlna);
-                    mEvent.mJClassDlna=NULL;
-                }
-                if (mEvent.mJObject) {
-                    env->DeleteGlobalRef(mEvent.mJObject);
-                    mEvent.mJObject=NULL;
-                }
-                if(mEvent.mJClassDmsItem){
-                    env->DeleteGlobalRef(mEvent.mJClassDmsItem);
-                    mEvent.mJClassDmsItem=NULL;
-                }
-                if(mEvent.mJClassRecVideoItem){
-                    env->DeleteGlobalRef(mEvent.mJClassRecVideoItem);
-                    mEvent.mJClassRecVideoItem=NULL;
-                }
-                if(mEvent.mJClassBsChListItem){
-                    env->DeleteGlobalRef(mEvent.mJClassBsChListItem);
-                    mEvent.mJClassBsChListItem=NULL;
-                }
-                if(mEvent.mJClassTerChListItem){
-                    env->DeleteGlobalRef(mEvent.mJClassTerChListItem);
-                    mEvent.mJClassTerChListItem=NULL;
-                }
-                if(mEvent.mJClassHikariChListItem){
-                    env->DeleteGlobalRef(mEvent.mJClassHikariChListItem);
-                    mEvent.mJClassHikariChListItem=NULL;
-                }
+        if (env) {
+            if (mEvent.mJClassDlna) {
+                env->DeleteLocalRef(mEvent.mJClassDlna);
+                mEvent.mJClassDlna=NULL;
             }
-            mEvent.mJavaVM = NULL;
-            mEvent.mJClassDlna = NULL;
-            mEvent.mJObject = NULL;
+            if (mEvent.mJObject) {
+                env->DeleteGlobalRef(mEvent.mJObject);
+                mEvent.mJObject=NULL;
+            }
+            if(mEvent.mJClassDmsItem){
+                env->DeleteGlobalRef(mEvent.mJClassDmsItem);
+                mEvent.mJClassDmsItem=NULL;
+            }
+            if(mEvent.mJClassRecVideoItem){
+                env->DeleteGlobalRef(mEvent.mJClassRecVideoItem);
+                mEvent.mJClassRecVideoItem=NULL;
+            }
+            if(mEvent.mJClassBsChListItem){
+                env->DeleteGlobalRef(mEvent.mJClassBsChListItem);
+                mEvent.mJClassBsChListItem=NULL;
+            }
+            if(mEvent.mJClassTerChListItem){
+                env->DeleteGlobalRef(mEvent.mJClassTerChListItem);
+                mEvent.mJClassTerChListItem=NULL;
+            }
+            if(mEvent.mJClassHikariChListItem){
+                env->DeleteGlobalRef(mEvent.mJClassHikariChListItem);
+                mEvent.mJClassHikariChListItem=NULL;
+            }
+        }
+        mEvent.mJavaVM = NULL;
+        mEvent.mJClassDlna = NULL;
+        mEvent.mJObject = NULL;
         error_1:
-            return false;
+        return false;
     }
 
     void Dlna::stop() {
@@ -296,11 +296,11 @@ namespace dtvt {
         return true;
 
         error2:
-            dupnp_cp_evtmgr_free(&mDMP.eventManager);
+        dupnp_cp_evtmgr_free(&mDMP.eventManager);
         error1:
-            dupnp_cp_dvcmgr_free(&mDMP.deviceManager);
+        dupnp_cp_dvcmgr_free(&mDMP.deviceManager);
         error0:
-            return false;
+        return false;
     }
 
     bool Dlna::soapInit() {
@@ -326,9 +326,9 @@ namespace dtvt {
         return true;
 
         error2:
-            du_mutex_free(&mDMP.soap.mutex);
+        du_mutex_free(&mDMP.soap.mutex);
         error:
-            du_str_array_free(&mDMP.soap.request_header);
+        du_str_array_free(&mDMP.soap.request_header);
         return false;
     }
 
@@ -349,9 +349,9 @@ namespace dtvt {
         return true;
 
         error2:
-            dupnp_cp_evtmgr_stop(&mDMP.eventManager);
+        dupnp_cp_evtmgr_stop(&mDMP.eventManager);
         error:
-            return false;
+        return false;
     }
 
     static du_bool checkSoapResponseError(dupnp_http_response *response) {
@@ -390,8 +390,8 @@ namespace dtvt {
         return true;
 
         error:
-            du_str_array_free(&param_array);
-            return false;
+        du_str_array_free(&param_array);
+        return false;
     }
 
     /*static*/ void  Dlna::browseDirectChildrenResponseHandler(dupnp_http_response *response, void *arg) {
@@ -435,8 +435,8 @@ namespace dtvt {
         return;
 
         error:
-            du_sync_notify(&d->soap.sync);
-            du_mutex_unlock(&d->soap.mutex);
+        du_sync_notify(&d->soap.sync);
+        du_mutex_unlock(&d->soap.mutex);
     }
 
     //bool Dlna::sendSoap(std::string controlUrl, std::string objectId="0", const int startingIndex=0, const int requestCount=0, std::string browseFlag="BrowseDirectChildren"){
@@ -964,25 +964,25 @@ namespace dtvt {
         env->CallVoidMethod(mEvent.mJObject, method, msg, listObj);
 
         error_or_return:
-            if(!env){
-                return;
-            }
-            if(itemObj){
-                env->DeleteLocalRef(itemObj);
-                itemObj=NULL;
-            }
-            if(listObj){
-                env->DeleteLocalRef(listObj);
-                listObj=NULL;
-            }
-            if(listActivityClazz){
-                env->DeleteLocalRef(listActivityClazz);
-                listActivityClazz=NULL;
-            }
-            if(listCls){
-                env->DeleteLocalRef(listCls);
-                listCls=NULL;
-            }
+        if(!env){
+            return;
+        }
+        if(itemObj){
+            env->DeleteLocalRef(itemObj);
+            itemObj=NULL;
+        }
+        if(listObj){
+            env->DeleteLocalRef(listObj);
+            listObj=NULL;
+        }
+        if(listActivityClazz){
+            env->DeleteLocalRef(listActivityClazz);
+            listActivityClazz=NULL;
+        }
+        if(listCls){
+            env->DeleteLocalRef(listCls);
+            listCls=NULL;
+        }
     }
 
     bool Dlna::browseRecVideoListDms(std::string controlUrl) {
