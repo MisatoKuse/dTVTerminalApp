@@ -48,7 +48,7 @@ public class RemoteControlRelayClient {
 
         {
             put(R.id.remote_controller_bt_ten, "KEYCODE_0");
-        }    // チャンネル (1～12) ※ チャンネル (10)は未定義
+        }    // チャンネル (1～12) ※ チャンネル (10)は仕様書より KEYCODE_0となる
 
         {
             put(R.id.remote_controller_bt_one, "KEYCODE_1");
@@ -154,11 +154,11 @@ public class RemoteControlRelayClient {
             put(R.id.remote_controller_bt_ddata, "KEYCODE_TV_DATA_SERVICE");
         }  // dデータ
         {
-            put(R.id.remote_controller_bt_tv_program, "KEYCODE_TV_PROGRAM");
-        }  // 電源
+            put(R.id.remote_controller_iv_power, "KEYCODE_POWER");
+        }  // 電源(KEYCODE_STB_POWERの可能性あり)
         {
-            put(R.id.remote_controller_bt_record_list, "KEYCODE_RECORD_LIST");
-        }  // 録画リスト
+            put(R.id.remote_controller_bt_record_list, "KEYCODE_REC_LIST");
+        }  // 録画リスト // 録画リスト
     };
 
     // シングルトン

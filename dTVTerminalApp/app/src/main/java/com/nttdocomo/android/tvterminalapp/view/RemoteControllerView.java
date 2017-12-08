@@ -136,6 +136,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        DTVTLogger.start("view_event:"+event.getAction());
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 //システム時間を取得する
@@ -224,6 +225,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                 }
                 break;
         }
+        DTVTLogger.end();
         return super.onTouchEvent(event);
     }
     //子ビュ―が一番上まで移動した場合表示するコンテンツを設定する
@@ -324,12 +326,14 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             DTVTLogger.start();
 
-            float flingY = e2.getY() - e1.getY();
-            if (flingY > mScrollHeight / 4 && mIsTop) {
-                DTVTLogger.debug("Down");
-                closeRemoteControllerUI();
-                DTVTLogger.end();
-                return true;
+            if(e1 != null && e2 != null) {
+                float flingY = e2.getY() - e1.getY();
+                if (flingY > mScrollHeight / 4 && mIsTop) {
+                    DTVTLogger.debug("Down");
+                    closeRemoteControllerUI();
+                    DTVTLogger.end();
+                    return true;
+                }
             }
             DTVTLogger.end();
             return false;
@@ -355,8 +359,8 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         mIsTop = false;
         mPowerButton = (ImageButton) findViewById(R.id.remote_controller_iv_power);
         mPowerButton.setVisibility(INVISIBLE);
-        mRelativelayout = findViewById(R.id.header_watch_by_tv);
-        mRelativelayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.color_blue, null));
+        mFrameLayout = findViewById(R.id.header_watch_by_tv);
+        mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.color_blue, null));
         mTextView = findViewById(R.id.watch_by_tv);
         mTextView.setVisibility(VISIBLE);
         remoteControllerSendKeyAction.cancelTimer();
