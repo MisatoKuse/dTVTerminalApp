@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.relayclient;
 
+import android.view.KeyEvent;
+
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
@@ -158,8 +160,6 @@ public class RemoteControlRelayClient {
             put(R.id.remote_controller_bt_record_list, "KEYCODE_RECORD_LIST");
         }  // 録画リスト
     };
-    //    private Context mContext;
-    private String mKeycodeName;
 
     // シングルトン
     private static RemoteControlRelayClient mInstance = new RemoteControlRelayClient();
@@ -180,29 +180,36 @@ public class RemoteControlRelayClient {
     private static final String STB_APPLICATION_DTV = "dTV";  // dTV
     private static final String STB_APPLICATION_DANIMESTORE = "dANIMESTORE";  // dアニメストア
     private static final String STB_APPLICATION_DTVCHANNEL = "dTVCHANNEL";  // dTVチャンネル
-    //
-    private static final String RERAY_COMMAND = "COMMAND";
-    private static final String RERAY_COMMAND_TITLE_DETAIL = "TITLE_DETAIL";
-    private static final String RERAY_COMMAND_APPLICATION_ID = "APP_ID";
-    private static final String RERAY_COMMAND_CONTENTS_ID = "CONTENTS_ID";
-    private static final String RERAY_RESULT = "RESULT";
-    private static final String RERAY_RESULT_OK = "0";
-    private static final String RERAY_RESULT_ERROR = "1";
-    private static final String RERAY_RESULT_MESSAGE = "MESSAGE";
-
+    // 中継アプリクライアントが送信するアプリ起動要求のメッセージ定数
+    private static final String RELAY_COMMAND = "COMMAND";
+    private static final String RELAY_COMMAND_TITLE_DETAIL = "TITLE_DETAIL";
+    private static final String RELAY_COMMAND_APPLICATION_ID = "APP_ID";
+    private static final String RELAY_COMMAND_CONTENTS_ID = "CONTENTS_ID";
+    private static final String RELAY_RESULT = "RESULT";
+    private static final String RELAY_RESULT_OK = "0";
+    private static final String RELAY_RESULT_ERROR = "1";
+    private static final String RELAY_RESULT_MESSAGE = "MESSAGE";
+    // 中継アプリクライアントが送信するキーコードのメッセージ定数
+    private static final String RELAY_KEYEVENT = "KEYEVENT";
+    private static final String RELAY_KEYEVENT_ACTION = "ACTION";
+    private static final String RELAY_KEYEVENT_ACTION_DOWN = "DOWN";
+    private static final String RELAY_KEYEVENT_ACTION_UP = "UP";
+    private static final String RELAY_KEYEVENT_ACTION_CANCELED = "TRUE";
 
     // アプリ起動要求種別に対応するするアプリ名シンボル
     private static final Map<STB_APPLICATION_TYPES, String> mStbApplicationSymbolMap = new HashMap<STB_APPLICATION_TYPES, String>() {
         {
             put(STB_APPLICATION_TYPES.DTV, STB_APPLICATION_DTV);    // dTV
-        }
-
-        {
             put(STB_APPLICATION_TYPES.DANIMESTORE, STB_APPLICATION_DANIMESTORE);    // dアニメストア
-        }
-
-        {
             put(STB_APPLICATION_TYPES.DTVCHANNEL, STB_APPLICATION_DTVCHANNEL);  // dTVチャンネル
+        }
+    };
+
+    // キーイベントアクション
+    private static final Map<Integer, String> mKeyeventActionMap = new HashMap<Integer, String>() {
+        {
+            put(KeyEvent.ACTION_DOWN, RELAY_KEYEVENT_ACTION_DOWN);
+            put(KeyEvent.ACTION_UP, RELAY_KEYEVENT_ACTION_UP);
         }
     };
 
@@ -240,11 +247,11 @@ public class RemoteControlRelayClient {
      *
      * @param keycodeRid
      */
-    public void sendKeycode(int keycodeRid) {
-        mKeycodeName = convertKeycode(keycodeRid);
-        if (mKeycodeName != null) {
+    public void sendKeycode(int keycodeRid, int action, boolean canceled) {
+        String keycode = convertKeycode(keycodeRid);
+        if (keycode != null && mKeyeventActionMap.containsKey(action)) {
             // キーコード送信スレッドを開始
-            new Thread(new KeycodeRerayTask(mKeycodeName)).start();
+            new Thread(new KeycodeRerayTask(keycode, action, canceled)).start();
         }
     }
 
@@ -252,10 +259,10 @@ public class RemoteControlRelayClient {
      * キーコードをSTBへ送信するスレッド
      */
     private class KeycodeRerayTask implements Runnable {
-        private String mSendKeycodeName;
+        private String mKeycodeRequest;
 
-        public KeycodeRerayTask(String keycodeName) {
-            mSendKeycodeName = keycodeName;
+        public KeycodeRerayTask(String keycode, int action, boolean canceled) {
+            mKeycodeRequest = setKeyeventRequest(keycode, action, canceled);
         }
 
         /**
@@ -265,8 +272,8 @@ public class RemoteControlRelayClient {
         public void run() {
             StbConnectRelayClient stbDatagram = StbConnectRelayClient.getInstance();  // Socket通信
             stbDatagram.setRemoteIp(ｍRemoteHost);
-            if (mSendKeycodeName != null) {
-                stbDatagram.sendDatagram(mSendKeycodeName);
+            if (mKeycodeRequest != null) {
+                stbDatagram.sendDatagram(mKeycodeRequest);
             }
         }
     }
@@ -352,8 +359,8 @@ public class RemoteControlRelayClient {
                 if (recvResult != null) {
                     recvJson = new JSONObject(recvResult);
                 }
-                if (!RERAY_RESULT_OK.equals(recvJson.get(RERAY_RESULT).toString())) {
-                    message = recvJson.get(RERAY_RESULT_MESSAGE).toString();
+                if (!RELAY_RESULT_OK.equals(recvJson.get(RELAY_RESULT).toString())) {
+                    message = recvJson.get(RELAY_RESULT_MESSAGE).toString();
                 }
             } catch (JSONException e) {
                 DTVTLogger.debug(e);
@@ -380,9 +387,31 @@ public class RemoteControlRelayClient {
         JSONObject requestJson = new JSONObject();
         String jsonStr = null;
         try {
-            requestJson.put(RERAY_COMMAND, RERAY_COMMAND_TITLE_DETAIL);
-            requestJson.put(RERAY_COMMAND_APPLICATION_ID, applicationId);
-            requestJson.put(RERAY_COMMAND_CONTENTS_ID, contentsId);
+            requestJson.put(RELAY_COMMAND, RELAY_COMMAND_TITLE_DETAIL);
+            requestJson.put(RELAY_COMMAND_APPLICATION_ID, applicationId);
+            requestJson.put(RELAY_COMMAND_CONTENTS_ID, contentsId);
+            jsonStr = requestJson.toString();
+        } catch (JSONException e) {
+            DTVTLogger.debug(e);
+        }
+        return jsonStr;
+    }
+
+    /**
+     * キーイベント送信要求のメッセージ（JSON形式）を作成する
+     *
+     * @param keycode
+     * @param action
+     * @param canceled
+     * @return
+     */
+    private static String setKeyeventRequest(String keycode, int action, boolean canceled) {
+        JSONObject requestJson = new JSONObject();
+        String jsonStr = null;
+        try {
+            requestJson.put(RELAY_KEYEVENT, keycode);
+            requestJson.put(RELAY_KEYEVENT_ACTION, mKeyeventActionMap.get(action));
+            requestJson.put(RELAY_KEYEVENT_ACTION_CANCELED, canceled ? true : "");
             jsonStr = requestJson.toString();
         } catch (JSONException e) {
             DTVTLogger.debug(e);
