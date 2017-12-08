@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
+
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
@@ -54,7 +55,7 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
      */
     public DtvContentsDetailDataProvider(Context context) {
         this.context = context;
-        this.apiDataProviderCallback = (DtvContentsDetailDataProvider.ApiDataProviderCallback) context;
+        this.apiDataProviderCallback = (ApiDataProviderCallback) context;
     }
 
     @Override
@@ -71,6 +72,15 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
     public void onRoleListJsonParsed(RoleListResponse roleListResponse) {
         if (roleListResponse != null) {
             roleListInfo = roleListResponse.getRoleList();
+            if (roleListInfo != null) {
+                Handler handler = new Handler();//チャンネル情報更新
+                try {
+                    DbThread t = new DbThread(handler, this, ROLELIST_UPDATE);
+                    t.start();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
             if (roleListInfo != null) {
                 apiDataProviderCallback.onRoleListCallback(roleListInfo);
             }
