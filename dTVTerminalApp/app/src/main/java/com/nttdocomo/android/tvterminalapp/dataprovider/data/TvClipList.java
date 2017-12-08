@@ -11,22 +11,22 @@ import java.util.List;
 
 public class TvClipList implements Serializable {
 
-    private HashMap<String, String> mVcMap = new HashMap<String, String>();
-    private List<HashMap<String, String>> mVcList = new ArrayList<>();
+    private HashMap<String, String> mTcMap = new HashMap<>();
+    private List<HashMap<String, String>> mTcList = new ArrayList<>();
 
     public HashMap getVcMap() {
-        return mVcMap;
+        return mTcMap;
     }
 
-    public void setVcMap(HashMap vcMap) {
-        this.mVcMap = vcMap;
+    public void setVcMap(HashMap tcMap) {
+        this.mTcMap = tcMap;
     }
 
     public List getVcList() {
-        return mVcList;
+        return mTcList;
     }
 
-    public void setVcList(List vcList) {
-        this.mVcList = vcList;
+    public void setVcList(List tcList) {
+        this.mTcList = tcList;
     }
 }

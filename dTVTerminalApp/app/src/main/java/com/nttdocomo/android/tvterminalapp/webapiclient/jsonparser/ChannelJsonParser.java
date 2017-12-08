@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 
@@ -26,63 +27,32 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
     // オブジェクトクラスの定義
     private ChannelList mChannelList;
 
-    public static final String CHANNEL_LIST_STATUS = "status";
-    public static final String CHANNEL_LIST = "list";
+    public static final String[] pagerPara = {JsonContents.META_RESPONSE_PAGER_LIMIT,
+            JsonContents.META_RESPONSE_OFFSET, JsonContents.META_RESPONSE_COUNT,
+            JsonContents.META_RESPONSE_TOTAL};
 
-    public static final String CHANNEL_LIST_PAGER = "pager";
-    public static final String CHANNEL_LIST_PAGER_LIMIT = "limit";
-    public static final String CHANNEL_LIST_PAGER_OFFSET = "offset";
-    public static final String CHANNEL_LIST_PAGER_COUNT = "count";
-    public static final String CHANNEL_LIST_PAGER_TOTAL = "total";
-
-    public static final String CHANNEL_LIST_CRID = "crid";
-    public static final String CHANNEL_LIST_CID = "cid";
-    public static final String CHANNEL_LIST_SERVER_ID = "service_id";
-    public static final String CHANNEL_LIST_CHNO = "chno";
-    public static final String CHANNEL_LIST_TITLE = "title";
-    public static final String CHANNEL_LIST_TITLERUBY = "titleruby";
-    public static final String CHANNEL_LIST_DISP_TYPE = "disp_type";
-    public static final String CHANNEL_LIST_SERVICE = "service";
-    public static final String CHANNEL_LIST_CH_TYPE = "ch_type";
-    public static final String CHANNEL_LIST_AVAIL_START_DATE = "avail_start_date";
-    public static final String CHANNEL_LIST_AVAIL_END_DATE = "avail_end_date";
-    public static final String CHANNEL_LIST_THUMB = "thumb";
-    public static final String CHANNEL_LIST_DEMONG = "demong";
-    public static final String CHANNEL_LIST_4KFLG = "4kflg";
-    public static final String CHANNEL_LIST_AVAIL_STATUS = "avail_status";
-    public static final String CHANNEL_LIST_DELIVERY = "delivery";
-    public static final String CHANNEL_LIST_R_VALUE = "r_value";
-    public static final String CHANNEL_LIST_ADULT = "adult";
-    public static final String CHANNEL_LIST_NG_FUNC = "ng_func";
-    public static final String CHANNEL_LIST_GENRE_ARRAY = "genre_array";
-    public static final String CHANNEL_LIST_SYNOP = "synop";
-    public static final String CHANNEL_LIST_STAMP = "stamp";
-    public static final String CHANNEL_LIST_CHSVOD = "chsvod";
-    public static final String CHANNEL_LIST_PUID = "puid";
-    public static final String CHANNEL_LIST_SUB_PUID = "sub_puid";
-    public static final String CHANNEL_LIST_PRICE = "price";
-    public static final String CHANNEL_LIST_QRANGE = "qrange";
-    public static final String CHANNEL_LIST_QUINT = "qunit";
-    public static final String CHANNEL_LIST_PU_S = "pu_s";
-    public static final String CHANNEL_LIST_PU_E = "pu_e";
-    public static final String CHANNEL_LIST_CHPACK = "CHPACK";
-    public static final String UNDER_LINE = "_";
-
-    public static final String[] pagerPara = {CHANNEL_LIST_PAGER_LIMIT, CHANNEL_LIST_PAGER_OFFSET,
-            CHANNEL_LIST_PAGER_COUNT, CHANNEL_LIST_PAGER_TOTAL};
-
-    public static final String[] listPara = {CHANNEL_LIST_CRID, CHANNEL_LIST_CID,
-            CHANNEL_LIST_SERVER_ID, CHANNEL_LIST_CHNO, CHANNEL_LIST_TITLE, CHANNEL_LIST_TITLERUBY,
-            CHANNEL_LIST_DISP_TYPE, CHANNEL_LIST_SERVICE, CHANNEL_LIST_CH_TYPE,
-            CHANNEL_LIST_AVAIL_START_DATE, CHANNEL_LIST_AVAIL_END_DATE, CHANNEL_LIST_THUMB,
-            CHANNEL_LIST_DEMONG, CHANNEL_LIST_4KFLG, CHANNEL_LIST_AVAIL_STATUS,
-            CHANNEL_LIST_DELIVERY, CHANNEL_LIST_R_VALUE, CHANNEL_LIST_ADULT, CHANNEL_LIST_NG_FUNC, CHANNEL_LIST_GENRE_ARRAY,
-            CHANNEL_LIST_SYNOP, CHANNEL_LIST_STAMP, CHANNEL_LIST_CHSVOD, CHANNEL_LIST_PUID,
-            CHANNEL_LIST_SUB_PUID, CHANNEL_LIST_PRICE, CHANNEL_LIST_QRANGE, CHANNEL_LIST_QUINT,
-            CHANNEL_LIST_PU_S, CHANNEL_LIST_PU_E, CHANNEL_LIST_CHPACK};
-    public static final String[] chpackList = {CHANNEL_LIST_CRID, CHANNEL_LIST_TITLE, CHANNEL_LIST_DISP_TYPE, CHANNEL_LIST_PUID,
-            CHANNEL_LIST_SUB_PUID, CHANNEL_LIST_PRICE, CHANNEL_LIST_QRANGE, CHANNEL_LIST_QUINT,
-            CHANNEL_LIST_PU_S, CHANNEL_LIST_PU_E};
+    public static final String[] listPara = {JsonContents.META_RESPONSE_CRID,
+            JsonContents.META_RESPONSE_SERVICE_ID, JsonContents.META_RESPONSE_CHNO,
+            JsonContents.META_RESPONSE_TITLE, JsonContents.META_RESPONSE_TITLERUBY,
+            JsonContents.META_RESPONSE_DISP_TYPE, JsonContents.META_RESPONSE_SERVICE,
+            JsonContents.META_RESPONSE_CH_TYPE, JsonContents.META_RESPONSE_AVAIL_START_DATE,
+            JsonContents.META_RESPONSE_AVAIL_END_DATE, JsonContents.META_RESPONSE_DEFAULT_THUMB,
+            JsonContents.META_RESPONSE_THUMB_640, JsonContents.META_RESPONSE_THUMB_448,
+            JsonContents.META_RESPONSE_DEMONG, JsonContents.META_RESPONSE_4KFLG,
+            JsonContents.META_RESPONSE_AVAIL_STATUS, JsonContents.META_RESPONSE_DELIVERY,
+            JsonContents.META_RESPONSE_R_VALUE, JsonContents.META_RESPONSE_ADULT,
+            JsonContents.META_RESPONSE_NG_FUNC, JsonContents.META_RESPONSE_GENRE_ARRAY,
+            JsonContents.META_RESPONSE_SYNOP, JsonContents.META_RESPONSE_CHSVOD,
+            JsonContents.META_RESPONSE_PUID, JsonContents.META_RESPONSE_SUB_PUID,
+            JsonContents.META_RESPONSE_PRICE, JsonContents.META_RESPONSE_QRANGE,
+            JsonContents.META_RESPONSE_QUNIT, JsonContents.META_RESPONSE_PU_START_DATE,
+            JsonContents.META_RESPONSE_PU_END_DATE, JsonContents.META_RESPONSE_CHPACK};
+    public static final String[] chpackList = {JsonContents.META_RESPONSE_CRID,
+            JsonContents.META_RESPONSE_TITLE, JsonContents.META_RESPONSE_DISP_TYPE,
+            JsonContents.META_RESPONSE_PUID, JsonContents.META_RESPONSE_SUB_PUID,
+            JsonContents.META_RESPONSE_PRICE, JsonContents.META_RESPONSE_QRANGE,
+            JsonContents.META_RESPONSE_QUNIT, JsonContents.META_RESPONSE_PU_START_DATE,
+            JsonContents.META_RESPONSE_PU_END_DATE};
 
     /**
      * CH一覧Jsonデータを解析する
@@ -123,14 +93,13 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
         try {
             // statusの値を取得し、Mapに格納
             HashMap<String, String> map = new HashMap<>();
-            if (!jsonObj.isNull(CHANNEL_LIST_STATUS)) {
-                String status = jsonObj.getString(CHANNEL_LIST_STATUS);
-                map.put(CHANNEL_LIST_STATUS, status);
+            if (!jsonObj.isNull(JsonContents.META_RESPONSE_STATUS)) {
+                String status = jsonObj.getString(JsonContents.META_RESPONSE_STATUS);
+                map.put(JsonContents.META_RESPONSE_STATUS, status);
             }
 
-
-            if (!jsonObj.isNull(CHANNEL_LIST_PAGER)) {
-                JSONObject pager = jsonObj.getJSONObject(CHANNEL_LIST_PAGER);
+            if (!jsonObj.isNull(JsonContents.META_RESPONSE_PAGER)) {
+                JSONObject pager = jsonObj.getJSONObject(JsonContents.META_RESPONSE_PAGER);
 
                 for (int i = 0; i < pagerPara.length; i++) {
                     if (!pager.isNull(pagerPara[i])) {
@@ -178,12 +147,12 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
      */
     public void sendVcList(JSONObject jsonObj) {
         try {
-            if (!jsonObj.isNull(CHANNEL_LIST)) {
+            if (!jsonObj.isNull(JsonContents.META_RESPONSE_LIST)) {
                 // コンテンツリストのList<HashMap>を用意
                 List<HashMap<String, String>> vcList = new ArrayList<>();
 
                 // コンテンツリストをJSONArrayにパースする
-                JSONArray jsonArr = jsonObj.getJSONArray(CHANNEL_LIST);
+                JSONArray jsonArr = jsonObj.getJSONArray(JsonContents.META_RESPONSE_LIST);
 
                 // リストの数だけまわす
                 for (int i = 0; i < jsonArr.length(); i++) {
@@ -193,18 +162,17 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
                     // i番目のJSONArrayをJSONObjectに変換する
                     JSONObject jsonObject = jsonArr.getJSONObject(i);
 
-
                     for (int j = 0; j < listPara.length; j++) {
                         if (!jsonObject.isNull(listPara[j])) {
-                            if (listPara[j].equals(CHANNEL_LIST_GENRE_ARRAY)) {
+                            if (listPara[j].equals(JsonContents.META_RESPONSE_GENRE_ARRAY)) {
                                 JSONArray para = jsonObject.getJSONArray(listPara[j]);
                                 vcListMap.put(listPara[j], para.toString());
-                            } else if (listPara[j].equals(CHANNEL_LIST_CHPACK)) {
+                            } else if (listPara[j].equals(JsonContents.META_RESPONSE_CHPACK)) {
                                 JSONObject para = jsonObject.getJSONObject(listPara[j]);
                                 for (int c = 0; c < chpackList.length; c++) {
                                     if (!jsonObject.isNull(chpackList[c])) {
                                         String value = para.getString(chpackList[c]);
-                                        vcListMap.put(listPara[j] + UNDER_LINE + chpackList[c], value);
+                                        vcListMap.put(listPara[j] + JsonContents.UNDER_LINE + chpackList[c], value);
                                     }
                                 }
                             } else {

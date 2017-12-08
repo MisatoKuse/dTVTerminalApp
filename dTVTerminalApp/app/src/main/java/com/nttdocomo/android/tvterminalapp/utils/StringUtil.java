@@ -9,7 +9,8 @@ import android.content.Context;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 
-import java.util.ArrayList;
+import org.json.JSONArray;
+
 
 /**
  * 文字列加工に関する処理を記載する
@@ -46,7 +47,7 @@ public class StringUtil {
      * @param strings 連結したい文字列配列
      * @return 連結後の文字列
      */
-    public String getConnectString(String[] strings){
+    public String getConnectString(String[] strings) {
         StringBuilder builder = new StringBuilder();
         String conString = null;
         for (String string : strings) {
@@ -54,5 +55,93 @@ public class StringUtil {
         }
         conString = builder.toString();
         return conString;
+    }
+
+    /**
+     * JSonArrayを文字列配列に変換する
+     *
+     * @param jsonArray JsonArray
+     * @return 文字列配列
+     */
+    public static String[] JSonArray2StringArray(JSONArray jsonArray) {
+        //出力文字列
+        String[] stringArr;
+
+        //JsonArrayがヌルの場合やJSONArrayではない場合は、長さゼロの配列を返す
+        if (jsonArray == null) {
+            return new String[0];
+        }
+
+        //jsonArrayの要素数で配列を宣言
+        stringArr = new String[jsonArray.length()];
+
+        //jsonArrayの要素数だけ回る
+        for (int i = 0; i < stringArr.length; i++) {
+            if (jsonArray.optString(i) == null) {
+                //無いはずだが、ヌルならば空文字にする
+                stringArr[i] = "";
+            } else {
+                //JsonArrayの中身を移す
+                stringArr[i] = jsonArray.optString(i);
+            }
+        }
+
+        return stringArr;
+    }
+
+    /**
+     * 与えられたオブジェクトをチェックし、長整数に変換する
+     *
+     * @param data オブジェクト
+     * @return 長整数変換後の値。変換できなければゼロ
+     */
+    public static long changeString2Long(Object data) {
+        //既に数値かどうかを判定
+        if (data instanceof Long) {
+            //長整数なのでそのまま返す
+            return (long) data;
+        }
+
+        if(data instanceof Integer) {
+            //整数なので長整数に変換
+            return ((Integer)data).longValue();
+        }
+
+        //数字の文字列かどうかの判定
+        if (data != null && data instanceof String && DBUtils.isNumber((String) data)) {
+            //数字文字列だったので、変換して返す
+            return Long.parseLong((String) data);
+        }
+
+        //変換できなかったのでゼロ
+        return 0;
+    }
+
+    /**
+     * 与えられたオブジェクトをチェックし、整数に変換する
+     *
+     * @param data オブジェクト
+     * @return 長整数変換後の値。変換できなければゼロ
+     */
+    public static int changeString2Int(Object data) {
+        //既に数値かどうかを判定
+        if(data instanceof Integer) {
+            //整数なのでそのまま返す
+            return (Integer)data;
+        }
+
+        if (data instanceof Long) {
+            //長整数なので整数に変換
+            return ((Long)data).intValue();
+        }
+
+        //数字の文字列かどうかの判定
+        if (data != null && data instanceof String && DBUtils.isNumber((String) data)) {
+            //数字文字列だったので、変換して返す
+            return Integer.parseInt((String) data);
+        }
+
+        //変換できなかったのでゼロ
+        return 0;
     }
 }

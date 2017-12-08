@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -21,8 +22,21 @@ import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplayEventListener;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuItem;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuItemParam;
+import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
+import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 
 /**
@@ -31,11 +45,14 @@ import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
  * 「Activity」全体にとって、共通の機能があれば、追加すること
  */
 
-public class BaseActivity extends FragmentActivity implements MenuDisplayEventListener {
+public class BaseActivity extends FragmentActivity implements MenuDisplayEventListener, DlnaDevListListener, View.OnClickListener {
 
     private LinearLayout baseLinearLayout;
     private RelativeLayout headerLayout;
     protected TextView titleTextView;
+    private ImageView mStbStatusIcon;
+    private DlnaProvDevList mDlnaProvDevListForBase;
+    private ImageView mMenuImageViewForBase;
     private RemoteControllerView remoteControllerView = null;
 
     /**
@@ -107,6 +124,82 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         headerLayout.setLayoutParams(lp);
         titleTextView = findViewById(R.id.header_layout_text);
         DTVTLogger.end();
+        mStbStatusIcon= findViewById(R.id.header_stb_status_icon);
+        mMenuImageViewForBase = findViewById(R.id.header_layout_menu);
+    }
+
+    /**
+     * 機能：STB接続アイコンを有効
+     * @param isOn true: 表示  false: 非表示
+     */
+    protected void enableStbStatusIcon(boolean isOn){
+        if(this instanceof STBSelectActivity
+                || this instanceof LaunchActivity
+                //|| this instanceof RecordedListActivity
+                || this instanceof TvPlayerActivity){
+            return;
+        }
+        if(null!=mStbStatusIcon){
+            if (isOn) {
+                mStbStatusIcon.setVisibility(View.VISIBLE);
+            } else {
+                mStbStatusIcon.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    /**
+     * 機能：Global menuアイコンを有効
+     * @param isOn true: 表示  false: 非表示
+     */
+    protected void enableGlobalMenuIcon(boolean isOn){
+        if(null!=mMenuImageViewForBase){
+            if (isOn) {
+                mMenuImageViewForBase.setVisibility(View.VISIBLE);
+                mMenuImageViewForBase.setOnClickListener(this);
+            } else {
+                mMenuImageViewForBase.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    //stb status icon状態
+    private boolean mIsStbStatusOn=false;
+    /**
+     * 機能：STBステータスを変更
+     * @param isOn true: stb接続中   false: stb未接続
+     */
+    protected void setStbStatus(final boolean isOn){
+        //mStbStatusIcon.
+        if(null!=mStbStatusIcon ){
+            mStbStatusIcon.post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        synchronized (this) {
+                            if (isOn) {
+                                mStbStatusIcon.setImageResource(R.mipmap.ic_stb_status_icon_white);
+                                mIsStbStatusOn = true;
+                            } else {
+                                mStbStatusIcon.setImageResource(R.mipmap.ic_stb_status_icon_gray);
+                                mIsStbStatusOn = false;
+                            }
+                        }
+                    }catch (Exception e) {
+                        DTVTLogger.debug("BaseActivity::setStbStatus, stb status png file not found");
+                        return;
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * 機能：STB接続ステータスを戻す
+     * @return true: stb接続中   false: stb未接続
+     */
+    protected boolean getStbStatus(){
+        return mIsStbStatusOn;
     }
 
     /**
@@ -137,6 +230,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         displayMenu();
     }
 
+    /**
+     * 機能：onCreate
+     *       Sub classにて、super.onCreate(savedInstanceState)をコールする必要がある
+     * @param savedInstanceState savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         DTVTLogger.start();
@@ -146,8 +244,74 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         DTVTLogger.end();
     }
 
+    /**
+     * 機能：onResume
+     *       Sub classにて、super.onResume()をコールする必要がある
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        DTVTLogger.start();
+        enableStbStatusIcon(true);
+        registerDevListDlna();
+
+        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
+        if(null==dlnaDmsItem){
+            return;
+        }
+        if(null!=mDlnaProvDevListForBase){
+            boolean isAvai = mDlnaProvDevListForBase.isDmsAvailable(dlnaDmsItem.mUdn);
+            setStbStatus(isAvai);
+        }
+        DTVTLogger.end();
+    }
+
+    /**
+     * 機能：onStop
+     *       Sub classにて、super.onStop()をコールする必要がある
+     */
+    @Override
+    protected void onStop() {
+        super.onStop();
+        DTVTLogger.start();
+        //unregisterDevListDlna();
+        DTVTLogger.end();
+    }
+
+    /**
+     * 機能：ActivityのSTB接続アイコン
+     */
+    private void registerDevListDlna() {
+        DTVTLogger.start();
+        if(this instanceof STBSelectActivity
+                || this instanceof LaunchActivity
+                //|| this instanceof RecordedListActivity
+                || this instanceof TvPlayerActivity){
+            DTVTLogger.end();
+            return;
+        }
+        mDlnaProvDevListForBase= new DlnaProvDevList();
+        mDlnaProvDevListForBase.start(this);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 機能：ActivityのSTB接続アイコン
+     */
+    private void unregisterDevListDlna() {
+        DTVTLogger.start();
+        if(this instanceof STBSelectActivity){
+            DTVTLogger.end();
+            return;
+        }
+        if(null!=mDlnaProvDevListForBase){
+            mDlnaProvDevListForBase.stopListen();
+        }
+        DTVTLogger.end();
+    }
+
     private static final int MIN_CLICK_DELAY_TIME = 1000;
-    private long lastClickTime;
+    private  long lastClickTime;
 
     /**
      * 機能
@@ -175,9 +339,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     /**
      * 機能
-     * ディスプレイ横幅取得
+     * ディスプレイ幅さ取得
      *
-     * @return ディスプレイ横幅
+     * @return ディスプレイ幅さ
      */
     protected int getWidthDensity() {
         return getDisplayMetrics().widthPixels;
@@ -185,9 +349,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     /**
      * 機能
-     * ディスプレイ縦幅取得
+     * ディスプレイ幅さ取得
      *
-     * @return ディスプレイ縦幅
+     * @return ディスプレイ幅さ
      */
     protected int getHeightDensity() {
         return getDisplayMetrics().heightPixels;
@@ -301,6 +465,63 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     @Override
     public void onMenuItemSelected(MenuItem menuItem) {
 
+    }
+
+    /**
+     * 機能：DMSを加入する場合コールされる
+     * @param curInfo カレントDlnaDMSInfo
+     * @param newItem 新しいDms情報
+     */
+    @Override
+    public void onDeviceJoin(DlnaDMSInfo curInfo, DlnaDmsItem newItem) {
+        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
+        if(null==dlnaDmsItem){
+            setStbStatus(false);
+            return;
+        }
+        if(dlnaDmsItem.mUdn.equals(newItem.mUdn)){
+            setStbStatus(true);
+        }
+    }
+
+    /**
+     * 機能：DMSをなくなる場合コールされる
+     * @param curInfo　　　カレントDlnaDMSInfo
+     * @param leaveDmsUdn　消えるDmsのudn名
+     */
+    @Override
+    public void onDeviceLeave(DlnaDMSInfo curInfo, String leaveDmsUdn) {
+        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
+        if(null==dlnaDmsItem){
+            setStbStatus(false);
+            return;
+        }
+        if(dlnaDmsItem.mUdn.equals(leaveDmsUdn)){
+            setStbStatus(false);
+        }
+    }
+
+    /**
+     * 機能：DLNAはerrorを発生する場合コールされる
+     * @param msg     エラー情報
+     */
+    @Override
+    public void onError(String msg) {
+
+    }
+
+    /**
+     * 機能：onClick event for menu
+     * @param view
+     */
+    @Override
+    public void onClick(View view) {
+        if (mMenuImageViewForBase==view) {
+            //ダブルクリックを防ぐ
+            if (isFastClick()) {
+                onSampleGlobalMenuButton_PairLoginOk();
+            }
+        }
     }
 
     /**

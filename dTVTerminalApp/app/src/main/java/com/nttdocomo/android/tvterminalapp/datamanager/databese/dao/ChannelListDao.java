@@ -9,12 +9,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_DISP_TYPE;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CHANNEL_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATE_TYPE;
 
@@ -79,7 +80,7 @@ public class ChannelListDao {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
         StringBuilder selection = new StringBuilder();
-        selection.append(CHANNEL_LIST_DISP_TYPE);
+        selection.append(JsonContents.META_RESPONSE_DISP_TYPE);
         selection.append("=? AND ");
         selection.append(DATE_TYPE);
         selection.append("=? ");
@@ -143,7 +144,7 @@ public class ChannelListDao {
      */
     public int deleteByType(String type) {
         StringBuilder deleteSelection = new StringBuilder();
-        deleteSelection.append(CHANNEL_LIST_DISP_TYPE);
+        deleteSelection.append(JsonContents.META_RESPONSE_DISP_TYPE);
         deleteSelection.append("=? AND ");
         deleteSelection.append(DATE_TYPE);
         deleteSelection.append("=?");

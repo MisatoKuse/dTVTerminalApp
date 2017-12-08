@@ -7,16 +7,12 @@ package com.nttdocomo.android.tvterminalapp.datamanager.select;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvClipListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 
 import java.util.List;
 import java.util.Map;
-
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_DISPLAY_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_DISP_TYPE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_THUMB;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_TITLE;
 
 public class TvClipDataManager {
 
@@ -38,8 +34,8 @@ public class TvClipDataManager {
      */
     public List<Map<String, String>> selectTvClipData() {
         //ホーム画面に必要な列を列挙する
-        String[] columns = {TVCLIP_LIST_THUMB, TVCLIP_LIST_TITLE,
-                TVCLIP_LIST_DISPLAY_START_DATE, TVCLIP_LIST_DISP_TYPE};
+        String[] columns = {JsonContents.META_RESPONSE_THUMB_448, JsonContents.META_RESPONSE_TITLE,
+                JsonContents.META_RESPONSE_DISPLAY_START_DATE, JsonContents.META_RESPONSE_DISP_TYPE};
 
         //Daoクラス使用準備
         DBHelper homeDBHelper = new DBHelper(mContext);

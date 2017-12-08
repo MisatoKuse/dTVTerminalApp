@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.datamanager.select;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ChannelListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.DailyRankListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendChannelListDao;
@@ -15,38 +16,21 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvScheduleLi
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VodClipListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WeeklyRankListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_AVAIL_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_AVAIL_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_DISP_TYPE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_THUMB;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_TITLE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_CHNO;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_DISPLAY_START_DATE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_DISP_TYPE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_THUMB;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_TITLE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_VOD_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_DISP_TYPE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_THUMB;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_TITLE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_DISPLAY_START_DATE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_DISP_TYPE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_THUMB;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_TITLE;
 
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_LINEAR_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_THUMB;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_TITLE;
-
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CTPICURL1;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_TITLE;
-
 
 
 public class HomeDataManager {
@@ -56,16 +40,16 @@ public class HomeDataManager {
     /**
      * コンストラクタ
      *
-     * @param mContext
+     * @param context
      */
-    public HomeDataManager(Context mContext) {
-        this.mContext = mContext;
+    public HomeDataManager(Context context) {
+        this.mContext = context;
     }
 
     /**
      * ホーム画面用クリップデータを返却する
      *
-     * @return
+     * @return list
      */
     public List<Map<String, String>> selectClipHomeData() {
         //ホーム画面に必要な列を列挙する
@@ -87,13 +71,13 @@ public class HomeDataManager {
     /**
      * ホーム画面用CH一覧データを返却する
      *
-     * @return
+     * @return list
      */
     public List<Map<String, String>> selectChannelListHomeData() {
         //ホーム画面に必要な列を列挙する
-        String[] columns = {CHANNEL_LIST_CHNO, CHANNEL_LIST_THUMB, CHANNEL_LIST_TITLE,
-                CHANNEL_LIST_AVAIL_START_DATE, CHANNEL_LIST_AVAIL_END_DATE,
-                CHANNEL_LIST_DISP_TYPE};
+        String[] columns = {JsonContents.META_RESPONSE_CHNO, JsonContents.META_RESPONSE_DEFAULT_THUMB,
+                JsonContents.META_RESPONSE_TITLE, JsonContents.META_RESPONSE_AVAIL_START_DATE,
+                JsonContents.META_RESPONSE_AVAIL_END_DATE, JsonContents.META_RESPONSE_DISP_TYPE};
 
         //Daoクラス使用準備
         DBHelper channelListDBHelper = new DBHelper(mContext);
@@ -110,7 +94,7 @@ public class HomeDataManager {
     /**
      * ホーム画面用おすすめ番組一覧データを返却する
      *
-     * @return
+     * @return list
      */
     public List<Map<String, String>> selectRecommendChListHomeData() {
         //ホーム画面に必要な列を列挙する
@@ -131,7 +115,7 @@ public class HomeDataManager {
     /**
      * ホーム画面用おすすめビデオ一覧データを返却する
      *
-     * @return
+     * @return list
      */
     public List<Map<String, String>> selectRecommendVdListHomeData() {
         //ホーム画面に必要な列を列挙する
@@ -152,7 +136,7 @@ public class HomeDataManager {
     /**
      * ホーム画面用今日のランキング一覧データを返却する
      *
-     * @return
+     * @return list
      */
     public List<Map<String, String>> selectDailyRankListHomeData() {
         //ホーム画面に必要な列を列挙する
@@ -174,12 +158,12 @@ public class HomeDataManager {
     /**
      * ホーム画面用CH毎番組表データを返却する
      *
-     * @return
+     * @return list
      */
     public List<Map<String, String>> selectTvScheduleListHomeData() {
         //ホーム画面に必要な列を列挙する
-        String[] columns = {TV_SCHEDULE_LIST_THUMB, TV_SCHEDULE_LIST_TITLE,
-                TV_SCHEDULE_LIST_VOD_START_DATE, TV_SCHEDULE_LIST_DISP_TYPE};
+        String[] columns = {JsonContents.META_RESPONSE_THUMB_448, JsonContents.META_RESPONSE_TITLE,
+                JsonContents.META_RESPONSE_AVAIL_START_DATE, JsonContents.META_RESPONSE_AVAIL_END_DATE};
 
         //Daoクラス使用準備
         DBHelper tvScheduleListDBHelper = new DBHelper(mContext);
@@ -196,12 +180,12 @@ public class HomeDataManager {
     /**
      * ホーム画面用週間ランキングデータを返却する
      *
-     * @return
+     * @return list
      */
     public List<Map<String, String>> selectWeeklyRankListHomeData() {
         //ホーム画面に必要な列を列挙する
-        String[] columns = {WEEKLYRANK_LIST_THUMB, WEEKLYRANK_LIST_TITLE,
-                WEEKLYRANK_LIST_LINEAR_START_DATE};
+        String[] columns = {JsonContents.META_RESPONSE_THUMB_448, JsonContents.META_RESPONSE_TITLE,
+                JsonContents.META_RESPONSE_AVAIL_START_DATE};
 
         //Daoクラス使用準備
         DBHelper weeklyRankListDBHelper = new DBHelper(mContext);

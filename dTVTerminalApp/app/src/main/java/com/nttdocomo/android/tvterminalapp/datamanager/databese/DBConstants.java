@@ -4,38 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.datamanager.databese;
 
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_CRID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_CID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_SERVER_ID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_CHNO;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_TITLE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_TITLERUBY;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_DISP_TYPE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_SERVICE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_CH_TYPE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_AVAIL_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_AVAIL_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_THUMB;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_DEMONG;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_4KFLG;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_AVAIL_STATUS;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_DELIVERY;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_R_VALUE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_ADULT;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_NG_FUNC;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_GENRE_ARRAY;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_SYNOP;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_STAMP;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_CHSVOD;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_PUID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_SUB_PUID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_PRICE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_QRANGE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_QUINT;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_PU_S;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_PU_E;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_CHPACK;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.UNDER_LINE;
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_ADULT;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_AVAIL_END_DATE;
@@ -66,76 +35,6 @@ import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyR
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_THUMB;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_TITLE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_TITLE_ID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_ADULT;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_AVAIL_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_AVAIL_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_AVAIL_STATUS;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_BVFLG;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_CID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_COPYRIGHT;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_CRID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_DELIVERY;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_DEMONG;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_DISPLAY_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_DISPLAY_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_DISP_TYPE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_DTV;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_DUR;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_EPISODE_ID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_EPITITLE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_GENRE_ID_ARRAY;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_HDRFLG;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_MS;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_NEWA_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_NEWA_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_NG_FUNC;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_PUBLISH_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_PUBLISH_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_R_VALUE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_THUMB;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_TITLE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser.TVCLIP_LIST_TITLE_ID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_CRID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_TITLE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_TITLERUBY;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_CID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_SERVICE_ID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_EVENT_ID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_CHNO;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_DISP_TYPE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_LINEAR_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_LINEAR_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_VOD_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_VOD_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_THUMB;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_COPYRIGHT;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_DUR;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_DEMONG;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_AVAIL_STATUS;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_DELIVERY;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_R_VALUE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_MAIN_GENRE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_SECOND_GEBRE_ARRAY;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_SYNOP;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_CREDITS;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_CAPL;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_COPY;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_ADINFO;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_BILINGAL;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_LIVE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_FIRST_JAPAN;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_FIRST_TV;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_EXCLUSIVE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_PRE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_FIRST_CH;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_ORIGINAL;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_MASK;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_NONSCRAMBLE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_DOWNLOAD;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_STARTOVER;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_STAMP;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_RELATIONAL_ID_ARRAY;
-
 
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser.USER_INFO_LIST_CONTRACT_STATUS;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ;
@@ -170,25 +69,6 @@ import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodCli
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_THUMB;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_TITLE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_TITLE_ID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_AVAII_STATUS;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_CHNO;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_CID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_COPYRIGHT;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_CRID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_DELIVERY;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_DEMONG;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_DISP_TYPE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_DUR;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_EVENT_ID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_LINEAR_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_LINEAR_START_END;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_MISSED_VOD;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_R_VALUE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_SERVICE_ID;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_THUMB;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_TITLE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_VOD_END_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser.WEEKLYRANK_LIST_VOD_START_DATE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_AGREEMENT;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID;
@@ -289,7 +169,6 @@ import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullD
 import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_DUR;
 import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_DEMONG;
 import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_BVFLG;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_4KFLG;
 import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_HDRFLG;
 import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_AVAIL_STATUS;
 import static com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData.VOD_META_FULL_DATA_DELIVERY;
@@ -336,46 +215,46 @@ public class DBConstants {
     public static final String CREATE_TABLE_CHANNEL_SQL = "" +
             "create table " + CHANNEL_LIST_TABLE_NAME + " (" +
             ID_COLUMN + " integer primary key autoincrement, " +
-            CHANNEL_LIST_CRID  + " text, " +
-            CHANNEL_LIST_CID  + " text, " +
-            CHANNEL_LIST_SERVER_ID  + " text, " +
-            CHANNEL_LIST_CHNO  + " text, " +
-            CHANNEL_LIST_TITLE + " text, " +
-            CHANNEL_LIST_TITLERUBY   + " text, " +
-            CHANNEL_LIST_DISP_TYPE  + " text, " +
-            CHANNEL_LIST_SERVICE  + " text, " +
-            CHANNEL_LIST_CH_TYPE  + " text, " +
-            CHANNEL_LIST_AVAIL_START_DATE  + " text, " +
-            CHANNEL_LIST_AVAIL_END_DATE  + " text, " +
-            CHANNEL_LIST_THUMB  + " text, " +
-            CHANNEL_LIST_DEMONG  + " text, " +
+            JsonContents.META_RESPONSE_CRID + " text, " +
+            JsonContents.META_RESPONSE_SERVICE_ID  + " text, " +
+            JsonContents.META_RESPONSE_CHNO  + " text, " +
+            JsonContents.META_RESPONSE_TITLE + " text, " +
+            JsonContents.META_RESPONSE_TITLERUBY   + " text, " +
+            JsonContents.META_RESPONSE_DISP_TYPE  + " text, " +
+            JsonContents.META_RESPONSE_SERVICE  + " text, " +
+            JsonContents.META_RESPONSE_CH_TYPE  + " text, " +
+            JsonContents.META_RESPONSE_AVAIL_START_DATE  + " text, " +
+            JsonContents.META_RESPONSE_AVAIL_END_DATE  + " text, " +
+            JsonContents.META_RESPONSE_DEFAULT_THUMB  + " text, " +
+            JsonContents.META_RESPONSE_THUMB_640  + " text, " +
+            JsonContents.META_RESPONSE_THUMB_448  + " text, " +
+            JsonContents.META_RESPONSE_DEMONG  + " text, " +
             UNDER_BAR_FOUR_K_FLG  + " text, " +
-            CHANNEL_LIST_AVAIL_STATUS  + " text, " +
-            CHANNEL_LIST_DELIVERY  + " text, " +
-            CHANNEL_LIST_R_VALUE  + " text, " +
-            CHANNEL_LIST_ADULT  + " text, " +
-            CHANNEL_LIST_NG_FUNC  + " text, " +
-            CHANNEL_LIST_GENRE_ARRAY  + " text, " +
-            CHANNEL_LIST_SYNOP  + " text, " +
-            CHANNEL_LIST_STAMP  + " text, " +
-            CHANNEL_LIST_CHSVOD  + " text, " +
-            CHANNEL_LIST_PUID  + " text, " +
-            CHANNEL_LIST_SUB_PUID  + " text, " +
-            CHANNEL_LIST_PRICE  + " text, " +
-            CHANNEL_LIST_QRANGE  + " text, " +
-            CHANNEL_LIST_QUINT  + " text, " +
-            CHANNEL_LIST_PU_S  + " text, " +
-            CHANNEL_LIST_PU_E  + " text, " +
-            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_CRID + " text, " +
-            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_TITLE +" text, " +
-            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_DISP_TYPE +" text, " +
-            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_PUID +" text, " +
-            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_SUB_PUID +" text, " +
-            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_PRICE +" text, " +
-            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_QRANGE +" text, " +
-            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_QUINT +" text, " +
-            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_PU_S +" text, " +
-            CHANNEL_LIST_CHPACK  + UNDER_LINE + CHANNEL_LIST_PU_E +" text, " +
+            JsonContents.META_RESPONSE_AVAIL_STATUS  + " text, " +
+            JsonContents.META_RESPONSE_DELIVERY  + " text, " +
+            JsonContents.META_RESPONSE_R_VALUE  + " text, " +
+            JsonContents.META_RESPONSE_ADULT  + " text, " +
+            JsonContents.META_RESPONSE_NG_FUNC  + " text, " +
+            JsonContents.META_RESPONSE_GENRE_ARRAY  + " text, " +
+            JsonContents.META_RESPONSE_SYNOP  + " text, " +
+            JsonContents.META_RESPONSE_CHSVOD  + " text, " +
+            JsonContents.META_RESPONSE_PUID  + " text, " +
+            JsonContents.META_RESPONSE_SUB_PUID  + " text, " +
+            JsonContents.META_RESPONSE_PRICE  + " text, " +
+            JsonContents.META_RESPONSE_QRANGE  + " text, " +
+            JsonContents.META_RESPONSE_QUNIT  + " text, " +
+            JsonContents.META_RESPONSE_PU_START_DATE  + " text, " +
+            JsonContents.META_RESPONSE_PU_END_DATE  + " text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_TITLE +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_DISP_TYPE +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_SUB_PUID +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PRICE +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QRANGE +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QUNIT +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_START_DATE +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_END_DATE +" text, " +
             DATE_TYPE + " text, " +
             UPDATE_DATE + " text " +
             ")";
@@ -422,48 +301,76 @@ public class DBConstants {
     public static final String CREATE_TABLE_TV_SCHEDULE_SQL = "" +
             "create table " + TV_SCHEDULE_LIST_TABLE_NAME + " (" +
             ID_COLUMN + " integer primary key autoincrement, " +
-            TV_SCHEDULE_LIST_CRID  + " text, " +
-            TV_SCHEDULE_LIST_TITLE  + " text, " +
-            TV_SCHEDULE_LIST_TITLERUBY  + " text, " +
-            TV_SCHEDULE_LIST_CID  + " text, " +
-            TV_SCHEDULE_LIST_SERVICE_ID  + " text, " +
-            TV_SCHEDULE_LIST_EVENT_ID  + " text, " +
-            TV_SCHEDULE_LIST_CHNO  + " text, " +
-            TV_SCHEDULE_LIST_DISP_TYPE  + " text, " +
-            TV_SCHEDULE_LIST_LINEAR_START_DATE  + " text, " +
-            TV_SCHEDULE_LIST_LINEAR_END_DATE  + " text, " +
-            TV_SCHEDULE_LIST_VOD_START_DATE  + " text, " +
-            TV_SCHEDULE_LIST_VOD_END_DATE  + " text, " +
-            TV_SCHEDULE_LIST_THUMB  + " text, " +
-            TV_SCHEDULE_LIST_COPYRIGHT  + " text, " +
-            TV_SCHEDULE_LIST_DUR  + " text, " +
-            TV_SCHEDULE_LIST_DEMONG  + " text, " +
-            TV_SCHEDULE_LIST_AVAIL_STATUS  + " text, " +
-            TV_SCHEDULE_LIST_DELIVERY  + " text, " +
-            TV_SCHEDULE_LIST_R_VALUE  + " text, " +
-            TV_SCHEDULE_LIST_MAIN_GENRE  + " text, " +
-            TV_SCHEDULE_LIST_SECOND_GEBRE_ARRAY  + " text, " +
-            TV_SCHEDULE_LIST_SYNOP  + " text, " +
-            TV_SCHEDULE_LIST_CREDITS  + " text, " +
-            TV_SCHEDULE_LIST_CAPL  + " text, " +
-            TV_SCHEDULE_LIST_COPY  + " text, " +
-            TV_SCHEDULE_LIST_ADINFO  + " text, " +
-            TV_SCHEDULE_LIST_BILINGAL  + " text, " +
-            TV_SCHEDULE_LIST_LIVE   + " text, " +
-            TV_SCHEDULE_LIST_FIRST_JAPAN  + " text, " +
-            TV_SCHEDULE_LIST_FIRST_TV  + " text, " +
-            TV_SCHEDULE_LIST_EXCLUSIVE   + " text, " +
-            TV_SCHEDULE_LIST_PRE   + " text, " +
-            TV_SCHEDULE_LIST_FIRST_CH   + " text, " +
-            TV_SCHEDULE_LIST_ORIGINAL    + " text, " +
-            TV_SCHEDULE_LIST_MASK    + " text, " +
-            TV_SCHEDULE_LIST_NONSCRAMBLE    + " text, " +
-            TV_SCHEDULE_LIST_DOWNLOAD    + " text, " +
-            TV_SCHEDULE_LIST_STARTOVER     + " text, " +
-            TV_SCHEDULE_LIST_STAMP     + " text, " +
-            TV_SCHEDULE_LIST_RELATIONAL_ID_ARRAY     + " text, " +
-            DATE_TYPE + " text, " +
-            UPDATE_DATE + " text " +
+            JsonContents.META_RESPONSE_CRID + " text, " +
+            JsonContents.META_RESPONSE_CID + " text, " +
+            JsonContents.META_RESPONSE_TITLE_ID + " text, " +
+            JsonContents.META_RESPONSE_EPISODE_ID + " text, " +
+            JsonContents.META_RESPONSE_TITLE + " text, " +
+            JsonContents.META_RESPONSE_EPITITLE + " text, " +
+            JsonContents.META_RESPONSE_TITLERUBY + " text, " +
+            JsonContents.META_RESPONSE_DISP_TYPE + " text, " +
+            JsonContents.META_RESPONSE_DISPLAY_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_DISPLAY_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_AVAIL_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_AVAIL_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUBLISH_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUBLISH_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_NEWA_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_NEWA_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_THUMB_640 + " text, " +
+            JsonContents.META_RESPONSE_THUMB_448 + " text, " +
+            JsonContents.META_RESPONSE_DTV_THUMB_640 + " text, " +
+            JsonContents.META_RESPONSE_DTV_THUMB_448 + " text, " +
+            JsonContents.META_RESPONSE_COPYRIGHT + " text, " +
+            JsonContents.META_RESPONSE_DUR + " text, " +
+            JsonContents.META_RESPONSE_DEMONG + " text, " +
+            JsonContents.META_RESPONSE_BVFLG + " text, " +
+            UNDER_BAR_FOUR_K_FLG + " text, " +
+            JsonContents.META_RESPONSE_HDRFLG + " text, " +
+            JsonContents.META_RESPONSE_DELIVERY + " text, " +
+            JsonContents.META_RESPONSE_R_VALUE + " text, " +
+            JsonContents.META_RESPONSE_ADULT + " text, " +
+            JsonContents.META_RESPONSE_GENRE_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_SYNOP + " text, " +
+            JsonContents.META_RESPONSE_SYNOP_SHORT + " text, " +
+            JsonContents.META_RESPONSE_PUID + " text, " +
+            JsonContents.META_RESPONSE_PRICE + " text, " +
+            JsonContents.META_RESPONSE_QRANGE + " text, " +
+            JsonContents.META_RESPONSE_QUNIT + " text, " +
+            JsonContents.META_RESPONSE_PU_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_PU_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_CREDIT_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_RATING + " text, " +
+            JsonContents.META_RESPONSE_DTV + " text, " +
+            JsonContents.META_RESPONSE_CHSVOD + " text, " +
+            JsonContents.META_RESPONSE_SEARCH_OK + " text, " +
+            JsonContents.META_RESPONSE_LIINF_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_TITLE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_EPITITLE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_DISP_TYPE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CHSVOD + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PRICE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QUNIT + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QRANGE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_CAPL + " text, " +
+            JsonContents.META_RESPONSE_BILINGAL + " text, " +
+            JsonContents.META_RESPONSE_TV_CID + " text, " +
+            JsonContents.META_RESPONSE_SERVICE_ID + " text, " +
+            JsonContents.META_RESPONSE_EVENT_ID + " text, " +
+            JsonContents.META_RESPONSE_CHNO + " text, " +
+            JsonContents.META_RESPONSE_TV_SERVICE + " text, " +
+            JsonContents.META_RESPONSE_CONTENT_TYPE + " text, " +
+            JsonContents.META_RESPONSE_VOD_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_VOD_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_MAIN_GENRE + " text, " +
+            JsonContents.META_RESPONSE_SECOND_GENRE_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_COPY + " text, " +
+            JsonContents.META_RESPONSE_ADINFO_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_RELATIONAL_ID_ARRAY + " text " +
             ")";
 
     //Homeキャッシュデータ格納用テーブル
@@ -519,25 +426,76 @@ public class DBConstants {
     public static final String CREATE_TABLE_WEEKLYRANK_SQL = "" +
             "create table " + WEEKLYRANK_LIST_TABLE_NAME + " (" +
             ID_COLUMN + " integer primary key autoincrement, " +
-            WEEKLYRANK_LIST_CRID + " text, " +
-            WEEKLYRANK_LIST_CID + " text, " +
-            WEEKLYRANK_LIST_TITLE + " text, " +
-            WEEKLYRANK_LIST_SERVICE_ID + " text, " +
-            WEEKLYRANK_LIST_EVENT_ID + " text, " +
-            WEEKLYRANK_LIST_CHNO + " text, " +
-            WEEKLYRANK_LIST_DISP_TYPE + " text, " +
-            WEEKLYRANK_LIST_MISSED_VOD + " text, " +
-            WEEKLYRANK_LIST_LINEAR_START_DATE + " text, " +
-            WEEKLYRANK_LIST_LINEAR_START_END + " text, " +
-            WEEKLYRANK_LIST_VOD_START_DATE + " text, " +
-            WEEKLYRANK_LIST_VOD_END_DATE + " text, " +
-            WEEKLYRANK_LIST_THUMB + " text, " +
-            WEEKLYRANK_LIST_COPYRIGHT + " text, " +
-            WEEKLYRANK_LIST_DUR + " text, " +
-            WEEKLYRANK_LIST_DEMONG + " text, " +
-            WEEKLYRANK_LIST_AVAII_STATUS + " text, " +
-            WEEKLYRANK_LIST_DELIVERY + " text, " +
-            WEEKLYRANK_LIST_R_VALUE + " text " +
+            JsonContents.META_RESPONSE_CRID + " text, " +
+            JsonContents.META_RESPONSE_CID + " text, " +
+            JsonContents.META_RESPONSE_TITLE_ID + " text, " +
+            JsonContents.META_RESPONSE_EPISODE_ID + " text, " +
+            JsonContents.META_RESPONSE_TITLE + " text, " +
+            JsonContents.META_RESPONSE_EPITITLE + " text, " +
+            JsonContents.META_RESPONSE_TITLERUBY + " text, " +
+            JsonContents.META_RESPONSE_DISP_TYPE + " text, " +
+            JsonContents.META_RESPONSE_DISPLAY_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_DISPLAY_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_AVAIL_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_AVAIL_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUBLISH_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUBLISH_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_NEWA_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_NEWA_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_THUMB_640 + " text, " +
+            JsonContents.META_RESPONSE_THUMB_448 + " text, " +
+            JsonContents.META_RESPONSE_DTV_THUMB_640 + " text, " +
+            JsonContents.META_RESPONSE_DTV_THUMB_448 + " text, " +
+            JsonContents.META_RESPONSE_COPYRIGHT + " text, " +
+            JsonContents.META_RESPONSE_DUR + " text, " +
+            JsonContents.META_RESPONSE_DEMONG + " text, " +
+            JsonContents.META_RESPONSE_BVFLG + " text, " +
+            UNDER_BAR_FOUR_K_FLG + " text, " +
+            JsonContents.META_RESPONSE_HDRFLG + " text, " +
+            JsonContents.META_RESPONSE_DELIVERY + " text, " +
+            JsonContents.META_RESPONSE_R_VALUE + " text, " +
+            JsonContents.META_RESPONSE_ADULT + " text, " +
+            JsonContents.META_RESPONSE_GENRE_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_SYNOP + " text, " +
+            JsonContents.META_RESPONSE_SYNOP_SHORT + " text, " +
+            JsonContents.META_RESPONSE_PUID + " text, " +
+            JsonContents.META_RESPONSE_PRICE + " text, " +
+            JsonContents.META_RESPONSE_QRANGE + " text, " +
+            JsonContents.META_RESPONSE_QUNIT + " text, " +
+            JsonContents.META_RESPONSE_PU_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_PU_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_CREDIT_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_RATING + " text, " +
+            JsonContents.META_RESPONSE_DTV + " text, " +
+            JsonContents.META_RESPONSE_CHSVOD + " text, " +
+            JsonContents.META_RESPONSE_SEARCH_OK + " text, " +
+            JsonContents.META_RESPONSE_LIINF_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_TITLE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_EPITITLE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_DISP_TYPE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CHSVOD + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PRICE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QUNIT + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QRANGE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_CAPL + " text, " +
+            JsonContents.META_RESPONSE_BILINGAL + " text, " +
+            JsonContents.META_RESPONSE_TV_CID + " text, " +
+            JsonContents.META_RESPONSE_SERVICE_ID + " text, " +
+            JsonContents.META_RESPONSE_EVENT_ID + " text, " +
+            JsonContents.META_RESPONSE_CHNO + " text, " +
+            JsonContents.META_RESPONSE_TV_SERVICE + " text, " +
+            JsonContents.META_RESPONSE_CONTENT_TYPE + " text, " +
+            JsonContents.META_RESPONSE_VOD_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_VOD_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_MAIN_GENRE + " text, " +
+            JsonContents.META_RESPONSE_SECOND_GENRE_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_COPY + " text, " +
+            JsonContents.META_RESPONSE_ADINFO_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_RELATIONAL_ID_ARRAY + " text " +
             ")";
 
     //Homeキャッシュデータ格納用テーブル
@@ -722,42 +680,82 @@ public class DBConstants {
             RECOMMENDCHANNEL_LIST_GROUPID + " text, " +
             RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID + " text " +
             ")";
-	
-	//TV CLIP TABLE、クリップ一覧用
+
+    //TV CLIP TABLE、クリップ一覧用
     public static final String TVCLIP_LIST_TABLE_NAME = "tv_clip_list";
     public static final String CREATE_TABLE_TVCLIP_LIST_SQL = "" +
             "create table " + TVCLIP_LIST_TABLE_NAME + " (" +
             ID_COLUMN + " integer primary key autoincrement, " +
-            TVCLIP_LIST_CRID + " text, " +
-            TVCLIP_LIST_CID + " text, " +
-            TVCLIP_LIST_TITLE_ID + " text, " +
-            TVCLIP_LIST_EPISODE_ID + " text, " +
-            TVCLIP_LIST_TITLE + " text, " +
-            TVCLIP_LIST_EPITITLE + " text, " +
-            TVCLIP_LIST_DISP_TYPE + " text, " +
-            TVCLIP_LIST_DISPLAY_START_DATE + " text, " +
-            TVCLIP_LIST_DISPLAY_END_DATE + " text, " +
-            TVCLIP_LIST_AVAIL_START_DATE + " text, " +
-            TVCLIP_LIST_AVAIL_END_DATE + " text, " +
-            TVCLIP_LIST_PUBLISH_START_DATE + " text, " +
-            TVCLIP_LIST_PUBLISH_END_DATE + " text, " +
-            TVCLIP_LIST_NEWA_START_DATE + " text, " +
-            TVCLIP_LIST_NEWA_END_DATE + " text, " +
-            TVCLIP_LIST_COPYRIGHT + " text, " +
-            TVCLIP_LIST_THUMB + " text, " +
-            TVCLIP_LIST_DUR + " text, " +
-            TVCLIP_LIST_DEMONG + " text, " +
-            TVCLIP_LIST_BVFLG + " text, " +
+            JsonContents.META_RESPONSE_CRID + " text, " +
+            JsonContents.META_RESPONSE_CID + " text, " +
+            JsonContents.META_RESPONSE_TITLE_ID + " text, " +
+            JsonContents.META_RESPONSE_EPISODE_ID + " text, " +
+            JsonContents.META_RESPONSE_TITLE + " text, " +
+            JsonContents.META_RESPONSE_EPITITLE + " text, " +
+            JsonContents.META_RESPONSE_TITLERUBY + " text, " +
+            JsonContents.META_RESPONSE_DISP_TYPE + " text, " +
+            JsonContents.META_RESPONSE_DISPLAY_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_DISPLAY_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_AVAIL_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_AVAIL_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUBLISH_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUBLISH_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_NEWA_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_NEWA_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_THUMB_640 + " text, " +
+            JsonContents.META_RESPONSE_THUMB_448 + " text, " +
+            JsonContents.META_RESPONSE_DTV_THUMB_640 + " text, " +
+            JsonContents.META_RESPONSE_DTV_THUMB_448 + " text, " +
+            JsonContents.META_RESPONSE_COPYRIGHT + " text, " +
+            JsonContents.META_RESPONSE_DUR + " text, " +
+            JsonContents.META_RESPONSE_DEMONG + " text, " +
+            JsonContents.META_RESPONSE_BVFLG + " text, " +
             UNDER_BAR_FOUR_K_FLG + " text, " +
-            TVCLIP_LIST_HDRFLG + " text, " +
-            TVCLIP_LIST_AVAIL_STATUS + " text, " +
-            TVCLIP_LIST_DELIVERY + " text, " +
-            TVCLIP_LIST_R_VALUE + " text, " +
-            TVCLIP_LIST_ADULT + " text, " +
-            TVCLIP_LIST_MS + " text, " +
-            TVCLIP_LIST_NG_FUNC + " text, " +
-            TVCLIP_LIST_GENRE_ID_ARRAY + " text, " +
-            TVCLIP_LIST_DTV + " text " +
+            JsonContents.META_RESPONSE_HDRFLG + " text, " +
+            JsonContents.META_RESPONSE_DELIVERY + " text, " +
+            JsonContents.META_RESPONSE_R_VALUE + " text, " +
+            JsonContents.META_RESPONSE_ADULT + " text, " +
+            JsonContents.META_RESPONSE_GENRE_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_SYNOP + " text, " +
+            JsonContents.META_RESPONSE_SYNOP_SHORT + " text, " +
+            JsonContents.META_RESPONSE_PUID + " text, " +
+            JsonContents.META_RESPONSE_PRICE + " text, " +
+            JsonContents.META_RESPONSE_QRANGE + " text, " +
+            JsonContents.META_RESPONSE_QUNIT + " text, " +
+            JsonContents.META_RESPONSE_PU_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_PU_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_CREDIT_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_RATING + " text, " +
+            JsonContents.META_RESPONSE_DTV + " text, " +
+            JsonContents.META_RESPONSE_CHSVOD + " text, " +
+            JsonContents.META_RESPONSE_SEARCH_OK + " text, " +
+            JsonContents.META_RESPONSE_LIINF_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_TITLE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_EPITITLE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_DISP_TYPE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CHSVOD + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PRICE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QUNIT + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QRANGE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_CAPL + " text, " +
+            JsonContents.META_RESPONSE_BILINGAL + " text, " +
+            JsonContents.META_RESPONSE_TV_CID + " text, " +
+            JsonContents.META_RESPONSE_SERVICE_ID + " text, " +
+            JsonContents.META_RESPONSE_EVENT_ID + " text, " +
+            JsonContents.META_RESPONSE_CHNO + " text, " +
+            JsonContents.META_RESPONSE_TV_SERVICE + " text, " +
+            JsonContents.META_RESPONSE_CONTENT_TYPE + " text, " +
+            JsonContents.META_RESPONSE_VOD_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_VOD_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_MAIN_GENRE + " text, " +
+            JsonContents.META_RESPONSE_SECOND_GENRE_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_COPY + " text, " +
+            JsonContents.META_RESPONSE_ADINFO_ARRAY + " text, " +
+            JsonContents.META_RESPONSE_RELATIONAL_ID_ARRAY + " text " +
             ")";
 
     // TABLE、レンタル一覧用

@@ -80,22 +80,16 @@ public class RankingTopDataProvider implements
     public interface ApiDataProviderCallback {
         /**
          * デイリーランキング用コールバック
-         *
-         * @param dailyHashMap
          */
         void dailyRankListCallback(List<Map<String, String>> dailyHashMap);
 
         /**
          * 週間ランキング用コールバック
-         *
-         * @param weeklyHashMap
          */
         void weeklyRankCallback(List<Map<String, String>> weeklyHashMap);
 
         /**
          * ビデオランキング用コールバック
-         *
-         * @param videoHashMap
          */
         void videoRankCallback(List<Map<String, String>> videoHashMap);
     }
@@ -106,29 +100,21 @@ public class RankingTopDataProvider implements
     public interface WeeklyRankingApiDataProviderCallback {
         /**
          * 取得条件"総合"用コールバック
-         *
-         * @param weeklyHashMap
          */
         void weeklyRankSynthesisCallback(List<Map<String, String>> weeklyHashMap);
 
         /**
          * 取得条件"海外映画"用コールバック
-         *
-         * @param weeklyHashMap
          */
         void weeklyRankOverseasMovieCallback(List<Map<String, String>> weeklyHashMap);
 
         /**
          * 取得条件"国内映画"用コールバック
-         *
-         * @param weeklyHashMap
          */
         void weeklyRankDomesticMovieCallback(List<Map<String, String>> weeklyHashMap);
 
         /**
          * 取得条件"海外TV番組・ドラマ"用コールバック
-         *
-         * @param weeklyHashMap
          */
         void weeklyRankOverseasChannelCallback(List<Map<String, String>> weeklyHashMap);
     }
@@ -136,11 +122,11 @@ public class RankingTopDataProvider implements
     /**
      * コンストラクタ
      *
-     * @param mContext
+     * @param context
      */
-    public RankingTopDataProvider(Context mContext) {
-        this.mContext = mContext;
-        this.apiDataProviderCallback = (ApiDataProviderCallback) mContext;
+    public RankingTopDataProvider(Context context) {
+        this.mContext = context;
+        this.apiDataProviderCallback = (ApiDataProviderCallback) context;
     }
 
     /**
@@ -148,9 +134,9 @@ public class RankingTopDataProvider implements
      */
     public RankingTopDataProvider(Context mContext, int mMode) {
         this.mContext = mContext;
-        if(mMode == RankingConstants.RANKING_MODE_NO_OF_WEEKLY) {
+        if (mMode == RankingConstants.RANKING_MODE_NO_OF_WEEKLY) {
             this.weeklyRankingApiCallback = (WeeklyRankingApiDataProviderCallback) mContext;
-        } else if(mMode == RankingConstants.RANKING_MODE_NO_OF_VIDEO){
+        } else if (mMode == RankingConstants.RANKING_MODE_NO_OF_VIDEO) {
             this.videoRankingApiDataProviderCallback = (VideoRankingApiDataProviderCallback) mContext;
         }
     }
@@ -180,7 +166,6 @@ public class RankingTopDataProvider implements
 
     /**
      * WeeklyTvRankingActivityからのデータ取得要求
-     * @param tabPageNo
      */
     public void getWeeklyRankingData(int tabPageNo) {
         // TODO ジャンルIDを設定する
@@ -211,7 +196,6 @@ public class RankingTopDataProvider implements
 
     /**
      * VideoRankingActivityからのデータ取得要求
-     * @param tabPageNo
      */
     public void getVideoRankingData(int tabPageNo) {
         // TODO ジャンルIDを設定する
@@ -239,10 +223,9 @@ public class RankingTopDataProvider implements
             sendVideoGenreRankListData(videoRankList, genreId);
         }
     }
+
     /**
      * 今日のランキングをRankingTopActivityに送る
-     *
-     * @param list
      */
     public void sendDailyRankListData(List<Map<String, String>> list) {
         apiDataProviderCallback.dailyRankListCallback(list);
@@ -250,8 +233,6 @@ public class RankingTopDataProvider implements
 
     /**
      * 週間ランキングリストをRankingTopActivityに送る
-     *
-     * @param list
      */
     public void sendWeeklyRankListData(List<Map<String, String>> list) {
         apiDataProviderCallback.weeklyRankCallback(list);
@@ -259,8 +240,6 @@ public class RankingTopDataProvider implements
 
     /**
      * ビデオランキングリストをRankingTopActivityに送る
-     *
-     * @param list
      */
     public void sendVideoRankListData(List<Map<String, String>> list) {
         apiDataProviderCallback.videoRankCallback(list);
@@ -326,8 +305,9 @@ public class RankingTopDataProvider implements
 
     /**
      * 週間ランキングのデータ取得要求を行う
+     *
      * @param genreId
-     * @return
+     * @return 週間ランキングリスト
      */
     private List<Map<String, String>> getWeeklyRankListData(String genreId) {
         DateUtils dateUtils = new DateUtils(mContext);
@@ -356,7 +336,8 @@ public class RankingTopDataProvider implements
 
     /**
      * ビデオランキングのデータ取得要求を行う
-     * @return
+     *
+     * @return ビデオランキングリスト
      */
     private List<Map<String, String>> getVideoRankListData(String genreId) {
         DateUtils dateUtils = new DateUtils(mContext);
@@ -386,9 +367,7 @@ public class RankingTopDataProvider implements
     }
 
     /**
-     * デーリーランキングデータをDBに格納する
-     *
-     * @param dailyRankList
+     * デイリーランキングデータをDBに格納する
      */
     public void setStructDB(DailyRankList dailyRankList) {
 
@@ -401,8 +380,6 @@ public class RankingTopDataProvider implements
 
     /**
      * 週間ランキングリストをDBに格納する
-     *
-     * @param weeklyRankList
      */
     public void setStructDB(WeeklyRankList weeklyRankList) {
         // TODO ジャンル毎のキャッシュ登録について検討
@@ -419,8 +396,6 @@ public class RankingTopDataProvider implements
 
     /**
      * ビデオランキングリストをDBに格納する
-     *
-     * @param videoRankList
      */
     public void setStructDB(VideoRankList videoRankList) {
         // TODO ジャンル毎のキャッシュ登録について検討

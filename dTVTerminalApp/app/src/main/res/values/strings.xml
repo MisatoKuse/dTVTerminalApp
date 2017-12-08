@@ -134,6 +134,14 @@
         <item>海外TV番組・ドラマ</item>
     </string-array>
 
+    <!-- チャンネルリスト -->
+    <string-array name="channel_list_tab_names">
+        <item>ひかりTV</item>
+        <item>地上波</item>
+        <item>BS</item>
+        <item>dTVチャンネル</item>
+    </string-array>
+
     <string name="tv_icon_description">テレビアイコン</string>
     <string name="menu_icon_description">メニューアイコン</string>
 

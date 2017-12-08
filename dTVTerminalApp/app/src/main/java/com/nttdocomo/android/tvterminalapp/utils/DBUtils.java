@@ -13,13 +13,13 @@ import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstan
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.UNDER_BAR_FOUR_K_FLG;
 
 public class DBUtils {
-    final static String NUMERICAL_DECISION = "^[0-9]*$";
+    private final static String NUMERICAL_DECISION = "^[0-9]*$";
 
     /**
      * Jsonのキー名の"4kflg"によるDBエラー回避用
      *
-     * @param string
-     * @return
+     * @param string 検査用文字列
+     * @return 変換後文字列
      */
     public static String fourKFlgConversion(String string) {
         String s = string;
@@ -55,12 +55,53 @@ public class DBUtils {
      * @param num 　判定したい数値
      * @return 数値の場合true
      */
-
     public static boolean isNumber(String num) {
+        //ヌルや空欄ならば数値ではない
+        if(num == null || num.isEmpty()) {
+            return false;
+        }
 
         Pattern p = Pattern.compile(NUMERICAL_DECISION);
         Matcher m = p.matcher(num);
         return m.find();
+    }
+
+    /**
+     * 与えられたオブジェクトが小数を含む数値か、小数を表す文字列だった場合は、ダブル型で返す
+     * @param num 返還対象のオブジェクト
+     * @return 変換後の数値。変換に失敗した場合はゼロとなる
+     */
+    public static double getDecimal(Object num) {
+        //例外に頼らずに済むものは、事前に排除する
+        //ヌルならば即座に帰る
+        if(num == null) {
+            return 0;
+        }
+
+        //整数型ならばダブル型に変換して帰る
+        if(num instanceof Integer) {
+            return ((Integer) num).doubleValue();
+        }
+
+        //長い整数型ならばダブル型に変換して帰る
+        if(num instanceof Long) {
+            return ((Long) num).doubleValue();
+        }
+
+        double answer;
+        try {
+            answer = (double)num;
+        } catch(ClassCastException classCastException) {
+            //ダブルへのキャストに失敗するので、数値の類ではない
+            try {
+                answer = Double.parseDouble((String)num);
+            } catch (NumberFormatException numberFormatException) {
+                //ダブルへのパースに失敗するので、小数ではない
+                answer=0;
+            }
+        }
+
+        return answer;
     }
 
     /**

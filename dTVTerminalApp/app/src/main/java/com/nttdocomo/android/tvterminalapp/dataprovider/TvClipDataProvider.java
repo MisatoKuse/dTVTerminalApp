@@ -6,13 +6,13 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.TvClipInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.TvClipDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvClipContentInfo;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvClipList;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvClipWebClient;
-import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvClipJsonParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +21,7 @@ import java.util.Map;
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.TV_LAST_INSERT;
 
 
-public class TvClipDataProvider implements TvClipWebClient.TvClipJsonParserCallback
-{
+public class TvClipDataProvider implements TvClipWebClient.TvClipJsonParserCallback {
     private Context mContext;
 
     @Override
@@ -32,10 +31,10 @@ public class TvClipDataProvider implements TvClipWebClient.TvClipJsonParserCallb
             setStructDB(list);
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
-            if(null!=apiDataProviderCallback){
+            if (null != apiDataProviderCallback) {
                 apiDataProviderCallback.tvClipListCallback(null);
             }
-        }       
+        }
     }
 
     /**
@@ -44,8 +43,6 @@ public class TvClipDataProvider implements TvClipWebClient.TvClipJsonParserCallb
     public interface TvClipDataProviderCallback {
         /**
          * クリップリスト用コールバック
-         *
-         * @param clipContentInfo
          */
         void tvClipListCallback(TvClipContentInfo clipContentInfo);
     }
@@ -55,11 +52,11 @@ public class TvClipDataProvider implements TvClipWebClient.TvClipJsonParserCallb
     /**
      * コンストラクタ
      *
-     * @param mContext
+     * @param context
      */
-    public TvClipDataProvider(Context mContext) {
-        this.mContext = mContext;
-        this.apiDataProviderCallback = (TvClipDataProviderCallback) mContext;
+    public TvClipDataProvider(Context context) {
+        this.mContext = context;
+        this.apiDataProviderCallback = (TvClipDataProviderCallback) context;
     }
 
     /**
@@ -68,34 +65,32 @@ public class TvClipDataProvider implements TvClipWebClient.TvClipJsonParserCallb
     public void getClipData(int pagerOffset) {
         List<Map<String, String>> tvClipList = getTvClipListData(pagerOffset);
 
-        if(tvClipList != null && tvClipList.size() > 0){
+        if (tvClipList != null && tvClipList.size() > 0) {
             sendTvClipListData(tvClipList);
         }
     }
 
     /**
      * TvクリップリストをActivityに送る
-     *
-     * @param list
      */
     public void sendTvClipListData(List<Map<String, String>> list) {
 
         TvClipContentInfo clipContentInfo = new TvClipContentInfo();
-        String title="";
-        String contentTime="";
-        String picUrl ="";
-        String contentId="";
-        TvClipContentInfo tmpClipContentInfo=new TvClipContentInfo();
+        String title = "";
+        String contentTime = "";
+        String picUrl = "";
+        String contentId = "";
+        TvClipContentInfo tmpClipContentInfo = new TvClipContentInfo();
 
         for (int i = 0; i < list.size(); i++) {
-            title = list.get(i).get(TvClipJsonParser.TVCLIP_LIST_TITLE);
-            contentTime = list.get(i).get(TvClipJsonParser.TVCLIP_LIST_DISPLAY_START_DATE);
-            picUrl = list.get(i).get(TvClipJsonParser.TVCLIP_LIST_THUMB);
-            contentId = list.get(i).get(TvClipJsonParser.TVCLIP_LIST_DISP_TYPE);
+            title = list.get(i).get(JsonContents.META_RESPONSE_TITLE);
+            contentTime = list.get(i).get(JsonContents.META_RESPONSE_DISPLAY_START_DATE);
+            picUrl = list.get(i).get(JsonContents.META_RESPONSE_THUMB_448);
+            contentId = list.get(i).get(JsonContents.META_RESPONSE_DISP_TYPE);
 
             //ClipContentInfoItem(boolean clipFlag, String contentPictureUrl, String title, String rating)
 
-            TvClipContentInfo.TvClipContentInfoItem item=tmpClipContentInfo.new TvClipContentInfoItem(true, picUrl, title, "");
+            TvClipContentInfo.TvClipContentInfoItem item = tmpClipContentInfo.new TvClipContentInfoItem(true, picUrl, title, "");
             clipContentInfo.add(item);
         }
 
@@ -112,33 +107,32 @@ public class TvClipDataProvider implements TvClipWebClient.TvClipJsonParserCallb
         List<Map<String, String>> list = new ArrayList<>();
         //Vodクリップ一覧のDB保存履歴と、有効期間を確認
         //if (true) { //test
-        boolean fromDb= lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate);
+        boolean fromDb = lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate);
         if (fromDb) {
             //データをDBから取得する
             TvClipDataManager tvClipDataManager = new TvClipDataManager(mContext);
             list = tvClipDataManager.selectTvClipData();
-            if(null==list || 0==list.size()){
-                fromDb=false;
+            if (null == list || 0 == list.size()) {
+                fromDb = false;
             }
         }
 
-        if (!fromDb){
+        if (!fromDb) {
             //通信クラスにデータ取得要求を出す
             TvClipWebClient webClient = new TvClipWebClient();
             int ageReq = 1;
             int upperPageLimit = 1;
             int lowerPageLimit = 1;
             //int pagerOffset = 1;
+            String pagerDirection = "";
             webClient.getTvClipApi(ageReq, upperPageLimit,
-                    lowerPageLimit, pagerOffset, this);
+                    lowerPageLimit, pagerOffset, pagerDirection, this);
         }
         return list;
     }
 
     /**
      * Vodクリップ一覧データをDBに格納する
-     *
-     * @param tvClipList
      */
     private void setStructDB(TvClipList tvClipList) {
         DateUtils dateUtils = new DateUtils(mContext);

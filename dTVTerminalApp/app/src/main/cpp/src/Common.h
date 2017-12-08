@@ -61,6 +61,7 @@ namespace dtvt {
     #define IfNullGoTo(var, where) { if (NULL == (var) ) { goto  where; } }
     //#define IfGoTo(var, where) { if ( !(var) ) { goto  where; } }
     #define IfNullReturn(var) { if (NULL == (var) ) { return; } }
+    #define IfNullReturnFalse(var) { if (NULL == (var) ) { return false; } }
     #define DelIfNotNull(obj) {  if(NULL!=(obj)) { delete obj; obj = NULL; }  }
 
 } //namespace dtvt
