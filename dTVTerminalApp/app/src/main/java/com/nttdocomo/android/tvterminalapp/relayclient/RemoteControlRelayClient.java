@@ -194,7 +194,8 @@ public class RemoteControlRelayClient {
     private static final String RELAY_KEYEVENT_ACTION = "ACTION";
     private static final String RELAY_KEYEVENT_ACTION_DOWN = "DOWN";
     private static final String RELAY_KEYEVENT_ACTION_UP = "UP";
-    private static final String RELAY_KEYEVENT_ACTION_CANCELED = "TRUE";
+    private static final String RELAY_KEYEVENT_ACTION_CANCELED = "CANCELED";
+    private static final String RELAY_KEYEVENT_ACTION_CANCELED_TRUE = "TRUE";
 
     // アプリ起動要求種別に対応するするアプリ名シンボル
     private static final Map<STB_APPLICATION_TYPES, String> mStbApplicationSymbolMap = new HashMap<STB_APPLICATION_TYPES, String>() {
@@ -411,7 +412,7 @@ public class RemoteControlRelayClient {
         try {
             requestJson.put(RELAY_KEYEVENT, keycode);
             requestJson.put(RELAY_KEYEVENT_ACTION, mKeyeventActionMap.get(action));
-            requestJson.put(RELAY_KEYEVENT_ACTION_CANCELED, canceled ? true : "");
+            requestJson.put(RELAY_KEYEVENT_ACTION_CANCELED, canceled ? RELAY_KEYEVENT_ACTION_CANCELED_TRUE : "");
             jsonStr = requestJson.toString();
         } catch (JSONException e) {
             DTVTLogger.debug(e);
