@@ -8,6 +8,7 @@ import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RentalListInsertDataManager;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
@@ -95,17 +96,17 @@ public class RentalDataProvider implements RentalVodListWebClient.RentalVodListJ
         webClient.getRentalVodListApi(this);
 
         //TODO: Display用ダミーデータ(消去予定)ここから
-        ArrayList<VodMetaFullData> list = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
-            VodMetaFullData vodMetaFullData = new VodMetaFullData();
-            vodMetaFullData.setTitle("title" + i);
-            vodMetaFullData.setmThumb_448_252("https://www.nhk.or.jp/prog/img/944/g944.jpg");
-            vodMetaFullData.setAvail_end_date(1512054000);//"2017/12/01"
-            vodMetaFullData.setRating(i);
-            list.add(vodMetaFullData);
-        }
-        response.setVodMetaFullData(list);
-        sendRentalListData(response);
+//        ArrayList<VodMetaFullData> list = new ArrayList<>();
+//        for (int i = 0; i < 30; i++) {
+//            VodMetaFullData vodMetaFullData = new VodMetaFullData();
+//            vodMetaFullData.setTitle("title" + i);
+//            vodMetaFullData.setmThumb_448_252("https://www.nhk.or.jp/prog/img/944/g944.jpg");
+//            vodMetaFullData.setAvail_end_date(1512054000);//"2017/12/01"
+//            vodMetaFullData.setRating(i);
+//            list.add(vodMetaFullData);
+//        }
+//        response.setVodMetaFullData(list);
+//        sendRentalListData(response);
         //Display用ダミーデータ(消去予定)ここまで
     }
 

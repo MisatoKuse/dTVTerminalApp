@@ -796,6 +796,15 @@ public class DBConstants {
             CLOSE_BRACKETS_TEXT
     };
 
+    // TABLE、ロールリスト用
+    public static final String ROLE_LIST_TABLE_NAME = "role_list";
+    public static final String CREATE_TABLE_ROLE_LIST_SQL = "" +
+            "create table " + ROLE_LIST_TABLE_NAME + " (" +
+            ID_COLUMN + " integer primary key autoincrement, " +
+            "id text, " +
+            "name text" +
+            ")";
+
     public static final String CREATE_TABLE_RENTAL_LIST_SQL = StringUtil.getConnectString(
             CREATE_TABLE_RENTAL_LIST_SQL_NAMES);
 

@@ -1,57 +1,193 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
   -->
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/contents_detail_fragment_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingLeft="@dimen/contents_tab_side_margin"
-    android:paddingRight="@dimen/contents_tab_side_margin"
-    android:paddingTop="@dimen/contents_tab_top_margin">
+    android:paddingStart="@dimen/contents_tab_side_margin">
 
-    <TextView
-        android:id="@+id/service_provider"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/contents_provider_shape_corner"
-        android:paddingLeft="@dimen/contents_service_name_side_margin"
-        android:paddingRight="@dimen/contents_service_name_side_margin"
-        android:textColor="@color/white_text" />
-
-    <TextView
-        android:id="@+id/contents_title"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/contents_text_vertical_margin"
-        android:textColor="@color/white_text"
-        android:textSize="@dimen/header_title_text_size" />
+        android:orientation="vertical"
+        android:paddingEnd="@dimen/contents_tab_side_margin">
 
-    <TextView
-        android:id="@+id/contents_detail_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/contents_text_vertical_margin"
-        android:ellipsize="end"
-        android:maxLines="4"
-        android:textColor="@color/white_text"
-        android:textStyle="bold" />
+        <TextView
+            android:id="@+id/dtv_contents_detail_fragment_service_provider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/contents_provider_shape_corner_blue"
+            android:paddingLeft="@dimen/contents_service_name_side_margin"
+            android:paddingRight="@dimen/contents_service_name_side_margin"
+            android:textColor="@color/white_text" />
 
-    <TextView
-        android:id="@+id/contents_detail_all_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/contents_text_vertical_margin"
-        android:textColor="@color/white_text"
-        android:textStyle="bold" />
+        <TextView
+            android:id="@+id/dtv_contents_detail_fragment_contents_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/contents_text_vertical_margin"
+            android:textColor="@color/white_text"
+            android:textSize="@dimen/header_title_text_size" />
 
-    <TextView
-        android:id="@+id/more_button"
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/contents_detail_8dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/dtv_contents_detail_fragment_channel_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/darker_gray" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/contents_detail_5dp"
+                        android:layout_marginStart="@dimen/contents_detail_5dp"
+                        android:text="@string/contents_detail_tv_label"
+                        android:textColor="@android:color/darker_gray" />
+
+                    <TextView
+                        android:id="@+id/dtv_contents_detail_fragment_channel_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/darker_gray" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/contents_detail_5dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/dtv_contents_detail_fragment_caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/contents_provider_shape_corner_dark_gray"
+                        android:paddingEnd="@dimen/contents_detail_5dp"
+                        android:paddingStart="@dimen/contents_detail_5dp"
+                        android:text="字幕"
+                        android:textColor="@android:color/white" />
+
+                    <TextView
+                        android:id="@+id/dtv_contents_detail_fragment_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/contents_detail_5dp"
+                        android:background="@drawable/contents_provider_shape_corner_dark_gray"
+                        android:paddingEnd="@dimen/contents_detail_8dp"
+                        android:paddingStart="@dimen/contents_detail_8dp"
+                        android:text="5.1"
+                        android:textColor="@android:color/white" />
+
+                    <TextView
+                        android:id="@+id/dtv_contents_detail_fragment_age"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/contents_detail_5dp"
+                        android:background="@drawable/contents_provider_shape_corner"
+                        android:paddingEnd="@dimen/contents_detail_2dp"
+                        android:paddingStart="@dimen/contents_detail_2dp"
+                        android:text="PG 12"
+                        android:textColor="@android:color/white" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:gravity="center_vertical"
+                android:src="@mipmap/ic_radio_button_checked_white_24dp" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/dtv_contents_detail_fragment_detail_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/contents_text_info_margin"
+            android:ellipsize="end"
+            android:maxLines="4"
+            android:textColor="@color/white_text"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/dtv_contents_detail_fragment_all_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/contents_text_info_margin"
+            android:textColor="@color/white_text"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/dtv_contents_detail_fragment_more_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:gravity="end"
+            android:text="@string/contents_info_more_text"
+            android:textColor="@color/white_text" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/dtv_contents_detail_fragment_staff"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        android:gravity="end"
-        android:text="@string/contents_info_more_text"
-        android:textColor="@color/white_text" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/dtv_contents_detail_fragment_staff_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/contents_detail_8dp"
+            android:text="@string/contents_detail_tv_staff"
+            android:textColor="@color/white_text"
+            android:textSize="@dimen/contents_detail_16dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/dtv_contents_detail_fragment_recommend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/dtv_contents_detail_fragment_recommend_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/contents_detail_16dp"
+            android:text="@string/contents_detail_tv_staff_recommend"
+            android:textColor="@color/white_text"
+            android:textSize="@dimen/contents_detail_16dp" />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
+            <LinearLayout
+                android:id="@+id/dtv_contents_detail_fragment_recommend_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/contents_detail_10dp"
+                android:orientation="vertical">
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
 </LinearLayout>

@@ -167,6 +167,8 @@ public class JsonContents {
     public static final String META_RESPONSE_CRID = "crid";
     // コンテンツID
     public static final String META_RESPONSE_CONTENTS_ID = "id";
+    // コンテンツNAME
+    public static final String META_RESPONSE_CONTENTS_NAME = "name";
     // サービスID
     public static final String META_RESPONSE_SERVICE_ID = "service_id";
     // チャンネル番号

@@ -102,14 +102,6 @@
         <item>海外TV番組・ドラマ</item>
     </string-array>
 
-    <!-- チャンネルリスト -->
-    <string-array name="channel_list_tab_names">
-        <item>ひかりTV</item>
-        <item>地上波</item>
-        <item>BS</item>
-        <item>dTVチャンネル</item>
-    </string-array>
-
     <string name="tv_icon_description">テレビアイコン</string>
     <string name="menu_icon_description">メニューアイコン</string>
 
@@ -165,7 +157,17 @@
     <string name="contents_detail_channel_button">チャンネル</string>
     <string name="contents_detail_record_reserve_button">録画予約する</string>
     <string name="contents_detail_tv_view_button">テレビで視聴する</string>
+    <string name="contents_detail_tv_now_on_air">NOW ON AIR</string>
+    <string name="contents_detail_tv_staff">キャスト・スタッフ</string>
+    <string name="contents_detail_tv_staff_recommend">おすすめ作品</string>
+    <string name="contents_detail_tv_label">|</string>
     <string-array name="other_contents_detail_tabs">
-        <item>作品情報</item>
+        <item>番組詳細</item>
+        <item>チャンネル</item>
+    </string-array>
+    <string-array name="other_contents_detail_staff_item">
+        <item>エミリー・デシャンネル</item>
+        <item>エピッド・ボレアナズ</item>
+        <item>ミカエラ・コンリン</item>
     </string-array>
 </resources>

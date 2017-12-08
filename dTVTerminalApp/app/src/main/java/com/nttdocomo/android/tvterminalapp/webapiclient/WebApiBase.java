@@ -4,6 +4,9 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient;
 
+
+import android.os.Handler;
+
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.HttpThread;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.WebApiCallback;
@@ -17,8 +20,20 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
     private WebApiCallback mWebApiCallback=null;
 
     public void get(String urlString, LinkedHashMap<String, String> queryItems, WebApiCallback callback){
-        String url = createUrlComponents(urlString, queryItems);
-        mWebApiCallback = callback;
+        Handler handler = new Handler();
+        String url=createUrlComponents(urlString, queryItems);
+        mWebApiCallback=callback;
+        //Log.d(DCommon.LOG_DEF_TAG, "WebApiBase::get, url= " + url);
+        new HttpThread(url, handler, this).start();
+    }
+
+    /**
+     * Handlerが使用できないASyncTaskの処理内で使用する
+     */
+    public void getReccomendInfo(String urlString, LinkedHashMap<String, String> queryItems, WebApiCallback callback){
+        String url=createUrlComponents(urlString, queryItems);
+        mWebApiCallback=callback;
+        //Log.d(DCommon.LOG_DEF_TAG, "WebApiBase::get, url= " + url);
         new HttpThread(url, this).start();
     }
 

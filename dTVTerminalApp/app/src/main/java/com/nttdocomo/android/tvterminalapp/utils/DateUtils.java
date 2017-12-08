@@ -61,6 +61,9 @@ public class DateUtils {
     //チャンネル取得日付キー
     public static final String CHANNEL_LAST_UPDATE = "ChannelLastUpdate";
 
+    //ロールリスト取得日付キー
+    public static final String ROLELIST_LAST_UPDATE = "RoleListLastUpdate";
+
     //番組表取得日付キー
     public static final String TVSCHEDULE_LAST_UPDATE = "TvScheduleLastUpdate";
 

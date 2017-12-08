@@ -1,18 +1,13 @@
-
 /*
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
-
 package com.nttdocomo.android.tvterminalapp.fragment.player;
-
+import android.support.v4.app.Fragment;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class DtvContentsDetailFragmentFactory {
 
-    private Map<Integer, DtvContentsDetailBaseFragment> mFragments = new HashMap<>();
+    private Fragment[] mFragments = new Fragment[2];
 
     /**
      * フラグメントクラスの生成、取得
@@ -20,12 +15,16 @@ public class DtvContentsDetailFragmentFactory {
      * @param position
      * @return
      */
-    public DtvContentsDetailBaseFragment createFragment(int position) {
+    public Fragment createFragment(int position) {
         DTVTLogger.start();
-        DtvContentsDetailBaseFragment fragment = mFragments.get(position);
+        Fragment fragment = mFragments[position];
         if (fragment == null) {
-            fragment = new DtvContentsDetailBaseFragment();
-            mFragments.put(position, fragment);
+            if(position == 0){
+                fragment = new DtvContentsDetailFragment();
+            } else {
+                fragment = new DtvContentsChannelFragment();
+            }
+            mFragments[position] = fragment;
         }
         return fragment;
     }
