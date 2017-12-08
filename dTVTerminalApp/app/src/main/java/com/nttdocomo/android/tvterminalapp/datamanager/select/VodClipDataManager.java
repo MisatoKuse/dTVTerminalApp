@@ -21,7 +21,7 @@ public class VodClipDataManager {
     /**
      * コンストラクタ
      *
-     * @param mContext
+     * @param mContext コンテキスト
      */
     public VodClipDataManager(Context mContext) {
         this.mContext = mContext;
@@ -30,13 +30,13 @@ public class VodClipDataManager {
     /**
      * クリップ一覧画面用クリップデータを返却する
      *
-     * @return
+     * @return クリップ一覧画面用クリップデータ
      */
     public List<Map<String, String>> selectVodClipData() {
         //ホーム画面に必要な列を列挙する
         //String[] columns = {VODCLIP_LIST_THUMB, VODCLIP_LIST_TITLE,
         //        VODCLIP_LIST_DISPLAY_START_DATE, VODCLIP_LIST_DISP_TYPE};
-        String[] columns = {JsonContents.META_RESPONSE_DTV_THUMB_448, JsonContents.META_RESPONSE_TITLE,
+        String[] columns = {JsonContents.META_RESPONSE_THUMB_448, JsonContents.META_RESPONSE_TITLE,
                 JsonContents.META_RESPONSE_DISPLAY_START_DATE, JsonContents.META_RESPONSE_R_VALUE};
 
         //Daoクラス使用準備
