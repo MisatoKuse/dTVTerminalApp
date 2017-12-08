@@ -142,6 +142,13 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
                 }
             }
             testType=ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS;   //test
+//            if (mDlnaProvBsChList.start(dlnaDmsItem, getActivity())) {
+//                boolean ret=mDlnaProvBsChList.browseChListDms();
+//                if(!ret){
+//                    onError("Get recoreded bs channel datas failed");
+//                }
+//            }
+//            testType=ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS;   //test
         }
     };
 
