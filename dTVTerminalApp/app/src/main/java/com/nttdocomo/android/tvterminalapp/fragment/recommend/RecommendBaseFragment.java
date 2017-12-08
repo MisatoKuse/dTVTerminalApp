@@ -155,7 +155,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
      * コンテンツ詳細に必要なデータを返す
      *
      * @param info レコメンド情報
-     * @return
+     * @return コンテンツ情報
      */
     public OtherContentsDetailData getOtherContentsDetailData(RecommendContentInfo info) {
         OtherContentsDetailData detailData = new OtherContentsDetailData();
@@ -163,6 +163,9 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
         detailData.setThumb(info.contentPictureUrl);
         detailData.setDetail(info.contentsDetailInfo);
         detailData.setServiceId(info.serviceId);
+
+        //コンテンツIDの受け渡しを追加
+        detailData.setContentId(info.contentId);
 
         return detailData;
     }

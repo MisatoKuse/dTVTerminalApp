@@ -31,12 +31,16 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.utils.ClassNameUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 
 /**
  * クラス機能：
@@ -52,6 +56,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     private ImageView mStbStatusIcon;
     private DlnaProvDevList mDlnaProvDevListForBase;
     private ImageView mMenuImageViewForBase;
+    private RemoteControllerView remoteControllerView = null;
 
     /**
      * Created on 2017/09/21.
@@ -533,5 +538,24 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                 onSampleGlobalMenuButton_PairLoginOk();
             }
         }
+    }
+
+    /**
+     * リモコン画面を生成する
+     */
+    public void createRemoteControllerView() {
+        // TODO リモコン表示Viewの作成を行う
+        RelativeLayout layout = findViewById(R.id.remote_controller_rl);
+        remoteControllerView = layout.findViewById(R.id.msv);
+        remoteControllerView.init(this);
+        layout.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    protected void onPause() {
+        if(remoteControllerView != null && remoteControllerView.isTopRemoteControllerUI()) {
+            remoteControllerView.closeRemoteControllerUI();
+        }
+        super.onPause();
     }
 }

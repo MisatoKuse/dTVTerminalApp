@@ -29,6 +29,38 @@
     <string name="str_d_account_reg_confirmation_title">dアカウント登録確認</string>
     <string name="str_stb_select_result_text_failed">ドコモテレビターミナルがネットワークに接続されていないか、\nドコモテレビターミナルのバージョンアップが必要です</string>
     <string name="str_stb_select_result_text_search">STB検索中</string>
+    
+    <!-- リモコン-->
+    <string name="remote_controller_viewpager_record_list_button">録画リスト</string>
+    <string name="remote_controller_viewpager_program_list_button">番組表</string>
+    <string name="remote_controller_viewpager_decide_button">決定</string>
+    <string name="remote_controller_viewpager_up_button">∧</string>
+    <string name="remote_controller_viewpager_down_button">∨</string>
+    <string name="remote_controller_viewpager_left_button">＜</string>
+    <string name="remote_controller_viewpager_right_button">＞</string>
+    <string name="remote_controller_viewpager_back_button">戻る</string>
+    <string name="remote_controller_viewpager_home_button">ホーム</string>
+    <string name="remote_controller_viewpager_digital_button">地でじ</string>
+    <string name="remote_controller_viewpager_bs_button">BS</string>
+    <string name="remote_controller_viewpager_ip_tv_button">IPTV</string>
+    <string name="remote_controller_viewpager_one_button">1</string>
+    <string name="remote_controller_viewpager_two_button">2</string>
+    <string name="remote_controller_viewpager_three_button">3</string>
+    <string name="remote_controller_viewpager_four_button">4</string>
+    <string name="remote_controller_viewpager_five_button">5</string>
+    <string name="remote_controller_viewpager_six_button">6</string>
+    <string name="remote_controller_viewpager_seven_button">7</string>
+    <string name="remote_controller_viewpager_eight_button">8</string>
+    <string name="remote_controller_viewpager_nine_button">9</string>
+    <string name="remote_controller_viewpager_ten_button">10</string>
+    <string name="remote_controller_viewpager_eleven_button">11</string>
+    <string name="remote_controller_viewpager_twelve_button">12</string>
+    <string name="remote_controller_viewpager_channel_plus_button">∧</string>
+    <string name="remote_controller_viewpager_channel_minus_button">∨</string>
+    <string name="remote_controller_viewpager_channel_text">チャンネル</string>
+    <string name="remote_controller_viewpager_notice_button">お知らせ</string>
+    <string name="remote_controller_viewpager_d_date_button">d データ</string>
+    <string name="remote_controller_viewpager_watch_by_tv">テレビで視聴する</string>
 
     <!-- Home -->
     <string name="now_on_air_list">NOW ON AIR</string>

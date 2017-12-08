@@ -213,6 +213,15 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     }
 
     /**
+     * リモコン画面への遷移
+     *
+     * @param view
+     */
+    public void remoteControlButton(View view) {
+        createRemoteControllerView();
+    }
+
+    /**
      * コンテンツ詳細用ページャアダプター
      */
     private class ContentsDetailPagerAdapter extends FragmentStatePagerAdapter {

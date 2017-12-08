@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/remote_viewpager_bottom_corner">
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/remote_controller_viewpager_digital_button"
+        android:textStyle="bold"
+        android:layout_marginStart="10dp"
+        android:background="@android:color/white"
+        android:id="@+id/remote_controller_bt_degital"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:textStyle="bold"
+        android:background="@android:color/white"
+        android:text="@string/remote_controller_viewpager_bs_button"
+        android:layout_alignTop="@+id/remote_controller_bt_degital"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/remote_controller_bt_bs" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:textStyle="bold"
+        android:background="@android:color/white"
+        android:text="@string/remote_controller_viewpager_ip_tv_button"
+        android:layout_marginEnd="12dp"
+        android:layout_alignTop="@+id/remote_controller_bt_bs"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/remote_controller_bt_iptv" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:background="@android:color/white"
+        android:text="@string/remote_controller_viewpager_two_button"
+        android:textSize="35sp"
+        android:layout_alignBaseline="@+id/remote_controller_bt_one"
+        android:layout_alignBottom="@+id/remote_controller_bt_one"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/remote_controller_bt_two" />
+    <Button
+        android:id="@+id/remote_controller_bt_one"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:background="@android:color/white"
+        android:text="@string/remote_controller_viewpager_one_button"
+        android:textSize="35sp"
+        android:layout_alignStart="@+id/remote_controller_bt_degital"
+        android:layout_below="@+id/remote_controller_bt_degital"
+        android:layout_marginTop="18dp"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:background="@android:color/white"
+        android:text="@string/remote_controller_viewpager_three_button"
+        android:textSize="35sp"
+        android:layout_alignBaseline="@+id/remote_controller_bt_one"
+        android:layout_alignBottom="@+id/remote_controller_bt_one"
+        android:layout_alignStart="@+id/remote_controller_bt_iptv"
+        android:id="@+id/remote_controller_bt_three" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:background="@android:color/white"
+        android:text="@string/remote_controller_viewpager_four_button"
+        android:textSize="35sp"
+        android:layout_marginTop="17dp"
+        android:id="@+id/remote_controller_bt_four"
+        android:layout_below="@+id/remote_controller_bt_two"
+        android:layout_alignStart="@+id/remote_controller_bt_one" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:background="@android:color/white"
+        android:text="@string/remote_controller_viewpager_five_button"
+        android:textSize="35sp"
+        android:layout_alignBaseline="@+id/remote_controller_bt_four"
+        android:layout_alignBottom="@+id/remote_controller_bt_four"
+        android:layout_alignStart="@+id/remote_controller_bt_two"
+        android:id="@+id/remote_controller_bt_five" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:background="@android:color/white"
+        android:text="@string/remote_controller_viewpager_six_button"
+        android:textSize="35sp"
+        android:layout_alignBaseline="@+id/remote_controller_bt_five"
+        android:layout_alignBottom="@+id/remote_controller_bt_five"
+        android:layout_alignStart="@+id/remote_controller_bt_three"
+        android:id="@+id/remote_controller_bt_six" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:background="@android:color/white"
+        android:text="@string/remote_controller_viewpager_seven_button"
+        android:textSize="35sp"
+        android:layout_below="@+id/remote_controller_bt_six"
+        android:layout_alignStart="@+id/remote_controller_bt_four"
+        android:layout_marginTop="17dp"
+        android:id="@+id/remote_controller_bt_seven" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:background="@android:color/white"
+        android:text="@string/remote_controller_viewpager_eight_button"
+        android:textSize="35sp"
+        android:layout_alignBaseline="@+id/remote_controller_bt_seven"
+        android:layout_alignBottom="@+id/remote_controller_bt_seven"
+        android:layout_alignStart="@+id/remote_controller_bt_five"
+        android:id="@+id/remote_controller_bt_eight" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:background="@android:color/white"
+        android:text="@string/remote_controller_viewpager_nine_button"
+        android:textSize="35sp"
+        android:layout_alignBaseline="@+id/remote_controller_bt_seven"
+        android:layout_alignBottom="@+id/remote_controller_bt_seven"
+        android:layout_alignStart="@+id/remote_controller_bt_six"
+        android:id="@+id/remote_controller_bt_nine" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:background="@android:color/white"
+        android:text="@string/remote_controller_viewpager_ten_button"
+        android:textSize="35sp"
+        android:layout_below="@+id/remote_controller_bt_eight"
+        android:layout_alignStart="@+id/remote_controller_bt_seven"
+        android:layout_marginTop="12dp"
+        android:id="@+id/remote_controller_bt_ten" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:background="@android:color/white"
+        android:text="@string/remote_controller_viewpager_eleven_button"
+        android:textSize="35sp"
+        android:layout_alignBaseline="@+id/remote_controller_bt_ten"
+        android:layout_alignBottom="@+id/remote_controller_bt_ten"
+        android:layout_alignStart="@+id/remote_controller_bt_eight"
+        android:id="@+id/remote_controller_bt_eleven" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:background="@android:color/white"
+        android:text="@string/remote_controller_viewpager_twelve_button"
+        android:textSize="35sp"
+        android:layout_alignBaseline="@+id/remote_controller_bt_eleven"
+        android:layout_alignBottom="@+id/remote_controller_bt_eleven"
+        android:layout_alignStart="@+id/remote_controller_bt_nine"
+        android:id="@+id/remote_controller_bt_twelve" />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/remote_controller_button0"
+        android:layout_below="@+id/remote_controller_bt_ten"
+        android:layout_alignEnd="@+id/remote_controller_bt_ten" />
+
+    <ImageView
+        android:id="@+id/remote_controller_iv_lock"
+        android:layout_width="52dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/remote_controller_lock"
+        android:layout_below="@+id/remote_controller_bt_twelve"
+        android:layout_alignStart="@+id/remote_controller_bt_twelve" />
+
+    <Button
+        android:id="@+id/remote_controller_bt_channel_plus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:background="@android:color/white"
+        android:text="@string/remote_controller_viewpager_channel_plus_button"
+        android:layout_below="@+id/remote_controller_bt_twelve"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:background="@android:color/white"
+        android:text="チャンネル"
+        android:maxLines="1"
+        android:gravity="center"
+        android:textColor="@android:color/black"
+        android:id="@+id/remote_controller_tv_channel"
+        android:layout_below="@+id/remote_controller_bt_channel_plus"
+        android:layout_alignStart="@+id/remote_controller_bt_channel_plus" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:background="@android:color/white"
+        android:text="@string/remote_controller_viewpager_channel_minus_button"
+        android:layout_below="@+id/remote_controller_tv_channel"
+        android:layout_alignStart="@+id/remote_controller_tv_channel"
+        android:id="@+id/remote_controller_bt_channel_minus" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:background="@android:color/white"
+        android:text="@string/remote_controller_viewpager_notice_button"
+        android:id="@+id/remote_controller_bt_notice"
+        android:layout_above="@+id/remote_controller_bt_channel_minus"
+        android:layout_alignStart="@+id/remote_controller_bt_twelve" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:background="@android:color/white"
+        android:text="@string/remote_controller_viewpager_d_date_button"
+        android:textAllCaps="false"
+        android:layout_alignBottom="@+id/remote_controller_bt_channel_minus"
+        android:layout_alignStart="@+id/remote_controller_bt_notice"
+        android:id="@+id/remote_controller_bt_ddata"/>
+
+</RelativeLayout>

@@ -1,181 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000"
-    android:orientation="vertical">
-
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/layout_titleBar"
+    android:id="@+id/watch_by_tv_relative_layout"
+    >
+    <com.nttdocomo.android.tvterminalapp.view.RemoteControllerView
+        android:id="@+id/msv"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="#ff0000">
-
-        <TextView
-            android:id="@+id/text_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal|center"
-            android:maxLines="1"
-            android:text="REMOTE_CONTROL_START"
-            android:textColor="#ffffffff"
-            android:textSize="20dp" />
-
-    </RelativeLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="これはリモートコントロール画面"
-        android:textColor="#ffffffff"/>
-
-    <GridLayout
-        android:columnCount="4"
-        android:rowCount="8"
-        android:verticalSpacing="4dp"
-        android:layout_marginBottom="10dp"
+        android:layout_height="match_parent"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:background="@android:color/transparent">
 
-        <Button
-            android:id="@+id/keycode_dpad_up"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:background="#ffffff"
-            android:layout_column="1"
-            android:layout_row="0"
-            android:layout_margin="5dp"
-            android:text="∧" />
+        <LinearLayout
+            android:id="@+id/linear_layout"
+            android:layout_width="359dp"
+            android:layout_height="641dp"
+            android:orientation="vertical"
+            android:background="@android:color/transparent"
+            android:weightSum="641">
 
-        <Button
-            android:id="@+id/keycode_dpad_down"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:background="#ffffff"
-            android:layout_column="1"
-            android:layout_row="2"
-            android:layout_margin="5dp"
-            android:text="∨" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_weight="80"
+                android:orientation="vertical">
 
-        <Button
-            android:id="@+id/keycode_dpad_center"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:background="#ffffff"
-            android:layout_column="1"
-            android:layout_row="1"
-            android:layout_margin="5dp"
-            android:text="決定" />
+                <FrameLayout
+                    android:id="@+id/header_watch_by_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/remote_watch_by_tv_bottom_corner">
 
-        <Button
-            android:id="@+id/keycode_dpad_left"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:background="#ffffff"
-            android:layout_column="0"
-            android:layout_row="1"
-            android:layout_margin="5dp"
-            android:text="＜" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:weightSum="641">
 
-        <Button
-            android:id="@+id/keycode_dpad_right"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:background="#ffffff"
-            android:layout_column="2"
-            android:layout_row="1"
-            android:layout_margin="5dp"
-            android:text="＞" />
+                        <View
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="16" />
 
-        <Button
-            android:id="@+id/keycode_dpad_home"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:background="#ffffff"
-            android:layout_column="1"
-            android:layout_row="3"
-            android:layout_margin="5dp"
-            android:text="ホーム" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:weightSum="359">
 
-        <Button
-            android:id="@+id/keycode_dpad_back"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:background="#ffffff"
-            android:layout_column="0"
-            android:layout_row="3"
-            android:layout_margin="5dp"
-            android:text="戻る" />
+                            <View
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="16" />
 
-        <Button
-            android:id="@+id/keycode_1"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:background="#ffffff"
-            android:layout_column="0"
-            android:layout_row="4"
-            android:layout_margin="5dp"
-            android:text="１" />
+                            <ImageButton
+                                android:id="@+id/remote_controller_iv_power"
+                                android:layout_width="wrap_content"
+                                android:layout_height="0dp"
+                                android:layout_marginLeft="20dp"
+                                android:layout_weight="48"
+                                android:background="@drawable/color_little_gray"
+                                android:gravity="center_vertical|start"
+                                android:src="@mipmap/ic_launcher"
+                                android:visibility="gone" />
+                        </LinearLayout>
+                    </LinearLayout>
 
-        <Button
-            android:id="@+id/keycode_2"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:background="#ffffff"
-            android:layout_column="1"
-            android:layout_row="4"
-            android:layout_margin="5dp"
-            android:text="２" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="489dp"
+                        android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/keycode_3"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:background="#ffffff"
-            android:layout_column="2"
-            android:layout_row="4"
-            android:layout_margin="5dp"
-            android:text="３" />
+                        <ImageView
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:layout_marginLeft="10dp"
+                            android:src="@mipmap/ic_remote_tv_play" />
 
-        <Button
-            android:id="@+id/keycode_channel_up"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:textSize="10dp"
-            android:background="#ffffff"
-            android:layout_column="3"
-            android:layout_row="0"
-            android:layout_margin="5dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="0dp"
-            android:text="チャンネル∧" />
+                        <TextView
+                            android:id="@+id/watch_by_tv"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="10dp"
+                            android:text="@string/remote_controller_viewpager_watch_by_tv"
+                            android:textColor="#ffffff"
+                            android:textSize="14dp" />
 
-        <Button
-            android:id="@+id/keycode_channel_down"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:textSize="10dp"
-            android:background="#ffffff"
-            android:layout_column="3"
-            android:layout_row="1"
-            android:layout_margin="5dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="0dp"
-            android:text="チャンネル∨" />
+                        <ImageView
+                            android:id="@+id/remote_controller_down"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:layout_gravity="right"
+                            android:layout_marginRight="10dp"
+                            android:src="@drawable/remote_controller_down" />
+                    </LinearLayout>
+                </FrameLayout>
+            </LinearLayout>
 
-    </GridLayout>
+            <android.support.v4.view.ViewPager
+                android:id="@+id/remokon_viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="561dp"
+                android:visibility="visible"
+                android:layout_weight="561"/>
+        </LinearLayout>
+    </com.nttdocomo.android.tvterminalapp.view.RemoteControllerView>
 
-</LinearLayout>
+</RelativeLayout>

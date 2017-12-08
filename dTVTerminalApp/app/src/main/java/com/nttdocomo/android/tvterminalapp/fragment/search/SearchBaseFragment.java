@@ -145,7 +145,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
      * コンテンツ詳細に必要なデータを返す
      *
      * @param info レコメンド情報
-     * @return
+     * @return コンテンツ情報
      */
     public OtherContentsDetailData getOtherContentsDetailData(SearchContentInfo info) {
         OtherContentsDetailData detailData = new OtherContentsDetailData();
@@ -153,6 +153,9 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         detailData.setThumb(info.contentPictureUrl);
         detailData.setDetail(info.contentsDetailInfo);
         detailData.setServiceId(info.serviceId);
+
+        //コンテンツIDの受け渡しを追加
+        detailData.setContentId(info.contentId);
 
         return detailData;
     }
