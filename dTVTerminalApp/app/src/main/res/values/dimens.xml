@@ -101,4 +101,7 @@
     <dimen name="list_tab_margin_top">0dp</dimen>
     <dimen name="list_tab_margin_right">0dp</dimen>
     <dimen name="list_tab_margin_bottom">0dp</dimen>
+
+    <!--リモコン-->
+    <dimen name="remote_controller_header_view_high">50dp</dimen>
 </resources>

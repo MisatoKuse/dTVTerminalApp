@@ -31,23 +31,33 @@ import java.util.List;
 
 public class RemoteControllerView extends RelativeLayout implements ViewPager.OnPageChangeListener {
 
-    private int downY, moveY, movedY;
+    private int mDownY;
+    private int  mMoveY;
+    private int  mMovedY;
     private View mChild;
     private Scroller mScroller;
     private int mScrollHeight;
-    private boolean isTop = false;
+    private boolean mIsTop = false;
     private float mVisibilityHeight;
     private ArrayList<View> mDots;
     private List<View> viewList = new ArrayList<View>();
     ViewPager mViewPager;
     private ViewPagerAdapter mRemokonAdapter;
-    private int mCurrentItem = 0;
-    private int mOldPosition;
     private TextView mTextView;
-    private FrameLayout mFragmentLayout;
+    private RelativeLayout mRelativeLayout;
     private RemoteControllerSendKeyAction remoteControllerSendKeyAction;
-    private ImageButton mPowerButton;
     private GestureDetector mGestureDetector = null;
+    private ImageButton mPowerButton;
+    private long mSysTime;//システムTime
+    private final long CLICK_MAX_TIME = 100;
+    private boolean mIsClick = false;//クリックなのかスワイプなのか
+    private int  mScreenWidth;
+    private int mScreenHeight;
+    private  RemoteControllerView mRemoteControllerView;
+    private int BaseWidth = 360;
+    private int BaseHeight = 640;
+    private RelativeLayout mRelativelayout;
+    private float mDensity;
 
 
     public RemoteControllerView(Context context) {
@@ -62,9 +72,11 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         super(context, attrs, defStyleAttr);
 
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.RecycleListView);
-        mVisibilityHeight = ta.getDimension(R.styleable.RemoteControllerView_visibility_height, 100);
+        mVisibilityHeight = ta.getDimension(R.styleable.RemoteControllerView_visibility_height,
+                getResources().getDimension(R.dimen.remote_controller_header_view_high));
         ta.recycle();
-
+        //TODO
+//        setViewSize(context);
         init(context);
     }
 
@@ -96,28 +108,45 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         mChild = getChildAt(0);
     }
 
-
-    private boolean mIsClick = false;
-
     private void setIsClick(boolean is) {
         synchronized (this) {
             mIsClick = is;
         }
     }
 
-    private long mSysTime;
-    private final long CLICK_MAX_TIME = 100;
+    //端末の解像度によってlayoutサイズを設定する
+    public void setViewSize(Context context){
+        mDensity = context.getResources().getDisplayMetrics().density;
+        mRelativelayout = findViewById(R.id.remote_controller_rl);
+        mScreenWidth = (int) (getMeasuredWidth() / mDensity);
+        mScreenHeight = (int) (getMeasuredHeight() / mDensity);
+        if(mScreenWidth >= BaseWidth && mScreenHeight >= BaseHeight) {
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(BaseWidth,BaseHeight);
+            mRelativelayout.setLayoutParams(params);
+        }else {
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(mScreenWidth,mScreenHeight);
+            mRelativelayout.setLayoutParams(params);
+        }
+    }
 
+    /**
+     *
+     * @param event タッチevent
+     * @return
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                //システム時間を取得する
                 mSysTime = System.currentTimeMillis();
-
-                downY = (int) event.getY();
-                if (downY < mScrollHeight - mVisibilityHeight && !isTop) {
+                //タッチされたY座標とビューTOPの距離を取得する
+                mDownY = (int) event.getY();
+                //子ビュー以外の部分がタップされた場合Touchイベントを走らせない
+                if (mDownY < mScrollHeight - mVisibilityHeight && !mIsTop) {
                     return false;
                 }
+                //viewPagerを初期化する
                 if (viewList.size() == 0) {
                     setPager();
                 }
@@ -125,71 +154,90 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
             case MotionEvent.ACTION_MOVE:
 
-                moveY = (int) event.getY();
-                int deY = downY - moveY;
+                mMoveY = (int) event.getY();
+                //mDeY:移動した距離
+                //下に移動の場合,mDeY < 0；上に移動の場合,mDeY > 0;
+                int deY = mDownY - mMoveY;
+                //上に移動するときの処理
                 if (deY > 0) {
-                    movedY += deY;
-                    if (movedY > mScrollHeight) {
-                        movedY = mScrollHeight;
+                    //移動した距離を加算する,移動できる範囲内に制限する
+                    mMovedY += deY;
+                    if (mMovedY > mScrollHeight) {
+                        mMovedY = mScrollHeight;
                     }
-                    if (movedY < mScrollHeight) {
+                    if (mMovedY < mScrollHeight) {
                         scrollBy(0, deY);
-                        downY = moveY;
+                        mDownY = mMoveY;
                         return true;
                     }
                 }
+                //下に移動するときの処理
                 if (deY < 0) {
-                    movedY += deY;
-                    if (movedY < 0) {
-                        movedY = 0;
+                    mMovedY += deY;
+                    if (mMovedY < 0) {
+                        mMovedY = 0;
                     }
-                    if (movedY > 0) {
+                    if (mMovedY > 0) {
                         scrollBy(0, deY);
                     }
-                    downY = moveY;
+                    mDownY = mMoveY;
                     return true;
 
                 }
-
                 break;
             case MotionEvent.ACTION_UP:
+                //指が離すときの時間差を計算する
                 Long curTime = System.currentTimeMillis();
                 Long diff = curTime - mSysTime;
+                //クリックなのかを判断する
                 if (diff < CLICK_MAX_TIME) {
                     setIsClick(true);
                 } else {
                     setIsClick(false);
                 }
-                if (downY > mScrollHeight - mVisibilityHeight && mIsClick && !isTop) {
+                //子ビューがタップされた場合
+                if (mDownY > mScrollHeight - mVisibilityHeight && mIsClick && !mIsTop) {
                     mScroller.startScroll(0, -getScrollY(), 0, mScrollHeight);
                     postInvalidate();
-                    movedY = mScrollHeight;
-                    isTop = true;
-                    mPowerButton = (ImageButton) findViewById(R.id.remote_controller_iv_power);
-                    mPowerButton.setVisibility(VISIBLE);
-                    mFragmentLayout = findViewById(R.id.header_watch_by_tv);
-                    mFragmentLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.color_little_gray, null));
-                    mTextView = findViewById(R.id.watch_by_tv);
-                    mTextView.setVisibility(INVISIBLE);
+                    setHeaderContent();
                     break;
                 }
-                if (movedY > mScrollHeight / 4 && !isTop) {
+                //指が離すまで子ビュ―の移動した距離は子ビューの1/4に超えた場合、
+                // 自動的にTOPまで移動する
+                if (mMovedY > mScrollHeight / 4 && !mIsTop) {
                     mScroller.startScroll(0, getScrollY(), 0, (mScrollHeight - getScrollY()));
                     invalidate();
-                    movedY = mScrollHeight;
-                    isTop = true;
-                    mPowerButton = (ImageButton) findViewById(R.id.remote_controller_iv_power);
-                    mPowerButton.setVisibility(VISIBLE);
-                    mFragmentLayout = findViewById(R.id.header_watch_by_tv);
-                    mFragmentLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.color_little_gray, null));
-                    mTextView = findViewById(R.id.watch_by_tv);
-                    mTextView.setVisibility(INVISIBLE);
+                    setHeaderContent();
                 } else {
-                    closeRemoteControllerUI();
+                    //1/4に満たしていない場合、元の位置に戻る
+                    //表示するコンテンツを設定する
+                    mScroller.startScroll(0, getScrollY(), 0, -getScrollY());
+                    postInvalidate();
+                    mMovedY = 0;
+                    mIsTop = false;
+                    mPowerButton = (ImageButton) findViewById(R.id.remote_controller_iv_power);
+                    mPowerButton.setVisibility(INVISIBLE);
+                    mRelativeLayout = findViewById(R.id.header_watch_by_tv);
+                    mRelativeLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner, null));
+                    mTextView = findViewById(R.id.watch_by_tv);
+                    mTextView.setVisibility(VISIBLE);
                 }
                 break;
         }
         return super.onTouchEvent(event);
+    }
+    //子ビュ―が一番上まで移動した場合表示するコンテンツを設定する
+    private void setHeaderContent() {
+        DTVTLogger.start();
+        mMovedY = mScrollHeight;
+        mIsTop = true;
+        mPowerButton = findViewById(R.id.remote_controller_iv_power);
+        mPowerButton.setVisibility(VISIBLE);
+        mRelativeLayout = findViewById(R.id.header_watch_by_tv);
+        mRelativeLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_top_corner, null));
+        mTextView = findViewById(R.id.watch_by_tv);
+        mTextView.setVisibility(INVISIBLE);
+        DTVTLogger.end();
     }
 
     @Override
@@ -199,8 +247,8 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
             scrollTo(0, mScroller.getCurrY());
             postInvalidate();
         }
-
     }
+
 
     public void setPager() {
         mDots = new ArrayList<View>();
@@ -277,7 +325,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
             DTVTLogger.start();
 
             float flingY = e2.getY() - e1.getY();
-            if (flingY > mScrollHeight / 4 && isTop) {
+            if (flingY > mScrollHeight / 4 && mIsTop) {
                 DTVTLogger.debug("Down");
                 closeRemoteControllerUI();
                 DTVTLogger.end();
@@ -303,12 +351,12 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     public void closeRemoteControllerUI(){
         mScroller.startScroll(0, getScrollY(), 0, -getScrollY());
         postInvalidate();
-        movedY = 0;
-        isTop = false;
+        mMovedY = 0;
+        mIsTop = false;
         mPowerButton = (ImageButton) findViewById(R.id.remote_controller_iv_power);
         mPowerButton.setVisibility(INVISIBLE);
-        mFragmentLayout = findViewById(R.id.header_watch_by_tv);
-        mFragmentLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.color_blue, null));
+        mRelativelayout = findViewById(R.id.header_watch_by_tv);
+        mRelativelayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.color_blue, null));
         mTextView = findViewById(R.id.watch_by_tv);
         mTextView.setVisibility(VISIBLE);
         remoteControllerSendKeyAction.cancelTimer();
@@ -318,7 +366,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * isTopのboolean値を返す
      */
     public boolean isTopRemoteControllerUI() {
-        return isTop;
+        return mIsTop;
     }
 }
 

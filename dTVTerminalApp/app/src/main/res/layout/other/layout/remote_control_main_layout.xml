@@ -10,6 +10,7 @@
     android:layout_marginRight="10dp"
     android:layout_marginTop="10dp"
     app:visibility_height="100dp"
+    android:id="@+id/watch_by_tv_relative_layout"
     >
     <com.nttdocomo.android.tvterminalapp.view.RemoteControllerView
         android:id="@+id/msv"
@@ -22,46 +23,63 @@
         <LinearLayout
             android:id="@+id/linear_layout"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/color_white"
+            android:layout_height="match_parent"
             android:orientation="vertical"
+            android:background="@android:color/transparent"
             >
-            <FrameLayout
+            <RelativeLayout
                 android:id="@+id/header_watch_by_tv"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#0099ff">
-                <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:src="@drawable/power"
-                    android:layout_marginStart="10dp"
-                    android:background="@drawable/color_little_gray"
-                    android:layout_marginEnd="0dp"
-                    android:visibility="gone"
-                    android:id="@+id/remote_controller_iv_power"/>
+                android:layout_weight="1.0"
+                android:layout_height="0dp"
+                android:background="@drawable/remote_watch_by_tv_bottom_corner">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"/>
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="3"
+                        android:src="@mipmap/ic_launcher"
+                        android:layout_marginLeft="20dp"
+                        android:visibility="gone"
+                        android:background="@drawable/color_little_gray"
+                        android:gravity="center_vertical|start"
+                        android:id="@+id/remote_controller_iv_power"/>
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"/>
+                </LinearLayout>
+
                 <TextView
                     android:id="@+id/watch_by_tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
                     android:text="@string/remote_controller_viewpager_watch_by_tv"
                     android:gravity="center"/>
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
                     android:layout_gravity="end"
+                    android:layout_alignParentEnd="true"
                     android:layout_marginEnd="10dp"
                     android:src="@drawable/remote_controller_down"
                     android:id="@+id/remote_controller_down"
                     />
-            </FrameLayout>
+            </RelativeLayout>
             <android.support.v4.view.ViewPager
+                android:layout_weight="8"
                 android:id="@+id/remokon_viewpager"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="visible"
-                >
-            </android.support.v4.view.ViewPager>
+                android:layout_height="0dp"
+                android:visibility="visible"/>
         </LinearLayout>
 
     </com.nttdocomo.android.tvterminalapp.view.RemoteControllerView>
