@@ -8,6 +8,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationMetaData;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
@@ -85,11 +86,10 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
                 }
             }
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
-           DTVTLogger.debug(CLASS_NAME + JSON_OBJECT,e);
+            DTVTLogger.debug(CLASS_NAME + JSON_OBJECT, e);
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + RESPONSE,e);
+            DTVTLogger.debug(CLASS_NAME + RESPONSE, e);
         }
         return null;
     }
@@ -102,26 +102,25 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
     public void sendStatus(JSONObject jsonObj) {
         try {
             // statusの値を取得しセットする
-            if (!jsonObj.isNull(REMOTE_RECORDING_RESERVATION_META_RESPONSE_STATUS)) {
-                String status = jsonObj.getString(REMOTE_RECORDING_RESERVATION_META_RESPONSE_STATUS);
+            if (!jsonObj.isNull(JsonContents.META_RESPONSE_STATUS)) {
+                String status = jsonObj.getString(JsonContents.META_RESPONSE_STATUS);
                 if (mRemoteRecordingReservationListResponse != null) {
                     mRemoteRecordingReservationListResponse.setStatus(status);
                 }
             }
             // countの値を取得しセットする
-            if (!jsonObj.isNull(REMOTE_RECORDING_RESERVATION_META_RESPONSE_COUNT)) {
+            if (!jsonObj.isNull(JsonContents.META_RESPONSE_COUNT)) {
                 int count = 0;
                 try {
                     //数字の場合のみ、値を採用する
-                    String stringBuffer = jsonObj.getString(
-                            REMOTE_RECORDING_RESERVATION_META_RESPONSE_COUNT);
+                    String stringBuffer = jsonObj.getString(JsonContents.META_RESPONSE_COUNT);
                     if(DBUtils.isNumber(stringBuffer)) {
                         count = Integer.parseInt(stringBuffer);
                     } else {
                         throw new NumberFormatException();
                     }
                 } catch (JSONException e) {
-                   DTVTLogger.debug(CLASS_NAME + IS_NUMBER,e);
+                    DTVTLogger.debug(CLASS_NAME + IS_NUMBER, e);
                 }
                 if (mRemoteRecordingReservationListResponse != null) {
                     mRemoteRecordingReservationListResponse.setCount(count);
@@ -131,7 +130,7 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
             throw new RuntimeException(e);
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + SEND_STATUS,e);
+            DTVTLogger.debug(CLASS_NAME + SEND_STATUS, e);
         }
     }
 
@@ -143,9 +142,9 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
     public void sendRemoteRecordingReservationListResponse(JSONObject jsonObj) {
         try {
             ArrayList<RemoteRecordingReservationMetaData> remoteRecordingReservationMetaDataList = new ArrayList<RemoteRecordingReservationMetaData>();
-            if (!jsonObj.isNull(REMOTE_RECORDING_RESERVATION_META_RESPONSE_LIST)) {
+            if (!jsonObj.isNull(JsonContents.META_RESPONSE_LIST)) {
                 // リモート録画予約一覧をJSONArrayにパースする
-                JSONArray lists = jsonObj.getJSONArray(REMOTE_RECORDING_RESERVATION_META_RESPONSE_LIST);
+                JSONArray lists = jsonObj.getJSONArray(JsonContents.META_RESPONSE_LIST);
                 if (lists.length() == 0) {
                     return;
                 }
@@ -164,8 +163,7 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
             throw new RuntimeException(e);
         } catch (Exception e) {
             // TODO Auto-generated catch block
-          DTVTLogger.debug(CLASS_NAME + SEND_RESPONSE,e);
+            DTVTLogger.debug(CLASS_NAME + SEND_RESPONSE, e);
         }
     }
-
 }

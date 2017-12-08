@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ContentsDetailGetResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ContentsDetailJsonParser;
 
@@ -86,7 +87,7 @@ public class ContentsDetailGetWebClient
         }
 
         //チャンネル一覧を呼び出す
-        openUrl(API_NAME_LIST.CONTENTS_DETAIL_GET_WEB_CLIENT.getString(), sendParameter, this);
+        openUrl(UrlConstants.WebApiUrl.CONTENTS_DETAIL_GET_WEB_CLIENT, sendParameter, this);
 
         //現状失敗は無いのでtrue
         return true;

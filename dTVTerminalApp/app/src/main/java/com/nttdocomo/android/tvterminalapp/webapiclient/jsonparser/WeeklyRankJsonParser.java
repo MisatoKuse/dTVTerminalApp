@@ -100,7 +100,6 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
             List<WeeklyRankList> wrList = Arrays.asList(mWeeklyRankList);
             return wrList;
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         } catch (Exception e) {
             // TODO Auto-generated catch block

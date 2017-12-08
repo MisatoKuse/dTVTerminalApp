@@ -75,7 +75,6 @@ public class GenreListJsonParser extends AsyncTask<Object, Object, Object> {
                 }
             }
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(CLASS_NAME + JSON_OBJECT, e);
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -124,7 +123,7 @@ public class GenreListJsonParser extends AsyncTask<Object, Object, Object> {
                 }
                 JSONArray lists = jsonObj.getJSONArray(item);
                 if (lists.length() == 0) {
-                   continue;
+                    continue;
                 }
                 genreListMetaDataList =
                         new ArrayList<GenreListMetaData>();

@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 import android.os.Bundle;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WeeklyRankList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WeeklyRankJsonParser;
 
@@ -89,7 +90,7 @@ public class WeeklyRankWebClient
         bundle.putString("genreId",genreId);
 
         //週毎ランク一覧を呼び出す
-        openUrlWithExtraData(API_NAME_LIST.WEEKLY_RANK_LIST.getString(),sendParameter,this,bundle);
+        openUrlWithExtraData(UrlConstants.WebApiUrl.WEEKLY_RANK_LIST,sendParameter,this,bundle);
 
 
         //今のところ失敗は無いので、trueで帰る

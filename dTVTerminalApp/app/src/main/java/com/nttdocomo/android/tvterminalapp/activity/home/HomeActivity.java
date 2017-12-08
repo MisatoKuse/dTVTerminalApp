@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -61,6 +63,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         setTitleText("ホーム");
         //ビューの初期化処理
         initView();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //Home画面用データを取得
         HomeDataProvider homeDataProvider = new HomeDataProvider(this);
         homeDataProvider.getHomeData();
     }
@@ -295,45 +303,58 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         }
     }
 
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            setRecyclerView((List) msg.obj, msg.what);
+        }
+    };
+
     @Override
     public void tvScheduleListCallback(List<Map<String, String>> channelList) {
         if (channelList != null && channelList.size() > 0) {
-            setRecyclerView(channelList, CHANNEL_SORT);
+            Message msg = Message.obtain(mHandler, CHANNEL_SORT, channelList);
+            mHandler.sendMessage(msg);
         }
     }
 
     @Override
     public void dailyRankListCallback(List<Map<String, String>> dailyRankList) {
         if (dailyRankList != null && dailyRankList.size() > 0) {
-            setRecyclerView(dailyRankList, TODAY_SORT);
+            Message msg = Message.obtain(mHandler, TODAY_SORT, dailyRankList);
+            mHandler.sendMessage(msg);
         }
     }
 
     @Override
     public void vodClipListCallback(List<Map<String, String>> clipList) {
         if (clipList != null && clipList.size() > 0) {
-            setRecyclerView(clipList, CLIP_SORT);
+            Message msg = Message.obtain(mHandler, CLIP_SORT, clipList);
+            mHandler.sendMessage(msg);
         }
     }
 
     @Override
     public void videoRankCallback(List<Map<String, String>> videoRankList) {
         if (videoRankList != null && videoRankList.size() > 0) {
-            setRecyclerView(videoRankList, VIDEO_SORT);
+            Message msg = Message.obtain(mHandler, CLIP_SORT, videoRankList);
+            mHandler.sendMessage(msg);
         }
     }
 
     @Override
     public void recommendChannelCallback(List<Map<String, String>> redChList) {
         if (redChList != null && redChList.size() > 0) {
-            setRecyclerView(redChList, REDCH_SORT);
+            Message msg = Message.obtain(mHandler, REDCH_SORT, redChList);
+            mHandler.sendMessage(msg);
         }
     }
 
     @Override
-    public void recommemdVideoCallback(List<Map<String, String>> redVdList) {
+    public void recommendVideoCallback(List<Map<String, String>> redVdList) {
         if (redVdList != null && redVdList.size() > 0) {
-            setRecyclerView(redVdList, REDVD_SORT);
+            Message msg = Message.obtain(mHandler, REDVD_SORT, redVdList);
+            mHandler.sendMessage(msg);
         }
     }
 
