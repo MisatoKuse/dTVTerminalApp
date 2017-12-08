@@ -21,21 +21,31 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ChannelListAdapter;
+import com.nttdocomo.android.tvterminalapp.dataprovider.DTvChDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.HikariTvChDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.fragment.channellist.ChannelListFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.channellist.ChannelListFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListInfo;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvBsChList;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvRecVideo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvTerChList;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoInfo;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListListener;
+import com.nttdocomo.android.tvterminalapp.model.program.Channel;
+import com.nttdocomo.android.tvterminalapp.model.program.ChannelsInfo;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
-public class ChannelListActivity extends BaseActivity implements View.OnClickListener, ChannelListFragment.ChannelListFragmentListener, DlnaRecVideoListener, DlnaTerChListListener, DlnaBsChListListener {
+import java.util.ArrayList;
+
+public class ChannelListActivity extends BaseActivity implements View.OnClickListener, ChannelListFragment.ChannelListFragmentListener,
+        DlnaRecVideoListener, DlnaTerChListListener, DlnaBsChListListener, ScaledDownProgramListDataProvider.ApiDataProviderCallback {
 
     private static final int SCREEN_TIME_WIDTH_PERCENT = 9;
     private LinearLayout mTabsLayout;
@@ -48,6 +58,8 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
     private DlnaProvRecVideo mDlnaProvRecVideo;
     private DlnaProvBsChList mDlnaProvBsChList;
     private DlnaProvTerChList mDlnaProvTerChList;
+    private HikariTvChDataProvider mHikariTvChDataProvider;
+    private DTvChDataProvider mDTvChDataProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +90,12 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
         }
         if(null==mDlnaProvTerChList) {
             mDlnaProvTerChList = new DlnaProvTerChList();
+        }
+        if(null==mHikariTvChDataProvider){
+            mHikariTvChDataProvider=new HikariTvChDataProvider(this);
+        }
+        if(null==mDTvChDataProvider){
+            mDTvChDataProvider=new DTvChDataProvider(this);
         }
         super.onResume();
     }
@@ -134,6 +152,17 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
     private Runnable mRunableBs = new Runnable() {
         @Override
         public void run() {
+            //STBにチャンネル機能を提供していないで、仮データを使うために、本番ソースを一時コメントしている。
+            //本番ソース begin
+//            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
+//            if (mDlnaProvBsChList.start(dlnaDmsItem, getActivity())) {
+//                boolean ret=mDlnaProvBsChList.browseChListDms();
+//                if(!ret){
+//                    onError("Get BS channel list datas failed");
+//                }
+//            }
+            //本番ソース end
+            //仮ソース begin
             DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
             if (mDlnaProvRecVideo.start(dlnaDmsItem, getActivity())) {
                 boolean ret=mDlnaProvRecVideo.browseRecVideoDms();
@@ -142,13 +171,7 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
                 }
             }
             testType=ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS;   //test
-//            if (mDlnaProvBsChList.start(dlnaDmsItem, getActivity())) {
-//                boolean ret=mDlnaProvBsChList.browseChListDms();
-//                if(!ret){
-//                    onError("Get recoreded bs channel datas failed");
-//                }
-//            }
-//            testType=ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS;   //test
+            //仮ソース end
         }
     };
 
@@ -162,11 +185,23 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
     private Runnable mRunableTer = new Runnable() {
         @Override
         public void run() {
+            //STBにチャンネル機能を提供していないで、仮データを使うために、本番ソースを一時コメントしている。
+            //本番ソース begin
+//            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
+//            if (mDlnaProvTerChList.start(dlnaDmsItem, getActivity())) {
+//                boolean ret=mDlnaProvTerChList.browseChListDms();
+//                if(!ret){
+//                    onError("Get BS channel list datas failed");
+//                }
+//            }
+            //本番ソース end
+            //仮ソース begin
             DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
             if (mDlnaProvRecVideo.start(dlnaDmsItem, getActivity())) {
                 mDlnaProvRecVideo.browseRecVideoDms();
             }
             testType=ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER;   //test
+            //仮ソース end
         }
     };
 
@@ -185,23 +220,25 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
     private Runnable mRunableHikari = new Runnable() {
         @Override
         public void run() {
-            //test b
-            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
-            if (mDlnaProvRecVideo.start(dlnaDmsItem, getActivity())) {
-                mDlnaProvRecVideo.browseRecVideoDms();
-            }
-            testType=ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI;   //test
+//            //test b
+//            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
+//            if (mDlnaProvRecVideo.start(dlnaDmsItem, getActivity())) {
+//                mDlnaProvRecVideo.browseRecVideoDms();
+//            }
+//            testType=ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI;   //test
+            mHikariTvChDataProvider.getChannelList(1, 1, "");
         }
     };
 
     private Runnable mRunableDtv = new Runnable() {
         @Override
         public void run() {
-            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
-            if (mDlnaProvRecVideo.start(dlnaDmsItem, getActivity())) {
-                mDlnaProvRecVideo.browseRecVideoDms();
-            }
-            testType=ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_DTV;   //test
+//            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
+//            if (mDlnaProvRecVideo.start(dlnaDmsItem, getActivity())) {
+//                mDlnaProvRecVideo.browseRecVideoDms();
+//            }
+//            testType=ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_DTV;   //test
+            mDTvChDataProvider.getChannelList(1, 1, "");
         }
     };
 
@@ -366,28 +403,41 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
 
     //test end
 
+    //仮データ関数 begin
     @Override
     public void onVideoBrows(DlnaRecVideoInfo curInfo) {
         int pos=mViewPager.getCurrentItem();
+        //STBにチャンネル機能を提供していないで、仮データを使うために、testデータを一時コメントしている。
         //final ChannelListFragment fragment= mFactory.createFragment(pos, this, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS);
         //test b
+        DlnaRecVideoInfo curInfo2=new DlnaRecVideoInfo();
         if(testType==ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS){
+            for(int i=0;i<curInfo.size();++i){
+                curInfo2.addItem(curInfo.get(i));
+                curInfo2.get(i).mTitle="BSチャンネル " + i;
+            }
             pos=2;
         } else if(testType==ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER){
+            for(int i=0;i<curInfo.size();++i){
+                curInfo2.addItem(curInfo.get(i));
+                curInfo2.get(i).mTitle="地上波チャンネル " + i;
+            }
             pos=1;
         } else if(testType==ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI){
             pos=0;
         } else if(testType==ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_DTV){
             pos=3;
         }
-
         //test e
         final ChannelListFragment fragment= mFactory.createFragment(pos, this, testType); //test
         for(int i=0;i<curInfo.size();++i){
-            fragment.addData(curInfo.get(i));
+//            fragment.addData(curInfo.get(i));   //本番
+            fragment.addData(curInfo2.get(i));      //test
         }
+
         updateUi(fragment);
     }
+    //仮データ関数 end
 
     private void updateUi(final ChannelListFragment fragment){
         runOnUiThread(new Runnable() {
@@ -414,7 +464,9 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
         int pos=mViewPager.getCurrentItem();
         final ChannelListFragment fragment= mFactory.createFragment(pos, this, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS);
         for(int i=0;i<curInfo.size();++i){
-            fragment.addData(curInfo.get(i));
+            DlnaBsChListItem item=curInfo.get(i);
+
+            fragment.addData(item);
         }
         updateUi(fragment);
     }
@@ -467,5 +519,48 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
         public CharSequence getPageTitle(int position) {
             return mTabNames[position];
         }
+    }
+
+    /**
+     * 縮小番組表多チャンネル情報を戻すコールバック
+     *
+     * @param channelsInfo 画面に渡すチャンネル番組情報
+     */
+    @Override
+    public void channelInfoCallback(ChannelsInfo channelsInfo){
+        ArrayList<Channel> channels= channelsInfo.getChannels();
+        if(0==channels.size()){
+            return;
+        }
+    }
+
+    /**
+     * チャンネルリストを戻す
+     *
+     * @param channels 　画面に渡すチャンネル情報
+     */
+    @Override
+    public void channelListCallback(ArrayList<Channel> channels){
+        int size=channels.size();
+        if(0==size){
+            return;
+        }
+        int pos=mViewPager.getCurrentItem();
+        ChannelListFragment fragment=null;
+        switch (pos) {
+            case CHANNEL_LIST_TAB_HIKARI:
+                fragment= mFactory.createFragment(pos, this, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI);
+                break;
+            case CHANNEL_LIST_TAB_DTV:
+                fragment= mFactory.createFragment(pos, this, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_DTV);
+                break;
+        }
+        if(null==fragment){
+            return;
+        }
+        for(int i=0;i<channels.size();++i){
+            fragment.addData(channels.get(i));
+        }
+        updateUi(fragment);
     }
 }
