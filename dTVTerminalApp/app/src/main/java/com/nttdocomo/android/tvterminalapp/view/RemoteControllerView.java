@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Scroller;
 import android.widget.TextView;
@@ -32,8 +33,8 @@ import java.util.List;
 public class RemoteControllerView extends RelativeLayout implements ViewPager.OnPageChangeListener {
 
     private int mDownY;
-    private int  mMoveY;
-    private int  mMovedY;
+    private int mMoveY;
+    private int mMovedY;
     private View mChild;
     private Scroller mScroller;
     private int mScrollHeight;
@@ -43,21 +44,13 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     private List<View> viewList = new ArrayList<View>();
     ViewPager mViewPager;
     private ViewPagerAdapter mRemokonAdapter;
-    private TextView mTextView;
     private FrameLayout mFrameLayout;
     private RemoteControllerSendKeyAction remoteControllerSendKeyAction;
     private GestureDetector mGestureDetector = null;
-    private ImageButton mPowerButton;
     private long mSysTime;//システムTime
     private final long CLICK_MAX_TIME = 100;
     private boolean mIsClick = false;//クリックなのかスワイプなのか
-    private int  mScreenWidth;
-    private int mScreenHeight;
-    private  RemoteControllerView mRemoteControllerView;
-    private int BaseWidth = 360;
-    private int BaseHeight = 640;
-    private RelativeLayout mRelativelayout;
-    private float mDensity;
+    private LinearLayout mBottomLinearLayout, mTopLinearLayout;
 
 
     public RemoteControllerView(Context context) {
@@ -111,21 +104,6 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     private void setIsClick(boolean is) {
         synchronized (this) {
             mIsClick = is;
-        }
-    }
-
-    //端末の解像度によってlayoutサイズを設定する
-    public void setViewSize(Context context){
-        mDensity = context.getResources().getDisplayMetrics().density;
-        mRelativelayout = findViewById(R.id.remote_controller_rl);
-        mScreenWidth = (int) (getMeasuredWidth() / mDensity);
-        mScreenHeight = (int) (getMeasuredHeight() / mDensity);
-        if(mScreenWidth >= BaseWidth && mScreenHeight >= BaseHeight) {
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(BaseWidth,BaseHeight);
-            mRelativelayout.setLayoutParams(params);
-        }else {
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(mScreenWidth,mScreenHeight);
-            mRelativelayout.setLayoutParams(params);
         }
     }
 
@@ -216,12 +194,12 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                     postInvalidate();
                     mMovedY = 0;
                     mIsTop = false;
-                    mPowerButton = (ImageButton) findViewById(R.id.remote_controller_iv_power);
-                    mPowerButton.setVisibility(INVISIBLE);
+                    mBottomLinearLayout = findViewById(R.id.bottom_view_ll);
+                    mBottomLinearLayout.setVisibility(VISIBLE);
+                    mTopLinearLayout = findViewById(R.id.top_view_ll);
+                    mTopLinearLayout.setVisibility(GONE);
                     mFrameLayout = findViewById(R.id.header_watch_by_tv);
                     mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner, null));
-                    mTextView = findViewById(R.id.watch_by_tv);
-                    mTextView.setVisibility(VISIBLE);
                 }
                 break;
         }
@@ -233,12 +211,12 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         DTVTLogger.start();
         mMovedY = mScrollHeight;
         mIsTop = true;
-        mPowerButton = findViewById(R.id.remote_controller_iv_power);
-        mPowerButton.setVisibility(VISIBLE);
+        mTopLinearLayout = (findViewById(R.id.top_view_ll));
+        mTopLinearLayout.setVisibility(VISIBLE);
+        mBottomLinearLayout = findViewById(R.id.bottom_view_ll);
+        mBottomLinearLayout.setVisibility(GONE);
         mFrameLayout = findViewById(R.id.header_watch_by_tv);
         mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_top_corner, null));
-        mTextView = findViewById(R.id.watch_by_tv);
-        mTextView.setVisibility(INVISIBLE);
         DTVTLogger.end();
     }
 
@@ -357,12 +335,12 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         postInvalidate();
         mMovedY = 0;
         mIsTop = false;
-        mPowerButton = (ImageButton) findViewById(R.id.remote_controller_iv_power);
-        mPowerButton.setVisibility(INVISIBLE);
+        mBottomLinearLayout = findViewById(R.id.bottom_view_ll);
+        mBottomLinearLayout.setVisibility(VISIBLE);
+        mTopLinearLayout = findViewById(R.id.top_view_ll);
+        mTopLinearLayout.setVisibility(GONE);
         mFrameLayout = findViewById(R.id.header_watch_by_tv);
         mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.color_blue, null));
-        mTextView = findViewById(R.id.watch_by_tv);
-        mTextView.setVisibility(VISIBLE);
         remoteControllerSendKeyAction.cancelTimer();
     }
 
