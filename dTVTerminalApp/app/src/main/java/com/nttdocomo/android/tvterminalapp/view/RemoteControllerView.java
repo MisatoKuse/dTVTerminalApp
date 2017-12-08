@@ -44,7 +44,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     ViewPager mViewPager;
     private ViewPagerAdapter mRemokonAdapter;
     private TextView mTextView;
-    private RelativeLayout mRelativeLayout;
+    private FrameLayout mFrameLayout;
     private RemoteControllerSendKeyAction remoteControllerSendKeyAction;
     private GestureDetector mGestureDetector = null;
     private ImageButton mPowerButton;
@@ -217,8 +217,8 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                     mIsTop = false;
                     mPowerButton = (ImageButton) findViewById(R.id.remote_controller_iv_power);
                     mPowerButton.setVisibility(INVISIBLE);
-                    mRelativeLayout = findViewById(R.id.header_watch_by_tv);
-                    mRelativeLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner, null));
+                    mFrameLayout = findViewById(R.id.header_watch_by_tv);
+                    mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner, null));
                     mTextView = findViewById(R.id.watch_by_tv);
                     mTextView.setVisibility(VISIBLE);
                 }
@@ -233,8 +233,8 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         mIsTop = true;
         mPowerButton = findViewById(R.id.remote_controller_iv_power);
         mPowerButton.setVisibility(VISIBLE);
-        mRelativeLayout = findViewById(R.id.header_watch_by_tv);
-        mRelativeLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_top_corner, null));
+        mFrameLayout = findViewById(R.id.header_watch_by_tv);
+        mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_top_corner, null));
         mTextView = findViewById(R.id.watch_by_tv);
         mTextView.setVisibility(INVISIBLE);
         DTVTLogger.end();
