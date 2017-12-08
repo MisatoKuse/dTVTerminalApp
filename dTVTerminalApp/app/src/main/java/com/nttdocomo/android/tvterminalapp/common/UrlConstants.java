@@ -118,6 +118,14 @@ public class UrlConstants {
                 PLALA_BASE_URL +  "genreList_sample_1445.json";
 
         /**
+         * ロール一覧リストファイル：こちらはAPIではなく、ファイルの直接読み込みとのこと。
+         * APIではないので、例外としてURL全体を指定する
+         * TODO: 当然後ほど変更する事となる。
+         */
+        public static final String ROLE_LIST_FILE =
+                PLALA_BASE_URL +  "roleList_sample.json";
+
+        /**
          * ジャンル毎コンテンツ数取得
          */
         public static final String GENRE_COUNT_GET_WEB_CLIENT =

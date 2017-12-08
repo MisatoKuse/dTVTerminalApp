@@ -12,6 +12,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ChannelListD
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.DailyRankListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendChannelListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendVideolListDao;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RoleListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvScheduleListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VodClipListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WeeklyRankListDao;
@@ -187,6 +188,27 @@ public class HomeDataManager {
         List<Map<String, String>> list = weeklyRankListDao.findById(columns);
         db.close();
         weeklyRankListDBHelper.close();
+        return list;
+    }
+
+    /**
+     * ロールリストデータを返却する
+     *
+     * @return list ロールリスト
+     */
+    public List<Map<String, String>> selectRoleListData() {
+        //ホーム画面に必要な列を列挙する
+        String[] columns = {JsonContents.META_RESPONSE_CONTENTS_ID, JsonContents.META_RESPONSE_CONTENTS_NAME};
+
+        //Daoクラス使用準備
+        DBHelper roleListDBHelper = new DBHelper(mContext);
+        SQLiteDatabase db = roleListDBHelper.getWritableDatabase();
+        RoleListDao roleListDao = new RoleListDao(db);
+
+        //ホーム画面用データ取得
+        List<Map<String, String>> list = roleListDao.findById(columns);
+        db.close();
+        roleListDBHelper.close();
         return list;
     }
 }

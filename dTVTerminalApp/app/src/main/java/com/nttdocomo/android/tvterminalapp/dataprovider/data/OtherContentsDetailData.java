@@ -7,6 +7,8 @@ package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.List;
+
 public class OtherContentsDetailData implements Parcelable {
 
     public static final int DTV_CONTENTS_SERVICE_ID = 15;
@@ -16,8 +18,12 @@ public class OtherContentsDetailData implements Parcelable {
     //変数名はぷららサーバインタフェース仕様書からの引用
     private String mTitle;
     private String mThumb;
+    private String mChannelDate;
+    private String mChannelName;
     private int mServiceId;
     private String mDetail;
+    private int mAge;
+    private List<String> staffList;
 
     public String getTitle() {
         return mTitle;
@@ -25,6 +31,22 @@ public class OtherContentsDetailData implements Parcelable {
 
     public void setTitle(String mTitle) {
         this.mTitle = mTitle;
+    }
+
+    public String getChannelDate() {
+        return mChannelDate;
+    }
+
+    public void setChannelDate(String mChannelDate) {
+        this.mChannelDate = mChannelDate;
+    }
+
+    public String getChannelName() {
+        return mChannelName;
+    }
+
+    public void setChannelName(String mChannelName) {
+        this.mChannelName = mChannelName;
     }
 
     public String getThumb() {
@@ -51,6 +73,23 @@ public class OtherContentsDetailData implements Parcelable {
         this.mDetail = detail;
     }
 
+    public int getAge() {
+        return mAge;
+    }
+
+    public void setAge(int Age) {
+        this.mAge = Age;
+    }
+
+    public List<String> getStaffList() {
+        return staffList;
+    }
+
+    public void setStaffList(List<String> staffList) {
+        this.staffList = staffList;
+    }
+
+
     @Override
     public int describeContents() {
         return 0;
@@ -60,8 +99,12 @@ public class OtherContentsDetailData implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.mTitle);
         dest.writeString(this.mThumb);
+        dest.writeString(this.mChannelDate);
+        dest.writeString(this.mChannelName);
         dest.writeInt(this.mServiceId);
         dest.writeString(this.mDetail);
+        dest.writeInt(this.mAge);
+        dest.writeStringList(this.staffList);
     }
 
     public OtherContentsDetailData() {
@@ -70,20 +113,23 @@ public class OtherContentsDetailData implements Parcelable {
     protected OtherContentsDetailData(Parcel in) {
         this.mTitle = in.readString();
         this.mThumb = in.readString();
+        this.mChannelDate = in.readString();
+        this.mChannelName = in.readString();
         this.mServiceId = in.readInt();
         this.mDetail = in.readString();
+        this.mAge = in.readInt();
+        this.staffList = in.createStringArrayList();
     }
 
-    public static final Creator<OtherContentsDetailData> CREATOR =
-            new Creator<OtherContentsDetailData>() {
-                @Override
-                public OtherContentsDetailData createFromParcel(Parcel source) {
-                    return new OtherContentsDetailData(source);
-                }
+    public static final Creator<OtherContentsDetailData> CREATOR = new Creator<OtherContentsDetailData>() {
+        @Override
+        public OtherContentsDetailData createFromParcel(Parcel source) {
+            return new OtherContentsDetailData(source);
+        }
 
-                @Override
-                public OtherContentsDetailData[] newArray(int size) {
-                    return new OtherContentsDetailData[size];
-                }
-            };
+        @Override
+        public OtherContentsDetailData[] newArray(int size) {
+            return new OtherContentsDetailData[size];
+        }
+    };
 }
