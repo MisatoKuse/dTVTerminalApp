@@ -113,15 +113,15 @@ public class RemoteControllerSendKeyAction {
      */
     // プレイヤー操作UI
     private static class RemoteControllerPlayerViewHolder {
-        Button remote_controller_bt_record_list = null;
-        Button remote_controller_bt_tvprogram = null;
-        Button remote_controller_bt_decide = null;
+        ImageView remote_controller_bt_record_list = null;
+        ImageView remote_controller_bt_tvprogram = null;
+        ImageView remote_controller_bt_decide = null;
         Button remote_controller_bt_up = null;
         Button remote_controller_bt_left = null;
         Button remote_controller_bt_down = null;
         Button remote_controller_bt_right = null;
-        Button remote_controller_bt_back = null;
-        Button remote_controller_bt_toHome = null;
+        ImageView remote_controller_bt_back = null;
+        ImageView remote_controller_bt_toHome = null;
         ImageView remote_controller_iv_playOrStop = null;
         ImageView remote_controller_iv_blue = null;
         ImageView remote_controller_iv_red = null;
@@ -132,25 +132,25 @@ public class RemoteControllerSendKeyAction {
     // チャンネル操作UI
     private static class RemoteControllerChannelViewHolder {
         ImageView remote_controller_iv_power = null;
-        Button remote_controller_bt_degital = null;
-        Button remote_controller_bt_bs = null;
-        Button remote_controller_bt_iptv = null;
-        Button remote_controller_bt_two = null;
-        Button remote_controller_bt_one = null;
-        Button remote_controller_bt_three = null;
-        Button remote_controller_bt_four = null;
-        Button remote_controller_bt_five = null;
-        Button remote_controller_bt_six = null;
-        Button remote_controller_bt_seven = null;
-        Button remote_controller_bt_eight = null;
-        Button remote_controller_bt_nine = null;
-        Button remote_controller_bt_ten = null;
-        Button remote_controller_bt_eleven = null;
-        Button remote_controller_bt_twelve = null;
+        ImageView remote_controller_bt_degital = null;
+        ImageView remote_controller_bt_bs = null;
+        ImageView remote_controller_bt_iptv = null;
+        ImageView remote_controller_bt_two = null;
+        ImageView remote_controller_bt_one = null;
+        ImageView remote_controller_bt_three = null;
+        ImageView remote_controller_bt_four = null;
+        ImageView remote_controller_bt_five = null;
+        ImageView remote_controller_bt_six = null;
+        ImageView remote_controller_bt_seven = null;
+        ImageView remote_controller_bt_eight = null;
+        ImageView remote_controller_bt_nine = null;
+        ImageView remote_controller_bt_ten = null;
+        ImageView remote_controller_bt_eleven = null;
+        ImageView remote_controller_bt_twelve = null;
         Button remote_controller_bt_channel_plus = null;
         Button remote_controller_bt_channel_minus = null;
-        Button remote_controller_bt_notice = null;
-        Button remote_controller_bt_ddata = null;
+        ImageView remote_controller_bt_notice = null;
+        ImageView remote_controller_bt_ddata = null;
     }
 
     /**
