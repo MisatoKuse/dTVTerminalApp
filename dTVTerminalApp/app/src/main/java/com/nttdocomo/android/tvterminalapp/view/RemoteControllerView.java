@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.support.v4.content.res.ResourcesCompat;
-import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -16,13 +15,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Scroller;
-import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.model.remotecontroller.RemoteControllerSendKeyAction;
 
@@ -65,11 +63,16 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         super(context, attrs, defStyleAttr);
 
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.RecycleListView);
-        mVisibilityHeight = ta.getDimension(R.styleable.RemoteControllerView_visibility_height,
-                getResources().getDimension(R.dimen.remote_controller_header_view_high));
-        ta.recycle();
         //TODO
-//        setViewSize(context);
+        if (context instanceof DtvContentsDetailActivity) {
+
+            mVisibilityHeight = ta.getDimension(R.styleable.RemoteControllerView_visibility_height,
+                    getResources().getDimension(R.dimen.remote_controller_header_view_high));
+        } else {
+            mVisibilityHeight = ta.getDimension(R.styleable.RemoteControllerView_visibility_height,
+                    0);
+        }
+        ta.recycle();
         init(context);
     }
 
@@ -108,13 +111,12 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     }
 
     /**
-     *
      * @param event タッチevent
      * @return
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        DTVTLogger.start("view_event:"+event.getAction());
+        DTVTLogger.start("view_event:" + event.getAction());
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 //システム時間を取得する
@@ -206,6 +208,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         DTVTLogger.end();
         return super.onTouchEvent(event);
     }
+
     //子ビュ―が一番上まで移動した場合表示するコンテンツを設定する
     private void setHeaderContent() {
         DTVTLogger.start();
@@ -253,8 +256,6 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-
     }
 
     @Override
@@ -304,7 +305,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             DTVTLogger.start();
 
-            if(e1 != null && e2 != null) {
+            if (e1 != null && e2 != null) {
                 float flingY = e2.getY() - e1.getY();
                 if (flingY > mScrollHeight / 4 && mIsTop) {
                     DTVTLogger.debug("Down");
@@ -330,7 +331,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     /**
      * リモコンUI画面を閉じる処理
      */
-    public void closeRemoteControllerUI(){
+    public void closeRemoteControllerUI() {
         mScroller.startScroll(0, getScrollY(), 0, -getScrollY());
         postInvalidate();
         mMovedY = 0;
@@ -350,5 +351,16 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     public boolean isTopRemoteControllerUI() {
         return mIsTop;
     }
+
+    public void startRemoteUI() {
+        //viewPagerを初期化する
+        if (viewList.size() == 0) {
+            setPager();
+        }
+        mScroller.startScroll(0, 0, 0, (int) (mScrollHeight + mVisibilityHeight));
+        invalidate();
+        setHeaderContent();
+    }
+
 }
 
