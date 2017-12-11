@@ -22,7 +22,7 @@ import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
+import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
@@ -32,7 +32,6 @@ import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingConstants;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingFragmentScrollListener;
-import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -304,7 +303,7 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
      * @param view
      */
     public void contentsDetailButton(View view) {
-        startActivity(TvPlayerActivity.class, null);
+        startActivity(DtvContentsDetailActivity.class, null);
     }
 
     /**

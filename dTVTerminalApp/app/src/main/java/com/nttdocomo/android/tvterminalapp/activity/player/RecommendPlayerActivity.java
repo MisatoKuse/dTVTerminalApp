@@ -9,8 +9,9 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 
-public class RecommendPlayerActivity extends TvPlayerActivity {
+public class RecommendPlayerActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,15 +23,5 @@ public class RecommendPlayerActivity extends TvPlayerActivity {
     protected void onResume() {
         super.onResume();
         Toast.makeText(this, "おすすめ画面", Toast.LENGTH_SHORT).show();
-    }
-
-    /**
-     * おすすめへの遷移
-     *
-     * @param view
-     */
-    @Override
-    public void recommendButton(View view) {
-        startActivity(RecommendPlayerActivity.class, null);
     }
 }

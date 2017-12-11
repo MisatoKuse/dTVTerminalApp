@@ -17,7 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
+import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.model.program.Channel;
 import com.nttdocomo.android.tvterminalapp.model.program.Schedule;
@@ -216,7 +216,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             public void onClick(View view) {
                 if((int)view.getTag() == 1){
                     Intent intent = new Intent();
-                    intent.setClass(mContext, TvPlayerActivity.class);
+                    intent.setClass(mContext, DtvContentsDetailActivity.class);
                     mContext.startActivityForResult(intent,0);
                 }
             }

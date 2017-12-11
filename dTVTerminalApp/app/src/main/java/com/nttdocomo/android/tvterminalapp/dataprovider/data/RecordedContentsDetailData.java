@@ -15,6 +15,15 @@ public class RecordedContentsDetailData implements Parcelable {
     private String mBitrate;
     private String mResUrl;
     private String mUpnpIcon;
+    private String mTitle;
+
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public void setTitle(String mTitle) {
+        this.mTitle = mTitle;
+    }
 
     public void setSize(String mSize) {
         this.mSize = mSize;
@@ -64,29 +73,6 @@ public class RecordedContentsDetailData implements Parcelable {
         this.mUpnpIcon = mUpnpIcon;
     }
 
-    public RecordedContentsDetailData() {
-    }
-
-    public RecordedContentsDetailData(Parcel in) {
-        mSize = in.readString();
-        mDuration = in.readString();
-        mResolution = in.readString();
-        mBitrate = in.readString();
-        mResUrl = in.readString();
-        mUpnpIcon = in.readString();
-    }
-
-    public static final Creator<RecordedContentsDetailData> CREATOR = new Creator<RecordedContentsDetailData>() {
-        @Override
-        public RecordedContentsDetailData createFromParcel(Parcel in) {
-            return new RecordedContentsDetailData(in);
-        }
-
-        @Override
-        public RecordedContentsDetailData[] newArray(int size) {
-            return new RecordedContentsDetailData[size];
-        }
-    };
 
     @Override
     public int describeContents() {
@@ -95,11 +81,37 @@ public class RecordedContentsDetailData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mSize);
-        dest.writeString(mDuration);
-        dest.writeString(mResolution);
-        dest.writeString(mBitrate);
-        dest.writeString(mResUrl);
-        dest.writeString(mUpnpIcon);
+        dest.writeString(this.mSize);
+        dest.writeString(this.mDuration);
+        dest.writeString(this.mResolution);
+        dest.writeString(this.mBitrate);
+        dest.writeString(this.mResUrl);
+        dest.writeString(this.mUpnpIcon);
+        dest.writeString(this.mTitle);
     }
+
+    public RecordedContentsDetailData() {
+    }
+
+    protected RecordedContentsDetailData(Parcel in) {
+        this.mSize = in.readString();
+        this.mDuration = in.readString();
+        this.mResolution = in.readString();
+        this.mBitrate = in.readString();
+        this.mResUrl = in.readString();
+        this.mUpnpIcon = in.readString();
+        this.mTitle = in.readString();
+    }
+
+    public static final Creator<RecordedContentsDetailData> CREATOR = new Creator<RecordedContentsDetailData>() {
+        @Override
+        public RecordedContentsDetailData createFromParcel(Parcel source) {
+            return new RecordedContentsDetailData(source);
+        }
+
+        @Override
+        public RecordedContentsDetailData[] newArray(int size) {
+            return new RecordedContentsDetailData[size];
+        }
+    };
 }

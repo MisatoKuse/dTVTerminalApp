@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
+import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.WatchListenVideoBaseAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.WatchListenVideoListDataProvider;
@@ -168,7 +168,7 @@ public class WatchingVideoListActivity extends BaseActivity implements View.OnCl
         if(mLoadMoreView == view){
             return;
         }
-        startActivity(TvPlayerActivity.class, null);
+        startActivity(DtvContentsDetailActivity.class, null);
     }
 
     private void resetPaging(){

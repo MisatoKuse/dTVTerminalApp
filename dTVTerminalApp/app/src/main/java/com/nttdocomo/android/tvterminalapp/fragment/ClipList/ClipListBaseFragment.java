@@ -16,7 +16,7 @@ import android.widget.ListView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
+import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ClipMainAdapter;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvClipContentInfo;
@@ -179,6 +179,6 @@ public class ClipListBaseFragment extends Fragment implements AbsListView.OnScro
         if(mLoadMoreView == view){
             return;
         }
-        ((BaseActivity)mActivity).startActivity(TvPlayerActivity.class, null);
+        ((BaseActivity)mActivity).startActivity(DtvContentsDetailActivity.class, null);
     }
 }

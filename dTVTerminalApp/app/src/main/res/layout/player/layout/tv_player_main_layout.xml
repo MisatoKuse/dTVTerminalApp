@@ -1,25 +1,27 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
   -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dtv_contents_detail_main_layout_ll"
+    style="@style/default_layout_style"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-	<RelativeLayout
-		android:id="@+id/tv_player_main_layout_player_rl"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent">
+    <RelativeLayout
+        android:id="@+id/tv_player_main_layout_player_rl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-		<com.digion.dixim.android.secureplayer.SecureVideoView
-			android:id="@+id/tv_player_main_layout_player_vv"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"/>
+        <com.digion.dixim.android.secureplayer.SecureVideoView
+            android:id="@+id/tv_player_main_layout_player_vv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-		<!--<include
-			android:id="@+id/tv_player_main_layout_ctrl_root_rl"
-			layout="@layout/tv_player_main_layout_video_ctrl"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"/>-->
-	</RelativeLayout>
-</RelativeLayout>
+        <!--<include
+            android:id="@+id/tv_player_main_layout_ctrl_root_rl"
+            layout="@layout/tv_player_main_layout_video_ctrl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>-->
+    </RelativeLayout>
+</LinearLayout>

@@ -22,20 +22,15 @@ import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplayEventListener;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuItem;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuItemParam;
-import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
-import com.nttdocomo.android.tvterminalapp.utils.ClassNameUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 /**
@@ -93,19 +88,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * 関数機能：
-     * Activityを起動する
-     *
-     * @param serviceId
-     * @param bundle
-     */
-    public void startActivityByServiceId(int serviceId, Bundle bundle) {
-        ClassNameUtils classNameUtils = new ClassNameUtils();
-        Class<?> className = classNameUtils.getContentsService(serviceId);
-        startActivity(className, bundle);
-    }
-
-    /**
      * タイトルビュー
      *
      * @param resId
@@ -147,7 +129,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         if(this instanceof STBSelectActivity
                 || this instanceof LaunchActivity
                 //|| this instanceof RecordedListActivity
-                || this instanceof TvPlayerActivity){
+                || this instanceof DtvContentsDetailActivity){
             return;
         }
         if(null!=mStbStatusIcon){
@@ -297,7 +279,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         if(this instanceof STBSelectActivity
                 || this instanceof LaunchActivity
                 //|| this instanceof RecordedListActivity
-                || this instanceof TvPlayerActivity){
+                || this instanceof DtvContentsDetailActivity){
             DTVTLogger.end();
             return;
         }

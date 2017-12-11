@@ -17,7 +17,7 @@ import android.widget.ListView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
+import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -127,7 +127,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         Bundle args = new Bundle();
         args.putParcelable( RecordedListActivity.RECORD_LIST_KEY,mContentsList.get(i));
         if (null != mActivity) {
-            ((BaseActivity) mActivity).startActivity(TvPlayerActivity.class, args);
+            ((BaseActivity) mActivity).startActivity(DtvContentsDetailActivity.class, args);
         }
     }
 }
