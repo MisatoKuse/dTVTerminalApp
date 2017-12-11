@@ -453,9 +453,8 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
                 break;
             case R.id.header_stb_status_icon:
                 //テレビアイコンをタップされたらリモコンを起動する
-                if(getStbStatus()) {
-                    createRemoteControllerView();
-                    remoteControllerView.startRemoteUI();
+                if (getStbStatus()) {
+                    getRemoteControllerView().startRemoteUI();
                 }
                 break;
             case R.id.tv_program_list_main_layout_changemode_rl:

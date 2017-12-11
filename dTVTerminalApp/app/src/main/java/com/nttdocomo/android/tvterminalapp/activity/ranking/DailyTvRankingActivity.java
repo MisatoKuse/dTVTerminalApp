@@ -80,9 +80,8 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
         findViewById(R.id.header_stb_status_icon).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(getStbStatus()) {
-                    createRemoteControllerView();
-                    remoteControllerView.startRemoteUI();
+                if (getStbStatus()) {
+                    getRemoteControllerView().startRemoteUI();
                 }
             }
         });
