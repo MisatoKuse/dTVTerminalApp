@@ -102,6 +102,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
             @Override
             public void onClick(View view) {
                 if (getStbStatus()) {
+                    createRemoteControllerView();
                     getRemoteControllerView().startRemoteUI();
                 }
             }

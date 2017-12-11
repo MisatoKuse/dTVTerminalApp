@@ -87,6 +87,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onClick(View view) {
                 if (getStbStatus()) {
+                    createRemoteControllerView();
                     getRemoteControllerView().startRemoteUI();
                 }
             }

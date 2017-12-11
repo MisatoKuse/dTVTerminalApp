@@ -154,6 +154,7 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
             @Override
             public void onClick(View view) {
                 if (getStbStatus()) {
+                    createRemoteControllerView();
                     getRemoteControllerView().startRemoteUI();
                 }
             }

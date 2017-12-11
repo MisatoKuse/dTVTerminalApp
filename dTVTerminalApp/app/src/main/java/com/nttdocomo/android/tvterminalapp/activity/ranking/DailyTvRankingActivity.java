@@ -81,6 +81,7 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
             @Override
             public void onClick(View view) {
                 if (getStbStatus()) {
+                    createRemoteControllerView();
                     getRemoteControllerView().startRemoteUI();
                 }
             }
