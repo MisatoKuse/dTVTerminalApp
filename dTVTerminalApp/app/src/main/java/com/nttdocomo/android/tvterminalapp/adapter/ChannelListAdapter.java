@@ -79,6 +79,18 @@ public class ChannelListAdapter extends BaseAdapter {
             view = View.inflate(mContext, mLayoutId, null);
             holder.mThumbnail = view.findViewById(R.id.channel_list_item_thumb_iv);
             holder.mChannelName = view.findViewById(R.id.channel_list_item_title_tv);
+            switch (mChListDataType) {
+                case CH_LIST_DATA_TYPE_BS:
+                case CH_LIST_DATA_TYPE_TER:
+                    holder.mThumbnail.setVisibility(View.VISIBLE);
+                    break;
+                case CH_LIST_DATA_TYPE_HIKARI:
+                case CH_LIST_DATA_TYPE_DTV:
+                    holder.mThumbnail.setVisibility(View.GONE);
+                    break;
+                case CH_LIST_DATA_TYPE_INVALID:
+                    break;
+            }
             convertView = view;
             convertView.setTag(holder);
         } else {

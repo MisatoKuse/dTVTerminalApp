@@ -18,6 +18,10 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ChannelListAdapter;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListItem;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoItem;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListItem;
+import com.nttdocomo.android.tvterminalapp.model.program.Channel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -130,6 +134,81 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         if(null!=mData){
             mData.clear();
         }
+    }
+
+    public int getDataCount(){
+        if(null==mData){
+            return 0;
+        }
+        return mData.size();
+    }
+
+    public boolean hasData(Object item){
+        if(null==item || null==mData || 0==mData.size()){
+            return false;
+        }
+        boolean ret=false;
+        switch (mChListDataType){
+            case CH_LIST_DATA_TYPE_BS:
+                //本番ソース begin
+//                DlnaBsChListItem bs2=(DlnaBsChListItem)item;
+//                for(Object obj: mData){
+//                    DlnaBsChListItem bs1= (DlnaBsChListItem)obj;
+//                    ret= bs1.equalTo(bs2);
+//                    if(ret){
+//                        break;
+//                    }
+//                }
+                //本番ソース end
+                //テストソース begin
+                DlnaRecVideoItem bs2=(DlnaRecVideoItem)item;
+                for(Object obj: mData){
+                    DlnaRecVideoItem bs1= (DlnaRecVideoItem)obj;
+                    ret= bs1.equalTo(bs2);
+                    if(ret){
+                        break;
+                    }
+                }
+                //テストソース end
+                break;
+            case CH_LIST_DATA_TYPE_TER:
+                //本番ソース begin
+//                DlnaTerChListItem ter2=(DlnaTerChListItem)item;
+//                for(Object obj: mData){
+//                    DlnaTerChListItem ter1= (DlnaTerChListItem)obj;
+//                    ret= ter1.equalTo(ter2);
+//                    if(ret){
+//                        break;
+//                    }
+//                }
+                //本番ソース end
+                //テストソース begin
+                DlnaRecVideoItem ter2=(DlnaRecVideoItem)item;
+                for(Object obj: mData){
+                    DlnaRecVideoItem bs1= (DlnaRecVideoItem)obj;
+                    ret= bs1.equalTo(ter2);
+                    if(ret){
+                        break;
+                    }
+                }
+                //テストソース end
+                break;
+            case CH_LIST_DATA_TYPE_HIKARI:
+            case CH_LIST_DATA_TYPE_DTV:
+                Channel ch2= (Channel)item;
+                for(Object obj: mData){
+                    Channel ch1= (Channel)obj;
+                    ret= ch1.equalTo(ch2);
+                    if(ret){
+                        break;
+                    }
+                }
+                break;
+            case CH_LIST_DATA_TYPE_INVALID:
+                return true;    //データを追加しない
+        }
+
+        return ret;
     }
 
     @Override

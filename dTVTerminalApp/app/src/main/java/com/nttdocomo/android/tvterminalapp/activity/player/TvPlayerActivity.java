@@ -496,30 +496,13 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
         String title= datas.getTitle();
 
         //本番ソース begin
-//        Uri uri = Uri.parse(url);
-//        mCurrentMediaInfo = new MediaVideoInfo(
-//                uri,                //uri
-//                "video/mp4",      //RESOURCE_MIMETYPE
-//                size,               //SIZE
-//                duration,           //DURATION
-//                bitRate,            //BITRATE
-//                true,               //IS_SUPPORTED_BYTE_SEEK
-//                true,               //IS_SUPPORTED_TIME_SEEK
-//                true,               //IS_AVAILABLE_CONNECTION_STALLING
-//                true,               //IS_LIVE_MODE
-//                true,               //IS_REMOTE
-//                title,           //TITLE
-//                "contentFormat"   //CONTENT_FORMAT
-//        );
-        //本番ソース end
-        //test being
-        Uri uri = Uri.parse("http://192.168.11.5:58890/web/video/pvr?id=15124802860000000001&quality=mobile");
+        Uri uri = Uri.parse(url);
         mCurrentMediaInfo = new MediaVideoInfo(
                 uri,                //uri
-                "application/x-dtcp1",      //RESOURCE_MIMETYPE
+                "video/mp4",      //RESOURCE_MIMETYPE
                 size,               //SIZE
-                1312000,           //DURATION
-                0,            //BITRATE
+                duration,           //DURATION
+                bitRate,            //BITRATE
                 true,               //IS_SUPPORTED_BYTE_SEEK
                 true,               //IS_SUPPORTED_TIME_SEEK
                 true,               //IS_AVAILABLE_CONNECTION_STALLING
@@ -528,6 +511,23 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                 title,           //TITLE
                 "contentFormat"   //CONTENT_FORMAT
         );
+        //本番ソース end
+        //test being
+//        Uri uri = Uri.parse("http://192.168.11.5:58890/web/video/pvr?id=15124802860000000001&quality=mobile");
+//        mCurrentMediaInfo = new MediaVideoInfo(
+//                uri,                //uri
+//                "application/x-dtcp1",      //RESOURCE_MIMETYPE
+//                size,               //SIZE
+//                1312000,           //DURATION
+//                0,            //BITRATE
+//                true,               //IS_SUPPORTED_BYTE_SEEK
+//                true,               //IS_SUPPORTED_TIME_SEEK
+//                true,               //IS_AVAILABLE_CONNECTION_STALLING
+//                true,               //IS_LIVE_MODE
+//                true,               //IS_REMOTE
+//                title,           //TITLE
+//                "contentFormat"   //CONTENT_FORMAT
+//        );
         //test end
         DTVTLogger.end();
         return true;

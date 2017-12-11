@@ -475,6 +475,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             return;
         }
         if(dlnaDmsItem.mUdn.equals(newItem.mUdn)){
+            SharedPreferencesUtils.setSharedPreferencesStbInfo(this, newItem);
             setStbStatus(true);
         }
     }

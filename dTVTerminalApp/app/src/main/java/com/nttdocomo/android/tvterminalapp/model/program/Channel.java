@@ -65,4 +65,12 @@ public class Channel {
     public void setSchedules(ArrayList<Schedule> schedules) {
         this.schedules = schedules;
     }
+
+    public boolean equalTo(Channel ch2){
+        if(null==ch2 || null==this || null==this.title || null==ch2.title){
+            return false;
+        }
+        boolean ret = (this.chNo==ch2.chNo && this.title.equals(ch2.title));
+        return ret;
+    }
 }
