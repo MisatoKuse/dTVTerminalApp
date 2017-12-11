@@ -96,6 +96,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
             @Override
             public void onClick(View view) {
                 if (getStbStatus()) {
+                    createRemoteControllerView();
                     getRemoteControllerView().startRemoteUI();
                 }
             }

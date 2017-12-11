@@ -63,6 +63,7 @@ public class WatchingVideoListActivity extends BaseActivity implements View.OnCl
             @Override
             public void onClick(View view) {
                 if (getStbStatus()) {
+                    createRemoteControllerView();
                     getRemoteControllerView().startRemoteUI();
                 }
             }

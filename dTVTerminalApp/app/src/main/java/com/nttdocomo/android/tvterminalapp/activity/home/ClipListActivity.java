@@ -319,6 +319,7 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
             @Override
             public void onClick(View view) {
                 if (getStbStatus()) {
+                    createRemoteControllerView();
                     getRemoteControllerView().startRemoteUI();
                 }
             }
