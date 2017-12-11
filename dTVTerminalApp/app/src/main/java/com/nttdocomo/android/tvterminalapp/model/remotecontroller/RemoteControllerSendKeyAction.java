@@ -386,4 +386,12 @@ public class RemoteControllerSendKeyAction {
             mRepeatStateManagement = null;
         }
     }
+
+    /**
+     * RelayClientを取得する
+     * @return RemoteControlRelayClient
+     */
+    public RemoteControlRelayClient getRelayClient() {
+        return mRemoteControlRelayClient;
+    }
 }

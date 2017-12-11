@@ -89,18 +89,4 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
     </ScrollView>
-
-    <!--テレビで視聴するボタン用レイアウト-->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="bottom">
-
-        <Button
-            android:id="@+id/change_remote_controller_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="remoteControlButton"
-            android:text="@string/remote_control_start" />
-    </RelativeLayout>
 </LinearLayout>

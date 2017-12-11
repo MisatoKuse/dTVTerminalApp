@@ -27,10 +27,12 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailFragmentFactory;
+import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.view.ContentsDetailViewPager;
+import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 
-public class DtvContentsDetailActivity extends BaseActivity {
+public class DtvContentsDetailActivity extends BaseActivity implements RemoteControllerView.OnStartRemoteControllerUIListener {
     private String[] mTabNames;
     private DtvContentsDetailFragmentFactory mContentsDetailFragmentFactory = null;
     private HorizontalScrollView mTabScrollView;
@@ -59,6 +61,9 @@ public class DtvContentsDetailActivity extends BaseActivity {
         setNoTitle();
         initData();
         initView();
+        // リモコンUIのリスナーを設定
+        createRemoteControllerView();
+        setStartRemoteControllerUIListener(this);
     }
 
     /**
@@ -234,5 +239,28 @@ public class DtvContentsDetailActivity extends BaseActivity {
 
     private static class ViewHolder {
         ImageView wl_thumbnail;
+    }
+
+    @Override
+    public void onStartRemoteControl() {
+        DTVTLogger.start();
+        // サービスIDにより起動するアプリを変更する
+        switch (mDetailData.getServiceId()) {
+            case DTV_CONTENTS_SERVICE_ID: // dTV
+                requestStartApplication(
+                        RemoteControlRelayClient.STB_APPLICATION_TYPES.DTV, mDetailData.getContentId());
+                break;
+            case D_ANIMATION_CONTENTS_SERVICE_ID: // dアニメ
+                requestStartApplication(
+                        RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE, mDetailData.getContentId());
+                break;
+            case DTV_CHANNEL_CONTENTS_SERVICE_ID: // dチャンネル
+                requestStartApplication(
+                        RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL, mDetailData.getContentId());
+                break;
+            default:
+                break;
+        }
+        DTVTLogger.end();
     }
 }
