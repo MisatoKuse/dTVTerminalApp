@@ -22,7 +22,6 @@ import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplayEventListener;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuItem;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuItemParam;
-import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
@@ -32,11 +31,9 @@ import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.utils.ClassNameUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
@@ -140,22 +137,23 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         headerLayout.setLayoutParams(lp);
         titleTextView = findViewById(R.id.header_layout_text);
         DTVTLogger.end();
-        mStbStatusIcon= findViewById(R.id.header_stb_status_icon);
+        mStbStatusIcon = findViewById(R.id.header_stb_status_icon);
         mMenuImageViewForBase = findViewById(R.id.header_layout_menu);
     }
 
     /**
      * 機能：STB接続アイコンを有効
+     *
      * @param isOn true: 表示  false: 非表示
      */
-    protected void enableStbStatusIcon(boolean isOn){
-        if(this instanceof STBSelectActivity
+    protected void enableStbStatusIcon(boolean isOn) {
+        if (this instanceof STBSelectActivity
                 || this instanceof LaunchActivity
                 //|| this instanceof RecordedListActivity
-                || this instanceof TvPlayerActivity){
+                || this instanceof TvPlayerActivity) {
             return;
         }
-        if(null!=mStbStatusIcon){
+        if (null != mStbStatusIcon) {
             if (isOn) {
                 mStbStatusIcon.setVisibility(View.VISIBLE);
             } else {
@@ -166,10 +164,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     /**
      * 機能：Global menuアイコンを有効
+     *
      * @param isOn true: 表示  false: 非表示
      */
-    protected void enableGlobalMenuIcon(boolean isOn){
-        if(null!=mMenuImageViewForBase){
+    protected void enableGlobalMenuIcon(boolean isOn) {
+        if (null != mMenuImageViewForBase) {
             if (isOn) {
                 mMenuImageViewForBase.setVisibility(View.VISIBLE);
                 mMenuImageViewForBase.setOnClickListener(this);
@@ -180,14 +179,16 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     //stb status icon状態
-    private boolean mIsStbStatusOn=false;
+    private boolean mIsStbStatusOn = false;
+
     /**
      * 機能：STBステータスを変更
+     *
      * @param isOn true: stb接続中   false: stb未接続
      */
-    protected void setStbStatus(final boolean isOn){
+    protected void setStbStatus(final boolean isOn) {
         //mStbStatusIcon.
-        if(null!=mStbStatusIcon ){
+        if (null != mStbStatusIcon) {
             mStbStatusIcon.post(new Runnable() {
                 @Override
                 public void run() {
@@ -201,7 +202,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                                 mIsStbStatusOn = false;
                             }
                         }
-                    }catch (Exception e) {
+                    } catch (Exception e) {
                         DTVTLogger.debug("BaseActivity::setStbStatus, stb status png file not found");
                         return;
                     }
@@ -212,9 +213,10 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     /**
      * 機能：STB接続ステータスを戻す
+     *
      * @return true: stb接続中   false: stb未接続
      */
-    protected boolean getStbStatus(){
+    protected boolean getStbStatus() {
         return mIsStbStatusOn;
     }
 
@@ -248,7 +250,8 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     /**
      * 機能：onCreate
-     *       Sub classにて、super.onCreate(savedInstanceState)をコールする必要がある
+     * Sub classにて、super.onCreate(savedInstanceState)をコールする必要がある
+     *
      * @param savedInstanceState savedInstanceState
      */
     @Override
@@ -262,7 +265,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     /**
      * 機能：onResume
-     *       Sub classにて、super.onResume()をコールする必要がある
+     * Sub classにて、super.onResume()をコールする必要がある
      */
     @Override
     protected void onResume() {
@@ -272,10 +275,10 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         registerDevListDlna();
 
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-        if(null==dlnaDmsItem){
+        if (null == dlnaDmsItem) {
             return;
         }
-        if(null!=mDlnaProvDevListForBase){
+        if (null != mDlnaProvDevListForBase) {
             boolean isAvai = mDlnaProvDevListForBase.isDmsAvailable(dlnaDmsItem.mUdn);
             setStbStatus(isAvai);
         }
@@ -284,7 +287,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     /**
      * 機能：onStop
-     *       Sub classにて、super.onStop()をコールする必要がある
+     * Sub classにて、super.onStop()をコールする必要がある
      */
     @Override
     protected void onStop() {
@@ -299,14 +302,14 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      */
     private void registerDevListDlna() {
         DTVTLogger.start();
-        if(this instanceof STBSelectActivity
+        if (this instanceof STBSelectActivity
                 || this instanceof LaunchActivity
                 //|| this instanceof RecordedListActivity
-                || this instanceof TvPlayerActivity){
+                || this instanceof TvPlayerActivity) {
             DTVTLogger.end();
             return;
         }
-        mDlnaProvDevListForBase= new DlnaProvDevList();
+        mDlnaProvDevListForBase = new DlnaProvDevList();
         mDlnaProvDevListForBase.start(this);
         DTVTLogger.end();
     }
@@ -316,18 +319,18 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      */
     private void unregisterDevListDlna() {
         DTVTLogger.start();
-        if(this instanceof STBSelectActivity){
+        if (this instanceof STBSelectActivity) {
             DTVTLogger.end();
             return;
         }
-        if(null!=mDlnaProvDevListForBase){
+        if (null != mDlnaProvDevListForBase) {
             mDlnaProvDevListForBase.stopListen();
         }
         DTVTLogger.end();
     }
 
     private static final int MIN_CLICK_DELAY_TIME = 1000;
-    private  long lastClickTime;
+    private long lastClickTime;
 
     /**
      * 機能
@@ -485,41 +488,44 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     /**
      * 機能：DMSを加入する場合コールされる
+     *
      * @param curInfo カレントDlnaDMSInfo
      * @param newItem 新しいDms情報
      */
     @Override
     public void onDeviceJoin(DlnaDMSInfo curInfo, DlnaDmsItem newItem) {
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-        if(null==dlnaDmsItem){
+        if (null == dlnaDmsItem) {
             setStbStatus(false);
             return;
         }
-        if(dlnaDmsItem.mUdn.equals(newItem.mUdn)){
+        if (dlnaDmsItem.mUdn.equals(newItem.mUdn)) {
             setStbStatus(true);
         }
     }
 
     /**
      * 機能：DMSをなくなる場合コールされる
-     * @param curInfo　　　カレントDlnaDMSInfo
-     * @param leaveDmsUdn　消えるDmsのudn名
+     *
+     * @param curInfo     　　　カレントDlnaDMSInfo
+     * @param leaveDmsUdn 　消えるDmsのudn名
      */
     @Override
     public void onDeviceLeave(DlnaDMSInfo curInfo, String leaveDmsUdn) {
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-        if(null==dlnaDmsItem){
+        if (null == dlnaDmsItem) {
             setStbStatus(false);
             return;
         }
-        if(dlnaDmsItem.mUdn.equals(leaveDmsUdn)){
+        if (dlnaDmsItem.mUdn.equals(leaveDmsUdn)) {
             setStbStatus(false);
         }
     }
 
     /**
      * 機能：DLNAはerrorを発生する場合コールされる
-     * @param msg     エラー情報
+     *
+     * @param msg エラー情報
      */
     @Override
     public void onError(String msg) {
@@ -528,11 +534,12 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     /**
      * 機能：onClick event for menu
+     *
      * @param view
      */
     @Override
     public void onClick(View view) {
-        if (mMenuImageViewForBase==view) {
+        if (mMenuImageViewForBase == view) {
             //ダブルクリックを防ぐ
             if (isFastClick()) {
                 onSampleGlobalMenuButton_PairLoginOk();
@@ -546,16 +553,43 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     public void createRemoteControllerView() {
         // TODO リモコン表示Viewの作成を行う
         RelativeLayout layout = findViewById(R.id.remote_controller_rl);
-        remoteControllerView = layout.findViewById(R.id.msv);
+        remoteControllerView = layout.findViewById(R.id.remote_control_view);
         remoteControllerView.init(this);
         layout.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void onPause() {
-        if(remoteControllerView != null && remoteControllerView.isTopRemoteControllerUI()) {
+        if (remoteControllerView != null && remoteControllerView.isTopRemoteControllerUI()) {
+            // onPause時にリモコンUIを閉じる
             remoteControllerView.closeRemoteControllerUI();
         }
         super.onPause();
+    }
+
+    /**
+     * リモコンUIにリスナーを設定する
+     */
+    protected void setStartRemoteControllerUIListener(RemoteControllerView.OnStartRemoteControllerUIListener listener) {
+        remoteControllerView.setOnStartRemoteControllerUI(listener);
+    }
+
+    /**
+     * 中継アプリのdアプリ起動リクエスト処理を実行
+     *
+     * @param type       アプリのタイプ
+     * @param contentsId コンテンツID
+     */
+    protected void requestStartApplication(RemoteControlRelayClient.STB_APPLICATION_TYPES type, String contentsId) {
+        remoteControllerView.sendStartApplicationRequest(type, contentsId);
+    }
+
+    /**
+     * リモコンUI画面を取得
+     *
+     * @return RemoteControllerView
+     */
+    protected RemoteControllerView getRemoteControllerView() {
+        return remoteControllerView;
     }
 }

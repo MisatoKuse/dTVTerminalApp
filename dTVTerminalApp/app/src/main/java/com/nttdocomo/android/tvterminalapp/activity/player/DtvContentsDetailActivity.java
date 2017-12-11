@@ -30,9 +30,11 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailFragmentFactory;
+import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.model.program.Channel;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.view.ContentsDetailViewPager;
+import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -41,8 +43,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-public class DtvContentsDetailActivity extends BaseActivity implements DtvContentsDetailDataProvider.ApiDataProviderCallback {
-
+public class DtvContentsDetailActivity extends BaseActivity implements DtvContentsDetailDataProvider.ApiDataProviderCallback, RemoteControllerView.OnStartRemoteControllerUIListener {
     //tabビュー
     private LinearLayout tabLinearLayout;
     private ContentsDetailViewPager mViewPager;
@@ -74,6 +75,9 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         initView();
         initData();
         initTab();
+        // リモコンUIのリスナーを設定
+        createRemoteControllerView();
+        setStartRemoteControllerUIListener(this);
     }
 
     private void getData() {
@@ -359,5 +363,28 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         Fragment currentFragment = fragmentFactory.createFragment(0);
         DtvContentsDetailFragment detailFragment = (DtvContentsDetailFragment) currentFragment;
         return detailFragment;
+    }
+
+    @Override
+    public void onStartRemoteControl() {
+        DTVTLogger.start();
+        // サービスIDにより起動するアプリを変更する
+        switch (mDetailData.getServiceId()) {
+            case DTV_CONTENTS_SERVICE_ID: // dTV
+                requestStartApplication(
+                        RemoteControlRelayClient.STB_APPLICATION_TYPES.DTV, mDetailData.getContentId());
+                break;
+            case D_ANIMATION_CONTENTS_SERVICE_ID: // dアニメ
+                requestStartApplication(
+                        RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE, mDetailData.getContentId());
+                break;
+            case DTV_CHANNEL_CONTENTS_SERVICE_ID: // dチャンネル
+                requestStartApplication(
+                        RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL, mDetailData.getContentId());
+                break;
+            default:
+                break;
+        }
+        DTVTLogger.end();
     }
 }
