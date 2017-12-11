@@ -371,7 +371,6 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
     }
 
     private Handler mHandler = new Handler();
-    //private static final int sLoadPageDelayTime = 10;
 
     @Override
     public void onScrollStateChanged(final ChannelListFragment fragment, AbsListView absListView, int scrollState) {
@@ -399,11 +398,6 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
                             case CH_LIST_DATA_TYPE_INVALID:
                                 break;
                         }
-//                        int offset = 0;
-//                        if(null!=mData ){
-//                            offset = mData.size();
-//                        }
-//                        mWatchListenVideoListDataProvider.getWatchListenVideoData(offset);
                     }
                 });
             }
