@@ -17,7 +17,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
@@ -138,11 +137,11 @@ public class RecordReservationListActivity extends BaseActivity
     /**
      * 再読み込み時のダイアログ表示処理
      *
-     * @param b
+     * @param bool
      */
-    private void displayMoreData(boolean b) {
+    private void displayMoreData(boolean bool) {
         if (null != mListView && null != mLoadMoreView) {
-            if (b) {
+            if (bool) {
                 mListView.addFooterView(mLoadMoreView);
             } else {
                 mListView.removeFooterView(mLoadMoreView);
@@ -161,11 +160,11 @@ public class RecordReservationListActivity extends BaseActivity
     /**
      * 再読み込み実施フラグ設定
      *
-     * @param b
+     * @param bool
      */
-    private void setCommunicatingStatus(boolean b) {
+    private void setCommunicatingStatus(boolean bool) {
         synchronized (this) {
-            mIsCommunicating = b;
+            mIsCommunicating = bool;
         }
     }
 
