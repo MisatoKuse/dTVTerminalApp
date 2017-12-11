@@ -77,13 +77,15 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        //スクロールできる最大の距離
         mScrollHeight = (int) (mChild.getMeasuredHeight() - mVisibilityHeight);
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        mChild.layout(0, mScrollHeight, mChild.getMeasuredWidth(), mChild.getMeasuredHeight() + mScrollHeight);
+        //リモコンの表示領域を設定する
+        mChild.layout((getMeasuredWidth()-mChild.getMeasuredWidth()) / 2, mScrollHeight, getMeasuredWidth(), mChild.getMeasuredHeight() + mScrollHeight);
     }
 
     /**
@@ -341,7 +343,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         mTopLinearLayout = findViewById(R.id.top_view_ll);
         mTopLinearLayout.setVisibility(GONE);
         mFrameLayout = findViewById(R.id.header_watch_by_tv);
-        mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.color_blue, null));
+        mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner, null));
         remoteControllerSendKeyAction.cancelTimer();
     }
 

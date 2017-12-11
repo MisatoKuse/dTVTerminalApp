@@ -58,6 +58,16 @@ public class WatchingVideoListActivity extends BaseActivity implements View.OnCl
     }
 
     private void initView() {
+        //テレビアイコンをタップされたらリモコンを起動する
+        findViewById(R.id.header_stb_status_icon).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(getStbStatus()) {
+                    createRemoteControllerView();
+                    remoteControllerView.startRemoteUI();
+                }
+            }
+        });
 
         mListView = findViewById(R.id.video_watching_list);
         mListView.setOnItemClickListener(this);

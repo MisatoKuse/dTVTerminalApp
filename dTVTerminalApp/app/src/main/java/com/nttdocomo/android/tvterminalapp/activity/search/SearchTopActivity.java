@@ -98,6 +98,15 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
     /*検索トップ画面初期化*/
     private void initView() {
         mSearchView = findViewById(R.id.keyword_search_form);
+        findViewById(R.id.header_stb_status_icon).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(getStbStatus()) {
+                    createRemoteControllerView();
+                    remoteControllerView.startRemoteUI();
+                }
+            }
+        });
     }
 
     private static String sKeywordText = "";
