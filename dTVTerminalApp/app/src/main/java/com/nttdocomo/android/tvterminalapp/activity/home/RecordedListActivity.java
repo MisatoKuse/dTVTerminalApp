@@ -224,6 +224,17 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 //        if (null != mViewPager) {
 //            return;
 //        }
+        //テレビアイコンをタップされたらリモコンを起動する
+        findViewById(R.id.header_stb_status_icon).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(getStbStatus()) {
+                    createRemoteControllerView();
+                    remoteControllerView.startRemoteUI();
+                }
+            }
+        });
+
         mViewPager = findViewById(R.id.record_list_main_layout_viewpagger);
         mTabScrollView = findViewById(R.id.record_list_main_layout_scroll);
         mTabNames = getResources().getStringArray(R.array.record_list_tab_names);

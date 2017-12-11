@@ -162,7 +162,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         TextView agreementTextView = findViewById(R.id.home_main_layout_kytv);
         LinearLayout agreementRl = findViewById(R.id.home_main_layout_kyrl);
         ImageView prImageView = findViewById(R.id.home_main_layout_pr);
-
+        //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

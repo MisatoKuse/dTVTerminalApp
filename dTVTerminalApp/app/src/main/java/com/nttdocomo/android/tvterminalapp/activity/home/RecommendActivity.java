@@ -82,6 +82,16 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
      * データの初期化
      */
     private void initData() {
+        //テレビアイコンをタップされたらリモコンを起動する
+        findViewById(R.id.header_stb_status_icon).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(getStbStatus()) {
+                    createRemoteControllerView();
+                    remoteControllerView.startRemoteUI();
+                }
+            }
+        });
         mTabNames = getResources().getStringArray(R.array.recommend_list_tab_names);
         mRecommendDataProvider = new RecommendDataProvider(this);
     }

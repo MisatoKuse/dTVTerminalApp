@@ -144,6 +144,16 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
      * Viewの初期化
      */
     private void initView() {
+        //テレビアイコンをタップされたらリモコンを起動する
+        findViewById(R.id.header_stb_status_icon).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(getStbStatus()) {
+                    createRemoteControllerView();
+                    remoteControllerView.startRemoteUI();
+                }
+            }
+        });
         mTabScrollView = findViewById(R.id.weekly_ranking_tab_strip_scroll);
         mViewPager = findViewById(R.id.vp_weekly_ranking_result);
         RankingPagerAdapter rankingPagerAdapter

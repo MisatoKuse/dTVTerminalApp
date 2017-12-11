@@ -150,6 +150,16 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
      * Viewの初期化
      */
     private void initView() {
+        //テレビアイコンをタップされたらリモコンを起動する
+        findViewById(R.id.header_stb_status_icon).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(getStbStatus()) {
+                    createRemoteControllerView();
+                    remoteControllerView.startRemoteUI();
+                }
+            }
+        });
         mTabScrollView = findViewById(R.id.video_ranking_tab_strip_scroll);
         mViewPager = findViewById(R.id.vp_video_ranking_result);
         VideoRankingActivity.RankingPagerAdapter rankingPagerAdapter

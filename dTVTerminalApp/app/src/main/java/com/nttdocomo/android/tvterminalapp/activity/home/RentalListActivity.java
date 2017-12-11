@@ -61,6 +61,16 @@ public class RentalListActivity extends BaseActivity implements View.OnClickList
      */
     private void initView() {
 
+        //テレビアイコンをタップされたらリモコンを起動する
+        findViewById(R.id.header_stb_status_icon).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(getStbStatus()) {
+                    createRemoteControllerView();
+                    remoteControllerView.startRemoteUI();
+                }
+            }
+        });
         mListView = findViewById(R.id.rental_list);
         mListView.setOnItemClickListener(this);
         mListView.setOnScrollListener(this);
