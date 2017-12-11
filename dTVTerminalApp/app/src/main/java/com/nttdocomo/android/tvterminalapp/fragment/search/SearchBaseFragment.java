@@ -18,7 +18,6 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.SearchResultBaseAdapter;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
@@ -36,7 +35,6 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
     private TextView mCountText = null;
     private SearchBaseFragmentScrollListener mSearchBaseFragmentScrollListener = null;
     private View mLoadMoreView;
-    private View mLoadCompleteView;
     private SearchResultBaseAdapter mSearchResultBaseAdapter = null;
 
     public void setSearchBaseFragmentScrollListener(SearchBaseFragmentScrollListener lis) {
@@ -92,7 +90,9 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         if (null != mSearchResultBaseAdapter) {
             mSearchResultBaseAdapter.notifyDataSetChanged();
         }
-        mCountText.setText(count);
+        if (null != mCountText) {
+            mCountText.setText(count);
+        }
     }
 
     public void setSelection(int itemNo) {
@@ -112,7 +112,9 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
     }
 
     public void clear() {
-        mData.clear();
+        if (null != mData) {
+            mData.clear();
+        }
         notifyDataSetChanged(SearchTopActivity.sSearchCountDefault);
     }
 
@@ -138,7 +140,9 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         if (mLoadMoreView == view) {
             return;
         }
-        ((BaseActivity) mActivity).startActivity(className, args);
+        if (null != mActivity) {
+            ((BaseActivity) mActivity).startActivity(className, args);
+        }
     }
 
     /**
