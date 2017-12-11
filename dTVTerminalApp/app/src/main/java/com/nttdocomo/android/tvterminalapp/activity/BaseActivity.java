@@ -48,7 +48,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     private ImageView mStbStatusIcon;
     private DlnaProvDevList mDlnaProvDevListForBase;
     private ImageView mMenuImageViewForBase;
-    private RemoteControllerView remoteControllerView = null;
+    protected RemoteControllerView remoteControllerView = null;
 
     /**
      * Created on 2017/09/21.
@@ -525,8 +525,10 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     public void createRemoteControllerView() {
         // TODO リモコン表示Viewの作成を行う
         RelativeLayout layout = findViewById(R.id.remote_controller_rl);
-        remoteControllerView = layout.findViewById(R.id.remote_control_view);
-        remoteControllerView.init(this);
+        if (remoteControllerView == null) {
+            remoteControllerView = layout.findViewById(R.id.remote_control_view);
+            remoteControllerView.init(this);
+        }
         layout.setVisibility(View.VISIBLE);
     }
 

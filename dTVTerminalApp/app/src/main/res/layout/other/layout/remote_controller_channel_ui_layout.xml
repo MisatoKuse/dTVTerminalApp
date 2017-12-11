@@ -5,7 +5,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E5E5E5"
+    android:background="@drawable/remote_viewpager_bottom_corner"
     android:orientation="vertical">
 
     <LinearLayout
@@ -412,7 +412,7 @@
         <ImageView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="20"
+            android:layout_weight="21"
             android:src="@mipmap/remote_controller_paging_r" />
 
         <LinearLayout

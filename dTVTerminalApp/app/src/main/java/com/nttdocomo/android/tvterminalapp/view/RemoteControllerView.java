@@ -38,8 +38,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     private int mScrollHeight;
     private boolean mIsTop = false;
     private float mVisibilityHeight;
-    private ArrayList<View> mDots;
-    private List<View> viewList = new ArrayList<View>();
+    private List<View> mViewList = new ArrayList<View>();
     ViewPager mViewPager;
     private ViewPagerAdapter mRemokonAdapter;
     private FrameLayout mFrameLayout;
@@ -47,9 +46,8 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     private GestureDetector mGestureDetector = null;
     private long mSysTime;//システムTime
     private final long CLICK_MAX_TIME = 100;
-    private boolean mIsClick = false;//クリックなのかスワイプなのか
+    private boolean mIsClick = false;
     private LinearLayout mBottomLinearLayout, mTopLinearLayout;
-
 
     public RemoteControllerView(Context context) {
         this(context, null);
@@ -63,7 +61,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         super(context, attrs, defStyleAttr);
 
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.RecycleListView);
-        //TODO
+        //コンテンツ詳細画面に50dp出す、ほかの画面は隠す
         if (context instanceof DtvContentsDetailActivity) {
 
             mVisibilityHeight = ta.getDimension(R.styleable.RemoteControllerView_visibility_height,
@@ -104,6 +102,10 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         mChild = getChildAt(0);
     }
 
+    /**
+     *クリックなのかスワイプなのか
+     * @param is
+     */
     private void setIsClick(boolean is) {
         synchronized (this) {
             mIsClick = is;
@@ -128,7 +130,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                     return false;
                 }
                 //viewPagerを初期化する
-                if (viewList.size() == 0) {
+                if (mViewList.size() == 0) {
                     setPager();
                 }
                 return true;
@@ -232,16 +234,14 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         }
     }
 
-
+    //viewpagerを設定する
     public void setPager() {
-        mDots = new ArrayList<View>();
-
         LayoutInflater lf = LayoutInflater.from(this.getContext());
-        View inflate1 = lf.inflate(R.layout.remote_controller_player_ui_layout, null);
-        View inflate = lf.inflate(R.layout.remote_controller_channel_ui_layout, null);
+        View remotePage1 = lf.inflate(R.layout.remote_controller_player_ui_layout, null);
+        View remotePage2 = lf.inflate(R.layout.remote_controller_channel_ui_layout, null);
 
-        viewList.add(inflate1);
-        viewList.add(inflate);
+        mViewList.add(remotePage1);
+        mViewList.add(remotePage2);
 
         mViewPager = (ViewPager) findViewById(R.id.remokon_viewpager);
         mRemokonAdapter = new ViewPagerAdapter();
@@ -269,7 +269,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     private class ViewPagerAdapter extends PagerAdapter {
         @Override
         public int getCount() {
-            return viewList.size();
+            return mViewList.size();
         }
 
         @Override
@@ -283,8 +283,8 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            ((ViewPager) container).addView(viewList.get(position));
-            return viewList.get(position);
+            ((ViewPager) container).addView(mViewList.get(position));
+            return mViewList.get(position);
         }
     }
 
@@ -354,13 +354,12 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
     public void startRemoteUI() {
         //viewPagerを初期化する
-        if (viewList.size() == 0) {
+        if (mViewList.size() == 0) {
             setPager();
         }
         mScroller.startScroll(0, 0, 0, (int) (mScrollHeight + mVisibilityHeight));
         invalidate();
         setHeaderContent();
     }
-
 }
 

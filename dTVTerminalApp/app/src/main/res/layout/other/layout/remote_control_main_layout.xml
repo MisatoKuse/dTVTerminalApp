@@ -68,7 +68,7 @@
                             android:layout_height="24dp"
                             android:layout_marginStart="125dp"
                             android:layout_marginTop="17.5dp"
-                            android:src="@drawable/down" />
+                            android:src="@mipmap/remote_controller_arrow_top" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -100,11 +100,9 @@
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center"
-                                android:layout_marginLeft="20dp"
-                                android:layout_marginTop="17dp"
-                                android:layout_weight="48"
+                                android:layout_weight="52"
                                 android:background="@drawable/color_little_gray"
-                                android:src="@drawable/power" />
+                                android:src="@mipmap/remote_controller_power" />
 
                             <View
                                 android:layout_width="0dp"
@@ -115,7 +113,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="25"
-                                android:src="@drawable/down" />
+                                android:src="@mipmap/remote_controller_arrow_bottom" />
                         </LinearLayout>
                     </LinearLayout>
 
@@ -129,5 +127,4 @@
                 android:layout_weight="561"/>
         </LinearLayout>
     </com.nttdocomo.android.tvterminalapp.view.RemoteControllerView>
-
 </RelativeLayout>

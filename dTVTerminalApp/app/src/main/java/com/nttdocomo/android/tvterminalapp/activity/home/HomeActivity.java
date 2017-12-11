@@ -159,7 +159,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             @Override
             public void onClick(View view) {
                 if(getStbStatus()) {
-                    RemoteControllerView remoteControllerView = (RemoteControllerView) findViewById(R.id.remote_control_view);
+                    createRemoteControllerView();
                     remoteControllerView.startRemoteUI();
                 }
             }
