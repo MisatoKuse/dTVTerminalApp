@@ -6,16 +6,12 @@ package com.nttdocomo.android.tvterminalapp.model.remotecontroller;
 
 import android.content.Context;
 import android.os.Handler;
-import android.util.AttributeSet;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.home.adapter.HomeRecyclerViewAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 
@@ -251,8 +247,10 @@ public class RemoteControllerSendKeyAction {
                 case MotionEvent.ACTION_CANCEL:
                     sendKeyCode(v.getId(),SEND_KEYCODE_PARAM_ACTION_UP,true);
                     DTVTLogger.debug("MotionEvemt ACTION_CANCEL");
-                    mRepeatStateManagement.repeatCancel();
-                    mRepeatStateManagement.setRepeatTaskStatus(RepeatTaskStatus.REPEAT_STATUS_STAND_BY);
+                    if (null != mRepeatStateManagement) {
+                        mRepeatStateManagement.repeatCancel();
+                        mRepeatStateManagement.setRepeatTaskStatus(RepeatTaskStatus.REPEAT_STATUS_STAND_BY);
+                    }
                     break;
                 case MotionEvent.ACTION_OUTSIDE:
                     DTVTLogger.debug("MotionEvemt ACTION_OUTSIDE");

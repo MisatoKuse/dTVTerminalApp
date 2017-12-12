@@ -45,6 +45,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     private ViewPagerAdapter mRemokonAdapter;
     private FrameLayout mFrameLayout;
     private RemoteControllerSendKeyAction remoteControllerSendKeyAction;
+    private GestureDetector mParentGestureDetector = null;
     private GestureDetector mGestureDetector = null;
     private long mSysTime;//システムTime
     private final long CLICK_MAX_TIME = 100;
@@ -106,6 +107,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     protected void onFinishInflate() {
         super.onFinishInflate();
         mChild = getChildAt(0);
+        mParentGestureDetector = new GestureDetector(this.getContext(), mGestureListener);
     }
 
     private void setIsClick(boolean is) {
@@ -210,7 +212,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                         mIsTop = false;
                     }
                 }
-                break;
+            break;
         }
         DTVTLogger.end();
         return super.onTouchEvent(event);
@@ -335,6 +337,14 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         }
     };
 
+    private OnTouchListener mParentOnTouchListener = new OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            DTVTLogger.start();
+            return mParentGestureDetector.onTouchEvent(event);
+        }
+    };
+
     /**
      * リモコンUI画面を閉じる処理
      */
@@ -351,7 +361,9 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
             mFrameLayout = findViewById(R.id.header_watch_by_tv);
             mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner, null));
             remoteControllerSendKeyAction.cancelTimer();
-            mStartUIListener.onEndRemoteControl();
+            if (null != mStartUIListener) {
+                mStartUIListener.onEndRemoteControl();
+            }
         }
     }
 
@@ -400,5 +412,13 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         DTVTLogger.start();
         remoteControllerSendKeyAction.getRelayClient().startApplicationRequest(type,contentsId);
         DTVTLogger.end();
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        DTVTLogger.start();
+        mParentGestureDetector.onTouchEvent(ev);
+        this.setOnTouchListener(mParentOnTouchListener);
+        return !mIsTop;
     }
 }
