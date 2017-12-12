@@ -9,6 +9,9 @@ import android.os.AsyncTask;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
+import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 
 import org.json.JSONArray;
@@ -57,8 +60,8 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
     /**
      * CH一覧Jsonデータを解析する
      *
-     * @param jsonStr
-     * @return
+     * @param jsonStr 元のJSONデータ
+     * @return リスト化データ
      */
     public List<ChannelList> CHANNELListSender(String jsonStr) {
 
@@ -86,7 +89,7 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
     /**
      * statusの値をMapでオブジェクトクラスに渡す
      *
-     * @param jsonObj
+     * @param jsonObj 元のJSONデータ
      */
     public void sendStatus(JSONObject jsonObj) {
         try {
@@ -121,7 +124,7 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
     /**
      * コンストラクタ
      *
-     * @param mChannelJsonParserCallback
+     * @param mChannelJsonParserCallback コールバック
      */
     public ChannelJsonParser(ChannelWebClient.ChannelJsonParserCallback mChannelJsonParserCallback) {
         this.mChannelJsonParserCallback = mChannelJsonParserCallback;
@@ -142,7 +145,7 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
     /**
      * コンテンツのList<HashMap>をオブジェクトクラスに格納
      *
-     * @param jsonObj
+     * @param jsonObj 元のJSONデータ
      */
     public void sendVcList(JSONObject jsonObj) {
         try {
@@ -171,9 +174,29 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
                                 for (int c = 0; c < chpackList.length; c++) {
                                     if (!jsonObject.isNull(chpackList[c])) {
                                         String value = para.getString(chpackList[c]);
-                                        vcListMap.put(listPara[j] + JsonContents.UNDER_LINE + chpackList[c], value);
+                                        //書き込み用項目名の作成
+                                        StringBuilder stringBuffer = new StringBuilder();
+                                        stringBuffer.append(listPara[j]);
+                                        stringBuffer.append(JsonContents.UNDER_LINE);
+                                        stringBuffer.append(chpackList[c]);
+
+                                        //日付項目チェック
+                                        if (DBUtils.isDateItem(chpackList[c])) {
+                                            //日付なので変換して格納する
+                                            String dateBuffer = DateUtils.formatEpochToString(
+                                                    StringUtil.changeString2Long(value));
+                                            vcListMap.put(stringBuffer.toString(), dateBuffer);
+                                        } else {
+                                            //日付ではないのでそのまま格納する
+                                            vcListMap.put(stringBuffer.toString(), value);
+                                        }
                                     }
                                 }
+                            } else if (DBUtils.isDateItem(listPara[j])) {
+                                // DATE_PARAに含まれるのは日付なので、エポック秒となる。変換して格納する
+                                String dateBuffer = DateUtils.formatEpochToString(
+                                        StringUtil.changeString2Long(jsonObject.getString(listPara[j])));
+                                vcListMap.put(listPara[j], dateBuffer);
                             } else {
                                 String para = jsonObject.getString(listPara[j]);
                                 vcListMap.put(listPara[j], para);
