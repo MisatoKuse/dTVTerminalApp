@@ -37,7 +37,7 @@ public class VodClipDataManager {
         //String[] columns = {VODCLIP_LIST_THUMB, VODCLIP_LIST_TITLE,
         //        VODCLIP_LIST_DISPLAY_START_DATE, VODCLIP_LIST_DISP_TYPE};
         String[] columns = {JsonContents.META_RESPONSE_THUMB_448, JsonContents.META_RESPONSE_TITLE,
-                JsonContents.META_RESPONSE_DISPLAY_START_DATE, JsonContents.META_RESPONSE_R_VALUE};
+                JsonContents.META_RESPONSE_DISPLAY_START_DATE, JsonContents.META_RESPONSE_RATING};
 
         //Daoクラス使用準備
         DBHelper homeDBHelper = new DBHelper(mContext);

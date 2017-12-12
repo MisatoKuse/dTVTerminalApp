@@ -94,7 +94,7 @@ public class VodClipDataProvider implements VodClipWebClient.VodClipJsonParserCa
             contentTime = list.get(i).get(JsonContents.META_RESPONSE_DISPLAY_START_DATE);
             picUrl = list.get(i).get(JsonContents.META_RESPONSE_THUMB_448);
             contentId = list.get(i).get(JsonContents.META_RESPONSE_DISP_TYPE);
-            ratingValue = list.get(i).get(JsonContents.META_RESPONSE_R_VALUE);
+            ratingValue = list.get(i).get(JsonContents.META_RESPONSE_RATING);
 
             //ClipContentInfoItem(boolean clipFlag, String contentPictureUrl, String title, String rating)
 
