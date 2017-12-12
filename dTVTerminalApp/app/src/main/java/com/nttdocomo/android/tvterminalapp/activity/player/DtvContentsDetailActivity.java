@@ -821,7 +821,12 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         //初期化の時点から、handlerにmsgを送る
         viewRefresher.sendEmptyMessage(REFRESH_VIDEO_VIEW);
         hideCtrlView(View.INVISIBLE);
-        pauseButton();
+        if(mPlayerController != null){
+            if(mPlayerController.isPlaying()){
+                mVideoPlayPause.getChildAt(0).setVisibility(View.GONE);
+                mVideoPlayPause.getChildAt(1).setVisibility(View.VISIBLE);
+            }
+        }
         DTVTLogger.end();
     }
 
