@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -24,6 +25,7 @@ import com.nttdocomo.android.tvterminalapp.activity.common.MenuItem;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuItemParam;
 import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
+import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
@@ -41,7 +43,7 @@ import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
  * 「Activity」全体にとって、共通の機能があれば、追加すること
  */
 
-public class BaseActivity extends FragmentActivity implements MenuDisplayEventListener, DlnaDevListListener, View.OnClickListener {
+public class BaseActivity extends FragmentActivity implements MenuDisplayEventListener, DlnaDevListListener, View.OnClickListener, RemoteControllerView.OnStartRemoteControllerUIListener{
 
     private LinearLayout baseLinearLayout;
     private RelativeLayout headerLayout;
@@ -50,6 +52,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     private DlnaProvDevList mDlnaProvDevListForBase;
     private ImageView mMenuImageViewForBase;
     private RemoteControllerView remoteControllerView = null;
+    private Context mContext = null;
 
     /**
      * Created on 2017/09/21.
@@ -242,6 +245,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         DTVTLogger.start();
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_base);
+        mContext = this;
         initView();
         DTVTLogger.end();
     }
@@ -534,10 +538,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      * リモコン画面を生成する
      */
     public void createRemoteControllerView() {
-        // TODO リモコン表示Viewの作成を行う
+        DTVTLogger.debug("CreateRemoteControllerView");
         RelativeLayout layout = findViewById(R.id.remote_controller_rl);
         remoteControllerView = layout.findViewById(R.id.remote_control_view);
         remoteControllerView.init(this);
+        remoteControllerView.setOnStartRemoteControllerUI(this);
         layout.setVisibility(View.VISIBLE);
     }
 
@@ -574,5 +579,47 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      */
     protected RemoteControllerView getRemoteControllerView() {
         return remoteControllerView;
+    }
+
+    /**
+     * リモコンUI画面用 onClickListener
+     */
+    protected View.OnClickListener mRemoteControllerOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if(mContext instanceof DtvContentsDetailActivity) {
+                // nop.
+            } else {
+                switch (v.getId()) {
+                    case R.id.header_stb_status_icon:
+                        if (getStbStatus()) {
+                            DTVTLogger.debug("Start RemoteControl");
+                            createRemoteControllerView();
+                            getRemoteControllerView().startRemoteUI();
+                        }
+                        break;
+                    default:
+                        DTVTLogger.debug("Close Controller");
+                        getRemoteControllerView().closeRemoteControllerUI();
+                        break;
+                }
+            }
+        }
+    };
+
+    @Override
+    public void onStartRemoteControl() {
+        DTVTLogger.debug("base_start_control");
+        View base = findViewById(R.id.base_motion_detection_rl);
+        base.setOnClickListener(mRemoteControllerOnClickListener);
+        base.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onEndRemoteControl() {
+        DTVTLogger.debug("base_end_control");
+        View base = findViewById(R.id.base_motion_detection_rl);
+        base.setOnClickListener(null);
+        base.setVisibility(View.GONE);
     }
 }

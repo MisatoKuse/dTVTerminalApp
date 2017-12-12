@@ -58,6 +58,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      */
     public interface OnStartRemoteControllerUIListener {
         void onStartRemoteControl();
+        void onEndRemoteControl();
     }
 
     public RemoteControllerView(Context context) {
@@ -338,17 +339,20 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * リモコンUI画面を閉じる処理
      */
     public void closeRemoteControllerUI() {
-        mScroller.startScroll(0, getScrollY(), 0, -getScrollY());
-        postInvalidate();
-        mMovedY = 0;
-        mIsTop = false;
-        mBottomLinearLayout = findViewById(R.id.bottom_view_ll);
-        mBottomLinearLayout.setVisibility(VISIBLE);
-        mTopLinearLayout = findViewById(R.id.top_view_ll);
-        mTopLinearLayout.setVisibility(GONE);
-        mFrameLayout = findViewById(R.id.header_watch_by_tv);
-        mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner, null));
-        remoteControllerSendKeyAction.cancelTimer();
+        if(mIsTop) {
+            mScroller.startScroll(0, getScrollY(), 0, -getScrollY());
+            postInvalidate();
+            mMovedY = 0;
+            mIsTop = false;
+            mBottomLinearLayout = findViewById(R.id.bottom_view_ll);
+            mBottomLinearLayout.setVisibility(VISIBLE);
+            mTopLinearLayout = findViewById(R.id.top_view_ll);
+            mTopLinearLayout.setVisibility(GONE);
+            mFrameLayout = findViewById(R.id.header_watch_by_tv);
+            mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner, null));
+            remoteControllerSendKeyAction.cancelTimer();
+            mStartUIListener.onEndRemoteControl();
+        }
     }
 
     /**

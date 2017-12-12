@@ -294,8 +294,8 @@ public class RemoteControllerSendKeyAction {
         private int mRepeatButtonId;
         private TimerTask mTimerTask = null;
         // 実行間隔
-        private long EXECUTION_INTERVAL = 50;
-        private long DELAY_TIME = 50;
+        private long EXECUTION_INTERVAL = 500;
+        private long DELAY_TIME = 500;
         // 実行回数カウンター
         private int execution_counter = 0;
 
@@ -325,7 +325,6 @@ public class RemoteControllerSendKeyAction {
             DTVTLogger.end();
         }
 
-
         /**
          * TimerTask処理の設定
          */
@@ -334,7 +333,7 @@ public class RemoteControllerSendKeyAction {
                 @Override
                 public void run() {
                     DTVTLogger.start();
-                    DTVTLogger.debug("status" + mStatus.toString());
+//                    DTVTLogger.debug("status" + mStatus.toString());
                     // 連打フラグをみて処理を続けるか判断する
                     if (execution_counter >= 10 && mStatus != RepeatTaskStatus.REPEAT_STATUS_EXECUTION) {
                         DTVTLogger.debug("CHANGE_STATUS EXECUTION");
