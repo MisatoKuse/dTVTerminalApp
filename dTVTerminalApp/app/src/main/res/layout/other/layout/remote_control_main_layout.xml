@@ -2,10 +2,10 @@
   ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/watch_by_tv_relative_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="359dp"
+    android:layout_height="641dp">
 
     <com.nttdocomo.android.tvterminalapp.view.RemoteControllerView
         android:id="@+id/remote_control_view"
@@ -13,7 +13,6 @@
         android:layout_height="match_parent"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
         android:background="@android:color/transparent">
 
         <LinearLayout
@@ -26,7 +25,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="0dp"
                 android:layout_weight="80"
                 android:orientation="vertical">
 
@@ -127,4 +126,4 @@
                 android:layout_weight="561"/>
         </LinearLayout>
     </com.nttdocomo.android.tvterminalapp.view.RemoteControllerView>
-</RelativeLayout>
+</FrameLayout>

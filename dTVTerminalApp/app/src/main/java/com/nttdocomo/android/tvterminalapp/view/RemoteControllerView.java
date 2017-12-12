@@ -3,12 +3,12 @@
 package com.nttdocomo.android.tvterminalapp.view;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -37,10 +37,11 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     private View mChild;
     private Scroller mScroller;
     private int mScrollHeight;
+    private int mHeaderHeight;
     private boolean mIsTop = false;
     private float mVisibilityHeight;
-    private List<View> viewList = new ArrayList<View>();
-    ViewPager mViewPager;
+    private List<View> viewList = new ArrayList<>();
+    private ViewPager mViewPager;
     private ViewPagerAdapter mRemokonAdapter;
     private FrameLayout mFrameLayout;
     private RemoteControllerSendKeyAction remoteControllerSendKeyAction;
@@ -50,6 +51,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     private boolean mIsClick = false;//クリックなのかスワイプなのか
     private LinearLayout mBottomLinearLayout, mTopLinearLayout;
     private OnStartRemoteControllerUIListener mStartUIListener= null;
+    private Context mContext;
 
     /**
      * このViewがtopに表示された際に通知するリスナー
@@ -68,39 +70,31 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
     public RemoteControllerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-
-        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.RecycleListView);
-        //TODO
+        mContext = context;
         if (context instanceof DtvContentsDetailActivity) {
-
-            mVisibilityHeight = ta.getDimension(R.styleable.RemoteControllerView_visibility_height,
-                    getResources().getDimension(R.dimen.remote_controller_header_view_high));
+            mHeaderHeight = 50;
         } else {
-            mVisibilityHeight = ta.getDimension(R.styleable.RemoteControllerView_visibility_height,
-                    0);
+            mHeaderHeight = 0;
         }
-        ta.recycle();
         init(context);
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        //スクロールできる最大の距離
-        mScrollHeight = (int) (mChild.getMeasuredHeight() - mVisibilityHeight);
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
+
+        //HeaderをリモコンViewの下部に移動させ、50dpだけ表示させる
+        DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
+        mScrollHeight = (int) (mChild.getMeasuredHeight() - (mHeaderHeight * metrics.density));
+        mVisibilityHeight = mHeaderHeight * metrics.density;
         //リモコンの表示領域を設定する
-        mChild.layout((getMeasuredWidth()-mChild.getMeasuredWidth()) / 2, mScrollHeight, getMeasuredWidth(), mChild.getMeasuredHeight() + mScrollHeight);
+        mChild.layout(mChild.getLeft(), mChild.getTop() + mScrollHeight, mChild.getRight(), mChild.getBottom() + mScrollHeight);
     }
 
     /**
      * viewの初期化
      *
-     * @param context
+     * @param context コンテキスト
      */
     public void init(Context context) {
         mScroller = new Scroller(context);
@@ -121,7 +115,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
     /**
      * @param event タッチevent
-     * @return
+     * @return Touchイベントを下位に伝えるかどうか
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -133,7 +127,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                 //タッチされたY座標とビューTOPの距離を取得する
                 mDownY = (int) event.getY();
                 //子ビュー以外の部分がタップされた場合Touchイベントを走らせない
-                if (mDownY < mScrollHeight - mVisibilityHeight && !mIsTop) {
+                if (mDownY < mChild.getMeasuredHeight() - mVisibilityHeight && !mIsTop) {
                     return false;
                 }
                 //viewPagerを初期化する
@@ -187,7 +181,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                 }
                 //子ビューがタップされた場合
                 if (mDownY > mScrollHeight - mVisibilityHeight && mIsClick && !mIsTop) {
-                    mScroller.startScroll(0, -getScrollY(), 0, mScrollHeight);
+                    mScroller.startScroll(0, -getScrollY(), 0, mScrollHeight - getScrollY());
                     postInvalidate();
                     setHeaderContent();
                     break;
@@ -254,7 +248,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         viewList.add(inflate1);
         viewList.add(inflate);
 
-        mViewPager = (ViewPager) findViewById(R.id.remokon_viewpager);
+        mViewPager = findViewById(R.id.remokon_viewpager);
         mRemokonAdapter = new ViewPagerAdapter();
         mViewPager.setAdapter(mRemokonAdapter);
         mViewPager.addOnPageChangeListener(this);
@@ -295,7 +289,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            ((ViewPager) container).addView(viewList.get(position));
+            container.addView(viewList.get(position));
             return viewList.get(position);
         }
     }
@@ -376,7 +370,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
     /**
      * リスナーを設定
-     * @param listener
+     * @param listener リスナー
      */
     public void setOnStartRemoteControllerUI(OnStartRemoteControllerUIListener listener) {
         DTVTLogger.debug("Set StartRemoteControllerUIListener");
@@ -395,8 +389,8 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
     /**
      * dアプリ起動リクエスト処理を呼び出し
-     * @param type
-     * @param contentsId
+     * @param type アプリ起動要求種別
+     * @param contentsId コンテンツID
      */
     public void sendStartApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES type, String contentsId) {
         DTVTLogger.start();
