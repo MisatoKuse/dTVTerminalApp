@@ -146,9 +146,9 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         /**
          * ビデオランキング用コールバック
          *
-         * @param weeklyList
+         * @param videoRankList
          */
-        void videoRankCallback(List<Map<String, String>> weeklyList);
+        void videoRankCallback(List<Map<String, String>> videoRankList);
 
         /**
          * おすすめ番組用コールバック

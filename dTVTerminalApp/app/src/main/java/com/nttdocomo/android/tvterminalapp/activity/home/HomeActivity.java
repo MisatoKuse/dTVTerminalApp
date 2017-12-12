@@ -349,7 +349,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     public void videoRankCallback(List<Map<String, String>> videoRankList) {
         if (videoRankList != null && videoRankList.size() > 0) {
-            Message msg = Message.obtain(mHandler, CLIP_SORT, videoRankList);
+            Message msg = Message.obtain(mHandler, VIDEO_SORT, videoRankList);
             mHandler.sendMessage(msg);
         }
     }

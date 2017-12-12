@@ -31,91 +31,87 @@
             android:textColor="@color/white_text"
             android:textSize="@dimen/header_title_text_size" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/contents_detail_8dp">
+            android:layout_marginTop="@dimen/contents_detail_8dp"
+            android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/dtv_contents_detail_fragment_channel_name"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:textColor="@android:color/darker_gray" />
 
-                    <TextView
-                        android:id="@+id/dtv_contents_detail_fragment_channel_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@android:color/darker_gray" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/contents_detail_5dp"
-                        android:layout_marginStart="@dimen/contents_detail_5dp"
-                        android:text="@string/contents_detail_tv_label"
-                        android:textColor="@android:color/darker_gray" />
-
-                    <TextView
-                        android:id="@+id/dtv_contents_detail_fragment_channel_date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@android:color/darker_gray" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/dtv_contents_detail_fragment_channel_label"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/contents_detail_5dp"
-                    android:orientation="horizontal">
+                    android:layout_marginEnd="@dimen/contents_detail_5dp"
+                    android:layout_marginStart="@dimen/contents_detail_5dp"
+                    android:text="@string/contents_detail_tv_label"
+                    android:textColor="@android:color/darker_gray" />
 
-                    <TextView
-                        android:id="@+id/dtv_contents_detail_fragment_caption"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/contents_provider_shape_corner_dark_gray"
-                        android:paddingEnd="@dimen/contents_detail_5dp"
-                        android:paddingStart="@dimen/contents_detail_5dp"
-                        android:text="字幕"
-                        android:textColor="@android:color/white" />
-
-                    <TextView
-                        android:id="@+id/dtv_contents_detail_fragment_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/contents_detail_5dp"
-                        android:background="@drawable/contents_provider_shape_corner_dark_gray"
-                        android:paddingEnd="@dimen/contents_detail_8dp"
-                        android:paddingStart="@dimen/contents_detail_8dp"
-                        android:text="5.1"
-                        android:textColor="@android:color/white" />
-
-                    <TextView
-                        android:id="@+id/dtv_contents_detail_fragment_age"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/contents_detail_5dp"
-                        android:background="@drawable/contents_provider_shape_corner"
-                        android:paddingEnd="@dimen/contents_detail_2dp"
-                        android:paddingStart="@dimen/contents_detail_2dp"
-                        android:text="PG 12"
-                        android:textColor="@android:color/white" />
-                </LinearLayout>
-
+                <TextView
+                    android:id="@+id/dtv_contents_detail_fragment_channel_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/darker_gray" />
             </LinearLayout>
 
-            <ImageView
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:gravity="center_vertical"
-                android:src="@mipmap/ic_radio_button_checked_white_24dp" />
-        </RelativeLayout>
+                android:layout_marginTop="@dimen/contents_detail_5dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/dtv_contents_detail_fragment_caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/contents_provider_shape_corner_dark_gray"
+                    android:paddingEnd="@dimen/contents_detail_5dp"
+                    android:paddingStart="@dimen/contents_detail_5dp"
+                    android:text="字幕"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/dtv_contents_detail_fragment_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/contents_detail_5dp"
+                    android:layout_toRightOf="@id/dtv_contents_detail_fragment_caption"
+                    android:background="@drawable/contents_provider_shape_corner_dark_gray"
+                    android:paddingEnd="@dimen/contents_detail_8dp"
+                    android:paddingStart="@dimen/contents_detail_8dp"
+                    android:text="5.1"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/dtv_contents_detail_fragment_age"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/contents_detail_5dp"
+                    android:layout_toRightOf="@id/dtv_contents_detail_fragment_text"
+                    android:background="@drawable/contents_provider_shape_corner"
+                    android:paddingEnd="@dimen/contents_detail_2dp"
+                    android:paddingStart="@dimen/contents_detail_2dp"
+                    android:text="PG 12"
+                    android:textColor="@android:color/white" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:gravity="center_vertical"
+                    android:src="@mipmap/ic_radio_button_checked_white_24dp" />
+            </RelativeLayout>
+        </LinearLayout>
 
         <TextView
             android:id="@+id/dtv_contents_detail_fragment_detail_info"
@@ -176,17 +172,18 @@
             android:text="@string/contents_detail_tv_staff_recommend"
             android:textColor="@color/white_text"
             android:textSize="@dimen/contents_detail_16dp" />
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scrollbars="none">
+
             <LinearLayout
                 android:id="@+id/dtv_contents_detail_fragment_recommend_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/contents_detail_10dp"
-                android:orientation="vertical">
-            </LinearLayout>
+                android:orientation="vertical"></LinearLayout>
         </ScrollView>
     </LinearLayout>
 

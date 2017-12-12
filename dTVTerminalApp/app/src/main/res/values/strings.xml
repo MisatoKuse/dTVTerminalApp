@@ -10,6 +10,7 @@
     <string name="close_key">×</string>
     <string name="list_transition">></string>
     <string name="contents_hyphen">-</string>
+    <string name="contents_more">more</string>
 
     <!-- Launch -->
     <string name="str_app_title">dリモート</string>
@@ -135,6 +136,7 @@
     <string name="weekly_tv_ranking_title">週間テレビランキング</string>
     <string name="video_ranking_title">ビデオランキング</string>
     <string name="common_ranking_enter">\n</string>
+    <string name="contents_header">　></string>
     <string-array name="ranking_tab_names">
         <item>総合</item>
         <item>海外映画</item>
@@ -165,6 +167,8 @@
     <string name="nav_menu_item_staff_recommend">スタッフおすすめ</string>
     <string name="nav_menu_item_ranking">ランキング</string>
     <string name="nav_menu_item_clip">クリップ</string>
+    <string name="nav_menu_item_tv_clip">クリップ(テレビ)</string>
+    <string name="nav_menu_item_vod_clip">クリップ(ビデオ)</string>
     <string name="nav_menu_item_purchased_video">購入済みビデオ</string>
     <string name="nav_menu_item_watch_listen_video">視聴中ビデオ</string>
     <string name="nav_menu_item_record_reserve">録画予約</string>
@@ -201,6 +205,9 @@
     <string name="contents_detail_tv_staff">キャスト・スタッフ</string>
     <string name="contents_detail_tv_staff_recommend">おすすめ作品</string>
     <string name="contents_detail_tv_label">|</string>
+    <string-array name="other_service_contents_detail_tabs">
+        <item>作品情報</item>
+    </string-array>
     <string-array name="other_contents_detail_tabs">
         <item>番組詳細</item>
         <item>チャンネル</item>

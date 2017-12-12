@@ -9,32 +9,35 @@ import android.os.Parcelable;
 
 import java.util.List;
 
-public class OtherContentsDetailData implements Parcelable {
+public class OtherContentsDetailData extends RecordedContentsDetailData implements Parcelable {
 
     public static final int DTV_CONTENTS_SERVICE_ID = 15;
     public static final int D_ANIMATION_CONTENTS_SERVICE_ID = 17;
     public static final int DTV_CHANNEL_CONTENTS_SERVICE_ID = 43;
+    public static final int DTV_HIKARI_CONTENTS_SERVICE_ID = 44;
 
-    //変数名はぷららサーバインタフェース仕様書からの引用
-    private String mTitle;
+    public static final String HIKARI_CONTENTS_CATEGORY_ID_DTB = "01";
+    public static final String HIKARI_CONTENTS_CATEGORY_ID_BS = "02";
+    public static final String HIKARI_CONTENTS_CATEGORY_ID_IPTV = "03";
+
     private String mThumb;
     private String mChannelDate;
     private String mChannelName;
     private int mServiceId;
     private String mDetail;
+    private String mComment;
+    private String mHighlight;
+    private String mContentsType;
     private int mAge;
+    private String []roleList;
+    private String availStartDate;
+    private String availEndDate;
+    private String displayType;
+    private String categoryId;
     private List<String> staffList;
 
     //コンテンツIDを追加
     private String mContentId;
-
-    public String getTitle() {
-        return mTitle;
-    }
-
-    public void setTitle(String mTitle) {
-        this.mTitle = mTitle;
-    }
 
     public String getChannelDate() {
         return mChannelDate;
@@ -76,6 +79,30 @@ public class OtherContentsDetailData implements Parcelable {
         this.mDetail = detail;
     }
 
+    public String getComment() {
+        return mComment;
+    }
+
+    public void setComment(String mComment) {
+        this.mComment = mComment;
+    }
+
+    public String getHighlight() {
+        return mHighlight;
+    }
+
+    public void setHighlight(String mHighlight) {
+        this.mHighlight = mHighlight;
+    }
+
+    public String getContentsType() {
+        return mContentsType;
+    }
+
+    public void setContentsType(String mContentsType) {
+        this.mContentsType = mContentsType;
+    }
+
     public int getAge() {
         return mAge;
     }
@@ -92,6 +119,45 @@ public class OtherContentsDetailData implements Parcelable {
         this.staffList = staffList;
     }
 
+    public String[] getRoleList() {
+        return roleList;
+    }
+
+    public void setRoleList(String[] roleList) {
+        this.roleList = roleList;
+    }
+
+    public String getAvailStartDate() {
+        return availStartDate;
+    }
+
+    public void setAvailStartDate(String availStartDate) {
+        this.availStartDate = availStartDate;
+    }
+
+    public String getAvailEndDate() {
+        return availEndDate;
+    }
+
+    public void setAvailEndDate(String availEndDate) {
+        this.availEndDate = availEndDate;
+    }
+
+    public String getDisplayType() {
+        return displayType;
+    }
+
+    public void setDisplayType(String displayType) {
+        this.displayType = displayType;
+    }
+
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
+    }
 
     public String getContentId() {
         return mContentId;
@@ -108,16 +174,24 @@ public class OtherContentsDetailData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.mTitle);
+        super.writeToParcel(dest, flags);
         dest.writeString(this.mThumb);
         dest.writeString(this.mChannelDate);
         dest.writeString(this.mChannelName);
         dest.writeInt(this.mServiceId);
         dest.writeString(this.mDetail);
+        dest.writeString(this.mComment);
+        dest.writeString(this.mHighlight);
+        dest.writeString(this.mContentsType);
 
         //contentIdを追加
         dest.writeString(this.mContentId);
         dest.writeInt(this.mAge);
+        dest.writeStringArray(this.roleList);
+        dest.writeString(this.availStartDate);
+        dest.writeString(this.availEndDate);
+        dest.writeString(this.displayType);
+        dest.writeString(this.categoryId);
         dest.writeStringList(this.staffList);
     }
 
@@ -125,16 +199,24 @@ public class OtherContentsDetailData implements Parcelable {
     }
 
     protected OtherContentsDetailData(Parcel in) {
-        this.mTitle = in.readString();
+        super(in);
         this.mThumb = in.readString();
         this.mChannelDate = in.readString();
         this.mChannelName = in.readString();
         this.mServiceId = in.readInt();
         this.mDetail = in.readString();
+        this.mComment = in.readString();
+        this.mHighlight = in.readString();
+        this.mContentsType = in.readString();
 
         //contentIdを追加
         this.mContentId = in.readString();
         this.mAge = in.readInt();
+        this.roleList = in.createStringArray();
+        this.availStartDate = in.readString();
+        this.availEndDate = in.readString();
+        this.displayType = in.readString();
+        this.categoryId = in.readString();
         this.staffList = in.createStringArrayList();
     }
 

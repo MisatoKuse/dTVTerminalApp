@@ -16,13 +16,12 @@ import android.widget.ListView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
+import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VideoContentProvider;
-import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -260,7 +259,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
             return;
         }
         // TODO 本来コンテンツ詳細に飛ぶ
-        startActivity(TvPlayerActivity.class, null);
+        startActivity(DtvContentsDetailActivity.class, null);
     }
 
     /**

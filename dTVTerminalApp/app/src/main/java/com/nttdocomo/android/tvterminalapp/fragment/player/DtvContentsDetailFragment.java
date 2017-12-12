@@ -46,6 +46,7 @@ public class DtvContentsDetailFragment extends Fragment {
     private TextView txtServiceName;
     private TextView txtChannelName;
     private TextView txtChannelDate;
+    private TextView txtChannelLabel;
     private String mContentsDetailInfo;
     private boolean mIsAllText = false;
     //サムネイルmargintop
@@ -73,7 +74,7 @@ public class DtvContentsDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         //コンテンツ詳細表示に必要なデータを取得する
-        mOtherContentsDetailData = getArguments().getParcelable(DtvContentsDetailActivity.DTV_INFO_BUNDLE_KEY);
+        mOtherContentsDetailData = getArguments().getParcelable(DtvContentsDetailActivity.RECOMMEND_INFO_BUNDLE_KEY);
         return initView(container);
     }
 
@@ -91,6 +92,8 @@ public class DtvContentsDetailFragment extends Fragment {
         headerText = view.findViewById(R.id.dtv_contents_detail_fragment_contents_title);
         txtChannelName = view.findViewById(R.id.dtv_contents_detail_fragment_channel_name);
         txtChannelDate = view.findViewById(R.id.dtv_contents_detail_fragment_channel_date);
+        txtChannelLabel = view.findViewById(R.id.dtv_contents_detail_fragment_channel_label);
+
         //省略
         mTxtTitleShortDetail = view.findViewById(R.id.dtv_contents_detail_fragment_detail_info);
         //全表示
@@ -126,19 +129,29 @@ public class DtvContentsDetailFragment extends Fragment {
         StringUtil util = new StringUtil(getContext());
         String strServiceName = util.getContentsServiceName(mOtherContentsDetailData.getServiceId());
         txtServiceName.setText(strServiceName);
-        mContentsDetailInfo = mOtherContentsDetailData.getDetail();
+        mContentsDetailInfo = selectDetail();
+        boolean isFlag = false;
         if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelName())) {
             txtChannelName.setText(mOtherContentsDetailData.getChannelName());
+        } else {
+            isFlag = true;
         }
         if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelDate())) {
             txtChannelDate.setText(mOtherContentsDetailData.getChannelDate());
+        } else {
+            isFlag = true;
+        }
+        if (isFlag) {
+            txtChannelLabel.setVisibility(View.GONE);
+        } else {
+            txtChannelLabel.setVisibility(View.VISIBLE);
         }
         if (mOtherContentsDetailData.getStaffList() != null) {
             setStaff();
-        }else{
+        } else {
             staffLayout.setVisibility(View.GONE);
         }
-        if(!TextUtils.isEmpty(mContentsDetailInfo)){
+        if (!TextUtils.isEmpty(mContentsDetailInfo)) {
             mTxtTitleShortDetail.setText(mContentsDetailInfo);
             mTxtTitleAllDetail.setText(mContentsDetailInfo);
         }
@@ -260,11 +273,49 @@ public class DtvContentsDetailFragment extends Fragment {
      * チャンネル情報の更新
      */
     public void refreshChannelInfo() {
+        boolean flag = false;
         if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelName())) {
             txtChannelName.setText(mOtherContentsDetailData.getChannelName());
+            flag = true;
         }
         if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelDate())) {
             txtChannelDate.setText(mOtherContentsDetailData.getChannelDate());
+            if(flag){
+                flag = true;
+            }
+        } else {
+            flag = false;
+        }
+        if (flag) {
+            txtChannelLabel.setVisibility(View.VISIBLE);
+        } else {
+            txtChannelLabel.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * 次の優先順位で、商品詳細を返却する
+     * 1:商品詳細2(あらすじ)
+     * 2:商品詳細1(解説)
+     * 3:商品詳細3(みどころ)
+     *
+     * @return
+     */
+    private String selectDetail() {
+        if (mOtherContentsDetailData.getDetail() != null &&
+                !mOtherContentsDetailData.getDetail().isEmpty()) {
+            //"あらすじ"を返却
+            return mOtherContentsDetailData.getDetail();
+        } else if (mOtherContentsDetailData.getComment() != null &&
+                !mOtherContentsDetailData.getComment().isEmpty()) {
+            //"解説"を返却
+            return mOtherContentsDetailData.getComment();
+        } else if (mOtherContentsDetailData.getHighlight() != null &&
+                !mOtherContentsDetailData.getHighlight().isEmpty()) {
+            //"みどころ"を返却
+            return mOtherContentsDetailData.getHighlight();
+        } else {
+            return "";
         }
     }
 }

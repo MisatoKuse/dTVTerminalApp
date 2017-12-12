@@ -22,7 +22,7 @@ import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
+import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
@@ -316,7 +316,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
      * コンテンツ詳細への遷移
      */
     public void contentsDetailButton(View view) {
-        startActivity(TvPlayerActivity.class, null);
+        startActivity(DtvContentsDetailActivity.class, null);
     }
 
     /**

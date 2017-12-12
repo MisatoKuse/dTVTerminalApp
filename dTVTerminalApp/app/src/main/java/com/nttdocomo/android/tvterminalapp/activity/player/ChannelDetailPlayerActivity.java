@@ -25,7 +25,7 @@ public class ChannelDetailPlayerActivity extends BaseActivity {
      * @param view
      */
     public void selectChannelButton(View view) {
-        startActivity(TvPlayerActivity.class, null);
+        startActivity(DtvContentsDetailActivity.class, null);
     }
 
     /**
@@ -52,6 +52,6 @@ public class ChannelDetailPlayerActivity extends BaseActivity {
      * @param view
      */
     public void tvProgramButton(View view) {
-        startActivity(TvPlayerActivity.class, null);
+        startActivity(DtvContentsDetailActivity.class, null);
     }
 }

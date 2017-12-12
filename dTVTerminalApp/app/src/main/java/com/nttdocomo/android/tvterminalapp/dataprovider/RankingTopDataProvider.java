@@ -34,11 +34,11 @@ public class RankingTopDataProvider implements
 
     private Context mContext;
     // RakingTop画面用コールバック
-    private ApiDataProviderCallback apiDataProviderCallback = null;
+    private ApiDataProviderCallback mApiDataProviderCallback = null;
     // WeeklyRanking用コールバック
-    private WeeklyRankingApiDataProviderCallback weeklyRankingApiCallback = null;
+    private WeeklyRankingApiDataProviderCallback mWeeklyRankingApiCallback = null;
     // VideoRanking用コールバック
-    private VideoRankingApiDataProviderCallback videoRankingApiDataProviderCallback = null;
+    private VideoRankingApiDataProviderCallback mVideoRankingApiDataProviderCallback = null;
 
 
     @Override
@@ -126,7 +126,7 @@ public class RankingTopDataProvider implements
      */
     public RankingTopDataProvider(Context context) {
         this.mContext = context;
-        this.apiDataProviderCallback = (ApiDataProviderCallback) context;
+        this.mApiDataProviderCallback = (ApiDataProviderCallback) context;
     }
 
     /**
@@ -135,9 +135,9 @@ public class RankingTopDataProvider implements
     public RankingTopDataProvider(Context mContext, int mMode) {
         this.mContext = mContext;
         if (mMode == RankingConstants.RANKING_MODE_NO_OF_WEEKLY) {
-            this.weeklyRankingApiCallback = (WeeklyRankingApiDataProviderCallback) mContext;
+            this.mWeeklyRankingApiCallback = (WeeklyRankingApiDataProviderCallback) mContext;
         } else if (mMode == RankingConstants.RANKING_MODE_NO_OF_VIDEO) {
-            this.videoRankingApiDataProviderCallback = (VideoRankingApiDataProviderCallback) mContext;
+            this.mVideoRankingApiDataProviderCallback = (VideoRankingApiDataProviderCallback) mContext;
         }
     }
 
@@ -228,21 +228,21 @@ public class RankingTopDataProvider implements
      * 今日のランキングをRankingTopActivityに送る
      */
     public void sendDailyRankListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.dailyRankListCallback(list);
+        mApiDataProviderCallback.dailyRankListCallback(list);
     }
 
     /**
      * 週間ランキングリストをRankingTopActivityに送る
      */
     public void sendWeeklyRankListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.weeklyRankCallback(list);
+        mApiDataProviderCallback.weeklyRankCallback(list);
     }
 
     /**
      * ビデオランキングリストをRankingTopActivityに送る
      */
     public void sendVideoRankListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.videoRankCallback(list);
+        mApiDataProviderCallback.videoRankCallback(list);
     }
 
     /**
@@ -253,7 +253,7 @@ public class RankingTopDataProvider implements
         // TODO ジャンルID毎にコールバックを返す
         switch (genreId) {
             case "":
-                weeklyRankingApiCallback.weeklyRankSynthesisCallback(list);
+                mWeeklyRankingApiCallback.weeklyRankSynthesisCallback(list);
                 break;
             default:
                 break;
@@ -268,7 +268,7 @@ public class RankingTopDataProvider implements
         // TODO ジャンルID毎にコールバックを返す
         switch (genreId) {
             case "":
-                videoRankingApiDataProviderCallback.videoRankSynthesisCallback(list);
+                mVideoRankingApiDataProviderCallback.videoRankSynthesisCallback(list);
                 break;
             default:
                 break;
@@ -387,7 +387,7 @@ public class RankingTopDataProvider implements
         dateUtils.addLastDate(WEEKLY_RANK_LAST_INSERT);
         WeeklyRankInsertDataManager dataManager = new WeeklyRankInsertDataManager(mContext);
         dataManager.insertWeeklyRankInsertList(weeklyRankList);
-        if (apiDataProviderCallback != null) {
+        if (mApiDataProviderCallback != null) {
             sendWeeklyRankListData(weeklyRankList.getWrList());
         } else {
             sendWeeklyGenreRankListData(weeklyRankList.getWrList(), weeklyRankList.getExtraData().getString("genreId"));

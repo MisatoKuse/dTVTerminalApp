@@ -78,6 +78,7 @@ public class DBConstants {
 
     //SQL共通項目
     private static final String CREATE_TABLE_TEXT = "create table ";
+    private static final String CREATE_TABLE_PRIMARY_TEXT = " integer primary key autoincrement,";
     private static final String TEXT_WITH_COMMA_TEXT = " text, ";
     private static final String TEXT_WITHOUT_COMMA_TEXT = " text ";
     private static final String OPEN_BRACKETS_TEXT = " (";
@@ -798,14 +799,20 @@ public class DBConstants {
 
     // TABLE、ロールリスト用
     public static final String ROLE_LIST_TABLE_NAME = "role_list";
-    public static final String CREATE_TABLE_ROLE_LIST_SQL = "" +
-            "create table " + ROLE_LIST_TABLE_NAME + " (" +
-            ID_COLUMN + " integer primary key autoincrement, " +
-            "id text, " +
-            "name text" +
-            ")";
+    public static final String CREATE_TABLE_ROLE_LIST_SQL_NAMES[] = {
+                CREATE_TABLE_TEXT,
+                ROLE_LIST_TABLE_NAME,
+                OPEN_BRACKETS_TEXT,
+                ID_COLUMN,
+                CREATE_TABLE_PRIMARY_TEXT,
+                JsonContents.META_RESPONSE_CONTENTS_ID,TEXT_WITH_COMMA_TEXT,
+                JsonContents.META_RESPONSE_CONTENTS_NAME,TEXT_WITHOUT_COMMA_TEXT,
+                CLOSE_BRACKETS_TEXT
+            };
 
     public static final String CREATE_TABLE_RENTAL_LIST_SQL = StringUtil.getConnectString(
             CREATE_TABLE_RENTAL_LIST_SQL_NAMES);
+    public static final String CREATE_TABLE_ROLE_LIST_SQL = StringUtil.getConnectString(
+            CREATE_TABLE_ROLE_LIST_SQL_NAMES);
 
 }

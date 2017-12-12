@@ -12,9 +12,9 @@ import android.widget.LinearLayout;
 
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.ChannelDetailPlayerActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 
 public class WeekTvProgramListActivity extends BaseActivity implements View.OnClickListener {
     private Button btnBack,btnMode,btnChannelInfo,btnTvInfo,btnVideoDialog;
@@ -78,7 +78,7 @@ public class WeekTvProgramListActivity extends BaseActivity implements View.OnCl
                 startActivity(ChannelDetailPlayerActivity.class,null);
                 break;
             case R.id.btn_tv_info:
-                startActivity(TvPlayerActivity.class,null);
+                startActivity(DtvContentsDetailActivity.class,null);
                 break;
             case R.id.btn_video_dialog:
 

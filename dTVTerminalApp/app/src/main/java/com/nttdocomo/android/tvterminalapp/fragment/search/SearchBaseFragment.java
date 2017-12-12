@@ -22,7 +22,6 @@ import com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.SearchResultBaseAdapter;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.model.search.SearchContentInfo;
-import com.nttdocomo.android.tvterminalapp.utils.ClassNameUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +34,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
     private TextView mCountText = null;
     private SearchBaseFragmentScrollListener mSearchBaseFragmentScrollListener = null;
     private View mLoadMoreView;
+    private View mLoadCompleteView;
     private SearchResultBaseAdapter mSearchResultBaseAdapter = null;
 
     public void setSearchBaseFragmentScrollListener(SearchBaseFragmentScrollListener lis) {
@@ -132,17 +132,13 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         SearchContentInfo info = (SearchContentInfo) mData.get(i);
-        ClassNameUtils classNameUtils = new ClassNameUtils();
-        Class<?> className = classNameUtils.getContentsService(info.serviceId);
         Bundle args = new Bundle();
-        args.putParcelable(DtvContentsDetailActivity.DTV_INFO_BUNDLE_KEY,
+        args.putParcelable(DtvContentsDetailActivity.RECOMMEND_INFO_BUNDLE_KEY,
                 getOtherContentsDetailData(info));
         if (mLoadMoreView == view) {
             return;
         }
-        if (null != mActivity) {
-            ((BaseActivity) mActivity).startActivity(className, args);
-        }
+        ((BaseActivity) mActivity).startActivity(DtvContentsDetailActivity.class, args);
     }
 
     /**
@@ -155,7 +151,9 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         OtherContentsDetailData detailData = new OtherContentsDetailData();
         detailData.setTitle(info.title);
         detailData.setThumb(info.contentPictureUrl);
-        detailData.setDetail(info.contentsDetailInfo);
+        detailData.setDetail(info.synop);
+        detailData.setComment(info.comment);
+        detailData.setHighlight(info.highlight);
         detailData.setServiceId(info.serviceId);
 
         //コンテンツIDの受け渡しを追加

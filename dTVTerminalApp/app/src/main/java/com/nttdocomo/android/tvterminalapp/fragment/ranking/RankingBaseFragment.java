@@ -13,7 +13,7 @@ import android.widget.ListView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
+import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
@@ -173,11 +173,11 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
     /**
      * 読み込み表示を行う
      *
-     * @param b
+     * @param bool
      */
-    public void displayMoreData(boolean b) {
+    public void displayMoreData(boolean bool) {
         if (null != mRankingListView) {
-            if (b) {
+            if (bool) {
                 mRankingListView.addFooterView(mLoadMoreView);
 
                 //スクロール位置を最下段にすることで、追加した更新フッターを画面内に入れる
@@ -219,7 +219,7 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
         if (mLoadMoreView == view || mActivity == null) {
             return;
         }
-        ((BaseActivity) mActivity).startActivity(TvPlayerActivity.class, null);
+        ((BaseActivity) mActivity).startActivity(DtvContentsDetailActivity.class, null);
     }
 
     @Override
