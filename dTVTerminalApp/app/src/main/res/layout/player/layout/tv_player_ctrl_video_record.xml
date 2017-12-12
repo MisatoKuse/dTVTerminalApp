@@ -86,7 +86,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true">
 
-
         <TextView
             android:id="@+id/tv_player_ctrl_now_on_air_cur_time_tv"
             android:layout_width="wrap_content"
@@ -116,19 +115,25 @@
             android:text="59:22"
             android:textColor="@android:color/white" />
 
-        <SeekBar
-            android:id="@+id/tv_player_ctrl_now_on_air_seek_bar_sb"
+        <RelativeLayout
+            android:id="@+id/tv_player_ctrl_progress_ll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:layout_marginTop="40dp"
-            android:max="100"
-            android:maxHeight="1dp"
-            android:minHeight="1dp"
-            android:paddingEnd="0dp"
-            android:paddingStart="0dp"
-            android:progressDrawable="@drawable/player_progress_style"
-            android:thumb="@drawable/seek_bar_thumb_style" />
+            android:orientation="horizontal">
+            <SeekBar
+                android:id="@+id/tv_player_ctrl_now_on_air_seek_bar_sb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="40dp"
+                android:max="100"
+                android:maxHeight="1dp"
+                android:minHeight="1dp"
+                android:paddingEnd="0dp"
+                android:paddingStart="0dp"
+                android:progressDrawable="@drawable/player_progress_style"
+                android:thumb="@drawable/seek_bar_thumb_style" />
+        </RelativeLayout>
     </RelativeLayout>
 
     <RelativeLayout

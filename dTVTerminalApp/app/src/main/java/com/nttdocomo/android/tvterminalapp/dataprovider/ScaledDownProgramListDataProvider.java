@@ -86,10 +86,12 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                         Map<String, String> hashMap = resultSet.get(i);
                         String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
                         String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
+                        String thumb = hashMap.get(JsonContents.META_RESPONSE_DEFAULT_THUMB);
                         if (!TextUtils.isEmpty(chNo)) {
                             Channel channel = new Channel();
                             channel.setChNo(Integer.parseInt(chNo));
                             channel.setTitle(title);
+                            channel.setThumbnail(thumb);
                             channels.add(channel);
                         }
                     }
@@ -107,7 +109,7 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                             Schedule mSchedule = new Schedule();
                             String startDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_START_DATE);
                             String endDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
-                            String thumb = hashMap.get(JsonContents.META_RESPONSE_THUMB_448);
+                            String thumb = hashMap.get(JsonContents.META_RESPONSE_DEFAULT_THUMB);
                             String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
                             String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
                             mSchedule.setStartTime(startDate);
@@ -245,7 +247,7 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                     }
                     if(day.compareTo(selectStartDate) !=-1 && day.compareTo(selectEndDate)!=1){
                         String endDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
-                        String thumb = hashMap.get(JsonContents.META_RESPONSE_THUMB_448);
+                        String thumb = hashMap.get(JsonContents.META_RESPONSE_DEFAULT_THUMB);
                         String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
                         String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
                         mSchedule.setStartTime(startDate);
@@ -301,10 +303,12 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
             HashMap<String, String> hashMap = channelList.get(i);
             String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
             String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
+            String thumbnail = hashMap.get(JsonContents.META_RESPONSE_DEFAULT_THUMB);
             if (!TextUtils.isEmpty(chNo)) {
                 Channel channel = new Channel();
                 channel.setTitle(title);
                 channel.setChNo(Integer.parseInt(chNo));
+                channel.setThumbnail(thumbnail);
                 channels.add(channel);
             }
         }

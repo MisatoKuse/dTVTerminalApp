@@ -99,7 +99,8 @@
         <activity android:name="com.nttdocomo.android.tvterminalapp.activity.player.RecordedVideoPlayerActivity" />
         <activity
             android:name="com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity"
-            android:configChanges="keyboardHidden|keyboard|orientation|screenSize"/>
+            android:configChanges="keyboardHidden|keyboard|orientation|screenSize"
+            android:screenOrientation="portrait"/>
         <activity android:name="com.nttdocomo.android.tvterminalapp.activity.player.VideoPlayerActivity" />
         <activity
             android:name="com.nttdocomo.android.tvterminalapp.activity.player.RecommendPlayerActivity"

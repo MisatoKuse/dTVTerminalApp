@@ -5,9 +5,12 @@
 package com.nttdocomo.android.tvterminalapp.activity.player;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -18,11 +21,15 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.view.Display;
 import android.view.GestureDetector;
 import android.view.Gravity;
+import android.view.KeyCharacterMap;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -107,6 +114,8 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     private TextView mVideoCurTime;
     private ImageView mVideoFullScreen;
     private TextView mVideoTotalTime;
+    private TextView mTvTitle;
+    private ImageView mTvLogo;
     private SeekBar mVideoSeekBar;
     private SecureVideoView mSecureVideoPlayer;
     private SecuredMediaPlayerController mPlayerController;
@@ -411,6 +420,10 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                         mVideoFast30.setVisibility(View.VISIBLE);
                         mVideoFast.setVisibility(View.VISIBLE);
                         mVideoCtrlBar.setVisibility(View.VISIBLE);
+                        if(getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE){
+                            mTvTitle.setVisibility(View.VISIBLE);
+                            mTvLogo.setVisibility(View.VISIBLE);
+                        }
                         //setPlayEvent();
                     }
                     hideCtrlViewAfterOperate();
@@ -435,6 +448,8 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         mVideoFast30.setVisibility(invisible);
         mVideoFast.setVisibility(invisible);
         mVideoCtrlBar.setVisibility(invisible);
+        mTvTitle.setVisibility(invisible);
+        mTvLogo.setVisibility(invisible);
         DTVTLogger.end();
     }
 
@@ -697,12 +712,12 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         if (mDetailData == null) {
             getContentsData();
             mDetailData = intent.getParcelableExtra(PLALA_INFO_BUNDLE_KEY);
-            if(mDetailData != null){
+            if (mDetailData != null) {
                 String displayType = mDetailData.getDisplayType();
                 String contentsType = mDetailData.getContentsType();
-                if("tv_program".equals(displayType)){
-                    if(!"1".equals(contentsType) && !"2".equals(contentsType)
-                            && !"3".equals(contentsType)){
+                if ("tv_program".equals(displayType)) {
+                    if (!"1".equals(contentsType) && !"2".equals(contentsType)
+                            && !"3".equals(contentsType)) {
                         //TODO  放送中の場合
                     }
                 }
@@ -710,10 +725,10 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         } else {
             int serviceId = mDetailData.getServiceId();
             String categoryId = mDetailData.getCategoryId();
-            if(serviceId == OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID){
-                if(OtherContentsDetailData.HIKARI_CONTENTS_CATEGORY_ID_DTB.equals(categoryId)
+            if (serviceId == OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID) {
+                if (OtherContentsDetailData.HIKARI_CONTENTS_CATEGORY_ID_DTB.equals(categoryId)
                         || OtherContentsDetailData.HIKARI_CONTENTS_CATEGORY_ID_BS.equals(categoryId)
-                        || OtherContentsDetailData.HIKARI_CONTENTS_CATEGORY_ID_IPTV.equals(categoryId)){
+                        || OtherContentsDetailData.HIKARI_CONTENTS_CATEGORY_ID_IPTV.equals(categoryId)) {
                     //TODO  放送中の場合
                 }
             }
@@ -775,6 +790,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     private void initPlayerView() {
         DTVTLogger.start();
         mPlayerViewLayout = findViewById(R.id.dtv_contents_detail_main_layout_player_rl);
+        mPlayerViewLayout.removeView(mRecordCtrlView);
         mRecordCtrlView = (RelativeLayout) LayoutInflater.from(this)
                 .inflate(R.layout.tv_player_ctrl_video_record, null, false);
         mVideoPlayPause = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_player_pause_fl);
@@ -789,6 +805,13 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         mVideoTotalTime = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_total_time_tv);
         mVideoSeekBar = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_seek_bar_sb);
         TextView nowTextView = mRecordCtrlView.findViewById(R.id.tv_player_main_layout_video_ctrl_player_now_on_air_tv);
+        mTvTitle = mPlayerViewLayout.findViewById(R.id.tv_player_main_layout_video_ctrl_player_title);
+        mTvLogo = mPlayerViewLayout.findViewById(R.id.tv_player_main_layout_video_ctrl_player_logo);
+        setPlayerLogoThumbnail("https://www.hikaritv.net/resources/hikari/pc/images/ch_logo/ch220/101.png");
+        mTvTitle.setText(headerTextView.getText());
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                getWidthDensity(), getHeightDensity());
+        setScreenSize(getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE, layoutParams);
         nowTextView.setVisibility(View.GONE);
         mVideoPlayPause.setOnClickListener(this);
         mVideoFullScreen.setOnClickListener(this);
@@ -800,6 +823,131 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         hideCtrlView(View.INVISIBLE);
         pauseButton();
         DTVTLogger.end();
+    }
+
+    /**
+     * set thumbnail
+     */
+    private void setPlayerLogoThumbnail(String url) {
+        if (!TextUtils.isEmpty(url)) {
+            ThumbnailProvider mThumbnailProvider = new ThumbnailProvider(this);
+            mTvLogo.setImageResource(R.drawable.test_image);
+            mTvLogo.setTag(url);
+            Bitmap bitmap = mThumbnailProvider.getThumbnailImage(mTvLogo, url);
+            if (bitmap != null) {
+                mTvLogo.setImageBitmap(bitmap);
+            }
+        }
+    }
+
+    /**
+     * set screen size
+     */
+    private void setScreenSize(boolean mIsLandscape, LinearLayout.LayoutParams playerParams) {
+        DTVTLogger.start();
+        LinearLayout headerLayout = findViewById(R.id.contents_detail_main_layout_header);
+        if (mIsLandscape) {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+            headerLayout.setVisibility(View.GONE);
+            playerParams.height = getScreenHeight();
+            mScreenWidth = getWidthDensity();
+            setPlayerProgressView(true);
+        } else {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+            mScreenWidth = getWidthDensity();
+            playerParams.height = getWidthDensity() * 2 / 3;
+            headerLayout.setVisibility(View.VISIBLE);
+            setPlayerProgressView(false);
+        }
+        thumbnailRelativeLayout.setLayoutParams(playerParams);
+        DTVTLogger.end();
+    }
+
+    /**
+     * プレイヤーの場合スクロールできない
+     */
+    private void setPlayerProgressView(boolean isLandscape) {
+        RelativeLayout progressLayout = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_progress_ll);
+        if (isLandscape) {
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.setMargins((int) getDensity() * 10, 0, (int) getDensity() * 10, 0);
+            progressLayout.setLayoutParams(layoutParams);
+            layoutParams = new RelativeLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_START);
+            layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+            mVideoCurTime.setLayoutParams(layoutParams);
+            layoutParams = new RelativeLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
+            layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+            mVideoFullScreen.setLayoutParams(layoutParams);
+            layoutParams = new RelativeLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.addRule(RelativeLayout.START_OF, R.id.tv_player_ctrl_now_on_air_full_screen_iv);
+            layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+            layoutParams.setMargins(0, 0, (int) getDensity() * 10, 0);
+            mVideoTotalTime.setLayoutParams(layoutParams);
+            mVideoCtrlBar.removeView(mVideoCurTime);
+            mVideoCtrlBar.removeView(mVideoFullScreen);
+            mVideoCtrlBar.removeView(mVideoTotalTime);
+            layoutParams = new RelativeLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.addRule(RelativeLayout.END_OF,R.id.tv_player_ctrl_now_on_air_cur_time_tv);
+            layoutParams.addRule(RelativeLayout.START_OF,R.id.tv_player_ctrl_now_on_air_total_time_tv);
+            layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+            layoutParams.setMargins((int) getDensity() * 10, 0, (int) getDensity() * 10, 0);
+            mVideoSeekBar.setLayoutParams(layoutParams);
+            progressLayout.addView(mVideoCurTime);
+            progressLayout.addView(mVideoFullScreen, 2);
+            progressLayout.addView(mVideoTotalTime, 3);
+        } else {
+            if (progressLayout.getChildCount() > 1) {
+                progressLayout.removeViewAt(0);
+                progressLayout.removeViewAt(1);
+                progressLayout.removeViewAt(1);
+                mVideoCtrlBar.addView(mVideoCurTime);
+                mVideoCtrlBar.addView(mVideoFullScreen);
+                mVideoCtrlBar.addView(mVideoTotalTime);
+            }
+        }
+    }
+
+    private boolean isNavigationBarShow() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            Display display = getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            Point realSize = new Point();
+            display.getSize(size);
+            display.getRealSize(realSize);
+            return realSize.y != size.y;
+        } else {
+            boolean menu = ViewConfiguration.get(this).hasPermanentMenuKey();
+            boolean back = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
+            if (menu || back) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+
+    private int getNavigationBarHeight() {
+        if (!isNavigationBarShow()) {
+            return 0;
+        }
+        int resourceId = getResources().getIdentifier("navigation_bar_height",
+                "dimen", "android");
+        int height = getResources().getDimensionPixelSize(resourceId);
+        return height;
+    }
+
+
+    private int getScreenHeight() {
+        return getHeightDensity() + getNavigationBarHeight();
     }
 
     /**
@@ -856,7 +1004,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     /**
      * プレイヤーの場合スクロールできない
      */
-    private void setPlayerScroll(){
+    private void setPlayerScroll() {
         LinearLayout parentLayout = findViewById(R.id.dtv_contents_detail_main_layout_ll);
         LinearLayout scrollLayout = findViewById(R.id.contents_detail_scroll_layout);
         scrollLayout.removeViewAt(0);
@@ -1110,7 +1258,16 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                 hideCtrlViewAfterOperate();
                 break;
             case R.id.tv_player_ctrl_now_on_air_full_screen_iv:
-                Toast.makeText(this, "フルスクリーンに変更されています", Toast.LENGTH_SHORT).show();
+                if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                    initPlayerView();
+                    setPlayerEvent();
+                } else {
+                    Toast.makeText(this, "フルスクリーンに変更されています", Toast.LENGTH_SHORT).show();
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                    initPlayerView();
+                    setPlayerEvent();
+                }
                 hideCtrlViewAfterOperate();
                 break;
             default:

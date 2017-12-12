@@ -9,7 +9,9 @@
     android:orientation="vertical">
 
     <!-- コンテンツ詳細用のヘッダ を読み込む -->
-    <include layout="@layout/contents_detail_header_layout" />
+    <include
+        android:id="@+id/contents_detail_main_layout_header"
+        layout="@layout/contents_detail_header_layout" />
 
     <ScrollView
         android:id="@+id/contents_detail_scroll_view"
@@ -39,6 +41,26 @@
                         android:id="@+id/dtv_contents_detail_main_layout_player_view"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
+
+                    <TextView
+                        android:id="@+id/tv_player_main_layout_video_ctrl_player_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="80dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="24dp"
+                        android:text=""
+                        android:maxLines="2"
+                        android:ellipsize="end"
+                        android:textColor="@android:color/white"/>
+
+                    <ImageView
+                        android:id="@+id/tv_player_main_layout_video_ctrl_player_logo"
+                        android:layout_width="48dp"
+                        android:layout_height="27dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="26dp"
+                        android:background="@android:color/transparent"/>
                 </RelativeLayout>
 
                 <ImageView
