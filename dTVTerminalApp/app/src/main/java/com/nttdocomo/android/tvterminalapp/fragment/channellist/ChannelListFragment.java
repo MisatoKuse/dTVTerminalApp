@@ -16,8 +16,10 @@ import android.widget.ListView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ChannelListAdapter;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListItem;
@@ -234,9 +236,88 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        if(null==mData || i<0){
+            return;
+        }
         if(mLoadMoreView == view){
             return;
         }
-        ((BaseActivity)mActivity).startActivity(TvPlayerActivity.class, null);
+        switch (mChListDataType) {
+            case CH_LIST_DATA_TYPE_HIKARI:
+            case CH_LIST_DATA_TYPE_DTV:
+                return;
+            case CH_LIST_DATA_TYPE_BS:
+            case CH_LIST_DATA_TYPE_TER:
+            case CH_LIST_DATA_TYPE_INVALID:
+                break;
+        }
+        RecordedContentsDetailData datas= getParcleData(i);
+        if(null==datas){
+            return;
+        }
+        Bundle args = new Bundle();
+        args.putParcelable( RecordedListActivity.RECORD_LIST_KEY, datas);
+        if (null != mActivity) {
+            ((BaseActivity) mActivity).startActivity(TvPlayerActivity.class, args);
+        }
+
     }
+
+    private RecordedContentsDetailData getParcleData(int i){
+        RecordedContentsDetailData ret = new RecordedContentsDetailData();
+        switch (mChListDataType) {
+            case CH_LIST_DATA_TYPE_HIKARI:
+            case CH_LIST_DATA_TYPE_DTV:
+                return null;
+            case CH_LIST_DATA_TYPE_BS:
+                //本番ソース begin
+//                DlnaBsChListItem bsI = (DlnaBsChListItem)mData.get(i);
+//                ret.setUpnpIcon(null);
+//                ret.setSize(bsI.mSize);
+//                ret.setResUrl(bsI.mResUrl);
+//                ret.setResolution(bsI.mResolution);
+//                ret.setBitrate(bsI.mBitrate);
+//                ret.setDuration(bsI.mDuration);
+//                ret.setTitle(bsI.mTitle);
+                //本番ソース end
+                //test begin
+                DlnaRecVideoItem video = (DlnaRecVideoItem)mData.get(i);
+                ret.setUpnpIcon(null);
+                ret.setSize(video.mSize);
+                ret.setResUrl(video.mResUrl);
+                ret.setResolution(video.mResolution);
+                ret.setBitrate(video.mBitrate);
+                ret.setDuration(video.mDuration);
+                ret.setTitle(video.mTitle);
+                //test end
+                break;
+            case CH_LIST_DATA_TYPE_TER:
+                //本番ソース begin
+//                DlnaBsChListItem bsT = (DlnaBsChListItem)mData.get(i);
+//                ret.setUpnpIcon(null);
+//                ret.setSize(bsT.mSize);
+//                ret.setResUrl(bsT.mResUrl);
+//                ret.setResolution(bsT.mResolution);
+//                ret.setBitrate(bsT.mBitrate);
+//                ret.setDuration(bsT.mDuration);
+//                ret.setTitle(bsT.mTitle);
+                //本番ソース end
+                //test begin
+                DlnaRecVideoItem video2 = (DlnaRecVideoItem)mData.get(i);
+                ret.setUpnpIcon(null);
+                ret.setSize(video2.mSize);
+                ret.setResUrl(video2.mResUrl);
+                ret.setResolution(video2.mResolution);
+                ret.setBitrate(video2.mBitrate);
+                ret.setDuration(video2.mDuration);
+                ret.setTitle(video2.mTitle);
+                //test end
+                break;
+            case CH_LIST_DATA_TYPE_INVALID:
+               return null;
+        }
+        return ret;
+    }
+
+
 }
