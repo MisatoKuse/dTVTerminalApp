@@ -129,7 +129,7 @@ public class DtvContentsDetailFragment extends Fragment {
         StringUtil util = new StringUtil(getContext());
         String strServiceName = util.getContentsServiceName(mOtherContentsDetailData.getServiceId());
         txtServiceName.setText(strServiceName);
-        mContentsDetailInfo = mOtherContentsDetailData.getDetail();
+        mContentsDetailInfo = selectDetail();
         boolean isFlag = false;
         if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelName())) {
             txtChannelName.setText(mOtherContentsDetailData.getChannelName());
@@ -141,17 +141,17 @@ public class DtvContentsDetailFragment extends Fragment {
         } else {
             isFlag = true;
         }
-        if(isFlag){
+        if (isFlag) {
             txtChannelLabel.setVisibility(View.GONE);
         } else {
             txtChannelLabel.setVisibility(View.VISIBLE);
         }
         if (mOtherContentsDetailData.getStaffList() != null) {
             setStaff();
-        }else{
+        } else {
             staffLayout.setVisibility(View.GONE);
         }
-        if(!TextUtils.isEmpty(mContentsDetailInfo)){
+        if (!TextUtils.isEmpty(mContentsDetailInfo)) {
             mTxtTitleShortDetail.setText(mContentsDetailInfo);
             mTxtTitleAllDetail.setText(mContentsDetailInfo);
         }
@@ -278,6 +278,32 @@ public class DtvContentsDetailFragment extends Fragment {
         }
         if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelDate())) {
             txtChannelDate.setText(mOtherContentsDetailData.getChannelDate());
+        }
+    }
+
+    /**
+     * 次の優先順位で、商品詳細を返却する
+     * 1:商品詳細2(あらすじ)
+     * 2:商品詳細1(解説)
+     * 3:商品詳細3(みどころ)
+     *
+     * @return
+     */
+    private String selectDetail() {
+        if (mOtherContentsDetailData.getDetail() != null &&
+                !mOtherContentsDetailData.getDetail().isEmpty()) {
+            //"あらすじ"を返却
+            return mOtherContentsDetailData.getDetail();
+        } else if (mOtherContentsDetailData.getComment() != null &&
+                !mOtherContentsDetailData.getComment().isEmpty()) {
+            //"解説"を返却
+            return mOtherContentsDetailData.getComment();
+        } else if (mOtherContentsDetailData.getHighlight() != null &&
+                !mOtherContentsDetailData.getHighlight().isEmpty()) {
+            //"みどころ"を返却
+            return mOtherContentsDetailData.getHighlight();
+        } else {
+            return "";
         }
     }
 }

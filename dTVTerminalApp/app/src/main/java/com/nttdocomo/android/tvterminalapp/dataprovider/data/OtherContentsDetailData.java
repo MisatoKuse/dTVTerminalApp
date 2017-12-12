@@ -25,6 +25,8 @@ public class OtherContentsDetailData extends RecordedContentsDetailData implemen
     private String mChannelName;
     private int mServiceId;
     private String mDetail;
+    private String mComment;
+    private String mHighlight;
     private String mContentsType;
     private int mAge;
     private String []roleList;
@@ -72,6 +74,22 @@ public class OtherContentsDetailData extends RecordedContentsDetailData implemen
 
     public void setDetail(String detail) {
         this.mDetail = detail;
+    }
+
+    public String getComment() {
+        return mComment;
+    }
+
+    public void setComment(String mComment) {
+        this.mComment = mComment;
+    }
+
+    public String getHighlight() {
+        return mHighlight;
+    }
+
+    public void setHighlight(String mHighlight) {
+        this.mHighlight = mHighlight;
     }
 
     public String getContentsType() {
@@ -151,6 +169,8 @@ public class OtherContentsDetailData extends RecordedContentsDetailData implemen
         dest.writeString(this.mChannelName);
         dest.writeInt(this.mServiceId);
         dest.writeString(this.mDetail);
+        dest.writeString(this.mComment);
+        dest.writeString(this.mHighlight);
         dest.writeString(this.mContentsType);
         dest.writeInt(this.mAge);
         dest.writeStringArray(this.roleList);
@@ -171,6 +191,8 @@ public class OtherContentsDetailData extends RecordedContentsDetailData implemen
         this.mChannelName = in.readString();
         this.mServiceId = in.readInt();
         this.mDetail = in.readString();
+        this.mComment = in.readString();
+        this.mHighlight = in.readString();
         this.mContentsType = in.readString();
         this.mAge = in.readInt();
         this.roleList = in.createStringArray();
