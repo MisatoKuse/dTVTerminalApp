@@ -199,15 +199,6 @@ public class DtvContentsDetailActivity extends BaseActivity implements RemoteCon
     }
 
     /**
-     * リモコン画面への遷移
-     *
-     * @param view
-     */
-    public void remoteControlButton(View view) {
-        createRemoteControllerView();
-    }
-
-    /**
      * コンテンツ詳細用ページャアダプター
      */
     private class ContentsDetailPagerAdapter extends FragmentStatePagerAdapter {
@@ -261,6 +252,13 @@ public class DtvContentsDetailActivity extends BaseActivity implements RemoteCon
             default:
                 break;
         }
+        super.onStartRemoteControl();
         DTVTLogger.end();
+    }
+
+    @Override
+    public void onEndRemoteControl() {
+        // nop.
+        super.onEndRemoteControl();
     }
 }

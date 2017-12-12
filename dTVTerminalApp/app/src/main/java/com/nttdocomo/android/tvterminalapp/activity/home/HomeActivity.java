@@ -26,8 +26,8 @@ import com.nttdocomo.android.tvterminalapp.activity.home.adapter.HomeRecyclerVie
 import com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.HomeDataProvider;
-import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 
 import java.util.List;
 import java.util.Map;
@@ -155,15 +155,16 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         LinearLayout agreementRl = findViewById(R.id.home_main_layout_kyrl);
         ImageView prImageView = findViewById(R.id.home_main_layout_pr);
         //テレビアイコンをタップされたらリモコンを起動する
-        findViewById(R.id.header_stb_status_icon).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (getStbStatus()) {
-                    createRemoteControllerView();
-                    getRemoteControllerView().startRemoteUI();
-                }
-            }
-        });
+        findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
+//        findViewById(R.id.header_stb_status_icon).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (getStbStatus()) {
+//                    createRemoteControllerView();
+//                    getRemoteControllerView().startRemoteUI();
+//                }
+//            }
+//        });
         int height = getHeightDensity();
         //多機種を対応できるよう
         LinearLayout.LayoutParams imgIp = new LinearLayout.LayoutParams(
@@ -353,4 +354,5 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     public void userInfoCallback(List<Map<String, String>> userList) {
 
     }
+
 }
