@@ -553,7 +553,8 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
         DTVTLogger.start();
         if(!isVisibleToUser){
             fragment.clearDatas();
-            fragment.noticeRefresh();
+            //fragment.noticeRefresh();
+            noticeRefresh(fragment);
             DTVTLogger.end();
             return;
         }
@@ -816,8 +817,24 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
                 ++addedCnt;
             }
         }
-        fragment.noticeRefresh();
+        //fragment.noticeRefresh();
+        noticeRefresh(fragment);
         DTVTLogger.end();
+    }
+
+    private void noticeRefresh(final ChannelListFragment fragment){
+        if(null==fragment){
+            return;
+        }
+        if(null==mHandle){
+            mHandle=new Handler();
+        }
+        mHandle.post(new Runnable() {
+            @Override
+            public void run() {
+                fragment.noticeRefresh();
+            }
+        });
     }
 
     /**
