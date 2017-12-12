@@ -77,10 +77,10 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
     private void resetPaging() {
         synchronized (this) {
             setCommunicatingStatus(false);
-            RankingBaseFragment b = getCurrentFragment();
-            if (null != b && null != b.mData) {
-                b.mData.clear();
-                b.noticeRefresh();
+            RankingBaseFragment baseFragment = getCurrentFragment();
+            if (null != baseFragment && null != baseFragment.mData) {
+                baseFragment.mData.clear();
+                baseFragment.noticeRefresh();
             }
         }
     }
@@ -88,11 +88,11 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
     /**
      * mIsCommunicationを変更
      *
-     * @param b
+     * @param bool
      */
-    private void setCommunicatingStatus(boolean b) {
+    private void setCommunicatingStatus(boolean bool) {
         synchronized (this) {
-            mIsCommunicating = b;
+            mIsCommunicating = bool;
         }
     }
 
@@ -102,13 +102,13 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
      * @return
      */
     private int getCurrentNumber() {
-        RankingBaseFragment b = getCurrentFragment();
-        if (null == b || null == b.mData || 0 == b.mData.size()) {
+        RankingBaseFragment baseFragment = getCurrentFragment();
+        if (null == baseFragment || null == baseFragment.mData || 0 == baseFragment.mData.size()) {
             return 0;
-        } else if (b.mData.size() < NUM_PER_PAGE) {
+        } else if (baseFragment.mData.size() < NUM_PER_PAGE) {
             return 1;
         }
-        return b.mData.size() / NUM_PER_PAGE;
+        return baseFragment.mData.size() / NUM_PER_PAGE;
     }
 
     /**
@@ -137,10 +137,10 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
         }
 
         for (int i = 0; i < tabCount; ++i) { // タブの数だけ処理を行う
-            RankingBaseFragment b = mRankingFragmentFactory.createFragment
+            RankingBaseFragment baseFragment = mRankingFragmentFactory.createFragment
                     (RankingConstants.RANKING_MODE_NO_OF_VIDEO, i, this);
-            if (null != b) {
-                b.mData.clear();
+            if (null != baseFragment) {
+                baseFragment.mData.clear();
             }
         }
     }
@@ -263,11 +263,11 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
      * 読み込み中表示を非表示に変更
      */
     private void resetCommunication() {
-        RankingBaseFragment b = getCurrentFragment();
-        if (null == b) {
+        RankingBaseFragment baseFragment = getCurrentFragment();
+        if (null == baseFragment) {
             return;
         }
-        b.displayMoreData(false);
+        baseFragment.displayMoreData(false);
         setCommunicatingStatus(false);
     }
 
@@ -326,11 +326,11 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
     public void onScroll(RankingBaseFragment fragment, AbsListView absListView,
                          int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         synchronized (this) {
-            RankingBaseFragment b = getCurrentFragment();
-            if (null == b || null == fragment.getRankingAdapter()) {
+            RankingBaseFragment baseFragment = getCurrentFragment();
+            if (null == baseFragment || null == fragment.getRankingAdapter()) {
                 return;
             }
-            if (fragment != b) {
+            if (fragment != baseFragment) {
                 return;
             }
 
@@ -350,11 +350,11 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
                                      int scrollState) {
         synchronized (this) {
 
-            RankingBaseFragment b = getCurrentFragment();
-            if (null == b || null == fragment.getRankingAdapter()) {
+            RankingBaseFragment baseFragment = getCurrentFragment();
+            if (null == baseFragment || null == fragment.getRankingAdapter()) {
                 return;
             }
-            if (fragment != b) {
+            if (fragment != baseFragment) {
                 return;
             }
 
