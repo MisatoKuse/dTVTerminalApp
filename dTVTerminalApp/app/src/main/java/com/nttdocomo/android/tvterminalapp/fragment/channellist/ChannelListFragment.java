@@ -17,7 +17,7 @@ import android.widget.ListView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
+import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ChannelListAdapter;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListItem;
@@ -258,7 +258,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         Bundle args = new Bundle();
         args.putParcelable( RecordedListActivity.RECORD_LIST_KEY, datas);
         if (null != mActivity) {
-            ((BaseActivity) mActivity).startActivity(TvPlayerActivity.class, args);
+            ((BaseActivity) mActivity).startActivity(DtvContentsDetailActivity.class, args);
         }
 
     }
