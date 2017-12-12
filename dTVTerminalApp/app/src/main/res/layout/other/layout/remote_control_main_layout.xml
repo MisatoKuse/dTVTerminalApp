@@ -32,7 +32,7 @@
                 <FrameLayout
                     android:id="@+id/header_watch_by_tv"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="50dp"
                     android:background="@drawable/remote_watch_by_tv_bottom_corner">
 
                     <LinearLayout
@@ -48,15 +48,15 @@
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:layout_marginStart="13dp"
-                            android:layout_marginTop="17dp"
+                            android:layout_marginTop="10dp"
                             android:src="@mipmap/ic_remote_tv_play" />
 
                         <TextView
                             android:id="@+id/watch_by_tv"
                             android:layout_width="122dp"
                             android:layout_height="484dp"
-                            android:layout_marginLeft="13dp"
-                            android:layout_marginTop="20dp"
+                            android:layout_marginStart="13dp"
+                            android:layout_marginTop="16dp"
                             android:text="@string/remote_controller_viewpager_watch_by_tv"
                             android:textColor="#ffffff"
                             android:textSize="14dp" />
@@ -65,8 +65,8 @@
                             android:id="@+id/remote_controller_down"
                             android:layout_width="24dp"
                             android:layout_height="24dp"
-                            android:layout_marginStart="125dp"
-                            android:layout_marginTop="17.5dp"
+                            android:layout_marginStart="117dp"
+                            android:layout_marginTop="13dp"
                             android:src="@mipmap/remote_controller_arrow_top" />
                     </LinearLayout>
 
@@ -116,6 +116,11 @@
                         </LinearLayout>
                     </LinearLayout>
 
+                </FrameLayout>
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/color_little_gray">
                 </FrameLayout>
             </LinearLayout>
             <android.support.v4.view.ViewPager
