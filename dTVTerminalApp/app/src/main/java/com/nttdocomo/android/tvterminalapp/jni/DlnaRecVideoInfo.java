@@ -16,6 +16,21 @@ public class DlnaRecVideoInfo {
         mRecordVideoLists.add(item);
     }
 
+    public void addItemByValue(DlnaRecVideoItem item){
+        DlnaRecVideoItem newItem= new DlnaRecVideoItem();
+        newItem.mTitle=item.mTitle;
+        newItem.mDate=item.mDate;
+        newItem.mAllowedUse=item.mAllowedUse;
+        newItem.mBitrate=item.mBitrate;
+        newItem.mDuration=item.mDuration;
+        newItem.mResolution=item.mResolution;
+        newItem.mResUrl=item.mResUrl;
+        newItem.mSize=item.mSize;
+        newItem.mUpnpIcon=item.mUpnpIcon;
+
+        mRecordVideoLists.add(newItem);
+    }
+
     public void clearAll(){
         mRecordVideoLists.clear();
     }

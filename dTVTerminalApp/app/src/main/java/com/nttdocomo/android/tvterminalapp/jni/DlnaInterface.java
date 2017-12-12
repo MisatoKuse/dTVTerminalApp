@@ -378,6 +378,14 @@ public class DlnaInterface {
         if (null != mDlnaDevListListener) {
             mDlnaDevListListener.onDeviceJoin(mDMSInfo, item);
         }
+        if(mCurrentDmsItem.mUdn.equals(item.mUdn)){
+            mCurrentDmsItem=item;
+            //本番ソース begin
+//        browseBsChListDms();
+//        browseTerChListDms();
+            //本番ソース end
+            browseRecVideoDms();    //test
+        }
     }
 
     /**

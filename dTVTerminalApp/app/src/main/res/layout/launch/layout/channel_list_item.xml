@@ -30,7 +30,7 @@
 			android:layout_toEndOf="@id/channel_list_item_thumb_iv"
 			android:text="FOX HD"
 			android:textColor="@android:color/white"
-			android:textSize="25dp"/>
+			android:textSize="16dp"/>
 
 	</RelativeLayout>
 
