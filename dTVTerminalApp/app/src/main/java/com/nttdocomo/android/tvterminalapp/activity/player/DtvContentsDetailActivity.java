@@ -878,7 +878,8 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
             headerLayout.setVisibility(View.GONE);
             playerParams.height = getScreenHeight();
-            mScreenWidth = getWidthDensity();
+            playerParams.width = getScreenWidth();
+            mScreenWidth = getScreenWidth();
             setPlayerProgressView(true);
         } else {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
@@ -942,14 +943,18 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         }
     }
 
-    private boolean isNavigationBarShow() {
+    private boolean isNavigationBarShow(boolean isHeight) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             Display display = getWindowManager().getDefaultDisplay();
             Point size = new Point();
             Point realSize = new Point();
             display.getSize(size);
             display.getRealSize(realSize);
-            return realSize.y != size.y;
+            if(isHeight){
+                return realSize.y != size.y;
+            }else{
+                return realSize.x != size.x;
+            }
         } else {
             boolean menu = ViewConfiguration.get(this).hasPermanentMenuKey();
             boolean back = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
@@ -961,20 +966,30 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         }
     }
 
-    private int getNavigationBarHeight() {
-        if (!isNavigationBarShow()) {
+    private int getNavigationBarHeight(boolean isHeight) {
+        if (!isNavigationBarShow(isHeight)) {
             return 0;
         }
-        int resourceId = getResources().getIdentifier("navigation_bar_height",
-                "dimen", "android");
+        int resourceId;
+        if(isHeight){
+            resourceId = getResources().getIdentifier("navigation_bar_height",
+                    "dimen", "android");
+        }else {
+            resourceId = getResources().getIdentifier("navigation_bar_width",
+                    "dimen", "android");
+        }
         int height = getResources().getDimensionPixelSize(resourceId);
         return height;
     }
 
-
     private int getScreenHeight() {
-        return getHeightDensity() + getNavigationBarHeight();
+        return getHeightDensity() + getNavigationBarHeight(true);
     }
+
+    private int getScreenWidth() {
+        return getWidthDensity() + getNavigationBarHeight(false);
+    }
+
 
     /**
      * set seek bar listener
