@@ -74,6 +74,7 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         DTVTLogger.start();
         super.onCreate(savedInstanceState);
+        setTitleText(getString(R.string.channel_list_activity_title));
         setContentView(R.layout.channel_list_main_layout);
         screenWidth = getWidthDensity();
         initView();
