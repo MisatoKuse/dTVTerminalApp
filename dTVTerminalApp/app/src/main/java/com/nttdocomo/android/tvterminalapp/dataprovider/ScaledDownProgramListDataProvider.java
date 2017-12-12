@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.text.TextUtils;
 
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.TvScheduleInsertDataManager;
@@ -31,13 +32,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_CHNO;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ChannelJsonParser.CHANNEL_LIST_TITLE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_TITLE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_CHNO;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_THUMB;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_LINEAR_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser.TV_SCHEDULE_LIST_LINEAR_END_DATE;
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.CHANNEL_LAST_UPDATE;
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.TVSCHEDULE_LAST_UPDATE;
 
@@ -79,7 +73,7 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
      */
     public ScaledDownProgramListDataProvider(Context mContext) {
         this.mContext = mContext;
-        this.mApiDataProviderCallback = (ScaledDownProgramListDataProvider.ApiDataProviderCallback) mContext;
+        this.mApiDataProviderCallback = (ApiDataProviderCallback) mContext;
     }
 
     @Override
@@ -90,13 +84,13 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                     ArrayList<Channel> channels = new ArrayList<>();
                     for (int i = 0; i < resultSet.size(); i++) {
                         Map<String, String> hashMap = resultSet.get(i);
-                        String chNo = hashMap.get(CHANNEL_LIST_CHNO);
-                        String title = hashMap.get(CHANNEL_LIST_TITLE);
-                        String thumb= hashMap.get("thumb");
+                        String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
+                        String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
+                        String thumb= hashMap.get("thumb"); //DREM-36マージの場合、これをoversriteする予定
                         if (!TextUtils.isEmpty(chNo)) {
                             Channel channel = new Channel();
                             channel.setChNo(Integer.parseInt(chNo));
-                            channel.setTitle(title);
+                            channel.setTitle(title);    //DREM-36マージの場合、これをoversriteする予定
                             channel.setThumbnail(thumb);
                             channels.add(channel);
                         }
@@ -113,11 +107,11 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                         for (int i = 0; i < resultSet.size(); i++) {//CH毎番組データ取得して、整形する
                             Map<String, String> hashMap = resultSet.get(i);
                             Schedule mSchedule = new Schedule();
-                            String startDate = hashMap.get(TV_SCHEDULE_LIST_LINEAR_START_DATE);
-                            String endDate = hashMap.get(TV_SCHEDULE_LIST_LINEAR_END_DATE);
-                            String thumb = hashMap.get(TV_SCHEDULE_LIST_THUMB);
-                            String title = hashMap.get(TV_SCHEDULE_LIST_TITLE);
-                            String chNo = hashMap.get(TV_SCHEDULE_LIST_CHNO);
+                            String startDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_START_DATE);
+                            String endDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
+                            String thumb = hashMap.get(JsonContents.META_RESPONSE_THUMB_448);
+                            String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
+                            String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
                             mSchedule.setStartTime(startDate);
                             mSchedule.setEndTime(endDate);
                             mSchedule.setImageUrl(thumb);
@@ -241,7 +235,7 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                 for (int i = 0; i < mChannelProgramList.size(); i++) {//CH毎番組データ取得して、整形する
                     HashMap<String, String> hashMap = mChannelProgramList.get(i);
                     Schedule mSchedule = new Schedule();
-                    String startDate = hashMap.get(TV_SCHEDULE_LIST_LINEAR_START_DATE);
+                    String startDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_START_DATE);
                     StringBuilder startBuilder = new StringBuilder();
                     startBuilder.append(startDate.substring(0, 10));
                     startBuilder.append(startDate.substring(11, 19));
@@ -252,10 +246,10 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                         e.printStackTrace();
                     }
                     if(day.compareTo(selectStartDate) !=-1 && day.compareTo(selectEndDate)!=1){
-                        String endDate = hashMap.get(TV_SCHEDULE_LIST_LINEAR_END_DATE);
-                        String thumb = hashMap.get(TV_SCHEDULE_LIST_THUMB);
-                        String title = hashMap.get(TV_SCHEDULE_LIST_TITLE);
-                        String chNo = hashMap.get(TV_SCHEDULE_LIST_CHNO);
+                        String endDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
+                        String thumb = hashMap.get(JsonContents.META_RESPONSE_THUMB_448);
+                        String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
+                        String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
                         mSchedule.setStartTime(startDate);
                         mSchedule.setEndTime(endDate);
                         mSchedule.setImageUrl(thumb);
@@ -307,9 +301,9 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
     private void setChannelData(ArrayList<Channel> channels, List<HashMap<String, String>> channelList) {
         for (int i = 0; i < channelList.size(); i++) {
             HashMap<String, String> hashMap = channelList.get(i);
-            String chNo = hashMap.get(CHANNEL_LIST_CHNO);
-            String title = hashMap.get(CHANNEL_LIST_TITLE);
-            String thumb=hashMap.get("thumb");
+            String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
+            String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
+            String thumb= hashMap.get("thumb"); //DREM-36マージの場合、これをoversriteする予定
             if (!TextUtils.isEmpty(chNo)) {
                 Channel channel = new Channel();
                 channel.setTitle(title);
