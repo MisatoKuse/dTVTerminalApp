@@ -4,8 +4,11 @@
 
 package com.nttdocomo.android.tvterminalapp.utils;
 
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+
 import org.json.JSONArray;
 
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +17,24 @@ import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstan
 
 public class DBUtils {
     private final static String NUMERICAL_DECISION = "^[0-9]*$";
+
+    //日付項目判定用配列
+
+    //日付用パラメータの識別用
+    private static final String[] DATE_PARA = {
+            JsonContents.META_RESPONSE_DISPLAY_START_DATE,
+            JsonContents.META_RESPONSE_DISPLAY_END_DATE,
+            JsonContents.META_RESPONSE_AVAIL_START_DATE,
+            JsonContents.META_RESPONSE_AVAIL_END_DATE,
+            JsonContents.META_RESPONSE_PUBLISH_START_DATE,
+            JsonContents.META_RESPONSE_PUBLISH_END_DATE,
+            JsonContents.META_RESPONSE_NEWA_START_DATE,
+            JsonContents.META_RESPONSE_NEWA_END_DATE,
+            JsonContents.META_RESPONSE_PU_START_DATE,
+            JsonContents.META_RESPONSE_PU_END_DATE,
+            JsonContents.META_RESPONSE_VOD_START_DATE,
+            JsonContents.META_RESPONSE_VOD_END_DATE,
+    };
 
     /**
      * Jsonのキー名の"4kflg"によるDBエラー回避用
@@ -133,5 +154,22 @@ public class DBUtils {
             i =  (Long) data;
         }
         return i;
+    }
+
+    /**
+     * Jsonの項目名が日付関連か同課を見る
+     * @param parameterName 調べたい項目名
+     * @return 日付関連の項目名ならばtrue
+     */
+    public static boolean isDateItem(String parameterName) {
+        boolean answer = false;
+
+        //日付関連項目が含まれるかどうかを見る
+        if(Arrays.asList(DATE_PARA).contains(parameterName)) {
+            //日付関連項目なので、true
+            answer = true;
+        }
+
+        return answer;
     }
 }
