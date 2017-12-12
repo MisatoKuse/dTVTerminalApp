@@ -329,8 +329,8 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
                     .get(JsonContents.META_RESPONSE_THUMB_448));
             rankingContentInfo.setTitle(dailyRankMapList.get(i)
                     .get(JsonContents.META_RESPONSE_TITLE));
-            rankingContentInfo.setRatStar(dailyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_RATING));
+            rankingContentInfo.setTime(dailyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_DISPLAY_START_DATE));
 
             rankingContentsDataList.add(rankingContentInfo);
             DTVTLogger.info("RankingContentInfo " + rankingContentInfo.getRank());

@@ -144,7 +144,7 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
                                 //日付項目チェック
                                 if (DBUtils.isDateItem(puinfBuffer)) {
                                     //日付なので変換して格納する
-                                    String dateBuffer = DateUtils.formatEpochToString(
+                                    String dateBuffer = DateUtils.getRecordShowListItem(
                                             StringUtil.changeString2Long(puinfObj.getString(
                                                     puinfBuffer)));
                                     drListMap.put(stringBuffer.toString(), dateBuffer);
@@ -156,7 +156,7 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
                             }
                         } else if (DBUtils.isDateItem(listBuffer)) {
                             // DATE_PARAに含まれるのは日付なので、エポック秒となる。変換して格納する
-                            String dateBuffer = DateUtils.formatEpochToString(
+                            String dateBuffer = DateUtils.getRecordShowListItem(
                                     StringUtil.changeString2Long(jsonObject.getString(listBuffer)));
                             drListMap.put(listBuffer, dateBuffer);
                         } else {
