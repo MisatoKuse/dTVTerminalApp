@@ -667,14 +667,19 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         return ret;
     }
 
+    private Toast mToast;
+
     /**
      * showMessage
-     *
      * @param msg
      */
-    private void showMessage(String msg) {
+    private void showMessage(String msg){
         DTVTLogger.start();
-        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+        if(null==mToast){
+            mToast= Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
+        }
+        mToast.setText(msg);
+        mToast.show();
         DTVTLogger.end();
     }
 
@@ -1449,5 +1454,26 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     public void onSuperData(MediaPlayerController mediaPlayerController, CaptionDrawCommands captionDrawCommands) {
         DTVTLogger.start();
         DTVTLogger.end();
+    }
+
+    /**
+     * Playを停止
+     */
+    private void finishPlayer() {
+        if (mPlayerController != null) {
+            setCanPlay(false);
+            mPlayerController.setCaptionDataListener(null);
+            mPlayerController.release();
+            mPlayerController = null;
+        }
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        finishPlayer();
+        if(null!=mToast){
+            mToast.cancel();
+        }
     }
 }
