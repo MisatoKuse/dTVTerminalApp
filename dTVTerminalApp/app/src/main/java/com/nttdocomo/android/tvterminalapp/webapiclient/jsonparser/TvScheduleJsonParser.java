@@ -9,6 +9,9 @@ import android.os.AsyncTask;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
+import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvScheduleWebClient;
 
 import org.json.JSONArray;
@@ -30,7 +33,7 @@ public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object> {
     /**
      * コンストラクタ
      *
-     * @param mTvScheduleJsonParserCallback
+     * @param mTvScheduleJsonParserCallback コールバック
      */
     public TvScheduleJsonParser(TvScheduleWebClient.TvScheduleJsonParserCallback mTvScheduleJsonParserCallback) {
         this.mTvScheduleJsonParserCallback = mTvScheduleJsonParserCallback;
@@ -51,8 +54,8 @@ public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object> {
     /**
      * CH毎番組Jsonデータを解析する
      *
-     * @param jsonStr
-     * @return
+     * @param jsonStr 元のJSONデータ
+     * @return パース後のJSONデータ
      */
     public List<TvScheduleList> TvScheduleListListSender(String jsonStr) {
 
@@ -81,7 +84,7 @@ public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object> {
     /**
      * statsの値をMapでオブジェクトクラスに渡す
      *
-     * @param jsonObj
+     * @param jsonObj 元のJSONデータ
      */
     public void sendStatus(JSONObject jsonObj) {
         try {
@@ -102,7 +105,7 @@ public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object> {
     /**
      * コンテンツのList<HashMap>をオブジェクトクラスに格納
      *
-     * @param arrayList
+     * @param arrayList 元のJSONデータ
      */
     public void sendTsList(JSONArray arrayList) {
         try {
@@ -115,9 +118,30 @@ public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object> {
                         if (listBuffer.equals(JsonContents.META_RESPONSE_PUINF)) {
                             JSONObject puinfObj = jsonObject.getJSONObject(listBuffer);
                             for (String puinfBuffer : JsonContents.PUINF_PARA) {
-                                String para = puinfObj.getString(puinfBuffer);
-                                tsListMap.put(JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + puinfBuffer, para);
+                                //書き込み用項目名の作成
+                                StringBuilder stringBuffer = new StringBuilder();
+                                stringBuffer.append(JsonContents.META_RESPONSE_PUINF);
+                                stringBuffer.append(JsonContents.UNDER_LINE);
+                                stringBuffer.append(puinfBuffer);
+
+                                //日付項目チェック
+                                if (DBUtils.isDateItem(puinfBuffer)) {
+                                    //日付なので変換して格納する
+                                    String dateBuffer = DateUtils.formatEpochToString(
+                                            StringUtil.changeString2Long(puinfObj.getString(
+                                                    puinfBuffer)));
+                                    tsListMap.put(stringBuffer.toString(), dateBuffer);
+                                } else {
+                                    //日付ではないのでそのまま格納する
+                                    String para = puinfObj.getString(puinfBuffer);
+                                    tsListMap.put(stringBuffer.toString(), para);
+                                }
                             }
+                        } else if (DBUtils.isDateItem(listBuffer)) {
+                            // DATE_PARAに含まれるのは日付なので、エポック秒となる。変換して格納する
+                            String dateBuffer = DateUtils.formatEpochToString(
+                                    StringUtil.changeString2Long(jsonObject.getString(listBuffer)));
+                            tsListMap.put(listBuffer, dateBuffer);
                         } else {
                             String para = jsonObject.getString(listBuffer);
                             tsListMap.put(listBuffer, para);
