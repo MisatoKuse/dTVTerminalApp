@@ -758,6 +758,10 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void channelInfoCallback(ChannelsInfo channelsInfo){
         DTVTLogger.start();
+        if(null==channelsInfo){
+            DTVTLogger.end();
+            return;
+        }
         ArrayList<Channel> channels= channelsInfo.getChannels();
         if(0==channels.size()){
             return;
@@ -773,6 +777,10 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void channelListCallback(ArrayList<Channel> channels){
         DTVTLogger.start();
+        if(null==channels){
+            DTVTLogger.end();
+            return;
+        }
         int size=channels.size();
         if(0==size){
             return;
