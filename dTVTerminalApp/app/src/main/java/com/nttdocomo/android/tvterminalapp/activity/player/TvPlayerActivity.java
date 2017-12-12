@@ -511,6 +511,29 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                 title,           //TITLE
                 "contentFormat"   //CONTENT_FORMAT
         );
+        //test b
+//        switch (datas.getDetailParamFromWhere()){
+//            case DetailParamFromWhere_ChList_TabBs:
+//            case DetailParamFromWhere_ChList_TabTer:
+//                mCurrentMediaInfo = new MediaVideoInfo(
+//                        Uri.parse("http://192.168.11.25:5001/get/22057/test8.m2ts"),                //uri
+//                        "video/mp4",      //RESOURCE_MIMETYPE
+//                        16712244,               //SIZE
+//                        55000,           //DURATION
+//                        299977,            //BITRATE
+//                        true,               //IS_SUPPORTED_BYTE_SEEK
+//                        true,               //IS_SUPPORTED_TIME_SEEK
+//                        true,               //IS_AVAILABLE_CONNECTION_STALLING
+//                        true,               //IS_LIVE_MODE
+//                        true,               //IS_REMOTE
+//                        title,           //TITLE
+//                        "contentFormat"   //CONTENT_FORMAT
+//                );
+//                break;
+//            case DetailParamFromWhere_Other:
+//                break;
+//        }
+        //test e
         //本番ソース end
         //test being
 //        Uri uri = Uri.parse("http://192.168.11.5:58890/web/video/pvr?id=15124802860000000001&quality=mobile");
