@@ -62,9 +62,9 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
     private HikariTvChDataProvider mHikariTvChDataProvider;
     private DTvChDataProvider mDTvChDataProvider;
     private int mPagingOffset=1;
-    //ToDo: 開発中テストデータは不足なので、ページング数は一時に「4」に設定していますが、
+    //ToDo: 開発中テストデータは不足なので、ページング数は一時に「10」に設定していますが、
     //       リリースの時、仕様より、再設定する必要がある。
-    private final int CH_LIST_ACTI_PAGING_NUMBER = 4;
+    private final int CH_LIST_ACTI_PAGING_NUMBER = 10;
 
     /**
      * Constructor
