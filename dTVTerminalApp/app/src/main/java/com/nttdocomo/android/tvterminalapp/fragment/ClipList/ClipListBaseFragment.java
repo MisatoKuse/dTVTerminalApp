@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -26,18 +27,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ClipListBaseFragment extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
+public class ClipListBaseFragment extends Fragment implements AbsListView.OnScrollListener,
+        AdapterView.OnItemClickListener, AdapterView.OnTouchListener {
 
-    public Context mActivity;
-    public List mData;
+    private Context mActivity;
+    public List mData = null;
 
     private View mTeleviFragmentView;
     private ListView mTeveviListview;
 
     private ClipMainAdapter mClipMainAdapter;
 
-    public ClipListBaseFragment(){
-        if(mData == null){
+    //スクロール位置の記録
+    private int mFirstVisibleItem = 0;
+
+    //最後のスクロール方向が上ならばtrue
+    private boolean mLastScrollUp = false;
+
+    //指を置いたY座標
+    private float mStartY = 0;
+
+    public ClipListBaseFragment() {
+        if (mData == null) {
             mData = new ArrayList();
         }
     }
@@ -49,28 +60,30 @@ public class ClipListBaseFragment extends Fragment implements AbsListView.OnScro
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         //initData();//一時使うデータ
         return initView();
     }
 
-    private ClipListBaseFragmentScrollListener mClipListBaseFragmentScrollListener=null;
+    private ClipListBaseFragmentScrollListener mClipListBaseFragmentScrollListener = null;
 
-    public void setClipListBaseFragmentScrollListener(ClipListBaseFragmentScrollListener lis){
-        mClipListBaseFragmentScrollListener=lis;
+    public void setClipListBaseFragmentScrollListener(ClipListBaseFragmentScrollListener lis) {
+        mClipListBaseFragmentScrollListener = lis;
     }
 
     /**
      * 各タブ画面は別々に実現して表示されること
      */
-    private View initView(){
-        if(mData == null){
+    private View initView() {
+        if (mData == null) {
             mData = new ArrayList();
         }
         mTeleviFragmentView = View.inflate(getActivity()
                 , R.layout.fragment_clip_list_item_content, null);
 
-        mLoadMoreView = LayoutInflater.from(getActivity()).inflate(R.layout.search_load_more, null);
+        mLoadMoreView = LayoutInflater.from(getActivity()).inflate(
+                R.layout.search_load_more, null);
 
         /*
         if (mData.size() != 0) {
@@ -83,12 +96,13 @@ public class ClipListBaseFragment extends Fragment implements AbsListView.OnScro
         return mTeleviFragmentView;
     }
 
-    public ClipMainAdapter getClipMainAdapter(){
+    public ClipMainAdapter getClipMainAdapter() {
         return mClipMainAdapter;
     }
 
     private View initLoadingContentView() {
-        View defaultView = View.inflate(getActivity(), R.layout.clip_list_default_loading_view, null);
+        View defaultView = View.inflate(getActivity(),
+                R.layout.clip_list_default_loading_view, null);
         return defaultView;
     }
 
@@ -100,15 +114,18 @@ public class ClipListBaseFragment extends Fragment implements AbsListView.OnScro
         mTeveviListview.setOnScrollListener(this);
         mTeveviListview.setOnItemClickListener(this);
 
+        //スクロールの上下方向検知用のリスナーを設定
+        mTeveviListview.setOnTouchListener(this);
+
         ThumbnailProvider thumbnailProvider = new ThumbnailProvider(getActivity());
         mClipMainAdapter
                 = new ClipMainAdapter(getContext()
-                ,mData, R.layout.item_clip_list_dvideo,thumbnailProvider);
+                , mData, R.layout.item_clip_list_dvideo, thumbnailProvider);
         mTeveviListview.setAdapter(mClipMainAdapter);
     }
 
-    public void noticeRefresh(){
-        if(null!=mClipMainAdapter){
+    public void noticeRefresh() {
+        if (null != mClipMainAdapter) {
             mClipMainAdapter.notifyDataSetChanged();
         }
     }
@@ -116,17 +133,20 @@ public class ClipListBaseFragment extends Fragment implements AbsListView.OnScro
     private View mLoadMoreView;
 
     public void displayMoreData(boolean b) {
-        if(null!=mTeveviListview && null!=mTeveviListview){
-            if(b){
+        if (null != mTeveviListview) {
+            if (b) {
                 mTeveviListview.addFooterView(mLoadMoreView);
+
+                //スクロール位置を最下段にすることで、追加した更新フッターを画面内に入れる
+                mTeveviListview.setSelection(mTeveviListview.getMaxScrollAmount());
             } else {
                 mTeveviListview.removeFooterView(mLoadMoreView);
             }
         }
     }
 
-    public void setMode(ClipMainAdapter.Mode mode){
-        if(null!=mClipMainAdapter){
+    public void setMode(ClipMainAdapter.Mode mode) {
+        if (null != mClipMainAdapter) {
             mClipMainAdapter.setMode(mode);
             mData.clear();
             /*
@@ -147,14 +167,14 @@ public class ClipListBaseFragment extends Fragment implements AbsListView.OnScro
     */
 
     public void setDataVod(VodClipContentInfo.VodClipContentInfoItem clipContentInfoItem) {
-        if(mData == null){
+        if (mData == null) {
             mData = new ArrayList();
         }
         mData.add(clipContentInfoItem);
     }
 
     public void setDataTv(TvClipContentInfo.TvClipContentInfoItem clipContentInfoItem) {
-        if(mData == null){
+        if (mData == null) {
             mData = new ArrayList();
         }
         mData.add(clipContentInfoItem);
@@ -162,23 +182,70 @@ public class ClipListBaseFragment extends Fragment implements AbsListView.OnScro
 
     @Override
     public void onScrollStateChanged(AbsListView absListView, int scrollState) {
-        if(null!=mClipListBaseFragmentScrollListener){
+        if (null != mClipListBaseFragmentScrollListener) {
+            //スクロール位置がリストの先頭で上スクロールだった場合は、更新をせずに帰る
+            if (mFirstVisibleItem == 0 && mLastScrollUp) {
+                return;
+            }
+
             mClipListBaseFragmentScrollListener.onScrollStateChanged(this, absListView, scrollState);
         }
     }
 
     @Override
-    public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if(null!=mClipListBaseFragmentScrollListener){
-            mClipListBaseFragmentScrollListener.onScroll(this, absListView, firstVisibleItem, visibleItemCount, totalItemCount);
+    public void onScroll(AbsListView absListView, int firstVisibleItem,
+                         int visibleItemCount, int totalItemCount) {
+        if (null != mClipListBaseFragmentScrollListener) {
+            //現在のスクロール位置の記録
+            mFirstVisibleItem = firstVisibleItem;
+
+            mClipListBaseFragmentScrollListener.onScroll(this, absListView, firstVisibleItem,
+                    visibleItemCount, totalItemCount);
         }
     }
 
     @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        if (!(view instanceof ListView)) {
+            //今回はリストビューの事しか考えないので、他のビューならば帰る
+            return false;
+        }
+
+        //指を動かした方向を検知する
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                //指を降ろしたので、位置を記録
+                mStartY = motionEvent.getY();
+                break;
+            case MotionEvent.ACTION_UP:
+                //指を離したので、位置を記録
+                float mEndY = motionEvent.getY();
+
+                mLastScrollUp = false;
+
+                //スクロール方向の判定
+                if (mStartY < mEndY) {
+                    //終了時のY座標の方が大きいので、上スクロール
+                    mLastScrollUp = true;
+                }
+
+                break;
+
+            default:
+                //現状処理は無い・警告対応
+        }
+
+        return false;
+    }
+
+    @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        if(mLoadMoreView == view){
+        if (mLoadMoreView == view) {
             return;
         }
-        ((BaseActivity)mActivity).startActivity(DtvContentsDetailActivity.class, null);
+
+        if(mActivity != null) {
+            ((BaseActivity) mActivity).startActivity(DtvContentsDetailActivity.class, null);
+        }
     }
 }
