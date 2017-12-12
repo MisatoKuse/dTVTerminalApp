@@ -273,11 +273,23 @@ public class DtvContentsDetailFragment extends Fragment {
      * チャンネル情報の更新
      */
     public void refreshChannelInfo() {
+        boolean flag = false;
         if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelName())) {
             txtChannelName.setText(mOtherContentsDetailData.getChannelName());
+            flag = true;
         }
         if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelDate())) {
             txtChannelDate.setText(mOtherContentsDetailData.getChannelDate());
+            if(flag){
+                flag = true;
+            }
+        } else {
+            flag = false;
+        }
+        if (flag) {
+            txtChannelLabel.setVisibility(View.VISIBLE);
+        } else {
+            txtChannelLabel.setVisibility(View.GONE);
         }
     }
 
