@@ -24,6 +24,8 @@ public class Channel {
     private String startDate;
     //チャンネルの終了時間
     private String endDate;
+    //チャンネルのアイコン
+    private String thumbnail;
 
     /**
      * Channelタイトルを取得
@@ -100,6 +102,20 @@ public class Channel {
      */
     public void setEndDate(String endDate) {
         this.endDate = endDate;
+    }
+    /**
+     * thumbnailを取得
+     * @return thumbnail
+     */
+    public String getThumbnail() {
+        return thumbnail;
+    }
+    /**
+     * thumbnail
+     * @param thumbnail チャンネルID
+     */
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
     }
 
     /**

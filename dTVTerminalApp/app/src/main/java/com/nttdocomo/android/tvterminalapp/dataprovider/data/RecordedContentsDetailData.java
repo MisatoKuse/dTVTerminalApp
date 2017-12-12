@@ -9,6 +9,11 @@ import android.os.Parcelable;
 
 public class RecordedContentsDetailData implements Parcelable {
 
+    public enum DetailParamFromWhere{
+        DetailParamFromWhere_ChList_TabTer,
+        DetailParamFromWhere_ChList_TabBs,
+        DetailParamFromWhere_Other,
+    }
     private String mSize;
     private String mDuration;
     private String mResolution;
@@ -16,6 +21,15 @@ public class RecordedContentsDetailData implements Parcelable {
     private String mResUrl;
     private String mUpnpIcon;
     private String mTitle;
+    private DetailParamFromWhere mDetailParamFromWhere=DetailParamFromWhere.DetailParamFromWhere_Other;
+
+    public void setDetailParamFromWhere(DetailParamFromWhere from){
+        mDetailParamFromWhere=from;
+    }
+
+    public DetailParamFromWhere getDetailParamFromWhere(){
+        return mDetailParamFromWhere;
+    }
 
     public String getTitle() {
         return mTitle;
@@ -87,6 +101,7 @@ public class RecordedContentsDetailData implements Parcelable {
         dest.writeString(this.mResUrl);
         dest.writeString(this.mUpnpIcon);
         dest.writeString(this.mTitle);
+        dest.writeInt(this.mDetailParamFromWhere.ordinal());
     }
 
     public RecordedContentsDetailData() {
@@ -100,6 +115,7 @@ public class RecordedContentsDetailData implements Parcelable {
         this.mResUrl = in.readString();
         this.mUpnpIcon = in.readString();
         this.mTitle = in.readString();
+        this.mDetailParamFromWhere = DetailParamFromWhere.values()[in.readInt()];
     }
 
     public static final Parcelable.Creator<RecordedContentsDetailData> CREATOR = new Parcelable.Creator<RecordedContentsDetailData>() {

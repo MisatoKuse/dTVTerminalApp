@@ -26,7 +26,7 @@ public class DlnaBsChListItem {
     public String mResolution="";
     public String mBitrate="";
     public String mResUrl="";
-    public String mThumbnail="";
+    //public String mThumbnail="";
     //protocolInfo end
     //日付
     public String mDate="";

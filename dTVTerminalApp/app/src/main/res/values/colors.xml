@@ -58,4 +58,7 @@
     <!--//リモコン画面-->
     <drawable name="color_blue">#0099ff</drawable>
     <drawable name="color_little_gray">#E5E5E5</drawable>
+
+    <!--//チャンネルリスト-->
+    <color name="list_view_divider">#e0777777</color>
 </resources>

@@ -6,10 +6,12 @@ package com.nttdocomo.android.tvterminalapp.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -37,6 +39,10 @@ public class ChannelListAdapter extends BaseAdapter {
     private int mLayoutId;
     private ThumbnailProvider mThumbnailProvider;
     private ChListDataType mChListDataType;
+    //サムネイル幅さ display7分の1
+    private float THUMBNAIL_WIDTH = 5;
+    //サムネイル高さ サムネイル幅さ2分の1
+    private static final int THUMBNAIL_HEIGHT = 2;
 
     public ChannelListAdapter(Context context, List data, int id) {
         this.mContext = context;
@@ -82,15 +88,20 @@ public class ChannelListAdapter extends BaseAdapter {
             switch (mChListDataType) {
                 case CH_LIST_DATA_TYPE_BS:
                 case CH_LIST_DATA_TYPE_TER:
-                    holder.mThumbnail.setVisibility(View.VISIBLE);
+                    holder.mThumbnail.setVisibility(View.GONE);
                     break;
                 case CH_LIST_DATA_TYPE_HIKARI:
                 case CH_LIST_DATA_TYPE_DTV:
-                    holder.mThumbnail.setVisibility(View.GONE);
+                    holder.mThumbnail.setVisibility(View.VISIBLE);
                     break;
                 case CH_LIST_DATA_TYPE_INVALID:
                     break;
             }
+            DisplayMetrics DisplayMetrics = mContext.getResources().getDisplayMetrics();
+            float mWidth = (float) DisplayMetrics.widthPixels / THUMBNAIL_WIDTH;
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int) mWidth
+                    , (int) mWidth / THUMBNAIL_HEIGHT);
+            holder.mThumbnail.setLayoutParams(layoutParams);
             convertView = view;
             convertView.setTag(holder);
         } else {
@@ -126,28 +137,30 @@ public class ChannelListAdapter extends BaseAdapter {
                     DlnaRecVideoItem bsItem = (DlnaRecVideoItem) mData.get(position);
                     if (null != bsItem) {
                         chName = bsItem.mTitle;
-                        thumbnail = bsItem.mUpnpIcon;
+                        //thumbnail = bsItem.mUpnpIcon;
+                        thumbnail = null;
                     }
                     break;
                 case CH_LIST_DATA_TYPE_TER:
                     DlnaRecVideoItem terItem = (DlnaRecVideoItem) mData.get(position);
                     if (null != terItem) {
                         chName = terItem.mTitle;
-                        thumbnail = terItem.mUpnpIcon;
+                        //thumbnail = terItem.mUpnpIcon;
+                        thumbnail = null;
                     }
                     break;
                 case CH_LIST_DATA_TYPE_HIKARI:
                     Channel ch= (Channel)mData.get(position);;
                     if (null != ch) {
                         chName = ch.getTitle();
-                        thumbnail = null;
+                        thumbnail = ch.getThumbnail();
                     }
                     break;
                 case CH_LIST_DATA_TYPE_DTV:
                     Channel ch2= (Channel)mData.get(position);;
                     if (null != ch2) {
                         chName = ch2.getTitle();
-                        thumbnail = null;
+                        thumbnail = ch2.getThumbnail();
                     }
                     break;
                 case CH_LIST_DATA_TYPE_INVALID:
