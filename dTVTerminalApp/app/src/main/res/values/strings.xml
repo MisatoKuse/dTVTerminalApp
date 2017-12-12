@@ -210,4 +210,7 @@
         <item>エピッド・ボレアナズ</item>
         <item>ミカエラ・コンリン</item>
     </string-array>
+
+    <!-- チャンネルリストタイトル -->
+    <string name="channel_list_activity_title">チャンネルリスト</string>
 </resources>
