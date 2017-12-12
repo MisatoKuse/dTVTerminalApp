@@ -16,6 +16,21 @@ public class DlnaRecVideoInfo {
         mRecordVideoLists.add(item);
     }
 
+    public void addItemByValue(DlnaRecVideoItem item){
+        DlnaRecVideoItem newItem= new DlnaRecVideoItem();
+        newItem.mTitle=item.mTitle;
+        newItem.mDate=item.mDate;
+        newItem.mAllowedUse=item.mAllowedUse;
+        newItem.mBitrate=item.mBitrate;
+        newItem.mDuration=item.mDuration;
+        newItem.mResolution=item.mResolution;
+        newItem.mResUrl=item.mResUrl;
+        newItem.mSize=item.mSize;
+        newItem.mUpnpIcon=item.mUpnpIcon;
+
+        mRecordVideoLists.add(newItem);
+    }
+
     public void clearAll(){
         mRecordVideoLists.clear();
     }
@@ -60,6 +75,17 @@ public class DlnaRecVideoInfo {
         }
 
         return info;
+    }
+
+    public static final ArrayList<Object> toArrayList(DlnaRecVideoInfo info){
+        ArrayList<Object> ret=new ArrayList();
+        if(null==info || 0==info.size()){
+            return ret;
+        }
+        for(int i=0;i<info.size();++i){
+            ret.add(info.get(i));
+        }
+        return ret;
     }
 
     public ArrayList<DlnaRecVideoItem> getRecordVideoLists() {

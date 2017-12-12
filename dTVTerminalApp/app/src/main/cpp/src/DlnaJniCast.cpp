@@ -54,7 +54,7 @@ namespace dtvt {
     }
 
     /**
-     * 機能：コンテンツ一覧を取得
+     * 機能：録画ヴィデオ一覧を発見
      */
     extern "C" jboolean JNICALL
     Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterface_browseRecVideoDms(JNIEnv *env, jobject instance,
@@ -70,7 +70,70 @@ namespace dtvt {
             return JNI_FALSE;
         }
 
-        bool ret = dlnaPtr->browseDms(std::string((char*)udn));
+        bool ret = dlnaPtr->browseRecVideoListDms(std::string((char *) udn));
+        env->ReleaseStringUTFChars(ctl_, (const char *) udn);
+
+        return ret;
+    }
+
+    /**
+     * 機能：BSデジタルに関して、チャンネルリストを発見
+     */
+    extern "C" jboolean JNICALL
+    Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterface_browseBsChListDms(JNIEnv *env, jobject instance,
+                                                                                 jlong thiz, jstring ctl_) {
+        if (NULL == ctl_) {
+            return JNI_FALSE;
+        }
+        const du_uchar *udn = (const du_uchar *) env->GetStringUTFChars(ctl_, 0);
+
+        Dlna *dlnaPtr = (Dlna *) thiz;
+        if (NULL == dlnaPtr || NULL == udn) {
+            env->ReleaseStringUTFChars(ctl_, (const char *) udn);
+            return JNI_FALSE;
+        }
+
+        bool ret = dlnaPtr->browseBsChListDms(std::string((char *) udn));
+        env->ReleaseStringUTFChars(ctl_, (const char *) udn);
+
+        return ret;
+    }
+
+    extern "C" jboolean JNICALL
+    Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterface_browseTerChListDms(JNIEnv *env, jobject instance,
+                                                                                 jlong thiz, jstring ctl_) {
+        if (NULL == ctl_) {
+            return JNI_FALSE;
+        }
+        const du_uchar *udn = (const du_uchar *) env->GetStringUTFChars(ctl_, 0);
+
+        Dlna *dlnaPtr = (Dlna *) thiz;
+        if (NULL == dlnaPtr || NULL == udn) {
+            env->ReleaseStringUTFChars(ctl_, (const char *) udn);
+            return JNI_FALSE;
+        }
+
+        bool ret = dlnaPtr->browseTerChListDms(std::string((char *) udn));
+        env->ReleaseStringUTFChars(ctl_, (const char *) udn);
+
+        return ret;
+    }
+
+    extern "C" jboolean JNICALL
+    Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterface_browseHikariChListDms(JNIEnv *env, jobject instance,
+                                                                                 jlong thiz, jstring ctl_) {
+        if (NULL == ctl_) {
+            return JNI_FALSE;
+        }
+        const du_uchar *udn = (const du_uchar *) env->GetStringUTFChars(ctl_, 0);
+
+        Dlna *dlnaPtr = (Dlna *) thiz;
+        if (NULL == dlnaPtr || NULL == udn) {
+            env->ReleaseStringUTFChars(ctl_, (const char *) udn);
+            return JNI_FALSE;
+        }
+
+        bool ret = dlnaPtr->browseHikariChListDms(std::string((char *) udn));
         env->ReleaseStringUTFChars(ctl_, (const char *) udn);
 
         return ret;

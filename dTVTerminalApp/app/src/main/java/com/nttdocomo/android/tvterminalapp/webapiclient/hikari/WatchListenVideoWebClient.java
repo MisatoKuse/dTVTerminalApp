@@ -7,6 +7,8 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WatchListenVideoList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.JsonParserThread;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.WatchListenVideoListJsonParser;
@@ -88,11 +90,11 @@ public class WatchListenVideoWebClient
      * @return パラメータ等に問題があった場合はfalse
      */
     public boolean getWatchListenVideoApi(int ageReq, int upperPagetLimit, int lowerPagetLimit,
-                                          int pagerOffset,
+                                          int pagerOffset, String pagerDirection,
                                           WatchListenVideoJsonParserCallback watchListenVideoJsonParserCallback) {
         //パラメーターのチェック
         if (!checkNormalParameter(ageReq, upperPagetLimit, lowerPagetLimit,
-                pagerOffset, watchListenVideoJsonParserCallback)) {
+                pagerOffset, pagerDirection, watchListenVideoJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、ヌルで帰る
             return false;
         }
@@ -101,7 +103,7 @@ public class WatchListenVideoWebClient
         mWatchListenVideoJsonParserCallback = watchListenVideoJsonParserCallback;
 
         //送信用パラメータの作成
-        String sendParameter = makeSendParameter(ageReq, upperPagetLimit, lowerPagetLimit, pagerOffset);
+        String sendParameter = makeSendParameter(ageReq, upperPagetLimit, lowerPagetLimit, pagerOffset, pagerDirection);
 
         //JSONの組み立てに失敗していれば、ヌルで帰る
         if (sendParameter.isEmpty()) {
@@ -109,7 +111,7 @@ public class WatchListenVideoWebClient
         }
 
         //視聴中ビデオ一覧を呼び出す
-        openUrl(API_NAME_LIST.WATCH_LISTEN_VIDEO_LIST.getString(),
+        openUrl(UrlConstants.WebApiUrl.WATCH_LISTEN_VIDEO_LIST,
                 sendParameter, this);
 
         //今のところ正常なので、trueで帰る
@@ -123,11 +125,12 @@ public class WatchListenVideoWebClient
      * @param upperPagetLimit                    結果の最大件数
      * @param lowerPagetLimit                    　            結果の最小件数
      * @param pagerOffset                        取得位置
+     * @param pagerDirection                    取得方向
      * @param watchListenVideoJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
     private boolean checkNormalParameter(int ageReq, int upperPagetLimit, int lowerPagetLimit,
-                                         int pagerOffset,
+                                         int pagerOffset, String pagerDirection,
                                          WatchListenVideoJsonParserCallback watchListenVideoJsonParserCallback) {
         if (!(ageReq >= 1 && ageReq <= 17)) {
             //ageReqが1から17ではないならばfalse
@@ -161,21 +164,24 @@ public class WatchListenVideoWebClient
      * @param upperPagetLimit 結果の最大件数
      * @param lowerPagetLimit 　結果の最小件数
      * @param pagerOffset     取得位置
+     * @param pagerDirection    取得方向
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(int ageReq, int upperPagetLimit, int lowerPagetLimit, int pagerOffset) {
+    private String makeSendParameter(int ageReq, int upperPagetLimit, int lowerPagetLimit,
+                                     int pagerOffset, String pagerDirection) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
-            jsonObject.put("age_req", ageReq);
+            jsonObject.put(JsonContents.META_RESPONSE_AGE_REQ, ageReq);
 
             JSONObject jsonPagerObject = new JSONObject();
 
-            jsonPagerObject.put("upper_limit", upperPagetLimit);
-            jsonPagerObject.put("lower_limit", lowerPagetLimit);
-            jsonPagerObject.put("offset", pagerOffset);
+            jsonPagerObject.put(JsonContents.META_RESPONSE_UPPER_LIMIT, upperPagetLimit);
+            jsonPagerObject.put(JsonContents.META_RESPONSE_LOWER_LIMIT, lowerPagetLimit);
+            jsonPagerObject.put(JsonContents.META_RESPONSE_OFFSET, pagerOffset);
+            jsonPagerObject.put(JsonContents.META_RESPONSE_DIRECTION, pagerDirection);
 
-            jsonObject.put("pager", jsonPagerObject);
+            jsonObject.put(JsonContents.META_RESPONSE_PAGER, jsonPagerObject);
 
             answerText = jsonObject.toString();
 

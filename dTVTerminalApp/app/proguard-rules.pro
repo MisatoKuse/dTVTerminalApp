@@ -23,3 +23,8 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Leave symbol names related to JNI
+-keep class com.nttdocomo.android.tvterminalapp.jni.* {
+ *;
+}

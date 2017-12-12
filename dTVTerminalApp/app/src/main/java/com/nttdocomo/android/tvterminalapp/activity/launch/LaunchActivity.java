@@ -13,11 +13,15 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaProvRecVideo;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoInfo;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoListener;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 
-public class LaunchActivity extends BaseActivity implements View.OnClickListener {
+public class LaunchActivity extends BaseActivity implements View.OnClickListener, DlnaRecVideoListener {
 
     public static final String mStateFromTutorialActivity="fromTutorialActivity";
 
@@ -27,6 +31,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
     Button firstLanchLanchYesActivity=null;
     Button firstLanchLanchNoActivity=null;
+    private DlnaProvRecVideo mDlnaProvRecVideo;
 
     private String mState="";
 
@@ -41,6 +46,17 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
             /*
              * to do: DLNA起動失敗の場合、仕様はないので、ここで将来対応
              */
+        }else {
+            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
+            if(null==dlnaDmsItem){
+                /*
+                 * to do: ペアリングするか、ここで将来対応
+                 */
+                return;
+            }
+            mDlnaProvRecVideo= new DlnaProvRecVideo();
+            mDlnaProvRecVideo.start(dlnaDmsItem, this);
+            mDlnaProvRecVideo.browseRecVideoDms();
         }
 
         setContents();
@@ -87,6 +103,12 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
             firstLanchLanchYesActivity.setVisibility(View.GONE);
         }
         super.onResume();
+    }
+
+    @Override
+    protected void onStop(){
+        mDlnaProvRecVideo.stopListen();
+        super.onStop();
     }
 
     @Override
@@ -162,5 +184,15 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
             DTVTLogger.debug("Start STBSelectActivity");
         }
         DTVTLogger.end();
+    }
+
+    @Override
+    public void onVideoBrows(DlnaRecVideoInfo curInfo) {
+
+    }
+
+    @Override
+    public String getCurrentDmsUdn() {
+        return null;
     }
 }

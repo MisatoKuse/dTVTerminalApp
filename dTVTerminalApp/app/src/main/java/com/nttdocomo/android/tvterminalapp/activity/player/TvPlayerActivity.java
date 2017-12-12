@@ -493,6 +493,9 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
             size= duration*bitRate;
         }
 
+        String title= datas.getTitle();
+
+        //本番ソース begin
         Uri uri = Uri.parse(url);
         mCurrentMediaInfo = new MediaVideoInfo(
                 uri,                //uri
@@ -505,9 +508,27 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
                 true,               //IS_AVAILABLE_CONNECTION_STALLING
                 true,               //IS_LIVE_MODE
                 true,               //IS_REMOTE
-                "title",           //TITLE
+                title,           //TITLE
                 "contentFormat"   //CONTENT_FORMAT
         );
+        //本番ソース end
+        //test being
+//        Uri uri = Uri.parse("http://192.168.11.5:58890/web/video/pvr?id=15124802860000000001&quality=mobile");
+//        mCurrentMediaInfo = new MediaVideoInfo(
+//                uri,                //uri
+//                "application/x-dtcp1",      //RESOURCE_MIMETYPE
+//                size,               //SIZE
+//                1312000,           //DURATION
+//                0,            //BITRATE
+//                true,               //IS_SUPPORTED_BYTE_SEEK
+//                true,               //IS_SUPPORTED_TIME_SEEK
+//                true,               //IS_AVAILABLE_CONNECTION_STALLING
+//                true,               //IS_LIVE_MODE
+//                true,               //IS_REMOTE
+//                title,           //TITLE
+//                "contentFormat"   //CONTENT_FORMAT
+//        );
+        //test end
         DTVTLogger.end();
         return true;
     }
@@ -566,52 +587,110 @@ public class TvPlayerActivity extends BaseActivity implements View.OnClickListen
         playerParams.height = getHeightDensity() * 4 / 11;
         mSecureVideoPlayer.setLayoutParams(playerParams);
         if(getCurMode() == NOW_ON_AIR_MODE){//リニア放送中
-            mTvCtrlView = (RelativeLayout) LayoutInflater.from(this)
-                    .inflate(R.layout.tv_player_ctrl_now_on_air, null, false);
-            mTvNow = mTvCtrlView.findViewById(R.id.tv_player_main_layout_video_ctrl_player_now_on_air_tv);
-            mTvBack = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_back_iv);
-            mTvForward = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_forward_iv);
-            mTvReplay = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_replay_iv);
-            mTvFullScreen = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_full_screen_iv);
-            //mTvRapid = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_rapid_tv);
-            mTvSeekBar = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_seek_bar_sb);
-            mTvFullScreen.setOnClickListener(this);
-            mTvReplay.setOnClickListener(this);
-            mTvBack.setOnClickListener(this);
-            mTvForward.setOnClickListener(this);
-            mTvCtrlView.setLayoutParams(playerParams);
-            mPlayerViewLayout.addView(mTvCtrlView);
-            //初期化の時点から、handlerにmsgを送る
-            viewRefresher.sendEmptyMessage(REFRESH_TV_VIEW);
-            hideTvCtrlView(View.INVISIBLE);
+            initViewOnAir();
+//            mTvCtrlView = (RelativeLayout) LayoutInflater.from(this)
+//                    .inflate(R.layout.tv_player_ctrl_now_on_air, null, false);
+//            mTvNow = mTvCtrlView.findViewById(R.id.tv_player_main_layout_video_ctrl_player_now_on_air_tv);
+//            mTvBack = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_back_iv);
+//            mTvForward = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_forward_iv);
+//            mTvReplay = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_replay_iv);
+//            mTvFullScreen = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_full_screen_iv);
+//            //mTvRapid = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_rapid_tv);
+//            mTvSeekBar = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_seek_bar_sb);
+//            mTvFullScreen.setOnClickListener(this);
+//            mTvReplay.setOnClickListener(this);
+//            mTvBack.setOnClickListener(this);
+//            mTvForward.setOnClickListener(this);
+//            mTvCtrlView.setLayoutParams(playerParams);
+//            mPlayerViewLayout.addView(mTvCtrlView);
+//            //初期化の時点から、handlerにmsgを送る
+//            viewRefresher.sendEmptyMessage(REFRESH_TV_VIEW);
+//            hideTvCtrlView(View.INVISIBLE);
         }else if(getCurMode() == VIDEO_RECORDING_MODE){//録画
-            mRecordCtrlView = (RelativeLayout) LayoutInflater.from(this)
-                    .inflate(R.layout.tv_player_ctrl_video_record, null, false);
-            mVideoPlayPause = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_player_pause_fl);
-            mVideoCtrlRootView = mRecordCtrlView.findViewById(R.id.tv_player_main_layout_video_ctrl_player_video_root);
-            mVideoRewind10 = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_10_tv);
-            mVideoRewind = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_rewind_iv);
-            mVideoFast30 = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_30_tv);
-            mVideoFast = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_fast_iv);
-            mVideoCtrlBar = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_control_bar_iv);
-            mVideoCurTime = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_cur_time_tv);
-            mVideoFullScreen = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_full_screen_iv);
-            //mVideoRapid = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_rapid_tv);
-            mVideoTotalTime = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_total_time_tv);
-            mVideoSeekBar = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_seek_bar_sb);
-            mVideoPlayPause.setOnClickListener(this);
-            mVideoFullScreen.setOnClickListener(this);
-            //mVideoRapid.setOnClickListener(this);
-            mVideoCtrlRootView.setOnClickListener(this);
-            setVideoSeekBarListener(mVideoSeekBar);
-            mRecordCtrlView.setLayoutParams(playerParams);
-            mPlayerViewLayout.addView(mRecordCtrlView);
-            //初期化の時点から、handlerにmsgを送る
-            viewRefresher.sendEmptyMessage(REFRESH_VIDEO_VIEW);
-            hideVideoCtrlView(View.INVISIBLE);
+            initViewVideo();
+//            mRecordCtrlView = (RelativeLayout) LayoutInflater.from(this)
+//                    .inflate(R.layout.tv_player_ctrl_video_record, null, false);
+//            mVideoPlayPause = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_player_pause_fl);
+//            mVideoCtrlRootView = mRecordCtrlView.findViewById(R.id.tv_player_main_layout_video_ctrl_player_video_root);
+//            mVideoRewind10 = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_10_tv);
+//            mVideoRewind = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_rewind_iv);
+//            mVideoFast30 = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_30_tv);
+//            mVideoFast = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_fast_iv);
+//            mVideoCtrlBar = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_control_bar_iv);
+//            mVideoCurTime = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_cur_time_tv);
+//            mVideoFullScreen = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_full_screen_iv);
+//            //mVideoRapid = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_rapid_tv);
+//            mVideoTotalTime = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_total_time_tv);
+//            mVideoSeekBar = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_seek_bar_sb);
+//            mVideoPlayPause.setOnClickListener(this);
+//            mVideoFullScreen.setOnClickListener(this);
+//            //mVideoRapid.setOnClickListener(this);
+//            mVideoCtrlRootView.setOnClickListener(this);
+//            setVideoSeekBarListener(mVideoSeekBar);
+//            mRecordCtrlView.setLayoutParams(playerParams);
+//            mPlayerViewLayout.addView(mRecordCtrlView);
+//            //初期化の時点から、handlerにmsgを送る
+//            viewRefresher.sendEmptyMessage(REFRESH_VIDEO_VIEW);
+//            hideVideoCtrlView(View.INVISIBLE);
         }
         pauseButton();
         DTVTLogger.end();
+    }
+
+    private void initViewOnAir(){
+        mPlayerViewLayout = findViewById(R.id.tv_player_main_layout_player_rl);
+        RelativeLayout.LayoutParams playerParams = (RelativeLayout.LayoutParams) mSecureVideoPlayer.getLayoutParams();
+        playerParams.height = getHeightDensity() * 4 / 11;
+        mSecureVideoPlayer.setLayoutParams(playerParams);
+        mTvCtrlView = (RelativeLayout) LayoutInflater.from(this)
+                .inflate(R.layout.tv_player_ctrl_now_on_air, null, false);
+        mTvNow = mTvCtrlView.findViewById(R.id.tv_player_main_layout_video_ctrl_player_now_on_air_tv);
+        mTvBack = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_back_iv);
+        mTvForward = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_forward_iv);
+        mTvReplay = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_replay_iv);
+        mTvFullScreen = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_full_screen_iv);
+        //mTvRapid = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_rapid_tv);
+        mTvSeekBar = mTvCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_seek_bar_sb);
+        mTvFullScreen.setOnClickListener(this);
+        mTvReplay.setOnClickListener(this);
+        mTvBack.setOnClickListener(this);
+        mTvForward.setOnClickListener(this);
+        mTvCtrlView.setLayoutParams(playerParams);
+        mPlayerViewLayout.addView(mTvCtrlView);
+        //初期化の時点から、handlerにmsgを送る
+        viewRefresher.sendEmptyMessage(REFRESH_TV_VIEW);
+        hideTvCtrlView(View.INVISIBLE);
+    }
+
+    private void initViewVideo(){
+        mPlayerViewLayout = findViewById(R.id.tv_player_main_layout_player_rl);
+        RelativeLayout.LayoutParams playerParams = (RelativeLayout.LayoutParams) mSecureVideoPlayer.getLayoutParams();
+        playerParams.height = getHeightDensity() * 4 / 11;
+        mSecureVideoPlayer.setLayoutParams(playerParams);
+        mRecordCtrlView = (RelativeLayout) LayoutInflater.from(this)
+                .inflate(R.layout.tv_player_ctrl_video_record, null, false);
+        mVideoPlayPause = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_player_pause_fl);
+        mVideoCtrlRootView = mRecordCtrlView.findViewById(R.id.tv_player_main_layout_video_ctrl_player_video_root);
+        mVideoRewind10 = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_10_tv);
+        mVideoRewind = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_rewind_iv);
+        mVideoFast30 = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_30_tv);
+        mVideoFast = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_fast_iv);
+        mVideoCtrlBar = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_control_bar_iv);
+        mVideoCurTime = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_cur_time_tv);
+        mVideoFullScreen = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_full_screen_iv);
+        //mVideoRapid = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_rapid_tv);
+        mVideoTotalTime = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_total_time_tv);
+        mVideoSeekBar = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_seek_bar_sb);
+        mVideoPlayPause.setOnClickListener(this);
+        mVideoFullScreen.setOnClickListener(this);
+        //mVideoRapid.setOnClickListener(this);
+        mVideoCtrlRootView.setOnClickListener(this);
+        setVideoSeekBarListener(mVideoSeekBar);
+        mRecordCtrlView.setLayoutParams(playerParams);
+        mPlayerViewLayout.addView(mRecordCtrlView);
+        //初期化の時点から、handlerにmsgを送る
+        viewRefresher.sendEmptyMessage(REFRESH_VIDEO_VIEW);
+        hideVideoCtrlView(View.INVISIBLE);
     }
 
     /**

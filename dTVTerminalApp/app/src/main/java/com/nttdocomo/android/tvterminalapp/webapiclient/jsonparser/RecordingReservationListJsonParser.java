@@ -8,6 +8,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationMetaData;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RecordingReservationListWebClient;
@@ -18,9 +19,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationListResponse.RECORDING_RESERVATION_META_RESPONSE_PAGER;
 import static com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationListResponse.RECORDING_RESERVATION_META_RESPONSE_RESERVATION_LIST;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationListResponse.RECORDING_RESERVATION_META_RESPONSE_STATUS;
 
 public class RecordingReservationListJsonParser extends AsyncTask<Object, Object, Object> {
     private final String CLASS_NAME = getClass().getSimpleName();
@@ -30,7 +29,7 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
     private static final String JSON_OBJECT = ".JSONObject";
 
     private RecordingReservationListWebClient.RecordingReservationListJsonParserCallback
-                mRecordingReservationListJsonParserCallback;
+            mRecordingReservationListJsonParserCallback;
     // オブジェクトクラスの定義　
     private RecordingReservationListResponse mRecordingReservationListResponse;
 
@@ -51,6 +50,7 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
         mRecordingReservationListJsonParserCallback.
             onRecordingReservationListJsonParsed(mRecordingReservationListResponse);
     }
+
     @Override
     protected Object doInBackground(Object... strings) {
         String result = (String) strings[0];
@@ -78,11 +78,10 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
                 }
             }
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + JSON_OBJECT,e);
+            DTVTLogger.debug(CLASS_NAME + JSON_OBJECT, e);
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + RESPONSE,e);
+            DTVTLogger.debug(CLASS_NAME + RESPONSE, e);
         }
         return null;
     }
@@ -95,17 +94,16 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
     public void sendStatus(JSONObject jsonObj) {
         try {
             // statusの値を取得しセットする
-            if (!jsonObj.isNull(RECORDING_RESERVATION_META_RESPONSE_STATUS)) {
-                String status = jsonObj.getString(RECORDING_RESERVATION_META_RESPONSE_STATUS);
+            if (!jsonObj.isNull(JsonContents.META_RESPONSE_STATUS)) {
+                String status = jsonObj.getString(JsonContents.META_RESPONSE_STATUS);
                 if (mRecordingReservationListResponse != null) {
                     mRecordingReservationListResponse.setStatus(status);
                 }
             }
 
             //pagerの値を取得しセットする
-            if (!jsonObj.isNull(RECORDING_RESERVATION_META_RESPONSE_PAGER)) {
-                JSONObject pager = jsonObj.getJSONObject(
-                        RECORDING_RESERVATION_META_RESPONSE_PAGER);
+            if (!jsonObj.isNull(JsonContents.META_RESPONSE_PAGER)) {
+                JSONObject pager = jsonObj.getJSONObject(JsonContents.META_RESPONSE_PAGER);
                 mRecordingReservationListResponse.setPager(pager);
             }
 
@@ -113,7 +111,7 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
             throw new RuntimeException(e);
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + SEND_STATUS,e);
+            DTVTLogger.debug(CLASS_NAME + SEND_STATUS, e);
         }
     }
 
@@ -150,8 +148,7 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
             throw new RuntimeException(e);
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            DTVTLogger.debug(CLASS_NAME + SEND_RESPONSE,e);
+            DTVTLogger.debug(CLASS_NAME + SEND_RESPONSE, e);
         }
     }
-
 }

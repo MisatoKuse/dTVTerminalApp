@@ -17,28 +17,6 @@
 		android:layout_marginTop="10dp"
 		android:background="@color/keyword_search_background"/>
 
-	<!-- 検索履歴画面 -->
-	<LinearLayout
-		android:id="@+id/search_history"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:layout_marginLeft="20dp"
-		android:background="@color/keyword_search_header_background"
-		android:orientation="vertical">
-
-		<TextView
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginBottom="5dp"
-			android:text="@string/keyword_search_history"
-			android:textColor="@color/keyword_search_result_text"
-			android:textSize="20dp"/>
-
-		<ListView
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"/>
-	</LinearLayout>
-
 	<!-- 検索結果画面 -->
 	<RelativeLayout
 		android:id="@+id/fl_search_result"

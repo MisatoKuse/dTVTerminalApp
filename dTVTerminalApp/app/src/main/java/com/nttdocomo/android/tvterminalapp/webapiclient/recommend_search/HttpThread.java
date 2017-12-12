@@ -39,6 +39,12 @@ public class HttpThread extends Thread {
         }
     }
 
+    public HttpThread(String url, HttpThreadFinish httpThreadFinish) {
+        mUrl = url;
+        mHttpThreadFinish=httpThreadFinish;
+        clearStatus();
+    }
+
     public HttpThread(String url, Handler handler, HttpThreadFinish httpThreadFinish) {
         mHandler = handler;
         mUrl = url;
@@ -71,12 +77,12 @@ public class HttpThread extends Thread {
             if(httpUrlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
 
                 InputStream is = httpUrlConn.getInputStream();
-                if(null==is){
+                if(null == is){
                     throw new Exception("HttpThread::run, is==null");
                 }
 
                 InputStreamReader isr = new InputStreamReader(is, "UTF-8");
-                if(null==isr){
+                if(null == isr){
                     throw new Exception("HttpThread::run, isr==null");
                 }
                 BufferedReader br = new BufferedReader(isr);
@@ -98,20 +104,30 @@ public class HttpThread extends Thread {
             setError(true);
         }
 
-        mHandler.post(new Runnable() {
+        if (mHandler != null) {
+            mHandler.post(new Runnable() {
 
-            @Override
-            public void run() {
-                if(null!=mHttpThreadFinish){
-                    if(mError){
-                        mXmlStr = "";
-                    } else {
-                        mXmlStr = sb.toString();
+                @Override
+                public void run() {
+                    if (null != mHttpThreadFinish) {
+                        if (mError) {
+                            mXmlStr = "";
+                        } else {
+                            mXmlStr = sb.toString();
+                        }
+                        mHttpThreadFinish.onHttpThreadFinish(mXmlStr);
                     }
-                    mHttpThreadFinish.onHttpThreadFinish(mXmlStr);
                 }
+            });
+        } else {
+            if (null != mHttpThreadFinish) {
+                if (mError) {
+                    mXmlStr = "";
+                } else {
+                    mXmlStr = sb.toString();
+                }
+                mHttpThreadFinish.onHttpThreadFinish(mXmlStr);
             }
-        });
-
+        }
     }
 }

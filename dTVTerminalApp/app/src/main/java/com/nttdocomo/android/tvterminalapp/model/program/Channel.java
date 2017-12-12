@@ -18,6 +18,12 @@ public class Channel {
     private String title;
     //チャンネルのチャンネルID
     private int chNo;
+    //チャンネルのサービスID
+    private String serviceId;
+    //チャンネルの開始時間
+    private String startDate;
+    //チャンネルの終了時間
+    private String endDate;
 
     /**
      * Channelタイトルを取得
@@ -51,6 +57,52 @@ public class Channel {
     }
 
     /**
+     * serviceIdを取得
+     * @return serviceId
+     */
+    public String getServiceId() {
+        return serviceId;
+    }
+
+    /**
+     * serviceIdを設定
+     * @param serviceId チャンネルID
+     */
+    public void setServiceId(String serviceId) {
+        this.serviceId = serviceId;
+    }
+
+    /**
+     * startDateを取得
+     * @return startDate
+     */
+    public String getStartDate() {
+        return startDate;
+    }
+    /**
+     * startDateを設定
+     * @param startDate チャンネルID
+     */
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    /**
+     * endDateを取得
+     * @return endDate
+     */
+    public String getEndDate() {
+        return endDate;
+    }
+    /**
+     * endDateを設定
+     * @param endDate チャンネルID
+     */
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }
+
+    /**
      * チャンネル番組を取得
      * @return schedules　チャンネル番組
      */
@@ -64,5 +116,13 @@ public class Channel {
      */
     public void setSchedules(ArrayList<Schedule> schedules) {
         this.schedules = schedules;
+    }
+
+    public boolean equalTo(Channel ch2){
+        if(null==ch2 || null==this || null==this.title || null==ch2.title){
+            return false;
+        }
+        boolean ret = (this.chNo==ch2.chNo && this.title.equals(ch2.title));
+        return ret;
     }
 }

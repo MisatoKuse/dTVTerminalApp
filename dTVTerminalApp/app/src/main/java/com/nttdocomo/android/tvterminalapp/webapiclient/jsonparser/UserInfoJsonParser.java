@@ -66,7 +66,6 @@ public class UserInfoJsonParser {
                 return userInfoList;
             }
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -79,7 +78,7 @@ public class UserInfoJsonParser {
      * ユーザ情報をList<HashMap>でオブジェクトクラスに格納
      *
      * @param jsonObj
-     * @return
+     * @return ユーザ情報List
      */
     private List sendUiList(JSONObject jsonObj) {
         List<HashMap<String, String>> list = new ArrayList<>();

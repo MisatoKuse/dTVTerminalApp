@@ -12,6 +12,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ChannelListD
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.DailyRankListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendChannelListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendVideolListDao;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RoleListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvScheduleListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VodClipListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WeeklyRankListDao;
@@ -19,15 +20,6 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 
 import java.util.List;
 import java.util.Map;
-
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_DISPLAY_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_DISP_TYPE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_THUMB;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser.DAILYRANK_LIST_TITLE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_DISPLAY_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_DISP_TYPE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_THUMB;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser.VODCLIP_LIST_TITLE;
 
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CTPICURL1;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_TITLE;
@@ -53,8 +45,8 @@ public class HomeDataManager {
      */
     public List<Map<String, String>> selectClipHomeData() {
         //ホーム画面に必要な列を列挙する
-        String[] columns = {VODCLIP_LIST_THUMB, VODCLIP_LIST_TITLE,
-                VODCLIP_LIST_DISPLAY_START_DATE, VODCLIP_LIST_DISP_TYPE};
+        String[] columns = {JsonContents.META_RESPONSE_THUMB_448, JsonContents.META_RESPONSE_TITLE,
+                JsonContents.META_RESPONSE_DISPLAY_START_DATE, JsonContents.META_RESPONSE_DISP_TYPE};
 
         //Daoクラス使用準備
         DBHelper vodClipListDBHelper = new DBHelper(mContext);
@@ -140,8 +132,8 @@ public class HomeDataManager {
      */
     public List<Map<String, String>> selectDailyRankListHomeData() {
         //ホーム画面に必要な列を列挙する
-        String[] columns = {DAILYRANK_LIST_THUMB, DAILYRANK_LIST_TITLE,
-                DAILYRANK_LIST_DISPLAY_START_DATE, DAILYRANK_LIST_DISP_TYPE};
+        String[] columns = {JsonContents.META_RESPONSE_THUMB_448, JsonContents.META_RESPONSE_TITLE,
+                JsonContents.META_RESPONSE_DISPLAY_START_DATE, JsonContents.META_RESPONSE_DISP_TYPE};
 
         //Daoクラス使用準備
         DBHelper dailyRankListDBHelper = new DBHelper(mContext);
@@ -196,6 +188,27 @@ public class HomeDataManager {
         List<Map<String, String>> list = weeklyRankListDao.findById(columns);
         db.close();
         weeklyRankListDBHelper.close();
+        return list;
+    }
+
+    /**
+     * ロールリストデータを返却する
+     *
+     * @return list ロールリスト
+     */
+    public List<Map<String, String>> selectRoleListData() {
+        //ホーム画面に必要な列を列挙する
+        String[] columns = {JsonContents.META_RESPONSE_CONTENTS_ID, JsonContents.META_RESPONSE_CONTENTS_NAME};
+
+        //Daoクラス使用準備
+        DBHelper roleListDBHelper = new DBHelper(mContext);
+        SQLiteDatabase db = roleListDBHelper.getWritableDatabase();
+        RoleListDao roleListDao = new RoleListDao(db);
+
+        //ホーム画面用データ取得
+        List<Map<String, String>> list = roleListDao.findById(columns);
+        db.close();
+        roleListDBHelper.close();
         return list;
     }
 }

@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationListResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.RemoteRecordingReservationListJsonParser;
 
@@ -68,7 +69,7 @@ public class RemoteRecordingReservationListWebClient
                 remoteRecordingReservationListJsonParserCallback;
 
         //リモート録画一覧の情報を読み込むため、リモート録画一覧を呼び出す
-        openUrl(API_NAME_LIST.REMOTE_RECORDING_RESERVATION_LIST_WEB_CLIENT.getString(),
+        openUrl(UrlConstants.WebApiUrl.REMOTE_RECORDING_RESERVATION_LIST_WEB_CLIENT,
                 "", this);
 
         //今のところ失敗していないので、trueを返す

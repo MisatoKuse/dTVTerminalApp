@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationListResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.RecordingReservationListJsonParser;
 
@@ -12,11 +14,6 @@ import org.json.JSONObject;
 
 public class RecordingReservationListWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
-
-    //JSON作成用固定値
-    private static final String PAGER_STR = "pager";
-    private static final String LIMIT_STR = "limit";
-    private static final String OFFSET_STR = "offset";
 
     //実際の値の下限
     private static final int LOWER_LIMIT = 1;
@@ -84,7 +81,7 @@ public class RecordingReservationListWebClient
         String sendParameter = makeSendParameter(limit, offset);
 
         //録画一覧の情報を読み込むため、録画一覧APIを呼び出す
-        openUrl(API_NAME_LIST.RECORDING_RESERVATION_LIST_WEB_CLIENT.getString(),
+        openUrl(UrlConstants.WebApiUrl.RECORDING_RESERVATION_LIST_WEB_CLIENT,
                 sendParameter, this);
 
         //今のところ失敗していないので、trueを返す
@@ -138,17 +135,17 @@ public class RecordingReservationListWebClient
 
             //offsetが1以上ならばJSONに書き込む・ゼロの場合は全件指定なので、出力しないことで全件になる
             if (limit >= LOWER_LIMIT) {
-                pager.put(LIMIT_STR, limit);
+                pager.put(JsonContents.META_RESPONSE_LIST, limit);
             }
 
             //limitが1以上ならばJSONに書き込む・ゼロの場合は全件指定なので、出力しないことで全件になる
             if (offset >= LOWER_LIMIT) {
-                pager.put(OFFSET_STR, offset);
+                pager.put(JsonContents.META_RESPONSE_OFFSET, offset);
             }
 
             //ページャーに値が格納されていれば、出力する
-            if (pager.has(LIMIT_STR) || pager.has(OFFSET_STR)) {
-                jsonObject.put(PAGER_STR, pager);
+            if (pager.has(JsonContents.META_RESPONSE_LIST) || pager.has(JsonContents.META_RESPONSE_OFFSET)) {
+                jsonObject.put(JsonContents.META_RESPONSE_PAGER, pager);
                 answerText = jsonObject.toString();
             } else {
                 answerText = "";

@@ -23,7 +23,18 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
         Handler handler = new Handler();
         String url=createUrlComponents(urlString, queryItems);
         mWebApiCallback=callback;
+        //Log.d(DCommon.LOG_DEF_TAG, "WebApiBase::get, url= " + url);
         new HttpThread(url, handler, this).start();
+    }
+
+    /**
+     * Handlerが使用できないASyncTaskの処理内で使用する
+     */
+    public void getReccomendInfo(String urlString, LinkedHashMap<String, String> queryItems, WebApiCallback callback){
+        String url=createUrlComponents(urlString, queryItems);
+        mWebApiCallback=callback;
+        //Log.d(DCommon.LOG_DEF_TAG, "WebApiBase::get, url= " + url);
+        new HttpThread(url, this).start();
     }
 
     private String createUrlComponents(String url, Map<String, String> queryItems) {

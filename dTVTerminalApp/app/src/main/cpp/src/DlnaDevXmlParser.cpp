@@ -11,7 +11,7 @@ namespace dtvt {
      *
      * @return
      */
-    DlnaDevXmlParser::DlnaDevXmlParser(){
+    DlnaDevXmlParser::DlnaDevXmlParser(): DlnaXmlParserBase(DLNA_MSG_ID_DEV_DISP_JOIN){
 
     }
 

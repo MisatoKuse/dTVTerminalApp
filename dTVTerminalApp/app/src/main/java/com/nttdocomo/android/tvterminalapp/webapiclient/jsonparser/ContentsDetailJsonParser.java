@@ -9,7 +9,7 @@ import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ContentsDetailGetResponse;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodProgramMetaFullData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsDetailGetWebClient;
 
 import org.json.JSONArray;
@@ -105,7 +105,7 @@ public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> 
      */
     private void sendContentsDetailGetResponse(JSONObject jsonObj) {
         try {
-            ArrayList<VodProgramMetaFullData> vodProgramMetaFullDataArrayList =
+            ArrayList<VodMetaFullData> vodMetaFullDataArrayList =
                     new ArrayList<>();
             if (!jsonObj.isNull(ContentsDetailGetResponse.GENRE_COUNT_GET_RESPONSE_LIST)) {
                 // VOD＆番組マージメタデータ（フル版）をJSONArrayにパースする
@@ -117,19 +117,19 @@ public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> 
 
                 //VOD＆番組マージメタデータ（フル版）のデータオブジェクトArrayListを生成する
                 for (int i = 0; i < lists.length(); i++) {
-                    VodProgramMetaFullData fullData = new VodProgramMetaFullData();
+                    VodMetaFullData fullData = new VodMetaFullData();
 
                     //データを個別に転送する
                     fullData.setData(lists.getJSONObject(i));
 
                     //データを追加
-                    vodProgramMetaFullDataArrayList.add(fullData);
+                    vodMetaFullDataArrayList.add(fullData);
                 }
 
                 //レスポンスとしてVOD＆番組マージメタデータ（フル版）を返す
                 if (mContentsDetailGetResponse != null) {
-                    mContentsDetailGetResponse.setVodProgramMetaFullData(
-                            vodProgramMetaFullDataArrayList);
+                    mContentsDetailGetResponse.setVodMetaFullData(
+                            vodMetaFullDataArrayList);
                 }
 
             }
@@ -137,5 +137,4 @@ public class ContentsDetailJsonParser extends AsyncTask<Object, Object, Object> 
             throw new RuntimeException(e);
         }
     }
-
 }

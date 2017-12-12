@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.DailyRankJsonParser;
 
@@ -74,7 +76,7 @@ public class DailyRankWebClient
         }
 
         //日毎ランク一覧を呼び出す
-        openUrl(API_NAME_LIST.DAILY_RANK_LIST.getString(), sendParameter, this);
+        openUrl(UrlConstants.WebApiUrl.DAILY_RANK_LIST, sendParameter, this);
 
         //今のところ失敗していないので、trueを返す
         return true;
@@ -142,19 +144,19 @@ public class DailyRankWebClient
         try {
             //ページャー部の作成
             JSONObject jsonPagerObject = new JSONObject();
-            jsonPagerObject.put("limit", limit);
-            jsonPagerObject.put("offset", offset);
-            jsonObject.put("pager", jsonPagerObject);
+            jsonPagerObject.put(JsonContents.META_RESPONSE_PAGER_LIMIT, limit);
+            jsonPagerObject.put(JsonContents.META_RESPONSE_OFFSET, offset);
+            jsonObject.put(JsonContents.META_RESPONSE_PAGER, jsonPagerObject);
 
             //その他
-            jsonObject.put("filter", filter);
+            jsonObject.put(JsonContents.META_RESPONSE_FILTER, filter);
 
             //数字がゼロの場合は無指定と判断して1にする
             if (ageReq == 0) {
                 ageReq = 1;
             }
 
-            jsonObject.put("age_req", ageReq);
+            jsonObject.put(JsonContents.META_RESPONSE_AGE_REQ, ageReq);
 
             answerText = jsonObject.toString();
 
@@ -165,5 +167,4 @@ public class DailyRankWebClient
 
         return answerText;
     }
-
 }

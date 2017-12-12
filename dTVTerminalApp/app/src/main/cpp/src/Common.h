@@ -30,6 +30,23 @@ namespace dtvt {
 
     typedef std::vector<std::string> StringVector;
 
+    typedef enum {
+        //Browseコンテンツ
+        DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST = 0,
+        //デバイスjoin
+        DLNA_MSG_ID_DEV_DISP_JOIN = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 1,
+        //デバイスleave
+        DLNA_MSG_ID_DEV_DISP_LEAVE = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 2,
+        //BSデジタルに関して、チャンネルリストを発見
+        DLNA_MSG_ID_BS_CHANNEL_LIST = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 3,
+        //地上波(terrestrial)
+        DLNA_MSG_ID_TER_CHANNEL_LIST = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 4,
+        //ひかりTV
+        DLNA_MSG_ID_HIKARI_CHANNEL_LIST = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 5,
+        //invalid value
+        DLNA_MSG_ID_INVALID = 0xffffffff,
+    } DLNA_MSG_ID;
+
 
     //const du_uchar* BDC_FILTER = ...      --> can not compile, so do it as below
     const du_uchar BDC_FILTER[] = "res,res@duration,res@bitrate,res@sampleFrequency,res@bitsPerSample,res@nrAudioChannels,res@size,res@colorDepth,res@resolution,res@dlna:ifoFileURI,upnp:album,dc:date,dc:creator,upnp:originalTrackNumber,upnp:albumArtURI,upnp:albumArtURI@dlna:profileID";
@@ -54,6 +71,39 @@ namespace dtvt {
     const char * const RecVideoItem_Field_mResUrl     ="mResUrl";
     const char * const RecVideoItem_Field_mUpnpIcon   ="mUpnpIcon";
     const char * const RecVideoItem_Field_mDate       ="mDate";
+    
+    //DlnaBsChListItem フィールド定義
+    const char * const DlnaBsChListItem_Field_mChannelNo ="mChannelNo";
+    const char * const DlnaBsChListItem_Field_mTitle = "mTitle";
+    const char * const DlnaBsChListItem_Field_mSize =  "mSize";
+    const char * const DlnaBsChListItem_Field_mDuration =  "mDuration";
+    const char * const DlnaBsChListItem_Field_mResolution =  "mResolution";
+    const char * const DlnaBsChListItem_Field_mBitrate =  "mBitrate";
+    const char * const DlnaBsChListItem_Field_mResUrl =  "mResUrl";
+    const char * const DlnaBsChListItem_Field_mThumbnail =  "mThumbnail";
+    const char * const DlnaBsChListItem_Field_mDate =  "mDate";
+
+    //DlnaTerChListItem フィールド定義
+    const char * const DlnaTerChListItem_Field_mChannelNo ="mChannelNo";
+    const char * const DlnaTerChListItem_Field_mTitle = "mTitle";
+    const char * const DlnaTerChListItem_Field_mSize =  "mSize";
+    const char * const DlnaTerChListItem_Field_mDuration =  "mDuration";
+    const char * const DlnaTerChListItem_Field_mResolution =  "mResolution";
+    const char * const DlnaTerChListItem_Field_mBitrate =  "mBitrate";
+    const char * const DlnaTerChListItem_Field_mResUrl =  "mResUrl";
+    const char * const DlnaTerChListItem_Field_mThumbnail =  "mThumbnail";
+    const char * const DlnaTerChListItem_Field_mDate =  "mDate";
+
+    //DlnaHikariChListItem フィールド定義
+    const char * const DlnaHikariChListItem_Field_mChannelNo ="mChannelNo";
+    const char * const DlnaHikariChListItem_Field_mTitle = "mTitle";
+    const char * const DlnaHikariChListItem_Field_mSize =  "mSize";
+    const char * const DlnaHikariChListItem_Field_mDuration =  "mDuration";
+    const char * const DlnaHikariChListItem_Field_mResolution =  "mResolution";
+    const char * const DlnaHikariChListItem_Field_mBitrate =  "mBitrate";
+    const char * const DlnaHikariChListItem_Field_mResUrl =  "mResUrl";
+    const char * const DlnaHikariChListItem_Field_mThumbnail =  "mThumbnail";
+    const char * const DlnaHikariChListItem_Field_mDate =  "mDate";
 
     //java string path
     const char * const Dlna_Java_String_Path = "java/lang/String";    //"Ljava/lang/String;";

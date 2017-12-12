@@ -20,7 +20,7 @@ namespace dtvt {
     class DlnaXmlParserBase {
 
     public:
-        DlnaXmlParserBase(){}
+        DlnaXmlParserBase(DLNA_MSG_ID id);
 
         /**
          * 機能：xxxParserクラスのベースクラス
@@ -49,6 +49,15 @@ namespace dtvt {
         virtual void parse(void *response, vector<StringVector>& out, std::string &containerId, std::string &isContainerId);
         
         virtual ~DlnaXmlParserBase(){}
+
+        /**
+         * 機能：DMSデバイス以外のsub parser用、sub parserを表示する。DMSデバイスのsub classは　DLNA_MSG_ID_DEV_DISP_JOIN　を固定
+         * @return mDlnaMsgIdD
+         */
+        DLNA_MSG_ID getMsgId();
+
+    private:
+        DLNA_MSG_ID mDlnaMsgIdD;
     };
     
 }   //namespace dtvt

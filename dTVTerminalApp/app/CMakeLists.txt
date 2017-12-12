@@ -109,6 +109,9 @@ set_target_properties(libxml2
 add_library(
      dtvtlib # dynamic lib name
      SHARED  # share
+     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaBSDigitalXmlParser.cpp
+     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaTerChXmlParser.cpp
+     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaHikariChXmlParser.cpp
      ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaJniCast.cpp
      ${CMAKE_SOURCE_DIR}/src/main/cpp/src/Dlna.cpp
      ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaXmlParserBase.cpp

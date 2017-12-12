@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.RentalVodListJsonParser;
 
@@ -61,7 +62,7 @@ public class RentalVodListWebClient
         mRentalVodListJsonParserCallback = rentalVodListJsonParserCallback;
 
         //レンタルビデオの情報を読み込むため、購入済みVOD一覧を呼び出す
-        openUrl(API_NAME_LIST.RENTAL_VOD_LIST_WEB_CLIENT.getString(), "", this);
+        openUrl(UrlConstants.WebApiUrl.RENTAL_VOD_LIST_WEB_CLIENT, "", this);
 
         //今のところ失敗していないので、trueを返す
         return true;

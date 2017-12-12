@@ -17,12 +17,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.TvPlayerActivity;
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_START_DATE;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_THUMB;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VideoRankJsonParser.VIDEORANK_LIST_TITLE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE;
 
@@ -112,12 +112,12 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         if (getItemViewType(i) == TYPE_FOOTER) {
             return;
         }
-        String date = mContentList.get(i).get(VIDEORANK_LIST_START_DATE);
-        String title = mContentList.get(i).get(VIDEORANK_LIST_TITLE);
+        String date = mContentList.get(i).get(JsonContents.META_RESPONSE_DISPLAY_START_DATE);
+        String title = mContentList.get(i).get(JsonContents.META_RESPONSE_TITLE);
         if (TextUtils.isEmpty(title)) {
             title = mContentList.get(i).get(RECOMMENDCHANNEL_LIST_TITLE);
         }
-        String thumbnail = mContentList.get(i).get(VIDEORANK_LIST_THUMB);
+        String thumbnail = mContentList.get(i).get(JsonContents.META_RESPONSE_THUMB_448);
         if (TextUtils.isEmpty(thumbnail)) {
             thumbnail = mContentList.get(i).get(RECOMMENDCHANNEL_LIST_CTPICURL1);
         }
@@ -145,9 +145,8 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         viewHolder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent mIntent = new Intent();
-                mIntent.setClass(context, TvPlayerActivity.class);
-                context.startActivity(mIntent);
+                ((BaseActivity)context).startActivityByServiceId(OtherContentsDetailData.
+                        DTV_CONTENTS_SERVICE_ID, null);
             }
         });
     }

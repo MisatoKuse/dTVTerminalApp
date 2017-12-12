@@ -29,7 +29,7 @@ namespace dtvt {
         void parse(void *fileStr, vector<StringVector>& out);
 
         /**
-         * 機能：再帰する必要があるxmlにとって、xxxParserクラスで実現
+         * 機能：BSデジタル xmlを解析
          * @param children
          * @param out
          * @param v1
@@ -41,28 +41,28 @@ namespace dtvt {
         virtual ~DlnaBSDigitalXmlParser();
     };
 
-    //DlnaRecVideoParse フィールド定義
-    const char * const RecVideoParse_Field_Container    ="container";
-    const char * const RecVideoParse_Field_Item         ="item";
-    const char * const RecVideoParse_Field_Id           ="id";
-    const char * const RecVideoParse_Field_Title        ="title";
-    const char * const RecVideoParse_Field_Res          ="res";
-    const char * const RecVideoParse_Field_ProtocolInfo ="protocolInfo";
-    const char * const RecVideoParse_Field_Size         ="size";
-    const char * const RecVideoParse_Field_Duration     ="duration";
-    const char * const RecVideoParse_Field_Resolution   ="resolution";
-    const char * const RecVideoParse_Field_Bitrate      ="bitrate";
-    const char * const RecVideoParse_Field_AlbumArtURI  ="albumArtURI";
-    const char * const RecVideoParse_Field_ProfileID    ="profileID";
-    const char * const RecVideoParse_Field_PNG_LRG      ="PNG_LRG";
-    const char * const RecVideoParse_Field_Date         ="date";
-    const char * const RecVideoParse_Field_Class        ="class";
-    const char * const RecVideoParse_Field_VideoItem    ="object.item.videoItem";
-    const char * const RecVideoParse_Field_Videos       ="Videos";
+    //フィールド定義
+    const char * const BsXmlParser_Field_Container    ="container";
+    const char * const BsXmlParser_Field_Item         ="item";
+    const char * const BsXmlParser_Field_Id           ="id";
+    const char * const BsXmlParser_Field_Title        ="title";
+    const char * const BsXmlParser_Field_Res          ="res";
+    const char * const BsXmlParser_Field_ProtocolInfo ="protocolInfo";
+    const char * const BsXmlParser_Field_Size         ="size";
+    const char * const BsXmlParser_Field_Duration     ="duration";
+    const char * const BsXmlParser_Field_Resolution   ="resolution";
+    const char * const BsXmlParser_Field_Bitrate      ="bitrate";
+    const char * const BsXmlParser_Field_AlbumArtURI  ="albumArtURI";
+    const char * const BsXmlParser_Field_ProfileID    ="profileID";
+    const char * const BsXmlParser_Field_PNG_LRG      ="PNG_LRG";
+    const char * const BsXmlParser_Field_Date         ="date";
+    const char * const BsXmlParser_Field_Class        ="class";
+    const char * const BsXmlParser_Field_VideoItem    ="object.item.videoItem";
+    const char * const BsXmlParser_Field_Videos       ="Videos";
 
     //ビデオ種類
-    const char * const RecVideoType_Field_Mp4           ="http-get:*:video/mp4";
-    const char * const RecVideoType_Field_Mpeg          ="http-get:*:video/mpeg";
+    const char * const BsXmlParser_Field_Mp4           ="http-get:*:video/mp4";
+    const char * const BsXmlParser_Field_Mpeg          ="http-get:*:video/mpeg";
 
 }   //namespace dtvt
 
