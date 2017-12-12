@@ -294,8 +294,8 @@ public class RemoteControllerSendKeyAction {
         private int mRepeatButtonId;
         private TimerTask mTimerTask = null;
         // 実行間隔
-        private long EXECUTION_INTERVAL = 500;
-        private long DELAY_TIME = 500;
+        private long EXECUTION_INTERVAL = 50;
+        private long DELAY_TIME = 50;
         // 実行回数カウンター
         private int execution_counter = 0;
 
