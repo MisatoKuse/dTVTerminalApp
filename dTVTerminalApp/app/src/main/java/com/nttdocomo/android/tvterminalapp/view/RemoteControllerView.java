@@ -251,7 +251,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         viewList.add(inflate1);
         viewList.add(inflate);
 
-        mViewPager = findViewById(R.id.remokon_viewpager);
+        mViewPager = findViewById(R.id.remocon_viewpager);
         mRemokonAdapter = new ViewPagerAdapter();
         mViewPager.setAdapter(mRemokonAdapter);
         mViewPager.addOnPageChangeListener(this);
@@ -364,6 +364,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
             if (null != mStartUIListener) {
                 mStartUIListener.onEndRemoteControl();
             }
+            setDefaultPage();
         }
     }
 
@@ -420,5 +421,12 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         mParentGestureDetector.onTouchEvent(ev);
         this.setOnTouchListener(mParentOnTouchListener);
         return !mIsTop;
+    }
+
+    /**
+     * リモコンUI画面を閉じた際にplayer操作画面に戻す
+     */
+    public void setDefaultPage() {
+        mViewPager.setCurrentItem(0);
     }
 }

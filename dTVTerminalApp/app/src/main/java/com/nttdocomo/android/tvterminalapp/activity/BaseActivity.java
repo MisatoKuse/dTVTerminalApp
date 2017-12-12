@@ -555,10 +555,15 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      */
     public void createRemoteControllerView() {
         DTVTLogger.debug("CreateRemoteControllerView");
-        RelativeLayout layout = findViewById(R.id.remote_controller_rl);
+        RelativeLayout layout = findViewById(R.id.base_remote_controller_rl);
         remoteControllerView = layout.findViewById(R.id.remote_control_view);
         remoteControllerView.init(this);
-        remoteControllerView.setOnStartRemoteControllerUI(this);
+        if(this instanceof DtvContentsDetailActivity) {
+            // nop.
+            DTVTLogger.debug("DtvContentsDetailActivity");
+        } else {
+            remoteControllerView.setOnStartRemoteControllerUI(this);
+        }
         layout.setVisibility(View.VISIBLE);
     }
 
@@ -603,22 +608,18 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     protected View.OnClickListener mRemoteControllerOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if(mContext instanceof DtvContentsDetailActivity) {
-                // nop.
-            } else {
-                switch (v.getId()) {
-                    case R.id.header_stb_status_icon:
-                        if (getStbStatus()) {
-                            DTVTLogger.debug("Start RemoteControl");
-                            createRemoteControllerView();
-                            getRemoteControllerView().startRemoteUI();
-                        }
-                        break;
-                    default:
-                        DTVTLogger.debug("Close Controller");
-                        getRemoteControllerView().closeRemoteControllerUI();
-                        break;
-                }
+            switch (v.getId()) {
+                case R.id.header_stb_status_icon:
+                    if (getStbStatus()) {
+                        DTVTLogger.debug("Start RemoteControl");
+                        createRemoteControllerView();
+                        getRemoteControllerView().startRemoteUI();
+                    }
+                    break;
+                default:
+                    DTVTLogger.debug("Close Controller");
+                    getRemoteControllerView().closeRemoteControllerUI();
+                    break;
             }
         }
     };
@@ -637,5 +638,15 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         View base = findViewById(R.id.base_motion_detection_rl);
         base.setOnClickListener(null);
         base.setVisibility(View.GONE);
+    }
+
+    /**
+     * リモートコントローラーViewのVisibilityを変更
+     * @param visibility
+     */
+    protected void setRemoteControllerViewVisibility(int visibility) {
+        if(remoteControllerView != null) {
+            findViewById(R.id.base_remote_controller_rl).setVisibility(visibility);
+        }
     }
 }

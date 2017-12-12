@@ -225,6 +225,7 @@ public class RemoteControllerSendKeyAction {
                     } else if (mRepeatStateManagement.mStatus == RepeatTaskStatus.REPEAT_STATUS_DURING_STARTUP) {
                         // リピート処理を1度も行っていない場合
                         sendKeyCode(v.getId(),SEND_KEYCODE_PARAM_ACTION_UP,false);
+                        mRepeatStateManagement.repeatCancel();
                         mRepeatStateManagement.setRepeatTaskStatus(RepeatTaskStatus.REPEAT_STATUS_STAND_BY);
                         DTVTLogger.debug("sendKeyCode");
                     } else {
@@ -356,7 +357,10 @@ public class RemoteControllerSendKeyAction {
          * リピート処理の終了
          */
         public void repeatCancel() {
-            mTimerTask.cancel();
+            if(mTimerTask != null) {
+                mTimerTask.cancel();
+                mTimerTask = null;
+            }
         }
     }
 
