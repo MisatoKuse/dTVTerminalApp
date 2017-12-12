@@ -708,7 +708,6 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
      * インテントデータ取得
      */
     private void setIntentDetailData() {
-        mDetailData = intent.getParcelableExtra(RECOMMEND_INFO_BUNDLE_KEY);
         if (mDetailData == null) {
             getContentsData();
             mDetailData = intent.getParcelableExtra(PLALA_INFO_BUNDLE_KEY);
@@ -758,7 +757,29 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
      * データの初期化
      */
     private void initContentData() {
-        mTabNames = getResources().getStringArray(R.array.other_contents_detail_tabs);
+
+        // 他サービスフラグ
+        boolean isOtherService = false;
+
+        // タブ数を先に決定するため、コンテンツ詳細のデータを最初に取得しておく
+        mDetailData = intent.getParcelableExtra(RECOMMEND_INFO_BUNDLE_KEY);
+        if (mDetailData != null) {
+            int serviceId = mDetailData.getServiceId();
+            if (serviceId == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID
+                    || serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID
+                    || serviceId == OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID) {
+                // 他サービス(dtv/dtvチャンネル/dアニメ)フラグを立てる
+                isOtherService = true;
+            }
+        }
+
+        if (isOtherService) {
+            // コンテンツ詳細(他サービスの時は、タブ一つに設定する)
+            mTabNames = getResources().getStringArray(R.array.other_service_contents_detail_tabs);
+        } else {
+            mTabNames = getResources().getStringArray(R.array.other_contents_detail_tabs);
+        }
+
         fragmentFactory = new DtvContentsDetailFragmentFactory();
         ContentsDetailPagerAdapter contentsDetailPagerAdapter
                 = new ContentsDetailPagerAdapter(getSupportFragmentManager());

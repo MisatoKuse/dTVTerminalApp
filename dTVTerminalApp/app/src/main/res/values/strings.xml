@@ -165,6 +165,9 @@
     <string name="contents_detail_tv_staff">キャスト・スタッフ</string>
     <string name="contents_detail_tv_staff_recommend">おすすめ作品</string>
     <string name="contents_detail_tv_label">|</string>
+    <string-array name="other_service_contents_detail_tabs">
+        <item>作品情報</item>
+    </string-array>
     <string-array name="other_contents_detail_tabs">
         <item>番組詳細</item>
         <item>チャンネル</item>
