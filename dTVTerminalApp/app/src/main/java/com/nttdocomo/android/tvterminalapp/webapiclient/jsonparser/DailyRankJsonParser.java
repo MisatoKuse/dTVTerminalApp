@@ -9,6 +9,9 @@ import android.os.AsyncTask;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
+import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.DailyRankWebClient;
 
 import org.json.JSONArray;
@@ -29,6 +32,7 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
 
     public static final String[] PAGER_PARA = {JsonContents.META_RESPONSE_PAGER_LIMIT, JsonContents.META_RESPONSE_OFFSET,
             JsonContents.META_RESPONSE_COUNT, JsonContents.META_RESPONSE_TOTAL};
+
     /**
      * コンストラクタ
      *
@@ -131,9 +135,30 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
                         if (listBuffer.equals(JsonContents.META_RESPONSE_PUINF)) {
                             JSONObject puinfObj = jsonObject.getJSONObject(listBuffer);
                             for (String puinfBuffer : JsonContents.PUINF_PARA) {
-                                String para = puinfObj.getString(puinfBuffer);
-                                drListMap.put(JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + puinfBuffer, para);
+                                //書き込み用項目名の作成
+                                StringBuilder stringBuffer = new StringBuilder();
+                                stringBuffer.append(JsonContents.META_RESPONSE_PUINF);
+                                stringBuffer.append(JsonContents.UNDER_LINE);
+                                stringBuffer.append(puinfBuffer);
+
+                                //日付項目チェック
+                                if (DBUtils.isDateItem(puinfBuffer)) {
+                                    //日付なので変換して格納する
+                                    String dateBuffer = DateUtils.formatEpochToString(
+                                            StringUtil.changeString2Long(puinfObj.getString(
+                                                    puinfBuffer)));
+                                    drListMap.put(stringBuffer.toString(), dateBuffer);
+                                } else {
+                                    //日付ではないのでそのまま格納する
+                                    String para = puinfObj.getString(puinfBuffer);
+                                    drListMap.put(stringBuffer.toString(), para);
+                                }
                             }
+                        } else if (DBUtils.isDateItem(listBuffer)) {
+                            // DATE_PARAに含まれるのは日付なので、エポック秒となる。変換して格納する
+                            String dateBuffer = DateUtils.formatEpochToString(
+                                    StringUtil.changeString2Long(jsonObject.getString(listBuffer)));
+                            drListMap.put(listBuffer, dateBuffer);
                         } else {
                             String para = jsonObject.getString(listBuffer);
                             drListMap.put(listBuffer, para);
