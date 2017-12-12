@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -83,25 +84,22 @@ public class ChannelListAdapter extends BaseAdapter {
         if (convertView == null) {
             holder = new ViewHolder();
             view = View.inflate(mContext, mLayoutId, null);
+            holder.mThumbnailLayout = view.findViewById(R.id.channel_list_item_thumb_ll);
             holder.mThumbnail = view.findViewById(R.id.channel_list_item_thumb_iv);
             holder.mChannelName = view.findViewById(R.id.channel_list_item_title_tv);
             switch (mChListDataType) {
                 case CH_LIST_DATA_TYPE_BS:
                 case CH_LIST_DATA_TYPE_TER:
-                    holder.mThumbnail.setVisibility(View.GONE);
+                    holder.mThumbnailLayout.setVisibility(View.GONE);
                     break;
                 case CH_LIST_DATA_TYPE_HIKARI:
                 case CH_LIST_DATA_TYPE_DTV:
+                    holder.mThumbnailLayout.setVisibility(View.VISIBLE);
                     holder.mThumbnail.setVisibility(View.VISIBLE);
                     break;
                 case CH_LIST_DATA_TYPE_INVALID:
                     break;
             }
-            DisplayMetrics DisplayMetrics = mContext.getResources().getDisplayMetrics();
-            float mWidth = (float) DisplayMetrics.widthPixels / THUMBNAIL_WIDTH;
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int) mWidth
-                    , (int) mWidth / THUMBNAIL_HEIGHT);
-            holder.mThumbnail.setLayoutParams(layoutParams);
             convertView = view;
             convertView.setTag(holder);
         } else {
@@ -116,7 +114,7 @@ public class ChannelListAdapter extends BaseAdapter {
         if(null != holder.mChannelName && null!=chName){
             holder.mChannelName.setText(chName);
         }
-
+        holder.mThumbnail.setBackgroundResource(R.drawable.test_image);
         if(null!=holder.mThumbnail && null!=thumbnail){
             holder.mThumbnail.setTag(thumbnail);
             Bitmap bp= mThumbnailProvider.getThumbnailImage(holder.mThumbnail, thumbnail);
@@ -173,6 +171,7 @@ public class ChannelListAdapter extends BaseAdapter {
 
     class ViewHolder {
         ImageView mThumbnail;
+        LinearLayout mThumbnailLayout;
         TextView mChannelName;
     }
 }

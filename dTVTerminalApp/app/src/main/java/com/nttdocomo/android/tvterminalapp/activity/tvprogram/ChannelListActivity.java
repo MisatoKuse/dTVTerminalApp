@@ -49,6 +49,7 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
         DlnaRecVideoListener, DlnaTerChListListener, DlnaBsChListListener, ScaledDownProgramListDataProvider.ApiDataProviderCallback {
 
     private static final int SCREEN_TIME_WIDTH_PERCENT = 9;
+    private static final float TAB_TEXT_SIZE = 14.0f;
     private LinearLayout mTabsLayout;
     private String[] mTabNames;
     private int screenWidth;
@@ -415,6 +416,7 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
             tabTextView.setTag(i);
             tabTextView.setBackgroundResource(0);
             tabTextView.setTextColor(Color.WHITE);
+            tabTextView.setTextSize(TAB_TEXT_SIZE);
             if (i == 0) {
                 tabTextView.setBackgroundResource(R.drawable.rectangele);
                 tabTextView.setTextColor(Color.GRAY);
