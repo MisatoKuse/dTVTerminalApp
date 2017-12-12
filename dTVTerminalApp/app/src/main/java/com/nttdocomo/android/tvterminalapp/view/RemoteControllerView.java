@@ -387,7 +387,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * リスナーが設定されている場合、通知処理を実行
      */
     private void startRemoteControl() {
-        if(mStartUIListener != null) {
+        if(mStartUIListener != null && mIsTop) {
             DTVTLogger.debug("StartUIListener.onStartRemoteControl");
             mStartUIListener.onStartRemoteControl();
         }
