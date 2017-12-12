@@ -1,66 +1,46 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
-	<RelativeLayout
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:layout_marginStart="7dp"
-		android:layout_marginTop="10dp">
+	<LinearLayout
+		android:id="@+id/channel_list_item_thumb_ll"
+		android:layout_width="48dp"
+		android:layout_height="45dp"
+		android:paddingBottom="9dp"
+		android:paddingTop="9dp">
 
 		<ImageView
 			android:id="@+id/channel_list_item_thumb_iv"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_centerVertical="true"
-			android:scaleType="fitXY"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:scaleType="fitCenter"
 			android:visibility="gone"/>
+	</LinearLayout>
 
-		<ImageView
-			android:id="@+id/channel_list_item_channel_name_standard"
-			android:layout_width="1dp"
-			android:layout_height="40dp"
-			android:layout_centerVertical="true"
-			android:background="@android:color/transparent"
-			android:scaleType="fitXY"/>
+	<TextView
+		android:id="@+id/channel_list_item_title_tv"
+		android:layout_width="match_parent"
+		android:layout_height="45dp"
+		android:layout_centerVertical="true"
+		android:layout_marginStart="5dp"
+		android:layout_toEndOf="@id/channel_list_item_thumb_ll"
+		android:ellipsize="end"
+		android:gravity="center_vertical"
+		android:maxLines="1"
+		android:paddingStart="10dp"
+		android:textColor="@android:color/white"
+		android:textSize="15dp"/>
 
-		<TextView
-			android:id="@+id/channel_list_item_title_tv"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_alignBottom="@id/channel_list_item_thumb_iv"
-			android:layout_alignTop="@id/channel_list_item_thumb_iv"
-			android:layout_centerVertical="true"
-			android:layout_marginEnd="16dp"
-			android:layout_marginStart="10dp"
-			android:layout_toEndOf="@id/channel_list_item_thumb_iv"
-			android:ellipsize="end"
-			android:gravity="center_vertical"
-			android:maxLines="1"
-			android:paddingLeft="6dp"
-			android:textColor="@android:color/white"
-			android:textSize="15dp"/>
+	<TextView
+		android:id="@+id/channel_list_item_line"
+		android:layout_width="match_parent"
+		android:layout_height="1dp"
+		android:layout_alignParentBottom="true"
+		android:layout_alignStart="@id/channel_list_item_title_tv"
+		android:background="@color/list_view_divider"/>
 
-		<View
-			android:id="@+id/channel_list_item_space_view"
-			android:layout_width="wrap_content"
-			android:layout_height="10dp"
-			android:layout_below="@id/channel_list_item_channel_name_standard"
-			android:layout_toEndOf="@id/channel_list_item_thumb_iv"
-			android:background="@android:color/transparent"/>
-
-		<View
-			android:id="@+id/channel_list_item_line"
-			android:layout_width="match_parent"
-			android:layout_height="1dp"
-			android:layout_alignStart="@id/channel_list_item_title_tv"
-			android:layout_below="@id/channel_list_item_space_view"
-			android:background="@color/list_view_divider"/>
-
-	</RelativeLayout>
 </RelativeLayout>
