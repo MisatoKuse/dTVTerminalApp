@@ -104,9 +104,11 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter implements  AbsList
         if(null!=holder.wl_thumbnail){
 
             holder.wl_thumbnail.setTag(watchListenVideoInfo.mContentPictureUrl);
-            Bitmap bp= mThumbnailProvider.getThumbnailImage(holder.wl_thumbnail, watchListenVideoInfo.mContentPictureUrl);
-            if(null!=bp){
-                holder.wl_thumbnail.setImageBitmap(bp);
+            if(null!=watchListenVideoInfo.mContentPictureUrl && 0<watchListenVideoInfo.mContentPictureUrl.length()){
+                Bitmap bp= mThumbnailProvider.getThumbnailImage(holder.wl_thumbnail, watchListenVideoInfo.mContentPictureUrl);
+                if(null!=bp){
+                    holder.wl_thumbnail.setImageBitmap(bp);
+                }
             }
         }
         if(null!=holder.wl_video_rating){

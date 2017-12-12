@@ -15,6 +15,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvClipContentInfo;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipContentInfo;
@@ -90,9 +91,11 @@ public class ClipMainAdapter extends BaseAdapter {
 
                 if(null!=holder.iv_clip_video_thumbnail){
                     holder.iv_clip_video_thumbnail.setTag(tvClipContentInfoItem.mContentPictureUrl);
-                    Bitmap bp= mThumbnailProvider.getThumbnailImage(holder.iv_clip_video_thumbnail, tvClipContentInfoItem.mContentPictureUrl);
-                    if(null!=bp){
-                        holder.iv_clip_video_thumbnail.setImageBitmap(bp);
+                    if(null!=tvClipContentInfoItem.mContentPictureUrl && 0<tvClipContentInfoItem.mContentPictureUrl.length()){
+                        Bitmap bp= mThumbnailProvider.getThumbnailImage(holder.iv_clip_video_thumbnail, tvClipContentInfoItem.mContentPictureUrl);
+                        if(null!=bp){
+                            holder.iv_clip_video_thumbnail.setImageBitmap(bp);
+                        }
                     }
                 }
 
@@ -116,15 +119,23 @@ public class ClipMainAdapter extends BaseAdapter {
 
                 if(null!=holder.iv_clip_video_thumbnail){
                     holder.iv_clip_video_thumbnail.setTag(clipContentInfoItem.mContentPictureUrl);
-                    Bitmap bp= mThumbnailProvider.getThumbnailImage(holder.iv_clip_video_thumbnail, clipContentInfoItem.mContentPictureUrl);
-                    if(null!=bp){
-                        holder.iv_clip_video_thumbnail.setImageBitmap(bp);
+                    if(null!=clipContentInfoItem.mContentPictureUrl && 0<clipContentInfoItem.mContentPictureUrl.length()){
+                        Bitmap bp= mThumbnailProvider.getThumbnailImage(holder.iv_clip_video_thumbnail, clipContentInfoItem.mContentPictureUrl);
+                        if(null!=bp){
+                            holder.iv_clip_video_thumbnail.setImageBitmap(bp);
+                        }
                     }
                 }
 
                 if(null != holder.rb_clip_video_rating){
                     holder.rb_clip_video_rating.setNumStars(5);
-                    holder.rb_clip_video_rating.setRating(Float.parseFloat(clipContentInfoItem.mRating));
+                    if(null!=clipContentInfoItem.mRating){
+                        try {
+                            holder.rb_clip_video_rating.setRating(Float.parseFloat(clipContentInfoItem.mRating));
+                        }catch (Exception e) {
+                            DTVTLogger.debug("ClipMainAdapter.getView, msg=" + e.getCause());
+                        }
+                    }
                 }
 
                 if(null != holder.rb_clip_video_rating_count){
