@@ -39,7 +39,7 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ranking_top_main_layout);
-        setTitleText("ランキング");
+        setTitleText(getString(R.string.nav_menu_item_ranking));
         //ビューの初期化処理
         initView();
         RankingTopDataProvider rankingTopDataProvider = new RankingTopDataProvider(this);
@@ -93,7 +93,7 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(spacingInPixels));
         //コンテンツタイプを設定
         typeTextView.setText(typeContentName);
-        countTextView.setText("＞");
+        countTextView.setText(contentsData.size() + getString(R.string.contents_header));
         //リサイクルビューデータ設定
         setRecyclerViewData(mRecyclerView, contentsData, tag);
     }
@@ -110,7 +110,7 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
         mRecyclerView.setAdapter(mHorizontalViewAdapter);
         View footer = LayoutInflater.from(this).inflate(R.layout.home_main_layout_recyclerview_footer, mRecyclerView, false);
         TextView mTextView = footer.findViewById(R.id.home_main_layout_recyclerview_footer);
-        mTextView.setText("more");
+        mTextView.setText(getString(R.string.contents_more));
         //もっと見るの遷移先を設定
         mTextView.setOnClickListener(new View.OnClickListener() {
             @Override
