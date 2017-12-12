@@ -697,12 +697,14 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         if (mDetailData == null) {
             getContentsData();
             mDetailData = intent.getParcelableExtra(PLALA_INFO_BUNDLE_KEY);
-            String displayType = mDetailData.getDisplayType();
-            String contentsType = mDetailData.getContentsType();
-            if("tv_program".equals(displayType)){
-                if(!"1".equals(contentsType) && !"2".equals(contentsType)
-                        && !"3".equals(contentsType)){
-                    //TODO  放送中の場合
+            if(mDetailData != null){
+                String displayType = mDetailData.getDisplayType();
+                String contentsType = mDetailData.getContentsType();
+                if("tv_program".equals(displayType)){
+                    if(!"1".equals(contentsType) && !"2".equals(contentsType)
+                            && !"3".equals(contentsType)){
+                        //TODO  放送中の場合
+                    }
                 }
             }
         } else {

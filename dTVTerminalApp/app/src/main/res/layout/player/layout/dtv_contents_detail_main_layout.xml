@@ -53,7 +53,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone">
                     <!--中央ボタン画像-->
                     <ImageView
                         android:id="@+id/dtv_contents_view_button"
