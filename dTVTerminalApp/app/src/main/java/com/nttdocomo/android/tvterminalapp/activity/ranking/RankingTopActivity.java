@@ -52,15 +52,7 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
      */
     private void initView() {
         //テレビアイコンをタップされたらリモコンを起動する
-        findViewById(R.id.header_stb_status_icon).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (getStbStatus()) {
-                    createRemoteControllerView();
-                    getRemoteControllerView().startRemoteUI();
-                }
-            }
-        });
+        findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         mLinearLayout = findViewById(R.id.ranking_top_main_layout_linearLayout);
         ImageView menuImageView = findViewById(R.id.header_layout_menu);
         menuImageView.setVisibility(View.VISIBLE);

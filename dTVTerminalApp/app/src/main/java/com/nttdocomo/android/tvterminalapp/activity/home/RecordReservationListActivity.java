@@ -79,15 +79,7 @@ public class RecordReservationListActivity extends BaseActivity
         mListView.setAdapter(mContentsAdapter);
         mLoadMoreView = LayoutInflater.from(this).inflate(R.layout.search_load_more, null);
         //テレビアイコンをタップされたらリモコンを起動する
-        findViewById(R.id.header_stb_status_icon).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (getStbStatus()) {
-                    createRemoteControllerView();
-                    getRemoteControllerView().startRemoteUI();
-                }
-            }
-        });
+        findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         DTVTLogger.end();
     }
 

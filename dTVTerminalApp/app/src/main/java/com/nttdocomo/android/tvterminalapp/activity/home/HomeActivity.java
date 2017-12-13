@@ -72,7 +72,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         //Home画面用データを取得
         HomeDataProvider homeDataProvider = new HomeDataProvider(this);
         homeDataProvider.getHomeData();
-        createRemoteControllerView();
     }
 
     @Override
@@ -164,15 +163,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         ImageView prImageView = findViewById(R.id.home_main_layout_pr);
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
-//        findViewById(R.id.header_stb_status_icon).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (getStbStatus()) {
-//                    createRemoteControllerView();
-//                    getRemoteControllerView().startRemoteUI();
-//                }
-//            }
-//        });
         int height = getHeightDensity();
         //多機種を対応できるよう
         LinearLayout.LayoutParams imgIp = new LinearLayout.LayoutParams(

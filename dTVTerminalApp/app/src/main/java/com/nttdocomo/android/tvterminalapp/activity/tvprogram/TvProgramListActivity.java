@@ -103,6 +103,7 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
         screenWidth = getWidthDensity();
         ImageView menuImage = findViewById(R.id.header_layout_menu);
         ImageView tvImage = findViewById(R.id.header_stb_status_icon);
+        tvImage.setOnClickListener(mRemoteControllerOnClickListener);
         findViewById(R.id.header_layout_back).setVisibility(View.INVISIBLE);
         timeScrollView = findViewById(R.id.tv_program_list_main_layout_time_sl);
         channelRecyclerView = findViewById(R.id.tv_program_list_main_layout_channel_rv);
@@ -113,7 +114,7 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
         changeModeLayout = findViewById(R.id.tv_program_list_main_layout_changemode_rl);
         menuImage.setVisibility(View.VISIBLE);
         tvImage.setVisibility(View.VISIBLE);
-        tvImage.setOnClickListener(this);
+//        tvImage.setOnClickListener(this);
         menuImage.setOnClickListener(this);
         tagImageView.setOnClickListener(this);
         titleTextView.setOnClickListener(this);
@@ -451,13 +452,13 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
                 //日付選択ダイアログ
                 showDatePickDlg();
                 break;
-            case R.id.header_stb_status_icon:
-                //テレビアイコンをタップされたらリモコンを起動する
-                if (getStbStatus()) {
-                    createRemoteControllerView();
-                    getRemoteControllerView().startRemoteUI();
-                }
-                break;
+//            case R.id.header_stb_status_icon:
+//                //テレビアイコンをタップされたらリモコンを起動する
+//                if (getStbStatus()) {
+//                    createRemoteControllerView();
+//                    getRemoteControllerView().startRemoteUI();
+//                }
+//                break;
             case R.id.tv_program_list_main_layout_changemode_rl:
                 //番組表モード切替
                 // TODO: 拡大・縮小番組表切替

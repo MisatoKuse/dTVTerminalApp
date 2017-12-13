@@ -229,7 +229,9 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         mBottomLinearLayout.setVisibility(GONE);
         mFrameLayout = findViewById(R.id.header_watch_by_tv);
         mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_top_corner, null));
-        startRemoteControl();
+        if(mIsTop) {
+            startRemoteControl();
+        }
         DTVTLogger.end();
     }
 
@@ -260,7 +262,9 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         mViewPager.setOnTouchListener(mOnTouchListener);
 
         setRemoteControllerViewAction();
-        startRemoteControl();
+        if(mIsTop) {
+            startRemoteControl();
+        }
     }
 
     @Override
