@@ -76,15 +76,7 @@ public class VideoTopActivity extends BaseActivity implements View.OnClickListen
      */
     private void initView() {
         //テレビアイコンをタップされたらリモコンを起動する
-        findViewById(R.id.header_stb_status_icon).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (getStbStatus()) {
-                    createRemoteControllerView();
-                    getRemoteControllerView().startRemoteUI();
-                }
-            }
-        });
+        findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         if (mContentsList == null) {
             mContentsList = new ArrayList();
         }
