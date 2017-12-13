@@ -46,7 +46,8 @@
             android:clickable="true"
             android:contentDescription="@null"
             android:scaleType="fitCenter"
-            android:src="@mipmap/ic_personal_video_white_24dp" />
+            android:src="@mipmap/ic_personal_video_white_24dp"
+            android:visibility="gone"/>
 
         <ImageView
             android:layout_width="wrap_content"
