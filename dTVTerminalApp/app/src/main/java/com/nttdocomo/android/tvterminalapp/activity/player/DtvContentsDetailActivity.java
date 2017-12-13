@@ -159,9 +159,6 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         setStatusBarColor(R.color.contents_header_background);
         setNoTitle();
         initView();
-        // リモコンUIのリスナーを設定
-        createRemoteControllerView();
-        setStartRemoteControllerUIListener(this);
     }
 
     @Override
@@ -193,6 +190,9 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         Object object = intent.getParcelableExtra(RecordedListActivity.RECORD_LIST_KEY);
         if (object instanceof RecordedContentsDetailData) {
             isPlayer = true;
+            // リモコンUIのリスナーを設定
+            createRemoteControllerView();
+            setStartRemoteControllerUIListener(this);
             initPlayer();
         }
         initContentsView();
@@ -892,12 +892,14 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             playerParams.width = getScreenWidth();
             mScreenWidth = getScreenWidth();
             setPlayerProgressView(true);
+            setRemoteControllerViewVisibility(View.GONE);
         } else {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
             mScreenWidth = getWidthDensity();
             playerParams.height = getWidthDensity() * 2 / 3;
             headerLayout.setVisibility(View.VISIBLE);
             setPlayerProgressView(false);
+            setRemoteControllerViewVisibility(View.VISIBLE);
         }
         thumbnailRelativeLayout.setLayoutParams(playerParams);
         DTVTLogger.end();
@@ -1332,21 +1334,23 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     public void onStartRemoteControl() {
         DTVTLogger.start();
         // サービスIDにより起動するアプリを変更する
-        switch (mDetailData.getServiceId()) {
-            case DTV_CONTENTS_SERVICE_ID: // dTV
-                requestStartApplication(
-                        RemoteControlRelayClient.STB_APPLICATION_TYPES.DTV, mDetailData.getContentId());
-                break;
-            case D_ANIMATION_CONTENTS_SERVICE_ID: // dアニメ
-                requestStartApplication(
-                        RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE, mDetailData.getContentId());
-                break;
-            case DTV_CHANNEL_CONTENTS_SERVICE_ID: // dチャンネル
-                requestStartApplication(
-                        RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL, mDetailData.getContentId());
-                break;
-            default:
-                break;
+        if(mDetailData != null){
+            switch (mDetailData.getServiceId()) {
+                case DTV_CONTENTS_SERVICE_ID: // dTV
+                    requestStartApplication(
+                            RemoteControlRelayClient.STB_APPLICATION_TYPES.DTV, mDetailData.getContentId());
+                    break;
+                case D_ANIMATION_CONTENTS_SERVICE_ID: // dアニメ
+                    requestStartApplication(
+                            RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE, mDetailData.getContentId());
+                    break;
+                case DTV_CHANNEL_CONTENTS_SERVICE_ID: // dチャンネル
+                    requestStartApplication(
+                            RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL, mDetailData.getContentId());
+                    break;
+                default:
+                    break;
+            }
         }
         super.onStartRemoteControl();
         DTVTLogger.end();
