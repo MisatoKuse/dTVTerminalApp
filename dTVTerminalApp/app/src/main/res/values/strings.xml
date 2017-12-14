@@ -220,4 +220,34 @@
 
     <!-- チャンネルリストタイトル -->
     <string name="channel_list_activity_title">チャンネルリスト</string>
+
+    <!-- 設定画面 -->
+    <string name="main_setting_paring">ペアリング済み</string>
+    <string name="main_setting_not_paring">未ペアリング</string>
+    <string name="main_setting_device_storage">本体ストレージ</string>
+    <string name="main_setting_outside_storage">外部ストレージ</string>
+    <string name="main_setting_image_quality_low">低</string>
+    <string name="main_setting_image_quality_middle">中</string>
+    <string name="main_setting_image_quality_high">高</string>
+
+    <string-array name="main_setting_items">
+        <item>dアカウント設定</item>
+        <item>dアカウント設定</item>
+        <item>機器設定</item>
+        <item>ペアリング設定</item>
+        <item>番組表設定</item>
+        <item>マイ番組表設定</item>
+        <item>ダウンロード設定</item>
+        <item>ダウンロード先</item>
+        <item>外出先視聴時の画質設定</item>
+        <item>外出先視聴時の画質設定</item>
+        <item>FAQ</item>
+        <item>FAQ(TBD)</item>
+        <item>アプリケーション情報</item>
+        <item>バージョン情報(TBD)</item>
+        <item>ライセンス情報(TBD)</item>
+        <item>プライバシーポリシー(TBD)</item>
+        <item>利用規約(TBD)</item>
+    </string-array>
+
 </resources>
