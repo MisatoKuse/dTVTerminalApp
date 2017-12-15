@@ -88,6 +88,12 @@
         <activity
             android:name=".activity.other.SettingDetailActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.other.SettingImageQualityActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.other.SettingDownloadPathActivity"
+            android:screenOrientation="portrait" />
         <!-- ======================================  Other グループ End ====================================== -->
 
 
@@ -162,7 +168,7 @@
         <activity android:name=".activity.temp.DAccountAppliActivity" />
         <activity android:name=".activity.temp.GoogleStoreActivity" />
         <activity android:name=".activity.launch.DAccountRegConfirmationActivity" />
-        <activity android:name=".activity.other.SettingDownloadLocation"></activity>
+
     </application>
 
 </manifest>

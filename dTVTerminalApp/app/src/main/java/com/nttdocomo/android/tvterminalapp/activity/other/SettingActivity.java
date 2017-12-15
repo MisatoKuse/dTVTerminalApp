@@ -5,12 +5,16 @@
 package com.nttdocomo.android.tvterminalapp.activity.other;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.storage.StorageManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -27,17 +31,24 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.utils.MainSettingUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SettingActivity extends BaseActivity implements View.OnClickListener,
         AdapterView.OnItemClickListener {
 
+    private Boolean isSDCard = false;
     private String[] itemName;
     private ListView mListView;
-    private final List<MainSettingUtils> mSettingList = new ArrayList<>();
-    private MainSettingListAdapter mAdapter;
     private Resources res;
+    private MainSettingListAdapter mAdapter;
+    private final List<MainSettingUtils> mSettingList = new ArrayList<>();
 
     // カテゴリであることを示す
     private static final boolean CATEGORY = true;
@@ -46,16 +57,20 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     // 空白文字
     private static final String BLANK = "";
     // Dアカウントアプリpackage名
-    private String D_ACCOUNT_PACKAGE_ID = "com.nttdocomo.android.idmanager";
+    private static final String D_ACCOUNT_PACKAGE_ID = "com.nttdocomo.android.idmanager";
+    // 本体ストレージpath保存用
+    private List<String> deviceStorageDirPath;
+    // SDカードpath保存用
+    private List<String> sdCardDirPathList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DTVTLogger.start();
+        setContentView(R.layout.setting_main_layout);
 
         //header部分の設定
         setTitleText(getString(R.string.nav_menu_item_setting));
-        setContentView(R.layout.setting_main_layout);
         ImageView menuImageView = findViewById(R.id.header_layout_menu);
         menuImageView.setVisibility(View.VISIBLE);
         menuImageView.setOnClickListener(this);
@@ -72,7 +87,10 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         mAdapter = new MainSettingListAdapter(this, R.layout.setting_main_list_layout, mSettingList);
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(this);
-        checkIsPairng();
+
+        checkDownloadPath();
+        checkIsPairing();
+        checkImageQuality();
     }
 
     @Override
@@ -99,23 +117,23 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             startDAccountSetting();
         } else if (tappedItemName.equals(itemName[3])) {
             //TODO ペアリング設定
-            startActivity(STBSelectActivity.class, null);
+            Intent intent = new Intent(getApplicationContext(),STBSelectActivity.class);
+//            intent.putExtra("FROM_WHERE", STBSelectActivity.STBSeleFromMode.STBSeleFromMode_Setting.ordinal());
+            startActivity(intent);
         } else if (tappedItemName.equals(itemName[5])) {
             //TODO マイ番組表連携
             startActivity(SearchTopActivity.class, null);
             Toast.makeText(this, "テストとして検索画面を開いている", Toast.LENGTH_SHORT).show();
         } else if (tappedItemName.equals(itemName[7])) {
-            //TODO ダウンロード先設定
-            //外部ストレージがない場合は非表示、ただしスロットが確認できる場合は表示後刺さっていません表示
-            Toast.makeText(this, "ダウンロード先変更", Toast.LENGTH_SHORT).show();
+            //ダウンロードコンテンツ保存先設定画面への遷移
+            Intent intent = new Intent(this, SettingDownloadPathActivity.class);
+            intent.putExtra(getString(R.string.main_setting_storage_status), mSettingList.get(i).getStateText());
+            startActivity(intent);
         } else if (tappedItemName.equals(itemName[9])) {
-            //TODO 外出先視聴時の画質設定 (ダイアログの作成)
-            startActivity(SettingDownloadLocation.class, null);
-            /* テストコード */
-//            SharedPreferencesUtils.setSharedPreferencesImageQuality(this, "高");
-//            mSettingList.set(9, new MainSettingUtils(itemName[9], "高", true, ITEM));
-//            mAdapter.notifyDataSetChanged();
-            /* テストコードここまで */
+            //外出先視聴時の画質設定画面への遷移
+            Intent intent = new Intent(this, SettingImageQualityActivity.class);
+            intent.putExtra(getString(R.string.main_setting_quality_status), mSettingList.get(i).getStateText());
+            startActivity(intent);
         }
     }
 
@@ -134,12 +152,15 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             isParing = res.getString(R.string.main_setting_not_paring);
         }
 
-        //保存先ストレージの確認
+        //外部ストレージの存在判定
+        isExternalStorage();
         String storage = res.getString(R.string.main_setting_device_storage);
-        Boolean storagePath = SharedPreferencesUtils.getSharedPreferencesStoragePath(this);
-        if (!storagePath) {
-            //TODO 初期値の確認
-            storage = res.getString(R.string.main_setting_outside_storage);
+        if (isSDCard) {
+            //保存先ストレージの確認
+            Boolean storagePath = SharedPreferencesUtils.getSharedPreferencesStoragePath(this);
+            if (!storagePath) {
+                storage = res.getString(R.string.main_setting_outside_storage);
+            }
         }
 
         //画質設定の設定値を確認
@@ -157,8 +178,10 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         mSettingList.add(new MainSettingUtils(itemName[3], isParing, true, ITEM));
         mSettingList.add(new MainSettingUtils(itemName[4], BLANK, false, CATEGORY));
         mSettingList.add(new MainSettingUtils(itemName[5], BLANK, true, ITEM));
-        mSettingList.add(new MainSettingUtils(itemName[6], BLANK, false, CATEGORY));
-        mSettingList.add(new MainSettingUtils(itemName[7], storage, true, ITEM));
+        if (isSDCard) {
+            mSettingList.add(new MainSettingUtils(itemName[6], BLANK, false, CATEGORY));
+            mSettingList.add(new MainSettingUtils(itemName[7], storage, true, ITEM));
+        }
         mSettingList.add(new MainSettingUtils(itemName[8], BLANK, false, CATEGORY));
         mSettingList.add(new MainSettingUtils(itemName[9], imageQuality, true, ITEM));
         mSettingList.add(new MainSettingUtils(itemName[10], BLANK, false, CATEGORY));
@@ -196,9 +219,23 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     }
 
     /**
-     * ストレージ先変更画面からの復帰時に値を確認し、変更されていた場合は更新を行う
+     * ダウンロード先設定画面からの復帰時に値を確認し、変更されていた場合は変更を行う
      */
-    private void checkIsPairng() {
+    private void checkDownloadPath() {
+        if (isSDCard) {
+            Boolean storagePath = SharedPreferencesUtils.getSharedPreferencesStoragePath(this);
+            String storage = storagePath ? res.getString(R.string.main_setting_device_storage) :
+            res.getString(R.string.main_setting_outside_storage);
+            mSettingList.set(7, new MainSettingUtils(itemName[7], storage, true, ITEM));
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
+
+    /**
+     * 再ペアリング画面からの復帰時に値を確認し、変更されていた場合は更新を行う
+     */
+    private void checkIsPairing() {
         String isParing = res.getString(R.string.main_setting_paring);
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
         if (dlnaDmsItem.mControlUrl.isEmpty()) {
@@ -207,5 +244,127 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         }
         mSettingList.set(3, new MainSettingUtils(itemName[3], isParing, true, ITEM));
         mAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * 外出先視聴時の画質設定からの復帰時に値を確認し、変更されていた場合変更を行う
+     */
+    private void checkImageQuality() {
+        String imageQuality = SharedPreferencesUtils.getSharedPreferencesImageQuality(this);
+        itemName = res.getStringArray(R.array.main_setting_items);
+        for (int i=0; i < mSettingList.size(); i++) {
+            if (mSettingList.get(i).getText().equals(itemName[9]) && !mSettingList.get(i).isCategory()) {
+                mSettingList.set(i, new MainSettingUtils(itemName[9], imageQuality, true, ITEM));
+                break;
+            }
+        }
+        mAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * SDカードの存在判定を行う。Android4.4と5.0以上では処理が異なる
+     */
+    private void isExternalStorage() {
+        sdCardDirPathList = new ArrayList<>();
+        deviceStorageDirPath = new ArrayList<>();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //Android5.0以上の時の処理
+            File[] dirArr = getExternalFilesDirs(null);
+            for (File dir : dirArr) {
+                if (dir != null) {
+                    String path = dir.getAbsolutePath();
+                    DTVTLogger.debug(path);
+                    // 取り外し可能か（SDカードか）を判定
+                    if (Environment.isExternalStorageRemovable(dir)) {
+                        // 取り外し可能であればSDカード
+                        if (!sdCardDirPathList.contains(path)) {
+                            sdCardDirPathList.add(path);
+                        }
+                    } else {
+                        // 取り外し不可能であれば内部ストレージ。
+                        deviceStorageDirPath.add(path);
+                    }
+                }
+            }
+            isSDCard = sdCardDirPathList.size() > 0;
+            DTVTLogger.debug("SDCard:" + isSDCard);
+        } else {
+            //Android4.4の時の処理
+            StorageManager sm = (StorageManager) getSystemService(Context.STORAGE_SERVICE);
+            try {
+                Method getVolumeListMethod = sm.getClass().getDeclaredMethod("getVolumeList");
+                Object[] volumeList = (Object[]) getVolumeListMethod.invoke(sm);
+                for (Object volume : volumeList) {
+                    Method getPathFileMethod = volume.getClass().getDeclaredMethod("getPathFile");
+                    File file = (File) getPathFileMethod.invoke(volume);
+                    String storageBasePath = file.getAbsolutePath();
+
+                    Method isRemovableMethod = volume.getClass().getDeclaredMethod("isRemovable");
+                    boolean isRemovable = (boolean) isRemovableMethod.invoke(volume);
+                    // ストレージが取り外し可能か（SDカードか）を判定。
+                    if (isRemovable) {
+                        // ベースパスがマウントされているかどうか
+                        if (isMountedBasePath(storageBasePath)) {
+                            // StorageVolumeの中で、取り外し可能かつマウント済みのパスはSDカード
+                            if (!sdCardDirPathList.contains(storageBasePath)) {
+                                String sdCardFilesDirPath = storageBasePath + "/Android/data/com.nttdocomo.android.tvterminalapp/files";
+                                sdCardDirPathList.add(sdCardFilesDirPath);
+                            }
+                        }
+                    } else {
+                        // StorageVolumeの中で、取り外し不可能なパスは内部ストレージ
+                        deviceStorageDirPath.add(storageBasePath);
+                    }
+                }
+            } catch (NoSuchMethodException | InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            isSDCard = sdCardDirPathList.size() > 0;
+        }
+    }
+
+    /**
+     * 指定したベースパスがマウントされているかどうか
+     *
+     * @param basePath ベースパス
+     * @return ベースパスがマウントされていればtrue、マウントされていなければfalse
+     */
+    private static boolean isMountedBasePath(String basePath) {
+        boolean isMounted = false;
+        BufferedReader br = null;
+        File mounts = new File("/proc/mounts");
+
+        // /proc/mountsが存在しなければ処理を終了する
+        if (!mounts.exists()) {
+            return false;
+        }
+
+        try {
+            // マウントポイントを取得する
+            br = new BufferedReader(new FileReader(mounts));
+            String line;
+            // マウントポイントに該当するパスがあるかチェックする
+            while ((line = br.readLine()) != null) {
+                if (line.contains(basePath)) {
+                    // 該当するパスがあればマウントされている
+                    isMounted = true;
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (null != br) {
+                    br.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return isMounted;
     }
 }

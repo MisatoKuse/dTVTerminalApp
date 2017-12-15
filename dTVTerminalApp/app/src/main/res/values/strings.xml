@@ -227,11 +227,15 @@
     <string name="main_setting_d_account_message">dアカウントアプリがインストールされていません。\nインストールしますか？</string>
     <string name="main_setting_paring">ペアリング済み</string>
     <string name="main_setting_not_paring">未ペアリング</string>
+    <string name="main_setting_storage_setting_header">ダウンロード先設定</string>
+    <string name="main_setting_storage_status">storage</string>
     <string name="main_setting_device_storage">本体ストレージ</string>
-    <string name="main_setting_outside_storage">外部ストレージ</string>
+    <string name="main_setting_outside_storage">SDカード</string>
     <string name="main_setting_image_quality_low">標準画質</string>
     <string name="main_setting_image_quality_middle">高画質</string>
     <string name="main_setting_image_quality_high">最高画質</string>
+    <string name="main_setting_quality_setting_header">外出先視聴時の画質設定</string>
+    <string name="main_setting_quality_status">status</string>
 
     <string-array name="main_setting_items">
         <item>dアカウント設定</item>
