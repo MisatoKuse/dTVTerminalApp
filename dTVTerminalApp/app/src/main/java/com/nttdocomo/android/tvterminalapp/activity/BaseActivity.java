@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -17,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
@@ -53,6 +56,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     private ImageView mMenuImageViewForBase;
     private RemoteControllerView remoteControllerView = null;
     private Context mContext = null;
+    private RemoteControlRelayClient mRemoteControlRelayClient = null;
 
     /**
      * Created on 2017/09/21.
@@ -247,6 +251,8 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         super.setContentView(R.layout.activity_base);
         mContext = this;
         initView();
+        mRemoteControlRelayClient = RemoteControlRelayClient.getInstance();
+        mRemoteControlRelayClient.setHandler(ｍRerayClientHandler);
         DTVTLogger.end();
     }
 
@@ -318,6 +324,39 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     private static final int MIN_CLICK_DELAY_TIME = 1000;
     private long lastClickTime;
+
+    public Handler ｍRerayClientHandler= new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            String message = "OK";
+            switch (msg.what) {
+                case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_OK:
+                    Toast.makeText(mContext, message, Toast.LENGTH_LONG).show();
+                    break;
+                default:
+                    int resultcode = ((RemoteControlRelayClient.ResponseMessage)msg.obj).getResultCode();
+                    switch (resultcode){
+                        case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_APPLICATION_NOT_INSTALL:
+                            message = "APPLICATION_NOT_INSTALL";
+                            break;
+                        case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_APPLICATION_START_FAILED:
+                            message = "APPLICATION_START_FAILED";
+                            break;
+                        case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_INTERNAL_ERROR:
+                            message = "INTERNAL_ERROR";
+                            break;
+                        case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_VERSION_CODE_INCOMPATIBLE:
+                            message = "VERSION_CODE_INCOMPATIBLE";
+                            break;
+                        default:
+                            message = "UNKNOWN";
+                            break;
+                    }
+                    Toast.makeText(mContext, message, Toast.LENGTH_LONG).show();
+                    break;
+            }
+        }
+    };
 
     /**
      * 機能

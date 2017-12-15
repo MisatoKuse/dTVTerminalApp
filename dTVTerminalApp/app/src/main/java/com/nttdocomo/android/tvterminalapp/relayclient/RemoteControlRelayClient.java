@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.relayclient;
 
+import android.os.Handler;
 import android.view.KeyEvent;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -195,7 +196,7 @@ public class RemoteControlRelayClient {
     private static final String RELAY_RESULT = "RESULT";
     private static final String RELAY_RESULT_OK = "OK";
     private static final String RELAY_RESULT_ERROR = "ERROR";
-    private static final String RELAY_RESULT_MESSAGE = "MESSAGE";
+//    private static final String RELAY_RESULT_MESSAGE = "MESSAGE";
     // 中継アプリクライアントが送信するキーコードのメッセージ定数
     private static final String RELAY_KEYEVENT = "KEYEVENT";
     private static final String RELAY_KEYEVENT_ACTION = "ACTION";
@@ -203,6 +204,13 @@ public class RemoteControlRelayClient {
     private static final String RELAY_KEYEVENT_ACTION_UP = "UP";
     private static final String RELAY_KEYEVENT_ACTION_CANCELED = "CANCELED";
     private static final String RELAY_KEYEVENT_ACTION_CANCELED_TRUE = "TRUE";
+    // 中継アプリのエラーコード定数
+    private static final String RELAY_RESULT_ERROR_CODE = "ERROR_CODE";
+    private static final String RELAY_RESULT_INTERNAL_ERROR = "INTERNAL_ERROR";
+    private static final String RELAY_RESULT_APPLICATION_NOT_INSTALL  = "APPLICATION_NOT_INSTALL";
+    private static final String RELAY_RESULT_APPLICATION_START_FAILED  = "APPLICATION_START_FAILED";
+    private static final String RELAY_RESULT_VERSION_CODE_INCOMPATIBLE  = "VERSION_CODE_INCOMPATIBLE";
+    private static final String RELAY_RESULT_CONTENTS_ID_NOTEXIST  = "CONTENTS_ID_NOTEXIST";
 
     // アプリ起動要求種別に対応するするアプリ名シンボル
     private static final Map<STB_APPLICATION_TYPES, String> mStbApplicationSymbolMap = new HashMap<STB_APPLICATION_TYPES, String>() {
@@ -223,6 +231,9 @@ public class RemoteControlRelayClient {
         }
     };
 
+    // 処理結果応答を通知するハンドラー
+    private Handler mHandler = null;
+
     /**
      * シングルトン
      */
@@ -236,6 +247,22 @@ public class RemoteControlRelayClient {
      */
     public static RemoteControlRelayClient getInstance() {
         return mInstance;
+    }
+
+    /**
+     * 処理結果応答を通知するハンドラーの設定
+     *
+     * @param handler
+     */
+    public void setHandler(Handler handler) {
+        mHandler = handler;
+    }
+
+    /**
+     * 処理結果応答を通知するハンドラーの設定の解除
+     */
+    public void resetHandler() {
+        mHandler = null;
     }
 
     /**
@@ -265,6 +292,66 @@ public class RemoteControlRelayClient {
         }
     }
 
+    /**
+     *  処理結果応答を通知する情報
+     *
+     */
+    public class ResponseMessage {
+        public static final int RELAY_RESULT_OK = 0;
+        public static final int RELAY_RESULT_ERROR = 1;
+        public static final int RELAY_RESULT_SUCCESS = 0;
+        public static final int RELAY_RESULT_INTERNAL_ERROR = 11;
+        public static final int RELAY_RESULT_APPLICATION_NOT_INSTALL = 12;
+        public static final int RELAY_RESULT_APPLICATION_START_FAILED = 13;
+        public static final int RELAY_RESULT_VERSION_CODE_INCOMPATIBLE  = 14;
+
+        public int mResult = RELAY_RESULT_OK;
+        public int mResultCode = RELAY_RESULT_SUCCESS;
+
+        // 応答結果の変換
+        public final Map<String, Integer> mResultMap = new HashMap<String, Integer>() {
+            {
+                put(RemoteControlRelayClient.RELAY_RESULT_OK, RELAY_RESULT_OK);
+                put(RemoteControlRelayClient.RELAY_RESULT_ERROR, RELAY_RESULT_ERROR);
+            }
+        };
+
+        // 応答結果コードの変換
+        public final Map<String, Integer> mResultCodeMap = new HashMap<String, Integer>() {
+            {
+                put(RemoteControlRelayClient.RELAY_RESULT_INTERNAL_ERROR, RELAY_RESULT_INTERNAL_ERROR);
+                put(RemoteControlRelayClient.RELAY_RESULT_APPLICATION_NOT_INSTALL, RELAY_RESULT_APPLICATION_NOT_INSTALL);
+                put(RemoteControlRelayClient.RELAY_RESULT_APPLICATION_START_FAILED, RELAY_RESULT_APPLICATION_START_FAILED);
+                put(RemoteControlRelayClient.RELAY_RESULT_VERSION_CODE_INCOMPATIBLE, RELAY_RESULT_VERSION_CODE_INCOMPATIBLE);
+            }
+        };
+
+        public ResponseMessage() {
+            mResult = RELAY_RESULT_OK;
+            mResultCode = RELAY_RESULT_SUCCESS;
+        }
+
+        public ResponseMessage(int result, int resultCode, String message) {
+            mResult = result;
+            mResultCode = resultCode;
+        }
+
+        public int getResult() {
+            return mResult;
+        }
+
+        public void setResult(int result) {
+            mResult = result;
+        }
+
+        public void setResultCode(int resultCode) {
+            mResultCode = resultCode;
+        }
+
+        public int getResultCode() {
+            return mResultCode;
+        }
+    }
     /**
      * キーコードをSTBへ送信するスレッド
      */
@@ -363,7 +450,7 @@ public class RemoteControlRelayClient {
         public void run() {
             StbConnectRelayClient stbConnection = StbConnectRelayClient.getInstance();  // Socket通信
             String recvData;
-            String message = null;
+            ResponseMessage response = new ResponseMessage();
 
             if (mRequestParam != null) {
                 stbConnection.setRemoteIp(ｍRemoteHost);
@@ -371,32 +458,55 @@ public class RemoteControlRelayClient {
                 if (stbConnection.connect()) {
                     if (stbConnection.send(mRequestParam)) {
                         recvData = stbConnection.recv();
-                        message = getRecvResult(recvData);
-                        if (message != null) {
-                            DTVTLogger.debug(message);
-                        }
+                        DTVTLogger.debug("recvData:" + recvData);
+                        response = setResponse(recvData);
                     }
                     stbConnection.disconnect();
                 } else {
                     DTVTLogger.debug("STBとの接続に失敗しました。");
+                    response.setResult(ResponseMessage.RELAY_RESULT_ERROR);
+                    response.setResultCode(ResponseMessage.RELAY_RESULT_INTERNAL_ERROR);
                 }
+                sendResponseMessage(response);
             }
         }
 
-        private String getRecvResult(String recvResult) {
+        /**
+         * 処理結果応答をハンドラーへ通知する
+         *
+          * @param response
+         */
+        private void sendResponseMessage(ResponseMessage response) {
+            if (mHandler != null){
+                mHandler.sendMessage(mHandler.obtainMessage(response.getResult(), response));
+            }
+        }
+
+        /**
+         * 中継アプリの応答を返す
+         *
+         * @param recvResult
+         * @return
+         */
+        private ResponseMessage setResponse(String recvResult) {
             JSONObject recvJson = new JSONObject();
             String message = null;
+            ResponseMessage response = new ResponseMessage();
             try {
                 if (recvResult != null) {
                     recvJson = new JSONObject(recvResult);
-                }
-                if (!RELAY_RESULT_OK.equals(recvJson.get(RELAY_RESULT).toString())) {
-                    message = recvJson.get(RELAY_RESULT_MESSAGE).toString();
+
+                    response.setResult(response.mResultMap.get(recvJson.get(RELAY_RESULT).toString()));
+                    if (recvJson.has(RELAY_RESULT_ERROR_CODE)){
+                        response.setResultCode(response.mResultCodeMap.get(recvJson.get(RELAY_RESULT_ERROR_CODE).toString()));
+                    }
                 }
             } catch (JSONException e) {
                 DTVTLogger.debug(e);
+                response.setResult(ResponseMessage.RELAY_RESULT_ERROR);
+                response.setResultCode(ResponseMessage.RELAY_RESULT_INTERNAL_ERROR);
             }
-            return message;
+            return response;
         }
     }
 
