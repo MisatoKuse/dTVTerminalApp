@@ -18,8 +18,7 @@
     <color name="content_time_text">#AAAAAA</color>
     <color name="result_line">#222222</color>
     <!--Global Menu-->
-    <color name="hikari_tv_title">#00FFFF</color>
-    <color name="dtv_channel_title">#00FFFF</color>
+    <color name="hikari_tv_and_dtv_channel_title">#00FFFF</color>
     <color name="dtv_title">#FF0000</color>
     <color name="d_animation_title">#FF8800</color>
     <color name="stb_start_title">#888888</color>
