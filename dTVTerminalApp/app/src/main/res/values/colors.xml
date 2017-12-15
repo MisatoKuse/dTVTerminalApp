@@ -61,4 +61,9 @@
 
     <!--//チャンネルリスト-->
     <color name="list_view_divider">#222222</color>
+
+    <!--//設定画面-->
+    <color name="setting_text_color_white">#ffffff</color>
+    <color name="setting_category_color_white">#cccccc</color>
+
 </resources>
