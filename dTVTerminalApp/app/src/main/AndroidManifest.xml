@@ -10,6 +10,15 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+    <uses-permission android:name="com.nttdocomo.android.idmanager.permission.serviceapp.IDimServiceAppService"/>
+
+    <!-- ID管理画面起動（サービスアプリ用）I/Fを利用する場合に記載が必要. -->
+    <uses-permission android:name="com.nttdocomo.android.idmanager.permission.OPEN_SERVICE_TOP"/>
+
+    <!-- ID設定状態取得 I/Fを利用する場合に記載が必要. -->
+    <uses-permission android:name="com.nttdocomo.android.idmanager.permission.GET_ID_STATE"/>
+
+
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
@@ -170,6 +179,19 @@
         <activity android:name=".activity.temp.DAccountAppliActivity" />
         <activity android:name=".activity.temp.GoogleStoreActivity" />
         <activity android:name=".activity.launch.DAccountRegConfirmationActivity" />
+
+        <!-- dアカウントの状況変化を受け取るレシーバー -->
+        <receiver
+            android:name="com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountReceiver"
+            android:permission="com.nttdocomo.android.idmanager.permission.NOTIFY_STATUS">
+            <intent-filter>
+                <action android:name="com.nttdocomo.android.idmanager.action.DOCOMOID_SET_DEFAULT" />
+                <action android:name="com.nttdocomo.android.idmanager.action.DOCOMOID_AUTHENTICATED" />
+                <action android:name="com.nttdocomo.android.idmanager.action.DOCOMOID_REMOVED" />
+                <action android:name="com.nttdocomo.android.idmanager.action.DOCOMOID_INVALIDATE" />
+                <action android:name="com.nttdocomo.android.idmanager.action.DOCOMOID_LINKED_LINE" />
+            </intent-filter>
+        </receiver>
 
     </application>
 
