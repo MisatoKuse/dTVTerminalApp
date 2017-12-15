@@ -3,10 +3,19 @@
           package="com.nttdocomo.android.tvterminalapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <uses-permission android:name="com.nttdocomo.android.idmanager.permission.serviceapp.IDimServiceAppService"/>
+
+    <!-- ID管理画面起動（サービスアプリ用）I/Fを利用する場合に記載が必要. -->
+    <uses-permission android:name="com.nttdocomo.android.idmanager.permission.OPEN_SERVICE_TOP"/>
+
+    <!-- ID設定状態取得 I/Fを利用する場合に記載が必要. -->
+    <uses-permission android:name="com.nttdocomo.android.idmanager.permission.GET_ID_STATE"/>
+
 
     <application
         android:allowBackup="false"
@@ -18,72 +27,72 @@
 
         <!-- ====================================== Home グループ Begin ====================================== -->
         <activity
-            android:name=".activity.home.HomeActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name="com.nttdocomo.android.tvterminalapp.activity.home.ClipListActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.home.ClipListActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.home.RecommendActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.home.RecommendActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.home.RecordedListActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.home.RecordReservationListActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.home.RecordReservationListActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.home.RentalListActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.home.RentalListActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.home.WatchingVideoListActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.home.WatchingVideoListActivity"
             android:screenOrientation="portrait" />
         <!-- ======================================  Home グループ End ====================================== -->
 
 
         <!-- ===================================== Launch グループ Begin ===================================== -->
         <activity
-            android:name=".activity.launch.DAccountReSettingActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.launch.DAccountReSettingActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.launch.DAccountSettingActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.launch.DAccountSettingActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.launch.DAccountSettingHelpActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.launch.DAccountSettingHelpActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.launch.LaunchActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.launch.STBConnectActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.launch.STBConnectActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.launch.STBParingInvitationActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.launch.STBParingInvitationActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.launch.STBSelectActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.launch.TutorialActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.launch.TutorialActivity"
             android:screenOrientation="portrait" />
         <!-- ======================================  Launch グループ End ====================================== -->
 
 
         <!-- ====================================== Other グループ Begin ====================================== -->
         <activity
-            android:name=".activity.other.NewsActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.other.NewsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.other.NewsDetailActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.other.NewsDetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.other.SettingActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.other.SettingActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.other.SettingDetailActivity"
@@ -98,36 +107,37 @@
 
 
         <!-- ====================================== Player グループ Begin ====================================== -->
-        <activity android:name=".activity.player.ChannelDetailPlayerActivity" />
-        <activity android:name=".activity.player.RecordedVideoPlayerActivity" />
+        <activity android:name="com.nttdocomo.android.tvterminalapp.activity.player.ChannelDetailPlayerActivity" />
+        <activity android:name="com.nttdocomo.android.tvterminalapp.activity.player.RecordedVideoPlayerActivity" />
         <activity
-            android:name=".activity.player.DtvContentsDetailActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity"
             android:configChanges="keyboardHidden|keyboard|orientation|screenSize"
-            android:screenOrientation="portrait" />
-        <activity android:name=".activity.player.VideoPlayerActivity" />
+            android:screenOrientation="portrait"/>
+        <activity android:name="com.nttdocomo.android.tvterminalapp.activity.player.VideoPlayerActivity" />
         <activity
-            android:name=".activity.player.RecommendPlayerActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.player.RecommendPlayerActivity"
             android:launchMode="singleTop" />
         <activity
             android:name="com.digion.dixim.android.activation.ActivationActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="Activation"
-            android:theme="@style/DiximPlayerPanelTheme"></activity>
+            android:theme="@style/DiximPlayerPanelTheme" >
+        </activity>
         <!-- ======================================  Player グループ End ====================================== -->
 
 
         <!-- ====================================== Ranking グループ Begin ====================================== -->
         <activity
-            android:name=".activity.ranking.DailyTvRankingActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.ranking.RankingTopActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.ranking.RankingTopActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.ranking.VideoRankingActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.ranking.WeeklyTvRankingActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.ranking.WeeklyTvRankingActivity"
             android:screenOrientation="portrait" />
         <!-- ======================================  Ranking グループ End ====================================== -->
 
@@ -135,39 +145,52 @@
         <!-- ====================================== Search グループ Begin ====================================== -->
 
         <activity
-            android:name=".activity.search.SearchTopActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity"
             android:screenOrientation="portrait" />
         <!-- ======================================  Search グループ End ====================================== -->
 
 
         <!-- ====================================== TvProgram グループ Begin ====================================== -->
         <activity
-            android:name=".activity.tvprogram.ChannelListActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.tvprogram.MyChannelEditActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.tvprogram.MyChannelEditActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.tvprogram.TvProgramListActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.tvprogram.WeekTvProgramListActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.tvprogram.WeekTvProgramListActivity"
             android:screenOrientation="portrait" />
         <!-- ======================================  TvProgram グループ End ====================================== -->
 
 
         <!-- ====================================== Video グループ Begin ====================================== -->
         <activity
-            android:name=".activity.video.VideoContentListActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.video.VideoContentListActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.video.VideoTopActivity"
+            android:name="com.nttdocomo.android.tvterminalapp.activity.video.VideoTopActivity"
             android:screenOrientation="portrait" />
         <!-- ======================================  Video グループ End ====================================== -->
 
         <activity android:name=".activity.temp.DAccountAppliActivity" />
         <activity android:name=".activity.temp.GoogleStoreActivity" />
         <activity android:name=".activity.launch.DAccountRegConfirmationActivity" />
+
+        <!-- dアカウントの状況変化を受け取るレシーバー -->
+        <receiver
+            android:name="com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountReceiver"
+            android:permission="com.nttdocomo.android.idmanager.permission.NOTIFY_STATUS">
+            <intent-filter>
+                <action android:name="com.nttdocomo.android.idmanager.action.DOCOMOID_SET_DEFAULT" />
+                <action android:name="com.nttdocomo.android.idmanager.action.DOCOMOID_AUTHENTICATED" />
+                <action android:name="com.nttdocomo.android.idmanager.action.DOCOMOID_REMOVED" />
+                <action android:name="com.nttdocomo.android.idmanager.action.DOCOMOID_INVALIDATE" />
+                <action android:name="com.nttdocomo.android.idmanager.action.DOCOMOID_LINKED_LINE" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

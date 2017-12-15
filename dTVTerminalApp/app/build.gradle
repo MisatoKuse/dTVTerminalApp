@@ -52,6 +52,9 @@ android {
 
     sourceSets {
         main {
+            aidl.srcDirs = [
+                    'src/main/aidl'
+            ]
             res.srcDirs =
                     [
                             'src/main/res/layout/launch',
