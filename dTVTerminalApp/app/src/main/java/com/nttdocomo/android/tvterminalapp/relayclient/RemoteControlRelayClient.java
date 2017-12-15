@@ -173,21 +173,28 @@ public class RemoteControlRelayClient {
         // dアニメストア
         DANIMESTORE,
         // dTVチャンネル
-        DTVCHANNEL
+        DTVCHANNEL,
+        // ひかりTV
+        HIKARITV,
+        // ダ・ゾーン
+        DAZN
     }
 
     // アプリ起動要求に対応するアプリ名
     private static final String STB_APPLICATION_DTV = "dTV";  // dTV
     private static final String STB_APPLICATION_DANIMESTORE = "dANIMESTORE";  // dアニメストア
     private static final String STB_APPLICATION_DTVCHANNEL = "dTVCHANNEL";  // dTVチャンネル
+    private static final String STB_APPLICATION_HIKARITV = "HIKARITV";  // ひかりTV
+    private static final String STB_APPLICATION_DAZN = "DAZN";  // ダ・ゾーン
     // 中継アプリクライアントが送信するアプリ起動要求のメッセージ定数
     private static final String RELAY_COMMAND = "COMMAND";
     private static final String RELAY_COMMAND_TITLE_DETAIL = "TITLE_DETAIL";
+    private static final String RELAY_COMMAND_START_APPLICATION = "START_APPLICATION";
     private static final String RELAY_COMMAND_APPLICATION_ID = "APP_ID";
     private static final String RELAY_COMMAND_CONTENTS_ID = "CONTENTS_ID";
     private static final String RELAY_RESULT = "RESULT";
-    private static final String RELAY_RESULT_OK = "0";
-    private static final String RELAY_RESULT_ERROR = "1";
+    private static final String RELAY_RESULT_OK = "OK";
+    private static final String RELAY_RESULT_ERROR = "ERROR";
     private static final String RELAY_RESULT_MESSAGE = "MESSAGE";
     // 中継アプリクライアントが送信するキーコードのメッセージ定数
     private static final String RELAY_KEYEVENT = "KEYEVENT";
@@ -203,6 +210,8 @@ public class RemoteControlRelayClient {
             put(STB_APPLICATION_TYPES.DTV, STB_APPLICATION_DTV);    // dTV
             put(STB_APPLICATION_TYPES.DANIMESTORE, STB_APPLICATION_DANIMESTORE);    // dアニメストア
             put(STB_APPLICATION_TYPES.DTVCHANNEL, STB_APPLICATION_DTVCHANNEL);  // dTVチャンネル
+            put(STB_APPLICATION_TYPES.HIKARITV, STB_APPLICATION_HIKARITV);    // ひかりTV
+            put(STB_APPLICATION_TYPES.DAZN, STB_APPLICATION_DAZN);    // ダ・ゾーン
         }
     };
 
@@ -280,10 +289,31 @@ public class RemoteControlRelayClient {
     }
 
     /**
-     * アプリ起動要求を受信してインテントをSTBへ送信する
+     * アプリ起動要求を受信してアプリ起動リクエストをSTBへ送信する
      *
      * @param applicationType
-     * @param contentsId
+     * @return
+     */
+    public boolean startApplicationRequest(STB_APPLICATION_TYPES applicationType) {
+        String applicationId = getApplicationId(applicationType);
+        String requestParam;
+
+        if (applicationId != null) {
+            requestParam = setApplicationStartRequest(applicationId);
+            if (requestParam != null) {
+                // アプリ起動要求を受信してインテントをSTBへ送信する
+                sendStartApplicationRequest(requestParam);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * アプリ起動要求を受信してタイトル詳細表示のリクエストをSTBへ送信する
+     *
+     * @param applicationType
+     * @param contentsId コンテンツID
      * @return
      */
     public boolean startApplicationRequest(STB_APPLICATION_TYPES applicationType, String contentsId) {
@@ -381,21 +411,41 @@ public class RemoteControlRelayClient {
      * アプリ起動要求のメッセージ（JSON形式）を作成する
      *
      * @param applicationId
+     * @return
+     */
+    private String setApplicationStartRequest(String applicationId) {
+        JSONObject requestJson = new JSONObject();
+        String request = null;
+        try {
+            requestJson.put(RELAY_COMMAND, RELAY_COMMAND_START_APPLICATION);
+            requestJson.put(RELAY_COMMAND_APPLICATION_ID, applicationId);
+            request = requestJson.toString();
+        } catch (JSONException e) {
+            DTVTLogger.debug(e);
+        }
+        return request;
+    }
+
+    /**
+     * アプリ起動要求のメッセージ（JSON形式）を作成する
+     * タイトル詳細表示のリクエスト
+     *
+     * @param applicationId
      * @param contentsId
      * @return
      */
     private static String setTitleDetailRequest(String applicationId, String contentsId) {
         JSONObject requestJson = new JSONObject();
-        String jsonStr = null;
+        String request = null;
         try {
             requestJson.put(RELAY_COMMAND, RELAY_COMMAND_TITLE_DETAIL);
             requestJson.put(RELAY_COMMAND_APPLICATION_ID, applicationId);
             requestJson.put(RELAY_COMMAND_CONTENTS_ID, contentsId);
-            jsonStr = requestJson.toString();
+            request = requestJson.toString();
         } catch (JSONException e) {
             DTVTLogger.debug(e);
         }
-        return jsonStr;
+        return request;
     }
 
     /**
