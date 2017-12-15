@@ -11,6 +11,8 @@
     <string name="list_transition">></string>
     <string name="contents_hyphen">-</string>
     <string name="contents_more">more</string>
+    <string name="positive_response">はい</string>
+    <string name="negative_response">いいえ</string>
 
     <!-- Launch -->
     <string name="str_app_title">dリモート</string>
@@ -222,13 +224,14 @@
     <string name="channel_list_activity_title">チャンネルリスト</string>
 
     <!-- 設定画面 -->
+    <string name="main_setting_d_account_message">dアカウントアプリがインストールされていません。\nインストールしますか？</string>
     <string name="main_setting_paring">ペアリング済み</string>
     <string name="main_setting_not_paring">未ペアリング</string>
     <string name="main_setting_device_storage">本体ストレージ</string>
     <string name="main_setting_outside_storage">外部ストレージ</string>
-    <string name="main_setting_image_quality_low">低</string>
-    <string name="main_setting_image_quality_middle">中</string>
-    <string name="main_setting_image_quality_high">高</string>
+    <string name="main_setting_image_quality_low">標準画質</string>
+    <string name="main_setting_image_quality_middle">高画質</string>
+    <string name="main_setting_image_quality_high">最高画質</string>
 
     <string-array name="main_setting_items">
         <item>dアカウント設定</item>
