@@ -243,22 +243,27 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_hikari_tv))) {
                 if (null != mMenuDisplayEventListener) {
                     //TODO:TVアプリ起動導線(ひかりTV)
+                    mActivity.menuRemoteController();
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dtv_channel))) {
                 if (null != mMenuDisplayEventListener) {
                     //TODO:TVアプリ起動導線(dTVチャンネル)
+                    mActivity.menuRemoteController();
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dtv))) {
                 if (null != mMenuDisplayEventListener) {
                     //TODO:TVアプリ起動導線(dTV)
+                    mActivity.menuRemoteController();
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_d_animation))) {
                 if (null != mMenuDisplayEventListener) {
                     //TODO:TVアプリ起動導線(dアニメ)
+                    mActivity.menuRemoteController();
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dazn))) {
                 if (null != mMenuDisplayEventListener) {
                     //TODO:TVアプリ起動導線(DAZN)
+                    mActivity.menuRemoteController();
                 }
             }
 
