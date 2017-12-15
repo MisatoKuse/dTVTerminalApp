@@ -176,12 +176,12 @@
     <string name="nav_menu_item_keyword_search">キーワードで探す</string>
     <string name="nav_menu_item_notice">お知らせ</string>
     <string name="nav_menu_item_setting">設定</string>
-    <string name="nav_menu_item_hikari_tv_none_action">ひかりＴＶ </string>
+    <string name="nav_menu_item_hikari_tv_none_action">ひかりＴＶ　</string>
     <string name="nav_menu_item_hikari_tv">ひかりＴＶ</string>
     <string name="nav_menu_item_dtv_channel">dTVチャンネル</string>
     <string name="nav_menu_item_dtv">dTV</string>
     <string name="nav_menu_item_d_animation">dアニメ</string>
-    <string name="nav_menu_item_dazn">DAZN</string>
+    <string name="nav_menu_item_dazn">ダ・ゾーン</string>
     <string name="nav_menu_item_premium_video">プレミアムビデオ</string>
     <string name="nav_menu_item_premium_tv_app_start_common">テレビアプリを起動する</string>
     <!-- MenuDisplay End -->

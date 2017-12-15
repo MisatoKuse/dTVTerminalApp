@@ -20,6 +20,15 @@
     <dimen name="launch_text_end_padding">0dp</dimen>
     <dimen name="launch_device_list_layout_high">0dp</dimen>
 
+    <!--Global Menu-->
+    <dimen name="global_menu_list_item_bottom_margin">15dp</dimen>
+    <dimen name="global_menu_list_item_top_margin">15dp</dimen>
+    <dimen name="global_menu_list_item_default_title_left_margin">20dp</dimen>
+    <dimen name="global_menu_list_item_sub_title_left_margin">40dp</dimen>
+    <dimen name="global_menu_list_item_dazn_title_left_margin">10dp</dimen>
+    <dimen name="global_menu_list_item_arrow_right_margin">20dp</dimen>
+    <dimen name="global_menu_list_item_count_right_margin">25dp</dimen>
+
     <!--Common-->
     <dimen name="header_title_text_size">16dp</dimen>
     <dimen name="list_item_title_text_size">15sp</dimen>

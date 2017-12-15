@@ -17,6 +17,12 @@
     <color name="thumbnail_background">#888888</color>
     <color name="content_time_text">#AAAAAA</color>
     <color name="result_line">#222222</color>
+    <!--Global Menu-->
+    <color name="hikari_tv_title">#00FFFF</color>
+    <color name="dtv_channel_title">#00FFFF</color>
+    <color name="dtv_title">#FF0000</color>
+    <color name="d_animation_title">#FF8800</color>
+    <color name="stb_start_title">#888888</color>
     <!-- キーワード検索 -->
     <color name="keyword_search_background">#EEEEEE</color>
     <color name="keyword_search_hint">#888888</color>

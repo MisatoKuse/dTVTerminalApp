@@ -52,6 +52,8 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     private List mMenuItemTitles = null;
     private List mMenuItemCount = null;
 
+    public static final int INT_NONE_COUNT_STATUS = -1;
+
     /**
      * 機能
      * Singletonのため、privateにする
@@ -326,27 +328,27 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     private void setMenuItemSignedPairing() {
         //ホーム
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_home));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //おすすめ番組・ビデオ
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_recommend_program_video));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //キーワードで探す
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_keyword_search));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //ひかりTV
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_hikari_tv_none_action));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //番組表
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_program_list));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //チャンネルリスト
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_channel_list));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //録画番組
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_recorder_program));
@@ -354,11 +356,11 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
 
         //ランキング
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_ranking));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //視聴中ビデオ
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_watch_listen_video));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //クリップ
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_clip));
@@ -366,15 +368,15 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
 
         //ビデオ
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_video));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //プレミアムビデオ
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_premium_video));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //レンタル
         mMenuItemTitles.add(mActivity.getString(R.string.rental_title));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //録画予約
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_record_reserve));
@@ -386,53 +388,53 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
 
         //設定
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_setting));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //テレビアプリを起動する
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_premium_tv_app_start_common));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //ひかりTV
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_hikari_tv));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //dTVチャンネル
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_dtv_channel));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //dTV
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_dtv));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //dアニメ
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_d_animation));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //DAZN
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_dazn));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
     }
 
     private void setMenuItemSignedUnpaired() {
         //ホーム
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_home));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //番組表
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_program_list));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //チャンネルリスト
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_channel_list));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //おすすめ番組・ビデオ
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_recommend_program_video));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //ランキング
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_ranking));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //クリップ
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_clip));
@@ -440,15 +442,15 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
 
         //ビデオ
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_video));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //視聴中ビデオ
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_watch_listen_video));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //キーワードで探す
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_keyword_search));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //お知らせ
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_notice));
@@ -456,42 +458,42 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
 
         //設定
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_setting));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
     }
 
     private void setMenuItemUnsignedLogin() {
         //ホーム
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_home));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //番組表
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_program_list));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //チャンネルリスト
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_channel_list));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //おすすめ番組・ビデオ
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_recommend_program_video));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //ランキング
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_ranking));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //ビデオ
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_video));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //視聴中ビデオ
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_watch_listen_video));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //キーワードで探す
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_keyword_search));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //お知らせ
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_notice));
@@ -499,42 +501,42 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
 
         //設定
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_setting));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
     }
 
     private void setMenuItemLogoff() {
         //ホーム
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_home));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //番組表
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_program_list));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //チャンネルリスト
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_channel_list));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //おすすめ番組・ビデオ
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_recommend_program_video));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //ランキング
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_ranking));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //ビデオ
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_video));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //視聴中ビデオ
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_watch_listen_video));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //キーワードで探す
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_keyword_search));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //お知らせ
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_notice));
@@ -542,7 +544,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
 
         //設定
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_setting));
-        mMenuItemCount.add(-1);
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
     }
 
 }
