@@ -206,7 +206,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      *
      * @return true: stb接続中   false: stb未接続
      */
-    protected boolean getStbStatus() {
+    public boolean getStbStatus() {
         return mIsStbStatusOn;
     }
 
