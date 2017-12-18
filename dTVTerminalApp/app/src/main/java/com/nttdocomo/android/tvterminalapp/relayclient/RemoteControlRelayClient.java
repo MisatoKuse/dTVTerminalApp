@@ -457,7 +457,7 @@ public class RemoteControlRelayClient {
                 // アプリ起動要求をSTBへ送信して処理結果応答を取得する
                 if (stbConnection.connect()) {
                     if (stbConnection.send(mRequestParam)) {
-                        recvData = stbConnection.recv();
+                        recvData = stbConnection.receive();
                         DTVTLogger.debug("recvData:" + recvData);
                         response = setResponse(recvData);
                     }
