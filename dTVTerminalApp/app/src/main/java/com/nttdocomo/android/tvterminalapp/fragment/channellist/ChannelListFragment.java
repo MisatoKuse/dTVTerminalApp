@@ -280,6 +280,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
 //                ret.setDuration(bsI.mDuration);
 //                ret.setTitle(bsI.mTitle);
 //                ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabBs);
+//                ret.setVideoType(bsI.mVideoType);
                 //本番ソース end
                 //test begin
                 DlnaRecVideoItem video = (DlnaRecVideoItem)mData.get(i);
@@ -291,6 +292,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
                 ret.setDuration(video.mDuration);
                 ret.setTitle(video.mTitle);
                 ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabBs);
+                ret.setVideoType(video.mVideoType);
                 //test end
                 break;
             case CH_LIST_DATA_TYPE_TER:
@@ -304,6 +306,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
 //                ret.setDuration(bsT.mDuration);
 //                ret.setTitle(bsT.mTitle);
 //                ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabTer);
+//                ret.setVideoType(bsT.mVideoType);
                 //本番ソース end
                 //test begin
                 DlnaRecVideoItem video2 = (DlnaRecVideoItem)mData.get(i);
@@ -315,6 +318,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
                 ret.setDuration(video2.mDuration);
                 ret.setTitle(video2.mTitle);
                 ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabTer);
+                ret.setVideoType(video2.mVideoType);
                 //test end
                 break;
             case CH_LIST_DATA_TYPE_INVALID:
