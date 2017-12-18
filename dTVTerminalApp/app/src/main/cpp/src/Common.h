@@ -11,6 +11,7 @@
 #include <dupnp_cp_evtmgr.h>
 #include <du_libxml.h>
 #include <dav_didl_libxml.h>
+#include <map>
 
 namespace dtvt {
 
@@ -29,6 +30,8 @@ namespace dtvt {
     } dmp;
 
     typedef std::vector<std::string> StringVector;
+    typedef std::map<int, std::string> XmlItemMap;
+    typedef std::vector<XmlItemMap> MapVector;
 
     typedef enum {
         //Browseコンテンツ
@@ -71,6 +74,7 @@ namespace dtvt {
     const char * const RecVideoItem_Field_mResUrl     ="mResUrl";
     const char * const RecVideoItem_Field_mUpnpIcon   ="mUpnpIcon";
     const char * const RecVideoItem_Field_mDate       ="mDate";
+    const char * const RecVideoItem_Field_mVideoType       ="mVideoType";
     
     //DlnaBsChListItem フィールド定義
     const char * const DlnaBsChListItem_Field_mChannelNo ="mChannelNo";
@@ -108,11 +112,36 @@ namespace dtvt {
     //java string path
     const char * const Dlna_Java_String_Path = "java/lang/String";    //"Ljava/lang/String;";
 
+    //xml item key from DlnaRecVideoItem.java
+    const int Xml_Item_Id=1;
+    const int Xml_Item_Title= Xml_Item_Id + 1;
+    const int Xml_Item_Size= Xml_Item_Id + 2;
+    const int Xml_Item_Duration= Xml_Item_Id + 3;
+    const int Xml_Item_Resolution= Xml_Item_Id + 4;
+    const int Xml_Item_Bitrate= Xml_Item_Id + 5;
+    const int Xml_Item_ResUrl= Xml_Item_Id + 6;
+    const int Xml_Item_UpnpIcon= Xml_Item_Id + 7;
+    const int Xml_Item_Date= Xml_Item_Id + 8;
+    const int Xml_Item_AllowedUse= Xml_Item_Id + 9;
+    const int Xml_Item_VideoType= Xml_Item_Id + 10;   //mVideoType
+
+
+
     #define IfNullGoTo(var, where) { if (NULL == (var) ) { goto  where; } }
     //#define IfGoTo(var, where) { if ( !(var) ) { goto  where; } }
     #define IfNullReturn(var) { if (NULL == (var) ) { return; } }
     #define IfNullReturnFalse(var) { if (NULL == (var) ) { return false; } }
     #define DelIfNotNull(obj) {  if(NULL!=(obj)) { delete obj; obj = NULL; }  }
+
+    //開発段階にて、本番のDMSはないので、仮DMSを使っていますが、違うDMSを定義し、どのDMSを選択できるよう
+    //#define DLNA_KARI_DMS_UNIVERSAL
+    #define DLNA_KARI_DMS_NAS
+
+    #if defined(DLNA_KARI_DMS_UNIVERSAL)
+        const char* const DLNA_DMS_ROOT = "0";
+    #elif defined(DLNA_KARI_DMS_NAS)
+        const char* const DLNA_DMS_ROOT = "0/video/all";
+    #endif
 
 } //namespace dtvt
 

@@ -331,7 +331,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             String message = "OK";
             switch (msg.what) {
                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_OK:
-                    Toast.makeText(mContext, message, Toast.LENGTH_LONG).show();
+                    menuRemoteController();
                     break;
                 default:
                     int resultcode = ((RemoteControlRelayClient.ResponseMessage)msg.obj).getResultCode();
@@ -672,4 +672,16 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             findViewById(R.id.base_remote_controller_rl).setVisibility(visibility);
         }
     }
+
+    /**
+     * グローバルメニューからのリモコン表示
+     */
+    public void menuRemoteController() {
+        if (getStbStatus()) {
+            DTVTLogger.debug("Start RemoteControl");
+            createRemoteControllerView();
+            getRemoteControllerView().startRemoteUI();
+        }
+    }
+
 }

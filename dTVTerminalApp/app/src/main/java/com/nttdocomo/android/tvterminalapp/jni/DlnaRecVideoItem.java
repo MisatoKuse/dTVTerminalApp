@@ -34,6 +34,8 @@ public class DlnaRecVideoItem {
     //to do: 使用する必要があれば、新しいフィールドをここで追加
     //TODO コピー残り回数（まだ取得できない為ダミー）
     public int mAllowedUse = 0;
+    public String mVideoType="";
+
     /**
      * 機能：DlnaRecVideoItem情報クラスを構造
      */

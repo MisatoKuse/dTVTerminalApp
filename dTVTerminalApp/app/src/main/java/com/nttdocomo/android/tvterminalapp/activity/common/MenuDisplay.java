@@ -33,6 +33,7 @@ import com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActiv
 import com.nttdocomo.android.tvterminalapp.activity.video.VideoTopActivity;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
+import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -242,23 +243,28 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_hikari_tv))) {
                 if (null != mMenuDisplayEventListener) {
-                    //TODO:TVアプリ起動導線(ひかりTV)
+                    // TVアプリ起動導線(ひかりTV)
+                    RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.HIKARITV);
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dtv_channel))) {
                 if (null != mMenuDisplayEventListener) {
-                    //TODO:TVアプリ起動導線(dTVチャンネル)
+                    // TVアプリ起動導線(dTVチャンネル)
+                    RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL);
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dtv))) {
                 if (null != mMenuDisplayEventListener) {
-                    //TODO:TVアプリ起動導線(dTV)
+                    // TVアプリ起動導線(dTV)
+                    RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTV);
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_d_animation))) {
                 if (null != mMenuDisplayEventListener) {
-                    //TODO:TVアプリ起動導線(dアニメ)
+                    // TVアプリ起動導線(dアニメ)
+                    RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE);
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dazn))) {
                 if (null != mMenuDisplayEventListener) {
-                    //TODO:TVアプリ起動導線(DAZN)
+                    // TVアプリ起動導線(DAZN)
+                    RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DAZN);
                 }
             }
 

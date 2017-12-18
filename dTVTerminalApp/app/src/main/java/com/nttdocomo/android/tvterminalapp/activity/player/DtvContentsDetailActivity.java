@@ -80,6 +80,9 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         MediaPlayerController.OnPlayerEventListener, MediaPlayerController.OnErrorListener, MediaPlayerController.OnCaptionDataListener,
         RemoteControllerView.OnStartRemoteControllerUIListener {
 
+    private static final int SCREEN_RATIO_WIDTH=16;
+    private static final int SCREEN_RATIO_HEIGHT=9;
+
     /* コンテンツ詳細 start */
     private LinearLayout tabLinearLayout;
     private ContentsDetailViewPager mViewPager;
@@ -185,7 +188,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         thumbnailRelativeLayout = findViewById(R.id.dtv_contents_detail_layout);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 getWidthDensity(),
-                getWidthDensity() * 2 / 3);
+                (int)(getWidthDensity() * SCREEN_RATIO_HEIGHT / SCREEN_RATIO_WIDTH));
         thumbnailRelativeLayout.setLayoutParams(layoutParams);
         Object object = intent.getParcelableExtra(RecordedListActivity.RECORD_LIST_KEY);
         if (object instanceof RecordedContentsDetailData) {
@@ -602,6 +605,8 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         String durationStr = datas.getDuration();
         long duration = getDuration(durationStr);
 
+        String type= datas.getVideoType();
+
         int bitRate = Integer.parseInt(datas.getBitrate());
         if (0 == size) {
             size = duration * bitRate;
@@ -609,20 +614,38 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         String title = datas.getTitle();
         headerTextView.setText(title);
         Uri uri = Uri.parse(url);
+        String contentFormat="contentFormat";
+        String type2="";
+        int isDtcp= type.indexOf("application/x-dtcp1");
+        if(isDtcp>0){
+            String http="http-get:*:";
+            int startPos= http.length() - 1;
+            int endPos= type.indexOf(":DLNA.ORG_OP");
+            if(startPos>0 && endPos>0 && startPos<endPos && startPos<type.length() && endPos<type.length()){
+                contentFormat=type.substring(startPos+1, endPos);
+                type2 = "application/x-dtcp1";
+            } else {
+                DTVTLogger.debug("setCurrentMediaInfo failed");
+                return false;
+            }
+        } else {
+            type2 = type;
+        }
         mCurrentMediaInfo = new MediaVideoInfo(
-                uri,                 //uri
-                "video/mp4",       //RESOURCE_MIMETYPE
-                size,                //SIZE
-                duration,            //DURATION
-                bitRate,             //BITRATE
-                true,               //IS_SUPPORTED_BYTE_SEEK
-                true,               //IS_SUPPORTED_TIME_SEEK
-                true,               //IS_AVAILABLE_CONNECTION_STALLING
-                true,               //IS_LIVE_MODE
-                true,               //IS_REMOTE
-                title,               //TITLE
-                "contentFormat"   //CONTENT_FORMAT
+                uri,           //uri
+                type2,         //"application/x-dtcp1", "video/mp4", RESOURCE_MIMETYPE
+                0,             //SIZE
+                duration,      //DURATION
+                0,             //BITRATE
+                true,         //IS_SUPPORTED_BYTE_SEEK
+                true,         //IS_SUPPORTED_TIME_SEEK
+                true,         //IS_AVAILABLE_CONNECTION_STALLING
+                true,         //IS_LIVE_MODE
+                false,        //IS_REMOTE
+                title,         //TITLE
+                contentFormat
         );
+
         DTVTLogger.end();
         return true;
     }
@@ -901,7 +924,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         } else {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
             mScreenWidth = getWidthDensity();
-            playerParams.height = getWidthDensity() * 2 / 3;
+            playerParams.height = (int)(getWidthDensity() * SCREEN_RATIO_HEIGHT / SCREEN_RATIO_WIDTH);
             headerLayout.setVisibility(View.VISIBLE);
             setPlayerProgressView(false);
             setRemoteControllerViewVisibility(View.VISIBLE);
@@ -1381,7 +1404,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             case MediaPlayerDefinitions.PE_START_NETWORK_CONNECTION:
                 break;
             case MediaPlayerDefinitions.PE_START_AUTHENTICATION:
-                showMessage("PE_START_AUTHENTICATION");
+                showMessage("認証開始");
                 break;
             case MediaPlayerDefinitions.PE_START_BUFFERING:
                 showMessage("バッファー開始");

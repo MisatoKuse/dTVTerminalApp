@@ -56,6 +56,9 @@ namespace dtvt {
          */
         DLNA_MSG_ID getMsgId();
 
+    protected:
+        void setXmlItemValues(StringVector& out, const int key, XmlItemMap& itemMap);
+
     private:
         DLNA_MSG_ID mDlnaMsgIdD;
     };

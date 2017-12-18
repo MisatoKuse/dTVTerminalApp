@@ -411,15 +411,28 @@ namespace dtvt {
         d->soap.id = DUPNP_INVALID_ID;
         std::string containerId;
         std::string isContainerId = "0";
+
         if (!checkSoapResponseError(response)) {
             goto error;
         }
 
         parser = thiz->mRecursionXmlParser;
         parser->parse((void *) response, vv, containerId, isContainerId);
-        if(containerId.length() != 0){
-            thiz->sendSoap((char*)response->url, containerId);
-        } else {
+        #if defined(DLNA_KARI_DMS_UNIVERSAL)
+            if(containerId.length() != 0){
+                thiz->sendSoap((char*)response->url, containerId);
+            } else {
+                if(0==vv.size()){
+                    du_sync_notify(&d->soap.sync);
+                    du_mutex_unlock(&d->soap.mutex);
+                    return;
+                }
+
+                thiz->notifyObject(parser->getMsgId(), vv);
+
+                //du_sync_notify(&d->soap.sync);
+            }
+        #elif defined(DLNA_KARI_DMS_NAS)
             if(0==vv.size()){
                 du_sync_notify(&d->soap.sync);
                 du_mutex_unlock(&d->soap.mutex);
@@ -427,9 +440,8 @@ namespace dtvt {
             }
 
             thiz->notifyObject(parser->getMsgId(), vv);
+        #endif
 
-            //du_sync_notify(&d->soap.sync);
-        }
         du_sync_notify(&d->soap.sync);
         du_mutex_unlock(&d->soap.mutex);
         return;
@@ -610,7 +622,15 @@ namespace dtvt {
         }
 
         //mDate
-        ret= setJavaObjectField(env, cl, RecVideoItem_Field_mDate, Dlna_Java_String_Path,  *i, objOut);
+        ret= setJavaObjectField(env, cl, RecVideoItem_Field_mDate, Dlna_Java_String_Path,  *i++, objOut);
+        if(!ret){
+            return false;
+        }
+
+        //mAllowedUse?
+
+        //Xml_Item_VideoType
+        ret= setJavaObjectField(env, cl, RecVideoItem_Field_mVideoType, Dlna_Java_String_Path,  *i, objOut);
         if(!ret){
             return false;
         }
@@ -991,7 +1011,7 @@ namespace dtvt {
             IfNullReturnFalse(mBsDigitalXmlParser);
         }
         mRecursionXmlParser=mDlnaRecVideoXmlParser;
-        return sendSoap(controlUrl, "0");
+        return sendSoap(controlUrl, DLNA_DMS_ROOT);
     }
 
     bool Dlna::browseBsChListDms(std::string controlUrl) {
