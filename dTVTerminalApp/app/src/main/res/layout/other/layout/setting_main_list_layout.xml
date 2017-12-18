@@ -18,12 +18,12 @@
         android:textColor="@color/white_text"/>
     <ImageView
         android:id="@+id/setting_forward_image"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="@dimen/main_setting_view_margin"
-        android:src="@drawable/menu_forward"/>
+        android:src="@drawable/arrow_right"/>
     <TextView
         android:id="@+id/setting_state_text"
         android:layout_width="wrap_content"

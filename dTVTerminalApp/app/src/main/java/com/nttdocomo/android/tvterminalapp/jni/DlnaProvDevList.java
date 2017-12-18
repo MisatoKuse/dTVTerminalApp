@@ -70,4 +70,15 @@ public class DlnaProvDevList {
         di.setDlnaDevListListener(lis);
         return true;
     }
+
+    /**
+     * 機能：カレントDMSを削除
+     */
+    public void dmsRemove(){
+        DlnaInterface di = DlnaInterface.getInstance();
+        if (null == di) {
+            return;
+        }
+        di.dmsRemove();
+    }
 }

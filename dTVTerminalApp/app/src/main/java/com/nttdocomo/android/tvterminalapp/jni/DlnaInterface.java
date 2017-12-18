@@ -474,4 +474,18 @@ public class DlnaInterface {
      * @return 操作結果
      */
     private native boolean browseHikariChListDms(long prt, String ctl);
+
+    /**
+     * 機能：カレントDMSを削除
+     */
+    public void dmsRemove(){
+        if(null!=mDlnaDevListListener){
+            String udn="";
+            if(null!=mCurrentDmsItem){
+                udn= mCurrentDmsItem.mUdn;
+            }
+            mDlnaDevListListener.onDeviceLeave(mDMSInfo, udn);
+        }
+        mCurrentDmsItem=null;
+    }
 }
