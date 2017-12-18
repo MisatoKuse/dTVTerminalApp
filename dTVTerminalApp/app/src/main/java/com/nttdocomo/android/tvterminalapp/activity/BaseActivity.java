@@ -672,4 +672,16 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             findViewById(R.id.base_remote_controller_rl).setVisibility(visibility);
         }
     }
+
+    /**
+     * グローバルメニューからのリモコン表示
+     */
+    public void menuRemoteController() {
+        if (getStbStatus()) {
+            DTVTLogger.debug("Start RemoteControl");
+            createRemoteControllerView();
+            getRemoteControllerView().startRemoteUI();
+        }
+    }
+
 }
