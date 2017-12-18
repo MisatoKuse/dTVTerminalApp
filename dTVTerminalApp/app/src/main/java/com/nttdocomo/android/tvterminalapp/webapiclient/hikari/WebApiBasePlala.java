@@ -187,6 +187,26 @@ public class WebApiBasePlala {
      */
     public static final String LIST_STRING = "list";
 
+    /**
+     * h4d_iptv：多チャンネル
+     */
+    static final String CLIP_TYPE_H4D_IPTV = "h4d_iptv";
+
+    /**
+     * h4d_vod：ビデオ
+     */
+    static final String CLIP_TYPE_H4D_VOD = "h4d_vod";
+
+    /**
+     * dch：dTVチャンネル
+     */
+    static final String CLIP_TYPE_DCH = "dch";
+
+    /**
+     * dtv_vod：dTV
+     */
+    static final String CLIP_TYPE_DTV_VOD = "dtv_vod";
+
     //戻り値用構造体
     static protected class ReturnCode {
         ERROR_TYPE errorType;

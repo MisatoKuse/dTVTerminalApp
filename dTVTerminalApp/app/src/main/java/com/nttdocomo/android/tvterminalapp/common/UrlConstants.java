@@ -148,5 +148,17 @@ public class UrlConstants {
         public static final String CONTENTS_DETAIL_GET_WEB_CLIENT =
                 //PLALA_CLIENT + "contents/specifics/get";
                 PLALA_CLIENT + "meta/conetntsdetail";
+
+        /**
+         * クリップ登録
+         */
+        public static final String CLIP_REGISTER_GET_WEB_CLIENT =
+                PLALA_CLIENT + "/user/clip/register";
+
+        /**
+         * クリップ削除
+         */
+        public static final String CLIP_DELETE_GET_WEB_CLIENT =
+                PLALA_CLIENT + "/user/clip/delete";
     }
 }
