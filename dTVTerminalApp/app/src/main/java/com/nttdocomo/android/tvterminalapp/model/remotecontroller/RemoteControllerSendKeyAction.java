@@ -41,7 +41,6 @@ public class RemoteControllerSendKeyAction {
     public RemoteControllerSendKeyAction(Context context) {
         mContext = context;
         mRemoteControlRelayClient = RemoteControlRelayClient.getInstance();
-        mRemoteControlRelayClient.setDebugRemoteIp("192.168.11.19");
     }
 
     public void initRemoteControllerPlayerView(View view) {
