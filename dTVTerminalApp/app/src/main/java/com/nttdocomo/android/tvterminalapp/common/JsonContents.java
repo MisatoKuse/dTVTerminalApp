@@ -301,4 +301,6 @@ public class JsonContents {
     public static final String META_RESPONSE_ADINFO_ARRAY = "adinfo_array";
     // 関連VODのcrid
     public static final String META_RESPONSE_RELATIONAL_ID_ARRAY = "relational_id_array";
+    // エラー番号
+    public static final String META_RESPONSE_NG_ERROR_NO = "errorno";
 }

@@ -53,10 +53,12 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.DtvContentsDetailDataPro
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationResultResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailFragmentFactory;
+import com.nttdocomo.android.tvterminalapp.model.detail.RecordingReservationContentsDetailInfo;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.model.player.MediaVideoInfo;
 import com.nttdocomo.android.tvterminalapp.model.program.Channel;
@@ -136,6 +138,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     private int mScreenWidth;
     private boolean isHideOperate = true;
     private boolean mIsOncreateOk = false;
+    private RecordingReservationContentsDetailInfo mRecordingReservationContentsDetailInfo = null;
 
     private Runnable mHideCtrlViewThread = new Runnable() {
 
@@ -1181,6 +1184,14 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                 detailDataProvider.getChannelList(1, 1, "", 1);
             }
             detailFragment.noticeRefresh();
+            // リモート録画予約情報を生成
+            mRecordingReservationContentsDetailInfo = new RecordingReservationContentsDetailInfo(
+                    detailFullData.getmService_id(),
+                    detailFullData.getmEvent_id(),
+                    detailFullData.getTitle(),
+                    detailFullData.getAvail_start_date(),
+                    detailFullData.getDur(),
+                    detailFullData.getR_value());
         }
     }
 
@@ -1482,5 +1493,10 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         if(null!=mToast){
             mToast.cancel();
         }
+    }
+
+    @Override
+    public void recordingReservationResult(RemoteRecordingReservationResultResponse response) {
+
     }
 }

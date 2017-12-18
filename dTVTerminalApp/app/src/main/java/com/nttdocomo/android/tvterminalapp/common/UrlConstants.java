@@ -148,5 +148,11 @@ public class UrlConstants {
         public static final String CONTENTS_DETAIL_GET_WEB_CLIENT =
                 //PLALA_CLIENT + "contents/specifics/get";
                 PLALA_CLIENT + "meta/conetntsdetail";
+
+        /**
+         * リモート録画予約登録
+         */
+        public static final String REMOTE_RECORDING_RESERVATION_CLIENT =
+                PLALA_CLIENT + "/remoterecording/reservation/set";
     }
 }

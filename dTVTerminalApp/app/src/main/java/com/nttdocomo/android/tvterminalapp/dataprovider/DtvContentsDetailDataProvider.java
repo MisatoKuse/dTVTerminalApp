@@ -16,13 +16,16 @@ import com.nttdocomo.android.tvterminalapp.datamanager.select.HomeDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.ProgramDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ContentsDetailGetResponse;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationResultResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
+import com.nttdocomo.android.tvterminalapp.model.detail.RecordingReservationContentsDetailInfo;
 import com.nttdocomo.android.tvterminalapp.model.program.Channel;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsDetailGetWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RemoteRecordingReservationClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RoleListWebClient;
 
 import java.util.ArrayList;
@@ -35,7 +38,7 @@ import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.ROLELIST_LAST_
 
 public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient.ContentsDetailJsonParserCallback,
         RoleListWebClient.RoleListJsonParserCallback, ChannelWebClient.ChannelJsonParserCallback,
-        DbThread.DbOperation{
+        DbThread.DbOperation, RemoteRecordingReservationClient.RemoteRecordingReservationJsonParserCallback {
 
     private ApiDataProviderCallback apiDataProviderCallback;
     private static final String DISPLAY_TYPE[] = {"", "hikaritv", "dch"};
@@ -185,6 +188,11 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
         return resultSet;
     }
 
+    @Override
+    public void onRemoteRecordingReservationJsonParsed(RemoteRecordingReservationResultResponse response) {
+        apiDataProviderCallback.recordingReservationResult(response);
+    }
+
     /**
      * チャンネルデータの整形
      */
@@ -232,15 +240,22 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
          * @param channels 　画面に渡すチャンネル情報
          */
         void channelListCallback(ArrayList<Channel> channels);
+
+        /**
+         * リモート録画予約実行結果を返す
+         *
+         * @param response 実行結果
+         */
+        void recordingReservationResult(RemoteRecordingReservationResultResponse response);
     }
 
 
     /**
-     * CH一覧取得
+     * コンテンツ詳細取得
      *
-     * @param crid  取得したい情報のコンテンツ識別ID(crid)の配列
+     * @param crid   取得したい情報のコンテンツ識別ID(crid)の配列
      * @param filter release、testa、demo ※指定なしの場合release
-     * @param ageReq   dch：dチャンネル, hikaritv：ひかりTVの多ch, 指定なしの場合：すべて
+     * @param ageReq dch：dチャンネル, hikaritv：ひかりTVの多ch, 指定なしの場合：すべて
      */
     public void getContentsDetailData(String[] crid, String filter, int ageReq) {
         ContentsDetailGetWebClient detailGetWebClient = new ContentsDetailGetWebClient();
@@ -295,5 +310,11 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
             ChannelWebClient mChannelList = new ChannelWebClient();
             mChannelList.getChannelApi(limit, offset, filter, DISPLAY_TYPE[type], this);
         }
+    }
+
+    public void requestRecordingReservation(RecordingReservationContentsDetailInfo info) {
+        RemoteRecordingReservationClient client = new RemoteRecordingReservationClient();
+        client.getRemoteRecordingReservationApi(info, this);
+
     }
 }

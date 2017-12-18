@@ -99,6 +99,9 @@ public class DateUtils {
     public static final int DAY_OF_WEEK_FRIDAY = 6;
     public static final int DAY_OF_WEEK_SATURDAY = 7;
 
+    /**  */
+    public static final long EPOCH_TIME_ONE_DAY = 86400;
+
 
     /**
      * コンテキスト
@@ -324,5 +327,13 @@ public class DateUtils {
      */
     public static String getStringDayOfWeek(int dayOfWeek) {
         return STRING_DAY_OF_WEEK[dayOfWeek];
+    }
+
+    /**
+     * 録画予約開始時間の算出
+     * 引数日時（エポック秒）の0時00分00秒からの時間を算出
+     */
+    public static long getCalculationRecordingReservationStartTime(long startTime) {
+        return startTime % EPOCH_TIME_ONE_DAY;
     }
 }
