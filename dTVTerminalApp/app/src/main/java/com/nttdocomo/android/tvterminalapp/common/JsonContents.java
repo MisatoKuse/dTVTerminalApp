@@ -177,6 +177,8 @@ public class JsonContents {
     public static final String META_RESPONSE_TITLE = "title";
     // タイトルルビ
     public static final String META_RESPONSE_TITLERUBY = "titleruby";
+    // index
+    public static final String META_RESPONSE_INDEX = "index";
     // 表示タイプ
     public static final String META_RESPONSE_DISP_TYPE = "disp_type";
     // サービス

@@ -95,8 +95,7 @@ public class MyChannelDeleteWebClient
         String answerText;
         try {
             //サービスIDの作成
-            JSONObject jsonPagerObject = new JSONObject();
-            jsonPagerObject.put(JsonContents.META_RESPONSE_SERVICE_ID, serviceId);
+            jsonObject.put(JsonContents.META_RESPONSE_SERVICE_ID, serviceId);
 
             answerText = jsonObject.toString();
 

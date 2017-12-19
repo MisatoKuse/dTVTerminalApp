@@ -6,9 +6,13 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.text.TextUtils;
 
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelRegisterResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.MyChannelRegisterJsonParser;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -80,12 +84,47 @@ public class MyChannelRegisterWebClient
         //コールバックのセット
         this.myChannelRegisterJsonParserCallback = myChannelRegisterJsonParserCallback;
 
+        //送信用パラメータの作成
+        String sendParameter = makeSendParameter(serviceId, title, rValue, adultType, index);
+
+        //JSONの組み立てに失敗していれば、falseで帰る
+        if (sendParameter.isEmpty()) {
+            return false;
+        }
+
         //リモート録画一覧の情報を読み込むため、リモート録画一覧を呼び出す
         openUrl(UrlConstants.WebApiUrl.MY_CHANNEL_SET_WEB_CLIENT,
-                "", this);
+                sendParameter, this);
 
         //今のところ失敗していないので、trueを返す
         return true;
+    }
+
+    /**
+     * 指定されたパラメータをJSONで組み立てて文字列にする
+     *
+     * @param serviceId サービスID
+     * @return 組み立て後の文字列
+     */
+    private String makeSendParameter(String serviceId, String title, String rValue, String adultType, int index) {
+        JSONObject jsonObject = new JSONObject();
+        String answerText;
+        try {
+            //サービスIDの作成
+            jsonObject.put(JsonContents.META_RESPONSE_SERVICE_ID, serviceId);
+            jsonObject.put(JsonContents.META_RESPONSE_TITLE, title);
+            jsonObject.put(JsonContents.META_RESPONSE_R_VALUE, rValue);
+            jsonObject.put(JsonContents.META_RESPONSE_ADULT, adultType);
+            jsonObject.put(JsonContents.META_RESPONSE_INDEX, index);
+
+            answerText = jsonObject.toString();
+
+        } catch (JSONException e) {
+            //JSONの作成に失敗したので空文字とする
+            answerText = "";
+        }
+
+        return answerText;
     }
 
     /**
