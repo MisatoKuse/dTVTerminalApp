@@ -16,15 +16,18 @@ public class RecommendContentInfo {
     public String synop;
     public String comment;
     public String highlight;
+    public String reserved4;
+
 
     public RecommendContentInfo(String contentId, int categoryId, int serviceId,
-                                String contentPictureUrl, String title, String startViewing) {
-        this.contentId = contentId;
+                                String contentPictureUrl, String title, String startViewing,String reserved4) {
+        this.contentId = "10019088";//現在テストのため固定にしまして、今後はcontentId
         this.categoryId = categoryId;
         this.serviceId = serviceId;
         this.contentPictureUrl = contentPictureUrl;
         this.title = title;
         this.startViewing = startViewing;
+        this.reserved4=reserved4;
         //TODO:↓レコメンドサーバからコンテンツ詳細情報が取得できるようになったら、synop、comment、highlight取得に関する一連の処理を追加する
         this.synop = "※あらすじ(ダミー)【吹替版】" +
                 "魔女の呪いによって野獣の姿に変えられてしまった王子。呪いを解く鍵は、" +

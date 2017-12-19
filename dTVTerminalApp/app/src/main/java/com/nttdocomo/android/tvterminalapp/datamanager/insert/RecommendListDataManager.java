@@ -22,6 +22,7 @@ import java.util.Map;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED4;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE;
@@ -121,7 +122,8 @@ public class RecommendListDataManager {
                     Integer.parseInt(map.get(RECOMMENDCHANNEL_LIST_SERVICEID)),
                     map.get(RECOMMENDCHANNEL_LIST_CTPICURL1),
                     map.get(RECOMMENDCHANNEL_LIST_TITLE),
-                    map.get(RECOMMENDCHANNEL_LIST_STARTVIEWING)
+                    map.get(RECOMMENDCHANNEL_LIST_STARTVIEWING),
+                    map.get(RECOMMENDCHANNEL_LIST_RESERVED4)
             );
             recommendContentInfoList.add(info);
         }

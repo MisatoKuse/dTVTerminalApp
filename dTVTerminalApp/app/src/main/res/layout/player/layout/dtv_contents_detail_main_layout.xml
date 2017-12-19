@@ -91,6 +91,8 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:textColor="@color/white_text"
+                        android:maxLines="1"
+                        android:textSize="@dimen/contents_detail_10dp"
                         android:visibility="gone" />
                 </LinearLayout>
             </RelativeLayout>
