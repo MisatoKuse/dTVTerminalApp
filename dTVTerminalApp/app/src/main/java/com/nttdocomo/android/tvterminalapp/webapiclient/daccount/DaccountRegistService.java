@@ -108,10 +108,10 @@ public class DaccountRegistService {
             String serviceKey = DaccountConstants.SERVICE_KEY;
 
             //各ブロードキャストレシーバーの名前を指定する
-            String setDefIdReceiver = "com.nttdocomo.android.tvterminalapp.SetDefIdReceiver";
-            String userAuthReceiver = "com.nttdocomo.android.tvterminalapp.UserAuthReceiver";
-            String deleteIdReceiver = "com.nttdocomo.android.tvterminalapp.DelIdReceiver";
-            String invalidateIdReceiver = "com.nttdocomo.android.tvterminalapp.InvIdReceiver";
+            String setDefIdReceiver = DaccountConstants.SET_ID_RECEIVER;
+            String userAuthReceiver = DaccountConstants.USER_AUTH_RECEIVER;
+            String deleteIdReceiver = DaccountConstants.DELETE_ID_RECEIVER;
+            String invalidateIdReceiver = DaccountConstants.INVALIDATE_ID_RECEIVER;
 
             try {
                 //サービス登録を呼び出す
