@@ -59,7 +59,8 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private StbInfoCallBackTimer mCallbackTimer = null;
     private DlnaDMSInfo mDlnaDMSInfo = null;
     private int mStartMode = 0;
-    private ImageView mCheckMark, mMenuImageView = null, mStatusIcon;
+    private ImageView mCheckMark, mMenuImageView = null;
+    public static final String FROM_WHERE = "FROM_WHERE";
 
     private enum TimerStatus {
         TIMER_STATUS_DEFAULT,// 初期状態
@@ -68,9 +69,9 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         TIMER_STATUS_CANCEL, // キャンセル
     }
 
-    public enum STBSeleFromMode {
-        STBSeleFromMode_Launch,
-        STBSeleFromMode_Setting,
+    public enum STBSelectFromMode {
+        STBSelectFromMode_Launch,
+        STBSelectFromMode_Setting,
     }
 
     @Override
@@ -109,12 +110,12 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 
         Intent intent = getIntent();
         if (intent != null) {
-            mStartMode = intent.getIntExtra("FROM_WHERE", -1);
+            mStartMode = intent.getIntExtra(FROM_WHERE, -1);
         }
-        if (mStartMode == (STBSeleFromMode.STBSeleFromMode_Launch.ordinal())) {
+        if (mStartMode == (STBSelectFromMode.STBSelectFromMode_Launch.ordinal())) {
             return;
 
-        } else if (mStartMode == (STBSeleFromMode.STBSeleFromMode_Setting.ordinal())) {
+        } else if (mStartMode == (STBSelectFromMode.STBSelectFromMode_Setting.ordinal())) {
             setTitleText(getString(R.string.str_stb_paring_setting_title));
             useWithoutPairingSTBParingInvitationTextView.setVisibility(View.GONE);
             mMenuImageView = findViewById(R.id.header_layout_menu);
@@ -374,7 +375,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         mDlnaProvDevList.stopListen();
         //STB選択画面"次回以降表示しない" 状態をSharedPreferenceに保存
         SharedPreferencesUtils.setSharedPreferencesStbSelect(this, mIsNextTimeHide);
-        if (mStartMode == STBSeleFromMode.STBSeleFromMode_Setting.ordinal() && mParingDevice != null) {
+        if (mStartMode == STBSelectFromMode.STBSelectFromMode_Setting.ordinal() && mParingDevice != null) {
             //ペアリング解除する場合、すべてのSTBキャッシュデータを削除して、ホーム画面に遷移する
             mDlnaProvDevList.dmsRemove();
             SharedPreferencesUtils.resetSharedPreferencesStbInfo(this);
@@ -429,7 +430,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             // SharedPreferencesにSTBデータを保存
             if (mDlnaDmsItemList != null) {
                 SharedPreferencesUtils.setSharedPreferencesStbInfo(this, mDlnaDmsItemList.get(i));
-                if (mStartMode == STBSeleFromMode.STBSeleFromMode_Setting.ordinal() && mParingDevice != null) {
+                if (mStartMode == STBSelectFromMode.STBSelectFromMode_Setting.ordinal() && mParingDevice != null) {
                     mParingDevice.setBackgroundColor(Color.BLACK);
                     mParingDevice.setTextColor(Color.WHITE);
                     mCheckMark.setVisibility(View.GONE);
@@ -583,7 +584,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         displayMoreData((false));
         // STB検索タイムアウト文言表示
         TextView statusTextView = (TextView) findViewById(R.id.stb_select_status_text);
-        if (mStartMode == STBSeleFromMode.STBSeleFromMode_Setting.ordinal() &&
+        if (mStartMode == STBSelectFromMode.STBSelectFromMode_Setting.ordinal() &&
                 !mParingDevice.getText().toString().isEmpty()) {
             useWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_paring_cancel_text);
         } else {

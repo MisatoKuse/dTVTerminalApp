@@ -33,7 +33,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     Button firstLanchLanchYesActivity=null;
     Button firstLanchLanchNoActivity=null;
     private DlnaProvRecVideo mDlnaProvRecVideo;
-
     private String mState="";
 
     @Override
@@ -182,7 +181,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         } else {
             // STB選択画面へ遷移
             Intent intent = new Intent(getApplicationContext(),STBSelectActivity.class);
-            intent.putExtra("FROM_WHERE", STBSelectActivity.STBSeleFromMode.STBSeleFromMode_Launch.ordinal());
+            intent.putExtra(STBSelectActivity.FROM_WHERE, STBSelectActivity.STBSelectFromMode.STBSelectFromMode_Launch.ordinal());
             startActivity(intent);
             DTVTLogger.debug("Start STBSelectActivity");
         }
