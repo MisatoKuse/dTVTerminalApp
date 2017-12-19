@@ -23,14 +23,22 @@ public class DaccountConstants {
 
     //ブロードキャスト登録名
     //デフォルトのdアカウントIDを知らせる場合
-    public static final String SET_ID_RECEIVER ="com.nttdocomo.android.tvterminalapp.DOCOMOID_SET_DEFAULT";
+    public static final String SET_ID_RECEIVER = //"com.nttdocomo.android.tvterminalapp.DOCOMOID_SET_DEFAULT";
+                                                    "com.nttdocomo.android.idmanager.action.DOCOMOID_SET_DEFAULT";
     //dアカウントユーザー認証が発生した事を知らせる場合
-    public static final String USER_AUTH_RECEIVER ="com.nttdocomo.android.tvterminalapp.DOCOMOID_AUTHENTICATED";
+    public static final String USER_AUTH_RECEIVER =//"com.nttdocomo.android.tvterminalapp.DOCOMOID_AUTHENTICATED";
+                                                        "com.nttdocomo.android.idmanager.action.DOCOMOID_AUTHENTICATED";
     //dアカウントユーザーの削除を知らせる場合
-    public static final String DELETE_ID_RECEIVER ="com.nttdocomo.android.tvterminalapp.DOCOMOID_INVALIDATE";
+    public static final String DELETE_ID_RECEIVER =//"com.nttdocomo.android.tvterminalapp.DOCOMOID_RECEIVER";
+                                                         "com.nttdocomo.android.idmanager.action.DOCOMOID_REMOVED";
     //dアカウント無効化を知らせる場合
-    public static final String INVALIDATE_ID_RECEIVER ="com.nttdocomo.android.tvterminalapp.DOCOMOID_INVALIDATE";
+    public static final String INVALIDATE_ID_RECEIVER =//"com.nttdocomo.android.tvterminalapp.DOCOMOID_INVALIDATE";
+                                                            "com.nttdocomo.android.idmanager.action.DOCOMOID_INVALIDATE";
     //回線連携完了を知らせる場合
-    public static final String LINKED_LINE_RECEIVER ="com.nttdocomo.android.tvterminalapp.DOCOMOID_LINKED_LINE";
+    public static final String LINKED_LINE_RECEIVER = //"com.nttdocomo.android.tvterminalapp.DOCOMOID_LINKED_LINE";
+                                                            "com.nttdocomo.android.idmanager.action.DOCOMOID_LINKED_LINE";
+    //アプリ除外を知らせる場合
+    public static final String SERVICEAPP_REMOVED_RECEIVER = "com.nttdocomo.android.idmanager.action.SERVICEAPP_REMOVED";
+
 
 }

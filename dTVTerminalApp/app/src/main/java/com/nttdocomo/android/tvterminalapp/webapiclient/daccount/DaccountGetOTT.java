@@ -117,15 +117,15 @@ public class DaccountGetOTT {
 
             //呼び出し用のパラメータの設定
             //TODO: didはひとまず直書きで行う
-            String id = "dtvtfsitest2017@yahoo.co.jp";
             String serviceKey = DaccountConstants.SERVICE_KEY;
             int option = IDimDefines.CertOption.DEFAULT;
             String appCheckKey = "";
             DTVTLogger.debug("compName=" + name);
 
             try {
-                //OTT取得処理を呼び出す
-                result = mService.getOneTimePassword(appReqId, id, serviceKey, option,
+                //OTT取得処理を呼び出す(IDは無設定の場合、既にdアカウント設定アプリに設定された物が
+                //使用されるので、空欄とします）
+                result = mService.getOneTimePassword(appReqId, "", serviceKey, option,
                         appCheckKey, callback);
             } catch (RemoteException e) {
                 e.printStackTrace();

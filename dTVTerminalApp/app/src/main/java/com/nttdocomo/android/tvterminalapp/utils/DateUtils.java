@@ -325,4 +325,13 @@ public class DateUtils {
     public static String getStringDayOfWeek(int dayOfWeek) {
         return STRING_DAY_OF_WEEK[dayOfWeek];
     }
+
+    /**
+     * dアカウント切り替え時に、以前のデータを削除する
+     * @param context コンテキスト
+     */
+    public static void clearDataSave(Context context) {
+        SharedPreferences data = context.getSharedPreferences(DATA_SAVE, Context.MODE_PRIVATE);
+        data.edit().clear().apply();
+    }
 }

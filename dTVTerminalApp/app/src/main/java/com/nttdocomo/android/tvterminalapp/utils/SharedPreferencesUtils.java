@@ -51,6 +51,27 @@ public class SharedPreferencesUtils {
     private static final String LAST_ONE_TIME_PASSWORD = "LAST_ONE_TIME_PASSWORD";
 
     /**
+     * 独自の削除メソッドがある接続済みSTB情報以外の、dアカウントユーザー切り替え時の削除対象
+     */
+    private final static String[] DELETE_PREFERENCES_NAME = {
+            // SharedPreferences ペアリング情報保存キー 親キー
+            SHARED_KEY_PAIRING_INFOMATION,
+            // STB選択画面"次回以降表示しない" 選択保存キー
+            SHARED_KEY_STB_SELECT_UNNECESSARY_NEXT_TIME,
+            // STB接続画面 接続成功 保存キー
+            SHARED_KEY_STB_CONNECT_SUCCESS,
+            // ペアリング勧誘画面表示済み判定情報 保存キー
+            SHARED_KEY_IS_DISPLAYED_PARING_INVITATION,
+            // ホーム画面ペアリング済み判定 保存キー
+            SHARED_KEY_DECISION_PARING_SETTLED,
+            //最後に取得したdアカウントのID
+            LAST_D_ACCOUNT_ID,
+            //最後に取得したワンタイムパスワード
+            LAST_ONE_TIME_PASSWORD,
+    };
+
+
+    /**
      * STB選択画面"次回以降表示しない" 状態を保存
      *
      * @param context             コンテキスト
@@ -347,5 +368,19 @@ public class SharedPreferencesUtils {
                 LAST_ONE_TIME_PASSWORD, Context.MODE_PRIVATE);
 
         return data.getString(LAST_ONE_TIME_PASSWORD,"");
+    }
+
+    /**
+     * 一部の設定値以外のプリファレンスを削除する
+     */
+    public static void clearAlmostSharedPreferences(Context context) {
+        //接続済みSTB情報には削除処理があるので使用する
+        resetSharedPreferencesStbInfo(context);
+
+        //他の情報の削除を行う
+        for(String deleteKey : DELETE_PREFERENCES_NAME) {
+            SharedPreferences deleteData = context.getSharedPreferences(deleteKey,Context.MODE_PRIVATE);
+            deleteData.edit().clear().apply();
+        }
     }
 }
