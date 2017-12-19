@@ -15,8 +15,6 @@ import com.nttdocomo.android.tvterminalapp.common.DaccountConstants;
 import java.util.ArrayList;
 import java.util.Set;
 
-import com.nttdocomo.android.tvterminalapp.common.DaccountConstants;
-
 /**
  * dアカウントで状況の変化が発生した場合の通知を受け取るレシーバー
  * TODO: dアカウント用にマニフェストファイルの設定を行ったのに応じて生成された。中身はこれから
