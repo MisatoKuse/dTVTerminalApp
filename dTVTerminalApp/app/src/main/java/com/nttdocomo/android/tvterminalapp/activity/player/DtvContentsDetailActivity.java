@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.player;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
@@ -62,6 +64,7 @@ import com.nttdocomo.android.tvterminalapp.model.detail.RecordingReservationCont
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.model.player.MediaVideoInfo;
 import com.nttdocomo.android.tvterminalapp.model.program.Channel;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.view.ContentsDetailViewPager;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
@@ -80,10 +83,10 @@ import java.util.Map;
 public class DtvContentsDetailActivity extends BaseActivity implements DtvContentsDetailDataProvider.ApiDataProviderCallback,
         View.OnClickListener, MediaPlayerController.OnStateChangeListener, MediaPlayerController.OnFormatChangeListener,
         MediaPlayerController.OnPlayerEventListener, MediaPlayerController.OnErrorListener, MediaPlayerController.OnCaptionDataListener,
-        RemoteControllerView.OnStartRemoteControllerUIListener {
+        RemoteControllerView.OnStartRemoteControllerUIListener, DtvContentsDetailFragment.RecordingReservationIconListener {
 
-    private static final int SCREEN_RATIO_WIDTH=16;
-    private static final int SCREEN_RATIO_HEIGHT=9;
+    private static final int SCREEN_RATIO_WIDTH = 16;
+    private static final int SCREEN_RATIO_HEIGHT = 9;
 
     /* コンテンツ詳細 start */
     private LinearLayout tabLinearLayout;
@@ -142,6 +145,9 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     private boolean isHideOperate = true;
     private boolean mIsOncreateOk = false;
     private RecordingReservationContentsDetailInfo mRecordingReservationContentsDetailInfo = null;
+    private AlertDialog.Builder mDialogBuilder = null;
+    private final int RECORDING_RESERVATION_DIALOG_INDEX_0 = 0;// 予約録画する
+    private final int RECORDING_RESERVATION_DIALOG_INDEX_1 = 1;// キャンセル
 
     private Runnable mHideCtrlViewThread = new Runnable() {
 
@@ -191,7 +197,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         thumbnailRelativeLayout = findViewById(R.id.dtv_contents_detail_layout);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 getWidthDensity(),
-                (int)(getWidthDensity() * SCREEN_RATIO_HEIGHT / SCREEN_RATIO_WIDTH));
+                (int) (getWidthDensity() * SCREEN_RATIO_HEIGHT / SCREEN_RATIO_WIDTH));
         thumbnailRelativeLayout.setLayoutParams(layoutParams);
         Object object = intent.getParcelableExtra(RecordedListActivity.RECORD_LIST_KEY);
         if (object instanceof RecordedContentsDetailData) {
@@ -432,7 +438,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                         mVideoFast30.setVisibility(View.VISIBLE);
                         mVideoFast.setVisibility(View.VISIBLE);
                         mVideoCtrlBar.setVisibility(View.VISIBLE);
-                        if(getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE){
+                        if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
                             mTvTitle.setVisibility(View.VISIBLE);
                             mTvLogo.setVisibility(View.VISIBLE);
                         }
@@ -608,7 +614,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         String durationStr = datas.getDuration();
         long duration = getDuration(durationStr);
 
-        String type= datas.getVideoType();
+        String type = datas.getVideoType();
 
         int bitRate = Integer.parseInt(datas.getBitrate());
         if (0 == size) {
@@ -617,15 +623,15 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         String title = datas.getTitle();
         headerTextView.setText(title);
         Uri uri = Uri.parse(url);
-        String contentFormat="contentFormat";
-        String type2="";
-        int isDtcp= type.indexOf("application/x-dtcp1");
-        if(isDtcp>0){
-            String http="http-get:*:";
-            int startPos= http.length() - 1;
-            int endPos= type.indexOf(":DLNA.ORG_OP");
-            if(startPos>0 && endPos>0 && startPos<endPos && startPos<type.length() && endPos<type.length()){
-                contentFormat=type.substring(startPos+1, endPos);
+        String contentFormat = "contentFormat";
+        String type2 = "";
+        int isDtcp = type.indexOf("application/x-dtcp1");
+        if (isDtcp > 0) {
+            String http = "http-get:*:";
+            int startPos = http.length() - 1;
+            int endPos = type.indexOf(":DLNA.ORG_OP");
+            if (startPos > 0 && endPos > 0 && startPos < endPos && startPos < type.length() && endPos < type.length()) {
+                contentFormat = type.substring(startPos + 1, endPos);
                 type2 = "application/x-dtcp1";
             } else {
                 DTVTLogger.debug("setCurrentMediaInfo failed");
@@ -697,12 +703,13 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
 
     /**
      * showMessage
+     *
      * @param msg
      */
-    private void showMessage(String msg){
+    private void showMessage(String msg) {
         DTVTLogger.start();
-        if(null==mToast){
-            mToast= Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
+        if (null == mToast) {
+            mToast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
         }
         mToast.setText(msg);
         mToast.show();
@@ -737,7 +744,10 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
      */
     private void getContentsData() {
         detailDataProvider = new DtvContentsDetailDataProvider(this);
-        String[] cRid = {"1", "2"};
+        // TODO ぷららサーバデータが取得できるようになったら切り替える
+        //String[] cRid = {"1", "2"};
+        String[] cRid = {"682017101601"};
+//        String[] cRid = {mDetailData.getContentId()};
         detailDataProvider.getContentsDetailData(cRid, "", 1);
     }
 
@@ -807,7 +817,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                     || serviceId == OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID) {
                 // 他サービス(dtv/dtvチャンネル/dアニメ)フラグを立てる
                 isOtherService = true;
-                if(serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID){
+                if (serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID) {
                     // リモコンUIのリスナーを設定
                     createRemoteControllerView();
                     setStartRemoteControllerUIListener(this);
@@ -884,8 +894,8 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         //初期化の時点から、handlerにmsgを送る
         viewRefresher.sendEmptyMessage(REFRESH_VIDEO_VIEW);
         hideCtrlView(View.INVISIBLE);
-        if(mPlayerController != null){
-            if(mPlayerController.isPlaying()){
+        if (mPlayerController != null) {
+            if (mPlayerController.isPlaying()) {
                 mVideoPlayPause.getChildAt(0).setVisibility(View.GONE);
                 mVideoPlayPause.getChildAt(1).setVisibility(View.VISIBLE);
             }
@@ -927,7 +937,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         } else {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
             mScreenWidth = getWidthDensity();
-            playerParams.height = (int)(getWidthDensity() * SCREEN_RATIO_HEIGHT / SCREEN_RATIO_WIDTH);
+            playerParams.height = (int) (getWidthDensity() * SCREEN_RATIO_HEIGHT / SCREEN_RATIO_WIDTH);
             headerLayout.setVisibility(View.VISIBLE);
             setPlayerProgressView(false);
             setRemoteControllerViewVisibility(View.VISIBLE);
@@ -967,8 +977,8 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             mVideoCtrlBar.removeView(mVideoTotalTime);
             layoutParams = new RelativeLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            layoutParams.addRule(RelativeLayout.END_OF,R.id.tv_player_ctrl_now_on_air_cur_time_tv);
-            layoutParams.addRule(RelativeLayout.START_OF,R.id.tv_player_ctrl_now_on_air_total_time_tv);
+            layoutParams.addRule(RelativeLayout.END_OF, R.id.tv_player_ctrl_now_on_air_cur_time_tv);
+            layoutParams.addRule(RelativeLayout.START_OF, R.id.tv_player_ctrl_now_on_air_total_time_tv);
             layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
             layoutParams.setMargins((int) getDensity() * 10, 0, (int) getDensity() * 10, 0);
             mVideoSeekBar.setLayoutParams(layoutParams);
@@ -994,9 +1004,9 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             Point realSize = new Point();
             display.getSize(size);
             display.getRealSize(realSize);
-            if(isHeight){
+            if (isHeight) {
                 return realSize.y != size.y;
-            }else{
+            } else {
                 return realSize.x != size.x;
             }
         } else {
@@ -1015,10 +1025,10 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             return 0;
         }
         int resourceId;
-        if(isHeight){
+        if (isHeight) {
             resourceId = getResources().getIdentifier("navigation_bar_height",
                     "dimen", "android");
-        }else {
+        } else {
             resourceId = getResources().getIdentifier("navigation_bar_width",
                     "dimen", "android");
         }
@@ -1215,6 +1225,13 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                     detailFullData.getAvail_start_date(),
                     detailFullData.getDur(),
                     detailFullData.getR_value());
+            if (comparisonStartTime()) {
+                detailFragment.changeVisiblityRecordingReservationIcon(View.VISIBLE);
+                detailFragment.setRecordingReservationIconListener(this);
+            } else {
+                detailFragment.changeVisiblityRecordingReservationIcon(View.INVISIBLE);
+                detailFragment.setRecordingReservationIconListener(null);
+            }
         }
     }
 
@@ -1373,7 +1390,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     public void onStartRemoteControl() {
         DTVTLogger.start();
         // サービスIDにより起動するアプリを変更する
-        if(mDetailData != null){
+        if (mDetailData != null) {
             switch (mDetailData.getServiceId()) {
                 case DTV_CONTENTS_SERVICE_ID: // dTV
                     requestStartApplication(
@@ -1510,16 +1527,82 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
         finishPlayer();
-        if(null!=mToast){
+        if (null != mToast) {
             mToast.cancel();
         }
     }
 
     @Override
     public void recordingReservationResult(RemoteRecordingReservationResultResponse response) {
+        DTVTLogger.start();
+        if (response.getErrorNo() != null) {
+            DTVTLogger.debug("error" + response.getErrorNo());
+            // TODO エラー番号が判明次第エラーダイアログ表示
+            switch (response.getErrorNo()) {
+                case "0":
+                    break;
+                case "1":
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            // TODO 正常時、ダイアログ出力
+        }
+        DTVTLogger.end();
+    }
 
+    @Override
+    public void onClickRecordingReservationIcon(View view) {
+        // リスト表示用のアラートダイアログを表示
+        if (mDialogBuilder == null) {
+            createRecordingReservationDialog();
+        }
+        mDialogBuilder.show();
+    }
+
+    /**
+     * リモート録画予約ダイアログを生成
+     */
+    private void createRecordingReservationDialog() {
+        DTVTLogger.start();
+        final CharSequence[] items = getResources().getTextArray(R.array.recording_reservation_menu_dialog_item);
+        mDialogBuilder = new AlertDialog.Builder(this);
+        mDialogBuilder.setTitle("タイトル");
+        mDialogBuilder.setItems(items,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int index) {
+                        // リスト選択時の処理
+                        //TODO 定期予約実装時 1 は "繰り返し録画予約する"になる
+                        switch (index) {
+                            case RECORDING_RESERVATION_DIALOG_INDEX_0: // 録画予約するをタップ
+                                DTVTLogger.debug("Request RecordingReservation");
+                                detailDataProvider.requestRecordingReservation(mRecordingReservationContentsDetailInfo);
+                                break;
+                            case RECORDING_RESERVATION_DIALOG_INDEX_1: // キャンセルをタップ
+                                DTVTLogger.debug("Cancel RecordingReservation");
+                                break;
+                            default:
+                                break;
+                        }
+                        dialog.dismiss();
+                    }
+                });
+        mDialogBuilder.create();
+        DTVTLogger.end();
+    }
+
+    private boolean comparisonStartTime() {
+        long nowTimeEpoch = DateUtils.getNowTimeFormatEpoch();
+        long canRecordingReservationTime =
+                mRecordingReservationContentsDetailInfo.getStartTime() - (DateUtils.EPOCH_TIME_ONE_HOUR * 2);
+        if (nowTimeEpoch >= canRecordingReservationTime) {
+            // 開始時間2時間前を過ぎている場合
+            return false;
+        }
+        return true;
     }
 }

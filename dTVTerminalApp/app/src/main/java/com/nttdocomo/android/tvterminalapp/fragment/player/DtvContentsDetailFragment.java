@@ -46,7 +46,6 @@ public class DtvContentsDetailFragment extends Fragment {
     private TextView txtServiceName;
     private TextView txtChannelName;
     private TextView txtChannelDate;
-    private TextView txtChannelLabel;
     private String mContentsDetailInfo;
     private boolean mIsAllText = false;
     //サムネイルmargintop
@@ -63,6 +62,7 @@ public class DtvContentsDetailFragment extends Fragment {
     private final static int THUMBNAIL_MARGIN0 = 0;
     //ライン高さ
     private final static int LINE_HEIGHT = 1;
+    private RecordingReservationIconListener mIconClickListener = null;
 
     @Override
     public Context getContext() {
@@ -92,7 +92,6 @@ public class DtvContentsDetailFragment extends Fragment {
         headerText = view.findViewById(R.id.dtv_contents_detail_fragment_contents_title);
         txtChannelName = view.findViewById(R.id.dtv_contents_detail_fragment_channel_name);
         txtChannelDate = view.findViewById(R.id.dtv_contents_detail_fragment_channel_date);
-        txtChannelLabel = view.findViewById(R.id.dtv_contents_detail_fragment_channel_label);
 
         //省略
         mTxtTitleShortDetail = view.findViewById(R.id.dtv_contents_detail_fragment_detail_info);
@@ -140,11 +139,6 @@ public class DtvContentsDetailFragment extends Fragment {
             txtChannelDate.setText(mOtherContentsDetailData.getChannelDate());
         } else {
             isFlag = true;
-        }
-        if (isFlag) {
-            txtChannelLabel.setVisibility(View.GONE);
-        } else {
-            txtChannelLabel.setVisibility(View.VISIBLE);
         }
         if (mOtherContentsDetailData.getStaffList() != null) {
             setStaff();
@@ -280,16 +274,11 @@ public class DtvContentsDetailFragment extends Fragment {
         }
         if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelDate())) {
             txtChannelDate.setText(mOtherContentsDetailData.getChannelDate());
-            if(flag){
+            if (flag) {
                 flag = true;
             }
         } else {
             flag = false;
-        }
-        if (flag) {
-            txtChannelLabel.setVisibility(View.VISIBLE);
-        } else {
-            txtChannelLabel.setVisibility(View.GONE);
         }
     }
 
@@ -318,4 +307,47 @@ public class DtvContentsDetailFragment extends Fragment {
             return "";
         }
     }
+
+    /**
+     * 録画予約アイコンの 表示/非表示 を切り替え
+     *
+     * @param visiblity
+     */
+    public void changeVisiblityRecordingReservationIcon(int visiblity) {
+        DTVTLogger.start("setVisiblity:" + visiblity);
+        view.findViewById(R.id.dtv_contents_detail_fragment_rec_iv).setVisibility(visiblity);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 録画予約アイコンにOnClickListenerを登録
+     */
+    public void setRecordingReservationIconListener(RecordingReservationIconListener listener) {
+        DTVTLogger.start();
+        if (listener != null) {
+            DTVTLogger.debug("setOnClickListener");
+            mIconClickListener = listener;
+            view.findViewById(R.id.dtv_contents_detail_fragment_rec_iv).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DTVTLogger.debug("onClick RecordingReservationIcon");
+                    // onClickをActivityに通知
+                    mIconClickListener.onClickRecordingReservationIcon(v);
+                }
+            });
+        } else {
+            DTVTLogger.debug("Listener is Null");
+            mIconClickListener = null;
+            view.findViewById(R.id.dtv_contents_detail_fragment_rec_iv).setOnClickListener(null);
+        }
+        DTVTLogger.end();
+    }
+
+    /**
+     * 録画予約アイコンのonClickを通知するリスナー
+     */
+    public interface RecordingReservationIconListener {
+        void onClickRecordingReservationIcon(View v);
+    }
+
 }

@@ -25,7 +25,7 @@ public class RemoteRecordingReservationResultResponse {
     }
 
     public String getErrorNo() {
-        return mStatus;
+        return mErrorNo;
     }
 
     public void setErrorNo(String errorNo) {
