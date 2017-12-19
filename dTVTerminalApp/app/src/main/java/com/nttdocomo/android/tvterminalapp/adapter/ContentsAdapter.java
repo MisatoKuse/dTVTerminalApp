@@ -61,6 +61,12 @@ public class ContentsAdapter extends BaseAdapter {
     //コピー残り回数
     private final static int ALLOWED_USE = 0;
 
+    // クリップ登録済み判定用
+    private final static String ACTIVE_CLIP_DISPLAY = "1";
+
+    // クリップ未登録判定用
+    private final static String OPACITY_CLIP_DISPLAY = "0";
+
     /**
      * 機能
      * 共通アダプター使う
@@ -147,14 +153,14 @@ public class ContentsAdapter extends BaseAdapter {
         setRecodingReservationStatusData(holder, listContentInfo);
         setRedordedRankData(holder, listContentInfo);
         setRedordedDownloadIcon(holder, listContentInfo);
-        setDeviceName(holder,listContentInfo);
+        setDeviceName(holder, listContentInfo);
     }
 
     /**
      * データ設定（STBデバイス名）
      */
     private void setDeviceName(ViewHolder holder, ContentsData listContentInfo) {
-        if(holder.stb_device_name != null){
+        if (holder.stb_device_name != null) {
             holder.stb_device_name.setText(listContentInfo.getDeviceName());
         }
     }
@@ -284,6 +290,9 @@ public class ContentsAdapter extends BaseAdapter {
                 }
             }
         }
+
+        setClipButton(holder, listContentInfo);
+
         DTVTLogger.end();
     }
 
@@ -326,11 +335,11 @@ public class ContentsAdapter extends BaseAdapter {
             case TYPE_RENTAL_RANK: // レンタル一覧
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
             case TYPE_RECORDED_LIST: // 録画番組一覧
-                view = mInflater.inflate(R.layout.item_common_result, parent, false);
-                break;
+//                view = mInflater.inflate(R.layout.item_common_result, parent, false);
+//                break;
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
-                view = mInflater.inflate(R.layout.item_common_result, parent, false);
-                break;
+//                view = mInflater.inflate(R.layout.item_common_result, parent, false);
+//                break;
             case TYPE_STB_SELECT_LIST: //STBデバイス名一覧
                 view = mInflater.inflate(R.layout.item_common_result, parent, false);
             default:
@@ -367,6 +376,7 @@ public class ContentsAdapter extends BaseAdapter {
         switch (mType) {
             case TYPE_DAILY_RANK: // 今日のテレビランキング
             case TYPE_WEEKLY_RANK: // 週間ランキング
+//                holder.tv_clip = view.findViewById(R.id.item_common_result_clip_tv);
             case TYPE_VIDEO_RANK: // ビデオランキング
             case TYPE_RENTAL_RANK: // レンタル一覧
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
@@ -399,6 +409,7 @@ public class ContentsAdapter extends BaseAdapter {
             case TYPE_DAILY_RANK: // 今日のテレビランキング
             case TYPE_WEEKLY_RANK: // 週間ランキング
                 holder.ll_rating.setVisibility(View.GONE);
+                holder.tv_clip.setVisibility(View.GONE);
                 break;
             case TYPE_VIDEO_RANK: // ビデオランキング
                 holder.tv_time.setVisibility(View.GONE);
@@ -435,6 +446,28 @@ public class ContentsAdapter extends BaseAdapter {
                 break;
             default:
                 break;
+        }
+    }
+
+    /**
+     * クリップ表示処理
+     *
+     * @param holder          クリップアイコン
+     * @param listContentInfo
+     */
+    private void setClipButton(ViewHolder holder, ContentsData listContentInfo) {
+        if (holder.tv_clip != null) {
+            String clipFlg = listContentInfo.getSearchOk();
+            if (clipFlg != null && clipFlg.equals(ACTIVE_CLIP_DISPLAY)) {
+                holder.tv_clip.setVisibility(View.VISIBLE);
+                holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+            } else if (clipFlg != null && clipFlg.equals(OPACITY_CLIP_DISPLAY)) {
+                holder.tv_clip.setVisibility(View.VISIBLE);
+                holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
+            } else {
+                //TODO:クリップ状態取得失敗又はパラメータ追加の際は、そのつど対応する
+                holder.tv_clip.setVisibility(View.GONE);
+            }
         }
     }
 

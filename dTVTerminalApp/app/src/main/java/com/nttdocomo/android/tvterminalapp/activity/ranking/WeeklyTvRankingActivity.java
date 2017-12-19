@@ -296,6 +296,8 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
                     .get(JsonContents.META_RESPONSE_AVAIL_START_DATE));
             rankingContentInfo.setTitle(weeklyRankMapList.get(i)
                     .get(JsonContents.META_RESPONSE_TITLE));
+            rankingContentInfo.setSearchOk(weeklyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_SEARCH_OK));
 
             rankingContentsDataList.add(rankingContentInfo);
         }

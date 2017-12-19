@@ -24,6 +24,8 @@ public class ContentsData {
     private String mChannelName = null;
     // 録画番組用 コピー残り回数
     private int mAllowedUse = 0;
+    // クリップ状態
+    private String mSearchOk = "";
 
     //デバイス名
     private String mDeviceName = null;

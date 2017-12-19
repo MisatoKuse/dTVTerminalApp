@@ -130,7 +130,8 @@ public class HomeDataManager {
     public List<Map<String, String>> selectDailyRankListHomeData() {
         //ホーム画面に必要な列を列挙する
         String[] columns = {JsonContents.META_RESPONSE_THUMB_448, JsonContents.META_RESPONSE_TITLE,
-                JsonContents.META_RESPONSE_DISPLAY_START_DATE, JsonContents.META_RESPONSE_DISP_TYPE};
+                JsonContents.META_RESPONSE_DISPLAY_START_DATE, JsonContents.META_RESPONSE_DISP_TYPE,
+                JsonContents.META_RESPONSE_SEARCH_OK};
 
         //Daoクラス使用準備
         DBHelper dailyRankListDBHelper = new DBHelper(mContext);
@@ -174,7 +175,7 @@ public class HomeDataManager {
     public List<Map<String, String>> selectWeeklyRankListHomeData() {
         //ホーム画面に必要な列を列挙する
         String[] columns = {JsonContents.META_RESPONSE_THUMB_448, JsonContents.META_RESPONSE_TITLE,
-                JsonContents.META_RESPONSE_AVAIL_START_DATE};
+                JsonContents.META_RESPONSE_AVAIL_START_DATE, JsonContents.META_RESPONSE_SEARCH_OK};
 
         //Daoクラス使用準備
         DBHelper weeklyRankListDBHelper = new DBHelper(mContext);
