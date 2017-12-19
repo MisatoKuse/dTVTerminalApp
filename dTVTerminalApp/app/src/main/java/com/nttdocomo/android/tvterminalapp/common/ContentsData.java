@@ -26,6 +26,8 @@ public class ContentsData {
     private String recordedChannelName = null;
     // 録画番組用 コピー残り回数
     private int allowedUse = 0;
+    // クリップ状態
+    private String mSearchOk = "";
 
     //デバイス名
     private String deviceName = null;
@@ -107,5 +109,13 @@ public class ContentsData {
 
     public void setAllowedUse(int allowedUse) {
         this.allowedUse = allowedUse;
+    }
+
+    public String getSearchOk() {
+        return mSearchOk;
+    }
+
+    public void setSearchOk(String mSearchOk) {
+        this.mSearchOk = mSearchOk;
     }
 }
