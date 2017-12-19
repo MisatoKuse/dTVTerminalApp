@@ -41,7 +41,7 @@ public class DaccountRegistService {
     private DaccountRegistServiceCallBack mDaccountRegistServiceCallBack;
 
     //dアカウント設定アプリの接続用のクラス(サービス設定用)
-    private IDimServiceAppServiceCustom mService;
+    private IDimServiceAppServiceCustom mServiceCustom;
 
     /**
      * 各コールバックの動作を定義する
@@ -89,13 +89,13 @@ public class DaccountRegistService {
         @Override
         public void onServiceDisconnected(ComponentName name) {
             //切断されたのでヌルを格納
-            mService = null;
+            mServiceCustom = null;
         }
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             //dアカウント設定アプリとの接続に成功したので、中のメソッドを呼び出せるようにする
-            mService = IDimServiceAppServiceCustom.Stub.asInterface(service);
+            mServiceCustom = IDimServiceAppServiceCustom.Stub.asInterface(service);
 
             //結果
             int result;
@@ -107,15 +107,15 @@ public class DaccountRegistService {
             DTVTLogger.debug("compName=" + name);
             String serviceKey = DaccountConstants.SERVICE_KEY;
 
-            //TODO: ひとまずレシーバーを作るまでは登録しない。省略可能項目なので、エラーにはならないはず
-            String setDefIdReceiver = "";//"com.nttdocomo.android.tvterminalapp.SetDefIdReceiver";
-            String userAuthReceiver = "";//"com.nttdocomo.android.tvterminalapp.UserAuthReceiver";
-            String deleteIdReceiver = "";//"com.nttdocomo.android.tvterminalapp.DelIdReceiver";
-            String invalidateIdReceiver = "";//"com.nttdocomo.android.tvterminalapp.InvIdReceiver";
+            //各ブロードキャストレシーバーの名前を指定する
+            String setDefIdReceiver = "com.nttdocomo.android.tvterminalapp.SetDefIdReceiver";
+            String userAuthReceiver = "com.nttdocomo.android.tvterminalapp.UserAuthReceiver";
+            String deleteIdReceiver = "com.nttdocomo.android.tvterminalapp.DelIdReceiver";
+            String invalidateIdReceiver = "com.nttdocomo.android.tvterminalapp.InvIdReceiver";
 
             try {
                 //サービス登録を呼び出す
-                result = mService.registServiceWithReceiver(appReqId, serviceKey,
+                result = mServiceCustom.registServiceWithReceiver(appReqId, serviceKey,
                         setDefIdReceiver, userAuthReceiver, deleteIdReceiver,
                         invalidateIdReceiver, callback);
             } catch (RemoteException e) {
@@ -139,12 +139,12 @@ public class DaccountRegistService {
     }
 
     /**
-     * OTT取得処理を開始する
+     * サービス登録処理を開始する
      *
      * @param context               コンテキスト
      * @param daccountRegistService 結果を返すコールバック
      */
-    public void execDaccountGetOTT(Context context,
+    public synchronized void execRegistService(Context context,
                                    DaccountRegistServiceCallBack daccountRegistService) {
         DTVTLogger.start();
 
@@ -152,7 +152,7 @@ public class DaccountRegistService {
         mContext = context;
         mDaccountRegistServiceCallBack = daccountRegistService;
 
-        //OTT取得処理の開始
+        //サービス登録処理の開始
         bindDimServiceAppService();
     }
 
