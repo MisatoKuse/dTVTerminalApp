@@ -19,27 +19,26 @@ import com.nttdocomo.android.tvterminalapp.common.DaccountConstants;
 import static android.content.Context.BIND_AUTO_CREATE;
 
 /**
- * dアカウント連携・OTT取得
+ * dアカウント連携・サービス登録状況取得
  */
-public class DaccountGetOTT {
+public class DaccountCheckService {
     /**
      * 結果を返すコールバック
      */
-    public interface DaccountGetOttCallBack {
+    public interface DaccountCheckServiceCallBack {
         /**
          * OTT取得結果を返す
          *
-         * @param result          結果コード 0ならば成功
-         * @param oneTimePassword OTT
+         * @param result 結果コード 0ならば成功
          */
-        void getOttCallBack(int result, String id, String oneTimePassword);
+        void checkServiceCallBack(int result);
     }
 
     //コンテキストの控え
     private Context mContext = null;
 
     //コールバックの控え
-    private DaccountGetOttCallBack mDaccountGetOttCallBack;
+    private DaccountCheckServiceCallBack mDaccountCheckServiceCallBack;
 
     //dアカウント設定アプリの接続用のクラス
     private IDimServiceAppService mService;
@@ -49,24 +48,16 @@ public class DaccountGetOTT {
      */
     private final IDimServiceAppCallbacks callback = new IDimServiceAppCallbacks.Stub() {
         @Override
-        public void onCompleteGetOneTimePassword(int appReqId, int result,
-                                                 String id,
-                                                 String oneTimePassword,
-                                                 String appCheckKey) throws RemoteException {
+        public void onCompleteCheckService(int appReqId,
+                                           int result,
+                                           String version,
+                                           String protocolVersion) throws RemoteException {
             //dアカウント設定アプリと切断する
             daccountServiceEnd();
 
-            //ヌルなら空文字に変更
-            if (id == null) {
-                id = "";
-            }
-            if (oneTimePassword == null) {
-                oneTimePassword = "";
-            }
-
-            if (mDaccountGetOttCallBack != null) {
+            if (mDaccountCheckServiceCallBack != null) {
                 //結果を呼び出し元に返す
-                mDaccountGetOttCallBack.getOttCallBack(result, id, oneTimePassword);
+                mDaccountCheckServiceCallBack.checkServiceCallBack(result);
             }
 
             DTVTLogger.end();
@@ -74,23 +65,29 @@ public class DaccountGetOTT {
 
         // 以下のメソッドはJavaのインターフェースの仕様により宣言を強要されているだけで、ここで使われることはない
         @Override
-        public void onCompleteCheckService(int appReqId, int result, String version,
-                                           String protocolVersion) throws RemoteException {
-        }
-
-        @Override
         public void onCompleteRegistService(int appReqId, int result) throws RemoteException {
+
         }
 
         @Override
-        public void onCompleteGetAuthToken(int appReqId, int result, String id, String token,
+        public void onCompleteGetAuthToken(int appReqId, int result, String id,
+                                           String token,
                                            String appCheckKey) throws RemoteException {
+
         }
 
         @Override
         public void onCompleteGetIdStatus(int appReqId, int result, String id,
                                           boolean isDefault, boolean hasMsn,
                                           boolean authStatus) throws RemoteException {
+
+        }
+
+        @Override
+        public void onCompleteGetOneTimePassword(int appReqId, int result, String id,
+                                                 String oneTimePassword,
+                                                 String appCheckKey) throws RemoteException {
+
         }
     };
 
@@ -116,17 +113,13 @@ public class DaccountGetOTT {
             int appReqId = 0;
 
             //呼び出し用のパラメータの設定
-            //TODO: didはひとまず直書きで行う
-            String id = "dtvtfsitest2017@yahoo.co.jp";
             String serviceKey = DaccountConstants.SERVICE_KEY;
-            int option = IDimDefines.CertOption.DEFAULT;
-            String appCheckKey = "";
+
             DTVTLogger.debug("compName=" + name);
 
             try {
                 //OTT取得処理を呼び出す
-                result = mService.getOneTimePassword(appReqId, id, serviceKey, option,
-                        appCheckKey, callback);
+                result = mService.checkService(appReqId, serviceKey, callback);
             } catch (RemoteException e) {
                 e.printStackTrace();
                 //例外が発生した場合は、自前で内部エラーにする
@@ -134,9 +127,10 @@ public class DaccountGetOTT {
             }
 
             //結果コードを判定
-            if (IDimDefines.REQUEST_ACCEPTED != result && mDaccountGetOttCallBack != null) {
+            if (IDimDefines.REQUEST_ACCEPTED != result &&
+                    mDaccountCheckServiceCallBack != null) {
                 //正常以外の結果ならば、コールバックを呼んで終わらせる
-                mDaccountGetOttCallBack.getOttCallBack(result, "", "");
+                mDaccountCheckServiceCallBack.checkServiceCallBack(result);
             }
         }
     };
@@ -144,22 +138,22 @@ public class DaccountGetOTT {
     /**
      * コンストラクタ
      */
-    public DaccountGetOTT() {
+    public DaccountCheckService() {
     }
 
     /**
      * OTT取得処理を開始する
      *
-     * @param context                コンテキスト
-     * @param daccountGetOttCallBack 結果を返すコールバック
+     * @param context                      コンテキスト
+     * @param daccountCheckServiceCallBack 結果を返すコールバック
      */
-    public synchronized void execDaccountGetOTT(Context context,
-                                                DaccountGetOttCallBack daccountGetOttCallBack) {
+    public synchronized void execDaccountCheckService(
+            Context context, DaccountCheckServiceCallBack daccountCheckServiceCallBack) {
         DTVTLogger.start();
 
         //コンテキストとコールバックの取得
         mContext = context;
-        mDaccountGetOttCallBack = daccountGetOttCallBack;
+        mDaccountCheckServiceCallBack = daccountCheckServiceCallBack;
 
         //OTT取得処理の開始
         bindDimServiceAppService();
@@ -176,9 +170,10 @@ public class DaccountGetOTT {
                 DaccountConstants.D_ACCOUNT_SERVICE);
         boolean ans = mContext.bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
 
-        if (!ans && mDaccountGetOttCallBack != null) {
+        if (!ans && mDaccountCheckServiceCallBack != null) {
             //正常以外の結果ならば、コールバックを呼んで終わらせる
-            mDaccountGetOttCallBack.getOttCallBack(IDimDefines.RESULT_INTERNAL_ERROR, "", "");
+            mDaccountCheckServiceCallBack.checkServiceCallBack(
+                    IDimDefines.RESULT_INTERNAL_ERROR);
         }
     }
 
