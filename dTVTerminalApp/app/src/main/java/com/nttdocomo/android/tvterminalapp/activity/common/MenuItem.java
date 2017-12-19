@@ -24,5 +24,10 @@ public enum MenuItem {
     VIDEO,                   //ビデオ
     KEY_WORD_SEARCH,       //キーワードで探す
     NOTICE,                  //お知らせ
-    SETTING;                 //設定
+    SETTING,                 //設定
+    HIKARI_TV,               //ひかり
+    DTV_CHANNEL,             //dTVチャンネル
+    DTV,                      //dTV
+    D_ANIMATION,             //dアニメ
+    DAZN;                     //DAZN
 }

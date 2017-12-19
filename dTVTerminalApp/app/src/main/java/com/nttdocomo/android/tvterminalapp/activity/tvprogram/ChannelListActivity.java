@@ -66,6 +66,13 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
     //ToDo: 開発中テストデータは不足なので、ページング数は一時に「10」に設定していますが、
     //       リリースの時、仕様より、再設定する必要がある。
     private final int CH_LIST_ACTI_PAGING_NUMBER = 10;
+    private final int CHANNEL_LIST_TAB_HIKARI = 0;
+    private final int CHANNEL_LIST_TAB_TER = 1;
+    private final int CHANNEL_LIST_TAB_BS = 2;
+    private final int CHANNEL_LIST_TAB_DTV = 3;
+    private final int CHANNEL_LIST_TAB_DELAY_TIME=900;
+
+    private Handler mHandle= new Handler();
 
     /**
      * Constructor
@@ -175,13 +182,6 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
         DTVTLogger.end();
     }
 
-    private final int CHANNEL_LIST_TAB_HIKARI = 0;
-    private final int CHANNEL_LIST_TAB_TER = 1;
-    private final int CHANNEL_LIST_TAB_BS = 2;
-    private final int CHANNEL_LIST_TAB_DTV = 3;
-
-    private Handler mHandle= new Handler();
-
     /**
      * Loading...を表示
      * @param yn
@@ -235,8 +235,6 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
         mHandle.postDelayed(mRunableBs, CHANNEL_LIST_TAB_DELAY_TIME);
         DTVTLogger.end();
     }
-
-    private final int CHANNEL_LIST_TAB_DELAY_TIME=1300;
 
     /**
      * Terデータスレッド

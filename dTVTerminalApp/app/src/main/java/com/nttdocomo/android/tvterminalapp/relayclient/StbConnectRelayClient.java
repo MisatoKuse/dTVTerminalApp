@@ -6,19 +6,12 @@ package com.nttdocomo.android.tvterminalapp.relayclient;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.net.SocketException;
-import java.net.SocketTimeoutException;
-import java.nio.charset.StandardCharsets;
 
 /**
  * 中継アプリとの Socket通信処理
@@ -26,13 +19,12 @@ import java.nio.charset.StandardCharsets;
 
 public class StbConnectRelayClient {
     private Socket mSocket = null;
-    private DatagramSocket mSocketDatagram = null;
     private String mRemoteIp;
     private static final int REMOTE_SOCKET_PORT = 1025;
     private static final int REMOTE_DATAGRAM_PORT = 1026;
-    private static final int SEND_RECV_TIMEOUT = 1000;
     private int mRemoteSocketPort = REMOTE_SOCKET_PORT;
     private int mRemoteDatagramPort = REMOTE_DATAGRAM_PORT;
+    private TcpClient mTcpClient;
 
     // シングルトン
     private static StbConnectRelayClient mInstance = new StbConnectRelayClient();
@@ -59,41 +51,23 @@ public class StbConnectRelayClient {
      * @return
      */
     public boolean connect() {
-        this.disconnect();
         if (mRemoteIp == null) {
+            DTVTLogger.debug("mRemoteIp == null");
             return false;
         }
-        SocketAddress remoteAddress = new InetSocketAddress(mRemoteIp, mRemoteSocketPort);
-        mSocket = new Socket();
+        this.disconnect();
 
-        try {
-            mSocket.connect(remoteAddress, SEND_RECV_TIMEOUT);
-        } catch (SocketTimeoutException e) {
-            DTVTLogger.debug(e);
-            return false;
-        } catch (IllegalArgumentException e) {
-            DTVTLogger.debug(e);
-            return false;
-        } catch (IOException e) {
-            DTVTLogger.debug(e);
-            return false;
-        }
-        return true;
+        mTcpClient = new TcpClient();
+        return mTcpClient.connect(mRemoteIp, mRemoteSocketPort);
     }
 
     /**
      * Socket通信を切断する
      */
     public void disconnect() {
-        if (mSocket != null) {
-            if (mSocket.isConnected()) {
-                try {
-                    mSocket.close();
-                    mSocket = null;
-                } catch (IOException e) {
-                    DTVTLogger.debug(e);
-                }
-            }
+        if (mTcpClient != null) {
+            mTcpClient.disconnect();
+            mTcpClient = null;
         }
     }
 
@@ -104,35 +78,14 @@ public class StbConnectRelayClient {
      * @return
      */
     public boolean send(String data) {
-        PrintWriter writer = null;
-        OutputStreamWriter out = null;
-
-        if (mSocket == null) {
+        boolean ret;
+        if (mTcpClient == null) {
+            DTVTLogger.debug("mTcpClient == null");
             return false;
         }
-
-        try {
-            out = new OutputStreamWriter(mSocket.getOutputStream(), StandardCharsets.UTF_8);
-            writer = new PrintWriter(out, true);
-            writer.write(data);
-            writer.flush();
-
-        } catch (IOException e) {
-            DTVTLogger.debug(e);
-            return false;
-        } finally {
-            if (writer != null) {
-                writer.close();
-            }
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    DTVTLogger.debug(e);
-                }
-            }
-        }
-        return true;
+        DTVTLogger.debug("send() data:" + data);
+        ret = mTcpClient.send(data);
+        return ret;
     }
 
     /**
@@ -140,45 +93,14 @@ public class StbConnectRelayClient {
      *
      * @return
      */
-    public String recv() {
-        InputStreamReader in = null;
-        BufferedReader reader = null;
-        StringBuilder data = null;
+    public String receive() {
         String recvdata = null;
-
-        if (mSocket == null) {
+        if (mTcpClient == null) {
+            DTVTLogger.debug("mTcpClient == null");
             return null;
         }
-        try {
-            in = new InputStreamReader(mSocket.getInputStream(), StandardCharsets.UTF_8);
-            reader = new BufferedReader(in);
-
-            data = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                data.append(line);
-            }
-        } catch (IOException e) {
-            DTVTLogger.debug(e);
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    DTVTLogger.debug(e);
-                }
-            }
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    DTVTLogger.debug(e);
-                }
-            }
-            if (data != null) {
-                recvdata = data.toString();
-            }
-        }
+        recvdata = mTcpClient.receive();
+        DTVTLogger.debug("receive() data:" + recvdata);
         return recvdata;
     }
 
@@ -189,6 +111,7 @@ public class StbConnectRelayClient {
      * @return
      */
     public void sendDatagram(String data) {
+        DatagramSocket dataSocket = null;
         try {
             if (data != null) {
                 if (mRemoteIp == null) {
@@ -196,17 +119,16 @@ public class StbConnectRelayClient {
                 }
                 byte[] buff = data.getBytes();
                 DatagramPacket packet = new DatagramPacket(buff, buff.length, new InetSocketAddress(mRemoteIp, mRemoteDatagramPort));
-                mSocketDatagram = new DatagramSocket();
-                mSocketDatagram.send(packet);
+                dataSocket = new DatagramSocket();
+                dataSocket.send(packet);
             }
         } catch (SocketException e) {
             DTVTLogger.debug(e);
         } catch (IOException e) {
             DTVTLogger.debug(e);
         } finally {
-            if (mSocketDatagram != null) {
-                mSocketDatagram.close();
-                mSocketDatagram = null;
+            if (dataSocket != null) {
+                dataSocket.close();
             }
         }
     }

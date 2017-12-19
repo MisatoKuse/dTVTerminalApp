@@ -41,6 +41,11 @@ public class SharedPreferencesUtils {
     private static final String SHARED_KEY_SCREEN_INFORMATION = "screen_information";
     // LaunchActivity チュートリアル表示済み判定 保存キー
     private static final String SHARED_KEY_IS_DISPLAYED_TUTORIAL = "is_displayed_tutorial";
+    // SettinActivity 画質設定の設定値
+    private static final String SHARED_KEY_IMAGE_QUALITY = "image_quality";
+    // 持ち出しコンテンツダウンロード先 ture:内部 false:外部
+    private static final String SHARED_KEY_STORAGE_PATH = "storage_path";
+
 
     /**
      * STB選択画面"次回以降表示しない" 状態を保存
@@ -233,4 +238,57 @@ public class SharedPreferencesUtils {
         data.edit().clear().apply();
     }
 
+    /**
+     * 設定画面の"外出先視聴時の画質設定"の設定値を保存
+     *
+     * @param context コンテキスト
+     * @param quality 画質の設定値
+     */
+    public static void setSharedPreferencesImageQuality(Context context, String quality) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                SHARED_KEY_IMAGE_QUALITY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putString(SHARED_KEY_IMAGE_QUALITY, quality);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * 設定画面の"外出先視聴時の画質設定"の設定値を取得
+     */
+    public static String getSharedPreferencesImageQuality(Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                SHARED_KEY_IMAGE_QUALITY, Context.MODE_PRIVATE);
+
+        return data.getString(SHARED_KEY_IMAGE_QUALITY, "");
+    }
+
+    /**
+     * 持ち出しコンテンツのダウンロード先を保存
+     *
+     * @param context コンテキスト
+     * @param path ダウンロード先 true:内部 false:外部
+     */
+    public static void setSharedPreferencesStoragePath(Context context, Boolean path) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                SHARED_KEY_STORAGE_PATH, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putBoolean(SHARED_KEY_STORAGE_PATH, path);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * 持ち出しコンテンツのダウンロード先を取得
+     */
+    public static Boolean getSharedPreferencesStoragePath(Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                SHARED_KEY_STORAGE_PATH, Context.MODE_PRIVATE);
+
+        return data.getBoolean(SHARED_KEY_STORAGE_PATH, true);
+    }
 }

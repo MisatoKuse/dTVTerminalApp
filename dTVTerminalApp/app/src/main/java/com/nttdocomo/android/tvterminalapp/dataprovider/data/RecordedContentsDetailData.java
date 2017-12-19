@@ -22,6 +22,7 @@ public class RecordedContentsDetailData implements Parcelable {
     private String mUpnpIcon;
     private String mTitle;
     private DetailParamFromWhere mDetailParamFromWhere=DetailParamFromWhere.DetailParamFromWhere_Other;
+    private String mVideoType;
 
     public void setDetailParamFromWhere(DetailParamFromWhere from){
         mDetailParamFromWhere=from;
@@ -87,6 +88,14 @@ public class RecordedContentsDetailData implements Parcelable {
         this.mUpnpIcon = mUpnpIcon;
     }
 
+    public String getVideoType() {
+        return mVideoType;
+    }
+
+    public void setVideoType(String type) {
+        this.mVideoType = type;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -102,6 +111,7 @@ public class RecordedContentsDetailData implements Parcelable {
         dest.writeString(this.mUpnpIcon);
         dest.writeString(this.mTitle);
         dest.writeInt(this.mDetailParamFromWhere.ordinal());
+        dest.writeString(this.mVideoType);
     }
 
     public RecordedContentsDetailData() {
@@ -116,6 +126,7 @@ public class RecordedContentsDetailData implements Parcelable {
         this.mUpnpIcon = in.readString();
         this.mTitle = in.readString();
         this.mDetailParamFromWhere = DetailParamFromWhere.values()[in.readInt()];
+        this.mVideoType = in.readString();
     }
 
     public static final Parcelable.Creator<RecordedContentsDetailData> CREATOR = new Parcelable.Creator<RecordedContentsDetailData>() {

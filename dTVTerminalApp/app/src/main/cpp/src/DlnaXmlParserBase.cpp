@@ -57,4 +57,13 @@ namespace dtvt {
         xmlFreeDoc(didl_doc);
     }
 
+    void DlnaXmlParserBase::setXmlItemValues(StringVector& out, const int key, XmlItemMap& itemMap){
+        XmlItemMap::iterator i = itemMap.find(key);
+        if(i==itemMap.end()){
+            out.push_back("");
+        } else {
+            out.push_back(i->second);
+        }
+    }
+
 } //end of dtvt

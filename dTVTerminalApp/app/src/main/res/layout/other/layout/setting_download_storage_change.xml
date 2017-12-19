@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/setting_background_color_black">
+
+    <RelativeLayout
+        android:id="@+id/main_setting_relativelayout_storage_device"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_setting_list_height"
+        android:clickable="true">
+        <TextView
+            android:id="@+id/main_setting_download_text_device"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/main_setting_list_height"
+            android:layout_marginStart="@dimen/main_setting_text_start_margin"
+            android:gravity="center_vertical"
+            android:text="@string/main_setting_device_storage"
+            android:textColor="@color/white_text"
+            android:textSize="20sp" />
+        <CheckBox
+            android:id="@+id/main_setting_download_checkbox_device"
+            android:button="@null"
+            android:background="@drawable/setting_checkbox"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="@dimen/main_setting_checkbox_margin"
+            android:layout_marginEnd="@dimen/main_setting_checkbox_margin"
+            android:clickable="false" />
+    </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_setting_quality_list_separate"
+        android:background="@color/setting_background_color_white" />
+
+    <RelativeLayout
+        android:id="@+id/main_setting_relativelayout_storage_outside"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_setting_list_height"
+        android:clickable="true">
+        <TextView
+            android:id="@+id/main_setting_download_text_outside"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/main_setting_list_height"
+            android:layout_marginStart="@dimen/main_setting_text_start_margin"
+            android:gravity="center_vertical"
+            android:text="@string/main_setting_outside_storage"
+            android:textColor="@color/white_text"
+            android:textSize="20sp" />
+        <CheckBox
+            android:id="@+id/main_setting_download_checkbox_outside"
+            android:button="@null"
+            android:background="@drawable/setting_checkbox"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="@dimen/main_setting_checkbox_margin"
+            android:layout_marginEnd="@dimen/main_setting_checkbox_margin"
+            android:clickable="false" />
+    </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/main_setting_quality_list_separate"
+        android:background="@color/setting_background_color_white" />
+
+</LinearLayout>

@@ -422,6 +422,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 detailData.setBitrate(curInfo.getRecordVideoLists().get(i).mBitrate);
                 detailData.setDuration(curInfo.getRecordVideoLists().get(i).mDuration);
                 detailData.setTitle(curInfo.getRecordVideoLists().get(i).mTitle);
+                detailData.setVideoType(curInfo.getRecordVideoLists().get(i).mVideoType);
                 baseFrgament.mContentsList.add(detailData);
             }
             List<ContentsData> listData = baseFrgament.getContentsData();

@@ -27,6 +27,7 @@ public class DlnaRecVideoInfo {
         newItem.mResUrl=item.mResUrl;
         newItem.mSize=item.mSize;
         newItem.mUpnpIcon=item.mUpnpIcon;
+        newItem.mVideoType=item.mVideoType;
 
         mRecordVideoLists.add(newItem);
     }
