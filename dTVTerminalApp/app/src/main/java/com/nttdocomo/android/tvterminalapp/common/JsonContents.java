@@ -301,6 +301,12 @@ public class JsonContents {
     public static final String META_RESPONSE_ADINFO_ARRAY = "adinfo_array";
     // 関連VODのcrid
     public static final String META_RESPONSE_RELATIONAL_ID_ARRAY = "relational_id_array";
+    // 放送開始日時
+    public static final String META_RESPONSE_LINEAR_START_DATE = "linear_start_date";
+    // 放送終了日時
+    public static final String META_RESPONSE_LINEAR_END_DATE = "linear_end_date";
+    // 視聴通知するか否か
+    public static final String META_RESPONSE_IS_NOTIFY = "is_notify";
     // エラー番号
     public static final String META_RESPONSE_NG_ERROR_NO = "errorno";
 }

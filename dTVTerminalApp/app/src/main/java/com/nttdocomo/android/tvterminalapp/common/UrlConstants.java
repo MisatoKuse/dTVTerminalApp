@@ -150,6 +150,18 @@ public class UrlConstants {
                 PLALA_CLIENT + "meta/conetntsdetail";
 
         /**
+         * クリップ登録
+         */
+        public static final String CLIP_REGISTER_GET_WEB_CLIENT =
+                PLALA_CLIENT + "/user/clip/register";
+
+        /**
+         * クリップ削除
+         */
+        public static final String CLIP_DELETE_GET_WEB_CLIENT =
+                PLALA_CLIENT + "/user/clip/delete";
+
+        /**
          * リモート録画予約登録
          */
         public static final String REMOTE_RECORDING_RESERVATION_CLIENT =

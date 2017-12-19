@@ -244,12 +244,12 @@ public class ContentsAdapter extends BaseAdapter {
                     break;
                 case RecordingReservationListDataProvider.RECORD_RESERVATION_SYNC_STATUS_ALREADY_REFLECT:
                     // 受信完了
-                    holder.tv_recording_reservation.setVisibility(View.INVISIBLE);
+                    holder.tv_recording_reservation.setVisibility(View.GONE);
                     holder.tv_recording_reservation.setBackgroundColor
                             (ContextCompat.getColor(mContext, R.color.recording_reservation_status_background_black));
                     break;
                 default:
-                    holder.tv_recording_reservation.setVisibility(View.INVISIBLE);
+                    holder.tv_recording_reservation.setVisibility(View.GONE);
                     holder.tv_recording_reservation.setBackgroundColor
                             (ContextCompat.getColor(mContext, R.color.recording_reservation_status_background_black));
                     break;

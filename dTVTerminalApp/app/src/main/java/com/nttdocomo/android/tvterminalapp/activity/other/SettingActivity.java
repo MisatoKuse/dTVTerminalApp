@@ -198,7 +198,10 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
      * Dアカウント設定を連携起動する
      */
     private void startDAccountSetting() {
-        Intent intent = DAccountUtils.checkDAccountIsExist(this);
+        Intent intent = new Intent();
+        intent.setClassName(
+                "com.nttdocomo.android.idmanager",
+                "com.nttdocomo.android.idmanager.activity.DocomoIdTopActivity");
         if (intent != null) {
             startActivity(intent);
         } else {
