@@ -5,8 +5,13 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.daccount;
 
 import android.content.Context;
+import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailCacheManager;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 /**
@@ -25,9 +30,6 @@ public class DaccountControl implements
 
     //実行クラス名控え
     private String mResultClass = "";
-
-    //古いID
-    private String oldId = "";
 
     /**
      * コールバックは失敗と成功しか返さないので、エラーの値が欲しい場合はこれで取得
@@ -150,10 +152,10 @@ public class DaccountControl implements
         }
 
         //古いIDを取得する
-        oldId = SharedPreferencesUtils.getSharedPreferencesDaccountId(mContext);
+        String oldId = SharedPreferencesUtils.getSharedPreferencesDaccountId(mContext);
 
         if (oldId == null || oldId.isEmpty()) {
-            //古いIDが無いので、初回の実行なので、oldIDにidの内容を入れて、処理を通す
+            //古いIDが無いのは初回の実行なので、oldIDにidの内容を入れて、処理を通す
             oldId = id;
 
             //保存する
@@ -180,5 +182,48 @@ public class DaccountControl implements
         //実行に成功したので、trueを返す
         mDaccountControlCallBack.daccountControlCallBack(true);
         DTVTLogger.end();
+    }
+
+    /**
+     * dアカウントのユーザー切り替え時に行うキャッシュ等のクリア処理
+     * @param context コンテキスト
+     */
+    public static void cacheClear(Context context) {
+        DTVTLogger.start();
+        //キャッシュ削除タスクを呼び出す
+        CacheClearTask clearTask = new CacheClearTask();
+        clearTask.execute(context);
+        DTVTLogger.end();
+    }
+
+    /**
+     * キャッシュ削除処理の実体
+     * おそらく必要はないが、一応ファイル削除やDB削除なので、AsyncTaskとする
+     */
+    private static class CacheClearTask extends AsyncTask<Context, Void, Void> {
+        @Override
+        protected Void doInBackground(Context... contexts) {
+            DTVTLogger.start();
+
+            //プリファレンスユーティリティの配下のデータを、ユーザー切り替え後も残す一部を除き削除
+            SharedPreferencesUtils.clearAlmostSharedPreferences(contexts[0]);
+
+            //日付ユーティリティの配下のプリファレンスを削除
+            DateUtils.clearDataSave(contexts[0]);
+
+            //サムネイルのキャッシュファイルを削除する
+            ThumbnailCacheManager.clearThumbnailCache(contexts[0]);
+
+            //DBを丸ごと削除する
+            boolean deleteDatabaseExeced = contexts[0].deleteDatabase(DBConstants.DATABASE_NAME);
+
+            DTVTLogger.debug("deleteDatabase Answer = " + deleteDatabaseExeced);
+
+            //DBを新造する・インスタンスを作ると自動で作成される
+            new DBHelper(contexts[0]);
+
+            DTVTLogger.end();
+            return null;
+        }
     }
 }
