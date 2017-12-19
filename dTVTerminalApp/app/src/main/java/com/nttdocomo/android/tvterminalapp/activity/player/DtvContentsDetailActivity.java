@@ -807,12 +807,9 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                     || serviceId == OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID) {
                 // 他サービス(dtv/dtvチャンネル/dアニメ)フラグを立てる
                 isOtherService = true;
-                if(serviceId == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID
-                        || serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID){
-                    // リモコンUIのリスナーを設定
-                    createRemoteControllerView();
-                    setStartRemoteControllerUIListener(this);
-                }
+                // リモコンUIのリスナーを設定
+                createRemoteControllerView();
+                setStartRemoteControllerUIListener(this);
             }
         }
 
