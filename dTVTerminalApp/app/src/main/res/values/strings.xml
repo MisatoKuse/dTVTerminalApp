@@ -13,6 +13,8 @@
     <string name="contents_more">more</string>
     <string name="positive_response">はい</string>
     <string name="negative_response">いいえ</string>
+    <string name="custom_dialog_ok">確定</string>
+    <string name="custom_dialog_cancel">キャンセル</string>
 
     <!-- Launch -->
     <string name="str_app_title">dリモート</string>
