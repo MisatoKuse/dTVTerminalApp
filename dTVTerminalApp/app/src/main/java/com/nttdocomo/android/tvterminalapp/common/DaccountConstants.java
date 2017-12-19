@@ -20,4 +20,17 @@ public class DaccountConstants {
 
     //DTVTアプリに割り当てられたサービス識別キー(OTP)
     public static final String SERVICE_KEY = "B3d02";
+
+    //ブロードキャスト登録名
+    //デフォルトのdアカウントIDを知らせる場合
+    public static final String SET_ID_RECEIVER ="com.nttdocomo.android.tvterminalapp.DOCOMOID_SET_DEFAULT";
+    //dアカウントユーザー認証が発生した事を知らせる場合
+    public static final String USER_AUTH_RECEIVER ="com.nttdocomo.android.tvterminalapp.DOCOMOID_AUTHENTICATED";
+    //dアカウントユーザーの削除を知らせる場合
+    public static final String DELETE_ID_RECEIVER ="com.nttdocomo.android.tvterminalapp.DOCOMOID_INVALIDATE";
+    //dアカウント無効化を知らせる場合
+    public static final String INVALIDATE_ID_RECEIVER ="com.nttdocomo.android.tvterminalapp.DOCOMOID_INVALIDATE";
+    //回線連携完了を知らせる場合
+    public static final String LINKED_LINE_RECEIVER ="com.nttdocomo.android.tvterminalapp.DOCOMOID_LINKED_LINE";
+
 }

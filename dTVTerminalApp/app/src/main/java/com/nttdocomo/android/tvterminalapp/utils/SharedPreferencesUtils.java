@@ -45,7 +45,10 @@ public class SharedPreferencesUtils {
     private static final String SHARED_KEY_IMAGE_QUALITY = "image_quality";
     // 持ち出しコンテンツダウンロード先 ture:内部 false:外部
     private static final String SHARED_KEY_STORAGE_PATH = "storage_path";
-
+    //最後に取得したdアカウントのID
+    private static final String LAST_D_ACCOUNT_ID = "BEFORE_D_ACCOUNT_ID";
+    //最後に取得したワンタイムパスワード
+    private static final String LAST_ONE_TIME_PASSWORD = "LAST_ONE_TIME_PASSWORD";
 
     /**
      * STB選択画面"次回以降表示しない" 状態を保存
@@ -290,5 +293,59 @@ public class SharedPreferencesUtils {
                 SHARED_KEY_STORAGE_PATH, Context.MODE_PRIVATE);
 
         return data.getBoolean(SHARED_KEY_STORAGE_PATH, true);
+    }
+
+    /**
+     * 取得したdアカウントを保存
+     *
+     * @param context コンテキスト
+     * @param id 保存するdアカウントID
+     */
+    public static void setSharedPreferencesDaccountId(Context context, String id) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                LAST_D_ACCOUNT_ID, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putString(LAST_D_ACCOUNT_ID, id);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * 最後に保存したdアカウントを取得
+     */
+    public static String getSharedPreferencesDaccountId(Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                LAST_D_ACCOUNT_ID, Context.MODE_PRIVATE);
+
+        return data.getString(LAST_D_ACCOUNT_ID,"");
+    }
+
+    /**
+     * 取得したワンタイムパスワードを保存
+     *
+     * @param context コンテキスト
+     * @param pass 保存するワンタイムパスワード
+     */
+    public static void setSharedPreferencesOneTimePass(Context context, String pass) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                LAST_ONE_TIME_PASSWORD, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putString(LAST_ONE_TIME_PASSWORD, pass);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * 最後に保存したワンタイムパスワードを取得
+     */
+    public static String getSharedPreferencesOneTimePass(Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                LAST_ONE_TIME_PASSWORD, Context.MODE_PRIVATE);
+
+        return data.getString(LAST_ONE_TIME_PASSWORD,"");
     }
 }
