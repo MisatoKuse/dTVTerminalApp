@@ -31,11 +31,54 @@
         android:layout_below="@+id/stb_icon_relative_layout"
         android:layout_alignParentStart="true" />
 
+    <RelativeLayout
+        android:id="@+id/stb_device_selected"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/stb_select_status_text"
+        >
+
+        <TextView
+            android:id="@+id/stb_select_status_selected_text"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginRight="@dimen/launch_stb_list_start_margin"
+            android:layout_marginLeft="@dimen/launch_stb_list_start_margin"
+            android:layout_marginBottom="@dimen/launch_text_bottom_margin"
+            android:paddingStart="@dimen/launch_text_left_padding"
+            android:paddingEnd="@dimen/launch_text_right_padding"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:gravity="center_vertical|start"
+            android:visibility="gone"
+            />
+        <ImageView
+            android:id="@+id/stb_device_check_mark"
+            android:layout_width="wrap_content"
+            android:layout_alignEnd="@+id/stb_select_status_selected_text"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/launch_text_end_padding"
+            android:paddingEnd="@dimen/launch_text_right_padding"
+            android:src="@drawable/remote_paring_device_check_mark"
+            android:layout_alignBottom="@+id/stb_select_status_selected_text"
+            android:layout_alignParentTop="true"
+            android:visibility="gone"/>
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/stb_device_progress"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:layout_below="@+id/stb_device_selected"
+        android:layout_centerHorizontal="true" />
+
     <ListView
         android:id="@+id/stb_device_name_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/stb_select_status_text"
+        android:layout_below="@id/stb_device_progress"
         android:layout_above="@+id/checkBoxSTBSelectActivity">
     </ListView>
 

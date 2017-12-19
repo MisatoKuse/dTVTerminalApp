@@ -4,14 +4,18 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.LayoutInflater;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -45,14 +49,17 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     Button mDAccountAppliNoSTBSelectActivity = null;
     Button mDAccountSameYesSTBSelectActivity = null;
     Button mDAccountSameNoSTBSelectActivity = null;
-    private TextView mBackIcon;
+    private TextView mBackIcon, mParingDevice;
     private ListView mDeviceListView;
     List<ContentsData> mContentsList;
+    List<DlnaDmsItem> mDlnaDmsItemList;
     private ContentsAdapter mContentsAdapter;
-    private View mLoadMoreView = null;
+    private ProgressBar mLoadMoreView = null;
     private DlnaProvDevList mDlnaProvDevList = null;
     private StbInfoCallBackTimer mCallbackTimer = null;
     private DlnaDMSInfo mDlnaDMSInfo = null;
+    private int mStartMode = 0;
+    private ImageView mCheckMark, mMenuImageView = null, mStatusIcon;
 
     private enum TimerStatus {
         TIMER_STATUS_DEFAULT,// 初期状態
@@ -61,12 +68,18 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         TIMER_STATUS_CANCEL, // キャンセル
     }
 
+    public enum STBSeleFromMode {
+        STBSeleFromMode_Launch,
+        STBSeleFromMode_Setting,
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DTVTLogger.start();
         setContentView(R.layout.stb_select_main_layout);
         mContentsList = new ArrayList();
+        mDlnaDmsItemList = new ArrayList<>();
         mBackIcon = findViewById(R.id.header_layout_back);
         mBackIcon.setVisibility(View.GONE);
         setTitleText(getString(R.string.str_app_title));
@@ -83,6 +96,8 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      * 画面上に表示するコンテンツの初期化を行う
      */
     private void initView() {
+        mParingDevice = findViewById(R.id.stb_select_status_selected_text);
+        mCheckMark = findViewById(R.id.stb_device_check_mark);
         DTVTLogger.start();
         mDeviceListView = findViewById(R.id.stb_device_name_list);
         mContentsAdapter = new ContentsAdapter(this, mContentsList,
@@ -90,7 +105,51 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         mDeviceListView.setAdapter(mContentsAdapter);
         mDeviceListView.setOnItemClickListener(this);
         mDeviceListView.setVisibility(View.VISIBLE);
-        mLoadMoreView = LayoutInflater.from(this).inflate(R.layout.device_search_progress, null);
+        mLoadMoreView = findViewById(R.id.stb_device_progress);
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            mStartMode = intent.getIntExtra("FROM_WHERE", -1);
+        }
+        if (mStartMode == (STBSeleFromMode.STBSeleFromMode_Launch.ordinal())) {
+            return;
+
+        } else if (mStartMode == (STBSeleFromMode.STBSeleFromMode_Setting.ordinal())) {
+            setTitleText(getString(R.string.str_stb_paring_setting_title));
+            useWithoutPairingSTBParingInvitationTextView.setVisibility(View.GONE);
+            mMenuImageView = findViewById(R.id.header_layout_menu);
+            mMenuImageView.setVisibility(View.VISIBLE);
+            mMenuImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (isFastClick()) {
+                        onSampleGlobalMenuButton_PairLoginOk();
+                    }
+                }
+            });
+            //sharedPreferencesからSTB情報を取得する
+            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
+            if (null == dlnaDmsItem) {
+                //未ペアリング
+                return;
+            } else {
+                //ペアリング済み
+                DlnaDMSInfo info = new DlnaDMSInfo();
+                info.add(dlnaDmsItem);
+                updateDeviceList(info);
+                mParingDevice.setText(dlnaDmsItem.mFriendlyName);
+                if (!mParingDevice.getText().toString().isEmpty()) {
+                    mParingDevice.setVisibility(View.VISIBLE);
+                    mCheckMark.setVisibility(View.VISIBLE);
+                    mParingDevice.setTextColor(Color.BLACK);
+                    mParingDevice.setBackground(getResources().getDrawable(R.drawable.color_white));
+                    useWithoutPairingSTBParingInvitationTextView.setVisibility(View.VISIBLE);
+                    useWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_paring_cancel_text);
+                }
+            }
+        } else {
+            //error
+        }
         DTVTLogger.end();
     }
 
@@ -149,12 +208,9 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     public void onResume() {
         super.onResume();
         DTVTLogger.start();
-        // この画面に来た時点でSharedPreferencesのSTB情報をリセットする
-        SharedPreferencesUtils.resetSharedPreferencesStbInfo(this);
         setContents();
         initView();
         setDevListener();
-
         DTVTLogger.end();
     }
 
@@ -318,12 +374,20 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         mDlnaProvDevList.stopListen();
         //STB選択画面"次回以降表示しない" 状態をSharedPreferenceに保存
         SharedPreferencesUtils.setSharedPreferencesStbSelect(this, mIsNextTimeHide);
-        SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
-                this, false);
-        if (SharedPreferencesUtils.getSharedPreferencesIsDisplayedParingInvitation(this)) {
+        if (mStartMode == STBSeleFromMode.STBSeleFromMode_Setting.ordinal() && mParingDevice != null) {
+            //ペアリング解除する場合、すべてのSTBキャッシュデータを削除して、ホーム画面に遷移する
+            mDlnaProvDevList.dmsRemove();
+            SharedPreferencesUtils.resetSharedPreferencesStbInfo(this);
             startActivity(HomeActivity.class, null);
+
         } else {
-            startActivity(STBParingInvitationActivity.class, null);
+            SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
+                    this, false);
+            if (SharedPreferencesUtils.getSharedPreferencesIsDisplayedParingInvitation(this)) {
+                startActivity(HomeActivity.class, null);
+            } else {
+                startActivity(STBParingInvitationActivity.class, null);
+            }
         }
         DTVTLogger.end();
     }
@@ -363,8 +427,13 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start();
         if (mCallbackTimer.getTimerStatus() != TimerStatus.TIMER_STATUS_DURING_STARTUP) {
             // SharedPreferencesにSTBデータを保存
-            if (mDlnaDMSInfo != null) {
-                SharedPreferencesUtils.setSharedPreferencesStbInfo(this, mDlnaDMSInfo.get(i));
+            if (mDlnaDmsItemList != null) {
+                SharedPreferencesUtils.setSharedPreferencesStbInfo(this, mDlnaDmsItemList.get(i));
+                if (mStartMode == STBSeleFromMode.STBSeleFromMode_Setting.ordinal() && mParingDevice != null) {
+                    mParingDevice.setBackgroundColor(Color.BLACK);
+                    mParingDevice.setTextColor(Color.WHITE);
+                    mCheckMark.setVisibility(View.GONE);
+                }
             }
             // TODO dアカウントクラス実装時に遷移先を修正
             startActivity(STBConnectActivity.class, null);
@@ -413,13 +482,27 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private void updateDeviceList(DlnaDMSInfo info) {
         DTVTLogger.start();
+        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
+
         mContentsList.clear();
+        mDlnaDmsItemList.clear();
         for (int i = 0; i < info.size(); i++) {
             ContentsData data = new ContentsData();
             data.setDeviceName(info.get(i).mFriendlyName);
+
             DTVTLogger.debug("ContentsList.size = " + info.get(i).mFriendlyName);
             DTVTLogger.debug("DlnaDMSInfo.mIPAddress = " + info.get(i).mIPAddress);
-            mContentsList.add(data);
+            boolean flag = false;
+            if (dlnaDmsItem != null && !TextUtils.isEmpty(dlnaDmsItem.mUdn)) {
+                if (dlnaDmsItem.mUdn.equals(info.get(i).mUdn)) {
+                    flag = true;
+                }
+            }
+            if (!flag) {
+                mContentsList.add(data);
+                mDlnaDmsItemList.add(info.get(i));
+            }
+
         }
         mDlnaDMSInfo = info;
         DTVTLogger.debug("ContentsList.size = " + mContentsList.size());
@@ -440,7 +523,9 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                     displayMoreData(false);
                     stopCallbackTimer();
                     showResultCompleteView();
-                    mContentsAdapter.notifyDataSetChanged();
+                    if (null != mContentsAdapter) {
+                        mContentsAdapter.notifyDataSetChanged();
+                    }
                     DTVTLogger.debug("TimerTaskNotExecuted");
                 } else { // 既にタイムアウトとなっていた場合
                     // nop.
@@ -458,17 +543,10 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private void displayMoreData(boolean b) {
         DTVTLogger.start("displayMoreData:" + b);
-        if (null != mDeviceListView && null != mLoadMoreView) {
-            if (b) {
-                mDeviceListView.addFooterView(mLoadMoreView);
-            } else {
-                mDeviceListView.removeFooterView(mLoadMoreView);
-            }
-        } else if (null == mDeviceListView) {
-            DTVTLogger.debug("mDeviceListView is Null");
-
+        if (b) {
+            mLoadMoreView.setVisibility(View.VISIBLE);
         } else {
-            DTVTLogger.debug("mLoadMoreView is Null");
+            mLoadMoreView.setVisibility(View.GONE);
         }
         DTVTLogger.end();
     }
@@ -505,11 +583,14 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         displayMoreData((false));
         // STB検索タイムアウト文言表示
         TextView statusTextView = (TextView) findViewById(R.id.stb_select_status_text);
+        if (mStartMode == STBSeleFromMode.STBSeleFromMode_Setting.ordinal() &&
+                !mParingDevice.getText().toString().isEmpty()) {
+            useWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_paring_cancel_text);
+        } else {
+            // STB未検出のため非表示
+            mCheckBoxSTBSelectActivity.setVisibility(View.INVISIBLE);
+        }
         statusTextView.setText(R.string.str_stb_select_result_text_failed);
-
-        // STB未検出のため非表示
-        mCheckBoxSTBSelectActivity.setVisibility(View.INVISIBLE);
-
         // リストを非表示
         mDeviceListView.setVisibility(View.GONE);
         mDlnaProvDevList.stopListen();

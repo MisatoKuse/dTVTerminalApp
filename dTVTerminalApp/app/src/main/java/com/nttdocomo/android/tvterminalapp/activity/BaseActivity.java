@@ -137,8 +137,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      * @param isOn true: 表示  false: 非表示
      */
     protected void enableStbStatusIcon(boolean isOn) {
-        if (this instanceof STBSelectActivity
-                || this instanceof LaunchActivity
+        if (this instanceof LaunchActivity
                 //|| this instanceof RecordedListActivity
                 || this instanceof DtvContentsDetailActivity){
             return;
@@ -296,8 +295,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      */
     private void registerDevListDlna() {
         DTVTLogger.start();
-        if (this instanceof STBSelectActivity
-                || this instanceof LaunchActivity
+        if (this instanceof LaunchActivity
                 //|| this instanceof RecordedListActivity
                 || this instanceof DtvContentsDetailActivity){
             DTVTLogger.end();
