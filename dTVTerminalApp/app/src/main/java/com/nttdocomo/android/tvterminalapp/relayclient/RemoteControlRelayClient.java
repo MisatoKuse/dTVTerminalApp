@@ -196,7 +196,7 @@ public class RemoteControlRelayClient {
     private static final String RELAY_RESULT = "RESULT";
     private static final String RELAY_RESULT_OK = "OK";
     private static final String RELAY_RESULT_ERROR = "ERROR";
-//    private static final String RELAY_RESULT_MESSAGE = "MESSAGE";
+    //    private static final String RELAY_RESULT_MESSAGE = "MESSAGE";
     // 中継アプリクライアントが送信するキーコードのメッセージ定数
     private static final String RELAY_KEYEVENT = "KEYEVENT";
     private static final String RELAY_KEYEVENT_ACTION = "ACTION";
@@ -213,7 +213,7 @@ public class RemoteControlRelayClient {
     private static final String RELAY_RESULT_VERSION_CODE_INCOMPATIBLE  = "VERSION_CODE_INCOMPATIBLE";
     private static final String RELAY_RESULT_CONTENTS_ID_NOTEXIST  = "CONTENTS_ID_NOTEXIST";
 
-    // アプリ起動要求種別に対応するするアプリ名シンボル
+    // アプリ起動要求種別に対応するアプリ名シンボル
     private static final Map<STB_APPLICATION_TYPES, String> mStbApplicationSymbolMap = new HashMap<STB_APPLICATION_TYPES, String>() {
         {
             put(STB_APPLICATION_TYPES.DTV, STB_APPLICATION_DTV);    // dTV
@@ -307,8 +307,9 @@ public class RemoteControlRelayClient {
         public static final int RELAY_RESULT_APPLICATION_START_FAILED = 14;
         public static final int RELAY_RESULT_VERSION_CODE_INCOMPATIBLE  = 15;
 
-        public int mResult = RELAY_RESULT_OK;
-        public int mResultCode = RELAY_RESULT_SUCCESS;
+        private int mResult = RELAY_RESULT_OK;
+        private int mResultCode = RELAY_RESULT_SUCCESS;
+        private STB_APPLICATION_TYPES mApplicationTypes;
 
         // 応答結果の変換
         public final Map<String, Integer> mResultMap = new HashMap<String, Integer>() {
@@ -326,6 +327,17 @@ public class RemoteControlRelayClient {
                 put(RemoteControlRelayClient.RELAY_RESULT_APPLICATION_ID_NOTEXIST, RELAY_RESULT_APPLICATION_ID_NOTEXIST);
                 put(RemoteControlRelayClient.RELAY_RESULT_APPLICATION_START_FAILED, RELAY_RESULT_APPLICATION_START_FAILED);
                 put(RemoteControlRelayClient.RELAY_RESULT_VERSION_CODE_INCOMPATIBLE, RELAY_RESULT_VERSION_CODE_INCOMPATIBLE);
+            }
+        };
+
+        // アプリ名シンボルに対するアプリ起動要求種別
+        private final Map<String, STB_APPLICATION_TYPES> mStbApplicationEnumMap = new HashMap<String, STB_APPLICATION_TYPES>() {
+            {
+                put(STB_APPLICATION_DTV, STB_APPLICATION_TYPES.DTV);    // dTV
+                put(STB_APPLICATION_DANIMESTORE, STB_APPLICATION_TYPES.DANIMESTORE);    // dアニメストア
+                put(STB_APPLICATION_DTVCHANNEL, STB_APPLICATION_TYPES.DTVCHANNEL);  // dTVチャンネル
+                put(STB_APPLICATION_HIKARITV, STB_APPLICATION_TYPES.HIKARITV);    // ひかりTV
+                put(STB_APPLICATION_DAZN, STB_APPLICATION_TYPES.DAZN);    // ダ・ゾーン
             }
         };
 
@@ -353,6 +365,14 @@ public class RemoteControlRelayClient {
 
         public int getResultCode() {
             return mResultCode;
+        }
+
+        public STB_APPLICATION_TYPES getApplicationTypes() {
+            return mApplicationTypes;
+        }
+
+        public void setApplicationTypes(STB_APPLICATION_TYPES applicationTypes) {
+            mApplicationTypes = applicationTypes;
         }
     }
     /**
@@ -477,7 +497,7 @@ public class RemoteControlRelayClient {
         /**
          * 処理結果応答をハンドラーへ通知する
          *
-          * @param response
+         * @param response
          */
         private void sendResponseMessage(ResponseMessage response) {
             if (mHandler != null){
@@ -495,16 +515,26 @@ public class RemoteControlRelayClient {
             JSONObject recvJson = new JSONObject();
             String message = null;
             String errorcode = null;
+            String appId = null;
             ResponseMessage response = new ResponseMessage();
             try {
                 if (recvResult != null) {
                     recvJson = new JSONObject(recvResult);
-
                     response.setResult(response.mResultMap.get(recvJson.get(RELAY_RESULT).toString()));
+                    // エラーの場合、応答結果コードをエラーコード値に変換
                     if (recvJson.has(RELAY_RESULT_ERROR_CODE)){
                         errorcode = recvJson.get(RELAY_RESULT_ERROR_CODE).toString();
                         if (response.mResultCodeMap.containsKey(errorcode)) {
                             response.setResultCode(response.mResultCodeMap.get(errorcode));
+                        } else {
+                            response.setResultCode(ResponseMessage.RELAY_RESULT_INTERNAL_ERROR);
+                        }
+                    }
+                    // STBアプリ起動要求のアプリ種別をアプリ種別コードに変換
+                    if (recvJson.has(RELAY_COMMAND_APPLICATION_ID)) {
+                        appId = recvJson.get(RELAY_COMMAND_APPLICATION_ID).toString();
+                        if (response.mStbApplicationEnumMap.containsKey(appId)) {
+                            response.setApplicationTypes(response.mStbApplicationEnumMap.get(appId));
                         } else {
                             response.setResultCode(ResponseMessage.RELAY_RESULT_INTERNAL_ERROR);
                         }

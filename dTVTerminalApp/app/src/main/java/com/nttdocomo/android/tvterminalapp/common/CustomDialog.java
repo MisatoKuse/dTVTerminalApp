@@ -4,8 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.common;
 
-import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
 import android.graphics.Color;
@@ -23,7 +23,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import java.util.List;
 
 public class CustomDialog {
-    private Activity activity;
+    private Context context;
     private AlertDialog dialog;
     private DialogType dialogType;
     private String title;
@@ -54,8 +54,8 @@ public class CustomDialog {
         this.apiSelectCallback = apiSelectCallback;
     }
 
-    public CustomDialog(Activity activity, DialogType dialogType) {
-        this.activity = activity;
+    public CustomDialog(Context context, DialogType dialogType) {
+        this.context = context;
         this.dialogType = dialogType;
     }
 
@@ -81,7 +81,7 @@ public class CustomDialog {
      * ダイアログの表示
      */
     public void showDialog() {
-        dialog = new AlertDialog.Builder(activity).create();
+        dialog = new AlertDialog.Builder(context).create();
         dialog.setCanceledOnTouchOutside(true);
         dialog.setOnKeyListener(keyListener);
         dialog.show();
@@ -123,13 +123,13 @@ public class CustomDialog {
                 if (list != null) {
                     LinearLayout linearLayout = window.findViewById(R.id.custom_dialog_ll);
                     for (int i = 0; i < list.size(); i++) {
-                        TextView tabTextView = new TextView(activity);
+                        TextView tabTextView = new TextView(context);
                         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                                 LinearLayout.LayoutParams.MATCH_PARENT,
                                 LinearLayout.LayoutParams.WRAP_CONTENT);
                         tabTextView.setLayoutParams(params);
-                        tabTextView.setPadding(0, (int) activity.getResources().getDimension(R.dimen.contents_detail_5dp),
-                                0, (int) activity.getResources().getDimension(R.dimen.contents_detail_5dp));
+                        tabTextView.setPadding(0, (int) context.getResources().getDimension(R.dimen.contents_detail_5dp),
+                                0, (int) context.getResources().getDimension(R.dimen.contents_detail_5dp));
                         tabTextView.setText(list.get(i));
                         tabTextView.setBackgroundResource(R.drawable.rectangele_white);
                         tabTextView.setGravity(Gravity.CENTER);
@@ -184,7 +184,7 @@ public class CustomDialog {
     }
 
     /**
-     * ダイアログビューの初期化
+     * ダイアログを閉じる
      */
     public void dismissDialog() {
         if (dialog != null) {
