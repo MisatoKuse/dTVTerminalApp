@@ -4,7 +4,6 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -26,10 +25,11 @@
             android:textSize="20sp" />
         <CheckBox
             android:id="@+id/main_setting_quality_checkbox_high"
-            style="@style/CheckBox"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignTop="@id/main_setting_quality_text_high"
+            android:button="@null"
+            android:background="@drawable/setting_checkbox"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="@dimen/main_setting_checkbox_margin"
             android:layout_marginEnd="@dimen/main_setting_checkbox_margin"
@@ -57,10 +57,11 @@
             android:textSize="20sp" />
         <CheckBox
             android:id="@+id/main_setting_quality_checkbox_middle"
-            style="@style/CheckBox"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignTop="@id/main_setting_quality_text_middle"
+            android:button="@null"
+            android:background="@drawable/setting_checkbox"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="@dimen/main_setting_checkbox_margin"
             android:layout_marginEnd="@dimen/main_setting_checkbox_margin"
@@ -88,10 +89,11 @@
             android:textSize="20sp" />
         <CheckBox
             android:id="@+id/main_setting_quality_checkbox_low"
-            style="@style/CheckBox"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignTop="@id/main_setting_quality_text_low"
+            android:button="@null"
+            android:background="@drawable/setting_checkbox"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="@dimen/main_setting_checkbox_margin"
             android:layout_marginEnd="@dimen/main_setting_checkbox_margin"

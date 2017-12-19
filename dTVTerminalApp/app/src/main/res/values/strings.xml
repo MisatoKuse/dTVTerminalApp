@@ -239,6 +239,7 @@
     <string name="main_setting_storage_status">storage</string>
     <string name="main_setting_device_storage">本体ストレージ</string>
     <string name="main_setting_outside_storage">SDカード</string>
+    <string name="main_setting_no_permission">SDカードへのアクセスが許可されていませんので、ダウンロード先は本体ストレージのままとなります。</string>
     <string name="main_setting_image_quality_low">標準画質</string>
     <string name="main_setting_image_quality_middle">高画質</string>
     <string name="main_setting_image_quality_high">最高画質</string>
