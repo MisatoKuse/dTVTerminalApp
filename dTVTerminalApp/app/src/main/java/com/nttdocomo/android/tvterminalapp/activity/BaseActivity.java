@@ -253,6 +253,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         initView();
         mRemoteControlRelayClient = RemoteControlRelayClient.getInstance();
         mRemoteControlRelayClient.setHandler(ｍRerayClientHandler);
+        mRemoteControlRelayClient.setDebugRemoteIp("192.168.11.19");
         DTVTLogger.end();
     }
 
@@ -331,13 +332,16 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             String message = "OK";
             switch (msg.what) {
                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_OK:
-                    Toast.makeText(mContext, message, Toast.LENGTH_LONG).show();
+                    menuRemoteController();
                     break;
                 default:
                     int resultcode = ((RemoteControlRelayClient.ResponseMessage)msg.obj).getResultCode();
                     switch (resultcode){
                         case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_APPLICATION_NOT_INSTALL:
                             message = "APPLICATION_NOT_INSTALL";
+                            break;
+                        case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_APPLICATION_ID_NOTEXIST:
+                            message = "APPLICATION_ID_NOTEXIST";
                             break;
                         case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_APPLICATION_START_FAILED:
                             message = "APPLICATION_START_FAILED";
@@ -349,7 +353,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                             message = "VERSION_CODE_INCOMPATIBLE";
                             break;
                         default:
-                            message = "UNKNOWN";
+                            message = "INTERNAL_ERROR";
                             break;
                     }
                     Toast.makeText(mContext, message, Toast.LENGTH_LONG).show();

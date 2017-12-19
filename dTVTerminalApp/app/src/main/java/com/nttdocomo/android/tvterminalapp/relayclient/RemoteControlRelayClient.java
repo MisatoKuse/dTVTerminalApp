@@ -208,6 +208,7 @@ public class RemoteControlRelayClient {
     private static final String RELAY_RESULT_ERROR_CODE = "ERROR_CODE";
     private static final String RELAY_RESULT_INTERNAL_ERROR = "INTERNAL_ERROR";
     private static final String RELAY_RESULT_APPLICATION_NOT_INSTALL  = "APPLICATION_NOT_INSTALL";
+    private static final String RELAY_RESULT_APPLICATION_ID_NOTEXIST  = "APPLICATION_ID_NOTEXIST";
     private static final String RELAY_RESULT_APPLICATION_START_FAILED  = "APPLICATION_START_FAILED";
     private static final String RELAY_RESULT_VERSION_CODE_INCOMPATIBLE  = "VERSION_CODE_INCOMPATIBLE";
     private static final String RELAY_RESULT_CONTENTS_ID_NOTEXIST  = "CONTENTS_ID_NOTEXIST";
@@ -302,8 +303,9 @@ public class RemoteControlRelayClient {
         public static final int RELAY_RESULT_SUCCESS = 0;
         public static final int RELAY_RESULT_INTERNAL_ERROR = 11;
         public static final int RELAY_RESULT_APPLICATION_NOT_INSTALL = 12;
-        public static final int RELAY_RESULT_APPLICATION_START_FAILED = 13;
-        public static final int RELAY_RESULT_VERSION_CODE_INCOMPATIBLE  = 14;
+        public static final int RELAY_RESULT_APPLICATION_ID_NOTEXIST = 13;
+        public static final int RELAY_RESULT_APPLICATION_START_FAILED = 14;
+        public static final int RELAY_RESULT_VERSION_CODE_INCOMPATIBLE  = 15;
 
         public int mResult = RELAY_RESULT_OK;
         public int mResultCode = RELAY_RESULT_SUCCESS;
@@ -321,6 +323,7 @@ public class RemoteControlRelayClient {
             {
                 put(RemoteControlRelayClient.RELAY_RESULT_INTERNAL_ERROR, RELAY_RESULT_INTERNAL_ERROR);
                 put(RemoteControlRelayClient.RELAY_RESULT_APPLICATION_NOT_INSTALL, RELAY_RESULT_APPLICATION_NOT_INSTALL);
+                put(RemoteControlRelayClient.RELAY_RESULT_APPLICATION_ID_NOTEXIST, RELAY_RESULT_APPLICATION_ID_NOTEXIST);
                 put(RemoteControlRelayClient.RELAY_RESULT_APPLICATION_START_FAILED, RELAY_RESULT_APPLICATION_START_FAILED);
                 put(RemoteControlRelayClient.RELAY_RESULT_VERSION_CODE_INCOMPATIBLE, RELAY_RESULT_VERSION_CODE_INCOMPATIBLE);
             }
@@ -491,6 +494,7 @@ public class RemoteControlRelayClient {
         private ResponseMessage setResponse(String recvResult) {
             JSONObject recvJson = new JSONObject();
             String message = null;
+            String errorcode = null;
             ResponseMessage response = new ResponseMessage();
             try {
                 if (recvResult != null) {
@@ -498,7 +502,12 @@ public class RemoteControlRelayClient {
 
                     response.setResult(response.mResultMap.get(recvJson.get(RELAY_RESULT).toString()));
                     if (recvJson.has(RELAY_RESULT_ERROR_CODE)){
-                        response.setResultCode(response.mResultCodeMap.get(recvJson.get(RELAY_RESULT_ERROR_CODE).toString()));
+                        errorcode = recvJson.get(RELAY_RESULT_ERROR_CODE).toString();
+                        if (response.mResultCodeMap.containsKey(errorcode)) {
+                            response.setResultCode(response.mResultCodeMap.get(errorcode));
+                        } else {
+                            response.setResultCode(ResponseMessage.RELAY_RESULT_INTERNAL_ERROR);
+                        }
                     }
                 }
             } catch (JSONException e) {
