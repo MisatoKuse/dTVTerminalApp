@@ -20,7 +20,9 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
+import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +32,7 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
         AdapterView.OnItemClickListener, AdapterView.OnTouchListener {
 
     public Context mActivity;
-    public List mData = null;
+    public List<ContentsData> mData = null;
 
     private View mRankingFragmentView = null;
     private ListView mRankingListView = null;
@@ -220,13 +222,25 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
     }
 
     @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         if(mLoadMoreView.equals(view) || mActivity == null) {
             return;
         }
-        if (view == getActivity().findViewById(R.id.item_common_result_clip_tv)) {
+        if (view.equals(mData.get(position).getClipButton())) {
             //TODO:クリップ処理実装
-            Toast.makeText(getActivity(), "クリップしました", Toast.LENGTH_SHORT).show();
+            ClipRequestData requestData = new ClipRequestData();
+            ContentsData contentsData = mData.get(position);
+            requestData.setCrid(contentsData.getCrid());
+            requestData.setServiceId(contentsData.getServiceId());
+            requestData.setEventId(contentsData.getEventId());
+            requestData.setTitleId(contentsData.getTitleId());
+            requestData.setTitle(contentsData.getTitle());
+            requestData.setRValue(contentsData.getRValue());
+            requestData.setLinearStartDate(contentsData.getLinearStartDate());
+            requestData.setLinearEndDate(contentsData.getLinearEndDate());
+            requestData.setIsNotify(contentsData.getDispType(), contentsData.getContentsType(),
+                    contentsData.getLinearEndDate(), contentsData.getTvService(), contentsData.getDtv());
+            ((BaseActivity) mActivity).sendClipRequest(requestData);
         } else {
             ((BaseActivity) mActivity).startActivity(DtvContentsDetailActivity.class, null);
         }

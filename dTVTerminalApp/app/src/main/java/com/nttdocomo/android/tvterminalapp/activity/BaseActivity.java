@@ -31,6 +31,7 @@ import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
@@ -39,6 +40,7 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClient;
 
 /**
  * クラス機能：
@@ -46,7 +48,9 @@ import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
  * 「Activity」全体にとって、共通の機能があれば、追加すること
  */
 
-public class BaseActivity extends FragmentActivity implements MenuDisplayEventListener, DlnaDevListListener, View.OnClickListener, RemoteControllerView.OnStartRemoteControllerUIListener {
+public class BaseActivity extends FragmentActivity implements MenuDisplayEventListener,
+        DlnaDevListListener, View.OnClickListener, RemoteControllerView.OnStartRemoteControllerUIListener,
+        ClipRegistWebClient.ClipRegistJsonParserCallback {
 
     private LinearLayout baseLinearLayout;
     private RelativeLayout headerLayout;
@@ -690,4 +694,26 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         }
     }
 
+    /**
+     * クリップ登録/削除処理追加
+     */
+    public void sendClipRequest(ClipRequestData data) {
+        ClipRegistWebClient registWebClient = new ClipRegistWebClient();
+        registWebClient.getClipRegistApi(data.getType(), data.getCrid(), data.getServiceId(),
+                data.getEventId(), data.getTitleId(), data.getTitle(), data.getRValue(),
+                data.getLinearStartDate(), data.getLinearEndDate(), data.getIsNotify(),
+                (ClipRegistWebClient.ClipRegistJsonParserCallback) this);
+    }
+
+    @Override
+    public void onClipRegistResult() {
+        //TODO:クリップ成功時の正式なトースト実装
+        Toast.makeText(this, "クリップ成功", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onClipRegistFailure() {
+        //TODO:クリップ失敗時の正式なトースト実装
+        Toast.makeText(this, "クリップ失敗", Toast.LENGTH_SHORT).show();
+    }
 }
