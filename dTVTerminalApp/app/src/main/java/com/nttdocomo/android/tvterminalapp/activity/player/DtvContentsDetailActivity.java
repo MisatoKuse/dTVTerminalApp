@@ -1624,7 +1624,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         long nowTimeEpoch = DateUtils.getNowTimeFormatEpoch();
         long canRecordingReservationTime =
                 mRecordingReservationContentsDetailInfo.getStartTime() - (DateUtils.EPOCH_TIME_ONE_HOUR * 2);
-        if (nowTimeEpoch < canRecordingReservationTime) {
+        if (nowTimeEpoch >= canRecordingReservationTime) {
             // 開始時間2時間前を過ぎている場合
             return false;
         }
