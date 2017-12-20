@@ -510,7 +510,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
 
     @Override
     public void onClick(View view) {
-        if (view == mMenuImageView) {
+        if (mMenuImageView.equals(view)) {
             onSampleGlobalMenuButton_PairLoginOk();
         }
     }
@@ -523,8 +523,6 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
             mIsPaging = b;
         }
     }
-
-    private static final int sLoadPageDelayTime = 500;
 
     @Override
     public void onScroll(SearchBaseFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
@@ -545,7 +543,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
                 public void run() {
                     setSearchData(null);
                 }
-            }, sLoadPageDelayTime);
+            }, LOAD_PAGE_DELAY_TIME);
         }
     }
 

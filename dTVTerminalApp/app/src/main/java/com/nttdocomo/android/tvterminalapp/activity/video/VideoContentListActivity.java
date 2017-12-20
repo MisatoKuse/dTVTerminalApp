@@ -38,8 +38,6 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
 
     // 最大表示件数
     private final static int NUM_PER_PAGE = 10;
-    // タイムアウト時間
-    private final static int LOAD_PAGE_DELAY_TIME = 1000;
 
     private ImageView mMenuImageView;
     private VideoContentProvider mVideoContentProvider;

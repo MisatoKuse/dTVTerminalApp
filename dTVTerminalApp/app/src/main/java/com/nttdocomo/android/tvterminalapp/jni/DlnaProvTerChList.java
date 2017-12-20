@@ -27,7 +27,7 @@ public class DlnaProvTerChList {
         if(null==di){
             return;
         }
-        di.setDlnaRecVideoBaseListener(null);
+        di.setDlnaTerChListListener(null);
     }
 
     /**
@@ -60,6 +60,6 @@ public class DlnaProvTerChList {
         if(null==di){
             return false;
         }
-        return di.browseBsChListDms();
+        return di.browseTerChListDms();
     }
 }

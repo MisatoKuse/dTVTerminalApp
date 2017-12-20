@@ -135,7 +135,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         Bundle args = new Bundle();
         args.putParcelable(DtvContentsDetailActivity.RECOMMEND_INFO_BUNDLE_KEY,
                 getOtherContentsDetailData(info));
-        if (mLoadMoreView == view) {
+        if (mLoadMoreView.equals(view)) {
             return;
         }
         ((BaseActivity) mActivity).startActivity(DtvContentsDetailActivity.class, args);

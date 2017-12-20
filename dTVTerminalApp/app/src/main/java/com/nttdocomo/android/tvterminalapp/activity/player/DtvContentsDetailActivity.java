@@ -4,11 +4,13 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.player;
 
-import android.app.AlertDialog;
 import android.content.Context;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -53,6 +55,7 @@ import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
+import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.DtvContentsDetailDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
@@ -115,6 +118,16 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     private boolean isPlayer = false;
     private Intent intent;
     /* コンテンツ詳細 end */
+    /*DTV起動*/
+    private static final String RESERVED4_TYPE4 = "4";
+    private static final String RESERVED4_TYPE7 = "7";
+    private static final String RESERVED4_TYPE8 = "8";
+    private static final String GOOGLEPLAY_DOWNLOAD_URL = "http://play.google.com/store/apps/details?id=jp.co.nttdocomo.dtv";
+    private static final String DTV_PACKAGE_NAME = "jp.co.nttdocomo.dtv";
+    private static final String SUPER_SPEED_START_TYPE = "dmktvideosc:///openLiveTitle?deliveryTitleId=";
+    private static final String WORK_START_TYPE = "dmktvideosc:///openEpisode?episodeId=";
+    private static final String TITTLE_START_TYPE = "dmktvideosc:///openTitle?titleId=";
+    /*DTV起動*/
     /* player start */
     private static final long HIDE_IN_3_SECOND = 3 * 1000;
     private static final int REFRESH_VIDEO_VIEW = 0;
@@ -781,6 +794,11 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                         || OtherContentsDetailData.HIKARI_CONTENTS_CATEGORY_ID_IPTV.equals(categoryId)) {
                     //TODO  放送中の場合
                 }
+            }else if(serviceId == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID){
+                thumbnailBtn.setVisibility(View.VISIBLE);
+                TextView startAppIcon = findViewById(R.id.view_contents_button_text);
+                startAppIcon.setVisibility(View.VISIBLE);
+                startAppIcon.setText(getResources().getString(R.string.dTV_content_service_start_text));
             }
             setTitleAndThumbnail(mDetailData.getTitle(), mDetailData.getThumb());
         }
@@ -821,12 +839,9 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                     || serviceId == OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID) {
                 // 他サービス(dtv/dtvチャンネル/dアニメ)フラグを立てる
                 isOtherService = true;
-                if(serviceId == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID
-                        || serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID) {
-                    // リモコンUIのリスナーを設定
-                    createRemoteControllerView();
-                    setStartRemoteControllerUIListener(this);
-                }
+                // リモコンUIのリスナーを設定
+                createRemoteControllerView();
+                setStartRemoteControllerUIListener(this);
             }
         }
 
@@ -1092,6 +1107,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         tabLinearLayout = findViewById(R.id.dtv_contents_detail_main_layout_tab);
         thumbnail = findViewById(R.id.dtv_contents_detail_main_layout_thumbnail);
         thumbnailBtn = findViewById(R.id.dtv_contents_detail_main_layout_thumbnail_btn);
+        thumbnailBtn.setOnClickListener(this);
         if (isPlayer) {
             setPlayerScroll();
         } else {
@@ -1385,10 +1401,88 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                 }
                 hideCtrlViewAfterOperate();
                 break;
+            case R.id.dtv_contents_detail_main_layout_thumbnail_btn:
+                //DTVの場合
+                if (mDetailData.getServiceId() == DTV_CONTENTS_SERVICE_ID) {
+                CustomDialog startAppDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+                startAppDialog.setTitle(getResources().getString(R.string.dTV_content_service_start_dialog));
+                startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                    @Override
+                    public void onOKCallback(boolean isOK) {
+                        //端末にDTVアプリはすでに存在した場合
+                        if (isAppInstalled(DtvContentsDetailActivity.this, DTV_PACKAGE_NAME)) {
+                            //RESERVED4は4の場合
+                            if (RESERVED4_TYPE4.equals(mDetailData.getReserved4())) {
+                                startAPP(WORK_START_TYPE + mDetailData.getContentId());
+                                //RESERVED4は7,8の場合
+                            } else if (RESERVED4_TYPE7.equals(mDetailData.getReserved4())
+                                    || RESERVED4_TYPE8.equals(mDetailData.getReserved4())) {
+                                startAPP(SUPER_SPEED_START_TYPE + mDetailData.getContentId());
+                                //その他の場合
+                            } else {
+                                startAPP(TITTLE_START_TYPE + mDetailData.getContentId());
+                            }
+                            //DTVアプリ存在しない場合
+                        } else {
+                            Uri uri = Uri.parse(GOOGLEPLAY_DOWNLOAD_URL);
+                            Intent installIntent = new Intent(Intent.ACTION_VIEW, uri);
+                            startActivity(installIntent);
+                        }
+                    }
+                });
+                startAppDialog.showDialog();
+
+                    break;
+                }
             default:
                 break;
         }
         DTVTLogger.end();
+    }
+    /**
+     * 機能：APP起動
+     *
+     * @param url
+     */
+    private void startAPP(String url){
+        Uri uri = Uri.parse(url);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    /**
+     * 機能：中継アプリは端末にインストールするかどうかの判断
+     *
+     * @param packageName 中継アプリのパッケージ名
+     */
+    public boolean isAppInstalled(Context context, String packageName) {
+        final PackageManager packageManager = context.getPackageManager();
+        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);
+        List<String> pName = new ArrayList();
+        if (pinfo != null) {
+            for (int i = 0; i < pinfo.size(); i++) {
+                String pn = pinfo.get(i).packageName;
+                pName.add(pn);
+            }
+        }
+        return pName.contains(packageName);
+    }
+    /**
+     * 機能：ローカルバージョン情報を取得する
+     *
+     * @return
+     */
+    private int getVersionCode() {
+        PackageManager packageManager = getPackageManager();
+        try {
+            PackageInfo packageInfo = packageManager.getPackageInfo(getPackageName(), 0);
+            int versionCode = packageInfo.versionCode;
+            return versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 
     @Override

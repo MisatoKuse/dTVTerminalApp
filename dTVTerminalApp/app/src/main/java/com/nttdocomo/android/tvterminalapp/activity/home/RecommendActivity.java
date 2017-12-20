@@ -300,7 +300,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        if (view == mMenuImageView) {
+        if (mMenuImageView.equals(view)) {
             onSampleGlobalMenuButton_PairLoginOk();
         }
     }
@@ -308,11 +308,11 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
     /**
      * ページング判定の変更
      *
-     * @param b
+     * @param bool
      */
-    private void setPagingStatus(boolean b) {
+    private void setPagingStatus(boolean bool) {
         synchronized (this) {
-            mIsPaging = b;
+            mIsPaging = bool;
         }
     }
 

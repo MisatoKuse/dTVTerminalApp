@@ -27,7 +27,7 @@ public class DlnaProvBsChList {
         if(null==di){
             return;
         }
-        di.setDlnaRecVideoBaseListener(null);
+        di.setDlnaBsChListListener(null);
     }
 
     /**

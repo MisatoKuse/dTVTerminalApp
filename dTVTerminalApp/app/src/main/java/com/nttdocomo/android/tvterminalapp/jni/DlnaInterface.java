@@ -47,7 +47,7 @@ public class DlnaInterface {
     //Dlna info
     private DlnaRecVideoInfo mDlnaRecVideoInfo = new DlnaRecVideoInfo();
     private DlnaBsChListInfo mDlnaBsChListInfo;
-    private DlnaTerChListItem mDlnaTerChListItem;
+    private DlnaTerChListInfo mDlnaTerChListInfo;
     private Handler mHandler= new Handler();
 
     /**
@@ -213,10 +213,25 @@ public class DlnaInterface {
      * @return 成功:true 失敗: false
      */
     public boolean browseBsChListDms() {
+        //boolean ret= browseBsChListDms(mNativeDlna, mCurrentDmsItem.mControlUrl);
         if(null== mCurrentDmsItem || null== mCurrentDmsItem.mControlUrl || 1> mCurrentDmsItem.mControlUrl.length()){
             return false;
         }
+        if(null!=mDlnaBsChListInfo && 0<mDlnaBsChListInfo.size()){
+            final ArrayList<Object> content= DlnaBsChListInfo.toArrayList(mDlnaBsChListInfo);
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    notifyObjFromNative(DLNA_MSG_ID_BS_CHANNEL_LIST, content);
+                }
+            }, DLNA_IF_THREAD_DELAY);
+            DTVTLogger.end();
+            return true;
+        }
         boolean ret= browseBsChListDms(mNativeDlna, mCurrentDmsItem.mControlUrl);
+        DTVTLogger.debug("call c++ browseBsChListDms");
+        DTVTLogger.end();
+
         return ret;
     }
 
@@ -248,7 +263,21 @@ public class DlnaInterface {
         if(null== mCurrentDmsItem || null== mCurrentDmsItem.mControlUrl || 1> mCurrentDmsItem.mControlUrl.length()){
             return false;
         }
+        if(null!=mDlnaTerChListInfo && 0<mDlnaBsChListInfo.size()){
+            final ArrayList<Object> content= DlnaTerChListInfo.toArrayList(mDlnaTerChListInfo);
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    notifyObjFromNative(DLNA_MSG_ID_TER_CHANNEL_LIST, content);
+                }
+            }, DLNA_IF_THREAD_DELAY);
+            DTVTLogger.end();
+            return true;
+        }
         boolean ret= browseTerChListDms(mNativeDlna, mCurrentDmsItem.mControlUrl);
+        DTVTLogger.debug("call c++ browseTerChListDms");
+        DTVTLogger.end();
+
         return ret;
     }
 
@@ -287,6 +316,9 @@ public class DlnaInterface {
      */
     public void notifyObjFromNative(int msg, ArrayList<Object> content) {
         Log.d("", "msg=" + msg + ", content=" + content);
+        if(onError(msg, content)){
+            return;
+        }
         switch (msg) {
             case DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST:
                 onRecVideo(content);
@@ -308,6 +340,49 @@ public class DlnaInterface {
                 notifyDeviceJoinInv(content, mCurrentDmsItem);
                 break;
         }
+    }
+
+    private final String sErrorMsgDMS="DMS Error";
+    private final String sErrorMsgRecordVideo="録画一覧データ取得失敗しまいました";
+    private final String sErrorMsgTerChannelList="地上波チャンネルリスト取得失敗しまいました";
+    private final String sErrorMsgBsChannelList="BSチャンネルリスト取得失敗しまいました";
+    private final String sErrorMsgHikariChannelList="ひかりチャンネルリスト取得失敗しまいました";
+
+    private boolean onError(int msg, ArrayList<Object> content){
+        boolean ret=false;
+        switch (msg) {
+            case DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST:
+                if(null!=mDlnaRecVideoListener && null!=content && 0==content.size()){
+                    mDlnaRecVideoListener.onError(sErrorMsgRecordVideo);
+                    ret=true;
+                }
+                break;
+            case DLNA_MSG_ID_DEV_DISP_JOIN:
+                if(null!=mDlnaDevListListener && null!=content && 0==content.size()){
+                    mDlnaDevListListener.onError(sErrorMsgDMS);
+                    ret=true;
+                }
+                break;
+            case DLNA_MSG_ID_BS_CHANNEL_LIST:
+                if(null!=mDlnaBsChListListener && null!=content && 0==content.size()){
+                    mDlnaBsChListListener.onError(sErrorMsgBsChannelList);
+                    ret=true;
+                }
+                break;
+            case DLNA_MSG_ID_TER_CHANNEL_LIST:
+                if(null!=mDlnaTerChListListener && null!=content && 0==content.size()){
+                    mDlnaTerChListListener.onError(sErrorMsgTerChannelList);
+                    ret=true;
+                }
+                break;
+            case DLNA_MSG_ID_HIKARI_CHANNEL_LIST:
+                if(null!=mDlnaHikariChListListener && null!=content && 0==content.size()){
+                    mDlnaHikariChListListener.onError(sErrorMsgHikariChannelList);
+                    ret=true;
+                }
+                break;
+        }
+        return ret;
     }
 
     /**
@@ -381,10 +456,10 @@ public class DlnaInterface {
         if(mCurrentDmsItem.mUdn.equals(item.mUdn)){
             mCurrentDmsItem=item;
             //本番ソース begin
-//        browseBsChListDms();
-//        browseTerChListDms();
+            browseBsChListDms();
+            //browseTerChListDms();
             //本番ソース end
-            browseRecVideoDms();    //test
+            //browseRecVideoDms();    //test
         }
     }
 

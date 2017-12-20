@@ -21,7 +21,6 @@ import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActi
 import com.nttdocomo.android.tvterminalapp.adapter.ChannelListAdapter;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListItem;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListItem;
 import com.nttdocomo.android.tvterminalapp.model.program.Channel;
 
@@ -153,46 +152,46 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         switch (mChListDataType){
             case CH_LIST_DATA_TYPE_BS:
                 //本番ソース begin
-//                DlnaBsChListItem bs2=(DlnaBsChListItem)item;
-//                for(Object obj: mData){
-//                    DlnaBsChListItem bs1= (DlnaBsChListItem)obj;
-//                    ret= bs1.equalTo(bs2);
-//                    if(ret){
-//                        break;
-//                    }
-//                }
-                //本番ソース end
-                //テストソース begin
-                DlnaRecVideoItem bs2=(DlnaRecVideoItem)item;
+                DlnaBsChListItem bs2=(DlnaBsChListItem)item;
                 for(Object obj: mData){
-                    DlnaRecVideoItem bs1= (DlnaRecVideoItem)obj;
+                    DlnaBsChListItem bs1= (DlnaBsChListItem)obj;
                     ret= bs1.equalTo(bs2);
                     if(ret){
                         break;
                     }
                 }
-                //テストソース end
-                break;
-            case CH_LIST_DATA_TYPE_TER:
-                //本番ソース begin
-//                DlnaTerChListItem ter2=(DlnaTerChListItem)item;
+                //本番ソース end
+                //テストソース begin
+//                DlnaRecVideoItem bs2=(DlnaRecVideoItem)item;
 //                for(Object obj: mData){
-//                    DlnaTerChListItem ter1= (DlnaTerChListItem)obj;
-//                    ret= ter1.equalTo(ter2);
+//                    DlnaRecVideoItem bs1= (DlnaRecVideoItem)obj;
+//                    ret= bs1.equalTo(bs2);
 //                    if(ret){
 //                        break;
 //                    }
 //                }
-                //本番ソース end
-                //テストソース begin
-                DlnaRecVideoItem ter2=(DlnaRecVideoItem)item;
+                //テストソース end
+                break;
+            case CH_LIST_DATA_TYPE_TER:
+                //本番ソース begin
+                DlnaTerChListItem ter2=(DlnaTerChListItem)item;
                 for(Object obj: mData){
-                    DlnaRecVideoItem bs1= (DlnaRecVideoItem)obj;
-                    ret= bs1.equalTo(ter2);
+                    DlnaTerChListItem ter1= (DlnaTerChListItem)obj;
+                    ret= ter1.equalTo(ter2);
                     if(ret){
                         break;
                     }
                 }
+                //本番ソース end
+                //テストソース begin
+//                DlnaRecVideoItem ter2=(DlnaRecVideoItem)item;
+//                for(Object obj: mData){
+//                    DlnaRecVideoItem bs1= (DlnaRecVideoItem)obj;
+//                    ret= bs1.equalTo(ter2);
+//                    if(ret){
+//                        break;
+//                    }
+//                }
                 //テストソース end
                 break;
             case CH_LIST_DATA_TYPE_HIKARI:
@@ -271,54 +270,54 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
                 return null;
             case CH_LIST_DATA_TYPE_BS:
                 //本番ソース begin
-//                DlnaBsChListItem bsI = (DlnaBsChListItem)mData.get(i);
-//                ret.setUpnpIcon(null);
-//                ret.setSize(bsI.mSize);
-//                ret.setResUrl(bsI.mResUrl);
-//                ret.setResolution(bsI.mResolution);
-//                ret.setBitrate(bsI.mBitrate);
-//                ret.setDuration(bsI.mDuration);
-//                ret.setTitle(bsI.mTitle);
-//                ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabBs);
-//                ret.setVideoType(bsI.mVideoType);
+                DlnaBsChListItem bsI = (DlnaBsChListItem)mData.get(i);
+                ret.setUpnpIcon(null);
+                ret.setSize(bsI.mSize);
+                ret.setResUrl(bsI.mResUrl);
+                ret.setResolution(bsI.mResolution);
+                ret.setBitrate(bsI.mBitrate);
+                ret.setDuration(bsI.mDuration);
+                ret.setTitle(bsI.mTitle);
+                ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabBs);
+                ret.setVideoType(bsI.mVideoType);
                 //本番ソース end
                 //test begin
-                DlnaRecVideoItem video = (DlnaRecVideoItem)mData.get(i);
-                ret.setUpnpIcon(null);
-                ret.setSize(video.mSize);
-                ret.setResUrl(video.mResUrl);
-                ret.setResolution(video.mResolution);
-                ret.setBitrate(video.mBitrate);
-                ret.setDuration(video.mDuration);
-                ret.setTitle(video.mTitle);
-                ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabBs);
-                ret.setVideoType(video.mVideoType);
+//                DlnaRecVideoItem video = (DlnaRecVideoItem)mData.get(i);
+//                ret.setUpnpIcon(null);
+//                ret.setSize(video.mSize);
+//                ret.setResUrl(video.mResUrl);
+//                ret.setResolution(video.mResolution);
+//                ret.setBitrate(video.mBitrate);
+//                ret.setDuration(video.mDuration);
+//                ret.setTitle(video.mTitle);
+//                ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabBs);
+//                ret.setVideoType(video.mVideoType);
                 //test end
                 break;
             case CH_LIST_DATA_TYPE_TER:
                 //本番ソース begin
-//                DlnaBsChListItem bsT = (DlnaBsChListItem)mData.get(i);
-//                ret.setUpnpIcon(null);
-//                ret.setSize(bsT.mSize);
-//                ret.setResUrl(bsT.mResUrl);
-//                ret.setResolution(bsT.mResolution);
-//                ret.setBitrate(bsT.mBitrate);
-//                ret.setDuration(bsT.mDuration);
-//                ret.setTitle(bsT.mTitle);
-//                ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabTer);
-//                ret.setVideoType(bsT.mVideoType);
+                DlnaTerChListItem bsT = (DlnaTerChListItem)mData.get(i);
+                ret.setUpnpIcon(null);
+                ret.setSize(bsT.mSize);
+                ret.setResUrl(bsT.mResUrl);
+                ret.setResolution(bsT.mResolution);
+                ret.setBitrate(bsT.mBitrate);
+                ret.setDuration(bsT.mDuration);
+                ret.setTitle(bsT.mTitle);
+                ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabTer);
+                ret.setVideoType(bsT.mVideoType);
                 //本番ソース end
                 //test begin
-                DlnaRecVideoItem video2 = (DlnaRecVideoItem)mData.get(i);
-                ret.setUpnpIcon(null);
-                ret.setSize(video2.mSize);
-                ret.setResUrl(video2.mResUrl);
-                ret.setResolution(video2.mResolution);
-                ret.setBitrate(video2.mBitrate);
-                ret.setDuration(video2.mDuration);
-                ret.setTitle(video2.mTitle);
-                ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabTer);
-                ret.setVideoType(video2.mVideoType);
+//                DlnaRecVideoItem video2 = (DlnaRecVideoItem)mData.get(i);
+//                ret.setUpnpIcon(null);
+//                ret.setSize(video2.mSize);
+//                ret.setResUrl(video2.mResUrl);
+//                ret.setResolution(video2.mResolution);
+//                ret.setBitrate(video2.mBitrate);
+//                ret.setDuration(video2.mDuration);
+//                ret.setTitle(video2.mTitle);
+//                ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabTer);
+//                ret.setVideoType(video2.mVideoType);
                 //test end
                 break;
             case CH_LIST_DATA_TYPE_INVALID:

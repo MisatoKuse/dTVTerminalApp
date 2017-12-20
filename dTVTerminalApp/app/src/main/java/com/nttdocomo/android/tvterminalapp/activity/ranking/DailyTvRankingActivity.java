@@ -35,8 +35,6 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
 
     // 最大表示件数
     private final static int NUM_PER_PAGE = 10;
-    // タイムアウト時間
-    private final static int LOAD_PAGE_DELAY_TIME = 1000;
 
     private ImageView mMenuImageView;
     private RankingTopDataProvider mRankingTopDataProvider;
@@ -156,7 +154,7 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
 
     @Override
     public void onClick(View view) {
-        if (view == mMenuImageView) {
+        if (mMenuImageView.equals(view)) {
             onSampleGlobalMenuButton_PairLoginOk();
         }
     }
@@ -262,7 +260,7 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (mLoadMoreView == view) {
+        if(mLoadMoreView.equals(view)) {
             return;
         }
         startActivity(DtvContentsDetailActivity.class, null);

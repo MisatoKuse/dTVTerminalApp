@@ -84,8 +84,9 @@ namespace dtvt {
     const char * const DlnaBsChListItem_Field_mResolution =  "mResolution";
     const char * const DlnaBsChListItem_Field_mBitrate =  "mBitrate";
     const char * const DlnaBsChListItem_Field_mResUrl =  "mResUrl";
-    const char * const DlnaBsChListItem_Field_mThumbnail =  "mThumbnail";
+    //const char * const DlnaBsChListItem_Field_mThumbnail =  "mThumbnail";
     const char * const DlnaBsChListItem_Field_mDate =  "mDate";
+    const char * const DlnaBsChListItem_Field_mVideoType       ="mVideoType";
 
     //DlnaTerChListItem フィールド定義
     const char * const DlnaTerChListItem_Field_mChannelNo ="mChannelNo";
@@ -95,8 +96,9 @@ namespace dtvt {
     const char * const DlnaTerChListItem_Field_mResolution =  "mResolution";
     const char * const DlnaTerChListItem_Field_mBitrate =  "mBitrate";
     const char * const DlnaTerChListItem_Field_mResUrl =  "mResUrl";
-    const char * const DlnaTerChListItem_Field_mThumbnail =  "mThumbnail";
+    //const char * const DlnaTerChListItem_Field_mThumbnail =  "mThumbnail";
     const char * const DlnaTerChListItem_Field_mDate =  "mDate";
+    const char * const DlnaTerChListItem_Field_mVideoType       ="mVideoType";
 
     //DlnaHikariChListItem フィールド定義
     const char * const DlnaHikariChListItem_Field_mChannelNo ="mChannelNo";
@@ -106,8 +108,9 @@ namespace dtvt {
     const char * const DlnaHikariChListItem_Field_mResolution =  "mResolution";
     const char * const DlnaHikariChListItem_Field_mBitrate =  "mBitrate";
     const char * const DlnaHikariChListItem_Field_mResUrl =  "mResUrl";
-    const char * const DlnaHikariChListItem_Field_mThumbnail =  "mThumbnail";
+    //const char * const DlnaHikariChListItem_Field_mThumbnail =  "mThumbnail";
     const char * const DlnaHikariChListItem_Field_mDate =  "mDate";
+    const char * const DlnaHikariChListItem_Field_mVideoType       ="mVideoType";
 
     //java string path
     const char * const Dlna_Java_String_Path = "java/lang/String";    //"Ljava/lang/String;";
@@ -136,11 +139,27 @@ namespace dtvt {
     //開発段階にて、本番のDMSはないので、仮DMSを使っていますが、違うDMSを定義し、どのDMSを選択できるよう
     //#define DLNA_KARI_DMS_UNIVERSAL
     #define DLNA_KARI_DMS_NAS
+    //#define DLNA_KARI_DMS_RELEASE
 
     #if defined(DLNA_KARI_DMS_UNIVERSAL)
         const char* const DLNA_DMS_ROOT = "0";
     #elif defined(DLNA_KARI_DMS_NAS)
         const char* const DLNA_DMS_ROOT = "0/video/all";
+    #elif defined(DLNA_KARI_DMS_RELEASE)
+        //チューナールート/スマホ向け/録画一覧
+        //const char* const DLNA_DMS_RECORD_LIST = "0/smartphone/rec/all"; //本番
+        const char* const DLNA_DMS_RECORD_LIST = "0/video/all"; //nasでテスト
+
+        //チューナールート/スマホ向け/多チャンネル
+        const char* const DLNA_DMS_MULTI_CHANNEL = "0/smartphone/ip";
+
+        //チューナールート/スマホ向け/地上デジタル
+        //const char* const DLNA_DMS_TER_CHANNEL = "0/smartphone/tb"; //本番
+        const char* const DLNA_DMS_TER_CHANNEL = "0/video/all"; //nasでテスト
+
+        //チューナールート/スマホ向け/BSデジタル
+        //const char* const DLNA_DMS_BS_CHANNEL = "0/smartphone/bs"; //本番
+        const char* const DLNA_DMS_BS_CHANNEL = "0/video/all"; //nasでテスト
     #endif
 
 } //namespace dtvt

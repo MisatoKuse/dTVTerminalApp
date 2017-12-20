@@ -11,7 +11,7 @@ import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.JsonParserThread;
-import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser2;
+import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.VodClipJsonParser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,7 +31,7 @@ public class VodClipWebClient
 
     @Override
     public Object parse(String body) {
-        VodClipJsonParser2 vodClipJsonParser = new VodClipJsonParser2();
+        VodClipJsonParser vodClipJsonParser = new VodClipJsonParser();
         List<VodClipList> pursedData;
         pursedData = vodClipJsonParser.VodClipListSender(body);
         return pursedData;

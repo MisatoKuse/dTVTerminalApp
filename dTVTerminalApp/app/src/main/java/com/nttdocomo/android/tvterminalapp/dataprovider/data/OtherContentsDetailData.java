@@ -34,6 +34,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData implemen
     private String availEndDate;
     private String displayType;
     private String categoryId;
+    private String reserved4;
     private List<String> staffList;
 
     //コンテンツIDを追加
@@ -167,6 +168,14 @@ public class OtherContentsDetailData extends RecordedContentsDetailData implemen
         this.mContentId = mContentId;
     }
 
+    public String getReserved4() {
+        return reserved4;
+    }
+
+    public void setReserved4(String reserved4) {
+        this.reserved4 = reserved4;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -192,6 +201,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData implemen
         dest.writeString(this.availEndDate);
         dest.writeString(this.displayType);
         dest.writeString(this.categoryId);
+        dest.writeString(this.reserved4);
         dest.writeStringList(this.staffList);
     }
 
@@ -217,6 +227,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData implemen
         this.availEndDate = in.readString();
         this.displayType = in.readString();
         this.categoryId = in.readString();
+        this.reserved4=in.readString();
         this.staffList = in.createStringArrayList();
     }
 

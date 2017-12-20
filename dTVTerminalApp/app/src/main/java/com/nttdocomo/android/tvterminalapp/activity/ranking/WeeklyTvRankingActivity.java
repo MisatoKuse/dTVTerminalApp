@@ -48,7 +48,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
     private HorizontalScrollView mTabScrollView;
     private LinearLayout mLinearLayout;
     private ViewPager mViewPager;
-    private static final int sLoadPageDelayTime = 1000;
 
     //標準タブ数
     private static final int DEFAULT_TAB_MAX = 4;
@@ -170,16 +169,16 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
     private void getGenreData(int tabPageNo) {
         switch (tabPageNo) {
             case RankingConstants.RANKING_PAGE_NO_OF_SYNTHESIS:
-                mRankingDataProvider.getWeeklyRankingData(tabPageNo);
+                mRankingDataProvider.getWeeklyRankingData(mRankingDataProvider.getGenreId(tabPageNo));
                 break;
             case RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_MOVIE:
-                mRankingDataProvider.getWeeklyRankingData(tabPageNo);
+                mRankingDataProvider.getWeeklyRankingData(mRankingDataProvider.getGenreId(tabPageNo));
                 break;
             case RankingConstants.RANKING_PAGE_NO_OF_DOMESTIC_MOVIE:
-                mRankingDataProvider.getWeeklyRankingData(tabPageNo);
+                mRankingDataProvider.getWeeklyRankingData(mRankingDataProvider.getGenreId(tabPageNo));
                 break;
             case RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_CHANNEL:
-                mRankingDataProvider.getWeeklyRankingData(tabPageNo);
+                mRankingDataProvider.getWeeklyRankingData(mRankingDataProvider.getGenreId(tabPageNo));
                 break;
             default:
                 break;
@@ -320,7 +319,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
 
     @Override
     public void onClick(View view) {
-        if (view == mMenuImageView) {
+        if (mMenuImageView.equals(view)) {
             onSampleGlobalMenuButton_PairLoginOk();
         }
     }
@@ -329,11 +328,12 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
     public void onScroll(RankingBaseFragment fragment, AbsListView absListView,
                          int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         synchronized (this) {
-            RankingBaseFragment b = getCurrentFragment();
-            if (null == b || null == fragment.getRankingAdapter()) {
+            RankingBaseFragment baseFragment = getCurrentFragment();
+            if (null == baseFragment || null == fragment.getRankingAdapter()) {
                 return;
             }
-            if (fragment != b) {
+
+            if (!fragment.equals(baseFragment)) {
                 return;
             }
 
@@ -353,11 +353,11 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
                                      int scrollState) {
         synchronized (this) {
 
-            RankingBaseFragment b = getCurrentFragment();
-            if (null == b || null == fragment.getRankingAdapter()) {
+            RankingBaseFragment baseFragment = getCurrentFragment();
+            if (null == baseFragment || null == fragment.getRankingAdapter()) {
                 return;
             }
-            if (fragment != b) {
+            if (!fragment.equals(baseFragment)) {
                 return;
             }
 
@@ -380,7 +380,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
                     public void run() {
                         getGenreData(mViewPager.getCurrentItem());
                     }
-                }, sLoadPageDelayTime);
+                }, LOAD_PAGE_DELAY_TIME);
             }
         }
 

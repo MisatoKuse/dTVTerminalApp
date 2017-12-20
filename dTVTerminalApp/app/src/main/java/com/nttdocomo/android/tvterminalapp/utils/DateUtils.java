@@ -339,4 +339,13 @@ public class DateUtils {
     public static long getCalculationRecordingReservationStartTime(long startTime) {
         return startTime % EPOCH_TIME_ONE_DAY;
     }
+
+    /**
+     * dアカウント切り替え時に、以前のデータを削除する
+     * @param context コンテキスト
+     */
+    public static void clearDataSave(Context context) {
+        SharedPreferences data = context.getSharedPreferences(DATA_SAVE, Context.MODE_PRIVATE);
+        data.edit().clear().apply();
+    }
 }

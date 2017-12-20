@@ -216,7 +216,7 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        if (mLoadMoreView == view || mActivity == null) {
+        if(mLoadMoreView.equals(view) || mActivity == null) {
             return;
         }
         ((BaseActivity) mActivity).startActivity(DtvContentsDetailActivity.class, null);

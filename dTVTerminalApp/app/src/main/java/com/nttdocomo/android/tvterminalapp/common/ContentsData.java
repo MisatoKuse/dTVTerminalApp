@@ -9,103 +9,93 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationList
 public class ContentsData {
 
     //ランキング順位
-    private String rank = null;
+    private String mRank = null;
     //サブタイトル
-    private String time = null;
+    private String mTime = null;
     //メインタイトル
-    private String title = null;
+    private String mTitle = null;
     //評価ポイント
-    private String ratStar = null;
+    private String mRatStar = null;
     //サムネイルURL
-    private String thumURL = null;
+    private String mThumURL = null;
     // 録画予約ステータス
-    private int recordingReservationStatus = RecordingReservationListDataProvider.RECORD_RESERVATION_SYNC_STATUS_ALREADY_REFLECT;
+    private int mRecordingReservationStatus = RecordingReservationListDataProvider.RECORD_RESERVATION_SYNC_STATUS_ALREADY_REFLECT;
     // チャンネル名
-    private String channelName = null;
-    // 録画番組用 チャンネル名
-    private String recordedChannelName = null;
+    private String mChannelName = null;
     // 録画番組用 コピー残り回数
-    private int allowedUse = 0;
+    private int mAllowedUse = 0;
 
     //デバイス名
-    private String deviceName = null;
+    private String mDeviceName = null;
 
     public String getDeviceName() {
-        return deviceName;
+        return mDeviceName;
     }
 
     public void setDeviceName(String deviceName) {
-        this.deviceName = deviceName;
+        this.mDeviceName = deviceName;
     }
 
     public String getRank() {
-        return rank;
+        return mRank;
     }
 
     public void setRank(String rank) {
-        this.rank = rank;
+        this.mRank = rank;
     }
 
     public String getTime() {
-        return time;
+        return mTime;
     }
 
     public void setTime(String time) {
-        this.time = time;
+        this.mTime = time;
     }
 
     public String getTitle() {
-        return title;
+        return mTitle;
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.mTitle = title;
     }
 
     public String getRatStar() {
-        return ratStar;
+        return mRatStar;
     }
 
     public void setRatStar(String ratStar) {
-        this.ratStar = ratStar;
+        this.mRatStar = ratStar;
     }
 
     public String getThumURL() {
-        return thumURL;
+        return mThumURL;
     }
 
     public void setThumURL(String thumURL) {
-        this.thumURL = thumURL;
+        this.mThumURL = thumURL;
     }
 
     public void setRecordingReservationStatus(int status) {
-        recordingReservationStatus = status;
+        mRecordingReservationStatus = status;
     }
 
     public int getRecordingReservationStatus() {
-        return recordingReservationStatus;
+        return mRecordingReservationStatus;
     }
 
     public String getChannelName() {
-        return channelName;
+        return mChannelName;
     }
 
     public void setChannelName(String channelName) {
-        this.channelName = channelName;
-    }
-
-    public String getRecordedChannelName() {
-        return recordedChannelName;
-    }
-
-    public void setRecordedChannelName(String channelName) {
-        this.recordedChannelName = channelName;
+        this.mChannelName = channelName;
     }
     public int getAllowedUse() {
-        return allowedUse;
+        return mAllowedUse;
     }
 
     public void setAllowedUse(int allowedUse) {
-        this.allowedUse = allowedUse;
+        this.mAllowedUse = allowedUse;
     }
 }

@@ -19,14 +19,15 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
-import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragmentScrollListener;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragment;
+import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragmentScrollListener;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
@@ -472,9 +473,27 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         DTVTLogger.start();
     }
 
+    private Handler mHandler = new Handler();
     @Override
     public void onError(String msg) {
         DTVTLogger.start(msg);
+        final String msg2=msg;
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                showMessage(msg2);
+            }
+        });
+    }
+
+    /**
+     * showMessage
+     * @param msg
+     */
+    private void showMessage(String msg){
+        DTVTLogger.start();
+        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+        DTVTLogger.end();
     }
 
     @Override

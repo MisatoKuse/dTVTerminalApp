@@ -20,9 +20,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
-
-import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE;
+import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser;
 
 import java.util.List;
 import java.util.Map;
@@ -113,11 +111,11 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         String date = mContentList.get(i).get(JsonContents.META_RESPONSE_DISPLAY_START_DATE);
         String title = mContentList.get(i).get(JsonContents.META_RESPONSE_TITLE);
         if (TextUtils.isEmpty(title)) {
-            title = mContentList.get(i).get(RECOMMENDCHANNEL_LIST_TITLE);
+            title = mContentList.get(i).get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE);
         }
         String thumbnail = mContentList.get(i).get(JsonContents.META_RESPONSE_THUMB_448);
         if (TextUtils.isEmpty(thumbnail)) {
-            thumbnail = mContentList.get(i).get(RECOMMENDCHANNEL_LIST_CTPICURL1);
+            thumbnail = mContentList.get(i).get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1);
         }
         if (!TextUtils.isEmpty(title)) {
             viewHolder.mContent.setVisibility(View.VISIBLE);
