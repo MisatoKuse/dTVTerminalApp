@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
@@ -34,11 +35,13 @@ import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
+import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountControl;
 
 /**
  * クラス機能：
@@ -46,7 +49,10 @@ import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
  * 「Activity」全体にとって、共通の機能があれば、追加すること
  */
 
-public class BaseActivity extends FragmentActivity implements MenuDisplayEventListener, DlnaDevListListener, View.OnClickListener, RemoteControllerView.OnStartRemoteControllerUIListener{
+public class BaseActivity extends FragmentActivity implements MenuDisplayEventListener,
+        DlnaDevListListener, View.OnClickListener,
+        RemoteControllerView.OnStartRemoteControllerUIListener ,
+        DaccountControl.DaccountControlCallBack {
 
     private LinearLayout baseLinearLayout;
     private RelativeLayout headerLayout;
@@ -86,8 +92,8 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      * 関数機能：
      * Activityを起動する
      *
-     * @param clz
-     * @param bundle
+     * @param clz 起動するアクティビティ
+     * @param bundle 受け渡すパラメータ
      */
     public void startActivity(Class<?> clz, Bundle bundle) {
         Intent intent = new Intent(this, clz);
@@ -100,7 +106,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     /**
      * タイトルビュー
      *
-     * @param resId
+     * @param resId リソースID
      */
     @Override
     public void setContentView(int resId) {
@@ -221,11 +227,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     /**
      * タイトル内容を設定
      *
-     * @param c
+     * @param text 設定する文字列
      */
-    protected void setTitleText(CharSequence c) {
+    protected void setTitleText(CharSequence text) {
         if (titleTextView != null) {
-            titleTextView.setText(c);
+            titleTextView.setText(text);
         }
     }
 
@@ -246,6 +252,10 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         DTVTLogger.start();
+
+        //TODO: 認証付きアプリのデバッグ時に有効化すると、デバッグのアタッチが行われるまでここで停止する。最終的には削除を行う事
+        //android.os.Debug.waitForDebugger();
+
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_base);
         mContext = this;
@@ -253,6 +263,10 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         mRemoteControlRelayClient = RemoteControlRelayClient.getInstance();
         mRemoteControlRelayClient.setHandler(ｍRerayClientHandler);
         mRemoteControlRelayClient.setDebugRemoteIp("192.168.11.19");
+
+        //dアカウントの検知処理を追加する
+        setDaccountControl();
+
         DTVTLogger.end();
     }
 
@@ -472,7 +486,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     /**
      * コンテンツ詳細の戻るボタン
      *
-     * @param view
+     * @param view 戻るボタンのビュー
      */
     public void contentsDetailBackKey(View view) {
         finish();
@@ -481,7 +495,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     /**
      * コンテンツ詳細のクローズボタン
      *
-     * @param view
+     * @param view クローズボタンのビュー
      */
     public void contentsDetailCloseKey(View view) {
         //TODO:コンテンツ詳細系の画面をクローズする処理を記載する
@@ -563,7 +577,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     /**
      * 機能：onClick event for menu
      *
-     * @param view
+     * @param view メニューアイコンのビュー
      */
     @Override
     public void onClick(View view) {
@@ -667,7 +681,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     /**
      * リモートコントローラーViewのVisibilityを変更
-     * @param visibility
+     * @param visibility 表示非表示指定
      */
     protected void setRemoteControllerViewVisibility(int visibility) {
         if(remoteControllerView != null) {
@@ -686,4 +700,24 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         }
     }
 
+    /**
+     * dアカウントの切り替えや無効化を受信できるように設定を行う
+     */
+    private void setDaccountControl() {
+        //dアカウント関連の処理を依頼する
+        DaccountControl daccountControl = new DaccountControl();
+        daccountControl.registService(getApplicationContext(),this);
+    }
+
+    @Override
+    public void daccountControlCallBack(boolean result) {
+        //dアカウントの登録結果を受け取るコールバック
+        if(!result) {
+            //失敗した場合は、dアカウント登録画面へ遷移を行う
+            DAccountUtils.startDAccountSetting(this);
+
+            //画面は終わらせる。この時点ではまだdアカウント登録画面を表示しただけなので、再起動は行えない。
+            finish();
+        }
+    }
 }

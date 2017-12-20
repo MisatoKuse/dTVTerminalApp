@@ -14,7 +14,6 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -206,16 +205,30 @@ public class ThumbnailCacheManager {
         return sb.toString();
     }
 
-    //サムネイルファイルの削除
+    /**
+     * サムネイルファイルの削除
+     *
+     * @param context コンテキスト
+     */
     public static void clearThumbnailCache(Context context) {
         //サムネイルフォルダの名前を取得
-        String folderSource = context.getCacheDir() + THUMBNAIL_CACHE;
+        StringBuilder folderSource = new StringBuilder();
+        folderSource.append(context.getCacheDir());
+        folderSource.append(THUMBNAIL_CACHE);
 
-        File folder = new File(folderSource);
+        File folder = new File(folderSource.toString());
+
+        //フォルダではないなら帰る
+        if(!folder.isDirectory()) {
+            return;
+        }
 
         for(File nowFile : folder.listFiles()) {
             try {
-                nowFile.delete();
+                //ファイルが存在していた場合は消す
+                if(nowFile != null && nowFile.isFile()) {
+                    nowFile.delete();
+                }
             } catch(SecurityException e) {
                 //削除が行えなくても、特に対策は無いので次へ進む
             }
