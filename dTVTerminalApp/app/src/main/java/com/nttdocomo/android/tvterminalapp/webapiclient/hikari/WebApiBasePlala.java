@@ -175,12 +175,12 @@ public class WebApiBasePlala {
     /**
      * マイチャンネル登録位置の上限値
      */
-    protected static final int MY_CHANNEL_MAX_INDEX = 45;
+    public static final int MY_CHANNEL_MAX_INDEX = 16;
 
     /**
      * チャンネルのアダルトタイプ(adult)
      */
-    protected static final String MY_CHANNEL_ADULT_TYPE_ADULT = "adult";
+    public static final String MY_CHANNEL_ADULT_TYPE_ADULT = "adult";
 
     /**
      * チャンネルのアダルトタイプ(空値)
@@ -190,7 +190,7 @@ public class WebApiBasePlala {
     /**
      * チャンネルのパレンタル設定値(G)
      */
-    protected static final String MY_CHANNEL_R_VALUE_G = "G";
+    public static final String MY_CHANNEL_R_VALUE_G = "G";
 
     /**
      * チャンネルのパレンタル設定値(PG-12)

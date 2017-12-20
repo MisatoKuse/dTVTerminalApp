@@ -61,4 +61,9 @@
 
     <!--//チャンネルリスト-->
     <color name="list_view_divider">#222222</color>
+
+    <!--//マイ番組表設定-->
+    <color name="item_num_black">#000000</color>
+    <color name="item_num_register_bg_black">#FFFFFF</color>
+    <color name="item_num_unregister_bg_black">#333333</color>
 </resources>

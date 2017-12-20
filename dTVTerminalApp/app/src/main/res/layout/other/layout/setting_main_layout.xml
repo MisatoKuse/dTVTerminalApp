@@ -45,5 +45,12 @@
         android:text="再ペアリング"
         android:textColor="#ffffffff"/>
 
+    <Button
+        android:id="@+id/setting_activity_btn_to_my_program_list_setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="MY番組表設定"
+        android:textColor="#ffffffff"/>
+
 
 </LinearLayout>
