@@ -69,13 +69,13 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     private Context mContext = null;
     private RemoteControlRelayClient mRemoteControlRelayClient = null;
 
-    // タイムアウト時間
+    /** タイムアウト時間 */
     public final static int LOAD_PAGE_DELAY_TIME = 1000;
 
-    // クリップ対象
+    /** クリップ対象 */
     private String mClipTarget = null;
 
-    // クリップ未登録状態
+    /** クリップ未登録状態 */
     private static final String CLIP_RESULT_STATUS = "1";
 
     /** dアカウント設定アプリ登録処理 */
