@@ -55,14 +55,6 @@ public class MyChannelRegisterWebClient
     /**
      * マイチャンネル登録取得
      *
-     * @param myChannelRegisterJsonParserCallback コールバックTODO:
-     * 本WebAPIには通常のパラメータが無く、基底クラスで追加するサービストークンのみとなる。）
-     * TODO: 仕様確定後に基底クラスへサービストークンの処理の追加が必要
-     * @return パラメータエラー等が発生した場合はfalse
-     */
-    /**
-     * マイチャンネル登録取得
-     *
      * @param serviceId                           サービスID
      * @param title                               　チャンネル名
      * @param rValue                              　チャンネルのパレンタル設定値

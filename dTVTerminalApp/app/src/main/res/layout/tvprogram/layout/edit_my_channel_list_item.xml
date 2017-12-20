@@ -44,7 +44,7 @@
 			android:layout_centerVertical="true"
 			android:layout_marginEnd="10dp"
 			android:textColor="@android:color/white"
-			android:background="@drawable/edit_channel_list_style"
+			android:background="@drawable/edit_channel_list_item_bt_style"
 			android:text="+"/>
 
 		<TextView

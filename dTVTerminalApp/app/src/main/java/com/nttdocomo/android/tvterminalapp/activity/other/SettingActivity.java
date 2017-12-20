@@ -118,9 +118,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             startActivity(intent);
         } else if (tappedItemName.equals(itemName[5])) {
             //TODO マイ番組表連携
-//            startActivity(MyChannelEditActivity.class, null);
-            startActivity(SearchTopActivity.class, null);
-            Toast.makeText(this, "マイ番組表設定画面が完成するまでの仮遷移", Toast.LENGTH_SHORT).show();
+            startActivity(MyChannelEditActivity.class, null);
         } else if (tappedItemName.equals(itemName[7])) {
             //ダウンロードコンテンツ保存先設定画面への遷移
             Intent intent = new Intent(this, SettingDownloadPathActivity.class);
