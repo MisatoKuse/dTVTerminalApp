@@ -287,4 +287,8 @@
         <item>プライバシーポリシー(TBD)</item>
         <item>利用規約(TBD)</item>
     </string-array>
+
+    <!-- dアカウント登録 -->
+    <string name="d_account_regist_error">dアカウントが取得できませんでした</string>
+
 </resources>
