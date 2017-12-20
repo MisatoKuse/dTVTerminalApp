@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -219,7 +220,12 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
         if (mLoadMoreView == view || mActivity == null) {
             return;
         }
-        ((BaseActivity) mActivity).startActivity(DtvContentsDetailActivity.class, null);
+        if (view == getActivity().findViewById(R.id.item_common_result_clip_tv)) {
+            //TODO:クリップ処理実装
+            Toast.makeText(getActivity(), "クリップしました", Toast.LENGTH_SHORT).show();
+        } else {
+            ((BaseActivity) mActivity).startActivity(DtvContentsDetailActivity.class, null);
+        }
     }
 
     @Override

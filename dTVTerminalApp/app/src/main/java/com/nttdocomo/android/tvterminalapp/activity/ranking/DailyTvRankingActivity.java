@@ -13,6 +13,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -265,7 +266,12 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
         if (mLoadMoreView == view) {
             return;
         }
-        startActivity(DtvContentsDetailActivity.class, null);
+        if (view == findViewById(R.id.item_common_result_clip_tv)) {
+            //TODO:クリップ処理実装
+            Toast.makeText(this, "クリップしました", Toast.LENGTH_SHORT).show();
+        } else {
+            startActivity(DtvContentsDetailActivity.class, null);
+        }
     }
 
     @Override
@@ -325,6 +331,24 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
                     .get(JsonContents.META_RESPONSE_DISPLAY_START_DATE));
             rankingContentInfo.setSearchOk(dailyRankMapList.get(i)
                     .get(JsonContents.META_RESPONSE_SEARCH_OK));
+            rankingContentInfo.setType(dailyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_TYPE));
+            rankingContentInfo.setCrid(dailyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_CRID));
+            rankingContentInfo.setServiceId(dailyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_SERVICE_ID));
+            rankingContentInfo.setEventId(dailyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_EVENT_ID));
+            rankingContentInfo.setTitleId(dailyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_TITLE_ID));
+            rankingContentInfo.setRValue(dailyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_R_VALUE));
+            rankingContentInfo.setLinearStartDate(dailyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_AVAIL_START_DATE));
+            rankingContentInfo.setLinearEndDate(dailyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_AVAIL_END_DATE));
+            rankingContentInfo.setDtv(dailyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_DTV));
 
             rankingContentsDataList.add(rankingContentInfo);
             DTVTLogger.info("RankingContentInfo " + rankingContentInfo.getRank());
