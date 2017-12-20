@@ -26,14 +26,14 @@ public class ContentsData {
     private int mAllowedUse = 0;
 
     //デバイス名
-    private String deviceName = null;
+    private String mDeviceName = null;
 
     public String getDeviceName() {
-        return deviceName;
+        return mDeviceName;
     }
 
     public void setDeviceName(String deviceName) {
-        this.deviceName = deviceName;
+        this.mDeviceName = deviceName;
     }
 
     public String getRank() {
