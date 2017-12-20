@@ -4,15 +4,12 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
-import android.os.AsyncTask;
-
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
-import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,9 +20,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class VodClipJsonParser extends AsyncTask<Object, Object, Object> {
+public class VodClipJsonParser {
 
-    private VodClipWebClient.VodClipJsonParserCallback mVodClipJsonParserCallback;
     // オブジェクトクラスの定義
     private VodClipList mVodClipList;
 
@@ -33,42 +29,6 @@ public class VodClipJsonParser extends AsyncTask<Object, Object, Object> {
             JsonContents.META_RESPONSE_LOWER_LIMIT, JsonContents.META_RESPONSE_OFFSET,
             JsonContents.META_RESPONSE_COUNT};
 
-//    public static final String[] listPara = {VODCLIP_LIST_CRID, VODCLIP_LIST_CID, VODCLIP_LIST_TITLE_ID,
-//            VODCLIP_LIST_EPISODE_ID, VODCLIP_LIST_TITLE, VODCLIP_LIST_EPITITLE, VODCLIP_LIST_DISP_TYPE,
-//            VODCLIP_LIST_DISPLAY_START_DATE, VODCLIP_LIST_DISPLAY_END_DATE, VODCLIP_LIST_AVAIL_START_DATE,
-//            VODCLIP_LIST_AVAIL_END_DATE, VODCLIP_LIST_PUBLISH_START_DATE, VODCLIP_LIST_PUBLISH_END_DATE,
-//            VODCLIP_LIST_NEWA_START_DATE, VODCLIP_LIST_NEWA_END_DATE, VODCLIP_LIST_COPYRIGHT,
-//            VODCLIP_LIST_THUMB, VODCLIP_LIST_DUR, VODCLIP_LIST_DEMONG, VODCLIP_LIST_BVFLG, VODCLIP_LIST_4KFLG,
-//            VODCLIP_LIST_HDRFLG, VODCLIP_LIST_AVAIL_STATUS, VODCLIP_LIST_DELIVERY, VODCLIP_LIST_R_VALUE,
-//            VODCLIP_LIST_ADULT, VODCLIP_LIST_MS, VODCLIP_LIST_NG_FUNC, VODCLIP_LIST_GENRE_ID_ARRAY, VODCLIP_LIST_DTV};
-
-    /**
-     * コンストラクタ
-     *
-     * @param mVodClipJsonParserCallback
-     */
-    public VodClipJsonParser(VodClipWebClient.VodClipJsonParserCallback mVodClipJsonParserCallback) {
-        this.mVodClipJsonParserCallback = mVodClipJsonParserCallback;
-    }
-
-    @Override
-    protected void onPostExecute(Object s) {
-        mVodClipJsonParserCallback.onVodClipJsonParsed((List<VodClipList>) s);
-    }
-
-    @Override
-    protected Object doInBackground(Object... strings) {
-        String result = (String) strings[0];
-        List<VodClipList> resultList = VodClipListSender(result);
-        return resultList;
-    }
-
-    /**
-     * VodクリップJsonデータを解析する
-     *
-     * @param jsonStr
-     * @return
-     */
     public List<VodClipList> VodClipListSender(String jsonStr) {
 
         mVodClipList = new VodClipList();
@@ -77,7 +37,7 @@ public class VodClipJsonParser extends AsyncTask<Object, Object, Object> {
             JSONObject jsonObj = new JSONObject(jsonStr);
             sendStatus(jsonObj);
             // **FindBugs** Bad practice FindBugはこのヌルチェックが無用と警告するが、将来的にcatch (Exception e)は消すはずなので残す
-            if (jsonObj.isNull(JsonContents.META_RESPONSE_LIST)) {
+            if (!jsonObj.isNull(JsonContents.META_RESPONSE_LIST)) {
                 JSONArray arrayList = jsonObj.getJSONArray(JsonContents.META_RESPONSE_LIST);
                 sendVcList(arrayList);
             }
@@ -92,15 +52,10 @@ public class VodClipJsonParser extends AsyncTask<Object, Object, Object> {
         return null;
     }
 
-    /**
-     * statusの値をMapでオブジェクトクラスに渡す
-     *
-     * @param jsonObj
-     */
     public void sendStatus(JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
-            HashMap<String, String> map = new HashMap<String, String>();
+            HashMap<String, String> map = new HashMap<>();
             if (!jsonObj.isNull(JsonContents.META_RESPONSE_STATUS)) {
                 String status = jsonObj.getString(JsonContents.META_RESPONSE_STATUS);
                 map.put(JsonContents.META_RESPONSE_STATUS, status);
@@ -116,11 +71,9 @@ public class VodClipJsonParser extends AsyncTask<Object, Object, Object> {
                     }
                 }
             }
-
             if (mVodClipList != null) {
                 mVodClipList.setVcMap(map);
             }
-
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
@@ -131,12 +84,9 @@ public class VodClipJsonParser extends AsyncTask<Object, Object, Object> {
 
     /**
      * コンテンツのList<HashMap>をオブジェクトクラスに格納
-     *
-     * @param arrayList
      */
     public void sendVcList(JSONArray arrayList) {
         try {
-            // コンテンツリストのList<HashMap>を用意
             List<HashMap<String, String>> vcList = new ArrayList<>();
             // リストの数だけまわす
             for (int i = 0; i < arrayList.length(); i++) {
@@ -179,9 +129,9 @@ public class VodClipJsonParser extends AsyncTask<Object, Object, Object> {
                         }
                     }
                 }
+                // i番目のMapをListにadd
                 vcList.add(vcListMap);
             }
-
             // リスト数ぶんの格納が終わったらオブジェクトクラスにList<HashMap>でset
             if (mVodClipList != null) {
                 mVodClipList.setVcList(vcList);

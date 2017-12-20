@@ -524,8 +524,6 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
         }
     }
 
-    private static final int sLoadPageDelayTime = 500;
-
     @Override
     public void onScroll(SearchBaseFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
@@ -545,7 +543,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
                 public void run() {
                     setSearchData(null);
                 }
-            }, sLoadPageDelayTime);
+            }, LOAD_PAGE_DELAY_TIME);
         }
     }
 

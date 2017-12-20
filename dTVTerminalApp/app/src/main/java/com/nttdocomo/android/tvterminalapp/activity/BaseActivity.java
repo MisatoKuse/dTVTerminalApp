@@ -46,7 +46,7 @@ import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
  * 「Activity」全体にとって、共通の機能があれば、追加すること
  */
 
-public class BaseActivity extends FragmentActivity implements MenuDisplayEventListener, DlnaDevListListener, View.OnClickListener, RemoteControllerView.OnStartRemoteControllerUIListener{
+public class BaseActivity extends FragmentActivity implements MenuDisplayEventListener, DlnaDevListListener, View.OnClickListener, RemoteControllerView.OnStartRemoteControllerUIListener {
 
     private LinearLayout baseLinearLayout;
     private RelativeLayout headerLayout;
@@ -57,6 +57,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     private RemoteControllerView remoteControllerView = null;
     private Context mContext = null;
     private RemoteControlRelayClient mRemoteControlRelayClient = null;
+
+    // タイムアウト時間
+    public final static int LOAD_PAGE_DELAY_TIME = 1000;
 
     /**
      * Created on 2017/09/21.
@@ -139,7 +142,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     protected void enableStbStatusIcon(boolean isOn) {
         if (this instanceof LaunchActivity
                 //|| this instanceof RecordedListActivity
-                || this instanceof DtvContentsDetailActivity){
+                || this instanceof DtvContentsDetailActivity) {
             return;
         }
         if (null != mStbStatusIcon) {
@@ -297,7 +300,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         DTVTLogger.start();
         if (this instanceof LaunchActivity
                 //|| this instanceof RecordedListActivity
-                || this instanceof DtvContentsDetailActivity){
+                || this instanceof DtvContentsDetailActivity) {
             DTVTLogger.end();
             return;
         }
@@ -324,7 +327,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     private static final int MIN_CLICK_DELAY_TIME = 1000;
     private long lastClickTime;
 
-    public Handler ｍRerayClientHandler= new Handler() {
+    public Handler ｍRerayClientHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             String message = "OK";
@@ -333,8 +336,8 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                     menuRemoteController();
                     break;
                 default:
-                    int resultcode = ((RemoteControlRelayClient.ResponseMessage)msg.obj).getResultCode();
-                    switch (resultcode){
+                    int resultcode = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getResultCode();
+                    switch (resultcode) {
                         case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_APPLICATION_NOT_INSTALL:
                             message = "APPLICATION_NOT_INSTALL";
                             break;
@@ -583,7 +586,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         RelativeLayout layout = findViewById(R.id.base_remote_controller_rl);
         remoteControllerView = layout.findViewById(R.id.remote_control_view);
         remoteControllerView.init(this);
-        if(this instanceof DtvContentsDetailActivity) {
+        if (this instanceof DtvContentsDetailActivity) {
             // nop.
             DTVTLogger.debug("DtvContentsDetailActivity");
         } else {
@@ -667,10 +670,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     /**
      * リモートコントローラーViewのVisibilityを変更
+     *
      * @param visibility
      */
     protected void setRemoteControllerViewVisibility(int visibility) {
-        if(remoteControllerView != null) {
+        if (remoteControllerView != null) {
             findViewById(R.id.base_remote_controller_rl).setVisibility(visibility);
         }
     }

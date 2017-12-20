@@ -236,8 +236,6 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
         }
     }
 
-    private static final int sLoadPageDelayTime = 1000;
-
     @Override
     public void onScrollStateChanged(ClipListBaseFragment fragment, AbsListView absListView, int scrollState) {
         synchronized (this) {
@@ -282,7 +280,7 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
                                 break;
                         }
                     }
-                }, sLoadPageDelayTime);
+                }, LOAD_PAGE_DELAY_TIME);
             }
         }
     }
@@ -427,7 +425,4 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
         int i= mViewPager.getCurrentItem();
         return mClipListFragmentFactory.createFragment(i, this);
     }
-
-
-
 }

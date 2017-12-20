@@ -165,62 +165,49 @@ public class RankingTopDataProvider implements
     }
 
     /**
-     * WeeklyTvRankingActivityからのデータ取得要求
+     * genreIdを取得する
      */
-    public void getWeeklyRankingData(int tabPageNo) {
+    public String getGenreId(int tabPageNo) {
         // TODO ジャンルIDを設定する
         String genreId = null;
         switch (tabPageNo) {
             case RankingConstants.RANKING_PAGE_NO_OF_SYNTHESIS: //総合
                 // ジャンルID 指定なし
                 genreId = RankingConstants.RANKING_GENRE_ID_SYNTHESIS;
-                break;
+                return genreId;
             case RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_MOVIE: // 海外映画
                 genreId = RankingConstants.RANKING_GENRE_ID_OVERSEAS_MOVIE;
-                break;
+                return genreId;
             case RankingConstants.RANKING_PAGE_NO_OF_DOMESTIC_MOVIE: // 国内映画
                 genreId = RankingConstants.RANKING_GENRE_ID_DOMESTIC_MOVIE;
-                break;
+                return genreId;
             case RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_CHANNEL: // 海外TV番組・ドラマ
                 genreId = RankingConstants.RANKING_GENRE_ID_OVERSEAS_CHANNEL;
-                break;
+                return genreId;
             default:
-                break;
-        }
-        // データを取得
-        List<Map<String, String>> weeklyRankList = getWeeklyRankListData(genreId);
-        if (weeklyRankList != null && weeklyRankList.size() > 0) {
-            sendWeeklyGenreRankListData(weeklyRankList, genreId);
+                return genreId;
         }
     }
 
     /**
-     * VideoRankingActivityからのデータ取得要求
+     * ビデオランキング
+     * データを取得する
      */
-    public void getVideoRankingData(int tabPageNo) {
-        // TODO ジャンルIDを設定する
-        String genreId = null;
-        switch (tabPageNo) {
-            case RankingConstants.RANKING_PAGE_NO_OF_SYNTHESIS: //総合
-                // ジャンルID 指定なし
-                genreId = RankingConstants.RANKING_GENRE_ID_SYNTHESIS;
-                break;
-            case RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_MOVIE: // 海外映画
-                genreId = RankingConstants.RANKING_GENRE_ID_OVERSEAS_MOVIE;
-                break;
-            case RankingConstants.RANKING_PAGE_NO_OF_DOMESTIC_MOVIE: // 国内映画
-                genreId = RankingConstants.RANKING_GENRE_ID_DOMESTIC_MOVIE;
-                break;
-            case RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_CHANNEL: // 海外TV番組・ドラマ
-                genreId = RankingConstants.RANKING_GENRE_ID_OVERSEAS_CHANNEL;
-                break;
-            default:
-                break;
-        }
-        // データを取得
+    public void getVideoRankingData(String genreId) {
         List<Map<String, String>> videoRankList = getVideoRankListData(genreId);
         if (videoRankList != null && videoRankList.size() > 0) {
             sendVideoGenreRankListData(videoRankList, genreId);
+        }
+    }
+
+    /**
+     * 週間ランキング
+     * データを取得する
+     */
+    public void getWeeklyRankingData(String genreId) {
+        List<Map<String, String>> weeklyRankList = getWeeklyRankListData(genreId);
+        if (weeklyRankList != null && weeklyRankList.size() > 0) {
+            sendWeeklyGenreRankListData(weeklyRankList, genreId);
         }
     }
 

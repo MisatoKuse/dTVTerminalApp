@@ -48,7 +48,6 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
     private HorizontalScrollView mTabScrollView;
     private LinearLayout mLinearLayout;
     private ViewPager mViewPager;
-    private static final int sLoadPageDelayTime = 1000;
 
     //標準タブ数
     private static final int DEFAULT_TAB_MAX = 4;
@@ -175,7 +174,7 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
      * @param tabPageNo
      */
     private void getGenreData(int tabPageNo) {
-        mRankingDataProvider.getVideoRankingData(tabPageNo);
+        mRankingDataProvider.getVideoRankingData(mRankingDataProvider.getGenreId(tabPageNo));
     }
 
     /**
@@ -379,7 +378,7 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
                     public void run() {
                         getGenreData(mViewPager.getCurrentItem());
                     }
-                }, sLoadPageDelayTime);
+                }, LOAD_PAGE_DELAY_TIME);
             }
         }
 

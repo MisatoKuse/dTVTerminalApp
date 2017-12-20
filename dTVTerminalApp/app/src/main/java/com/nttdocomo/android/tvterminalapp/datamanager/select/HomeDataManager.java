@@ -17,13 +17,10 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvScheduleLi
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VodClipListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WeeklyRankListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendVideoXmlParser;
 
 import java.util.List;
 import java.util.Map;
-
-import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CTPICURL1;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_TITLE;
-
 
 public class HomeDataManager {
 
@@ -90,7 +87,7 @@ public class HomeDataManager {
      */
     public List<Map<String, String>> selectRecommendChListHomeData() {
         //ホーム画面に必要な列を列挙する
-        String[] columns = {RECOMMENDVIDEO_LIST_TITLE, RECOMMENDVIDEO_LIST_CTPICURL1};
+        String[] columns = {RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_TITLE, RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CTPICURL1};
 
         //Daoクラス使用準備
         DBHelper recommendChListDBHelper = new DBHelper(mContext);
@@ -111,7 +108,7 @@ public class HomeDataManager {
      */
     public List<Map<String, String>> selectRecommendVdListHomeData() {
         //ホーム画面に必要な列を列挙する
-        String[] columns = {RECOMMENDVIDEO_LIST_TITLE, RECOMMENDVIDEO_LIST_CTPICURL1};
+        String[] columns = {RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_TITLE, RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CTPICURL1};
 
         //Daoクラス使用準備
         DBHelper recommendVdListDBHelper = new DBHelper(mContext);

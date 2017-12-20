@@ -265,8 +265,6 @@ public class WatchingVideoListActivity extends BaseActivity implements View.OnCl
         }
     }
 
-    private static final int sLoadPageDelayTime = 1000;
-
     private void displayMoreData(boolean b) {
         if (null != mListView && null != mLoadMoreView) {
             if (b) {
@@ -347,7 +345,7 @@ public class WatchingVideoListActivity extends BaseActivity implements View.OnCl
                         mWatchListenVideoListDataProvider.getWatchListenVideoData(offset);
 
                     }
-                }, sLoadPageDelayTime);
+                }, LOAD_PAGE_DELAY_TIME);
             }
         }
 
