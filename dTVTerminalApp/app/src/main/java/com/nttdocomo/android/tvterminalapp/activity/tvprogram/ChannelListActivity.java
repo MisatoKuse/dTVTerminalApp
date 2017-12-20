@@ -70,7 +70,7 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
     private final int CHANNEL_LIST_TAB_TER = 1;
     private final int CHANNEL_LIST_TAB_BS = 2;
     private final int CHANNEL_LIST_TAB_DTV = 3;
-    private final int CHANNEL_LIST_TAB_DELAY_TIME=900;
+    private final int CHANNEL_LIST_TAB_DELAY_TIME=1300;
 
     private Handler mHandle= new Handler();
 
@@ -204,23 +204,23 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
             DTVTLogger.start();
             //STBにチャンネル機能を提供していないで、仮データを使うために、本番ソースを一時コメントしている。
             //本番ソース begin
-//            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
-//            if (mDlnaProvBsChList.start(dlnaDmsItem, getActivity())) {
-//                boolean ret=mDlnaProvBsChList.browseChListDms();
-//                if(!ret){
-//                    onError("Get BS channel list datas failed");
-//                }
-//            }
-            //本番ソース end
-            //仮ソース begin
             DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
-            if (mDlnaProvRecVideo.start(dlnaDmsItem, getActivity())) {
-                boolean ret=mDlnaProvRecVideo.browseRecVideoDms();
+            if (mDlnaProvBsChList.start(dlnaDmsItem, getActivity())) {
+                boolean ret=mDlnaProvBsChList.browseChListDms();
                 if(!ret){
-                    onError("Get recoreded video datas failed");
+                    onError("Get BS channel list datas failed");
                 }
             }
-            testType=ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS;   //test
+            //本番ソース end
+            //仮ソース begin
+//            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
+//            if (mDlnaProvRecVideo.start(dlnaDmsItem, getActivity())) {
+//                boolean ret=mDlnaProvRecVideo.browseRecVideoDms();
+//                if(!ret){
+//                    onError("Get recoreded video datas failed");
+//                }
+//            }
+//            testType=ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS;   //test
             //仮ソース end
             DTVTLogger.end();
         }
@@ -245,20 +245,20 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
             DTVTLogger.start();
             //STBにチャンネル機能を提供していないで、仮データを使うために、本番ソースを一時コメントしている。
             //本番ソース begin
-//            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
-//            if (mDlnaProvTerChList.start(dlnaDmsItem, getActivity())) {
-//                boolean ret=mDlnaProvTerChList.browseChListDms();
-//                if(!ret){
-//                    onError("Get BS channel list datas failed");
-//                }
-//            }
+            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
+            if (mDlnaProvTerChList.start(dlnaDmsItem, getActivity())) {
+                boolean ret=mDlnaProvTerChList.browseChListDms();
+                if(!ret){
+                    onError("Get Ter channel list datas failed");
+                }
+            }
             //本番ソース end
             //仮ソース begin
-            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
-            if (mDlnaProvRecVideo.start(dlnaDmsItem, getActivity())) {
-                mDlnaProvRecVideo.browseRecVideoDms();
-            }
-            testType=ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER;   //test
+//            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
+//            if (mDlnaProvRecVideo.start(dlnaDmsItem, getActivity())) {
+//                mDlnaProvRecVideo.browseRecVideoDms();
+//            }
+//            testType=ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER;   //test
             //仮ソース end
             DTVTLogger.end();
         }
@@ -597,21 +597,21 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
         //final ChannelListFragment fragment= mFactory.createFragment(pos, this, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS);
         //test b
         DlnaRecVideoInfo curInfo2=new DlnaRecVideoInfo();
-        if(testType==ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS){
+        if(testType== ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS){
             for(int i=0;i<curInfo.size();++i){
                 curInfo2.addItemByValue(curInfo.get(i));
                 curInfo2.get(i).mTitle="BSチャンネル " + i;
             }
             pos=2;
-        } else if(testType==ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER){
+        } else if(testType== ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER){
             for(int i=0;i<curInfo.size();++i){
                 curInfo2.addItemByValue(curInfo.get(i));
                 curInfo2.get(i).mTitle="地上波チャンネル " + i;
             }
             pos=1;
-        } else if(testType==ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI){
+        } else if(testType== ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI){
             pos=0;
-        } else if(testType==ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_DTV){
+        } else if(testType== ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_DTV){
             pos=3;
         }
         //test e
@@ -653,9 +653,6 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
         DTVTLogger.start();
         int pos=mViewPager.getCurrentItem();
         final ChannelListFragment fragment= mFactory.createFragment(pos, this, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER);
-        for(int i=0;i<curInfo.size();++i){
-            fragment.addData(curInfo.get(i));
-        }
         ArrayList<Object> tmp=new ArrayList();
         for(int i=0;i<curInfo.size();++i){
             Object item=curInfo.get(i);
@@ -701,7 +698,7 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
      */
     private ChannelListAdapter.ChListDataType getTypeFromViewPagerIndex(int viewPagerIndex){
         DTVTLogger.start();
-        ChannelListAdapter.ChListDataType ret=ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_INVALID;
+        ChannelListAdapter.ChListDataType ret= ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_INVALID;
         switch (viewPagerIndex){
             case 0:
                 ret= ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI;
@@ -812,22 +809,29 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
      */
     private void paging(ChannelListFragment fragment, ArrayList<Object> list) {
         DTVTLogger.start();
-        if(null==fragment || null==list){
-            return;
-        }
-        int addedCnt=0;
-        for(Object objBs: list){
-            if(addedCnt>=CH_LIST_ACTI_PAGING_NUMBER){
-                break;
+        final ChannelListFragment fragment2=fragment;
+        final ArrayList<Object> list2=list;
+        mHandle.post(new Runnable() {
+            @Override
+            public void run() {
+                if(null==fragment2 || null==list2){
+                    return;
+                }
+                int addedCnt=0;
+                for(Object objBs: list2){
+                    if(addedCnt>=CH_LIST_ACTI_PAGING_NUMBER){
+                        break;
+                    }
+                    boolean has=fragment2.hasData(objBs);
+                    if(!has){
+                        fragment2.addData(objBs);
+                        ++addedCnt;
+                    }
+                }
+                noticeRefresh(fragment2);
             }
-            boolean has=fragment.hasData(objBs);
-            if(!has){
-                fragment.addData(objBs);
-                ++addedCnt;
-            }
-        }
-        //fragment.noticeRefresh();
-        noticeRefresh(fragment);
+        });
+
         DTVTLogger.end();
     }
 
@@ -857,17 +861,22 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
             DTVTLogger.end();
             return;
         }
-        int tab=mViewPager.getCurrentItem();
-        switch (tab){
-            case CHANNEL_LIST_TAB_BS:
-                displayMore(false, CHANNEL_LIST_TAB_BS, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS);
-                showMessage("BSチャンネル取得できなせんでした");
-                break;
-            case CHANNEL_LIST_TAB_TER:
-                displayMore(false, CHANNEL_LIST_TAB_TER, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER);
-                showMessage("地上波チャンネル取得できなせんでした");
-                break;
-        }
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                int tab=mViewPager.getCurrentItem();
+                switch (tab){
+                    case CHANNEL_LIST_TAB_BS:
+                        displayMore(false, CHANNEL_LIST_TAB_BS, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS);
+                        showMessage("BSチャンネル取得できなせんでした");
+                        break;
+                    case CHANNEL_LIST_TAB_TER:
+                        displayMore(false, CHANNEL_LIST_TAB_TER, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER);
+                        showMessage("地上波チャンネル取得できなせんでした");
+                        break;
+                }
+            }
+        });
         DTVTLogger.end();
     }
 

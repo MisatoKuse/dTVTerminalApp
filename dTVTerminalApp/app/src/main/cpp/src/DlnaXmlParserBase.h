@@ -58,6 +58,9 @@ namespace dtvt {
 
     protected:
         void setXmlItemValues(StringVector& out, const int key, XmlItemMap& itemMap);
+        void next(xmlNodePtr& xmlChildNode, XmlItemMap& itemXmlItemMap, bool& isItVideo );
+        void setXmlItemMapDefaultKey(XmlItemMap& itemMap, int key, string& defValue);
+        bool hasXmlItemMapKey(XmlItemMap& itemMap, int key);
 
     private:
         DLNA_MSG_ID mDlnaMsgIdD;

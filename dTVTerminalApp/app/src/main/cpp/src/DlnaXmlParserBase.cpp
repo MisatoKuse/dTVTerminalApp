@@ -66,4 +66,24 @@ namespace dtvt {
         }
     }
 
+    void DlnaXmlParserBase::next(xmlNodePtr& xmlChildNode, XmlItemMap& itemXmlItemMap, bool& isItVideo ){
+        itemXmlItemMap.clear();
+        isItVideo=false;
+        if(NULL!=xmlChildNode){
+            xmlChildNode = xmlChildNode->next;
+        }
+    }
+
+    void DlnaXmlParserBase::setXmlItemMapDefaultKey(XmlItemMap& itemMap, int key, string& defValue){
+        XmlItemMap::iterator i= itemMap.find(key);
+        if(i==itemMap.end()){
+            itemMap[key]=defValue;
+        }
+    }
+
+    bool DlnaXmlParserBase::hasXmlItemMapKey(XmlItemMap& itemMap, int key){
+        XmlItemMap::iterator i= itemMap.find(key);
+        return i!=itemMap.end();
+    }
+
 } //end of dtvt

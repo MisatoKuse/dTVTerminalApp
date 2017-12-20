@@ -55,11 +55,11 @@ namespace dtvt {
     const char * const RecVideoParse_Field_Videos       ="Videos";
 
     //ビデオ種類
-    const char * const RecVideoType_Field_Mp4           ="http-get:*:video/mp4";
-    //const char * const RecVideoType_Field_Mpeg          ="http-get:*:video/mpeg";
-    const char * const RecVideoType_Field_Dtcp           ="http-get:*:application/x-dtcp1;";
-    const char * const RecVideoType_Field_Mp4_Ret           ="http-get:*:video/mp4";
-    const char * const RecVideoType_Field_Dtcp_Ret           ="application/x-dtcp1";
+    const char * const RecVideoParse_Field_Mp4           ="http-get:*:video/mp4";
+    //const char * const RecVideoParse_Field_Mpeg          ="http-get:*:video/mpeg";
+    const char * const RecVideoParse_Field_Dtcp           ="http-get:*:application/x-dtcp1;";
+    const char * const RecVideoParse_Field_Mp4_Ret           ="http-get:*:video/mp4";
+    //const char * const RecVideoParse_Field_Dtcp_Ret           ="application/x-dtcp1";
 
 }   //namespace dtvt
 
