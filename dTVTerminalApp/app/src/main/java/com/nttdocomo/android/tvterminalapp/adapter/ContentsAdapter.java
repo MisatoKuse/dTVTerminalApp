@@ -33,11 +33,11 @@ public class ContentsAdapter extends BaseAdapter {
     //各Activityインスタンス
     private Context mContext = null;
     //リスト用データソース
-    private List<ContentsData> listData = null;
+    private List<ContentsData> mListData = null;
     //サムネイル取得用プロバイダー
     private ThumbnailProvider mThumbnailProvider = null;
     //表示項目のタイプ
-    private ActivityTypeItem type;
+    private ActivityTypeItem mType;
     //ビューの生成
     private LayoutInflater mInflater;
     //評価基準値
@@ -86,19 +86,19 @@ public class ContentsAdapter extends BaseAdapter {
     public ContentsAdapter(Context mContext, List<ContentsData> listData, ActivityTypeItem type) {
         this.mContext = mContext;
         mInflater = LayoutInflater.from(mContext);
-        this.listData = listData;
-        this.type = type;
+        this.mListData = listData;
+        this.mType = type;
         mThumbnailProvider = new ThumbnailProvider(mContext);
     }
 
     @Override
     public int getCount() {
-        return listData.size();
+        return mListData.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return listData.get(position);
+        return mListData.get(position);
     }
 
     @Override
@@ -124,7 +124,7 @@ public class ContentsAdapter extends BaseAdapter {
         }
         setShowDataVisibility(holder);
         //各アイテムデータを取得
-        ContentsData listContentInfo = listData.get(position);
+        ContentsData listContentInfo = mListData.get(position);
         // アイテムデータを設定する
         setContentsData(holder, listContentInfo);
 
@@ -145,7 +145,6 @@ public class ContentsAdapter extends BaseAdapter {
         setThumbnailData(holder, listContentInfo);
         setRatStarData(holder, listContentInfo);
         setRecodingReservationStatusData(holder, listContentInfo);
-        setChannelName(holder, listContentInfo);
         setRedordedRankData(holder, listContentInfo);
         setRedordedDownloadIcon(holder, listContentInfo);
         setDeviceName(holder,listContentInfo);
@@ -291,24 +290,12 @@ public class ContentsAdapter extends BaseAdapter {
     /**
      * データの設定（チャンネル名）
      */
-    private void setChannelName(ViewHolder holder, ContentsData listContentInfo) {
-        DTVTLogger.start("ChannelName = " + listContentInfo.getChannelName());
-        if (holder.tv_recording_reservation != null) {
-            holder.tv_channel_name.setVisibility(View.VISIBLE);
-            holder.tv_channel_name.setText(listContentInfo.getChannelName());
-        }
-        DTVTLogger.end();
-    }
-
-    /**
-     * データの設定（録画番組用チャンネル名）
-     */
     private void setRedordedRankData(ViewHolder holder, ContentsData listContentInfo) {
         DTVTLogger.start();
-        if (!TextUtils.isEmpty(listContentInfo.getRecordedChannelName())) {//ランク
+        if (!TextUtils.isEmpty(listContentInfo.getChannelName())) {//ランク
             holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
             holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
-            holder.tv_recorded_ch_name.setText(listContentInfo.getRecordedChannelName());
+            holder.tv_recorded_ch_name.setText(listContentInfo.getChannelName());
         }
     }
 
@@ -332,7 +319,7 @@ public class ContentsAdapter extends BaseAdapter {
         DTVTLogger.start();
         // TODO 録画予約一覧以外のパターンも共通項目以外を抽出し、修正する
         View view = null;
-        switch (type) {
+        switch (mType) {
             case TYPE_DAILY_RANK: // 今日のテレビランキング
             case TYPE_WEEKLY_RANK: // 週間ランキング
             case TYPE_VIDEO_RANK: // ビデオランキング
@@ -377,7 +364,7 @@ public class ContentsAdapter extends BaseAdapter {
         DTVTLogger.start();
         // TODO 録画予約一覧以外のパターンも共通項目以外を抽出し、修正する
         holder = setCommonListItem(holder, view);
-        switch (type) {
+        switch (mType) {
             case TYPE_DAILY_RANK: // 今日のテレビランキング
             case TYPE_WEEKLY_RANK: // 週間ランキング
             case TYPE_VIDEO_RANK: // ビデオランキング
@@ -387,7 +374,8 @@ public class ContentsAdapter extends BaseAdapter {
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
                 holder.tv_recording_reservation =
                         view.findViewById(R.id.item_common_result_recording_reservation_status);
-                holder.tv_channel_name = view.findViewById(R.id.item_common_result_channel_name);
+                holder.tv_recorded_hyphen = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
+                holder.tv_recorded_ch_name = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
                 break;
             case TYPE_RECORDED_LIST: // 録画番組一覧
                 holder.tv_recorded_hyphen = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
@@ -407,8 +395,7 @@ public class ContentsAdapter extends BaseAdapter {
      * データの設定
      */
     private void setShowDataVisibility(ViewHolder holder) {
-        DTVTLogger.start();
-        switch (type) {
+        switch (mType) {
             case TYPE_DAILY_RANK: // 今日のテレビランキング
             case TYPE_WEEKLY_RANK: // 週間ランキング
                 holder.ll_rating.setVisibility(View.GONE);
@@ -426,7 +413,6 @@ public class ContentsAdapter extends BaseAdapter {
                 holder.iv_thumbnail.setVisibility(View.GONE);
                 holder.rb_rating.setVisibility(View.GONE);
                 holder.tv_rating_num.setVisibility(View.GONE);
-                holder.tv_channel_name.setVisibility(View.VISIBLE);
                 break;
             case TYPE_RECORDED_LIST: // 録画番組一覧
                 holder.tv_rank.setVisibility(View.GONE);
@@ -478,11 +464,9 @@ public class ContentsAdapter extends BaseAdapter {
         TextView tv_line;
         // 録画予約ステータス
         TextView tv_recording_reservation = null;
-        // チャンネル名
-        TextView tv_channel_name = null;
         //ハイフン
         TextView tv_recorded_hyphen;
-        // 録画番組用チャンネル名
+        // チャンネル名
         TextView tv_recorded_ch_name;
         // STBデバイス名
         TextView stb_device_name = null;
