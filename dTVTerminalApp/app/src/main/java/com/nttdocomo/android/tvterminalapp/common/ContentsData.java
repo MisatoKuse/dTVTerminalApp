@@ -25,7 +25,27 @@ public class ContentsData {
     // 録画番組用 コピー残り回数
     private int mAllowedUse = 0;
     // クリップ状態
-    private String mSearchOk = "";
+    private String mSearchOk = null;
+    // タイプ
+    private String mType = null;
+    // コンテンツ識別子
+    private String mCrid = null;
+    // サービスID
+    private String mServiceId = null;
+    // イベントID
+    private String mEventId = null;
+    // タイトルID
+    private String mTitleId = null;
+    // dtvフラグ
+    private String mDtv = null;
+    // 番組のパレンタル設定値
+    private String mRValue = null;
+    // 放送開始日時
+    private String mLinearStartDate = null;
+    // 放送終了日時
+    private String mLinearEndDate = null;
+    // 視聴通知判定
+    private String mIsNotify = null;
 
     //デバイス名
     private String mDeviceName = null;
@@ -99,5 +119,85 @@ public class ContentsData {
 
     public void setAllowedUse(int allowedUse) {
         this.mAllowedUse = allowedUse;
+    }
+
+    public String getType() {
+        return mType;
+    }
+
+    public void setType(String mType) {
+        this.mType = mType;
+    }
+
+    public String getCrid() {
+        return mCrid;
+    }
+
+    public void setCrid(String mCrid) {
+        this.mCrid = mCrid;
+    }
+
+    public String getServiceId() {
+        return mServiceId;
+    }
+
+    public void setServiceId(String mServiceId) {
+        this.mServiceId = mServiceId;
+    }
+
+    public String getEventId() {
+        return mEventId;
+    }
+
+    public void setEventId(String mEventId) {
+        this.mEventId = mEventId;
+    }
+
+    public String getDtv() {
+        return mDtv;
+    }
+
+    public void setDtv(String mDtv) {
+        this.mDtv = mDtv;
+    }
+
+    public String getTitleId() {
+        return mTitleId;
+    }
+
+    public void setTitleId(String mTitleId) {
+        this.mTitleId = mTitleId;
+    }
+
+    public String getRValue() {
+        return mRValue;
+    }
+
+    public void setRValue(String mRValue) {
+        this.mRValue = mRValue;
+    }
+
+    public String getLinearStartDate() {
+        return mLinearStartDate;
+    }
+
+    public void setLinearStartDate(String mLinearStartDate) {
+        this.mLinearStartDate = mLinearStartDate;
+    }
+
+    public String getLinearEndDate() {
+        return mLinearEndDate;
+    }
+
+    public void setLinearEndDate(String mLinearEndDate) {
+        this.mLinearEndDate = mLinearEndDate;
+    }
+
+    public String isIsNotify() {
+        return mIsNotify;
+    }
+
+    public void setIsNotify(String mIsNotify) {
+        this.mIsNotify = mIsNotify;
     }
 }

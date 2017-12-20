@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -113,7 +114,7 @@ public class ContentsAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View view, ViewGroup parent) {
+    public View getView(final int position, View view, final ViewGroup parent) {
         ViewHolder holder = null;
 
         //ビューの再利用
@@ -130,9 +131,18 @@ public class ContentsAdapter extends BaseAdapter {
         }
         setShowDataVisibility(holder);
         //各アイテムデータを取得
-        ContentsData listContentInfo = mListData.get(position);
+        final ContentsData listContentInfo = mListData.get(position);
         // アイテムデータを設定する
         setContentsData(holder, listContentInfo);
+
+        TextView textView = view.findViewById(R.id.item_common_result_clip_tv);
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //クリップボタンのイベントを親に渡す
+                ((ListView) parent).performItemClick(view, position, R.id.item_common_result_clip_tv);
+            }
+        });
 
         return view;
     }
