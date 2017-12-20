@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.player;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -21,6 +22,7 @@ import android.os.PowerManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.Display;
@@ -32,6 +34,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -146,6 +149,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     private boolean mIsOncreateOk = false;
     private RecordingReservationContentsDetailInfo mRecordingReservationContentsDetailInfo = null;
     private AlertDialog.Builder mDialogBuilder = null;
+    private AlertDialog mRecordingReservationAlertDialog = null;
     private final int RECORDING_RESERVATION_DIALOG_INDEX_0 = 0;// 予約録画する
     private final int RECORDING_RESERVATION_DIALOG_INDEX_1 = 1;// キャンセル
 
@@ -1559,10 +1563,11 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     @Override
     public void onClickRecordingReservationIcon(View view) {
         // リスト表示用のアラートダイアログを表示
-        if (mDialogBuilder == null) {
+        if (mRecordingReservationAlertDialog == null) {
+            DTVTLogger.debug("Create Dialog");
             createRecordingReservationDialog();
         }
-        mDialogBuilder.show();
+        mRecordingReservationAlertDialog.show();
     }
 
     /**
@@ -1571,8 +1576,10 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     private void createRecordingReservationDialog() {
         DTVTLogger.start();
         final CharSequence[] items = getResources().getTextArray(R.array.recording_reservation_menu_dialog_item);
+        // TODO styleでカスタマイズする場合は切り替え
+        // mDialogBuilder = new AlertDialog.Builder(this, R.style.RecordingReservationMenuDialog);
         mDialogBuilder = new AlertDialog.Builder(this);
-        mDialogBuilder.setTitle("タイトル");
+        setRecordingReservationDialogStatus();
         mDialogBuilder.setItems(items,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int index) {
@@ -1589,21 +1596,39 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                             default:
                                 break;
                         }
-                        dialog.dismiss();
+                        mRecordingReservationAlertDialog.dismiss();
                     }
                 });
-        mDialogBuilder.create();
+        mDialogBuilder.setCancelable(false);
+        mRecordingReservationAlertDialog = mDialogBuilder.create();
         DTVTLogger.end();
     }
 
+    private void setRecordingReservationDialogStatus() {
+        // TODO ダイアログのデザインが必要になった場合切り替えて修正
+        mDialogBuilder.setTitle(getResources().getString(R.string.recordiong_reservation_menu_dialog_title));
+//        TextView titleTextView = new TextView(this);
+//        titleTextView.setGravity(View.TEXT_ALIGNMENT_CENTER);
+//        titleTextView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+//        titleTextView.setText(getResources().getString(R.string.recordiong_reservation_menu_dialog_title));
+//        titleTextView.setTextSize(R.dimen.recording_reservation_dialog_title_text_size);
+//        titleTextView.setTextColor(ContextCompat.getColor(this,R.color.recording_reservation_title_text_color));
+//        mDialogBuilder.setCustomTitle(titleTextView);
+    }
+
+    /**
+     * 開始時間と現在時刻の比較
+     * @return
+     */
     private boolean comparisonStartTime() {
         long nowTimeEpoch = DateUtils.getNowTimeFormatEpoch();
         long canRecordingReservationTime =
                 mRecordingReservationContentsDetailInfo.getStartTime() - (DateUtils.EPOCH_TIME_ONE_HOUR * 2);
-        if (nowTimeEpoch >= canRecordingReservationTime) {
+        if (nowTimeEpoch < canRecordingReservationTime) {
             // 開始時間2時間前を過ぎている場合
             return false;
         }
         return true;
     }
+
 }

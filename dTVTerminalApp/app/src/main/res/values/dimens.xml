@@ -128,4 +128,8 @@
     <dimen name="main_setting_list_height">60dp</dimen>
     <dimen name="main_setting_checkbox_margin">10dp</dimen>
     <dimen name="main_setting_quality_list_separate">1dp</dimen>
+
+    <!-- リモート録画予約ダイアログ -->
+    <dimen name="recording_reservation_dialog_title_text_size">16dp</dimen>
+    <dimen name="recording_reservation_dialog_item_text_size">16dp</dimen>
 </resources>

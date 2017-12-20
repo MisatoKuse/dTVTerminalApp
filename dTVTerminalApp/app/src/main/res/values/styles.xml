@@ -59,4 +59,17 @@
         <!-- チェック時の色 -->
         <item name="colorControlActivated">@color/white_text</item>
     </style>
+
+    <!-- リモート録画予約ダイアログ -->
+    <!-- TODO デザインが必要であれば
+    <style name="RecordingReservationMenuDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="windowMinWidthMajor">270dp</item>
+        <item name="android:windowBackground">@drawable/alert_background_1x</item>
+        <item name="android:textColorAlertDialogListItem">@color/recording_reservation_item_text_color</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:listDividerAlertDialog">@drawable/path_1x</item>
+        <item name="android:dividerHeight">1dp</item>
+        <item name="android:textSize">@dimen/recording_reservation_dialog_item_text_size</item>
+    </style>
+    -->
 </resources>
