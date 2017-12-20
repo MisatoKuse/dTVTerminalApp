@@ -318,7 +318,7 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public void onClick(View view) {
-        if (view == mMenuImageView) {
+        if (mMenuImageView.equals(view)) {
             onSampleGlobalMenuButton_PairLoginOk();
         }
     }
@@ -331,7 +331,7 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
             if (null == baseFragment || null == fragment.getRankingAdapter()) {
                 return;
             }
-            if (fragment != baseFragment) {
+            if (!fragment.equals(baseFragment)) {
                 return;
             }
 
@@ -355,7 +355,7 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
             if (null == baseFragment || null == fragment.getRankingAdapter()) {
                 return;
             }
-            if (fragment != baseFragment) {
+            if (!fragment.equals(baseFragment)) {
                 return;
             }
 

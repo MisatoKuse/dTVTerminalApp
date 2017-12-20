@@ -144,7 +144,7 @@ public class WatchingVideoListActivity extends BaseActivity implements View.OnCl
 
     @Override
     public void onClick(View view) {
-        if (view == mMenuImageView) {
+        if (mMenuImageView.equals(view)) {
             onSampleGlobalMenuButton_PairLoginOk();
         }
 
@@ -247,7 +247,7 @@ public class WatchingVideoListActivity extends BaseActivity implements View.OnCl
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        if (mLoadMoreView == view) {
+        if (mMenuImageView.equals(view)) {
             return;
         }
         startActivity(DtvContentsDetailActivity.class, null);

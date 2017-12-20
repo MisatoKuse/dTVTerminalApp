@@ -41,9 +41,9 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
     private LinearLayout mLinearLayout;
     private VodClipDataProvider mVodClipDataProvider;
     private TvClipDataProvider mTvClipDataProvider;
-    private final int NUM_PER_PAGE=10;
+    private final int NUM_PER_PAGE = 10;
     private boolean mIsCommunicating = false;
-    private ClipListFragmentFactory mClipListFragmentFactory=null;
+    private ClipListFragmentFactory mClipListFragmentFactory = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,60 +61,60 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void resetPaging() {
-        synchronized (this){
+        synchronized (this) {
             setCommunicatingStatus(false);
-            ClipListBaseFragment b=getCurrentFragment();
-            if(null!=b && null != b.mData){
-                b.mData.clear();
-                b.noticeRefresh();
+            ClipListBaseFragment baseFragment = getCurrentFragment();
+            if (null != baseFragment && null != baseFragment.mData) {
+                baseFragment.mData.clear();
+                baseFragment.noticeRefresh();
             }
         }
     }
 
-    private void setCommunicatingStatus(boolean b){
-        synchronized (this){
-            mIsCommunicating = b;
+    private void setCommunicatingStatus(boolean bool) {
+        synchronized (this) {
+            mIsCommunicating = bool;
         }
     }
 
-    private int getCurrentNumber(){
-        ClipListBaseFragment b=getCurrentFragment();
-        if(null==b || null==b.mData || 0==b.mData.size()){
+    private int getCurrentNumber() {
+        ClipListBaseFragment baseFragment = getCurrentFragment();
+        if (null == baseFragment || null == baseFragment.mData || 0 == baseFragment.mData.size()) {
             return 0;
         }
-        return b.mData.size()/NUM_PER_PAGE;
+        return baseFragment.mData.size() / NUM_PER_PAGE;
     }
 
-    private boolean isSkipTv(TvClipContentInfo tvClipContentInfo){
-        ClipListBaseFragment b= mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_TV, this);
-        if(null==b || null == b.mData || 0==b.mData.size()){
+    private boolean isSkipTv(TvClipContentInfo tvClipContentInfo) {
+        ClipListBaseFragment baseFragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_TV, this);
+        if (null == baseFragment || null == baseFragment.mData || 0 == baseFragment.mData.size()) {
             return false;
         }
 
-        if(null==tvClipContentInfo || 0==tvClipContentInfo.size() ){
+        if (null == tvClipContentInfo || 0 == tvClipContentInfo.size()) {
             return true;
         }
 
-        TvClipContentInfo.TvClipContentInfoItem item1= (TvClipContentInfo.TvClipContentInfoItem)b.mData.get(b.mData.size() -1 );
-        TvClipContentInfo.TvClipContentInfoItem item2 = tvClipContentInfo.get(tvClipContentInfo.size() -1 );
+        TvClipContentInfo.TvClipContentInfoItem item1 = (TvClipContentInfo.TvClipContentInfoItem) baseFragment.mData.get(baseFragment.mData.size() - 1);
+        TvClipContentInfo.TvClipContentInfoItem item2 = tvClipContentInfo.get(tvClipContentInfo.size() - 1);
         return tvClipContentInfo.isContentEqual(item1, item2);
     }
 
     private static final int CLIP_LIST_PAGE_NO_OF_TV = 0;
     private static final int CLIP_LIST_PAGE_NO_OF_VOD = 1;
 
-    private boolean isSkipVod(VodClipContentInfo vodClipContentInfo){
-        ClipListBaseFragment b= mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_VOD, this);
-        if(null==b || null == b.mData || 0==b.mData.size()){
+    private boolean isSkipVod(VodClipContentInfo vodClipContentInfo) {
+        ClipListBaseFragment baseFragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_VOD, this);
+        if (null == baseFragment || null == baseFragment.mData || 0 == baseFragment.mData.size()) {
             return false;
         }
 
-        if(null==vodClipContentInfo || 0==vodClipContentInfo.size() ){
+        if (null == vodClipContentInfo || 0 == vodClipContentInfo.size()) {
             return true;
         }
 
-        VodClipContentInfo.VodClipContentInfoItem item1= (VodClipContentInfo.VodClipContentInfoItem)b.mData.get(b.mData.size() -1 );
-        VodClipContentInfo.VodClipContentInfoItem item2 = vodClipContentInfo.get(vodClipContentInfo.size() -1 );
+        VodClipContentInfo.VodClipContentInfoItem item1 = (VodClipContentInfo.VodClipContentInfoItem) baseFragment.mData.get(baseFragment.mData.size() - 1);
+        VodClipContentInfo.VodClipContentInfoItem item2 = vodClipContentInfo.get(vodClipContentInfo.size() - 1);
         return vodClipContentInfo.isContentEqual(item1, item2);
     }
 
@@ -128,9 +128,9 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        for(int i=0;i<2; ++i){
-            ClipListBaseFragment b =mClipListFragmentFactory.createFragment(i, this);
-            if(null!=b){
+        for (int i = 0; i < 2; ++i) {
+            ClipListBaseFragment b = mClipListFragmentFactory.createFragment(i, this);
+            if (null != b) {
                 b.mData.clear();
             }
         }
@@ -138,7 +138,7 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void tvClipListCallback(TvClipContentInfo clipContentInfo) {
-        if(null == clipContentInfo || 0== clipContentInfo.size()){
+        if (null == clipContentInfo || 0 == clipContentInfo.size()) {
             //通信とJSON Parseに関してerror処理
             DTVTLogger.debug("ClipListActivity::TvClipListCallback, get data failed.");
             // TODO:エラーメッセージ表示はリスト画面上に表示する
@@ -146,22 +146,22 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
             return;
         }
 
-        if(0==clipContentInfo.size()){
+        if (0 == clipContentInfo.size()) {
             //doing
             resetCommunication();
             return;
         }
 
-        if(isSkipTv(clipContentInfo)){
+        if (isSkipTv(clipContentInfo)) {
             resetCommunication();
             return;
         }
 
         ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_TV, this);
 
-        int pageNumber =  getCurrentNumber();
-        for(int i= pageNumber*NUM_PER_PAGE;i<(pageNumber + 1)*NUM_PER_PAGE  && i<clipContentInfo.size();++i){
-            if(null!=fragment.mData) {
+        int pageNumber = getCurrentNumber();
+        for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE && i < clipContentInfo.size(); ++i) {
+            if (null != fragment.mData) {
                 fragment.mData.add(clipContentInfo.get(i));
             }
         }
@@ -174,7 +174,7 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void vodClipListCallback(VodClipContentInfo clipContentInfo) {
-        if(null == clipContentInfo || 0== clipContentInfo.size()){
+        if (null == clipContentInfo || 0 == clipContentInfo.size()) {
             //通信とJSON Parseに関してerror処理
             DTVTLogger.debug("ClipListActivity::VodClipListCallback, get data failed");
             // TODO:エラーメッセージ表示はリスト画面上に表示する
@@ -182,22 +182,22 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
             return;
         }
 
-        if(0==clipContentInfo.size()){
+        if (0 == clipContentInfo.size()) {
             //doing
             resetCommunication();
             return;
         }
 
-        if(isSkipVod(clipContentInfo)){
+        if (isSkipVod(clipContentInfo)) {
             resetCommunication();
             return;
         }
 
         ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_VOD, this);
 
-        int pageNumber =  getCurrentNumber();
-        for(int i= pageNumber*NUM_PER_PAGE;i<(pageNumber + 1)*NUM_PER_PAGE  && i<clipContentInfo.size();++i){
-            if(null!=fragment.mData) {
+        int pageNumber = getCurrentNumber();
+        for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE && i < clipContentInfo.size(); ++i) {
+            if (null != fragment.mData) {
                 fragment.mData.add(clipContentInfo.get(i));
             }
         }
@@ -208,30 +208,30 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
         fragment.noticeRefresh();
     }
 
-    private void resetCommunication(){
-        ClipListBaseFragment b = getCurrentFragment();
-        if(null==b){
+    private void resetCommunication() {
+        ClipListBaseFragment baseFragment = getCurrentFragment();
+        if (null == baseFragment) {
             return;
         }
-        b.displayMoreData(false);
+        baseFragment.displayMoreData(false);
         setCommunicatingStatus(false);
     }
 
     @Override
     public void onScroll(ClipListBaseFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         synchronized (this) {
-            ClipListBaseFragment b= getCurrentFragment();
-            if(null==b || null==fragment.getClipMainAdapter()){
+            ClipListBaseFragment baseFragment = getCurrentFragment();
+            if (null == baseFragment || null == fragment.getClipMainAdapter()) {
                 return;
             }
-            if(fragment!=b){
+            if (!fragment.equals(baseFragment)) {
                 return;
             }
 
             if (firstVisibleItem + visibleItemCount == totalItemCount
                     && 0 != totalItemCount
                     ) {
-                DTVTLogger.debug("ClipListActivity::onScroll, paging, firstVisibleItem=" + firstVisibleItem + ", totalItemCount=" + totalItemCount+ ", visibleItemCount=" + visibleItemCount);
+                DTVTLogger.debug("ClipListActivity::onScroll, paging, firstVisibleItem=" + firstVisibleItem + ", totalItemCount=" + totalItemCount + ", visibleItemCount=" + visibleItemCount);
             }
         }
     }
@@ -240,18 +240,18 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
     public void onScrollStateChanged(ClipListBaseFragment fragment, AbsListView absListView, int scrollState) {
         synchronized (this) {
 
-            ClipListBaseFragment b= getCurrentFragment();
-            if(null==b || null==fragment.getClipMainAdapter()){
+            ClipListBaseFragment baseFragment = getCurrentFragment();
+            if (null == baseFragment || null == fragment.getClipMainAdapter()) {
                 return;
             }
-            if(fragment!=b){
+            if (!fragment.equals(baseFragment)) {
                 return;
             }
 
             if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE &&
                     absListView.getLastVisiblePosition() == fragment.getClipMainAdapter().getCount() - 1) {
 
-                if(mIsCommunicating){
+                if (mIsCommunicating) {
                     return;
                 }
 
@@ -268,10 +268,10 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
                     public void run() {
 
                         int offset = 0;
-                        if(null!=finalFragment.mData ){
+                        if (null != finalFragment.mData) {
                             offset = finalFragment.mData.size();
                         }
-                        switch (mViewPager.getCurrentItem()){
+                        switch (mViewPager.getCurrentItem()) {
                             case CLIP_LIST_PAGE_NO_OF_TV:
                                 mTvClipDataProvider.getClipData(offset);
                                 break;
@@ -285,7 +285,7 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
         }
     }
 
-    private ClipListActivity getClipListActivity(){
+    private ClipListActivity getClipListActivity() {
         return this;
     }
 
@@ -340,7 +340,7 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
         initTabVIew();
     }
 
-    private void setVod(){
+    private void setVod() {
 
         ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_VOD, this);
         //fragment.clearAllDatas();
@@ -348,7 +348,7 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
         mVodClipDataProvider.getClipData(1);
     }
 
-    private void setTv(){
+    private void setTv() {
         ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_TV, this);
         //fragment.clearAllDatas();
         fragment.setMode(ClipMainAdapter.Mode.CLIP_LIST_MODE_TV);
@@ -415,14 +415,14 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void onClick(View view) {
-        if (view == mMenuImageView) {
+        if (mMenuImageView.equals(view)) {
             onSampleGlobalMenuButton_PairLoginOk();
         }
     }
 
-    private ClipListBaseFragment getCurrentFragment(){
+    private ClipListBaseFragment getCurrentFragment() {
 
-        int i= mViewPager.getCurrentItem();
+        int i = mViewPager.getCurrentItem();
         return mClipListFragmentFactory.createFragment(i, this);
     }
 }

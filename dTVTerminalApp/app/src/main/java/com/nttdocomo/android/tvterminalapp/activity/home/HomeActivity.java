@@ -125,7 +125,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                         startMain.addCategory(Intent.CATEGORY_HOME);
                         startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(startMain);
-                        System.exit(0);
+                        finish();
                     }
                 })
                 .setNegativeButton("Cancel",

@@ -77,11 +77,11 @@ public class RentalListActivity extends BaseActivity implements View.OnClickList
     /**
      * 再読み込み時のダイアログ表示処理
      *
-     * @param b
+     * @param bool
      */
-    private void displayMoreData(boolean b) {
+    private void displayMoreData(boolean bool) {
         if (null != mListView && null != mLoadMoreView) {
-            if (b) {
+            if (bool) {
                 mListView.addFooterView(mLoadMoreView);
             } else {
                 mListView.removeFooterView(mLoadMoreView);
@@ -110,7 +110,7 @@ public class RentalListActivity extends BaseActivity implements View.OnClickList
 
     @Override
     public void onClick(View view) {
-        if (view == mMenuImageView) {
+        if (mMenuImageView.equals(view)) {
             onSampleGlobalMenuButton_PairLoginOk();
         }
     }
@@ -173,7 +173,7 @@ public class RentalListActivity extends BaseActivity implements View.OnClickList
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        if (mLoadMoreView == view) {
+        if (mLoadMoreView.equals(view)) {
             return;
         }
         startActivity(DtvContentsDetailActivity.class, null);

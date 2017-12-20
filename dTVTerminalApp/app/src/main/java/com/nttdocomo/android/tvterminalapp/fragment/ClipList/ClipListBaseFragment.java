@@ -240,11 +240,11 @@ public class ClipListBaseFragment extends Fragment implements AbsListView.OnScro
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        if (mLoadMoreView == view) {
+        if (mLoadMoreView.equals(view)) {
             return;
         }
 
-        if(mActivity != null) {
+        if (mActivity != null) {
             ((BaseActivity) mActivity).startActivity(DtvContentsDetailActivity.class, null);
         }
     }

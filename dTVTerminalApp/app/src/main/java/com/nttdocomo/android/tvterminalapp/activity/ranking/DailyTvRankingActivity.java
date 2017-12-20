@@ -154,7 +154,7 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
 
     @Override
     public void onClick(View view) {
-        if (view == mMenuImageView) {
+        if (mMenuImageView.equals(view)) {
             onSampleGlobalMenuButton_PairLoginOk();
         }
     }
@@ -260,7 +260,7 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (mLoadMoreView == view) {
+        if(mLoadMoreView.equals(view)) {
             return;
         }
         startActivity(DtvContentsDetailActivity.class, null);

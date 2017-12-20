@@ -510,7 +510,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
 
     @Override
     public void onClick(View view) {
-        if (view == mMenuImageView) {
+        if (mMenuImageView.equals(view)) {
             onSampleGlobalMenuButton_PairLoginOk();
         }
     }
