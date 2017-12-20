@@ -295,4 +295,8 @@
     <string name="my_channel_list_setting_failed_dialog_content_unregister">解除失敗!</string>
     <string name="my_channel_list_setting_dialog_title_unregister">確認!</string>
     <string name="my_channel_list_setting_dialog_content_unregister">本当削除しますか?</string>
+
+    <!-- dアカウント登録 -->
+    <string name="d_account_regist_error">dアカウントが取得できませんでした</string>
+
 </resources>

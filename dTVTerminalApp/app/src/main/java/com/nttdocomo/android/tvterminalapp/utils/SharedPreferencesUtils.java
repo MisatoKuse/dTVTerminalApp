@@ -52,6 +52,7 @@ public class SharedPreferencesUtils {
 
     /**
      * 独自の削除メソッドがある接続済みSTB情報以外の、dアカウントユーザー切り替え時の削除対象
+     * (チュートリアル表示済み判定以外は全て消すことになった)
      */
     private final static String[] DELETE_PREFERENCES_NAME = {
             // SharedPreferences ペアリング情報保存キー 親キー
@@ -64,6 +65,10 @@ public class SharedPreferencesUtils {
             SHARED_KEY_IS_DISPLAYED_PARING_INVITATION,
             // ホーム画面ペアリング済み判定 保存キー
             SHARED_KEY_DECISION_PARING_SETTLED,
+            // SettinActivity 画質設定の設定値
+            SHARED_KEY_IMAGE_QUALITY,
+            // 持ち出しコンテンツダウンロード先
+            SHARED_KEY_STORAGE_PATH,
             //最後に取得したdアカウントのID
             LAST_D_ACCOUNT_ID,
             //最後に取得したワンタイムパスワード
@@ -184,7 +189,7 @@ public class SharedPreferencesUtils {
     /**
      * ペアリング状態を保存(Home画面用)
      *
-     * @param paringStatus
+     * @param paringStatus ペアリング状態
      */
     public static void setSharedPreferencesDecisionParingSettled(Context context, boolean paringStatus) {
         DTVTLogger.start();

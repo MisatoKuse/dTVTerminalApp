@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.daccount;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
@@ -65,6 +66,9 @@ public class DaccountControl implements
     //コールバックの控え
     private DaccountControlCallBack mDaccountControlCallBack;
 
+    //単回実行フラグ
+    private DaccountControlOnce onceControl = null;
+
     /**
      * dアカウントに対して、サービス登録を行う
      *
@@ -73,8 +77,24 @@ public class DaccountControl implements
      */
     public void registService(Context context, DaccountControlCallBack daccountControlCallBackSource) {
         DTVTLogger.start();
+
+        onceControl = DaccountControlOnce.getInstance();
+        if (onceControl.isExecOnce()) {
+            //既に実行済みなので帰る
+            DTVTLogger.end("registService already exec");
+            return;
+        }
+
+        //次回の実行を阻止するためフラグをセット
+        onceControl.setExecOnce(true);
+
         //コールバックがヌルならば何もできないので帰る
         if (daccountControlCallBackSource == null) {
+            DTVTLogger.end("no callback");
+
+            //次回実行する為にフラグをリセット
+            onceControl.setExecOnce(false);
+
             return;
         }
         mDaccountControlCallBack = daccountControlCallBackSource;
@@ -83,7 +103,11 @@ public class DaccountControl implements
         if (context == null) {
             //コンテキストが無いので、エラーで帰る
             mDaccountControlCallBack.daccountControlCallBack(false);
-            DTVTLogger.end();
+            DTVTLogger.end("no context");
+
+            //次回実行する為にフラグをリセット
+            onceControl.setExecOnce(false);
+
             return;
         }
         mContext = context;
@@ -114,12 +138,17 @@ public class DaccountControl implements
         } else {
             //実行失敗なので、エラーを返す
             mDaccountControlCallBack.daccountControlCallBack(false);
+
+            //次回実行する為にフラグをリセット
+            onceControl.setExecOnce(false);
+
             DTVTLogger.end();
         }
     }
 
     @Override
     public void registServiceCallBack(int result) {
+
         //戻り値を控える
         mResult = result;
 
@@ -134,6 +163,10 @@ public class DaccountControl implements
         } else {
             //実行失敗なので、エラーを返す
             mDaccountControlCallBack.daccountControlCallBack(false);
+
+            //次回実行する為にフラグをリセット
+            onceControl.setExecOnce(false);
+
             DTVTLogger.end();
         }
     }
@@ -143,12 +176,17 @@ public class DaccountControl implements
         //戻り値を控える
         mResult = result;
 
-        //ワンタイムパスワードの取得結果
-        if (oneTimePassword == null) {
+        //ワンタイムパスワードの取得結果(ワンタイムパスワードの有無が重要なので、resultの判定は無用)
+        if (oneTimePassword == null || oneTimePassword.isEmpty()) {
             //ワンタイムトークン取得失敗
             //実行失敗なので、エラーを返す
             mDaccountControlCallBack.daccountControlCallBack(false);
-            DTVTLogger.end();
+
+            //次回実行する為にフラグをリセット
+            onceControl.setExecOnce(false);
+
+            DTVTLogger.end("not get one time password");
+            return;
         }
 
         //古いIDを取得する
@@ -168,11 +206,16 @@ public class DaccountControl implements
             SharedPreferencesUtils.setSharedPreferencesDaccountId(mContext, id);
 
             //キャッシュクリアを呼ぶ
-            //TODO: キャッシュクリア処理は後ほど検討
+            //IDが変更されていた場合は、キャッシュクリアを呼ぶ
+            DaccountControl.cacheClear(mContext);
 
             //エラーを返す
             mDaccountControlCallBack.daccountControlCallBack(false);
-            DTVTLogger.end();
+
+            //次回実行する為にフラグをリセット
+            onceControl.setExecOnce(false);
+
+            DTVTLogger.end("change id");
             return;
         }
 
@@ -186,13 +229,20 @@ public class DaccountControl implements
 
     /**
      * dアカウントのユーザー切り替え時に行うキャッシュ等のクリア処理
+     *
      * @param context コンテキスト
      */
     public static void cacheClear(Context context) {
         DTVTLogger.start();
+        DaccountControlOnce onceControl = DaccountControlOnce.getInstance();
+
         //キャッシュ削除タスクを呼び出す
         CacheClearTask clearTask = new CacheClearTask();
         clearTask.execute(context);
+
+        //次回実行する為にフラグをリセット
+        onceControl.setExecOnce(false);
+
         DTVTLogger.end();
     }
 
@@ -201,29 +251,78 @@ public class DaccountControl implements
      * おそらく必要はないが、一応ファイル削除やDB削除なので、AsyncTaskとする
      */
     private static class CacheClearTask extends AsyncTask<Context, Void, Void> {
+        //退避用コンテキスト
+        Context mContext;
+
         @Override
         protected Void doInBackground(Context... contexts) {
             DTVTLogger.start();
 
+            //コンテキストの退避
+            mContext = contexts[0];
+            if (mContext == null) {
+                return null;
+            }
+
             //プリファレンスユーティリティの配下のデータを、ユーザー切り替え後も残す一部を除き削除
-            SharedPreferencesUtils.clearAlmostSharedPreferences(contexts[0]);
+            SharedPreferencesUtils.clearAlmostSharedPreferences(mContext);
 
             //日付ユーティリティの配下のプリファレンスを削除
-            DateUtils.clearDataSave(contexts[0]);
+            DateUtils.clearDataSave(mContext);
 
             //サムネイルのキャッシュファイルを削除する
-            ThumbnailCacheManager.clearThumbnailCache(contexts[0]);
+            ThumbnailCacheManager.clearThumbnailCache(mContext);
 
             //DBを丸ごと削除する
-            boolean deleteDatabaseExeced = contexts[0].deleteDatabase(DBConstants.DATABASE_NAME);
+            boolean deleteDatabaseExeced = mContext.deleteDatabase(DBConstants.DATABASE_NAME);
 
             DTVTLogger.debug("deleteDatabase Answer = " + deleteDatabaseExeced);
 
             //DBを新造する・インスタンスを作ると自動で作成される
-            new DBHelper(contexts[0]);
+            new DBHelper(mContext);
 
             DTVTLogger.end();
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            DTVTLogger.start();
+
+            //TODO: アプリ再起動処理がまだ無いので、仮メッセージ
+            Toast.makeText(mContext, "キャッシュクリアをしました", Toast.LENGTH_LONG).show();
+
+            DTVTLogger.end();
+        }
+    }
+
+    /**
+     * dアカウント制御をアプリ起動時に1回だけ行うための制御クラス
+     */
+    public static class DaccountControlOnce {
+        //
+        private static DaccountControlOnce mDaccountControlOnce = new DaccountControlOnce();
+
+        //実行状況を保持する
+        private static boolean execOnce = false;
+
+        public static boolean isExecOnce() {
+            return execOnce;
+        }
+
+        public static void setExecOnce(boolean execOnce) {
+            DaccountControlOnce.execOnce = execOnce;
+        }
+
+        /**
+         * 内容は無いが、これが無いと余計なインスタンスが作成される
+         */
+        private DaccountControlOnce() {
+        }
+
+        public static DaccountControlOnce getInstance() {
+            return mDaccountControlOnce;
         }
     }
 }
