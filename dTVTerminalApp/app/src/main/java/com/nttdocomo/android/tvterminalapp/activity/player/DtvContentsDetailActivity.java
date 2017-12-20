@@ -24,7 +24,6 @@ import android.os.PowerManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.Display;
@@ -36,7 +35,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -54,6 +52,7 @@ import com.digion.dixim.android.secureplayer.helper.CaptionDrawCommands;
 import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.RecordReservationListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -1637,20 +1636,24 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     @Override
     public void recordingReservationResult(RemoteRecordingReservationResultResponse response) {
         DTVTLogger.start();
-        if (response.getErrorNo() != null) {
-            DTVTLogger.debug("error" + response.getErrorNo());
-            // TODO エラー番号が判明次第エラーダイアログ表示
-            switch (response.getErrorNo()) {
-                case "0":
-                    break;
-                case "1":
-                    break;
-                default:
-                    break;
-            }
-        } else {
-            // TODO 正常時、ダイアログ出力
-        }
+//        if (response.getErrorNo() != null) {
+//            DTVTLogger.debug("error" + response.getErrorNo());
+            CustomDialog dialog = createErrorDialog();
+            // TODO エラー番号が判明次第エラーダイアログのタイトルを設定して表示
+//            switch (response.getErrorNo()) {
+//                case "0":
+//                    dialog.setTitle();
+//                    break;
+//                case "1":
+//                    break;
+//                default:
+//                    break;
+//            }
+            dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_param));
+            dialog.showDialog();
+//        } else {
+//            showCompleteDialog();
+//        }
         DTVTLogger.end();
     }
 
@@ -1725,4 +1728,32 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         return true;
     }
 
+    /**
+     * 録画予約成功時ダイアログ表示
+     */
+    private void showCompleteDialog() {
+        CustomDialog completeRecordingReservationDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+        completeRecordingReservationDialog.setTitle(getResources().getString(R.string.recording_reservation_complete_dialog_title));
+        completeRecordingReservationDialog.setContent(getResources().getString(R.string.recording_reservation_complete_dialog_msg));
+        completeRecordingReservationDialog.setConfirmText(R.string.recording_reservation_complete_dialog_confirm);
+        completeRecordingReservationDialog.setCancelText(R.string.recording_reservation_complete_dialog_cancel);
+        completeRecordingReservationDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+            @Override
+            public void onOKCallback(boolean isOK) {
+                startActivity(RecordReservationListActivity.class,null);
+            }
+        });
+        completeRecordingReservationDialog.showDialog();
+    }
+
+    /**
+     * 録画予約失敗時エラーダイアログ表示
+     */
+    private CustomDialog createErrorDialog() {
+        CustomDialog failedRecordingReservationDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+        failedRecordingReservationDialog.setContent(getResources().getString(R.string.recording_reservation_failed_dialog_msg));
+        failedRecordingReservationDialog.setCancelText(R.string.recording_reservation_failed_dialog_confirm);
+
+        return failedRecordingReservationDialog;
+    }
 }

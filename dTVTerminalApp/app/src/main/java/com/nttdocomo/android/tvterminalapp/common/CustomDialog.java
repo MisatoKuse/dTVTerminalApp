@@ -31,6 +31,8 @@ public class CustomDialog {
     private List<String> list;
     private ApiOKCallback apiOKCallback;
     private ApiSelectCallback apiSelectCallback;
+    private String confirmText = null;
+    private String cancelText = null;
 
     /**
      * OKを返却するためのコールバック
@@ -149,6 +151,12 @@ public class CustomDialog {
                 }
                 break;
             case CONFIRM:
+                if(confirmText != null) {
+                    tv_confirm.setText(confirmText);
+                }
+                if(cancelText != null) {
+                    tv_cancel.setText(cancelText);
+                }
                 break;
             default:
                 break;
@@ -202,4 +210,20 @@ public class CustomDialog {
             }
         }
     };
+
+    /**
+     * DialogType.CONFIRMのconfirmテキストを変更
+     * @param resId リソースID
+     */
+    public void setConfirmText(int resId) {
+        confirmText = context.getResources().getString(resId);
+    }
+
+    /**
+     * DialogType.CONFIRMのcancelテキストを変更
+     * @param resId リソースID
+     */
+    public void setCancelText(int resId) {
+        cancelText = context.getResources().getString(resId);
+    }
 }
