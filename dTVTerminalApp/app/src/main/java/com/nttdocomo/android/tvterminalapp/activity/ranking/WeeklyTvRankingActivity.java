@@ -299,8 +299,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
                     .get(JsonContents.META_RESPONSE_TITLE));
             rankingContentInfo.setSearchOk(weeklyRankMapList.get(i)
                     .get(JsonContents.META_RESPONSE_SEARCH_OK));
-            rankingContentInfo.setType(weeklyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_TYPE));
             rankingContentInfo.setCrid(weeklyRankMapList.get(i)
                     .get(JsonContents.META_RESPONSE_CRID));
             rankingContentInfo.setServiceId(weeklyRankMapList.get(i)
@@ -315,6 +313,12 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
                     .get(JsonContents.META_RESPONSE_AVAIL_START_DATE));
             rankingContentInfo.setLinearEndDate(weeklyRankMapList.get(i)
                     .get(JsonContents.META_RESPONSE_AVAIL_END_DATE));
+            rankingContentInfo.setDispType(weeklyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_DISP_TYPE));
+            rankingContentInfo.setContentsType(weeklyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_CONTENT_TYPE));
+            rankingContentInfo.setTvService(weeklyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_TV_SERVICE));
             rankingContentInfo.setDtv(weeklyRankMapList.get(i)
                     .get(JsonContents.META_RESPONSE_DTV));
 

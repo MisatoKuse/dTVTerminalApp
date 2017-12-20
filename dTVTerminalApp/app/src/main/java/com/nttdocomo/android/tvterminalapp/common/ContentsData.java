@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.common;
 
+import android.widget.TextView;
+
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
 
 public class ContentsData {
@@ -28,8 +30,6 @@ public class ContentsData {
     private int allowedUse = 0;
     // クリップ状態
     private String mSearchOk = null;
-    // タイプ
-    private String mType = null;
     // コンテンツ識別子
     private String mCrid = null;
     // サービスID
@@ -38,8 +38,8 @@ public class ContentsData {
     private String mEventId = null;
     // タイトルID
     private String mTitleId = null;
-    // dtvフラグ
-    private String mDtv = null;
+    // 番組種別
+    private String mDispType = null;
     // 番組のパレンタル設定値
     private String mRValue = null;
     // 放送開始日時
@@ -48,6 +48,14 @@ public class ContentsData {
     private String mLinearEndDate = null;
     // 視聴通知判定
     private String mIsNotify = null;
+    // コンテンツタイプ
+    private String mContentsType = null;
+    // サービス種別
+    private String mTvService = null;
+    // dTVフラグ
+    private String mDtv = null;
+    // クリップボタン
+    private TextView mClipButton = null;
 
     //デバイス名
     private String deviceName = null;
@@ -139,14 +147,6 @@ public class ContentsData {
         this.mSearchOk = mSearchOk;
     }
 
-    public String getType() {
-        return mType;
-    }
-
-    public void setType(String mType) {
-        this.mType = mType;
-    }
-
     public String getCrid() {
         return mCrid;
     }
@@ -171,12 +171,12 @@ public class ContentsData {
         this.mEventId = mEventId;
     }
 
-    public String getDtv() {
-        return mDtv;
+    public String getDispType() {
+        return mDispType;
     }
 
-    public void setDtv(String mDtv) {
-        this.mDtv = mDtv;
+    public void setDispType(String mDispType) {
+        this.mDispType = mDispType;
     }
 
     public String getTitleId() {
@@ -211,11 +211,43 @@ public class ContentsData {
         this.mLinearEndDate = mLinearEndDate;
     }
 
+    public String getContentsType() {
+        return mContentsType;
+    }
+
+    public void setContentsType(String mContentsType) {
+        this.mContentsType = mContentsType;
+    }
+
     public String isIsNotify() {
         return mIsNotify;
     }
 
     public void setIsNotify(String mIsNotify) {
         this.mIsNotify = mIsNotify;
+    }
+
+    public TextView getClipButton() {
+        return mClipButton;
+    }
+
+    public void setClipButton(TextView mClipButton) {
+        this.mClipButton = mClipButton;
+    }
+
+    public String getTvService() {
+        return mTvService;
+    }
+
+    public void setTvService(String mTvService) {
+        this.mTvService = mTvService;
+    }
+
+    public String getDtv() {
+        return mDtv;
+    }
+
+    public void setDtv(String mDtv) {
+        this.mDtv = mDtv;
     }
 }

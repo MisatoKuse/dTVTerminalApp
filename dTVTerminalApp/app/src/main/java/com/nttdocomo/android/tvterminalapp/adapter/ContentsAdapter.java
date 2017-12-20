@@ -26,6 +26,7 @@ import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 
 import java.util.List;
 
@@ -136,6 +137,7 @@ public class ContentsAdapter extends BaseAdapter {
         setContentsData(holder, listContentInfo);
 
         TextView textView = view.findViewById(R.id.item_common_result_clip_tv);
+        listContentInfo.setClipButton(textView);
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -200,7 +202,22 @@ public class ContentsAdapter extends BaseAdapter {
      */
     private void setTimeData(ViewHolder holder, ContentsData listContentInfo) {
         if (!TextUtils.isEmpty(listContentInfo.getTime())) {//時間
-            holder.tv_time.setText(listContentInfo.getTime());
+            switch (type) {
+                case TYPE_DAILY_RANK: // 今日のテレビランキング
+                case TYPE_WEEKLY_RANK: // 週間ランキング
+                    holder.tv_time.setText(DateUtils.getRecordShowListItem(Long.parseLong(listContentInfo.getTime())));
+                    break;
+                case TYPE_VIDEO_RANK: // ビデオランキング
+                case TYPE_RENTAL_RANK: // レンタル一覧
+                case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
+                case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
+                case TYPE_RECORDED_LIST: // 録画番組一覧
+                case TYPE_STB_SELECT_LIST: //STBデバイス名一覧
+                    holder.tv_time.setText(listContentInfo.getTime());
+                    break;
+                default:
+                    break;
+            }
         }
     }
 

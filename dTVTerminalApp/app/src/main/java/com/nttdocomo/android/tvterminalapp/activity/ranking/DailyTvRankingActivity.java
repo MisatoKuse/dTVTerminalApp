@@ -23,6 +23,8 @@ import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +47,7 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
 
     private View mLoadMoreView;
     private ListView mListView;
-    private List mContentsList;
+    private List<ContentsData> mContentsList;
 
     private boolean mIsCommunicating = false;
 
@@ -266,9 +268,21 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
         if (mLoadMoreView == view) {
             return;
         }
-        if (view == findViewById(R.id.item_common_result_clip_tv)) {
+        if (view.equals(mContentsList.get(position).getClipButton())) {
             //TODO:クリップ処理実装
-            Toast.makeText(this, "クリップしました", Toast.LENGTH_SHORT).show();
+            ClipRequestData requestData = new ClipRequestData();
+            ContentsData contentsData = mContentsList.get(position);
+            requestData.setCrid(contentsData.getCrid());
+            requestData.setServiceId(contentsData.getServiceId());
+            requestData.setEventId(contentsData.getEventId());
+            requestData.setTitleId(contentsData.getTitleId());
+            requestData.setTitle(contentsData.getTitle());
+            requestData.setRValue(contentsData.getRValue());
+            requestData.setLinearStartDate(contentsData.getLinearStartDate());
+            requestData.setLinearEndDate(contentsData.getLinearEndDate());
+            requestData.setIsNotify(contentsData.getDispType(), contentsData.getContentsType(),
+                    contentsData.getLinearEndDate(), contentsData.getTvService(), contentsData.getDtv());
+            sendClipRequest(requestData);
         } else {
             startActivity(DtvContentsDetailActivity.class, null);
         }
@@ -331,8 +345,6 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
                     .get(JsonContents.META_RESPONSE_DISPLAY_START_DATE));
             rankingContentInfo.setSearchOk(dailyRankMapList.get(i)
                     .get(JsonContents.META_RESPONSE_SEARCH_OK));
-            rankingContentInfo.setType(dailyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_TYPE));
             rankingContentInfo.setCrid(dailyRankMapList.get(i)
                     .get(JsonContents.META_RESPONSE_CRID));
             rankingContentInfo.setServiceId(dailyRankMapList.get(i)
@@ -347,6 +359,12 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
                     .get(JsonContents.META_RESPONSE_AVAIL_START_DATE));
             rankingContentInfo.setLinearEndDate(dailyRankMapList.get(i)
                     .get(JsonContents.META_RESPONSE_AVAIL_END_DATE));
+            rankingContentInfo.setDispType(dailyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_DISP_TYPE));
+            rankingContentInfo.setContentsType(dailyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_CONTENT_TYPE));
+            rankingContentInfo.setTvService(dailyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_TV_SERVICE));
             rankingContentInfo.setDtv(dailyRankMapList.get(i)
                     .get(JsonContents.META_RESPONSE_DTV));
 
