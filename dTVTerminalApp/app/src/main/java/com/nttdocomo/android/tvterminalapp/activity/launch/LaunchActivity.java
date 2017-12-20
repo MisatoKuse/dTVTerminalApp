@@ -4,25 +4,30 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListInfo;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaProvBsChList;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvRecVideo;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaProvTerChList;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoListener;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListInfo;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListListener;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 
-public class LaunchActivity extends BaseActivity implements View.OnClickListener, DlnaRecVideoListener {
+public class LaunchActivity extends BaseActivity implements View.OnClickListener, DlnaRecVideoListener, DlnaTerChListListener, DlnaBsChListListener {
 
     public static final String mStateFromTutorialActivity="fromTutorialActivity";
 
@@ -33,6 +38,9 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     Button firstLanchLanchYesActivity=null;
     Button firstLanchLanchNoActivity=null;
     private DlnaProvRecVideo mDlnaProvRecVideo;
+    private DlnaProvTerChList mDlnaProvTerChList;
+    private DlnaProvBsChList mDlnaProvBsChList;
+
     private String mState="";
 
     @Override
@@ -57,6 +65,14 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
             mDlnaProvRecVideo= new DlnaProvRecVideo();
             mDlnaProvRecVideo.start(dlnaDmsItem, this);
             mDlnaProvRecVideo.browseRecVideoDms();
+
+            mDlnaProvTerChList= new DlnaProvTerChList();
+            mDlnaProvTerChList.start(dlnaDmsItem, this);
+            mDlnaProvTerChList.browseChListDms();
+
+            mDlnaProvBsChList= new DlnaProvBsChList();
+            mDlnaProvBsChList.start(dlnaDmsItem, this);
+            mDlnaProvBsChList.browseChListDms();
         }
 
         setContents();
@@ -87,7 +103,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
      * @return true: 成功　　false: 失敗
      */
     private boolean startDlna() {
-        DlnaInterface di=DlnaInterface.getInstance();
+        DlnaInterface di= DlnaInterface.getInstance();
         boolean ret=false;
         if(null==di){
             ret=false;
@@ -180,9 +196,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
             DTVTLogger.debug("ParingNG Start HomeActivity");
         } else {
             // STB選択画面へ遷移
-            Intent intent = new Intent(getApplicationContext(),STBSelectActivity.class);
-            intent.putExtra(STBSelectActivity.FROM_WHERE, STBSelectActivity.STBSelectFromMode.STBSelectFromMode_Launch.ordinal());
-            startActivity(intent);
+            startActivity(STBSelectActivity.class, null);
             DTVTLogger.debug("Start STBSelectActivity");
         }
         DTVTLogger.end();
@@ -190,6 +204,16 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public void onVideoBrows(DlnaRecVideoInfo curInfo) {
+
+    }
+
+    @Override
+    public void onListUpdate(DlnaTerChListInfo curInfo) {
+
+    }
+
+    @Override
+    public void onListUpdate(DlnaBsChListInfo curInfo) {
 
     }
 

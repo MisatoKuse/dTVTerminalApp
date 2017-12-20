@@ -30,6 +30,7 @@ public class DlnaTerChListItem {
     //protocolInfo end
     //日付
     public String mDate="";
+    public String mVideoType="";
 
     //to do: 使用する必要があれば、新しいフィールドをここで追加
 

@@ -27,7 +27,7 @@ public class DlnaProvHikariChList {
         if(null==di){
             return;
         }
-        di.setDlnaRecVideoBaseListener(null);
+        di.setDlnaHikariChListListener(null);
     }
 
     /**

@@ -62,6 +62,17 @@ public class DlnaTerChListInfo {
         return info;
     }
 
+    public static final ArrayList<Object> toArrayList(DlnaTerChListInfo info){
+        ArrayList<Object> ret=new ArrayList();
+        if(null==info || 0==info.size()){
+            return ret;
+        }
+        for(int i=0;i<info.size();++i){
+            ret.add(info.get(i));
+        }
+        return ret;
+    }
+
     public ArrayList<DlnaTerChListItem> getRecordVideoLists() {
         return mLists;
     }
