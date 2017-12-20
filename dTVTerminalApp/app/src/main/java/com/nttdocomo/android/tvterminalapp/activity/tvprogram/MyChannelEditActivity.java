@@ -4,83 +4,308 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.tvprogram;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
-import android.view.Gravity;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.view.KeyEvent;
 import android.view.View;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.TextView;
 
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.adapter.EditMyChannelListAdapter;
+import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.dataprovider.MyChannelDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
+import com.nttdocomo.android.tvterminalapp.fragment.channellist.EditChannelListBaseFragment;
+import com.nttdocomo.android.tvterminalapp.fragment.channellist.EditChannelListFragment;
+import com.nttdocomo.android.tvterminalapp.fragment.channellist.EditMyChannelListFragment;
+import com.nttdocomo.android.tvterminalapp.model.program.Channel;
+import com.nttdocomo.android.tvterminalapp.model.program.ChannelsInfo;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
-public class MyChannelEditActivity extends BaseActivity implements View.OnClickListener {
+import java.util.ArrayList;
+import java.util.List;
 
-    private Button btnBack,btnAdd;
-    private TextView channel1,channel2,channel3,channel4,channel5,channel6,backIcon;
+import static com.nttdocomo.android.tvterminalapp.adapter.EditMyChannelListAdapter.SERVICE_ID_MY_CHANNEL_LIST;
+import static com.nttdocomo.android.tvterminalapp.common.CustomDialog.DialogType.ERROR;
+import static com.nttdocomo.android.tvterminalapp.common.JsonContents.META_RESPONSE_STATUS_OK;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala.MY_CHANNEL_MAX_INDEX;
+
+public class MyChannelEditActivity extends BaseActivity implements View.OnClickListener
+        , MyChannelDataProvider.ApiDataProviderCallback
+        , ScaledDownProgramListDataProvider.ApiDataProviderCallback
+        , EditMyChannelListAdapter.EditChannelListItemImpl
+        , EditChannelListFragment.ChannelListItemImpl
+        ,EditMyChannelListAdapter.DataTransferImpl {
+
+    private static final int CHANNEL_LIST_PAGE = 1;
+    private static final int MY_EDIT_CHANNEL_LIST_PAGE = 0;
+    public ViewPager mViewPager;
+    private EditMyChannelListFragment mEditMyChannelListFragment;
+    private EditChannelListFragment mEditChannelListFragment;
+    private ArrayList<EditChannelListBaseFragment> mFragmentList = new ArrayList<>();
+    private static final int EDIT_CHANNEL_LIST_COUNT = MY_CHANNEL_MAX_INDEX;
+    private String[] mServiceIds;
+    private int mEditPosition;
+    public MyChannelDataProvider mMyChannelDataProvider;
+    private Bundle mUnregisterBundle;
+    private ArrayList<MyChannelMetaData> mUnregisterData;
+    private Channel mRegisterChannel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.my_channel_edit_main_layout);
+        setTitleText(getResources().getString(R.string.my_channel_list_setting));
+        initData();
         initView();
     }
 
+    /**
+     * view 初期化
+     */
     private void initView() {
-        btnBack = (Button)findViewById(R.id.btn_back);
-        btnAdd = (Button)findViewById(R.id.btn_add);
-        channel1= (TextView)findViewById(R.id.channel1);
-        channel2= (TextView)findViewById(R.id.channel2);
-        channel3= (TextView)findViewById(R.id.channel3);
-        channel4= (TextView)findViewById(R.id.channel4);
-        channel5= (TextView)findViewById(R.id.channel5);
-        channel6= (TextView)findViewById(R.id.channel6);
-        backIcon = (TextView)findViewById(R.id.back_key);
-        backIcon.setOnClickListener(this);
-        btnBack.setOnClickListener(this);
-        btnAdd.setOnClickListener(this);
-        channel1.setOnClickListener(this);
-        channel2.setOnClickListener(this);
-        channel3.setOnClickListener(this);
-        channel4.setOnClickListener(this);
-        channel5.setOnClickListener(this);
-        channel6.setOnClickListener(this);
+        mViewPager = findViewById(R.id.my_channel_edit_main_layout_edit_vp);
+        mEditMyChannelListFragment = new EditMyChannelListFragment();
+        mEditChannelListFragment = new EditChannelListFragment();
+        mFragmentList.add(mEditMyChannelListFragment);
+        mFragmentList.add(mEditChannelListFragment);
+        mViewPager.setAdapter(new EditChannelListPageAdapter(getSupportFragmentManager(), mFragmentList));
     }
 
+    /**
+     * データ初期化
+     */
+    private void initData() {
+        mMyChannelDataProvider = new MyChannelDataProvider(this);
+        mMyChannelDataProvider.getMyChannelList();
+    }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.btn_back:
-            case R.id.back_key:
-                finish();
-                break;
-            case R.id.btn_add:
-            case R.id.channel1:
-            case R.id.channel2:
-            case R.id.channel3:
-            case R.id.channel4:
-            case R.id.channel5:
-            case R.id.channel6:
-            case R.id.add_over:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                final AlertDialog dialog = builder.create();
-                Window window = dialog.getWindow();
-                window.setGravity(Gravity.BOTTOM);
-                View view1 = View.inflate(this, R.layout.channel_add_dialog_layout, null);
-                dialog.setView(view1,0,0,0,0);
-                dialog.show();
-                view1.findViewById(R.id.add_over).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.dismiss();
+    public void onMyChannelListCallback(ArrayList<MyChannelMetaData> myChannelMetaData) {
+        if (myChannelMetaData != null) {
+            for (int i = 1; i <= EDIT_CHANNEL_LIST_COUNT; i++) {
+                MyChannelMetaData myChannelItemData = null;
+                for (int j = 0; j < myChannelMetaData.size(); j++) {
+                    MyChannelMetaData myChData = myChannelMetaData.get(j);
+                    int index = Integer.parseInt(myChData.getIndex());
+                    if (i == index) {
+                        myChannelItemData = myChData;
+                        break;
                     }
-                });
+                }
+                if (myChannelItemData == null) {
+                    myChannelItemData = new MyChannelMetaData();
+                    myChannelItemData.setIndex(String.valueOf(i));
+                }
+                mEditMyChannelListFragment.editDatas.add(myChannelItemData);
+                mEditMyChannelListFragment.notifyDataChanged();
+            }
+        }
+    }
+
+    /**
+     * 登録結果返し
+     * @param result 登録状態
+     */
+    @Override
+    public void onMyChannelRegisterCallback(String result) {
+        switch (result){
+          case META_RESPONSE_STATUS_OK://登録UI更新
+              successInRegisterRefreshUi(mRegisterChannel);
+            break;
+          default:
+              showFailedDialog(getResources().getString(R.string
+                      .my_channel_list_setting_failed_dialog_content_register));
+              break;
+        }
+    }
+
+    /**
+     * 動作失敗ダイアログ
+     * @param content
+     */
+    private void showFailedDialog(String content) {
+        CustomDialog customDialog = new CustomDialog(this, ERROR);
+        customDialog.setTitle(getResources().getString(R.string.my_channel_list_setting_failed_dialog_title));
+        customDialog.setContent(content);
+        customDialog.showDialog();
+    }
+
+    /**
+     * 解除結果返し
+     *
+     * @param result 解除状態
+     */
+    @Override
+    public void onMyChannelDeleteCallback(String result) {
+        switch (result) {
+            case META_RESPONSE_STATUS_OK:
+                for (int i = 0; i < mUnregisterData.size(); i++) {//解除UI更新
+                    if (mUnregisterBundle.getString(SERVICE_ID_MY_CHANNEL_LIST)
+                            .equals(mUnregisterData.get(i).getServiceId())) {
+                        MyChannelMetaData channel = new MyChannelMetaData();
+                        channel.setIndex(mUnregisterData.get(i).getIndex());
+                        mUnregisterData.set(i, channel);
+                        mEditMyChannelListFragment.notifyDataChanged();
+                        break;
+                    }
+                }
                 break;
             default:
+                showFailedDialog(getResources().getString(R.string
+                        .my_channel_list_setting_failed_dialog_content_unregister));
                 break;
         }
     }
+
+    @Override
+    public void channelInfoCallback(ChannelsInfo channelsInfo) {
+
+    }
+
+    /**
+     * チャンネルリストデータ取得
+     * @param channels 　画面に渡すチャンネル情報
+     */
+    @Override
+    public void channelListCallback(ArrayList<Channel> channels) {
+        if (channels != null) {
+            mEditChannelListFragment.mData.clear();
+            ArrayList<Channel> rmChannels = new ArrayList<>();
+            for (int i = 0; i < mServiceIds.length; i++) {
+                for (int j = 0; j < channels.size(); j++) {
+                    if (mServiceIds[i] != null) {
+                        if (mServiceIds[i].equals(channels.get(j).getServiceId())) {
+                            rmChannels.add(channels.get(j));
+                        }
+                    }
+                }
+            }
+            channels.removeAll(rmChannels);//重複登録不可とする
+            mEditChannelListFragment.mData.addAll(channels);
+            mEditChannelListFragment.notifyDataChanged();
+        }
+    }
+
+    /**
+     * My編集番組表Itemをタップする時
+     *
+     * @param position
+     * @param channel
+     */
+    @Override
+    public void onTapEditListItem(int position, MyChannelMetaData channel) {
+        this.mEditPosition = position;
+        DTVTLogger.start();
+        DTVTLogger.end();
+    }
+
+    /**
+     * チャンネルリストItemをタップする時
+     *
+     * @param position
+     * @param channel
+     */
+    @Override
+    public void onTapChannelListItem(int position, Channel channel) {
+        DTVTLogger.start();
+        this.mRegisterChannel = channel;
+        //MYチャンネル登録実行
+        executeMyChannelListRegister(position,channel);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 登録成功、画面アップデート
+     * @param channel
+     */
+    private void successInRegisterRefreshUi(Channel channel) {
+        MyChannelMetaData myChannelItemData = new MyChannelMetaData();
+        myChannelItemData.setIndex(String.valueOf(mEditPosition + 1));
+        myChannelItemData.setTitle(channel.getTitle());
+        myChannelItemData.setServiceId(channel.getServiceId());
+        mEditMyChannelListFragment.editDatas.set(mEditPosition, myChannelItemData);
+        mEditMyChannelListFragment.notifyDataChanged();
+    }
+
+    /**
+     * マイ番組表設定登録
+     * @param position
+     * @param channel
+     */
+    private void executeMyChannelListRegister(int position, Channel channel) {
+        MyChannelDataProvider myChDataProvider = new MyChannelDataProvider(this);
+        myChDataProvider.getMyChannelRegisterStatus(channel.getServiceId()
+                ,channel.getTitle(), WebApiBasePlala.MY_CHANNEL_R_VALUE_G
+                ,WebApiBasePlala.MY_CHANNEL_ADULT_TYPE_ADULT,position+1);
+    }
+
+    /**
+     * 画面更新用データ届く
+     * @param bundle
+     * @param data
+     */
+    @Override
+    public void sendDataToRefreshUi(Bundle bundle, ArrayList<MyChannelMetaData> data) {
+        if(bundle != null && data != null){
+            this.mUnregisterBundle = bundle;
+            this.mUnregisterData = data;
+            //解除通信
+            mMyChannelDataProvider.getMyChannelDeleteStatus(bundle.getString(SERVICE_ID_MY_CHANNEL_LIST));
+        }
+    }
+
+    /**
+     * マイチャンネル編集 アダプター
+     */
+    private class EditChannelListPageAdapter extends FragmentStatePagerAdapter {
+        private List fragmentList;
+
+        public EditChannelListPageAdapter(FragmentManager fm, List fragmentList) {
+            super(fm);
+            this.fragmentList = fragmentList;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return (Fragment) fragmentList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return fragmentList.size();
+        }
+    }
+
+    /**
+     * backKey 処理
+     *
+     * @param event
+     * @return
+     */
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (mViewPager.getCurrentItem() == CHANNEL_LIST_PAGE
+                && event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+            mViewPager.setCurrentItem(MY_EDIT_CHANNEL_LIST_PAGE);
+            return true;
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
+    /**
+     * EditList情報を設定する
+     *
+     * @param editListInfo
+     */
+    public void setEditListInfo(StringBuffer editListInfo) {
+        mServiceIds = null;
+        mServiceIds = editListInfo.toString().split(EditMyChannelListAdapter.COMMA);
+    }
+
 }

@@ -173,6 +173,46 @@ public class WebApiBasePlala {
     public static final int AGE_HIGH_VALUE = 17;
 
     /**
+     * マイチャンネル登録位置の上限値
+     */
+    public static final int MY_CHANNEL_MAX_INDEX = 16;
+
+    /**
+     * チャンネルのアダルトタイプ(adult)
+     */
+    public static final String MY_CHANNEL_ADULT_TYPE_ADULT = "adult";
+
+    /**
+     * チャンネルのアダルトタイプ(空値)
+     */
+    protected static final String MY_CHANNEL_ADULT_TYPE_EMPTY = "";
+
+    /**
+     * チャンネルのパレンタル設定値(G)
+     */
+    public static final String MY_CHANNEL_R_VALUE_G = "G";
+
+    /**
+     * チャンネルのパレンタル設定値(PG-12)
+     */
+    protected static final String MY_CHANNEL_R_VALUE_PG_12 = "PG-12";
+
+    /**
+     * チャンネルのパレンタル設定値(R-15)
+     */
+    protected static final String MY_CHANNEL_R_VALUE_PG_15 = "R-15";
+
+    /**
+     * チャンネルのパレンタル設定値(R-18)
+     */
+    protected static final String MY_CHANNEL_R_VALUE_PG_18 = "R-18";
+
+    /**
+     * チャンネルのパレンタル設定値(R-20)
+     */
+    protected static final String MY_CHANNEL_R_VALUE_PG_20 = "R-20";
+
+    /**
      * age_req(年齢設定値)のパラメータ作成用文字列
      */
     public static final String AGE_REQ_STRING = "age_req";

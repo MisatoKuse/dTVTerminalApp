@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/background_dark">
+
+	<RelativeLayout
+		android:id="@+id/edit_my_channel_list_item_no"
+		android:layout_width="40dp"
+		android:layout_height="50dp"
+		android:layout_centerVertical="true"
+		android:background="@android:color/black">
+
+		<TextView
+			android:id="@+id/edit_my_channel_list_item_no_tv"
+			android:layout_width="30dp"
+			android:layout_height="30dp"
+			android:layout_centerInParent="true"
+			android:background="#333333"
+			android:gravity="center"
+			android:text="1"
+			android:textColor="@android:color/white"/>
+	</RelativeLayout>
+
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="35dp"
+		android:layout_alignBottom="@id/edit_my_channel_list_item_no"
+		android:layout_alignTop="@id/edit_my_channel_list_item_no"
+		android:layout_marginLeft="10dp"
+		android:layout_toEndOf="@id/edit_my_channel_list_item_no"
+		android:background="@drawable/rectangele_all">
+
+		<Button
+			android:id="@+id/edit_my_channel_list_item_edit_bt"
+			android:layout_width="30dp"
+			android:layout_height="30dp"
+			android:layout_alignParentEnd="true"
+			android:layout_centerVertical="true"
+			android:layout_marginEnd="10dp"
+			android:textColor="@android:color/white"
+			android:background="@drawable/edit_channel_list_style"
+			android:text="+"/>
+
+		<TextView
+			android:id="@+id/edit_my_channel_list_item_channel_name_tv"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_toStartOf="@id/edit_my_channel_list_item_edit_bt"
+			android:gravity="center_vertical"
+			android:maxLines="1"
+			android:ellipsize="end"
+			android:textColor="@android:color/white"
+			android:textSize="15dp"/>
+
+	</RelativeLayout>
+</RelativeLayout>
