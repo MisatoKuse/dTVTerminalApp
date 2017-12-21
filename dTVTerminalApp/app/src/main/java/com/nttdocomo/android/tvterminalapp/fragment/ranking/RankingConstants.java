@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.fragment.ranking;
 
 public class RankingConstants {
@@ -21,6 +25,3 @@ public class RankingConstants {
         // nop.
     }
 }
-
-
-
