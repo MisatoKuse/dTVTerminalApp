@@ -29,45 +29,53 @@ public class DaccountReceiver extends BroadcastReceiver {
         Bundle intentBundle = intent.getExtras();
         Set<String> bundleLists = intentBundle.keySet();
         for (String key : bundleLists) {
-            String buffer = intentBundle.get(key).toString();
-            if (buffer == null) {
-                buffer = "";
+            Object bundleData = intentBundle.get(key);
+            if(bundleData != null) {
+                String buffer = bundleData.toString();
+                DTVTLogger.debug("in Data " + key + "=" + buffer);
             }
-
-            DTVTLogger.debug("in Data " + key + "=" + buffer);
         }
 
         //内容で処理を振り分ける
-        if (role.equals(DaccountConstants.SET_ID_RECEIVER)) {
-            //デフォルトIDの設定通知を受け取った。
-            DTVTLogger.debug("SET_ID_RECEIVER");
+        switch (role) {
+            case DaccountConstants.SET_ID_RECEIVER:
+                //デフォルトIDの設定通知を受け取った。
+                DTVTLogger.debug("SET_ID_RECEIVER");
 
-            //アプリの再起動を行う
-            DAccountUtils.reStartApli(context);
+                //アプリの再起動を行う
+                DAccountUtils.reStartApplication(context);
 
-        } else if (role.equals(DaccountConstants.USER_AUTH_RECEIVER)) {
-            //ユーザー認証通知を受け取った。
-            DTVTLogger.debug("USER_AUTH_RECEIVER");
-        } else if (role.equals(DaccountConstants.DELETE_ID_RECEIVER)) {
-            //ユーザー削除通知を受け取った。
-            DTVTLogger.debug("DELETE_ID_RECEIVER");
+                break;
+            case DaccountConstants.USER_AUTH_RECEIVER:
+                //ユーザー認証通知を受け取った。
+                DTVTLogger.debug("USER_AUTH_RECEIVER");
+                break;
+            case DaccountConstants.DELETE_ID_RECEIVER:
+                //ユーザー削除通知を受け取った。
+                DTVTLogger.debug("DELETE_ID_RECEIVER");
 
-            //ユーザーが削除されていた場合は、キャッシュクリアを呼ぶ
-            DaccountControl.cacheClear(context);
+                //ユーザーが削除されていた場合は、キャッシュクリアを呼ぶ
+                DaccountControl.cacheClear(context);
 
-        } else if (role.equals(DaccountConstants.INVALIDATE_ID_RECEIVER)) {
-            //ユーザー無効化通知を受け取った。
-            DTVTLogger.debug("INVALIDATE_ID_RECEIVER");
+                break;
+            case DaccountConstants.INVALIDATE_ID_RECEIVER:
+                //ユーザー無効化通知を受け取った。
+                DTVTLogger.debug("INVALIDATE_ID_RECEIVER");
 
-            //ユーザーが無効化されていた場合は、キャッシュクリアを呼ぶ
-            DaccountControl.cacheClear(context);
+                //ユーザーが無効化されていた場合は、キャッシュクリアを呼ぶ
+                DaccountControl.cacheClear(context);
 
-        } else if (role.equals(DaccountConstants.LINKED_LINE_RECEIVER)) {
-            //回線登録通知を受け取った。
-            DTVTLogger.debug("INVALIDATE_ID_RECEIVER");
-        } else if (role.equals(DaccountConstants.SERVICEAPP_REMOVED_RECEIVER)) {
-            //アプリ除外通知を受け取った。
-            DTVTLogger.debug("SERVICEAPP_REMOVED_RECEIVER");
+                break;
+            case DaccountConstants.LINKED_LINE_RECEIVER:
+                //回線登録通知を受け取った。
+                DTVTLogger.debug("INVALIDATE_ID_RECEIVER");
+                break;
+            case DaccountConstants.SERVICEAPP_REMOVED_RECEIVER:
+                //アプリ除外通知を受け取った。
+                DTVTLogger.debug("SERVICE_APP_REMOVED_RECEIVER");
+                break;
+            default:
+                //アナライザー対策なので無処理
         }
     }
 }
