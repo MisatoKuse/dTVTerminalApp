@@ -1398,14 +1398,14 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                                  */
                                 //RESERVED4は4の場合
                                 if (RESERVED4_TYPE4.equals(mDetailData.getReserved4())) {
-                                    startAPP(WORK_START_TYPE + mDetailData.getContentId());
+                                    startApp(WORK_START_TYPE + mDetailData.getContentId());
                                     //RESERVED4は7,8の場合
                                 } else if (RESERVED4_TYPE7.equals(mDetailData.getReserved4())
                                         || RESERVED4_TYPE8.equals(mDetailData.getReserved4())) {
-                                    startAPP(SUPER_SPEED_START_TYPE + mDetailData.getContentId());
+                                    startApp(SUPER_SPEED_START_TYPE + mDetailData.getContentId());
                                     //その他の場合
                                 } else {
-                                    startAPP(TITTLE_START_TYPE + mDetailData.getContentId());
+                                    startApp(TITTLE_START_TYPE + mDetailData.getContentId());
                                 }
                                 //DTVアプリ存在しない場合
                             } else {
@@ -1430,7 +1430,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
      *
      * @param url
      */
-    private void startAPP(String url) {
+    private void startApp(String url) {
         Uri uri = Uri.parse(url);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

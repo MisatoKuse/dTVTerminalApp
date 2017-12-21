@@ -26,9 +26,9 @@ import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.MyChannelEditActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.MainSettingListAdapter;
+import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
-import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.MainSettingUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
@@ -206,19 +206,17 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             startActivity(intent);
         } else {
             //　アプリが無ければインストール画面に誘導
-            //TODO 独自ダイアログの使用。現在はAlertDialogを使用している。
-            new AlertDialog.Builder(this)
-                .setMessage(getString(R.string.main_setting_d_account_message))
-                .setPositiveButton(getString(R.string.positive_response), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Uri uri = Uri.parse(D_ACCOUNT_APP_URI);
-                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                        startActivity(intent);
-                    }
-                })
-                .setNegativeButton(getString(R.string.negative_response), null)
-                .show();
+            CustomDialog dAccountUninstallDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+            dAccountUninstallDialog.setTitle(getResources().getString(R.string.main_setting_d_account_message));
+            dAccountUninstallDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                @Override
+                public void onOKCallback(boolean isOK) {
+                    Uri uri = Uri.parse(D_ACCOUNT_APP_URI);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
+                }
+            });
+            dAccountUninstallDialog.showDialog();
         }
     }
 

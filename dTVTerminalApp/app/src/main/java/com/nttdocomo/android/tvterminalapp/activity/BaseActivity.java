@@ -30,6 +30,7 @@ import com.nttdocomo.android.tvterminalapp.activity.common.MenuItemParam;
 import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
+import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
@@ -349,31 +350,89 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                     break;
                 default:
                     int resultcode = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getResultCode();
+                    RemoteControlRelayClient.STB_APPLICATION_TYPES appId
+                            = ((RemoteControlRelayClient.ResponseMessage)msg.obj).getApplicationTypes();
                     switch (resultcode) {
                         case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_APPLICATION_NOT_INSTALL:
-                            message = "APPLICATION_NOT_INSTALL";
-                            break;
+                            switch (appId) {
+                                case DTV:
+                                    message = getResources().getString(R.string.main_setting_dtv_uninstall_message);
+                                    showErrorDialog(message);
+                                    break;
+                                case DANIMESTORE:
+                                    message = getResources().getString(R.string.main_setting_d_anime_store_uninstall_message);
+                                    showErrorDialog(message);
+                                    break;
+                                case DTVCHANNEL:
+                                    message = getResources().getString(R.string.main_setting_dtv_channel_uninstall_message);
+                                    showErrorDialog(message);
+                                    break;
+                                case HIKARITV:
+                                    message = getResources().getString(R.string.main_setting_hikari_tv_uninstall_message);
+                                    showErrorDialog(message);
+                                    break;
+                                case DAZN:
+                                    message = getResources().getString(R.string.main_setting_dazn_uninstall_message);
+                                    showErrorDialog(message);
+                                    break;
+                                default:
+                                    break;
+                            }
                         case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_APPLICATION_ID_NOTEXIST:
-                            message = "APPLICATION_ID_NOTEXIST";
-                            break;
+//                            message = "APPLICATION_ID_NOTEXIST";
+//                            break;
                         case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_APPLICATION_START_FAILED:
-                            message = "APPLICATION_START_FAILED";
-                            break;
+//                            message = "APPLICATION_START_FAILED";
+//                            break;
                         case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_INTERNAL_ERROR:
-                            message = "INTERNAL_ERROR";
+                            message = getResources().getString(R.string.main_setting_connect_error_message);
+                            showErrorDialog(message);
                             break;
                         case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_VERSION_CODE_INCOMPATIBLE:
-                            message = "VERSION_CODE_INCOMPATIBLE";
-                            break;
+                            switch (appId) {
+                                case DTV:
+                                    message = getResources().getString(R.string.main_setting_dtv_update_message);
+                                    showErrorDialog(message);
+                                    break;
+                                case DANIMESTORE:
+                                    message = getResources().getString(R.string.main_setting_d_anime_store_update_message);
+                                    showErrorDialog(message);
+                                    break;
+                                case DTVCHANNEL:
+                                    message = getResources().getString(R.string.main_setting_dtv_channel_update_message);
+                                    showErrorDialog(message);
+                                    break;
+                                case HIKARITV:
+                                    message = getResources().getString(R.string.main_setting_hikari_tv_update_message);
+                                    showErrorDialog(message);
+                                    break;
+                                case DAZN:
+                                    message = getResources().getString(R.string.main_setting_dazn_update_message);
+                                    showErrorDialog(message);
+                                    break;
+                                default:
+                                    break;
+                            }
                         default:
-                            message = "INTERNAL_ERROR";
+                            message = getResources().getString(R.string.main_setting_connect_error_message);
+                            showErrorDialog(message);
                             break;
                     }
-                    Toast.makeText(mContext, message, Toast.LENGTH_LONG).show();
                     break;
             }
         }
     };
+
+    /**
+     * 機能 エラーメッセージの表示
+     *
+     * @param errorMessage dialog content
+     */
+    private void showErrorDialog(String errorMessage) {
+        CustomDialog errorDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
+        errorDialog.setContent(errorMessage);
+        errorDialog.showDialog();
+    }
 
     /**
      * 機能

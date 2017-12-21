@@ -255,6 +255,18 @@
     <string name="main_setting_image_quality_high">最高画質</string>
     <string name="main_setting_quality_setting_header">外出先視聴時の画質設定</string>
     <string name="main_setting_quality_status">status</string>
+    <string name="main_setting_dtv_uninstall_message">ドコモテレビターミナルのdTVアプリはインストールされてない</string>
+    <string name="main_setting_dtv_update_message">ドコモテレビターミナルのdTVアプリのアップデートが必要です。</string>
+    <string name="main_setting_d_anime_store_uninstall_message">ドコモテレビターミナルのdアニメストアアプリはインストールされてない</string>
+    <string name="main_setting_d_anime_store_update_message">ドコモテレビターミナルのdアニメストアアプリのアップデートが必要です。</string>
+    <string name="main_setting_dtv_channel_uninstall_message">ドコモテレビターミナルのdTVチャンネルアプリはインストールされてない</string>
+    <string name="main_setting_dtv_channel_update_message">ドコモテレビターミナルのdTVチャンネルアプリのアップデートが必要です。</string>
+    <string name="main_setting_hikari_tv_uninstall_message">ドコモテレビターミナルのひかりTVはインストールされてない</string>
+    <string name="main_setting_hikari_tv_update_message">ドコモテレビターミナルのひかりTVアプリのアップデートが必要です。</string>
+    <string name="main_setting_dazn_uninstall_message">ドコモテレビターミナルのDAZNアプリはインストールされてない</string>
+    <string name="main_setting_dazn_update_message">ドコモテレビターミナルのDAZNアプリのアップデートが必要です。</string>
+    <string name="main_setting_connect_error_message">接続できません</string>
+
 
     <string-array name="main_setting_items">
         <item>dアカウント設定</item>
