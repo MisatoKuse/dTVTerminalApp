@@ -64,6 +64,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     private Context mContext = null;
     private RemoteControlRelayClient mRemoteControlRelayClient = null;
 
+    /** dアカウント設定アプリ登録処理 */
+    private DaccountControl mDaccountControl = null;
+
     /**
      * Created on 2017/09/21.
      * 関数機能：
@@ -705,19 +708,35 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      */
     private void setDaccountControl() {
         //dアカウント関連の処理を依頼する
-        DaccountControl daccountControl = new DaccountControl();
-        daccountControl.registService(getApplicationContext(),this);
+        mDaccountControl = new DaccountControl();
+        mDaccountControl.registService(getApplicationContext(),this);
     }
 
     @Override
     public void daccountControlCallBack(boolean result) {
+        DTVTLogger.start();
         //dアカウントの登録結果を受け取るコールバック
-        if(!result) {
-            //失敗した場合は、dアカウント登録画面へ遷移を行う
-            DAccountUtils.startDAccountSetting(this);
-
-            //画面は終わらせる。この時点ではまだdアカウント登録画面を表示しただけなので、再起動は行えない。
-            finish();
+        if(result) {
+            //処理に成功したので、帰る
+            DTVTLogger.end("normal end");
+            return;
         }
+
+        if(mDaccountControl == null) {
+            //処理には失敗したが、動作の続行ができないので、ここで終わらせる。ただ、このコールバックを受けている以上、ヌルになることありえないはず
+            Toast.makeText(getApplicationContext(),R.string.d_account_regist_error,Toast.LENGTH_LONG).show();
+            DTVTLogger.end("null end");
+            return;
+        }
+
+        if(mDaccountControl.isOneTimePass() || mDaccountControl.isCheckService()) {
+            //エラーが発生したのはワンタイムパスワード取得かチェックサービスとなる。dアカウント未認証なので、本処理ではなにもしない
+            DTVTLogger.end("d account not regist");
+            return;
+        }
+
+        //サービスチェックに成功したが、ブロードキャストの登録に失敗した場合。チェック後に急に通信不全になるような事が無ければ発生しないはず。
+        //発生時は次のアクティビティ表示時のリトライにゆだねる。
+        DTVTLogger.end("d account error");
     }
 }
