@@ -8,10 +8,12 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailCacheManager;
+import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
@@ -23,14 +25,30 @@ public class DaccountControl implements
         DaccountRegistService.DaccountRegistServiceCallBack,
         DaccountCheckService.DaccountCheckServiceCallBack {
 
-    //コンテキストの控え
+    /** コンテキストの控え */
     private Context mContext = null;
 
-    //戻り値控え
+    /** 戻り値控え */
     private int mResult = 0;
 
-    //実行クラス名控え
-    private String mResultClass = "";
+    /** コールバックの控え */
+    private DaccountControlCallBack mDaccountControlCallBack = null;
+
+    /** 単回実行フラグ */
+    private DaccountControlOnce mOnceControl = null;
+
+    /** 実行クラスの識別用固定値 */
+    private enum CHECK_LAST_CLASS {
+        //サービス登録チェック
+        CHECK_SERVICE,
+        //サービス登録
+        REGIST_SERVICE,
+        //ワンタイムパスワード登録
+        ONE_TIME_PASS_WORD,
+    }
+
+    /** 実行クラス名控え */
+    private CHECK_LAST_CLASS mResultClass;
 
     /**
      * コールバックは失敗と成功しか返さないので、エラーの値が欲しい場合はこれで取得
@@ -47,7 +65,7 @@ public class DaccountControl implements
      *
      * @return 実行したクラスの名前
      */
-    public String getmResultClass() {
+    public CHECK_LAST_CLASS getmResultClass() {
         return mResultClass;
     }
 
@@ -63,12 +81,6 @@ public class DaccountControl implements
         void daccountControlCallBack(boolean result);
     }
 
-    //コールバックの控え
-    private DaccountControlCallBack mDaccountControlCallBack;
-
-    //単回実行フラグ
-    private DaccountControlOnce onceControl = null;
-
     /**
      * dアカウントに対して、サービス登録を行う
      *
@@ -78,22 +90,30 @@ public class DaccountControl implements
     public void registService(Context context, DaccountControlCallBack daccountControlCallBackSource) {
         DTVTLogger.start();
 
-        onceControl = DaccountControlOnce.getInstance();
-        if (onceControl.isExecOnce()) {
+        if(DAccountUtils.checkDAccountIsExist() == null) {
+            //dアカウント設定アプリが存在しないので帰る。ここで帰れば、単体実行フラグがセットされず、別のアクティビティの実行時に自動的に実行される。
+            //後ほど、dアカウント設定アプリがダウンロードされた場合、その直後のアクティビティの起動時に呼び出されるので、意図的にダウンロード直後に処理を
+            //挿入する必要はない。
+            DTVTLogger.end("not install idmanager");
+            return;
+        }
+
+        mOnceControl = DaccountControlOnce.getInstance();
+        if (mOnceControl.isExecOnce()) {
             //既に実行済みなので帰る
             DTVTLogger.end("registService already exec");
             return;
         }
 
         //次回の実行を阻止するためフラグをセット
-        onceControl.setExecOnce(true);
+        mOnceControl.setExecOnce(true);
 
         //コールバックがヌルならば何もできないので帰る
         if (daccountControlCallBackSource == null) {
             DTVTLogger.end("no callback");
 
             //次回実行する為にフラグをリセット
-            onceControl.setExecOnce(false);
+            mOnceControl.setExecOnce(false);
 
             return;
         }
@@ -106,7 +126,7 @@ public class DaccountControl implements
             DTVTLogger.end("no context");
 
             //次回実行する為にフラグをリセット
-            onceControl.setExecOnce(false);
+            mOnceControl.setExecOnce(false);
 
             return;
         }
@@ -116,8 +136,8 @@ public class DaccountControl implements
         DaccountCheckService checkService = new DaccountCheckService();
         checkService.execDaccountCheckService(context, this);
 
-        //クラス名を控える
-        mResultClass = checkService.getClass().getSimpleName();
+        //クラスの識別値を控える
+        mResultClass = CHECK_LAST_CLASS.CHECK_SERVICE;
     }
 
 
@@ -133,14 +153,14 @@ public class DaccountControl implements
             //結果が利用不可や動作対象外や内部エラー以外は、サービス登録要求を呼び出す
             DaccountRegistService registService = new DaccountRegistService();
             registService.execRegistService(mContext, this);
-            //クラス名を控える
-            mResultClass = registService.getClass().getSimpleName();
+            //クラスの識別値を控える
+            mResultClass = CHECK_LAST_CLASS.REGIST_SERVICE;
         } else {
             //実行失敗なので、エラーを返す
             mDaccountControlCallBack.daccountControlCallBack(false);
 
             //次回実行する為にフラグをリセット
-            onceControl.setExecOnce(false);
+            mOnceControl.setExecOnce(false);
 
             DTVTLogger.end();
         }
@@ -159,13 +179,13 @@ public class DaccountControl implements
             DaccountGetOTT getOneTimePass = new DaccountGetOTT();
             getOneTimePass.execDaccountGetOTT(mContext, this);
             //クラス名を控える
-            mResultClass = getOneTimePass.getClass().getSimpleName();
+            mResultClass = CHECK_LAST_CLASS.ONE_TIME_PASS_WORD;
         } else {
             //実行失敗なので、エラーを返す
             mDaccountControlCallBack.daccountControlCallBack(false);
 
             //次回実行する為にフラグをリセット
-            onceControl.setExecOnce(false);
+            mOnceControl.setExecOnce(false);
 
             DTVTLogger.end();
         }
@@ -183,7 +203,7 @@ public class DaccountControl implements
             mDaccountControlCallBack.daccountControlCallBack(false);
 
             //次回実行する為にフラグをリセット
-            onceControl.setExecOnce(false);
+            mOnceControl.setExecOnce(false);
 
             DTVTLogger.end("not get one time password");
             return;
@@ -213,7 +233,7 @@ public class DaccountControl implements
             mDaccountControlCallBack.daccountControlCallBack(false);
 
             //次回実行する為にフラグをリセット
-            onceControl.setExecOnce(false);
+            mOnceControl.setExecOnce(false);
 
             DTVTLogger.end("change id");
             return;
@@ -225,6 +245,33 @@ public class DaccountControl implements
         //実行に成功したので、trueを返す
         mDaccountControlCallBack.daccountControlCallBack(true);
         DTVTLogger.end();
+    }
+
+    /**
+     * 最後のクラスがサービスチェックかどうかのチェック
+     * @return そうならばtrue
+     */
+    public boolean isCheckService() {
+        return mResultClass == CHECK_LAST_CLASS.CHECK_SERVICE;
+
+    }
+
+    /**
+     * 最後のクラスがサービス登録かどうかのチェック
+     * @return そうならばtrue
+     */
+    public boolean isRegistService() {
+        return mResultClass == CHECK_LAST_CLASS.REGIST_SERVICE;
+
+    }
+
+    /**
+     * 最後のクラスがワンタイムパスワード取得かどうかのチェック
+     * @return そうならばtrue
+     */
+    public boolean isOneTimePass() {
+        return mResultClass == CHECK_LAST_CLASS.ONE_TIME_PASS_WORD;
+
     }
 
     /**
@@ -251,8 +298,8 @@ public class DaccountControl implements
      * おそらく必要はないが、一応ファイル削除やDB削除なので、AsyncTaskとする
      */
     private static class CacheClearTask extends AsyncTask<Context, Void, Void> {
-        //退避用コンテキスト
-        Context mContext;
+        /** 退避用コンテキスト */
+        Context mContext = null;
 
         @Override
         protected Void doInBackground(Context... contexts) {
@@ -290,8 +337,8 @@ public class DaccountControl implements
             super.onPostExecute(aVoid);
             DTVTLogger.start();
 
-            //TODO: アプリ再起動処理がまだ無いので、仮メッセージ
-            Toast.makeText(mContext, "キャッシュクリアをしました", Toast.LENGTH_LONG).show();
+            //TODO: アプリ再起動処理がまだ無いので、仮処理
+            Toast.makeText(mContext, R.string.d_account_chamge_message, Toast.LENGTH_LONG).show();
 
             DTVTLogger.end();
         }
@@ -300,19 +347,27 @@ public class DaccountControl implements
     /**
      * dアカウント制御をアプリ起動時に1回だけ行うための制御クラス
      */
-    public static class DaccountControlOnce {
-        //
-        private static DaccountControlOnce mDaccountControlOnce = new DaccountControlOnce();
+    private static class DaccountControlOnce {
+        /** 初回のみ実行用のインスタンス */
+        private static DaccountControlOnce sDaccountControlOnce = new DaccountControlOnce();
 
-        //実行状況を保持する
-        private static boolean execOnce = false;
+        /** 実行状況を保持する */
+        private static boolean sExecOnce = false;
 
+        /**
+         * 初回実行かどうかを検知する
+         * @return 実行済みならばtrue
+         */
         public static boolean isExecOnce() {
-            return execOnce;
+            return sExecOnce;
         }
 
+        /**
+         * 実行フラグを設定する
+         * @param execOnce 設定を行う実行フラグの値
+         */
         public static void setExecOnce(boolean execOnce) {
-            DaccountControlOnce.execOnce = execOnce;
+            DaccountControlOnce.sExecOnce = execOnce;
         }
 
         /**
@@ -321,8 +376,12 @@ public class DaccountControl implements
         private DaccountControlOnce() {
         }
 
+        /**
+         * 自分のインスタンスを返す
+         * @return 自分のインスタンス
+         */
         public static DaccountControlOnce getInstance() {
-            return mDaccountControlOnce;
+            return sDaccountControlOnce;
         }
     }
 }

@@ -289,6 +289,7 @@
     </string-array>
 
     <!-- dアカウント登録 -->
-    <string name="d_account_regist_error">dアカウントが取得できませんでした</string>
+    <string name="d_account_regist_error">dアカウントの処理に失敗しました。</string>
+    <string name="d_account_chamge_message">dアカウントが変更されました。初期画面に戻ります。</string>
 
 </resources>
