@@ -15,6 +15,10 @@
     <string name="negative_response">いいえ</string>
     <string name="custom_dialog_ok">確定</string>
     <string name="custom_dialog_cancel">キャンセル</string>
+    <string name="clip_regist_result_message">をクリップしました</string>
+    <string name="clip_regist_error_message">のクリップに失敗しました</string>
+    <string name="clip_delete_result_message">のクリップを削除しました</string>
+    <string name="clip_delete_error_message">のクリップ削除に失敗しました</string>
 
     <!-- Launch -->
     <string name="str_app_title">dリモート</string>
@@ -36,7 +40,7 @@
     <string name="str_d_account_reg_confirmation_title">dアカウント登録確認</string>
     <string name="str_stb_select_result_text_failed">ドコモテレビターミナルがネットワークに接続されていないか、\nドコモテレビターミナルのバージョンアップが必要です</string>
     <string name="str_stb_select_result_text_search">STB検索中</string>
-    
+
     <!-- リモコン-->
     <string name="remote_controller_viewpager_record_list_button">録画リスト</string>
     <string name="remote_controller_viewpager_program_list_button">番組表</string>
@@ -271,5 +275,4 @@
         <item>プライバシーポリシー(TBD)</item>
         <item>利用規約(TBD)</item>
     </string-array>
-
 </resources>

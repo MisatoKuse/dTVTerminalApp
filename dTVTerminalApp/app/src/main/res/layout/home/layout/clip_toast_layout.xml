@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:background="@color/custom_toast_background"
+    android:padding="@dimen/clip_toast_margin"
+    android:layout_height="wrap_content">
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:layout_marginEnd="@dimen/clip_toast_margin"
+        android:src="@mipmap/icon_normal_clip" />
+    <TextView
+        android:id="@+id/clip_toast_textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white_text"
+        android:background="@color/custom_toast_background" />
+</LinearLayout>

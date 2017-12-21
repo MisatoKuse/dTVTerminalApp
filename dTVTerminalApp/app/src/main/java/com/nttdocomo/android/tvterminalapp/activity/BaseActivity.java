@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.util.DisplayMetrics;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
@@ -38,8 +39,9 @@ import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
-import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipDeleteWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClient;
 
 /**
@@ -50,7 +52,7 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClie
 
 public class BaseActivity extends FragmentActivity implements MenuDisplayEventListener,
         DlnaDevListListener, View.OnClickListener, RemoteControllerView.OnStartRemoteControllerUIListener,
-        ClipRegistWebClient.ClipRegistJsonParserCallback {
+        ClipRegistWebClient.ClipRegistJsonParserCallback, ClipDeleteWebClient.ClipDeleteJsonParserCallback {
 
     private LinearLayout baseLinearLayout;
     private RelativeLayout headerLayout;
@@ -64,6 +66,12 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     // タイムアウト時間
     public final static int LOAD_PAGE_DELAY_TIME = 1000;
+
+    // クリップ対象
+    private String mClipTarget = null;
+
+    // クリップ未登録状態
+    private static final String CLIP_RESULT_STATUS = "1";
 
     /**
      * Created on 2017/09/21.
@@ -698,22 +706,60 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      * クリップ登録/削除処理追加
      */
     public void sendClipRequest(ClipRequestData data) {
-        ClipRegistWebClient registWebClient = new ClipRegistWebClient();
-        registWebClient.getClipRegistApi(data.getType(), data.getCrid(), data.getServiceId(),
-                data.getEventId(), data.getTitleId(), data.getTitle(), data.getRValue(),
-                data.getLinearStartDate(), data.getLinearEndDate(), data.getIsNotify(),
-                (ClipRegistWebClient.ClipRegistJsonParserCallback) this);
+        String status = data.getSearchOk();
+        mClipTarget = data.getClipTarget();
+        if (status != null && !status.equals(CLIP_RESULT_STATUS)) {
+            ClipRegistWebClient registWebClient = new ClipRegistWebClient();
+            registWebClient.getClipRegistApi(data.getType(), data.getCrid(), data.getServiceId(),
+                    data.getEventId(), data.getTitleId(), data.getTitle(), data.getRValue(),
+                    data.getLinearStartDate(), data.getLinearEndDate(), data.getIsNotify(), this);
+        } else {
+            ClipDeleteWebClient deleteWebClient = new ClipDeleteWebClient();
+            deleteWebClient.getClipDeleteApi(data.getType(), data.getCrid(), data.getTitleId(), this);
+        }
+    }
+
+    /**
+     * クリップ処理でのトースト表示
+     *
+     * @param msgId 各ステータスのメッセージID
+     */
+    private void showClipToast(int msgId) {
+        //クリップ対象がない場合には、トーストのメッセージに不整合が生じるため、表示しない
+        if (mClipTarget != null && mClipTarget.length() > 0) {
+            String[] strings = {mClipTarget, getString(msgId)};
+            LayoutInflater inflater = getLayoutInflater();
+            View view = inflater.inflate(R.layout.clip_toast_layout, null);
+            TextView textView = view.findViewById(R.id.clip_toast_textView);
+            textView.setText(StringUtil.getConnectString(strings));
+            Toast toast = new Toast(this);
+            toast.setDuration(Toast.LENGTH_SHORT);
+            toast.setView(view);
+            toast.show();
+        }
     }
 
     @Override
     public void onClipRegistResult() {
-        //TODO:クリップ成功時の正式なトースト実装
-        Toast.makeText(this, "クリップ成功", Toast.LENGTH_SHORT).show();
+        //TODO:クリップ登録成功時の正式なトースト実装
+        showClipToast(R.string.clip_regist_result_message);
     }
 
     @Override
     public void onClipRegistFailure() {
-        //TODO:クリップ失敗時の正式なトースト実装
-        Toast.makeText(this, "クリップ失敗", Toast.LENGTH_SHORT).show();
+        //TODO:クリップ登録失敗時の正式なトースト実装
+        showClipToast(R.string.clip_regist_error_message);
+    }
+
+    @Override
+    public void onClipDeleteResult() {
+        //TODO:クリップ削除成功時の正式なトースト実装
+        showClipToast(R.string.clip_delete_result_message);
+    }
+
+    @Override
+    public void onClipDeleteFailure() {
+        //TODO:クリップ削除失敗時の正式なトースト実装
+        showClipToast(R.string.clip_delete_error_message);
     }
 }
