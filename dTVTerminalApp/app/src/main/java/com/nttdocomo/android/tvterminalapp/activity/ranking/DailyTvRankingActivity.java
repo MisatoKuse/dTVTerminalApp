@@ -13,7 +13,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -24,7 +23,6 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
-import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -280,6 +278,8 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
             requestData.setRValue(contentsData.getRValue());
             requestData.setLinearStartDate(contentsData.getLinearStartDate());
             requestData.setLinearEndDate(contentsData.getLinearEndDate());
+            requestData.setSearchOk(contentsData.getSearchOk());
+            requestData.setClipTarget(contentsData.getTitle()); //TODO:仕様確認中 現在はランキング画面ではトーストにタイトル名を表示することとしています
             requestData.setIsNotify(contentsData.getDispType(), contentsData.getContentsType(),
                     contentsData.getLinearEndDate(), contentsData.getTvService(), contentsData.getDtv());
             sendClipRequest(requestData);

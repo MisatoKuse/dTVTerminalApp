@@ -26,9 +26,12 @@ public class ClipRequestData {
     private String mLinearStartDate = null;
     // 放送終了日時
     private String mLinearEndDate = null;
+    // クリップ状態
+    private String mSearchOk = null;
+    // クリップ対象
+    private String mClipTarget = null;
     // 視聴通知判定
     private boolean mIsNotify = false;
-
     //EPG判定用
     private String TV_PROGRAM_CHECK = "tv_program";
     //h4d_iptv
@@ -108,8 +111,24 @@ public class ClipRequestData {
         this.mLinearEndDate = mLinearEndDate;
     }
 
+    public String getSearchOk() {
+        return mSearchOk;
+    }
+
+    public void setSearchOk(String mSearchOk) {
+        this.mSearchOk = mSearchOk;
+    }
+
     public boolean getIsNotify() {
         return mIsNotify;
+    }
+
+    public String getClipTarget() {
+        return mClipTarget;
+    }
+
+    public void setClipTarget(String mClipTarget) {
+        this.mClipTarget = mClipTarget;
     }
 
     /**
