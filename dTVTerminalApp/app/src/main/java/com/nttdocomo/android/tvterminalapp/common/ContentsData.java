@@ -129,6 +129,14 @@ public class ContentsData {
         this.mAllowedUse = allowedUse;
     }
 
+    public String getSearchOk() {
+        return mSearchOk;
+    }
+
+    public void setSearchOk(String mSearchOk) {
+        this.mSearchOk = mSearchOk;
+    }
+
     public String getCrid() {
         return mCrid;
     }

@@ -201,7 +201,7 @@ public class ContentsAdapter extends BaseAdapter {
      */
     private void setTimeData(ViewHolder holder, ContentsData listContentInfo) {
         if (!TextUtils.isEmpty(listContentInfo.getTime())) {//時間
-            switch (type) {
+            switch (mType) {
                 case TYPE_DAILY_RANK: // 今日のテレビランキング
                 case TYPE_WEEKLY_RANK: // 週間ランキング
                     holder.tv_time.setText(DateUtils.getRecordShowListItem(Long.parseLong(listContentInfo.getTime())));
