@@ -65,7 +65,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     if(j == itemSchedules.size()-1){
                         isLast = true;
                     }
-                    ItemViewHolder itemViewHolder = new ItemViewHolder();
+                    ItemViewHolder itemViewHolder = new ItemViewHolder(itemSchedules.get(i));
                     setView(itemViewHolder, itemSchedule, isLast);
                     mItemViews.add(itemViewHolder);
                 }
@@ -114,7 +114,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             mInUsage =true;
         }
 
-        ItemViewHolder() {
+        ItemViewHolder(final Schedule schedule) {
             mView = LayoutInflater.from(mContext).inflate(R.layout.tv_program_item_panel, null, false);
             mStartM = mView.findViewById(R.id.tv_program_item_panel_clip_tv);
             mContent = mView.findViewById(R.id.tv_program_item_panel_content_des_tv);
@@ -128,7 +128,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     //クリップボタンのイベントを親に渡す
 //                    ((ListView) parent).performItemClick(mView, position, R.id.item_common_result_clip_tv);
                     //TODO:親に処理を渡すか検討中
-                    ((BaseActivity) mContext).sendClipRequest(ClipDataProvider.setClipData());
+                    ((BaseActivity) mContext).sendClipRequest(schedule.getClipRequestData());
                 }
             });
         }
@@ -158,7 +158,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             for (int i = 0; i < itemSchedule.size(); i++) {
                 ItemViewHolder itemViewHolder =getUnused();
                 if(itemViewHolder == null){
-                    itemViewHolder = new ItemViewHolder();
+                    itemViewHolder = new ItemViewHolder(itemSchedule.get(i));
                     if(i == itemSchedule.size()-1){
                         isLast = true;
                     }

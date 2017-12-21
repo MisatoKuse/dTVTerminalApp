@@ -121,7 +121,7 @@ public class DtvContentsDetailFragment extends Fragment {
         clipButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((BaseActivity) mActivity).sendClipRequest(ClipDataProvider.setClipData());
+                ((BaseActivity) mActivity).sendClipRequest(ClipDataProvider.setClipData(mOtherContentsDetailData.getVodMetaFullData()));
             }
         });
         if (mOtherContentsDetailData != null) {
