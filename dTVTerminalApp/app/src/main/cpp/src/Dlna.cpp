@@ -399,6 +399,48 @@ namespace dtvt {
             return;
         }
 
+        //test s
+        char str_0[1024+1] = {0};
+        char str_1[1024+1] = {0};
+        char str_2[1024+1] = {0};
+        char str_3[1024+1] = {0};
+        char str_4[1024+1] = {0};
+        char str_5[1024+1] = {0};
+        char str_6[1024+1] = {0};
+        char str_7[1024+1] = {0};
+        char str_8[1024+1] = {0};
+        char str_9[1024+1] = {0};
+        char str_10[1024+1] = {0};
+        char str_11[1024+1] = {0};
+        char str_12[1024+1] = {0};
+        char str_13[1024+1] = {0};
+        char str_14[1024+1] = {0};
+        char str_15[1024+1] = {0};
+        char str_16[1024+1] = {0};
+        char str_17[1024+1] = {0};
+        char str_18[1024+1] = {0};
+        char str_19[1024+1] = {0};
+        char str_20[1024+1] = {0};
+        char str_21[1024+1] = {0};
+        char str_22[1024+1] = {0};
+        char str_23[1024+1] = {0};
+        char str_24[1024+1] = {0};
+        char str_25[1024+1] = {0};
+        char str_26[1024+1] = {0};
+        char str_27[1024+1] = {0};
+        char str_28[1024+1] = {0};
+        char str_29[1024+1] = {0};
+        char str_30[1024+1] = {0};
+        char str_31[1024+1] = {0};
+        char str_32[1024+1] = {0};
+        char str_33[1024+1] = {0};
+        char str_34[1024+1] = {0};
+        char str_35[1024+1] = {0};
+        memcpy(str_0, response->body, 1024);
+        memcpy(str_1, &response->body[1024], 1024);
+        memcpy(str_2, &response->body[1024*2], 1024);
+        char * ss= (char*)&response->body[1024*3];
+        //test e
         DlnaXmlParserBase* parser=NULL;
         Dlna *thiz = (Dlna *) arg;
         IfNullReturn(thiz);
@@ -417,7 +459,206 @@ namespace dtvt {
         if (!checkSoapResponseError(response)) {
             goto error;
         }
+//test s
+        if(strlen(ss)<1024){
+            strcpy(str_3, ss);
+        } else {
+            memcpy(str_3, ss, 1024);
+            ss= (char*)&response->body[1024*4];
+            if(strlen(ss)<1024){
+                strcpy(str_4, ss);
+            } else {
+                memcpy(str_4, ss, 1024);
+                ss= (char*)&response->body[1024*5];
+                if(strlen(ss)<1024){
+                    strcpy(str_5, ss);
+                } else {
+                    memcpy(str_5, ss, 1024);
+                    ss= (char*)&response->body[1024*6];
+                    if(strlen(ss)<1024){
+                        strcpy(str_6, ss);
+                    } else {
+                        memcpy(str_6, ss, 1024);
+                        ss= (char*)&response->body[1024*7];
+                        if(strlen(ss)<1024){
+                            strcpy(str_7, ss);
+                        } else {
+                            memcpy(str_7, ss, 1024);
+                            ss= (char*)&response->body[1024*8];
+                            if(strlen(ss)<1024){
+                                strcpy(str_8, ss);
+                            } else {
+                                memcpy(str_8, ss, 1024);
+                                ss= (char*)&response->body[1024*9];
+                                if(strlen(ss)<1024){
+                                    strcpy(str_9, ss);
+                                } else {
+                                    memcpy(str_9, ss, 1024);
+                                    ss= (char*)&response->body[1024*10];
+                                    if(strlen(ss)<1024){
+                                        strcpy(str_10, ss);
+                                    } else {
+                                        memcpy(str_10, ss, 1024);
+                                        ss= (char*)&response->body[1024*11];
+                                        if(strlen(ss)<1024){
+                                            strcpy(str_11, ss);
+                                        } else {
+                                            memcpy(str_11, ss, 1024);
+                                            ss= (char*)&response->body[1024*12];
+                                            if(strlen(ss)<1024){
+                                                strcpy(str_12, ss);
+                                            } else {
+                                                memcpy(str_12, ss, 1024);
+                                                ss= (char*)&response->body[1024*13];
+                                                if(strlen(ss)<1024){
+                                                    strcpy(str_13, ss);
+                                                } else {
+                                                    memcpy(str_13, ss, 1024);
+                                                    ss= (char*)&response->body[1024*14];
+                                                    if(strlen(ss)<1024){
+                                                        strcpy(str_14, ss);
+                                                    } else {
+                                                        memcpy(str_14, ss, 1024);
+                                                        ss= (char*)&response->body[1024*15];
+                                                        if(strlen(ss)<1024){
+                                                            strcpy(str_15, ss);
+                                                        } else {
+                                                            memcpy(str_15, ss, 1024);
+                                                            ss= (char*)&response->body[1024*16];
+                                                            if(strlen(ss)<1024){
+                                                                strcpy(str_16, ss);
+                                                            } else {
+                                                                memcpy(str_16, ss, 1024);
+                                                                ss= (char*)&response->body[1024*17];
+                                                                if(strlen(ss)<1024){
+                                                                    strcpy(str_17, ss);
+                                                                } else {
+                                                                    memcpy(str_17, ss, 1024);
+                                                                    ss= (char*)&response->body[1024*18];
+                                                                    if(strlen(ss)<1024){
+                                                                        strcpy(str_18, ss);
+                                                                    } else {
+                                                                        memcpy(str_18, ss, 1024);
+                                                                        ss= (char*)&response->body[1024*19];
+                                                                        if(strlen(ss)<1024){
+                                                                            strcpy(str_19, ss);
+                                                                        } else {
+                                                                            memcpy(str_19, ss, 1024);
+                                                                            ss= (char*)&response->body[1024*20];
+                                                                            if(strlen(ss)<1024){
+                                                                                strcpy(str_20, ss);
+                                                                            } else {
+                                                                                memcpy(str_20, ss, 1024);
+                                                                                ss= (char*)&response->body[1024*21];
+                                                                                if(strlen(ss)<1024){
+                                                                                    strcpy(str_21, ss);
+                                                                                } else {
+                                                                                    memcpy(str_21, ss, 1024);
+                                                                                    ss= (char*)&response->body[1024*22];
+                                                                                    if(strlen(ss)<1024){
+                                                                                        strcpy(str_22, ss);
+                                                                                    } else {
+                                                                                        memcpy(str_22, ss, 1024);
+                                                                                        ss= (char*)&response->body[1024*23];
+                                                                                        if(strlen(ss)<1024){
+                                                                                            strcpy(str_23, ss);
+                                                                                        } else {
+                                                                                            memcpy(str_23, ss, 1024);
+                                                                                            ss= (char*)&response->body[1024*24];
+                                                                                            if(strlen(ss)<1024){
+                                                                                                strcpy(str_24, ss);
+                                                                                            } else {
+                                                                                                memcpy(str_24, ss, 1024);
+                                                                                                ss= (char*)&response->body[1024*25];
+                                                                                                if(strlen(ss)<1024){
+                                                                                                    strcpy(str_25, ss);
+                                                                                                } else {
+                                                                                                    memcpy(str_25, ss, 1024);
+                                                                                                    ss= (char*)&response->body[1024*26];
+                                                                                                    if(strlen(ss)<1024){
+                                                                                                        strcpy(str_26, ss);
+                                                                                                    } else {
+                                                                                                        memcpy(str_26, ss, 1024);
+                                                                                                        ss= (char*)&response->body[1024*27];
+                                                                                                        if(strlen(ss)<1024){
+                                                                                                            strcpy(str_27, ss);
+                                                                                                        } else {
+                                                                                                            memcpy(str_27, ss, 1024);
+                                                                                                            ss= (char*)&response->body[1024*28];
+                                                                                                            if(strlen(ss)<1024){
+                                                                                                                strcpy(str_28, ss);
+                                                                                                            } else {
+                                                                                                                memcpy(str_28, ss, 1024);
+                                                                                                                ss= (char*)&response->body[1024*29];
+                                                                                                                if(strlen(ss)<1024){
+                                                                                                                    strcpy(str_29, ss);
+                                                                                                                } else {
+                                                                                                                    memcpy(str_29, ss, 1024);
+                                                                                                                    ss= (char*)&response->body[1024*30];
+                                                                                                                    if(strlen(ss)<1024){
+                                                                                                                        strcpy(str_30, ss);
+                                                                                                                    } else {
+                                                                                                                        memcpy(str_30, ss, 1024);
+                                                                                                                        ss= (char*)&response->body[1024*31];
+                                                                                                                        if(strlen(ss)<1024){
+                                                                                                                            strcpy(str_31, ss);
+                                                                                                                        } else {
+                                                                                                                            memcpy(str_31, ss, 1024);
+                                                                                                                            ss= (char*)&response->body[1024*32];
+                                                                                                                            if(strlen(ss)<1024){
+                                                                                                                                strcpy(str_32, ss);
+                                                                                                                            } else {
+                                                                                                                                memcpy(str_32, ss, 1024);
+                                                                                                                                ss= (char*)&response->body[1024*33];
+                                                                                                                                if(strlen(ss)<1024){
+                                                                                                                                    strcpy(str_33, ss);
+                                                                                                                                } else {
+                                                                                                                                    memcpy(str_33, ss, 1024);
+                                                                                                                                    ss= (char*)&response->body[1024*34];
+                                                                                                                                    if(strlen(ss)<1024){
+                                                                                                                                        strcpy(str_34, ss);
+                                                                                                                                    } else {
+                                                                                                                                        memcpy(str_34, ss, 1024);
+                                                                                                                                        ss= (char*)&response->body[1024*35];
+                                                                                                                                        if(strlen(ss)<1024){
+                                                                                                                                            strcpy(str_35, ss);
+                                                                                                                                        } else {
+                                                                                                                                            memcpy(str_35, ss, 1024);
+                                                                                                                                        }
+                                                                                                                                    }
+                                                                                                                                }
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
 
+                                                                                                                }
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //test e
         parser->parse((void *) response, vv, containerId, isContainerId);
         #if defined(DLNA_KARI_DMS_UNIVERSAL)
             if(containerId.length() != 0){
@@ -1022,7 +1263,7 @@ namespace dtvt {
 //        method = env->GetMethodID(listActivityClazz, "notifyObjFromNative", "(ILjava/util/ArrayList;)V");
 //        IfNullGoTo(method, error_or_return);
 
-        env->CallVoidMethod(mEvent.mJObject, method, msg, listObj);
+        //env->CallVoidMethod(mEvent.mJObject, method, msg, listObj);
 
         error_or_return:
             if(env && method && listObj){
@@ -1059,7 +1300,8 @@ namespace dtvt {
         #if defined(DLNA_KARI_DMS_UNIVERSAL)
             return sendSoap(controlUrl, "0");
         #elif defined(DLNA_KARI_DMS_NAS)
-            return sendSoap(controlUrl, DLNA_DMS_ROOT);
+            //return sendSoap(controlUrl, "0"); //test
+            return sendSoap(controlUrl, DLNA_DMS_ROOT);   //本番
         #elif defined(DLNA_KARI_DMS_RELEASE)
             return sendSoap(controlUrl, DLNA_DMS_RECORD_LIST);
 //                //チューナールート/スマホ向け/録画一覧
