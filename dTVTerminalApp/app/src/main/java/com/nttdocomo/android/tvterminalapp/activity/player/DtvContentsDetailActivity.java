@@ -448,7 +448,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     }
 
     /**
-     * hide video ctrl view
+     * hide video ctrl mView
      *
      * @param invisible
      */
@@ -466,7 +466,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     }
 
     /**
-     * hide ctrl view
+     * hide ctrl mView
      */
     private void hideCtrlViewAfterOperate() {
         DTVTLogger.start();
@@ -849,7 +849,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     }
 
     /**
-     * initPlayerView view
+     * initPlayerView mView
      */
     private void initPlayerView() {
         DTVTLogger.start();

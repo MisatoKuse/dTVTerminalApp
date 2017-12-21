@@ -6,20 +6,16 @@ package com.nttdocomo.android.tvterminalapp.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaHikariChListItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoItem;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListItem;
 import com.nttdocomo.android.tvterminalapp.model.program.Channel;
 
 import java.util.ArrayList;
@@ -135,7 +131,7 @@ public class ChannelListAdapter extends BaseAdapter {
                     DlnaRecVideoItem bsItem = (DlnaRecVideoItem) mData.get(position);
                     if (null != bsItem) {
                         chName = bsItem.mTitle;
-                        //thumbnail = bsItem.mUpnpIcon;
+                        //mThumbnail = bsItem.mUpnpIcon;
                         thumbnail = null;
                     }
                     break;
@@ -143,7 +139,7 @@ public class ChannelListAdapter extends BaseAdapter {
                     DlnaRecVideoItem terItem = (DlnaRecVideoItem) mData.get(position);
                     if (null != terItem) {
                         chName = terItem.mTitle;
-                        //thumbnail = terItem.mUpnpIcon;
+                        //mThumbnail = terItem.mUpnpIcon;
                         thumbnail = null;
                     }
                     break;

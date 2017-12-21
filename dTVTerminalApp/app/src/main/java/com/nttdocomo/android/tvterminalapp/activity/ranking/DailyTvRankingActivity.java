@@ -22,7 +22,6 @@ import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -266,26 +265,7 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
         if (mLoadMoreView == view) {
             return;
         }
-        if (view.equals(mContentsList.get(position).getClipButton())) {
-            //TODO:クリップ処理実装
-            ClipRequestData requestData = new ClipRequestData();
-            ContentsData contentsData = mContentsList.get(position);
-            requestData.setCrid(contentsData.getCrid());
-            requestData.setServiceId(contentsData.getServiceId());
-            requestData.setEventId(contentsData.getEventId());
-            requestData.setTitleId(contentsData.getTitleId());
-            requestData.setTitle(contentsData.getTitle());
-            requestData.setRValue(contentsData.getRValue());
-            requestData.setLinearStartDate(contentsData.getLinearStartDate());
-            requestData.setLinearEndDate(contentsData.getLinearEndDate());
-            requestData.setSearchOk(contentsData.getSearchOk());
-            requestData.setClipTarget(contentsData.getTitle()); //TODO:仕様確認中 現在はランキング画面ではトーストにタイトル名を表示することとしています
-            requestData.setIsNotify(contentsData.getDispType(), contentsData.getContentsType(),
-                    contentsData.getLinearEndDate(), contentsData.getTvService(), contentsData.getDtv());
-            sendClipRequest(requestData);
-        } else {
-            startActivity(DtvContentsDetailActivity.class, null);
-        }
+        startActivity(DtvContentsDetailActivity.class, null);
     }
 
     @Override

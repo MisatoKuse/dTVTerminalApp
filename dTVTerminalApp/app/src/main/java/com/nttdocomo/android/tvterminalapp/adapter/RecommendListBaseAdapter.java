@@ -15,6 +15,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.dataprovider.ClipDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.model.recommend.RecommendContentInfo;
 
@@ -62,6 +64,15 @@ public class RecommendListBaseAdapter extends BaseAdapter {
             holder.tv_des = view.findViewById(R.id.recommend_des);
             holder.bt_clip = view.findViewById(R.id.recommend_bt_clip);
             holder.bt_clip.setVisibility(View.GONE);
+            holder.bt_clip.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //クリップボタンのイベントを親に渡す
+//                    ((ListView) parent).performItemClick(mView, position, R.id.item_common_result_clip_tv);
+                    //TODO:親に処理を渡すか検討中
+                    ((BaseActivity) mContext).sendClipRequest(ClipDataProvider.setClipData());
+                }
+            });
 
             float mWidth = (float) mContext.getResources().getDisplayMetrics().widthPixels / 3;
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int) mWidth, (int) mWidth / 2);

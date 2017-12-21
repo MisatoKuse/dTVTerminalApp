@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -24,6 +23,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.dataprovider.ClipDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
@@ -142,7 +142,9 @@ public class ContentsAdapter extends BaseAdapter {
             @Override
             public void onClick(View view) {
                 //クリップボタンのイベントを親に渡す
-                ((ListView) parent).performItemClick(view, position, R.id.item_common_result_clip_tv);
+//                    ((ListView) parent).performItemClick(mView, position, R.id.item_common_result_clip_tv);
+                //TODO:親に処理を渡すか検討中
+                ((BaseActivity) mContext).sendClipRequest(ClipDataProvider.setClipData(listContentInfo));
             }
         });
 
@@ -375,10 +377,10 @@ public class ContentsAdapter extends BaseAdapter {
             case TYPE_RENTAL_RANK: // レンタル一覧
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
             case TYPE_RECORDED_LIST: // 録画番組一覧
-//                view = mInflater.inflate(R.layout.item_common_result, parent, false);
+//                mView = mInflater.inflate(R.layout.item_common_result, parent, false);
 //                break;
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
-//                view = mInflater.inflate(R.layout.item_common_result, parent, false);
+//                mView = mInflater.inflate(R.layout.item_common_result, parent, false);
 //                break;
             case TYPE_STB_SELECT_LIST: //STBデバイス名一覧
                 view = mInflater.inflate(R.layout.item_common_result, parent, false);
@@ -416,7 +418,7 @@ public class ContentsAdapter extends BaseAdapter {
         switch (type) {
             case TYPE_DAILY_RANK: // 今日のテレビランキング
             case TYPE_WEEKLY_RANK: // 週間ランキング
-//                holder.tv_clip = view.findViewById(R.id.item_common_result_clip_tv);
+//                holder.tv_clip = mView.findViewById(R.id.item_common_result_clip_tv);
             case TYPE_VIDEO_RANK: // ビデオランキング
             case TYPE_RENTAL_RANK: // レンタル一覧
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧

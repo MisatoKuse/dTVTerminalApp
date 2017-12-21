@@ -17,7 +17,6 @@ import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActi
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -221,26 +220,7 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
         if (mLoadMoreView == view || mActivity == null) {
             return;
         }
-        if (view.equals(mData.get(position).getClipButton())) {
-            //TODO:クリップ処理実装
-            ClipRequestData requestData = new ClipRequestData();
-            ContentsData contentsData = mData.get(position);
-            requestData.setCrid(contentsData.getCrid());
-            requestData.setServiceId(contentsData.getServiceId());
-            requestData.setEventId(contentsData.getEventId());
-            requestData.setTitleId(contentsData.getTitleId());
-            requestData.setTitle(contentsData.getTitle());
-            requestData.setRValue(contentsData.getRValue());
-            requestData.setLinearStartDate(contentsData.getLinearStartDate());
-            requestData.setLinearEndDate(contentsData.getLinearEndDate());
-            requestData.setSearchOk(contentsData.getSearchOk());
-            requestData.setClipTarget(contentsData.getTitle()); //TODO:仕様確認中 現在はランキング画面ではトーストにタイトル名を表示することとしています
-            requestData.setIsNotify(contentsData.getDispType(), contentsData.getContentsType(),
-                    contentsData.getLinearEndDate(), contentsData.getTvService(), contentsData.getDtv());
-            ((BaseActivity) mActivity).sendClipRequest(requestData);
-        } else {
-            ((BaseActivity) mActivity).startActivity(DtvContentsDetailActivity.class, null);
-        }
+        ((BaseActivity) mActivity).startActivity(DtvContentsDetailActivity.class, null);
     }
 
     @Override
