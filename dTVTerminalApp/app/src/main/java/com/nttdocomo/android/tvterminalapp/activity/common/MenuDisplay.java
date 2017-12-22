@@ -290,7 +290,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     private void loadMenuList(View popupWindowView) {
 
         mGlobalMenuListView = popupWindowView.findViewById(R.id.menu_list);
-        addFooterView(mGlobalMenuListView); //アカウント名アイテム追加
+//        addFooterView(mGlobalMenuListView); //アカウント名アイテム追加
         initMenuListData();
 
         mMenuListAdapter = new MenuListAdapter(mActivity, mMenuItemTitles, mMenuItemCount);
