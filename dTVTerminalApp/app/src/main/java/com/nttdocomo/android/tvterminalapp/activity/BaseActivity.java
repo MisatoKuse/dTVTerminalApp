@@ -378,6 +378,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                                 default:
                                     break;
                             }
+                            break;
                         case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_APPLICATION_ID_NOTEXIST:
 //                            message = "APPLICATION_ID_NOTEXIST";
 //                            break;
