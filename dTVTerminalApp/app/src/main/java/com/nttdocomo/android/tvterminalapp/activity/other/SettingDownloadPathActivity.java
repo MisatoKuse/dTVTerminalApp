@@ -4,8 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.other;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
