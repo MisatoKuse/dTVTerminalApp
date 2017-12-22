@@ -128,4 +128,17 @@ public class RecordingReservationContentsDetailInfo {
         return mRValue;
     }
 
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("plat:" + getPlatformType())
+                .append(" sId:"+ getServiceId())
+                .append(" eId:" + getEventId())
+                .append(" title:" + getTitle())
+                .append(" start:" + getStartTime())
+                .append(" dur:" + getDuration())
+                .append(" loop:" + getLoopTypeNum())
+                .append(" rval:" + getRValue());
+        return builder.toString();
+    }
+
 }

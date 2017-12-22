@@ -31,8 +31,15 @@ public class CustomDialog {
     private List<String> list;
     private ApiOKCallback apiOKCallback;
     private ApiSelectCallback apiSelectCallback;
+    private ApiItemSelectCallback apiItemSelectCallback;
     private String confirmText = null;
     private String cancelText = null;
+    private boolean cancelable = true;
+
+    private int cancelVisiblity = View.VISIBLE;
+    private int confirmVisiblity = View.VISIBLE;
+    private boolean isCancelVisiblityChanged = false;
+    private boolean isConfirmVisiblityChanged = false;
 
     /**
      * OKを返却するためのコールバック
@@ -48,12 +55,23 @@ public class CustomDialog {
         void onSelectCallback(int position);
     }
 
+    /**
+     * SELECTを返却するためのコールバック
+     */
+    public interface ApiItemSelectCallback {
+        void onItemSelectCallback(AlertDialog dialog, int position);
+    }
+
     public void setOkCallBack(ApiOKCallback apiOKCallback) {
         this.apiOKCallback = apiOKCallback;
     }
 
     public void setSelectCallBack(ApiSelectCallback apiSelectCallback) {
         this.apiSelectCallback = apiSelectCallback;
+    }
+
+    public void setItemSelectCallback(ApiItemSelectCallback callback) {
+        this.apiItemSelectCallback = callback;
     }
 
     public CustomDialog(Context context, DialogType dialogType) {
@@ -120,7 +138,15 @@ public class CustomDialog {
                 tv_cancel.setVisibility(View.GONE);
                 break;
             case SELECT:
-                tv_confirm.setVisibility(View.GONE);
+                if(isConfirmVisiblityChanged) {
+                    tv_confirm.setVisibility(confirmVisiblity);
+                } else {
+                    tv_confirm.setVisibility(View.GONE);
+                }
+                if(isCancelVisiblityChanged) {
+                    tv_cancel.setVisibility(cancelVisiblity);
+                }
+
                 window.findViewById(R.id.custom_dialog_sl).setVisibility(View.VISIBLE);
                 if (list != null) {
                     LinearLayout linearLayout = window.findViewById(R.id.custom_dialog_ll);
@@ -143,6 +169,9 @@ public class CustomDialog {
                                 int position = (int) view.getTag();
                                 if (apiSelectCallback != null) {
                                     apiSelectCallback.onSelectCallback(position);
+                                }
+                                if(apiItemSelectCallback != null) {
+                                    apiItemSelectCallback.onItemSelectCallback(dialog ,position);
                                 }
                             }
                         });
@@ -183,6 +212,8 @@ public class CustomDialog {
                 }
             });
         }
+        dialog.setCancelable(cancelable);
+
         /*WindowManager.LayoutParams lp = window.getAttributes();
         lp.width = 800;
         window.setAttributes(lp);*/
@@ -225,5 +256,28 @@ public class CustomDialog {
      */
     public void setCancelText(int resId) {
         cancelText = context.getResources().getString(resId);
+    }
+
+    /**
+     * Dialogのcancelableを変更
+     */
+    public void setCancelable(boolean cancelable) {
+        this.cancelable = cancelable;
+    }
+
+    /**
+     * confirmの表示/非表示を設定
+     */
+    public void setConfirmVisiblity(int visiblity) {
+        isConfirmVisiblityChanged = true;
+        confirmVisiblity = visiblity;
+    }
+
+    /**
+     * cancelの表示/非表示を設定
+     */
+    public void setCancelVisiblity(int visiblity) {
+        isCancelVisiblityChanged = true;
+        cancelVisiblity = visiblity;
     }
 }

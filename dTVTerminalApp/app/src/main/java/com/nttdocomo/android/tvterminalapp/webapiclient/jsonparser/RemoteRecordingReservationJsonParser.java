@@ -10,7 +10,7 @@ import android.os.AsyncTask;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationResultResponse;
-import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RemoteRecordingReservationClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RemoteRecordingReservationWebClient;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,7 +21,7 @@ public class RemoteRecordingReservationJsonParser extends AsyncTask<Object, Obje
     private static final String RESPONSE = ".RemoteRecordingReservationResultResponse";
     private static final String JSON_OBJECT = ".JSONObject";
 
-    private RemoteRecordingReservationClient.RemoteRecordingReservationJsonParserCallback
+    private RemoteRecordingReservationWebClient.RemoteRecordingReservationJsonParserCallback
             mRemoteRecordingReservationJsonParserCallback;
     // オブジェクトクラスの定義　
     private RemoteRecordingReservationResultResponse mRemoteRecordingReservationResultResponse;
@@ -29,7 +29,7 @@ public class RemoteRecordingReservationJsonParser extends AsyncTask<Object, Obje
     /**
      * コンストラクタ
      */
-    public RemoteRecordingReservationJsonParser(RemoteRecordingReservationClient.
+    public RemoteRecordingReservationJsonParser(RemoteRecordingReservationWebClient.
                                                         RemoteRecordingReservationJsonParserCallback recordingReservationListJsonParserCallback) {
         mRemoteRecordingReservationJsonParserCallback =
                 recordingReservationListJsonParserCallback;
@@ -66,6 +66,7 @@ public class RemoteRecordingReservationJsonParser extends AsyncTask<Object, Obje
                     sendStatus(jsonObj);
                     return mRemoteRecordingReservationResultResponse;
                 }
+                DTVTLogger.debug("JsonStr is Null");
             }
         } catch (JSONException e) {
             DTVTLogger.debug(CLASS_NAME + JSON_OBJECT, e);
