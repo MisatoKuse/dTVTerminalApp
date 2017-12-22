@@ -47,6 +47,7 @@ import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountControl;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipDeleteWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountControl;
 
 /**
  * クラス機能：
