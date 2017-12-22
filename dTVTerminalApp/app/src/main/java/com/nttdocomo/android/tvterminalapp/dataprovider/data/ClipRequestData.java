@@ -99,6 +99,11 @@ public class ClipRequestData {
         return mLinearStartDate;
     }
 
+    /**
+     * 仕様により avail_start_date を設定する
+     *
+     * @param mLinearStartDate 番組開始時間
+     */
     public void setLinearStartDate(String mLinearStartDate) {
         this.mLinearStartDate = mLinearStartDate;
     }
@@ -107,6 +112,11 @@ public class ClipRequestData {
         return mLinearEndDate;
     }
 
+    /**
+     * 仕様により avail_end_date を設定する
+     *
+     * @param mLinearEndDate 番組終了時間
+     */
     public void setLinearEndDate(String mLinearEndDate) {
         this.mLinearEndDate = mLinearEndDate;
     }
@@ -160,12 +170,16 @@ public class ClipRequestData {
      * @param tvService TV種別
      */
     private void setTvType(String tvService) {
-        if (tvService.equals(H4D_IPTV_SERVICE_CONTENTS)) {
-            //h4d_iptv
-            mType = WebApiBasePlala.CLIP_TYPE_H4D_IPTV;
-        } else if (tvService.equals(DCH_SERVICE_CONTENTS)) {
-            //dch
-            mType = WebApiBasePlala.CLIP_TYPE_DCH;
+        if (tvService != null) {
+            if (tvService.equals(H4D_IPTV_SERVICE_CONTENTS)) {
+                //h4d_iptv
+                mType = WebApiBasePlala.CLIP_TYPE_H4D_IPTV;
+            } else if (tvService.equals(DCH_SERVICE_CONTENTS)) {
+                //dch
+                mType = WebApiBasePlala.CLIP_TYPE_DCH;
+            } else {
+                mType = "";
+            }
         }
     }
 
@@ -175,7 +189,7 @@ public class ClipRequestData {
      * @param dtv dTV種別
      */
     private void setDtvType(String dtv) {
-        if (dtv.equals(DTV_SERVICE_CONTENTS_TRUE)) {
+        if (dtv != null && dtv.equals(DTV_SERVICE_CONTENTS_TRUE)) {
             //dtv_vod
             mType = WebApiBasePlala.CLIP_TYPE_DTV_VOD;
         } else {

@@ -23,9 +23,9 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.dataprovider.ClipDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 
 import java.util.List;
@@ -132,10 +132,12 @@ public class ContentsAdapter extends BaseAdapter {
         }
         setShowDataVisibility(holder);
         //各アイテムデータを取得
-        final ContentsData listContentInfo = listData.get(position);
+        ContentsData listContentInfo = listData.get(position);
         // アイテムデータを設定する
         setContentsData(holder, listContentInfo);
 
+        //クリップボタン処理を設定する
+        final ClipRequestData requestData = listContentInfo.getRequestData();
         TextView textView = view.findViewById(R.id.item_common_result_clip_tv);
         listContentInfo.setClipButton(textView);
         textView.setOnClickListener(new View.OnClickListener() {
@@ -144,7 +146,7 @@ public class ContentsAdapter extends BaseAdapter {
                 //クリップボタンのイベントを親に渡す
 //                    ((ListView) parent).performItemClick(mView, position, R.id.item_common_result_clip_tv);
                 //TODO:親に処理を渡すか検討中
-                ((BaseActivity) mContext).sendClipRequest(ClipDataProvider.setClipData(listContentInfo));
+                ((BaseActivity) mContext).sendClipRequest(requestData);
             }
         });
 

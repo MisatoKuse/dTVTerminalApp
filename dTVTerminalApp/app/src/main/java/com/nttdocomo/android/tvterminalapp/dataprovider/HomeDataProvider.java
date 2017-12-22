@@ -8,6 +8,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 
+import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DailyRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendChInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendVdInsertDataManager;
@@ -30,6 +33,7 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendChWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendVdWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,14 +124,14 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
          *
          * @param channelList
          */
-        void tvScheduleListCallback(List<Map<String, String>> channelList);
+        void tvScheduleListCallback(List<ContentsData> channelList);
 
         /**
          * デイリーランキング用コールバック
          *
          * @param dailyList
          */
-        void dailyRankListCallback(List<Map<String, String>> dailyList);
+        void dailyRankListCallback(List<ContentsData> dailyList);
 
         /**
          * ユーザ情報用コールバック
@@ -141,28 +145,28 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
          *
          * @param clipList
          */
-        void vodClipListCallback(List<Map<String, String>> clipList);
+        void vodClipListCallback(List<ContentsData> clipList);
 
         /**
          * ビデオランキング用コールバック
          *
          * @param videoRankList
          */
-        void videoRankCallback(List<Map<String, String>> videoRankList);
+        void videoRankCallback(List<ContentsData> videoRankList);
 
         /**
          * おすすめ番組用コールバック
          *
          * @param recChList
          */
-        void recommendChannelCallback(List<Map<String, String>> recChList);
+        void recommendChannelCallback(List<ContentsData> recChList);
 
         /**
          * おすすめビデオ用コールバック
          *
          * @param recVdList
          */
-        void recommendVideoCallback(List<Map<String, String>> recVdList);
+        void recommendVideoCallback(List<ContentsData> recVdList);
     }
 
     private ApiDataProviderCallback apiDataProviderCallback;
@@ -188,7 +192,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
     /**
      * 非同期処理でHOME画面に表示するデータの取得を行う
      */
-    private AsyncTask<Void, Void, Void>homeDataDownloadTask = new AsyncTask<Void, Void, Void>() {
+    private AsyncTask<Void, Void, Void> homeDataDownloadTask = new AsyncTask<Void, Void, Void>() {
         @Override
         protected Void doInBackground(Void... voids) {
             //NOW ON AIR
@@ -231,7 +235,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param list
      */
     public void sendTvScheduleListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.tvScheduleListCallback(list);
+        apiDataProviderCallback.tvScheduleListCallback(setHomeContentData(list));
     }
 
     /**
@@ -240,7 +244,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param list
      */
     public void sendRecommendChListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.recommendChannelCallback(list);
+        apiDataProviderCallback.recommendChannelCallback(setHomeContentData(list));
     }
 
     /**
@@ -249,7 +253,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param list
      */
     public void sendRecommendVdListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.recommendVideoCallback(list);
+        apiDataProviderCallback.recommendVideoCallback(setHomeContentData(list));
     }
 
     /**
@@ -258,7 +262,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param list
      */
     public void sendDailyRankListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.dailyRankListCallback(list);
+        apiDataProviderCallback.dailyRankListCallback(setHomeContentData(list));
     }
 
     /**
@@ -267,7 +271,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param list
      */
     public void sendVideoRankListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.videoRankCallback(list);
+        apiDataProviderCallback.videoRankCallback(setHomeContentData(list));
     }
 
     /**
@@ -276,7 +280,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param list
      */
     public void sendVodClipListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.vodClipListCallback(list);
+        apiDataProviderCallback.vodClipListCallback(setHomeContentData(list));
     }
 
     /**
@@ -286,6 +290,41 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      */
     public void sendUserInfoListData(List<Map<String, String>> list) {
         apiDataProviderCallback.userInfoCallback(list);
+    }
+
+
+    /**
+     * 取得したリストマップをContentsDataクラスへ入れる
+     *
+     * @param mapList コンテンツリストデータ
+     * @return dataList ListView表示用データ
+     */
+    private List<ContentsData> setHomeContentData(
+            List<Map<String, String>> mapList) {
+        List<ContentsData> rankingContentsDataList = new ArrayList<>();
+
+        ContentsData rankingContentInfo;
+
+        for (int i = 0; i < mapList.size(); i++) {
+            rankingContentInfo = new ContentsData();
+            rankingContentInfo.setTime(mapList.get(i).get(JsonContents.META_RESPONSE_DISPLAY_START_DATE));
+            rankingContentInfo.setTitle(mapList.get(i).get(JsonContents.META_RESPONSE_TITLE));
+            rankingContentInfo.setThumURL(mapList.get(i).get(JsonContents.META_RESPONSE_THUMB_448));
+            String thumbUrl = rankingContentInfo.getThumURL();
+            String title = rankingContentInfo.getTitle();
+            if (title == null || title.length() < 1) {
+                rankingContentInfo.setTitle(mapList.get(i).get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE));
+            }
+            if (thumbUrl == null || thumbUrl.length() < 1) {
+                //レコメンドからのデータはキーが違うため再取得する
+                rankingContentInfo.setThumURL(mapList.get(i).get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1));
+            }
+
+            rankingContentsDataList.add(rankingContentInfo);
+            DTVTLogger.info("RankingContentInfo " + rankingContentInfo.getRank());
+        }
+
+        return rankingContentsDataList;
     }
 
     /**
@@ -305,8 +344,8 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         } else {
             //通信クラスにデータ取得要求を出す
             TvScheduleWebClient webClient = new TvScheduleWebClient();
-            int []ageReq = {1};
-            String [] upperPageLimit = {WebApiBasePlala.DATE_NOW};
+            int[] ageReq = {1};
+            String[] upperPageLimit = {WebApiBasePlala.DATE_NOW};
             String lowerPageLimit = "";
             //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
             webClient.getTvScheduleApi(ageReq, upperPageLimit,
@@ -317,7 +356,6 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
 
     /**
      * おすすめ番組情報取得
-     *
      */
     private List<Map<String, String>> getRecommendChListData() {
         DateUtils dateUtils = new DateUtils(mContext);
@@ -339,7 +377,6 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
 
     /**
      * おすすめビデオ情報取得
-     *
      */
     private List<Map<String, String>> getRecommendVdListData() {
         DateUtils dateUtils = new DateUtils(mContext);
@@ -389,7 +426,6 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
 
     /**
      * 今日のテレビランキング情報取得
-     *
      */
     private List<Map<String, String>> getDailyRankListData() {
         DateUtils dateUtils = new DateUtils(mContext);
@@ -417,7 +453,6 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
 
     /**
      * ビデオランキング情報取得
-     *
      */
     private List<Map<String, String>> getVideoRankListData() {
         DateUtils dateUtils = new DateUtils(mContext);

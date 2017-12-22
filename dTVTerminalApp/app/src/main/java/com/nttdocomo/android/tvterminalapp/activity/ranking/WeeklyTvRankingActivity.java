@@ -235,30 +235,28 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
     /**
      * 取得結果の設定・表示
      */
-    private void setShowWeeklyRanking(List<Map<String, String>> weeklyRankMapList) {
-        if (null == weeklyRankMapList || 0 == weeklyRankMapList.size()) {
+    private void setShowWeeklyRanking(List<ContentsData> contentsDataList) {
+        if (null == contentsDataList || 0 == contentsDataList.size()) {
             //通信とJSON Parseに関してerror処理
             //TODO: メッセージは仕様検討の必要あり
             Toast.makeText(this, "ランキングデータ取得失敗", Toast.LENGTH_SHORT).show();
             return;
         }
-        List<ContentsData> rankingContentInfo = setWeeklyRankingContentData(weeklyRankMapList);
-
 
         RankingBaseFragment fragment = mRankingFragmentFactory.createFragment
                 (RankingConstants.RANKING_MODE_NO_OF_WEEKLY, mViewPager.getCurrentItem(), this);
 
         //既に元のデータ以上の件数があれば足す物は無いので、更新せずに帰る
-        if (null != fragment.mData && fragment.mData.size() >= rankingContentInfo.size()) {
+        if (null != fragment.mData && fragment.mData.size() >= contentsDataList.size()) {
             fragment.displayMoreData(false);
             return;
         }
 
         int pageNumber = getCurrentNumber();
         for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE
-                && i < rankingContentInfo.size(); ++i) {
+                && i < contentsDataList.size(); ++i) {
             if (null != fragment.mData) {
-                fragment.mData.add(rankingContentInfo.get(i));
+                fragment.mData.add(contentsDataList.get(i));
             }
         }
         DTVTLogger.end("Fragment.mData.size :" + String.valueOf(fragment.mData.size()));
@@ -277,55 +275,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
         }
         b.displayMoreData(false);
         setCommunicatingStatus(false);
-    }
-
-    /**
-     * 取得したリストマップをContentsDataクラスへ入れる
-     */
-    private List<ContentsData> setWeeklyRankingContentData(List<Map<String, String>>
-                                                                   weeklyRankMapList) {
-        List<ContentsData> rankingContentsDataList = new ArrayList<>();
-
-        ContentsData rankingContentInfo;
-
-        for (int i = 0; i < weeklyRankMapList.size(); i++) {
-            rankingContentInfo = new ContentsData();
-            rankingContentInfo.setRank(String.valueOf(i + 1));
-            rankingContentInfo.setThumURL(weeklyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_THUMB_448));
-            rankingContentInfo.setTime(weeklyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_AVAIL_START_DATE));
-            rankingContentInfo.setTitle(weeklyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_TITLE));
-            rankingContentInfo.setSearchOk(weeklyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_SEARCH_OK));
-            rankingContentInfo.setCrid(weeklyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_CRID));
-            rankingContentInfo.setServiceId(weeklyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_SERVICE_ID));
-            rankingContentInfo.setEventId(weeklyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_EVENT_ID));
-            rankingContentInfo.setTitleId(weeklyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_TITLE_ID));
-            rankingContentInfo.setRValue(weeklyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_R_VALUE));
-            rankingContentInfo.setLinearStartDate(weeklyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_AVAIL_START_DATE));
-            rankingContentInfo.setLinearEndDate(weeklyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_AVAIL_END_DATE));
-            rankingContentInfo.setDispType(weeklyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_DISP_TYPE));
-            rankingContentInfo.setContentsType(weeklyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_CONTENT_TYPE));
-            rankingContentInfo.setTvService(weeklyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_TV_SERVICE));
-            rankingContentInfo.setDtv(weeklyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_DTV));
-
-            rankingContentsDataList.add(rankingContentInfo);
-        }
-
-        return rankingContentsDataList;
     }
 
     /**
@@ -439,10 +388,10 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
      * 取得条件"総合"用コールバック
      */
     @Override
-    public void weeklyRankSynthesisCallback(List<Map<String, String>> weeklyRankMapList) {
-        DTVTLogger.start("ResponseDataSize :" + weeklyRankMapList.size());
+    public void weeklyRankSynthesisCallback(List<ContentsData> contentsDataList) {
+        DTVTLogger.start("ResponseDataSize :" + contentsDataList.size());
         if (mViewPager.getCurrentItem() == RankingConstants.RANKING_PAGE_NO_OF_SYNTHESIS) {
-            setShowWeeklyRanking(weeklyRankMapList);
+            setShowWeeklyRanking(contentsDataList);
         }
     }
 
@@ -450,11 +399,11 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
      * 取得条件"海外映画"用コールバック
      */
     @Override
-    public void weeklyRankOverseasMovieCallback(List<Map<String, String>> weeklyRankMapList) {
-        DTVTLogger.start("ResponseDataSize :" + weeklyRankMapList.size());
+    public void weeklyRankOverseasMovieCallback(List<ContentsData> contentsDataList) {
+        DTVTLogger.start("ResponseDataSize :" + contentsDataList.size());
         if (mViewPager.getCurrentItem() ==
                 RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_MOVIE) {
-            setShowWeeklyRanking(weeklyRankMapList);
+            setShowWeeklyRanking(contentsDataList);
         }
     }
 
@@ -462,11 +411,11 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
      * 取得条件"国内映画"用コールバック
      */
     @Override
-    public void weeklyRankDomesticMovieCallback(List<Map<String, String>> weeklyRankMapList) {
-        DTVTLogger.start("ResponseDataSize :" + weeklyRankMapList.size());
+    public void weeklyRankDomesticMovieCallback(List<ContentsData> contentsDataList) {
+        DTVTLogger.start("ResponseDataSize :" + contentsDataList.size());
         if (mViewPager.getCurrentItem() ==
                 RankingConstants.RANKING_PAGE_NO_OF_DOMESTIC_MOVIE) {
-            setShowWeeklyRanking(weeklyRankMapList);
+            setShowWeeklyRanking(contentsDataList);
         }
     }
 
@@ -474,11 +423,11 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
      * 取得条件"海外TV番組・ドラマ"用コールバック
      */
     @Override
-    public void weeklyRankOverseasChannelCallback(List<Map<String, String>> weeklyRankMapList) {
-        DTVTLogger.start("ResponseDataSize :" + weeklyRankMapList.size());
+    public void weeklyRankOverseasChannelCallback(List<ContentsData> contentsDataList) {
+        DTVTLogger.start("ResponseDataSize :" + contentsDataList.size());
         if (mViewPager.getCurrentItem() ==
                 RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_CHANNEL) {
-            setShowWeeklyRanking(weeklyRankMapList);
+            setShowWeeklyRanking(contentsDataList);
         }
     }
 

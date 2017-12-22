@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.common;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 
 public class ContentsData {
 
@@ -56,6 +57,8 @@ public class ContentsData {
     private String mDtv = null;
     // クリップボタン
     private TextView mClipButton = null;
+    // クリップリクエストデータ
+    private ClipRequestData mRequestData = new ClipRequestData();
 
     //デバイス名
     private String deviceName = null;
@@ -249,5 +252,13 @@ public class ContentsData {
 
     public void setDtv(String mDtv) {
         this.mDtv = mDtv;
+    }
+
+    public ClipRequestData getRequestData() {
+        return mRequestData;
+    }
+
+    public void setRequestData(ClipRequestData ｍRequestData) {
+        this.mRequestData = ｍRequestData;
     }
 }

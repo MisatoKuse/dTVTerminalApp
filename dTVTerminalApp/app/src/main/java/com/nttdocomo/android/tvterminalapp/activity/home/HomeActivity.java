@@ -28,7 +28,7 @@ import com.nttdocomo.android.tvterminalapp.activity.home.adapter.HomeRecyclerVie
 import com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
-import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.HomeDataProvider;
 
 import java.util.List;
@@ -194,9 +194,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
      * 機能
      * コンテンツ一覧ビューを設定
      */
-    private void setRecyclerView(List<Map<String, String>> contentList, final int tag) {
+    private void setRecyclerView(List<ContentsData> contentsDataList, final int tag) {
         String typeContentName = getContentTypeName(tag);
-        String resultCount = String.valueOf(contentList.size());
+        String resultCount = String.valueOf(contentsDataList.size());
         View view = mLinearLayout.getChildAt(tag);
         view.setVisibility(View.VISIBLE);
         TextView typeTextView = view.findViewById(R.id.home_main_item_type_tx);
@@ -217,7 +217,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         //コンテンツカウントを設定（20）
         countTextView.setText(resultCount);
         //リサイクルビューデータ設定
-        setRecyclerViewData(mRecyclerView, contentList, tag);
+        setRecyclerViewData(mRecyclerView, contentsDataList, tag);
     }
 
     /**
@@ -255,11 +255,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
      * 機能
      * コンテンツ一覧データを設定
      */
-    private void setRecyclerViewData(RecyclerView mRecyclerView, List<Map<String, String>> mList, final int index) {
+    private void setRecyclerViewData(RecyclerView mRecyclerView, List<ContentsData> contentsDataList, final int index) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mRecyclerView.setLayoutManager(linearLayoutManager);
-        HomeRecyclerViewAdapter mHorizontalViewAdapter = new HomeRecyclerViewAdapter(this, mList);
+        HomeRecyclerViewAdapter mHorizontalViewAdapter = new HomeRecyclerViewAdapter(this, contentsDataList);
         mRecyclerView.setAdapter(mHorizontalViewAdapter);
         View footer = LayoutInflater.from(this).inflate(R.layout.home_main_layout_recyclerview_footer, mRecyclerView, false);
         TextView mTextView = footer.findViewById(R.id.home_main_layout_recyclerview_footer);
@@ -314,7 +314,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     };
 
     @Override
-    public void tvScheduleListCallback(List<Map<String, String>> channelList) {
+    public void tvScheduleListCallback(List<ContentsData> channelList) {
         if (channelList != null && channelList.size() > 0) {
             Message msg = Message.obtain(mHandler, CHANNEL_SORT, channelList);
             mHandler.sendMessage(msg);
@@ -322,7 +322,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     @Override
-    public void dailyRankListCallback(List<Map<String, String>> dailyRankList) {
+    public void dailyRankListCallback(List<ContentsData> dailyRankList) {
         if (dailyRankList != null && dailyRankList.size() > 0) {
             Message msg = Message.obtain(mHandler, TODAY_SORT, dailyRankList);
             mHandler.sendMessage(msg);
@@ -330,7 +330,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     @Override
-    public void vodClipListCallback(List<Map<String, String>> clipList) {
+    public void vodClipListCallback(List<ContentsData> clipList) {
         if (clipList != null && clipList.size() > 0) {
             Message msg = Message.obtain(mHandler, CLIP_SORT, clipList);
             mHandler.sendMessage(msg);
@@ -338,7 +338,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     @Override
-    public void videoRankCallback(List<Map<String, String>> videoRankList) {
+    public void videoRankCallback(List<ContentsData> videoRankList) {
         if (videoRankList != null && videoRankList.size() > 0) {
             Message msg = Message.obtain(mHandler, VIDEO_SORT, videoRankList);
             mHandler.sendMessage(msg);
@@ -346,7 +346,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     @Override
-    public void recommendChannelCallback(List<Map<String, String>> redChList) {
+    public void recommendChannelCallback(List<ContentsData> redChList) {
         if (redChList != null && redChList.size() > 0) {
             Message msg = Message.obtain(mHandler, REDCH_SORT, redChList);
             mHandler.sendMessage(msg);
@@ -354,7 +354,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     @Override
-    public void recommendVideoCallback(List<Map<String, String>> redVdList) {
+    public void recommendVideoCallback(List<ContentsData> redVdList) {
         if (redVdList != null && redVdList.size() > 0) {
             Message msg = Message.obtain(mHandler, REDVD_SORT, redVdList);
             mHandler.sendMessage(msg);

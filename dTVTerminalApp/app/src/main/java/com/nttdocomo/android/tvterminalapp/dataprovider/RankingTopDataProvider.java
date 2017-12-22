@@ -3,13 +3,16 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DailyRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.VideoRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.WeeklyRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.HomeDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.RankingTopDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.callback.VideoRankingApiDataProviderCallback;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WeeklyRankList;
@@ -81,17 +84,17 @@ public class RankingTopDataProvider implements
         /**
          * デイリーランキング用コールバック
          */
-        void dailyRankListCallback(List<Map<String, String>> dailyHashMap);
+        void dailyRankListCallback(List<ContentsData> contentsDataList);
 
         /**
          * 週間ランキング用コールバック
          */
-        void weeklyRankCallback(List<Map<String, String>> weeklyHashMap);
+        void weeklyRankCallback(List<ContentsData> contentsDataList);
 
         /**
          * ビデオランキング用コールバック
          */
-        void videoRankCallback(List<Map<String, String>> videoHashMap);
+        void videoRankCallback(List<ContentsData> contentsDataList);
     }
 
     /**
@@ -101,22 +104,22 @@ public class RankingTopDataProvider implements
         /**
          * 取得条件"総合"用コールバック
          */
-        void weeklyRankSynthesisCallback(List<Map<String, String>> weeklyHashMap);
+        void weeklyRankSynthesisCallback(List<ContentsData> contentsDataList);
 
         /**
          * 取得条件"海外映画"用コールバック
          */
-        void weeklyRankOverseasMovieCallback(List<Map<String, String>> weeklyHashMap);
+        void weeklyRankOverseasMovieCallback(List<ContentsData> contentsDataList);
 
         /**
          * 取得条件"国内映画"用コールバック
          */
-        void weeklyRankDomesticMovieCallback(List<Map<String, String>> weeklyHashMap);
+        void weeklyRankDomesticMovieCallback(List<ContentsData> contentsDataList);
 
         /**
          * 取得条件"海外TV番組・ドラマ"用コールバック
          */
-        void weeklyRankOverseasChannelCallback(List<Map<String, String>> weeklyHashMap);
+        void weeklyRankOverseasChannelCallback(List<ContentsData> contentsDataList);
     }
 
     /**
@@ -189,8 +192,9 @@ public class RankingTopDataProvider implements
         }
         // データを取得
         List<Map<String, String>> weeklyRankList = getWeeklyRankListData(genreId);
-        if (weeklyRankList != null && weeklyRankList.size() > 0) {
-            sendWeeklyGenreRankListData(weeklyRankList, genreId);
+        List<ContentsData> contentsDataList = setRankingContentData(weeklyRankList);
+        if (contentsDataList != null && contentsDataList.size() > 0) {
+            sendWeeklyGenreRankListData(contentsDataList, genreId);
         }
     }
 
@@ -228,32 +232,88 @@ public class RankingTopDataProvider implements
      * 今日のランキングをRankingTopActivityに送る
      */
     public void sendDailyRankListData(List<Map<String, String>> list) {
-        mApiDataProviderCallback.dailyRankListCallback(list);
+        List<ContentsData> contentsDataList = setRankingContentData(list);
+        mApiDataProviderCallback.dailyRankListCallback(contentsDataList);
     }
 
     /**
      * 週間ランキングリストをRankingTopActivityに送る
      */
     public void sendWeeklyRankListData(List<Map<String, String>> list) {
-        mApiDataProviderCallback.weeklyRankCallback(list);
+        List<ContentsData> contentsDataList = setRankingContentData(list);
+        mApiDataProviderCallback.weeklyRankCallback(contentsDataList);
     }
 
     /**
      * ビデオランキングリストをRankingTopActivityに送る
      */
     public void sendVideoRankListData(List<Map<String, String>> list) {
-        mApiDataProviderCallback.videoRankCallback(list);
+        List<ContentsData> contentsDataList = setRankingContentData(list);
+        mApiDataProviderCallback.videoRankCallback(contentsDataList);
+    }
+
+    /**
+     * 取得したリストマップをContentsDataクラスへ入れる
+     *
+     * @param dailyRankMapList コンテンツリストデータ
+     * @return ListView表示用データ
+     */
+    private List<ContentsData> setRankingContentData(
+            List<Map<String, String>> dailyRankMapList) {
+        List<ContentsData> rankingContentsDataList = new ArrayList<>();
+
+        ContentsData rankingContentInfo;
+
+        for (int i = 0; i < dailyRankMapList.size(); i++) {
+            rankingContentInfo = new ContentsData();
+
+            String title = dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_TITLE);
+            String search = dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_SEARCH_OK);
+            String linearEndDate = dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
+
+            rankingContentInfo.setRank(String.valueOf(i + 1));
+            rankingContentInfo.setThumURL(dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_THUMB_448));
+            rankingContentInfo.setTitle(title);
+            rankingContentInfo.setTime(dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_DISPLAY_START_DATE));
+            rankingContentInfo.setSearchOk(search);
+
+            //クリップリクエストデータ作成
+            ClipRequestData requestData = new ClipRequestData();
+            requestData.setCrid(dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_CRID));
+            requestData.setServiceId(dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_SERVICE_ID));
+            requestData.setEventId(dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_EVENT_ID));
+            requestData.setTitleId(dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_TITLE_ID));
+            requestData.setTitle(title);
+            requestData.setRValue(dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_R_VALUE));
+            requestData.setLinearStartDate(dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_AVAIL_START_DATE));
+            requestData.setLinearEndDate(linearEndDate);
+            requestData.setSearchOk(search);
+            requestData.setClipTarget(title); //TODO:仕様確認中 現在はトーストにタイトル名を表示することとしています
+
+            //視聴通知判定生成
+            String dispType = dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_DISP_TYPE);
+            String contentsType = dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_CONTENT_TYPE);
+            String tvService = dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_TV_SERVICE);
+            String dTv = dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_DTV);
+            requestData.setIsNotify(dispType, contentsType, linearEndDate, tvService, dTv);
+            rankingContentInfo.setRequestData(requestData);
+
+            rankingContentsDataList.add(rankingContentInfo);
+            DTVTLogger.info("RankingContentInfo " + rankingContentInfo.getRank());
+        }
+
+        return rankingContentsDataList;
     }
 
     /**
      * 週間ランキングリストをWeeklyRankingActivityに送る
      */
-    public void sendWeeklyGenreRankListData(List<Map<String, String>> list, String genreId) {
+    public void sendWeeklyGenreRankListData(List<ContentsData> contentsDataList, String genreId) {
         DTVTLogger.start("response genreId : " + genreId);
         // TODO ジャンルID毎にコールバックを返す
         switch (genreId) {
             case "":
-                mWeeklyRankingApiCallback.weeklyRankSynthesisCallback(list);
+                mWeeklyRankingApiCallback.weeklyRankSynthesisCallback(contentsDataList);
                 break;
             default:
                 break;
