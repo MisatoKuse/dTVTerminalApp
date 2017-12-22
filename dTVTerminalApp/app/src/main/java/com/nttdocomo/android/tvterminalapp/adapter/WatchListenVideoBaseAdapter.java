@@ -25,14 +25,13 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.WatchListenVideoCon
 
 import java.util.List;
 
-public class WatchListenVideoBaseAdapter extends BaseAdapter implements  AbsListView.OnScrollListener {
-
+public class WatchListenVideoBaseAdapter extends BaseAdapter implements AbsListView.OnScrollListener {
 
 
     private Context mContext = null;
     private List mData = null;
-//    private int layoutid;
-    private ThumbnailProvider mThumbnailProvider=null;
+    //    private int layoutid;
+    private ThumbnailProvider mThumbnailProvider = null;
 
     public WatchListenVideoBaseAdapter(Context context, List data, int id) {
         this.mContext = context;
@@ -60,7 +59,7 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter implements  AbsList
     public View getView(int position, View view, ViewGroup parent) {
         WatchListenVideoContentInfo.WatchListenVideoContentInfoItem watchListenVideoInfo = (WatchListenVideoContentInfo.WatchListenVideoContentInfoItem) mData.get(position);
         ViewHolder holder;
-        if(null==view){
+        if (null == view) {
             view = View.inflate(mContext, R.layout.item_watching_video, null);
             holder = new ViewHolder();
             holder.wl_thumbnail = view.findViewById(R.id.wl_thumbnail);
@@ -69,7 +68,7 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter implements  AbsList
             holder.wl_video_rating = view.findViewById(R.id.wl_video_rating);
             holder.wl_rating_count = view.findViewById(R.id.wl_rating_count);
 //            holder.wl_des = mView.findViewById(R.id.wl_des);
-            holder.wl_clip = view.findViewById(R.id.bt_clip);
+            holder.wl_clip = view.findViewById(R.id.wl_clip);
 //            holder.wl_clip.setVisibility(View.GONE);
 
             holder.wl_clip.setOnClickListener(new View.OnClickListener() {
@@ -81,15 +80,15 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter implements  AbsList
                     ((BaseActivity) mContext).sendClipRequest(ClipDataProvider.setClipData());
                 }
             });
-            float mWidth = (float)mContext.getResources().getDisplayMetrics().widthPixels / 3;
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int)mWidth,(int)mWidth/2);
+            float mWidth = (float) mContext.getResources().getDisplayMetrics().widthPixels / 3;
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int) mWidth, (int) mWidth / 2);
             holder.wl_thumbnail.setLayoutParams(layoutParams);
             view.setTag(holder);
-        }else {
+        } else {
             holder = (ViewHolder) view.getTag();
         }
 
-        if(null != holder.wl_title){
+        if (null != holder.wl_title) {
             holder.wl_title.setText(watchListenVideoInfo.mTitle);
         }
 
@@ -103,17 +102,17 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter implements  AbsList
 //        }
         holder.wl_thumbnail.setBackgroundResource(R.mipmap.loading);
 
-        if(null!=holder.wl_thumbnail){
+        if (null != holder.wl_thumbnail) {
 
             holder.wl_thumbnail.setTag(watchListenVideoInfo.mContentPictureUrl);
-            if(null!=watchListenVideoInfo.mContentPictureUrl && 0<watchListenVideoInfo.mContentPictureUrl.length()){
-                Bitmap bp= mThumbnailProvider.getThumbnailImage(holder.wl_thumbnail, watchListenVideoInfo.mContentPictureUrl);
-                if(null!=bp){
+            if (null != watchListenVideoInfo.mContentPictureUrl && 0 < watchListenVideoInfo.mContentPictureUrl.length()) {
+                Bitmap bp = mThumbnailProvider.getThumbnailImage(holder.wl_thumbnail, watchListenVideoInfo.mContentPictureUrl);
+                if (null != bp) {
                     holder.wl_thumbnail.setImageBitmap(bp);
                 }
             }
         }
-        if(null!=holder.wl_video_rating){
+        if (null != holder.wl_video_rating) {
 
             holder.wl_video_rating.setRating(Float.parseFloat(watchListenVideoInfo.mRatingValue));
             holder.wl_rating_count.setText(watchListenVideoInfo.mRatingValue);
@@ -136,8 +135,8 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter implements  AbsList
         ImageView wl_thumbnail;
         TextView wl_title;
         TextView wl_rating_count;
-//        TextView wl_des;
-        Button wl_clip;
+        //        TextView wl_des;
+        ImageView wl_clip;
         RatingBar wl_video_rating;
         ProgressBar wl_progressBar;
     }

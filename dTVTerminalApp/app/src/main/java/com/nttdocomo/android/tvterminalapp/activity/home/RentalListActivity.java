@@ -32,7 +32,7 @@ public class RentalListActivity extends BaseActivity implements View.OnClickList
     private RentalDataProvider mRentalDataProvider;
     private ListView mListView;
     private View mLoadMoreView;
-    private List mContentsList;
+    private List<ContentsData> mContentsList;
     private boolean mIsCommunicating = false;
     private ContentsAdapter mContentsAdapter;
     private final int NUM_PER_PAGE = 20;
