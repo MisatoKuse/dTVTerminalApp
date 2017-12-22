@@ -8,10 +8,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
-import com.nttdocomo.android.tvterminalapp.model.recommend.RecommendContentInfo;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 
 import java.util.ArrayList;
@@ -97,7 +97,7 @@ public class RecommendListDataManager {
     /**
      * キャッシュからリストデータを表示件数分取得する
      */
-    public List<RecommendContentInfo> selectRecommendList(int tagPageNo, int startIndex, int maxResult) {
+    public List<ContentsData> selectRecommendList(int tagPageNo, int startIndex, int maxResult) {
 
         String[] columns = {
                 RECOMMENDCHANNEL_LIST_CONTENTSID,
@@ -110,22 +110,21 @@ public class RecommendListDataManager {
         int maxResultData = startIndex + maxResult - 1;
         List<Map<String, String>> resultList
                 = mRecommendListDao.findById(columns, tagPageNo, String.valueOf(maxResultData));
-        List<RecommendContentInfo> recommendContentInfoList = new ArrayList<RecommendContentInfo>();
+        List<ContentsData> recommendContentInfoList = new ArrayList<>();
         if(resultList.size() == 0) {
             return recommendContentInfoList;
         }
         for (int i = startIndex - 1; i <= resultList.size()-1; i++) {
             Map<String, String> map = resultList.get(i);
-            RecommendContentInfo info = new RecommendContentInfo(
-                    map.get(RECOMMENDCHANNEL_LIST_CONTENTSID),
-                    Integer.parseInt(map.get(RECOMMENDCHANNEL_LIST_CATEGORYID)),
-                    Integer.parseInt(map.get(RECOMMENDCHANNEL_LIST_SERVICEID)),
-                    map.get(RECOMMENDCHANNEL_LIST_CTPICURL1),
-                    map.get(RECOMMENDCHANNEL_LIST_TITLE),
-                    map.get(RECOMMENDCHANNEL_LIST_STARTVIEWING),
-                    map.get(RECOMMENDCHANNEL_LIST_RESERVED4)
-            );
-            recommendContentInfoList.add(info);
+            ContentsData contentsData = new ContentsData();
+            contentsData.setContentsId(map.get(RECOMMENDCHANNEL_LIST_CONTENTSID));
+            contentsData.setCategoryId(map.get(RECOMMENDCHANNEL_LIST_CATEGORYID));
+            contentsData.setServiceId(map.get(RECOMMENDCHANNEL_LIST_SERVICEID));
+            contentsData.setThumURL(map.get(RECOMMENDCHANNEL_LIST_CTPICURL1));
+            contentsData.setTitle(map.get(RECOMMENDCHANNEL_LIST_TITLE));
+            contentsData.setStartViewing(map.get(RECOMMENDCHANNEL_LIST_STARTVIEWING));
+            contentsData.setReserved(map.get(RECOMMENDCHANNEL_LIST_RESERVED4));
+            recommendContentInfoList.add(contentsData);
         }
         return recommendContentInfoList;
     }

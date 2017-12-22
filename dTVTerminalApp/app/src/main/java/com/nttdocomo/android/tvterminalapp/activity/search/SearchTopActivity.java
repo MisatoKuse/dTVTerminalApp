@@ -473,13 +473,13 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
 
             totalCountText = "検索結果:" + mSearchTotalCount + "件";
 
+            //画面表示用のデータセット
+            baseFragment.mData = content.getContentsDataList();
             int thisTimeTotal = content.searchContentInfo.size();
             for (int i = 0; i < thisTimeTotal; ++i) {
-                SearchContentInfo ci = content.searchContentInfo.get(i);
-
-                SearchContentInfo searchContentInfo = new SearchContentInfo(false, ci.contentId, ci.serviceId, ci.contentPictureUrl, ci.title);
-                baseFragment.mData.add(searchContentInfo);
+                baseFragment.mData.add(content.getContentsDataList().get(i));
             }
+
             DTVTLogger.debug("baseFragment.mData.size = " + baseFragment.mData.size());
 
             baseFragment.notifyDataSetChanged(totalCountText);

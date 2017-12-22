@@ -16,16 +16,15 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.dataprovider.ClipDataProvider;
+import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
-import com.nttdocomo.android.tvterminalapp.model.recommend.RecommendContentInfo;
 
 import java.util.List;
 
 public class RecommendListBaseAdapter extends BaseAdapter {
 
     private Context mContext = null;
-    private List mData = null;
+    private List<ContentsData> mData = null;
     //private int layoutid;
     private ThumbnailProvider mThumbnailProvider = null;
 
@@ -54,7 +53,7 @@ public class RecommendListBaseAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup parent) {
-        RecommendContentInfo recommendContentInfo = (RecommendContentInfo) mData.get(position);
+        final ContentsData recommendContentInfo =  mData.get(position);
         ViewHolder holder;
         if (null == view) {
             view = View.inflate(mContext, R.layout.item_recommend_list, null);
@@ -63,14 +62,14 @@ public class RecommendListBaseAdapter extends BaseAdapter {
             holder.tv_title = view.findViewById(R.id.recommend_title);
             holder.tv_des = view.findViewById(R.id.recommend_des);
             holder.bt_clip = view.findViewById(R.id.recommend_bt_clip);
-            holder.bt_clip.setVisibility(View.GONE);
+            holder.bt_clip.setVisibility(View.VISIBLE);
             holder.bt_clip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     //クリップボタンのイベントを親に渡す
 //                    ((ListView) parent).performItemClick(mView, position, R.id.item_common_result_clip_tv);
                     //TODO:親に処理を渡すか検討中
-                    ((BaseActivity) mContext).sendClipRequest(ClipDataProvider.setClipData());
+                    ((BaseActivity) mContext).sendClipRequest(recommendContentInfo.getRequestData());
                 }
             });
 
@@ -83,21 +82,23 @@ public class RecommendListBaseAdapter extends BaseAdapter {
         }
 
         if (null != holder.tv_title) {
-            holder.tv_title.setText(recommendContentInfo.title);
+            holder.tv_title.setText(recommendContentInfo.getTitle());
         }
 
         if (null != holder.tv_des) {
             holder.tv_des.setText("");
         }
 
-        if (recommendContentInfo.clipFlag) {
-
+        String searchOk = recommendContentInfo.getSearchOk();
+        if (searchOk != null && searchOk.length() > 1) {
+            //TODO:クリップボタン状態変更
         }
         holder.iv_thumbnail.setImageResource(R.drawable.test_image);
         if (null != holder.iv_thumbnail) {
 
-            holder.iv_thumbnail.setTag(recommendContentInfo.contentPictureUrl);
-            Bitmap bp = mThumbnailProvider.getThumbnailImage(holder.iv_thumbnail, recommendContentInfo.contentPictureUrl);
+            String thumbUrl = recommendContentInfo.getThumURL();
+            holder.iv_thumbnail.setTag(thumbUrl);
+            Bitmap bp = mThumbnailProvider.getThumbnailImage(holder.iv_thumbnail, thumbUrl);
             if (null != bp) {
                 holder.iv_thumbnail.setImageBitmap(bp);
             }

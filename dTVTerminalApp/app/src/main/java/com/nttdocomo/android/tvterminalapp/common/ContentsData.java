@@ -55,6 +55,20 @@ public class ContentsData {
     private String mTvService = null;
     // dTVフラグ
     private String mDtv = null;
+    // コンテンツID
+    private String mContentsId = null;
+    // あらすじ
+    private String mSynop = null;
+    // コメント
+    private String mComment = null;
+    // カテゴリID
+    private String mCategoryId = null;
+    // 開始時刻
+    private String mStartViewing = null;
+    // reserved
+    private String mReserved = null;
+    // みどころ
+    private String mHighlight = null;
     // クリップボタン
     private TextView mClipButton = null;
     // クリップリクエストデータ
@@ -254,10 +268,83 @@ public class ContentsData {
         this.mDtv = mDtv;
     }
 
+    public String getContentsId() {
+        return mContentsId;
+    }
+
+    public void setContentsId(String mContentsId) {
+        this.mContentsId = mContentsId;
+    }
+
+    public String getSynop() {
+        return mSynop;
+    }
+
+    public void setSynop(String mSynop) {
+        //TODO:レスポンスがないためダミー
+//        this.mSynop = mSynop;
+        this.mSynop = "";
+    }
+
+    public String getComment() {
+        return mComment;
+    }
+
+    public void setComment(String mComment) {
+        //TODO:レスポンスがないためダミー
+//        this.mComment = mComment;
+        this.mComment = "※解説(ダミー)【吹替版】" +
+                "魔女の呪いによって野獣の姿に変えられてしまった王子。呪いを解く鍵は、" +
+                "魔法のバラの花びらが全て散る前に誰かを心から愛し、そして愛されること―。" +
+                "だが野獣の姿になった彼を愛するものなどいるはずがない。" +
+                "独り心を閉ざしていく中、心に孤独を抱えながらも、自分の輝きを信じて生きる、" +
+                "聡明で美しい女性、ベルと出会うが。。。";
+    }
+
+    public String getHighlight() {
+        return mHighlight;
+    }
+
+    public void setHighlight(String mHighlight) {
+        //TODO:レスポンスがないためダミー
+//        this.mHighlight = mHighlight;
+        this.mHighlight = "※みどころ(ダミー)【吹替版】" +
+                "魔女の呪いによって野獣の姿に変えられてしまった王子。呪いを解く鍵は、" +
+                "魔法のバラの花びらが全て散る前に誰かを心から愛し、そして愛されること―。" +
+                "だが野獣の姿になった彼を愛するものなどいるはずがない。" +
+                "独り心を閉ざしていく中、心に孤独を抱えながらも、自分の輝きを信じて生きる、" +
+                "聡明で美しい女性、ベルと出会うが。。。";
+    }
+
+    public String getCategoryId() {
+        return mCategoryId;
+    }
+
+    public void setCategoryId(String mCategoryId) {
+        this.mCategoryId = mCategoryId;
+    }
+
+    public String getStartViewing() {
+        return mStartViewing;
+    }
+
+    public void setStartViewing(String mStartViewing) {
+        this.mStartViewing = mStartViewing;
+    }
+
+    public String getReserved() {
+        return mReserved;
+    }
+
+    public void setReserved(String mReserved) {
+        this.mReserved = mReserved;
+    }
+
     public ClipRequestData getRequestData() {
         return mRequestData;
     }
 
     public void setRequestData(ClipRequestData ｍRequestData) {
         this.mRequestData = ｍRequestData;
-    }}
+    }
+}

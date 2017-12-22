@@ -20,8 +20,8 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.SearchResultBaseAdapter;
+import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
-import com.nttdocomo.android.tvterminalapp.model.search.SearchContentInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ import java.util.List;
 public class SearchBaseFragment extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
 
     public Context mActivity;
-    public List mData;
+    public List<ContentsData> mData;
     private TextView mCountText = null;
     private SearchBaseFragmentScrollListener mSearchBaseFragmentScrollListener = null;
     private View mLoadMoreView;
@@ -88,6 +88,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
 
     public void notifyDataSetChanged(String count) {
         if (null != mSearchResultBaseAdapter) {
+            initView();
             mSearchResultBaseAdapter.notifyDataSetChanged();
         }
         if (null != mCountText) {
@@ -131,7 +132,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        SearchContentInfo info = (SearchContentInfo) mData.get(i);
+        ContentsData info =  mData.get(i);
         Bundle args = new Bundle();
         args.putParcelable(DtvContentsDetailActivity.RECOMMEND_INFO_BUNDLE_KEY,
                 getOtherContentsDetailData(info));
@@ -147,17 +148,17 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
      * @param info レコメンド情報
      * @return コンテンツ情報
      */
-    public OtherContentsDetailData getOtherContentsDetailData(SearchContentInfo info) {
+    public OtherContentsDetailData getOtherContentsDetailData(ContentsData info) {
         OtherContentsDetailData detailData = new OtherContentsDetailData();
-        detailData.setTitle(info.title);
-        detailData.setThumb(info.contentPictureUrl);
-        detailData.setDetail(info.synop);
-        detailData.setComment(info.comment);
-        detailData.setHighlight(info.highlight);
-        detailData.setServiceId(info.serviceId);
+        detailData.setTitle(info.getTitle());
+        detailData.setThumb(info.getThumURL());
+        detailData.setDetail(info.getSynop());
+        detailData.setComment(info.getComment());
+        detailData.setHighlight(info.getHighlight());
+        detailData.setServiceId(Integer.parseInt(info.getServiceId()));
 
         //コンテンツIDの受け渡しを追加
-        detailData.setContentId(info.contentId);
+        detailData.setContentId(info.getContentsId());
 
         return detailData;
     }

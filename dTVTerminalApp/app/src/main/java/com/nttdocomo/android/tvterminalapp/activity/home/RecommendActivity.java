@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecommendDataProvider;
@@ -237,7 +238,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
      *
      * @param resultInfoList
      */
-    public void recommendDataProviderSuccess(List<RecommendContentInfo> resultInfoList) {
+    public void recommendDataProviderSuccess(List<ContentsData> resultInfoList) {
         RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
 
         synchronized (this) {
@@ -250,7 +251,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
         }
 
         if (0 < resultInfoList.size()) {
-            for (RecommendContentInfo info : resultInfoList) {
+            for (ContentsData info : resultInfoList) {
                 baseFragment.mData.add(info);
                 showListSize += 1;
             }
@@ -375,7 +376,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
      * @param recommendContentInfoList
      */
     @Override
-    public void RecommendChannelCallback(List<RecommendContentInfo> recommendContentInfoList) {
+    public void RecommendChannelCallback(List<ContentsData> recommendContentInfoList) {
         DTVTLogger.debug("Chan Callback DataSize:" + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + mRecommendViewPager.getCurrentItem());
         if (mRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV) {
             recommendDataProviderSuccess(recommendContentInfoList);
@@ -388,7 +389,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
      * @param recommendContentInfoList
      */
     @Override
-    public void RecommendVideoCallback(List<RecommendContentInfo> recommendContentInfoList) {
+    public void RecommendVideoCallback(List<ContentsData> recommendContentInfoList) {
         DTVTLogger.debug("vid Callback DataSize:" + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + mRecommendViewPager.getCurrentItem());
         if (mRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO) {
             recommendDataProviderSuccess(recommendContentInfoList);
@@ -401,7 +402,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
      * @param recommendContentInfoList
      */
     @Override
-    public void RecommendDTVCallback(List<RecommendContentInfo> recommendContentInfoList) {
+    public void RecommendDTVCallback(List<ContentsData> recommendContentInfoList) {
         DTVTLogger.debug("dtv Callback DataSize:" + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + mRecommendViewPager.getCurrentItem());
         if (mRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV) {
             recommendDataProviderSuccess(recommendContentInfoList);
@@ -415,7 +416,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
      * @param recommendContentInfoList
      */
     @Override
-    public void RecommendDAnimeCallback(List<RecommendContentInfo> recommendContentInfoList) {
+    public void RecommendDAnimeCallback(List<ContentsData> recommendContentInfoList) {
         DTVTLogger.debug("ani Callback DataSize:" + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + mRecommendViewPager.getCurrentItem());
         if (mRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME) {
             recommendDataProviderSuccess(recommendContentInfoList);
@@ -428,7 +429,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
      * @param recommendContentInfoList
      */
     @Override
-    public void RecommendDChannelCallback(List<RecommendContentInfo> recommendContentInfoList) {
+    public void RecommendDChannelCallback(List<ContentsData> recommendContentInfoList) {
         DTVTLogger.debug("dCH Callback DataSize:"
                 + recommendContentInfoList.size() + "ViewPager.getCurrentItem:" + mRecommendViewPager.getCurrentItem());
         if (mRecommendViewPager.getCurrentItem() == SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL) {

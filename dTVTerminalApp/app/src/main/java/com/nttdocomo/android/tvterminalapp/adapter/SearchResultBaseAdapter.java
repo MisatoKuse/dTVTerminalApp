@@ -16,16 +16,16 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ClipDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
-import com.nttdocomo.android.tvterminalapp.model.search.SearchContentInfo;
 
 import java.util.List;
 
 public class SearchResultBaseAdapter extends BaseAdapter {
 
     private Context mContext = null;
-    private List mData = null;
+    private List<ContentsData> mData = null;
     //private int layoutid;
     private ThumbnailProvider mThumbnailProvider=null;
 
@@ -53,7 +53,7 @@ public class SearchResultBaseAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup parent) {
-        SearchContentInfo searchContentInfo = (SearchContentInfo) mData.get(position);
+        ContentsData searchContentInfo =  mData.get(position);
         ViewHolder holder;
         if(null==view){
             view = View.inflate(mContext, R.layout.item_search_result_televi, null);
@@ -82,21 +82,23 @@ public class SearchResultBaseAdapter extends BaseAdapter {
         }
 
         if(null != holder.tv_title){
-            holder.tv_title.setText(searchContentInfo.title);
+            holder.tv_title.setText(searchContentInfo.getTitle());
         }
 
         if(null != holder.tv_des){
             holder.tv_des.setText("");
         }
 
-        if(searchContentInfo.clipFlag){
-
+        String searchOk = searchContentInfo.getSearchOk();
+        if(searchOk != null && searchOk.length() > 0){
+            //TODO:クリップボタン状態変更
         }
 
         if(null!=holder.iv_thumbnail){
 
-            holder.iv_thumbnail.setTag(searchContentInfo.contentPictureUrl);
-            Bitmap bp= mThumbnailProvider.getThumbnailImage(holder.iv_thumbnail, searchContentInfo.contentPictureUrl);
+            String thumbUrl = searchContentInfo.getThumURL();
+            holder.iv_thumbnail.setTag(thumbUrl);
+            Bitmap bp= mThumbnailProvider.getThumbnailImage(holder.iv_thumbnail, thumbUrl);
             if(null!=bp){
                 holder.iv_thumbnail.setImageBitmap(bp);
             }
