@@ -5,24 +5,25 @@
 package com.nttdocomo.android.tvterminalapp.service.download;
 
 
-public interface DownloadListener {
+interface DownloadListener {
 
     /**
      * ダウンロードエラー定義
      */
-    public enum DLError{
+    enum DLError{
         DLError_NetLost,
         DLError_DmsLost,
         DLError_DmsError,
         DLError_StorageNoSpace,
         DLError_Other,
+        DLError_NoError,
     }
 
     /**
      * ダウンロード開始の時、コールされる
-     * @param fileByteSize fileByteSize
+     * @param totalFileByteSize totalFileByteSize
      */
-    void onStart(int fileByteSize);
+    void onStart(int totalFileByteSize);
 
     /**
      * ダウンロード一時停止の時、コールされる
@@ -57,4 +58,9 @@ public interface DownloadListener {
      * ダウンロードキャンセルの時、コールされる
      */
     void onCancel();
+
+    /**
+     * ダウンロード容量不足の場合、コールされる
+     */
+    void onLowStorageSpace();
 }
