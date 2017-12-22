@@ -15,6 +15,10 @@
     <string name="negative_response">いいえ</string>
     <string name="custom_dialog_ok">確定</string>
     <string name="custom_dialog_cancel">キャンセル</string>
+    <string name="clip_regist_result_message">をクリップしました</string>
+    <string name="clip_regist_error_message">のクリップに失敗しました</string>
+    <string name="clip_delete_result_message">のクリップを削除しました</string>
+    <string name="clip_delete_error_message">のクリップ削除に失敗しました</string>
 
     <!-- Launch -->
     <string name="str_app_title">dリモート</string>
@@ -287,5 +291,4 @@
         <item>プライバシーポリシー(TBD)</item>
         <item>利用規約(TBD)</item>
     </string-array>
-
 </resources>

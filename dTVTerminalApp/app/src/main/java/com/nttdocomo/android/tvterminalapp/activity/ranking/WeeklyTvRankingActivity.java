@@ -296,6 +296,30 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
                     .get(JsonContents.META_RESPONSE_AVAIL_START_DATE));
             rankingContentInfo.setTitle(weeklyRankMapList.get(i)
                     .get(JsonContents.META_RESPONSE_TITLE));
+            rankingContentInfo.setSearchOk(weeklyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_SEARCH_OK));
+            rankingContentInfo.setCrid(weeklyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_CRID));
+            rankingContentInfo.setServiceId(weeklyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_SERVICE_ID));
+            rankingContentInfo.setEventId(weeklyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_EVENT_ID));
+            rankingContentInfo.setTitleId(weeklyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_TITLE_ID));
+            rankingContentInfo.setRValue(weeklyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_R_VALUE));
+            rankingContentInfo.setLinearStartDate(weeklyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_AVAIL_START_DATE));
+            rankingContentInfo.setLinearEndDate(weeklyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_AVAIL_END_DATE));
+            rankingContentInfo.setDispType(weeklyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_DISP_TYPE));
+            rankingContentInfo.setContentsType(weeklyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_CONTENT_TYPE));
+            rankingContentInfo.setTvService(weeklyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_TV_SERVICE));
+            rankingContentInfo.setDtv(weeklyRankMapList.get(i)
+                    .get(JsonContents.META_RESPONSE_DTV));
 
             rankingContentsDataList.add(rankingContentInfo);
         }
@@ -308,13 +332,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
      */
     public void contentsDetailButton(View view) {
         startActivity(DtvContentsDetailActivity.class, null);
-    }
-
-    /**
-     * クリップボタン
-     */
-    public void clipButton(View view) {
-        Toast.makeText(this, "クリップしました", Toast.LENGTH_SHORT).show();
     }
 
     @Override

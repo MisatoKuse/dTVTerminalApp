@@ -1403,33 +1403,38 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             case R.id.dtv_contents_detail_main_layout_thumbnail_btn:
                 //DTVの場合
                 if (mDetailData.getServiceId() == DTV_CONTENTS_SERVICE_ID) {
-                CustomDialog startAppDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-                startAppDialog.setTitle(getResources().getString(R.string.dTV_content_service_start_dialog));
-                startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-                    @Override
-                    public void onOKCallback(boolean isOK) {
-                        //端末にDTVアプリはすでに存在した場合
-                        if (isAppInstalled(DtvContentsDetailActivity.this, DTV_PACKAGE_NAME)) {
-                            //RESERVED4は4の場合
-                            if (RESERVED4_TYPE4.equals(mDetailData.getReserved4())) {
-                                startAPP(WORK_START_TYPE + mDetailData.getContentId());
-                                //RESERVED4は7,8の場合
-                            } else if (RESERVED4_TYPE7.equals(mDetailData.getReserved4())
-                                    || RESERVED4_TYPE8.equals(mDetailData.getReserved4())) {
-                                startAPP(SUPER_SPEED_START_TYPE + mDetailData.getContentId());
-                                //その他の場合
+                    CustomDialog startAppDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+                    startAppDialog.setTitle(getResources().getString(R.string.dTV_content_service_start_dialog));
+                    startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                        @Override
+                        public void onOKCallback(boolean isOK) {
+                            //端末にDTVアプリはすでに存在した場合
+                            if (isAppInstalled(DtvContentsDetailActivity.this, DTV_PACKAGE_NAME)) {
+                                /**TODO　バージョンチェックの実装　
+                                 * 端末にインストールしたアプリのバージョンを取得する関数がすでにあります
+                                 * getAPPVersionCode(String packageName){}
+                                 * サーバから最新のバージョン情報を取得するの実装は、現在情報が足りないので実装できない
+                                 */
+                                //RESERVED4は4の場合
+                                if (RESERVED4_TYPE4.equals(mDetailData.getReserved4())) {
+                                    startAPP(WORK_START_TYPE + mDetailData.getContentId());
+                                    //RESERVED4は7,8の場合
+                                } else if (RESERVED4_TYPE7.equals(mDetailData.getReserved4())
+                                        || RESERVED4_TYPE8.equals(mDetailData.getReserved4())) {
+                                    startAPP(SUPER_SPEED_START_TYPE + mDetailData.getContentId());
+                                    //その他の場合
+                                } else {
+                                    startAPP(TITTLE_START_TYPE + mDetailData.getContentId());
+                                }
+                                //DTVアプリ存在しない場合
                             } else {
-                                startAPP(TITTLE_START_TYPE + mDetailData.getContentId());
+                                Uri uri = Uri.parse(GOOGLEPLAY_DOWNLOAD_URL);
+                                Intent installIntent = new Intent(Intent.ACTION_VIEW, uri);
+                                startActivity(installIntent);
                             }
-                            //DTVアプリ存在しない場合
-                        } else {
-                            Uri uri = Uri.parse(GOOGLEPLAY_DOWNLOAD_URL);
-                            Intent installIntent = new Intent(Intent.ACTION_VIEW, uri);
-                            startActivity(installIntent);
                         }
-                    }
-                });
-                startAppDialog.showDialog();
+                    });
+                    startAppDialog.showDialog();
 
                     break;
                 }
@@ -1438,12 +1443,13 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         }
         DTVTLogger.end();
     }
+
     /**
      * 機能：APP起動
      *
      * @param url
      */
-    private void startAPP(String url){
+    private void startAPP(String url) {
         Uri uri = Uri.parse(url);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -1467,15 +1473,16 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         }
         return pName.contains(packageName);
     }
+
     /**
      * 機能：ローカルバージョン情報を取得する
      *
-     * @return
+     * @param packageName 中継アプリのパッケージ名
      */
-    private int getVersionCode() {
+    private int getVersionCode(String packageName) {
         PackageManager packageManager = getPackageManager();
         try {
-            PackageInfo packageInfo = packageManager.getPackageInfo(getPackageName(), 0);
+            PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
             int versionCode = packageInfo.versionCode;
             return versionCode;
         } catch (PackageManager.NameNotFoundException e) {
