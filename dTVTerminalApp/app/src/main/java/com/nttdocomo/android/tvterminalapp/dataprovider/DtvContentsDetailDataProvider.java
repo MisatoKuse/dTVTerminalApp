@@ -315,6 +315,5 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
     public void requestRecordingReservation(RecordingReservationContentsDetailInfo info) {
         RemoteRecordingReservationClient client = new RemoteRecordingReservationClient();
         client.getRemoteRecordingReservationApi(info, this);
-
     }
 }

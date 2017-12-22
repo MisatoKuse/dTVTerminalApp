@@ -760,11 +760,19 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
      */
     private void getContentsData() {
         detailDataProvider = new DtvContentsDetailDataProvider(this);
-        // TODO ぷららサーバデータが取得できるようになったら切り替える
-        //String[] cRid = {"1", "2"};
-        String[] cRid = {"682017101601"};
-//        String[] cRid = {mDetailData.getContentId()};
-        detailDataProvider.getContentsDetailData(cRid, "", 1);
+        String[] cRid;
+        if (mDetailData != null) {
+            DTVTLogger.debug("contentId:" + mDetailData.getContentId());
+            cRid = new String[1];
+            cRid[cRid.length-1] = mDetailData.getContentId();
+            int ageReq = mDetailData.getAge();
+            detailDataProvider.getContentsDetailData(cRid, "", ageReq);
+        } else {
+            // TODO Home画面から受け取れるようになったら消す
+            cRid = new String[1];
+            cRid[cRid.length-1] = "682017101601";
+            detailDataProvider.getContentsDetailData(cRid, "", 1);
+        }
     }
 
     /**
@@ -772,7 +780,6 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
      */
     private void setIntentDetailData() {
         if (mDetailData == null) {
-            getContentsData();
             mDetailData = intent.getParcelableExtra(PLALA_INFO_BUNDLE_KEY);
             if (mDetailData != null) {
                 String displayType = mDetailData.getDisplayType();
@@ -793,7 +800,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                         || OtherContentsDetailData.HIKARI_CONTENTS_CATEGORY_ID_IPTV.equals(categoryId)) {
                     //TODO  放送中の場合
                 }
-            }else if(serviceId == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID){
+            } else if (serviceId == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID) {
                 thumbnailBtn.setVisibility(View.VISIBLE);
                 TextView startAppIcon = findViewById(R.id.view_contents_button_text);
                 startAppIcon.setVisibility(View.VISIBLE);
@@ -801,6 +808,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             }
             setTitleAndThumbnail(mDetailData.getTitle(), mDetailData.getThumb());
         }
+        getContentsData();
     }
 
     /**
@@ -1238,19 +1246,21 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             }
             detailFragment.noticeRefresh();
             // リモート録画予約情報を生成
-            mRecordingReservationContentsDetailInfo = new RecordingReservationContentsDetailInfo(
-                    detailFullData.getmService_id(),
-                    detailFullData.getmEvent_id(),
-                    detailFullData.getTitle(),
-                    detailFullData.getAvail_start_date(),
-                    detailFullData.getDur(),
-                    detailFullData.getR_value());
-            if (comparisonStartTime()) {
-                detailFragment.changeVisiblityRecordingReservationIcon(View.VISIBLE);
-                detailFragment.setRecordingReservationIconListener(this);
-            } else {
-                detailFragment.changeVisiblityRecordingReservationIcon(View.INVISIBLE);
-                detailFragment.setRecordingReservationIconListener(null);
+            if (String.valueOf(OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID).equals(detailFullData.getmService_id())) {
+                mRecordingReservationContentsDetailInfo = new RecordingReservationContentsDetailInfo(
+                        detailFullData.getmService_id(),
+                        detailFullData.getTitle(),
+                        detailFullData.getAvail_start_date(),
+                        detailFullData.getDur(),
+                        detailFullData.getR_value());
+                mRecordingReservationContentsDetailInfo.getEventId();
+                if (comparisonStartTime()) {
+                    detailFragment.changeVisiblityRecordingReservationIcon(View.VISIBLE);
+                    detailFragment.setRecordingReservationIconListener(this);
+                } else {
+                    detailFragment.changeVisiblityRecordingReservationIcon(View.INVISIBLE);
+                    detailFragment.setRecordingReservationIconListener(null);
+                }
             }
         }
     }
@@ -1643,24 +1653,41 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     @Override
     public void recordingReservationResult(RemoteRecordingReservationResultResponse response) {
         DTVTLogger.start();
-//        if (response.getErrorNo() != null) {
-//            DTVTLogger.debug("error" + response.getErrorNo());
-            CustomDialog dialog = createErrorDialog();
-            // TODO エラー番号が判明次第エラーダイアログのタイトルを設定して表示
+        if (response != null) {
+            if (RemoteRecordingReservationResultResponse
+                    .REMOTE_RECORDING_RESERVATION_RESULT_RESPONSE_STATUS_NG.equals(response.getStatus())) {
+                DTVTLogger.debug("error" + response.getErrorNo());
+                CustomDialog dialog = createErrorDialog();
+                // TODO エラー番号が判明次第エラーダイアログのタイトルを設定して表示
 //            switch (response.getErrorNo()) {
-//                case "0":
-//                    dialog.setTitle();
+//                case "0": // トークン不一致
+//                    dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_token));
 //                    break;
-//                case "1":
+//                case "1": // その他異常
+//                    dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_other));
 //                    break;
-//                default:
+//                case "2": // リクエストパラメータ
+//                    dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_param));
+//                    break;
+//                case "3": // 登録件数超過
+//                    dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_over));
+//                    break;
+//                case "4": // 未契約エラー
+//                    dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_no_agreement));
+//                    break;
+//                default: // 基本的には通らない
 //                    break;
 //            }
+                dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_param));
+                dialog.showDialog();
+            } else {
+                showCompleteDialog();
+            }
+        } else {
+            CustomDialog dialog = createErrorDialog();
             dialog.setTitle(getResources().getString(R.string.recording_reservation_failed_dialog_param));
             dialog.showDialog();
-//        } else {
-//            showCompleteDialog();
-//        }
+        }
         DTVTLogger.end();
     }
 
@@ -1692,6 +1719,8 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                         switch (index) {
                             case RECORDING_RESERVATION_DIALOG_INDEX_0: // 録画予約するをタップ
                                 DTVTLogger.debug("Request RecordingReservation");
+                                mRecordingReservationContentsDetailInfo.setLoopTypeNum(
+                                        RecordingReservationContentsDetailInfo.REMOTE_RECORDING_RESERVATION_LOOP_TYPE_NUM_0);
                                 detailDataProvider.requestRecordingReservation(mRecordingReservationContentsDetailInfo);
                                 break;
                             case RECORDING_RESERVATION_DIALOG_INDEX_1: // キャンセルをタップ
@@ -1708,6 +1737,9 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         DTVTLogger.end();
     }
 
+    /**
+     * 録画予約ダイアログの設定
+     */
     private void setRecordingReservationDialogStatus() {
         // TODO ダイアログのデザインが必要になった場合切り替えて修正
         mDialogBuilder.setTitle(getResources().getString(R.string.recordiong_reservation_menu_dialog_title));
@@ -1722,6 +1754,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
 
     /**
      * 開始時間と現在時刻の比較
+     *
      * @return
      */
     private boolean comparisonStartTime() {
@@ -1747,7 +1780,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         completeRecordingReservationDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(boolean isOK) {
-                startActivity(RecordReservationListActivity.class,null);
+                startActivity(RecordReservationListActivity.class, null);
             }
         });
         completeRecordingReservationDialog.showDialog();

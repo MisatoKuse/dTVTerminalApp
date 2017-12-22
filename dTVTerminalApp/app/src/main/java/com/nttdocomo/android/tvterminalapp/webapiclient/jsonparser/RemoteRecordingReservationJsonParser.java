@@ -17,9 +17,8 @@ import org.json.JSONObject;
 
 public class RemoteRecordingReservationJsonParser extends AsyncTask<Object, Object, Object> {
     private final String CLASS_NAME = getClass().getSimpleName();
-    private static final String SEND_RESPONSE = ".sendRecordingReservationListResponse";
     private static final String SEND_STATUS = ".sendStatus";
-    private static final String RESPONSE = ".RecordingReservationListResponse";
+    private static final String RESPONSE = ".RemoteRecordingReservationResultResponse";
     private static final String JSON_OBJECT = ".JSONObject";
 
     private RemoteRecordingReservationClient.RemoteRecordingReservationJsonParserCallback

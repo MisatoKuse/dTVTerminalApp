@@ -11,6 +11,7 @@ public class RemoteRecordingReservationResultResponse {
 
     public static final String REMOTE_RECORDING_RESERVATION_RESULT_RESPONSE_STATUS = "status";
     public static final String REMOTE_RECORDING_RESERVATION_RESULT_RESPONSE_ERROR_NO = "errorno";
+    public static final String REMOTE_RECORDING_RESERVATION_RESULT_RESPONSE_STATUS_NG = "NG";
     private static final String REMOTE_RECORDING_RESERVATION_FIXED_ERROR_NO = "";
 
     private String mStatus; // Status(OK or NG)
