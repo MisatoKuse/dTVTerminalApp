@@ -19,9 +19,8 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.dataprovider.ClipDataProvider;
+import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.WatchListenVideoContentInfo;
 
 import java.util.List;
 
@@ -29,7 +28,7 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter implements AbsListV
 
 
     private Context mContext = null;
-    private List mData = null;
+    private List<ContentsData> mData = null;
     //    private int layoutid;
     private ThumbnailProvider mThumbnailProvider = null;
 
@@ -57,19 +56,16 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter implements AbsListV
 
     @Override
     public View getView(int position, View view, ViewGroup parent) {
-        WatchListenVideoContentInfo.WatchListenVideoContentInfoItem watchListenVideoInfo = (WatchListenVideoContentInfo.WatchListenVideoContentInfoItem) mData.get(position);
+        final ContentsData contentsData =  mData.get(position);
         ViewHolder holder;
         if (null == view) {
             view = View.inflate(mContext, R.layout.item_watching_video, null);
             holder = new ViewHolder();
             holder.wl_thumbnail = view.findViewById(R.id.wl_thumbnail);
             holder.wl_title = view.findViewById(R.id.wl_title);
-//            holder.wl_progressBar = mView.findViewById(R.id.wl_progressBar);
             holder.wl_video_rating = view.findViewById(R.id.wl_video_rating);
             holder.wl_rating_count = view.findViewById(R.id.wl_rating_count);
-//            holder.wl_des = mView.findViewById(R.id.wl_des);
             holder.wl_clip = view.findViewById(R.id.wl_clip);
-//            holder.wl_clip.setVisibility(View.GONE);
 
             holder.wl_clip.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -77,7 +73,7 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter implements AbsListV
                     //クリップボタンのイベントを親に渡す
 //                    ((ListView) parent).performItemClick(mView, position, R.id.item_common_result_clip_tv);
                     //TODO:親に処理を渡すか検討中
-                    ((BaseActivity) mContext).sendClipRequest(ClipDataProvider.setClipData());
+                    ((BaseActivity) mContext).sendClipRequest(contentsData.getRequestData());
                 }
             });
             float mWidth = (float) mContext.getResources().getDisplayMetrics().widthPixels / 3;
@@ -89,7 +85,7 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter implements AbsListV
         }
 
         if (null != holder.wl_title) {
-            holder.wl_title.setText(watchListenVideoInfo.mTitle);
+            holder.wl_title.setText(contentsData.getTitle());
         }
 
 //        if(null != holder.wl_des){
@@ -104,9 +100,10 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter implements AbsListV
 
         if (null != holder.wl_thumbnail) {
 
-            holder.wl_thumbnail.setTag(watchListenVideoInfo.mContentPictureUrl);
-            if (null != watchListenVideoInfo.mContentPictureUrl && 0 < watchListenVideoInfo.mContentPictureUrl.length()) {
-                Bitmap bp = mThumbnailProvider.getThumbnailImage(holder.wl_thumbnail, watchListenVideoInfo.mContentPictureUrl);
+            String thumbUrl = contentsData.getThumURL();
+            holder.wl_thumbnail.setTag(thumbUrl);
+            if (null != thumbUrl && 0 < thumbUrl.length()) {
+                Bitmap bp = mThumbnailProvider.getThumbnailImage(holder.wl_thumbnail, thumbUrl);
                 if (null != bp) {
                     holder.wl_thumbnail.setImageBitmap(bp);
                 }
@@ -114,8 +111,9 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter implements AbsListV
         }
         if (null != holder.wl_video_rating) {
 
-            holder.wl_video_rating.setRating(Float.parseFloat(watchListenVideoInfo.mRatingValue));
-            holder.wl_rating_count.setText(watchListenVideoInfo.mRatingValue);
+            String ratingValue = contentsData.getRatStar();
+            holder.wl_video_rating.setRating(Float.parseFloat(ratingValue));
+            holder.wl_rating_count.setText(ratingValue);
         }
 
         return view;
