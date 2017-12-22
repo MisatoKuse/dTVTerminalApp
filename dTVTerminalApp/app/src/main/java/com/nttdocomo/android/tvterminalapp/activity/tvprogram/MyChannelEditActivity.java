@@ -54,14 +54,13 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     public MyChannelDataProvider mMyChannelDataProvider;
     private Bundle mUnregisterBundle;
     private ArrayList<MyChannelMetaData> mUnregisterData;
-    private Channel mRegisterChannel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_channel_edit_main_layout);
         setTitleText(getResources().getString(R.string.my_channel_list_setting));
-        initData();
+        loadData();
         initView();
     }
 
@@ -80,32 +79,57 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     /**
      * データ初期化
      */
-    private void initData() {
+    private void loadData() {
         mMyChannelDataProvider = new MyChannelDataProvider(this);
-        mMyChannelDataProvider.getMyChannelList();
+        mMyChannelDataProvider.getMyChannelList(R.layout.my_channel_edit_main_layout);
     }
 
+    /**
+     * サーバからデータ取得
+     * @param myChannelMetaData 画面に渡すチャンネル番組情報
+     */
     @Override
     public void onMyChannelListCallback(ArrayList<MyChannelMetaData> myChannelMetaData) {
+        DTVTLogger.start();
         if (myChannelMetaData != null) {
-            for (int i = 1; i <= EDIT_CHANNEL_LIST_COUNT; i++) {
-                MyChannelMetaData myChannelItemData = null;
-                for (int j = 0; j < myChannelMetaData.size(); j++) {
-                    MyChannelMetaData myChData = myChannelMetaData.get(j);
-                    int index = Integer.parseInt(myChData.getIndex());
-                    if (i == index) {
-                        myChannelItemData = myChData;
-                        break;
+            ArrayList<MyChannelMetaData> editList = mEditMyChannelListFragment.editDatas;
+            if(editList.size() == 0){
+                for (int i = 1; i <= EDIT_CHANNEL_LIST_COUNT; i++) {
+                    MyChannelMetaData myChannelItemData = null;
+                    for (int j = 0; j < myChannelMetaData.size(); j++) {
+                        MyChannelMetaData myChData = myChannelMetaData.get(j);
+                        int index = Integer.parseInt(myChData.getIndex());
+                        if (i == index) {
+                            myChannelItemData = myChData;
+                            break;
+                        }
+                    }
+                    if (myChannelItemData == null) {
+                        myChannelItemData = new MyChannelMetaData();
+                        myChannelItemData.setIndex(String.valueOf(i));
+                    }
+                    editList.add(myChannelItemData);
+                    mEditMyChannelListFragment.notifyDataChanged();
+                }
+            } else {
+                ArrayList<MyChannelMetaData> rmList = new ArrayList<>();
+                for(int i=0;i<myChannelMetaData.size();i++){
+                    for(int j=0;j<editList.size();j++){
+                        String myChannelItemServiceId = myChannelMetaData.get(i).getServiceId();
+                        if(myChannelItemServiceId != null){
+                            if(myChannelItemServiceId.equals(editList.get(j).getServiceId())){
+                                rmList.add(myChannelMetaData.get(i));
+                                break;
+                            }
+                        }
                     }
                 }
-                if (myChannelItemData == null) {
-                    myChannelItemData = new MyChannelMetaData();
-                    myChannelItemData.setIndex(String.valueOf(i));
-                }
-                mEditMyChannelListFragment.editDatas.add(myChannelItemData);
+                myChannelMetaData.removeAll(rmList);
+                editList.addAll(myChannelMetaData);
                 mEditMyChannelListFragment.notifyDataChanged();
             }
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -115,8 +139,9 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     @Override
     public void onMyChannelRegisterCallback(String result) {
         switch (result){
-          case META_RESPONSE_STATUS_OK://登録UI更新
-              successInRegisterRefreshUi(mRegisterChannel);
+          case META_RESPONSE_STATUS_OK:
+              //そのまま通信してデータ取得
+              loadData();
             break;
           default:
               showFailedDialog(getResources().getString(R.string
@@ -214,23 +239,9 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     @Override
     public void onTapChannelListItem(int position, Channel channel) {
         DTVTLogger.start();
-        this.mRegisterChannel = channel;
         //MYチャンネル登録実行
         executeMyChannelListRegister(position,channel);
         DTVTLogger.end();
-    }
-
-    /**
-     * 登録成功、画面アップデート
-     * @param channel
-     */
-    private void successInRegisterRefreshUi(Channel channel) {
-        MyChannelMetaData myChannelItemData = new MyChannelMetaData();
-        myChannelItemData.setIndex(String.valueOf(mEditPosition + 1));
-        myChannelItemData.setTitle(channel.getTitle());
-        myChannelItemData.setServiceId(channel.getServiceId());
-        mEditMyChannelListFragment.editDatas.set(mEditPosition, myChannelItemData);
-        mEditMyChannelListFragment.notifyDataChanged();
     }
 
     /**
