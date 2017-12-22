@@ -105,11 +105,13 @@
                     android:textColor="@android:color/white" />
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/contents_detail_clip_button"
+                    android:layout_width="@dimen/contents_detail_clip_size"
+                    android:layout_height="@dimen/contents_detail_clip_size"
                     android:layout_alignParentEnd="true"
+                    android:clickable="true"
                     android:gravity="center_vertical"
-                    android:src="@mipmap/ic_radio_button_checked_white_24dp" />
+                    android:src="@mipmap/icon_circle_opacity_clip" />
             </RelativeLayout>
         </LinearLayout>
 

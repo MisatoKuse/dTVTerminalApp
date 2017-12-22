@@ -15,7 +15,9 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.dataprovider.ClipDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvClipContentInfo;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipContentInfo;
@@ -63,7 +65,7 @@ public class ClipMainAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, final ViewGroup parent) {
         View view = null;
         ViewHolder holder = null;
         if (convertView == null) {
@@ -74,7 +76,16 @@ public class ClipMainAdapter extends BaseAdapter {
             holder.rb_clip_video_rating = view.findViewById(R.id.rb_clip_video_rating);
             holder.rb_clip_video_rating_count = view.findViewById(R.id.rb_clip_video_rating_count);
             holder.bt_video_clip = view.findViewById(R.id.bt_video_clip);
-            convertView = view;
+            holder.bt_video_clip.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //クリップボタンのイベントを親に渡す
+//                    ((ListView) parent).performItemClick(mView, position, R.id.item_common_result_clip_tv);
+                    //TODO:親に処理を渡すか検討中
+                    ((BaseActivity) mContext).sendClipRequest(ClipDataProvider.setClipData());
+                }
+            });
+                    convertView = view;
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();

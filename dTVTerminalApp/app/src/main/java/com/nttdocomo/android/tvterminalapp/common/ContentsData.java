@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.common;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 
 public class ContentsData {
 
@@ -23,9 +24,11 @@ public class ContentsData {
     // 録画予約ステータス
     private int mRecordingReservationStatus = RecordingReservationListDataProvider.RECORD_RESERVATION_SYNC_STATUS_ALREADY_REFLECT;
     // チャンネル名
-    private String mChannelName = null;
+    private String channelName = null;
+    // 録画番組用 チャンネル名
+    private String recordedChannelName = null;
     // 録画番組用 コピー残り回数
-    private int mAllowedUse = 0;
+    private int allowedUse = 0;
     // クリップ状態
     private String mSearchOk = null;
     // コンテンツ識別子
@@ -54,6 +57,8 @@ public class ContentsData {
     private String mDtv = null;
     // クリップボタン
     private TextView mClipButton = null;
+    // クリップリクエストデータ
+    private ClipRequestData mRequestData = new ClipRequestData();
 
     //デバイス名
     private String mDeviceName = null;
@@ -119,10 +124,18 @@ public class ContentsData {
     }
 
     public void setChannelName(String channelName) {
-        this.mChannelName = channelName;
+        this.channelName = channelName;
+    }
+
+    public String getRecordedChannelName() {
+        return recordedChannelName;
+    }
+
+    public void setRecordedChannelName(String channelName) {
+        this.recordedChannelName = channelName;
     }
     public int getAllowedUse() {
-        return mAllowedUse;
+        return allowedUse;
     }
 
     public void setAllowedUse(int allowedUse) {
@@ -240,4 +253,11 @@ public class ContentsData {
     public void setDtv(String mDtv) {
         this.mDtv = mDtv;
     }
-}
+
+    public ClipRequestData getRequestData() {
+        return mRequestData;
+    }
+
+    public void setRequestData(ClipRequestData ｍRequestData) {
+        this.mRequestData = ｍRequestData;
+    }}

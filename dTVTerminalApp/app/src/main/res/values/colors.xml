@@ -15,8 +15,8 @@
     <color name="disable_tab_background">#111111</color>
     <color name="list_item_background">#000000</color>
     <color name="thumbnail_background">#888888</color>
-    <color name="content_time_text">#cccccc</color>
-    <color name="result_line">#333333</color>
+    <color name="content_time_text">#AAAAAA</color>
+    <color name="result_line">#222222</color>
     <color name="custom_toast_background">#000000</color>
     <!--Global Menu-->
     <color name="hikari_tv_and_dtv_channel_title">#00FFFF</color>
@@ -49,11 +49,6 @@
     <!-- ビデオ一覧 -->
     <color name="video_list_text">#FFFFFF</color>
     <color name="video_list_line">#424242</color>
-
-    <!--CustomDialog-->
-    <color name="custom_dialog_backgroud_color">#eeeeee</color>
-    <color name="custom_dialog_separate_color">#555555</color>
-    <color name="custom_dialog_button_text_color">#339999</color>
 
     <!--コンテンツ詳細-->
     <color name="contents_header_background">#000000</color>

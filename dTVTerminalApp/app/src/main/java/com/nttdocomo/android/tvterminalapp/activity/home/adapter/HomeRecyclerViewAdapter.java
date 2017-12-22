@@ -18,16 +18,15 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser;
 
 import java.util.List;
-import java.util.Map;
 
 public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerViewAdapter.ViewHolder> {
     private LayoutInflater mInflater;
-    private List<Map<String, String>> mContentList;
+    private List<ContentsData> mContentList;
     private Context context;
     //サムネイル取得プロバイダー
     private ThumbnailProvider thumbnailProvider;
@@ -42,9 +41,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     //普通
     private static final int TYPE_NORMAL = 2;
 
-    public HomeRecyclerViewAdapter(Context context, List<Map<String, String>> mContentList) {
+    public HomeRecyclerViewAdapter(Context context, List<ContentsData> contentsDataList) {
         mInflater = LayoutInflater.from(context);
-        this.mContentList = mContentList;
+        this.mContentList = contentsDataList;
         this.context = context;
         thumbnailProvider = new ThumbnailProvider(context);
     }
@@ -108,14 +107,14 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         if (getItemViewType(i) == TYPE_FOOTER) {
             return;
         }
-        String date = mContentList.get(i).get(JsonContents.META_RESPONSE_DISPLAY_START_DATE);
-        String title = mContentList.get(i).get(JsonContents.META_RESPONSE_TITLE);
+        String date = mContentList.get(i).getTime();
+        String title = mContentList.get(i).getTitle();
         if (TextUtils.isEmpty(title)) {
-            title = mContentList.get(i).get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE);
+            title = mContentList.get(i).getTitle();
         }
-        String thumbnail = mContentList.get(i).get(JsonContents.META_RESPONSE_THUMB_448);
+        String thumbnail = mContentList.get(i).getThumURL();
         if (TextUtils.isEmpty(thumbnail)) {
-            thumbnail = mContentList.get(i).get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1);
+            thumbnail = mContentList.get(i).getThumURL();
         }
         if (!TextUtils.isEmpty(title)) {
             viewHolder.mContent.setVisibility(View.VISIBLE);

@@ -311,7 +311,8 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      */
     private void registerDevListDlna() {
         DTVTLogger.start();
-        if (this instanceof LaunchActivity
+        if (this instanceof STBSelectActivity
+                || this instanceof LaunchActivity
                 //|| this instanceof RecordedListActivity
                 || this instanceof DtvContentsDetailActivity) {
             DTVTLogger.end();

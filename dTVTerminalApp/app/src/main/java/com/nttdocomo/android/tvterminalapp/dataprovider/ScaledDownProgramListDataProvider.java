@@ -234,7 +234,7 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                 selectEndDate = gc.getTime();
                 for (int i = 0; i < mChannelProgramList.size(); i++) {//CH毎番組データ取得して、整形する
                     HashMap<String, String> hashMap = mChannelProgramList.get(i);
-                    Schedule mSchedule = new Schedule();
+                    Schedule schedule = new Schedule();
                     String startDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_START_DATE);
                     StringBuilder startBuilder = new StringBuilder();
                     startBuilder.append(startDate.substring(0, 10));
@@ -251,11 +251,13 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                         String thumb = hashMap.get(JsonContents.META_RESPONSE_DEFAULT_THUMB);
                         String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
                         String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
-                        mSchedule.setStartTime(startDate);
-                        mSchedule.setEndTime(endDate);
-                        mSchedule.setImageUrl(thumb);
-                        mSchedule.setTitle(title);
-                        mSchedule.setChNo(chNo);
+                        schedule.setStartTime(startDate);
+                        schedule.setEndTime(endDate);
+                        schedule.setImageUrl(thumb);
+                        schedule.setTitle(title);
+                        schedule.setChNo(chNo);
+                        schedule.setClipRequestData(ClipDataProvider.setClipData(hashMap));
+
                         if (!TextUtils.isEmpty(chNo)) {//CH毎番組データ取得して、整形する
                             ArrayList<Channel> oldChannelList = channelsInfo.getChannels();
                             boolean isExist = false;
@@ -264,7 +266,7 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                                     Channel oldChannel = oldChannelList.get(j);
                                     if (oldChannel.getChNo() == Integer.valueOf(chNo)) {//番組ID存在する場合
                                         ArrayList<Schedule> oldSchedule = oldChannel.getSchedules();
-                                        oldSchedule.add(mSchedule);
+                                        oldSchedule.add(schedule);
                                         isExist = true;
                                         break;
                                     }
@@ -272,7 +274,7 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                             }
                             if (!isExist) {//番組ID存在しない場合
                                 mScheduleList = new ArrayList<>();
-                                mScheduleList.add(mSchedule);
+                                mScheduleList.add(schedule);
                                 Channel channel = new Channel();
                                 channel.setChNo(Integer.parseInt(chNo));
                                 channel.setTitle(title);

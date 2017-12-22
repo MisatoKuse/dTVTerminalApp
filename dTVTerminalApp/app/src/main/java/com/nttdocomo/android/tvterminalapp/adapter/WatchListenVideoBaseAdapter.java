@@ -6,7 +6,6 @@ package com.nttdocomo.android.tvterminalapp.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -19,6 +18,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.dataprovider.ClipDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WatchListenVideoContentInfo;
 
@@ -55,14 +56,6 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter implements  AbsList
         return i;
     }
 
-
-
-//    public View getView(int position, View convertView, ViewGroup parent) {
-//        View view = null;
-//        view = View.inflate(mContext, layoutid, null);
-//        return view;
-//    }
-
     @Override
     public View getView(int position, View view, ViewGroup parent) {
         WatchListenVideoContentInfo.WatchListenVideoContentInfoItem watchListenVideoInfo = (WatchListenVideoContentInfo.WatchListenVideoContentInfoItem) mData.get(position);
@@ -72,13 +65,22 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter implements  AbsList
             holder = new ViewHolder();
             holder.wl_thumbnail = view.findViewById(R.id.wl_thumbnail);
             holder.wl_title = view.findViewById(R.id.wl_title);
-//            holder.wl_progressBar = view.findViewById(R.id.wl_progressBar);
+//            holder.wl_progressBar = mView.findViewById(R.id.wl_progressBar);
             holder.wl_video_rating = view.findViewById(R.id.wl_video_rating);
             holder.wl_rating_count = view.findViewById(R.id.wl_rating_count);
-//            holder.wl_des = view.findViewById(R.id.wl_des);
+//            holder.wl_des = mView.findViewById(R.id.wl_des);
             holder.wl_clip = view.findViewById(R.id.bt_clip);
 //            holder.wl_clip.setVisibility(View.GONE);
 
+            holder.wl_clip.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //クリップボタンのイベントを親に渡す
+//                    ((ListView) parent).performItemClick(mView, position, R.id.item_common_result_clip_tv);
+                    //TODO:親に処理を渡すか検討中
+                    ((BaseActivity) mContext).sendClipRequest(ClipDataProvider.setClipData());
+                }
+            });
             float mWidth = (float)mContext.getResources().getDisplayMetrics().widthPixels / 3;
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int)mWidth,(int)mWidth/2);
             holder.wl_thumbnail.setLayoutParams(layoutParams);

@@ -86,8 +86,10 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         MediaPlayerController.OnPlayerEventListener, MediaPlayerController.OnErrorListener, MediaPlayerController.OnCaptionDataListener,
         RemoteControllerView.OnStartRemoteControllerUIListener {
 
-    private static final int SCREEN_RATIO_WIDTH=16;
-    private static final int SCREEN_RATIO_HEIGHT=9;
+    private static final int SCREEN_RATIO_WIDTH = 16;
+    private static final int SCREEN_RATIO_HEIGHT = 9;
+    //先頭のメタデータを取得用
+    private static final int FIRST_VOD_META_DATA = 0;
 
     /* コンテンツ詳細 start */
     private LinearLayout tabLinearLayout;
@@ -205,7 +207,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         thumbnailRelativeLayout = findViewById(R.id.dtv_contents_detail_layout);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 getWidthDensity(),
-                (int)(getWidthDensity() * SCREEN_RATIO_HEIGHT / SCREEN_RATIO_WIDTH));
+                (int) (getWidthDensity() * SCREEN_RATIO_HEIGHT / SCREEN_RATIO_WIDTH));
         thumbnailRelativeLayout.setLayoutParams(layoutParams);
         Object object = intent.getParcelableExtra(RecordedListActivity.RECORD_LIST_KEY);
         if (object instanceof RecordedContentsDetailData) {
@@ -446,7 +448,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                         mVideoFast30.setVisibility(View.VISIBLE);
                         mVideoFast.setVisibility(View.VISIBLE);
                         mVideoCtrlBar.setVisibility(View.VISIBLE);
-                        if(getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE){
+                        if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
                             mTvTitle.setVisibility(View.VISIBLE);
                             mTvLogo.setVisibility(View.VISIBLE);
                         }
@@ -462,7 +464,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     }
 
     /**
-     * hide video ctrl view
+     * hide video ctrl mView
      *
      * @param invisible
      */
@@ -480,7 +482,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     }
 
     /**
-     * hide ctrl view
+     * hide ctrl mView
      */
     private void hideCtrlViewAfterOperate() {
         DTVTLogger.start();
@@ -622,7 +624,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         String durationStr = datas.getDuration();
         long duration = getDuration(durationStr);
 
-        String type= datas.getVideoType();
+        String type = datas.getVideoType();
 
         int bitRate = Integer.parseInt(datas.getBitrate());
         if (0 == size) {
@@ -631,15 +633,15 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         String title = datas.getTitle();
         headerTextView.setText(title);
         Uri uri = Uri.parse(url);
-        String contentFormat="contentFormat";
-        String type2="";
-        int isDtcp= type.indexOf("application/x-dtcp1");
-        if(isDtcp>0){
-            String http="http-get:*:";
-            int startPos= http.length() - 1;
-            int endPos= type.indexOf(":DLNA.ORG_OP");
-            if(startPos>0 && endPos>0 && startPos<endPos && startPos<type.length() && endPos<type.length()){
-                contentFormat=type.substring(startPos+1, endPos);
+        String contentFormat = "contentFormat";
+        String type2 = "";
+        int isDtcp = type.indexOf("application/x-dtcp1");
+        if (isDtcp > 0) {
+            String http = "http-get:*:";
+            int startPos = http.length() - 1;
+            int endPos = type.indexOf(":DLNA.ORG_OP");
+            if (startPos > 0 && endPos > 0 && startPos < endPos && startPos < type.length() && endPos < type.length()) {
+                contentFormat = type.substring(startPos + 1, endPos);
                 type2 = "application/x-dtcp1";
             } else {
                 DTVTLogger.debug("setCurrentMediaInfo failed");
@@ -711,12 +713,13 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
 
     /**
      * showMessage
+     *
      * @param msg
      */
-    private void showMessage(String msg){
+    private void showMessage(String msg) {
         DTVTLogger.start();
-        if(null==mToast){
-            mToast= Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
+        if (null == mToast) {
+            mToast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
         }
         mToast.setText(msg);
         mToast.show();
@@ -826,9 +829,12 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                     || serviceId == OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID) {
                 // 他サービス(dtv/dtvチャンネル/dアニメ)フラグを立てる
                 isOtherService = true;
-                // リモコンUIのリスナーを設定
-                createRemoteControllerView();
-                setStartRemoteControllerUIListener(this);
+                if (serviceId == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID
+                        || serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID) {
+                    // リモコンUIのリスナーを設定
+                    createRemoteControllerView();
+                    setStartRemoteControllerUIListener(this);
+                }
             }
         }
 
@@ -865,7 +871,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     }
 
     /**
-     * initPlayerView view
+     * initPlayerView mView
      */
     private void initPlayerView() {
         DTVTLogger.start();
@@ -901,8 +907,8 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         //初期化の時点から、handlerにmsgを送る
         viewRefresher.sendEmptyMessage(REFRESH_VIDEO_VIEW);
         hideCtrlView(View.INVISIBLE);
-        if(mPlayerController != null){
-            if(mPlayerController.isPlaying()){
+        if (mPlayerController != null) {
+            if (mPlayerController.isPlaying()) {
                 mVideoPlayPause.getChildAt(0).setVisibility(View.GONE);
                 mVideoPlayPause.getChildAt(1).setVisibility(View.VISIBLE);
             }
@@ -944,7 +950,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         } else {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
             mScreenWidth = getWidthDensity();
-            playerParams.height = (int)(getWidthDensity() * SCREEN_RATIO_HEIGHT / SCREEN_RATIO_WIDTH);
+            playerParams.height = (int) (getWidthDensity() * SCREEN_RATIO_HEIGHT / SCREEN_RATIO_WIDTH);
             headerLayout.setVisibility(View.VISIBLE);
             setPlayerProgressView(false);
             setRemoteControllerViewVisibility(View.VISIBLE);
@@ -984,8 +990,8 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             mVideoCtrlBar.removeView(mVideoTotalTime);
             layoutParams = new RelativeLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            layoutParams.addRule(RelativeLayout.END_OF,R.id.tv_player_ctrl_now_on_air_cur_time_tv);
-            layoutParams.addRule(RelativeLayout.START_OF,R.id.tv_player_ctrl_now_on_air_total_time_tv);
+            layoutParams.addRule(RelativeLayout.END_OF, R.id.tv_player_ctrl_now_on_air_cur_time_tv);
+            layoutParams.addRule(RelativeLayout.START_OF, R.id.tv_player_ctrl_now_on_air_total_time_tv);
             layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
             layoutParams.setMargins((int) getDensity() * 10, 0, (int) getDensity() * 10, 0);
             mVideoSeekBar.setLayoutParams(layoutParams);
@@ -1011,9 +1017,9 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             Point realSize = new Point();
             display.getSize(size);
             display.getRealSize(realSize);
-            if(isHeight){
+            if (isHeight) {
                 return realSize.y != size.y;
-            }else{
+            } else {
                 return realSize.x != size.x;
             }
         } else {
@@ -1032,10 +1038,10 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             return 0;
         }
         int resourceId;
-        if(isHeight){
+        if (isHeight) {
             resourceId = getResources().getIdentifier("navigation_bar_height",
                     "dimen", "android");
-        }else {
+        } else {
             resourceId = getResources().getIdentifier("navigation_bar_width",
                     "dimen", "android");
         }
@@ -1216,6 +1222,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             detailFullData = contentsDetailInfo.get(0);
             detailFragment.mOtherContentsDetailData.setTitle(detailFullData.getTitle());
             detailFragment.mOtherContentsDetailData.setDetail(detailFullData.getSynop());
+            detailFragment.mOtherContentsDetailData.setVodMetaFullData(contentsDetailInfo.get(FIRST_VOD_META_DATA));
             String[] credit_array = detailFullData.getmCredit_array();
             setTitleAndThumbnail(detailFullData.getTitle(), detailFullData.getmDtv_thumb_448_252());
             if (credit_array != null && credit_array.length > 0) {
@@ -1476,7 +1483,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     public void onStartRemoteControl() {
         DTVTLogger.start();
         // サービスIDにより起動するアプリを変更する
-        if(mDetailData != null){
+        if (mDetailData != null) {
             switch (mDetailData.getServiceId()) {
                 case DTV_CONTENTS_SERVICE_ID: // dTV
                     requestStartApplication(
@@ -1613,10 +1620,10 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
         finishPlayer();
-        if(null!=mToast){
+        if (null != mToast) {
             mToast.cancel();
         }
     }
