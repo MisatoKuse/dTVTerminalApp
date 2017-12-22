@@ -73,7 +73,7 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
      */
     public ScaledDownProgramListDataProvider(Context mContext) {
         this.mContext = mContext;
-        this.mApiDataProviderCallback = (ScaledDownProgramListDataProvider.ApiDataProviderCallback) mContext;
+        this.mApiDataProviderCallback = (ApiDataProviderCallback) mContext;
     }
 
     @Override
@@ -245,7 +245,8 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    if(day.compareTo(selectStartDate) !=-1 && day.compareTo(selectEndDate)!=1){
+                    //TODO 番組表表示させるため、コメントアウトします
+                    /*if(day.compareTo(selectStartDate) !=-1 && day.compareTo(selectEndDate)!=1){*/
                         String endDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
                         String thumb = hashMap.get(JsonContents.META_RESPONSE_DEFAULT_THUMB);
                         String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
@@ -279,7 +280,8 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                                 channelsInfo.addChannel(channel);
                             }
                         }
-                    }
+                    //TODO 番組表表示させるため、コメントアウトします
+                    /*}*/
                 }
                 Handler handler = new Handler();//番組情報更新
                 try {

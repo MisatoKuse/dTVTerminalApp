@@ -31,7 +31,7 @@ public class Schedule {
     //時間単価換算
     private static final float FORMAT = 1000 * 60 * 60;
     //日付format
-    private static final String DATE_FORMAT = "yyyy-MM-ddHH:mm:ss";
+    private static final String DATE_FORMAT = "yyyy/MM/ddHH:mm:ss";
     private static final String PROGRAM_FORMAT = "yyyy-MM-dd";
 
     /*
