@@ -25,19 +25,29 @@ public class DaccountControl implements
         DaccountRegistService.DaccountRegistServiceCallBack,
         DaccountCheckService.DaccountCheckServiceCallBack {
 
-    /** コンテキストの控え */
+    /**
+     * コンテキストの控え
+     */
     private Context mContext = null;
 
-    /** 戻り値控え */
+    /**
+     * 戻り値控え
+     */
     private int mResult = 0;
 
-    /** コールバックの控え */
+    /**
+     * コールバックの控え
+     */
     private DaccountControlCallBack mDaccountControlCallBack = null;
 
-    /** 単回実行フラグ */
+    /**
+     * 単回実行フラグ
+     */
     private DaccountControlOnce mOnceControl = null;
 
-    /** 実行クラスの識別用固定値 */
+    /**
+     * 実行クラスの識別用固定値
+     */
     private enum CHECK_LAST_CLASS {
         //サービス登録チェック
         CHECK_SERVICE,
@@ -47,7 +57,9 @@ public class DaccountControl implements
         ONE_TIME_PASS_WORD,
     }
 
-    /** 実行クラス名控え */
+    /**
+     * 実行クラス名控え
+     */
     private CHECK_LAST_CLASS mResultClass;
 
     /**
@@ -90,7 +102,7 @@ public class DaccountControl implements
     public void registService(Context context, DaccountControlCallBack daccountControlCallBackSource) {
         DTVTLogger.start();
 
-        if(DAccountUtils.checkDAccountIsExist() == null) {
+        if (DAccountUtils.checkDAccountIsExist() == null) {
             //dアカウント設定アプリが存在しないので帰る。ここで帰れば、単体実行フラグがセットされず、別のアクティビティの実行時に自動的に実行される。
             //後ほど、dアカウント設定アプリがダウンロードされた場合、その直後のアクティビティの起動時に呼び出されるので、意図的にダウンロード直後に処理を
             //挿入する必要はない。
@@ -226,7 +238,7 @@ public class DaccountControl implements
             SharedPreferencesUtils.setSharedPreferencesDaccountId(mContext, id);
 
             //キャッシュクリアを呼ぶ
-            //IDが変更されていた場合は、キャッシュクリアを呼ぶ
+            //IDが変更されていた場合は、キャッシュクリアを呼ぶ その後再起動が走る
             DaccountControl.cacheClear(mContext);
 
             //エラーを返す
@@ -249,6 +261,7 @@ public class DaccountControl implements
 
     /**
      * 最後のクラスがサービスチェックかどうかのチェック
+     *
      * @return そうならばtrue
      */
     public boolean isCheckService() {
@@ -258,6 +271,7 @@ public class DaccountControl implements
 
     /**
      * 最後のクラスがサービス登録かどうかのチェック
+     *
      * @return そうならばtrue
      */
     public boolean isRegistService() {
@@ -267,6 +281,7 @@ public class DaccountControl implements
 
     /**
      * 最後のクラスがワンタイムパスワード取得かどうかのチェック
+     *
      * @return そうならばtrue
      */
     public boolean isOneTimePass() {
@@ -279,7 +294,7 @@ public class DaccountControl implements
      *
      * @param context コンテキスト
      */
-    public static void cacheClear(Context context) {
+    static void cacheClear(Context context) {
         DTVTLogger.start();
         DaccountControlOnce onceControl = DaccountControlOnce.getInstance();
 
@@ -298,7 +313,9 @@ public class DaccountControl implements
      * おそらく必要はないが、一応ファイル削除やDB削除なので、AsyncTaskとする
      */
     private static class CacheClearTask extends AsyncTask<Context, Void, Void> {
-        /** 退避用コンテキスト */
+        /**
+         * 退避用コンテキスト
+         */
         Context mContext = null;
 
         @Override
@@ -337,8 +354,14 @@ public class DaccountControl implements
             super.onPostExecute(aVoid);
             DTVTLogger.start();
 
-            //TODO: アプリ再起動処理がまだ無いので、仮処理
+            //TODO: 実行確認用メッセージ・後ほど削除
             Toast.makeText(mContext, R.string.d_account_chamge_message, Toast.LENGTH_LONG).show();
+
+            // 再起動フラグの設定
+            SharedPreferencesUtils.setSharedPreferencesRestartFlag(mContext, true);
+
+            //アプリの再起動を行う
+            DAccountUtils.reStartApplication(mContext);
 
             DTVTLogger.end();
         }
@@ -348,25 +371,31 @@ public class DaccountControl implements
      * dアカウント制御をアプリ起動時に1回だけ行うための制御クラス
      */
     private static class DaccountControlOnce {
-        /** 初回のみ実行用のインスタンス */
+        /**
+         * 初回のみ実行用のインスタンス
+         */
         private static DaccountControlOnce sDaccountControlOnce = new DaccountControlOnce();
 
-        /** 実行状況を保持する */
+        /**
+         * 実行状況を保持する
+         */
         private static boolean sExecOnce = false;
 
         /**
          * 初回実行かどうかを検知する
+         *
          * @return 実行済みならばtrue
          */
-        public static boolean isExecOnce() {
+        static boolean isExecOnce() {
             return sExecOnce;
         }
 
         /**
          * 実行フラグを設定する
+         *
          * @param execOnce 設定を行う実行フラグの値
          */
-        public static void setExecOnce(boolean execOnce) {
+        static void setExecOnce(boolean execOnce) {
             DaccountControlOnce.sExecOnce = execOnce;
         }
 
@@ -378,6 +407,7 @@ public class DaccountControl implements
 
         /**
          * 自分のインスタンスを返す
+         *
          * @return 自分のインスタンス
          */
         public static DaccountControlOnce getInstance() {

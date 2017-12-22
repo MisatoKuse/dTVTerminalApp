@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
@@ -36,18 +35,17 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountControl;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipDeleteWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClient;
-import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountControl;
 
 /**
  * クラス機能：
@@ -307,6 +305,21 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             boolean isAvai = mDlnaProvDevListForBase.isDmsAvailable(dlnaDmsItem.mUdn);
             setStbStatus(isAvai);
         }
+
+        DTVTLogger.debug("RestartFlag check " +
+                SharedPreferencesUtils.getSharedPreferencesRestartFlag(getApplicationContext()));
+
+        // 再起動フラグがtrueならば、再起動メッセージを表示する
+        if (SharedPreferencesUtils.getSharedPreferencesRestartFlag(getApplicationContext())) {
+            restartMessageDialog();
+        }
+
+        //再起動フラグをOFFにする
+        SharedPreferencesUtils.setSharedPreferencesRestartFlag(getApplicationContext(),false);
+
+        DTVTLogger.debug("RestartFlag falsed " +
+                SharedPreferencesUtils.getSharedPreferencesRestartFlag(getApplicationContext()));
+
         DTVTLogger.end();
     }
 
@@ -448,6 +461,24 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         CustomDialog errorDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
         errorDialog.setContent(errorMessage);
         errorDialog.showDialog();
+    }
+
+    /**
+     * dアカウント変更後の再起動時のダイアログ
+     */
+    private void restartMessageDialog() {
+        //ダイアログを、OKボタンのコールバックありに設定する
+        CustomDialog restartDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+        restartDialog.setContent(getString(R.string.d_account_chamge_message));
+        //startAppDialog.setTitle(getString(R.string.dTV_content_service_start_dialog));
+        restartDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+            @Override
+            public void onOKCallback(boolean isOK) {
+                //OKが押されたので、ホーム画面の表示
+                DAccountUtils.reStartApplication(getApplicationContext());
+            }
+        });
+        restartDialog.showDialog();
     }
 
     /**
@@ -837,7 +868,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         //TODO:クリップ削除失敗時の正式なトースト実装
         showClipToast(R.string.clip_delete_error_message);
     }
-
     /**
      * dアカウントの切り替えや無効化を受信できるように設定を行う
      */
@@ -859,7 +889,8 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
         if(mDaccountControl == null) {
             //処理には失敗したが、動作の続行ができないので、ここで終わらせる。ただ、このコールバックを受けている以上、ヌルになることありえないはず
-            Toast.makeText(getApplicationContext(),R.string.d_account_regist_error,Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),
+                    R.string.d_account_regist_error,Toast.LENGTH_LONG).show();
             DTVTLogger.end("null end");
             return;
         }
@@ -872,6 +903,8 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
         //サービスチェックに成功したが、ブロードキャストの登録に失敗した場合。チェック後に急に通信不全になるような事が無ければ発生しないはず。
         //発生時は次のアクティビティ表示時のリトライにゆだねる。
-        DTVTLogger.end("d account error");
+        //また、"dcmEval20150128.keystore"の署名ファイルが付加されずに実行された場合もこちらになる。署名ファイル無しではブロードキャストの
+        //登録はできないので、こちらに来るのは自然な動作となる。
+        DTVTLogger.end("d account error. no signature?");
     }
 }
