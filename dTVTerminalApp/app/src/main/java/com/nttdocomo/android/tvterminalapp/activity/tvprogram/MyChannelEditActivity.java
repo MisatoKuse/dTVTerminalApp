@@ -170,16 +170,8 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     public void onMyChannelDeleteCallback(String result) {
         switch (result) {
             case META_RESPONSE_STATUS_OK:
-                for (int i = 0; i < mUnregisterData.size(); i++) {//解除UI更新
-                    if (mUnregisterBundle.getString(SERVICE_ID_MY_CHANNEL_LIST)
-                            .equals(mUnregisterData.get(i).getServiceId())) {
-                        MyChannelMetaData channel = new MyChannelMetaData();
-                        channel.setIndex(mUnregisterData.get(i).getIndex());
-                        mUnregisterData.set(i, channel);
-                        mEditMyChannelListFragment.notifyDataChanged();
-                        break;
-                    }
-                }
+                //そのまま通信してデータ取得
+                loadData();
                 break;
             default:
                 showFailedDialog(getResources().getString(R.string
