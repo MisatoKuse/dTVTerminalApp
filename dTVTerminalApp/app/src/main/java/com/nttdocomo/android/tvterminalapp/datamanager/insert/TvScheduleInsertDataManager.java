@@ -101,7 +101,8 @@ public class TvScheduleInsertDataManager {
                 String keyName = (String) entry.getKey();
                 String valName = (String) entry.getValue();
                 if(JsonContents.META_RESPONSE_AVAIL_START_DATE.equals(keyName)){
-                    if(!TextUtils.isEmpty(valName)){
+                    //TODO DB日付検索条件除く、将来は対応必要
+                    /*if(!TextUtils.isEmpty(valName)){
                         String update = valName.substring(0,10);
                         int hour = Integer.parseInt(valName.substring(11,13));
                         if( hour>=0 && hour < 4){
@@ -120,7 +121,8 @@ public class TvScheduleInsertDataManager {
                         }else{
                             values.put(UPDATE_DATE, update);
                         }
-                    }
+                    }*/
+                    //TODO DB日付検索条件除く、将来は対応必要
                 }
                 values.put(DBUtils.fourKFlgConversion(keyName), valName);
             }

@@ -77,22 +77,25 @@ public class TvScheduleListDao {
     public List<Map<String, String>> findByTypeAndDate(String[] colomuStr, String type, String date) {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
-        StringBuilder selection = new StringBuilder();
+        //TODO DB日付検索条件除く、将来は対応必要
+        /*StringBuilder selection = new StringBuilder();
         selection.append(JsonContents.META_RESPONSE_DISP_TYPE);
         selection.append("=? AND ");
         selection.append(UPDATE_DATE);
         selection.append("=? AND ");
         selection.append(DATE_TYPE);
-        selection.append("=? ");
+        selection.append("=? ");*/
         Cursor cursor = db.query(
                 TV_SCHEDULE_LIST_TABLE_NAME,
                 colomuStr,
-                selection.toString(),
-                new String[]{type, date, "program"},
+//                selection.toString(),
+                null,
+//                new String[]{type, date, "program"},
+                null,
                 null,
                 null,
                 null);
-
+        //TODO DB日付検索条件除く、将来は対応必要
         //参照先を一番始めに
         boolean isEof = cursor.moveToFirst();
 
