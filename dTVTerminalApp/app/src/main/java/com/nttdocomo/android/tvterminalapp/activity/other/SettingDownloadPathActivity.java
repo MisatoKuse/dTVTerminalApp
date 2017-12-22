@@ -100,8 +100,8 @@ public class SettingDownloadPathActivity extends BaseActivity implements View.On
             if (!RuntimePermissionUtils.checkGrantResults(grantResults)) {
                 //チェックが二重に表示されるのを防ぐために一旦チェックを外す
                 checkBoxDevice.setChecked(false);
-                CustomDialog NoPermissionDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-                NoPermissionDialog.setTitle(getResources().getString(R.string.main_setting_no_permission));
+                CustomDialog NoPermissionDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+                NoPermissionDialog.setContent(getResources().getString(R.string.main_setting_no_permission));
                 NoPermissionDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                     @Override
                     public void onOKCallback(boolean isOK) {

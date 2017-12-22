@@ -17,7 +17,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
@@ -126,7 +125,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             Intent intent = new Intent(this, SettingDownloadPathActivity.class);
             intent.putExtra(getString(R.string.main_setting_storage_status), mSettingList.get(i).getStateText());
             startActivity(intent);
-        } else if (tappedItemName.equals(itemName[9])) {
+        } else if (tappedItemName.equals(itemName[9]) && !mSettingList.get(i).isCategory()) {
             //外出先視聴時の画質設定画面への遷移
             Intent intent = new Intent(this, SettingImageQualityActivity.class);
             intent.putExtra(getString(R.string.main_setting_quality_status), mSettingList.get(i).getStateText());
@@ -205,7 +204,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         } catch (ActivityNotFoundException e){
             //　アプリが無ければインストール画面に誘導
             CustomDialog dAccountUninstallDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-            dAccountUninstallDialog.setTitle(getResources().getString(R.string.main_setting_d_account_message));
+            dAccountUninstallDialog.setContent(getResources().getString(R.string.main_setting_d_account_message));
             dAccountUninstallDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                 @Override
                 public void onOKCallback(boolean isOK) {

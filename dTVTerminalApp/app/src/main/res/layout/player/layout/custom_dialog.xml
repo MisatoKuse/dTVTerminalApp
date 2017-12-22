@@ -4,6 +4,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:background="@color/custom_dialog_backgroud_color"
     android:gravity="center">
 
     <RelativeLayout
@@ -11,7 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:background="#FFFFFF"
         android:orientation="vertical">
 
         <TextView
@@ -19,8 +19,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
+            android:paddingBottom="@dimen/custom_dialog_padding"
+            android:paddingTop="@dimen/custom_dialog_padding"
             android:textColor="@android:color/black"
             android:textSize="16dp" />
 
@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_below="@id/custom_dialog_title_tv"
-            android:background="#555555" />
+            android:background="@color/custom_dialog_separate_color" />
 
         <TextView
             android:id="@+id/custom_dialog_content"
@@ -37,8 +37,18 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/custom_dialog_line"
             android:layout_centerHorizontal="true"
-            android:padding="5dp"
+            android:padding="@dimen/custom_dialog_padding"
+            android:paddingStart="@dimen/custom_dialog_content_padding"
+            android:paddingEnd="@dimen/custom_dialog_content_padding"
             android:textSize="16dp" />
+
+        <TextView
+            android:id="@+id/custom_dialog_line_separete"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/custom_dialog_content"
+            android:background="@color/custom_dialog_separate_color"
+            android:visibility="gone"/>
     </RelativeLayout>
 
     <ScrollView
@@ -67,23 +77,21 @@
             android:id="@+id/custom_dialog_confirm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FF0000"
             android:gravity="center"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
+            android:paddingBottom="@dimen/custom_dialog_padding"
+            android:paddingTop="@dimen/custom_dialog_padding"
             android:text="@string/custom_dialog_ok"
-            android:textColor="#FFFFFF" />
+            android:textColor="@color/custom_dialog_button_text_color" />
 
         <TextView
             android:id="@+id/custom_dialog_cancel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#0000FF"
             android:gravity="center"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
+            android:paddingBottom="@dimen/custom_dialog_padding"
+            android:paddingTop="@dimen/custom_dialog_padding"
             android:text="@string/custom_dialog_cancel"
-            android:textColor="#FFFFFF" />
+            android:textColor="@color/custom_dialog_button_text_color" />
     </LinearLayout>
 
 </RelativeLayout>

@@ -49,6 +49,10 @@
     <dimen name="list_item_sort_button_bottom_margin">25dp</dimen>
     <dimen name="list_item_sort_button_right_margin">25dp</dimen>
 
+    <!--Custom Dialog-->
+    <dimen name="custom_dialog_padding">5dp</dimen>
+    <dimen name="custom_dialog_content_padding">10dp</dimen>
+
     <!--コンテンツ詳細-->
     <dimen name="contents_header_close_button_size">24sp</dimen>
     <dimen name="contents_header_back_button_size">20sp</dimen>

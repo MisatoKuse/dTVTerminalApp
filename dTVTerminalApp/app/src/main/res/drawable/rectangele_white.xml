@@ -6,12 +6,12 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
     <item>
         <shape>
-            <solid android:color="#555555" />
+            <solid android:color="@color/custom_dialog_separate_color" />
         </shape>
     </item>
     <item android:bottom="1.5dp">
         <shape>
-            <solid android:color="#FFFFFF" />
+            <solid android:color="@color/custom_dialog_backgroud_color" />
         </shape>
     </item>
  </layer-list>
