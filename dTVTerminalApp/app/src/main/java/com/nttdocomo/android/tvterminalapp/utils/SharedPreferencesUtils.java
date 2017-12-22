@@ -12,43 +12,45 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 
 public class SharedPreferencesUtils {
 
-    // SharedPreferences ペアリング情報保存キー 親キー
+    /**  SharedPreferences ペアリング情報保存キー 親キー */
     private static final String SHARED_KEY_PAIRING_INFOMATION = "pairing_info";
-    // STB選択画面"次回以降表示しない" 選択保存キー
+    /**  STB選択画面"次回以降表示しない" 選択保存キー */
     private static final String SHARED_KEY_STB_SELECT_UNNECESSARY_NEXT_TIME = "unnecessary_next_time";
-    // STB接続画面 接続成功 保存キー
+    /**  STB接続画面 接続成功 保存キー */
     private static final String SHARED_KEY_STB_CONNECT_SUCCESS = "connect_success";
-    // ペアリング勧誘画面表示済み判定情報 保存キー
+    /**  ペアリング勧誘画面表示済み判定情報 保存キー */
     private static final String SHARED_KEY_IS_DISPLAYED_PARING_INVITATION = "is_displayed_paring_invitation";
-    // ホーム画面ペアリング済み判定 保存キー
+    /**  ホーム画面ペアリング済み判定 保存キー */
     private static final String SHARED_KEY_DECISION_PARING_SETTLED = "decision_paring_settled";
     // 接続済み STB情報 保存キー
-    // STB情報 親キー
+    /**  STB情報 親キー */
     private static final String SHARED_KEY_SELECTED_STB_DATA_INFOMATION = "stb_data_info";
-    // UDN
+    /**  UDN */
     private static final String SHARED_KEY_SELECTED_STB_DATA_INFOMATION_UDN = "selected_stb_udn";
-    // コントロールURL
+    /**  コントロールURL */
     private static final String SHARED_KEY_SELECTED_STB_DATA_INFOMATION_CONTROL_URL = "selected_stb_control_url";
-    // HTTP
+    /**  HTTP */
     private static final String SHARED_KEY_SELECTED_STB_DATA_INFOMATION_HTTP = "selected_stb_http";
-    // Friendly名
+    /**  Friendly名 */
     private static final String SHARED_KEY_SELECTED_STB_DATA_INFOMATION_FRIENDLY_NAME = "selected_stb_friendly_name";
-    // IPv6アドレス
+    /**  IPv6アドレス */
     private static final String SHARED_KEY_SELECTED_STB_DATA_INFOMATION_IPADDRESS = "selected_stb_ipaddress";
-    // getString 初期値
+    /**  getString 初期値 */
     private static final String SHARED_GET_STRING_DEFAULT = "";
-    // 画面情報保存 親キー
+    /**  画面情報保存 親キー */
     private static final String SHARED_KEY_SCREEN_INFORMATION = "screen_information";
-    // LaunchActivity チュートリアル表示済み判定 保存キー
+    /**  LaunchActivity チュートリアル表示済み判定 保存キー */
     private static final String SHARED_KEY_IS_DISPLAYED_TUTORIAL = "is_displayed_tutorial";
-    // SettinActivity 画質設定の設定値
+    /**  SettinActivity 画質設定の設定値 */
     private static final String SHARED_KEY_IMAGE_QUALITY = "image_quality";
-    // 持ち出しコンテンツダウンロード先 ture:内部 false:外部
+    /**  持ち出しコンテンツダウンロード先 ture:内部 false:外部 */
     private static final String SHARED_KEY_STORAGE_PATH = "storage_path";
-    //最後に取得したdアカウントのID
+    /** 最後に取得したdアカウントのID */
     private static final String LAST_D_ACCOUNT_ID = "BEFORE_D_ACCOUNT_ID";
-    //最後に取得したワンタイムパスワード
+    /** 最後に取得したワンタイムパスワード */
     private static final String LAST_ONE_TIME_PASSWORD = "LAST_ONE_TIME_PASSWORD";
+    /** アプリ再起動フラグ */
+    private static final String RESTART_FLAG = "RESTART_FLAG";
 
     /**
      * 独自の削除メソッドがある接続済みSTB情報以外の、dアカウントユーザー切り替え時の削除対象
@@ -65,7 +67,7 @@ public class SharedPreferencesUtils {
             SHARED_KEY_IS_DISPLAYED_PARING_INVITATION,
             // ホーム画面ペアリング済み判定 保存キー
             SHARED_KEY_DECISION_PARING_SETTLED,
-            // SettinActivity 画質設定の設定値
+            // SettingActivity 画質設定の設定値
             SHARED_KEY_IMAGE_QUALITY,
             // 持ち出しコンテンツダウンロード先
             SHARED_KEY_STORAGE_PATH,
@@ -388,4 +390,33 @@ public class SharedPreferencesUtils {
             deleteData.edit().clear().apply();
         }
     }
+
+    /**
+     * 再起動フラグを設定
+     *
+     * @param context コンテキスト
+     * @param restartFlag 再起動フラグの設定値
+     */
+    public static void setSharedPreferencesRestartFlag(Context context, boolean restartFlag) {
+        DTVTLogger.start("set restart flag = " + restartFlag);
+        SharedPreferences data = context.getSharedPreferences(
+                RESTART_FLAG, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putBoolean(RESTART_FLAG, restartFlag);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * 再起動フラグを取得
+     */
+    public static boolean getSharedPreferencesRestartFlag(Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                RESTART_FLAG, Context.MODE_PRIVATE);
+
+        //デフォルト値はfalseで取得して返す
+        return data.getBoolean(RESTART_FLAG,false);
+    }
+
 }

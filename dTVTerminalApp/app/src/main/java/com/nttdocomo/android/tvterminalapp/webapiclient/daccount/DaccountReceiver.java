@@ -17,7 +17,6 @@ import java.util.Set;
 
 /**
  * dアカウントで状況の変化が発生した場合の通知を受け取るレシーバー
- * TODO: dアカウント用にマニフェストファイルの設定を行ったのに応じて生成された。中身はこれから
  */
 public class DaccountReceiver extends BroadcastReceiver {
     @Override
@@ -30,7 +29,7 @@ public class DaccountReceiver extends BroadcastReceiver {
         Set<String> bundleLists = intentBundle.keySet();
         for (String key : bundleLists) {
             Object bundleData = intentBundle.get(key);
-            if(bundleData != null) {
+            if (bundleData != null) {
                 String buffer = bundleData.toString();
                 DTVTLogger.debug("in Data " + key + "=" + buffer);
             }
@@ -42,19 +41,23 @@ public class DaccountReceiver extends BroadcastReceiver {
                 //デフォルトIDの設定通知を受け取った。
                 DTVTLogger.debug("SET_ID_RECEIVER");
 
-                //アプリの再起動を行う
-                DAccountUtils.reStartApplication(context);
+                //ユーザーが登録された場合は、キャッシュクリアを呼ぶ。その後は再起動
+                DaccountControl.cacheClear(context);
 
                 break;
             case DaccountConstants.USER_AUTH_RECEIVER:
                 //ユーザー認証通知を受け取った。
                 DTVTLogger.debug("USER_AUTH_RECEIVER");
+
+                //ユーザーが登録された場合は、キャッシュクリアを呼ぶ。その後は再起動
+                DaccountControl.cacheClear(context);
+
                 break;
             case DaccountConstants.DELETE_ID_RECEIVER:
                 //ユーザー削除通知を受け取った。
                 DTVTLogger.debug("DELETE_ID_RECEIVER");
 
-                //ユーザーが削除されていた場合は、キャッシュクリアを呼ぶ
+                //ユーザーが削除されていた場合は、キャッシュクリアを呼ぶ。その後は再起動
                 DaccountControl.cacheClear(context);
 
                 break;
@@ -62,7 +65,7 @@ public class DaccountReceiver extends BroadcastReceiver {
                 //ユーザー無効化通知を受け取った。
                 DTVTLogger.debug("INVALIDATE_ID_RECEIVER");
 
-                //ユーザーが無効化されていた場合は、キャッシュクリアを呼ぶ
+                //ユーザーが無効化されていた場合は、キャッシュクリアを呼ぶ。その後は再起動
                 DaccountControl.cacheClear(context);
 
                 break;
