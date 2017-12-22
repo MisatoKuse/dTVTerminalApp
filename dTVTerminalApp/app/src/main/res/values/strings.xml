@@ -253,6 +253,10 @@
     <string name="recording_reservation_failed_dialog_param">リクエストパラメータ不正</string>
     <string name="recording_reservation_failed_dialog_over">登録件数超過</string>
     <string name="recording_reservation_failed_dialog_no_agreement">未契約エラー</string>
+    <string name="recording_reservation_confirm_dialog_title">録画予約確認</string>
+    <string name="recording_reservation_confirm_dialog_msg">この番組を録画予約します。\n宜しいでしょうか？</string>
+    <string name="recording_reservation_confirm_dialog_confirm">録画予約する</string>
+    <string name="recording_reservation_confirm_dialog_cancel">録画予約しない</string>
 
     <!-- チャンネルリストタイトル -->
     <string name="channel_list_activity_title">チャンネルリスト</string>
