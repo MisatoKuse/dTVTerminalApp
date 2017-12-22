@@ -24,11 +24,11 @@ public class ContentsData {
     // 録画予約ステータス
     private int mRecordingReservationStatus = RecordingReservationListDataProvider.RECORD_RESERVATION_SYNC_STATUS_ALREADY_REFLECT;
     // チャンネル名
-    private String channelName = null;
+    private String mChannelName = null;
     // 録画番組用 チャンネル名
     private String recordedChannelName = null;
     // 録画番組用 コピー残り回数
-    private int allowedUse = 0;
+    private int mAllowedUse = 0;
     // クリップ状態
     private String mSearchOk = null;
     // コンテンツ識別子
@@ -124,7 +124,7 @@ public class ContentsData {
     }
 
     public void setChannelName(String channelName) {
-        this.channelName = channelName;
+        this.mChannelName = channelName;
     }
 
     public String getRecordedChannelName() {
@@ -135,7 +135,7 @@ public class ContentsData {
         this.recordedChannelName = channelName;
     }
     public int getAllowedUse() {
-        return allowedUse;
+        return mAllowedUse;
     }
 
     public void setAllowedUse(int allowedUse) {

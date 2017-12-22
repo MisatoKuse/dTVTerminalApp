@@ -174,7 +174,7 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
      * @param tabPageNo
      */
     private void getGenreData(int tabPageNo) {
-        mRankingDataProvider.getVideoRankingData(mRankingDataProvider.getGenreId(tabPageNo));
+        mRankingDataProvider.getVideoRankingData(Integer.parseInt(mRankingDataProvider.getGenreId(tabPageNo)));
     }
 
     /**
