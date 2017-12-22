@@ -12,6 +12,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CHANNEL_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_CHANNEL_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_DAILY_RANK_SQL;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_MY_CHANNEL_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_RECOMMEND_CHANNEL_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_RECOMMEND_DANIME_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_RECOMMEND_DCHANNEL_SQL;
@@ -92,6 +93,7 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(CREATE_TABLE_RECOMMEND_DTV_SQL);
         sqLiteDatabase.execSQL(CREATE_TABLE_RECOMMEND_DANIME_SQL);
         sqLiteDatabase.execSQL(CREATE_TABLE_ROLE_LIST_SQL);
+        sqLiteDatabase.execSQL(CREATE_TABLE_MY_CHANNEL_SQL);
         try {
             sqLiteDatabase.execSQL(CREATE_TABLE_TVCLIP_LIST_SQL);   //クリップ一覧画面用
         } catch (Exception e) {

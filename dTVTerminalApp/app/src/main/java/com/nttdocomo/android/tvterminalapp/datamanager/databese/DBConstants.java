@@ -815,4 +815,16 @@ public class DBConstants {
     public static final String CREATE_TABLE_ROLE_LIST_SQL = StringUtil.getConnectString(
             CREATE_TABLE_ROLE_LIST_SQL_NAMES);
 
+    //My番組表キャッシュデータ格納用テーブル
+    public static final String MY_CHANNEL_LIST_TABLE_NAME = "my_channel_list";
+    public static final String CREATE_TABLE_MY_CHANNEL_SQL = "" +
+            "create table " + MY_CHANNEL_LIST_TABLE_NAME + " (" +
+            ID_COLUMN + " integer primary key autoincrement, " +
+            JsonContents.META_RESPONSE_CRID + " text, " +
+            JsonContents.META_RESPONSE_SERVICE_ID  + " text, " +
+            JsonContents.META_RESPONSE_TITLE + " text, " +
+            JsonContents.META_RESPONSE_R_VALUE  + " text, " +
+            JsonContents.META_RESPONSE_ADULT_TYPE  + " text, " +
+            JsonContents.META_RESPONSE_INDEX  + " text " +
+            ")";
 }

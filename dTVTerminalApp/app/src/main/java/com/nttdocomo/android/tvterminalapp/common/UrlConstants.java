@@ -113,6 +113,24 @@ public class UrlConstants {
                 PLALA_C_CLIENT + "user/reservation/remote";
 
         /**
+         * マイチャンネル一覧取得
+         */
+        public static final String MY_CHANNEL_LIST_WEB_CLIENT =
+                PLALA_C_CLIENT + "user/mychannel";
+
+        /**
+         * マイチャンネル登録
+         */
+        public static final String MY_CHANNEL_SET_WEB_CLIENT =
+                PLALA_C_CLIENT + "user/mychannel/register";
+
+        /**
+         * マイチャンネル解除
+         */
+        public static final String MY_CHANNEL_RELEASE_WEB_CLIENT =
+                PLALA_C_CLIENT + "user/mychannel/delete";
+
+        /**
          * 録画予約一覧
          */
         public static final String RECORDING_RESERVATION_LIST_WEB_CLIENT =
