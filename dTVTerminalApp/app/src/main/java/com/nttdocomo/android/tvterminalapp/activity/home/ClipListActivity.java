@@ -23,14 +23,15 @@ import android.widget.Toast;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ClipMainAdapter;
+import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.TvClipDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VodClipDataProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvClipContentInfo;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipContentInfo;
 import com.nttdocomo.android.tvterminalapp.fragment.ClipList.ClipListBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.ClipList.ClipListBaseFragmentScrollListener;
 import com.nttdocomo.android.tvterminalapp.fragment.ClipList.ClipListFragmentFactory;
+
+import java.util.List;
 
 
 public class ClipListActivity extends BaseActivity implements View.OnClickListener, VodClipDataProvider.ApiDataProviderCallback, TvClipDataProvider.TvClipDataProviderCallback, ClipListBaseFragmentScrollListener {
@@ -85,38 +86,8 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
         return baseFragment.mData.size() / NUM_PER_PAGE;
     }
 
-    private boolean isSkipTv(TvClipContentInfo tvClipContentInfo) {
-        ClipListBaseFragment baseFragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_TV, this);
-        if (null == baseFragment || null == baseFragment.mData || 0 == baseFragment.mData.size()) {
-            return false;
-        }
-
-        if (null == tvClipContentInfo || 0 == tvClipContentInfo.size()) {
-            return true;
-        }
-
-        TvClipContentInfo.TvClipContentInfoItem item1 = (TvClipContentInfo.TvClipContentInfoItem) baseFragment.mData.get(baseFragment.mData.size() - 1);
-        TvClipContentInfo.TvClipContentInfoItem item2 = tvClipContentInfo.get(tvClipContentInfo.size() - 1);
-        return tvClipContentInfo.isContentEqual(item1, item2);
-    }
-
     private static final int CLIP_LIST_PAGE_NO_OF_TV = 0;
     private static final int CLIP_LIST_PAGE_NO_OF_VOD = 1;
-
-    private boolean isSkipVod(VodClipContentInfo vodClipContentInfo) {
-        ClipListBaseFragment baseFragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_VOD, this);
-        if (null == baseFragment || null == baseFragment.mData || 0 == baseFragment.mData.size()) {
-            return false;
-        }
-
-        if (null == vodClipContentInfo || 0 == vodClipContentInfo.size()) {
-            return true;
-        }
-
-        VodClipContentInfo.VodClipContentInfoItem item1 = (VodClipContentInfo.VodClipContentInfoItem) baseFragment.mData.get(baseFragment.mData.size() - 1);
-        VodClipContentInfo.VodClipContentInfoItem item2 = vodClipContentInfo.get(vodClipContentInfo.size() - 1);
-        return vodClipContentInfo.isContentEqual(item1, item2);
-    }
 
     private void initData() {
         mTabNames = getResources().getStringArray(R.array.tab_clip_names);
@@ -137,7 +108,7 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
     }
 
     @Override
-    public void tvClipListCallback(TvClipContentInfo clipContentInfo) {
+    public void tvClipListCallback(List<ContentsData> clipContentInfo) {
         if (null == clipContentInfo || 0 == clipContentInfo.size()) {
             //通信とJSON Parseに関してerror処理
             DTVTLogger.debug("ClipListActivity::TvClipListCallback, get data failed.");
@@ -148,11 +119,6 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
 
         if (0 == clipContentInfo.size()) {
             //doing
-            resetCommunication();
-            return;
-        }
-
-        if (isSkipTv(clipContentInfo)) {
             resetCommunication();
             return;
         }
@@ -173,7 +139,7 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
     }
 
     @Override
-    public void vodClipListCallback(VodClipContentInfo clipContentInfo) {
+    public void vodClipListCallback(List<ContentsData> clipContentInfo) {
         if (null == clipContentInfo || 0 == clipContentInfo.size()) {
             //通信とJSON Parseに関してerror処理
             DTVTLogger.debug("ClipListActivity::VodClipListCallback, get data failed");
@@ -184,11 +150,6 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
 
         if (0 == clipContentInfo.size()) {
             //doing
-            resetCommunication();
-            return;
-        }
-
-        if (isSkipVod(clipContentInfo)) {
             resetCommunication();
             return;
         }
