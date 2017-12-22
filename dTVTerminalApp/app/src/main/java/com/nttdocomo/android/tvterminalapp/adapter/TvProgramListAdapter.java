@@ -65,7 +65,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     if(j == itemSchedules.size()-1){
                         isLast = true;
                     }
-                    ItemViewHolder itemViewHolder = new ItemViewHolder(itemSchedules.get(i));
+                    ItemViewHolder itemViewHolder = new ItemViewHolder(itemSchedules.get(j));
                     setView(itemViewHolder, itemSchedule, isLast);
                     mItemViews.add(itemViewHolder);
                 }

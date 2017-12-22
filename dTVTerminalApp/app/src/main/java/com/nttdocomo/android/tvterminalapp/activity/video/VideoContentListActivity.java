@@ -45,7 +45,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
 
     private View mLoadMoreView;
     private ListView mListView;
-    private List mContentsList;
+    private List<ContentsData> mContentsList;
 
     private boolean mIsCommunicating = false;
 
@@ -255,11 +255,10 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     /**
      * 取得結果の設定・表示
      */
-    private void setShowVideoContent(List<Map<String, String>> videoContentMapList) {
-        if (null == videoContentMapList || 0 == videoContentMapList.size()) {
+    private void setShowVideoContent(List<ContentsData> videoContentInfo) {
+        if (null == videoContentInfo || 0 == videoContentInfo.size()) {
             return;
         }
-        List<ContentsData> videoContentInfo = setVideoContentData(videoContentMapList);
 
         //既に元のデータ以上の件数があれば足す物は無いので、更新せずに帰る
         if (null != mContentsList && mContentsList.size() >= videoContentInfo.size()) {
@@ -306,7 +305,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     }
 
     @Override
-    public void videoContentCallback(List<Map<String, String>> videoHashMap) {
+    public void videoContentCallback(List<ContentsData> videoHashMap) {
         setShowVideoContent(videoHashMap);
     }
 

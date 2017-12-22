@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.dataprovider.callback;
 
+import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+
 import java.util.List;
 import java.util.Map;
 
@@ -11,28 +13,28 @@ public interface VideoRankingApiDataProviderCallback {
     /**
      * 取得条件"総合"用コールバック
      *
-     * @param videoRankMapList
+     * @param videoRankList
      */
-    void videoRankSynthesisCallback(List<Map<String, String>> videoRankMapList);
+    void videoRankSynthesisCallback(List<ContentsData> videoRankList);
 
     /**
      * 取得条件"海外映画"用コールバック
      *
-     * @param videoRankMapList
+     * @param videoRankList
      */
-    void videoRankOverseasMovieCallback(List<Map<String, String>> videoRankMapList);
+    void videoRankOverseasMovieCallback(List<ContentsData> videoRankList);
 
     /**
      * 取得条件"国内映画"用コールバック
      *
-     * @param videoRankMapList
+     * @param videoRankList
      */
-    void videoRankDomesticMovieCallback(List<Map<String, String>> videoRankMapList);
+    void videoRankDomesticMovieCallback(List<ContentsData> videoRankList);
 
     /**
      * 取得条件"海外TV番組・ドラマ"用コールバック
      *
-     * @param videoRankMapList
+     * @param videoRankList
      */
-    void videoRankOverseasChannelCallback(List<Map<String, String>> videoRankMapList);
+    void videoRankOverseasChannelCallback(List<ContentsData> videoRankList);
 }
