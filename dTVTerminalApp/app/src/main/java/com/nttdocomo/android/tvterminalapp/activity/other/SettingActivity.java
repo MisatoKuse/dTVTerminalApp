@@ -4,9 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.other;
 
-import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -23,12 +22,11 @@ import android.widget.Toast;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
-import com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.MyChannelEditActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.MainSettingListAdapter;
+import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
-import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.MainSettingUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
@@ -56,6 +54,10 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     private static final boolean ITEM = false;
     //空白文字
     private static final String BLANK = "";
+    //Dアカウントアプリ Package名
+    private static final String D_ACCOUNT_APP_PACKAGE_NAME = "com.nttdocomo.android.idmanager";
+    //Dアカウントアプリ Activity名
+    private static final String D_ACCOUNT_APP_ACTIVITY_NAME=".activity.DocomoIdTopActivity";
     //DアカウントアプリURI
     private static final String D_ACCOUNT_APP_URI = "market://details?id=com.nttdocomo.android.idmanager";
 
@@ -112,15 +114,13 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             //Dアカウント設定
             startDAccountSetting();
         } else if (tappedItemName.equals(itemName[3])) {
-            //TODO ペアリング設定
+            //ペアリング設定
             Intent intent = new Intent(getApplicationContext(),STBSelectActivity.class);
-//            intent.putExtra("FROM_WHERE", STBSelectActivity.STBSeleFromMode.STBSeleFromMode_Setting.ordinal());
+            intent.putExtra(STBSelectActivity.FROM_WHERE, STBSelectActivity.STBSelectFromMode.STBSelectFromMode_Setting.ordinal());
             startActivity(intent);
         } else if (tappedItemName.equals(itemName[5])) {
-            //TODO マイ番組表連携
-//            startActivity(MyChannelEditActivity.class, null);
-            startActivity(SearchTopActivity.class, null);
-            Toast.makeText(this, "マイ番組表設定画面が完成するまでの仮遷移", Toast.LENGTH_SHORT).show();
+            //マイ番組表連携
+            startActivity(MyChannelEditActivity.class, null);
         } else if (tappedItemName.equals(itemName[7])) {
             //ダウンロードコンテンツ保存先設定画面への遷移
             Intent intent = new Intent(this, SettingDownloadPathActivity.class);
@@ -164,8 +164,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         String imageQuality = SharedPreferencesUtils.getSharedPreferencesImageQuality(this);
         if (imageQuality.isEmpty()) {
             //値が保存されていない場合は初期値を設定
-            //TODO 初期値の確認
-            imageQuality = res.getString(R.string.main_setting_image_quality_low);
+            imageQuality = res.getString(R.string.main_setting_image_quality_high);
             /* test code begin */
             SharedPreferencesUtils.setSharedPreferencesImageQuality(this, imageQuality);
             /* test code end */
@@ -199,26 +198,23 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
      */
     private void startDAccountSetting() {
         Intent intent = new Intent();
-        intent.setClassName(
-                "com.nttdocomo.android.idmanager",
-                "com.nttdocomo.android.idmanager.activity.DocomoIdTopActivity");
-        if (intent != null) {
+        intent.setClassName(D_ACCOUNT_APP_PACKAGE_NAME,
+                D_ACCOUNT_APP_PACKAGE_NAME + D_ACCOUNT_APP_ACTIVITY_NAME);
+        try {
             startActivity(intent);
-        } else {
+        } catch (ActivityNotFoundException e){
             //　アプリが無ければインストール画面に誘導
-            //TODO 独自ダイアログの使用。現在はAlertDialogを使用している。
-            new AlertDialog.Builder(this)
-                .setMessage(getString(R.string.main_setting_d_account_message))
-                .setPositiveButton(getString(R.string.positive_response), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Uri uri = Uri.parse(D_ACCOUNT_APP_URI);
-                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                        startActivity(intent);
-                    }
-                })
-                .setNegativeButton(getString(R.string.negative_response), null)
-                .show();
+            CustomDialog dAccountUninstallDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+            dAccountUninstallDialog.setTitle(getResources().getString(R.string.main_setting_d_account_message));
+            dAccountUninstallDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                @Override
+                public void onOKCallback(boolean isOK) {
+                    Uri uri = Uri.parse(D_ACCOUNT_APP_URI);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
+                }
+            });
+            dAccountUninstallDialog.showDialog();
         }
     }
 
@@ -264,7 +260,6 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
      */
     private void checkImageQuality() {
         String imageQuality = SharedPreferencesUtils.getSharedPreferencesImageQuality(this);
-        DTVTLogger.debug(imageQuality);
         for (int i=0; i < mSettingList.size(); i++) {
             if (mSettingList.get(i).getText().equals(itemName[9]) && !mSettingList.get(i).isCategory()) {
                 mSettingList.set(i, new MainSettingUtils(itemName[9], imageQuality, true, ITEM));
@@ -286,7 +281,6 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             for (File dir : dirArr) {
                 if (dir != null) {
                     String path = dir.getAbsolutePath();
-                    DTVTLogger.debug(path);
                     // 取り外し可能か（SDカードか）を判定
                     if (Environment.isExternalStorageRemovable(dir)) {
                         // 取り外し可能であればSDカード
@@ -300,7 +294,6 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 }
             }
             isSDCard = sdCardDirPathList.size() > 0;
-            DTVTLogger.debug("SDCard:" + isSDCard);
         } else {
             //Android4.4の時の処理
             StorageManager sm = (StorageManager) getSystemService(Context.STORAGE_SERVICE);
