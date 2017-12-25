@@ -60,7 +60,7 @@ public class RecommendListBaseAdapter extends BaseAdapter {
             holder.iv_thumbnail = view.findViewById(R.id.recommend_iv_thumbnail);
             holder.tv_title = view.findViewById(R.id.recommend_title);
             holder.tv_des = view.findViewById(R.id.recommend_des);
-            holder.iv_clip = view.findViewById(R.id.recommend_bt_clip);
+            holder.iv_clip = view.findViewById(R.id.recommend_iv_clip);
             holder.iv_clip.setVisibility(View.VISIBLE);
             holder.iv_clip.setOnClickListener(new View.OnClickListener() {
                 @Override

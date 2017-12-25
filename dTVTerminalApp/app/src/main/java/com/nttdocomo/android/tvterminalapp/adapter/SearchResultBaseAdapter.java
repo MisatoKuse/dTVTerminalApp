@@ -59,7 +59,7 @@ public class SearchResultBaseAdapter extends BaseAdapter {
             holder.iv_thumbnail = view.findViewById(R.id.iv_thumbnail);
             holder.tv_title = view.findViewById(R.id.tv_title);
             holder.tv_des = view.findViewById(R.id.tv_des);
-            holder.iv_clip = view.findViewById(R.id.bt_clip);
+            holder.iv_clip = view.findViewById(R.id.iv_clip);
             holder.iv_clip.setVisibility(View.VISIBLE);
 
             holder.iv_clip.setOnClickListener(new View.OnClickListener() {

@@ -145,9 +145,7 @@ public class ContentsAdapter extends BaseAdapter {
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //クリップボタンのイベントを親に渡す
-//                    ((ListView) parent).performItemClick(mView, position, R.id.item_common_result_clip_tv);
-                //TODO:親に処理を渡すか検討中
+                //クリップボタンイベント
                 ((BaseActivity) mContext).sendClipRequest(requestData);
             }
         });

@@ -50,6 +50,7 @@
             android:layout_width="@dimen/clip_button_size"
             android:layout_height="@dimen/clip_button_size"
             android:layout_marginEnd="@dimen/recorded_clip_tv_margin_end"
+            android:clickable="true"
             android:background="@color/list_item_background" />
 
         <TextView

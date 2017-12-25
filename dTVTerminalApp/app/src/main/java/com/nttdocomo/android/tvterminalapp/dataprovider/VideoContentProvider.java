@@ -27,6 +27,7 @@ public class VideoContentProvider implements
 
     // ビデオコンテンツ画面用コールバック
     private apiVideoContentDataProviderCallback mApiVideoContentDataProviderCallback = null;
+    private List<Map<String, String>> videoContentMapList;
 
     /**
      * コンストラクタ
@@ -84,7 +85,8 @@ public class VideoContentProvider implements
      * @param list
      */
     public void sendContentListData(List<Map<String, String>> list) {
-        mApiVideoContentDataProviderCallback.videoContentCallback(setVideoContentData(list));
+        List<ContentsData> contentsDataList = setVideoContentData(list);
+        mApiVideoContentDataProviderCallback.videoContentCallback(contentsDataList);
     }
 
     /**
@@ -93,8 +95,8 @@ public class VideoContentProvider implements
      * @param videoContentMapList コンテンツリストデータ
      * @return dataList 読み込み表示フラグ
      */
-    private List<ContentsData> setVideoContentData(
-            List<Map<String, String>> videoContentMapList) {
+    private List<ContentsData> setVideoContentData(List<Map<String, String>> videoContentMapList) {
+        this.videoContentMapList = videoContentMapList;
         List<ContentsData> videoContentsDataList = new ArrayList<>();
 
         ContentsData contentsData;
@@ -102,34 +104,37 @@ public class VideoContentProvider implements
         for (int i = 0; i < videoContentMapList.size(); i++) {
             contentsData = new ContentsData();
 
-            String title = videoContentMapList.get(i).get(JsonContents.META_RESPONSE_TITLE);
-            String search = videoContentMapList.get(i).get(JsonContents.META_RESPONSE_SEARCH_OK);
-            String linearEndDate = videoContentMapList.get(i).get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
+            Map<String,String> map = videoContentMapList.get(i);
+            String title = map.get(JsonContents.META_RESPONSE_TITLE);
+            String search = map.get(JsonContents.META_RESPONSE_SEARCH_OK);
+            String linearEndDate = map.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
 
-            contentsData.setThumURL(videoContentMapList.get(i).get(JsonContents.META_RESPONSE_THUMB_448));
-            contentsData.setTitle(videoContentMapList.get(i).get(JsonContents.META_RESPONSE_TITLE));
-            contentsData.setRatStar(videoContentMapList.get(i).get(JsonContents.META_RESPONSE_RATING));
+            contentsData.setThumURL(map.get(JsonContents.META_RESPONSE_THUMB_448));
+            contentsData.setTitle(map.get(JsonContents.META_RESPONSE_TITLE));
+            contentsData.setRatStar(map.get(JsonContents.META_RESPONSE_RATING));
 
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
 
-            requestData.setCrid(videoContentMapList.get(i).get(JsonContents.META_RESPONSE_CRID));
-            requestData.setServiceId(videoContentMapList.get(i).get(JsonContents.META_RESPONSE_SERVICE_ID));
-            requestData.setEventId(videoContentMapList.get(i).get(JsonContents.META_RESPONSE_EVENT_ID));
-            requestData.setTitleId(videoContentMapList.get(i).get(JsonContents.META_RESPONSE_TITLE_ID));
+            requestData.setCrid(map.get(JsonContents.META_RESPONSE_CRID));
+            requestData.setServiceId(map.get(JsonContents.META_RESPONSE_SERVICE_ID));
+            requestData.setEventId(map.get(JsonContents.META_RESPONSE_EVENT_ID));
+            requestData.setTitleId(map.get(JsonContents.META_RESPONSE_TITLE_ID));
             requestData.setTitle(title);
-            requestData.setRValue(videoContentMapList.get(i).get(JsonContents.META_RESPONSE_R_VALUE));
-            requestData.setLinearStartDate(videoContentMapList.get(i).get(JsonContents.META_RESPONSE_AVAIL_START_DATE));
+            requestData.setClipTarget(title);
+            requestData.setRValue(map.get(JsonContents.META_RESPONSE_R_VALUE));
+            requestData.setLinearStartDate(map.get(JsonContents.META_RESPONSE_AVAIL_START_DATE));
             requestData.setLinearEndDate(linearEndDate);
             requestData.setSearchOk(search);
             requestData.setClipTarget(title); //TODO:仕様確認中 現在はトーストにタイトル名を表示することとしています
 
             //視聴通知判定生成
-            String dispType = videoContentMapList.get(i).get(JsonContents.META_RESPONSE_DISP_TYPE);
-            String contentsType = videoContentMapList.get(i).get(JsonContents.META_RESPONSE_CONTENT_TYPE);
-            String tvService = videoContentMapList.get(i).get(JsonContents.META_RESPONSE_TV_SERVICE);
-            String dTv = videoContentMapList.get(i).get(JsonContents.META_RESPONSE_DTV);
+            String dispType = map.get(JsonContents.META_RESPONSE_DISP_TYPE);
+            String contentsType = map.get(JsonContents.META_RESPONSE_CONTENT_TYPE);
+            String tvService = map.get(JsonContents.META_RESPONSE_TV_SERVICE);
+            String dTv = map.get(JsonContents.META_RESPONSE_DTV);
             requestData.setIsNotify(dispType, contentsType, linearEndDate, tvService, dTv);
+            contentsData.setRequestData(requestData);
 
             videoContentsDataList.add(contentsData);
         }
