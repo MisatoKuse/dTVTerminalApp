@@ -51,7 +51,6 @@ import com.digion.dixim.android.secureplayer.helper.CaptionDrawCommands;
 import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.home.RecordReservationListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -166,6 +165,8 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     private CustomDialog mRecordingReservationCustomtDialog = null;
     private final int RECORDING_RESERVATION_DIALOG_INDEX_0 = 0;// 予約録画する
     private final int RECORDING_RESERVATION_DIALOG_INDEX_1 = 1;// キャンセル
+    // 他サービスフラグ
+    boolean mIsOtherService = false;
 
     private Runnable mHideCtrlViewThread = new Runnable() {
 
@@ -766,7 +767,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         if (mDetailData != null) {
             DTVTLogger.debug("contentId:" + mDetailData.getContentId());
             cRid = new String[1];
-            cRid[cRid.length-1] = mDetailData.getContentId();
+            cRid[cRid.length - 1] = mDetailData.getContentId();
             int ageReq = mDetailData.getAge();
             detailDataProvider.getContentsDetailData(cRid, "", ageReq);
         } else {
@@ -836,9 +837,6 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
      */
     private void initContentData() {
 
-        // 他サービスフラグ
-        boolean isOtherService = false;
-
         // タブ数を先に決定するため、コンテンツ詳細のデータを最初に取得しておく
         mDetailData = intent.getParcelableExtra(RECOMMEND_INFO_BUNDLE_KEY);
         if (mDetailData != null) {
@@ -847,7 +845,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                     || serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID
                     || serviceId == OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID) {
                 // 他サービス(dtv/dtvチャンネル/dアニメ)フラグを立てる
-                isOtherService = true;
+                mIsOtherService = true;
                 if (serviceId == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID
                         || serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID) {
                     // リモコンUIのリスナーを設定
@@ -857,7 +855,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             }
         }
 
-        if (isOtherService) {
+        if (mIsOtherService) {
             // コンテンツ詳細(他サービスの時は、タブ一つに設定する)
             mTabNames = getResources().getStringArray(R.array.other_service_contents_detail_tabs);
         } else {
@@ -1239,35 +1237,41 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         if (contentsDetailInfo != null) {
             DtvContentsDetailFragment detailFragment = getDetailFragment();
             detailFullData = contentsDetailInfo.get(0);
-            detailFragment.mOtherContentsDetailData.setTitle(detailFullData.getTitle());
-            detailFragment.mOtherContentsDetailData.setDetail(detailFullData.getSynop());
+            // TODO ぷららサーバからmDetailDataを受け取った場合の処理を修正する可能性あり（画面間の受け渡しデータの値が検レコサーバと異なる場合など）
+            if(!mIsOtherService) {
+                DTVTLogger.debug("mIsOtherService:false");
+                detailFragment.mOtherContentsDetailData.setTitle(detailFullData.getTitle());
+                setTitleAndThumbnail(detailFullData.getTitle(), detailFullData.getmDtv_thumb_448_252());
+
+                // リモート録画予約情報を生成
+                if (String.valueOf(OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID).equals(detailFullData.getmService_id())) {
+                    mRecordingReservationContentsDetailInfo = new RecordingReservationContentsDetailInfo(
+                            detailFullData.getmService_id(),
+                            detailFullData.getTitle(),
+                            detailFullData.getAvail_start_date(),
+                            detailFullData.getDur(),
+                            detailFullData.getR_value());
+                    mRecordingReservationContentsDetailInfo.setEventId(detailFullData.getmEvent_id());
+                    if (comparisonStartTime()) {
+                        detailFragment.changeVisiblityRecordingReservationIcon(View.VISIBLE);
+                        detailFragment.setRecordingReservationIconListener(this);
+                    } else {
+                        detailFragment.changeVisiblityRecordingReservationIcon(View.INVISIBLE);
+                        detailFragment.setRecordingReservationIconListener(null);
+                    }
+                }
+            }
             detailFragment.mOtherContentsDetailData.setVodMetaFullData(contentsDetailInfo.get(FIRST_VOD_META_DATA));
+            detailFragment.mOtherContentsDetailData.setDetail(detailFullData.getSynop());
             String[] credit_array = detailFullData.getmCredit_array();
-            setTitleAndThumbnail(detailFullData.getTitle(), detailFullData.getmDtv_thumb_448_252());
             if (credit_array != null && credit_array.length > 0) {
                 detailDataProvider.getRoleListData();
             }
             if (!TextUtils.isEmpty(detailFullData.getmService_id())) {
                 detailDataProvider.getChannelList(1, 1, "", 1);
             }
+
             detailFragment.noticeRefresh();
-            // リモート録画予約情報を生成
-            if (String.valueOf(OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID).equals(detailFullData.getmService_id())) {
-                mRecordingReservationContentsDetailInfo = new RecordingReservationContentsDetailInfo(
-                        detailFullData.getmService_id(),
-                        detailFullData.getTitle(),
-                        detailFullData.getAvail_start_date(),
-                        detailFullData.getDur(),
-                        detailFullData.getR_value());
-                mRecordingReservationContentsDetailInfo.setEventId(detailFullData.getmEvent_id());
-                if (comparisonStartTime()) {
-                    detailFragment.changeVisiblityRecordingReservationIcon(View.VISIBLE);
-                    detailFragment.setRecordingReservationIconListener(this);
-                } else {
-                    detailFragment.changeVisiblityRecordingReservationIcon(View.INVISIBLE);
-                    detailFragment.setRecordingReservationIconListener(null);
-                }
-            }
         }
     }
 
