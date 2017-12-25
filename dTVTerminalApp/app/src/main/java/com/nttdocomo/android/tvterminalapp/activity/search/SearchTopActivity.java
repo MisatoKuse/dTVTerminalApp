@@ -29,7 +29,6 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.SearchDataProvider;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchResultError;
 import com.nttdocomo.android.tvterminalapp.model.ResultType;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
-import com.nttdocomo.android.tvterminalapp.model.search.SearchContentInfo;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchDubbedType;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchFilterTypeMappable;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchGenreType;
@@ -236,22 +235,22 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
 
         switch (pageIndex) {
             case PAGE_NO_OF_SERVICE_TEREBI: //テレビ
-                ret.add(new SearchServiceType(SearchServiceType.ServiceId.hikariTVForDocomo));
-                ret.add(new SearchServiceType(SearchServiceType.ServiceId.dTVChannel));
+                ret.add(new SearchServiceType(SearchServiceType.ServiceId.HIKARI_TV_FOR_DOCOMO));
+                ret.add(new SearchServiceType(SearchServiceType.ServiceId.DTV_CHANNEL_CONTENTS));
                 break;
             case PAGE_NO_OF_SERVICE_VIDEO: //ビデオ
-                //ret.add(new SearchServiceType(SearchServiceType.ServiceId.hikariTVForDocomo));
-                ret.add(new SearchServiceType(SearchServiceType.ServiceId.dTV));
-                ret.add(new SearchServiceType(SearchServiceType.ServiceId.dAnime));
+                //ret.add(new SearchServiceType(SearchServiceType.ServiceId.HIKARI_TV_FOR_DOCOMO));
+                ret.add(new SearchServiceType(SearchServiceType.ServiceId.DTV_CONTENTS));
+                ret.add(new SearchServiceType(SearchServiceType.ServiceId.D_ANIMATION_CONTENTS));
                 break;
             case PAGE_NO_OF_SERVICE_DTV_CHANNEL: //dTVチャンネル
-                ret.add(new SearchServiceType(SearchServiceType.ServiceId.dTVChannel));
+                ret.add(new SearchServiceType(SearchServiceType.ServiceId.DTV_CHANNEL_CONTENTS));
                 break;
-            case PAGE_NO_OF_SERVICE_DTV: //dTV
-                ret.add(new SearchServiceType(SearchServiceType.ServiceId.dTV));
+            case PAGE_NO_OF_SERVICE_DTV: //DTV_CONTENTS
+                ret.add(new SearchServiceType(SearchServiceType.ServiceId.DTV_CONTENTS));
                 break;
             case PAGE_NO_OF_SERVICE_DANIME: //dアニメ
-                ret.add(new SearchServiceType(SearchServiceType.ServiceId.dAnime));
+                ret.add(new SearchServiceType(SearchServiceType.ServiceId.D_ANIMATION_CONTENTS));
                 break;
             default:
                 break;

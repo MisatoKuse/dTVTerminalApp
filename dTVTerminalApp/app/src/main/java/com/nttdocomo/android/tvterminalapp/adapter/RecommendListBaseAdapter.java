@@ -17,6 +17,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
+import com.nttdocomo.android.tvterminalapp.model.search.SearchServiceType;
 
 import java.util.List;
 
@@ -61,16 +62,20 @@ public class RecommendListBaseAdapter extends BaseAdapter {
             holder.tv_title = view.findViewById(R.id.recommend_title);
             holder.tv_des = view.findViewById(R.id.recommend_des);
             holder.iv_clip = view.findViewById(R.id.recommend_iv_clip);
-            holder.iv_clip.setVisibility(View.VISIBLE);
-            holder.iv_clip.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //クリップボタンのイベントを親に渡す
-//                    ((ListView) parent).performItemClick(mView, position, R.id.item_common_result_clip_tv);
-                    //TODO:親に処理を渡すか検討中
-                    ((BaseActivity) mContext).sendClipRequest(recommendContentInfo.getRequestData());
-                }
-            });
+
+            //ひかりコンテンツのみクリップボタンを表示する
+            if(recommendContentInfo.getServiceId().equals(SearchServiceType.ServiceId.HIKARI_TV_FOR_DOCOMO)){
+                holder.iv_clip.setVisibility(View.VISIBLE);
+                holder.iv_clip.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //クリップボタンイベント
+                        ((BaseActivity) mContext).sendClipRequest(recommendContentInfo.getRequestData());
+                    }
+                });
+            }else{
+                holder.iv_clip.setVisibility(View.GONE);
+            }
 
             float mWidth = (float) mContext.getResources().getDisplayMetrics().widthPixels / 3;
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int) mWidth, (int) mWidth / 2);
