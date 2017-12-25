@@ -36,6 +36,8 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
 
     // 最大表示件数
     private final static int NUM_PER_PAGE = 10;
+    // タイムアウト時間
+    private final static int LOAD_PAGE_DELAY_TIME = 1000;
 
     private ImageView mMenuImageView;
     private RankingTopDataProvider mRankingTopDataProvider;
@@ -264,41 +266,22 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
         if(mLoadMoreView.equals(view)) {
             return;
         }
-        if (view.equals(mContentsList.get(position).getClipButton())) {
-            //TODO:クリップ処理実装
-            ClipRequestData requestData = new ClipRequestData();
-            ContentsData contentsData = mContentsList.get(position);
-            requestData.setCrid(contentsData.getCrid());
-            requestData.setServiceId(contentsData.getServiceId());
-            requestData.setEventId(contentsData.getEventId());
-            requestData.setTitleId(contentsData.getTitleId());
-            requestData.setTitle(contentsData.getTitle());
-            requestData.setRValue(contentsData.getRValue());
-            requestData.setLinearStartDate(contentsData.getLinearStartDate());
-            requestData.setLinearEndDate(contentsData.getLinearEndDate());
-            requestData.setSearchOk(contentsData.getSearchOk());
-            requestData.setClipTarget(contentsData.getTitle()); //TODO:仕様確認中 現在はランキング画面ではトーストにタイトル名を表示することとしています
-            requestData.setIsNotify(contentsData.getDispType(), contentsData.getContentsType(),
-                    contentsData.getLinearEndDate(), contentsData.getTvService(), contentsData.getDtv());
-            sendClipRequest(requestData);
-        } else {
-            startActivity(DtvContentsDetailActivity.class, null);
-        }
+        startActivity(DtvContentsDetailActivity.class, null);
     }
 
     @Override
-    public void dailyRankListCallback(List<Map<String, String>> dailyRankMapList) {
-        setShowDailyRanking(dailyRankMapList);
+    public void dailyRankListCallback(List<ContentsData> contentsDataList) {
+        setShowDailyRanking(contentsDataList);
     }
 
     /**
      * 取得結果の設定・表示
      */
-    private void setShowDailyRanking(List<Map<String, String>> dailyRankMapList) {
-        if (null == dailyRankMapList || 0 == dailyRankMapList.size()) {
+    private void setShowDailyRanking(List<ContentsData> contentsDataList) {
+        if (null == contentsDataList || 0 == contentsDataList.size()) {
             return;
         }
-        List<ContentsData> rankingContentInfo = setDailyRankContentData(dailyRankMapList);
+        List<ContentsData> rankingContentInfo = contentsDataList;
 
         //既に元のデータ以上の件数があれば足す物は無いので、更新せずに帰る
         if (null != mContentsList && mContentsList.size() >= rankingContentInfo.size()) {
@@ -320,66 +303,13 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
         }
     }
 
-    /**
-     * 取得したリストマップをContentsDataクラスへ入れる
-     *
-     * @param dailyRankMapList コンテンツリストデータ
-     * @return dataList 読み込み表示フラグ
-     */
-    private List<ContentsData> setDailyRankContentData(
-            List<Map<String, String>> dailyRankMapList) {
-        List<ContentsData> rankingContentsDataList = new ArrayList<>();
-
-        ContentsData rankingContentInfo;
-
-        for (int i = 0; i < dailyRankMapList.size(); i++) {
-            rankingContentInfo = new ContentsData();
-            rankingContentInfo.setRank(String.valueOf(i + 1));
-            rankingContentInfo.setThumURL(dailyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_THUMB_448));
-            rankingContentInfo.setTitle(dailyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_TITLE));
-            rankingContentInfo.setTime(dailyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_DISPLAY_START_DATE));
-            rankingContentInfo.setSearchOk(dailyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_SEARCH_OK));
-            rankingContentInfo.setCrid(dailyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_CRID));
-            rankingContentInfo.setServiceId(dailyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_SERVICE_ID));
-            rankingContentInfo.setEventId(dailyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_EVENT_ID));
-            rankingContentInfo.setTitleId(dailyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_TITLE_ID));
-            rankingContentInfo.setRValue(dailyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_R_VALUE));
-            rankingContentInfo.setLinearStartDate(dailyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_AVAIL_START_DATE));
-            rankingContentInfo.setLinearEndDate(dailyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_AVAIL_END_DATE));
-            rankingContentInfo.setDispType(dailyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_DISP_TYPE));
-            rankingContentInfo.setContentsType(dailyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_CONTENT_TYPE));
-            rankingContentInfo.setTvService(dailyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_TV_SERVICE));
-            rankingContentInfo.setDtv(dailyRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_DTV));
-
-            rankingContentsDataList.add(rankingContentInfo);
-            DTVTLogger.info("RankingContentInfo " + rankingContentInfo.getRank());
-        }
-
-        return rankingContentsDataList;
-    }
-
     @Override
-    public void weeklyRankCallback(List<Map<String, String>> weeklyHashMap) {
+    public void weeklyRankCallback(List<ContentsData> contentsDataList) {
         // NOP
     }
 
     @Override
-    public void videoRankCallback(List<Map<String, String>> videoHashMap) {
+    public void videoRankCallback(List<ContentsData> contentsDataList) {
         // NOP
     }
 }

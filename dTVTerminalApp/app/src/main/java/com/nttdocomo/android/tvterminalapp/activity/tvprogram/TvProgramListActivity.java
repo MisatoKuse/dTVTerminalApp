@@ -531,9 +531,9 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
             ArrayList<Channel> channels = channelsInfo.getChannels();
             sort(channels);
             channelInfo = channels;
-            if(tab_index !=0 ){
+            /*if(tab_index !=0 ){*/
                 setProgramRecyclerView();
-            }
+            /*}*/
         }
     }
 

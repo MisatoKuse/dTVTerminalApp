@@ -73,7 +73,7 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
      */
     public ScaledDownProgramListDataProvider(Context mContext) {
         this.mContext = mContext;
-        this.mApiDataProviderCallback = (ScaledDownProgramListDataProvider.ApiDataProviderCallback) mContext;
+        this.mApiDataProviderCallback = (ApiDataProviderCallback) mContext;
     }
 
     @Override
@@ -87,11 +87,13 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                         String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
                         String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
                         String thumb = hashMap.get(JsonContents.META_RESPONSE_DEFAULT_THUMB);
+                        String serviceId = hashMap.get(JsonContents.META_RESPONSE_SERVICE_ID);
                         if (!TextUtils.isEmpty(chNo)) {
                             Channel channel = new Channel();
                             channel.setChNo(Integer.parseInt(chNo));
                             channel.setTitle(title);
                             channel.setThumbnail(thumb);
+                            channel.setServiceId(serviceId);
                             channels.add(channel);
                         }
                     }
@@ -234,7 +236,7 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                 selectEndDate = gc.getTime();
                 for (int i = 0; i < mChannelProgramList.size(); i++) {//CH毎番組データ取得して、整形する
                     HashMap<String, String> hashMap = mChannelProgramList.get(i);
-                    Schedule mSchedule = new Schedule();
+                    Schedule schedule = new Schedule();
                     String startDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_START_DATE);
                     StringBuilder startBuilder = new StringBuilder();
                     startBuilder.append(startDate.substring(0, 10));
@@ -245,16 +247,19 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    if(day.compareTo(selectStartDate) !=-1 && day.compareTo(selectEndDate)!=1){
+                    //TODO 番組表表示させるため、コメントアウトします
+                    /*if(day.compareTo(selectStartDate) !=-1 && day.compareTo(selectEndDate)!=1){*/
                         String endDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
                         String thumb = hashMap.get(JsonContents.META_RESPONSE_DEFAULT_THUMB);
                         String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
                         String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
-                        mSchedule.setStartTime(startDate);
-                        mSchedule.setEndTime(endDate);
-                        mSchedule.setImageUrl(thumb);
-                        mSchedule.setTitle(title);
-                        mSchedule.setChNo(chNo);
+                        schedule.setStartTime(startDate);
+                        schedule.setEndTime(endDate);
+                        schedule.setImageUrl(thumb);
+                        schedule.setTitle(title);
+                        schedule.setChNo(chNo);
+                        schedule.setClipRequestData(ClipDataProvider.setClipData(hashMap));
+
                         if (!TextUtils.isEmpty(chNo)) {//CH毎番組データ取得して、整形する
                             ArrayList<Channel> oldChannelList = channelsInfo.getChannels();
                             boolean isExist = false;
@@ -263,7 +268,7 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                                     Channel oldChannel = oldChannelList.get(j);
                                     if (oldChannel.getChNo() == Integer.valueOf(chNo)) {//番組ID存在する場合
                                         ArrayList<Schedule> oldSchedule = oldChannel.getSchedules();
-                                        oldSchedule.add(mSchedule);
+                                        oldSchedule.add(schedule);
                                         isExist = true;
                                         break;
                                     }
@@ -271,7 +276,7 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                             }
                             if (!isExist) {//番組ID存在しない場合
                                 mScheduleList = new ArrayList<>();
-                                mScheduleList.add(mSchedule);
+                                mScheduleList.add(schedule);
                                 Channel channel = new Channel();
                                 channel.setChNo(Integer.parseInt(chNo));
                                 channel.setTitle(title);
@@ -279,7 +284,8 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                                 channelsInfo.addChannel(channel);
                             }
                         }
-                    }
+                    //TODO 番組表表示させるため、コメントアウトします
+                    /*}*/
                 }
                 Handler handler = new Handler();//番組情報更新
                 try {
@@ -304,11 +310,13 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
             String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
             String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
             String thumbnail = hashMap.get(JsonContents.META_RESPONSE_DEFAULT_THUMB);
+            String serviceId = hashMap.get(JsonContents.META_RESPONSE_SERVICE_ID);
             if (!TextUtils.isEmpty(chNo)) {
                 Channel channel = new Channel();
                 channel.setTitle(title);
                 channel.setChNo(Integer.parseInt(chNo));
                 channel.setThumbnail(thumbnail);
+                channel.setServiceId(serviceId);
                 channels.add(channel);
             }
         }

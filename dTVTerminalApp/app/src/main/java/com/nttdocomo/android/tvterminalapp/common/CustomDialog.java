@@ -146,7 +146,7 @@ public class CustomDialog {
                 if(isCancelVisiblityChanged) {
                     tv_cancel.setVisibility(cancelVisiblity);
                 }
-
+                window.findViewById(R.id.custom_dialog_line_separete).setVisibility(View.VISIBLE);
                 window.findViewById(R.id.custom_dialog_sl).setVisibility(View.VISIBLE);
                 if (list != null) {
                     LinearLayout linearLayout = window.findViewById(R.id.custom_dialog_ll);
@@ -232,6 +232,7 @@ public class CustomDialog {
     }
 
     private static OnKeyListener keyListener = new OnKeyListener() {
+        @Override
         public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
             if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
                 dialog.dismiss();

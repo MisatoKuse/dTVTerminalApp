@@ -6,10 +6,12 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 
+import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.TvClipInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.TvClipDataManager;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvClipContentInfo;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvClipList;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvClipWebClient;
@@ -44,7 +46,7 @@ public class TvClipDataProvider implements TvClipWebClient.TvClipJsonParserCallb
         /**
          * クリップリスト用コールバック
          */
-        void tvClipListCallback(TvClipContentInfo clipContentInfo);
+        void tvClipListCallback(List<ContentsData> clipContentInfo);
     }
 
     private TvClipDataProviderCallback apiDataProviderCallback;
@@ -73,28 +75,62 @@ public class TvClipDataProvider implements TvClipWebClient.TvClipJsonParserCallb
     /**
      * TvクリップリストをActivityに送る
      */
-    public void sendTvClipListData(List<Map<String, String>> list) {
+    private void sendTvClipListData(List<Map<String, String>> list) {
+        apiDataProviderCallback.tvClipListCallback(setClipContentData(list));
+    }
 
-        TvClipContentInfo clipContentInfo = new TvClipContentInfo();
-        String title = "";
-        String contentTime = "";
-        String picUrl = "";
-        String contentId = "";
-        TvClipContentInfo tmpClipContentInfo = new TvClipContentInfo();
+    /**
+     * 取得したリストマップをContentsDataクラスへ入れる
+     *
+     * @param clipMapList コンテンツリストデータ
+     * @return ListView表示用データ
+     */
+    private List<ContentsData> setClipContentData(List<Map<String, String>> clipMapList) {
+        List<ContentsData> rankingContentsDataList = new ArrayList<>();
 
-        for (int i = 0; i < list.size(); i++) {
-            title = list.get(i).get(JsonContents.META_RESPONSE_TITLE);
-            contentTime = list.get(i).get(JsonContents.META_RESPONSE_DISPLAY_START_DATE);
-            picUrl = list.get(i).get(JsonContents.META_RESPONSE_THUMB_448);
-            contentId = list.get(i).get(JsonContents.META_RESPONSE_DISP_TYPE);
+        ContentsData rankingContentInfo;
 
-            //ClipContentInfoItem(boolean clipFlag, String contentPictureUrl, String title, String rating)
+        for (int i = 0; i < clipMapList.size(); i++) {
+            rankingContentInfo = new ContentsData();
 
-            TvClipContentInfo.TvClipContentInfoItem item = tmpClipContentInfo.new TvClipContentInfoItem(true, picUrl, title, "");
-            clipContentInfo.add(item);
+            String title = clipMapList.get(i).get(JsonContents.META_RESPONSE_TITLE);
+            String search = clipMapList.get(i).get(JsonContents.META_RESPONSE_SEARCH_OK);
+            String linearEndDate = clipMapList.get(i).get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
+            String dispType = clipMapList.get(i).get(JsonContents.META_RESPONSE_DISP_TYPE);
+
+            rankingContentInfo.setRank(String.valueOf(i + 1));
+            rankingContentInfo.setThumURL(clipMapList.get(i).get(JsonContents.META_RESPONSE_THUMB_448));
+            rankingContentInfo.setTitle(title);
+            rankingContentInfo.setTime(clipMapList.get(i).get(JsonContents.META_RESPONSE_DISPLAY_START_DATE));
+            rankingContentInfo.setSearchOk(search);
+            rankingContentInfo.setDispType(clipMapList.get(i).get(dispType));
+            rankingContentInfo.setRatStar(clipMapList.get(i).get(JsonContents.META_RESPONSE_RATING));
+
+            //クリップリクエストデータ作成
+            ClipRequestData requestData = new ClipRequestData();
+            requestData.setCrid(clipMapList.get(i).get(JsonContents.META_RESPONSE_CRID));
+            requestData.setServiceId(clipMapList.get(i).get(JsonContents.META_RESPONSE_SERVICE_ID));
+            requestData.setEventId(clipMapList.get(i).get(JsonContents.META_RESPONSE_EVENT_ID));
+            requestData.setTitleId(clipMapList.get(i).get(JsonContents.META_RESPONSE_TITLE_ID));
+            requestData.setTitle(title);
+            requestData.setRValue(clipMapList.get(i).get(JsonContents.META_RESPONSE_R_VALUE));
+            requestData.setLinearStartDate(clipMapList.get(i).get(JsonContents.META_RESPONSE_AVAIL_START_DATE));
+            requestData.setLinearEndDate(linearEndDate);
+            requestData.setSearchOk(search);
+            requestData.setClipTarget(title); //TODO:仕様確認中 現在はトーストにタイトル名を表示することとしています
+
+            //視聴通知判定生成
+            String contentsType = clipMapList.get(i).get(JsonContents.META_RESPONSE_CONTENT_TYPE);
+            String tvService = clipMapList.get(i).get(JsonContents.META_RESPONSE_TV_SERVICE);
+            String dTv = clipMapList.get(i).get(JsonContents.META_RESPONSE_DTV);
+            requestData.setIsNotify(dispType, contentsType, linearEndDate, tvService, dTv);
+            rankingContentInfo.setRequestData(requestData);
+
+            rankingContentsDataList.add(rankingContentInfo);
+            DTVTLogger.info("RankingContentInfo " + rankingContentInfo.getRank());
         }
 
-        apiDataProviderCallback.tvClipListCallback(clipContentInfo);
+        return rankingContentsDataList;
     }
 
     /**

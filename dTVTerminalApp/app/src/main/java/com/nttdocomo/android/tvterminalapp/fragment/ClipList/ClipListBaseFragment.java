@@ -20,8 +20,6 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ClipMainAdapter;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvClipContentInfo;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipContentInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -165,20 +163,6 @@ public class ClipListBaseFragment extends Fragment implements AbsListView.OnScro
         }
     }
     */
-
-    public void setDataVod(VodClipContentInfo.VodClipContentInfoItem clipContentInfoItem) {
-        if (mData == null) {
-            mData = new ArrayList();
-        }
-        mData.add(clipContentInfoItem);
-    }
-
-    public void setDataTv(TvClipContentInfo.TvClipContentInfoItem clipContentInfoItem) {
-        if (mData == null) {
-            mData = new ArrayList();
-        }
-        mData.add(clipContentInfoItem);
-    }
 
     @Override
     public void onScrollStateChanged(AbsListView absListView, int scrollState) {

@@ -91,6 +91,8 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
 
     private static final int SCREEN_RATIO_WIDTH = 16;
     private static final int SCREEN_RATIO_HEIGHT = 9;
+    //先頭のメタデータを取得用
+    private static final int FIRST_VOD_META_DATA = 0;
 
     /* コンテンツ詳細 start */
     private LinearLayout tabLinearLayout;
@@ -471,7 +473,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     }
 
     /**
-     * hide video ctrl view
+     * hide video ctrl mView
      *
      * @param invisible
      */
@@ -489,7 +491,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     }
 
     /**
-     * hide ctrl view
+     * hide ctrl mView
      */
     private void hideCtrlViewAfterOperate() {
         DTVTLogger.start();
@@ -847,9 +849,12 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                     || serviceId == OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID) {
                 // 他サービス(dtv/dtvチャンネル/dアニメ)フラグを立てる
                 isOtherService = true;
-                // リモコンUIのリスナーを設定
-                createRemoteControllerView();
-                setStartRemoteControllerUIListener(this);
+                if (serviceId == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID
+                        || serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID) {
+                    // リモコンUIのリスナーを設定
+                    createRemoteControllerView();
+                    setStartRemoteControllerUIListener(this);
+                }
             }
         }
 
@@ -886,7 +891,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     }
 
     /**
-     * initPlayerView view
+     * initPlayerView mView
      */
     private void initPlayerView() {
         DTVTLogger.start();
@@ -1237,6 +1242,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             detailFullData = contentsDetailInfo.get(0);
             detailFragment.mOtherContentsDetailData.setTitle(detailFullData.getTitle());
             detailFragment.mOtherContentsDetailData.setDetail(detailFullData.getSynop());
+            detailFragment.mOtherContentsDetailData.setVodMetaFullData(contentsDetailInfo.get(FIRST_VOD_META_DATA));
             String[] credit_array = detailFullData.getmCredit_array();
             setTitleAndThumbnail(detailFullData.getTitle(), detailFullData.getmDtv_thumb_448_252());
             if (credit_array != null && credit_array.length > 0) {

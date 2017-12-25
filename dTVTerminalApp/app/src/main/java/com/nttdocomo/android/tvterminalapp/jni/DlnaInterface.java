@@ -140,7 +140,7 @@ public class DlnaInterface {
     /**
      * 機能：Dlna機能を開始
      *
-     * @return
+     * @return boolean
      */
     public boolean startDlna() {
         synchronized (this) {
@@ -291,8 +291,7 @@ public class DlnaInterface {
         if(null== mCurrentDmsItem || null== mCurrentDmsItem.mControlUrl || 1> mCurrentDmsItem.mControlUrl.length()){
             return false;
         }
-        boolean ret= browseHikariChListDms(mNativeDlna, mCurrentDmsItem.mControlUrl);
-        return ret;
+        return browseHikariChListDms(mNativeDlna, mCurrentDmsItem.mControlUrl);
     }
 
     /**
@@ -562,5 +561,12 @@ public class DlnaInterface {
             mDlnaDevListListener.onDeviceLeave(mDMSInfo, udn);
         }
         mCurrentDmsItem=null;
+    }
+
+    /**
+     * todo: WiFiは切ると、対応する
+     */
+    public void toDoWithWiFiLost(){
+
     }
 }

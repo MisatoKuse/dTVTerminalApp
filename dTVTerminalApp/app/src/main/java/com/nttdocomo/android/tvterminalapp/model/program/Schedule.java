@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.model.program;
 
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -28,10 +30,12 @@ public class Schedule {
     private String imageUrl;
     //チャンネル ID
     private String chNo;
+    //クリップリクエスト用データ
+    private ClipRequestData mClipRequestData = null;
     //時間単価換算
     private static final float FORMAT = 1000 * 60 * 60;
     //日付format
-    private static final String DATE_FORMAT = "yyyy-MM-ddHH:mm:ss";
+    private static final String DATE_FORMAT = "yyyy/MM/ddHH:mm:ss";
     private static final String PROGRAM_FORMAT = "yyyy-MM-dd";
 
     /*
@@ -104,6 +108,13 @@ public class Schedule {
         this.chNo = chNo;
     }
 
+    public ClipRequestData getClipRequestData() {
+        return mClipRequestData;
+    }
+
+    public void setClipRequestData(ClipRequestData mClipRequestData) {
+        this.mClipRequestData = mClipRequestData;
+    }
 
     /**
      * 開始時間よりmarginの取得

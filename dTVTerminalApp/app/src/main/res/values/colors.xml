@@ -15,8 +15,8 @@
     <color name="disable_tab_background">#111111</color>
     <color name="list_item_background">#000000</color>
     <color name="thumbnail_background">#888888</color>
-    <color name="content_time_text">#cccccc</color>
-    <color name="result_line">#333333</color>
+    <color name="content_time_text">#AAAAAA</color>
+    <color name="result_line">#222222</color>
     <color name="custom_toast_background">#000000</color>
     <!--Global Menu-->
     <color name="hikari_tv_and_dtv_channel_title">#00FFFF</color>
@@ -50,6 +50,11 @@
     <color name="video_list_text">#FFFFFF</color>
     <color name="video_list_line">#424242</color>
 
+    <!--CustomDialog-->
+    <color name="custom_dialog_backgroud_color">#eeeeee</color>
+    <color name="custom_dialog_separate_color">#555555</color>
+    <color name="custom_dialog_button_text_color">#339999</color>
+
     <!--コンテンツ詳細-->
     <color name="contents_header_background">#000000</color>
     <!--録画番組一覧-->
@@ -74,7 +79,8 @@
     <color name="setting_background_color_black">#000000</color>
     <color name="setting_background_color_white">#ffffff</color>
 
-    <!-- リモート録画予約ダイアログ -->
-    <color name="recording_reservation_item_text_color">#0076ff</color>
-    <color name="recording_reservation_title_text_color">#030303</color>
+    <!--//マイ番組表設定-->
+    <color name="item_num_black">#000000</color>
+    <color name="item_num_register_bg_black">#FFFFFF</color>
+    <color name="item_num_unregister_bg_black">#333333</color>
 </resources>

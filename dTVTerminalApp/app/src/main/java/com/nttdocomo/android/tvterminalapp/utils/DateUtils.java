@@ -86,6 +86,9 @@ public class DateUtils {
     // 曜日配列
     private static final String[] STRING_DAY_OF_WEEK = {null, "日", "月", "火", "水", "木", "金", "土"};
 
+    //マイ番組表取得日付キー
+    public static final String MY_CHANNEL_LIST_LAST_INSERT = "MyChannelListLastInsert";
+
     private Context mContext;
 
     /**

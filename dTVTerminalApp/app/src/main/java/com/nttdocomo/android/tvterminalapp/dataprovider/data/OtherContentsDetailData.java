@@ -29,13 +29,16 @@ public class OtherContentsDetailData extends RecordedContentsDetailData implemen
     private String mHighlight;
     private String mContentsType;
     private int mAge;
-    private String []roleList;
+    private String[] roleList;
     private String availStartDate;
     private String availEndDate;
     private String displayType;
     private String categoryId;
     private String reserved4;
     private List<String> staffList;
+
+    // クリップ情報取得用
+    private VodMetaFullData mVodMetaFullData = null;
 
     //コンテンツIDを追加
     private String mContentId;
@@ -174,6 +177,14 @@ public class OtherContentsDetailData extends RecordedContentsDetailData implemen
 
     public void setReserved4(String reserved4) {
         this.reserved4 = reserved4;
+    }
+
+    public VodMetaFullData getVodMetaFullData() {
+        return mVodMetaFullData;
+    }
+
+    public void setVodMetaFullData(VodMetaFullData mVodMetaFullData) {
+        this.mVodMetaFullData = mVodMetaFullData;
     }
 
     @Override

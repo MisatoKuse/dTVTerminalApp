@@ -147,6 +147,8 @@ public class JsonContents {
     public static final String META_RESPONSE_RESV_ID = "resv_id";
     // OK
     public static final String META_RESPONSE_STATUS = "status";
+    //OK
+    public static final String META_RESPONSE_STATUS_OK = "OK";
     // コンテンツ配列
     public static final String META_RESPONSE_LIST = "list";
     // ページャ
@@ -177,6 +179,8 @@ public class JsonContents {
     public static final String META_RESPONSE_TITLE = "title";
     // タイトルルビ
     public static final String META_RESPONSE_TITLERUBY = "titleruby";
+    // index
+    public static final String META_RESPONSE_INDEX = "index_no";
     // 表示タイプ
     public static final String META_RESPONSE_DISP_TYPE = "disp_type";
     // サービス
@@ -209,6 +213,8 @@ public class JsonContents {
     public static final String META_RESPONSE_R_VALUE = "r_value";
     // アダルトフラグ
     public static final String META_RESPONSE_ADULT = "adult";
+    // アダルトタイプ
+    public static final String META_RESPONSE_ADULT_TYPE = "adult_type";
     // NGファンク
     public static final String META_RESPONSE_NG_FUNC = "ng_func";
     // ジャンル（ARIB）

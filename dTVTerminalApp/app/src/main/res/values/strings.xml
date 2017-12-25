@@ -307,4 +307,12 @@
         <item>プライバシーポリシー(TBD)</item>
         <item>利用規約(TBD)</item>
     </string-array>
+
+    <!-- MY番組表設定 -->
+    <string name="my_channel_list_setting">マイ番組表設定</string>
+    <string name="my_channel_list_setting_failed_dialog_title">エラー</string>
+    <string name="my_channel_list_setting_failed_dialog_content_register">登録失敗!</string>
+    <string name="my_channel_list_setting_failed_dialog_content_unregister">解除失敗!</string>
+    <string name="my_channel_list_setting_dialog_title_unregister">確認!</string>
+    <string name="my_channel_list_setting_dialog_content_unregister">本当削除しますか?</string>
 </resources>

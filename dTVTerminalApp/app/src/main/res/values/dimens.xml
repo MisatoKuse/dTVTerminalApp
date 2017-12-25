@@ -49,6 +49,10 @@
     <dimen name="list_item_sort_button_bottom_margin">25dp</dimen>
     <dimen name="list_item_sort_button_right_margin">25dp</dimen>
 
+    <!--Custom Dialog-->
+    <dimen name="custom_dialog_padding">5dp</dimen>
+    <dimen name="custom_dialog_content_padding">10dp</dimen>
+
     <!--コンテンツ詳細-->
     <dimen name="contents_header_close_button_size">24sp</dimen>
     <dimen name="contents_header_back_button_size">20sp</dimen>
@@ -71,7 +75,8 @@
     <dimen name="contents_detail_8dp">8dp</dimen>
     <dimen name="contents_detail_10dp">10dp</dimen>
     <dimen name="contents_detail_16dp">16dp</dimen>
-    <dimen name="contents_detail_icon_size">36dp</dimen>
+    <dimen name="contents_detail_clip_size">24dp</dimen>
+    <dimen name="contents_detail_icon_size">24dp</dimen>
 
     <!--ビデオ一覧-->
     <dimen name="video_contents_genre_button_margin_end">15dp</dimen>
@@ -129,8 +134,4 @@
     <dimen name="main_setting_list_height">60dp</dimen>
     <dimen name="main_setting_checkbox_margin">10dp</dimen>
     <dimen name="main_setting_quality_list_separate">1dp</dimen>
-
-    <!-- リモート録画予約ダイアログ -->
-    <dimen name="recording_reservation_dialog_title_text_size">16dp</dimen>
-    <dimen name="recording_reservation_dialog_item_text_size">16dp</dimen>
 </resources>

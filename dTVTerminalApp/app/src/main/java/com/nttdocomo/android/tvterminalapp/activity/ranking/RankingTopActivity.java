@@ -18,6 +18,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.common.SpaceItemDecoration;
 import com.nttdocomo.android.tvterminalapp.activity.home.adapter.HomeRecyclerViewAdapter;
+import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
 
 import java.util.List;
@@ -77,7 +78,7 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
      * 機能
      * コンテンツ一覧ビューを設定
      */
-    private void setRecyclerView(List<Map<String, String>> contentsData, final int tag) {
+    private void setRecyclerView(List<ContentsData> contentsDataList, final int tag) {
         String typeContentName = getContentTypeName(tag);
         View view = mLinearLayout.getChildAt(tag);
         view.setVisibility(View.VISIBLE);
@@ -95,20 +96,20 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(spacingInPixels));
         //コンテンツタイプを設定
         typeTextView.setText(typeContentName);
-        countTextView.setText(contentsData.size() + getString(R.string.contents_header));
+        countTextView.setText(contentsDataList.size() + getString(R.string.contents_header));
         //リサイクルビューデータ設定
-        setRecyclerViewData(mRecyclerView, contentsData, tag);
+        setRecyclerViewData(mRecyclerView, contentsDataList, tag);
     }
 
     /**
      * 機能
      * コンテンツ一覧データを設定
      */
-    private void setRecyclerViewData(RecyclerView mRecyclerView, List<Map<String, String>> mList, final int index) {
+    private void setRecyclerViewData(RecyclerView mRecyclerView, List<ContentsData> contentsDataList, final int index) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mRecyclerView.setLayoutManager(linearLayoutManager);
-        HomeRecyclerViewAdapter mHorizontalViewAdapter = new HomeRecyclerViewAdapter(this, mList);
+        HomeRecyclerViewAdapter mHorizontalViewAdapter = new HomeRecyclerViewAdapter(this, contentsDataList);
         mRecyclerView.setAdapter(mHorizontalViewAdapter);
         View footer = LayoutInflater.from(this).inflate(R.layout.home_main_layout_recyclerview_footer, mRecyclerView, false);
         TextView mTextView = footer.findViewById(R.id.home_main_layout_recyclerview_footer);
@@ -184,23 +185,23 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
     }
 
     @Override
-    public void dailyRankListCallback(List<Map<String, String>> dailyMap) {
-        if (dailyMap != null && dailyMap.size() > 0) {
-            setRecyclerView(dailyMap, TODAY_SORT);
+    public void dailyRankListCallback(List<ContentsData> contentsDataList) {
+        if (contentsDataList != null && contentsDataList.size() > 0) {
+            setRecyclerView(contentsDataList, TODAY_SORT);
         }
     }
 
     @Override
-    public void weeklyRankCallback(List<Map<String, String>> weeklyMap) {
-        if (weeklyMap != null && weeklyMap.size() > 0) {
-            setRecyclerView(weeklyMap, WEEK_SORT);
+    public void weeklyRankCallback(List<ContentsData> contentsDataList) {
+        if (contentsDataList != null && contentsDataList.size() > 0) {
+            setRecyclerView(contentsDataList, WEEK_SORT);
         }
     }
 
     @Override
-    public void videoRankCallback(List<Map<String, String>> videoMap) {
-        if (videoMap != null && videoMap.size() > 0) {
-            setRecyclerView(videoMap, VIDEO_SORT);
+    public void videoRankCallback(List<ContentsData> contentsDataList) {
+        if (contentsDataList != null && contentsDataList.size() > 0) {
+            setRecyclerView(contentsDataList, VIDEO_SORT);
         }
     }
 }

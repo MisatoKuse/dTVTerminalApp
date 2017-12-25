@@ -226,14 +226,14 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
     /**
      * 取得結果の設定・表示
      */
-    private void setShowVideoRanking(List<Map<String, String>> videoRankMapList) {
+    private void setShowVideoRanking(List<ContentsData> videoRankMapList) {
         if (null == videoRankMapList || 0 == videoRankMapList.size()) {
             //通信とJSON Parseに関してerror処理
             //TODO: エラー表示は検討の必要あり
             Toast.makeText(this, "ランキングデータ取得失敗", Toast.LENGTH_SHORT).show();
             return;
         }
-        List<ContentsData> rankingContentInfo = setVideoRankingContentData(videoRankMapList);
+        List<ContentsData> rankingContentInfo = videoRankMapList;
 
 
         RankingBaseFragment fragment = mRankingFragmentFactory.createFragment
@@ -419,13 +419,13 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
     /**
      * 取得条件"総合"用コールバック
      *
-     * @param videoRankMapList
+     * @param videoRankList
      */
     @Override
-    public void videoRankSynthesisCallback(List<Map<String, String>> videoRankMapList) {
-        DTVTLogger.start("ResponseDataSize :" + videoRankMapList.size());
+    public void videoRankSynthesisCallback(List<ContentsData> videoRankList) {
+        DTVTLogger.start("ResponseDataSize :" + videoRankList.size());
         if (mViewPager.getCurrentItem() == RankingConstants.RANKING_PAGE_NO_OF_SYNTHESIS) {
-            setShowVideoRanking(videoRankMapList);
+            setShowVideoRanking(videoRankList);
         } else {
             // nop.
         }
@@ -435,14 +435,14 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
     /**
      * 取得条件"海外映画"用コールバック
      *
-     * @param videoRankMapList
+     * @param videoRankList
      */
     @Override
-    public void videoRankOverseasMovieCallback(List<Map<String, String>> videoRankMapList) {
-        DTVTLogger.start("ResponseDataSize :" + videoRankMapList.size());
+    public void videoRankOverseasMovieCallback(List<ContentsData> videoRankList) {
+        DTVTLogger.start("ResponseDataSize :" + videoRankList.size());
         if (mViewPager.getCurrentItem() ==
                 RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_MOVIE) {
-            setShowVideoRanking(videoRankMapList);
+            setShowVideoRanking(videoRankList);
         } else {
             // nop.
         }
@@ -452,14 +452,14 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
     /**
      * 取得条件"国内映画"用コールバック
      *
-     * @param videoRankMapList
+     * @param videoRankList
      */
     @Override
-    public void videoRankDomesticMovieCallback(List<Map<String, String>> videoRankMapList) {
-        DTVTLogger.start("ResponseDataSize :" + videoRankMapList.size());
+    public void videoRankDomesticMovieCallback(List<ContentsData> videoRankList) {
+        DTVTLogger.start("ResponseDataSize :" + videoRankList.size());
         if (mViewPager.getCurrentItem() ==
                 RankingConstants.RANKING_PAGE_NO_OF_DOMESTIC_MOVIE) {
-            setShowVideoRanking(videoRankMapList);
+            setShowVideoRanking(videoRankList);
         } else {
             // nop.
         }
@@ -469,14 +469,14 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
     /**
      * 取得条件"海外TV番組・ドラマ"用コールバック
      *
-     * @param videoRankMapList
+     * @param videoRankList
      */
     @Override
-    public void videoRankOverseasChannelCallback(List<Map<String, String>> videoRankMapList) {
-        DTVTLogger.start("ResponseDataSize :" + videoRankMapList.size());
+    public void videoRankOverseasChannelCallback(List<ContentsData> videoRankList) {
+        DTVTLogger.start("ResponseDataSize :" + videoRankList.size());
         if (mViewPager.getCurrentItem() ==
                 RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_CHANNEL) {
-            setShowVideoRanking(videoRankMapList);
+            setShowVideoRanking(videoRankList);
         } else {
             // nop.
         }

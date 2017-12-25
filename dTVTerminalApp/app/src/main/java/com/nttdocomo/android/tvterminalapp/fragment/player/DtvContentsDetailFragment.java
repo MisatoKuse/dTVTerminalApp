@@ -23,8 +23,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.dataprovider.ClipDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
@@ -112,6 +114,13 @@ public class DtvContentsDetailFragment extends Fragment {
                 mTxtTitleShortDetail.setVisibility(View.GONE);
                 mTxtTitleAllDetail.setVisibility(View.VISIBLE);
                 mTxtMoreText.setVisibility(View.GONE);
+            }
+        });
+        ImageView clipButton = view.findViewById(R.id.contents_detail_clip_button);
+        clipButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((BaseActivity) mActivity).sendClipRequest(ClipDataProvider.setClipData(mOtherContentsDetailData.getVodMetaFullData()));
             }
         });
         if (mOtherContentsDetailData != null) {

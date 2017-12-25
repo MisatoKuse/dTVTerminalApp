@@ -19,9 +19,9 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.WatchListenVideoBaseAdapter;
+import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.WatchListenVideoListDataProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.WatchListenVideoContentInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -163,26 +163,8 @@ public class WatchingVideoListActivity extends BaseActivity implements View.OnCl
         return mData.size() / NUM_PER_PAGE;
     }
 
-    private boolean isSkip(WatchListenVideoContentInfo watchListenVideoContentInfo) {
-        if (null == mData || 0 == mData.size()) {
-            return false;
-        }
-
-        if (null == watchListenVideoContentInfo || 0 == watchListenVideoContentInfo.size()) {
-            return true;
-        }
-
-        WatchListenVideoContentInfo.WatchListenVideoContentInfoItem item1 =
-                (WatchListenVideoContentInfo.WatchListenVideoContentInfoItem)
-                        mData.get(mData.size() - 1);
-        WatchListenVideoContentInfo.WatchListenVideoContentInfoItem item2 =
-                watchListenVideoContentInfo.get(watchListenVideoContentInfo.size() - 1);
-        return watchListenVideoContentInfo.isContentEqual(item1, item2);
-    }
-
     @Override
-    public void watchListenVideoListCallback(WatchListenVideoContentInfo
-                                                     watchListenVideoContentInfo) {
+    public void watchListenVideoListCallback(List<ContentsData> watchListenVideoContentInfo) {
         if (null == watchListenVideoContentInfo) {
             //通信とJSON Parseに関してerror処理
             DTVTLogger.debug("ClipListActivity::VodClipListCallback, get data failed.");
@@ -199,32 +181,6 @@ public class WatchingVideoListActivity extends BaseActivity implements View.OnCl
             return;
         }
 
-        /*
-        WatchListenVideoContentInfo tmp = new WatchListenVideoContentInfo();
-        Log.d("----", "WatchListenVideoCallback");
-        //boolean clipFlag, String contentPictureUrl, String title, String rating
-        WatchListenVideoContentInfo.WatchListenVideoContentInfoItem i1 = tmp.new WatchListenVideoContentInfoItem(
-                "https://image5-a.beetv.jp/basic/img/beetv_image/1014/top_hd_org/10142461_top_hd_org.jpg",
-                "千本桜", "4.0");
-        WatchListenVideoContentInfo.WatchListenVideoContentInfoItem i2 = tmp.new WatchListenVideoContentInfoItem(
-                "https://image5-a.beetv.jp/basic/img/title/10014265_top_hd_org.jpg",
-                "サクラ大戦～桜華絢爛～", "5.0");
-
-        for(int i=0;i<22;++i){
-            String rating = String.valueOf((1.0f + 0.2f*i)%5.0);
-            WatchListenVideoContentInfo.WatchListenVideoContentInfoItem iii = tmp.new WatchListenVideoContentInfoItem(
-                    i1.mContentPictureUrl,
-                    "千本桜" + (i + 1),  rating);
-            watchListenVideoContentInfo.add(iii);
-        }
-        */
-
-        if (isSkip(watchListenVideoContentInfo)) {
-            resetCommunication();
-            return;
-        }
-
-
         int pageNumber = getCurrentNumber();
         for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE &&
                 i < watchListenVideoContentInfo.size(); ++i) { //mPageNumber
@@ -232,7 +188,7 @@ public class WatchingVideoListActivity extends BaseActivity implements View.OnCl
         }
 
         //アナライザーの指摘によるヌルチェック
-        if(mData != null) {
+        if (mData != null) {
             DTVTLogger.debug("WatchListenVideoCallback, mData.size==" + mData.size());
         }
 

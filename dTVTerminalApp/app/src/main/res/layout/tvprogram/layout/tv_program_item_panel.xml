@@ -33,9 +33,9 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="2dp"
             android:contentDescription="@null"
+            android:clickable="true"
             android:scaleType="fitCenter"
             android:src="@mipmap/ic_fiber_manual_record_white_24dp" />
-
     </RelativeLayout>
 
     <RelativeLayout
@@ -62,5 +62,4 @@
             android:background="@mipmap/loading"
             android:contentDescription="@null" />
     </RelativeLayout>
-
 </LinearLayout>

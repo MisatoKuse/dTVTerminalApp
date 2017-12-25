@@ -15,24 +15,24 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvClipContentInfo;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipContentInfo;
 
 import java.util.List;
 
 public class ClipMainAdapter extends BaseAdapter {
 
-    public enum Mode{
+    public enum Mode {
         CLIP_LIST_MODE_TV,
         CLIP_LIST_MODE_VIDEO;
     }
 
-    private Mode mMode= Mode.CLIP_LIST_MODE_TV;
+    private Mode mMode = Mode.CLIP_LIST_MODE_TV;
 
     private Context mContext = null;
-    private List mData = null;
+    private List<ContentsData> mData = null;
     private int layoutid;
     private ThumbnailProvider mThumbnailProvider;
 
@@ -43,8 +43,8 @@ public class ClipMainAdapter extends BaseAdapter {
         this.mThumbnailProvider = thumbnailProvider;
     }
 
-    public void setMode(Mode mode){
-        mMode=mode;
+    public void setMode(Mode mode) {
+        mMode = mode;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class ClipMainAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, final ViewGroup parent) {
         View view = null;
         ViewHolder holder = null;
         if (convertView == null) {
@@ -74,6 +74,15 @@ public class ClipMainAdapter extends BaseAdapter {
             holder.rb_clip_video_rating = view.findViewById(R.id.rb_clip_video_rating);
             holder.rb_clip_video_rating_count = view.findViewById(R.id.rb_clip_video_rating_count);
             holder.bt_video_clip = view.findViewById(R.id.bt_video_clip);
+            holder.bt_video_clip.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //クリップボタンのイベントを親に渡す
+//                    ((ListView) parent).performItemClick(mView, position, R.id.item_common_result_clip_tv);
+                    //TODO:親に処理を渡すか検討中
+                    ((BaseActivity) mContext).sendClipRequest(mData.get(position).getRequestData());
+                }
+            });
             convertView = view;
             convertView.setTag(holder);
         } else {
@@ -82,65 +91,66 @@ public class ClipMainAdapter extends BaseAdapter {
 
         switch (mMode) {
             case CLIP_LIST_MODE_TV:
-                TvClipContentInfo.TvClipContentInfoItem tvClipContentInfoItem
-                        = (TvClipContentInfo.TvClipContentInfoItem) mData.get(position);
+                ContentsData tvClipContentInfoItem = mData.get(position);
 
-                if(null != holder.tv_clip_des){
-                    holder.tv_clip_des.setText(tvClipContentInfoItem.mTitle);
+                if (null != holder.tv_clip_des) {
+                    holder.tv_clip_des.setText(tvClipContentInfoItem.getTitle());
                 }
 
-                if(null!=holder.iv_clip_video_thumbnail){
-                    holder.iv_clip_video_thumbnail.setTag(tvClipContentInfoItem.mContentPictureUrl);
-                    if(null!=tvClipContentInfoItem.mContentPictureUrl && 0<tvClipContentInfoItem.mContentPictureUrl.length()){
-                        Bitmap bp= mThumbnailProvider.getThumbnailImage(holder.iv_clip_video_thumbnail, tvClipContentInfoItem.mContentPictureUrl);
-                        if(null!=bp){
+                if (null != holder.iv_clip_video_thumbnail) {
+                    String thumbUrl = tvClipContentInfoItem.getThumURL();
+                    holder.iv_clip_video_thumbnail.setTag(thumbUrl);
+                    if (null != thumbUrl && 0 < thumbUrl.length()) {
+                        Bitmap bp = mThumbnailProvider.getThumbnailImage(holder.iv_clip_video_thumbnail, thumbUrl);
+                        if (null != bp) {
                             holder.iv_clip_video_thumbnail.setImageBitmap(bp);
                         }
                     }
                 }
 
-                if(null != holder.rb_clip_video_rating){
+                if (null != holder.rb_clip_video_rating) {
                     holder.rb_clip_video_rating.setVisibility(View.INVISIBLE);
                     holder.rb_clip_video_rating_count.setVisibility(View.INVISIBLE);
                 }
 
-                if(null != holder.rb_clip_video_rating_count){
+                if (null != holder.rb_clip_video_rating_count) {
                     //holder.rb_clip_video_rating_count.setVisibility(View.INVISIBLE);
                 }
 
                 break;
             case CLIP_LIST_MODE_VIDEO:
-                VodClipContentInfo.VodClipContentInfoItem clipContentInfoItem
-                        = (VodClipContentInfo.VodClipContentInfoItem) mData.get(position);
+                ContentsData clipContentInfoItem = mData.get(position);
 
-                if(null != holder.tv_clip_des){
-                    holder.tv_clip_des.setText(clipContentInfoItem.mTitle);
+                if (null != holder.tv_clip_des) {
+                    holder.tv_clip_des.setText(clipContentInfoItem.getTitle());
                 }
 
-                if(null!=holder.iv_clip_video_thumbnail){
-                    holder.iv_clip_video_thumbnail.setTag(clipContentInfoItem.mContentPictureUrl);
-                    if(null!=clipContentInfoItem.mContentPictureUrl && 0<clipContentInfoItem.mContentPictureUrl.length()){
-                        Bitmap bp= mThumbnailProvider.getThumbnailImage(holder.iv_clip_video_thumbnail, clipContentInfoItem.mContentPictureUrl);
-                        if(null!=bp){
+                if (null != holder.iv_clip_video_thumbnail) {
+                    String thumbUrl = clipContentInfoItem.getThumURL();
+                    holder.iv_clip_video_thumbnail.setTag(thumbUrl);
+                    if (null != thumbUrl && 0 < thumbUrl.length()) {
+                        Bitmap bp = mThumbnailProvider.getThumbnailImage(holder.iv_clip_video_thumbnail, thumbUrl);
+                        if (null != bp) {
                             holder.iv_clip_video_thumbnail.setImageBitmap(bp);
                         }
                     }
                 }
 
-                if(null != holder.rb_clip_video_rating){
+                if (null != holder.rb_clip_video_rating) {
                     holder.rb_clip_video_rating.setNumStars(5);
-                    if(null!=clipContentInfoItem.mRating){
+                    String rateValue = clipContentInfoItem.getRatStar();
+                    if (null != rateValue) {
                         try {
-                            holder.rb_clip_video_rating.setRating(Float.parseFloat(clipContentInfoItem.mRating));
-                        }catch (Exception e) {
+                            holder.rb_clip_video_rating.setRating(Float.parseFloat(rateValue));
+                        } catch (Exception e) {
                             DTVTLogger.debug("ClipMainAdapter.getView, msg=" + e.getCause());
                         }
                     }
                 }
 
-                if(null != holder.rb_clip_video_rating_count){
+                if (null != holder.rb_clip_video_rating_count) {
                     //holder.rb_clip_video_rating_count.setVisibility(View.VISIBLE);
-                    holder.rb_clip_video_rating_count.setText(clipContentInfoItem.mRating);
+                    holder.rb_clip_video_rating_count.setText(clipContentInfoItem.getRatStar());
                 }
 
                 break;
@@ -149,7 +159,7 @@ public class ClipMainAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public Mode getMode(){
+    public Mode getMode() {
         return mMode;
     }
 
