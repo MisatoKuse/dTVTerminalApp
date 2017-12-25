@@ -120,6 +120,8 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                             mSchedule.setImageUrl(thumb);
                             mSchedule.setTitle(title);
                             mSchedule.setChNo(chNo);
+                            mSchedule.setClipRequestData(setClipData((HashMap<String, String>) hashMap));
+
                             if (!TextUtils.isEmpty(chNo)) {//CH毎番組データ取得して、整形する
                                 ArrayList<Channel> oldChannelList = channelsInfo.getChannels();
                                 boolean isExist = false;
