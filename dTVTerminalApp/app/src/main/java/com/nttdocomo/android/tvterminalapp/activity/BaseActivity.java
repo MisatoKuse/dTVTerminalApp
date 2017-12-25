@@ -782,7 +782,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             }
         } else {
             ClipDeleteWebClient deleteWebClient = new ClipDeleteWebClient();
-            deleteWebClient.getClipDeleteApi(data.getType(), data.getCrid(), data.getTitleId(), this);
+            isParamCheck = deleteWebClient.getClipDeleteApi(data.getType(), data.getCrid(), data.getTitleId(), this);
 
             //パラメータチェックではじかれたら失敗表示
             if(!isParamCheck){

@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -61,9 +60,9 @@ public class RecommendListBaseAdapter extends BaseAdapter {
             holder.iv_thumbnail = view.findViewById(R.id.recommend_iv_thumbnail);
             holder.tv_title = view.findViewById(R.id.recommend_title);
             holder.tv_des = view.findViewById(R.id.recommend_des);
-            holder.bt_clip = view.findViewById(R.id.recommend_bt_clip);
-            holder.bt_clip.setVisibility(View.VISIBLE);
-            holder.bt_clip.setOnClickListener(new View.OnClickListener() {
+            holder.iv_clip = view.findViewById(R.id.recommend_bt_clip);
+            holder.iv_clip.setVisibility(View.VISIBLE);
+            holder.iv_clip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     //クリップボタンのイベントを親に渡す
@@ -111,7 +110,7 @@ public class RecommendListBaseAdapter extends BaseAdapter {
         ImageView iv_thumbnail;
         TextView tv_title;
         TextView tv_des;
-        ImageView bt_clip;
+        ImageView iv_clip;
     }
 }
 

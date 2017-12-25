@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -17,7 +16,6 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
-import com.nttdocomo.android.tvterminalapp.dataprovider.ClipDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 
 import java.util.List;
@@ -61,10 +59,10 @@ public class SearchResultBaseAdapter extends BaseAdapter {
             holder.iv_thumbnail = view.findViewById(R.id.iv_thumbnail);
             holder.tv_title = view.findViewById(R.id.tv_title);
             holder.tv_des = view.findViewById(R.id.tv_des);
-            holder.bt_clip = view.findViewById(R.id.bt_clip);
-            holder.bt_clip.setVisibility(View.VISIBLE);
+            holder.iv_clip = view.findViewById(R.id.bt_clip);
+            holder.iv_clip.setVisibility(View.VISIBLE);
 
-            holder.bt_clip.setOnClickListener(new View.OnClickListener() {
+            holder.iv_clip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     // クリップ処理
@@ -109,7 +107,7 @@ public class SearchResultBaseAdapter extends BaseAdapter {
         ImageView iv_thumbnail;
         TextView tv_title;
         TextView tv_des;
-        ImageView bt_clip;
+        ImageView iv_clip;
     }
 }
 
