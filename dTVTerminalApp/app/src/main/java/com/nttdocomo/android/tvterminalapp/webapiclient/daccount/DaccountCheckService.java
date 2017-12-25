@@ -27,7 +27,7 @@ public class DaccountCheckService {
      */
     public interface DaccountCheckServiceCallBack {
         /**
-         * OTT取得結果を返す
+         * チェック結果を返す
          *
          * @param result 結果コード 0ならば成功
          */
@@ -118,7 +118,7 @@ public class DaccountCheckService {
             DTVTLogger.debug("compName=" + name);
 
             try {
-                //OTT取得処理を呼び出す
+                //サービスチェック処理を呼び出す
                 result = mService.checkService(appReqId, serviceKey, callback);
             } catch (RemoteException e) {
                 e.printStackTrace();
@@ -142,7 +142,7 @@ public class DaccountCheckService {
     }
 
     /**
-     * OTT取得処理を開始する
+     * サービスチェック処理を開始する
      *
      * @param context                      コンテキスト
      * @param daccountCheckServiceCallBack 結果を返すコールバック
@@ -155,7 +155,7 @@ public class DaccountCheckService {
         mContext = context;
         mDaccountCheckServiceCallBack = daccountCheckServiceCallBack;
 
-        //OTT取得処理の開始
+        //dアカウント設定アプリ連携処理の開始
         bindDimServiceAppService();
     }
 
