@@ -22,13 +22,13 @@
             android:gravity="center_vertical"
             android:text="@string/main_setting_device_storage"
             android:textColor="@color/white_text"
-            android:textSize="20sp" />
+            android:textSize="@dimen/main_setting_list_detail_item_textsize" />
         <CheckBox
             android:id="@+id/main_setting_download_checkbox_device"
             android:button="@null"
             android:background="@drawable/setting_checkbox"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="@dimen/main_setting_list_checkbox_length"
+            android:layout_height="@dimen/main_setting_list_checkbox_length"
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="@dimen/main_setting_checkbox_margin"
@@ -54,13 +54,13 @@
             android:gravity="center_vertical"
             android:text="@string/main_setting_outside_storage"
             android:textColor="@color/white_text"
-            android:textSize="20sp" />
+            android:textSize="@dimen/main_setting_list_detail_item_textsize" />
         <CheckBox
             android:id="@+id/main_setting_download_checkbox_outside"
             android:button="@null"
             android:background="@drawable/setting_checkbox"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="@dimen/main_setting_list_checkbox_length"
+            android:layout_height="@dimen/main_setting_list_checkbox_length"
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="@dimen/main_setting_checkbox_margin"

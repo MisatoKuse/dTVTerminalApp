@@ -267,6 +267,7 @@
     <string name="main_setting_d_account_message">dアカウントアプリがインストールされていません。\nインストールしますか？</string>
     <string name="main_setting_paring">ペアリング済み</string>
     <string name="main_setting_not_paring">未ペアリング</string>
+    <string name="main_setting_list_version_info">バージョン情報</string>
     <string name="main_setting_storage_setting_header">ダウンロード先設定</string>
     <string name="main_setting_storage_status">storage</string>
     <string name="main_setting_device_storage">本体ストレージ</string>
@@ -288,8 +289,6 @@
     <string name="main_setting_dazn_uninstall_message">ドコモテレビターミナルのDAZNアプリはインストールされてない</string>
     <string name="main_setting_dazn_update_message">ドコモテレビターミナルのDAZNアプリのアップデートが必要です。</string>
     <string name="main_setting_connect_error_message">接続できません</string>
-
-
     <string-array name="main_setting_items">
         <item>dアカウント設定</item>
         <item>dアカウント設定</item>
@@ -302,12 +301,12 @@
         <item>外出先視聴時の画質設定</item>
         <item>外出先視聴時の画質設定</item>
         <item>FAQ</item>
-        <item>FAQ(TBD)</item>
+        <item>FAQ</item>
         <item>アプリケーション情報</item>
-        <item>バージョン情報(TBD)</item>
-        <item>ライセンス情報(TBD)</item>
-        <item>プライバシーポリシー(TBD)</item>
-        <item>利用規約(TBD)</item>
+        <item>バージョン情報</item>
+        <item>ライセンス情報</item>
+        <item>プライバシーポリシー</item>
+        <item>利用規約</item>
     </string-array>
 
     <!-- MY番組表設定 -->
