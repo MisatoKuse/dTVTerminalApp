@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.common;
 
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -113,7 +114,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
         mPopupWindow.setBackgroundDrawable(dw);
 
         mPopupWindow.showAtLocation(mActivity.getLayoutInflater()
-                .inflate(R.layout.home_main_layout, null), Gravity.RIGHT, 0, 0);
+                .inflate(R.layout.home_main_layout, null), Gravity.END, 0, 0);
         mPopupWindow.setOnDismissListener(new PopupDismissListener());
 
         popupWindowView.setOnTouchListener(new View.OnTouchListener() {
@@ -131,9 +132,13 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-        TextView title = (TextView) view.findViewById(R.id.tv_title);
+        TextView title = view.findViewById(R.id.tv_title);
         if (null != title) {
             String menuName = (String) title.getText();
+
+            //GlobalMenuから開いたページはRootActivityとなるため、後ろのActivityは存在しない状態にする
+            Intent intent = mActivity.getIntent();
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 
             if (menuName.equals(mActivity.getString(R.string.nav_menu_item_home))) {
                 if (null != mMenuDisplayEventListener) {
@@ -146,28 +151,32 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                 if (null != mMenuDisplayEventListener) {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.PROGRAM_LIST);
                     if (!(mActivity instanceof TvProgramListActivity)) {
-                        mActivity.startActivity(TvProgramListActivity.class, null);
+                        intent.setClass(mActivity, TvProgramListActivity.class);
+                        mActivity.startActivity(intent);
                     }
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_channel_list))) {
                 if (null != mMenuDisplayEventListener) {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.CHANNEL_LIST);
                     if (!(mActivity instanceof ChannelListActivity)) {
-                        mActivity.startActivity(ChannelListActivity.class, null);
+                        intent.setClass(mActivity, ChannelListActivity.class);
+                        mActivity.startActivity(intent);
                     }
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_recorder_program))) {
                 if (null != mMenuDisplayEventListener) {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.RECORD_PROGRAM);
                     if (!(mActivity instanceof RecordedListActivity)) {
-                        mActivity.startActivity(RecordedListActivity.class, null);
+                        intent.setClass(mActivity, RecordedListActivity.class);
+                        mActivity.startActivity(intent);
                     }
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_recommend_program_video))) {
                 if (null != mMenuDisplayEventListener) {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.RECOMMEND_PRO_VIDEO);
                     if (!(mActivity instanceof RecommendActivity)) {
-                        mActivity.startActivity(RecommendActivity.class, null);
+                        intent.setClass(mActivity, RecommendActivity.class);
+                        mActivity.startActivity(intent);
                     }
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_staff_recommend))) {
@@ -178,14 +187,16 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                 if (null != mMenuDisplayEventListener) {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.RANKING);
                     if (!(mActivity instanceof RankingTopActivity)) {
-                        mActivity.startActivity(RankingTopActivity.class, null);
+                        intent.setClass(mActivity, RankingTopActivity.class);
+                        mActivity.startActivity(intent);
                     }
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_clip))) {
                 if (null != mMenuDisplayEventListener) {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.CLIP);
                     if (!(mActivity instanceof ClipListActivity)) {
-                        mActivity.startActivity(ClipListActivity.class, null);
+                        intent.setClass(mActivity, ClipListActivity.class);
+                        mActivity.startActivity(intent);
                     }
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_purchased_video))) {
@@ -197,49 +208,56 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                 if (null != mMenuDisplayEventListener) {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.WATCH_LISTEN_VIDEO);
                     if (!(mActivity instanceof WatchingVideoListActivity)) {
-                        mActivity.startActivity(WatchingVideoListActivity.class, null);
+                        intent.setClass(mActivity, WatchingVideoListActivity.class);
+                        mActivity.startActivity(intent);
                     }
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_record_reserve))) {
                 if (null != mMenuDisplayEventListener) {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.RECORD_RESERVE);
                     if (!(mActivity instanceof RecordReservationListActivity)) {
-                        mActivity.startActivity(RecordReservationListActivity.class, null);
+                        intent.setClass(mActivity, RecordReservationListActivity.class);
+                        mActivity.startActivity(intent);
                     }
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_video))) {
                 if (null != mMenuDisplayEventListener) {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.VIDEO);
                     if (!(mActivity instanceof VideoTopActivity)) {
-                        mActivity.startActivity(VideoTopActivity.class, null);
+                        intent.setClass(mActivity, VideoTopActivity.class);
+                        mActivity.startActivity(intent);
                     }
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_keyword_search))) {
                 if (null != mMenuDisplayEventListener) {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.KEY_WORD_SEARCH);
                     if (!(mActivity instanceof SearchTopActivity)) {
-                        mActivity.startActivity(SearchTopActivity.class, null);
+                        intent.setClass(mActivity, SearchTopActivity.class);
+                        mActivity.startActivity(intent);
                     }
                 }
             } else if (menuName.equals(mActivity.getString(R.string.rental_title))) {
                 if (null != mMenuDisplayEventListener) {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.KEY_WORD_SEARCH);
                     if (!(mActivity instanceof RentalListActivity)) {
-                        mActivity.startActivity(RentalListActivity.class, null);
+                        intent.setClass(mActivity, RentalListActivity.class);
+                        mActivity.startActivity(intent);
                     }
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_notice))) {
                 if (null != mMenuDisplayEventListener) {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.NOTICE);
                     if (!(mActivity instanceof NewsActivity)) {
-                        mActivity.startActivity(NewsActivity.class, null);
+                        intent.setClass(mActivity, NewsActivity.class);
+                        mActivity.startActivity(intent);
                     }
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_setting))) {
                 if (null != mMenuDisplayEventListener) {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.SETTING);
                     if (!(mActivity instanceof SettingActivity)) {
-                        mActivity.startActivity(SettingActivity.class, null);
+                        intent.setClass(mActivity, SettingActivity.class);
+                        mActivity.startActivity(intent);
                     }
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_hikari_tv))) {
@@ -295,7 +313,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
         initMenuListData();
 
         mMenuListAdapter = new MenuListAdapter(mActivity, mMenuItemTitles, mMenuItemCount);
-        mGlobalMenuListView.setAdapter((ListAdapter) mMenuListAdapter);
+        mGlobalMenuListView.setAdapter(mMenuListAdapter);
 
         mGlobalMenuListView.setOnItemClickListener(this);
     }
@@ -321,8 +339,8 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
         if (mAccountName == null) {
             mAccountName = View.inflate(mActivity, R.layout.menu_login_foot, null);
         }
-        TextView accoutName = mAccountName.findViewById(R.id.tv_menu_account_name);
-        accoutName.setText(mActivity.getUserName());
+        TextView accountName = mAccountName.findViewById(R.id.tv_menu_account_name);
+        accountName.setText(mActivity.getUserName());
         mGlobalMenuListView.addFooterView(mAccountName);
     }
 
