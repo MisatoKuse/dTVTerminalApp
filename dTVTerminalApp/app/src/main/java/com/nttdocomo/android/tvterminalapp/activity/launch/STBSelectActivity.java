@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.content.res.ResourcesCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
@@ -128,6 +129,13 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                     }
                 }
             });
+            mBackIcon.setVisibility(View.VISIBLE);
+            mBackIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    finish();
+                }
+            });
             //sharedPreferencesからSTB情報を取得する
             DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
             if (null == dlnaDmsItem) {
@@ -143,7 +151,8 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                     mParingDevice.setVisibility(View.VISIBLE);
                     mCheckMark.setVisibility(View.VISIBLE);
                     mParingDevice.setTextColor(Color.BLACK);
-                    mParingDevice.setBackground(getResources().getDrawable(R.drawable.color_white));
+                    mParingDevice.setBackground(ResourcesCompat.getDrawable(
+                            getResources(),R.drawable.color_white,null));
                     useWithoutPairingSTBParingInvitationTextView.setVisibility(View.VISIBLE);
                     useWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_paring_cancel_text);
                 }
@@ -178,6 +187,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         useWithoutPairingSTBParingInvitationTextView.setOnClickListener(this);
 
         mCheckBoxSTBSelectActivity = (CheckBox) findViewById(R.id.checkBoxSTBSelectActivity);
+        mCheckBoxSTBSelectActivity.setVisibility(View.VISIBLE);
         mCheckBoxSTBSelectActivity.setOnClickListener(this);
         mCheckBoxSTBSelectActivity.setChecked(false);
 
@@ -263,7 +273,8 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         statusTextView.setText(R.string.str_stb_select_result_text_search);
 
         // STBが見つかるまで非表示
-        mCheckBoxSTBSelectActivity.setVisibility(View.INVISIBLE);
+        TextView checkBoxText = (TextView) findViewById(R.id.useWithoutPairingSTBParingInvitation);
+        checkBoxText.setVisibility(View.VISIBLE);
         DTVTLogger.end();
     }
 
@@ -277,7 +288,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         statusTextView.setText(R.string.str_stb_select_result_text);
 
         // STBが見つかったため表示する
-        mCheckBoxSTBSelectActivity.setVisibility(View.VISIBLE);
         TextView checkBoxText = (TextView) findViewById(R.id.useWithoutPairingSTBParingInvitation);
         checkBoxText.setVisibility(View.VISIBLE);
         DTVTLogger.end();
@@ -587,9 +597,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         if (mStartMode == STBSelectFromMode.STBSelectFromMode_Setting.ordinal() &&
                 !mParingDevice.getText().toString().isEmpty()) {
             useWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_paring_cancel_text);
-        } else {
-            // STB未検出のため非表示
-            mCheckBoxSTBSelectActivity.setVisibility(View.INVISIBLE);
         }
         statusTextView.setText(R.string.str_stb_select_result_text_failed);
         // リストを非表示
