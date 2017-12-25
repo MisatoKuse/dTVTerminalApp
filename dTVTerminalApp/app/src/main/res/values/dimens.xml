@@ -20,7 +20,7 @@
     <dimen name="launch_text_end_padding">0dp</dimen>
     <dimen name="launch_device_list_layout_high">0dp</dimen>
     <dimen name="clip_toast_margin">10dp</dimen>
-    <dimen name="clip_button_size">36dp</dimen>
+    <dimen name="clip_button_size">32dp</dimen>
     <dimen name="clip_common_margin">15dp</dimen>
 
     <!--Global Menu-->
@@ -77,7 +77,6 @@
     <dimen name="contents_detail_8dp">8dp</dimen>
     <dimen name="contents_detail_10dp">10dp</dimen>
     <dimen name="contents_detail_16dp">16dp</dimen>
-    <dimen name="contents_detail_clip_size">24dp</dimen>
     <dimen name="contents_detail_icon_size">36dp</dimen>
     <dimen name="contents_detail_icon_margin">8dp</dimen>
 

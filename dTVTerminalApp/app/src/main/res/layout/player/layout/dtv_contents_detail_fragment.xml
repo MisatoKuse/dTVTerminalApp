@@ -116,8 +116,8 @@
 
                 <ImageView
                     android:id="@+id/contents_detail_clip_button"
-                    android:layout_width="@dimen/contents_detail_clip_size"
-                    android:layout_height="@dimen/contents_detail_clip_size"
+                    android:layout_width="@dimen/contents_detail_icon_size"
+                    android:layout_height="@dimen/contents_detail_icon_size"
                     android:scaleType="fitXY"
                     android:layout_alignParentEnd="true"
                     android:clickable="true"
