@@ -360,6 +360,10 @@ public class DateUtils {
      * @return
      */
     public static long getEpochTime(String strDate) {
+        if(strDate == null || strDate.length() < 1){
+            //Nullやblankの場合はエラー回避のため0を返す
+            return 0;
+        }
         Date lm = new Date(strDate);
         return lm.getTime();
     }

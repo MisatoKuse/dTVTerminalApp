@@ -182,17 +182,4 @@ public class StringUtil {
         //変換できなかったので空文字
         return "";
     }
-
-    /**
-     * 文字列の値が数値かどうか判定する
-     *
-     * @param num 数値判定文字列
-     * @return 判定結果
-     */
-    public static boolean isNumber(String num) {
-        String regex = "^\\-?[0-9]*\\.?[0-9]+$";
-        Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(num);
-        return m.find();
-    }
 }
