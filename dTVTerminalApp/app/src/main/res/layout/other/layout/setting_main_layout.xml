@@ -8,8 +8,8 @@
         android:id="@+id/main_setting_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="@color/white_text"
+        android:divider="@color/setting_list_divider_color"
         android:dividerHeight="1dp"
-        android:background="@drawable/color_black">
+        android:background="@color/setting_list_background_color">
     </ListView>
 </LinearLayout>
