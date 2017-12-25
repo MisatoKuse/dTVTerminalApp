@@ -345,10 +345,22 @@ public class DateUtils {
 
     /**
      * dアカウント切り替え時に、以前のデータを削除する
+     *
      * @param context コンテキスト
      */
     public static void clearDataSave(Context context) {
         SharedPreferences data = context.getSharedPreferences(DATA_SAVE, Context.MODE_PRIVATE);
         data.edit().clear().apply();
+    }
+
+    /**
+     * エポック秒に変換する
+     *
+     * @param strDate
+     * @return
+     */
+    public static long getEpochTime(String strDate) {
+        Date lm = new Date(strDate);
+        return lm.getTime();
     }
 }

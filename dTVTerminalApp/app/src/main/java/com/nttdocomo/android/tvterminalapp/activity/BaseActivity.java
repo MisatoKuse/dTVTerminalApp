@@ -814,26 +814,28 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      * クリップ登録/削除処理追加
      */
     public void sendClipRequest(ClipRequestData data) {
-        String status = data.getSearchOk();
-        mClipTarget = data.getClipTarget();
-        boolean isParamCheck = true;
-        if (status != null && !status.equals(CLIP_RESULT_STATUS)) {
-            ClipRegistWebClient registWebClient = new ClipRegistWebClient();
-            isParamCheck = registWebClient.getClipRegistApi(data.getType(), data.getCrid(), data.getServiceId(),
-                    data.getEventId(), data.getTitleId(), data.getTitle(), data.getRValue(),
-                    data.getLinearStartDate(), data.getLinearEndDate(), data.getIsNotify(), this);
+        if (data != null) {
+            String status = data.getSearchOk();
+            mClipTarget = data.getClipTarget();
+            boolean isParamCheck = true;
+            if (status != null && !status.equals(CLIP_RESULT_STATUS)) {
+                ClipRegistWebClient registWebClient = new ClipRegistWebClient();
+                isParamCheck = registWebClient.getClipRegistApi(data.getType(), data.getCrid(), data.getServiceId(),
+                        data.getEventId(), data.getTitleId(), data.getTitle(), data.getRValue(),
+                        data.getLinearStartDate(), data.getLinearEndDate(), data.getIsNotify(), this);
 
-            //パラメータチェックではじかれたら失敗表示
-            if(!isParamCheck){
-                showClipToast(R.string.clip_regist_error_message);
-            }
-        } else {
-            ClipDeleteWebClient deleteWebClient = new ClipDeleteWebClient();
-            isParamCheck = deleteWebClient.getClipDeleteApi(data.getType(), data.getCrid(), data.getTitleId(), this);
+                //パラメータチェックではじかれたら失敗表示
+                if (!isParamCheck) {
+                    showClipToast(R.string.clip_regist_error_message);
+                }
+            } else {
+                ClipDeleteWebClient deleteWebClient = new ClipDeleteWebClient();
+                isParamCheck = deleteWebClient.getClipDeleteApi(data.getType(), data.getCrid(), data.getTitleId(), this);
 
-            //パラメータチェックではじかれたら失敗表示
-            if(!isParamCheck){
-                showClipToast(R.string.clip_delete_error_message);
+                //パラメータチェックではじかれたら失敗表示
+                if (!isParamCheck) {
+                    showClipToast(R.string.clip_delete_error_message);
+                }
             }
         }
     }
