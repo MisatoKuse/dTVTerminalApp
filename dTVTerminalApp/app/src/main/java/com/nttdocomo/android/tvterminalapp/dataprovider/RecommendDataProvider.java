@@ -10,6 +10,7 @@ import android.content.Context;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendListDataManager;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendRequestData;
@@ -281,6 +282,7 @@ public class RecommendDataProvider implements
 
         for (Map<String, String> map : recList) {
             ContentsData contentsData = new ContentsData();
+
             contentsData.setContentsId(map.get(RECOMMENDCHANNEL_LIST_CONTENTSID));
             contentsData.setCategoryId(map.get(RECOMMENDCHANNEL_LIST_CATEGORYID));
             contentsData.setServiceId(map.get(RECOMMENDCHANNEL_LIST_SERVICEID));
@@ -288,6 +290,7 @@ public class RecommendDataProvider implements
             contentsData.setTitle(map.get(RECOMMENDCHANNEL_LIST_TITLE));
             contentsData.setStartViewing(map.get(RECOMMENDCHANNEL_LIST_STARTVIEWING));
             contentsData.setReserved(map.get(RECOMMENDCHANNEL_LIST_RESERVED4));
+            contentsData.setRequestData(setClipResponse(map));
             recommendContentInfoList.add(contentsData);
         }
         int serviceId = Integer.parseInt(recommendContentInfoList.get(0).getServiceId());
@@ -328,6 +331,32 @@ public class RecommendDataProvider implements
         }
     }
 
+    /**
+     * クリップ操作用レスポンスを作成
+     *
+     * @param map サーバレスポンスデータ
+     * @return クリップ用リクエストデータ
+     */
+    private ClipRequestData setClipResponse(Map<String, String> map) {
+        ClipRequestData requestData = new ClipRequestData();
+        String title = map.get(RECOMMENDCHANNEL_LIST_TITLE);
+
+        //クリップ用データ設定
+        //TODO:レスポンスがないため、ダミーデータを設定
+        requestData.setCrid("672017101601");
+        requestData.setServiceId("672017101601");
+        requestData.setEventId("14c2");
+        requestData.setTitleId("");
+        requestData.setTitle(title);
+        requestData.setRValue("G");
+        requestData.setLinearStartDate("1513071135");
+        requestData.setLinearEndDate("1513306982");
+        requestData.setSearchOk("0");
+        requestData.setClipTarget(title); //TODO:仕様確認中 現在はトーストにタイトル名を表示することとしています
+        requestData.setIsNotify("disp_type", "content_type",
+                "display_end_date", "tv_service", "dtv");
+        return requestData;
+    }
 
     /**
      * おすすめ番組をDBに保存する

@@ -136,9 +136,9 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
      *
      * @param item1 取得済みデータ
      * @param item2 更新データ
-     * @return
+     * @return 判定結果
      */
-    public boolean isContentEqual(ContentsData item1, ContentsData item2) {
+    private boolean isContentEqual(ContentsData item1, ContentsData item2) {
         if (null == item1 || null == item2) {
             return false;
         }

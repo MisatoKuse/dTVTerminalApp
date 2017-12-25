@@ -133,10 +133,20 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
         }
     }
 
+    /**
+     * クリップ画面表示データ作成
+     *
+     * @param resultType サーバレスポンス
+     * @return クリップ画面表示データ
+     */
     private ResultType<TotalSearchContentInfo> onSetClipRequestData(ResultType<TotalSearchContentInfo> resultType) {
         TotalSearchContentInfo content = resultType.getResultType();
 
         List<ContentsData> contentsDataList = new ArrayList<>();
+
+        //クリップフラグ設定用
+        final String SEARCH_OK_TRUE = "1";
+        final String SEARCH_OK_FALSE = "0";
 
         int thisTimeTotal = content.searchContentInfo.size();
         for (int i = 0; i < thisTimeTotal; ++i) {
@@ -149,20 +159,27 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
             contentsData.setThumURL(ci.contentPictureUrl);
             contentsData.setTitle(ci.title);
 
+            SearchContentInfo searchContentInfo = resultType.getResultType().searchContentInfo.get(i);
+
             //TODO:レスポンスパラメータがないため、仮データを設定
-            String searchOk = "0";
+            String searchOk;
+            if (searchContentInfo.clipFlag) {
+                searchOk = SEARCH_OK_TRUE;
+            } else {
+                searchOk = SEARCH_OK_FALSE;
+            }
             contentsData.setSearchOk(searchOk);
             ClipRequestData requestData = new ClipRequestData();
             requestData.setCrid("672017101601");
             requestData.setServiceId("672017101601");
             requestData.setEventId("14c2");
             requestData.setTitleId("");
-            requestData.setTitle("【サイエンスアワー】新語・流行語大賞 「インスタ映え」などノミネート");
+            requestData.setTitle(searchContentInfo.title);
             requestData.setRValue("G");
             requestData.setLinearStartDate("1513071135");
             requestData.setLinearEndDate("1513306982");
             requestData.setSearchOk(searchOk);
-            requestData.setClipTarget("title"); //TODO:仕様確認中 現在はトーストにタイトル名を表示することとしています
+            requestData.setClipTarget(searchContentInfo.title); //TODO:仕様確認中 現在はトーストにタイトル名を表示することとしています
             requestData.setIsNotify("disp_type", "content_type",
                     "display_end_date", "tv_service", "dtv");
             contentsData.setRequestData(requestData);

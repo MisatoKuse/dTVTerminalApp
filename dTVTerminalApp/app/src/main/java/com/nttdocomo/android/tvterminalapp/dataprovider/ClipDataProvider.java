@@ -77,11 +77,11 @@ public class ClipDataProvider {
         requestData.setLinearStartDate(String.valueOf(hashMap.get(JsonContents.META_RESPONSE_AVAIL_START_DATE)));
         requestData.setLinearEndDate(String.valueOf(hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE)));
         requestData.setSearchOk(hashMap.get(JsonContents.META_RESPONSE_SEARCH_OK));
-        requestData.setClipTarget(JsonContents.META_RESPONSE_TITLE); //TODO:仕様確認中 現在はトーストにタイトル名を表示することとしています
-        requestData.setIsNotify(JsonContents.META_RESPONSE_DISP_TYPE,
-                JsonContents.META_RESPONSE_CONTENT_TYPE,
-                String.valueOf(JsonContents.META_RESPONSE_AVAIL_END_DATE),
-                JsonContents.META_RESPONSE_TV_SERVICE, JsonContents.META_RESPONSE_DTV);
+        requestData.setClipTarget(hashMap.get(JsonContents.META_RESPONSE_TITLE)); //TODO:仕様確認中 現在はトーストにタイトル名を表示することとしています
+        requestData.setIsNotify(hashMap.get(JsonContents.META_RESPONSE_DISP_TYPE),
+                hashMap.get(JsonContents.META_RESPONSE_CONTENT_TYPE),
+                String.valueOf(hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE)),
+                hashMap.get(JsonContents.META_RESPONSE_TV_SERVICE), hashMap.get(JsonContents.META_RESPONSE_DTV));
         return requestData;
     }
     /**

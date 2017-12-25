@@ -20,13 +20,15 @@
 			android:layout_height="wrap_content"
 			android:layout_centerVertical="true" />
 
-		<Button
+		<ImageView
 			android:id="@+id/recommend_bt_clip"
-			android:layout_width="25dp"
-			android:layout_height="25dp"
+			android:layout_width="@dimen/clip_button_size"
+			android:layout_height="@dimen/clip_button_size"
 			android:layout_alignParentRight="true"
 			android:layout_centerVertical="true"
-			android:layout_marginRight="5dp"/>
+			android:clickable="true"
+			android:src="@mipmap/icon_circle_opacity_clip"
+			android:layout_margin="@dimen/clip_common_margin"/>
 
 		<LinearLayout
 			android:id="@+id/recommend_title_des"

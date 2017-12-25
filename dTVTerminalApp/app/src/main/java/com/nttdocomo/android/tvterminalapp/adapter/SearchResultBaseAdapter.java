@@ -53,7 +53,7 @@ public class SearchResultBaseAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup parent) {
-        ContentsData searchContentInfo =  mData.get(position);
+        final ContentsData searchContentInfo =  mData.get(position);
         ViewHolder holder;
         if(null==view){
             view = View.inflate(mContext, R.layout.item_search_result_televi, null);
@@ -62,15 +62,13 @@ public class SearchResultBaseAdapter extends BaseAdapter {
             holder.tv_title = view.findViewById(R.id.tv_title);
             holder.tv_des = view.findViewById(R.id.tv_des);
             holder.bt_clip = view.findViewById(R.id.bt_clip);
-            holder.bt_clip.setVisibility(View.GONE);
+            holder.bt_clip.setVisibility(View.VISIBLE);
 
             holder.bt_clip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //クリップボタンのイベントを親に渡す
-//                    ((ListView) parent).performItemClick(mView, position, R.id.item_common_result_clip_tv);
-                    //TODO:親に処理を渡すか検討中
-                    ((BaseActivity) mContext).sendClipRequest(ClipDataProvider.setClipData());
+                    // クリップ処理
+                    ((BaseActivity) mContext).sendClipRequest(searchContentInfo.getRequestData());
                 }
             });
             float mWidth = (float)mContext.getResources().getDisplayMetrics().widthPixels / 3;
@@ -111,7 +109,7 @@ public class SearchResultBaseAdapter extends BaseAdapter {
         ImageView iv_thumbnail;
         TextView tv_title;
         TextView tv_des;
-        Button bt_clip;
+        ImageView bt_clip;
     }
 }
 

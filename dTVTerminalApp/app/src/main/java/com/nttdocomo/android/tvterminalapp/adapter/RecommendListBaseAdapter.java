@@ -111,7 +111,7 @@ public class RecommendListBaseAdapter extends BaseAdapter {
         ImageView iv_thumbnail;
         TextView tv_title;
         TextView tv_des;
-        Button bt_clip;
+        ImageView bt_clip;
     }
 }
 

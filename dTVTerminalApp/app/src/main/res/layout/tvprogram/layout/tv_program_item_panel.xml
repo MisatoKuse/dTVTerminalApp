@@ -27,15 +27,15 @@
 
         <ImageView
             android:id="@+id/tv_program_item_panel_clip_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/clip_button_size"
+            android:layout_height="@dimen/clip_button_size"
             android:layout_below="@id/tv_program_item_panel_clip_tv"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="2dp"
             android:contentDescription="@null"
             android:clickable="true"
             android:scaleType="fitCenter"
-            android:src="@mipmap/ic_fiber_manual_record_white_24dp" />
+            android:src="@mipmap/icon_circle_opacity_clip" />
     </RelativeLayout>
 
     <RelativeLayout
