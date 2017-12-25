@@ -119,6 +119,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     private Intent intent;
     /* コンテンツ詳細 end */
     /*DTV起動*/
+    private static final int DTV_VERSION_STANDARD=52000;
     private static final String RESERVED4_TYPE4 = "4";
     private static final String RESERVED4_TYPE7 = "7";
     private static final String RESERVED4_TYPE8 = "8";
@@ -127,6 +128,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     private static final String SUPER_SPEED_START_TYPE = "dmktvideosc:///openLiveTitle?deliveryTitleId=";
     private static final String WORK_START_TYPE = "dmktvideosc:///openEpisode?episodeId=";
     private static final String TITTLE_START_TYPE = "dmktvideosc:///openTitle?titleId=";
+    private String errorMessage;
     /*DTV起動*/
     /* player start */
     private static final long HIDE_IN_3_SECOND = 3 * 1000;
@@ -1422,23 +1424,25 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                     startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                         @Override
                         public void onOKCallback(boolean isOK) {
+                            int localVersionCode = getVersionCode(DTV_PACKAGE_NAME);
                             //端末にDTVアプリはすでに存在した場合
                             if (isAppInstalled(DtvContentsDetailActivity.this, DTV_PACKAGE_NAME)) {
-                                /**TODO　バージョンチェックの実装　
-                                 * 端末にインストールしたアプリのバージョンを取得する関数がすでにあります
-                                 * getAPPVersionCode(String packageName){}
-                                 * サーバから最新のバージョン情報を取得するの実装は、現在情報が足りないので実装できない
-                                 */
-                                //RESERVED4は4の場合
-                                if (RESERVED4_TYPE4.equals(mDetailData.getReserved4())) {
-                                    startApp(WORK_START_TYPE + mDetailData.getContentId());
-                                    //RESERVED4は7,8の場合
-                                } else if (RESERVED4_TYPE7.equals(mDetailData.getReserved4())
-                                        || RESERVED4_TYPE8.equals(mDetailData.getReserved4())) {
-                                    startApp(SUPER_SPEED_START_TYPE + mDetailData.getContentId());
-                                    //その他の場合
+                                //バージョンチェック
+                                if (localVersionCode < DTV_VERSION_STANDARD) {
+                                    errorMessage=getResources().getString(R.string.dTV_content_service_update_dialog);
+                                    showErrorDialog(errorMessage);
                                 } else {
-                                    startApp(TITTLE_START_TYPE + mDetailData.getContentId());
+                                    //RESERVED4は4の場合
+                                    if (RESERVED4_TYPE4.equals(mDetailData.getReserved4())) {
+                                        startApp(WORK_START_TYPE + mDetailData.getContentId());
+                                        //RESERVED4は7,8の場合
+                                    } else if (RESERVED4_TYPE7.equals(mDetailData.getReserved4())
+                                            || RESERVED4_TYPE8.equals(mDetailData.getReserved4())) {
+                                        startApp(SUPER_SPEED_START_TYPE + mDetailData.getContentId());
+                                        //その他の場合
+                                    } else {
+                                        startApp(TITTLE_START_TYPE + mDetailData.getContentId());
+                                    }
                                 }
                                 //DTVアプリ存在しない場合
                             } else {

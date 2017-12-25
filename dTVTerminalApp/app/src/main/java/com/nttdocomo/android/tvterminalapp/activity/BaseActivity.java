@@ -459,7 +459,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      *
      * @param errorMessage dialog content
      */
-    private void showErrorDialog(String errorMessage) {
+    protected void showErrorDialog(String errorMessage) {
         CustomDialog errorDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
         errorDialog.setContent(errorMessage);
         errorDialog.showDialog();
