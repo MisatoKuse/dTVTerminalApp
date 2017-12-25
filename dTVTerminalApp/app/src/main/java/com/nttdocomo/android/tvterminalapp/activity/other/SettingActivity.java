@@ -148,8 +148,8 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             isParing = res.getString(R.string.main_setting_not_paring);
         }
 
-        //外部ストレージの存在判定
-        isExternalStorage();
+        //外部ストレージスロットの存在判定
+        isExternalStorageSlot();
         String storage = res.getString(R.string.main_setting_device_storage);
         if (isSDCard) {
             //保存先ストレージの確認
@@ -269,9 +269,16 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     }
 
     /**
-     * SDカードの存在判定を行う。Android4.4と5.0以上では処理が異なる
+     * SDカードスロットの存在判定を行う。
      */
-    private void isExternalStorage() {
+    private void isExternalStorageSlot() {
+        //TODO 本来はSDカードスロットの存在判定の結果を返すメソッドだが、
+        //getExternalStorageState()がSDカードスロット以外のPathも返却する可能性がある。
+        //現時点では端末にSDカードスロットがあるものとしてtrue返却する。
+        //SDカードスロットの無い端末が手元に届いてから再度検証を行う。
+        isSDCard = true;
+
+        /*
         List<String> sdCardDirPathList = new ArrayList<>();
         List<String> deviceStorageDirPath = new ArrayList<>();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -326,6 +333,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             }
             isSDCard = sdCardDirPathList.size() > 0;
         }
+        */
     }
 
     /**
