@@ -9,6 +9,7 @@ import android.content.Context;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RentalListInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
@@ -136,11 +137,43 @@ public class RentalDataProvider implements RentalVodListWebClient.RentalVodListJ
         ArrayList<VodMetaFullData> metaFullData = response.getVodMetaFullData();
         for (int i = 0; i < response.getVodMetaFullData().size(); i++) {
             ContentsData data = new ContentsData();
-            data.setTitle(metaFullData.get(i).getTitle());
+
+            VodMetaFullData vodMetaFullData = metaFullData.get(i);
+
+            String title = vodMetaFullData.getTitle();
+            String search = vodMetaFullData.getmSearch_ok();
+            data.setTitle(title);
             //エポック秒から文字に変換
-            data.setTime(DateUtils.formatEpochToString(metaFullData.get(i).getAvail_end_date()));
-            data.setRatStar(String.valueOf(metaFullData.get(i).getRating()));
-            data.setThumURL(metaFullData.get(i).getmThumb_448_252());
+            data.setTime(DateUtils.formatEpochToString(vodMetaFullData.getAvail_end_date()));
+            data.setRatStar(String.valueOf(vodMetaFullData.getRating()));
+            data.setThumURL(vodMetaFullData.getmThumb_448_252());
+            data.setSearchOk(search);
+
+            //クリップリクエストデータ作成
+            ClipRequestData requestData = new ClipRequestData();
+
+            String linearEndDate = String.valueOf(vodMetaFullData.getAvail_end_date());
+
+            requestData.setCrid(vodMetaFullData.getCrid());
+            requestData.setServiceId(vodMetaFullData.getmService_id());
+            requestData.setEventId(vodMetaFullData.getmEvent_id());
+            requestData.setTitleId(vodMetaFullData.getEpisode_id());
+            requestData.setTitle(title);
+            requestData.setClipTarget(title);
+            requestData.setRValue(vodMetaFullData.getR_value());
+            requestData.setLinearStartDate(String.valueOf(vodMetaFullData.getAvail_start_date()));
+            requestData.setLinearEndDate(linearEndDate);
+            requestData.setSearchOk(search);
+            requestData.setClipTarget(title); //TODO:仕様確認中 現在はトーストにタイトル名を表示することとしています
+
+            //視聴通知判定生成
+            String dispType = vodMetaFullData.getDisp_type();
+            String contentsType = vodMetaFullData.getmContent_type();
+            String tvService = vodMetaFullData.getmTv_service();
+            String dTv = vodMetaFullData.getDtv();
+            requestData.setIsNotify(dispType, contentsType, linearEndDate, tvService, dTv);
+            data.setRequestData(requestData);
+
             list.add(data);
         }
         return list;

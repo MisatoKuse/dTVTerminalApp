@@ -286,36 +286,38 @@ public class RankingTopDataProvider implements
         for (int i = 0; i < dailyRankMapList.size(); i++) {
             rankingContentInfo = new ContentsData();
 
-            String title = dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_TITLE);
-            String search = dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_SEARCH_OK);
-            String linearEndDate = dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
+            Map<String, String> map = dailyRankMapList.get(i);
+
+            String title = map.get(JsonContents.META_RESPONSE_TITLE);
+            String search = map.get(JsonContents.META_RESPONSE_SEARCH_OK);
+            String linearEndDate = map.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
 
             rankingContentInfo.setRank(String.valueOf(i + 1));
-            rankingContentInfo.setThumURL(dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_THUMB_448));
+            rankingContentInfo.setThumURL(map.get(JsonContents.META_RESPONSE_THUMB_448));
             rankingContentInfo.setTitle(title);
-            rankingContentInfo.setTime(dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_DISPLAY_START_DATE));
+            rankingContentInfo.setTime(map.get(JsonContents.META_RESPONSE_DISPLAY_START_DATE));
             rankingContentInfo.setSearchOk(search);
             rankingContentInfo.setRank(String.valueOf(i + 1));
-            rankingContentInfo.setRatStar(dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_RATING));
+            rankingContentInfo.setRatStar(map.get(JsonContents.META_RESPONSE_RATING));
 
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
-            requestData.setCrid(dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_CRID));
-            requestData.setServiceId(dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_SERVICE_ID));
-            requestData.setEventId(dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_EVENT_ID));
-            requestData.setTitleId(dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_TITLE_ID));
+            requestData.setCrid(map.get(JsonContents.META_RESPONSE_CRID));
+            requestData.setServiceId(map.get(JsonContents.META_RESPONSE_SERVICE_ID));
+            requestData.setEventId(map.get(JsonContents.META_RESPONSE_EVENT_ID));
+            requestData.setTitleId(map.get(JsonContents.META_RESPONSE_TITLE_ID));
             requestData.setTitle(title);
-            requestData.setRValue(dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_R_VALUE));
-            requestData.setLinearStartDate(dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_AVAIL_START_DATE));
+            requestData.setRValue(map.get(JsonContents.META_RESPONSE_R_VALUE));
+            requestData.setLinearStartDate(map.get(JsonContents.META_RESPONSE_AVAIL_START_DATE));
             requestData.setLinearEndDate(linearEndDate);
             requestData.setSearchOk(search);
             requestData.setClipTarget(title); //TODO:仕様確認中 現在はトーストにタイトル名を表示することとしています
 
             //視聴通知判定生成
-            String dispType = dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_DISP_TYPE);
-            String contentsType = dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_CONTENT_TYPE);
-            String tvService = dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_TV_SERVICE);
-            String dTv = dailyRankMapList.get(i).get(JsonContents.META_RESPONSE_DTV);
+            String dispType = map.get(JsonContents.META_RESPONSE_DISP_TYPE);
+            String contentsType = map.get(JsonContents.META_RESPONSE_CONTENT_TYPE);
+            String tvService = map.get(JsonContents.META_RESPONSE_TV_SERVICE);
+            String dTv = map.get(JsonContents.META_RESPONSE_DTV);
             requestData.setIsNotify(dispType, contentsType, linearEndDate, tvService, dTv);
             rankingContentInfo.setRequestData(requestData);
 

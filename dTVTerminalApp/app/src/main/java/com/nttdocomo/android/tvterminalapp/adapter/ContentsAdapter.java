@@ -30,6 +30,8 @@ import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 
 import java.util.List;
 
+import static com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter.ActivityTypeItem.TYPE_RECORDING_RESERVATION_LIST;
+
 public class ContentsAdapter extends BaseAdapter {
 
     //各Activityインスタンス
@@ -143,9 +145,7 @@ public class ContentsAdapter extends BaseAdapter {
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //クリップボタンのイベントを親に渡す
-//                    ((ListView) parent).performItemClick(mView, position, R.id.item_common_result_clip_tv);
-                //TODO:親に処理を渡すか検討中
+                //クリップボタンイベント
                 ((BaseActivity) mContext).sendClipRequest(requestData);
             }
         });
@@ -379,11 +379,7 @@ public class ContentsAdapter extends BaseAdapter {
             case TYPE_RENTAL_RANK: // レンタル一覧
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
             case TYPE_RECORDED_LIST: // 録画番組一覧
-//                mView = mInflater.inflate(R.layout.item_common_result, parent, false);
-//                break;
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
-//                mView = mInflater.inflate(R.layout.item_common_result, parent, false);
-//                break;
             case TYPE_STB_SELECT_LIST: //STBデバイス名一覧
                 view = mInflater.inflate(R.layout.item_common_result, parent, false);
             default:
@@ -455,10 +451,12 @@ public class ContentsAdapter extends BaseAdapter {
                 break;
             case TYPE_VIDEO_RANK: // ビデオランキング
                 holder.tv_time.setVisibility(View.GONE);
+                holder.tv_clip.setVisibility(View.GONE);
                 break;
             case TYPE_RENTAL_RANK: // レンタル一覧
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
                 holder.tv_rank.setVisibility(View.GONE);
+                holder.tv_clip.setVisibility(View.GONE);
                 break;
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
                 holder.tv_clip.setVisibility(View.GONE);
@@ -502,14 +500,16 @@ public class ContentsAdapter extends BaseAdapter {
         if (holder.tv_clip != null) {
             String clipFlg = listContentInfo.getSearchOk();
             if (clipFlg != null && clipFlg.equals(ACTIVE_CLIP_DISPLAY)) {
+                //クリップ状態が1の時は、クリップボタンを表示
                 holder.tv_clip.setVisibility(View.VISIBLE);
                 holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_active_clip);
-            } else if (clipFlg != null && clipFlg.equals(OPACITY_CLIP_DISPLAY)) {
-                holder.tv_clip.setVisibility(View.VISIBLE);
-                holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
             } else {
-                //TODO:クリップ状態取得失敗又はパラメータ追加の際は、そのつど対応する
-                holder.tv_clip.setVisibility(View.GONE);
+                //TODO:録画予約一覧を共通アダプターから排除した場合は判定不要
+                if(!mType.equals(TYPE_RECORDING_RESERVATION_LIST)){
+                    //クリップ状態が1以外の時は、非活性クリップボタンを表示
+                    holder.tv_clip.setVisibility(View.VISIBLE);
+                    holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
+                }
             }
         }
     }

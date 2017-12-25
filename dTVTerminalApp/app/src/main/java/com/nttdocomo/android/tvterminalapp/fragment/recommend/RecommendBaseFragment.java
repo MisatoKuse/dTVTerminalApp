@@ -18,6 +18,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.RecommendListBaseAdapter;
+import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.model.recommend.RecommendContentInfo;
 
@@ -29,7 +30,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
         AdapterView.OnItemClickListener {
 
     public Context mActivity;
-    public List mData;
+    public List<ContentsData> mData;
     private RecommendBaseFragmentScrollListener mRecommendBaseFragmentScrollListener = null;
     private View mLoadMoreView;
     private View mLoadCompleteView;
@@ -140,7 +141,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        RecommendContentInfo info = (RecommendContentInfo) mData.get(i);
+        ContentsData info = mData.get(i);
         Bundle args = new Bundle();
         args.putParcelable(DtvContentsDetailActivity.RECOMMEND_INFO_BUNDLE_KEY,
                 getOtherContentsDetailData(info));
@@ -153,18 +154,18 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
      * @param info レコメンド情報
      * @return コンテンツ情報
      */
-    public OtherContentsDetailData getOtherContentsDetailData(RecommendContentInfo info) {
+    public OtherContentsDetailData getOtherContentsDetailData(ContentsData info) {
         OtherContentsDetailData detailData = new OtherContentsDetailData();
-        detailData.setTitle(info.title);
-        detailData.setThumb(info.contentPictureUrl);
-        detailData.setDetail(info.synop);
-        detailData.setComment(info.comment);
-        detailData.setHighlight(info.highlight);
-        detailData.setServiceId(info.serviceId);
-        detailData.setReserved4(info.reserved4);
+        detailData.setTitle(info.getTitle());
+        detailData.setThumb(info.getThumURL());
+        detailData.setDetail(info.getSynop());
+        detailData.setComment(info.getComment());
+        detailData.setHighlight(info.getHighlight());
+        detailData.setServiceId(Integer.parseInt(info.getServiceId()));
+        detailData.setReserved4(info.getReserved());
 
         //コンテンツIDの受け渡しを追加
-        detailData.setContentId(info.contentId);
+        detailData.setContentId(info.getContentsId());
 
         return detailData;
     }

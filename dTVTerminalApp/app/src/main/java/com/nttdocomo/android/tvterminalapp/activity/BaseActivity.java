@@ -816,14 +816,25 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     public void sendClipRequest(ClipRequestData data) {
         String status = data.getSearchOk();
         mClipTarget = data.getClipTarget();
+        boolean isParamCheck = true;
         if (status != null && !status.equals(CLIP_RESULT_STATUS)) {
             ClipRegistWebClient registWebClient = new ClipRegistWebClient();
-            registWebClient.getClipRegistApi(data.getType(), data.getCrid(), data.getServiceId(),
+            isParamCheck = registWebClient.getClipRegistApi(data.getType(), data.getCrid(), data.getServiceId(),
                     data.getEventId(), data.getTitleId(), data.getTitle(), data.getRValue(),
                     data.getLinearStartDate(), data.getLinearEndDate(), data.getIsNotify(), this);
+
+            //パラメータチェックではじかれたら失敗表示
+            if(!isParamCheck){
+                showClipToast(R.string.clip_regist_error_message);
+            }
         } else {
             ClipDeleteWebClient deleteWebClient = new ClipDeleteWebClient();
-            deleteWebClient.getClipDeleteApi(data.getType(), data.getCrid(), data.getTitleId(), this);
+            isParamCheck = deleteWebClient.getClipDeleteApi(data.getType(), data.getCrid(), data.getTitleId(), this);
+
+            //パラメータチェックではじかれたら失敗表示
+            if(!isParamCheck){
+                showClipToast(R.string.clip_delete_error_message);
+            }
         }
     }
 

@@ -19,6 +19,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ClipMainAdapter;
+import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class ClipListBaseFragment extends Fragment implements AbsListView.OnScro
         AdapterView.OnItemClickListener, AdapterView.OnTouchListener {
 
     private Context mActivity;
-    public List mData = null;
+    public List<ContentsData> mData = null;
 
     private View mTeleviFragmentView;
     private ListView mTeveviListview;

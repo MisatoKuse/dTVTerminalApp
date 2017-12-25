@@ -37,14 +37,12 @@
 
         <ImageView
             android:id="@+id/wl_clip"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="@dimen/clip_button_size"
+            android:layout_height="@dimen/clip_button_size"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="10dp"
-            android:src="@drawable/watch_listen_video_list_clip_icon"
-            android:background="@android:color/background_dark"/>
+            android:layout_margin="@dimen/clip_common_margin"
+            android:src="@mipmap/icon_circle_opacity_clip"/>
 
         <RelativeLayout
             android:layout_width="wrap_content"

@@ -168,7 +168,7 @@ public class ClipMainAdapter extends BaseAdapter {
         TextView tv_clip_des;
         TextView rb_clip_video_rating_count;
         RatingBar rb_clip_video_rating;
-        Button bt_video_clip;
+        ImageView bt_video_clip;
     }
 }
 

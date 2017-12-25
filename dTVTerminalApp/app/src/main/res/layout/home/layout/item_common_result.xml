@@ -47,9 +47,10 @@
 
         <TextView
             android:id="@+id/item_common_result_clip_tv"
-            android:layout_width="@dimen/recorded_clip_tv_width"
-            android:layout_height="@dimen/recorded_clip_tv_height"
+            android:layout_width="@dimen/clip_button_size"
+            android:layout_height="@dimen/clip_button_size"
             android:layout_marginEnd="@dimen/recorded_clip_tv_margin_end"
+            android:clickable="true"
             android:background="@color/list_item_background" />
 
         <TextView

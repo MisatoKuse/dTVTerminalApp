@@ -69,14 +69,6 @@ public class MenuListAdapter extends BaseAdapter {
         setTextView(title, holder.tv_title);
         setImageView(title, holder.tv_arrow);
         setDAZNIcon(title, holder.dazn_icon);
-        int cnt = (int) mDataCounts.get(i);
-        if (MenuDisplay.INT_NONE_COUNT_STATUS != cnt) {
-            holder.tv_count.setText(String.valueOf(cnt));
-            holder.tv_count.setVisibility(View.VISIBLE);
-        } else {
-            holder.tv_count.setText("");
-        }
-
         return view;
     }
 

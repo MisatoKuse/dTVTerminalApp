@@ -22,15 +22,15 @@
             android:layout_centerVertical="true"
             android:background="@mipmap/loading"/>
 
-        <Button
+        <ImageView
             android:id="@+id/bt_video_clip"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="@dimen/clip_button_size"
+            android:layout_height="@dimen/clip_button_size"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="10dp"
-            android:background="@android:color/white"/>
+            android:clickable="true"
+            android:src="@mipmap/icon_circle_opacity_clip"
+            android:layout_margin="@dimen/clip_common_margin"/>
 
         <RelativeLayout
             android:layout_width="wrap_content"

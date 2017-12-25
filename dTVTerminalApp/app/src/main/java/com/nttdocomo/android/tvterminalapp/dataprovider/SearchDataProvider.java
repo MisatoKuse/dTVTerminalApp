@@ -5,8 +5,9 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.model.ResultType;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 import com.nttdocomo.android.tvterminalapp.model.search.SearchContentInfo;
@@ -25,11 +26,13 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchS
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 
 public class SearchDataProvider implements TotalSearchWebApiDelegate {
 
-    public interface SearchDataProviderListener{
+    public interface SearchDataProviderListener {
         public void onSearchDataProviderFinishOk(ResultType<TotalSearchContentInfo> resultType);
+
         public void onSearchDataProviderFinishNg(ResultType<SearchResultError> resultType);
     }
 
@@ -37,22 +40,22 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
 
     private SearchState _state = SearchState.inital;
 
-    private SearchDataProviderListener mSearchDataProviderListener=null;
+    private SearchDataProviderListener mSearchDataProviderListener = null;
 
 
-    public SearchState getSearchState(){
+    public SearchState getSearchState() {
         synchronized (this) {
             return _state;
         }
     }
 
-    private void setSearchState(SearchState newSearchState){
+    private void setSearchState(SearchState newSearchState) {
         synchronized (this) {
             _state = newSearchState;
         }
     }
 
-    private TotalSearchWebApi mTotalSearchWebApi=null;
+    private TotalSearchWebApi mTotalSearchWebApi = null;
 
     public void startSearchWith(String keyword,
                                 ArrayList<SearchServiceType> serviceTypeArray,
@@ -79,7 +82,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
 
         mTotalSearchWebApi = new TotalSearchWebApi();
         mTotalSearchWebApi.setDelegate(this);
-        mSearchDataProviderListener= searchDataProviderListener;
+        mSearchDataProviderListener = searchDataProviderListener;
         mTotalSearchWebApi.request(request);
     }
 
@@ -88,12 +91,12 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
         DTVTLogger.debug("SearchDataProvider::cancelSearch()");
     }
 
-    private String getMappedData(ArrayList<SearchServiceType> serviceTypeArray, String comma){
-        StringBuilder ret=new StringBuilder("");
-        for(int i=0;i<serviceTypeArray.size();++i){
-            SearchServiceType sst=serviceTypeArray.get(i);
+    private String getMappedData(ArrayList<SearchServiceType> serviceTypeArray, String comma) {
+        StringBuilder ret = new StringBuilder("");
+        for (int i = 0; i < serviceTypeArray.size(); ++i) {
+            SearchServiceType sst = serviceTypeArray.get(i);
             ret.append(sst.serverRequestServiceIdString());
-            if(i!= serviceTypeArray.size() -1){
+            if (i != serviceTypeArray.size() - 1) {
                 ret.append(comma);
             }
         }
@@ -122,7 +125,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
                 resultType.success(totalSearchContentInfo);
 
                 if (null != mSearchDataProviderListener) {
-                    mSearchDataProviderListener.onSearchDataProviderFinishOk(resultType);
+                    mSearchDataProviderListener.onSearchDataProviderFinishOk(onSetClipRequestData(resultType));
                 }
 
                 setSearchState(SearchState.finished);
@@ -130,24 +133,81 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
         }
     }
 
+    /**
+     * クリップ画面表示データ作成
+     *
+     * @param resultType サーバレスポンス
+     * @return クリップ画面表示データ
+     */
+    private ResultType<TotalSearchContentInfo> onSetClipRequestData(ResultType<TotalSearchContentInfo> resultType) {
+        TotalSearchContentInfo content = resultType.getResultType();
+
+        List<ContentsData> contentsDataList = new ArrayList<>();
+
+        //クリップフラグ設定用
+        final String SEARCH_OK_TRUE = "1";
+        final String SEARCH_OK_FALSE = "0";
+
+        int thisTimeTotal = content.searchContentInfo.size();
+        for (int i = 0; i < thisTimeTotal; ++i) {
+            ContentsData contentsData = new ContentsData();
+            SearchContentInfo ci = content.searchContentInfo.get(i);
+
+            //画面表示用データ設定
+            contentsData.setContentsId(ci.contentId);
+            contentsData.setServiceId(String.valueOf(ci.serviceId));
+            contentsData.setThumURL(ci.contentPictureUrl);
+            contentsData.setTitle(ci.title);
+
+            SearchContentInfo searchContentInfo = resultType.getResultType().searchContentInfo.get(i);
+
+            //TODO:レスポンスパラメータがないため、仮データを設定
+            String searchOk;
+            if (searchContentInfo.clipFlag) {
+                searchOk = SEARCH_OK_TRUE;
+            } else {
+                searchOk = SEARCH_OK_FALSE;
+            }
+            contentsData.setSearchOk(searchOk);
+            ClipRequestData requestData = new ClipRequestData();
+            requestData.setCrid("672017101601");
+            requestData.setServiceId("672017101601");
+            requestData.setEventId("14c2");
+            requestData.setTitleId("");
+            requestData.setTitle(searchContentInfo.title);
+            requestData.setRValue("G");
+            requestData.setLinearStartDate("1513071135");
+            requestData.setLinearEndDate("1513306982");
+            requestData.setSearchOk(searchOk);
+            requestData.setClipTarget(searchContentInfo.title); //TODO:仕様確認中 現在はトーストにタイトル名を表示することとしています
+            requestData.setIsNotify("disp_type", "content_type",
+                    "display_end_date", "tv_service", "dtv");
+            contentsData.setRequestData(requestData);
+            contentsDataList.add(contentsData);
+        }
+        resultType.getResultType().setContentsDataList(contentsDataList);
+        return resultType;
+    }
+
     @Override
     public void onFailure(TotalSearchErrorData result) {
-        if(SearchState.canceled != getSearchState()){
+        if (SearchState.canceled != getSearchState()) {
 
-            SearchResultError error = SearchResultError.systemError;;
-            if(result.error.id.equals(SearchConstants.SearchResponseErrorId.requestError)){
+            SearchResultError error = SearchResultError.systemError;
+            ;
+            if (result.error.id.equals(SearchConstants.SearchResponseErrorId.requestError)) {
                 error = SearchResultError.requestError;
-            } else if (result.error.id.equals(SearchConstants.SearchResponseErrorId.systemError)){
+            } else if (result.error.id.equals(SearchConstants.SearchResponseErrorId.systemError)) {
                 error = SearchResultError.systemError;
             }
 
             //if(null!=handler){
 
-            ResultType<SearchResultError> resultType= new ResultType<SearchResultError>();
+            ResultType<SearchResultError> resultType = new ResultType<SearchResultError>();
             resultType.failure(error);
 
             //handler.init(resultType);
-            if(null!=mSearchDataProviderListener){
+            if (null != mSearchDataProviderListener) {
                 mSearchDataProviderListener.onSearchDataProviderFinishNg(resultType);
             }
             //}

@@ -86,8 +86,66 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
         return baseFragment.mData.size() / NUM_PER_PAGE;
     }
 
+    /**
+     * 取得結果が更新前と同じなら更新しない
+     *
+     * @param tvClipContentInfo 取得コンテンツデータ
+     * @return
+     */
+    private boolean isSkipTv(List<ContentsData> tvClipContentInfo) {
+        ClipListBaseFragment baseFragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_TV, this);
+        if (null == baseFragment || null == baseFragment.mData || 0 == baseFragment.mData.size()) {
+            return false;
+        }
+
+        if (null == tvClipContentInfo || 0 == tvClipContentInfo.size()) {
+            return true;
+        }
+
+        ContentsData item1 = baseFragment.mData.get(baseFragment.mData.size() - 1);
+        ContentsData item2 = tvClipContentInfo.get(tvClipContentInfo.size() - 1);
+        return isContentEqual(item1, item2);
+    }
+
     private static final int CLIP_LIST_PAGE_NO_OF_TV = 0;
     private static final int CLIP_LIST_PAGE_NO_OF_VOD = 1;
+
+    /**
+     * 取得結果が更新前と同じなら更新しない
+     *
+     * @param vodClipContentInfo 取得コンテンツデータ
+     * @return
+     */
+    private boolean isSkipVod(List<ContentsData> vodClipContentInfo) {
+        ClipListBaseFragment baseFragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_VOD, this);
+        if (null == baseFragment || null == baseFragment.mData || 0 == baseFragment.mData.size()) {
+            return false;
+        }
+
+        if (null == vodClipContentInfo || 0 == vodClipContentInfo.size()) {
+            return true;
+        }
+
+        ContentsData item1 = baseFragment.mData.get(baseFragment.mData.size() - 1);
+        ContentsData item2 = vodClipContentInfo.get(vodClipContentInfo.size() - 1);
+        return isContentEqual(item1, item2);
+    }
+
+    /**
+     * 同じコンテンツデータか判定
+     *
+     * @param item1 取得済みデータ
+     * @param item2 更新データ
+     * @return 判定結果
+     */
+    private boolean isContentEqual(ContentsData item1, ContentsData item2) {
+        if (null == item1 || null == item2) {
+            return false;
+        }
+        return item1.getThumURL().equals(item2.getThumURL())
+                && item1.getRatStar().equals(item2.getRatStar())
+                && item1.getTitle().equals(item2.getTitle());
+    }
 
     private void initData() {
         mTabNames = getResources().getStringArray(R.array.tab_clip_names);
@@ -123,6 +181,11 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
             return;
         }
 
+        if (isSkipTv(clipContentInfo)) {
+            resetCommunication();
+            return;
+        }
+
         ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_TV, this);
 
         int pageNumber = getCurrentNumber();
@@ -150,6 +213,11 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
 
         if (0 == clipContentInfo.size()) {
             //doing
+            resetCommunication();
+            return;
+        }
+
+        if (isSkipVod(clipContentInfo)) {
             resetCommunication();
             return;
         }
