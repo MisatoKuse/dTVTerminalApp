@@ -58,7 +58,7 @@ public class DaccountControl implements
     }
 
     /**
-     * 実行クラス名控え
+     * 実行クラス識別値控え
      */
     private CHECK_LAST_CLASS mResultClass;
 
@@ -73,9 +73,9 @@ public class DaccountControl implements
     }
 
     /**
-     * エラーの値は同じ値でも実行する要求によって異なる場合があるので、実行クラス名を取得
+     * エラーの値は同じ値でも実行する要求によって異なる場合があるので、実行クラス識別値を取得
      *
-     * @return 実行したクラスの名前
+     * @return 実行したクラスの識別値
      */
     public CHECK_LAST_CLASS getmResultClass() {
         return mResultClass;
@@ -190,7 +190,7 @@ public class DaccountControl implements
             // 登録結果が登録/更新成功か、既に登録済みならば、ワンタイムパスワードの取得を行う
             DaccountGetOTT getOneTimePass = new DaccountGetOTT();
             getOneTimePass.execDaccountGetOTT(mContext, this);
-            //クラス名を控える
+            //クラスの識別値を控える
             mResultClass = CHECK_LAST_CLASS.ONE_TIME_PASS_WORD;
         } else {
             //実行失敗なので、エラーを返す
@@ -260,7 +260,7 @@ public class DaccountControl implements
     }
 
     /**
-     * 最後のクラスがサービスチェックかどうかのチェック
+     * 最後に実行したのがサービスチェックかどうかのチェック
      *
      * @return そうならばtrue
      */
@@ -270,7 +270,7 @@ public class DaccountControl implements
     }
 
     /**
-     * 最後のクラスがサービス登録かどうかのチェック
+     * 最後に実行したのがサービス登録かどうかのチェック
      *
      * @return そうならばtrue
      */
@@ -280,7 +280,7 @@ public class DaccountControl implements
     }
 
     /**
-     * 最後のクラスがワンタイムパスワード取得かどうかのチェック
+     * 最後に実行したのがワンタイムパスワード取得かどうかのチェック
      *
      * @return そうならばtrue
      */
@@ -353,6 +353,12 @@ public class DaccountControl implements
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             DTVTLogger.start();
+
+            if(mContext == null) {
+                //コンテキストがヌルならば帰る
+                DTVTLogger.end();
+                return;
+            }
 
             //TODO: 実行確認用メッセージ・後ほど削除
             Toast.makeText(mContext, R.string.d_account_chamge_message, Toast.LENGTH_LONG).show();
