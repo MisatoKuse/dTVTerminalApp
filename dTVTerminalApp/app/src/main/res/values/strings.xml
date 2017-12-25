@@ -243,7 +243,8 @@
         <item>キャンセル</item>
     </string-array>
     <string name="recording_reservation_complete_dialog_title">録画予約完了</string>
-    <string name="recording_reservation_complete_dialog_msg">録画予約依頼を受け付けました。\n録画予約一覧を表示しますか？</string>
+    <string name="recording_reservation_complete_dialog_msg">録画予約依頼を受け付けました。</string>
+    <string name="recording_reservation_complete_dialog_ok">OK</string>
     <string name="recording_reservation_complete_dialog_confirm">表示する</string>
     <string name="recording_reservation_complete_dialog_cancel">表示しない</string>
     <string name="recording_reservation_failed_dialog_msg">録画予約失敗しました。</string>

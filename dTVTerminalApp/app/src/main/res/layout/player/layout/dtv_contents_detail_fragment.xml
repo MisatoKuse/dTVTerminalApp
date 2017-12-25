@@ -53,6 +53,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/darker_gray" />
+
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -92,7 +93,6 @@
                         android:paddingStart="@dimen/contents_detail_2dp"
                         android:text="PG 12"
                         android:textColor="@android:color/white" />
-
                 </RelativeLayout>
             </LinearLayout>
 
@@ -109,9 +109,11 @@
                     android:layout_height="@dimen/contents_detail_icon_size"
                     android:scaleType="fitXY"
                     android:background="@android:color/black"
-                    android:layout_toStartOf="@+id/dtv_contents_detail_fragment_clip_iv"
+                    android:layout_marginRight="@dimen/contents_detail_icon_margin"
+                    android:layout_toStartOf="@+id/contents_detail_clip_button"
                     android:src="@drawable/recording_reservation_rec_icon_selector"
                     android:visibility="invisible"/>
+
                 <ImageView
                     android:id="@+id/contents_detail_clip_button"
                     android:layout_width="@dimen/contents_detail_clip_size"

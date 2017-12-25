@@ -161,11 +161,9 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     private boolean isHideOperate = true;
     private boolean mIsOncreateOk = false;
     private RecordingReservationContentsDetailInfo mRecordingReservationContentsDetailInfo = null;
-    private AlertDialog.Builder mDialogBuilder = null;
     private CustomDialog mRecordingReservationCustomtDialog = null;
     private final int RECORDING_RESERVATION_DIALOG_INDEX_0 = 0;// 予約録画する
     private final int RECORDING_RESERVATION_DIALOG_INDEX_1 = 1;// キャンセル
-    private Context mContext = null;
 
     private Runnable mHideCtrlViewThread = new Runnable() {
 
@@ -189,7 +187,6 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         setStatusBarColor(R.color.contents_header_background);
         setNoTitle();
         initView();
-        mContext = this;
     }
 
     @Override
@@ -1756,19 +1753,12 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
      * 録画予約成功時ダイアログ表示
      */
     private void showCompleteDialog() {
-        CustomDialog completeRecordingReservationDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+        CustomDialog completeRecordingReservationDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
         completeRecordingReservationDialog.setTitle(getResources().getString(R.string.recording_reservation_complete_dialog_title));
         completeRecordingReservationDialog.setContent(getResources().getString(R.string.recording_reservation_complete_dialog_msg));
-        completeRecordingReservationDialog.setConfirmText(R.string.recording_reservation_complete_dialog_confirm);
-        completeRecordingReservationDialog.setCancelText(R.string.recording_reservation_complete_dialog_cancel);
+        completeRecordingReservationDialog.setConfirmText(R.string.recording_reservation_complete_dialog_ok);
         // Cancelable
         completeRecordingReservationDialog.setCancelable(false);
-        completeRecordingReservationDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-            @Override
-            public void onOKCallback(boolean isOK) {
-                startActivity(RecordReservationListActivity.class, null);
-            }
-        });
         completeRecordingReservationDialog.showDialog();
     }
 
@@ -1793,7 +1783,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                 case RECORDING_RESERVATION_DIALOG_INDEX_0: // 録画予約するをタップ
                     mRecordingReservationContentsDetailInfo.setLoopTypeNum(
                             RecordingReservationContentsDetailInfo.REMOTE_RECORDING_RESERVATION_LOOP_TYPE_NUM_0);
-                    showRecordiongReservationConfirmDialog();
+                    showRecordingReservationConfirmDialog();
                     dialog.dismiss();
                     break;
                 case RECORDING_RESERVATION_DIALOG_INDEX_1: // キャンセルをタップ
@@ -1809,7 +1799,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     /**
      * 録画予約確認ダイアログを表示
      */
-    private void showRecordiongReservationConfirmDialog() {
+    private void showRecordingReservationConfirmDialog() {
         CustomDialog completeRecordingReservationDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
         completeRecordingReservationDialog.setTitle(getResources().getString(R.string.recording_reservation_confirm_dialog_title));
         completeRecordingReservationDialog.setContent(getResources().getString(R.string.recording_reservation_confirm_dialog_msg));

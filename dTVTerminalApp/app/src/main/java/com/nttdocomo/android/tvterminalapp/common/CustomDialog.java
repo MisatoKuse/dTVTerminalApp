@@ -136,6 +136,9 @@ public class CustomDialog {
         switch (dialogType) {
             case ERROR:
                 tv_cancel.setVisibility(View.GONE);
+                if(confirmText != null) {
+                    tv_confirm.setText(confirmText);
+                }
                 break;
             case SELECT:
                 if(isConfirmVisiblityChanged) {
