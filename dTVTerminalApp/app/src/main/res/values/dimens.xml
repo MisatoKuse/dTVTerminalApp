@@ -134,6 +134,10 @@
     <dimen name="main_setting_view_margin">0dp</dimen>
     <dimen name="main_setting_text_end_margin">0dp</dimen>
     <dimen name="main_setting_list_height">60dp</dimen>
+    <dimen name="main_setting_list_divider_height">1dp</dimen>
+    <dimen name="main_setting_list_detail_item_textsize">20sp</dimen>
+    <dimen name="main_setting_list_status_textsize">14sp</dimen>
+    <dimen name="main_setting_list_checkbox_length">32dp</dimen>
     <dimen name="main_setting_checkbox_margin">10dp</dimen>
     <dimen name="main_setting_quality_list_separate">1dp</dimen>
 </resources>

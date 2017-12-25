@@ -177,7 +177,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         mSettingList.add(new MainSettingUtils(itemName[4], BLANK, false, CATEGORY));
         mSettingList.add(new MainSettingUtils(itemName[5], BLANK, true, ITEM));
         if (isSDCard) {
-            //SDCardが存在しない場合、ストレージ保存先の項目は非表示
+            //SDCardスロットが存在しない場合、ストレージ保存先の項目は非表示
             mSettingList.add(new MainSettingUtils(itemName[6], BLANK, false, CATEGORY));
             mSettingList.add(new MainSettingUtils(itemName[7], storage, true, ITEM));
         }
@@ -186,7 +186,8 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         mSettingList.add(new MainSettingUtils(itemName[10], BLANK, false, CATEGORY));
         mSettingList.add(new MainSettingUtils(itemName[11], BLANK, true, ITEM));
         mSettingList.add(new MainSettingUtils(itemName[12], BLANK, false, CATEGORY));
-        mSettingList.add(new MainSettingUtils(itemName[13], "2.1.0(仮)", false, ITEM));
+        //TODO アプリのバージョンを正式に取得する処理の追加
+        mSettingList.add(new MainSettingUtils(itemName[13], "2.1.0", false, ITEM));
         mSettingList.add(new MainSettingUtils(itemName[14], BLANK, true, ITEM));
         mSettingList.add(new MainSettingUtils(itemName[15], BLANK, true, ITEM));
         mSettingList.add(new MainSettingUtils(itemName[16], BLANK, true, ITEM));

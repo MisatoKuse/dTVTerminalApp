@@ -6,24 +6,29 @@ package com.nttdocomo.android.tvterminalapp.adapter;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.utils.MainSettingUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainSettingListAdapter extends BaseAdapter {
 
     private final Context mContext;
     private final int mItemLayoutResource;
-    private List<MainSettingUtils> mSettingList;
+    private final List<MainSettingUtils> mSettingList;
+    //カテゴリ時の項目名の文字サイズ
+    private final static int CATEGORY_TEXT_SIZE = 14;
+    //非カテゴリ時の項目名の文字サイズ
+    private final static int ITEM_TEXT_SIZE = 16;
+    //バージョン情報表示時のマージン
+    private final static int VERSION_MARGIN = 40;
 
     /**
      * コンストラクタ
@@ -71,19 +76,33 @@ public class MainSettingListAdapter extends BaseAdapter {
         holder.mText.setText(mainSettingUtils.getText());
         holder.mStateText.setText(mainSettingUtils.getStateText());
         if (!mainSettingUtils.isArrow()) {
-            //TODO バージョン情報を右寄せ。バージョン情報用のViewを作成する？
+            //バージョン情報は">"と同じ位置に表示させる
             holder.mForwardImage.setVisibility(View.INVISIBLE);
+            if (mainSettingUtils.getText().equals(mContext.getString(R.string.main_setting_list_version_info))) {
+                holder.mForwardImage.setVisibility(View.GONE);
+                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) holder.mStateText.getLayoutParams();
+                params.addRule(RelativeLayout.START_OF, 0);
+                params.addRule(RelativeLayout.ALIGN_PARENT_END, 1);
+                params.setMarginEnd(VERSION_MARGIN);
+                holder.mStateText.setLayoutParams(params);
+            }
         } else {
             holder.mForwardImage.setVisibility(View.VISIBLE);
-        }
-        if (mainSettingUtils.isCategory()) {
-            holder.mText.setTextColor(ContextCompat.getColor(mContext, R.color.setting_category_color_white));
-            holder.mText.setTextSize(14);
-        } else {
-            holder.mText.setTextColor(ContextCompat.getColor(mContext, R.color.setting_text_color_white));
-            holder.mText.setTextSize(16);
+
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) holder.mStateText.getLayoutParams();
+            params.addRule(RelativeLayout.START_OF, holder.mForwardImage.getId());
+            params.addRule(RelativeLayout.ALIGN_PARENT_END, 0);
+            holder.mStateText.setLayoutParams(params);
         }
 
+        //カテゴリーと項目とで文字サイズを変更する
+        if (mainSettingUtils.isCategory()) {
+            holder.mText.setTextColor(ContextCompat.getColor(mContext, R.color.setting_category_color_white));
+            holder.mText.setTextSize(CATEGORY_TEXT_SIZE);
+        } else {
+            holder.mText.setTextColor(ContextCompat.getColor(mContext, R.color.setting_text_color_white));
+            holder.mText.setTextSize(ITEM_TEXT_SIZE);
+        }
         return view;
     }
 
