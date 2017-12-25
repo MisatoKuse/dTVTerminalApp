@@ -26,9 +26,10 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.dataprovider.ClipDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 
 import java.util.List;
@@ -120,7 +121,7 @@ public class DtvContentsDetailFragment extends Fragment {
         clipButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((BaseActivity) mActivity).sendClipRequest(ClipDataProvider.setClipData(mOtherContentsDetailData.getVodMetaFullData()));
+                ((BaseActivity) mActivity).sendClipRequest(setClipData(mOtherContentsDetailData.getVodMetaFullData()));
             }
         });
         if (mOtherContentsDetailData != null) {
@@ -129,6 +130,30 @@ public class DtvContentsDetailFragment extends Fragment {
             mOtherContentsDetailData = new OtherContentsDetailData();
         }
         return view;
+    }
+
+    /**
+     * クリップリクエストに必要なデータを作成する(コンテンツ詳細用)
+     *
+     * @param metaFullData VODメタデータ
+     * @return Clipリクエストに必要なデータ
+     */
+    private static ClipRequestData setClipData(VodMetaFullData metaFullData){
+        //コンテンツ詳細は、メタデータを丸ごと持っているため、そのまま利用する
+        ClipRequestData requestData = new ClipRequestData();
+        requestData.setCrid(metaFullData.getCrid());
+        requestData.setServiceId(metaFullData.getmService_id());
+        requestData.setEventId(metaFullData.getmEvent_id());
+        requestData.setTitleId(metaFullData.getTitle_id());
+        requestData.setTitle(metaFullData.getTitle());
+        requestData.setRValue(metaFullData.getR_value());
+        requestData.setLinearStartDate(String.valueOf(metaFullData.getAvail_start_date()));
+        requestData.setLinearEndDate(String.valueOf(metaFullData.getAvail_end_date()));
+        requestData.setSearchOk(metaFullData.getmSearch_ok());
+        requestData.setClipTarget(metaFullData.getTitle()); //TODO:仕様確認中 現在はトーストにタイトル名を表示することとしています
+        requestData.setIsNotify(metaFullData.getDisp_type(), metaFullData.getmContent_type(),
+                String.valueOf(metaFullData.getAvail_end_date()), metaFullData.getmTv_service(), metaFullData.getDtv());
+        return requestData;
     }
 
     private void setDetailData() {

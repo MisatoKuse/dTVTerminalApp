@@ -14,6 +14,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataM
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.TvScheduleInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.ProgramDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
 import com.nttdocomo.android.tvterminalapp.model.program.Channel;
 import com.nttdocomo.android.tvterminalapp.model.program.ChannelsInfo;
@@ -258,7 +259,7 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                         schedule.setImageUrl(thumb);
                         schedule.setTitle(title);
                         schedule.setChNo(chNo);
-                        schedule.setClipRequestData(ClipDataProvider.setClipData(hashMap));
+                        schedule.setClipRequestData(setClipData(hashMap));
 
                         if (!TextUtils.isEmpty(chNo)) {//CH毎番組データ取得して、整形する
                             ArrayList<Channel> oldChannelList = channelsInfo.getChannels();
@@ -301,6 +302,30 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
         }
     }
 
+    /**
+     * クリップリクエストに必要なデータを作成する(番組表用)
+     *
+     * @param hashMap 番組表データ
+     * @return Clipリクエストに必要なデータ
+     */
+    private static ClipRequestData setClipData(HashMap<String, String> hashMap){
+        ClipRequestData requestData = new ClipRequestData();
+        requestData.setCrid(hashMap.get(JsonContents.META_RESPONSE_CRID));
+        requestData.setServiceId(hashMap.get(JsonContents.META_RESPONSE_SERVICE_ID));
+        requestData.setEventId(hashMap.get(JsonContents.META_RESPONSE_EVENT_ID));
+        requestData.setTitleId(hashMap.get(JsonContents.META_RESPONSE_TITLE_ID));
+        requestData.setTitle(hashMap.get(JsonContents.META_RESPONSE_TITLE));
+        requestData.setRValue(hashMap.get(JsonContents.META_RESPONSE_R_VALUE));
+        requestData.setLinearStartDate(String.valueOf(hashMap.get(JsonContents.META_RESPONSE_AVAIL_START_DATE)));
+        requestData.setLinearEndDate(String.valueOf(hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE)));
+        requestData.setSearchOk(hashMap.get(JsonContents.META_RESPONSE_SEARCH_OK));
+        requestData.setClipTarget(hashMap.get(JsonContents.META_RESPONSE_TITLE)); //TODO:仕様確認中 現在はトーストにタイトル名を表示することとしています
+        requestData.setIsNotify(hashMap.get(JsonContents.META_RESPONSE_DISP_TYPE),
+                hashMap.get(JsonContents.META_RESPONSE_CONTENT_TYPE),
+                String.valueOf(hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE)),
+                hashMap.get(JsonContents.META_RESPONSE_TV_SERVICE), hashMap.get(JsonContents.META_RESPONSE_DTV));
+        return requestData;
+    }
     /**
      * チャンネルデータの整形
      */
