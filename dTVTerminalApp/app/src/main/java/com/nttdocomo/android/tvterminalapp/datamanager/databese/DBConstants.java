@@ -117,6 +117,9 @@ public class DBConstants {
             JsonContents.META_RESPONSE_QUNIT  + " text, " +
             JsonContents.META_RESPONSE_PU_START_DATE  + " text, " +
             JsonContents.META_RESPONSE_PU_END_DATE  + " text, " +
+            JsonContents.META_RESPONSE_EVENT_ID + " text, " +
+            JsonContents.META_RESPONSE_TITLE_ID + " text, " +
+            JsonContents.META_RESPONSE_SEARCH_OK + " text, " +
             JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
             JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_TITLE +" text, " +
             JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_DISP_TYPE +" text, " +
