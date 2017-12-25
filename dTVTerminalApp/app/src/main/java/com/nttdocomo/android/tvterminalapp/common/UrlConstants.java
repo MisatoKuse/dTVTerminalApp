@@ -183,6 +183,7 @@ public class UrlConstants {
          * リモート録画予約登録
          */
         public static final String REMOTE_RECORDING_RESERVATION_CLIENT =
-                PLALA_CLIENT + "/remoterecording/reservation/set";
+//                PLALA_CLIENT + "remoterecording/reservation/set";
+                PLALA_BASE_URL + "remoterecording/reservation/set";
     }
 }

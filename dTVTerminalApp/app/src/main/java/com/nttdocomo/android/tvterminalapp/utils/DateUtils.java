@@ -84,7 +84,7 @@ public class DateUtils {
     private static final int LIMIT_HOUR = 1;
 
     // 曜日配列
-    private static final String[] STRING_DAY_OF_WEEK = {null,"日","月","火","水","木","金","土"};
+    private static final String[] STRING_DAY_OF_WEEK = {null, "日", "月", "火", "水", "木", "金", "土"};
 
     //マイ番組表取得日付キー
     public static final String MY_CHANNEL_LIST_LAST_INSERT = "MyChannelListLastInsert";
@@ -102,8 +102,11 @@ public class DateUtils {
     public static final int DAY_OF_WEEK_FRIDAY = 6;
     public static final int DAY_OF_WEEK_SATURDAY = 7;
 
-    /**  */
+    /**
+     * 1日のエポック秒
+     */
     public static final long EPOCH_TIME_ONE_DAY = 86400;
+    public static final long EPOCH_TIME_ONE_HOUR = 3600;
 
 
     /**
@@ -135,10 +138,10 @@ public class DateUtils {
     /**
      * 現在日時に1日加算した後に永続化
      *
-     * @param key name
+     * @param key   name
      * @param value value
      */
-    private void saveDataToSharePre(String key, String value){
+    private void saveDataToSharePre(String key, String value) {
         //データ永続化
         SharedPreferences data = mContext.getSharedPreferences(DATA_SAVE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = data.edit();
@@ -254,10 +257,10 @@ public class DateUtils {
         Calendar nowTime = Calendar.getInstance();
 
         //年月日データ以外をゼロにして、本日の0時0分0秒とする
-        nowTime.set(Calendar.HOUR_OF_DAY,0);
-        nowTime.set(Calendar.MINUTE,0);
-        nowTime.set(Calendar.SECOND,0);
-        nowTime.set(Calendar.MILLISECOND,0);
+        nowTime.set(Calendar.HOUR_OF_DAY, 0);
+        nowTime.set(Calendar.MINUTE, 0);
+        nowTime.set(Calendar.SECOND, 0);
+        nowTime.set(Calendar.MILLISECOND, 0);
 
         return (nowTime.getTimeInMillis() / 1000);
     }
@@ -317,7 +320,7 @@ public class DateUtils {
      */
     public static String getRecordShowListItem(long time) {
         Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(time*1000);
+        cal.setTimeInMillis(time * 1000);
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN_RECORDING_RESERVATION);
         String text = sdf.format(new Date(cal.getTimeInMillis()));
 

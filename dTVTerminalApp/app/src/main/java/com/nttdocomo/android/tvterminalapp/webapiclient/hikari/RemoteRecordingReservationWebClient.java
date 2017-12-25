@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationResultResponse;
@@ -13,7 +14,7 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.RemoteRecordi
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class RemoteRecordingReservationClient
+public class RemoteRecordingReservationWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
     /**
@@ -35,6 +36,7 @@ public class RemoteRecordingReservationClient
 
     @Override
     public void onAnswer(ReturnCode returnCode) {
+        DTVTLogger.debug("Client onAnswer");
         if (mRemoteRecordingReservationJsonParserCallback != null) {
             //JSONをパースして、データを返す
             new RemoteRecordingReservationJsonParser(
@@ -45,6 +47,7 @@ public class RemoteRecordingReservationClient
 
     @Override
     public void onError() {
+        DTVTLogger.debug("Client onError");
         if (mRemoteRecordingReservationJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
             mRemoteRecordingReservationJsonParserCallback
@@ -66,6 +69,7 @@ public class RemoteRecordingReservationClient
         //パラメーターのチェック
         if (!checkNormalParameter(contentsDetailInfo, remoteRecordingReservationJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、falseで帰る
+            DTVTLogger.debug("Parameter Error");
             return false;
         }
 
@@ -96,35 +100,43 @@ public class RemoteRecordingReservationClient
                                                  remoteRecordingReservationJsonParserCallback) {
         // 放送種別が 1 以外ならばfalse
         if (contentsDetailInfo.getPlatformType() != 1) {
+            DTVTLogger.debug("PlatformType:error");
             return false;
         }
         // サービスIDが null ならばfalse
         if (contentsDetailInfo.getServiceId() == null) {
+            DTVTLogger.debug("ServiceId:error");
             return false;
         }
         // 定期予約指定値が 0 かつイベントIDがない場合false
         if (contentsDetailInfo.getLoopTypeNum() == 0
                 && contentsDetailInfo.getEventId() == null) {
+            DTVTLogger.debug("EventId:error");
             return false;
         }
         // 番組タイトルが設定されていない場合はfalse
         if (contentsDetailInfo.getTitle() == null) {
+            DTVTLogger.debug("Title:error");
             return false;
         }
         // 開始時間が設定されていない場合はfalse
         if (contentsDetailInfo.getStartTime() <= 0) {
+            DTVTLogger.debug("StartTime:error");
             return false;
         }
         // 予約時間の長さが設定されていない場合はfalse
         if (contentsDetailInfo.getDuration() <= 0) {
+            DTVTLogger.debug("Duration:error");
             return false;
         }
         // 番組のパレンタル設定値が設定されていない場合はfalse
         if (contentsDetailInfo.getRValue() == null) {
+            DTVTLogger.debug("R_Value:error");
             return false;
         }
         //コールバックが指定されていないならばfalse
         if (remoteRecordingReservationJsonParserCallback == null) {
+            DTVTLogger.debug("setCallback:error");
             return false;
         }
 
@@ -159,7 +171,7 @@ public class RemoteRecordingReservationClient
             //JSONの作成に失敗したので空文字とする
             answerText = "";
         }
-
+        DTVTLogger.debug(answerText);
         return answerText;
     }
 }

@@ -25,7 +25,7 @@ import com.nttdocomo.android.tvterminalapp.model.program.Channel;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsDetailGetWebClient;
-import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RemoteRecordingReservationClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RemoteRecordingReservationWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RoleListWebClient;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.ROLELIST_LAST_
 
 public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient.ContentsDetailJsonParserCallback,
         RoleListWebClient.RoleListJsonParserCallback, ChannelWebClient.ChannelJsonParserCallback,
-        DbThread.DbOperation, RemoteRecordingReservationClient.RemoteRecordingReservationJsonParserCallback {
+        DbThread.DbOperation, RemoteRecordingReservationWebClient.RemoteRecordingReservationJsonParserCallback {
 
     private ApiDataProviderCallback apiDataProviderCallback;
     private static final String DISPLAY_TYPE[] = {"", "hikaritv", "dch"};
@@ -313,8 +313,7 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
     }
 
     public void requestRecordingReservation(RecordingReservationContentsDetailInfo info) {
-        RemoteRecordingReservationClient client = new RemoteRecordingReservationClient();
+        RemoteRecordingReservationWebClient client = new RemoteRecordingReservationWebClient();
         client.getRemoteRecordingReservationApi(info, this);
-
     }
 }
