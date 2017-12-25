@@ -53,6 +53,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     private List mMenuItemTitles = null;
     private List mMenuItemCount = null;
 
+    // TODO:メニュー表示種別
     public static final int INT_NONE_COUNT_STATUS = -1;
 
     /**
@@ -453,7 +454,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
 
         //クリップ
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_clip));
-        mMenuItemCount.add(mMenuItemParam.getClipCount());
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //ビデオ
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_video));
@@ -469,7 +470,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
 
         //録画予約
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_record_reserve));
-        mMenuItemCount.add(mMenuItemParam.getRecordReserveCount());
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
     }
 
     /**
@@ -493,7 +494,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
 
         //お知らせ
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_notice));
-        mMenuItemCount.add(mMenuItemParam.getInformationCount());
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //設定
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_setting));
