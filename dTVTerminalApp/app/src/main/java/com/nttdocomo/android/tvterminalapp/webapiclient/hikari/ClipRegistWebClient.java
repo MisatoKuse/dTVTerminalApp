@@ -6,6 +6,8 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ClipRegistJsonParser;
 
 import org.json.JSONException;
@@ -79,6 +81,11 @@ public class ClipRegistWebClient
                 linearStartDate, linearEndDate, isNotify, clipRegistJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、falseで帰る
             return false;
+        }
+
+        //パラメータチェック終了後にlinearEndDateをyyyy/MM/dd HH:mm:ss形式に変換する
+        if(linearEndDate != null && StringUtil.isNumber(linearEndDate)){
+            linearEndDate = DateUtils.formatEpochToString(Long.parseLong(linearEndDate));
         }
 
         //コールバックの設定

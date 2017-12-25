@@ -11,6 +11,9 @@ import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActi
 
 import org.json.JSONArray;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 /**
  * 文字列加工に関する処理を記載する
@@ -180,4 +183,16 @@ public class StringUtil {
         return "";
     }
 
+    /**
+     * 文字列の値が数値かどうか判定する
+     *
+     * @param num 数値判定文字列
+     * @return 判定結果
+     */
+    public static boolean isNumber(String num) {
+        String regex = "^\\-?[0-9]*\\.?[0-9]+$";
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(num);
+        return m.find();
+    }
 }

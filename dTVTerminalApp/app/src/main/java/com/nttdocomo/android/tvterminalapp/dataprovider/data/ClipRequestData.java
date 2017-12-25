@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
 public class ClipRequestData {
@@ -151,10 +152,16 @@ public class ClipRequestData {
      * @param dTV           dTVフラグ
      */
     public void setIsNotify(String dispType, String contentsType, String linearEndDate, String tvService, String dTV) {
+
+        //yyyy/MM/dd HH:mm:ss形式の時はエポック秒に変換する
+        String epocLinearEndDate = linearEndDate;
+        if (!StringUtil.isNumber(epocLinearEndDate)) {
+            epocLinearEndDate = String.valueOf(DateUtils.getEpochTime(epocLinearEndDate));
+        }
         //EPG/DTVはdispType,contentsTypeの内容で判定する
         if (dispType != null && dispType.equals(TV_PROGRAM_CHECK) &&
                 contentsType != null && contentsType.length() > 0 &&
-                Long.parseLong(linearEndDate) < DateUtils.getNowTimeFormatEpoch()) {
+                Long.parseLong(epocLinearEndDate) < DateUtils.getNowTimeFormatEpoch()) {
             //dispTypeがtv_programかつcontentsTypeにデータが存在かつ番組終了時間が現在時刻未満であればEPGと判断
             mIsNotify = true;
             setTvType(tvService);
