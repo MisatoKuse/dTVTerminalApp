@@ -70,9 +70,7 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter implements AbsListV
             holder.wl_clip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //クリップボタンのイベントを親に渡す
-//                    ((ListView) parent).performItemClick(mView, position, R.id.item_common_result_clip_tv);
-                    //TODO:親に処理を渡すか検討中
+                    //クリップボタンイベント
                     ((BaseActivity) mContext).sendClipRequest(contentsData.getRequestData());
                 }
             });

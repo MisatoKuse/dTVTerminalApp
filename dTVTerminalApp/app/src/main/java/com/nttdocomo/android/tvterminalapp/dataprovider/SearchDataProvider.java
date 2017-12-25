@@ -181,7 +181,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
             requestData.setSearchOk(searchOk);
             requestData.setClipTarget(searchContentInfo.title); //TODO:仕様確認中 現在はトーストにタイトル名を表示することとしています
             requestData.setIsNotify("disp_type", "content_type",
-                    "display_end_date", "tv_service", "dtv");
+                    "1513306982", "tv_service", "dtv");
             contentsData.setRequestData(requestData);
             contentsDataList.add(contentsData);
         }

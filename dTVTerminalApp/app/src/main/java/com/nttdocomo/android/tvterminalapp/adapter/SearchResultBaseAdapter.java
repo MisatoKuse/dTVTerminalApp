@@ -17,6 +17,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
+import com.nttdocomo.android.tvterminalapp.model.search.SearchServiceType;
 
 import java.util.List;
 
@@ -60,15 +61,22 @@ public class SearchResultBaseAdapter extends BaseAdapter {
             holder.tv_title = view.findViewById(R.id.tv_title);
             holder.tv_des = view.findViewById(R.id.tv_des);
             holder.iv_clip = view.findViewById(R.id.iv_clip);
-            holder.iv_clip.setVisibility(View.VISIBLE);
 
-            holder.iv_clip.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // クリップ処理
-                    ((BaseActivity) mContext).sendClipRequest(searchContentInfo.getRequestData());
-                }
-            });
+            //ひかりコンテンツのみクリップボタンを表示する
+            if(searchContentInfo.getServiceId().equals(SearchServiceType.ServiceId.HIKARI_TV_FOR_DOCOMO)){
+
+                holder.iv_clip.setVisibility(View.VISIBLE);
+
+                holder.iv_clip.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // クリップ処理
+                        ((BaseActivity) mContext).sendClipRequest(searchContentInfo.getRequestData());
+                    }
+                });
+            }else{
+                holder.iv_clip.setVisibility(View.GONE);
+            }
             float mWidth = (float)mContext.getResources().getDisplayMetrics().widthPixels / 3;
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int)mWidth,(int)mWidth/2);
             holder.iv_thumbnail.setLayoutParams(layoutParams);
