@@ -18,8 +18,33 @@ import java.util.Set;
  * dアカウントで状況の変化が発生した場合の通知を受け取るレシーバー
  */
 public class DaccountReceiver extends BroadcastReceiver {
+    //前回受信時間
+    private static long sBeforeReceiveTime = 0;
+
+    //連続通信扱い時間・5秒とする
+    static final long REPEAT_RECIEVE_TIME = 5000L;
+
     @Override
     public void onReceive(Context context, Intent intent) {
+        DTVTLogger.start();
+        //現在日時取得
+        long nowTime = System.currentTimeMillis();
+
+        DTVTLogger.debug("receive time:" + nowTime + " before time:" + sBeforeReceiveTime +
+                " difference:" + (nowTime - sBeforeReceiveTime) +
+                " INTERVAL:" + REPEAT_RECIEVE_TIME +
+                " answer:" + (sBeforeReceiveTime + REPEAT_RECIEVE_TIME > nowTime));
+
+        if (sBeforeReceiveTime + REPEAT_RECIEVE_TIME > nowTime) {
+            // 前回のdアカウント設定アプリからの通知から極端に短い時間で再通知を受けた場合は、ユーザー切り替えとなる。
+            // キャッシュ削除処理の重複防止用に、処理をスキップする
+            DTVTLogger.debug("receive short repaeat skip role=" + intent.getAction());
+            return;
+        }
+
+        //今の時間を前回時間にする
+        sBeforeReceiveTime = nowTime;
+
         //ブロードキャストの原因の取得
         String role = intent.getAction();
 
@@ -40,7 +65,7 @@ public class DaccountReceiver extends BroadcastReceiver {
                 //デフォルトIDの設定通知を受け取った。
                 DTVTLogger.debug("SET_ID_RECEIVER");
 
-                //ユーザーが登録された場合は、キャッシュクリアを呼ぶ。その後は再起動
+                //ユーザーが登録された場合は、キャッシュクリアを呼ぶ。
                 DaccountControl.cacheClear(context);
 
                 break;
@@ -48,7 +73,7 @@ public class DaccountReceiver extends BroadcastReceiver {
                 //ユーザー認証通知を受け取った。
                 DTVTLogger.debug("USER_AUTH_RECEIVER");
 
-                //ユーザーが登録された場合は、キャッシュクリアを呼ぶ。その後は再起動
+                //ユーザーが登録された場合は、キャッシュクリアを呼ぶ。
                 DaccountControl.cacheClear(context);
 
                 break;
@@ -56,7 +81,7 @@ public class DaccountReceiver extends BroadcastReceiver {
                 //ユーザー削除通知を受け取った。
                 DTVTLogger.debug("DELETE_ID_RECEIVER");
 
-                //ユーザーが削除されていた場合は、キャッシュクリアを呼ぶ。その後は再起動
+                //ユーザーが削除されていた場合は、キャッシュクリアを呼ぶ。
                 DaccountControl.cacheClear(context);
 
                 break;
@@ -64,7 +89,7 @@ public class DaccountReceiver extends BroadcastReceiver {
                 //ユーザー無効化通知を受け取った。
                 DTVTLogger.debug("INVALIDATE_ID_RECEIVER");
 
-                //ユーザーが無効化されていた場合は、キャッシュクリアを呼ぶ。その後は再起動
+                //ユーザーが無効化されていた場合は、キャッシュクリアを呼ぶ。
                 DaccountControl.cacheClear(context);
 
                 break;

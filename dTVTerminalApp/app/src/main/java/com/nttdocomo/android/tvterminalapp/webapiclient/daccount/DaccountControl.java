@@ -319,7 +319,7 @@ public class DaccountControl implements
         Context mContext = null;
 
         @Override
-        protected Void doInBackground(Context... contexts) {
+        protected synchronized Void doInBackground(Context... contexts) {
             DTVTLogger.start();
 
             //コンテキストの退避
@@ -361,13 +361,10 @@ public class DaccountControl implements
             }
 
             //TODO: 実行確認用メッセージ・後ほど削除
-            Toast.makeText(mContext, R.string.d_account_chamge_message, Toast.LENGTH_LONG).show();
+            //Toast.makeText(mContext, R.string.d_account_chamge_message, Toast.LENGTH_LONG).show();
 
             // 再起動フラグの設定
             SharedPreferencesUtils.setSharedPreferencesRestartFlag(mContext, true);
-
-            //アプリの再起動を行う
-            DAccountUtils.reStartApplication(mContext);
 
             DTVTLogger.end();
         }

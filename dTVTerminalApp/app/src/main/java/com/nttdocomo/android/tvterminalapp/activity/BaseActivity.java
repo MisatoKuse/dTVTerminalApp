@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -35,12 +36,12 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountControl;
@@ -472,6 +473,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      * dアカウント変更後の再起動時のダイアログ
      */
     private void restartMessageDialog() {
+        //呼び出し用のアクティビティの退避
+        final Activity activity = this;
+
         //ダイアログを、OKボタンのコールバックありに設定する
         CustomDialog restartDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
         restartDialog.setContent(getString(R.string.d_account_chamge_message));
@@ -480,7 +484,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             @Override
             public void onOKCallback(boolean isOK) {
                 //OKが押されたので、ホーム画面の表示
-                DAccountUtils.reStartApplication(getApplicationContext());
+                DAccountUtils.reStartApplication(activity);
             }
         });
         restartDialog.showDialog();
