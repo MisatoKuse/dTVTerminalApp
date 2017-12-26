@@ -250,26 +250,31 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_hikari_tv))) {
                 if (null != mMenuDisplayEventListener) {
                     // TVアプリ起動導線(ひかりTV)
+                    mActivity.setRelayClientHandler();
                     RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.HIKARITV);
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dtv_channel))) {
                 if (null != mMenuDisplayEventListener) {
                     // TVアプリ起動導線(dTVチャンネル)
+                    mActivity.setRelayClientHandler();
                     RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL);
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dtv))) {
                 if (null != mMenuDisplayEventListener) {
                     // TVアプリ起動導線(dTV)
+                    mActivity.setRelayClientHandler();
                     RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTV);
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_d_animation))) {
                 if (null != mMenuDisplayEventListener) {
                     // TVアプリ起動導線(dアニメ)
+                    mActivity.setRelayClientHandler();
                     RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE);
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dazn))) {
                 if (null != mMenuDisplayEventListener) {
                     // TVアプリ起動導線(DAZN)
+                    mActivity.setRelayClientHandler();
                     RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DAZN);
                 }
             }

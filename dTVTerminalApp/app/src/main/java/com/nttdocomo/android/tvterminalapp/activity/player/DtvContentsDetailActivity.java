@@ -1526,6 +1526,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         DTVTLogger.start();
         // サービスIDにより起動するアプリを変更する
         if (mDetailData != null) {
+            setRelayClientHandler();
             switch (mDetailData.getServiceId()) {
                 case DTV_CONTENTS_SERVICE_ID: // dTV
                     requestStartApplication(
@@ -1719,7 +1720,9 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         // リスト表示用のアラートダイアログを表示
         if (mRecordingReservationCustomtDialog == null) {
             DTVTLogger.debug("Create Dialog");
-            mRecordingReservationCustomtDialog = createRecordingReservationDialog();
+            // TODO 繰り返し予約処理追加時に切り替え
+//            mRecordingReservationCustomtDialog = createRecordingReservationDialog();
+            mRecordingReservationCustomtDialog = createRecordingReservationConfirmDialog();
         }
         mRecordingReservationCustomtDialog.showDialog();
     }
@@ -1727,27 +1730,28 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     /**
      * リモート録画予約ダイアログを生成
      */
-    private CustomDialog createRecordingReservationDialog() {
-        DTVTLogger.start();
-        CustomDialog recDialog = new CustomDialog(this, CustomDialog.DialogType.SELECT);
-        // Callback
-        recDialog.setItemSelectCallback(mItemSelectCallback);
-        // Title
-        recDialog.setTitle(getResources().getString(R.string.recordiong_reservation_menu_dialog_title));
-        // SelectItem
-        String[] itemArray = getResources().getStringArray(R.array.recording_reservation_menu_dialog_item);
-        List<String> list = new ArrayList<String>();
-        for(String str : itemArray) {
-            list.add(str);
-        }
-        recDialog.setSelectData(list);
-        // Cancelable
-        recDialog.setCancelable(false);
-        recDialog.setCancelVisiblity(View.GONE);
-        DTVTLogger.end();
-
-        return recDialog;
-    }
+    // TODO 繰り返し予約処理追加時に使用
+//    private CustomDialog createRecordingReservationDialog() {
+//        DTVTLogger.start();
+//        CustomDialog recDialog = new CustomDialog(this, CustomDialog.DialogType.SELECT);
+//        // Callback
+//        recDialog.setItemSelectCallback(mItemSelectCallback);
+//        // Title
+//        recDialog.setTitle(getResources().getString(R.string.recordiong_reservation_menu_dialog_title));
+//        // SelectItem
+//        String[] itemArray = getResources().getStringArray(R.array.recording_reservation_menu_dialog_item);
+//        List<String> list = new ArrayList<String>();
+//        for(String str : itemArray) {
+//            list.add(str);
+//        }
+//        recDialog.setSelectData(list);
+//        // Cancelable
+//        recDialog.setCancelable(false);
+//        recDialog.setCancelVisiblity(View.GONE);
+//        DTVTLogger.end();
+//
+//        return recDialog;
+//    }
 
     /**
      * 開始時間と現在時刻の比較
@@ -1799,7 +1803,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                 case RECORDING_RESERVATION_DIALOG_INDEX_0: // 録画予約するをタップ
                     mRecordingReservationContentsDetailInfo.setLoopTypeNum(
                             RecordingReservationContentsDetailInfo.REMOTE_RECORDING_RESERVATION_LOOP_TYPE_NUM_0);
-                    showRecordingReservationConfirmDialog();
+                    createRecordingReservationConfirmDialog();
                     dialog.dismiss();
                     break;
                 case RECORDING_RESERVATION_DIALOG_INDEX_1: // キャンセルをタップ
@@ -1815,15 +1819,15 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     /**
      * 録画予約確認ダイアログを表示
      */
-    private void showRecordingReservationConfirmDialog() {
-        CustomDialog completeRecordingReservationDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-        completeRecordingReservationDialog.setTitle(getResources().getString(R.string.recording_reservation_confirm_dialog_title));
-        completeRecordingReservationDialog.setContent(getResources().getString(R.string.recording_reservation_confirm_dialog_msg));
-        completeRecordingReservationDialog.setConfirmText(R.string.recording_reservation_confirm_dialog_confirm);
-        completeRecordingReservationDialog.setCancelText(R.string.recording_reservation_confirm_dialog_cancel);
+    private CustomDialog createRecordingReservationConfirmDialog() {
+        CustomDialog recordingReservationConfirmDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+        recordingReservationConfirmDialog.setTitle(getResources().getString(R.string.recording_reservation_confirm_dialog_title));
+        recordingReservationConfirmDialog.setContent(getResources().getString(R.string.recording_reservation_confirm_dialog_msg));
+        recordingReservationConfirmDialog.setConfirmText(R.string.recording_reservation_confirm_dialog_confirm);
+        recordingReservationConfirmDialog.setCancelText(R.string.recording_reservation_confirm_dialog_cancel);
         // Cancelable
-        completeRecordingReservationDialog.setCancelable(false);
-        completeRecordingReservationDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+        recordingReservationConfirmDialog.setCancelable(false);
+        recordingReservationConfirmDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(boolean isOK) {
                 DTVTLogger.debug("Request RecordingReservation");
@@ -1831,6 +1835,6 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                 mDetailDataProvider.requestRecordingReservation(mRecordingReservationContentsDetailInfo);
             }
         });
-        completeRecordingReservationDialog.showDialog();
+        return recordingReservationConfirmDialog;
     }
 }
