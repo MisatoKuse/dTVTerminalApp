@@ -17,7 +17,8 @@ public class UrlConstants {
          */
         public static final String RECOMMEND_LIST_GET_URL =
                 //"http://ve.m.support2.smt.docomo.ne.jp/srermd/recommend/index.do";
-                "https://ve.m.support2.smt.docomo.ne.jp/srermd/recommend/index.do";
+                //"https://ve.m.support2.smt.docomo.ne.jp/srermd/recommend/index.do";
+                "https://ve.m.service.smt.docomo.ne.jp/srermd/recommend/index.do";
 
         //TODO: 本物のぷららサーバーが提供されるまでは、テストサーバーのアドレスを指定する
         /**
