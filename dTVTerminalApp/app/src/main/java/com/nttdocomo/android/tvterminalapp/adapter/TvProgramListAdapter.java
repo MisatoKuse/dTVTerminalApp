@@ -20,8 +20,10 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.model.program.Channel;
 import com.nttdocomo.android.tvterminalapp.model.program.Schedule;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -113,21 +115,30 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             mInUsage =true;
         }
 
-        ItemViewHolder(final Schedule schedule) {
+        ItemViewHolder(Schedule schedule) {
             mView = LayoutInflater.from(mContext).inflate(R.layout.tv_program_item_panel, null, false);
             mStartM = mView.findViewById(R.id.tv_program_item_panel_clip_tv);
             mContent = mView.findViewById(R.id.tv_program_item_panel_content_des_tv);
             mThumbnail = mView.findViewById(R.id.tv_program_item_panel_content_thumbnail_iv);
             mLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
             mInUsage =false;
+
+            final ClipRequestData requestData = schedule.getClipRequestData();
+            String clipType = requestData.getType();
             mClipButton = mView.findViewById(R.id.tv_program_item_panel_clip_iv);
-            mClipButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //クリップボタンイベント
-                    ((BaseActivity) mContext).sendClipRequest(schedule.getClipRequestData());
-                }
-            });
+
+            //ひかりコンテンツ判定
+            if (StringUtil.isHikariContents(clipType) || StringUtil.isHikariInDtvContents(clipType)) {
+                mClipButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //クリップボタンイベント
+                        ((BaseActivity) mContext).sendClipRequest(requestData);
+                    }
+                });
+            } else {
+                mClipButton.setVisibility(View.GONE);
+            }
         }
     }
 

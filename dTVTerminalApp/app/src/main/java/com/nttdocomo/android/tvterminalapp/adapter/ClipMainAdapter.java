@@ -19,6 +19,8 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 
 import java.util.List;
 
@@ -63,7 +65,7 @@ public class ClipMainAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(final int position, View convertView, final ViewGroup parent) {
+    public View getView(int position, View convertView, final ViewGroup parent) {
         View view = null;
         ViewHolder holder = null;
         if (convertView == null) {
@@ -73,14 +75,23 @@ public class ClipMainAdapter extends BaseAdapter {
             holder.tv_clip_des = view.findViewById(R.id.tv_clip_des);
             holder.rb_clip_video_rating = view.findViewById(R.id.rb_clip_video_rating);
             holder.rb_clip_video_rating_count = view.findViewById(R.id.rb_clip_video_rating_count);
+
+            final ClipRequestData requestData = mData.get(position).getRequestData();
+            String clipType = requestData.getType();
             holder.bt_video_clip = view.findViewById(R.id.bt_video_clip);
-            holder.bt_video_clip.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //クリップボタンイベント
-                    ((BaseActivity) mContext).sendClipRequest(mData.get(position).getRequestData());
-                }
-            });
+
+            //ひかりコンテンツ判定
+            if (StringUtil.isHikariContents(clipType) || StringUtil.isHikariInDtvContents(clipType)) {
+                holder.bt_video_clip.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //クリップボタンイベント
+                        ((BaseActivity) mContext).sendClipRequest(requestData);
+                    }
+                });
+            } else {
+                holder.bt_video_clip.setVisibility(View.GONE);
+            }
             convertView = view;
             convertView.setTag(holder);
         } else {

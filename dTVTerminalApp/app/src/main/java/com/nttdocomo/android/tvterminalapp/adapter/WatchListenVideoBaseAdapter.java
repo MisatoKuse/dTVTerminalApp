@@ -21,6 +21,8 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 
 import java.util.List;
 
@@ -65,15 +67,23 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter implements AbsListV
             holder.wl_title = view.findViewById(R.id.wl_title);
             holder.wl_video_rating = view.findViewById(R.id.wl_video_rating);
             holder.wl_rating_count = view.findViewById(R.id.wl_rating_count);
+
+            final ClipRequestData requestData = contentsData.getRequestData();
+            String clipType = requestData.getType();
             holder.wl_clip = view.findViewById(R.id.wl_clip);
 
-            holder.wl_clip.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //クリップボタンイベント
-                    ((BaseActivity) mContext).sendClipRequest(contentsData.getRequestData());
-                }
-            });
+            //ひかりコンテンツ判定
+            if (StringUtil.isHikariContents(clipType) || StringUtil.isHikariInDtvContents(clipType)) {
+                holder.wl_clip.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //クリップボタンイベント
+                        ((BaseActivity) mContext).sendClipRequest(contentsData.getRequestData());
+                    }
+                });
+            } else {
+                holder.wl_clip.setVisibility(View.GONE);
+            }
             float mWidth = (float) mContext.getResources().getDisplayMetrics().widthPixels / 3;
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int) mWidth, (int) mWidth / 2);
             holder.wl_thumbnail.setLayoutParams(layoutParams);

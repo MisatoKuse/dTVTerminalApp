@@ -52,6 +52,10 @@ public class ClipRequestData {
         this.mTitle = mTitle;
     }
 
+    public void setType(String mType) {
+        this.mType = mType;
+    }
+
     public String getType() {
         return mType;
     }

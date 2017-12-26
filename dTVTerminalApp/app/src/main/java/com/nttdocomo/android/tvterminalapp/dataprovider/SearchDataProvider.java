@@ -182,6 +182,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
             requestData.setClipTarget(searchContentInfo.title); //TODO:仕様確認中 現在はトーストにタイトル名を表示することとしています
             requestData.setIsNotify("disp_type", "content_type",
                     "1513306982", "tv_service", "dtv");
+            requestData.setType("recommend");
             contentsData.setRequestData(requestData);
             contentsDataList.add(contentsData);
         }

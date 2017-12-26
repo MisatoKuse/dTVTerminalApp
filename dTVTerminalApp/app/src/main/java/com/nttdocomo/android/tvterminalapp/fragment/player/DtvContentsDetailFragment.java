@@ -51,6 +51,8 @@ public class DtvContentsDetailFragment extends Fragment {
     private TextView txtChannelDate;
     private String mContentsDetailInfo;
     private boolean mIsAllText = false;
+    //クリップボタン
+    private ImageView mClipButton = null;
     //サムネイルmargintop
     private final static int THUMBNAIL_MARGINTOP = 10;
     //サムネイルmarginright
@@ -117,14 +119,17 @@ public class DtvContentsDetailFragment extends Fragment {
                 mTxtMoreText.setVisibility(View.GONE);
             }
         });
-        ImageView clipButton = view.findViewById(R.id.contents_detail_clip_button);
-        clipButton.setOnClickListener(new View.OnClickListener() {
+
+        mClipButton = view.findViewById(R.id.contents_detail_clip_button);
+        mClipButton.setVisibility(View.GONE);
+        mClipButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //クリップボタンイベント
                 ((BaseActivity) mActivity).sendClipRequest(setClipData(mOtherContentsDetailData.getVodMetaFullData()));
             }
         });
+
         if (mOtherContentsDetailData != null) {
             setDetailData();
         } else {
@@ -139,7 +144,7 @@ public class DtvContentsDetailFragment extends Fragment {
      * @param metaFullData VODメタデータ
      * @return Clipリクエストに必要なデータ
      */
-    private static ClipRequestData setClipData(VodMetaFullData metaFullData){
+    private static ClipRequestData setClipData(VodMetaFullData metaFullData) {
         //コンテンツ詳細は、メタデータを丸ごと持っているため、そのまま利用する
         ClipRequestData requestData = new ClipRequestData();
         requestData.setCrid(metaFullData.getCrid());
@@ -184,7 +189,18 @@ public class DtvContentsDetailFragment extends Fragment {
             mTxtTitleShortDetail.setText(mContentsDetailInfo);
             mTxtTitleAllDetail.setText(mContentsDetailInfo);
         }
-        //setRecommendLayout();
+
+        //ひかりコンテンツ以外はクリップボタンを非表示
+        if (mOtherContentsDetailData != null && mOtherContentsDetailData.getVodMetaFullData() != null) {
+            ClipRequestData requestData = setClipData(mOtherContentsDetailData.getVodMetaFullData());
+            String clipType = requestData.getType();
+            if (StringUtil.isHikariContents(clipType) || StringUtil.isHikariInDtvContents(clipType)) {
+                mClipButton.setVisibility(View.VISIBLE);
+            }
+        } else {
+            //コンテンツデータなしの場合も非表示
+            mClipButton.setVisibility(View.GONE);
+        }
     }
 
     private void setStaff() {

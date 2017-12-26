@@ -27,6 +27,8 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationList
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
 import java.util.List;
 
@@ -498,14 +500,11 @@ public class ContentsAdapter extends BaseAdapter {
      */
     private void setClipButton(ViewHolder holder, ContentsData listContentInfo) {
         if (holder.tv_clip != null) {
-            String clipFlg = listContentInfo.getSearchOk();
-            if (clipFlg != null && clipFlg.equals(ACTIVE_CLIP_DISPLAY)) {
-                //クリップ状態が1の時は、クリップボタンを表示
-                holder.tv_clip.setVisibility(View.VISIBLE);
-                holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_active_clip);
-            } else {
-                //TODO:録画予約一覧を共通アダプターから排除した場合は判定不要
-                if(!mType.equals(TYPE_RECORDING_RESERVATION_LIST)){
+            String clipType = listContentInfo.getRequestData().getType();
+            //ひかりコンテンツ判定
+            if (StringUtil.isHikariContents(clipType) || StringUtil.isHikariInDtvContents(clipType)) {
+                //TODO:録画予約一覧等、クリップボタンを表示しない画面はここで外す
+                if (!mType.equals(TYPE_RECORDING_RESERVATION_LIST)) {
                     //クリップ状態が1以外の時は、非活性クリップボタンを表示
                     holder.tv_clip.setVisibility(View.VISIBLE);
                     holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);

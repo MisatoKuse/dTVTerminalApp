@@ -125,5 +125,4 @@ public class WatchListenVideoListDataProvider implements WatchListenVideoWebClie
 
         mApiDataProviderCallback.watchListenVideoListCallback(rankingContentsDataList);
     }
-
 }
