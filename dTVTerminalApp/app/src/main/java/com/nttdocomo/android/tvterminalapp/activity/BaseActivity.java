@@ -285,7 +285,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         initView();
         mRemoteControlRelayClient = RemoteControlRelayClient.getInstance();
         mRemoteControlRelayClient.setHandler(mRerayClientHandler);
-        mRemoteControlRelayClient.setDebugRemoteIp("192.168.11.19");
+        mRemoteControlRelayClient.setDebugRemoteIp("192.168.11.35");
 
         //dアカウントの検知処理を追加する
         setDaccountControl();
