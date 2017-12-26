@@ -431,7 +431,7 @@ public class TvProgramListActivity extends BaseActivity
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mChannelRecyclerView.setLayoutManager(linearLayoutManager);
-        mProgramChannelAdapter = new ProgramChannelAdapter(this, mChannels);
+        mProgramChannelAdapter = new ProgramChannelAdapter(this, channels);
         mProgramChannelAdapter.setOnItemClickListener(this);
         mChannelRecyclerView.setAdapter(mProgramChannelAdapter);
     }
@@ -494,9 +494,9 @@ public class TvProgramListActivity extends BaseActivity
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mProgramRecyclerView.setLayoutManager(linearLayoutManager);
-        mTvProgramListAdapter = new TvProgramListAdapter(this, mChannelInfo);
+        mTvProgramListAdapter = new TvProgramListAdapter(this, channelInfo);
         mProgramRecyclerView.setAdapter(mTvProgramListAdapter);
-        mProgramRecyclerView.setItemViewCacheSize(mChannelInfo.size());
+        mProgramRecyclerView.setItemViewCacheSize(channelInfo.size());
         mProgramRecyclerView.getRecycledViewPool().setMaxRecycledViews(mTvProgramListAdapter.getItemViewType(0), 3);
     }
 
@@ -635,7 +635,6 @@ public class TvProgramListActivity extends BaseActivity
                     //サービスIDでマッピング
                     if(myChannelDataList.get(i).getServiceId().equals(hikariChannels.get(j).getServiceId())){
                         myChannels.add(hikariChannels.get(j));
-                        break;
                     }
                 }
             }
@@ -668,6 +667,8 @@ public class TvProgramListActivity extends BaseActivity
             this.myChannelDataList = myChannelMetaData;
             ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
             scaledDownProgramListDataProvider.getChannelList(1, 1, "", INDEX_TAB_HIKARI);//ひかりリストからチャンネル選択
+        }else {//MY番組表情報がなければMY番組表を設定していないとする
+            showMyChannelNoItem(true);
         }
     }
 
