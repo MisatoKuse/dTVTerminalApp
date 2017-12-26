@@ -342,11 +342,11 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
         //お知らせ、設定
         setFooterMenuItem();
 
-        //テレビアプリを起動する
-        mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_premium_tv_app_start_common));
-        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
-
         if (mActivity.getStbStatus()) {
+            //テレビアプリを起動する
+            mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_premium_tv_app_start_common));
+            mMenuItemCount.add(INT_NONE_COUNT_STATUS);
+
             //ひかりTV
             mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_hikari_tv));
             mMenuItemCount.add(INT_NONE_COUNT_STATUS);
