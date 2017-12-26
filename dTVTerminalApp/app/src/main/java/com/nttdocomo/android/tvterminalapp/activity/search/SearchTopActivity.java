@@ -26,6 +26,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.SearchDataProvider;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchResultError;
 import com.nttdocomo.android.tvterminalapp.model.ResultType;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
@@ -63,8 +64,8 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
     private HorizontalScrollView mTabScrollView;
     private ViewPager mSearchViewPager = null;
 
-    SearchNarrowCondition mSearchNarrowCondition = null;
-    SearchSortKind mSearchSortKind = new SearchSortKind("SearchSortKindNone");
+    private SearchNarrowCondition mSearchNarrowCondition = null;
+    private SearchSortKind mSearchSortKind = new SearchSortKind("SearchSortKindNone");
 
     private ImageView mMenuImageView = null;
     private int mPageNumber = 0;
@@ -282,7 +283,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
     }
 
     private static String mCurrentSearchText = "";
-    SearchDataProvider mSearchDataProvider = null;
+    private SearchDataProvider mSearchDataProvider = null;
 
     private void setSearchData(String searchText) {
         if (null == mSearchDataProvider) {
@@ -311,6 +312,13 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
             SearchBaseFragment b = getCurrentSearchBaseFragment();
             if (null != b) {
                 b.clear();
+                //連続検索を行うと一瞬0件と表示される対策として、前回の検索結果件数を持たせる
+                String[] strings = {getString(R.string.keyword_search_result),
+                        Integer.toString(mSearchTotalCount),
+                        getString(R.string.keyword_search_result_num)};
+                String totalCountText = StringUtil.getConnectString(strings);
+
+                b.notifyDataSetChanged(totalCountText);
                 setPageNumber(0);
                 setPagingStatus(false);
             }
@@ -470,12 +478,13 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
 
         if (0 < mSearchTotalCount) {
 
-            totalCountText = "検索結果:" + mSearchTotalCount + "件";
+            String[] strings = {getString(R.string.keyword_search_result),
+                    Integer.toString(mSearchTotalCount),
+                    getString(R.string.keyword_search_result_num)};
+            totalCountText = StringUtil.getConnectString(strings);
 
             //画面表示用のデータセット
-            baseFragment.mData = content.getContentsDataList();
-            int thisTimeTotal = content.searchContentInfo.size();
-            for (int i = 0; i < thisTimeTotal; ++i) {
+            for (int i = 0; i < content.getContentsDataList().size(); ++i) {
                 baseFragment.mData.add(content.getContentsDataList().get(i));
             }
 
