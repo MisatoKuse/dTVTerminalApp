@@ -97,8 +97,6 @@ public class MenuListAdapter extends BaseAdapter {
             if (title.equals(mContext.getString(R.string.nav_menu_item_hikari_tv_none_action))) {
                 //ひかりTVメインの設定
                 colorUtils.setTextViewColor(textView, R.color.list_item_background);
-                textView.setTypeface(Typeface.DEFAULT_BOLD);
-                marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_premium_tv_app_start_common))) {
                 //テレビアプリを起動するの設定
                 colorUtils.setTextViewColor(textView, R.color.stb_start_title);
@@ -118,8 +116,6 @@ public class MenuListAdapter extends BaseAdapter {
                     || title.equals(mContext.getString(R.string.nav_menu_item_dtv))
                     || title.equals(mContext.getString(R.string.nav_menu_item_d_animation))) {
                 colorUtils.setTextViewColor(textView, R.color.list_item_background);
-                textView.setTypeface(Typeface.DEFAULT_BOLD);
-                marginLayoutParams.setMargins(intCustomTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_dazn))) {
                 //STB(DAZN)カスタマイズ
                 colorUtils.setTextViewColor(textView, R.color.white_text);
@@ -182,24 +178,36 @@ public class MenuListAdapter extends BaseAdapter {
      */
     private void setTitleNameImageView(String title, ImageView imageView) {
         if (title != null) {
+            ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
+            ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) layoutParams;
+            int intTitleLeftMargin = mContext.getResources().getDimensionPixelSize(
+                    R.dimen.global_menu_list_item_title_icon_left_margin);
             if (title.equals(mContext.getString(R.string.nav_menu_item_hikari_tv_none_action))) {
+                int intHikariSettingIconLeftMargin = mContext.getResources().getDimensionPixelSize(
+                        R.dimen.global_menu_list_item_default_title_left_margin);
                 imageView.setVisibility(View.VISIBLE);
                 imageView.setBackgroundResource(R.drawable.ic_menu_service_name_hikari);
+                marginLayoutParams.setMargins(intHikariSettingIconLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_hikari_tv))) {
                 imageView.setVisibility(View.VISIBLE);
                 imageView.setBackgroundResource(R.drawable.ic_menu_service_name_hikari);
+                marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_dtv_channel))) {
                 imageView.setVisibility(View.VISIBLE);
                 imageView.setBackgroundResource(R.drawable.ic_menu_service_name_d_tv_channel);
+                marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_dtv))) {
                 imageView.setVisibility(View.VISIBLE);
                 imageView.setBackgroundResource(R.drawable.ic_menu_service_name_d_tv);
+                marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_d_animation))) {
                 imageView.setVisibility(View.VISIBLE);
                 imageView.setBackgroundResource(R.drawable.ic_menu_service_name_d_anime);
+                marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_dtv_channel))) {
                 imageView.setVisibility(View.VISIBLE);
                 imageView.setBackgroundResource(R.drawable.ic_menu_service_name_d_tv_channel);
+                marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else {
                 //その他サブアイテムのカスタマイズ
                 imageView.setVisibility(View.GONE);
