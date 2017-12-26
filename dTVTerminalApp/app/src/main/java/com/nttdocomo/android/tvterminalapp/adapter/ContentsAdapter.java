@@ -168,7 +168,6 @@ public class ContentsAdapter extends BaseAdapter {
         setRatStarData(holder, listContentInfo);
         setRecodingReservationStatusData(holder, listContentInfo);
         setChannelName(holder, listContentInfo);
-        setRedordedRankData(holder, listContentInfo);
         setRedordedDownloadIcon(holder, listContentInfo);
         setDeviceName(holder, listContentInfo);
     }
@@ -281,12 +280,12 @@ public class ContentsAdapter extends BaseAdapter {
                     break;
                 case RecordingReservationListDataProvider.RECORD_RESERVATION_SYNC_STATUS_ALREADY_REFLECT:
                     // 受信完了
-                    holder.tv_recording_reservation.setVisibility(View.INVISIBLE);
+                    holder.tv_recording_reservation.setVisibility(View.GONE);
                     holder.tv_recording_reservation.setBackgroundColor
                             (ContextCompat.getColor(mContext, R.color.recording_reservation_status_background_black));
                     break;
                 default:
-                    holder.tv_recording_reservation.setVisibility(View.INVISIBLE);
+                    holder.tv_recording_reservation.setVisibility(View.GONE);
                     holder.tv_recording_reservation.setBackgroundColor
                             (ContextCompat.getColor(mContext, R.color.recording_reservation_status_background_black));
                     break;
@@ -332,23 +331,11 @@ public class ContentsAdapter extends BaseAdapter {
      * データの設定（チャンネル名）
      */
     private void setChannelName(ViewHolder holder, ContentsData listContentInfo) {
-        DTVTLogger.start("ChannelName = " + listContentInfo.getChannelName());
-        if (holder.tv_recording_reservation != null) {
-            holder.tv_channel_name.setVisibility(View.VISIBLE);
-            holder.tv_channel_name.setText(listContentInfo.getChannelName());
-        }
-        DTVTLogger.end();
-    }
-
-    /**
-     * データの設定（録画番組用チャンネル名）
-     */
-    private void setRedordedRankData(ViewHolder holder, ContentsData listContentInfo) {
         DTVTLogger.start();
-        if (!TextUtils.isEmpty(listContentInfo.getRecordedChannelName())) {//ランク
+        if (!TextUtils.isEmpty(listContentInfo.getChannelName())) {//ランク
             holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
             holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
-            holder.tv_recorded_ch_name.setText(listContentInfo.getRecordedChannelName());
+            holder.tv_recorded_ch_name.setText(listContentInfo.getChannelName());
         }
     }
 
@@ -423,7 +410,8 @@ public class ContentsAdapter extends BaseAdapter {
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
                 holder.tv_recording_reservation =
                         view.findViewById(R.id.item_common_result_recording_reservation_status);
-                holder.tv_channel_name = view.findViewById(R.id.item_common_result_channel_name);
+                holder.tv_recorded_hyphen = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
+                holder.tv_recorded_ch_name = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
                 break;
             case TYPE_RECORDED_LIST: // 録画番組一覧
                 holder.tv_recorded_hyphen = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
@@ -464,7 +452,6 @@ public class ContentsAdapter extends BaseAdapter {
                 holder.iv_thumbnail.setVisibility(View.GONE);
                 holder.rb_rating.setVisibility(View.GONE);
                 holder.tv_rating_num.setVisibility(View.GONE);
-                holder.tv_channel_name.setVisibility(View.VISIBLE);
                 break;
             case TYPE_RECORDED_LIST: // 録画番組一覧
                 holder.tv_rank.setVisibility(View.GONE);
@@ -505,7 +492,7 @@ public class ContentsAdapter extends BaseAdapter {
                 holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_active_clip);
             } else {
                 //TODO:録画予約一覧を共通アダプターから排除した場合は判定不要
-                if(!mType.equals(TYPE_RECORDING_RESERVATION_LIST)){
+                if (!mType.equals(TYPE_RECORDING_RESERVATION_LIST)) {
                     //クリップ状態が1以外の時は、非活性クリップボタンを表示
                     holder.tv_clip.setVisibility(View.VISIBLE);
                     holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);

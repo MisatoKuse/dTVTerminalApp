@@ -18,18 +18,10 @@
             android:textSize="@dimen/list_item_time_text_size"
             android:textColor="@color/content_time_text"/>
     </RelativeLayout>
-    <View
-        android:id="@+id/record_reservation_list_border"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="5dp"
-        android:layout_below="@id/record_reservation_list_update_time"
-        android:background="@color/result_line"/>
     <ListView
         android:id="@+id/record_reservation_list_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/record_reservation_list_border">
+        android:layout_height="match_parent">
     </ListView>
 
 </LinearLayout>
