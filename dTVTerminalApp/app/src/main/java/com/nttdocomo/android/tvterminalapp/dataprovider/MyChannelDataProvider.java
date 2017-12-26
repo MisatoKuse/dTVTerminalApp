@@ -174,8 +174,8 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
         switch (reqCode) {
             case R.layout.tv_program_list_main_layout:
                 DateUtils dateUtils = new DateUtils(mContext);
-                String lastDate = dateUtils.getLastDate(CHANNEL_LAST_UPDATE);
-                if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate)) {
+                String lastDate = dateUtils.getLastDate(MY_CHANNEL_LIST_LAST_INSERT);
+                if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeLimitDate(lastDate)) {
                     Handler handler = new Handler();//チャンネル情報更新
                     try {
                         DbThread t = new DbThread(handler, this, MY_CHANNEL_SELECT);
@@ -184,7 +184,7 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
                         e.printStackTrace();
                     }
                     break;
-                }
+                }//キャシューないなら通信のほうに進む
             case R.layout.my_channel_edit_main_layout://通信してデータ取得
                 MyChannelWebClient myChannelList = new MyChannelWebClient();
                 myChannelList.getMyChanelListApi(this);

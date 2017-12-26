@@ -115,6 +115,7 @@
         <item>ひかり</item>
         <item>dTVチャンネル</item>
     </string-array>
+    <string name="tv_program_tip">マイ番組が設定されていません</string>
 
     <!-- 録画番組 -->
     <string-array name="record_list_tab_names">
