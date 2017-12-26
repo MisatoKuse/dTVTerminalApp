@@ -177,6 +177,7 @@ public class ClipRequestData {
                 //dch
                 mType = WebApiBasePlala.CLIP_TYPE_DCH;
             } else {
+                //TODO：上記二つ以外の仕様が未定のため暫定対応
                 mType = "";
             }
         }
