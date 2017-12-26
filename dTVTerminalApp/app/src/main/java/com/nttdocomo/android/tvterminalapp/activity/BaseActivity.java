@@ -448,6 +448,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                                 default:
                                     break;
                             }
+                          break;
                         default:
                             message = getResources().getString(R.string.main_setting_connect_error_message);
                             showErrorDialog(message);
