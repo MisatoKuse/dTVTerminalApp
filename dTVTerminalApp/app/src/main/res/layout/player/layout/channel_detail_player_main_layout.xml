@@ -21,31 +21,4 @@
             android:textSize="15sp"/>
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/button10"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="selectChannelButton"
-        android:text="選局ボタン(コンテンツ詳細へ遷移)" />
-
-    <Button
-        android:id="@+id/button14"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="weeklyTvGuideButton"
-        android:text="週間番組表" />
-
-    <Button
-        android:id="@+id/button12"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="tvGuideSetting"
-        android:text="番組表設定" />
-
-    <Button
-        android:id="@+id/button13"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="tvProgramButton"
-        android:text="放送プログラム(コンテンツ詳細へ遷移)" />
 </LinearLayout>
