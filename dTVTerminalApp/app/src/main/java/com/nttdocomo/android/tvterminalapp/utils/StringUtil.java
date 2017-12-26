@@ -8,6 +8,7 @@ import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
 import org.json.JSONArray;
 
@@ -184,15 +185,32 @@ public class StringUtil {
     }
 
     /**
-     * 文字列の値が数値かどうか判定する
+     * ひかりコンテンツ判定(ひかり内DTVのみ)
      *
-     * @param num 数値判定文字列
-     * @return 判定結果
+     * @param type
+     * @return
      */
-    public static boolean isNumber(String num) {
-        String regex = "^\\-?[0-9]*\\.?[0-9]+$";
-        Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(num);
-        return m.find();
+    public static boolean isHikariInDtvContents(String type) {
+        boolean isHikariIn = false;
+        if (type != null && (type.equals(WebApiBasePlala.CLIP_TYPE_DTV_VOD))) {
+            isHikariIn = true;
+        }
+        return isHikariIn;
+    }
+
+    /**
+     * ひかりコンテンツ判定
+     *
+     * @param type
+     * @return
+     */
+    public static boolean isHikariContents(String type) {
+        boolean isHikari = false;
+        if (type != null && (type.equals(WebApiBasePlala.CLIP_TYPE_H4D_IPTV)
+                || type.equals(WebApiBasePlala.CLIP_TYPE_H4D_VOD)
+                || type.equals(WebApiBasePlala.CLIP_TYPE_DCH))) {
+            isHikari = true;
+        }
+        return isHikari;
     }
 }
