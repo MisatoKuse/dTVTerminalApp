@@ -46,24 +46,25 @@ public class RecommendWebXmlParser extends AsyncTask<Object, Object, Object> {
     public static final String RECOMMENDCHANNEL_LIST_GROUPID = "groupId";
     public static final String RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID = "recommendMethodId";
 
-    public RecommendWebXmlParser(RecommendWebClient.RecommendCallback mRecommendCallback){
+    public RecommendWebXmlParser(RecommendWebClient.RecommendCallback mRecommendCallback) {
         this.mRecommendCallback = mRecommendCallback;
     }
 
     @Override
     protected void onPostExecute(Object s) {
-        mRecommendCallback.RecommendCallback((RecommendChList)s);
+        mRecommendCallback.RecommendCallback((RecommendChList) s);
     }
 
     @Override
     protected Object doInBackground(Object... strings) {
-        String result = (String)strings[0];
+        String result = (String) strings[0];
         RecommendChList resultList = getRecommendWebList(result);
         return resultList;
     }
 
     /**
      * 受け取ったレスポンスデータからXMLをパースする
+     *
      * @param responseData レスポンスデータ
      * @return パース後のデータ
      */
@@ -83,72 +84,72 @@ public class RecommendWebXmlParser extends AsyncTask<Object, Object, Object> {
                         redChContentList = new ArrayList<>();
                         break;
                     case XmlPullParser.START_TAG:
-                        if(RECOMMENDCHANNEL_LIST_RECOMMENDCONTENT.equals(parser.getName())){
+                        if (RECOMMENDCHANNEL_LIST_RECOMMENDCONTENT.equals(parser.getName())) {
                             redChHashMap = new HashMap<>();
-                        } else if(RECOMMENDCHANNEL_LIST_RECOMMENDORDER.equals(parser.getName())) {
+                        } else if (RECOMMENDCHANNEL_LIST_RECOMMENDORDER.equals(parser.getName())) {
                             eventType = parser.next();
-                            redChHashMap.put(RECOMMENDCHANNEL_LIST_RECOMMENDORDER,parser.getText()==null?"":parser.getText());
-                        } else if(RECOMMENDCHANNEL_LIST_SERVICEID.equals(parser.getName())) {
+                            redChHashMap.put(RECOMMENDCHANNEL_LIST_RECOMMENDORDER, parser.getText() == null ? "" : parser.getText());
+                        } else if (RECOMMENDCHANNEL_LIST_SERVICEID.equals(parser.getName())) {
                             eventType = parser.next();
-                            redChHashMap.put(RECOMMENDCHANNEL_LIST_SERVICEID,parser.getText()==null?"":parser.getText());
-                        } else if(RECOMMENDCHANNEL_LIST_CATEGORYID.equals(parser.getName())) {
+                            redChHashMap.put(RECOMMENDCHANNEL_LIST_SERVICEID, parser.getText() == null ? "" : parser.getText());
+                        } else if (RECOMMENDCHANNEL_LIST_CATEGORYID.equals(parser.getName())) {
                             eventType = parser.next();
-                            redChHashMap.put(RECOMMENDCHANNEL_LIST_CATEGORYID,parser.getText()==null?"":parser.getText());
-                        } else if(RECOMMENDCHANNEL_LIST_CHANNELID.equals(parser.getName())) {
+                            redChHashMap.put(RECOMMENDCHANNEL_LIST_CATEGORYID, parser.getText() == null ? "" : parser.getText());
+                        } else if (RECOMMENDCHANNEL_LIST_CHANNELID.equals(parser.getName())) {
                             eventType = parser.next();
-                            redChHashMap.put(RECOMMENDCHANNEL_LIST_CHANNELID,parser.getText()==null?"":parser.getText());
-                        } else if(RECOMMENDCHANNEL_LIST_CONTENTSID.equals(parser.getName())) {
+                            redChHashMap.put(RECOMMENDCHANNEL_LIST_CHANNELID, parser.getText() == null ? "" : parser.getText());
+                        } else if (RECOMMENDCHANNEL_LIST_CONTENTSID.equals(parser.getName())) {
                             eventType = parser.next();
-                            redChHashMap.put(RECOMMENDCHANNEL_LIST_CONTENTSID,parser.getText()==null?"":parser.getText());
-                        } else if(RECOMMENDCHANNEL_LIST_TITLE.equals(parser.getName())) {
+                            redChHashMap.put(RECOMMENDCHANNEL_LIST_CONTENTSID, parser.getText() == null ? "" : parser.getText());
+                        } else if (RECOMMENDCHANNEL_LIST_TITLE.equals(parser.getName())) {
                             eventType = parser.next();
-                            redChHashMap.put(RECOMMENDCHANNEL_LIST_TITLE,parser.getText()==null?"":parser.getText());
-                        } else if(RECOMMENDCHANNEL_LIST_CTPICURL1.equals(parser.getName())) {
+                            redChHashMap.put(RECOMMENDCHANNEL_LIST_TITLE, parser.getText() == null ? "" : parser.getText());
+                        } else if (RECOMMENDCHANNEL_LIST_CTPICURL1.equals(parser.getName())) {
                             eventType = parser.next();
-                            redChHashMap.put(RECOMMENDCHANNEL_LIST_CTPICURL1,parser.getText()==null?"":parser.getText());
-                        } else if(RECOMMENDCHANNEL_LIST_CTPICURL2.equals(parser.getName())) {
+                            redChHashMap.put(RECOMMENDCHANNEL_LIST_CTPICURL1, parser.getText() == null ? "" : parser.getText());
+                        } else if (RECOMMENDCHANNEL_LIST_CTPICURL2.equals(parser.getName())) {
                             eventType = parser.next();
-                            redChHashMap.put(RECOMMENDCHANNEL_LIST_CTPICURL2,parser.getText()==null?"":parser.getText());
-                        } else if(RECOMMENDCHANNEL_LIST_STARTVIEWING.equals(parser.getName())) {
+                            redChHashMap.put(RECOMMENDCHANNEL_LIST_CTPICURL2, parser.getText() == null ? "" : parser.getText());
+                        } else if (RECOMMENDCHANNEL_LIST_STARTVIEWING.equals(parser.getName())) {
                             eventType = parser.next();
-                            redChHashMap.put(RECOMMENDCHANNEL_LIST_STARTVIEWING,parser.getText()==null?"":parser.getText());
-                        } else if(RECOMMENDCHANNEL_LIST_ENDVIEWING.equals(parser.getName())) {
+                            redChHashMap.put(RECOMMENDCHANNEL_LIST_STARTVIEWING, parser.getText() == null ? "" : parser.getText());
+                        } else if (RECOMMENDCHANNEL_LIST_ENDVIEWING.equals(parser.getName())) {
                             eventType = parser.next();
-                            redChHashMap.put(RECOMMENDCHANNEL_LIST_ENDVIEWING,parser.getText()==null?"":parser.getText());
-                        } else if(RECOMMENDCHANNEL_LIST_RESERVED1.equals(parser.getName())) {
+                            redChHashMap.put(RECOMMENDCHANNEL_LIST_ENDVIEWING, parser.getText() == null ? "" : parser.getText());
+                        } else if (RECOMMENDCHANNEL_LIST_RESERVED1.equals(parser.getName())) {
                             eventType = parser.next();
-                            redChHashMap.put(RECOMMENDCHANNEL_LIST_RESERVED1,parser.getText()==null?"":parser.getText());
-                        } else if(RECOMMENDCHANNEL_LIST_RESERVED2.equals(parser.getName())) {
+                            redChHashMap.put(RECOMMENDCHANNEL_LIST_RESERVED1, parser.getText() == null ? "" : parser.getText());
+                        } else if (RECOMMENDCHANNEL_LIST_RESERVED2.equals(parser.getName())) {
                             eventType = parser.next();
-                            redChHashMap.put(RECOMMENDCHANNEL_LIST_RESERVED2,parser.getText()==null?"":parser.getText());
-                        } else if(RECOMMENDCHANNEL_LIST_RESERVED3.equals(parser.getName())) {
+                            redChHashMap.put(RECOMMENDCHANNEL_LIST_RESERVED2, parser.getText() == null ? "" : parser.getText());
+                        } else if (RECOMMENDCHANNEL_LIST_RESERVED3.equals(parser.getName())) {
                             eventType = parser.next();
-                            redChHashMap.put(RECOMMENDCHANNEL_LIST_RESERVED3,parser.getText()==null?"":parser.getText());
-                        } else if(RECOMMENDCHANNEL_LIST_RESERVED4.equals(parser.getName())) {
+                            redChHashMap.put(RECOMMENDCHANNEL_LIST_RESERVED3, parser.getText() == null ? "" : parser.getText());
+                        } else if (RECOMMENDCHANNEL_LIST_RESERVED4.equals(parser.getName())) {
                             eventType = parser.next();
-                            redChHashMap.put(RECOMMENDCHANNEL_LIST_RESERVED4,parser.getText()==null?"":parser.getText());
-                        } else if(RECOMMENDCHANNEL_LIST_RESERVED5.equals(parser.getName())) {
+                            redChHashMap.put(RECOMMENDCHANNEL_LIST_RESERVED4, parser.getText() == null ? "" : parser.getText());
+                        } else if (RECOMMENDCHANNEL_LIST_RESERVED5.equals(parser.getName())) {
                             eventType = parser.next();
-                            redChHashMap.put(RECOMMENDCHANNEL_LIST_RESERVED5,parser.getText()==null?"":parser.getText());
-                        } else if(RECOMMENDCHANNEL_LIST_AGREEMENT.equals(parser.getName())) {
+                            redChHashMap.put(RECOMMENDCHANNEL_LIST_RESERVED5, parser.getText() == null ? "" : parser.getText());
+                        } else if (RECOMMENDCHANNEL_LIST_AGREEMENT.equals(parser.getName())) {
                             eventType = parser.next();
-                            redChHashMap.put(RECOMMENDCHANNEL_LIST_AGREEMENT,parser.getText()==null?"":parser.getText());
-                        } else if(RECOMMENDCHANNEL_LIST_VIEWABLE.equals(parser.getName())) {
+                            redChHashMap.put(RECOMMENDCHANNEL_LIST_AGREEMENT, parser.getText() == null ? "" : parser.getText());
+                        } else if (RECOMMENDCHANNEL_LIST_VIEWABLE.equals(parser.getName())) {
                             eventType = parser.next();
-                            redChHashMap.put(RECOMMENDCHANNEL_LIST_VIEWABLE,parser.getText()==null?"":parser.getText());
-                        } else if(RECOMMENDCHANNEL_LIST_PAGEID.equals(parser.getName())) {
+                            redChHashMap.put(RECOMMENDCHANNEL_LIST_VIEWABLE, parser.getText() == null ? "" : parser.getText());
+                        } else if (RECOMMENDCHANNEL_LIST_PAGEID.equals(parser.getName())) {
                             eventType = parser.next();
-                            redChHashMap.put(RECOMMENDCHANNEL_LIST_PAGEID,parser.getText()==null?"":parser.getText());
-                        } else if(RECOMMENDCHANNEL_LIST_GROUPID.equals(parser.getName())) {
+                            redChHashMap.put(RECOMMENDCHANNEL_LIST_PAGEID, parser.getText() == null ? "" : parser.getText());
+                        } else if (RECOMMENDCHANNEL_LIST_GROUPID.equals(parser.getName())) {
                             eventType = parser.next();
-                            redChHashMap.put(RECOMMENDCHANNEL_LIST_GROUPID,parser.getText()==null?"":parser.getText());
-                        } else if(RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID.equals(parser.getName())) {
+                            redChHashMap.put(RECOMMENDCHANNEL_LIST_GROUPID, parser.getText() == null ? "" : parser.getText());
+                        } else if (RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID.equals(parser.getName())) {
                             eventType = parser.next();
-                            redChHashMap.put(RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID,parser.getText()==null?"":parser.getText());
+                            redChHashMap.put(RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID, parser.getText() == null ? "" : parser.getText());
                         }
                         break;
                     case XmlPullParser.END_TAG:
-                        if(RECOMMENDCHANNEL_LIST_RECOMMENDCONTENT.equals(parser.getName())){
+                        if (RECOMMENDCHANNEL_LIST_RECOMMENDCONTENT.equals(parser.getName())) {
                             redChContentList.add(redChHashMap);
                             redChHashMap = null;
                         }
@@ -156,6 +157,8 @@ public class RecommendWebXmlParser extends AsyncTask<Object, Object, Object> {
                     case XmlPullParser.END_DOCUMENT:
                         redChContents.setmRcList(redChContentList);
                         endFlg = true;
+                        break;
+                    default:
                         break;
                 }
                 eventType = parser.next();

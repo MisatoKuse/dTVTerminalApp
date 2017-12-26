@@ -37,22 +37,21 @@ import java.util.List;
 
 public class DtvContentsDetailFragment extends Fragment {
 
-    public Context mActivity;
+    public Context mActivity = null;
     private View view = null;
-    public OtherContentsDetailData mOtherContentsDetailData;
-    private LinearLayout staffLayout;
-    private LinearLayout recommendLayout;
-    private TextView mTxtTitleShortDetail;
-    private TextView mTxtTitleAllDetail;
-    private TextView mTxtMoreText;
-    private TextView headerText;
-    private TextView txtServiceName;
-    private TextView txtChannelName;
-    private TextView txtChannelDate;
-    private String mContentsDetailInfo;
+    public OtherContentsDetailData mOtherContentsDetailData = null;
+    private LinearLayout staffLayout = null;
+    private LinearLayout recommendLayout = null;
+    private TextView mTxtTitleShortDetail = null;
+    private TextView mTxtTitleAllDetail = null;
+    private TextView mTxtMoreText = null;
+    private TextView headerText = null;
+    private TextView txtServiceName = null;
+    private TextView txtChannelName = null;
+    private TextView txtChannelDate = null;
+    private TextView txtChannelLabel = null;
     private boolean mIsAllText = false;
-    //クリップボタン
-    private ImageView mClipButton = null;
+
     //サムネイルmargintop
     private final static int THUMBNAIL_MARGINTOP = 10;
     //サムネイルmarginright
@@ -77,7 +76,6 @@ public class DtvContentsDetailFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         //コンテンツ詳細表示に必要なデータを取得する
         mOtherContentsDetailData = getArguments().getParcelable(DtvContentsDetailActivity.RECOMMEND_INFO_BUNDLE_KEY);
         return initView(container);
@@ -119,17 +117,14 @@ public class DtvContentsDetailFragment extends Fragment {
                 mTxtMoreText.setVisibility(View.GONE);
             }
         });
-
-        mClipButton = view.findViewById(R.id.contents_detail_clip_button);
-        mClipButton.setVisibility(View.GONE);
-        mClipButton.setOnClickListener(new View.OnClickListener() {
+        ImageView clipButton = view.findViewById(R.id.contents_detail_clip_button);
+        clipButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //クリップボタンイベント
                 ((BaseActivity) mActivity).sendClipRequest(setClipData(mOtherContentsDetailData.getVodMetaFullData()));
             }
         });
-
         if (mOtherContentsDetailData != null) {
             setDetailData();
         } else {
@@ -144,7 +139,7 @@ public class DtvContentsDetailFragment extends Fragment {
      * @param metaFullData VODメタデータ
      * @return Clipリクエストに必要なデータ
      */
-    private static ClipRequestData setClipData(VodMetaFullData metaFullData) {
+    private static ClipRequestData setClipData(VodMetaFullData metaFullData){
         //コンテンツ詳細は、メタデータを丸ごと持っているため、そのまま利用する
         ClipRequestData requestData = new ClipRequestData();
         requestData.setCrid(metaFullData.getCrid());
@@ -167,8 +162,9 @@ public class DtvContentsDetailFragment extends Fragment {
         //画面表示
         StringUtil util = new StringUtil(getContext());
         String strServiceName = util.getContentsServiceName(mOtherContentsDetailData.getServiceId());
+        String contentsDetailInfo;
         txtServiceName.setText(strServiceName);
-        mContentsDetailInfo = selectDetail();
+        contentsDetailInfo = selectDetail();
         boolean isFlag = false;
         if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelName())) {
             txtChannelName.setText(mOtherContentsDetailData.getChannelName());
@@ -185,22 +181,11 @@ public class DtvContentsDetailFragment extends Fragment {
         } else {
             staffLayout.setVisibility(View.GONE);
         }
-        if (!TextUtils.isEmpty(mContentsDetailInfo)) {
-            mTxtTitleShortDetail.setText(mContentsDetailInfo);
-            mTxtTitleAllDetail.setText(mContentsDetailInfo);
+        if (!TextUtils.isEmpty(contentsDetailInfo)) {
+            mTxtTitleShortDetail.setText(contentsDetailInfo);
+            mTxtTitleAllDetail.setText(contentsDetailInfo);
         }
-
-        //ひかりコンテンツ以外はクリップボタンを非表示
-        if (mOtherContentsDetailData != null && mOtherContentsDetailData.getVodMetaFullData() != null) {
-            ClipRequestData requestData = setClipData(mOtherContentsDetailData.getVodMetaFullData());
-            String clipType = requestData.getType();
-            if (StringUtil.isHikariContents(clipType) || StringUtil.isHikariInDtvContents(clipType)) {
-                mClipButton.setVisibility(View.VISIBLE);
-            }
-        } else {
-            //コンテンツデータなしの場合も非表示
-            mClipButton.setVisibility(View.GONE);
-        }
+        //setRecommendLayout();
     }
 
     private void setStaff() {
@@ -400,5 +385,4 @@ public class DtvContentsDetailFragment extends Fragment {
     public interface RecordingReservationIconListener {
         void onClickRecordingReservationIcon(View v);
     }
-
 }

@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -18,6 +17,8 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 
 public class DateUtils {
+
+    private Context mContext = null;
 
     //VodClipList取得日付キー
     public static final String VOD_LAST_INSERT = "VodLastInsert";
@@ -38,7 +39,7 @@ public class DateUtils {
     public static final String RECOMMEND_VD_LAST_INSERT = "RecommendVdLastInsert";
 
     //TvScheduleList取得日付キー
-    public static final String TvSchedule_LAST_INSERT = "TvScheduleLastInsert";
+    public static final String TV_SCHEDULE_LAST_INSERT = "TvScheduleLastInsert";
 
     //UserInfo取得日付キー
     public static final String USER_INFO_LAST_INSERT = "UserInfoLastInsert";
@@ -89,8 +90,6 @@ public class DateUtils {
     //マイ番組表取得日付キー
     public static final String MY_CHANNEL_LIST_LAST_INSERT = "MyChannelListLastInsert";
 
-    private Context mContext;
-
     /**
      * 曜日の固定値
      */
@@ -107,7 +106,6 @@ public class DateUtils {
      */
     public static final long EPOCH_TIME_ONE_DAY = 86400;
     public static final long EPOCH_TIME_ONE_HOUR = 3600;
-
 
     /**
      * コンテキスト
@@ -200,7 +198,6 @@ public class DateUtils {
             }
         }
 
-        //
         boolean isExpired = false;
         if (limit.compareTo(now) < 0) {
             isExpired = true;
@@ -225,7 +222,7 @@ public class DateUtils {
             lastDate = sdf.parse(lastStr);
             nowDate = sdf.parse(nowStr);
         } catch (Exception e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
         boolean isExpired = false;
         if (lastDate.compareTo(nowDate) != 0) {
@@ -360,10 +357,6 @@ public class DateUtils {
      * @return
      */
     public static long getEpochTime(String strDate) {
-        if(strDate == null || strDate.length() < 1){
-            //Nullやblankの場合はエラー回避のため0を返す
-            return 0;
-        }
         Date lm = new Date(strDate);
         return lm.getTime();
     }

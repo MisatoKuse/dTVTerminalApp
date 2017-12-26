@@ -45,24 +45,30 @@ import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 import java.util.ArrayList;
 
-public class ChannelListActivity extends BaseActivity implements View.OnClickListener, ChannelListFragment.ChannelListFragmentListener,
-        DlnaRecVideoListener, DlnaTerChListListener, DlnaBsChListListener, ScaledDownProgramListDataProvider.ApiDataProviderCallback {
+public class ChannelListActivity extends BaseActivity implements
+        View.OnClickListener, ChannelListFragment.ChannelListFragmentListener,
+        DlnaRecVideoListener, DlnaTerChListListener, DlnaBsChListListener,
+        ScaledDownProgramListDataProvider.ApiDataProviderCallback {
 
     private static final int SCREEN_TIME_WIDTH_PERCENT = 9;
     private static final float TAB_TEXT_SIZE = 14.0f;
-    private LinearLayout mTabsLayout;
-    private String[] mTabNames;
-    private int screenWidth;
-    private ViewPager mViewPager;
-    private ChannelListFragmentFactory mFactory;
-    private HorizontalScrollView mHorizontalScrollView;
 
-    private DlnaProvRecVideo mDlnaProvRecVideo;
-    private DlnaProvBsChList mDlnaProvBsChList;
-    private DlnaProvTerChList mDlnaProvTerChList;
-    private HikariTvChDataProvider mHikariTvChDataProvider;
-    private DTvChDataProvider mDTvChDataProvider;
-    private int mPagingOffset=1;
+    private String[] mTabNames = null;
+    private int screenWidth = 0;
+    private float mLastY = 0;
+    private static final float sScrollThreshold = 20.0f;
+    private boolean mIsScrollUp = false;
+
+    private LinearLayout mTabsLayout = null;
+    private ViewPager mViewPager = null;
+
+    private ChannelListFragmentFactory mFactory = null;
+    private DlnaProvRecVideo mDlnaProvRecVideo = null;
+    private DlnaProvBsChList mDlnaProvBsChList = null;
+    private DlnaProvTerChList mDlnaProvTerChList = null;
+    private HikariTvChDataProvider mHikariTvChDataProvider = null;
+    private DTvChDataProvider mDTvChDataProvider = null;
+    private int mPagingOffset = 1;
     //ToDo: 開発中テストデータは不足なので、ページング数は一時に「10」に設定していますが、
     //       リリースの時、仕様より、再設定する必要がある。
     private final int CH_LIST_ACTI_PAGING_NUMBER = 10;
@@ -70,12 +76,13 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
     private final int CHANNEL_LIST_TAB_TER = 1;
     private final int CHANNEL_LIST_TAB_BS = 2;
     private final int CHANNEL_LIST_TAB_DTV = 3;
-    private final int CHANNEL_LIST_TAB_DELAY_TIME=1300;
+    private final int CHANNEL_LIST_TAB_DELAY_TIME = 1300;
 
-    private Handler mHandle= new Handler();
+    private Handler mHandle = new Handler();
 
     /**
      * Constructor
+     *
      * @param savedInstanceState savedInstanceState
      */
     @Override
@@ -96,7 +103,7 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
      */
     private void firstMore() {
         DTVTLogger.start();
-        new Handler().postDelayed(new Runnable(){
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 displayMore(true, CHANNEL_LIST_TAB_HIKARI, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI);
@@ -109,22 +116,22 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
      * onResume処理
      */
     @Override
-    protected void onResume(){
+    protected void onResume() {
         DTVTLogger.start();
-        if(null==mDlnaProvRecVideo) {
+        if (null == mDlnaProvRecVideo) {
             mDlnaProvRecVideo = new DlnaProvRecVideo();
         }
-        if(null==mDlnaProvBsChList) {
+        if (null == mDlnaProvBsChList) {
             mDlnaProvBsChList = new DlnaProvBsChList();
         }
-        if(null==mDlnaProvTerChList) {
+        if (null == mDlnaProvTerChList) {
             mDlnaProvTerChList = new DlnaProvTerChList();
         }
-        if(null==mHikariTvChDataProvider){
-            mHikariTvChDataProvider=new HikariTvChDataProvider(this);
+        if (null == mHikariTvChDataProvider) {
+            mHikariTvChDataProvider = new HikariTvChDataProvider(this);
         }
-        if(null==mDTvChDataProvider){
-            mDTvChDataProvider=new DTvChDataProvider(this);
+        if (null == mDTvChDataProvider) {
+            mDTvChDataProvider = new DTvChDataProvider(this);
         }
         super.onResume();
         DTVTLogger.end();
@@ -153,20 +160,20 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
      */
     private void initData() {
         DTVTLogger.start();
-        mFactory= new ChannelListFragmentFactory();
+        mFactory = new ChannelListFragmentFactory();
         DTVTLogger.end();
     }
-
 
     /**
      * view初期化
      */
     private void initView() {
         DTVTLogger.start();
-        mHorizontalScrollView = findViewById(R.id.channel_list_main_layout_channel_titles_hs);
+        HorizontalScrollView horizontalScrollView = null;
+        horizontalScrollView = findViewById(R.id.channel_list_main_layout_channel_titles_hs);
         //mViewPager = findViewById(R.id.channel_list_main_layout_channel_body_vp);
-        initChannelListTab(mHorizontalScrollView);
-        ChannelListPagerAdapter adp= new ChannelListPagerAdapter(getSupportFragmentManager());
+        initChannelListTab(horizontalScrollView);
+        ChannelListPagerAdapter adp = new ChannelListPagerAdapter(getSupportFragmentManager());
         mViewPager = findViewById(R.id.channel_list_main_layout_channel_body_vp);
         mViewPager.setAdapter(adp);
         mViewPager.addOnPageChangeListener(new ViewPager
@@ -184,13 +191,14 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
 
     /**
      * Loading...を表示
+     *
      * @param yn
      * @param tabNo
      * @param type
      */
-    private void displayMore(boolean yn, int tabNo, ChannelListAdapter.ChListDataType type){
+    private void displayMore(boolean yn, int tabNo, ChannelListAdapter.ChListDataType type) {
         DTVTLogger.start();
-        final ChannelListFragment fragment= mFactory.createFragment(tabNo, this, type);
+        final ChannelListFragment fragment = mFactory.createFragment(tabNo, this, type);
         fragment.displayMoreData(yn);
         DTVTLogger.end();
     }
@@ -206,8 +214,8 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
             //本番ソース begin
             DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
             if (mDlnaProvBsChList.start(dlnaDmsItem, getActivity())) {
-                boolean ret=mDlnaProvBsChList.browseChListDms();
-                if(!ret){
+                boolean ret = mDlnaProvBsChList.browseChListDms();
+                if (!ret) {
                     onError("Get BS channel list datas failed");
                 }
             }
@@ -229,7 +237,7 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
     /**
      * Bsデータを取得
      */
-    private void getBsData(){
+    private void getBsData() {
         DTVTLogger.start();
         displayMore(true, CHANNEL_LIST_TAB_BS, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS);
         mHandle.postDelayed(mRunableBs, CHANNEL_LIST_TAB_DELAY_TIME);
@@ -247,8 +255,8 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
             //本番ソース begin
             DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
             if (mDlnaProvTerChList.start(dlnaDmsItem, getActivity())) {
-                boolean ret=mDlnaProvTerChList.browseChListDms();
-                if(!ret){
+                boolean ret = mDlnaProvTerChList.browseChListDms();
+                if (!ret) {
                     onError("Get Ter channel list datas failed");
                 }
             }
@@ -267,7 +275,7 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
     /**
      * Terデータ取得
      */
-    private void getTerData(){
+    private void getTerData() {
         DTVTLogger.start();
         displayMore(true, CHANNEL_LIST_TAB_TER, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER);
         mHandle.postDelayed(mRunableTer, CHANNEL_LIST_TAB_DELAY_TIME);
@@ -277,7 +285,7 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
     /**
      * Hikariデータ取得
      */
-    private void getHikariData(){
+    private void getHikariData() {
         DTVTLogger.start();
         //test b
         displayMore(true, CHANNEL_LIST_TAB_HIKARI, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI);
@@ -324,7 +332,7 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
     /**
      * DTvデータ取得
      */
-    private void getDtvData(){
+    private void getDtvData() {
         DTVTLogger.start();
         //test b
         displayMore(true, CHANNEL_LIST_TAB_DTV, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_DTV);
@@ -335,14 +343,15 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
 
     /**
      * Paging処理
+     *
      * @param tabPosition
      */
-    private void onPageChange(int tabPosition){
+    private void onPageChange(int tabPosition) {
         DTVTLogger.start();
-        if(null==mHandle){
+        if (null == mHandle) {
             return;
         }
-        switch (tabPosition){
+        switch (tabPosition) {
             case CHANNEL_LIST_TAB_HIKARI:
                 mHandle.removeCallbacks(mRunableBs);
                 mHandle.removeCallbacks(mRunableDtv);
@@ -375,15 +384,18 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
                 displayMore(false, CHANNEL_LIST_TAB_DTV, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_DTV);
                 displayMore(false, CHANNEL_LIST_TAB_TER, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER);
                 break;
+            default:
+                break;
         }
-        mPagingOffset=1;
-        mLastY=0;
-        mIsScrollUp =false;
+        mPagingOffset = 1;
+        mLastY = 0;
+        mIsScrollUp = false;
         DTVTLogger.end();
     }
 
     /**
      * Tab初期化
+     *
      * @param channelList channelList
      */
     private void initChannelListTab(HorizontalScrollView channelList) {
@@ -435,6 +447,7 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
 
     /**
      * Tab内容を設定
+     *
      * @param position position
      */
     private void setTab(int position) {
@@ -457,14 +470,16 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
 
     /**
      * Activityを取得
+     *
      * @return
      */
-    ChannelListActivity getActivity(){
+    ChannelListActivity getActivity() {
         return this;
     }
 
     /**
      * Scroll処理
+     *
      * @param fragment
      * @param absListView
      * @param firstVisibleItem
@@ -475,12 +490,9 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
     public void onScroll(ChannelListFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
     }
 
-    private float mLastY=0;
-    private static final float sScrollThreshold=20.0f;
-    private boolean mIsScrollUp =false;
-
     /**
      * MotionEvent処理
+     *
      * @param event event
      * @return super.dispatchTouchEvent
      */
@@ -488,15 +500,17 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
     public boolean dispatchTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                mLastY=event.getY();
+                mLastY = event.getY();
                 break;
             case MotionEvent.ACTION_UP:
-                float y=event.getY();
-                if( (y - mLastY) > sScrollThreshold ){
-                    mIsScrollUp =false;
-                }else {
-                    mIsScrollUp =true;
+                float y = event.getY();
+                if ((y - mLastY) > sScrollThreshold) {
+                    mIsScrollUp = false;
+                } else {
+                    mIsScrollUp = true;
                 }
+                break;
+            default:
                 break;
         }
         return super.dispatchTouchEvent(event);
@@ -506,7 +520,8 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
 
     /**
      * Event処理
-     * @param fragment fragment
+     *
+     * @param fragment    fragment
      * @param absListView absListView
      * @param scrollState scrollState
      */
@@ -517,11 +532,11 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
             if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE &&
                     absListView.getLastVisiblePosition() == fragment.getDataCount() - 1 &&
                     mIsScrollUp) {
-                    mIsScrollUp=false;
+                mIsScrollUp = false;
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        switch(fragment.getChListDataType()){
+                        switch (fragment.getChListDataType()) {
                             case CH_LIST_DATA_TYPE_BS:
                                 getBsData();
                                 break;
@@ -546,13 +561,14 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
 
     /**
      * データ取得
+     *
      * @param isVisibleToUser isVisibleToUser
-     * @param fragment fragment
+     * @param fragment        fragment
      */
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser, ChannelListFragment fragment){
+    public void setUserVisibleHint(boolean isVisibleToUser, ChannelListFragment fragment) {
         DTVTLogger.start();
-        if(!isVisibleToUser){
+        if (!isVisibleToUser) {
             fragment.clearDatas();
             //fragment.noticeRefresh();
             noticeRefresh(fragment);
@@ -560,8 +576,8 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
             return;
         }
 
-        ChannelListAdapter.ChListDataType type= fragment.getChListDataType();
-        switch (type){
+        ChannelListAdapter.ChListDataType type = fragment.getChListDataType();
+        switch (type) {
             case CH_LIST_DATA_TYPE_BS:
                 getBsData();
                 onPageChange(CHANNEL_LIST_TAB_BS);
@@ -592,36 +608,36 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onVideoBrows(DlnaRecVideoInfo curInfo) {
         DTVTLogger.start();
-        int pos=mViewPager.getCurrentItem();
+        int pos = mViewPager.getCurrentItem();
         //STBにチャンネル機能を提供していないで、仮データを使うために、testデータを一時コメントしている。
         //final ChannelListFragment fragment= mFactory.createFragment(pos, this, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS);
         //test b
-        DlnaRecVideoInfo curInfo2=new DlnaRecVideoInfo();
-        if(testType== ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS){
-            for(int i=0;i<curInfo.size();++i){
+        DlnaRecVideoInfo curInfo2 = new DlnaRecVideoInfo();
+        if (testType == ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS) {
+            for (int i = 0; i < curInfo.size(); ++i) {
                 curInfo2.addItemByValue(curInfo.get(i));
-                curInfo2.get(i).mTitle="BSチャンネル " + i;
+                curInfo2.get(i).mTitle = "BSチャンネル " + i;
             }
-            pos=2;
-        } else if(testType== ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER){
-            for(int i=0;i<curInfo.size();++i){
+            pos = 2;
+        } else if (testType == ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER) {
+            for (int i = 0; i < curInfo.size(); ++i) {
                 curInfo2.addItemByValue(curInfo.get(i));
-                curInfo2.get(i).mTitle="地上波チャンネル " + i;
+                curInfo2.get(i).mTitle = "地上波チャンネル " + i;
             }
-            pos=1;
-        } else if(testType== ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI){
-            pos=0;
-        } else if(testType== ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_DTV){
-            pos=3;
+            pos = 1;
+        } else if (testType == ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI) {
+            pos = 0;
+        } else if (testType == ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_DTV) {
+            pos = 3;
         }
         //test e
-        final ChannelListFragment fragment= mFactory.createFragment(pos, this, testType); //test
+        final ChannelListFragment fragment = mFactory.createFragment(pos, this, testType); //test
 //        for(int i=0;i<curInfo.size();++i){
 ////            fragment.addData(curInfo.get(i));   //本番
 //            fragment.addData(curInfo2.get(i));      //test
 //        }
-        ArrayList<Object> tmp=new ArrayList();
-        for(int i=0;i<curInfo2.size();++i){
+        ArrayList<Object> tmp = new ArrayList();
+        for (int i = 0; i < curInfo2.size(); ++i) {
             tmp.add(curInfo2.get(i));
         }
         paging(fragment, tmp);
@@ -632,9 +648,10 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
 
     /**
      * UI更新
+     *
      * @param fragment
      */
-    private void updateUi(final ChannelListFragment fragment){
+    private void updateUi(final ChannelListFragment fragment) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -646,16 +663,17 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
 
     /**
      * Terデータcallback
+     *
      * @param curInfo current recorded video list
      */
     @Override
     public void onListUpdate(DlnaTerChListInfo curInfo) {
         DTVTLogger.start();
-        int pos=mViewPager.getCurrentItem();
-        final ChannelListFragment fragment= mFactory.createFragment(pos, this, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER);
-        ArrayList<Object> tmp=new ArrayList();
-        for(int i=0;i<curInfo.size();++i){
-            Object item=curInfo.get(i);
+        int pos = mViewPager.getCurrentItem();
+        final ChannelListFragment fragment = mFactory.createFragment(pos, this, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER);
+        ArrayList<Object> tmp = new ArrayList();
+        for (int i = 0; i < curInfo.size(); ++i) {
+            Object item = curInfo.get(i);
             tmp.add(item);
         }
         paging(fragment, tmp);
@@ -665,16 +683,17 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
 
     /**
      * Bsデータcallback
+     *
      * @param curInfo current recorded video list
      */
     @Override
     public void onListUpdate(DlnaBsChListInfo curInfo) {
         DTVTLogger.start();
-        int pos=mViewPager.getCurrentItem();
-        final ChannelListFragment fragment= mFactory.createFragment(pos, this, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS);
-        ArrayList<Object> tmp=new ArrayList();
-        for(int i=0;i<curInfo.size();++i){
-            Object item=curInfo.get(i);
+        int pos = mViewPager.getCurrentItem();
+        final ChannelListFragment fragment = mFactory.createFragment(pos, this, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS);
+        ArrayList<Object> tmp = new ArrayList();
+        for (int i = 0; i < curInfo.size(); ++i) {
+            Object item = curInfo.get(i);
             tmp.add(item);
         }
         paging(fragment, tmp);
@@ -684,6 +703,7 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
 
     /**
      * 実現しない
+     *
      * @return
      */
     @Override
@@ -693,15 +713,16 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
 
     /**
      * データタイプ取得
+     *
      * @param viewPagerIndex
      * @return
      */
-    private ChannelListAdapter.ChListDataType getTypeFromViewPagerIndex(int viewPagerIndex){
+    private ChannelListAdapter.ChListDataType getTypeFromViewPagerIndex(int viewPagerIndex) {
         DTVTLogger.start();
-        ChannelListAdapter.ChListDataType ret= ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_INVALID;
-        switch (viewPagerIndex){
+        ChannelListAdapter.ChListDataType ret = ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_INVALID;
+        switch (viewPagerIndex) {
             case 0:
-                ret= ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI;
+                ret = ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI;
                 break;
             case 1:
                 ret = ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER;
@@ -711,6 +732,8 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
                 break;
             case 3:
                 ret = ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_DTV;
+                break;
+            default:
                 break;
         }
         DTVTLogger.end();
@@ -728,7 +751,7 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
 
         @Override
         public Fragment getItem(int position) {
-            if(null==mFactory){
+            if (null == mFactory) {
                 return null;
             }
             return mFactory.createFragment(position, getActivity(), getTypeFromViewPagerIndex(position));
@@ -751,14 +774,14 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
      * @param channelsInfo 画面に渡すチャンネル番組情報
      */
     @Override
-    public void channelInfoCallback(ChannelsInfo channelsInfo){
+    public void channelInfoCallback(ChannelsInfo channelsInfo) {
         DTVTLogger.start();
-        if(null==channelsInfo){
+        if (null == channelsInfo) {
             DTVTLogger.end();
             return;
         }
-        ArrayList<Channel> channels= channelsInfo.getChannels();
-        if(0==channels.size()){
+        ArrayList<Channel> channels = channelsInfo.getChannels();
+        if (0 == channels.size()) {
             return;
         }
         DTVTLogger.end();
@@ -770,31 +793,33 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
      * @param channels 　画面に渡すチャンネル情報
      */
     @Override
-    public void channelListCallback(ArrayList<Channel> channels){
+    public void channelListCallback(ArrayList<Channel> channels) {
         DTVTLogger.start();
-        if(null==channels){
+        if (null == channels) {
             DTVTLogger.end();
             return;
         }
-        int size=channels.size();
-        if(0==size){
+        int size = channels.size();
+        if (0 == size) {
             return;
         }
-        int pos=mViewPager.getCurrentItem();
-        ChannelListFragment fragment=null;
+        int pos = mViewPager.getCurrentItem();
+        ChannelListFragment fragment = null;
         switch (pos) {
             case CHANNEL_LIST_TAB_HIKARI:
-                fragment= mFactory.createFragment(pos, this, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI);
+                fragment = mFactory.createFragment(pos, this, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI);
                 break;
             case CHANNEL_LIST_TAB_DTV:
-                fragment= mFactory.createFragment(pos, this, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_DTV);
+                fragment = mFactory.createFragment(pos, this, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_DTV);
+                break;
+            default:
                 break;
         }
-        if(null==fragment){
+        if (null == fragment) {
             return;
         }
-        ArrayList<Object> tmp=new ArrayList();
-        for(Channel ch: channels){
+        ArrayList<Object> tmp = new ArrayList();
+        for (Channel ch : channels) {
             tmp.add(ch);
         }
         paging(fragment, tmp);
@@ -804,26 +829,27 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
 
     /**
      * Paging処理
+     *
      * @param fragment fragment
-     * @param list list
+     * @param list     list
      */
     private void paging(ChannelListFragment fragment, ArrayList<Object> list) {
         DTVTLogger.start();
-        final ChannelListFragment fragment2=fragment;
-        final ArrayList<Object> list2=list;
+        final ChannelListFragment fragment2 = fragment;
+        final ArrayList<Object> list2 = list;
         mHandle.post(new Runnable() {
             @Override
             public void run() {
-                if(null==fragment2 || null==list2){
+                if (null == fragment2 || null == list2) {
                     return;
                 }
-                int addedCnt=0;
-                for(Object objBs: list2){
-                    if(addedCnt>=CH_LIST_ACTI_PAGING_NUMBER){
+                int addedCnt = 0;
+                for (Object objBs : list2) {
+                    if (addedCnt >= CH_LIST_ACTI_PAGING_NUMBER) {
                         break;
                     }
-                    boolean has=fragment2.hasData(objBs);
-                    if(!has){
+                    boolean has = fragment2.hasData(objBs);
+                    if (!has) {
                         fragment2.addData(objBs);
                         ++addedCnt;
                     }
@@ -835,12 +861,12 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
         DTVTLogger.end();
     }
 
-    private void noticeRefresh(final ChannelListFragment fragment){
-        if(null==fragment){
+    private void noticeRefresh(final ChannelListFragment fragment) {
+        if (null == fragment) {
             return;
         }
-        if(null==mHandle){
-            mHandle=new Handler();
+        if (null == mHandle) {
+            mHandle = new Handler();
         }
         mHandle.post(new Runnable() {
             @Override
@@ -852,20 +878,21 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
 
     /**
      * Error処理
-     * @param msg     エラー情報
+     *
+     * @param msg エラー情報
      */
     @Override
-    public void onError(String msg){
+    public void onError(String msg) {
         DTVTLogger.start();
-        if(null==mViewPager){
+        if (null == mViewPager) {
             DTVTLogger.end();
             return;
         }
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                int tab=mViewPager.getCurrentItem();
-                switch (tab){
+                int tab = mViewPager.getCurrentItem();
+                switch (tab) {
                     case CHANNEL_LIST_TAB_BS:
                         displayMore(false, CHANNEL_LIST_TAB_BS, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS);
                         showMessage("BSチャンネル取得できなせんでした");
@@ -873,6 +900,8 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
                     case CHANNEL_LIST_TAB_TER:
                         displayMore(false, CHANNEL_LIST_TAB_TER, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER);
                         showMessage("地上波チャンネル取得できなせんでした");
+                        break;
+                    default:
                         break;
                 }
             }
@@ -882,9 +911,10 @@ public class ChannelListActivity extends BaseActivity implements View.OnClickLis
 
     /**
      * showMessage
+     *
      * @param msg
      */
-    private void showMessage(String msg){
+    private void showMessage(String msg) {
         DTVTLogger.start();
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
         DTVTLogger.end();

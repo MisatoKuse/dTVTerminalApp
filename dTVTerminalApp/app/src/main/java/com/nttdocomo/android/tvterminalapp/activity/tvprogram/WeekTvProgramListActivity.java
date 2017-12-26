@@ -17,8 +17,10 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 
 public class WeekTvProgramListActivity extends BaseActivity implements View.OnClickListener {
-    private Button btnBack,btnMode,btnChannelInfo,btnTvInfo,btnVideoDialog;
-    private boolean flag= true;
+
+    private Button btnBack, btnMode, btnChannelInfo, btnTvInfo, btnVideoDialog;
+    private boolean flag = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,11 +29,11 @@ public class WeekTvProgramListActivity extends BaseActivity implements View.OnCl
     }
 
     private void initView() {
-        btnBack = (Button)findViewById(R.id.btn_back);
-        btnMode = (Button)findViewById(R.id.btn_mode);
-        btnChannelInfo = (Button)findViewById(R.id.btn_channel_info);
-        btnTvInfo = (Button)findViewById(R.id.btn_tv_info);
-        btnVideoDialog = (Button)findViewById(R.id.btn_video_dialog);
+        btnBack = (Button) findViewById(R.id.btn_back);
+        btnMode = (Button) findViewById(R.id.btn_mode);
+        btnChannelInfo = (Button) findViewById(R.id.btn_channel_info);
+        btnTvInfo = (Button) findViewById(R.id.btn_tv_info);
+        btnVideoDialog = (Button) findViewById(R.id.btn_video_dialog);
         btnBack.setOnClickListener(this);
         btnMode.setOnClickListener(this);
         btnChannelInfo.setOnClickListener(this);
@@ -43,9 +45,9 @@ public class WeekTvProgramListActivity extends BaseActivity implements View.OnCl
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()){
+        switch (v.getId()) {
             case R.id.btn_back:
-                startActivity(HomeActivity.class,null);
+                startActivity(HomeActivity.class, null);
                 break;
             case R.id.btn_mode:
                 if (flag) {
@@ -56,7 +58,7 @@ public class WeekTvProgramListActivity extends BaseActivity implements View.OnCl
                     );
                     btnMode.setLayoutParams(lp);
                     flag = false;
-                }else{
+                } else {
                     btnMode.setText("週間番組表縮小版へ");
                     LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.MATCH_PARENT,
@@ -67,17 +69,17 @@ public class WeekTvProgramListActivity extends BaseActivity implements View.OnCl
                 }
                 break;
             case R.id.btn_channel_info:
-                startActivity(ChannelDetailPlayerActivity.class,null);
+                startActivity(ChannelDetailPlayerActivity.class, null);
                 break;
             case R.id.btn_tv_info:
-                startActivity(DtvContentsDetailActivity.class,null);
+                startActivity(DtvContentsDetailActivity.class, null);
                 break;
             case R.id.btn_video_dialog:
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 final AlertDialog dialog = builder.create();
                 View view1 = View.inflate(this, R.layout.schedule_rec_dialog_layout, null);
-                dialog.setView(view1,0,0,0,0);
+                dialog.setView(view1, 0, 0, 0, 0);
                 dialog.show();
                 view1.findViewById(R.id.video_ok).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -86,12 +88,12 @@ public class WeekTvProgramListActivity extends BaseActivity implements View.OnCl
                         AlertDialog.Builder builder = new AlertDialog.Builder(WeekTvProgramListActivity.this);
                         final AlertDialog dialog = builder.create();
                         View view1 = View.inflate(WeekTvProgramListActivity.this, R.layout.schedule_rec_dialog_layout2, null);
-                        dialog.setView(view1,0,0,0,0);
+                        dialog.setView(view1, 0, 0, 0, 0);
                         dialog.show();
-                        view1.findViewById(R.id.tv_cancel).setOnClickListener(new View.OnClickListener(){
+                        view1.findViewById(R.id.tv_cancel).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                               dialog.dismiss();
+                                dialog.dismiss();
                             }
                         });
                     }
@@ -107,5 +109,4 @@ public class WeekTvProgramListActivity extends BaseActivity implements View.OnCl
                 break;
         }
     }
-
 }

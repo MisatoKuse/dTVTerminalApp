@@ -15,14 +15,9 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.UPDATE_DATE;
@@ -30,7 +25,7 @@ import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstan
 
 public class TvScheduleInsertDataManager {
 
-    private Context mContext;
+    private Context mContext = null;
     private static final String DATE_FORMAT = "yyyy-MM-dd";
 
     /**
@@ -111,7 +106,7 @@ public class TvScheduleInsertDataManager {
                             try {
                                 date=sdf.parse(update);
                             }catch (ParseException e){
-                                e.printStackTrace();
+                                DTVTLogger.debug(e);
                             }
                             Calendar calendar = Calendar.getInstance();
                             calendar.setTime(date);

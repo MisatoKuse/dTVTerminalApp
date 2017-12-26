@@ -26,55 +26,50 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListListener;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
+public class LaunchActivity extends BaseActivity implements View.OnClickListener,
+        DlnaRecVideoListener, DlnaTerChListListener, DlnaBsChListListener {
 
-public class LaunchActivity extends BaseActivity implements View.OnClickListener, DlnaRecVideoListener, DlnaTerChListListener, DlnaBsChListListener {
+    private static boolean mIsFirstRun = true;
 
-    public static final String mStateFromTutorialActivity="fromTutorialActivity";
-
-    private final static String STATUS = "status";
-
-    private static boolean mIsFirstRun=true;
-
-    Button firstLanchLanchYesActivity=null;
-    Button firstLanchLanchNoActivity=null;
-    private DlnaProvRecVideo mDlnaProvRecVideo;
-    private DlnaProvTerChList mDlnaProvTerChList;
-    private DlnaProvBsChList mDlnaProvBsChList;
-
-    private String mState="";
+    Button firstLanchLanchYesActivity = null;
+    Button firstLanchLanchNoActivity = null;
+    private DlnaProvRecVideo mDlnaProvRecVideo = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        DlnaProvTerChList dlnaProvTerChList = null;
+        DlnaProvBsChList dlnaProvBsChList = null;
+
         setContentView(R.layout.launch_main_layout);
 
-        boolean isDlnaOk=startDlna();
-        if(!isDlnaOk){
+        boolean isDlnaOk = startDlna();
+        if (!isDlnaOk) {
             DTVTLogger.debug("BaseActivity");
             /*
              * to do: DLNA起動失敗の場合、仕様はないので、ここで将来対応
              */
-        }else {
+        } else {
             DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-            if(null==dlnaDmsItem){
+            if (null == dlnaDmsItem) {
                 /*
                  * to do: ペアリングするか、ここで将来対応
                  */
                 return;
             }
-            mDlnaProvRecVideo= new DlnaProvRecVideo();
+            mDlnaProvRecVideo = new DlnaProvRecVideo();
             mDlnaProvRecVideo.start(dlnaDmsItem, this);
             mDlnaProvRecVideo.browseRecVideoDms();
 
-            mDlnaProvTerChList= new DlnaProvTerChList();
-            mDlnaProvTerChList.start(dlnaDmsItem, this);
-            mDlnaProvTerChList.browseChListDms();
+            dlnaProvTerChList = new DlnaProvTerChList();
+            dlnaProvTerChList.start(dlnaDmsItem, this);
+            dlnaProvTerChList.browseChListDms();
 
-            mDlnaProvBsChList= new DlnaProvBsChList();
-            mDlnaProvBsChList.start(dlnaDmsItem, this);
-            mDlnaProvBsChList.browseChListDms();
+            dlnaProvBsChList = new DlnaProvBsChList();
+            dlnaProvBsChList.start(dlnaDmsItem, this);
+            dlnaProvBsChList.browseChListDms();
         }
-
         setContents();
     }
 
@@ -82,13 +77,13 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
      * 画面設定を行う
      */
     private void setContents() {
-        TextView title= (TextView)findViewById(R.id.titleLanchActivity);
+        TextView title = (TextView) findViewById(R.id.titleLanchActivity);
         title.setText(getScreenTitle());
 
-        firstLanchLanchYesActivity= (Button)findViewById(R.id.firstLanchLanchYesActivity);
+        firstLanchLanchYesActivity = (Button) findViewById(R.id.firstLanchLanchYesActivity);
         firstLanchLanchYesActivity.setOnClickListener(this);
 
-        firstLanchLanchNoActivity= (Button)findViewById(R.id.firstLanchLanchNoActivity);
+        firstLanchLanchNoActivity = (Button) findViewById(R.id.firstLanchLanchNoActivity);
         firstLanchLanchNoActivity.setOnClickListener(this);
         // TODO チュートリアル実装時にコメントアウトを外す
 //        if(SharedPreferencesUtils.getSharedPreferencesIsDisplayedTutorial(this)) {
@@ -100,29 +95,30 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
     /**
      * 機能： Dlnaを開始
+     *
      * @return true: 成功　　false: 失敗
      */
     private boolean startDlna() {
-        DlnaInterface di= DlnaInterface.getInstance();
-        boolean ret=false;
-        if(null==di){
-            ret=false;
+        DlnaInterface di = DlnaInterface.getInstance();
+        boolean ret = false;
+        if (null == di) {
+            ret = false;
         } else {
-            ret=di.startDlna();
+            ret = di.startDlna();
         }
         return ret;
     }
 
     @Override
-    protected void onResume(){
-        if(!mIsFirstRun){
+    protected void onResume() {
+        if (!mIsFirstRun) {
             firstLanchLanchYesActivity.setVisibility(View.GONE);
         }
         super.onResume();
     }
 
     @Override
-    protected void onStop(){
+    protected void onStop() {
         mDlnaProvRecVideo.stopListen();
         super.onStop();
     }
@@ -154,6 +150,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
     /**
      * 初回起動判定
+     *
      * @return
      */
     public static boolean isFirstRun() {
@@ -172,7 +169,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
      * チュートリアル画面へ遷移
      */
     // TODO チュートリアル画面作成時に削除
-    private void onFirstLaunchYesButton(){
+    private void onFirstLaunchYesButton() {
         startActivity(TutorialActivity.class, null);
     }
 
@@ -181,13 +178,13 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
      */
     private void doScreenTransition() {
         DTVTLogger.start();
-        if(SharedPreferencesUtils.getSharedPreferencesStbConnect(this)) {
+        if (SharedPreferencesUtils.getSharedPreferencesStbConnect(this)) {
             // ペアリング済み HOME画面遷移
             SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
                     this, true);
             startActivity(HomeActivity.class, null);
             DTVTLogger.debug("ParingOK Start HomeActivity");
-        } else if(SharedPreferencesUtils.getSharedPreferencesStbSelect(this)){
+        } else if (SharedPreferencesUtils.getSharedPreferencesStbSelect(this)) {
             // 次回から表示しないをチェック済み
             // 未ペアリング HOME画面遷移
             SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(

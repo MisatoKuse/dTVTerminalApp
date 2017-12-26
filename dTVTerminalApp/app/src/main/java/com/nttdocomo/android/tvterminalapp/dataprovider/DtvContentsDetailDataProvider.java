@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.text.TextUtils;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
@@ -33,23 +34,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.CHANNEL_LAST_UPDATE;
-import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.ROLELIST_LAST_UPDATE;
-
 public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient.ContentsDetailJsonParserCallback,
         RoleListWebClient.RoleListJsonParserCallback, ChannelWebClient.ChannelJsonParserCallback,
         DbThread.DbOperation, RemoteRecordingReservationWebClient.RemoteRecordingReservationJsonParserCallback {
 
-    private ApiDataProviderCallback apiDataProviderCallback;
+    private int mChannelDisplayType = 0;
+
+    private ApiDataProviderCallback mApiDataProviderCallback = null;
+
+    private Context mContext = null;
+    private ChannelList mChannelList = null;
+    private ArrayList<RoleListMetaData> mRoleListInfo = null;
+
+    //チャンネル更新
+    private static final int CHANNEL_UPDATE = 1;
+    //チャンネル検索
+    private static final int CHANNEL_SELECT = 2;
+    //ロールリスト更新
+    private static final int ROLELIST_UPDATE = 3;
+    //ロールリスト検索
+    private static final int ROLELIST_SELECT = 4;
+
     private static final String DISPLAY_TYPE[] = {"", "hikaritv", "dch"};
-    private Context context;
-    private static final int CHANNEL_UPDATE = 1;//チャンネル更新
-    private static final int CHANNEL_SELECT = 2;//チャンネル検索
-    private static final int ROLELIST_UPDATE = 3;//ロールリスト更新
-    private static final int ROLELIST_SELECT = 4;//ロールリスト検索
-    private int channel_display_type;
-    private ChannelList mChannelList;
-    private ArrayList<RoleListMetaData> roleListInfo;
 
     /**
      * コンストラクタ
@@ -57,8 +63,8 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
      * @param context TvProgramListActivity
      */
     public DtvContentsDetailDataProvider(Context context) {
-        this.context = context;
-        this.apiDataProviderCallback = (ApiDataProviderCallback) context;
+        this.mContext = context;
+        this.mApiDataProviderCallback = (ApiDataProviderCallback) context;
     }
 
     @Override
@@ -66,7 +72,7 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
         if (ContentsDetailLists != null) {
             ArrayList<VodMetaFullData> detailListInfo = ContentsDetailLists.getVodMetaFullData();
             if (detailListInfo != null) {
-                apiDataProviderCallback.onContentsDetailInfoCallback(detailListInfo);
+                mApiDataProviderCallback.onContentsDetailInfoCallback(detailListInfo);
             }
         }
     }
@@ -74,18 +80,18 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
     @Override
     public void onRoleListJsonParsed(RoleListResponse roleListResponse) {
         if (roleListResponse != null) {
-            roleListInfo = roleListResponse.getRoleList();
-            if (roleListInfo != null) {
+            mRoleListInfo = roleListResponse.getRoleList();
+            if (mRoleListInfo != null) {
                 Handler handler = new Handler();//チャンネル情報更新
                 try {
                     DbThread t = new DbThread(handler, this, ROLELIST_UPDATE);
                     t.start();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    DTVTLogger.debug(e);
                 }
             }
-            if (roleListInfo != null) {
-                apiDataProviderCallback.onRoleListCallback(roleListInfo);
+            if (mRoleListInfo != null) {
+                mApiDataProviderCallback.onRoleListCallback(mRoleListInfo);
             }
         }
     }
@@ -104,12 +110,12 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
                     DbThread t = new DbThread(handler, this, CHANNEL_UPDATE);
                     t.start();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    DTVTLogger.debug(e);
                 }
             }
         }
-        if (null != apiDataProviderCallback) {
-            apiDataProviderCallback.channelListCallback(channels);
+        if (null != mApiDataProviderCallback) {
+            mApiDataProviderCallback.channelListCallback(channels);
         }
     }
 
@@ -137,8 +143,8 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
                             channels.add(channel);
                         }
                     }
-                    if (null != apiDataProviderCallback) {
-                        apiDataProviderCallback.channelListCallback(channels);
+                    if (null != mApiDataProviderCallback) {
+                        mApiDataProviderCallback.channelListCallback(channels);
                     }
                     break;
                 case ROLELIST_SELECT:
@@ -152,8 +158,8 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
                         roleData.setName(name);
                         roleListData.add(roleData);
                     }
-                    if (null != apiDataProviderCallback) {
-                        apiDataProviderCallback.onRoleListCallback(roleListData);
+                    if (null != mApiDataProviderCallback) {
+                        mApiDataProviderCallback.onRoleListCallback(roleListData);
                     }
                     break;
                 default:
@@ -167,20 +173,20 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
         List<Map<String, String>> resultSet = null;
         switch (operationId) {
             case ROLELIST_UPDATE://サーバーから取得したロールリストデータをDBに保存する
-                RoleListInsertDataManager roleListInsertDataManager = new RoleListInsertDataManager(context);
-                roleListInsertDataManager.insertRoleList(roleListInfo);
+                RoleListInsertDataManager roleListInsertDataManager = new RoleListInsertDataManager(mContext);
+                roleListInsertDataManager.insertRoleList(mRoleListInfo);
                 break;
             case ROLELIST_SELECT://DBからロールリストデータを取得して、画面に返却する
-                HomeDataManager homeDataManager = new HomeDataManager(context);
+                HomeDataManager homeDataManager = new HomeDataManager(mContext);
                 resultSet = homeDataManager.selectRoleListData();
                 break;
             case CHANNEL_UPDATE://サーバーから取得したチャンネルデータをDBに保存する
-                ChannelInsertDataManager channelInsertDataManager = new ChannelInsertDataManager(context);
-                channelInsertDataManager.insertChannelInsertList(mChannelList, DISPLAY_TYPE[channel_display_type]);
+                ChannelInsertDataManager channelInsertDataManager = new ChannelInsertDataManager(mContext);
+                channelInsertDataManager.insertChannelInsertList(mChannelList, DISPLAY_TYPE[mChannelDisplayType]);
                 break;
             case CHANNEL_SELECT://DBからチャンネルデータを取得して、画面に返却する
-                ProgramDataManager channelDataManager = new ProgramDataManager(context);
-                resultSet = channelDataManager.selectChannelListProgramData(DISPLAY_TYPE[channel_display_type]);
+                ProgramDataManager channelDataManager = new ProgramDataManager(mContext);
+                resultSet = channelDataManager.selectChannelListProgramData(DISPLAY_TYPE[mChannelDisplayType]);
                 break;
             default:
                 break;
@@ -190,7 +196,7 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
 
     @Override
     public void onRemoteRecordingReservationJsonParsed(RemoteRecordingReservationResultResponse response) {
-        apiDataProviderCallback.recordingReservationResult(response);
+        mApiDataProviderCallback.recordingReservationResult(response);
     }
 
     /**
@@ -249,7 +255,6 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
         void recordingReservationResult(RemoteRecordingReservationResultResponse response);
     }
 
-
     /**
      * コンテンツ詳細取得
      *
@@ -266,8 +271,8 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
      * ロールリスト取得
      */
     public void getRoleListData() {
-        DateUtils dateUtils = new DateUtils(context);
-        String lastDate = dateUtils.getLastDate(ROLELIST_LAST_UPDATE);
+        DateUtils dateUtils = new DateUtils(mContext);
+        String lastDate = dateUtils.getLastDate(DateUtils.ROLELIST_LAST_UPDATE);
         if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate)) {
             //データをDBから取得する
             Handler handler = new Handler();//チャンネル情報更新
@@ -275,10 +280,10 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
                 DbThread t = new DbThread(handler, this, ROLELIST_SELECT);
                 t.start();
             } catch (Exception e) {
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             }
         } else {
-            dateUtils.addLastProgramDate(ROLELIST_LAST_UPDATE);
+            dateUtils.addLastProgramDate(DateUtils.ROLELIST_LAST_UPDATE);
             RoleListWebClient roleListWebClient = new RoleListWebClient();
             roleListWebClient.getRoleListApi(this);
         }
@@ -293,9 +298,9 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
      * @param type   dch：dチャンネル, hikaritv：ひかりTVの多ch, 指定なしの場合：すべて
      */
     public void getChannelList(int limit, int offset, String filter, int type) {
-        this.channel_display_type = type;
-        DateUtils dateUtils = new DateUtils(context);
-        String lastDate = dateUtils.getLastDate(CHANNEL_LAST_UPDATE);
+        this.mChannelDisplayType = type;
+        DateUtils dateUtils = new DateUtils(mContext);
+        String lastDate = dateUtils.getLastDate(DateUtils.CHANNEL_LAST_UPDATE);
         if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate)) {
             //データをDBから取得する
             Handler handler = new Handler();//チャンネル情報更新
@@ -303,10 +308,10 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
                 DbThread t = new DbThread(handler, this, CHANNEL_SELECT);
                 t.start();
             } catch (Exception e) {
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             }
         } else {
-            dateUtils.addLastProgramDate(CHANNEL_LAST_UPDATE);
+            dateUtils.addLastProgramDate(DateUtils.CHANNEL_LAST_UPDATE);
             ChannelWebClient mChannelList = new ChannelWebClient();
             mChannelList.getChannelApi(limit, offset, filter, DISPLAY_TYPE[type], this);
         }

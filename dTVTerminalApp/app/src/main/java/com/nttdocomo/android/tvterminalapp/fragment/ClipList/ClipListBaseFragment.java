@@ -25,26 +25,27 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class ClipListBaseFragment extends Fragment implements AbsListView.OnScrollListener,
+public class ClipListBaseFragment extends Fragment
+        implements AbsListView.OnScrollListener,
         AdapterView.OnItemClickListener, AdapterView.OnTouchListener {
 
-    private Context mActivity;
-    public List<ContentsData> mData = null;
+    private Context mActivity = null;
+    public List<ContentsData> mData = new ArrayList<>();
+    private View mLoadMoreView = null;
 
-    private View mTeleviFragmentView;
-    private ListView mTeveviListview;
+    private View mTeleviFragmentView = null;
+    private ListView mTeveviListview = null;
 
-    private ClipMainAdapter mClipMainAdapter;
+    private ClipMainAdapter mClipMainAdapter = null;
 
     //スクロール位置の記録
     private int mFirstVisibleItem = 0;
-
     //最後のスクロール方向が上ならばtrue
     private boolean mLastScrollUp = false;
-
     //指を置いたY座標
     private float mStartY = 0;
+
+    private ClipListBaseFragmentScrollListener mClipListBaseFragmentScrollListener = null;
 
     public ClipListBaseFragment() {
         if (mData == null) {
@@ -64,8 +65,6 @@ public class ClipListBaseFragment extends Fragment implements AbsListView.OnScro
         //initData();//一時使うデータ
         return initView();
     }
-
-    private ClipListBaseFragmentScrollListener mClipListBaseFragmentScrollListener = null;
 
     public void setClipListBaseFragmentScrollListener(ClipListBaseFragmentScrollListener lis) {
         mClipListBaseFragmentScrollListener = lis;
@@ -129,11 +128,9 @@ public class ClipListBaseFragment extends Fragment implements AbsListView.OnScro
         }
     }
 
-    private View mLoadMoreView;
-
-    public void displayMoreData(boolean b) {
+    public void displayMoreData(boolean loadFlag) {
         if (null != mTeveviListview) {
-            if (b) {
+            if (loadFlag) {
                 mTeveviListview.addFooterView(mLoadMoreView);
 
                 //スクロール位置を最下段にすることで、追加した更新フッターを画面内に入れる
@@ -205,21 +202,16 @@ public class ClipListBaseFragment extends Fragment implements AbsListView.OnScro
             case MotionEvent.ACTION_UP:
                 //指を離したので、位置を記録
                 float mEndY = motionEvent.getY();
-
                 mLastScrollUp = false;
-
                 //スクロール方向の判定
                 if (mStartY < mEndY) {
                     //終了時のY座標の方が大きいので、上スクロール
                     mLastScrollUp = true;
                 }
-
                 break;
-
             default:
                 //現状処理は無い・警告対応
         }
-
         return false;
     }
 

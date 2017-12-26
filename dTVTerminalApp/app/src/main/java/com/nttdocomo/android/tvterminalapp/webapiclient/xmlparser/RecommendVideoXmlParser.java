@@ -8,9 +8,7 @@ import android.os.AsyncTask;
 import android.util.Xml;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendVdList;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendChWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendVdWebClient;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -22,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RecommendVideoXmlParser extends AsyncTask<Object, Object, Object>{
+public class RecommendVideoXmlParser extends AsyncTask<Object, Object, Object> {
 
     private RecommendVdWebClient.RecommendVideoCallback mRecommendVideoCallback;
 
@@ -48,18 +46,18 @@ public class RecommendVideoXmlParser extends AsyncTask<Object, Object, Object>{
     public static final String RECOMMENDVIDEO_LIST_GROUPID = "groupId";
     public static final String RECOMMENDVIDEO_LIST_RECOMMENDMETHODID = "recommendMethodId";
 
-    public RecommendVideoXmlParser(RecommendVdWebClient.RecommendVideoCallback mRecommendVideoCallback){
+    public RecommendVideoXmlParser(RecommendVdWebClient.RecommendVideoCallback mRecommendVideoCallback) {
         this.mRecommendVideoCallback = mRecommendVideoCallback;
     }
 
     @Override
     protected void onPostExecute(Object s) {
-        mRecommendVideoCallback.RecommendVideoCallback((RecommendVdList)s);
+        mRecommendVideoCallback.RecommendVideoCallback((RecommendVdList) s);
     }
 
     @Override
     protected Object doInBackground(Object... strings) {
-        String result = (String)strings[0];
+        String result = (String) strings[0];
         RecommendVdList resultList = getRecommendVideoList(result);
         return resultList;
     }
@@ -159,6 +157,8 @@ public class RecommendVideoXmlParser extends AsyncTask<Object, Object, Object>{
                     case XmlPullParser.END_DOCUMENT:
                         redVdContents.setmRvList(redVdContentList);
                         endFlg = true;
+                        break;
+                    default:
                         break;
                 }
                 eventType = parser.next();

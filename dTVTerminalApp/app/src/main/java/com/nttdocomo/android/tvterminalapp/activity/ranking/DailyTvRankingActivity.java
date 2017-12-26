@@ -20,14 +20,10 @@ import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActi
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
 
 public class DailyTvRankingActivity extends BaseActivity implements View.OnClickListener,
         RankingTopDataProvider.ApiDataProviderCallback,

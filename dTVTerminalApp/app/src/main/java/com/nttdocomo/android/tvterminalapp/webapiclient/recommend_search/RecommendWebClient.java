@@ -10,12 +10,21 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.WebApiBase;
-import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser;
 import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendWebXmlParser;
 
 import java.util.LinkedHashMap;
 
 public class RecommendWebClient extends WebApiBase implements WebApiCallback {
+
+    //先頭スイッチ
+    private boolean mfirstParmater = false;
+
+    private final RecommendCallback mRecommendCallback;
+
+    //コールバックにエラーを返すためのハンドラー
+    private Handler handler;
+    private Runnable runnable;
+
     // 汎用レコメンド情報取得API
     /**
      * リクエスト用・サービスID
@@ -55,17 +64,6 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback {
 
     //ページID TODO: 現在はダミーの値
     public static final String USE_PAGE_ID = "0";
-
-
-    //先頭スイッチ
-    private boolean mfirstParmater;
-
-
-    private final RecommendCallback mRecommendCallback;
-
-    //コールバックにエラーを返すためのハンドラー
-    private Handler handler;
-    private Runnable runnable;
 
     public interface RecommendCallback {
         void RecommendCallback(RecommendChList mRecommendChList);

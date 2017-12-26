@@ -13,7 +13,8 @@ import android.view.View;
  * 横リサイクルビューの間隔を設定
  */
 public class SpaceItemDecoration extends RecyclerView.ItemDecoration {
-    int mSpace;
+
+    int mSpace = 0;
 
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {

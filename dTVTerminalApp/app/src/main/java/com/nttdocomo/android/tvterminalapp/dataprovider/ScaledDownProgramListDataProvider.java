@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.text.TextUtils;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
@@ -33,9 +34,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.CHANNEL_LAST_UPDATE;
-import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.TVSCHEDULE_LAST_UPDATE;
-
 /**
  * 縮小番組表用データプロバイダークラス
  * 機能：　縮小番組表画面で使うデータを提供するクラスである
@@ -44,13 +42,15 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
         ChannelWebClient.ChannelJsonParserCallback,
         TvScheduleWebClient.TvScheduleJsonParserCallback {
 
-    //CH毎番組取得のフィルター
-    private static final String PROGRAM_LIST_CHANNEL_PROGRAM_FILTER_RELEASE = "release";
-    private static final String PROGRAM_LIST_CHANNEL_PROGRAM_FILTER_TESTA = "testa";
-    private static final String PROGRAM_LIST_CHANNEL_PROGRAM_FILTER_DEMO = "demo";
-
     private ApiDataProviderCallback mApiDataProviderCallback = null;
-    private Context mContext;
+    private Context mContext = null;
+
+    private ChannelList mChannelList = null;
+    private TvScheduleList mTvScheduleList = null;
+    private int mChannelDisplayType = 0;
+    private int mProgramDisplayType = 0;
+    private String mProgramSelectDate = null;
+
     //共通スレッド使う
     private static final int CHANNEL_UPDATE = 1;//チャンネル更新
     private static final int SCHEDULE_UPDATE = 2;//番組更新
@@ -61,11 +61,10 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
     private static final String DATE_FORMAT = "yyyyMMdd";
     private static final String SELECT_TIME_FORMAT = "yyyy-MM-ddHH:mm:ss";
 
-    private ChannelList mChannelList;
-    private TvScheduleList mTvScheduleList;
-    private int channel_display_type;
-    private int program_display_type;
-    private String programSelectDate;
+    //CH毎番組取得のフィルター
+    private static final String PROGRAM_LIST_CHANNEL_PROGRAM_FILTER_RELEASE = "release";
+    private static final String PROGRAM_LIST_CHANNEL_PROGRAM_FILTER_TESTA = "testa";
+    private static final String PROGRAM_LIST_CHANNEL_PROGRAM_FILTER_DEMO = "demo";
 
     /**
      * コンストラクタ
@@ -84,32 +83,17 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                 case CHANNEL_SELECT:
                     ArrayList<Channel> channels = new ArrayList<>();
                     for (int i = 0; i < resultSet.size(); i++) {
-                        ArrayList<Schedule> mScheduleList;
                         Map<String, String> hashMap = resultSet.get(i);
                         String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
                         String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
                         String thumb = hashMap.get(JsonContents.META_RESPONSE_DEFAULT_THUMB);
                         String serviceId = hashMap.get(JsonContents.META_RESPONSE_SERVICE_ID);
-
-                        Schedule mSchedule = new Schedule();
-                        String startDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_START_DATE);
-                        String endDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
-                        mSchedule.setStartTime(startDate);
-                        mSchedule.setEndTime(endDate);
-                        mSchedule.setImageUrl(thumb);
-                        mSchedule.setTitle(title);
-                        mSchedule.setChNo(chNo);
-                        mSchedule.setClipRequestData(setClipData((HashMap<String, String>) hashMap));
-
                         if (!TextUtils.isEmpty(chNo)) {
                             Channel channel = new Channel();
                             channel.setChNo(Integer.parseInt(chNo));
                             channel.setTitle(title);
                             channel.setThumbnail(thumb);
                             channel.setServiceId(serviceId);
-                            mScheduleList = new ArrayList<>();
-                            mScheduleList.add(mSchedule);
-                            channel.setSchedules(mScheduleList);
                             channels.add(channel);
                         }
                     }
@@ -179,19 +163,19 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
         switch (mOperationId) {
             case CHANNEL_UPDATE://サーバーから取得したチャンネルデータをDBに保存する
                 ChannelInsertDataManager channelInsertDataManager = new ChannelInsertDataManager(mContext);
-                channelInsertDataManager.insertChannelInsertList(mChannelList, DISPLAY_TYPE[channel_display_type]);
+                channelInsertDataManager.insertChannelInsertList(mChannelList, DISPLAY_TYPE[mChannelDisplayType]);
                 break;
             case SCHEDULE_UPDATE://サーバーから取得した番組データをDBに保存する
                 TvScheduleInsertDataManager scheduleInsertDataManager = new TvScheduleInsertDataManager(mContext);
-                scheduleInsertDataManager.insertTvScheduleInsertList(mTvScheduleList, DISPLAY_TYPE[program_display_type]);
+                scheduleInsertDataManager.insertTvScheduleInsertList(mTvScheduleList, DISPLAY_TYPE[mProgramDisplayType]);
                 break;
             case CHANNEL_SELECT://DBからチャンネルデータを取得して、画面に返却する
                 ProgramDataManager channelDataManager = new ProgramDataManager(mContext);
-                resultSet = channelDataManager.selectChannelListProgramData(DISPLAY_TYPE[channel_display_type]);
+                resultSet = channelDataManager.selectChannelListProgramData(DISPLAY_TYPE[mChannelDisplayType]);
                 break;
             case SCHEDULE_SELECT://DBから番組データを取得して、画面に返却する
                 ProgramDataManager scheduleDataManager = new ProgramDataManager(mContext);
-                resultSet = scheduleDataManager.selectTvScheduleListProgramData(DISPLAY_TYPE[program_display_type], programSelectDate);
+                resultSet = scheduleDataManager.selectTvScheduleListProgramData(DISPLAY_TYPE[mProgramDisplayType], mProgramSelectDate);
                 break;
             default:
                 break;
@@ -213,7 +197,7 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                     DbThread t = new DbThread(handler, this, CHANNEL_UPDATE);
                     t.start();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    DTVTLogger.debug(e);
                 }
             }
         }
@@ -234,10 +218,10 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                 channelsInfo = new ChannelsInfo();
                 ArrayList<Schedule> mScheduleList;
                 StringBuilder baseStartDate = new StringBuilder();
-                baseStartDate.append(programSelectDate);
+                baseStartDate.append(mProgramSelectDate);
                 baseStartDate.append("04:00:00");
                 StringBuilder baseEndDate = new StringBuilder();
-                baseEndDate.append(programSelectDate);
+                baseEndDate.append(mProgramSelectDate);
                 baseEndDate.append("03:00:00");
                 Date selectStartDate = new Date();
                 Date selectEndDate = new Date();
@@ -246,7 +230,7 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                     selectStartDate = format.parse(baseStartDate.toString());
                     selectEndDate = format.parse(baseEndDate.toString());
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    DTVTLogger.debug(e);
                 }
                 GregorianCalendar gc = new GregorianCalendar();
                 gc.setTime(selectEndDate);
@@ -263,7 +247,7 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                     try {
                         day = format.parse(startBuilder.toString());
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        DTVTLogger.debug(e);
                     }
                     //TODO 番組表表示させるため、コメントアウトします
                     /*if(day.compareTo(selectStartDate) !=-1 && day.compareTo(selectEndDate)!=1){*/
@@ -310,7 +294,7 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                     DbThread t = new DbThread(handler, this, SCHEDULE_UPDATE);
                     t.start();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    DTVTLogger.debug(e);
                 }
             }
         }
@@ -392,9 +376,9 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
      * @param type   dch：dチャンネル, hikaritv：ひかりTVの多ch, 指定なしの場合：すべて
      */
     public void getChannelList(int limit, int offset, String filter, int type) {
-        this.channel_display_type = type;
+        this.mChannelDisplayType = type;
         DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(CHANNEL_LAST_UPDATE);
+        String lastDate = dateUtils.getLastDate(DateUtils.CHANNEL_LAST_UPDATE);
         if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate)) {
             //データをDBから取得する
             Handler handler = new Handler();//チャンネル情報更新
@@ -402,10 +386,10 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                 DbThread t = new DbThread(handler, this, CHANNEL_SELECT);
                 t.start();
             } catch (Exception e) {
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             }
         } else {
-            dateUtils.addLastProgramDate(CHANNEL_LAST_UPDATE);
+            dateUtils.addLastProgramDate(DateUtils.CHANNEL_LAST_UPDATE);
             ChannelWebClient mChannelList = new ChannelWebClient();
             mChannelList.getChannelApi(limit, offset, filter, DISPLAY_TYPE[type], this);
         }
@@ -427,10 +411,10 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
      * @param filter   文字列、Filter
      */
     private void getProgram(int[] chList, String[] dateList, final String filter, int type) {
-        this.program_display_type = type;
+        this.mProgramDisplayType = type;
         DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(TVSCHEDULE_LAST_UPDATE);
-        programSelectDate = dateList[0];
+        String lastDate = dateUtils.getLastDate(DateUtils.TVSCHEDULE_LAST_UPDATE);
+        mProgramSelectDate = dateList[0];
         if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate)) {
             //データをDBから取得する
             Handler handler = new Handler();//チャンネル情報更新
@@ -438,7 +422,7 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                 DbThread t = new DbThread(handler, this, SCHEDULE_SELECT);
                 t.start();
             } catch (Exception e) {
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             }
         } else {
             //日付の比較
@@ -459,10 +443,9 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                 dateList[j] = sdf.format(calendar.getTime());
                 j++;
             }
-            dateUtils.addLastProgramDate(TVSCHEDULE_LAST_UPDATE);
+            dateUtils.addLastProgramDate(DateUtils.TVSCHEDULE_LAST_UPDATE);
             TvScheduleWebClient mChannelProgramList = new TvScheduleWebClient();
             mChannelProgramList.getTvScheduleApi(chList, dateList, filter, this);
         }
     }
-
 }

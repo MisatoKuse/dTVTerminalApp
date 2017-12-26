@@ -4,7 +4,7 @@
     android:insetRight="16dp">
 
     <shape>
-        <solid android:color="#AAAAAA" />
+        <solid android:color="#333333" />
         <corners android:radius="1dp" />
     </shape>
 

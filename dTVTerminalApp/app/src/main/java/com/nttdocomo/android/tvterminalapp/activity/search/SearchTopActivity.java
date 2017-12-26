@@ -26,7 +26,6 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.SearchDataProvider;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchResultError;
 import com.nttdocomo.android.tvterminalapp.model.ResultType;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
@@ -45,32 +44,48 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class SearchTopActivity extends BaseActivity implements SearchDataProvider.SearchDataProviderListener, View.OnClickListener, SearchBaseFragmentScrollListener {
+public class SearchTopActivity extends BaseActivity
+        implements SearchDataProvider.SearchDataProviderListener,
+        View.OnClickListener, SearchBaseFragmentScrollListener {
 
-    private static final int PAGE_NO_OF_SERVICE_TEREBI = 0;                                         //テレビ
-    private static final int PAGE_NO_OF_SERVICE_VIDEO = PAGE_NO_OF_SERVICE_TEREBI + 1;         //ビデオ
-    private static final int PAGE_NO_OF_SERVICE_DTV_CHANNEL = PAGE_NO_OF_SERVICE_TEREBI + 2;  //dTVチャンネル
-    private static final int PAGE_NO_OF_SERVICE_DTV = PAGE_NO_OF_SERVICE_TEREBI + 3;            //dTV
-    private static final int PAGE_NO_OF_SERVICE_DANIME = PAGE_NO_OF_SERVICE_TEREBI + 4;        //dアニメ
+    private int mSearchTotalCount = 0;
+    private int mPageNumber = 0;
+    private int mSearchLastItem = 0;
+    private boolean mIsPaging = false;
+    private boolean mIsSearching = false;
+    private String[] mTabNames = null;
+    private static String sCurrentSearchText = "";
 
-    public final static int sSearchDisplayCountOnce = 20;
-    private final static long SEARCH_INTERVAL = 1000;
     public final static String sSearchCountDefault = "検索結果:0件";
 
-    private SearchView mSearchView;
-    private final static int TEXT_SIZE = 15;
-    private String[] mTabNames;
-    private LinearLayout mLinearLayout;
-    private HorizontalScrollView mTabScrollView;
+    private LinearLayout mLinearLayout = null;
+    private HorizontalScrollView mTabScrollView = null;
     private ViewPager mSearchViewPager = null;
-
-    private SearchNarrowCondition mSearchNarrowCondition = null;
-    private SearchSortKind mSearchSortKind = new SearchSortKind("SearchSortKindNone");
-
     private ImageView mMenuImageView = null;
-    private int mPageNumber = 0;
-    private boolean mIsSearching = false;
+    private SearchView mSearchView = null;
+
+    SearchDataProvider mSearchDataProvider = null;
+    SearchNarrowCondition mSearchNarrowCondition = null;
+    SearchSortKind mSearchSortKind = new SearchSortKind("SearchSortKindNone");
+
     private FragmentFactory mFragmentFactory = null;
+
+    //テレビ
+    private static final int PAGE_NO_OF_SERVICE_TEREBI = 0;
+    //ビデオ
+    private static final int PAGE_NO_OF_SERVICE_VIDEO = PAGE_NO_OF_SERVICE_TEREBI + 1;
+    //dTVチャンネル
+    private static final int PAGE_NO_OF_SERVICE_DTV_CHANNEL = PAGE_NO_OF_SERVICE_TEREBI + 2;
+    //dTV
+    private static final int PAGE_NO_OF_SERVICE_DTV = PAGE_NO_OF_SERVICE_TEREBI + 3;
+    //dアニメ
+    private static final int PAGE_NO_OF_SERVICE_DANIME = PAGE_NO_OF_SERVICE_TEREBI + 4;
+
+    public static final int SEARCH_DISPLAY_COUNT_ONCE = 20;
+
+    private static final long SEARCH_INTERVAL = 1000;
+
+    private static final int TEXT_SIZE = 15;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,20 +110,22 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
         mSearchDataProvider = new SearchDataProvider();
     }
 
-    /*検索トップ画面初期化*/
+    /**
+     * 検索トップ画面初期化
+     */
     private void initView() {
         mSearchView = findViewById(R.id.keyword_search_form);
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
     }
 
-    /*検索フォームの設定*/
+    /**
+     * 検索フォームの設定
+     */
     private void setSearchViewState() {
         mSearchView.setIconifiedByDefault(false);
         SearchView.SearchAutoComplete searchAutoComplete
                 = findViewById(android.support.v7.appcompat.R.id.search_src_text);
-
         //mSearchView.set
-
         mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
             Timer mTimer = null;
 
@@ -145,16 +162,16 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
                         }
 
                         @Override
-                        public boolean onQueryTextChange(String s) {
+                        public boolean onQueryTextChange(String seachText) {
                             // 検索フォームに文字が入力された時
                             // 空白でインクリメンタル検索を行うと、以後の検索で0件と表示され続けるため除外
-                            if (s.trim().length() == 0 && s.length() > 0) {
+                            if (seachText.trim().length() == 0 && seachText.length() > 0) {
                                 return false;
                             }
                             //一時検索画面が表示される
                             initSearchedResultView();
-                            if (s.length() > 0) {
-                                mInputText = s;
+                            if (seachText.length() > 0) {
+                                mInputText = seachText;
                                 if (mInputText.isEmpty()) {
                                     DTVTLogger.debug("isEmpty");
                                 }
@@ -227,7 +244,6 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
     }
 
     private ArrayList<SearchServiceType> getCurrentSearchServiceTypeArray() {
-
         ArrayList<SearchServiceType> ret = new ArrayList<>();
         if (null == mSearchViewPager) {
             return ret;
@@ -256,34 +272,27 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
             default:
                 break;
         }
-
         return ret;
     }
 
     private void setSearchNarrowCondition() {
         if (null == mSearchNarrowCondition) {
-
             ArrayList<SearchFilterTypeMappable> arr = new ArrayList<>();
-
             SearchGenreType genreType = new SearchGenreType("SearchGenreTypeActive_001");      //映画
             SearchDubbedType dubbedType = new SearchDubbedType("SearchDubbedTypeBoth");         //字幕
             //SearchChargeType
             //SearchOtherType
-
             arr.add(genreType);
             arr.add(dubbedType);
             mSearchNarrowCondition = new SearchNarrowCondition(arr);
         }
     }
 
-    private void setSearchStart(boolean b) {
+    private void setSearchStart(boolean searchingFlag) {
         synchronized (this) {
-            mIsSearching = b;
+            mIsSearching = searchingFlag;
         }
     }
-
-    private static String mCurrentSearchText = "";
-    private SearchDataProvider mSearchDataProvider = null;
 
     private void setSearchData(String searchText) {
         if (null == mSearchDataProvider) {
@@ -309,30 +318,23 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
                 }
             }
             */
-            SearchBaseFragment b = getCurrentSearchBaseFragment();
-            if (null != b) {
-                b.clear();
-                //連続検索を行うと一瞬0件と表示される対策として、前回の検索結果件数を持たせる
-                String[] strings = {getString(R.string.keyword_search_result),
-                        Integer.toString(mSearchTotalCount),
-                        getString(R.string.keyword_search_result_num)};
-                String totalCountText = StringUtil.getConnectString(strings);
-
-                b.notifyDataSetChanged(totalCountText);
+            SearchBaseFragment baseFragment = getCurrentSearchBaseFragment();
+            if (null != baseFragment) {
+                baseFragment.clear();
                 setPageNumber(0);
                 setPagingStatus(false);
             }
-            mCurrentSearchText = searchText;
+            sCurrentSearchText = searchText;
         }
 
-        if (mCurrentSearchText.length() == 0) {
+        if (sCurrentSearchText.length() == 0) {
             return;
         }
 
         //SearchDataProvider dp=new SearchDataProvider();
         ArrayList<SearchServiceType> serviceTypeArray = getCurrentSearchServiceTypeArray();
         mSearchDataProvider.startSearchWith(
-                mCurrentSearchText,
+                sCurrentSearchText,
                 serviceTypeArray,
                 mSearchNarrowCondition,
                 mSearchSortKind,
@@ -344,7 +346,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
             Thread.sleep(1000);
             dp.cancelSearch();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
         */
     }
@@ -353,9 +355,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
         if (null != mSearchViewPager) {
             return;
         }
-
         findViewById(R.id.fl_search_result).setVisibility(View.VISIBLE);
-
 
         mSearchViewPager = findViewById(R.id.vp_search_result);
         mTabScrollView = findViewById(R.id.hs_tab_strip_scroll);
@@ -383,7 +383,9 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
         });
     }
 
-    /*tabに関連Viewの初期化*/
+    /**
+     * tabに関連Viewの初期化
+     */
     private void initTabVIew() {
         mTabScrollView.removeAllViews();
         mLinearLayout = new LinearLayout(this);
@@ -428,7 +430,10 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
         }
     }
 
-    /*インジケーター設置*/
+    /**
+     * インジケーター設置
+     * @param position
+     */
     public void setTab(int position) {
         if (mLinearLayout != null) {
             for (int i = 0; i < mTabNames.length; i++) {
@@ -442,8 +447,6 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
         }
     }
 
-    private int mSearchTotalCount = 0;
-
     private SearchBaseFragment getCurrentSearchBaseFragment() {
         if (null != mSearchViewPager) {
             int currentPageNo = mSearchViewPager.getCurrentItem();
@@ -455,10 +458,8 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
     @Override
     public void onSearchDataProviderFinishOk(ResultType<TotalSearchContentInfo> resultType) {
         TotalSearchContentInfo content = resultType.getResultType();
-
         mSearchTotalCount = content.totalCount;
-
-        String totalCountText = sSearchCountDefault;
+        String totalCountText = sCurrentSearchText;
 
         SearchBaseFragment baseFragment = getCurrentSearchBaseFragment();//(SearchBaseFragment)mFragmentFactory.createFragment(currentPageNo, this);
         if (null == baseFragment) {
@@ -477,30 +478,24 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
         }
 
         if (0 < mSearchTotalCount) {
-
-            String[] strings = {getString(R.string.keyword_search_result),
-                    Integer.toString(mSearchTotalCount),
-                    getString(R.string.keyword_search_result_num)};
-            totalCountText = StringUtil.getConnectString(strings);
+            totalCountText = "検索結果:" + mSearchTotalCount + "件";
 
             //画面表示用のデータセット
-            for (int i = 0; i < content.getContentsDataList().size(); ++i) {
+            baseFragment.mData = content.getContentsDataList();
+            int thisTimeTotal = content.searchContentInfo.size();
+            for (int i = 0; i < thisTimeTotal; ++i) {
                 baseFragment.mData.add(content.getContentsDataList().get(i));
             }
 
             DTVTLogger.debug("baseFragment.mData.size = " + baseFragment.mData.size());
-
             baseFragment.notifyDataSetChanged(totalCountText);
             baseFragment.setSelection(mSearchLastItem);
         }
-
         baseFragment.displayLoadMore(false);
-
         setSearchStart(false);
     }
 
     public void clearAllFragment() {
-
         if (null != mSearchViewPager) {
             int sum = mFragmentFactory.getFragmentCount();
             for (int i = 0; i < sum; ++i) {
@@ -523,20 +518,15 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
         }
     }
 
-    private int mSearchLastItem = 0;
-    private boolean mIsPaging = false;
-
-    private void setPagingStatus(boolean b) {
+    private void setPagingStatus(boolean pagingFlag) {
         synchronized (this) {
-            mIsPaging = b;
+            mIsPaging = pagingFlag;
         }
     }
 
     @Override
     public void onScroll(SearchBaseFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
         mSearchLastItem = firstVisibleItem + visibleItemCount - 1;
-
         int pageMax = (mPageNumber + 1) * SearchConstants.Search.requestMaxResultCount;
         int maxPage = mSearchTotalCount / SearchConstants.Search.requestMaxResultCount;
         if (firstVisibleItem + visibleItemCount >= pageMax && maxPage >= 1 + mPageNumber) {
@@ -555,12 +545,11 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
         }
     }
 
-
-    /*検索結果タブ専用アダプター*/
+    /**
+     * 検索結果タブ専用アダプター
+     */
     private class MainAdapter extends FragmentStatePagerAdapter {
-
         private SearchTopActivity mSearchTopActivity = null;
-
         MainAdapter(FragmentManager fm, SearchTopActivity top) {
             super(fm);
             mSearchTopActivity = top;
@@ -595,5 +584,3 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
         return super.dispatchTouchEvent(event);
     }
 }
-
-

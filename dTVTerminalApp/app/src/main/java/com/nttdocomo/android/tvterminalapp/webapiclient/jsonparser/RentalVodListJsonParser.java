@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
@@ -18,18 +19,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
 
 /**
  * レンタル一覧（Jsonパーサー）
  */
-
 public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
-    private RentalVodListWebClient.RentalVodListJsonParserCallback mRentalVodListJsonParserCallback;
+
+    private RentalVodListWebClient.RentalVodListJsonParserCallback
+            mRentalVodListJsonParserCallback = null;
+
     // オブジェクトクラスの定義　
-    private PurchasedVodListResponse mPurchasedVodListResponse;
+    private PurchasedVodListResponse mPurchasedVodListResponse = null;
 
     /**
      * コンストラクタ
@@ -38,7 +40,6 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
      */
     public RentalVodListJsonParser(RentalVodListWebClient.RentalVodListJsonParserCallback rentalVodListJsonParserCallback) {
         mRentalVodListJsonParserCallback = rentalVodListJsonParserCallback;
-
         mPurchasedVodListResponse = new PurchasedVodListResponse();
     }
 
@@ -76,7 +77,7 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
                 }
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
         return null;
     }
@@ -127,6 +128,7 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
             throw new RuntimeException(e);
         }
     }
+
     /**
      * 有効期限一覧の取得：正常時レスポンスデータオブジェクトに格納
      *

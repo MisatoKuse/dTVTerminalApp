@@ -8,7 +8,6 @@ import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RentalListInsertDataManager;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
@@ -18,12 +17,12 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalVodListWebC
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.RENTAL_LIST_LAST_INSERT;
-
 public class RentalDataProvider implements RentalVodListWebClient.RentalVodListJsonParserCallback {
 
-    private Context mContext;
-    private boolean mSetDB;
+    private Context mContext = null;
+    private boolean mSetDB = false;
+
+    private ApiDataProviderCallback mApiDataProviderCallback = null;
 
     @Override
     public void onRentalVodListJsonParsed(PurchasedVodListResponse response) {
@@ -48,8 +47,6 @@ public class RentalDataProvider implements RentalVodListWebClient.RentalVodListJ
         void rentalListCallback(List<ContentsData> list);
     }
 
-    private ApiDataProviderCallback apiDataProviderCallback;
-
     /**
      * コンストラクタ
      *
@@ -57,7 +54,7 @@ public class RentalDataProvider implements RentalVodListWebClient.RentalVodListJ
      */
     public RentalDataProvider(Context mContext) {
         this.mContext = mContext;
-        this.apiDataProviderCallback = (ApiDataProviderCallback) mContext;
+        this.mApiDataProviderCallback = (ApiDataProviderCallback) mContext;
         this.mSetDB = false;
     }
 
@@ -83,7 +80,7 @@ public class RentalDataProvider implements RentalVodListWebClient.RentalVodListJ
         List<ContentsData> list = makeContentsData(response);
 
         //レンタル一覧を送る
-        apiDataProviderCallback.rentalListCallback(list);
+        mApiDataProviderCallback.rentalListCallback(list);
     }
 
     /**
@@ -119,7 +116,7 @@ public class RentalDataProvider implements RentalVodListWebClient.RentalVodListJ
     public void setStructDB(PurchasedVodListResponse response) {
         if (mSetDB) {
             DateUtils dateUtils = new DateUtils(mContext);
-            dateUtils.addLastDate(RENTAL_LIST_LAST_INSERT);
+            dateUtils.addLastDate(DateUtils.RENTAL_LIST_LAST_INSERT);
             RentalListInsertDataManager dataManager = new RentalListInsertDataManager(mContext);
             dataManager.insertRentalListInsertList(response);
             sendRentalListData(response);

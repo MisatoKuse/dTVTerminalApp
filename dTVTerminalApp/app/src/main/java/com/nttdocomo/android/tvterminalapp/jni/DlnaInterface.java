@@ -305,6 +305,8 @@ public class DlnaInterface {
             case DLNA_MSG_ID_DEV_DISP_LEAVE:
                 removeDms(content);
                 break;
+            default:
+                break;
         }
     }
 
@@ -337,6 +339,8 @@ public class DlnaInterface {
             case DLNA_MSG_ID_HIKARI_CHANNEL_LIST:
                 onHikariChList(content);
                 notifyDeviceJoinInv(content, mCurrentDmsItem);
+                break;
+            default:
                 break;
         }
     }
@@ -379,6 +383,8 @@ public class DlnaInterface {
                     mDlnaHikariChListListener.onError(sErrorMsgHikariChannelList);
                     ret=true;
                 }
+                break;
+            default:
                 break;
         }
         return ret;

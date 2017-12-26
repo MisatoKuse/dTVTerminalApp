@@ -36,7 +36,8 @@ import java.util.Map;
 
 public class HomeActivity extends BaseActivity implements View.OnClickListener, HomeDataProvider.ApiDataProviderCallback {
 
-    private LinearLayout mLinearLayout;
+    private LinearLayout mLinearLayout = null;
+
     //外部ブラウザー遷移先
     private final static String PR_URL = "https://www.hikaritv.net/video";
     //コンテンツ一覧数
@@ -363,7 +364,5 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void userInfoCallback(List<Map<String, String>> userList) {
-
     }
-
 }

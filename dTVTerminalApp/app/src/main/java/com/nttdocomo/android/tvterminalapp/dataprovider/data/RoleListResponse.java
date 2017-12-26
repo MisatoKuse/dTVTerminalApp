@@ -6,11 +6,9 @@ package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 
 public class RoleListResponse implements Serializable {
+
     private static final long serialVersionUID = -1211331811012005279L;
 
     //複数のジャンルの種別を収めるハッシュマップ

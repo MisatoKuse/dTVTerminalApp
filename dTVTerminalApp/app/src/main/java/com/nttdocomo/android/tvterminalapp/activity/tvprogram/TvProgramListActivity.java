@@ -25,6 +25,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.ChannelDetailPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ProgramChannelAdapter;
 import com.nttdocomo.android.tvterminalapp.adapter.TvProgramListAdapter;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.model.program.Channel;
 import com.nttdocomo.android.tvterminalapp.model.program.ChannelItemClickListener;
@@ -44,18 +45,34 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-public class TvProgramListActivity extends BaseActivity implements ChannelItemClickListener,
-        View.OnClickListener, ScaledDownProgramListDataProvider.ApiDataProviderCallback {
+public class TvProgramListActivity extends BaseActivity
+        implements ChannelItemClickListener,
+        View.OnClickListener,
+        ScaledDownProgramListDataProvider.ApiDataProviderCallback {
 
-    private ProgramRecyclerView programRecyclerView;
-    private int screenHeight;
-    private int screenWidth;
-    private ProgramScrollView timeScrollView;
-    private RecyclerView channelRecyclerView;
-    private HorizontalScrollView tabScrollView;
-    private LinearLayout tabLinearLayout;
-    private ImageView tagImageView;
-    private RelativeLayout changeModeLayout;
+    private ProgramRecyclerView mProgramRecyclerView = null;
+    private int mScreenHeight = 0;
+    private int mScreenWidth = 0;
+    private String mSelectDateStr = null;
+    private String mDate[] = {"日", "月", "火", "水", "木", "金", "土"};
+    private String mToDay = null;
+    private String mProgramTabNames[] = null;
+    private int mTabIndex = 0;
+    private ArrayList<Channel> mChannelInfo = new ArrayList<>();
+    private ArrayList<Channel> mChannels = new ArrayList<>();
+    private boolean mIsFromBackFlag = false;
+
+    private LinearLayout mLinearLayout = null;
+    private LinearLayout mTabLinearLayout = null;
+    private ImageView mTagImageView = null;
+    private ProgramScrollView mTimeScrollView = null;
+    private RecyclerView mChannelRecyclerView = null;
+    private HorizontalScrollView mTabScrollView = null;
+
+    private TvProgramListAdapter mTvProgramListAdapter = null;
+    private ProgramChannelAdapter mProgramChannelAdapter = null;
+
+    private static int EXPIRE_DATE = 7;
     private static final int START_TIME = 4;
     private static final int STANDARD_TIME = 24;
     private static final int SCREEN_TIME_WIDTH_PERCENT = 9;
@@ -65,25 +82,13 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
     private static final String SELECT_DATE_FORMAT = "yyyy年MM月dd日";
     private static final String TIME_FORMAT = "HHmmss";
     private static final String CUR_TIME_FORMAT = "yyyy-MM-ddHH:mm:ss";
-    private String selectDateStr;
-    private String date[] = {"日", "月", "火", "水", "木", "金", "土"};
-    private String toDay;
-    private LinearLayout mLinearLayout;
-    private String programTabNames[] = null;
-    private static int EXPIRE_DATE = 7;
-    private int tab_index = 0;
-    private TvProgramListAdapter tvProgramListAdapter;
-    private ProgramChannelAdapter programChannelAdapter;
-    private ArrayList<Channel> channelInfo;
-    private ArrayList<Channel> channels;
-    private boolean isFromBackFlag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tv_program_list_main_layout);
         initView();
-        syncScroll(channelRecyclerView, programRecyclerView);
+        syncScroll(mChannelRecyclerView, mProgramRecyclerView);
         //タブ設定
         setTabView();
         //タグ設定
@@ -99,40 +104,41 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
      * ビューの初期化
      */
     private void initView() {
-        screenHeight = getHeightDensity();
-        screenWidth = getWidthDensity();
+        RelativeLayout changeModeLayout = null;
+        mScreenHeight = getHeightDensity();
+        mScreenWidth = getWidthDensity();
         ImageView menuImage = findViewById(R.id.header_layout_menu);
         ImageView tvImage = findViewById(R.id.header_stb_status_icon);
         tvImage.setOnClickListener(mRemoteControllerOnClickListener);
         findViewById(R.id.header_layout_back).setVisibility(View.INVISIBLE);
-        timeScrollView = findViewById(R.id.tv_program_list_main_layout_time_sl);
-        channelRecyclerView = findViewById(R.id.tv_program_list_main_layout_channel_rv);
-        tabScrollView = findViewById(R.id.tv_program_list_main_layout_tab_hs);
-        programRecyclerView = findViewById(R.id.tv_program_list_main_layout_channeldetail_rv);
+        mTimeScrollView = findViewById(R.id.tv_program_list_main_layout_time_sl);
+        mChannelRecyclerView = findViewById(R.id.tv_program_list_main_layout_channel_rv);
+        mTabScrollView = findViewById(R.id.tv_program_list_main_layout_tab_hs);
+        mProgramRecyclerView = findViewById(R.id.tv_program_list_main_layout_channeldetail_rv);
         final ProgramScrollView programScrollView = findViewById(R.id.tv_program_list_main_layout_channeldetail_sl);
-        tagImageView = findViewById(R.id.tv_program_list_main_layout_curtime_iv);
+        mTagImageView = findViewById(R.id.tv_program_list_main_layout_curtime_iv);
         changeModeLayout = findViewById(R.id.tv_program_list_main_layout_changemode_rl);
         menuImage.setVisibility(View.VISIBLE);
         tvImage.setVisibility(View.VISIBLE);
 //        tvImage.setOnClickListener(this);
         menuImage.setOnClickListener(this);
-        tagImageView.setOnClickListener(this);
+        mTagImageView.setOnClickListener(this);
         titleTextView.setOnClickListener(this);
-        timeScrollView.setScrollView(programScrollView);
-        programScrollView.setScrollView(timeScrollView);
+        mTimeScrollView.setScrollView(programScrollView);
+        programScrollView.setScrollView(mTimeScrollView);
         programScrollView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 MotionEvent e = MotionEvent.obtain(motionEvent);
                 e.setLocation(e.getX() + programScrollView.getScrollX()
-                        , e.getY() - channelRecyclerView.getHeight());
-                programRecyclerView.forceToDispatchTouchEvent(e);
+                        , e.getY() - mChannelRecyclerView.getHeight());
+                mProgramRecyclerView.forceToDispatchTouchEvent(e);
                 return false;
             }
         });
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                (int)((double)screenWidth / (double)SCREEN_TIME_WIDTH_PERCENT * 2.0),
-                (int)((double)screenWidth / (double)SCREEN_TIME_WIDTH_PERCENT * 3.5));
+                (int) ((double) mScreenWidth / (double) SCREEN_TIME_WIDTH_PERCENT * 2.0),
+                (int) ((double) mScreenWidth / (double) SCREEN_TIME_WIDTH_PERCENT * 3.5));
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
         changeModeLayout.setLayoutParams(layoutParams);
@@ -142,11 +148,11 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
     @Override
     protected void onResume() {
         super.onResume();
-        if(!isFromBackFlag){
+        if (!mIsFromBackFlag) {
             //タイトル設定
             setTitle();
-        }else{
-            isFromBackFlag = false;
+        } else {
+            mIsFromBackFlag = false;
         }
     }
 
@@ -155,6 +161,11 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
      * 日付の表示
      */
     protected void showDatePickDlg() {
+        int curYear = 0;
+        int curMonth = 0;
+        int curDay = 0;
+        SimpleDateFormat sdf = new SimpleDateFormat(SELECT_DATE_FORMAT, Locale.JAPAN);
+
         DatePickerDialog.OnDateSetListener onDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
@@ -163,19 +174,15 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
                 getChannelData();
             }
         };
-        int curYear = 0;
-        int curMonth = 0;
-        int curDay = 0;
-        SimpleDateFormat sdf = new SimpleDateFormat(SELECT_DATE_FORMAT, Locale.JAPAN);
         try {
-            Date date = sdf.parse(toDay);
+            Date date = sdf.parse(mToDay);
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(date);
             curYear = calendar.get(Calendar.YEAR);
             curMonth = calendar.get(Calendar.MONTH);
             curDay = calendar.get(Calendar.DATE);
         } catch (ParseException e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, onDateSetListener,
                 curYear, curMonth, curDay);
@@ -183,11 +190,11 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
         DatePicker datePicker = datePickerDialog.getDatePicker();
         GregorianCalendar gc = new GregorianCalendar();
         gc.setTime(new Date());
-        if (tab_index == programTabNames.length - 1) {
+        if (mTabIndex == mProgramTabNames.length - 1) {
             gc.add(Calendar.DAY_OF_MONTH, -EXPIRE_DATE);
         }
         datePicker.setMinDate(gc.getTimeInMillis());
-        if (tab_index == programTabNames.length - 1) {
+        if (mTabIndex == mProgramTabNames.length - 1) {
             gc.add(Calendar.DAY_OF_MONTH, +(EXPIRE_DATE * 2));
         } else {
             gc.add(Calendar.DAY_OF_MONTH, +EXPIRE_DATE);
@@ -226,14 +233,14 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
         selectDate.append("月");
         selectDate.append(day);
         selectDate.append("日");
-        toDay = selectDate.toString();
+        mToDay = selectDate.toString();
         selectDate = new StringBuilder();
         selectDate.append(month.toString());
         selectDate.append("月");
         selectDate.append(day);
         selectDate.append("日");
         selectDate.append(" (");
-        selectDate.append(date[week - 1]);
+        selectDate.append(mDate[week - 1]);
         selectDate.append(")");
         setTitleText(selectDate.toString());
         selectDate = new StringBuilder();
@@ -242,7 +249,7 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
         selectDate.append(month.toString());
         selectDate.append("-");
         selectDate.append(day);
-        selectDateStr = selectDate.toString();
+        mSelectDateStr = selectDate.toString();
     }
 
     /**
@@ -254,10 +261,10 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
         Calendar c = Calendar.getInstance();
         Locale.setDefault(Locale.JAPAN);
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.JAPAN);
-        toDay = sdf.format(c.getTime());
-        setTitleText(toDay.substring(5));
+        mToDay = sdf.format(c.getTime());
+        setTitleText(mToDay.substring(5));
         sdf = new SimpleDateFormat(DATE_SELECT_FORMAT, Locale.JAPAN);
-        selectDateStr = sdf.format(c.getTime());
+        mSelectDateStr = sdf.format(c.getTime());
     }
 
     /**
@@ -265,19 +272,19 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
      * タブの設定
      */
     private void setTabView() {
-        programTabNames = getResources().getStringArray(R.array.tv_program_list_tab_names);
-        tabScrollView.removeAllViews();
-        tabLinearLayout = new LinearLayout(this);
+        mProgramTabNames = getResources().getStringArray(R.array.tv_program_list_tab_names);
+        mTabScrollView.removeAllViews();
+        mTabLinearLayout = new LinearLayout(this);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                screenWidth / SCREEN_TIME_WIDTH_PERCENT + (int) getDensity() * 5);
-        tabLinearLayout.setLayoutParams(layoutParams);
-        tabLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
-        tabLinearLayout.setGravity(Gravity.CENTER);
-        tabLinearLayout.setBackgroundColor(Color.BLACK);
-        tabLinearLayout.setBackgroundResource(R.drawable.rectangele_all);
-        tabScrollView.addView(tabLinearLayout);
-        for (int i = 0; i < programTabNames.length; i++) {
+                mScreenWidth / SCREEN_TIME_WIDTH_PERCENT + (int) getDensity() * 5);
+        mTabLinearLayout.setLayoutParams(layoutParams);
+        mTabLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+        mTabLinearLayout.setGravity(Gravity.CENTER);
+        mTabLinearLayout.setBackgroundColor(Color.BLACK);
+        mTabLinearLayout.setBackgroundResource(R.drawable.rectangele_all);
+        mTabScrollView.addView(mTabLinearLayout);
+        for (int i = 0; i < mProgramTabNames.length; i++) {
             TextView tabTextView = new TextView(this);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -286,7 +293,7 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
                 params.setMargins((int) getDensity() * 15, 0, 0, 0);
             }
             tabTextView.setLayoutParams(params);
-            tabTextView.setText(programTabNames[i]);
+            tabTextView.setText(mProgramTabNames[i]);
             tabTextView.setBackgroundColor(Color.BLACK);
             tabTextView.setTextColor(Color.WHITE);
             tabTextView.setGravity(Gravity.CENTER_VERTICAL);
@@ -300,13 +307,13 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
             tabTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    tab_index = (int) view.getTag();
-                    setTab(tab_index);
+                    mTabIndex = (int) view.getTag();
+                    setTab(mTabIndex);
                     clearData();
                     getChannelData();
                 }
             });
-            tabLinearLayout.addView(tabTextView);
+            mTabLinearLayout.addView(tabTextView);
         }
     }
 
@@ -317,9 +324,9 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
      * @param position タブインデックス
      */
     public void setTab(int position) {
-        if (tabLinearLayout != null) {
-            for (int i = 0; i < programTabNames.length; i++) {
-                TextView mTextView = (TextView) tabLinearLayout.getChildAt(i);
+        if (mTabLinearLayout != null) {
+            for (int i = 0; i < mProgramTabNames.length; i++) {
+                TextView mTextView = (TextView) mTabLinearLayout.getChildAt(i);
                 if (position == i) {
                     mTextView.setBackgroundResource(R.drawable.rectangele);
                     mTextView.setTextColor(Color.GRAY);
@@ -364,10 +371,10 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
      */
     private void setTagView() {
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                screenWidth / SCREEN_TIME_WIDTH_PERCENT,
-                screenWidth / SCREEN_TIME_WIDTH_PERCENT);
-        tagImageView.setLayoutParams(layoutParams);
-        tagImageView.setImageResource(R.mipmap.ic_event_note_white_24dp);
+                mScreenWidth / SCREEN_TIME_WIDTH_PERCENT,
+                mScreenWidth / SCREEN_TIME_WIDTH_PERCENT);
+        mTagImageView.setLayoutParams(layoutParams);
+        mTagImageView.setImageResource(R.mipmap.ic_event_note_white_24dp);
     }
 
     /**
@@ -384,12 +391,12 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
         mLinearLayout.setOrientation(LinearLayout.VERTICAL);
         mLinearLayout.setGravity(Gravity.CENTER);
         mLinearLayout.setBackgroundColor(Color.BLACK);
-        timeScrollView.addView(mLinearLayout);
+        mTimeScrollView.addView(mLinearLayout);
         for (int i = START_TIME; i < STANDARD_TIME + START_TIME; i++) {
             TextView tabTextView = new TextView(this);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    screenWidth / SCREEN_TIME_WIDTH_PERCENT,
-                    screenHeight / SCREEN_TIME_HEIGHT_PERCENT);
+                    mScreenWidth / SCREEN_TIME_WIDTH_PERCENT,
+                    mScreenHeight / SCREEN_TIME_HEIGHT_PERCENT);
             tabTextView.setLayoutParams(params);
             int curTime = i;
             if (curTime >= STANDARD_TIME) {
@@ -417,10 +424,10 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
     private void setChannelContentsView() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        channelRecyclerView.setLayoutManager(linearLayoutManager);
-        programChannelAdapter = new ProgramChannelAdapter(this, channels);
-        programChannelAdapter.setOnItemClickListener(this);
-        channelRecyclerView.setAdapter(programChannelAdapter);
+        mChannelRecyclerView.setLayoutManager(linearLayoutManager);
+        mProgramChannelAdapter = new ProgramChannelAdapter(this, mChannels);
+        mProgramChannelAdapter.setOnItemClickListener(this);
+        mChannelRecyclerView.setAdapter(mProgramChannelAdapter);
     }
 
     @Override
@@ -434,7 +441,7 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
      */
     private void getChannelData() {
         ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
-        scaledDownProgramListDataProvider.getChannelList(1, 1, "", tab_index);
+        scaledDownProgramListDataProvider.getChannelList(1, 1, "", mTabIndex);
     }
 
     @Override
@@ -475,31 +482,31 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
     private void setProgramRecyclerView() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        programRecyclerView.setLayoutManager(linearLayoutManager);
-        tvProgramListAdapter = new TvProgramListAdapter(this, channelInfo);
-        programRecyclerView.setAdapter(tvProgramListAdapter);
-        programRecyclerView.setItemViewCacheSize(channelInfo.size());
-        programRecyclerView.getRecycledViewPool().setMaxRecycledViews(tvProgramListAdapter.getItemViewType(0), 3);
+        mProgramRecyclerView.setLayoutManager(linearLayoutManager);
+        mTvProgramListAdapter = new TvProgramListAdapter(this, mChannelInfo);
+        mProgramRecyclerView.setAdapter(mTvProgramListAdapter);
+        mProgramRecyclerView.setItemViewCacheSize(mChannelInfo.size());
+        mProgramRecyclerView.getRecycledViewPool().setMaxRecycledViews(mTvProgramListAdapter.getItemViewType(0), 3);
     }
 
     /**
      * 機能
      * 番組表情報をクリア
      */
-    private void clearData(){
-        channelRecyclerView.removeAllViews();
-        programRecyclerView.removeAllViews();
-        if (channels != null) {
-            channels.clear();
+    private void clearData() {
+        mChannelRecyclerView.removeAllViews();
+        mProgramRecyclerView.removeAllViews();
+        if (mChannels != null) {
+            mChannels.clear();
         }
-        if (channelInfo != null) {
-            channelInfo.clear();
+        if (mChannelInfo != null) {
+            mChannelInfo.clear();
         }
-        if (programChannelAdapter != null) {
-            programChannelAdapter.notifyDataSetChanged();
+        if (mProgramChannelAdapter != null) {
+            mProgramChannelAdapter.notifyDataSetChanged();
         }
-        if(tvProgramListAdapter!=null){
-            tvProgramListAdapter.notifyDataSetChanged();
+        if (mTvProgramListAdapter != null) {
+            mTvProgramListAdapter.notifyDataSetChanged();
         }
     }
 
@@ -522,7 +529,7 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
                 scrollDis = mLinearLayout.getHeight();
             }
         }
-        timeScrollView.smoothScrollTo(0, scrollDis);
+        mTimeScrollView.smoothScrollTo(0, scrollDis);
     }
 
     @Override
@@ -530,9 +537,9 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
         if (channelsInfo != null && channelsInfo.getChannels() != null) {
             ArrayList<Channel> channels = channelsInfo.getChannels();
             sort(channels);
-            channelInfo = channels;
+            mChannelInfo = channels;
             /*if(tab_index !=0 ){*/
-                setProgramRecyclerView();
+            setProgramRecyclerView();
             /*}*/
         }
     }
@@ -540,8 +547,8 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
     @Override
     public void channelListCallback(ArrayList<Channel> channels) {
         if (channels != null) {
-            if(tab_index !=0 ){
-                this.channels = channels;
+            if (mTabIndex != 0) {
+                this.mChannels = channels;
                 setChannelContentsView();
             }
             ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
@@ -549,15 +556,15 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
             for (int i = 0; i < channels.size(); i++) {
                 channelNos[i] = channels.get(i).getChNo();
             }
-            String dateList[] = {selectDateStr};
-            scaledDownProgramListDataProvider.getProgram(channelNos, dateList, tab_index);
+            String dateList[] = {mSelectDateStr};
+            scaledDownProgramListDataProvider.getProgram(channelNos, dateList, mTabIndex);
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        isFromBackFlag = true;
+        mIsFromBackFlag = true;
     }
 
     /**
@@ -590,7 +597,7 @@ public class TvProgramListActivity extends BaseActivity implements ChannelItemCl
                 date1 = format.parse(time1.toString());
                 date2 = format.parse(time2.toString());
             } catch (Exception e) {
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             }
             return date1.compareTo(date2);
         }

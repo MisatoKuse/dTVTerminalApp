@@ -49,13 +49,16 @@ import java.util.TimerTask;
 
 public class RecordedListActivity extends BaseActivity implements View.OnClickListener,
         RecordedBaseFragmentScrollListener, DlnaRecVideoListener {
-    private LinearLayout mTabLinearLayout;
-    private String[] mTabNames;
-    private ImageView mMenuImageView;
-    private ViewPager mViewPager;
-    private SearchView mSearchView;
-    private HorizontalScrollView mTabScrollView;
-    private DlnaProvRecVideo mDlnaProvRecVideo;
+
+    private String[] mTabNames = null;
+
+    private LinearLayout mTabLinearLayout = null;
+    private ImageView mMenuImageView = null;
+    private ViewPager mViewPager = null;
+    private SearchView mSearchView = null;
+    private HorizontalScrollView mTabScrollView = null;
+
+    private DlnaProvRecVideo mDlnaProvRecVideo = null;
     private RecordedFragmentFactory mRecordedFragmentFactory = null;
 
     private final static long SEARCH_INTERVAL = 1000;
@@ -76,7 +79,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     //設定するマージンのピクセル数
     private static final String DATE_FORMAT = "yyyy/MM/ddHH:mm:ss";
-    private String date[] = {"日", "月", "火", "水", "木", "金", "土"};
+    private String mDate[] = {"日", "月", "火", "水", "木", "金", "土"};
     public ArrayList<DlnaRecVideoItem> mList;
 
     @Override
@@ -161,7 +164,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                                                 public void run() {
                                                     DTVTLogger.debug("1 sencond passed");
                                                     mSearchTime = System.currentTimeMillis();
-                                                    if (mInputText != mBeforeText) {
+                                                    if (!mInputText.equals(mBeforeText)) {
                                                         // 文字列に変化があった場合
                                                         DTVTLogger.debug("Start IncrementalSearch:" + mInputText);
 //                                                        initSearchedResultView();
@@ -412,60 +415,64 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onVideoBrows(DlnaRecVideoInfo curInfo) {
         if (curInfo != null && curInfo.getRecordVideoLists() != null) {
-            final RecordedBaseFragment baseFrgament = getCurrentRecordedBaseFragment();
-            baseFrgament.mContentsList = new ArrayList<RecordedContentsDetailData>();
-            for (int i = 0; i < curInfo.getRecordVideoLists().size(); ++i) {
-                RecordedContentsDetailData detailData = new RecordedContentsDetailData();
-                detailData.setUpnpIcon(curInfo.getRecordVideoLists().get(i).mUpnpIcon);
-                detailData.setSize(curInfo.getRecordVideoLists().get(i).mSize);
-                detailData.setResUrl(curInfo.getRecordVideoLists().get(i).mResUrl);
-                detailData.setResolution(curInfo.getRecordVideoLists().get(i).mResolution);
-                detailData.setBitrate(curInfo.getRecordVideoLists().get(i).mBitrate);
-                detailData.setDuration(curInfo.getRecordVideoLists().get(i).mDuration);
-                detailData.setTitle(curInfo.getRecordVideoLists().get(i).mTitle);
-                detailData.setVideoType(curInfo.getRecordVideoLists().get(i).mVideoType);
-                baseFrgament.mContentsList.add(detailData);
-            }
-            List<ContentsData> listData = baseFrgament.getContentsData();
-            listData.clear();
-            mList = getTakeOutContents(curInfo.getRecordVideoLists());
-            SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.JAPAN);
-            for (int i = 0; i < mList.size(); i++) {
-                // TODO 年齢取得未実装の為、固定値を返却
-                boolean isAge = true;
-                DlnaRecVideoItem dlnaRecVideoItem = mList.get(i);
-                ContentsData contentsData = new ContentsData();
-                int currentPageNo = mViewPager.getCurrentItem();
-                if (isAge) {
-                    contentsData.setTitle(dlnaRecVideoItem.mTitle);
-                    contentsData.setAllowedUse(dlnaRecVideoItem.mAllowedUse);
-                    String time = dlnaRecVideoItem.mDate.replaceAll("-", "/").replace("T", "");
-                    try {
-                        Calendar calendar = Calendar.getInstance(Locale.JAPAN);
-                        calendar.setTime(sdf.parse(time));
-                        StringUtil util = new StringUtil(this);
-                        String[] strings = {String.valueOf(calendar.get(Calendar.MONTH)),"/",
-                                String.valueOf(calendar.get(Calendar.DAY_OF_MONTH))," (",
-                                date[calendar.get(Calendar.DAY_OF_WEEK) - 1],") ",
-                                String.valueOf(calendar.get(Calendar.HOUR_OF_DAY)),":",
-                                String.valueOf(calendar.get(Calendar.MINUTE))};
-                        String selectDate = util.getConnectString(strings);
-                        contentsData.setTime(selectDate);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    listData.add(contentsData);
-                } else {
-                    // NOP
-                }
-            }
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    baseFrgament.notifyDataSetChanged();
-                }
-            });
+            setVideoBrows(curInfo);
         }
+    }
+
+    private void setVideoBrows(DlnaRecVideoInfo curInfo) {
+        final RecordedBaseFragment baseFrgament = getCurrentRecordedBaseFragment();
+        baseFrgament.mContentsList = new ArrayList<RecordedContentsDetailData>();
+        for (int i = 0; i < curInfo.getRecordVideoLists().size(); ++i) {
+            RecordedContentsDetailData detailData = new RecordedContentsDetailData();
+            detailData.setUpnpIcon(curInfo.getRecordVideoLists().get(i).mUpnpIcon);
+            detailData.setSize(curInfo.getRecordVideoLists().get(i).mSize);
+            detailData.setResUrl(curInfo.getRecordVideoLists().get(i).mResUrl);
+            detailData.setResolution(curInfo.getRecordVideoLists().get(i).mResolution);
+            detailData.setBitrate(curInfo.getRecordVideoLists().get(i).mBitrate);
+            detailData.setDuration(curInfo.getRecordVideoLists().get(i).mDuration);
+            detailData.setTitle(curInfo.getRecordVideoLists().get(i).mTitle);
+            detailData.setVideoType(curInfo.getRecordVideoLists().get(i).mVideoType);
+            baseFrgament.mContentsList.add(detailData);
+        }
+        List<ContentsData> listData = baseFrgament.getContentsData();
+        listData.clear();
+        mList = getTakeOutContents(curInfo.getRecordVideoLists());
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.JAPAN);
+        for (int i = 0; i < mList.size(); i++) {
+            // TODO 年齢取得未実装の為、固定値を返却
+            boolean isAge = true;
+            DlnaRecVideoItem dlnaRecVideoItem = mList.get(i);
+            ContentsData contentsData = new ContentsData();
+            int currentPageNo = mViewPager.getCurrentItem();
+            if (isAge) {
+                contentsData.setTitle(dlnaRecVideoItem.mTitle);
+                contentsData.setAllowedUse(dlnaRecVideoItem.mAllowedUse);
+                String time = dlnaRecVideoItem.mDate.replaceAll("-", "/").replace("T", "");
+                try {
+                    Calendar calendar = Calendar.getInstance(Locale.JAPAN);
+                    calendar.setTime(sdf.parse(time));
+                    StringUtil util = new StringUtil(this);
+                    String[] strings = {String.valueOf(calendar.get(Calendar.MONTH)), "/",
+                            String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)), " (",
+                            mDate[calendar.get(Calendar.DAY_OF_WEEK) - 1], ") ",
+                            String.valueOf(calendar.get(Calendar.HOUR_OF_DAY)), ":",
+                            String.valueOf(calendar.get(Calendar.MINUTE))};
+                    String selectDate = util.getConnectString(strings);
+                    contentsData.setTime(selectDate);
+                } catch (ParseException e) {
+                    DTVTLogger.debug(e);
+                }
+                listData.add(contentsData);
+            } else {
+                // NOP
+            }
+        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                baseFrgament.notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
@@ -477,7 +484,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onError(String msg) {
         DTVTLogger.start(msg);
-        final String msg2=msg;
+        final String msg2 = msg;
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -490,7 +497,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      * showMessage
      * @param msg
      */
-    private void showMessage(String msg){
+    private void showMessage(String msg) {
         DTVTLogger.start();
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
         DTVTLogger.end();

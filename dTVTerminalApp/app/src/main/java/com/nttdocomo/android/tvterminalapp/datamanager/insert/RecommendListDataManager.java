@@ -75,6 +75,8 @@ public class RecommendListDataManager {
                 case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME:
                     mRecommendListDao.delete(tagPageNo);
                     break;
+                default:
+                    break;
             }
         }
 

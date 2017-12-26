@@ -33,17 +33,6 @@ public class WatchingVideoListActivity extends BaseActivity implements View.OnCl
         WatchListenVideoListDataProvider.WatchListenVideoListProviderCallback,
         AbsListView.OnScrollListener, View.OnTouchListener {
 
-    private ListView mListView;
-
-    private ImageView mMenuImageView = null;
-
-    private WatchListenVideoBaseAdapter mWatchListenVideoBaseAdapter;
-    private List mData = new ArrayList<>();
-
-    private View mLoadMoreView;
-    //private boolean mPagingStatus = false;
-    private WatchListenVideoListDataProvider mWatchListenVideoListDataProvider = null;
-    private final int NUM_PER_PAGE = 10;
     private boolean mIsCommunicating = false;
 
     //スクロール位置の記録
@@ -52,14 +41,26 @@ public class WatchingVideoListActivity extends BaseActivity implements View.OnCl
     //最後のスクロール方向が上ならばtrue
     private boolean mLastScrollUp = false;
 
+    private List mData = new ArrayList<>();
+
     //指を置いたY座標
     private float mStartY = 0;
 
     //指を置いたX座標
     private float mStartX = 0;
 
+    private View mLoadMoreView = null;
+    private ListView mListView = null;
+    private ImageView mMenuImageView = null;
+
+    private WatchListenVideoBaseAdapter mWatchListenVideoBaseAdapter = null;
+    //private boolean mPagingStatus = false;
+    private WatchListenVideoListDataProvider mWatchListenVideoListDataProvider = null;
+
     //横スクロール判定用倍率
     private static final float RANGE_MAGNIFICATION = 3;
+
+    private final int NUM_PER_PAGE = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +115,6 @@ public class WatchingVideoListActivity extends BaseActivity implements View.OnCl
                 float endY = motionEvent.getY();
                 float endX = motionEvent.getX();
 
-
                 //縦横の移動距離を求める
                 float xRange = abs(endX - mStartX);
                 float yRange = abs(endY - mStartY);
@@ -132,13 +132,10 @@ public class WatchingVideoListActivity extends BaseActivity implements View.OnCl
                     //終了時のY座標の方が大きいので、上スクロール
                     mLastScrollUp = true;
                 }
-
                 break;
-
             default:
                 //現状処理は無い・警告対応
         }
-
         return false;
     }
 
@@ -147,7 +144,6 @@ public class WatchingVideoListActivity extends BaseActivity implements View.OnCl
         if (mMenuImageView.equals(view)) {
             onSampleGlobalMenuButton_PairLoginOk();
         }
-
     }
 
     private void setCommunicatingStatus(boolean b) {
@@ -237,7 +233,6 @@ public class WatchingVideoListActivity extends BaseActivity implements View.OnCl
     @Override
     public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount,
                          int totalItemCount) {
-
         //int page = getCurrentNumber();
         synchronized (this) {
             //現在のスクロール位置の記録
@@ -259,7 +254,6 @@ public class WatchingVideoListActivity extends BaseActivity implements View.OnCl
 
     @Override
     public void onScrollStateChanged(AbsListView absListView, int scrollState) {
-
         synchronized (this) {
             //if (mPagingStatus && scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
             //if (absListView.getLastVisiblePosition() == mListView.getAdapter().getCount() - 1
@@ -304,6 +298,5 @@ public class WatchingVideoListActivity extends BaseActivity implements View.OnCl
                 }, LOAD_PAGE_DELAY_TIME);
             }
         }
-
     }
 }

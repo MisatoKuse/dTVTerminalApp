@@ -6,19 +6,17 @@ package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 購入済みVOD一覧取得：正常時レスポンスデータ
  */
-
 public class PurchasedVodListResponse implements Serializable {
-
-    private static final long serialVersionUID = 11185212718261137L;
-
-    private String mStatus;                                 // status
-    private ArrayList<VodMetaFullData> mVodMetaFullData;  // 購入済みVOD一覧リスト
-    private ArrayList<ActiveData> mActiveData;             //有効期限一覧
+    // status
+    private String mStatus = null;
+    // 購入済みVOD一覧リスト
+    private ArrayList<VodMetaFullData> mVodMetaFullData = new ArrayList<>();
+    //有効期限一覧
+    private ArrayList<ActiveData> mActiveData = new ArrayList<>();
 
     public String getStatus() {
         return mStatus;

@@ -7,7 +7,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
-import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -29,6 +29,29 @@ import java.util.List;
 import java.util.Locale;
 
 public class WebApiBasePlala {
+
+    private ReturnCode mReturnCode = null;
+
+    /**
+     * コールバックのインスタンス
+     */
+    private WebApiBasePlalaCallback mWebApiBasePlalaCallback = null;
+
+    //通信停止用コネクション蓄積
+    private volatile static List<HttpURLConnection> mUrlConnections = null;
+
+    //全部止まった場合のフラグ
+    private static boolean mIsStopAllConnections = false;
+
+    //コネクション
+    private HttpURLConnection mUrlConnection = null;
+
+    //結果を受け取るバッファ
+    private String mAnswerBuffer = "";
+
+    //リクエスト種別・基本はPOST
+    private static final String REQUEST_METHOD = "POST";
+
     /**
      * データ受け渡しコールバック
      */
@@ -45,26 +68,6 @@ public class WebApiBasePlala {
          */
         void onError();
     }
-
-    /**
-     * コールバックのインスタンス
-     */
-    private WebApiBasePlalaCallback mWebApiBasePlalaCallback;
-
-    //通信停止用コネクション蓄積
-    private volatile static List<HttpURLConnection> mUrlConnections = null;
-
-    //全部止まった場合のフラグ
-    private static boolean mIsStopAllConnections = false;
-
-    //コネクション
-    private HttpURLConnection mUrlConnection = null;
-
-    //結果を受け取るバッファ
-    private String mAnswerBuffer = "";
-
-    //リクエスト種別・基本はPOST
-    private static final String REQUEST_METHOD = "POST";
 
     /**
      * 内部エラー情報（継承先クラスで判定する場合の為にprotected指定）
@@ -93,7 +96,6 @@ public class WebApiBasePlala {
          */
         OTHER_ERROR,
     }
-
 
     //指定文字列パラメータ群
     //対外的なパラメータなので、現在は非使用の物にもpublicが必要になる。
@@ -263,8 +265,6 @@ public class WebApiBasePlala {
         }
     }
 
-    private ReturnCode mReturnCode = null;
-
     /**
      * コンストラクタ
      */
@@ -414,13 +414,13 @@ public class WebApiBasePlala {
         } catch (UnsupportedEncodingException e) {
             //HTTP通信エラーとして元に返す
             mReturnCode.errorType = ERROR_TYPE.OTHER_ERROR;
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         } catch (IOException e) {
             //全通信停止発行済みならば、正常な動作となる
             if (!mIsStopAllConnections) {
                 //通信停止ではないので、通信エラー
                 mReturnCode.errorType = ERROR_TYPE.OTHER_ERROR;
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             }
         } finally {
             //ストリームを閉じる
@@ -453,7 +453,7 @@ public class WebApiBasePlala {
             } catch (IOException e) {
                 //クローズ失敗は通信エラー
                 mReturnCode.errorType = ERROR_TYPE.OTHER_ERROR;
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             }
         }
         if (inputStreamReader != null) {
@@ -462,7 +462,7 @@ public class WebApiBasePlala {
             } catch (IOException e) {
                 //クローズ失敗は通信エラー
                 mReturnCode.errorType = ERROR_TYPE.OTHER_ERROR;
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             }
         }
         if (bufferedReader != null) {
@@ -471,7 +471,7 @@ public class WebApiBasePlala {
             } catch (IOException e) {
                 //クローズ失敗は通信エラー
                 mReturnCode.errorType = ERROR_TYPE.OTHER_ERROR;
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             }
         }
     }
@@ -552,7 +552,7 @@ public class WebApiBasePlala {
             } catch (IOException e) {
                 //通信エラー扱いとする
                 mReturnCode.errorType = ERROR_TYPE.COMMUNICATION_ERROR;
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             } finally {
                 //最後なので初期化
                 mUrlConnection = null;
@@ -629,14 +629,14 @@ public class WebApiBasePlala {
 
             } catch (IOException e) {
                 // POST送信エラー
-                e.printStackTrace();
+                DTVTLogger.debug(e);
                 //result="POST送信エラー";
             } finally {
                 if (dataOutputStream != null) {
                     try {
                         dataOutputStream.close();
                     } catch (IOException e1) {
-                        e1.printStackTrace();
+                        DTVTLogger.debug(e1);
                     }
                 }
             }

@@ -31,6 +31,7 @@
     <dimen name="global_menu_list_item_dazn_title_left_margin">10dp</dimen>
     <dimen name="global_menu_list_item_arrow_right_margin">20dp</dimen>
     <dimen name="global_menu_list_item_count_right_margin">25dp</dimen>
+    <dimen name="global_menu_list_item_title_icon_left_margin">32dp</dimen>
 
     <!--Common-->
     <dimen name="header_title_text_size">16dp</dimen>

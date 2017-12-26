@@ -11,7 +11,6 @@ import android.os.Bundle;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.DaccountConstants;
-import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
 
 import java.util.Set;
 

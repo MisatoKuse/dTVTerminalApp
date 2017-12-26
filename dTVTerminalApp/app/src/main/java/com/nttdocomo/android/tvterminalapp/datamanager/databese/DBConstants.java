@@ -84,60 +84,52 @@ public class DBConstants {
     private static final String OPEN_BRACKETS_TEXT = " (";
     private static final String CLOSE_BRACKETS_TEXT = ")";
 
-    private static final String[] CREATE_TABLE_CHANNEL_LIST_SQL_NAME =
-            {CREATE_TABLE_TEXT, CHANNEL_LIST_TABLE_NAME, OPEN_BRACKETS_TEXT,
-                    ID_COLUMN, CREATE_TABLE_PRIMARY_TEXT,
-                    JsonContents.META_RESPONSE_CRID, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_SERVICE_ID, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_CHNO, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_TITLE, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_TITLERUBY, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_DISP_TYPE, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_SERVICE, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_CH_TYPE, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_AVAIL_START_DATE, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_AVAIL_END_DATE, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_DEFAULT_THUMB, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_THUMB_640, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_THUMB_448, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_DEMONG, TEXT_WITH_COMMA_TEXT,
-                    UNDER_BAR_FOUR_K_FLG, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_AVAIL_STATUS, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_DELIVERY, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_R_VALUE, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_ADULT, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_NG_FUNC, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_GENRE_ARRAY, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_SYNOP, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_CHSVOD, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_PUID, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_SUB_PUID, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_PRICE, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_QRANGE, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_QUNIT, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_PU_START_DATE, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_PU_END_DATE, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_EVENT_ID, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_TITLE_ID, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_SEARCH_OK, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_TV_SERVICE, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_DTV, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE, JsonContents.META_RESPONSE_CRID, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE, JsonContents.META_RESPONSE_TITLE, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE, JsonContents.META_RESPONSE_DISP_TYPE, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE, JsonContents.META_RESPONSE_PUID, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE, JsonContents.META_RESPONSE_SUB_PUID, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE, JsonContents.META_RESPONSE_PRICE, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE, JsonContents.META_RESPONSE_QRANGE, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE, JsonContents.META_RESPONSE_QUNIT, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE, JsonContents.META_RESPONSE_PU_START_DATE, TEXT_WITH_COMMA_TEXT,
-                    JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE, JsonContents.META_RESPONSE_PU_END_DATE, TEXT_WITH_COMMA_TEXT,
-                    DATE_TYPE, TEXT_WITH_COMMA_TEXT, UPDATE_DATE, TEXT_WITHOUT_COMMA_TEXT,
-                    CLOSE_BRACKETS_TEXT};
-
-    //Homeキャッシュデータ格納用テーブル(チャンネル)
-    public static final String CREATE_TABLE_CHANNEL_SQL =
-            StringUtil.getConnectString(CREATE_TABLE_CHANNEL_LIST_SQL_NAME);
+    public static final String CREATE_TABLE_CHANNEL_SQL = "" +
+            "create table " + CHANNEL_LIST_TABLE_NAME + " (" +
+            ID_COLUMN + " integer primary key autoincrement, " +
+            JsonContents.META_RESPONSE_CRID + " text, " +
+            JsonContents.META_RESPONSE_SERVICE_ID  + " text, " +
+            JsonContents.META_RESPONSE_CHNO  + " text, " +
+            JsonContents.META_RESPONSE_TITLE + " text, " +
+            JsonContents.META_RESPONSE_TITLERUBY   + " text, " +
+            JsonContents.META_RESPONSE_DISP_TYPE  + " text, " +
+            JsonContents.META_RESPONSE_SERVICE  + " text, " +
+            JsonContents.META_RESPONSE_CH_TYPE  + " text, " +
+            JsonContents.META_RESPONSE_AVAIL_START_DATE  + " text, " +
+            JsonContents.META_RESPONSE_AVAIL_END_DATE  + " text, " +
+            JsonContents.META_RESPONSE_DEFAULT_THUMB  + " text, " +
+            JsonContents.META_RESPONSE_THUMB_640  + " text, " +
+            JsonContents.META_RESPONSE_THUMB_448  + " text, " +
+            JsonContents.META_RESPONSE_DEMONG  + " text, " +
+            UNDER_BAR_FOUR_K_FLG  + " text, " +
+            JsonContents.META_RESPONSE_AVAIL_STATUS  + " text, " +
+            JsonContents.META_RESPONSE_DELIVERY  + " text, " +
+            JsonContents.META_RESPONSE_R_VALUE  + " text, " +
+            JsonContents.META_RESPONSE_ADULT  + " text, " +
+            JsonContents.META_RESPONSE_NG_FUNC  + " text, " +
+            JsonContents.META_RESPONSE_GENRE_ARRAY  + " text, " +
+            JsonContents.META_RESPONSE_SYNOP  + " text, " +
+            JsonContents.META_RESPONSE_CHSVOD  + " text, " +
+            JsonContents.META_RESPONSE_PUID  + " text, " +
+            JsonContents.META_RESPONSE_SUB_PUID  + " text, " +
+            JsonContents.META_RESPONSE_PRICE  + " text, " +
+            JsonContents.META_RESPONSE_QRANGE  + " text, " +
+            JsonContents.META_RESPONSE_QUNIT  + " text, " +
+            JsonContents.META_RESPONSE_PU_START_DATE  + " text, " +
+            JsonContents.META_RESPONSE_PU_END_DATE  + " text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_TITLE +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_DISP_TYPE +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_SUB_PUID +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PRICE +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QRANGE +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QUNIT +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_START_DATE +" text, " +
+            JsonContents.META_RESPONSE_CHPACK  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_END_DATE +" text, " +
+            DATE_TYPE + " text, " +
+            UPDATE_DATE + " text " +
+            ")";
 
     //Homeキャッシュデータ格納用テーブル
     public static final String DAILYRANK_LIST_TABLE_NAME = "daily_rank_list";
@@ -188,17 +180,17 @@ public class DBConstants {
             JsonContents.META_RESPONSE_CHSVOD + " text, " +
             JsonContents.META_RESPONSE_SEARCH_OK + " text, " +
             JsonContents.META_RESPONSE_LIINF_ARRAY + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_TITLE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_EPITITLE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_DISP_TYPE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CHSVOD + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PRICE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QUNIT + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QRANGE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_START_DATE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_TITLE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_EPITITLE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_DISP_TYPE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CHSVOD + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PRICE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QUNIT + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QRANGE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_END_DATE + " text, " +
             JsonContents.META_RESPONSE_CAPL + " text, " +
             JsonContents.META_RESPONSE_BILINGAL + " text, " +
             JsonContents.META_RESPONSE_TV_CID + " text, " +
@@ -265,17 +257,17 @@ public class DBConstants {
             JsonContents.META_RESPONSE_CHSVOD + " text, " +
             JsonContents.META_RESPONSE_SEARCH_OK + " text, " +
             JsonContents.META_RESPONSE_LIINF_ARRAY + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_TITLE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_EPITITLE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_DISP_TYPE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CHSVOD + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PRICE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QUNIT + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QRANGE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_START_DATE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_TITLE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_EPITITLE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_DISP_TYPE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CHSVOD + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PRICE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QUNIT + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QRANGE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_END_DATE + " text, " +
             JsonContents.META_RESPONSE_CAPL + " text, " +
             JsonContents.META_RESPONSE_BILINGAL + " text, " +
             JsonContents.META_RESPONSE_TV_CID + " text, " +
@@ -302,7 +294,7 @@ public class DBConstants {
             ID_COLUMN + " integer primary key autoincrement, " +
             USER_INFO_LIST_LOGGEDIN_ACCOUNT + " text, " +
             USER_INFO_LIST_CONTRACT_STATUS + " text, " +
-            USER_INFO_LIST_DCH_AGE_REQ + " text," +
+            USER_INFO_LIST_DCH_AGE_REQ +" text," +
             USER_INFO_LIST_H4D_AGE_REQ + " text" +
             ")";
 
@@ -357,7 +349,7 @@ public class DBConstants {
             JsonContents.META_RESPONSE_LIINF_ARRAY + " text, " +
             JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID + " text, " +
             JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_TITLE + " text, " +
+            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_TITLE  + " text, " +
             JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_EPITITLE + " text, " +
             JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_DISP_TYPE + " text, " +
             JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CHSVOD + " text, " +
@@ -432,17 +424,17 @@ public class DBConstants {
             JsonContents.META_RESPONSE_CHSVOD + " text, " +
             JsonContents.META_RESPONSE_SEARCH_OK + " text, " +
             JsonContents.META_RESPONSE_LIINF_ARRAY + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_TITLE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_EPITITLE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_DISP_TYPE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CHSVOD + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PRICE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QUNIT + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QRANGE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_START_DATE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_TITLE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_EPITITLE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_DISP_TYPE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CHSVOD + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PRICE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QUNIT + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QRANGE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_END_DATE + " text, " +
             JsonContents.META_RESPONSE_CAPL + " text, " +
             JsonContents.META_RESPONSE_BILINGAL + " text, " +
             JsonContents.META_RESPONSE_TV_CID + " text, " +
@@ -563,17 +555,17 @@ public class DBConstants {
             JsonContents.META_RESPONSE_CHSVOD + " text, " +
             JsonContents.META_RESPONSE_SEARCH_OK + " text, " +
             JsonContents.META_RESPONSE_LIINF_ARRAY + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_TITLE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_EPITITLE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_DISP_TYPE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CHSVOD + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PRICE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QUNIT + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QRANGE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_START_DATE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_TITLE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_EPITITLE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_DISP_TYPE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CHSVOD + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PRICE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QUNIT + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QRANGE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_END_DATE + " text, " +
             JsonContents.META_RESPONSE_CAPL + " text, " +
             JsonContents.META_RESPONSE_BILINGAL + " text, " +
             JsonContents.META_RESPONSE_TV_CID + " text, " +
@@ -722,17 +714,17 @@ public class DBConstants {
             JsonContents.META_RESPONSE_CHSVOD + " text, " +
             JsonContents.META_RESPONSE_SEARCH_OK + " text, " +
             JsonContents.META_RESPONSE_LIINF_ARRAY + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_TITLE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_EPITITLE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_DISP_TYPE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CHSVOD + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PRICE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QUNIT + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QRANGE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_START_DATE + " text, " +
-            JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_END_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CRID + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_TITLE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_EPITITLE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_DISP_TYPE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_CHSVOD + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PRICE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QUNIT + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_QRANGE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_START_DATE + " text, " +
+            JsonContents.META_RESPONSE_PUINF  + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PU_END_DATE + " text, " +
             JsonContents.META_RESPONSE_CAPL + " text, " +
             JsonContents.META_RESPONSE_BILINGAL + " text, " +
             JsonContents.META_RESPONSE_TV_CID + " text, " +
@@ -829,10 +821,10 @@ public class DBConstants {
             "create table " + MY_CHANNEL_LIST_TABLE_NAME + " (" +
             ID_COLUMN + " integer primary key autoincrement, " +
             JsonContents.META_RESPONSE_CRID + " text, " +
-            JsonContents.META_RESPONSE_SERVICE_ID + " text, " +
+            JsonContents.META_RESPONSE_SERVICE_ID  + " text, " +
             JsonContents.META_RESPONSE_TITLE + " text, " +
-            JsonContents.META_RESPONSE_R_VALUE + " text, " +
-            JsonContents.META_RESPONSE_ADULT_TYPE + " text, " +
-            JsonContents.META_RESPONSE_INDEX + " text " +
+            JsonContents.META_RESPONSE_R_VALUE  + " text, " +
+            JsonContents.META_RESPONSE_ADULT_TYPE  + " text, " +
+            JsonContents.META_RESPONSE_INDEX  + " text " +
             ")";
 }

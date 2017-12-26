@@ -552,6 +552,7 @@ public class RecordingReservationListDataProvider implements
                 } else {
                     key = RECORD_RESERVATION_MAP_INDEX_TODAY;
                 }
+                break;
             case RECORD_RESERVATION_LOOP_TYPE_NUM_SUN_THU: // 日曜日～木曜日
                 DTVTLogger.debug("case 11");
                 if (todayDayOfWeek == DateUtils.DAY_OF_WEEK_THURSDAY) {

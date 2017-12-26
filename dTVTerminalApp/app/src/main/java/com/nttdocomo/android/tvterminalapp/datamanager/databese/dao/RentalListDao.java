@@ -8,6 +8,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +21,7 @@ import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstan
 public class RentalListDao {
 
     // SQLiteDatabase
-    private SQLiteDatabase db;
+    private SQLiteDatabase mSQLiteDatabase = null;
 
     /**
      * コンストラクタ
@@ -27,7 +29,7 @@ public class RentalListDao {
      * @param db
      */
     public RentalListDao(SQLiteDatabase db) {
-        this.db = db;
+        this.mSQLiteDatabase = db;
     }
 
     /**
@@ -42,7 +44,7 @@ public class RentalListDao {
 
         Cursor cursor =null;
         try {
-            cursor = db.query(
+            cursor = mSQLiteDatabase.query(
                     RENTAL_LIST_TABLE_NAME,
                     strings,
                     null,
@@ -51,7 +53,7 @@ public class RentalListDao {
                     null,
                     null);
         }catch(Exception e){
-            e.printStackTrace();
+            DTVTLogger.debug(e);
             return null;
         }
 
@@ -80,7 +82,7 @@ public class RentalListDao {
      * @return
      */
     public long insert(ContentValues values) {
-        return db.insert(RENTAL_LIST_TABLE_NAME, null, values);
+        return mSQLiteDatabase.insert(RENTAL_LIST_TABLE_NAME, null, values);
     }
 
     public int update() {
@@ -94,6 +96,6 @@ public class RentalListDao {
      * @return
      */
     public int delete() {
-        return db.delete(RENTAL_LIST_TABLE_NAME, null, null);
+        return mSQLiteDatabase.delete(RENTAL_LIST_TABLE_NAME, null, null);
     }
 }

@@ -5,14 +5,10 @@
 package com.nttdocomo.android.tvterminalapp.activity.other;
 
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.storage.StorageManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -33,18 +29,16 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SettingActivity extends BaseActivity implements View.OnClickListener,
         AdapterView.OnItemClickListener {
 
-    private Boolean isSDCard = false;
-    private String[] itemName;
-    private Resources res;
-    private MainSettingListAdapter mAdapter;
+    private Boolean mIsSDCard = false;
+    private String[] mItemName = null;
+    private Resources mRes = null;
+    private MainSettingListAdapter mAdapter = null;
     private final List<MainSettingUtils> mSettingList = new ArrayList<>();
 
     //カテゴリであることを示す
@@ -106,26 +100,25 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
         String tappedItemName = mSettingList.get(i).getText();
 
-        if (tappedItemName.equals(itemName[1])) {
+        if (tappedItemName.equals(mItemName[1])) {
             //Dアカウント設定
             startDAccountSetting();
-        } else if (tappedItemName.equals(itemName[3])) {
+        } else if (tappedItemName.equals(mItemName[3])) {
             //ペアリング設定
             Intent intent = new Intent(getApplicationContext(),STBSelectActivity.class);
             intent.putExtra(STBSelectActivity.FROM_WHERE, STBSelectActivity.STBSelectFromMode.STBSelectFromMode_Setting.ordinal());
             startActivity(intent);
-        } else if (tappedItemName.equals(itemName[5])) {
+        } else if (tappedItemName.equals(mItemName[5])) {
             //マイ番組表連携
             startActivity(MyChannelEditActivity.class, null);
-        } else if (tappedItemName.equals(itemName[7])) {
+        } else if (tappedItemName.equals(mItemName[7])) {
             //ダウンロードコンテンツ保存先設定画面への遷移
             Intent intent = new Intent(this, SettingDownloadPathActivity.class);
             intent.putExtra(getString(R.string.main_setting_storage_status), mSettingList.get(i).getStateText());
             startActivity(intent);
-        } else if (tappedItemName.equals(itemName[9]) && !mSettingList.get(i).isCategory()) {
+        } else if (tappedItemName.equals(mItemName[9]) && !mSettingList.get(i).isCategory()) {
             //外出先視聴時の画質設定画面への遷移
             Intent intent = new Intent(this, SettingImageQualityActivity.class);
             intent.putExtra(getString(R.string.main_setting_quality_status), mSettingList.get(i).getStateText());
@@ -137,25 +130,25 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
      * 設定画面に表示する情報をリストに入れる
      */
     private void initData() {
-        res = getResources();
-        itemName = res.getStringArray(R.array.main_setting_items);
+        mRes = getResources();
+        mItemName = mRes.getStringArray(R.array.main_setting_items);
 
         // ペアリング状態の確認
-        String isParing = res.getString(R.string.main_setting_paring);
+        String isParing = mRes.getString(R.string.main_setting_paring);
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
         if (dlnaDmsItem.mControlUrl.isEmpty()) {
             // 未ペアリング時
-            isParing = res.getString(R.string.main_setting_not_paring);
+            isParing = mRes.getString(R.string.main_setting_not_paring);
         }
 
         //外部ストレージスロットの存在判定
         isExternalStorageSlot();
-        String storage = res.getString(R.string.main_setting_device_storage);
-        if (isSDCard) {
+        String storage = mRes.getString(R.string.main_setting_device_storage);
+        if (mIsSDCard) {
             //保存先ストレージの確認
             Boolean storagePath = SharedPreferencesUtils.getSharedPreferencesStoragePath(this);
             if (!storagePath) {
-                storage = res.getString(R.string.main_setting_outside_storage);
+                storage = mRes.getString(R.string.main_setting_outside_storage);
             }
         }
 
@@ -163,34 +156,34 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         String imageQuality = SharedPreferencesUtils.getSharedPreferencesImageQuality(this);
         if (imageQuality.isEmpty()) {
             //値が保存されていない場合は初期値を設定
-            imageQuality = res.getString(R.string.main_setting_image_quality_high);
+            imageQuality = mRes.getString(R.string.main_setting_image_quality_high);
             /* test code begin */
             SharedPreferencesUtils.setSharedPreferencesImageQuality(this, imageQuality);
             /* test code end */
         }
 
         //項目名、設定値、>の画像、カテゴリ情報
-        mSettingList.add(new MainSettingUtils(itemName[0], BLANK, false, CATEGORY));
-        mSettingList.add(new MainSettingUtils(itemName[1], BLANK, true, ITEM));
-        mSettingList.add(new MainSettingUtils(itemName[2], BLANK, false, CATEGORY));
-        mSettingList.add(new MainSettingUtils(itemName[3], isParing, true, ITEM));
-        mSettingList.add(new MainSettingUtils(itemName[4], BLANK, false, CATEGORY));
-        mSettingList.add(new MainSettingUtils(itemName[5], BLANK, true, ITEM));
-        if (isSDCard) {
+        mSettingList.add(new MainSettingUtils(mItemName[0], BLANK, false, CATEGORY));
+        mSettingList.add(new MainSettingUtils(mItemName[1], BLANK, true, ITEM));
+        mSettingList.add(new MainSettingUtils(mItemName[2], BLANK, false, CATEGORY));
+        mSettingList.add(new MainSettingUtils(mItemName[3], isParing, true, ITEM));
+        mSettingList.add(new MainSettingUtils(mItemName[4], BLANK, false, CATEGORY));
+        mSettingList.add(new MainSettingUtils(mItemName[5], BLANK, true, ITEM));
+        if (mIsSDCard) {
             //SDCardスロットが存在しない場合、ストレージ保存先の項目は非表示
-            mSettingList.add(new MainSettingUtils(itemName[6], BLANK, false, CATEGORY));
-            mSettingList.add(new MainSettingUtils(itemName[7], storage, true, ITEM));
+            mSettingList.add(new MainSettingUtils(mItemName[6], BLANK, false, CATEGORY));
+            mSettingList.add(new MainSettingUtils(mItemName[7], storage, true, ITEM));
         }
-        mSettingList.add(new MainSettingUtils(itemName[8], BLANK, false, CATEGORY));
-        mSettingList.add(new MainSettingUtils(itemName[9], imageQuality, true, ITEM));
-        mSettingList.add(new MainSettingUtils(itemName[10], BLANK, false, CATEGORY));
-        mSettingList.add(new MainSettingUtils(itemName[11], BLANK, true, ITEM));
-        mSettingList.add(new MainSettingUtils(itemName[12], BLANK, false, CATEGORY));
+        mSettingList.add(new MainSettingUtils(mItemName[8], BLANK, false, CATEGORY));
+        mSettingList.add(new MainSettingUtils(mItemName[9], imageQuality, true, ITEM));
+        mSettingList.add(new MainSettingUtils(mItemName[10], BLANK, false, CATEGORY));
+        mSettingList.add(new MainSettingUtils(mItemName[11], BLANK, true, ITEM));
+        mSettingList.add(new MainSettingUtils(mItemName[12], BLANK, false, CATEGORY));
         //TODO アプリのバージョンを正式に取得する処理の追加
-        mSettingList.add(new MainSettingUtils(itemName[13], "2.1.0", false, ITEM));
-        mSettingList.add(new MainSettingUtils(itemName[14], BLANK, true, ITEM));
-        mSettingList.add(new MainSettingUtils(itemName[15], BLANK, true, ITEM));
-        mSettingList.add(new MainSettingUtils(itemName[16], BLANK, true, ITEM));
+        mSettingList.add(new MainSettingUtils(mItemName[13], "2.1.0", false, ITEM));
+        mSettingList.add(new MainSettingUtils(mItemName[14], BLANK, true, ITEM));
+        mSettingList.add(new MainSettingUtils(mItemName[15], BLANK, true, ITEM));
+        mSettingList.add(new MainSettingUtils(mItemName[16], BLANK, true, ITEM));
     }
 
     /**
@@ -222,13 +215,13 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
      * ダウンロード先設定画面からの復帰時に値を確認し、変更されていた場合は変更を行う
      */
     private void checkDownloadPath() {
-        if (isSDCard) {
+        if (mIsSDCard) {
             Boolean storagePath = SharedPreferencesUtils.getSharedPreferencesStoragePath(this);
-            String storage = storagePath ? res.getString(R.string.main_setting_device_storage) :
-            res.getString(R.string.main_setting_outside_storage);
-            for (int i=0; i < mSettingList.size(); i++) {
-                if (mSettingList.get(i).getText().equals(itemName[7]) && !mSettingList.get(i).isCategory()) {
-                    mSettingList.set(i, new MainSettingUtils(itemName[7], storage, true, ITEM));
+            String storage = storagePath ? mRes.getString(R.string.main_setting_device_storage) :
+                    mRes.getString(R.string.main_setting_outside_storage);
+            for (int i = 0; i < mSettingList.size(); i++) {
+                if (mSettingList.get(i).getText().equals(mItemName[7]) && !mSettingList.get(i).isCategory()) {
+                    mSettingList.set(i, new MainSettingUtils(mItemName[7], storage, true, ITEM));
                 }
             }
             mAdapter.notifyDataSetChanged();
@@ -240,15 +233,15 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
      * 再ペアリング画面からの復帰時に値を確認し、変更されていた場合は更新を行う
      */
     private void checkIsPairing() {
-        String isParing = res.getString(R.string.main_setting_paring);
+        String isParing = mRes.getString(R.string.main_setting_paring);
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
         if (dlnaDmsItem.mControlUrl.isEmpty()) {
             // 未ペアリング時
-            isParing = res.getString(R.string.main_setting_not_paring);
+            isParing = mRes.getString(R.string.main_setting_not_paring);
         }
-        for (int i=0; i < mSettingList.size(); i++) {
-            if (mSettingList.get(i).getText().equals(itemName[3]) && !mSettingList.get(i).isCategory()) {
-                mSettingList.set(i, new MainSettingUtils(itemName[3], isParing, true, ITEM));
+        for (int i = 0; i < mSettingList.size(); i++) {
+            if (mSettingList.get(i).getText().equals(mItemName[3]) && !mSettingList.get(i).isCategory()) {
+                mSettingList.set(i, new MainSettingUtils(mItemName[3], isParing, true, ITEM));
                 break;
             }
         }
@@ -261,8 +254,8 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     private void checkImageQuality() {
         String imageQuality = SharedPreferencesUtils.getSharedPreferencesImageQuality(this);
         for (int i=0; i < mSettingList.size(); i++) {
-            if (mSettingList.get(i).getText().equals(itemName[9]) && !mSettingList.get(i).isCategory()) {
-                mSettingList.set(i, new MainSettingUtils(itemName[9], imageQuality, true, ITEM));
+            if (mSettingList.get(i).getText().equals(mItemName[9]) && !mSettingList.get(i).isCategory()) {
+                mSettingList.set(i, new MainSettingUtils(mItemName[9], imageQuality, true, ITEM));
                 break;
             }
         }
@@ -277,7 +270,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         //getExternalStorageState()がSDカードスロット以外のPathも返却する可能性がある。
         //現時点では端末にSDカードスロットがあるものとしてtrue返却する。
         //SDカードスロットの無い端末が手元に届いてから再度検証を行う。
-        isSDCard = true;
+        mIsSDCard = true;
 
         /*
         List<String> sdCardDirPathList = new ArrayList<>();
@@ -330,9 +323,9 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                     }
                 }
             } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             }
-            isSDCard = sdCardDirPathList.size() > 0;
+            mIsSDCard = sdCardDirPathList.size() > 0;
         }
         */
     }
@@ -366,17 +359,16 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         } finally {
             try {
                 if (null != br) {
                     br.close();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             }
         }
-
         return isMounted;
     }
 }

@@ -10,9 +10,6 @@ import android.os.Bundle;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WeeklyRankList;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
-import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WeeklyRankWebClient;
 
 import org.json.JSONArray;
@@ -27,17 +24,19 @@ import java.util.List;
 public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
 
     final private WeeklyRankWebClient.WeeklyRankJsonParserCallback mWeeklyRankJsonParserCallback;
+
     // オブジェクトクラスの定義
     private WeeklyRankList mWeeklyRankList;
-
-    // **FindBugs** Bad practice FindBugは、"pagerPara"と"listPara"はpublicを外せと言うが、対外的なパラメータなので、対応は行わない。
-    public static final String[] PAGER_PARA = {JsonContents.META_RESPONSE_PAGER_LIMIT, JsonContents.META_RESPONSE_OFFSET,
-            JsonContents.META_RESPONSE_COUNT, JsonContents.META_RESPONSE_TOTAL};
 
     /**
      * 拡張情報
      **/
     Bundle mExtraData = null;
+
+    // **FindBugs** Bad practice FindBugは、"pagerPara"と"listPara"はpublicを外せと言うが、対外的なパラメータなので、対応は行わない。
+    public static final String[] PAGER_PARA = {JsonContents.META_RESPONSE_PAGER_LIMIT,
+            JsonContents.META_RESPONSE_OFFSET, JsonContents.META_RESPONSE_COUNT,
+            JsonContents.META_RESPONSE_TOTAL};
 
     /**
      * コンストラクタ
@@ -71,7 +70,6 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
                 rankList.setExtraData(mExtraData);
             }
         }
-
         mWeeklyRankJsonParserCallback.onWeeklyRankJsonParsed(rankLists);
     }
 
@@ -89,9 +87,7 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
      * @return List<WeeklyRankList> ObjectクラスをList形式で返却
      */
     private List<WeeklyRankList> weeklyRankListSender(String jsonStr) {
-
         mWeeklyRankList = new WeeklyRankList();
-
         try {
             JSONObject jsonObj = new JSONObject(jsonStr);
             // **FindBugs** Bad practice FindBugはこのヌルチェックが無用と警告するが、将来的にcatch (Exception e)は消すはずなので残す
@@ -135,11 +131,9 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
                     }
                 }
             }
-
             if (mWeeklyRankList != null) {
                 mWeeklyRankList.setWrMap(map);
             }
-
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {

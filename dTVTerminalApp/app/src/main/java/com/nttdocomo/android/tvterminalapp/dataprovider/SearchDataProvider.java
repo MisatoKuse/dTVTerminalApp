@@ -30,28 +30,27 @@ import java.util.List;
 
 public class SearchDataProvider implements TotalSearchWebApiDelegate {
 
+    public static final String comma = ",";
+
+    private SearchState mState = SearchState.inital;
+
+    private SearchDataProviderListener mSearchDataProviderListener = null;
+
     public interface SearchDataProviderListener {
         public void onSearchDataProviderFinishOk(ResultType<TotalSearchContentInfo> resultType);
 
         public void onSearchDataProviderFinishNg(ResultType<SearchResultError> resultType);
     }
 
-    public static final String comma = ",";
-
-    private SearchState _state = SearchState.inital;
-
-    private SearchDataProviderListener mSearchDataProviderListener = null;
-
-
     public SearchState getSearchState() {
         synchronized (this) {
-            return _state;
+            return mState;
         }
     }
 
     private void setSearchState(SearchState newSearchState) {
         synchronized (this) {
-            _state = newSearchState;
+            mState = newSearchState;
         }
     }
 
@@ -64,7 +63,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
                                 int pageNumber,
                                 /*TotalSearchContentInfo handler, */
                                 SearchDataProviderListener searchDataProviderListener) {
-
+        TotalSearchWebApi totalSearchWebApi = null;
         //this.handler = handler;
         setSearchState(SearchState.running);
         TotalSearchRequestData request = new TotalSearchRequestData();
@@ -80,10 +79,10 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
         request.maxResult = SearchConstants.Search.requestMaxResultCount;
         request.startIndex = pageNumber * SearchConstants.Search.requestMaxResultCount + 1;
 
-        mTotalSearchWebApi = new TotalSearchWebApi();
-        mTotalSearchWebApi.setDelegate(this);
+        totalSearchWebApi = new TotalSearchWebApi();
+        totalSearchWebApi.setDelegate(this);
         mSearchDataProviderListener = searchDataProviderListener;
-        mTotalSearchWebApi.request(request);
+        totalSearchWebApi.request(request);
     }
 
     public void cancelSearch() {
@@ -109,12 +108,12 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
         */
-        DTVTLogger.debug("SearchDataProvider::onSuccess(), _state=" + _state.toString());
+        DTVTLogger.debug("SearchDataProvider::onSuccess(), _state=" + mState.toString());
         synchronized (this) {
-            if (_state != SearchState.canceled) {
+            if (mState != SearchState.canceled) {
 
                 final ArrayList<SearchContentInfo> contentArray = new ArrayList<SearchContentInfo>();
                 result.map(contentArray);
@@ -182,7 +181,6 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
             requestData.setClipTarget(searchContentInfo.title); //TODO:仕様確認中 現在はトーストにタイトル名を表示することとしています
             requestData.setIsNotify("disp_type", "content_type",
                     "1513306982", "tv_service", "dtv");
-            requestData.setType("recommend");
             contentsData.setRequestData(requestData);
             contentsDataList.add(contentsData);
         }

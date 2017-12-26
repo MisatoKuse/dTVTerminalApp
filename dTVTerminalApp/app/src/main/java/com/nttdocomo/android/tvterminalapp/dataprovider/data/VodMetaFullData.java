@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
@@ -19,8 +20,126 @@ import java.util.List;
 /**
  * VOD&番組メタレスポンス（フル版）
  */
-
 public class VodMetaFullData implements Serializable {
+
+    // crid
+    private String mCrid = null;
+    // コンテンツID
+    private String mCid = null;
+    // タイトルID（dTV）
+    private String mTitle_id = null;
+    // エピソードID（dTV）
+    private String mEpisode_id = null;
+    // タイトル
+    private String mTitle = null;
+    // エピソードタイトル
+    private String mEpititle = null;
+    // タイトルルビ
+    private String mTitleruby = null;
+    // 表示タイプ
+    private String mDisp_type = null;
+    // 表示開始日時(EPOC秒なので数値)
+    private long mDisplay_start_date = 0;
+    // 表示終了日時(EPOC秒なので数値)
+    private long mDisplay_end_date = 0;
+    // コンテンツ自体の有効開始日時(PITのみ)(EPOC秒なので数値)
+    private long mAvail_start_date = 0;
+    // コンテンツ自体の有効期限日時(PITのみ)(EPOC秒なので数値)
+    private long mAvail_end_date = 0;
+    // 有効開始日時(EPOC秒なので数値)
+    private long mPublish_start_date = 0;
+    // 有効期限日時(EPOC秒なので数値)
+    private long mPublish_end_date = 0;
+    // 新着期間開始(EPOC秒なので数値)
+    private long mNewa_start_date = 0;
+    // 新着期間終了(EPOC秒なので数値)
+    private long mNewa_end_date = 0;
+    // サムネイル（640＊360）
+    private String mThumb_640_360 = null;
+    // サムネイル（448＊252）
+    private String mThumb_448_252 = null;
+    // dtvサムネイル（640＊360）
+    private String mDtv_thumb_640_360 = null;
+    // dtvサムネイル（448＊252）
+    private String mDtv_thumb_448_252 = null;
+    // コピーライト
+    private String mCopyright = null;
+    // 尺長
+    private int mDur = 0;
+    // デモフラグ
+    private String mDemong = null;
+    // 見放題フラグ
+    private String mBvflg = null;
+    // 4Kフラグ
+    private int m4kflg = 0;
+    // HDRフラグ
+    private String mHdrflg = null;
+    // 配信ステータス
+    private String mDelivery = null;
+    // 配信ステータス
+    private String mR_value = null;
+    // アダルトフラグ
+    private int mAdult = 0;
+    // ジャンル
+    private String[] mGenre_array = null;
+    // あらすじ(long)(数値ではなく長いの意味の方)
+    private String mSynop = null;
+    // パーチャスID
+    private String mPuid = null;
+    // 価格(税込)
+    private String mPrice = null;
+    // 購入単位の期間(3日の3)
+    private String mQrange = null;
+    // 購入単位の単位(3日の「日」)
+    private String mQunit = null;
+    // 販売開始日時(EPOC秒なので数値)
+    private long mPu_start_date = 0;
+    // 販売終了日時(EPOC秒なので数値)
+    private long mPu_end_date = 0;
+    // 出演者情報（ロール|出演者名）
+    private String[] mCredit_array = null;
+    // レーティング値
+    private double mRating = 0;
+    // dTVフラグ
+    private String mDtv = null;
+    // CHSVOD
+    private String mChsvod = null;
+    // クリップ判定に利用(※一部コンテンツはこれだけでは判定不可)
+    private String mSearch_ok = null;
+    // ライセンス情報リスト
+    private String[] mLiinf_array = null;
+    // 販売情報リスト(原文が全て大文字なので、こちらも大文字)
+    private List<PUINF_class> mPUINF = new ArrayList<>();
+    // 字幕
+    private String mCapl = null;
+    // 二ヶ国語
+    private String mBilingal = null;
+    // コンテンツID（見逃し、関連VOD用）
+    private String mTv_cid = null;
+    // サービスID
+    private String mService_id = null;
+    // イベントID
+    private String mEvent_id = null;
+    // チャンネル番号
+    private String mChno = null;
+    // 放送種別（多ｃｈ、dch）
+    private String mTv_service = null;
+    // 見逃しタイプ（見逃し：切り出し、見逃し：完パケ、関連VOD）
+    private String mContent_type = null;
+    // VOD配信開始日時
+    private long mVod_start_date = 0;
+    // VOD配信終了日時
+    private long mVod_end_date = 0;
+    // 主ジャンル（ARIB）
+    private String mMain_genre = null;
+    // 副ジャンル（ARIB）
+    private String[] mSecond_genre_array = null;
+    // コピー制御
+    private String mCopy = null;
+    // 音声情報
+    private String[] mAdinfo_array = null;
+    // 関連VODのcrid
+    private String[] mRelational_id_array = null;
 
     private static final long serialVersionUID = 3855428172716406303L;
 
@@ -502,70 +621,34 @@ public class VodMetaFullData implements Serializable {
         this.mRelational_id_array = mRelational_id_array.clone();
     }
 
-    private String mCrid;                 // crid
-    private String mCid;                  // コンテンツID
-    private String mTitle_id;             // タイトルID（dTV）
-    private String mEpisode_id;           // エピソードID（dTV）
-    private String mTitle;                // タイトル
-    private String mEpititle;             // エピソードタイトル
-    private String mTitleruby;            // タイトルルビ
-    private String mDisp_type;            // 表示タイプ
-    private long mDisplay_start_date;   // 表示開始日時(EPOC秒なので数値)
-    private long mDisplay_end_date;     // 表示終了日時(EPOC秒なので数値)
-    private long mAvail_start_date;     // コンテンツ自体の有効開始日時(PITのみ)(EPOC秒なので数値)
-    private long mAvail_end_date;       // コンテンツ自体の有効期限日時(PITのみ)(EPOC秒なので数値)
-    private long mPublish_start_date;   // 有効開始日時(EPOC秒なので数値)
-    private long mPublish_end_date;     // 有効期限日時(EPOC秒なので数値)
-    private long mNewa_start_date;      // 新着期間開始(EPOC秒なので数値)
-    private long mNewa_end_date;        // 新着期間終了(EPOC秒なので数値)
-    private String mThumb_640_360;      // サムネイル（640＊360）
-    private String mThumb_448_252;      // サムネイル（448＊252）
-    private String mDtv_thumb_640_360;  // dtvサムネイル（640＊360）
-    private String mDtv_thumb_448_252;  // dtvサムネイル（448＊252）
-    private String mCopyright;           // コピーライト
-    private int mDur;                    // 尺長
-    private String mDemong;               // デモフラグ
-    private String mBvflg;                // 見放題フラグ
-    private int m4kflg;                  // 4Kフラグ
-    private String mHdrflg;               // HDRフラグ
-    private String mDelivery;             // 配信ステータス
-    private String mR_value;              // パレンタル情報
-    private int mAdult;                   // アダルトフラグ
-    private String[] mGenre_array;        // ジャンル
-    private String mSynop;                 // あらすじ(long)(数値ではなく長いの意味の方)
-    private String mPuid;                  // パーチャスID
-    private String mPrice;                 // 価格(税込)
-    private String mQrange;                // 購入単位の期間(3日の3)
-    private String mQunit;                 // 購入単位の単位(3日の「日」)
-    private long mPu_start_date;          // 販売開始日時(EPOC秒なので数値)
-    private long mPu_end_date;            // 販売終了日時(EPOC秒なので数値)
-    private String[] mCredit_array;         // 出演者情報（ロール|出演者名）
-    private double mRating;                 // レーティング値
-    private String mDtv;                    // dTVフラグ
-    private String mChsvod;                 // CHSVOD
-    private String mSearch_ok;              // クリップ判定に利用(※一部コンテンツはこれだけでは判定不可)
-    private String[] mLiinf_array;          // ライセンス情報リスト
-    private List<PUINF_class> mPUINF;       // 販売情報リスト(原文が全て大文字なので、こちらも大文字)
-    private String mCapl;                    //字幕
-    private String mBilingal;                //二ヶ国語
-    private String mTv_cid;                  //コンテンツID（見逃し、関連VOD用）
-    private String mService_id;              //サービスID
-    private String mEvent_id;                //イベントID
-    private String mChno;                    //チャンネル番号
-    private String mTv_service;              //放送種別（多ｃｈ、dch）
-    private String mContent_type;            //見逃しタイプ（見逃し：切り出し、見逃し：完パケ、関連VOD）
-    private long mVod_start_date;            //VOD配信開始日時
-    private long mVod_end_date;              //VOD配信終了日時
-    private String mMain_genre;              //主ジャンル（ARIB）
-    private String[] mSecond_genre_array;      //副ジャンル（ARIB）
-    private String mCopy;                      //コピー制御
-    private String[] mAdinfo_array;           // 音声情報
-    private String[] mRelational_id_array;   // 関連VODのcrid
-
     /**
      * 販売情報リストの内容
      */
     public class PUINF_class implements Serializable {
+
+        // ライセンスID
+        private String mPuid = null;
+        // ライセンスIDのCRID
+        private String mCrid = null;
+        // ライセンスIDのタイトル
+        private String mTitle = null;
+        // ライセンスIDのエピソードタイトル
+        private String mEpititle = null;
+        // 表示タイプ
+        private String mDisp_type = null;
+        // CHSVOD
+        private String mChsvod = null;
+        // ライセンス価格
+        private String mPrice = null;
+        // ライセンス購入単位の期間(3日の3)
+        private String mQunit = null;
+        // ライセンス購入単位の単位(3日の「日」)
+        private String mQrange = null;
+        // ライセンス販売可能期間（開始）(EPOC秒なので数値)
+        private long mPu_start_date = 0;
+        // ライセンス販売可能期間（終了）(EPOC秒なので数値)
+        private long mPu_end_date = 0;
+
         private static final long serialVersionUID = 147899028985473046L;
 
         public String getmPuid() {
@@ -656,18 +739,6 @@ public class VodMetaFullData implements Serializable {
             this.mPu_end_date = mPu_end_date;
         }
 
-        private String mPuid;           // ライセンスID
-        private String mCrid;           // ライセンスIDのCRID
-        private String mTitle;          // ライセンスIDのタイトル
-        private String mEpititle;       // ライセンスIDのエピソードタイトル
-        private String mDisp_type;      // 表示タイプ
-        private String mChsvod;         // CHSVOD
-        private String mPrice;          // ライセンス価格
-        private String mQunit;          // ライセンス購入単位の期間(3日の3)
-        private String mQrange;          // ライセンス購入単位の単位(3日の「日」)
-        private long mPu_start_date;    // ライセンス販売可能期間（開始）(EPOC秒なので数値)
-        private long mPu_end_date;      // ライセンス販売可能期間（終了）(EPOC秒なので数値)
-
         /**
          * PUINFの値をメンバーにセットする
          *
@@ -684,7 +755,7 @@ public class VodMetaFullData implements Serializable {
                     }
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             }
         }
 
@@ -696,7 +767,6 @@ public class VodMetaFullData implements Serializable {
          * @param data キーの値
          */
         private void setMember(String key, Object data) {
-
             //キーに値があれば、それを元に値を格納する
             if (key != null && !key.isEmpty()) {
                 switch (key) {
@@ -842,7 +912,7 @@ public class VodMetaFullData implements Serializable {
             JsonContents.META_RESPONSE_PU_END_DATE,
     };
 
-    //    // キー名：配列データ
+    // キー名：配列データ
     private static final String[] mRootArrayPara = {
             JsonContents.META_RESPONSE_GENRE_ARRAY, JsonContents.META_RESPONSE_CREDIT_ARRAY,
             JsonContents.META_RESPONSE_LIINF_ARRAY, JsonContents.META_RESPONSE_SECOND_GENRE_ARRAY,
@@ -903,7 +973,7 @@ public class VodMetaFullData implements Serializable {
                 }
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
     }
 
@@ -915,7 +985,6 @@ public class VodMetaFullData implements Serializable {
      * @param data キーの値
      */
     private void setMember(String key, Object data) {
-
         //キーに値があれば、それを元に値を格納する
         if (key != null && !key.isEmpty()) {
             switch (key) {
@@ -1163,7 +1232,6 @@ public class VodMetaFullData implements Serializable {
      * @param key 取得したい値のキー
      */
     public Object getMember(String key) {
-
         if (key == null || key.isEmpty()) {
             //キーが無いので、空文字を返す
             return "";
@@ -1346,7 +1414,6 @@ public class VodMetaFullData implements Serializable {
                 case JsonContents.META_RESPONSE_RELATIONAL_ID_ARRAY:
                     //関連VODのcrid
                     return mRelational_id_array.clone();
-
                 default:
                     return "";
             }

@@ -7,8 +7,6 @@ package com.nttdocomo.android.tvterminalapp.relayclient;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,14 +18,13 @@ import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 
 /**
- *  TCPクライアント
- *
+ * TCPクライアント
  */
 public class TcpClient {
 
-    private Socket mSocket;
-    private String mRemoteIp;
-    private int mRemotePort;
+    private Socket mSocket = null;
+    private String mRemoteIp = null;
+    private int mRemotePort = 0;
 
     private static final int SEND_RECV_TIMEOUT = 3000;
 
@@ -37,7 +34,6 @@ public class TcpClient {
     }
 
     /**
-     *
      * @param remoteIp
      * @param remotePort
      * @return
@@ -111,7 +107,7 @@ public class TcpClient {
                 if (inputStream.available() == 0) {
                     continue;
                 }
-                char[]	line = new char[inputStream.available()];
+                char[] line = new char[inputStream.available()];
                 streamReader.read(line);
                 data.append(String.valueOf(line));
                 break;
@@ -152,6 +148,4 @@ public class TcpClient {
         }
         return true;
     }
-
 }
-

@@ -5,7 +5,6 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 /**
  * マイチャンネル解除取得：正常時レスポンスデータ

@@ -4,7 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient;
 
-
 import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -14,15 +13,14 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.WebApiC
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-
 public class WebApiBase implements HttpThread.HttpThreadFinish {
 
-    private WebApiCallback mWebApiCallback=null;
+    private WebApiCallback mWebApiCallback = null;
 
-    public void get(String urlString, LinkedHashMap<String, String> queryItems, WebApiCallback callback){
+    public void get(String urlString, LinkedHashMap<String, String> queryItems, WebApiCallback callback) {
         Handler handler = new Handler();
-        String url=createUrlComponents(urlString, queryItems);
-        mWebApiCallback=callback;
+        String url = createUrlComponents(urlString, queryItems);
+        mWebApiCallback = callback;
         //Log.d(DCommon.LOG_DEF_TAG, "WebApiBase::get, url= " + url);
         new HttpThread(url, handler, this).start();
     }
@@ -30,36 +28,36 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
     /**
      * Handlerが使用できないASyncTaskの処理内で使用する
      */
-    public void getReccomendInfo(String urlString, LinkedHashMap<String, String> queryItems, WebApiCallback callback){
-        String url=createUrlComponents(urlString, queryItems);
-        mWebApiCallback=callback;
+    public void getReccomendInfo(String urlString, LinkedHashMap<String, String> queryItems, WebApiCallback callback) {
+        String url = createUrlComponents(urlString, queryItems);
+        mWebApiCallback = callback;
         //Log.d(DCommon.LOG_DEF_TAG, "WebApiBase::get, url= " + url);
         new HttpThread(url, this).start();
     }
 
     private String createUrlComponents(String url, Map<String, String> queryItems) {
-        StringBuffer u = new StringBuffer("");
-        if(null!=url){
+        StringBuffer stringBuffer = new StringBuffer("");
+        if (null != url) {
 
-            u=new StringBuffer(url);
+            stringBuffer = new StringBuffer(url);
 
-            for(String key : queryItems.keySet()){
-                if(null!=key && 0<key.length()){
-                    if(queryItems.containsKey(key)){
-                        String v="";
+            for (String key : queryItems.keySet()) {
+                if (null != key && 0 < key.length()) {
+                    if (queryItems.containsKey(key)) {
+                        String v = "";
                         try {
                             v = queryItems.get(key);
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             DTVTLogger.debug(e);
                         }
-                        if(null!=v){
-                            u.append(key+ "=") ;
-                            u.append(queryItems.get(key));
-                        }else {
+                        if (null != v) {
+                            stringBuffer.append(key + "=");
+                            stringBuffer.append(queryItems.get(key));
+                        } else {
                             DTVTLogger.debug("WebApiBase::createUrlComponents, queryItems.get(key) is NULL");
                         }
                     } else {
-                        DTVTLogger.debug("WebApiBase::createUrlComponents, queryItems has no key "+ key);
+                        DTVTLogger.debug("WebApiBase::createUrlComponents, queryItems has no key " + key);
                     }
                 }
 
@@ -73,7 +71,7 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
                         try {
                             v = queryItems.get(key);
                         }catch (Exception e){
-                            e.printStackTrace();
+                            DTVTLogger.debug(e);
                         }
                         if(null!=v){
                             u.append(key+ "=") ;
@@ -88,16 +86,15 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
 
             }*/
             //findbug 対応 end
-            DTVTLogger.debug("WebApiBase::createUrlComponents, url=" + u.toString());
+            DTVTLogger.debug("WebApiBase::createUrlComponents, url=" + stringBuffer.toString());
         }
-        return u.toString();
+        return stringBuffer.toString();
     }
 
     @Override
     public void onHttpThreadFinish(String str) {
-        if(null!=mWebApiCallback){
+        if (null != mWebApiCallback) {
             mWebApiCallback.onFinish(str);
         }
     }
-
 }

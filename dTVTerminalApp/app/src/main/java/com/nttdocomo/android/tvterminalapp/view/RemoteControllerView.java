@@ -31,34 +31,36 @@ import java.util.List;
 
 public class RemoteControllerView extends RelativeLayout implements ViewPager.OnPageChangeListener {
 
-    private int mDownY;
-    private int mMoveY;
-    private int mMovedY;
-    private View mChild;
-    private Scroller mScroller;
-    private int mScrollHeight;
-    private int mHeaderHeight;
+    private Context mContext = null;
+
+    private int mDownY = 0;
+    private int mMovedY = 0;
+    private int mScrollHeight = 0;
+    private int mHeaderHeight = 0;
     private boolean mIsTop = false;
-    private float mVisibilityHeight;
-    private List<View> viewList = new ArrayList<>();
-    private ViewPager mViewPager;
-    private ViewPagerAdapter mRemokonAdapter;
-    private FrameLayout mFrameLayout;
-    private RemoteControllerSendKeyAction remoteControllerSendKeyAction;
+    private float mVisibilityHeight = 0;
+    private long mSysTime;//システムTime
+    private boolean mIsClick = false;//クリックなのかスワイプなのか
+
+    private View mChild = null;
+    private Scroller mScroller = null;
+    private List<View> mViewList = new ArrayList<>();
+    private ViewPager mViewPager = null;
+    private FrameLayout mFrameLayout = null;
+    private RemoteControllerSendKeyAction remoteControllerSendKeyAction = null;
     private GestureDetector mParentGestureDetector = null;
     private GestureDetector mGestureDetector = null;
-    private long mSysTime;//システムTime
+    private LinearLayout mBottomLinearLayout, mTopLinearLayout = null;
+    private OnStartRemoteControllerUIListener mStartUIListener = null;
+
     private final long CLICK_MAX_TIME = 100;
-    private boolean mIsClick = false;//クリックなのかスワイプなのか
-    private LinearLayout mBottomLinearLayout, mTopLinearLayout;
-    private OnStartRemoteControllerUIListener mStartUIListener= null;
-    private Context mContext;
 
     /**
      * このViewがtopに表示された際に通知するリスナー
      */
     public interface OnStartRemoteControllerUIListener {
         void onStartRemoteControl();
+
         void onEndRemoteControl();
     }
 
@@ -134,17 +136,17 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                     return false;
                 }
                 //viewPagerを初期化する
-                if (viewList.size() == 0) {
+                if (mViewList.size() == 0) {
                     setPager();
                 }
                 return true;
 
             case MotionEvent.ACTION_MOVE:
-
-                mMoveY = (int) event.getY();
+                int moveY = 0;
+                moveY = (int) event.getY();
                 //mDeY:移動した距離
                 //下に移動の場合,mDeY < 0；上に移動の場合,mDeY > 0;
-                int deY = mDownY - mMoveY;
+                int deY = mDownY - moveY;
                 //上に移動するときの処理
                 if (deY > 0) {
                     //移動した距離を加算する,移動できる範囲内に制限する
@@ -154,7 +156,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                     }
                     if (mMovedY < mScrollHeight) {
                         scrollBy(0, deY);
-                        mDownY = mMoveY;
+                        mDownY = moveY;
                         return true;
                     }
                 }
@@ -167,9 +169,8 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                     if (mMovedY > 0) {
                         scrollBy(0, deY);
                     }
-                    mDownY = mMoveY;
+                    mDownY = moveY;
                     return true;
-
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -207,12 +208,14 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                     mTopLinearLayout.setVisibility(GONE);
                     mFrameLayout = findViewById(R.id.header_watch_by_tv);
                     mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner, null));
-                    if(mIsTop) {
+                    if (mIsTop) {
                         closeRemoteControllerUI();
                         mIsTop = false;
                     }
                 }
-            break;
+                break;
+            default:
+                break;
         }
         DTVTLogger.end();
         return super.onTouchEvent(event);
@@ -229,7 +232,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         mBottomLinearLayout.setVisibility(GONE);
         mFrameLayout = findViewById(R.id.header_watch_by_tv);
         mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_top_corner, null));
-        if(mIsTop) {
+        if (mIsTop) {
             startRemoteControl();
         }
         DTVTLogger.end();
@@ -244,25 +247,25 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         }
     }
 
-
     public void setPager() {
         LayoutInflater lf = LayoutInflater.from(this.getContext());
         View inflate1 = lf.inflate(R.layout.remote_controller_player_ui_layout, null);
         View inflate = lf.inflate(R.layout.remote_controller_channel_ui_layout, null);
+        ViewPagerAdapter remokonAdapter = null;
 
-        viewList.add(inflate1);
-        viewList.add(inflate);
+        mViewList.add(inflate1);
+        mViewList.add(inflate);
 
         mViewPager = findViewById(R.id.remocon_viewpager);
-        mRemokonAdapter = new ViewPagerAdapter();
-        mViewPager.setAdapter(mRemokonAdapter);
+        remokonAdapter = new ViewPagerAdapter();
+        mViewPager.setAdapter(remokonAdapter);
         mViewPager.addOnPageChangeListener(this);
 
         mGestureDetector = new GestureDetector(this.getContext(), mGestureListener);
         mViewPager.setOnTouchListener(mOnTouchListener);
 
         setRemoteControllerViewAction();
-        if(mIsTop) {
+        if (mIsTop) {
             startRemoteControl();
         }
     }
@@ -282,7 +285,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     private class ViewPagerAdapter extends PagerAdapter {
         @Override
         public int getCount() {
-            return viewList.size();
+            return mViewList.size();
         }
 
         @Override
@@ -296,8 +299,8 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            container.addView(viewList.get(position));
-            return viewList.get(position);
+            container.addView(mViewList.get(position));
+            return mViewList.get(position);
         }
     }
 
@@ -331,6 +334,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
             return false;
         }
     };
+
     /**
      * リモコンUI画面のonFlingを取得する
      */
@@ -353,7 +357,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * リモコンUI画面を閉じる処理
      */
     public void closeRemoteControllerUI() {
-        if(mIsTop) {
+        if (mIsTop) {
             mScroller.startScroll(0, getScrollY(), 0, -getScrollY());
             postInvalidate();
             mMovedY = 0;
@@ -381,7 +385,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
     public void startRemoteUI() {
         //viewPagerを初期化する
-        if (viewList.size() == 0) {
+        if (mViewList.size() == 0) {
             setPager();
         }
         mScroller.startScroll(0, 0, 0, (int) (mScrollHeight + mVisibilityHeight));
@@ -391,6 +395,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
     /**
      * リスナーを設定
+     *
      * @param listener リスナー
      */
     public void setOnStartRemoteControllerUI(OnStartRemoteControllerUIListener listener) {
@@ -402,7 +407,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * リスナーが設定されている場合、通知処理を実行
      */
     private void startRemoteControl() {
-        if(mStartUIListener != null && mIsTop) {
+        if (mStartUIListener != null && mIsTop) {
             DTVTLogger.debug("StartUIListener.onStartRemoteControl");
             mStartUIListener.onStartRemoteControl();
         }
@@ -410,12 +415,13 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
     /**
      * dアプリ起動リクエスト処理を呼び出し
-     * @param type アプリ起動要求種別
+     *
+     * @param type       アプリ起動要求種別
      * @param contentsId コンテンツID
      */
     public void sendStartApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES type, String contentsId) {
         DTVTLogger.start();
-        remoteControllerSendKeyAction.getRelayClient().startApplicationRequest(type,contentsId);
+        remoteControllerSendKeyAction.getRelayClient().startApplicationRequest(type, contentsId);
         DTVTLogger.end();
     }
 

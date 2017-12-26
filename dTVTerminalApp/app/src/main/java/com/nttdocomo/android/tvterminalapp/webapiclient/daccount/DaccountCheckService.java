@@ -22,6 +22,16 @@ import static android.content.Context.BIND_AUTO_CREATE;
  * dアカウント連携・サービス登録状況取得
  */
 public class DaccountCheckService {
+
+    //コンテキストの控え
+    private Context mContext = null;
+
+    //コールバックの控え
+    private DaccountCheckServiceCallBack mDaccountCheckServiceCallBack = null;
+
+    //dアカウント設定アプリの接続用のクラス
+    private IDimServiceAppService mService = null;
+
     /**
      * 結果を返すコールバック
      */
@@ -33,15 +43,6 @@ public class DaccountCheckService {
          */
         void checkServiceCallBack(int result);
     }
-
-    //コンテキストの控え
-    private Context mContext = null;
-
-    //コールバックの控え
-    private DaccountCheckServiceCallBack mDaccountCheckServiceCallBack;
-
-    //dアカウント設定アプリの接続用のクラス
-    private IDimServiceAppService mService;
 
     /**
      * 各コールバックの動作を定義する
@@ -121,7 +122,7 @@ public class DaccountCheckService {
                 //サービスチェック処理を呼び出す
                 result = mService.checkService(appReqId, serviceKey, callback);
             } catch (RemoteException e) {
-                e.printStackTrace();
+                DTVTLogger.debug(e);
                 //例外が発生した場合は、自前で内部エラーにする
                 result = IDimDefines.RESULT_INTERNAL_ERROR;
             }
@@ -183,5 +184,4 @@ public class DaccountCheckService {
     private void daccountServiceEnd() {
         mContext.unbindService(mServiceConnection);
     }
-
 }

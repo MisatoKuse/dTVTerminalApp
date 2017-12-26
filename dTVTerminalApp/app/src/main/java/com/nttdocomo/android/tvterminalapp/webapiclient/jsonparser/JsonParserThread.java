@@ -7,22 +7,18 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
-
-import java.util.List;
 
 public class JsonParserThread extends Thread {
-
-    public interface JsonParser {
-        public void onParserFinished(Object parsedData);
-
-        public Object parse(String body) throws Exception;
-    }
-
     private Handler mHandle = null;
     private String mJson = "";
     private JsonParser mJsonParser = null;
     private boolean mError = false;
+
+    public interface JsonParser {
+        void onParserFinished(Object parsedData);
+
+        Object parse(String body) throws Exception;
+    }
 
     public JsonParserThread(String json, Handler handle, JsonParser lis) throws Exception {
         if (null == json || 0 == json.length() || null == handle) {

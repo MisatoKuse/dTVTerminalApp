@@ -21,7 +21,6 @@ import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActi
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 
 import java.util.ArrayList;
 import java.util.List;

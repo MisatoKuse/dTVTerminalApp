@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -135,7 +137,7 @@ public class GenreListMetaData implements Serializable {
                 }
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
     }
 
@@ -187,7 +189,7 @@ public class GenreListMetaData implements Serializable {
                     }
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             }
         }
 
@@ -217,6 +219,3 @@ public class GenreListMetaData implements Serializable {
         }
     }
 }
-
-
-

@@ -16,14 +16,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.VIDEO_RANK_LAST_INSERT;
-
 /**
  * ビデオ一覧専用DPクラス
  */
 public class VideoContentProvider implements
         ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback {
-    private Context mContext;
+
+    private Context mContext = null;
 
     // ビデオコンテンツ画面用コールバック
     private apiVideoContentDataProviderCallback mApiVideoContentDataProviderCallback = null;

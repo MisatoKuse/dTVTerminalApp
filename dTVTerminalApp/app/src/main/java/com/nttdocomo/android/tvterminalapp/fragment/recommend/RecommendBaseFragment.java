@@ -20,21 +20,20 @@ import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActi
 import com.nttdocomo.android.tvterminalapp.adapter.RecommendListBaseAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
-import com.nttdocomo.android.tvterminalapp.model.recommend.RecommendContentInfo;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class RecommendBaseFragment extends Fragment implements AbsListView.OnScrollListener,
         AdapterView.OnItemClickListener {
 
-    public Context mActivity;
-    public List<ContentsData> mData;
-    private RecommendBaseFragmentScrollListener mRecommendBaseFragmentScrollListener = null;
-    private View mLoadMoreView;
-    private View mLoadCompleteView;
+    public Context mActivity = null;
+    public List<ContentsData> mData = null;
+    private View mLoadMoreView = null;
+    private View mRecommendFragmentView = null;
+    private ListView mRecommendListview = null;
     private RecommendListBaseAdapter mRecommendListBaseAdapter = null;
+    private RecommendBaseFragmentScrollListener mRecommendBaseFragmentScrollListener = null;
 
     public void setRecommendBaseFragmentScrollListener(RecommendBaseFragmentScrollListener lis) {
         mRecommendBaseFragmentScrollListener = lis;
@@ -57,9 +56,6 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     private void initData() {
         mData = new ArrayList();
     }
-
-    private View mRecommendFragmentView;
-    private ListView mRecommendListview;
 
     /**
      * Viewの初期設定
@@ -110,11 +106,11 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     /**
      * リストの最後に更新中の行を追加または追加した行を削除する
      *
-     * @param b
+     * @param loadFlag
      */
-    public void displayLoadMore(boolean b) {
+    public void displayLoadMore(boolean loadFlag) {
         if (null != mRecommendListview && null != mLoadMoreView) {
-            if (b) {
+            if (loadFlag) {
                 mRecommendListview.addFooterView(mLoadMoreView);
             } else {
                 mRecommendListview.removeFooterView(mLoadMoreView);

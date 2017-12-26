@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -21,13 +20,11 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 
 import java.util.List;
 
-public class WatchListenVideoBaseAdapter extends BaseAdapter implements AbsListView.OnScrollListener {
-
+public class WatchListenVideoBaseAdapter extends BaseAdapter
+        implements  AbsListView.OnScrollListener {
 
     private Context mContext = null;
     private List<ContentsData> mData = null;
@@ -67,23 +64,15 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter implements AbsListV
             holder.wl_title = view.findViewById(R.id.wl_title);
             holder.wl_video_rating = view.findViewById(R.id.wl_video_rating);
             holder.wl_rating_count = view.findViewById(R.id.wl_rating_count);
-
-            final ClipRequestData requestData = contentsData.getRequestData();
-            String clipType = requestData.getType();
             holder.wl_clip = view.findViewById(R.id.wl_clip);
 
-            //ひかりコンテンツ判定
-            if (StringUtil.isHikariContents(clipType) || StringUtil.isHikariInDtvContents(clipType)) {
-                holder.wl_clip.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        //クリップボタンイベント
-                        ((BaseActivity) mContext).sendClipRequest(contentsData.getRequestData());
-                    }
-                });
-            } else {
-                holder.wl_clip.setVisibility(View.GONE);
-            }
+            holder.wl_clip.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //クリップボタンイベント
+                    ((BaseActivity) mContext).sendClipRequest(contentsData.getRequestData());
+                }
+            });
             float mWidth = (float) mContext.getResources().getDisplayMetrics().widthPixels / 3;
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int) mWidth, (int) mWidth / 2);
             holder.wl_thumbnail.setLayoutParams(layoutParams);
@@ -123,18 +112,15 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter implements AbsListV
             holder.wl_video_rating.setRating(Float.parseFloat(ratingValue));
             holder.wl_rating_count.setText(ratingValue);
         }
-
         return view;
     }
 
     @Override
     public void onScrollStateChanged(AbsListView absListView, int i) {
-
     }
 
     @Override
     public void onScroll(AbsListView absListView, int i, int i1, int i2) {
-
     }
 
     static class ViewHolder {
@@ -147,4 +133,3 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter implements AbsListV
         ProgressBar wl_progressBar;
     }
 }
-

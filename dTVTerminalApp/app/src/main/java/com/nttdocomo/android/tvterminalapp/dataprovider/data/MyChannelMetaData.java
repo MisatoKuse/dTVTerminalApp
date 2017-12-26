@@ -5,7 +5,6 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;

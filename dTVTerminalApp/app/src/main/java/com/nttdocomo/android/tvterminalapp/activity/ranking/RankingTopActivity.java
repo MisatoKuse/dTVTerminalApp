@@ -22,7 +22,6 @@ import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
 
 import java.util.List;
-import java.util.Map;
 
 public class RankingTopActivity extends BaseActivity implements View.OnClickListener, RankingTopDataProvider.ApiDataProviderCallback {
 

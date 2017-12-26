@@ -33,18 +33,27 @@ import com.nttdocomo.android.tvterminalapp.fragment.ClipList.ClipListFragmentFac
 
 import java.util.List;
 
+public class ClipListActivity extends BaseActivity implements View.OnClickListener,
+        VodClipDataProvider.ApiDataProviderCallback,
+        TvClipDataProvider.TvClipDataProviderCallback,
+        ClipListBaseFragmentScrollListener {
 
-public class ClipListActivity extends BaseActivity implements View.OnClickListener, VodClipDataProvider.ApiDataProviderCallback, TvClipDataProvider.TvClipDataProviderCallback, ClipListBaseFragmentScrollListener {
-    private ImageView mMenuImageView;
-    private HorizontalScrollView mTabScrollView;
-    private ViewPager mViewPager;
-    private String[] mTabNames;
-    private LinearLayout mLinearLayout;
-    private VodClipDataProvider mVodClipDataProvider;
-    private TvClipDataProvider mTvClipDataProvider;
-    private final int NUM_PER_PAGE = 10;
+    private String[] mTabNames = null;
     private boolean mIsCommunicating = false;
+
+    private LinearLayout mLinearLayout = null;
+    private ImageView mMenuImageView = null;
+    private HorizontalScrollView mTabScrollView = null;
+    private ViewPager mViewPager = null;
+
+    private VodClipDataProvider mVodClipDataProvider = null;
+    private TvClipDataProvider mTvClipDataProvider = null;
     private ClipListFragmentFactory mClipListFragmentFactory = null;
+
+    private final int NUM_PER_PAGE = 10;
+
+    private static final int CLIP_LIST_PAGE_NO_OF_TV = 0;
+    private static final int CLIP_LIST_PAGE_NO_OF_VOD = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +64,6 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
         mMenuImageView.setOnClickListener(this);
         setTitleText(getString(R.string.str_clip_activity_title));
         initData();
-
         initView();
         resetPaging();
         setTv();
@@ -106,9 +114,6 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
         ContentsData item2 = tvClipContentInfo.get(tvClipContentInfo.size() - 1);
         return isContentEqual(item1, item2);
     }
-
-    private static final int CLIP_LIST_PAGE_NO_OF_TV = 0;
-    private static final int CLIP_LIST_PAGE_NO_OF_VOD = 1;
 
     /**
      * 取得結果が更新前と同じなら更新しない
@@ -307,6 +312,8 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
                             case CLIP_LIST_PAGE_NO_OF_VOD:
                                 mVodClipDataProvider.getClipData(offset);
                                 break;
+                            default:
+                                break;
                         }
                     }
                 }, LOAD_PAGE_DELAY_TIME);
@@ -318,7 +325,9 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
         return this;
     }
 
-    /*検索結果タブ専用アダプター*/
+    /**
+     * 検索結果タブ専用アダプター
+     */
     class ClipPagerAdapter extends FragmentStatePagerAdapter {
         public ClipPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -363,6 +372,8 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
                     case 1:
                         setVod();
                         break;
+                    default:
+                        break;
                 }
             }
         });
@@ -384,7 +395,9 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
         mTvClipDataProvider.getClipData(1);
     }
 
-    /*tabに関連Viewの初期化*/
+    /**
+     * tabに関連Viewの初期化
+     */
     private void initTabVIew() {
         mTabScrollView.removeAllViews();
         mLinearLayout = new LinearLayout(this);
@@ -427,7 +440,10 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
         }
     }
 
-    /*インジケーター設置*/
+    /**
+     * インジケーター設置
+     * @param position
+     */
     public void setTab(int position) {
         //mCurrentPageNum = position;
         if (mLinearLayout != null) {

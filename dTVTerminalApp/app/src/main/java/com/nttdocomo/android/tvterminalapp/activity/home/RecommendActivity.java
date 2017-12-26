@@ -23,13 +23,11 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecommendDataProvider;
 import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendBaseFragmentScrollListener;
 import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendFragmentFactory;
-import com.nttdocomo.android.tvterminalapp.model.recommend.RecommendContentInfo;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 
 import java.util.List;
@@ -37,25 +35,22 @@ import java.util.List;
 public class RecommendActivity extends BaseActivity implements View.OnClickListener,
         RecommendBaseFragmentScrollListener, RecommendDataProvider.RecommendApiDataProviderCallback {
 
-
-    private String[] mTabNames;
-    private LinearLayout mLinearLayout;
-    private HorizontalScrollView mTabScrollView;
-    private ViewPager mRecommendViewPager = null;
-
-
-    private ImageView mMenuImageView = null;
+    private String[] mTabNames = null;
     private boolean mIsSearching = false;
 
-    RecommendDataProvider mRecommendDataProvider = null;
+    private LinearLayout mLinearLayout = null;
+    private HorizontalScrollView mTabScrollView = null;
+    private ViewPager mRecommendViewPager = null;
+    private ImageView mMenuImageView = null;
 
-    private static final int mLoadPageDelayTime = 500;
+    private RecommendDataProvider mRecommendDataProvider = null;
 
-    private int mRequestService = 99;
+    private static final int LOAD_PAGE_DELAY_TIME = 500;
+
     // レコメンドコンテンツ最大件数（システム制約）
     private int maxShowListSize = 100;
     // 表示中レコメンドコンテンツ件数
-    private int showListSize = 0;
+    private int mShowListSize = 0;
     // 表示中の最後の行を保持
     private int mSearchLastItem = 0;
     // ページングの回数
@@ -72,7 +67,6 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
         mMenuImageView = findViewById(R.id.header_layout_menu);
         mMenuImageView.setVisibility(View.VISIBLE);
         mMenuImageView.setOnClickListener(this);
-
 
         initData();
         initRecommendListView();
@@ -92,11 +86,11 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
     /**
      * 検索中フラグの変更
      *
-     * @param b
+     * @param seachingFlag
      */
-    private void setSearchStart(boolean b) {
+    private void setSearchStart(boolean seachingFlag) {
         synchronized (this) {
-            mIsSearching = b;
+            mIsSearching = seachingFlag;
         }
     }
 
@@ -120,7 +114,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
         }
 
         int requestService = mRecommendViewPager.getCurrentItem();
-        int startIndex = showListSize + 1;
+        int startIndex = mShowListSize + 1;
         mRecommendDataProvider.startGetRecommendData(
                 requestService, startIndex, SearchConstants.RecommendList.requestMaxCount_Recommend);
     }
@@ -146,7 +140,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
                 setTab(position);
                 clearAllFragment();
                 setPagingStatus(false);
-                showListSize = 0;
+                mShowListSize = 0;
                 mCntPageing = 0;
                 requestRecommendData();
             }
@@ -194,7 +188,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
                     int position = (int) view.getTag();
                     mRecommendViewPager.setCurrentItem(position);
                     setTab(position);
-                    showListSize = 0;
+                    mShowListSize = 0;
                     mCntPageing = 0;
                     requestRecommendData();
                 }
@@ -232,7 +226,6 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
         return baseFragment;
     }
 
-
     /**
      * レコメンド取得完了時の表示処理
      *
@@ -253,7 +246,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
         if (0 < resultInfoList.size()) {
             for (ContentsData info : resultInfoList) {
                 baseFragment.mData.add(info);
-                showListSize += 1;
+                mShowListSize += 1;
             }
 
             DTVTLogger.debug("baseFragment.mData.size = " + baseFragment.mData.size());
@@ -366,7 +359,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
                 public void run() {
                     requestRecommendData();
                 }
-            }, mLoadPageDelayTime);
+            }, LOAD_PAGE_DELAY_TIME);
         }
     }
 
@@ -445,4 +438,3 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
         recommendDataProviderFinishNg();
     }
 }
-

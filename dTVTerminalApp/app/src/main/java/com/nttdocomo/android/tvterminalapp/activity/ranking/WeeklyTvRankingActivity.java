@@ -25,16 +25,13 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingConstants;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingFragmentScrollListener;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClickListener,
         RankingTopDataProvider.WeeklyRankingApiDataProviderCallback, RankingFragmentScrollListener {

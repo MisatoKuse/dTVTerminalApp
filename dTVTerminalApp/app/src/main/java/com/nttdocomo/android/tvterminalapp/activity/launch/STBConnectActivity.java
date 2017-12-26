@@ -16,13 +16,10 @@ import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
-
 public class STBConnectActivity extends BaseActivity {
+
     private boolean isStbConnected = false;
     private static final int DELAYED_TIME = 3000;
-    private TextView mConnectResult;
-    private TextView mBackIcon;
-    private final static String STATUS = "status";
     private final static String DTVT = "dTVTerminal";
     private Context mContext = null;
 
@@ -41,12 +38,14 @@ public class STBConnectActivity extends BaseActivity {
      */
     private void setContents() {
         DTVTLogger.start();
-        mBackIcon = findViewById(R.id.header_layout_back);
-        mBackIcon.setVisibility(View.GONE);
+        TextView connectResult = null;
+        TextView backIcon = null;
+        backIcon = findViewById(R.id.header_layout_back);
+        backIcon.setVisibility(View.GONE);
         setTitleText(getString(R.string.str_app_title));
-        mConnectResult = findViewById(R.id.connect_result_text);
-        mConnectResult.setVisibility(View.VISIBLE);
-        mConnectResult.setText(R.string.str_stb_connect_success_text);
+        connectResult = findViewById(R.id.connect_result_text);
+        connectResult.setVisibility(View.VISIBLE);
+        connectResult.setText(R.string.str_stb_connect_success_text);
         handler.postDelayed(runnable, DELAYED_TIME);
         DTVTLogger.end();
     }

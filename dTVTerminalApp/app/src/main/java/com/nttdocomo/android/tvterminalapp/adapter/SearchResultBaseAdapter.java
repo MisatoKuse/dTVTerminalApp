@@ -63,7 +63,7 @@ public class SearchResultBaseAdapter extends BaseAdapter {
             holder.iv_clip = view.findViewById(R.id.iv_clip);
 
             //ひかりコンテンツのみクリップボタンを表示する
-            if (searchContentInfo.getServiceId().equals(SearchServiceType.ServiceId.HIKARI_TV_FOR_DOCOMO)) {
+            if(searchContentInfo.getServiceId().equals(SearchServiceType.ServiceId.HIKARI_TV_FOR_DOCOMO)){
 
                 holder.iv_clip.setVisibility(View.VISIBLE);
 
@@ -74,7 +74,7 @@ public class SearchResultBaseAdapter extends BaseAdapter {
                         ((BaseActivity) mContext).sendClipRequest(searchContentInfo.getRequestData());
                     }
                 });
-            } else {
+            }else{
                 holder.iv_clip.setVisibility(View.GONE);
             }
             float mWidth = (float)mContext.getResources().getDisplayMetrics().widthPixels / 3;

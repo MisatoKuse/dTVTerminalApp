@@ -4,8 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
 public class ClipRequestData {
@@ -50,10 +50,6 @@ public class ClipRequestData {
 
     public void setTitle(String mTitle) {
         this.mTitle = mTitle;
-    }
-
-    public void setType(String mType) {
-        this.mType = mType;
     }
 
     public String getType() {
@@ -159,7 +155,7 @@ public class ClipRequestData {
 
         //yyyy/MM/dd HH:mm:ss形式の時はエポック秒に変換する
         String epocLinearEndDate = linearEndDate;
-        if (!DBUtils.isNumber(epocLinearEndDate)) {
+        if (!StringUtil.isNumber(epocLinearEndDate)) {
             epocLinearEndDate = String.valueOf(DateUtils.getEpochTime(epocLinearEndDate));
         }
         //EPG/DTVはdispType,contentsTypeの内容で判定する

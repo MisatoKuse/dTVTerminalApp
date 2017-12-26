@@ -5,13 +5,13 @@
 package com.nttdocomo.android.tvterminalapp.activity.player;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 
 public class RecommendPlayerActivity extends BaseActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

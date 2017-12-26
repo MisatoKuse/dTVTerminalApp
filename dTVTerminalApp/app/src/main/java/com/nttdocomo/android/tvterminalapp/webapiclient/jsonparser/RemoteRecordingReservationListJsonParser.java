@@ -4,7 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
-
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -20,10 +19,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationListResponse.REMOTE_RECORDING_RESERVATION_META_RESPONSE_COUNT;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationListResponse.REMOTE_RECORDING_RESERVATION_META_RESPONSE_LIST;
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationListResponse.REMOTE_RECORDING_RESERVATION_META_RESPONSE_STATUS;
-
 public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, Object, Object> {
     private final String CLASS_NAME = getClass().getSimpleName();
     private static final String SEND_RESPONSE = ".sendRemoteRecordingReservationListResponse";
@@ -35,8 +30,10 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
     private RemoteRecordingReservationListWebClient.
             RemoteRecordingReservationListJsonParserCallback
             mRemoteRecordingReservationListJsonParserCallback;
+
     // オブジェクトクラスの定義　
-    private RemoteRecordingReservationListResponse mRemoteRecordingReservationListResponse;
+    private RemoteRecordingReservationListResponse mRemoteRecordingReservationListResponse
+            = new RemoteRecordingReservationListResponse();
 
     /**
      * コンストラクタ
@@ -44,8 +41,8 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
      * //     * @param remoteRecordingReservationListJsonParserCallback
      */
     public RemoteRecordingReservationListJsonParser(RemoteRecordingReservationListWebClient.
-        RemoteRecordingReservationListJsonParserCallback
-        remoteRecordingReservationListJsonParserCallback) {
+                                                            RemoteRecordingReservationListJsonParserCallback
+                                                            remoteRecordingReservationListJsonParserCallback) {
         mRemoteRecordingReservationListJsonParserCallback =
                 remoteRecordingReservationListJsonParserCallback;
         mRemoteRecordingReservationListResponse = new RemoteRecordingReservationListResponse();
@@ -57,6 +54,7 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
                 .onRemoteRecordingReservationListJsonParsed(
                         mRemoteRecordingReservationListResponse);
     }
+
     @Override
     protected Object doInBackground(Object... strings) {
         String result = (String) strings[0];
@@ -114,7 +112,7 @@ public class RemoteRecordingReservationListJsonParser extends AsyncTask<Object, 
                 try {
                     //数字の場合のみ、値を採用する
                     String stringBuffer = jsonObj.getString(JsonContents.META_RESPONSE_COUNT);
-                    if(DBUtils.isNumber(stringBuffer)) {
+                    if (DBUtils.isNumber(stringBuffer)) {
                         count = Integer.parseInt(stringBuffer);
                     } else {
                         throw new NumberFormatException();

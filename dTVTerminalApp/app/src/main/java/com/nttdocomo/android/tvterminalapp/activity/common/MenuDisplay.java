@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -39,7 +38,6 @@ import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class MenuDisplay implements AdapterView.OnItemClickListener {
 
     private static MenuDisplay sMenuDisplay = new MenuDisplay();
@@ -62,7 +60,6 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
      * Singletonのため、privateにする
      */
     private MenuDisplay() {
-
     }
 
     public static MenuDisplay getInstance() {
@@ -84,13 +81,11 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
         if (null != mMenuDisplayEventListener) {
             mMenuDisplayEventListener.onPreUserStateChange(mMenuItemParam.getUserState(), menuItemParam.getUserState());
         }
-
         mMenuItemParam = menuItemParam;
     }
 
     public void display() {
         refreshMenu();
-
         if (null != mMenuDisplayEventListener) {
             mMenuDisplayEventListener.onUserStateChanged(mMenuItemParam.getUserState(), mMenuItemParam.getUserState());
         }
@@ -101,30 +96,22 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     }
 
     private void initPopupWindow() {
-
         View popupWindowView = mActivity.getLayoutInflater().inflate(R.layout.nav_pop, null);
-
         mPopupWindow = new PopupWindow(popupWindowView
                 , LinearLayout.LayoutParams.WRAP_CONTENT
                 , LinearLayout.LayoutParams.MATCH_PARENT, true);
-
         mPopupWindow.setAnimationStyle(R.style.AnimationRightFade);
-
         ColorDrawable dw = new ColorDrawable(0xffffffff);
         mPopupWindow.setBackgroundDrawable(dw);
-
         mPopupWindow.showAtLocation(mActivity.getLayoutInflater()
                 .inflate(R.layout.home_main_layout, null), Gravity.END, 0, 0);
         mPopupWindow.setOnDismissListener(new PopupDismissListener());
-
         popupWindowView.setOnTouchListener(new View.OnTouchListener() {
-
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 return false;
             }
         });
-
         loadMenuList(popupWindowView);
     }
 
@@ -286,18 +273,15 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                     RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DAZN);
                 }
             }
-
             mPopupWindow.dismiss();
         }
     }
 
     class PopupDismissListener implements PopupWindow.OnDismissListener {
-
         @Override
         public void onDismiss() {
             backgroundAlpha(1f);
         }
-
     }
 
     private void backgroundAlpha(float bgAlpha) {
@@ -321,7 +305,6 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     private void initMenuListData() {
         mMenuItemTitles = new ArrayList();
         mMenuItemCount = new ArrayList();
-
         if (UserState.LOGIN_NG == mMenuItemParam.getUserState()) {     //メニュー(未加入)
             setMenuItemLogoff();
             removeFooterView(); //未加入だけ場合は表示されない
@@ -332,7 +315,6 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
         } else if (UserState.CONTRACT_OK_PARING_OK == mMenuItemParam.getUserState()) { //メニュー(契約・ペアリング済み)
             setMenuItemSignedPairing();
         }
-
     }
 
     private void addFooterView(ListView mGlobalMenuListView) {
@@ -351,7 +333,6 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     }
 
     private void setMenuItemSignedPairing() {
-
         //ホーム～チャンネルリスト
         setHeaderMenuItem();
 
@@ -389,7 +370,6 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     }
 
     private void setMenuItemSignedUnpaired() {
-
         //ホーム～チャンネルリスト
         setHeaderMenuItem();
 
@@ -401,7 +381,6 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     }
 
     private void setMenuItemUnsignedLogin() {
-
         //ホーム～チャンネルリスト
         setHeaderMenuItem();
 
@@ -413,7 +392,6 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     }
 
     private void setMenuItemLogoff() {
-
         //ホーム～チャンネルリスト
         setHeaderMenuItem();
 
@@ -457,7 +435,6 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
      * 契約済みの録画番組～録画予約までは共通のためここにまとめる
      */
     private void setSighedMiddleMenuItem() {
-
         //録画番組
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_recorder_program));
         mMenuItemCount.add(mMenuItemParam.getRecordProgramCount());
@@ -495,7 +472,6 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
      * 未契約ログイン、未ログインの共通部分を統一
      */
     private void setUnsignedAndLogoffMiddleMenuItem() {
-
         //ランキング
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_ranking));
         mMenuItemCount.add(INT_NONE_COUNT_STATUS);
@@ -509,7 +485,6 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
      * お知らせ、設定は共通のため、このメソッドに統一
      */
     private void setFooterMenuItem() {
-
         //お知らせ
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_notice));
         mMenuItemCount.add(INT_NONE_COUNT_STATUS);

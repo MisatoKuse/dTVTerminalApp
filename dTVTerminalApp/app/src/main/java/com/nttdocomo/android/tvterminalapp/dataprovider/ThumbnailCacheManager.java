@@ -26,19 +26,19 @@ import java.util.List;
 
 public class ThumbnailCacheManager {
 
+    private Context mContext = null;
+
+    // メモリキャッシュ
+    private LruCache<String, Bitmap> mMemCache = null;
+
     // メモリサイズ 5MB
     private static final int MEM_CACHE_DEFAULT_SIZE = 5 * 1024 * 1024;
-    // メモリキャッシュ
-    private LruCache<String, Bitmap> memCache;
     // ディスクキャッシュ件数
     private final static int THUMBNAIL_FILE_CASHE_LIMIT = 100;
     // サムネイルキャッシュ保存するフォルダ　packagename/cache/thumbnail_cache
-    private static final String THUMBNAIL_CACHE  ="/thumbnail_cache/";
+    private static final String THUMBNAIL_CACHE = "/thumbnail_cache/";
 
-    private Context context;
-
-    public ThumbnailCacheManager (){
-
+    public ThumbnailCacheManager() {
     }
 
     /**
@@ -46,8 +46,8 @@ public class ThumbnailCacheManager {
      *
      * @param context
      */
-    public ThumbnailCacheManager (Context context){
-        this.context = context;
+    public ThumbnailCacheManager(Context context) {
+        this.mContext = context;
     }
 
     /**
@@ -55,7 +55,7 @@ public class ThumbnailCacheManager {
      */
     public void initMemCache() {
         //メモリキャッシュサイズ
-        memCache = new LruCache<String, Bitmap>(MEM_CACHE_DEFAULT_SIZE) {
+        mMemCache = new LruCache<String, Bitmap>(MEM_CACHE_DEFAULT_SIZE) {
             @Override
             protected int sizeOf(String key, Bitmap bitmap) {
                 return bitmap.getByteCount();
@@ -71,7 +71,7 @@ public class ThumbnailCacheManager {
     public Bitmap getBitmapFromDisk(String fileName) {
         try {
             //ファイルパス
-            String dir = context.getCacheDir() + THUMBNAIL_CACHE + hashKeyForDisk(fileName);
+            String dir = mContext.getCacheDir() + THUMBNAIL_CACHE + hashKeyForDisk(fileName);
             File file = new File(dir);
             Bitmap bitmap = null;
             if (file.exists()) {
@@ -90,7 +90,7 @@ public class ThumbnailCacheManager {
      * @param url
      */
     public Bitmap getBitmapFromMem(String url) {
-        return memCache.get(url);
+        return mMemCache.get(url);
     }
 
     /**
@@ -100,7 +100,7 @@ public class ThumbnailCacheManager {
      * @param bitmap
      */
     public void putBitmapToMem(String url, Bitmap bitmap) {
-        memCache.put(url, bitmap);
+        mMemCache.put(url, bitmap);
     }
 
     /**
@@ -111,7 +111,7 @@ public class ThumbnailCacheManager {
      */
     public boolean saveBitmapToDisk(String filename, Bitmap bitmap) {
         //フォルダーパス
-        String localPath = context.getCacheDir() + THUMBNAIL_CACHE;
+        String localPath = mContext.getCacheDir() + THUMBNAIL_CACHE;
         int quality = 100;
         if (bitmap == null || filename == null) {
             return false;
@@ -119,16 +119,16 @@ public class ThumbnailCacheManager {
         Bitmap.CompressFormat format = Bitmap.CompressFormat.PNG;
         OutputStream stream = null;
         try {
-            File myFile = new File(context.getCacheDir() + THUMBNAIL_CACHE);
-            if (!myFile.exists()){
-                if(!myFile.mkdir()){
+            File myFile = new File(mContext.getCacheDir() + THUMBNAIL_CACHE);
+            if (!myFile.exists()) {
+                if (!myFile.mkdir()) {
                     DTVTLogger.debug("create file fail ");
                 }
             }
             File[] files = myFile.listFiles();
             List<File> mListFile = new ArrayList<>();
             boolean isLimitFlg = false;
-            if (files!=null && files.length > 0){
+            if (files != null && files.length > 0) {
                 for (int i = 0; i < files.length; i++) {
                     if (files.length >= THUMBNAIL_FILE_CASHE_LIMIT) {
                         isLimitFlg = true;
@@ -140,8 +140,8 @@ public class ThumbnailCacheManager {
                 //ファイル更新時間通り昇順ソート
                 Collections.sort(mListFile, new CalendarComparator());
                 //古い情報を削除する
-                if(mListFile.get(0)!=null && mListFile.get(0).exists()){
-                    if(!mListFile.get(0).delete()){
+                if (mListFile.get(0) != null && mListFile.get(0).exists()) {
+                    if (!mListFile.get(0).delete()) {
                         DTVTLogger.debug("delete file fail ");
                     }
                 }
@@ -156,8 +156,7 @@ public class ThumbnailCacheManager {
     }
 
     /**
-     *ソート処理
-     *
+     * ソート処理
      */
     class CalendarComparator implements Comparator {
         @Override
@@ -180,9 +179,9 @@ public class ThumbnailCacheManager {
             byte[] bytes = key.getBytes("UTF-8");
             mDigest.update(bytes);
             cacheKey = bytesToHexString(mDigest.digest());
-        }catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException e) {
             cacheKey = String.valueOf(key.hashCode());
-        }catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             cacheKey = String.valueOf(key.hashCode());
         }
         return cacheKey;

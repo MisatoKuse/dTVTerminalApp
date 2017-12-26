@@ -16,8 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public class UserInfoJsonParser {
-    // オブジェクトクラスの定義
-    private UserInfoList mUserInfoList;
 
     private static final String USER_INFO_LIST_STATUS = "status";
 
@@ -38,7 +36,10 @@ public class UserInfoJsonParser {
      */
     public List<UserInfoList> userInfoListSender(String jsonStr) {
 
-        mUserInfoList = new UserInfoList();
+        // オブジェクトクラスの定義
+        UserInfoList infoList;
+
+        infoList = new UserInfoList();
 
         try {
             JSONObject jsonObj = new JSONObject(jsonStr);
@@ -49,19 +50,19 @@ public class UserInfoJsonParser {
                     String status = jsonObj.getString(USER_INFO_LIST_STATUS);
                     map.put(USER_INFO_LIST_STATUS, status);
                 }
-                mUserInfoList.setUiMap(map);
+                infoList.setUiMap(map);
 
                 if (!jsonObj.isNull(USER_INFO_LIST_LOGGEDIN_ACCOUNT)) {
                     JSONObject loggedinObj = jsonObj.getJSONObject(USER_INFO_LIST_LOGGEDIN_ACCOUNT);
-                    mUserInfoList.setLoggedinAccountList(sendUiList(loggedinObj));
+                    infoList.setLoggedinAccountList(sendUiList(loggedinObj));
 
                     if (!loggedinObj.isNull(USER_INFO_LIST_H4D_CONTRACTED_ACCOUNT)) {
                         JSONObject h4dObj = loggedinObj.getJSONObject(USER_INFO_LIST_H4D_CONTRACTED_ACCOUNT);
-                        mUserInfoList.setH4dAccountList(sendUiList(h4dObj));
+                        infoList.setH4dAccountList(sendUiList(h4dObj));
                     }
                 }
 
-                List<UserInfoList> userInfoList = Arrays.asList(mUserInfoList);
+                List<UserInfoList> userInfoList = Arrays.asList(infoList);
 
                 return userInfoList;
             }

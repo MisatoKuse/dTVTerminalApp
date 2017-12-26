@@ -9,18 +9,11 @@ import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelListResponse;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelRegisterResponse;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.MyChannelRegisterWebClient;
-import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.MyChannelWebClient;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 public class MyChannelRegisterJsonParser extends AsyncTask<Object, Object, Object> {
     private final String CLASS_NAME = getClass().getSimpleName();

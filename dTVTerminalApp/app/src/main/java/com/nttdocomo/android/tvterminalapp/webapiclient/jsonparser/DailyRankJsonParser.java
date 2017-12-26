@@ -9,9 +9,6 @@ import android.os.AsyncTask;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
-import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.DailyRankWebClient;
 
 import org.json.JSONArray;
@@ -28,10 +25,11 @@ public class DailyRankJsonParser extends AsyncTask<Object, Object, Object> {
     final private DailyRankWebClient.DailyRankJsonParserCallback mDailyRankJsonParserCallback;
 
     // オブジェクトクラスの定義
-    private DailyRankList mDailyRankList;
+    private DailyRankList mDailyRankList = null;
 
-    public static final String[] PAGER_PARA = {JsonContents.META_RESPONSE_PAGER_LIMIT, JsonContents.META_RESPONSE_OFFSET,
-            JsonContents.META_RESPONSE_COUNT, JsonContents.META_RESPONSE_TOTAL};
+    public static final String[] PAGER_PARA = {JsonContents.META_RESPONSE_PAGER_LIMIT,
+            JsonContents.META_RESPONSE_OFFSET, JsonContents.META_RESPONSE_COUNT,
+            JsonContents.META_RESPONSE_TOTAL};
 
     /**
      * コンストラクタ

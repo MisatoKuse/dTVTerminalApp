@@ -4,7 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
-
 import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
@@ -19,21 +18,19 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
-
 public class HttpThread extends Thread {
 
-    public interface HttpThreadFinish{
+    private Handler mHandler = null;
+    private String mUrl = null;
+    private String mXmlStr = "";
+    private HttpThreadFinish mHttpThreadFinish = null;
+    private boolean mError = false;
+
+    public interface HttpThreadFinish {
         public void onHttpThreadFinish(String str);
     }
 
-    private String mUrl = null;
-    private Handler mHandler = null;
-    private String mXmlStr="";
-    private HttpThreadFinish mHttpThreadFinish=null;
-
-    private boolean mError=false;
-
-    private void setError(boolean b){
+    private void setError(boolean b) {
         synchronized (this) {
             mError = b;
         }
@@ -41,25 +38,24 @@ public class HttpThread extends Thread {
 
     public HttpThread(String url, HttpThreadFinish httpThreadFinish) {
         mUrl = url;
-        mHttpThreadFinish=httpThreadFinish;
+        mHttpThreadFinish = httpThreadFinish;
         clearStatus();
     }
 
     public HttpThread(String url, Handler handler, HttpThreadFinish httpThreadFinish) {
         mHandler = handler;
         mUrl = url;
-        mHttpThreadFinish=httpThreadFinish;
+        mHttpThreadFinish = httpThreadFinish;
         clearStatus();
     }
 
-    private void clearStatus(){
+    private void clearStatus() {
         mXmlStr = "";
         setError(false);
     }
 
     @Override
     public void run() {
-
         clearStatus();
         HttpsURLConnection httpUrlConn = null;
         final StringBuffer sb = new StringBuffer();
@@ -74,15 +70,15 @@ public class HttpThread extends Thread {
             httpUrlConn.setRequestProperty("Accept-Charset", "utf-8");
             httpUrlConn.setRequestProperty("contentType", "utf-8");
 
-            if(httpUrlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            if (httpUrlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
 
                 InputStream is = httpUrlConn.getInputStream();
-                if(null == is){
+                if (null == is) {
                     throw new Exception("HttpThread::run, is==null");
                 }
 
                 InputStreamReader isr = new InputStreamReader(is, "UTF-8");
-                if(null == isr){
+                if (null == isr) {
                     throw new Exception("HttpThread::run, isr==null");
                 }
                 BufferedReader br = new BufferedReader(isr);

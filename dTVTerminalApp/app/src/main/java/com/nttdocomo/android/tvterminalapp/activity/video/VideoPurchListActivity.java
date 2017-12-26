@@ -14,8 +14,6 @@ import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActi
 
 public class VideoPurchListActivity extends BaseActivity {
 
-    private RelativeLayout mRelativeLayout;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,12 +21,13 @@ public class VideoPurchListActivity extends BaseActivity {
         initView();
     }
 
-    private void initView(){
-        mRelativeLayout = findViewById(R.id.purch_video_list_main_layout_ll1);
-        mRelativeLayout.setOnClickListener(new View.OnClickListener() {
+    private void initView() {
+        RelativeLayout relativeLayout = null;
+        relativeLayout = findViewById(R.id.purch_video_list_main_layout_ll1);
+        relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(DtvContentsDetailActivity.class,null);
+                startActivity(DtvContentsDetailActivity.class, null);
             }
         });
     }

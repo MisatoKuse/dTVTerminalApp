@@ -4,10 +4,9 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.common;
 
-
 /**
  * 機能
- *      メニューアイテム定義
+ * メニューアイテム定義
  */
 public enum MenuItem {
     HOME,                    //ホーム

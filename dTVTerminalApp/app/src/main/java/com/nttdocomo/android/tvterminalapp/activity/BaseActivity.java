@@ -35,12 +35,12 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountControl;
@@ -58,21 +58,30 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         ClipRegistWebClient.ClipRegistJsonParserCallback, ClipDeleteWebClient.ClipDeleteJsonParserCallback,
         DaccountControl.DaccountControlCallBack {
 
-    private LinearLayout baseLinearLayout;
-    private RelativeLayout headerLayout;
-    protected TextView titleTextView;
-    private ImageView mStbStatusIcon;
-    private DlnaProvDevList mDlnaProvDevListForBase;
-    private ImageView mMenuImageViewForBase;
+    private LinearLayout baseLinearLayout = null;
+    private RelativeLayout headerLayout = null;
+    protected TextView titleTextView = null;
+    private ImageView mStbStatusIcon = null;
+    private DlnaProvDevList mDlnaProvDevListForBase = null;
+
+    private ImageView mMenuImageViewForBase = null;
     private RemoteControllerView remoteControllerView = null;
     private Context mContext = null;
     private RemoteControlRelayClient mRemoteControlRelayClient = null;
+    private UserState sUserState = UserState.LOGIN_NG;
 
-    /** タイムアウト時間 */
-    public final static int LOAD_PAGE_DELAY_TIME = 1000;
+    private long lastClickTime = 0;
 
     /** クリップ対象 */
     private String mClipTarget = null;
+
+    /** stb status icon状態 */
+    private boolean mIsStbStatusOn = false;
+
+    /** タイムアウト時間 */
+    public static final int LOAD_PAGE_DELAY_TIME = 1000;
+
+    private static final int MIN_CLICK_DELAY_TIME = 1000;
 
     /** クリップ未登録状態 */
     private static final String CLIP_RESULT_STATUS = "1";
@@ -189,9 +198,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         }
     }
 
-    //stb status icon状態
-    private boolean mIsStbStatusOn = false;
-
     /**
      * 機能：STBステータスを変更
      *
@@ -277,7 +283,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         mContext = this;
         initView();
         mRemoteControlRelayClient = RemoteControlRelayClient.getInstance();
-        mRemoteControlRelayClient.setHandler(ｍRerayClientHandler);
+        mRemoteControlRelayClient.setHandler(mRerayClientHandler);
         mRemoteControlRelayClient.setDebugRemoteIp("192.168.11.19");
 
         //dアカウントの検知処理を追加する
@@ -367,10 +373,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         DTVTLogger.end();
     }
 
-    private static final int MIN_CLICK_DELAY_TIME = 1000;
-    private long lastClickTime;
-
-    public Handler ｍRerayClientHandler = new Handler() {
+    public Handler mRerayClientHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             String message = "OK";
@@ -548,8 +551,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     public String getUserName() {
         return "Test User";
     }
-
-    private UserState sUserState = UserState.LOGIN_NG;
 
     public UserState getUserState() {
         return sUserState;

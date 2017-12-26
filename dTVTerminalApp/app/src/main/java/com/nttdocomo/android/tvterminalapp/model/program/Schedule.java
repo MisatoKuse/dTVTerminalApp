@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.model.program;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 
 import java.text.ParseException;
@@ -132,7 +133,7 @@ public class Schedule {
                 try {
                     date=sdf.parse(curStartDay);
                 }catch (ParseException e){
-                    e.printStackTrace();
+                    DTVTLogger.debug(e);
                 }
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(date);
@@ -161,7 +162,7 @@ public class Schedule {
         try {
             date = format.parse(strDate);
         } catch (Exception e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
         return date;
     }

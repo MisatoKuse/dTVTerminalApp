@@ -8,7 +8,6 @@ import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
-import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
 import org.json.JSONArray;
 
@@ -106,9 +105,9 @@ public class StringUtil {
             return (long) data;
         }
 
-        if (data instanceof Integer) {
+        if(data instanceof Integer) {
             //整数なので長整数に変換
-            return ((Integer) data).longValue();
+            return ((Integer)data).longValue();
         }
 
         //数字の文字列かどうかの判定
@@ -129,14 +128,14 @@ public class StringUtil {
      */
     public static int changeString2Int(Object data) {
         //既に数値かどうかを判定
-        if (data instanceof Integer) {
+        if(data instanceof Integer) {
             //整数なのでそのまま返す
-            return (Integer) data;
+            return (Integer)data;
         }
 
         if (data instanceof Long) {
             //長整数なので整数に変換
-            return ((Long) data).intValue();
+            return ((Long)data).intValue();
         }
 
         //数字の文字列かどうかの判定
@@ -159,25 +158,25 @@ public class StringUtil {
         //Strinかどうかを見る
         if (data instanceof String) {
             //そのまま返す
-            return (String) data;
+            return (String)data;
         }
 
         //intかどうかを判定
-        if (data instanceof Integer) {
+        if(data instanceof Integer) {
             //intを文字に変換して返す
-            return String.valueOf((int) data);
+            return String.valueOf((int)data);
         }
 
         //longかどうかを判定
-        if (data instanceof Long) {
+        if(data instanceof Long) {
             //longを文字に変換して返す
-            return String.valueOf((long) data);
+            return String.valueOf((long)data);
         }
 
         //doubleかどうかを判定
-        if (data instanceof Double) {
+        if(data instanceof Double) {
             //doubleを文字に変換して返す
-            return String.valueOf((double) data);
+            return String.valueOf((double)data);
         }
 
         //変換できなかったので空文字
@@ -185,32 +184,15 @@ public class StringUtil {
     }
 
     /**
-     * ひかりコンテンツ判定(ひかり内DTVのみ)
+     * 文字列の値が数値かどうか判定する
      *
-     * @param type
-     * @return
+     * @param num 数値判定文字列
+     * @return 判定結果
      */
-    public static boolean isHikariInDtvContents(String type) {
-        boolean isHikariIn = false;
-        if (type != null && (type.equals(WebApiBasePlala.CLIP_TYPE_DTV_VOD))) {
-            isHikariIn = true;
-        }
-        return isHikariIn;
-    }
-
-    /**
-     * ひかりコンテンツ判定
-     *
-     * @param type
-     * @return
-     */
-    public static boolean isHikariContents(String type) {
-        boolean isHikari = false;
-        if (type != null && (type.equals(WebApiBasePlala.CLIP_TYPE_H4D_IPTV)
-                || type.equals(WebApiBasePlala.CLIP_TYPE_H4D_VOD)
-                || type.equals(WebApiBasePlala.CLIP_TYPE_DCH))) {
-            isHikari = true;
-        }
-        return isHikari;
+    public static boolean isNumber(String num) {
+        String regex = "^\\-?[0-9]*\\.?[0-9]+$";
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(num);
+        return m.find();
     }
 }

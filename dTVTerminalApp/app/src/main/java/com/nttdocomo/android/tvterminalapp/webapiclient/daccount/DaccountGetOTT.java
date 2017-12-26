@@ -22,6 +22,16 @@ import static android.content.Context.BIND_AUTO_CREATE;
  * dアカウント連携・OTT取得
  */
 public class DaccountGetOTT {
+
+    //コンテキストの控え
+    private Context mContext = null;
+
+    //コールバックの控え
+    private DaccountGetOttCallBack mDaccountGetOttCallBack = null;
+
+    //dアカウント設定アプリの接続用のクラス
+    private IDimServiceAppService mService = null;
+
     /**
      * 結果を返すコールバック
      */
@@ -34,15 +44,6 @@ public class DaccountGetOTT {
          */
         void getOttCallBack(int result, String id, String oneTimePassword);
     }
-
-    //コンテキストの控え
-    private Context mContext = null;
-
-    //コールバックの控え
-    private DaccountGetOttCallBack mDaccountGetOttCallBack;
-
-    //dアカウント設定アプリの接続用のクラス
-    private IDimServiceAppService mService;
 
     /**
      * 各コールバックの動作を定義する
@@ -128,7 +129,7 @@ public class DaccountGetOTT {
                 result = mService.getOneTimePassword(appReqId, "", serviceKey, option,
                         appCheckKey, callback);
             } catch (RemoteException e) {
-                e.printStackTrace();
+                DTVTLogger.debug(e);
                 //例外が発生した場合は、自前で内部エラーにする
                 result = IDimDefines.RESULT_INTERNAL_ERROR;
             }
@@ -188,5 +189,4 @@ public class DaccountGetOTT {
     private void daccountServiceEnd() {
         mContext.unbindService(mServiceConnection);
     }
-
 }

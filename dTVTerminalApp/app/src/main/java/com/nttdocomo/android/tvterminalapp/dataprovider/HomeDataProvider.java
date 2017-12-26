@@ -39,13 +39,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.DAILY_RANK_LAST_INSERT;
-import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.RECOMMEND_CH_LAST_INSERT;
-import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.RECOMMEND_VD_LAST_INSERT;
-import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.TvSchedule_LAST_INSERT;
-import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.VOD_LAST_INSERT;
-import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.VIDEO_RANK_LAST_INSERT;
-
 public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallback,
         TvScheduleWebClient.TvScheduleJsonParserCallback,
         DailyRankWebClient.DailyRankJsonParserCallback,
@@ -53,7 +46,9 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         RecommendChWebClient.RecommendChannelCallback,
         RecommendVdWebClient.RecommendVideoCallback {
 
-    private Context mContext;
+    private Context mContext = null;
+
+    private ApiDataProviderCallback mApiDataProviderCallback = null;
 
     @Override
     public void onVodClipJsonParsed(List<VodClipList> vodClipLists) {
@@ -169,8 +164,6 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         void recommendVideoCallback(List<ContentsData> recVdList);
     }
 
-    private ApiDataProviderCallback apiDataProviderCallback;
-
     /**
      * コンストラクタ
      *
@@ -178,7 +171,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      */
     public HomeDataProvider(Context mContext) {
         this.mContext = mContext;
-        this.apiDataProviderCallback = (ApiDataProviderCallback) mContext;
+        this.mApiDataProviderCallback = (ApiDataProviderCallback) mContext;
     }
 
     /**
@@ -235,7 +228,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param list
      */
     public void sendTvScheduleListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.tvScheduleListCallback(setHomeContentData(list));
+        mApiDataProviderCallback.tvScheduleListCallback(setHomeContentData(list));
     }
 
     /**
@@ -244,7 +237,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param list
      */
     public void sendRecommendChListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.recommendChannelCallback(setHomeContentData(list));
+        mApiDataProviderCallback.recommendChannelCallback(setHomeContentData(list));
     }
 
     /**
@@ -253,7 +246,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param list
      */
     public void sendRecommendVdListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.recommendVideoCallback(setHomeContentData(list));
+        mApiDataProviderCallback.recommendVideoCallback(setHomeContentData(list));
     }
 
     /**
@@ -262,7 +255,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param list
      */
     public void sendDailyRankListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.dailyRankListCallback(setHomeContentData(list));
+        mApiDataProviderCallback.dailyRankListCallback(setHomeContentData(list));
     }
 
     /**
@@ -271,7 +264,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param list
      */
     public void sendVideoRankListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.videoRankCallback(setHomeContentData(list));
+        mApiDataProviderCallback.videoRankCallback(setHomeContentData(list));
     }
 
     /**
@@ -280,7 +273,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param list
      */
     public void sendVodClipListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.vodClipListCallback(setHomeContentData(list));
+        mApiDataProviderCallback.vodClipListCallback(setHomeContentData(list));
     }
 
     /**
@@ -289,7 +282,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      * @param list
      */
     public void sendUserInfoListData(List<Map<String, String>> list) {
-        apiDataProviderCallback.userInfoCallback(list);
+        mApiDataProviderCallback.userInfoCallback(list);
     }
 
 
@@ -332,7 +325,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      */
     private List<Map<String, String>> getTvScheduleListData() {
         DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(TvSchedule_LAST_INSERT);
+        String lastDate = dateUtils.getLastDate(DateUtils.TV_SCHEDULE_LAST_INSERT);
 
         List<Map<String, String>> list = new ArrayList<>();
         //NO ON AIR一覧のDB保存履歴と、有効期間を確認
@@ -359,8 +352,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      */
     private List<Map<String, String>> getRecommendChListData() {
         DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(RECOMMEND_CH_LAST_INSERT);
-
+        String lastDate = dateUtils.getLastDate(DateUtils.RECOMMEND_CH_LAST_INSERT);
         List<Map<String, String>> list = new ArrayList<>();
         //おすすめ番組一覧のDB保存履歴と、有効期間を確認
         if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
@@ -380,8 +372,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      */
     private List<Map<String, String>> getRecommendVdListData() {
         DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(RECOMMEND_VD_LAST_INSERT);
-
+        String lastDate = dateUtils.getLastDate(DateUtils.RECOMMEND_VD_LAST_INSERT);
         List<Map<String, String>> list = new ArrayList<>();
         //おすすめビデオのDB保存履歴と、有効期間を確認
         if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
@@ -401,8 +392,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      */
     private List<Map<String, String>> getVodClipListData() {
         DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(VOD_LAST_INSERT);
-
+        String lastDate = dateUtils.getLastDate(DateUtils.VOD_LAST_INSERT);
         List<Map<String, String>> list = new ArrayList<>();
         //Vodクリップ一覧のDB保存履歴と、有効期間を確認
         if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
@@ -429,8 +419,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      */
     private List<Map<String, String>> getDailyRankListData() {
         DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(DAILY_RANK_LAST_INSERT);
-
+        String lastDate = dateUtils.getLastDate(DateUtils.DAILY_RANK_LAST_INSERT);
         List<Map<String, String>> list = new ArrayList<>();
         //今日のテレビランキング一覧のDB保存履歴と、有効期間を確認
         if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
@@ -456,8 +445,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      */
     private List<Map<String, String>> getVideoRankListData() {
         DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(VIDEO_RANK_LAST_INSERT);
-
+        String lastDate = dateUtils.getLastDate(DateUtils.VIDEO_RANK_LAST_INSERT);
         List<Map<String, String>> list = new ArrayList<>();
         //Vodクリップ一覧のDB保存履歴と、有効期間を確認
         if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeLimitDate(lastDate)) {
@@ -474,7 +462,6 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
             String genreId = "";
             String type = "";
             String sort = "";
-
             //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
             webClient.getContentsListPerGenreApi(limit, offset,
                     filter, ageReq, genreId, type, sort, this);
@@ -489,7 +476,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      */
     public void setStructDB(TvScheduleList tvScheduleList) {
         DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(TvSchedule_LAST_INSERT);
+        dateUtils.addLastDate(DateUtils.TV_SCHEDULE_LAST_INSERT);
         TvScheduleInsertDataManager dataManager = new TvScheduleInsertDataManager(mContext);
         dataManager.insertTvScheduleInsertList(tvScheduleList);
         sendTvScheduleListData(tvScheduleList.geTvsList());
@@ -502,7 +489,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      */
     public void setStructDB(RecommendChList recommendChList) {
         DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(RECOMMEND_CH_LAST_INSERT);
+        dateUtils.addLastDate(DateUtils.RECOMMEND_CH_LAST_INSERT);
         RecommendChInsertDataManager dataManager = new RecommendChInsertDataManager(mContext);
         dataManager.insertRecommendChInsertList(recommendChList);
         sendRecommendChListData(recommendChList.getmRcList());
@@ -515,20 +502,20 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      */
     public void setStructDB(RecommendVdList recommendVdList) {
         DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(RECOMMEND_VD_LAST_INSERT);
+        dateUtils.addLastDate(DateUtils.RECOMMEND_VD_LAST_INSERT);
         RecommendVdInsertDataManager dataManager = new RecommendVdInsertDataManager(mContext);
         dataManager.insertRecommendVdInsertList(recommendVdList);
         sendRecommendVdListData(recommendVdList.getmRvList());
     }
 
     /**
-     * デーリーランキングデータをDBに格納する
+     * デイリーランキングデータをDBに格納する
      *
      * @param dailyRankList
      */
     public void setStructDB(DailyRankList dailyRankList) {
         DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(DAILY_RANK_LAST_INSERT);
+        dateUtils.addLastDate(DateUtils.DAILY_RANK_LAST_INSERT);
         DailyRankInsertDataManager dataManager = new DailyRankInsertDataManager(mContext);
         dataManager.insertDailyRankInsertList(dailyRankList);
         sendDailyRankListData(dailyRankList.getDrList());
@@ -541,7 +528,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      */
     public void setStructDB(VideoRankList videoRankList) {
         DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(VIDEO_RANK_LAST_INSERT);
+        dateUtils.addLastDate(DateUtils.VIDEO_RANK_LAST_INSERT);
         VideoRankInsertDataManager dataManager = new VideoRankInsertDataManager(mContext);
         dataManager.insertVideoRankInsertList(videoRankList);
         sendVideoRankListData(videoRankList.getVrList());
@@ -554,7 +541,7 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
      */
     public void setStructDB(VodClipList vodClipList) {
         DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(VOD_LAST_INSERT);
+        dateUtils.addLastDate(DateUtils.VOD_LAST_INSERT);
         VodClipInsertDataManager dataManager = new VodClipInsertDataManager(mContext);
         dataManager.insertVodClipInsertList(vodClipList);
         sendVodClipListData(vodClipList.getVcList());

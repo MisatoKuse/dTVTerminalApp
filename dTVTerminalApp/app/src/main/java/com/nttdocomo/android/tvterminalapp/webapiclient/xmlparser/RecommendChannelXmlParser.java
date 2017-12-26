@@ -156,6 +156,8 @@ public class RecommendChannelXmlParser extends AsyncTask<Object, Object, Object>
                         redChContents.setmRcList(redChContentList);
                         endFlg = true;
                         break;
+                    default:
+                        break;
                 }
                 eventType = parser.next();
             }

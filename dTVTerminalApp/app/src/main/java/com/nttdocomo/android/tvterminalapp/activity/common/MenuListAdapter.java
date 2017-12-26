@@ -5,7 +5,6 @@
 package com.nttdocomo.android.tvterminalapp.activity.common;
 
 import android.content.Context;
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,6 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.utils.ColorUtils;
 
 import java.util.List;
-
 
 public class MenuListAdapter extends BaseAdapter {
 
@@ -46,7 +44,6 @@ public class MenuListAdapter extends BaseAdapter {
         return i;
     }
 
-
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         View itemProgramVIew = null;
@@ -58,17 +55,25 @@ public class MenuListAdapter extends BaseAdapter {
             holder.tv_count = itemProgramVIew.findViewById(R.id.tv_count);
             holder.tv_arrow = itemProgramVIew.findViewById(R.id.iv_arrow);
             holder.dazn_icon = itemProgramVIew.findViewById(R.id.dazn_icon);
+            holder.tv_title_icon = itemProgramVIew.findViewById(R.id.tv_title_icon);
             view = itemProgramVIew;
             view.setTag(holder);
         } else {
             holder = (ProgramViewHolder) view.getTag();
         }
-
         String title = (String) mData.get(i);
         holder.tv_title.setText(title);
         setTextView(title, holder.tv_title);
         setImageView(title, holder.tv_arrow);
+        setTitleNameImageView(title, holder.tv_title_icon);
         setDAZNIcon(title, holder.dazn_icon);
+        int cnt = (int) mDataCounts.get(i);
+        if (MenuDisplay.INT_NONE_COUNT_STATUS != cnt) {
+            holder.tv_count.setText(String.valueOf(cnt));
+            holder.tv_count.setVisibility(View.VISIBLE);
+        } else {
+            holder.tv_count.setText("");
+        }
         return view;
     }
 
@@ -91,7 +96,7 @@ public class MenuListAdapter extends BaseAdapter {
         if (title != null) {
             if (title.equals(mContext.getString(R.string.nav_menu_item_hikari_tv_none_action))) {
                 //ひかりTVメインの設定
-                colorUtils.setTextViewColor(textView, R.color.hikari_tv_and_dtv_channel_title);
+                colorUtils.setTextViewColor(textView, R.color.list_item_background);
                 textView.setTypeface(Typeface.DEFAULT_BOLD);
                 marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_premium_tv_app_start_common))) {
@@ -109,25 +114,16 @@ public class MenuListAdapter extends BaseAdapter {
                 textView.setTypeface(Typeface.DEFAULT);
                 marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_hikari_tv))
-                    || title.equals(mContext.getString(R.string.nav_menu_item_dtv_channel))) {
-                //STB(ひかりTV、dTVチャンネル)カスタマイズ
-                colorUtils.setTextViewColor(textView, R.color.hikari_tv_and_dtv_channel_title);
-                textView.setTypeface(Typeface.DEFAULT_BOLD);
-                marginLayoutParams.setMargins(intCustomTitleLeftMargin, 0, 0, 0);
-            } else if (title.equals(mContext.getString(R.string.nav_menu_item_dtv))) {
-                //STB(dTV)カスタマイズ
-                colorUtils.setTextViewColor(textView, R.color.dtv_title);
-                textView.setTypeface(Typeface.DEFAULT_BOLD);
-                marginLayoutParams.setMargins(intCustomTitleLeftMargin, 0, 0, 0);
-            } else if (title.equals(mContext.getString(R.string.nav_menu_item_d_animation))) {
-                //STB(dアニメ)カスタマイズ
-                colorUtils.setTextViewColor(textView, R.color.d_animation_title);
+                    || title.equals(mContext.getString(R.string.nav_menu_item_dtv_channel))
+                    || title.equals(mContext.getString(R.string.nav_menu_item_dtv))
+                    || title.equals(mContext.getString(R.string.nav_menu_item_d_animation))) {
+                colorUtils.setTextViewColor(textView, R.color.list_item_background);
                 textView.setTypeface(Typeface.DEFAULT_BOLD);
                 marginLayoutParams.setMargins(intCustomTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_dazn))) {
                 //STB(DAZN)カスタマイズ
                 colorUtils.setTextViewColor(textView, R.color.white_text);
-                textView.setTypeface(Typeface.DEFAULT_BOLD);
+                textView.setTypeface(Typeface.DEFAULT);
                 marginLayoutParams.setMargins(intDAZNLeftMargin, 0, 0, 0);
             } else {
                 //その他サブアイテムのカスタマイズ
@@ -178,6 +174,40 @@ public class MenuListAdapter extends BaseAdapter {
     }
 
     /**
+     * 各サービス名アイコン
+     * ImageViewの設定
+     *
+     * @param title     タイトル
+     * @param imageView アイコンView
+     */
+    private void setTitleNameImageView(String title, ImageView imageView) {
+        if (title != null) {
+            if (title.equals(mContext.getString(R.string.nav_menu_item_hikari_tv_none_action))) {
+                imageView.setVisibility(View.VISIBLE);
+                imageView.setBackgroundResource(R.drawable.ic_menu_service_name_hikari);
+            } else if (title.equals(mContext.getString(R.string.nav_menu_item_hikari_tv))) {
+                imageView.setVisibility(View.VISIBLE);
+                imageView.setBackgroundResource(R.drawable.ic_menu_service_name_hikari);
+            } else if (title.equals(mContext.getString(R.string.nav_menu_item_dtv_channel))) {
+                imageView.setVisibility(View.VISIBLE);
+                imageView.setBackgroundResource(R.drawable.ic_menu_service_name_d_tv_channel);
+            } else if (title.equals(mContext.getString(R.string.nav_menu_item_dtv))) {
+                imageView.setVisibility(View.VISIBLE);
+                imageView.setBackgroundResource(R.drawable.ic_menu_service_name_d_tv);
+            } else if (title.equals(mContext.getString(R.string.nav_menu_item_d_animation))) {
+                imageView.setVisibility(View.VISIBLE);
+                imageView.setBackgroundResource(R.drawable.ic_menu_service_name_d_anime);
+            } else if (title.equals(mContext.getString(R.string.nav_menu_item_dtv_channel))) {
+                imageView.setVisibility(View.VISIBLE);
+                imageView.setBackgroundResource(R.drawable.ic_menu_service_name_d_tv_channel);
+            } else {
+                //その他サブアイテムのカスタマイズ
+                imageView.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    /**
      * DAZNアイコン設定
      *
      * @param title     タイトル
@@ -198,5 +228,6 @@ public class MenuListAdapter extends BaseAdapter {
         TextView tv_count;
         ImageView tv_arrow;
         ImageView dazn_icon;
+        ImageView tv_title_icon;
     }
 }

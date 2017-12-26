@@ -19,7 +19,8 @@ import java.util.Map;
 
 
 public class WatchListenVideoListDataProvider implements WatchListenVideoWebClient.WatchListenVideoJsonParserCallback {
-    private Context mContext;
+
+    private Context mContext = null;
 
     @Override
     public void onWatchListenVideoJsonParsed(List<WatchListenVideoList> watchListenVideoList) {

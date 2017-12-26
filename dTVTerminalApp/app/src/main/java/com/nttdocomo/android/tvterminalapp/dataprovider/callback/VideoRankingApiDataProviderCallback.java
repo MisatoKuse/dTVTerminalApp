@@ -7,7 +7,6 @@ package com.nttdocomo.android.tvterminalapp.dataprovider.callback;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 
 import java.util.List;
-import java.util.Map;
 
 public interface VideoRankingApiDataProviderCallback {
     /**

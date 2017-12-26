@@ -124,6 +124,8 @@ public class RecommendListDao {
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME:
                 tableName = RECOMMEND_LIST_DANIME_TABLE_NAME;
                 break;
+            default:
+                break;
         }
         return tableName;
     }

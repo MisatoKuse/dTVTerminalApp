@@ -32,11 +32,12 @@ public class MainSettingListAdapter extends BaseAdapter {
 
     /**
      * コンストラクタ
-     * @param context コンテキスト
-     * @param resource レイアウトファイルのID
+     *
+     * @param context     コンテキスト
+     * @param resource    レイアウトファイルのID
      * @param settingList 設定画面に表示する情報のリスト
      */
-    public MainSettingListAdapter (Context context, int resource, List<MainSettingUtils> settingList) {
+    public MainSettingListAdapter(Context context, int resource, List<MainSettingUtils> settingList) {
         mContext = context;
         mItemLayoutResource = resource;
         mSettingList = settingList;
