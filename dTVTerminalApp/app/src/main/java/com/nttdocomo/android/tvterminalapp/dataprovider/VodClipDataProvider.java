@@ -123,7 +123,6 @@ public class VodClipDataProvider implements VodClipWebClient.VodClipJsonParserCa
             requestData.setLinearStartDate(clipMapList.get(i).get(JsonContents.META_RESPONSE_AVAIL_START_DATE));
             requestData.setLinearEndDate(linearEndDate);
             requestData.setSearchOk(search);
-            requestData.setClipTarget(title); //TODO:仕様確認中 現在はトーストにタイトル名を表示することとしています
 
             //視聴通知判定生成
             String contentsType = clipMapList.get(i).get(JsonContents.META_RESPONSE_CONTENT_TYPE);

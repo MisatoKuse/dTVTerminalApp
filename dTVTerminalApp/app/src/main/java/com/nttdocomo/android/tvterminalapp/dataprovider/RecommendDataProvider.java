@@ -334,7 +334,6 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         requestData.setLinearStartDate("1513071135");
         requestData.setLinearEndDate("1513306982");
         requestData.setSearchOk("0");
-        requestData.setClipTarget(title); //TODO:仕様確認中 現在はトーストにタイトル名を表示することとしています
         requestData.setIsNotify("disp_type", "content_type",
                 "1513306982", "tv_service", "dtv");
         return requestData;
