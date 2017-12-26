@@ -90,6 +90,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     /** dアカウント設定アプリ登録処理 */
     private DaccountControl mDaccountControl = null;
 
+    /** onDestroy判定 */
+    private boolean isOnDestroyed = false;
+
     /**
      * Created on 2017/09/21.
      * 関数機能：
@@ -283,9 +286,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         super.setContentView(R.layout.activity_base);
         mContext = this;
         initView();
-        mRemoteControlRelayClient = RemoteControlRelayClient.getInstance();
-        mRemoteControlRelayClient.setHandler(mRerayClientHandler);
-        mRemoteControlRelayClient.setDebugRemoteIp("192.168.11.35");
 
         //dアカウントの検知処理を追加する
         setDaccountControl();
@@ -377,6 +377,10 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     public Handler mRerayClientHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+            if (isOnDestroyed) {
+                mRemoteControlRelayClient.resetHandler();
+                return;
+            }
             String message = "OK";
             switch (msg.what) {
                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_OK:
@@ -456,6 +460,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                     }
                     break;
             }
+            mRemoteControlRelayClient.resetHandler();
         }
     };
 
@@ -928,9 +933,13 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     @Override
     protected void onDestroy(){
-        if(mRemoteControlRelayClient != null) {
-            mRemoteControlRelayClient.resetHandler();
-        }
+        isOnDestroyed = true;
         super.onDestroy();
+    }
+
+    public void setRelayClientHandler() {
+        mRemoteControlRelayClient = RemoteControlRelayClient.getInstance();
+        mRemoteControlRelayClient.setDebugRemoteIp("192.168.11.19");
+        mRemoteControlRelayClient.setHandler(mRerayClientHandler);
     }
 }
