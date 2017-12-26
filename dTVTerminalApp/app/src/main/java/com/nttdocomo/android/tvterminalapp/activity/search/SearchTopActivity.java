@@ -476,6 +476,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
             }
         }
 
+        baseFragment.setResultTextVisibility(true);
         if (0 < mSearchTotalCount) {
 
             String[] strings = {getString(R.string.keyword_search_result),
@@ -505,6 +506,7 @@ public class SearchTopActivity extends BaseActivity implements SearchDataProvide
             int sum = mFragmentFactory.getFragmentCount();
             for (int i = 0; i < sum; ++i) {
                 SearchBaseFragment baseFragment = mFragmentFactory.createFragment(i, this);
+                baseFragment.setResultTextVisibility(false);
                 baseFragment.clear();
             }
         }

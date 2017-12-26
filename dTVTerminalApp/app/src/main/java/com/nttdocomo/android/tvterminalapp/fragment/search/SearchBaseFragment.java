@@ -112,6 +112,16 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         }
     }
 
+    public void setResultTextVisibility(Boolean visibility) {
+        if (null != mCountText) {
+            if (visibility) {
+                mCountText.setVisibility(View.VISIBLE);
+            } else {
+                mCountText.setVisibility(View.INVISIBLE);
+            }
+        }
+    }
+
     public void clear() {
         if (null != mData) {
             mData.clear();
