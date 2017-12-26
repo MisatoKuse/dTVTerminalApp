@@ -30,6 +30,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
+import com.nttdocomo.android.tvterminalapp.model.search.SearchServiceType;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 
 import java.util.List;
@@ -51,7 +52,8 @@ public class DtvContentsDetailFragment extends Fragment {
     private TextView txtChannelDate = null;
     private TextView txtChannelLabel = null;
     private boolean mIsAllText = false;
-
+    //クリップボタン
+    private ImageView mClipButton = null;
     //サムネイルmargintop
     private final static int THUMBNAIL_MARGINTOP = 10;
     //サムネイルmarginright
@@ -117,14 +119,10 @@ public class DtvContentsDetailFragment extends Fragment {
                 mTxtMoreText.setVisibility(View.GONE);
             }
         });
-        ImageView clipButton = view.findViewById(R.id.contents_detail_clip_button);
-        clipButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //クリップボタンイベント
-                ((BaseActivity) mActivity).sendClipRequest(setClipData(mOtherContentsDetailData.getVodMetaFullData()));
-            }
-        });
+
+        mClipButton = view.findViewById(R.id.contents_detail_clip_button);
+        setClipButton(mClipButton);
+
         if (mOtherContentsDetailData != null) {
             setDetailData();
         } else {
@@ -133,6 +131,32 @@ public class DtvContentsDetailFragment extends Fragment {
         return view;
     }
 
+    /**
+     * クリップボタンの表示/非表示を
+     * @param clipButton
+     */
+    private void setClipButton(ImageView clipButton){
+
+        //他サービスならクリップボタン非表示
+        if (mOtherContentsDetailData != null) {
+            String serviceId = String.valueOf(mOtherContentsDetailData.getServiceId());
+            if(serviceId.equals(SearchServiceType.ServiceId.HIKARI_TV_FOR_DOCOMO)){
+                clipButton.setVisibility(View.VISIBLE);
+            }else{
+                clipButton.setVisibility(View.GONE);
+            }
+        } else {
+            clipButton.setVisibility(View.VISIBLE);
+        }
+
+        clipButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //クリップボタンイベント
+                ((BaseActivity) mActivity).sendClipRequest(setClipData(mOtherContentsDetailData.getVodMetaFullData()));
+            }
+        });
+    }
     /**
      * クリップリクエストに必要なデータを作成する(コンテンツ詳細用)
      *
@@ -151,7 +175,6 @@ public class DtvContentsDetailFragment extends Fragment {
         requestData.setLinearStartDate(String.valueOf(metaFullData.getAvail_start_date()));
         requestData.setLinearEndDate(String.valueOf(metaFullData.getAvail_end_date()));
         requestData.setSearchOk(metaFullData.getmSearch_ok());
-        requestData.setClipTarget(metaFullData.getTitle()); //TODO:仕様確認中 現在はトーストにタイトル名を表示することとしています
         requestData.setIsNotify(metaFullData.getDisp_type(), metaFullData.getmContent_type(),
                 String.valueOf(metaFullData.getAvail_end_date()), metaFullData.getmTv_service(), metaFullData.getDtv());
         return requestData;
@@ -185,7 +208,6 @@ public class DtvContentsDetailFragment extends Fragment {
             mTxtTitleShortDetail.setText(contentsDetailInfo);
             mTxtTitleAllDetail.setText(contentsDetailInfo);
         }
-        //setRecommendLayout();
     }
 
     private void setStaff() {

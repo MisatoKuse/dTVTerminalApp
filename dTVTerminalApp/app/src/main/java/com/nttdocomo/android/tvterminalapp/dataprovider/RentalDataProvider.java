@@ -156,12 +156,10 @@ public class RentalDataProvider implements RentalVodListWebClient.RentalVodListJ
             requestData.setEventId(vodMetaFullData.getmEvent_id());
             requestData.setTitleId(vodMetaFullData.getEpisode_id());
             requestData.setTitle(title);
-            requestData.setClipTarget(title);
             requestData.setRValue(vodMetaFullData.getR_value());
             requestData.setLinearStartDate(String.valueOf(vodMetaFullData.getAvail_start_date()));
             requestData.setLinearEndDate(linearEndDate);
             requestData.setSearchOk(search);
-            requestData.setClipTarget(title); //TODO:仕様確認中 現在はトーストにタイトル名を表示することとしています
 
             //視聴通知判定生成
             String dispType = vodMetaFullData.getDisp_type();
