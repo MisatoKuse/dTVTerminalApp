@@ -7,40 +7,42 @@ package com.nttdocomo.android.tvterminalapp.datamanager.databese.helper;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CHANNEL_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_CHANNEL_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_DAILY_RANK_SQL;
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_MY_CHANNEL_SQL;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_DOWNLOAD_LIST_SQL;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_RANKING_VIDEO_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_RECOMMEND_CHANNEL_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_RECOMMEND_DANIME_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_RECOMMEND_DCHANNEL_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_RECOMMEND_DTV_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_RECOMMEND_VIDEO_SQL;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_RENTAL_LIST_SQL;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_ROLE_LIST_SQL;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_TVCLIP_LIST_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_TV_SCHEDULE_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_USER_INFO_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_VODCLIP_LIST_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_WEEKLYRANK_SQL;
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_RANKING_VIDEO_SQL;
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_TVCLIP_LIST_SQL;
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_RENTAL_LIST_SQL;
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_ROLE_LIST_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DAILYRANK_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATABASE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATABASE_VERSION;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DOWNLOAD_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RECOMMEND_CHANNEL_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RECOMMEND_LIST_DANIME_TABLE_NAME;
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RECOMMEND_LIST_DTV_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RECOMMEND_LIST_DCHANNEL_TABLE_NAME;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RECOMMEND_LIST_DTV_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RECOMMEND_VIDEO_LIST_TABLE_NAME;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RENTAL_LIST_TABLE_NAME;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.ROLE_LIST_TABLE_NAME;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.TVCLIP_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.TV_SCHEDULE_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.USER_INFO_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.VODCLIP_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.WEEKLYRANK_LIST_TABLE_NAME;
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.TVCLIP_LIST_TABLE_NAME;
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RENTAL_LIST_TABLE_NAME;
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.ROLE_LIST_TABLE_NAME;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -59,6 +61,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String DROP_RECOMMEND_DCHANNEL_TABLE_SQL = "drop table if exists " + RECOMMEND_LIST_DCHANNEL_TABLE_NAME;
     private static final String DROP_RECOMMEND_DTV_TABLE_SQL = "drop table if exists " + RECOMMEND_LIST_DTV_TABLE_NAME;
     private static final String DROP_ROLE_LIST_TABLE_SQL = "drop table if exists " + ROLE_LIST_TABLE_NAME;
+    private static final String DROP_DOWNLOAD_LIST_TABLE_SQL = "drop table if exists " + DOWNLOAD_LIST_TABLE_NAME;
     private static final String DROP_RECOMMEND_DANIME_TABLE_SQL = "drop table if exists " + RECOMMEND_LIST_DANIME_TABLE_NAME;
     /**
      * 「tv clip list」テーブルの削除用SQL
@@ -93,7 +96,7 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(CREATE_TABLE_RECOMMEND_DTV_SQL);
         sqLiteDatabase.execSQL(CREATE_TABLE_RECOMMEND_DANIME_SQL);
         sqLiteDatabase.execSQL(CREATE_TABLE_ROLE_LIST_SQL);
-        sqLiteDatabase.execSQL(CREATE_TABLE_MY_CHANNEL_SQL);
+        sqLiteDatabase.execSQL(CREATE_TABLE_DOWNLOAD_LIST_SQL);
         try {
             sqLiteDatabase.execSQL(CREATE_TABLE_TVCLIP_LIST_SQL);   //クリップ一覧画面用
         } catch (Exception e) {
@@ -122,6 +125,7 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(DROP_RECOMMEND_DTV_TABLE_SQL);
         sqLiteDatabase.execSQL(DROP_RECOMMEND_DANIME_TABLE_SQL);
         sqLiteDatabase.execSQL(DROP_ROLE_LIST_TABLE_SQL);
+        sqLiteDatabase.execSQL(DROP_DOWNLOAD_LIST_TABLE_SQL);
         sqLiteDatabase.execSQL(DROP_TVCLIP_TABLE_SQL);  //クリップ一覧画面用
         sqLiteDatabase.execSQL(DROP_RENTAL_TABLE_SQL);  //レンタル一覧画面用
     }

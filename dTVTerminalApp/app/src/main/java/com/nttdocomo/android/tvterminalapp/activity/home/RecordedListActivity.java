@@ -421,9 +421,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     private void setVideoBrows(DlnaRecVideoInfo curInfo) {
         final RecordedBaseFragment baseFrgament = getCurrentRecordedBaseFragment();
-        baseFrgament.mContentsList = new ArrayList<RecordedContentsDetailData>();
+        baseFrgament.mContentsList = new ArrayList<>();
         for (int i = 0; i < curInfo.getRecordVideoLists().size(); ++i) {
             RecordedContentsDetailData detailData = new RecordedContentsDetailData();
+            detailData.setItemId(curInfo.getRecordVideoLists().get(i).mItemId);
             detailData.setUpnpIcon(curInfo.getRecordVideoLists().get(i).mUpnpIcon);
             detailData.setSize(curInfo.getRecordVideoLists().get(i).mSize);
             detailData.setResUrl(curInfo.getRecordVideoLists().get(i).mResUrl);

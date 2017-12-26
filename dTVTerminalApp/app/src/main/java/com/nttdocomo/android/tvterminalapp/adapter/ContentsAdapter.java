@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -33,7 +34,7 @@ import java.util.List;
 
 import static com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter.ActivityTypeItem.TYPE_RECORDING_RESERVATION_LIST;
 
-public class ContentsAdapter extends BaseAdapter {
+public class ContentsAdapter extends BaseAdapter implements OnClickListener {
 
     //各Activityインスタンス
     private Context mContext = null;
@@ -72,6 +73,18 @@ public class ContentsAdapter extends BaseAdapter {
     // クリップ未登録判定用
     private final static String OPACITY_CLIP_DISPLAY = "0";
 
+    public final static int DOWNLOAD_STATUS_ALLOW = 0;
+
+    public final static int DOWNLOAD_STATUS_LOADING = 1;
+
+    public final static int DOWNLOAD_STATUS_PAUSE = 2;
+
+    public final static int DOWNLOAD_STATUS_WAITING = 3;
+
+    public final static int DOWNLOAD_STATUS_COMPLETED = 4;
+
+    private DownloadCallback mDownloadCallback;
+
     /**
      * 機能
      * 共通アダプター使う
@@ -102,6 +115,15 @@ public class ContentsAdapter extends BaseAdapter {
         mThumbnailProvider = new ThumbnailProvider(mContext);
     }
 
+    public ContentsAdapter(Context mContext, List<ContentsData> listData, ActivityTypeItem type, DownloadCallback callback) {
+        this.mContext = mContext;
+        mInflater = LayoutInflater.from(mContext);
+        this.mListData = listData;
+        this.mType = type;
+        mThumbnailProvider = new ThumbnailProvider(mContext);
+        mDownloadCallback = callback;
+    }
+
     @Override
     public int getCount() {
         return mListData.size();
@@ -125,7 +147,7 @@ public class ContentsAdapter extends BaseAdapter {
         if (view == null) {
             holder = new ViewHolder();
             view = setViewPattern(parent);
-            holder = setListItemPattern(holder, view);
+            holder = setListItemPattern(holder, view, position);
 
             //ディスプレイ基づいて、画像の長さと幅さを設定
             setView(holder);
@@ -139,17 +161,23 @@ public class ContentsAdapter extends BaseAdapter {
         // アイテムデータを設定する
         setContentsData(holder, listContentInfo);
 
-        //クリップボタン処理を設定する
-        final ClipRequestData requestData = listContentInfo.getRequestData();
-        TextView textView = view.findViewById(R.id.item_common_result_clip_tv);
-        listContentInfo.setClipButton(textView);
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //クリップボタンイベント
-                ((BaseActivity) mContext).sendClipRequest(requestData);
-            }
-        });
+        if (!ActivityTypeItem.TYPE_RECORDED_LIST.equals(mType)) {
+            //クリップボタン処理を設定する
+            final ClipRequestData requestData = listContentInfo.getRequestData();
+            TextView textView = view.findViewById(R.id.item_common_result_clip_tv);
+            listContentInfo.setClipButton(textView);
+            textView.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //クリップボタンのイベントを親に渡す
+//                    ((ListView) parent).performItemClick(mView, position, R.id.item_common_result_clip_tv);
+                    //TODO:親に処理を渡すか検討中
+                    ((BaseActivity) mContext).sendClipRequest(requestData);
+                }
+            });
+        } else {
+            setDownloadStatus(holder,listContentInfo);
+        }
 
         return view;
     }
@@ -302,7 +330,8 @@ public class ContentsAdapter extends BaseAdapter {
         DTVTLogger.start();
         BaseActivity baseActivity = new BaseActivity();
         if (holder.tv_clip != null) {
-            Boolean contentsFlag = baseActivity.getDownloadContentsFalag();
+            //Boolean contentsFlag = baseActivity.getDownloadContentsFalag();
+            Boolean contentsFlag = true;
             if (contentsFlag) {
                 // ダウンロード済み
                 holder.tv_clip.setVisibility(View.VISIBLE);
@@ -323,7 +352,9 @@ public class ContentsAdapter extends BaseAdapter {
             }
         }
 
-        setClipButton(holder, listContentInfo);
+        if(!ActivityTypeItem.TYPE_RECORDED_LIST.equals(mType)){
+            setClipButton(holder, listContentInfo);
+        }
 
         DTVTLogger.end();
     }
@@ -397,7 +428,7 @@ public class ContentsAdapter extends BaseAdapter {
     /**
      * Itemのパターンを設定
      */
-    private ViewHolder setListItemPattern(ViewHolder holder, View view) {
+    private ViewHolder setListItemPattern(ViewHolder holder, View view, int position) {
         DTVTLogger.start();
         // TODO 録画予約一覧以外のパターンも共通項目以外を抽出し、修正する
         holder = setCommonListItem(holder, view);
@@ -417,6 +448,8 @@ public class ContentsAdapter extends BaseAdapter {
             case TYPE_RECORDED_LIST: // 録画番組一覧
                 holder.tv_recorded_hyphen = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
                 holder.tv_recorded_ch_name = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
+                holder.tv_clip.setTag(position);
+                holder.tv_clip.setOnClickListener(this);
                 break;
             case TYPE_STB_SELECT_LIST:  //STBデバイス名一覧
                 holder.stb_device_name = view.findViewById(R.id.item_common_result_device_name);
@@ -500,6 +533,45 @@ public class ContentsAdapter extends BaseAdapter {
     }
 
     /**
+     * ダウンロードステータス設定
+     */
+    private void setDownloadStatus(ViewHolder holder, ContentsData listContentInfo) {
+        if (holder.tv_clip != null && listContentInfo != null) {
+            switch (listContentInfo.getDownloadFlg()) {
+                case DOWNLOAD_STATUS_ALLOW:
+                    holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_normal_download);
+                    break;
+//                case DOWNLOAD_STATUS_PAUSE:
+//                    holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_active_play);
+//                    break;
+                case DOWNLOAD_STATUS_LOADING:
+                    holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_active_pause);
+                    break;
+                case DOWNLOAD_STATUS_COMPLETED:
+                    holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_normal_download_check);
+                    break;
+                default:
+                    break;
+            }
+        }
+        if (holder.tv_recorded_ch_name != null && holder.tv_recorded_hyphen != null && listContentInfo != null) {
+            if (!TextUtils.isEmpty(listContentInfo.getDownloadStatus())) {
+                holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
+                holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
+                holder.tv_recorded_ch_name.setText(listContentInfo.getDownloadStatus());
+                holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.d_animation_title));
+            } else {
+                holder.tv_recorded_ch_name.setText(listContentInfo.getRecordedChannelName());
+                holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.content_time_text));
+                if (TextUtils.isEmpty(listContentInfo.getRecordedChannelName())){
+                    holder.tv_recorded_hyphen.setVisibility(View.GONE);
+                    holder.tv_recorded_ch_name.setVisibility(View.GONE);
+                }
+            }
+        }
+    }
+
+    /**
      * ビュー管理クラス
      */
     private static class ViewHolder {
@@ -533,5 +605,15 @@ public class ContentsAdapter extends BaseAdapter {
         TextView tv_recorded_ch_name;
         // STBデバイス名
         TextView stb_device_name = null;
+    }
+
+    public interface DownloadCallback {
+         public void downloadClick(View v);
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        mDownloadCallback.downloadClick(v);
     }
 }

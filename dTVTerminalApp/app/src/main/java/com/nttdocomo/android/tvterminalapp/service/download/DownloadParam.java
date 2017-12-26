@@ -9,12 +9,16 @@ import android.content.Context;
 /**
  * このクラスから継承して、DownloaderBaseおよびSubClass用パラメータクラウスである
  */
-class DownloadParam {
+public class DownloadParam {
     private Context mContext;
     private String mSavePath;
     private String mSaveFileName;
     //通知の頻度
     private int mPercentToNotify;
+
+    public int getPercentToNotity(){
+        return mPercentToNotify;
+    }
 
     /**
      * Getter

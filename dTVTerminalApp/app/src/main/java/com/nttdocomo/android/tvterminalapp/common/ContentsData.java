@@ -77,6 +77,11 @@ public class ContentsData {
     //デバイス名
     private String mDeviceName = null;
 
+    //ダウンロードフラグ
+    private int mDownloadFlg = 0;
+    //ダウンロードステータス（進捗）
+    private String mDownloadStatus = "";
+
     public String getDeviceName() {
         return mDeviceName;
     }
@@ -346,5 +351,21 @@ public class ContentsData {
 
     public void setRequestData(ClipRequestData ｍRequestData) {
         this.mRequestData = ｍRequestData;
+    }
+
+    public int getDownloadFlg() {
+        return mDownloadFlg;
+    }
+
+    public void setDownloadFlg(int mDownloadFlg) {
+        this.mDownloadFlg = mDownloadFlg;
+    }
+
+    public String getDownloadStatus() {
+        return mDownloadStatus;
+    }
+
+    public void setDownloadStatus(String mDownloadStatus) {
+        this.mDownloadStatus = mDownloadStatus;
     }
 }

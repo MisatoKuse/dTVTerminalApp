@@ -4,7 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.service.download;
 
-
 interface DownloadListener {
 
     /**

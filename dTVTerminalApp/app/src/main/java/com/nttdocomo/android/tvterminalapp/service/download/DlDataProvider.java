@@ -9,16 +9,27 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Handler;
 import android.os.IBinder;
+
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.DownLoadListDataManager;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * ダウンロードデータプロバイダー
  * Activityからこのクラスを利用する
  */
-class DlDataProvider implements ServiceConnection, DownloadServiceListener {
+public class DlDataProvider implements ServiceConnection, DownloadServiceListener, DbThread.DbOperation {
     private DlDataProviderListener mDlDataProviderListener;
     private DownloadService.Binder mBinder;
     private Activity mActivity;
+    private DlData dlData;
+    private static boolean isBinded = false;
 
     public DlDataProvider(Activity activity, DlDataProviderListener dlDataProviderListener) throws Exception{
         if(null==activity){
@@ -35,17 +46,31 @@ class DlDataProvider implements ServiceConnection, DownloadServiceListener {
         if(null==mActivity){
             return;
         }
+        isBinded = true;
         Intent intent = new Intent(mActivity, DownloadService.class);
         mActivity.bindService(intent, this, Context.BIND_AUTO_CREATE);
+        startService();
+    }
+
+    /**
+     * サービス起動する
+     */
+    public void startService(){
+        if(null==mActivity){
+            return;
+        }
+        Intent intent = new Intent(mActivity, DownloadService.class);
+        mActivity.startService(intent);
     }
 
     /**
      * DlDataProvider機能を無効
      */
     public void endProvider(){
-        if(null==mActivity){
+        if(null==mActivity || !isBinded){
             return;
         }
+        isBinded = false;
         mActivity.unbindService(this);
     }
 
@@ -90,6 +115,16 @@ class DlDataProvider implements ServiceConnection, DownloadServiceListener {
         DownloadService ds=getDownloadService();
         if(null!=ds){
             ds.resume();
+        }
+    }
+
+    /**
+     * ダウンロード停止
+     */
+    private void stop(){
+        DownloadService ds=getDownloadService();
+        if(null!=ds){
+            ds.stopService();
         }
     }
 
@@ -160,6 +195,7 @@ class DlDataProvider implements ServiceConnection, DownloadServiceListener {
     public void onStart(int totalFileByteSize) {
         if(null!=mDlDataProviderListener){
             mDlDataProviderListener.onStart(totalFileByteSize);
+            saveDownLoad(totalFileByteSize);
         }
     }
 
@@ -195,6 +231,8 @@ class DlDataProvider implements ServiceConnection, DownloadServiceListener {
     public void onSuccess(String fullPath) {
         if(null!=mDlDataProviderListener){
             mDlDataProviderListener.onSuccess(fullPath);
+            endProvider();
+            stop();
         }
     }
 
@@ -209,6 +247,95 @@ class DlDataProvider implements ServiceConnection, DownloadServiceListener {
     public void onLowStorageSpace() {
         if(null!=mDlDataProviderListener){
             mDlDataProviderListener.onLowStorageSpace();
+        }
+    }
+
+    private static final int DOWNLOAD_STATUS_SELECT = 1;
+    private static final int DOWNLOAD_INSERT = 2;
+    private static final int DOWNLOAD_UPDATE = 3;
+    private static final int DOWNLOAD_TOTALSIZE_SELECT = 4;
+
+    public void getDownLoadStatus(){
+        dbOperationByThread(DOWNLOAD_STATUS_SELECT);
+    }
+
+    @Override
+    public void onDbOperationFinished(boolean isSuccessful, List<Map<String, String>> resultSet, int operationId) {
+        if (isSuccessful) {
+            switch (operationId) {
+                case DOWNLOAD_STATUS_SELECT:
+                    List<DlData> statusList = new ArrayList<>();
+                    for (int i = 0; i < resultSet.size(); i++) {
+                        Map<String, String> hashMap = resultSet.get(i);
+                        String downloadStatus = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
+                        String itemId = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
+                        String saveURL = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL);
+                        String fileName = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_TITLE);
+                        DlData mDlData = new DlData();
+                        mDlData.setItemId(itemId);
+                        mDlData.setSaveFile(saveURL);
+                        mDlData.setTitle(fileName);
+                        mDlData.setDownLoadStatus(downloadStatus);
+                        statusList.add(mDlData);
+                    }
+                    if (null != mDlDataProviderListener) {
+                        mDlDataProviderListener.onDownLoadListCallBack(statusList);
+                    }
+                    break;
+                case DOWNLOAD_TOTALSIZE_SELECT:
+                    if (null != mDlDataProviderListener) {
+                        if( resultSet!= null && resultSet.size() > 5 ){
+                            mDlDataProviderListener.onFail(DLError.DLError_Other);
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public List<Map<String, String>> dbOperation(int operationId) throws Exception {
+        List<Map<String, String>> resultSet = null;
+        DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(mActivity);
+        switch (operationId) {
+            case DOWNLOAD_STATUS_SELECT:
+                resultSet = downLoadListDataManager.selectDownLoadListVideoData();
+                break;
+            case DOWNLOAD_TOTALSIZE_SELECT:
+                downLoadListDataManager.selectDownLoadListByTotal();
+                break;
+            case DOWNLOAD_INSERT:
+                downLoadListDataManager.insertDownload(dlData);
+                break;
+            case DOWNLOAD_UPDATE:
+                downLoadListDataManager.updateDownload(dlData);
+                break;
+            default:
+                break;
+        }
+        return resultSet;
+    }
+
+    private void saveDownLoad(int totalFileByteSize){
+        if(dlData != null){
+            dlData.setTotalSize(String.valueOf(totalFileByteSize));
+        }
+    }
+
+    public void setDlData(DlData dlData){
+        this.dlData = dlData;
+        dbOperationByThread(DOWNLOAD_INSERT);
+    }
+
+    private void dbOperationByThread(int operationId){
+        Handler handler = new Handler();
+        try {
+            DbThread t = new DbThread(handler, this, operationId);
+            t.start();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

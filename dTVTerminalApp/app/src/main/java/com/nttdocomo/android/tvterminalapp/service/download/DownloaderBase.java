@@ -18,7 +18,15 @@ abstract class DownloaderBase {
     private boolean mIsPause;
     private boolean mIsCanceled;
     private DownloadListener mDownloadListener;
-    private DownLoadThread mDownLoadThread=new DownLoadThread();
+    private DownLoadThread mDownLoadThread;
+
+    protected void setDownloadedBytes(int bytesDone){
+        mDownloadedBytes=bytesDone;
+    }
+
+    public DownloadParam getDownloadParam() {
+        return mDownloadParam;
+    }
 
     /**
      * Constructor
@@ -77,6 +85,7 @@ abstract class DownloaderBase {
         if(null!=mDownloadListener){
             mDownloadListener.onStart(mTotalBytes);
         }
+        mDownLoadThread = new DownLoadThread();
         mDownLoadThread.start();
     }
 
@@ -101,6 +110,20 @@ abstract class DownloaderBase {
             path.append(File.separator);
             path.append(mDownloadParam.getSaveFileName());
             mDownloadListener.onSuccess(path.toString());
+        }
+    }
+
+    protected void onProgress(int everyTimeBytes){
+        if(mTotalBytes > 0){
+            float res = everyTimeBytes / mTotalBytes;
+            int p = mDownloadParam.getPercentToNotity();
+            float pp = p * 0.01f;
+            if (res >= pp) {
+                float f1 = ((float) mDownloadedBytes);
+                float f2 = ((float) mTotalBytes);
+                int ff = (int) ((f1 / f2) * 100);
+                mDownloadListener.onProgress(mDownloadedBytes, ff);
+            }
         }
     }
 

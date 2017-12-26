@@ -810,10 +810,65 @@ public class DBConstants {
             CLOSE_BRACKETS_TEXT
     };
 
+    // TABLE、録画持ち出しリスト用
+    public static final String DOWNLOAD_LIST_COLUM_ITEM_ID = "item_id";
+    public static final String DOWNLOAD_LIST_COLUM_URL = "url";
+    public static final String DOWNLOAD_LIST_COLUM_SAVE_DIDL = "didl";
+    public static final String DOWNLOAD_LIST_COLUM_SAVE_HOST = "host";
+    public static final String DOWNLOAD_LIST_COLUM_SAVE_PORT = "port";
+    public static final String DOWNLOAD_LIST_COLUM_SAVE_URL = "save_file";
+    public static final String DOWNLOAD_LIST_COLUM_TYPE = "mimetype";
+    public static final String DOWNLOAD_LIST_COLUM_DOWNLOAD_SIZE = "download_size";
+    public static final String DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS = "download_status";
+    public static final String DOWNLOAD_LIST_COLUM_SIZE = "total_size";
+    public static final String DOWNLOAD_LIST_COLUM_DURATION = "duration";
+    public static final String DOWNLOAD_LIST_COLUM_RESOLUTION = "resolution";
+    public static final String DOWNLOAD_LIST_COLUM_UPNP_ICON = "upnp_icon";
+    public static final String DOWNLOAD_LIST_COLUM_BITRATE = "bitrate";
+    public static final String DOWNLOAD_LIST_COLUM_IS_SUPPORTED_BYTE_SEEK = "is_supported_byte_seek";
+    public static final String DOWNLOAD_LIST_COLUM_IS_SUPPORTED_TIME_SEEK = "is_supported_time_seek";
+    public static final String DOWNLOAD_LIST_COLUM_IS_AVAILABLE_CONNECTION_STALLING = "is_available_connection_stalling";
+    public static final String DOWNLOAD_LIST_COLUM_IS_LIVE_MODE = "is_live_mode";
+    public static final String DOWNLOAD_LIST_COLUM_IS_REMOTE = "is_remote";
+    public static final String DOWNLOAD_LIST_COLUM_TITLE = "title";
+    public static final String DOWNLOAD_LIST_COLUM_CONTENTFORMAT = "contentFormat";
+    public static final String DOWNLOAD_LIST_TABLE_NAME = "download_list";
+    public static final String CREATE_TABLE_DOWNLOAD_LIST_SQL_NAMES[] = {
+            CREATE_TABLE_TEXT,
+            DOWNLOAD_LIST_TABLE_NAME,
+            OPEN_BRACKETS_TEXT,
+            ID_COLUMN,
+            CREATE_TABLE_PRIMARY_TEXT,
+            DOWNLOAD_LIST_COLUM_ITEM_ID,TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_URL,TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_SAVE_DIDL,TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_SAVE_HOST,TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_SAVE_PORT,TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_SAVE_URL,TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_TYPE,TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_DOWNLOAD_SIZE,TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS,TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_SIZE,TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_DURATION,TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_RESOLUTION,TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_UPNP_ICON,TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_BITRATE,TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_IS_SUPPORTED_BYTE_SEEK,TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_IS_SUPPORTED_TIME_SEEK,TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_IS_AVAILABLE_CONNECTION_STALLING,TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_IS_LIVE_MODE,TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_IS_REMOTE,TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_TITLE,TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_CONTENTFORMAT,TEXT_WITHOUT_COMMA_TEXT,
+            CLOSE_BRACKETS_TEXT
+    };
+
     public static final String CREATE_TABLE_RENTAL_LIST_SQL = StringUtil.getConnectString(
             CREATE_TABLE_RENTAL_LIST_SQL_NAMES);
     public static final String CREATE_TABLE_ROLE_LIST_SQL = StringUtil.getConnectString(
             CREATE_TABLE_ROLE_LIST_SQL_NAMES);
+    public static final String CREATE_TABLE_DOWNLOAD_LIST_SQL = StringUtil.getConnectString(
+            CREATE_TABLE_DOWNLOAD_LIST_SQL_NAMES);
 
     //My番組表キャッシュデータ格納用テーブル
     public static final String MY_CHANNEL_LIST_TABLE_NAME = "my_channel_list";
@@ -827,4 +882,6 @@ public class DBConstants {
             JsonContents.META_RESPONSE_ADULT_TYPE  + " text, " +
             JsonContents.META_RESPONSE_INDEX  + " text " +
             ")";
+
+
 }

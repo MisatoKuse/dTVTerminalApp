@@ -14,6 +14,7 @@ public class RecordedContentsDetailData implements Parcelable {
         DetailParamFromWhere_ChList_TabBs,
         DetailParamFromWhere_Other,
     }
+    private String mItemId;
     private String mSize;
     private String mDuration;
     private String mResolution;
@@ -30,6 +31,14 @@ public class RecordedContentsDetailData implements Parcelable {
 
     public DetailParamFromWhere getDetailParamFromWhere(){
         return mDetailParamFromWhere;
+    }
+
+    public String getItemId() {
+        return mItemId;
+    }
+
+    public void setItemId(String mItemId) {
+        this.mItemId = mItemId;
     }
 
     public String getTitle() {
@@ -103,6 +112,7 @@ public class RecordedContentsDetailData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.mItemId);
         dest.writeString(this.mSize);
         dest.writeString(this.mDuration);
         dest.writeString(this.mResolution);
@@ -110,7 +120,7 @@ public class RecordedContentsDetailData implements Parcelable {
         dest.writeString(this.mResUrl);
         dest.writeString(this.mUpnpIcon);
         dest.writeString(this.mTitle);
-        dest.writeInt(this.mDetailParamFromWhere.ordinal());
+        dest.writeInt(this.mDetailParamFromWhere == null ? -1 : this.mDetailParamFromWhere.ordinal());
         dest.writeString(this.mVideoType);
     }
 
@@ -118,6 +128,7 @@ public class RecordedContentsDetailData implements Parcelable {
     }
 
     protected RecordedContentsDetailData(Parcel in) {
+        this.mItemId = in.readString();
         this.mSize = in.readString();
         this.mDuration = in.readString();
         this.mResolution = in.readString();
@@ -125,11 +136,12 @@ public class RecordedContentsDetailData implements Parcelable {
         this.mResUrl = in.readString();
         this.mUpnpIcon = in.readString();
         this.mTitle = in.readString();
-        this.mDetailParamFromWhere = DetailParamFromWhere.values()[in.readInt()];
+        int tmpMDetailParamFromWhere = in.readInt();
+        this.mDetailParamFromWhere = tmpMDetailParamFromWhere == -1 ? null : DetailParamFromWhere.values()[tmpMDetailParamFromWhere];
         this.mVideoType = in.readString();
     }
 
-    public static final Parcelable.Creator<RecordedContentsDetailData> CREATOR = new Parcelable.Creator<RecordedContentsDetailData>() {
+    public static final Creator<RecordedContentsDetailData> CREATOR = new Creator<RecordedContentsDetailData>() {
         @Override
         public RecordedContentsDetailData createFromParcel(Parcel source) {
             return new RecordedContentsDetailData(source);

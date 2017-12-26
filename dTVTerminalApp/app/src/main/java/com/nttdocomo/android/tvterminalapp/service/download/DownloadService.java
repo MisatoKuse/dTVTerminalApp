@@ -4,15 +4,25 @@
 
 package com.nttdocomo.android.tvterminalapp.service.download;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.IBinder;
+import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
+import android.support.v7.app.NotificationCompat;
+
+import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 
 public class DownloadService extends Service implements DownloadListener {
     private DownloadServiceListener mDownloadServiceListener;
     private DownloaderBase mDownloaderBase;
     private String mData;
+    private static final int DOWNLOAD_SERVICE_ID = 1;
 
     public void setDownloadServiceListener(DownloadServiceListener dlServiceListener){
         mDownloadServiceListener=dlServiceListener;
@@ -92,25 +102,67 @@ public class DownloadService extends Service implements DownloadListener {
         }
     }
 
-    /**
-     * Service Bind
-     * @param intent intent
-     * @return IBinder
-     */
-    @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return new Binder();
     }
 
-    /**
-     * onUnbind
-     * @param intent intent
-     * @return boolean
-     */
     @Override
     public boolean onUnbind(Intent intent) {
         return super.onUnbind(intent);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        /*String msg = intent.getExtras().getString("downloadStatus");
+        String url = intent.getExtras().getString("url");
+        String path = intent.getExtras().getString("path");
+        String fileName =intent.getExtras().getString("fileName");
+        if (msg.equals("start")) {
+            startDownload();
+        } else if (msg.equals("pause")) {
+            downloader.pause();
+        } else if (msg.equals("resume")) {
+            downloader.resume();
+        } else if (msg.equals("stop")) {
+            downloader.cancel();
+            stopForeground(true);
+            stopSelf();
+        }*/
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    public void startService(){
+        startForeground(DOWNLOAD_SERVICE_ID ,getNotification("Downloading...", 0));
+    }
+
+    private void notifyProgress(String message, int progress){
+        getNotificationManager().notify(1, getNotification(message, progress));
+    }
+
+    private Notification getNotification(String title, int progress) {
+        Intent intent = new Intent(this, RecordedListActivity.class);
+        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setSmallIcon(R.mipmap.ic_launcher);
+        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
+        builder.setContentIntent(pi);
+        builder.setContentTitle(title);
+        builder.setPriority(NotificationCompat.PRIORITY_HIGH);
+        if (progress > 0) {
+            builder.setContentText(progress + "%");
+            builder.setProgress(100, progress, false);
+        }
+        return builder.build();
+    }
+
+    private NotificationManager getNotificationManager() {
+        return (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+    }
+
+    public void stopService(){
+        stopForeground(true);
+        stopSelf();
     }
 
     /**
