@@ -182,14 +182,12 @@ public class ClipRegistWebClient
         if ((type.equals(CLIP_TYPE_H4D_IPTV) || type.equals(CLIP_TYPE_H4D_VOD)
                 || isNotify) && (title == null || r_value == null || title.length() < 1
                 || r_value.length() < 1)) {
-            DTVTLogger.debug("コンテンツタイトル、番組のパレンタル設定値 type=h4d_iptv、h4d_vod、is_notify=true の場合必須");
             return false;
         }
         //放送開始日時、放送終了日時 type=h4d_iptv、dch の場合必須
         if ((type.equals(CLIP_TYPE_H4D_IPTV) || type.equals(CLIP_TYPE_DCH))
                 && (linearStartDate == null || linearEndDate == null || linearStartDate.length()
                 < 1 || linearEndDate.length() < 1)) {
-            DTVTLogger.debug("放送開始日時、放送終了日時 type=h4d_iptv、dch の場合必須");
             return false;
         }
 
@@ -199,7 +197,6 @@ public class ClipRegistWebClient
 
         if (clipRegistJsonParserCallback == null) {
             //コールバックがヌルならばfalse
-            DTVTLogger.debug("コールバックがヌルならばfalse");
             return false;
         }
 
