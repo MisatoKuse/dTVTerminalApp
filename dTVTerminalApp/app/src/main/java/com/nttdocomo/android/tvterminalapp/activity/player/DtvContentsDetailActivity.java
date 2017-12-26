@@ -1669,7 +1669,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             if (RemoteRecordingReservationResultResponse
                     .REMOTE_RECORDING_RESERVATION_RESULT_RESPONSE_STATUS_NG.equals(response.getStatus())) {
                 // サーバからのエラー通知
-                DTVTLogger.debug("error" + response.getErrorNo());
+                DTVTLogger.debug("error:" + response.getErrorNo());
                 CustomDialog dialog = createErrorDialog();
                 // TODO エラー番号が判明次第エラーダイアログのタイトルを設定して表示
 //            switch (response.getErrorNo()) {
