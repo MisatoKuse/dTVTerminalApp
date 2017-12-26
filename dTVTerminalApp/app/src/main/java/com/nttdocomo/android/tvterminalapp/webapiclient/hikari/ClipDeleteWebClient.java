@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ClipDeleteJsonParser;
 
 import org.json.JSONException;
@@ -142,11 +143,20 @@ public class ClipDeleteWebClient
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
-
             //リクエストパラメータ(Json)作成
-            jsonObject.put(JsonContents.META_RESPONSE_TYPE, type);
-            jsonObject.put(JsonContents.META_RESPONSE_CRID, crid);
-            jsonObject.put(JsonContents.META_RESPONSE_TITLE_ID, titleId);
+            if (StringUtil.isHikariContents(type)) {
+                //ひかりコンテンツ(dCh含む)
+                jsonObject.put(JsonContents.META_RESPONSE_CRID, crid);
+            } else if (StringUtil.isHikariInDtvContents(type)) {
+                //ひかり内dTVコンテンツ(VODメタのdTVフラグが1)
+                jsonObject.put(JsonContents.META_RESPONSE_CRID, crid);
+                jsonObject.put(JsonContents.META_RESPONSE_TITLE_ID, titleId);
+            } else {
+                //その他
+                jsonObject.put(JsonContents.META_RESPONSE_TYPE, type);
+                jsonObject.put(JsonContents.META_RESPONSE_CRID, crid);
+                jsonObject.put(JsonContents.META_RESPONSE_TITLE_ID, titleId);
+            }
 
             answerText = jsonObject.toString();
 
