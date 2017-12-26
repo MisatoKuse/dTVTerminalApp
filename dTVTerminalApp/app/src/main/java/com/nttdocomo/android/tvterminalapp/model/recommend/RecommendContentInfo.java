@@ -21,7 +21,7 @@ public class RecommendContentInfo {
 
     public RecommendContentInfo(String contentId, int categoryId, int serviceId,
                                 String contentPictureUrl, String title, String startViewing,String reserved4) {
-        this.contentId = "10019088";//現在テストのため固定にしまして、今後はcontentId
+        this.contentId = contentId;
         this.categoryId = categoryId;
         this.serviceId = serviceId;
         this.contentPictureUrl = contentPictureUrl;
