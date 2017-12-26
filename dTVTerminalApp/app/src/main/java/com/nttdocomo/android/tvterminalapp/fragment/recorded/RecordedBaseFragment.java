@@ -34,6 +34,7 @@ import com.nttdocomo.android.tvterminalapp.service.download.DlDataProviderListen
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadParam;
 import com.nttdocomo.android.tvterminalapp.service.download.KariDownloadParam;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -283,6 +284,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 dlData.setDuration(mContentsList.get((int) view.getTag()).getDuration());
                 dlData.setVideoType(mContentsList.get((int) view.getTag()).getVideoType());
                 dlData.setUpnpIcon(mContentsList.get((int) view.getTag()).getUpnpIcon());
+                mDlDataProvider.setDlData(dlData);
                 que.add(dlData);
                 queView.add(view);
                 setDownloadStatus(view , 0);
@@ -341,6 +343,12 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 if (isOK) {
                     if (true){
                         //コンテンツを削除する
+                        String fileName = mContentsList.get((int) view.getTag()).getTitle();
+                        File file = new File(getContext().getCacheDir().getPath() + "/" + fileName);
+                        if(file.exists()){
+                            if(file.delete())
+                            Toast.makeText(getContext(),"delete success",Toast.LENGTH_SHORT).show();
+                        }
                     } else {
                         //ダウンロードを取りやめる
                     }
@@ -373,6 +381,9 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         super.onDestroy();
         if(mDlDataProvider != null){
             mDlDataProvider.endProvider();
+            if(que.size() > 0){
+                mDlDataProvider.setQue(que);
+            }
         }
     }
 

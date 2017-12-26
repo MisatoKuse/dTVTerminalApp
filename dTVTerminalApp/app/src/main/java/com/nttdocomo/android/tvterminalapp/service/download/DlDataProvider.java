@@ -29,21 +29,22 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     private DownloadService.Binder mBinder;
     private Activity mActivity;
     private DlData dlData;
+    private List<DlData> dlDataQue;
     private static boolean isBinded = false;
 
-    public DlDataProvider(Activity activity, DlDataProviderListener dlDataProviderListener) throws Exception{
-        if(null==activity){
+    public DlDataProvider(Activity activity, DlDataProviderListener dlDataProviderListener) throws Exception {
+        if (null == activity) {
             throw new Exception("DlDataProvider.DlDataProvider, null activity");
         }
-        mActivity=activity;
+        mActivity = activity;
         mDlDataProviderListener = dlDataProviderListener;
     }
 
     /**
      * DlDataProvider機能を有効
      */
-    public void beginProvider(){
-        if(null==mActivity){
+    public void beginProvider() {
+        if (null == mActivity) {
             return;
         }
         isBinded = true;
@@ -55,8 +56,8 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     /**
      * サービス起動する
      */
-    public void startService(){
-        if(null==mActivity){
+    public void startService() {
+        if (null == mActivity) {
             return;
         }
         Intent intent = new Intent(mActivity, DownloadService.class);
@@ -66,23 +67,23 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     /**
      * DlDataProvider機能を無効
      */
-    public void endProvider(){
-        if(null==mActivity || !isBinded){
+    public void endProvider() {
+        if (null == mActivity || !isBinded) {
             return;
         }
         isBinded = false;
         mActivity.unbindService(this);
     }
 
-    public void setDlParam(DownloadParam param) throws Exception{
-        DownloadService ds=getDownloadService();
-        if(null!=ds){
+    public void setDlParam(DownloadParam param) throws Exception {
+        DownloadService ds = getDownloadService();
+        if (null != ds) {
             ds.setDlParam(param);
         }
     }
 
-    private DownloadService getDownloadService(){
-        if(null==mBinder){
+    private DownloadService getDownloadService() {
+        if (null == mBinder) {
             return null;
         }
         return mBinder.getDownloadService();
@@ -91,9 +92,9 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     /**
      * ダウンロード開始
      */
-    public void start(){
-        DownloadService ds=getDownloadService();
-        if(null!=ds){
+    public void start() {
+        DownloadService ds = getDownloadService();
+        if (null != ds) {
             ds.start();
         }
     }
@@ -101,9 +102,9 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     /**
      * ダウンロード一時停止
      */
-    public void pause(){
-        DownloadService ds=getDownloadService();
-        if(null!=ds){
+    public void pause() {
+        DownloadService ds = getDownloadService();
+        if (null != ds) {
             ds.pause();
         }
     }
@@ -111,9 +112,9 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     /**
      * ダウンロード再開
      */
-    public void resume(){
-        DownloadService ds=getDownloadService();
-        if(null!=ds){
+    public void resume() {
+        DownloadService ds = getDownloadService();
+        if (null != ds) {
             ds.resume();
         }
     }
@@ -121,9 +122,9 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     /**
      * ダウンロード停止
      */
-    private void stop(){
-        DownloadService ds=getDownloadService();
-        if(null!=ds){
+    public void stop() {
+        DownloadService ds = getDownloadService();
+        if (null != ds) {
             ds.stopService();
         }
     }
@@ -131,9 +132,9 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     /**
      * ダウンロード進捗通知
      */
-    public int getProgressBytes(){
-        DownloadService ds=getDownloadService();
-        if(null!=ds){
+    public int getProgressBytes() {
+        DownloadService ds = getDownloadService();
+        if (null != ds) {
             return ds.getProgressBytes();
         }
         return 0;
@@ -142,9 +143,9 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     /**
      * ダウンロード進捗通知
      */
-    public float getProgressPercent(){
-        DownloadService ds=getDownloadService();
-        if(null!=ds){
+    public float getProgressPercent() {
+        DownloadService ds = getDownloadService();
+        if (null != ds) {
             return ds.getProgressPercent();
         }
         return 0.0f;
@@ -153,9 +154,9 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     /**
      * ダウンロードエラー発生の時、コールされる
      */
-    public DownloadListener.DLError isError(){
-        DownloadService ds=getDownloadService();
-        if(null!=ds){
+    public DownloadListener.DLError isError() {
+        DownloadService ds = getDownloadService();
+        if (null != ds) {
             return ds.isError();
         }
         return DownloadListener.DLError.DLError_NoError;
@@ -164,9 +165,9 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     /**
      * ダウンロードキャンセル
      */
-    public void cancel(){
-        DownloadService ds=getDownloadService();
-        if(null!=ds){
+    public void cancel() {
+        DownloadService ds = getDownloadService();
+        if (null != ds) {
             ds.cancel();
         }
     }
@@ -174,26 +175,26 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     @Override
     public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
         mBinder = (DownloadService.Binder) iBinder;
-        DownloadService ds=getDownloadService();
-        if(null!=ds){
+        DownloadService ds = getDownloadService();
+        if (null != ds) {
             ds.setDownloadServiceListener(this);
         }
-        if(null!=mDlDataProviderListener){
+        if (null != mDlDataProviderListener) {
             mDlDataProviderListener.dlDataProviderAvailable();
         }
     }
 
     @Override
     public void onServiceDisconnected(ComponentName componentName) {
-        mBinder=null;
-        if(null!=mDlDataProviderListener){
+        mBinder = null;
+        if (null != mDlDataProviderListener) {
             mDlDataProviderListener.dlDataProviderUnavailable();
         }
     }
 
     @Override
     public void onStart(int totalFileByteSize) {
-        if(null!=mDlDataProviderListener){
+        if (null != mDlDataProviderListener) {
             mDlDataProviderListener.onStart(totalFileByteSize);
             saveDownLoad(totalFileByteSize);
         }
@@ -201,53 +202,73 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
 
     @Override
     public void onPause() {
-        if(null!=mDlDataProviderListener){
+        if (null != mDlDataProviderListener) {
             mDlDataProviderListener.onPause();
         }
     }
 
     @Override
     public void onResume() {
-        if(null!=mDlDataProviderListener){
+        if (null != mDlDataProviderListener) {
             mDlDataProviderListener.onResume();
         }
     }
 
     @Override
     public void onProgress(int receivedBytes, int percent) {
-        if(null!=mDlDataProviderListener){
+        if (null != mDlDataProviderListener) {
             mDlDataProviderListener.onProgress(receivedBytes, percent);
         }
     }
 
     @Override
     public void onFail(DLError error) {
-        if(null!=mDlDataProviderListener){
+        if (null != mDlDataProviderListener) {
             mDlDataProviderListener.onFail(error);
         }
     }
 
     @Override
     public void onSuccess(String fullPath) {
-        if(null!=mDlDataProviderListener){
+        if (null != mDlDataProviderListener) {
             mDlDataProviderListener.onSuccess(fullPath);
-            endProvider();
-            stop();
+            if (!isBinded) {
+                if (dlDataQue != null && dlDataQue.size() > 0) {
+                    endProvider();
+                    prepareDownLoad(dlDataQue.get(0));
+                    start();
+                } else {
+                    stop();
+                }
+            }else{
+                endProvider();
+                stop();
+            }
         }
     }
 
     @Override
     public void onCancel() {
-        if(null!=mDlDataProviderListener){
+        if (null != mDlDataProviderListener) {
             mDlDataProviderListener.onCancel();
         }
     }
 
     @Override
     public void onLowStorageSpace() {
-        if(null!=mDlDataProviderListener){
+        if (null != mDlDataProviderListener) {
             mDlDataProviderListener.onLowStorageSpace();
         }
+    }
+
+    private void prepareDownLoad(DlData dlData) {
+        DownloadParam downloadParam = new KariDownloadParam();
+        KariDownloadParam karidownloadparam = (KariDownloadParam) downloadParam;
+//            karidownloadparam.setContext(getActivity());
+        karidownloadparam.setUrl("https://www.nhk.or.jp/prog/img/2209/2209.jpg");
+        karidownloadparam.setSaveFileName(dlData.getTitle());
+        karidownloadparam.setFileSize(203697);
+        karidownloadparam.setSavePath(dlData.getSaveFile());
     }
 
     private static final int DOWNLOAD_STATUS_SELECT = 1;
@@ -255,7 +276,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     private static final int DOWNLOAD_UPDATE = 3;
     private static final int DOWNLOAD_TOTALSIZE_SELECT = 4;
 
-    public void getDownLoadStatus(){
+    public void getDownLoadStatus() {
         dbOperationByThread(DOWNLOAD_STATUS_SELECT);
     }
 
@@ -284,7 +305,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                     break;
                 case DOWNLOAD_TOTALSIZE_SELECT:
                     if (null != mDlDataProviderListener) {
-                        if( resultSet!= null && resultSet.size() > 5 ){
+                        if (resultSet != null && resultSet.size() > 5) {
                             mDlDataProviderListener.onFail(DLError.DLError_Other);
                         }
                     }
@@ -318,18 +339,22 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         return resultSet;
     }
 
-    private void saveDownLoad(int totalFileByteSize){
-        if(dlData != null){
+    private void saveDownLoad(int totalFileByteSize) {
+        if (dlData != null) {
             dlData.setTotalSize(String.valueOf(totalFileByteSize));
         }
     }
 
-    public void setDlData(DlData dlData){
+    public void setDlData(DlData dlData) {
         this.dlData = dlData;
         dbOperationByThread(DOWNLOAD_INSERT);
     }
 
-    private void dbOperationByThread(int operationId){
+    public void setQue(List<DlData> dlData) {
+        this.dlDataQue = dlData;
+    }
+
+    private void dbOperationByThread(int operationId) {
         Handler handler = new Handler();
         try {
             DbThread t = new DbThread(handler, this, operationId);
