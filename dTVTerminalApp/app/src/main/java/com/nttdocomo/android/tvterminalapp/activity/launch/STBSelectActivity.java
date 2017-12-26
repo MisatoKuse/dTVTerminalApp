@@ -114,10 +114,22 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             mStartMode = intent.getIntExtra(FROM_WHERE, -1);
         }
         if (mStartMode == (STBSelectFromMode.STBSelectFromMode_Launch.ordinal())) {
+            enableStbStatusIcon(false);
             return;
 
         } else if (mStartMode == (STBSelectFromMode.STBSelectFromMode_Setting.ordinal())) {
             setTitleText(getString(R.string.str_stb_paring_setting_title));
+            //enableStbStatusIcon(true);
+            setStbStatusIconVisibility(true);
+            boolean status=true;
+            //sharedPreferencesからSTB情報を取得する
+            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
+            if (null != dlnaDmsItem && null!=dlnaDmsItem.mUdn && 0==dlnaDmsItem.mUdn.length()) {
+                //未ペアリング
+                status=false;
+            }
+            setStbStatus(status);
+
             useWithoutPairingSTBParingInvitationTextView.setVisibility(View.GONE);
             mMenuImageView = findViewById(R.id.header_layout_menu);
             mMenuImageView.setVisibility(View.VISIBLE);
@@ -136,8 +148,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                     finish();
                 }
             });
-            //sharedPreferencesからSTB情報を取得する
-            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
             if (null == dlnaDmsItem) {
                 //未ペアリング
                 return;
@@ -158,7 +168,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 }
             }
         } else {
-            //error
+            DTVTLogger.debug("STBSelectFromMode :StartMode Error ");
         }
         DTVTLogger.end();
     }
