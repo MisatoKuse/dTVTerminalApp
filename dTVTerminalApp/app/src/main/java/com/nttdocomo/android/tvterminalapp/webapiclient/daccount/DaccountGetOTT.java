@@ -117,9 +117,9 @@ public class DaccountGetOTT {
             int appReqId = 0;
 
             //呼び出し用のパラメータの設定
-            //TODO: didはひとまず直書きで行う
             String serviceKey = DaccountConstants.SERVICE_KEY;
-            int option = IDimDefines.CertOption.DEFAULT;
+            //自動再認証OFFの設定
+            int option = IDimDefines.CertOption.RESERVE;
             String appCheckKey = "";
             DTVTLogger.debug("compName=" + name);
 

@@ -6,9 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.daccount;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.widget.Toast;
 
-import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
@@ -238,7 +236,7 @@ public class DaccountControl implements
             SharedPreferencesUtils.setSharedPreferencesDaccountId(mContext, id);
 
             //キャッシュクリアを呼ぶ
-            //IDが変更されていた場合は、キャッシュクリアを呼ぶ その後再起動が走る
+            //IDが変更されていた場合は、キャッシュクリアを呼ぶ
             DaccountControl.cacheClear(mContext);
 
             //エラーを返す
@@ -354,7 +352,7 @@ public class DaccountControl implements
             super.onPostExecute(aVoid);
             DTVTLogger.start();
 
-            if(mContext == null) {
+            if (mContext == null) {
                 //コンテキストがヌルならば帰る
                 DTVTLogger.end();
                 return;
