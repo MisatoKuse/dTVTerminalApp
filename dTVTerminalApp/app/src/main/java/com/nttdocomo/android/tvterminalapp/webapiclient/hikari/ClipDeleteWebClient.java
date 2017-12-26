@@ -109,7 +109,7 @@ public class ClipDeleteWebClient
             return false;
         }
         //タイトルID type=dtv_vod の場合必須
-        if (type.equals(CLIP_TYPE_DTV_VOD) && titleId == null) {
+        if (type.equals(CLIP_TYPE_DTV_VOD) && (titleId == null || titleId.length() < 1)) {
             return false;
         }
 
