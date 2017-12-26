@@ -184,6 +184,21 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
+     * 機能：STB接続アイコンを表示か
+     *
+     * @param isOn true: 表示  false: 非表示
+     */
+    protected void setStbStatusIconVisibility(boolean isOn) {
+        if (null != mStbStatusIcon) {
+            if (isOn) {
+                mStbStatusIcon.setVisibility(View.VISIBLE);
+            } else {
+                mStbStatusIcon.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    /**
      * 機能：Global menuアイコンを有効
      *
      * @param isOn true: 表示  false: 非表示

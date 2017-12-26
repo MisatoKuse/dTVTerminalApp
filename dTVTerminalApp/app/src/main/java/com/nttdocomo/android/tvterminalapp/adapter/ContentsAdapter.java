@@ -33,6 +33,7 @@ import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import java.util.List;
 
 import static com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter.ActivityTypeItem.TYPE_RECORDING_RESERVATION_LIST;
+import static com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter.ActivityTypeItem.TYPE_STB_SELECT_LIST;
 
 public class ContentsAdapter extends BaseAdapter implements OnClickListener {
 
@@ -329,7 +330,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     private void setRedordedDownloadIcon(ViewHolder holder, ContentsData listContentInfo) {
         DTVTLogger.start();
         //TODO:録画予約一覧等、クリップボタンを表示しない画面はここで外す
-        if (!mType.equals(TYPE_RECORDING_RESERVATION_LIST)) {
+        if (!mType.equals(TYPE_RECORDING_RESERVATION_LIST) && !mType.equals(TYPE_STB_SELECT_LIST)) {
             BaseActivity baseActivity = new BaseActivity();
             if (holder.tv_clip != null) {
                 //Boolean contentsFlag = baseActivity.getDownloadContentsFalag();
@@ -526,7 +527,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             //ひかりコンテンツ判定
             if (StringUtil.isHikariContents(clipType) || StringUtil.isHikariInDtvContents(clipType)) {
                 //TODO:録画予約一覧等、クリップボタンを表示しない画面はここで外す
-                if (!mType.equals(TYPE_RECORDING_RESERVATION_LIST)) {
+                if (!mType.equals(TYPE_RECORDING_RESERVATION_LIST) && !mType.equals(TYPE_STB_SELECT_LIST)) {
                     //クリップ状態が1以外の時は、非活性クリップボタンを表示
                     holder.tv_clip.setVisibility(View.VISIBLE);
                     holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
