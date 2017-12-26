@@ -929,4 +929,12 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         //登録はできないので、こちらに来るのは自然な動作となる。
         DTVTLogger.end("d account error. no signature?");
     }
+
+    @Override
+    protected void onDestroy(){
+        if(mRemoteControlRelayClient != null) {
+            mRemoteControlRelayClient.resetHandler();
+        }
+        super.onDestroy();
+    }
 }
