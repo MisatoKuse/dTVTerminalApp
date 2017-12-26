@@ -90,9 +90,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     /** dアカウント設定アプリ登録処理 */
     private DaccountControl mDaccountControl = null;
 
-    /** onDestroy判定 */
-    private boolean isOnDestroyed = false;
-
     /**
      * Created on 2017/09/21.
      * 関数機能：
@@ -287,6 +284,8 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         mContext = this;
         initView();
 
+        mRemoteControlRelayClient = RemoteControlRelayClient.getInstance();
+        mRemoteControlRelayClient.setDebugRemoteIp("192.168.11.35");
         //dアカウントの検知処理を追加する
         setDaccountControl();
 
@@ -338,6 +337,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     protected void onStop() {
         super.onStop();
         DTVTLogger.start();
+        mRemoteControlRelayClient.resetHandler();
         //unregisterDevListDlna();
         DTVTLogger.end();
     }
@@ -377,10 +377,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     public Handler mRerayClientHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            if (isOnDestroyed) {
-                mRemoteControlRelayClient.resetHandler();
-                return;
-            }
             String message = "OK";
             switch (msg.what) {
                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_OK:
@@ -933,13 +929,14 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     @Override
     protected void onDestroy(){
-        isOnDestroyed = true;
         super.onDestroy();
     }
 
+    /**
+     * RemoteControlRelayClientにHandlerを設定する
+     */
     public void setRelayClientHandler() {
-        mRemoteControlRelayClient = RemoteControlRelayClient.getInstance();
-        mRemoteControlRelayClient.setDebugRemoteIp("192.168.11.19");
+        // TODO MenuDisplay修正時に合わせて修正する
         mRemoteControlRelayClient.setHandler(mRerayClientHandler);
     }
 }

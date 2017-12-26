@@ -43,6 +43,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     private static MenuDisplay sMenuDisplay = new MenuDisplay();
     private MenuItemParam mMenuItemParam = new MenuItemParam();
     private MenuDisplayEventListener mMenuDisplayEventListener = null;
+    // TODO BaseActivityを持つことは実装的に望ましくない
     private BaseActivity mActivity = null;
     private View mAccountName = null;
 
@@ -115,6 +116,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
         loadMenuList(popupWindowView);
     }
 
+    // TODO ボタン押下時の画面遷移処理はBaseActivityへリスナーを設定して送る
     @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -256,24 +258,28 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dtv_channel))) {
                 if (null != mMenuDisplayEventListener) {
                     // TVアプリ起動導線(dTVチャンネル)
+                    // TODO BaseActivityで実行するのが望ましい
                     mActivity.setRelayClientHandler();
                     RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL);
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dtv))) {
                 if (null != mMenuDisplayEventListener) {
                     // TVアプリ起動導線(dTV)
+                    // TODO BaseActivityで実行するのが望ましい
                     mActivity.setRelayClientHandler();
                     RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTV);
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_d_animation))) {
                 if (null != mMenuDisplayEventListener) {
                     // TVアプリ起動導線(dアニメ)
+                    // TODO BaseActivityで実行するのが望ましい
                     mActivity.setRelayClientHandler();
                     RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE);
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dazn))) {
                 if (null != mMenuDisplayEventListener) {
                     // TVアプリ起動導線(DAZN)
+                    // TODO BaseActivityで実行するのが望ましい
                     mActivity.setRelayClientHandler();
                     RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DAZN);
                 }
