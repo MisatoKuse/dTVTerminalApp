@@ -26,6 +26,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.SearchDataProvider;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchResultError;
 import com.nttdocomo.android.tvterminalapp.model.ResultType;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
@@ -321,6 +322,9 @@ public class SearchTopActivity extends BaseActivity
             SearchBaseFragment baseFragment = getCurrentSearchBaseFragment();
             if (null != baseFragment) {
                 baseFragment.clear();
+                //連続検索を行うと一瞬0件と表示される対策として、前回の検索結果件数を持たせる
+                String totalCountText = getResultString();
+                baseFragment.notifyDataSetChanged(totalCountText);
                 setPageNumber(0);
                 setPagingStatus(false);
             }
@@ -459,7 +463,6 @@ public class SearchTopActivity extends BaseActivity
     public void onSearchDataProviderFinishOk(ResultType<TotalSearchContentInfo> resultType) {
         TotalSearchContentInfo content = resultType.getResultType();
         mSearchTotalCount = content.totalCount;
-        String totalCountText = sCurrentSearchText;
 
         SearchBaseFragment baseFragment = getCurrentSearchBaseFragment();//(SearchBaseFragment)mFragmentFactory.createFragment(currentPageNo, this);
         if (null == baseFragment) {
@@ -479,18 +482,19 @@ public class SearchTopActivity extends BaseActivity
 
         baseFragment.setResultTextVisibility(true);
         if (0 < mSearchTotalCount) {
-            totalCountText = "検索結果:" + mSearchTotalCount + "件";
 
             //画面表示用のデータセット
-            baseFragment.mData = content.getContentsDataList();
-            int thisTimeTotal = content.searchContentInfo.size();
-            for (int i = 0; i < thisTimeTotal; ++i) {
+            for (int i = 0; i < content.getContentsDataList().size(); ++i) {
                 baseFragment.mData.add(content.getContentsDataList().get(i));
             }
 
             DTVTLogger.debug("baseFragment.mData.size = " + baseFragment.mData.size());
-            baseFragment.notifyDataSetChanged(totalCountText);
+
+            baseFragment.notifyDataSetChanged(getResultString());
             baseFragment.setSelection(mSearchLastItem);
+        } else {
+            //表示件数0件の場合は"タブ名+検索結果:0件"を表示する
+            baseFragment.notifyDataSetChanged(getResultString());
         }
         baseFragment.displayLoadMore(false);
         setSearchStart(false);
@@ -584,5 +588,21 @@ public class SearchTopActivity extends BaseActivity
             mSearchView.clearFocus();
         }
         return super.dispatchTouchEvent(event);
+    }
+
+    /**
+     * 検索結果件数を表示する文字列を返す
+     * @return 検索結果件数の文字列
+     */
+    private String getResultString() {
+        int pageIndex = mSearchViewPager.getCurrentItem();
+        String[] tabNames = getResources().getStringArray(R.array.tab_names);
+        String tabName = tabNames[pageIndex];
+        String[] strings = {tabName,
+                getString(R.string.keyword_search_result_no),
+                getString(R.string.keyword_search_result),
+                Integer.toString(mSearchTotalCount),
+                getString(R.string.keyword_search_result_num)};
+        return StringUtil.getConnectString(strings);
     }
 }
