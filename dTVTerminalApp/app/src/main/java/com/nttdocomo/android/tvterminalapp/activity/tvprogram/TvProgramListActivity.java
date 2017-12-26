@@ -549,14 +549,14 @@ public class TvProgramListActivity extends BaseActivity
             ArrayList<Channel> channels = channelsInfo.getChannels();
             sort(channels);
             mChannelInfo = channels;
-            if(tab_index !=0 ){
+            if(mTabIndex !=0 ){
                 setProgramRecyclerView(mChannelInfo);
             }else {//マイ番組表
                 ArrayList<Channel> myChannels = new ArrayList<>();
                 for(int i = 0; i< mappedMyChannelList.size(); i++){
-                    for (int j=0;j<channelInfo.size();j++){
-                        if(mappedMyChannelList.get(i).getChNo() == channelInfo.get(j).getChNo()){//チャンネル番号でマッピング
-                            myChannels.add(channelInfo.get(j));
+                    for (int j=0;j<mChannelInfo.size();j++){
+                        if(mappedMyChannelList.get(i).getChNo() == mChannelInfo.get(j).getChNo()){//チャンネル番号でマッピング
+                            myChannels.add(mChannelInfo.get(j));
                         }
                     }
                 }
@@ -598,7 +598,7 @@ public class TvProgramListActivity extends BaseActivity
             channelNos[i] = mappedMyChannelList.get(i).getChNo();
         }
         if(channelNos.length != 0){//マイ番組表設定されていない場合、通信しない
-            String dateList[] = {selectDateStr};
+            String dateList[] = {mSelectDateStr};
             scaledDownProgramListDataProvider.getProgram(channelNos, dateList, 1);
         }else {//「マイ番組が設定されていません」と表示される
             showMyChannelNoItem(true);
@@ -629,12 +629,14 @@ public class TvProgramListActivity extends BaseActivity
      */
     private ArrayList<Channel> executeMapping() {
         ArrayList<Channel> myChannels = new ArrayList<>();
-        for(int i = 0; i< myChannelDataList.size(); i++){
-            for(int j=0;j<hikariChannels.size();j++){
-                //サービスIDでマッピング
-                if(myChannelDataList.get(i).getServiceId().equals(hikariChannels.get(j).getServiceId())){
-                    myChannels.add(hikariChannels.get(j));
-                    break;
+        if(myChannelDataList != null){
+            for(int i = 0; i< myChannelDataList.size(); i++){
+                for(int j=0;j<hikariChannels.size();j++){
+                    //サービスIDでマッピング
+                    if(myChannelDataList.get(i).getServiceId().equals(hikariChannels.get(j).getServiceId())){
+                        myChannels.add(hikariChannels.get(j));
+                        break;
+                    }
                 }
             }
         }
