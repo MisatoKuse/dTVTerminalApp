@@ -83,17 +83,32 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                 case CHANNEL_SELECT:
                     ArrayList<Channel> channels = new ArrayList<>();
                     for (int i = 0; i < resultSet.size(); i++) {
+                        ArrayList<Schedule> mScheduleList;
                         Map<String, String> hashMap = resultSet.get(i);
                         String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
                         String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
                         String thumb = hashMap.get(JsonContents.META_RESPONSE_DEFAULT_THUMB);
                         String serviceId = hashMap.get(JsonContents.META_RESPONSE_SERVICE_ID);
+
+                        Schedule mSchedule = new Schedule();
+                        String startDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_START_DATE);
+                        String endDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
+                        mSchedule.setStartTime(startDate);
+                        mSchedule.setEndTime(endDate);
+                        mSchedule.setImageUrl(thumb);
+                        mSchedule.setTitle(title);
+                        mSchedule.setChNo(chNo);
+                        mSchedule.setClipRequestData(setClipData((HashMap<String, String>) hashMap));
+
                         if (!TextUtils.isEmpty(chNo)) {
                             Channel channel = new Channel();
                             channel.setChNo(Integer.parseInt(chNo));
                             channel.setTitle(title);
                             channel.setThumbnail(thumb);
                             channel.setServiceId(serviceId);
+                            mScheduleList = new ArrayList<>();
+                            mScheduleList.add(mSchedule);
+                            channel.setSchedules(mScheduleList);
                             channels.add(channel);
                         }
                     }
@@ -320,7 +335,6 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
         requestData.setLinearStartDate(String.valueOf(hashMap.get(JsonContents.META_RESPONSE_AVAIL_START_DATE)));
         requestData.setLinearEndDate(String.valueOf(hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE)));
         requestData.setSearchOk(hashMap.get(JsonContents.META_RESPONSE_SEARCH_OK));
-        requestData.setClipTarget(hashMap.get(JsonContents.META_RESPONSE_TITLE)); //TODO:仕様確認中 現在はトーストにタイトル名を表示することとしています
         requestData.setIsNotify(hashMap.get(JsonContents.META_RESPONSE_DISP_TYPE),
                 hashMap.get(JsonContents.META_RESPONSE_CONTENT_TYPE),
                 String.valueOf(hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE)),

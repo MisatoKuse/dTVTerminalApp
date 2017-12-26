@@ -1252,27 +1252,25 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                 DTVTLogger.debug("mIsOtherService:false");
                 detailFragment.mOtherContentsDetailData.setTitle(mDetailFullData.getTitle());
                 setTitleAndThumbnail(mDetailFullData.getTitle(), mDetailFullData.getmDtv_thumb_448_252());
-
                 // リモート録画予約情報を生成
-                if (String.valueOf(OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID).equals(mDetailFullData.getmService_id())) {
-                    mRecordingReservationContentsDetailInfo = new RecordingReservationContentsDetailInfo(
-                            mDetailFullData.getmService_id(),
-                            mDetailFullData.getTitle(),
-                            mDetailFullData.getAvail_start_date(),
-                            mDetailFullData.getDur(),
-                            mDetailFullData.getR_value());
-                    mRecordingReservationContentsDetailInfo.setEventId(mDetailFullData.getmEvent_id());
-                    if (comparisonStartTime()) {
-                        detailFragment.changeVisiblityRecordingReservationIcon(View.VISIBLE);
-                        detailFragment.setRecordingReservationIconListener(this);
-                    } else {
-                        detailFragment.changeVisiblityRecordingReservationIcon(View.INVISIBLE);
-                        detailFragment.setRecordingReservationIconListener(null);
-                    }
+                mRecordingReservationContentsDetailInfo = new RecordingReservationContentsDetailInfo(
+                        mDetailFullData.getmService_id(),
+                        mDetailFullData.getTitle(),
+                        mDetailFullData.getAvail_start_date(),
+                        mDetailFullData.getDur(),
+                        mDetailFullData.getR_value());
+                mRecordingReservationContentsDetailInfo.setEventId(mDetailFullData.getmEvent_id());
+                if (comparisonStartTime()) {
+                    detailFragment.changeVisiblityRecordingReservationIcon(View.VISIBLE);
+                    detailFragment.setRecordingReservationIconListener(this);
+                } else {
+                    detailFragment.changeVisiblityRecordingReservationIcon(View.INVISIBLE);
+                    detailFragment.setRecordingReservationIconListener(null);
                 }
             }
             detailFragment.mOtherContentsDetailData.setVodMetaFullData(contentsDetailInfo.get(FIRST_VOD_META_DATA));
             detailFragment.mOtherContentsDetailData.setDetail(mDetailFullData.getSynop());
+            detailFragment.noticeRefresh();
             String[] credit_array = mDetailFullData.getmCredit_array();
             if (credit_array != null && credit_array.length > 0) {
                 mDetailDataProvider.getRoleListData();
@@ -1281,7 +1279,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                 mDetailDataProvider.getChannelList(1, 1, "", 1);
             }
 
-            detailFragment.noticeRefresh();
+
         }
     }
 

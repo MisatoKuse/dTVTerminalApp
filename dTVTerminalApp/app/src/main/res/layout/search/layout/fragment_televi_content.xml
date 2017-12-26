@@ -13,7 +13,9 @@
 		android:layout_marginLeft="20dp"
 		android:text="検索結果:0件"
 		android:textColor="@android:color/white"
-		android:textSize="13dp"/>
+		android:textSize="13dp"
+		android:visibility="invisible"
+		/>
 
 	<TextView
 		android:layout_width="match_parent"

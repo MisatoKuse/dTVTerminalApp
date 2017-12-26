@@ -817,7 +817,13 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     public void sendClipRequest(ClipRequestData data) {
         if (data != null) {
             String status = data.getSearchOk();
-            mClipTarget = data.getClipTarget();
+
+            //クリップ対象を格納
+            if (data.getIsNotify()) {
+                mClipTarget = getString(R.string.epg_contents_message);
+            } else {
+                mClipTarget = getString(R.string.vod_contents_message);
+            }
             boolean isParamCheck = true;
             if (status != null && !status.equals(CLIP_RESULT_STATUS)) {
                 ClipRegistWebClient registWebClient = new ClipRegistWebClient();

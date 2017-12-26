@@ -19,6 +19,8 @@
     <string name="clip_regist_error_message">のクリップに失敗しました</string>
     <string name="clip_delete_result_message">のクリップを削除しました</string>
     <string name="clip_delete_error_message">のクリップ削除に失敗しました</string>
+    <string name="epg_contents_message">番組</string>
+    <string name="vod_contents_message">ビデオ</string>
 
     <!-- Launch -->
     <string name="str_app_title">dリモート</string>

@@ -477,6 +477,7 @@ public class SearchTopActivity extends BaseActivity
             }
         }
 
+        baseFragment.setResultTextVisibility(true);
         if (0 < mSearchTotalCount) {
             totalCountText = "検索結果:" + mSearchTotalCount + "件";
 
@@ -500,6 +501,7 @@ public class SearchTopActivity extends BaseActivity
             int sum = mFragmentFactory.getFragmentCount();
             for (int i = 0; i < sum; ++i) {
                 SearchBaseFragment baseFragment = mFragmentFactory.createFragment(i, this);
+                baseFragment.setResultTextVisibility(false);
                 baseFragment.clear();
             }
         }
