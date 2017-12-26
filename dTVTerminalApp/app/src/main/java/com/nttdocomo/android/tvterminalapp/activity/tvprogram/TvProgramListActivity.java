@@ -26,7 +26,9 @@ import com.nttdocomo.android.tvterminalapp.activity.player.ChannelDetailPlayerAc
 import com.nttdocomo.android.tvterminalapp.adapter.ProgramChannelAdapter;
 import com.nttdocomo.android.tvterminalapp.adapter.TvProgramListAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.dataprovider.MyChannelDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
 import com.nttdocomo.android.tvterminalapp.model.program.Channel;
 import com.nttdocomo.android.tvterminalapp.model.program.ChannelItemClickListener;
 import com.nttdocomo.android.tvterminalapp.model.program.ChannelsInfo;
@@ -48,31 +50,20 @@ import java.util.Locale;
 public class TvProgramListActivity extends BaseActivity
         implements ChannelItemClickListener,
         View.OnClickListener,
-        ScaledDownProgramListDataProvider.ApiDataProviderCallback {
+        ScaledDownProgramListDataProvider.ApiDataProviderCallback,
+        MyChannelDataProvider.ApiDataProviderCallback{
 
+    private static final int INDEX_TAB_HIKARI = 1;
+    private static final int INDEX_TAB_MY_CHANNEL = 0;
     private ProgramRecyclerView mProgramRecyclerView = null;
     private int mScreenHeight = 0;
     private int mScreenWidth = 0;
-    private String mSelectDateStr = null;
-    private String mDate[] = {"日", "月", "火", "水", "木", "金", "土"};
-    private String mToDay = null;
-    private String mProgramTabNames[] = null;
-    private int mTabIndex = 0;
-    private ArrayList<Channel> mChannelInfo = new ArrayList<>();
-    private ArrayList<Channel> mChannels = new ArrayList<>();
-    private boolean mIsFromBackFlag = false;
-
-    private LinearLayout mLinearLayout = null;
-    private LinearLayout mTabLinearLayout = null;
-    private ImageView mTagImageView = null;
     private ProgramScrollView mTimeScrollView = null;
     private RecyclerView mChannelRecyclerView = null;
     private HorizontalScrollView mTabScrollView = null;
-
-    private TvProgramListAdapter mTvProgramListAdapter = null;
-    private ProgramChannelAdapter mProgramChannelAdapter = null;
-
-    private static int EXPIRE_DATE = 7;
+    private LinearLayout mTabLinearLayout = null;
+    private ImageView mTagImageView = null;
+    private RelativeLayout changeModeLayout;
     private static final int START_TIME = 4;
     private static final int STANDARD_TIME = 24;
     private static final int SCREEN_TIME_WIDTH_PERCENT = 9;
@@ -82,6 +73,21 @@ public class TvProgramListActivity extends BaseActivity
     private static final String SELECT_DATE_FORMAT = "yyyy年MM月dd日";
     private static final String TIME_FORMAT = "HHmmss";
     private static final String CUR_TIME_FORMAT = "yyyy-MM-ddHH:mm:ss";
+    private String mSelectDateStr = null;
+    private String mDate[] = {"日", "月", "火", "水", "木", "金", "土"};
+    private String mToDay = null;
+    private LinearLayout mLinearLayout = null;
+    private String mProgramTabNames[] = null;
+    private static int EXPIRE_DATE = 7;
+    private int mTabIndex = 0;
+    private TvProgramListAdapter mTvProgramListAdapter = null;
+    private ProgramChannelAdapter mProgramChannelAdapter = null;
+    private ArrayList<Channel> mChannelInfo = new ArrayList<>();
+    private ArrayList<Channel> mChannels = new ArrayList<>();
+    private boolean mIsFromBackFlag = false;
+    private ArrayList<Channel> hikariChannels;
+    private ArrayList<Channel> mappedMyChannelList;
+    private ArrayList<MyChannelMetaData> myChannelDataList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -421,7 +427,7 @@ public class TvProgramListActivity extends BaseActivity
      * 機能
      * 番組表を設定
      */
-    private void setChannelContentsView() {
+    private void setChannelContentsView(ArrayList<Channel> channels) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mChannelRecyclerView.setLayoutManager(linearLayoutManager);
@@ -440,8 +446,13 @@ public class TvProgramListActivity extends BaseActivity
      * チャンネルデータ取得
      */
     private void getChannelData() {
-        ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
-        scaledDownProgramListDataProvider.getChannelList(1, 1, "", mTabIndex);
+        if(mTabIndex != INDEX_TAB_MY_CHANNEL){//ひかり、dTVチャンネル
+            ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
+            scaledDownProgramListDataProvider.getChannelList(1, 1, "", mTabIndex);
+        } else {//MY番組表
+            MyChannelDataProvider myChannelDataProvider = new MyChannelDataProvider(this);
+            myChannelDataProvider.getMyChannelList(R.layout.tv_program_list_main_layout);
+        }
     }
 
     @Override
@@ -479,7 +490,7 @@ public class TvProgramListActivity extends BaseActivity
      * 機能
      * 番組表情報を設定
      */
-    private void setProgramRecyclerView() {
+    private void setProgramRecyclerView(ArrayList<Channel> channelInfo) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mProgramRecyclerView.setLayoutManager(linearLayoutManager);
@@ -538,27 +549,96 @@ public class TvProgramListActivity extends BaseActivity
             ArrayList<Channel> channels = channelsInfo.getChannels();
             sort(channels);
             mChannelInfo = channels;
-            /*if(tab_index !=0 ){*/
-            setProgramRecyclerView();
-            /*}*/
+            if(tab_index !=0 ){
+                setProgramRecyclerView(mChannelInfo);
+            }else {//マイ番組表
+                ArrayList<Channel> myChannels = new ArrayList<>();
+                for(int i = 0; i< mappedMyChannelList.size(); i++){
+                    for (int j=0;j<channelInfo.size();j++){
+                        if(mappedMyChannelList.get(i).getChNo() == channelInfo.get(j).getChNo()){//チャンネル番号でマッピング
+                            myChannels.add(channelInfo.get(j));
+                        }
+                    }
+                }
+                setProgramRecyclerView(myChannels);
+            }
         }
     }
 
     @Override
     public void channelListCallback(ArrayList<Channel> channels) {
         if (channels != null) {
-            if (mTabIndex != 0) {
+            if(mTabIndex == INDEX_TAB_MY_CHANNEL){//MY番組表
+                this.hikariChannels = channels;
+                mappedMyChannelList = executeMapping();
+                setChannelContentsView(mappedMyChannelList);
+                loadMyChannel();
+            }else {//ひかり、dTVチャンネル
                 this.mChannels = channels;
-                setChannelContentsView();
+                setChannelContentsView(mChannels);
+                showMyChannelNoItem(false);
+                ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
+                int channelNos[] = new int[channels.size()];
+                for (int i = 0; i < channels.size(); i++) {
+                    channelNos[i] = channels.get(i).getChNo();
+                }
+                String dateList[] = {mSelectDateStr};
+                scaledDownProgramListDataProvider.getProgram(channelNos, dateList, mTabIndex);
             }
-            ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
-            int channelNos[] = new int[channels.size()];
-            for (int i = 0; i < channels.size(); i++) {
-                channelNos[i] = channels.get(i).getChNo();
-            }
-            String dateList[] = {mSelectDateStr};
-            scaledDownProgramListDataProvider.getProgram(channelNos, dateList, mTabIndex);
         }
+    }
+
+    /**
+     * My番組表ロード
+     */
+    private void loadMyChannel() {
+        ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
+        int channelNos[] = new int[mappedMyChannelList.size()];
+        for (int i = 0; i < mappedMyChannelList.size(); i++) {
+            channelNos[i] = mappedMyChannelList.get(i).getChNo();
+        }
+        if(channelNos.length != 0){//マイ番組表設定されていない場合、通信しない
+            String dateList[] = {selectDateStr};
+            scaledDownProgramListDataProvider.getProgram(channelNos, dateList, 1);
+        }else {//「マイ番組が設定されていません」と表示される
+            showMyChannelNoItem(true);
+        }
+    }
+
+    /**
+     * マイ番組表Noチャンネル表示
+     * @param isShowFlag
+     */
+    private void showMyChannelNoItem(boolean isShowFlag) {
+        if(isShowFlag){
+            findViewById(R.id.tv_program_list_main_layout_time_sl).setVisibility(View.INVISIBLE);
+            findViewById(R.id.tv_program_list_main_layout_curtime_iv).setVisibility(View.INVISIBLE);
+            findViewById(R.id.tv_program_list_main_layout_changemode_rl).setVisibility(View.INVISIBLE);
+            findViewById(R.id.tv_program_list_main_layout_tip_tv).setVisibility(View.VISIBLE);
+        }else {
+            findViewById(R.id.tv_program_list_main_layout_time_sl).setVisibility(View.VISIBLE);
+            findViewById(R.id.tv_program_list_main_layout_curtime_iv).setVisibility(View.VISIBLE);
+            findViewById(R.id.tv_program_list_main_layout_changemode_rl).setVisibility(View.VISIBLE);
+            findViewById(R.id.tv_program_list_main_layout_tip_tv).setVisibility(View.INVISIBLE);
+        }
+    }
+
+    /**
+     * チャンネルリストからマッピングデータを抽出する
+     * @return
+     */
+    private ArrayList<Channel> executeMapping() {
+        ArrayList<Channel> myChannels = new ArrayList<>();
+        for(int i = 0; i< myChannelDataList.size(); i++){
+            for(int j=0;j<hikariChannels.size();j++){
+                //サービスIDでマッピング
+                if(myChannelDataList.get(i).getServiceId().equals(hikariChannels.get(j).getServiceId())){
+                    myChannels.add(hikariChannels.get(j));
+                    break;
+                }
+            }
+        }
+        return myChannels;
     }
 
     @Override
@@ -574,6 +654,29 @@ public class TvProgramListActivity extends BaseActivity
         for (Channel channel : channels) {
             Collections.sort(channel.getSchedules(), new CalendarComparator());
         }
+    }
+
+    /**
+     * MY番組表情報取得
+     * @param myChannelMetaData 画面に渡すチャンネル番組情報
+     */
+    @Override
+    public void onMyChannelListCallback(ArrayList<MyChannelMetaData> myChannelMetaData) {
+        if (myChannelMetaData != null && myChannelMetaData.size() > 0) {
+            this.myChannelDataList = myChannelMetaData;
+            ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
+            scaledDownProgramListDataProvider.getChannelList(1, 1, "", INDEX_TAB_HIKARI);//ひかりリストからチャンネル選択
+        }
+    }
+
+    @Override
+    public void onMyChannelRegisterCallback(String result) {
+        //nothing to do
+    }
+
+    @Override
+    public void onMyChannelDeleteCallback(String result) {
+        //nothing to do
     }
 
     /**
