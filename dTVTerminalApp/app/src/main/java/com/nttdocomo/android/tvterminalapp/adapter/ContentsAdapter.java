@@ -333,8 +333,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             BaseActivity baseActivity = new BaseActivity();
             if (holder.tv_clip != null) {
                 //Boolean contentsFlag = baseActivity.getDownloadContentsFalag();
-                Boolean contentsFlag = true;
-                if (contentsFlag) {
+                int downloadFlg = listContentInfo.getDownloadFlg();
+                if (downloadFlg != -1) {
                     // ダウンロード済み
                     holder.tv_clip.setVisibility(View.VISIBLE);
                     holder.tv_clip.setBackgroundColor

@@ -17,6 +17,7 @@
     <!-- 検索結果画面 -->
     <RelativeLayout
         android:id="@+id/record_list_main_layout_result"
+        android:background="@color/recorded_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -29,11 +30,19 @@
             android:foregroundGravity="center_horizontal"
             android:scrollbars="none" />
 
+        <ProgressBar
+            android:id="@+id/record_list_main_layout_progress"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/record_list_main_layout_scroll"
+            android:layout_centerHorizontal="true" />
+
         <android.support.v4.view.ViewPager
             android:id="@+id/record_list_main_layout_viewpagger"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/record_list_main_layout_scroll"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/record_list_main_layout_progress"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true" />
 

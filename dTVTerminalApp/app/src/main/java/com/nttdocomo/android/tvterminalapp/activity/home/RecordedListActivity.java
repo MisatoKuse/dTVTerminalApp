@@ -18,6 +18,7 @@ import android.widget.AbsListView;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +39,7 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoListener;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -57,6 +59,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private ViewPager mViewPager = null;
     private SearchView mSearchView = null;
     private HorizontalScrollView mTabScrollView = null;
+    private ProgressBar progressBar;
 
     private DlnaProvRecVideo mDlnaProvRecVideo = null;
     private RecordedFragmentFactory mRecordedFragmentFactory = null;
@@ -235,6 +238,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         mTabNames = getResources().getStringArray(R.array.record_list_tab_names);
         mRecordedFragmentFactory = new RecordedFragmentFactory();
         mSearchView = findViewById(R.id.record_list_main_layout_searchview);
+        progressBar = findViewById(R.id.record_list_main_layout_progress);
     }
 
     /**
@@ -249,17 +253,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 setTab(position);
-
-                switch (mViewPager.getCurrentItem()) {
-                    case 0:
-                        setRecordedAllContents();
-                        break;
-                    case 1:
-                        //setRecordedTakeOutContents();
-                        break;
-                    default:
-                        break;
-                }
             }
         });
     }
@@ -330,11 +323,17 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 }
             }
         }
-    }
-
-    private void setRecordedAllContents() {
-        DTVTLogger.start();
-        // NOP
+        progressBar.setVisibility(View.VISIBLE);
+        switch (mViewPager.getCurrentItem()) {
+            case 0:
+                getData();
+                break;
+            case 1:
+                setRecordedTakeOutContents();
+                break;
+            default:
+                break;
+        }
     }
 
     /**
@@ -343,15 +342,25 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private void setRecordedTakeOutContents() {
         DTVTLogger.start();
         RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment();
-        List<ContentsData> curInfo = baseFragment.getContentsData();
         List<ContentsData> list = baseFragment.getContentsData();
-        if (null != list) {
+        if (list != null) {
             list.clear();
-            ContentsData contentsData = new ContentsData();
-            list.add(contentsData);
+            File file = new File(getCacheDir().getPath());
+            File listFiles[] = file.listFiles();
+            if(listFiles != null && listFiles.length > 0){
+                for(File file1: listFiles){
+                    if(file1.isDirectory()){
+                        continue;
+                    }
+                    ContentsData contentsData = new ContentsData();
+                    contentsData.setTitle(file1.getName());
+                    contentsData.setDownloadFlg(-1);
+                    list.add(contentsData);
+                }
+            }
             baseFragment.notifyDataSetChanged();
         }
-
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -417,6 +426,12 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         if (curInfo != null && curInfo.getRecordVideoLists() != null) {
             setVideoBrows(curInfo);
         }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressBar.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void setVideoBrows(DlnaRecVideoInfo curInfo) {

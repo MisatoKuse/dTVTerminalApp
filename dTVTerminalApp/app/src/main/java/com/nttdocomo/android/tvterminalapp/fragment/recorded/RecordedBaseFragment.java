@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.nttdocomo.android.tvterminalapp.common.CustomDialog.DialogType.CONFIRM;
+import static com.nttdocomo.android.tvterminalapp.common.CustomDialog.DialogType.ERROR;
 
 public class RecordedBaseFragment extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener, ContentsAdapter.DownloadCallback
 ,DlDataProviderListener {
@@ -331,7 +332,8 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         } else if (completed == 2) {
             customDialog.setTitle("ダウンロードを取りやめますか？");
         } else {
-            customDialog.setTitle("やめますか？");
+            customDialog = new CustomDialog(getContext(), ERROR);
+            customDialog.setTitle("最大5件ダウンロードできます");
         }
         customDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
