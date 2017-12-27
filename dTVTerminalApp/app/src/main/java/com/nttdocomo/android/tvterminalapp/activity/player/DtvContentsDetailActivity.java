@@ -927,7 +927,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         nowTextView.setVisibility(View.GONE);
         mVideoPlayPause.setOnClickListener(this);
         mVideoFullScreen.setOnClickListener(this);
-        videoCtrlRootView.setOnClickListener(this);
+        mVideoCtrlRootView.setOnClickListener(this);
         setSeekBarListener(mVideoSeekBar);
         playerViewLayout.addView(mRecordCtrlView);
         //初期化の時点から、handlerにmsgを送る

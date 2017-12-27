@@ -448,7 +448,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     private void setSighedMiddleMenuItem() {
         //録画番組
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_recorder_program));
-        mMenuItemCount.add(mMenuItemParam.getRecordProgramCount());
+        mMenuItemCount.add(INT_NONE_COUNT_STATUS);
 
         //ランキング
         mMenuItemTitles.add(mActivity.getString(R.string.nav_menu_item_ranking));
