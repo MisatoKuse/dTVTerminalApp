@@ -15,7 +15,8 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoItem;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListItem;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListItem;
 import com.nttdocomo.android.tvterminalapp.model.program.Channel;
 
 import java.util.ArrayList;
@@ -128,18 +129,18 @@ public class ChannelListAdapter extends BaseAdapter {
         if(null!=mData) {
             switch (mChListDataType) {
                 case CH_LIST_DATA_TYPE_BS:
-                    DlnaRecVideoItem bsItem = (DlnaRecVideoItem) mData.get(position);
+                    DlnaBsChListItem bsItem = (DlnaBsChListItem) mData.get(position);
                     if (null != bsItem) {
                         chName = bsItem.mTitle;
-                        //mThumbnail = bsItem.mUpnpIcon;
+                        //thumbnail = bsItem.mUpnpIcon;
                         thumbnail = null;
                     }
                     break;
                 case CH_LIST_DATA_TYPE_TER:
-                    DlnaRecVideoItem terItem = (DlnaRecVideoItem) mData.get(position);
+                    DlnaTerChListItem terItem = (DlnaTerChListItem) mData.get(position);
                     if (null != terItem) {
                         chName = terItem.mTitle;
-                        //mThumbnail = terItem.mUpnpIcon;
+                        //thumbnail = terItem.mUpnpIcon;
                         thumbnail = null;
                     }
                     break;
