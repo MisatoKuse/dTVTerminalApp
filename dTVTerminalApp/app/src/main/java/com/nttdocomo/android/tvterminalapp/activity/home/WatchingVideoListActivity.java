@@ -4,8 +4,10 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,6 +22,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.WatchListenVideoBaseAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.WatchListenVideoListDataProvider;
 
@@ -28,12 +31,14 @@ import java.util.List;
 
 import static java.lang.Math.abs;
 
-public class WatchingVideoListActivity extends BaseActivity implements View.OnClickListener,
+public class WatchingVideoListActivity extends BaseActivity implements
         AdapterView.OnItemClickListener,
         WatchListenVideoListDataProvider.WatchListenVideoListProviderCallback,
         AbsListView.OnScrollListener, View.OnTouchListener {
 
     private boolean mIsCommunicating = false;
+    private Boolean mIsMenuLaunch = false;
+
 
     //スクロール位置の記録
     private int mFirstVisibleItem = 0;
@@ -67,10 +72,14 @@ public class WatchingVideoListActivity extends BaseActivity implements View.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.watching_video_list_main_layout);
 
-        mMenuImageView = findViewById(R.id.header_layout_menu);
-        mMenuImageView.setVisibility(View.VISIBLE);
-        mMenuImageView.setOnClickListener(this);
         setTitleText(getString(R.string.str_watching_video_activity_title));
+        Intent intent = getIntent();
+        mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
+        if (mIsMenuLaunch) {
+            enableHeaderBackIcon(false);
+        }
+        enableStbStatusIcon(true);
+        enableGlobalMenuIcon(true);
 
         resetPaging();
 
@@ -137,13 +146,6 @@ public class WatchingVideoListActivity extends BaseActivity implements View.OnCl
                 //現状処理は無い・警告対応
         }
         return false;
-    }
-
-    @Override
-    public void onClick(View view) {
-        if (mMenuImageView.equals(view)) {
-            onSampleGlobalMenuButton_PairLoginOk();
-        }
     }
 
     private void setCommunicatingStatus(boolean b) {
@@ -298,5 +300,21 @@ public class WatchingVideoListActivity extends BaseActivity implements View.OnCl
                 }, LOAD_PAGE_DELAY_TIME);
             }
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        DTVTLogger.start();
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                if (mIsMenuLaunch) {
+                    //メニューから起動の場合はアプリ終了ダイアログを表示
+                    showTips();
+                    return false;
+                }
+            default:
+                break;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

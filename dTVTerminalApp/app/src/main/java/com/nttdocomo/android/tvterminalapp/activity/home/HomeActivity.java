@@ -4,13 +4,11 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
@@ -63,6 +61,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         // TODO Bundle内の"state"ではなくSharedPreferencesからペアリング状態を取得する
         setContentView(R.layout.home_main_layout);
         setTitleText("ホーム");
+        enableHeaderBackIcon(false);
         //ビューの初期化処理
         initView();
     }
@@ -100,6 +99,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
                 if (isFastClick()) {
+                    //メニューから起動の場合はアプリ終了ダイアログを表示
                     showTips();
                 }
                 break;
@@ -108,35 +108,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 break;
         }
         return false;
-    }
-
-    /**
-     * 機能
-     * アプリ終了ダイアログ
-     */
-    private void showTips() {
-        AlertDialog alertDialog = new AlertDialog.Builder(this)
-                .setTitle("アプリ終了")
-                .setMessage("アプリ終了してよろしいでしょうか？")
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //アプリ終了する
-                        Intent startMain = new Intent(Intent.ACTION_MAIN);
-                        startMain.addCategory(Intent.CATEGORY_HOME);
-                        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(startMain);
-                        finish();
-                    }
-                })
-                .setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        }).create();
-        alertDialog.show();
-        alertDialog.setCancelable(true);
     }
 
     /**

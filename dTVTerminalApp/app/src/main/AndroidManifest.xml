@@ -96,9 +96,6 @@
             android:name=".activity.other.SettingActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.other.SettingDetailActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".activity.other.SettingImageQualityActivity"
             android:screenOrientation="portrait" />
         <activity

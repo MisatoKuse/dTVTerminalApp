@@ -44,6 +44,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         DlnaProvBsChList dlnaProvBsChList = null;
 
         setContentView(R.layout.launch_main_layout);
+        enableHeaderBackIcon(false);
 
         boolean isDlnaOk = startDlna();
         if (!isDlnaOk) {

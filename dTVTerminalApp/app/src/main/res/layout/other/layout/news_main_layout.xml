@@ -5,23 +5,6 @@
     android:background="#000000"
     android:orientation="vertical">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/layout_titleBar"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="#ff0000">
-
-        <TextView
-            android:id="@+id/text_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal|center"
-            android:maxLines="1"
-            android:text="お知らせ"
-            android:textColor="#ffffffff"
-            android:textSize="20dp" />
-
-    </RelativeLayout>
     <Button
         android:id="@+id/Back3"
         android:layout_width="wrap_content"
@@ -36,7 +19,6 @@
         android:clickable="true"
         android:text="お知らせ内容一"
         android:textColor="#ffffffff"/>
-
 
     <TextView
         android:id="@+id/tv_news2"

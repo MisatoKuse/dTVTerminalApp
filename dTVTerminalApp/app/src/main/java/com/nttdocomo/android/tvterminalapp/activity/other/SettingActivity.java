@@ -9,9 +9,9 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -20,6 +20,7 @@ import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.MyChannelEditActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.MainSettingListAdapter;
 import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.utils.MainSettingUtils;
@@ -32,9 +33,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SettingActivity extends BaseActivity implements View.OnClickListener,
-        AdapterView.OnItemClickListener {
+public class SettingActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
+    private Boolean mIsMenuLaunch = false;
     private Boolean mIsSDCard = false;
     private String[] mItemName = null;
     private Resources mRes = null;
@@ -60,11 +61,18 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         DTVTLogger.start();
         setContentView(R.layout.setting_main_layout);
 
-        //header部分の設定
+        //Headerの設定
         setTitleText(getString(R.string.nav_menu_item_setting));
-        ImageView menuImageView = findViewById(R.id.header_layout_menu);
-        menuImageView.setVisibility(View.VISIBLE);
-        menuImageView.setOnClickListener(this);
+        Intent intent = getIntent();
+        mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
+        if (mIsMenuLaunch) {
+            enableHeaderBackIcon(false);
+        }
+        enableStbStatusIcon(true);
+        enableGlobalMenuIcon(true);
+
+        //テレビアイコンをタップされたらリモコンを起動する
+        findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
 
         //設定画面に表示するデータを設定する
         initData();
@@ -82,20 +90,6 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         checkDownloadPath();
         checkIsPairing();
         checkImageQuality();
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.header_layout_menu:
-                //ダブルクリックを防ぐ
-                if (isFastClick()) {
-                    onSampleGlobalMenuButton_PairLoginOk();
-                }
-                break;
-            default:
-                break;
-        }
     }
 
     @Override
@@ -370,5 +364,21 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             }
         }
         return isMounted;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        DTVTLogger.start();
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                if (mIsMenuLaunch) {
+                    //メニューから起動の場合はアプリ終了ダイアログを表示
+                    showTips();
+                    return false;
+                }
+            default:
+                break;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

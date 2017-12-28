@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.DatePicker;
@@ -25,6 +26,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.ChannelDetailPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ProgramChannelAdapter;
 import com.nttdocomo.android.tvterminalapp.adapter.TvProgramListAdapter;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.MyChannelDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
@@ -56,6 +58,7 @@ public class TvProgramListActivity extends BaseActivity
     private static final int INDEX_TAB_HIKARI = 1;
     private static final int INDEX_TAB_MY_CHANNEL = 0;
     private ProgramRecyclerView mProgramRecyclerView = null;
+    private Boolean mIsMenuLaunch = false;
     private int mScreenHeight = 0;
     private int mScreenWidth = 0;
     private ProgramScrollView mTimeScrollView = null;
@@ -93,6 +96,16 @@ public class TvProgramListActivity extends BaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tv_program_list_main_layout);
+
+        //Headerの設定
+        Intent intent = getIntent();
+        mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
+        if (mIsMenuLaunch) {
+            enableHeaderBackIcon(false);
+        }
+        enableStbStatusIcon(true);
+        enableGlobalMenuIcon(true);
+
         initView();
         syncScroll(mChannelRecyclerView, mProgramRecyclerView);
         //タブ設定
@@ -110,24 +123,18 @@ public class TvProgramListActivity extends BaseActivity
      * ビューの初期化
      */
     private void initView() {
-        RelativeLayout changeModeLayout = null;
         mScreenHeight = getHeightDensity();
         mScreenWidth = getWidthDensity();
-        ImageView menuImage = findViewById(R.id.header_layout_menu);
-        ImageView tvImage = findViewById(R.id.header_stb_status_icon);
-        tvImage.setOnClickListener(mRemoteControllerOnClickListener);
-        findViewById(R.id.header_layout_back).setVisibility(View.INVISIBLE);
+        //テレビアイコンをタップされたらリモコンを起動する
+        findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         mTimeScrollView = findViewById(R.id.tv_program_list_main_layout_time_sl);
         mChannelRecyclerView = findViewById(R.id.tv_program_list_main_layout_channel_rv);
         mTabScrollView = findViewById(R.id.tv_program_list_main_layout_tab_hs);
         mProgramRecyclerView = findViewById(R.id.tv_program_list_main_layout_channeldetail_rv);
         final ProgramScrollView programScrollView = findViewById(R.id.tv_program_list_main_layout_channeldetail_sl);
         mTagImageView = findViewById(R.id.tv_program_list_main_layout_curtime_iv);
-        changeModeLayout = findViewById(R.id.tv_program_list_main_layout_changemode_rl);
-        menuImage.setVisibility(View.VISIBLE);
-        tvImage.setVisibility(View.VISIBLE);
-//        tvImage.setOnClickListener(this);
-        menuImage.setOnClickListener(this);
+        RelativeLayout changeModeLayout = findViewById(R.id.tv_program_list_main_layout_changemode_rl);
+
         mTagImageView.setOnClickListener(this);
         titleTextView.setOnClickListener(this);
         mTimeScrollView.setScrollView(programScrollView);
@@ -458,10 +465,6 @@ public class TvProgramListActivity extends BaseActivity
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.header_layout_menu:
-                //メニュー動作
-                onSampleGlobalMenuButton_PairLoginOk();
-                break;
             case R.id.tv_program_list_main_layout_curtime_iv:
                 //システム時間軸にスクロール
                 scrollToCurTime();
@@ -470,19 +473,12 @@ public class TvProgramListActivity extends BaseActivity
                 //日付選択ダイアログ
                 showDatePickDlg();
                 break;
-//            case R.id.header_stb_status_icon:
-//                //テレビアイコンをタップされたらリモコンを起動する
-//                if (getStbStatus()) {
-//                    createRemoteControllerView();
-//                    getRemoteControllerView().startRemoteUI();
-//                }
-//                break;
             case R.id.tv_program_list_main_layout_changemode_rl:
                 //番組表モード切替
                 // TODO: 拡大・縮小番組表切替
                 break;
             default:
-                break;
+                super.onClick(v);
         }
     }
 
@@ -707,5 +703,21 @@ public class TvProgramListActivity extends BaseActivity
             }
             return date1.compareTo(date2);
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        DTVTLogger.start();
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                if (mIsMenuLaunch) {
+                    //メニューから起動の場合はアプリ終了ダイアログを表示
+                    showTips();
+                    return false;
+                }
+            default:
+                break;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

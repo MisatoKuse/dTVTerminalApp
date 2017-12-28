@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
@@ -25,6 +27,7 @@ import android.widget.Toast;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragment;
@@ -55,11 +58,11 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private String[] mTabNames = null;
 
     private LinearLayout mTabLinearLayout = null;
-    private ImageView mMenuImageView = null;
     private ViewPager mViewPager = null;
     private SearchView mSearchView = null;
     private HorizontalScrollView mTabScrollView = null;
     private ProgressBar progressBar;
+    private Boolean mIsMenuLaunch = false;
 
     private DlnaProvRecVideo mDlnaProvRecVideo = null;
     private RecordedFragmentFactory mRecordedFragmentFactory = null;
@@ -90,10 +93,14 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         DTVTLogger.start();
         setContentView(R.layout.record_list_main_layout);
-        mMenuImageView = findViewById(R.id.header_layout_menu);
-        mMenuImageView.setVisibility(View.VISIBLE);
-        mMenuImageView.setOnClickListener(this);
         setTitleText(getString(R.string.nav_menu_item_recorder_program));
+        Intent intent = getIntent();
+        mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
+        if (mIsMenuLaunch) {
+            enableHeaderBackIcon(false);
+        }
+        enableStbStatusIcon(true);
+        enableGlobalMenuIcon(true);
 
         initView();
         getData();
@@ -409,14 +416,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     @Override
-    public void onClick(View view) {
-        DTVTLogger.start();
-        if (view == mMenuImageView) {
-            onSampleGlobalMenuButton_PairLoginOk();
-        }
-    }
-
-    @Override
     public void onScroll(RecordedBaseFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         DTVTLogger.start();
     }
@@ -593,5 +592,21 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             }
         }
         return allList;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        DTVTLogger.start();
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                if (mIsMenuLaunch) {
+                    //メニューから起動の場合はアプリ終了ダイアログを表示
+                    showTips();
+                    return false;
+                }
+            default:
+                break;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

@@ -32,6 +32,7 @@ import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivit
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.video.VideoTopActivity;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 
@@ -133,7 +134,9 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                 if (null != mMenuDisplayEventListener) {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.HOME);
                     if (!(mActivity instanceof HomeActivity)) {
-                        mActivity.startActivity(HomeActivity.class, null);
+                        intent.setClass(mActivity, HomeActivity.class);
+                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                        mActivity.startActivity(intent);
                     }
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_program_list))) {
@@ -141,6 +144,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.PROGRAM_LIST);
                     if (!(mActivity instanceof TvProgramListActivity)) {
                         intent.setClass(mActivity, TvProgramListActivity.class);
+                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
                         mActivity.startActivity(intent);
                     }
                 }
@@ -149,6 +153,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.CHANNEL_LIST);
                     if (!(mActivity instanceof ChannelListActivity)) {
                         intent.setClass(mActivity, ChannelListActivity.class);
+                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
                         mActivity.startActivity(intent);
                     }
                 }
@@ -157,6 +162,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.RECORD_PROGRAM);
                     if (!(mActivity instanceof RecordedListActivity)) {
                         intent.setClass(mActivity, RecordedListActivity.class);
+                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
                         mActivity.startActivity(intent);
                     }
                 }
@@ -165,6 +171,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.RECOMMEND_PRO_VIDEO);
                     if (!(mActivity instanceof RecommendActivity)) {
                         intent.setClass(mActivity, RecommendActivity.class);
+                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
                         mActivity.startActivity(intent);
                     }
                 }
@@ -177,6 +184,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.RANKING);
                     if (!(mActivity instanceof RankingTopActivity)) {
                         intent.setClass(mActivity, RankingTopActivity.class);
+                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
                         mActivity.startActivity(intent);
                     }
                 }
@@ -185,6 +193,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.CLIP);
                     if (!(mActivity instanceof ClipListActivity)) {
                         intent.setClass(mActivity, ClipListActivity.class);
+                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
                         mActivity.startActivity(intent);
                     }
                 }
@@ -198,6 +207,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.WATCH_LISTEN_VIDEO);
                     if (!(mActivity instanceof WatchingVideoListActivity)) {
                         intent.setClass(mActivity, WatchingVideoListActivity.class);
+                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
                         mActivity.startActivity(intent);
                     }
                 }
@@ -206,6 +216,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.RECORD_RESERVE);
                     if (!(mActivity instanceof RecordReservationListActivity)) {
                         intent.setClass(mActivity, RecordReservationListActivity.class);
+                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
                         mActivity.startActivity(intent);
                     }
                 }
@@ -214,6 +225,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.VIDEO);
                     if (!(mActivity instanceof VideoTopActivity)) {
                         intent.setClass(mActivity, VideoTopActivity.class);
+                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
                         mActivity.startActivity(intent);
                     }
                 }
@@ -222,6 +234,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.KEY_WORD_SEARCH);
                     if (!(mActivity instanceof SearchTopActivity)) {
                         intent.setClass(mActivity, SearchTopActivity.class);
+                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
                         mActivity.startActivity(intent);
                     }
                 }
@@ -230,6 +243,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.KEY_WORD_SEARCH);
                     if (!(mActivity instanceof RentalListActivity)) {
                         intent.setClass(mActivity, RentalListActivity.class);
+                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
                         mActivity.startActivity(intent);
                     }
                 }
@@ -238,6 +252,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.NOTICE);
                     if (!(mActivity instanceof NewsActivity)) {
                         intent.setClass(mActivity, NewsActivity.class);
+                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
                         mActivity.startActivity(intent);
                     }
                 }
@@ -246,6 +261,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.SETTING);
                     if (!(mActivity instanceof SettingActivity)) {
                         intent.setClass(mActivity, SettingActivity.class);
+                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
                         mActivity.startActivity(intent);
                     }
                 }

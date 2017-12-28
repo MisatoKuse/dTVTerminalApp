@@ -8,7 +8,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -39,9 +38,8 @@ public class STBConnectActivity extends BaseActivity {
      */
     private void setContents() {
         DTVTLogger.start();
-        ImageView backIcon = findViewById(R.id.header_layout_back);
-        backIcon.setVisibility(View.GONE);
         setTitleText(getString(R.string.str_app_title));
+        enableHeaderBackIcon(false);
         TextView connectResult = findViewById(R.id.connect_result_text);
         connectResult.setVisibility(View.VISIBLE);
         connectResult.setText(R.string.str_stb_connect_success_text);

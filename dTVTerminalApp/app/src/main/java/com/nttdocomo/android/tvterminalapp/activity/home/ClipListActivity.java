@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,10 +13,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +25,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ClipMainAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.TvClipDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VodClipDataProvider;
@@ -33,7 +35,7 @@ import com.nttdocomo.android.tvterminalapp.fragment.ClipList.ClipListFragmentFac
 
 import java.util.List;
 
-public class ClipListActivity extends BaseActivity implements View.OnClickListener,
+public class ClipListActivity extends BaseActivity implements
         VodClipDataProvider.ApiDataProviderCallback,
         TvClipDataProvider.TvClipDataProviderCallback,
         ClipListBaseFragmentScrollListener {
@@ -42,9 +44,9 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
     private boolean mIsCommunicating = false;
 
     private LinearLayout mLinearLayout = null;
-    private ImageView mMenuImageView = null;
     private HorizontalScrollView mTabScrollView = null;
     private ViewPager mViewPager = null;
+    private Boolean mIsMenuLaunch = false;
 
     private VodClipDataProvider mVodClipDataProvider = null;
     private TvClipDataProvider mTvClipDataProvider = null;
@@ -59,10 +61,17 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.clip_list_main);
-        mMenuImageView = findViewById(R.id.header_layout_menu);
-        mMenuImageView.setVisibility(View.VISIBLE);
-        mMenuImageView.setOnClickListener(this);
+
+        //Headerの設定
         setTitleText(getString(R.string.str_clip_activity_title));
+        Intent intent = getIntent();
+        mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
+        if (mIsMenuLaunch) {
+            enableHeaderBackIcon(false);
+        }
+        enableStbStatusIcon(true);
+        enableGlobalMenuIcon(true);
+
         initData();
         initView();
         resetPaging();
@@ -176,7 +185,7 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
             //通信とJSON Parseに関してerror処理
             DTVTLogger.debug("ClipListActivity::TvClipListCallback, get data failed.");
             // TODO:エラーメッセージ表示はリスト画面上に表示する
-            Toast.makeText(this, "クリップデータ取得失敗", Toast.LENGTH_SHORT);
+            Toast.makeText(this, "クリップデータ取得失敗", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -212,7 +221,7 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
             //通信とJSON Parseに関してerror処理
             DTVTLogger.debug("ClipListActivity::VodClipListCallback, get data failed");
             // TODO:エラーメッセージ表示はリスト画面上に表示する
-            Toast.makeText(this, "クリップデータ取得失敗", Toast.LENGTH_SHORT);
+            Toast.makeText(this, "クリップデータ取得失敗", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -458,16 +467,25 @@ public class ClipListActivity extends BaseActivity implements View.OnClickListen
         }
     }
 
-    @Override
-    public void onClick(View view) {
-        if (mMenuImageView.equals(view)) {
-            onSampleGlobalMenuButton_PairLoginOk();
-        }
-    }
-
     private ClipListBaseFragment getCurrentFragment() {
 
         int i = mViewPager.getCurrentItem();
         return mClipListFragmentFactory.createFragment(i, this);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        DTVTLogger.start();
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                if (mIsMenuLaunch) {
+                    //メニューから起動の場合はアプリ終了ダイアログを表示
+                    showTips();
+                    return false;
+                }
+            default:
+                break;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

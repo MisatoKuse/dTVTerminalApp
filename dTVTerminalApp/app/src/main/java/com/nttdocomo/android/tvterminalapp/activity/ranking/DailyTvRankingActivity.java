@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.activity.ranking;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,7 +26,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DailyTvRankingActivity extends BaseActivity implements View.OnClickListener,
+public class DailyTvRankingActivity extends BaseActivity implements
         RankingTopDataProvider.ApiDataProviderCallback,
         AbsListView.OnScrollListener, AdapterView.OnItemClickListener,
         AbsListView.OnTouchListener {
@@ -59,10 +60,12 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.daily_tv_ranking_main_layout);
         mContentsList = new ArrayList();
-        mMenuImageView = findViewById(R.id.header_layout_menu);
-        mMenuImageView.setVisibility(View.VISIBLE);
-        mMenuImageView.setOnClickListener(this);
+
+        //Headerの設定
         setTitleText(getString(R.string.daily_tv_ranking_title));
+        enableHeaderBackIcon(true);
+        enableStbStatusIcon(true);
+        enableGlobalMenuIcon(true);
         resetPaging();
 
         initView();
@@ -147,14 +150,6 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
     private void setCommunicatingStatus(boolean bool) {
         synchronized (this) {
             mIsCommunicating = bool;
-        }
-    }
-
-
-    @Override
-    public void onClick(View view) {
-        if (mMenuImageView.equals(view)) {
-            onSampleGlobalMenuButton_PairLoginOk();
         }
     }
 
@@ -259,7 +254,7 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if(mLoadMoreView.equals(view)) {
+        if (mLoadMoreView.equals(view)) {
             return;
         }
         startActivity(DtvContentsDetailActivity.class, null);
@@ -307,5 +302,14 @@ public class DailyTvRankingActivity extends BaseActivity implements View.OnClick
     @Override
     public void videoRankCallback(List<ContentsData> contentsDataList) {
         // NOP
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        DTVTLogger.start();
+        if (checkRemoteControllerView()) {
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

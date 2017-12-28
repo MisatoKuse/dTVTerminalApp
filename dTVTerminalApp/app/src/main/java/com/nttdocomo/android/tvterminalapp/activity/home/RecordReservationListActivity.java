@@ -5,8 +5,10 @@
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
@@ -21,6 +23,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
@@ -29,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RecordReservationListActivity extends BaseActivity
-        implements View.OnClickListener, AdapterView.OnItemClickListener, AbsListView.OnScrollListener,
+        implements AdapterView.OnItemClickListener, AbsListView.OnScrollListener,
         RecordingReservationListDataProvider.ApiDataProviderCallback {
 
     private RelativeLayout mRelativeLayout = null;
@@ -40,27 +43,29 @@ public class RecordReservationListActivity extends BaseActivity
     private List mContentsList = null;
     private View mLoadMoreView = null;
     private boolean mIsCommunicating = false;
+    private Boolean mIsMenuLaunch = false;
     private final int NUM_PER_PAGE = 20;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.record_reservation_list_main_layout);
-        mMenuImageView = findViewById(R.id.header_layout_menu);
-        mMenuImageView.setVisibility(View.VISIBLE);
-        mMenuImageView.setOnClickListener(this);
+
+        //Headerの設定
         setTitleText(getString(R.string.recording_reservation_list_title));
+        Intent intent = getIntent();
+        mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
+        if (mIsMenuLaunch) {
+            enableHeaderBackIcon(false);
+        }
+        enableStbStatusIcon(true);
+        enableGlobalMenuIcon(true);
+
         mProvider = new RecordingReservationListDataProvider(this);
         mContentsList = new ArrayList();
         initView();
         mProvider.requestRecordingReservationListData();
-    }
-
-    @Override
-    public void onClick(View view) {
-        if (view == mMenuImageView) {
-            onSampleGlobalMenuButton_PairLoginOk();
-        }
     }
 
     private void initView() {
@@ -208,7 +213,7 @@ public class RecordReservationListActivity extends BaseActivity
             //通信とJSON Parseに関してのerror処理
             // TODO データ取得失敗時の仕様決定後に修正が必要
             DTVTLogger.debug("RecordingReservationListActivity::RecordingReservationListCallback, 録画予約一覧取得失敗");
-            Toast.makeText(this, R.string.recording_reservation_list_error_toast, Toast.LENGTH_SHORT);
+            Toast.makeText(this, R.string.recording_reservation_list_error_toast, Toast.LENGTH_SHORT).show();
             resetPaging();
             resetCommunication();
             return;
@@ -232,5 +237,21 @@ public class RecordReservationListActivity extends BaseActivity
         resetCommunication();
         mContentsAdapter.notifyDataSetChanged();
         DTVTLogger.end();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        DTVTLogger.start();
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                if (mIsMenuLaunch) {
+                    //メニューから起動の場合はアプリ終了ダイアログを表示
+                    showTips();
+                    return false;
+                }
+            default:
+                break;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

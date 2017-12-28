@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,16 +14,17 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecommendDataProvider;
 import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendBaseFragment;
@@ -32,16 +34,16 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchC
 
 import java.util.List;
 
-public class RecommendActivity extends BaseActivity implements View.OnClickListener,
+public class RecommendActivity extends BaseActivity implements
         RecommendBaseFragmentScrollListener, RecommendDataProvider.RecommendApiDataProviderCallback {
 
     private String[] mTabNames = null;
     private boolean mIsSearching = false;
+    private Boolean mIsMenuLaunch = false;
 
     private LinearLayout mLinearLayout = null;
     private HorizontalScrollView mTabScrollView = null;
     private ViewPager mRecommendViewPager = null;
-    private ImageView mMenuImageView = null;
 
     private RecommendDataProvider mRecommendDataProvider = null;
 
@@ -62,11 +64,16 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recommend_main_layout);
-        setTitleText(getString(R.string.recommend_list_title));
 
-        mMenuImageView = findViewById(R.id.header_layout_menu);
-        mMenuImageView.setVisibility(View.VISIBLE);
-        mMenuImageView.setOnClickListener(this);
+        //Headerの設定
+        setTitleText(getString(R.string.recommend_list_title));
+        Intent intent = getIntent();
+        mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
+        if (mIsMenuLaunch) {
+            enableHeaderBackIcon(false);
+        }
+        enableStbStatusIcon(true);
+        enableGlobalMenuIcon(true);
 
         initData();
         initRecommendListView();
@@ -292,13 +299,6 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.debug("onSearchDataProviderFinishNg");
     }
 
-    @Override
-    public void onClick(View view) {
-        if (mMenuImageView.equals(view)) {
-            onSampleGlobalMenuButton_PairLoginOk();
-        }
-    }
-
     /**
      * ページング判定の変更
      *
@@ -436,5 +436,21 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void RecommendNGCallback() {
         recommendDataProviderFinishNg();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        DTVTLogger.start();
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                if (mIsMenuLaunch) {
+                    //メニューから起動の場合はアプリ終了ダイアログを表示
+                    showTips();
+                    return false;
+                }
+            default:
+                break;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

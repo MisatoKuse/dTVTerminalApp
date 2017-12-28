@@ -4,12 +4,13 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.ranking;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -19,13 +20,16 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.common.SpaceItemDecoration;
 import com.nttdocomo.android.tvterminalapp.activity.home.adapter.HomeRecyclerViewAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
 
 import java.util.List;
 
-public class RankingTopActivity extends BaseActivity implements View.OnClickListener, RankingTopDataProvider.ApiDataProviderCallback {
+public class RankingTopActivity extends BaseActivity implements RankingTopDataProvider.ApiDataProviderCallback {
 
     private LinearLayout mLinearLayout;
+    private Boolean mIsMenuLaunch = false;
     //コンテンツ一覧数
     private final static int CONTENT_LIST_COUNT = 3;
     //UIの上下表示順(今日のテレビランキング)
@@ -39,7 +43,17 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ranking_top_main_layout);
+
+        //Headerの設定
         setTitleText(getString(R.string.nav_menu_item_ranking));
+        Intent intent = getIntent();
+        mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
+        if (mIsMenuLaunch) {
+            enableHeaderBackIcon(false);
+        }
+        enableStbStatusIcon(true);
+        enableGlobalMenuIcon(true);
+
         //ビューの初期化処理
         initView();
         RankingTopDataProvider rankingTopDataProvider = new RankingTopDataProvider(this);
@@ -54,10 +68,6 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         mLinearLayout = findViewById(R.id.ranking_top_main_layout_linearLayout);
-        ImageView menuImageView = findViewById(R.id.header_layout_menu);
-        menuImageView.setVisibility(View.VISIBLE);
-        findViewById(R.id.header_layout_back).setVisibility(View.INVISIBLE);
-        menuImageView.setOnClickListener(this);
         int height = getHeightDensity();
         //各ランキングリストのUIをあらかじめ用意する
         for (int i = 0; i < CONTENT_LIST_COUNT; i++) {
@@ -124,20 +134,6 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
         mHorizontalViewAdapter.setFooterView(footer);
     }
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.header_layout_menu:
-                //ダブルクリックを防ぐ
-                if (isFastClick()) {
-                    onSampleGlobalMenuButton_PairLoginOk();
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
     /**
      * 機能
      * 遷移先を設定
@@ -202,5 +198,21 @@ public class RankingTopActivity extends BaseActivity implements View.OnClickList
         if (contentsDataList != null && contentsDataList.size() > 0) {
             setRecyclerView(contentsDataList, VIDEO_SORT);
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        DTVTLogger.start();
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                if (mIsMenuLaunch) {
+                    //メニューから起動の場合はアプリ終了ダイアログを表示
+                    showTips();
+                    return false;
+                }
+            default:
+                break;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

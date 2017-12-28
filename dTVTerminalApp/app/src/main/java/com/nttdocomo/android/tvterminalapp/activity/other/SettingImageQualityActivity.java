@@ -5,9 +5,9 @@
 package com.nttdocomo.android.tvterminalapp.activity.other;
 
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -28,11 +28,13 @@ public class SettingImageQualityActivity extends BaseActivity implements View.On
         DTVTLogger.start();
         setContentView(R.layout.setting_quality_change);
 
-        //header部分の設定
+        //Headerの設定
         setTitleText(getString(R.string.main_setting_quality_setting_header));
-        ImageView menuImageView = findViewById(R.id.header_layout_menu);
-        menuImageView.setVisibility(View.VISIBLE);
-        menuImageView.setOnClickListener(this);
+        enableHeaderBackIcon(true);
+        enableStbStatusIcon(true);
+        enableGlobalMenuIcon(true);
+        //テレビアイコンをタップされたらリモコンを起動する
+        findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
 
         //画質設定の設定値を取得
         mStatus = getIntent().getStringExtra(getString(R.string.main_setting_quality_status));
@@ -80,14 +82,8 @@ public class SettingImageQualityActivity extends BaseActivity implements View.On
                 storeStatus(getString(R.string.main_setting_image_quality_low));
                 this.finish();
                 break;
-            case R.id.header_layout_menu:
-                //ダブルクリックを防ぐ
-                if (isFastClick()) {
-                    onSampleGlobalMenuButton_PairLoginOk();
-                }
-                break;
             default:
-                break;
+                super.onClick(view);
         }
     }
 
@@ -110,5 +106,14 @@ public class SettingImageQualityActivity extends BaseActivity implements View.On
      */
     private void storeStatus(String status) {
         SharedPreferencesUtils.setSharedPreferencesImageQuality(this, status);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        DTVTLogger.start();
+        if (checkRemoteControllerView()) {
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

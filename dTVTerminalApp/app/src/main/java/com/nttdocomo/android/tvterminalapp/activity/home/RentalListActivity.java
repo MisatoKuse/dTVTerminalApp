@@ -4,13 +4,14 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -18,22 +19,22 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RentalDataProvider;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RentalListActivity extends BaseActivity implements View.OnClickListener,
-        AdapterView.OnItemClickListener, AbsListView.OnScrollListener,
-        RentalDataProvider.ApiDataProviderCallback {
+public class RentalListActivity extends BaseActivity implements AdapterView.OnItemClickListener,
+        AbsListView.OnScrollListener, RentalDataProvider.ApiDataProviderCallback {
 
-    private ImageView mMenuImageView;
     private RentalDataProvider mRentalDataProvider;
     private ListView mListView;
     private View mLoadMoreView;
     private List<ContentsData> mContentsList;
     private boolean mIsCommunicating = false;
+    private Boolean mIsMenuLaunch = false;
     private ContentsAdapter mContentsAdapter;
     private final int NUM_PER_PAGE = 20;
     private final int LOAD_PAGE_DELEY_TIME = 1000;
@@ -43,11 +44,17 @@ public class RentalListActivity extends BaseActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.rental_list_main_layout);
         mContentsList = new ArrayList();
-        mMenuImageView = findViewById(R.id.header_layout_menu);
-        mMenuImageView.setVisibility(View.VISIBLE);
-        mMenuImageView.setOnClickListener(this);
 
+        //Headerの設定
         setTitleText(getString(R.string.rental_title));
+        Intent intent = getIntent();
+        mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
+        if (mIsMenuLaunch) {
+            enableHeaderBackIcon(false);
+        }
+        enableStbStatusIcon(true);
+        enableGlobalMenuIcon(true);
+
         resetPaging();
 
         initView();
@@ -105,13 +112,6 @@ public class RentalListActivity extends BaseActivity implements View.OnClickList
     private void setCommunicatingStatus(boolean b) {
         synchronized (this) {
             mIsCommunicating = b;
-        }
-    }
-
-    @Override
-    public void onClick(View view) {
-        if (mMenuImageView.equals(view)) {
-            onSampleGlobalMenuButton_PairLoginOk();
         }
     }
 
@@ -219,5 +219,21 @@ public class RentalListActivity extends BaseActivity implements View.OnClickList
                         + visibleItemCount);
             }
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        DTVTLogger.start();
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                if (mIsMenuLaunch) {
+                    //メニューから起動の場合はアプリ終了ダイアログを表示
+                    showTips();
+                    return false;
+                }
+            default:
+                break;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

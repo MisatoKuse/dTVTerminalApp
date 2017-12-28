@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.activity.video;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -15,6 +16,8 @@ import android.widget.ListView;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.adapter.VideoGenreAdapter;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VideoGenreProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
@@ -26,12 +29,13 @@ import java.util.List;
 /**
  * ビデオ＞ジャンル/サブジャンル一覧 Activityクラス
  */
-public class VideoTopActivity extends BaseActivity implements View.OnClickListener,
+public class VideoTopActivity extends BaseActivity implements AbsListView.OnScrollListener,
         VideoGenreProvider.apiGenreListDataProviderCallback,
-        AbsListView.OnScrollListener, AdapterView.OnItemClickListener, VideoGenreProvider.GenreListMapCallback {
+        AdapterView.OnItemClickListener, VideoGenreProvider.GenreListMapCallback {
 
     private ImageView mMenuImageView;
     private List mContentsList;
+    private Boolean mIsMenuLaunch = false;
 
     private VideoGenreAdapter mVideoGenreAdapter;
     private VideoGenreListData mVideoGenreListData;
@@ -48,9 +52,6 @@ public class VideoTopActivity extends BaseActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.video_genre_main_layout);
         mContentsList = new ArrayList();
-        mMenuImageView = findViewById(R.id.header_layout_menu);
-        mMenuImageView.setVisibility(View.VISIBLE);
-        mMenuImageView.setOnClickListener(this);
 
         VideoGenreProvider videoGenreProvider = new VideoGenreProvider(this);
 
@@ -58,6 +59,7 @@ public class VideoTopActivity extends BaseActivity implements View.OnClickListen
         String genreId = intent.getStringExtra(VIDEO_CONTENTS_BUNDLE_KEY);
         mVideoGenreListData = intent.getParcelableExtra(GET_GENRE_MAP_BUNDLE_KEY);
 
+        //Headerの設定
         if (null != genreId) {
             // サブジャンル画面のタイトル
             setTitleText(mVideoGenreListData.getTitleMap().get(genreId));
@@ -65,6 +67,12 @@ public class VideoTopActivity extends BaseActivity implements View.OnClickListen
             // ジャンル画面のタイトル
             setTitleText(getString(R.string.video_content_top_title));
         }
+        mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
+        if (mIsMenuLaunch) {
+            enableHeaderBackIcon(false);
+        }
+        enableStbStatusIcon(true);
+        enableGlobalMenuIcon(true);
 
         //ジャンル一覧表示データ取得要求開始
         videoGenreProvider.getGenreListDataRequest();
@@ -96,13 +104,6 @@ public class VideoTopActivity extends BaseActivity implements View.OnClickListen
     private void noticeRefresh() {
         if (null != mVideoGenreAdapter) {
             mVideoGenreAdapter.notifyDataSetChanged();
-        }
-    }
-
-    @Override
-    public void onClick(View view) {
-        if (view == mMenuImageView) {
-            onSampleGlobalMenuButton_PairLoginOk();
         }
     }
 
@@ -159,5 +160,24 @@ public class VideoTopActivity extends BaseActivity implements View.OnClickListen
     @Override
     public void genreListMapCallback(VideoGenreListData listData) {
         mVideoGenreListData = listData;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        DTVTLogger.start();
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                if (mIsMenuLaunch) {
+                    //メニューから起動の場合はアプリ終了ダイアログを表示
+                    showTips();
+                    return false;
+                }
+            default:
+                break;
+        }
+        if (checkRemoteControllerView()) {
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

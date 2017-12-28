@@ -59,7 +59,13 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_channel_edit_main_layout);
+
+        //Headerの設定
         setTitleText(getResources().getString(R.string.my_channel_list_setting));
+        enableHeaderBackIcon(true);
+        enableStbStatusIcon(true);
+        enableGlobalMenuIcon(true);
+
         loadData();
         initView();
     }
@@ -68,6 +74,8 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
      * view 初期化
      */
     private void initView() {
+        //テレビアイコンをタップされたらリモコンを起動する
+        findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         mViewPager = findViewById(R.id.my_channel_edit_main_layout_edit_vp);
         mEditMyChannelListFragment = new EditMyChannelListFragment();
         mEditChannelListFragment = new EditChannelListFragment();
@@ -194,10 +202,10 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
         if (channels != null) {
             mEditChannelListFragment.mData.clear();
             ArrayList<Channel> rmChannels = new ArrayList<>();
-            for (int i = 0; i < mServiceIds.length; i++) {
+            for (String mServiceId : mServiceIds) {
                 for (int j = 0; j < channels.size(); j++) {
-                    if (mServiceIds[i] != null) {
-                        if (mServiceIds[i].equals(channels.get(j).getServiceId())) {
+                    if (mServiceId != null) {
+                        if (mServiceId.equals(channels.get(j).getServiceId())) {
                             rmChannels.add(channels.get(j));
                         }
                     }
@@ -311,4 +319,12 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
         mServiceIds = editListInfo.toString().split(EditMyChannelListAdapter.COMMA);
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        DTVTLogger.start();
+        if (checkRemoteControllerView()) {
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 }

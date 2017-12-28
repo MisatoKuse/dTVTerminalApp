@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.HorizontalScrollView;
@@ -33,7 +34,7 @@ import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingFragmentScrol
 
 import java.util.List;
 
-public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClickListener,
+public class WeeklyTvRankingActivity extends BaseActivity implements
         RankingTopDataProvider.WeeklyRankingApiDataProviderCallback, RankingFragmentScrollListener {
 
     private ImageView mMenuImageView;
@@ -61,7 +62,13 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
         mMenuImageView = findViewById(R.id.header_layout_menu);
         mMenuImageView.setVisibility(View.VISIBLE);
         mMenuImageView.setOnClickListener(this);
+
+        //Headerの設定
         setTitleText(getString(R.string.weekly_tv_ranking_title));
+        enableHeaderBackIcon(true);
+        enableStbStatusIcon(true);
+        enableGlobalMenuIcon(true);
+
         initData();
         initView();
         resetPaging();
@@ -281,13 +288,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
     }
 
     @Override
-    public void onClick(View view) {
-        if (mMenuImageView.equals(view)) {
-            onSampleGlobalMenuButton_PairLoginOk();
-        }
-    }
-
-    @Override
     public void onScroll(RankingBaseFragment fragment, AbsListView absListView,
                          int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         synchronized (this) {
@@ -451,5 +451,13 @@ public class WeeklyTvRankingActivity extends BaseActivity implements View.OnClic
             return mTabNames[position];
         }
     }
-}
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        DTVTLogger.start();
+        if (checkRemoteControllerView()) {
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+}

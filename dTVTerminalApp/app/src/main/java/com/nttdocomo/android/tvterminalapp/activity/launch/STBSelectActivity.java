@@ -83,9 +83,8 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         setContentView(R.layout.stb_select_main_layout);
         mContentsList = new ArrayList();
         mDlnaDmsItemList = new ArrayList<>();
-        mBackIcon = findViewById(R.id.header_layout_back);
-        mBackIcon.setVisibility(View.GONE);
         setTitleText(getString(R.string.str_app_title));
+        enableHeaderBackIcon(false);
 
         DTVTLogger.end();
     }
@@ -142,7 +141,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                     }
                 }
             });
-            mBackIcon.setVisibility(View.VISIBLE);
+            enableHeaderBackIcon(true);
             if (null == dlnaDmsItem) {
                 //未ペアリング
                 return;

@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.tvprogram;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +13,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ChannelListAdapter;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.DTvChDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.HikariTvChDataProvider;
@@ -58,6 +61,7 @@ public class ChannelListActivity extends BaseActivity implements
     private float mLastY = 0;
     private static final float sScrollThreshold = 20.0f;
     private boolean mIsScrollUp = false;
+    private Boolean mIsMenuLaunch = false;
 
     private LinearLayout mTabsLayout = null;
     private ViewPager mViewPager = null;
@@ -89,7 +93,17 @@ public class ChannelListActivity extends BaseActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         DTVTLogger.start();
         super.onCreate(savedInstanceState);
+
+        //Headerの設定
         setTitleText(getString(R.string.channel_list_activity_title));
+        Intent intent = getIntent();
+        mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
+        if (mIsMenuLaunch) {
+            enableHeaderBackIcon(false);
+        }
+        enableGlobalMenuIcon(true);
+        enableStbStatusIcon(true);
+
         setContentView(R.layout.channel_list_main_layout);
         screenWidth = getWidthDensity();
         initView();
@@ -169,8 +183,9 @@ public class ChannelListActivity extends BaseActivity implements
      */
     private void initView() {
         DTVTLogger.start();
-        HorizontalScrollView horizontalScrollView = null;
-        horizontalScrollView = findViewById(R.id.channel_list_main_layout_channel_titles_hs);
+        //テレビアイコンをタップされたらリモコンを起動する
+        findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
+        HorizontalScrollView horizontalScrollView = findViewById(R.id.channel_list_main_layout_channel_titles_hs);
         //mViewPager = findViewById(R.id.channel_list_main_layout_channel_body_vp);
         initChannelListTab(horizontalScrollView);
         ChannelListPagerAdapter adp = new ChannelListPagerAdapter(getSupportFragmentManager());
@@ -184,8 +199,6 @@ public class ChannelListActivity extends BaseActivity implements
                 setTab(position);
             }
         });
-        enableGlobalMenuIcon(true);
-        enableStbStatusIcon(true);
         DTVTLogger.end();
     }
 
@@ -504,11 +517,7 @@ public class ChannelListActivity extends BaseActivity implements
                 break;
             case MotionEvent.ACTION_UP:
                 float y = event.getY();
-                if ((y - mLastY) > sScrollThreshold) {
-                    mIsScrollUp = false;
-                } else {
-                    mIsScrollUp = true;
-                }
+                mIsScrollUp = (y - mLastY) <= sScrollThreshold;
                 break;
             default:
                 break;
@@ -918,5 +927,21 @@ public class ChannelListActivity extends BaseActivity implements
         DTVTLogger.start();
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
         DTVTLogger.end();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        DTVTLogger.start();
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                if (mIsMenuLaunch) {
+                    //メニューから起動の場合はアプリ終了ダイアログを表示
+                    showTips();
+                    return false;
+                }
+            default:
+                break;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

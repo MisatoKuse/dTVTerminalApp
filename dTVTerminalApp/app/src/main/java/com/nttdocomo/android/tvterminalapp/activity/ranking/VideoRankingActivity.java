@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.HorizontalScrollView;
@@ -37,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class VideoRankingActivity extends BaseActivity implements View.OnClickListener,
+public class VideoRankingActivity extends BaseActivity implements
         VideoRankingApiDataProviderCallback, RankingFragmentScrollListener {
     private ImageView mMenuImageView;
     private boolean mIsCommunicating = false;
@@ -62,10 +63,13 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.video_ranking_main_layout);
-        mMenuImageView = findViewById(R.id.header_layout_menu);
-        mMenuImageView.setVisibility(View.VISIBLE);
-        mMenuImageView.setOnClickListener(this);
+
+        //Headerの設定
         setTitleText(getString(R.string.video_ranking_title));
+        enableHeaderBackIcon(true);
+        enableStbStatusIcon(true);
+        enableGlobalMenuIcon(true);
+
         initData();
         initView();
         resetPaging();
@@ -277,7 +281,7 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
      */
     private List<ContentsData> setVideoRankingContentData(
             List<Map<String, String>> videoRankMapList) {
-        List<ContentsData> rankingContentsDataList = new ArrayList<ContentsData>();
+        List<ContentsData> rankingContentsDataList = new ArrayList<>();
 
         ContentsData rankingContentInfo;
 
@@ -314,13 +318,6 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
      */
     public void clipButton(View view) {
         Toast.makeText(this, "クリップしました", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onClick(View view) {
-        if (mMenuImageView.equals(view)) {
-            onSampleGlobalMenuButton_PairLoginOk();
-        }
     }
 
     @Override
@@ -505,5 +502,14 @@ public class VideoRankingActivity extends BaseActivity implements View.OnClickLi
         public CharSequence getPageTitle(int position) {
             return mTabNames[position];
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        DTVTLogger.start();
+        if (checkRemoteControllerView()) {
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

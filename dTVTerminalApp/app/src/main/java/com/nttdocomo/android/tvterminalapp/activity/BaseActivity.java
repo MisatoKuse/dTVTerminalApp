@@ -62,6 +62,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     private LinearLayout baseLinearLayout = null;
     private RelativeLayout headerLayout = null;
     protected TextView titleTextView = null;
+    private ImageView mHeaderBackIcon = null;
     private ImageView mStbStatusIcon = null;
     private DlnaProvDevList mDlnaProvDevListForBase = null;
 
@@ -159,8 +160,24 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         headerLayout.setLayoutParams(lp);
         titleTextView = findViewById(R.id.header_layout_text);
         DTVTLogger.end();
+        mHeaderBackIcon = findViewById(R.id.header_layout_back);
         mStbStatusIcon = findViewById(R.id.header_stb_status_icon);
         mMenuImageViewForBase = findViewById(R.id.header_layout_menu);
+    }
+
+    /**
+     * 機能：ヘッダーの戻るアイコン"<"有効
+     *
+     * @param isOn true: 表示  false: 非表示
+     */
+    protected void enableHeaderBackIcon(boolean isOn) {
+        if (null != mHeaderBackIcon) {
+            if (isOn) {
+                mHeaderBackIcon.setVisibility(View.VISIBLE);
+            } else {
+                mHeaderBackIcon.setVisibility(View.GONE);
+            }
+        }
     }
 
     /**
@@ -237,7 +254,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                         }
                     } catch (Exception e) {
                         DTVTLogger.debug("BaseActivity::setStbStatus, stb status png file not found");
-                        return;
                     }
                 }
             });
@@ -953,5 +969,45 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     public void setRelayClientHandler() {
         // TODO MenuDisplay修正時に合わせて修正する
         mRemoteControlRelayClient.setHandler(mRerayClientHandler);
+    }
+
+    /**
+     * 機能: バックキー押下によるアプリ終了ダイアログを表示
+     */
+    protected void showTips() {
+        DTVTLogger.start();
+        if (checkRemoteControllerView()) {
+            //リモコンUI表示時はリモコンUIを閉じてダイアログは表示しない
+            return;
+        }
+        CustomDialog applicationFinishDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+        applicationFinishDialog.setTitle(getString(R.string.app_finish_dialog_title));
+        applicationFinishDialog.setContent(getString(R.string.app_finish_dialog_message));
+        applicationFinishDialog.setCancelable(false);
+        applicationFinishDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+            @Override
+            public void onOKCallback(boolean isOK) {
+                //アプリ終了する
+                Intent startMain = new Intent(Intent.ACTION_MAIN);
+                startMain.addCategory(Intent.CATEGORY_HOME);
+                startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(startMain);
+                finish();
+            }
+        });
+        applicationFinishDialog.showDialog();
+    }
+
+    /**
+     * 機能: リモコンが表示されているか確認し、開いている場合は閉じる
+     *
+     * @return true:リモコン表示、リモコンを閉じる false:リモコン非表示
+     */
+    protected Boolean checkRemoteControllerView() {
+        if (remoteControllerView != null && remoteControllerView.isTopRemoteControllerUI()) {
+            remoteControllerView.closeRemoteControllerUI();
+            return true;
+        }
+        return false;
     }
 }

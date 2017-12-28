@@ -36,10 +36,10 @@ public class CustomDialog {
     private String cancelText = null;
     private boolean cancelable = true;
 
-    private int cancelVisiblity = View.VISIBLE;
-    private int confirmVisiblity = View.VISIBLE;
-    private boolean isCancelVisiblityChanged = false;
-    private boolean isConfirmVisiblityChanged = false;
+    private int cancelVisibility = View.VISIBLE;
+    private int confirmVisibility = View.VISIBLE;
+    private boolean isCancelVisibilityChanged = false;
+    private boolean isConfirmVisibilityChanged = false;
 
     /**
      * OKを返却するためのコールバック
@@ -141,13 +141,13 @@ public class CustomDialog {
                 }
                 break;
             case SELECT:
-                if(isConfirmVisiblityChanged) {
-                    tv_confirm.setVisibility(confirmVisiblity);
+                if(isConfirmVisibilityChanged) {
+                    tv_confirm.setVisibility(confirmVisibility);
                 } else {
                     tv_confirm.setVisibility(View.GONE);
                 }
-                if(isCancelVisiblityChanged) {
-                    tv_cancel.setVisibility(cancelVisiblity);
+                if(isCancelVisibilityChanged) {
+                    tv_cancel.setVisibility(cancelVisibility);
                 }
                 window.findViewById(R.id.custom_dialog_line_separete).setVisibility(View.VISIBLE);
                 window.findViewById(R.id.custom_dialog_sl).setVisibility(View.VISIBLE);
@@ -237,7 +237,8 @@ public class CustomDialog {
     private static OnKeyListener keyListener = new OnKeyListener() {
         @Override
         public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-            if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0
+                    && event.getAction() != KeyEvent.ACTION_UP) {
                 dialog.dismiss();
                 return true;
             } else {
@@ -272,16 +273,16 @@ public class CustomDialog {
     /**
      * confirmの表示/非表示を設定
      */
-    public void setConfirmVisiblity(int visiblity) {
-        isConfirmVisiblityChanged = true;
-        confirmVisiblity = visiblity;
+    public void setConfirmVisibility(int visibility) {
+        isConfirmVisibilityChanged = true;
+        confirmVisibility = visibility;
     }
 
     /**
      * cancelの表示/非表示を設定
      */
-    public void setCancelVisiblity(int visiblity) {
-        isCancelVisiblityChanged = true;
-        cancelVisiblity = visiblity;
+    public void setCancelVisibility(int visibility) {
+        isCancelVisibilityChanged = true;
+        cancelVisibility = visibility;
     }
 }
