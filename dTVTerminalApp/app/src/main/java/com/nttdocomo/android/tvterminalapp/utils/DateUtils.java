@@ -357,7 +357,16 @@ public class DateUtils {
      * @return
      */
     public static long getEpochTime(String strDate) {
-        Date lm = new Date(strDate);
-        return lm.getTime();
+        long epochTime = 0;
+        Date lm = null;
+        if (null != strDate) {
+            lm = new Date(strDate);
+            try {
+                epochTime = lm.getTime();
+            } catch (Exception e) {
+                DTVTLogger.error("response is null");
+            }
+        }
+        return epochTime;
     }
 }

@@ -124,6 +124,7 @@ public class Schedule {
      */
     public float getMarginTop() {
         String standardTime = "";
+        float diffHours = 0;
         if (startTime != null) {
             String curStartDay = startTime.substring(0, 10);
             int hour = Integer.parseInt(startTime.substring(11,13));
@@ -144,7 +145,11 @@ public class Schedule {
         }
         Date startTime = stringToDate(standardTime);
         Date endTime = stringToDate(getFormatDate(this.startTime));
-        float diffHours = (endTime.getTime() - startTime.getTime()) / FORMAT;
+        try {
+            diffHours = (endTime.getTime() - startTime.getTime()) / FORMAT;
+        } catch (Exception e) {
+            DTVTLogger.error("response is null");
+        }
         if (diffHours < 0) {
             diffHours = 0;
         }

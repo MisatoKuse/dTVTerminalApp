@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListMetaData;
@@ -133,8 +134,13 @@ public class VideoGenreProvider implements
      * @param genreListResponse ジャンル一覧APIからのレスポンス
      */
     private void getGenreList(GenreListResponse genreListResponse) {
-        Map<String, ArrayList<GenreListMetaData>> listMap = genreListResponse.getTypeList();
+        Map<String, ArrayList<GenreListMetaData>> listMap = new HashMap<>();
         ArrayList<GenreListMetaData> genreMetaDataList = new ArrayList<>();
+        try {
+            listMap = genreListResponse.getTypeList();
+        } catch (Exception e){
+            DTVTLogger.error("response is null");
+        }
 
         //PLALAコンテンツデータをすべて取得
         if (listMap.get(VIDEO_GENRE_KEY_PLALA) != null) {

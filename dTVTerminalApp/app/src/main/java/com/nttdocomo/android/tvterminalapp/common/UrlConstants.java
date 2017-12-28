@@ -16,14 +16,20 @@ public class UrlConstants {
          * レコメンド情報取得APIのURL
          */
         public static final String RECOMMEND_LIST_GET_URL =
-                //"http://ve.m.support2.smt.docomo.ne.jp/srermd/recommend/index.do";
-                "https://ve.m.support2.smt.docomo.ne.jp/srermd/recommend/index.do";
+                "https://ve.m.service.smt.docomo.ne.jp/srermd/recommend/index.do";
 
         //TODO: 本物のぷららサーバーが提供されるまでは、テストサーバーのアドレスを指定する
         /**
          * ぷららサーバーAPIアクセス用のベースURL
          */
         private static final String PLALA_BASE_URL = "http://192.168.2.3/";
+
+        // 商用
+//        private static final String PLALA_BASE_URL = "https://if.hikaritv-docomo.jp/";
+        // ステージング
+//        private static final String PLALA_BASE_URL = "https://zif.hikaritv-docomo.jp/";
+        // ラボ
+//        private static final String PLALA_BASE_URL = "https://tif.hikaritv-docomo.jp/";
 
         // ログ以外は文字列を+演算子で連結するのは禁止だが、ここはstaticなので+で連結せざるを得ない。
         /**
@@ -165,7 +171,7 @@ public class UrlConstants {
          */
         public static final String CONTENTS_DETAIL_GET_WEB_CLIENT =
                 //PLALA_CLIENT + "contents/specifics/get";
-                PLALA_CLIENT + "meta/conetntsdetail";
+                PLALA_CLIENT + "meta/contentsdetail";
 
         /**
          * クリップ登録
@@ -183,7 +189,6 @@ public class UrlConstants {
          * リモート録画予約登録
          */
         public static final String REMOTE_RECORDING_RESERVATION_CLIENT =
-                PLALA_BASE_URL +"remoterecording/reservation/set";
-//                PLALA_CLIENT + "remoterecording/reservation/set";
+                PLALA_CLIENT + "user/reservation/remote/register";
     }
 }

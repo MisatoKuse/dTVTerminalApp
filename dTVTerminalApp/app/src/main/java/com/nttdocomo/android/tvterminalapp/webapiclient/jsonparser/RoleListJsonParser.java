@@ -86,13 +86,19 @@ public class RoleListJsonParser extends AsyncTask<Object, Object, Object> {
      * @param jsonArray APIレスポンス Jsonデータ
      */
     public void sendRoleListResponse(JSONArray jsonArray) {
+        String id = "";
+        String name = "";
         try {
             ArrayList<RoleListMetaData> roleListMetaData = new ArrayList<>();
             for (int i = 0; i < jsonArray.length(); i++) {
                 RoleListMetaData roleMetaData = new RoleListMetaData();
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                String id = jsonObject.getString(JsonContents.META_RESPONSE_CONTENTS_ID);
-                String name = jsonObject.getString(JsonContents.META_RESPONSE_CONTENTS_NAME);
+                if (!jsonObject.isNull(JsonContents.META_RESPONSE_CONTENTS_ID)) {
+                    id = jsonObject.getString(JsonContents.META_RESPONSE_CONTENTS_ID);
+                }
+                if (!jsonObject.isNull(JsonContents.META_RESPONSE_CONTENTS_NAME)) {
+                    name = jsonObject.getString(JsonContents.META_RESPONSE_CONTENTS_NAME);
+                }
                 roleMetaData.setId(id);
                 roleMetaData.setName(name);
                 roleListMetaData.add(roleMetaData);

@@ -346,10 +346,10 @@ public class DlnaInterface {
     }
 
     private final String sErrorMsgDMS="DMS Error";
-    private final String sErrorMsgRecordVideo="録画一覧データ取得失敗しまいました";
-    private final String sErrorMsgTerChannelList="地上波チャンネルリスト取得失敗しまいました";
-    private final String sErrorMsgBsChannelList="BSチャンネルリスト取得失敗しまいました";
-    private final String sErrorMsgHikariChannelList="ひかりチャンネルリスト取得失敗しまいました";
+    private final String sErrorMsgRecordVideo="録画一覧データ取得に失敗しました";
+    private final String sErrorMsgTerChannelList="地上波チャンネルリスト取得に失敗しました";
+    private final String sErrorMsgBsChannelList="BSチャンネルリスト取得に失敗しました";
+    private final String sErrorMsgHikariChannelList="ひかりチャンネルリスト取得に失敗しました";
 
     private boolean onError(int msg, ArrayList<Object> content){
         boolean ret=false;
