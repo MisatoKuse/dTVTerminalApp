@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -38,12 +39,10 @@ public class STBConnectActivity extends BaseActivity {
      */
     private void setContents() {
         DTVTLogger.start();
-        TextView connectResult = null;
-        TextView backIcon = null;
-        backIcon = findViewById(R.id.header_layout_back);
+        ImageView backIcon = findViewById(R.id.header_layout_back);
         backIcon.setVisibility(View.GONE);
         setTitleText(getString(R.string.str_app_title));
-        connectResult = findViewById(R.id.connect_result_text);
+        TextView connectResult = findViewById(R.id.connect_result_text);
         connectResult.setVisibility(View.VISIBLE);
         connectResult.setText(R.string.str_stb_connect_success_text);
         handler.postDelayed(runnable, DELAYED_TIME);
@@ -53,8 +52,8 @@ public class STBConnectActivity extends BaseActivity {
     /**
      * STB接続できたら、ホーム画面に自動遷移する
      */
-    Handler handler = new Handler();
-    Runnable runnable = new Runnable() {
+    private Handler handler = new Handler();
+    private Runnable runnable = new Runnable() {
         @Override
         public void run() {
             DTVTLogger.start();

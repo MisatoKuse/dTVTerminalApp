@@ -34,6 +34,10 @@
     <dimen name="global_menu_list_item_title_icon_left_margin">32dp</dimen>
 
     <!--Common-->
+    <dimen name="main_header_title_text_size">17sp</dimen>
+    <dimen name="main_header_back_icon_size">50dp</dimen>
+    <dimen name="main_header_menu_padding_vertical">12dp</dimen>
+    <dimen name="main_header_menu_padding_end">15dp</dimen>
     <dimen name="header_title_text_size">16dp</dimen>
     <dimen name="list_item_title_text_size">14sp</dimen>
     <dimen name="list_item_time_text_size">12sp</dimen>

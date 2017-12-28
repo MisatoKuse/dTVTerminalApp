@@ -50,7 +50,8 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     Button mDAccountAppliNoSTBSelectActivity = null;
     Button mDAccountSameYesSTBSelectActivity = null;
     Button mDAccountSameNoSTBSelectActivity = null;
-    private TextView mBackIcon, mParingDevice;
+    private ImageView mBackIcon;
+    private TextView mParingDevice;
     private ListView mDeviceListView;
     List<ContentsData> mContentsList;
     List<DlnaDmsItem> mDlnaDmsItemList;
@@ -60,7 +61,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private StbInfoCallBackTimer mCallbackTimer = null;
     private DlnaDMSInfo mDlnaDMSInfo = null;
     private int mStartMode = 0;
-    private ImageView mCheckMark, mMenuImageView = null;
+    private ImageView mCheckMark;
     public static final String FROM_WHERE = "FROM_WHERE";
 
     private enum TimerStatus {
@@ -131,7 +132,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             setStbStatus(status);
 
             useWithoutPairingSTBParingInvitationTextView.setVisibility(View.GONE);
-            mMenuImageView = findViewById(R.id.header_layout_menu);
+            ImageView mMenuImageView = findViewById(R.id.header_layout_menu);
             mMenuImageView.setVisibility(View.VISIBLE);
             mMenuImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -142,12 +143,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 }
             });
             mBackIcon.setVisibility(View.VISIBLE);
-            mBackIcon.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    finish();
-                }
-            });
             if (null == dlnaDmsItem) {
                 //未ペアリング
                 return;
@@ -192,32 +187,32 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private void setContents() {
         DTVTLogger.start();
-        useWithoutPairingSTBParingInvitationTextView = (TextView) findViewById(
+        useWithoutPairingSTBParingInvitationTextView = findViewById(
                 R.id.useWithoutPairingSTBParingInvitation);
         useWithoutPairingSTBParingInvitationTextView.setOnClickListener(this);
 
-        mCheckBoxSTBSelectActivity = (CheckBox) findViewById(R.id.checkBoxSTBSelectActivity);
+        mCheckBoxSTBSelectActivity = findViewById(R.id.checkBoxSTBSelectActivity);
         mCheckBoxSTBSelectActivity.setVisibility(View.VISIBLE);
         mCheckBoxSTBSelectActivity.setOnClickListener(this);
         mCheckBoxSTBSelectActivity.setChecked(false);
 
         // TODO dアカウント取得画面実装時に削除
-        mDAccountLoginYesSTBSelectActivity = (Button) findViewById(R.id.dAccountLoginYesSTBSelectActivity);
+        mDAccountLoginYesSTBSelectActivity = findViewById(R.id.dAccountLoginYesSTBSelectActivity);
         mDAccountLoginYesSTBSelectActivity.setOnClickListener(this);
 
-        mDAccountLoginNoSTBSelectActivity = (Button) findViewById(R.id.dAccountLoginNoSTBSelectActivity);
+        mDAccountLoginNoSTBSelectActivity = findViewById(R.id.dAccountLoginNoSTBSelectActivity);
         mDAccountLoginNoSTBSelectActivity.setOnClickListener(this);
 
-        mDAccountAppliYesSTBSelectActivity = (Button) findViewById(R.id.dAccountAppliYesSTBSelectActivity);
+        mDAccountAppliYesSTBSelectActivity = findViewById(R.id.dAccountAppliYesSTBSelectActivity);
         mDAccountAppliYesSTBSelectActivity.setOnClickListener(this);
 
-        mDAccountAppliNoSTBSelectActivity = (Button) findViewById(R.id.dAccountAppliNoSTBSelectActivity);
+        mDAccountAppliNoSTBSelectActivity = findViewById(R.id.dAccountAppliNoSTBSelectActivity);
         mDAccountAppliNoSTBSelectActivity.setOnClickListener(this);
 
-        mDAccountSameYesSTBSelectActivity = (Button) findViewById(R.id.dAccountSameYesSTBSelectActivity);
+        mDAccountSameYesSTBSelectActivity = findViewById(R.id.dAccountSameYesSTBSelectActivity);
         mDAccountSameYesSTBSelectActivity.setOnClickListener(this);
 
-        mDAccountSameNoSTBSelectActivity = (Button) findViewById(R.id.dAccountSameNoSTBSelectActivity);
+        mDAccountSameNoSTBSelectActivity = findViewById(R.id.dAccountSameNoSTBSelectActivity);
         mDAccountSameNoSTBSelectActivity.setOnClickListener(this);
 
         setDAccountButtonVisibility(View.GONE);
@@ -279,11 +274,11 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private void showSearchingView() {
         DTVTLogger.start();
         // STB検索中文言表示
-        TextView statusTextView = (TextView) findViewById(R.id.stb_select_status_text);
+        TextView statusTextView = findViewById(R.id.stb_select_status_text);
         statusTextView.setText(R.string.str_stb_select_result_text_search);
 
         // STBが見つかるまで非表示
-        TextView checkBoxText = (TextView) findViewById(R.id.useWithoutPairingSTBParingInvitation);
+        TextView checkBoxText = findViewById(R.id.useWithoutPairingSTBParingInvitation);
         checkBoxText.setVisibility(View.VISIBLE);
         DTVTLogger.end();
     }
@@ -294,11 +289,11 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private void showResultCompleteView() {
         DTVTLogger.start();
         // STB検索中文言表示
-        TextView statusTextView = (TextView) findViewById(R.id.stb_select_status_text);
+        TextView statusTextView = findViewById(R.id.stb_select_status_text);
         statusTextView.setText(R.string.str_stb_select_result_text);
 
         // STBが見つかったため表示する
-        TextView checkBoxText = (TextView) findViewById(R.id.useWithoutPairingSTBParingInvitation);
+        TextView checkBoxText = findViewById(R.id.useWithoutPairingSTBParingInvitation);
         checkBoxText.setVisibility(View.VISIBLE);
         DTVTLogger.end();
     }
@@ -603,7 +598,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start();
         displayMoreData((false));
         // STB検索タイムアウト文言表示
-        TextView statusTextView = (TextView) findViewById(R.id.stb_select_status_text);
+        TextView statusTextView = findViewById(R.id.stb_select_status_text);
         if (mStartMode == STBSelectFromMode.STBSelectFromMode_Setting.ordinal() &&
                 !mParingDevice.getText().toString().isEmpty()) {
             useWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_paring_cancel_text);
@@ -618,7 +613,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     // タイムアウト設定クラス
     private class StbInfoCallBackTimer extends Timer {
         // STB検出タイムアウト時間
-        private final long STB_SEARCH_TIMEOUT = 30000;
+        private static final long STB_SEARCH_TIMEOUT = 30000;
         private TimerTask mTimerTask = null;
         private Handler mHandler = null;
         // タイマーの状態

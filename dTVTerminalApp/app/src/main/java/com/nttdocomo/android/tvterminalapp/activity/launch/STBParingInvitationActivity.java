@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.activity.launch;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -29,9 +30,7 @@ public class STBParingInvitationActivity extends BaseActivity implements View.On
     private void setContents() {
         DTVTLogger.start();
         setTitleText(getString(R.string.str_app_title));
-        TextView backIcon = null;
-        TextView useWithoutPairingSTBParingInvitationActivity = null;
-        backIcon = findViewById(R.id.header_layout_back);
+        ImageView backIcon = findViewById(R.id.header_layout_back);
         backIcon.setVisibility(View.GONE);
         //TODO SharedPreferenceから初回表示判定を取得する
         //ペアリング勧誘
@@ -42,7 +41,7 @@ public class STBParingInvitationActivity extends BaseActivity implements View.On
             startActivity(HomeActivity.class, null);
             return;
         }
-        useWithoutPairingSTBParingInvitationActivity =
+        TextView useWithoutPairingSTBParingInvitationActivity =
                 findViewById(R.id.useWithoutPairingSTBParingInvitationActivity);
         useWithoutPairingSTBParingInvitationActivity.setOnClickListener(this);
         SharedPreferencesUtils.setSharedPreferencesIsDisplayedParingInvitation(this, true);
