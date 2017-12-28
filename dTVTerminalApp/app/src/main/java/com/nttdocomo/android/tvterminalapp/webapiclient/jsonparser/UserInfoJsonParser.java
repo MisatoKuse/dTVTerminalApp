@@ -4,8 +4,11 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
+import android.os.AsyncTask;
+
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.UserInfoWebClient;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,7 +18,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class UserInfoJsonParser {
+public class UserInfoJsonParser extends AsyncTask<String, Object, List<UserInfoList>> {
 
     private static final String USER_INFO_LIST_STATUS = "status";
 
@@ -24,9 +27,14 @@ public class UserInfoJsonParser {
     public static final String USER_INFO_LIST_CONTRACT_STATUS = "contract_status";
     public static final String USER_INFO_LIST_DCH_AGE_REQ = "dch_age_req";
     public static final String USER_INFO_LIST_H4D_AGE_REQ = "h4d_age_req";
+    private UserInfoWebClient.UserInfoJsonParserCallback userInfoJsonParserCallback = null;
 
     private static final String[] listPara = {USER_INFO_LIST_CONTRACT_STATUS, USER_INFO_LIST_DCH_AGE_REQ,
             USER_INFO_LIST_H4D_AGE_REQ};
+
+    public UserInfoJsonParser(UserInfoWebClient.UserInfoJsonParserCallback callback) {
+        userInfoJsonParserCallback = callback;
+    }
 
     /**
      * ユーザ情報Jsonデータ解析
@@ -101,5 +109,23 @@ public class UserInfoJsonParser {
             DTVTLogger.debug(e);
         }
         return list;
+    }
+
+    @Override
+    protected List<UserInfoList> doInBackground(String... strings) {
+        String jsonStr = null;
+        if (strings != null && strings[0] != null) {
+            jsonStr = strings[0];
+        }
+        return userInfoListSender(jsonStr);
+    }
+
+    @Override
+    protected void onPostExecute(List<UserInfoList> list) {
+        if (list != null && list.size() > 0) {
+            userInfoJsonParserCallback.getUserInfoResult(list);
+        } else {
+            userInfoJsonParserCallback.getUserInfoFailure();
+        }
     }
 }

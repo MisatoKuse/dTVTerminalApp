@@ -190,5 +190,11 @@ public class UrlConstants {
          */
         public static final String REMOTE_RECORDING_RESERVATION_CLIENT =
                 PLALA_CLIENT + "user/reservation/remote/register";
+
+        /**
+         * ユーザ情報取得
+         */
+        public static final String USER＿INFO_GET_WEB_CLIENT =
+                PLALA_AUTH + "/user/info";
     }
 }
