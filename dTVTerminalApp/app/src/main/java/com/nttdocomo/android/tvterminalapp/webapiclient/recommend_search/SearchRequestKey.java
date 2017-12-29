@@ -16,5 +16,7 @@ public class SearchRequestKey {
     public static final String kMaxResult = "&maxResult";
     public static final String kSortKind = "&sortKind";
     public static final String kServiceId = "&serviceId";
+    public static final String kServiceCategoryId = "&serviceCategoryId";
+//    public static final String kCategoryId = "&filterCategoryId";TODO:仕様確認後削除
     public static final String kCondition = "&condition";
 }

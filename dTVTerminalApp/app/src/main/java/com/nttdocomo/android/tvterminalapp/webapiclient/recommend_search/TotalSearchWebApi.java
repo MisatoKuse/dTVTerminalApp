@@ -49,6 +49,12 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
         String serviceId= data.serviceId;
         queryItems.put(SearchRequestKey.kServiceId, serviceId);
 
+//        String categoryId= data.categoryId;TODO:仕様確認後削除
+//        queryItems.put(SearchRequestKey.kCategoryId, categoryId);TODO:仕様確認後削除
+
+        String serviceCategoryId= data.serviceCategoryId;
+        queryItems.put(SearchRequestKey.kServiceCategoryId, serviceCategoryId);
+
         int sortKind = data.sortKind;
         queryItems.put(SearchRequestKey.kSortKind, sortKind+"");
 

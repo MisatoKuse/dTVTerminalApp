@@ -131,6 +131,13 @@ public class UserInfoJsonParser extends AsyncTask<String, Object, List<UserInfoL
             userInfoJsonParserCallback.getUserInfoFailure();
         }
     }
+
+    /**
+     * ユーザ年齢情報を取得する
+     *
+     * @param userInfoList ユーザアカウント情報
+     * @return 年齢情報
+     */
     private int getUserInfo(List<UserInfoList> userInfoList){
         final int INT_LIST_HEAD = 0;
         final String USE_H4D_AGE_REQ = "001";

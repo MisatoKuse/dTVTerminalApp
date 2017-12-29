@@ -283,6 +283,38 @@ public class SearchTopActivity extends BaseActivity
         return ret;
     }
 
+    /**
+     * リクエスト用カテゴリIDを設定する
+     * @return
+     */
+    private ArrayList<SearchServiceType> getCurrentSearchCategoryTypeArray() {
+        ArrayList<SearchServiceType> ret = new ArrayList<>();
+        if (null == mSearchViewPager) {
+            return ret;
+        }
+        int pageIndex = mSearchViewPager.getCurrentItem();
+
+        switch (pageIndex) {
+            case PAGE_NO_OF_SERVICE_TEREBI: //テレビ
+                ret.add(new SearchServiceType(SearchServiceType.ServiceCategorySet.HIKARI_TV_FOR_DOCOMO_IP_TV));
+                ret.add(new SearchServiceType(SearchServiceType.ServiceCategorySet.HIKARI_TV_FOR_DOCOMO_DTV_CHANNEL_BROADCAST));
+                ret.add(new SearchServiceType(SearchServiceType.ServiceCategorySet.HIKARI_TV_FOR_DOCOMO_DTV_CHANNEL_RELATION));
+                ret.add(new SearchServiceType(SearchServiceType.ServiceCategorySet.HIKARI_TV_FOR_DOCOMO_HIKARI_TV_VOD));
+                ret.add(new SearchServiceType(SearchServiceType.ServiceCategorySet.HIKARI_TV_FOR_DOCOMO_DTV_SVOD));
+                break;
+            case PAGE_NO_OF_SERVICE_VIDEO: //ビデオ
+                ret.add(new SearchServiceType(SearchServiceType.ServiceCategorySet.HIKARI_TV_FOR_DOCOMO_WATCH_AGAIN));
+                break;
+            case PAGE_NO_OF_SERVICE_DTV_CHANNEL: //dTVチャンネル
+            case PAGE_NO_OF_SERVICE_DTV: //DTV_CONTENTS
+            case PAGE_NO_OF_SERVICE_DANIME: //dアニメ
+                break;
+            default:
+                break;
+        }
+        return ret;
+    }
+
     private void setSearchNarrowCondition() {
         if (null == mSearchNarrowCondition) {
             ArrayList<SearchFilterTypeMappable> arr = new ArrayList<>();
@@ -344,9 +376,11 @@ public class SearchTopActivity extends BaseActivity
 
         //SearchDataProvider dp=new SearchDataProvider();
         ArrayList<SearchServiceType> serviceTypeArray = getCurrentSearchServiceTypeArray();
+        ArrayList<SearchServiceType> serviceCategoryArray = getCurrentSearchCategoryTypeArray();
         mSearchDataProvider.startSearchWith(
                 sCurrentSearchText,
                 serviceTypeArray,
+                serviceCategoryArray,
                 mSearchNarrowCondition,
                 mSearchSortKind,
                 mPageNumber,
