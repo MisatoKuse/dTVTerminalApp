@@ -453,6 +453,9 @@ public class DlnaInterface {
         }
 
         DlnaDmsItem item = (DlnaDmsItem) content.get(0);
+        if(null==item || null==item.mUdn){
+            return;
+        }
         mDMSInfo.add(item);
 
         if (null != mDlnaDevListListener) {
