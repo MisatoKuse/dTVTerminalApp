@@ -318,6 +318,7 @@
 
     <!-- MY番組表設定 -->
     <string name="my_channel_list_setting">マイ番組表設定</string>
+    <string name="my_channel_list_setting_select_channel">チャンネルを選択</string>
     <string name="my_channel_list_setting_failed_dialog_title">エラー</string>
     <string name="my_channel_list_setting_failed_dialog_content_register">登録失敗!</string>
     <string name="my_channel_list_setting_failed_dialog_content_unregister">解除失敗!</string>

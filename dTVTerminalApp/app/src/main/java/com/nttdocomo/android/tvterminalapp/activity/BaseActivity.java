@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -171,6 +172,21 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
+     * 機能：ヘッダー色を変更する
+     *
+     * @param isColorRed true:ヘッダー色=赤 false:ヘッダー色=黒
+     */
+    protected void setHeaderColor(Boolean isColorRed) {
+        if (null != headerLayout) {
+            if (isColorRed) {
+                headerLayout.setBackgroundColor(ContextCompat.getColor(mContext, R.color.header_background_color_red));
+            } else {
+                headerLayout.setBackgroundColor(ContextCompat.getColor(mContext, R.color.header_background_color_black));
+            }
+        }
+    }
+
+    /**
      * 機能：ヘッダーの戻るアイコン"<"有効
      *
      * @param isOn true: 表示  false: 非表示
@@ -206,7 +222,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * 機能：STB接続アイコンを表示か
+     * 機能：STB接続アイコンを表示
      *
      * @param isOn true: 表示  false: 非表示
      */
@@ -232,6 +248,21 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                 mMenuImageViewForBase.setOnClickListener(this);
             } else {
                 mMenuImageViewForBase.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    /**
+     * 機能：Global menuアイコンと×ボタンアイコンを切り替える
+     *
+     * @param isMenu true:menuアイコン false:×ボタンアイコン
+     */
+    protected void changeGlobalMenuIcon(boolean isMenu) {
+        if (null != mMenuImageViewForBase) {
+            if (isMenu) {
+                mMenuImageViewForBase.setImageResource(R.mipmap.ic_menu_white_24dp);
+            } else {
+                mMenuImageViewForBase.setImageResource(R.mipmap.ic_clear_white_24dp);
             }
         }
     }

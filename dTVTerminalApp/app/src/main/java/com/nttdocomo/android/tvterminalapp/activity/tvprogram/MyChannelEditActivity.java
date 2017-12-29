@@ -35,12 +35,13 @@ import static com.nttdocomo.android.tvterminalapp.common.CustomDialog.DialogType
 import static com.nttdocomo.android.tvterminalapp.common.JsonContents.META_RESPONSE_STATUS_OK;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala.MY_CHANNEL_MAX_INDEX;
 
-public class MyChannelEditActivity extends BaseActivity implements View.OnClickListener
-        , MyChannelDataProvider.ApiDataProviderCallback
-        , ScaledDownProgramListDataProvider.ApiDataProviderCallback
-        , EditMyChannelListAdapter.EditChannelListItemImpl
-        , EditChannelListFragment.ChannelListItemImpl
-        ,EditMyChannelListAdapter.DataTransferImpl {
+public class MyChannelEditActivity extends BaseActivity implements View.OnClickListener,
+        MyChannelDataProvider.ApiDataProviderCallback,
+        ScaledDownProgramListDataProvider.ApiDataProviderCallback,
+        EditMyChannelListAdapter.EditChannelListItemImpl,
+        EditChannelListFragment.ChannelListItemImpl,
+        EditMyChannelListAdapter.DataTransferImpl,
+        ViewPager.OnPageChangeListener {
 
     private static final int CHANNEL_LIST_PAGE = 1;
     private static final int MY_EDIT_CHANNEL_LIST_PAGE = 0;
@@ -61,7 +62,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
         setContentView(R.layout.my_channel_edit_main_layout);
 
         //Headerの設定
-        setTitleText(getResources().getString(R.string.my_channel_list_setting));
+        setTitleText(getString(R.string.my_channel_list_setting));
         enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
@@ -76,12 +77,14 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     private void initView() {
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
+        findViewById(R.id.header_layout_menu).setOnClickListener(this);
         mViewPager = findViewById(R.id.my_channel_edit_main_layout_edit_vp);
         mEditMyChannelListFragment = new EditMyChannelListFragment();
         mEditChannelListFragment = new EditChannelListFragment();
         mFragmentList.add(mEditMyChannelListFragment);
         mFragmentList.add(mEditChannelListFragment);
         mViewPager.setAdapter(new EditChannelListPageAdapter(getSupportFragmentManager(), mFragmentList));
+        mViewPager.addOnPageChangeListener(this);
     }
 
     /**
@@ -326,5 +329,46 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
             return false;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.header_layout_menu) {
+            if (mViewPager.getCurrentItem() == MY_EDIT_CHANNEL_LIST_PAGE) {
+                super.onClick(view);
+            } else if (mViewPager.getCurrentItem() == CHANNEL_LIST_PAGE){
+                mViewPager.setCurrentItem(MY_EDIT_CHANNEL_LIST_PAGE);
+            }
+        }
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        DTVTLogger.start();
+        if (position == MY_EDIT_CHANNEL_LIST_PAGE) {
+            //マイ番組表設定画面
+            setHeaderColor(true);
+            setTitleText(getString(R.string.my_channel_list_setting));
+            enableHeaderBackIcon(true);
+            enableStbStatusIcon(true);
+            changeGlobalMenuIcon(true);
+        } else if (position == CHANNEL_LIST_PAGE){
+            //マイ番組表編集画面
+            setHeaderColor(false);
+            setTitleText(getString(R.string.my_channel_list_setting_select_channel));
+            enableHeaderBackIcon(false);
+            enableStbStatusIcon(false);
+            changeGlobalMenuIcon(false);
+        }
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        //interface仕様により宣言しているが使用しない
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+        //interface仕様により宣言しているが使用しない
     }
 }
