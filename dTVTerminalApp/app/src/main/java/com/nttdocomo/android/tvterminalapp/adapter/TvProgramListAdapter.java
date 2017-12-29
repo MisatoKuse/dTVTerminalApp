@@ -23,6 +23,8 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.model.program.Channel;
 import com.nttdocomo.android.tvterminalapp.model.program.Schedule;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,6 +44,8 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     private ThumbnailProvider mThumbnailProvider = null;
     //現在時刻
     private String mCurDate = null;
+    //年齢パレンタル情報
+    private int mAgeReq = 8;
     //現在時刻フォマード
     private static final String CUR_TIME_FORMAT = "yyyy-MM-ddHH:mm:ss";
     private List<ItemViewHolder> mItemViews = new ArrayList<>();
@@ -53,6 +57,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         this.mContext = mContext;
         mScreenWidth = mContext.getResources().getDisplayMetrics().widthPixels;
         mScreenHeight = mContext.getResources().getDisplayMetrics().heightPixels;
+        mAgeReq = SharedPreferencesUtils.getSharedPreferencesAgeReq(mContext);
         mThumbnailProvider = new ThumbnailProvider(mContext);
         getCurTime();
         for(int i=0;i<mProgramList.size();i++){
@@ -188,7 +193,6 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         if(!TextUtils.isEmpty(startTime)){
             itemViewHolder.mStartM.setText(startTime.substring(14,16));
         }
-        itemViewHolder.mContent.setText(itemSchedule.getTitle());
         String end = endTime.substring(0, 10) + endTime.substring(11, 19);
         Date date1 = new Date();
         Date date2 = new Date();
@@ -222,18 +226,34 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 itemViewHolder.mView.setTag(1);
             }
         }
-        itemViewHolder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if((int)view.getTag() == 1){
-                    Intent intent = new Intent();
-                    intent.setClass(mContext, DtvContentsDetailActivity.class);
-                    mContext.startActivityForResult(intent,0);
+        //年齢制限フラグ
+        boolean isParental = setParental(StringUtil.convertRValueToAgeReq(itemSchedule.getRValue()));
+        String title;
+        if(isParental){
+            title = StringUtil.returnAsterisk(mContext);
+        }else{
+            title = itemSchedule.getTitle();
+            itemViewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if((int)view.getTag() == 1){
+                        Intent intent = new Intent();
+                        intent.setClass(mContext, DtvContentsDetailActivity.class);
+                        mContext.startActivityForResult(intent,0);
+                    }
                 }
-            }
-        });
+            });
+        }
+        itemViewHolder.mContent.setText(title);
     }
 
+    private boolean setParental(int age){
+        boolean isParental = false;
+        if(mAgeReq < age){
+            isParental = true;
+        }
+        return isParental;
+    }
     @Override
     public int getItemCount() {
         return mProgramList.size();

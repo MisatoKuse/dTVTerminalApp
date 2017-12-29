@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
+import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.UserInfoWebClient;
 
 import org.json.JSONException;
@@ -27,6 +28,7 @@ public class UserInfoJsonParser extends AsyncTask<String, Object, List<UserInfoL
     public static final String USER_INFO_LIST_CONTRACT_STATUS = "contract_status";
     public static final String USER_INFO_LIST_DCH_AGE_REQ = "dch_age_req";
     public static final String USER_INFO_LIST_H4D_AGE_REQ = "h4d_age_req";
+    public static final int USE_NONE_AGE_REQ = 8;
     private UserInfoWebClient.UserInfoJsonParserCallback userInfoJsonParserCallback = null;
 
     private static final String[] listPara = {USER_INFO_LIST_CONTRACT_STATUS, USER_INFO_LIST_DCH_AGE_REQ,
@@ -123,9 +125,45 @@ public class UserInfoJsonParser extends AsyncTask<String, Object, List<UserInfoL
     @Override
     protected void onPostExecute(List<UserInfoList> list) {
         if (list != null && list.size() > 0) {
-            userInfoJsonParserCallback.getUserInfoResult(list);
+            int age = getUserInfo(list);
+            userInfoJsonParserCallback.getUserInfoResult(age);
         } else {
             userInfoJsonParserCallback.getUserInfoFailure();
         }
+    }
+    private int getUserInfo(List<UserInfoList> userInfoList){
+        final int INT_LIST_HEAD = 0;
+        final String USE_H4D_AGE_REQ = "001";
+        final String USE_DCH_AGE_REQ = "002";
+        String age = null;
+        String contractStatus = null;
+        UserInfoList infoList = userInfoList.get(INT_LIST_HEAD);
+        List<HashMap<String, String>> mLoggedInAccountList = infoList.getLoggedinAccountList();
+        HashMap<String, String> mLoggedInAccount = mLoggedInAccountList.get(INT_LIST_HEAD);
+        if (mLoggedInAccount != null && mLoggedInAccount.size() > 0) {
+            contractStatus = mLoggedInAccount.get(UserInfoJsonParser.USER_INFO_LIST_CONTRACT_STATUS);
+        }
+
+        //contractStatusがないときはPG12制限を設定
+        int intAge = 8;
+        if (contractStatus != null) {
+            if (contractStatus.equals(USE_H4D_AGE_REQ)) {
+                //H4Dの制限情報がないときはDCH側を使用
+                age = mLoggedInAccount.get(UserInfoJsonParser.USER_INFO_LIST_H4D_AGE_REQ);
+                if (age == null || age.length() < 1) {
+                    age = mLoggedInAccount.get(UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ);
+                }
+            } else if (contractStatus.equals(USE_DCH_AGE_REQ)) {
+                //DCHの制限情報がないときはH4DDCH側を使用
+                age = mLoggedInAccount.get(UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ);
+                if (age == null || age.length() < 1) {
+                    age = mLoggedInAccount.get(UserInfoJsonParser.USER_INFO_LIST_H4D_AGE_REQ);
+                }
+            }
+        }
+        if(DBUtils.isNumber(age)){
+            intAge = Integer.parseInt(age);
+        }
+        return intAge;
     }
 }

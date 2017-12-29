@@ -51,6 +51,8 @@ public class SharedPreferencesUtils {
     private static final String LAST_ONE_TIME_PASSWORD = "LAST_ONE_TIME_PASSWORD";
     /** アプリ再起動フラグ */
     private static final String RESTART_FLAG = "RESTART_FLAG";
+    /** ユーザ年齢情報キー */
+    private static final String USER_AGE_REQ_SHARED_KEY = "USER_AGE_REQ_SHARED_KEY";
 
     /**
      * 独自の削除メソッドがある接続済みSTB情報以外の、dアカウントユーザー切り替え時の削除対象
@@ -419,4 +421,30 @@ public class SharedPreferencesUtils {
         return data.getBoolean(RESTART_FLAG,false);
     }
 
+    /**
+     * 取得したユーザ視聴制限情報を保存
+     *
+     * @param context コンテキスト
+     * @param age 保存するユーザ年齢制限情報
+     */
+    public static void setSharedPreferencesAgeReq(Context context, int age) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                USER_AGE_REQ_SHARED_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putInt(USER_AGE_REQ_SHARED_KEY, age);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * 最後に保存したワンタイムパスワードを取得
+     */
+    public static int getSharedPreferencesAgeReq(Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                USER_AGE_REQ_SHARED_KEY, Context.MODE_PRIVATE);
+
+        return data.getInt(USER_AGE_REQ_SHARED_KEY,8);
+    }
 }

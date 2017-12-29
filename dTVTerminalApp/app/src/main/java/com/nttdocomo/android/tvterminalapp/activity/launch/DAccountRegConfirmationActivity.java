@@ -12,6 +12,8 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.temp.DAccountAppliActivity;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser;
 
 public class DAccountRegConfirmationActivity extends BaseActivity implements View.OnClickListener {
 
@@ -135,6 +137,9 @@ public class DAccountRegConfirmationActivity extends BaseActivity implements Vie
     private void onDAccountLoginNoButton() {
         setDAccountAppliButtonsVisibility(View.VISIBLE);
         setDAccountLoginButtonsVisibility(View.GONE);
+        //未ログインではPG12を設定する
+        //TODO:正式な未ログインへの変更処理が実装されたらそちらへ移動する
+        SharedPreferencesUtils.setSharedPreferencesAgeReq(this, UserInfoJsonParser.USE_NONE_AGE_REQ);
     }
 
     /**
@@ -143,6 +148,9 @@ public class DAccountRegConfirmationActivity extends BaseActivity implements Vie
     private void onDAccountLoginYesButton() {
         setDAccountLoginButtonsVisibility(View.GONE);
         setDAccountSameButtonsVisibility(View.VISIBLE);
+        //ログイン済みになったらユーザ情報取得処理を叩く
+        //TODO:正式なログイン済みへの変更処理が実装されたらそちらへ移動する
+        getUserInfoWebClient();
     }
 
 //    private void onUseWithoutPairingButton() {

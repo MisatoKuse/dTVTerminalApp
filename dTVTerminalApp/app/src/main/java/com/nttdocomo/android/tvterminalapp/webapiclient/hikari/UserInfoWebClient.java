@@ -20,7 +20,7 @@ public class UserInfoWebClient
         /**
          * 登録が正常に終了した場合に呼ばれるコールバック
          */
-        void getUserInfoResult(List<UserInfoList> userInfoList);
+        void getUserInfoResult(int ageReq);
 
         /**
          * 登録が正常に終了した場合に呼ばれるコールバック
