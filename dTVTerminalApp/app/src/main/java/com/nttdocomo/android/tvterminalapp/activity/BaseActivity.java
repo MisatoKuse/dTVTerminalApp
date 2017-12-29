@@ -51,8 +51,6 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipDeleteWebClie
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.UserInfoWebClient;
 
-import java.util.List;
-
 /**
  * クラス機能：
  * プロジェクトにて、すべての「Activity」のベースクラスである
@@ -76,7 +74,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     private Context mContext = null;
     private RemoteControlRelayClient mRemoteControlRelayClient = null;
     private UserState sUserState = UserState.LOGIN_NG;
-    private List<UserInfoList> mUserInfoList = null;
 
     private long lastClickTime = 0;
 
@@ -356,9 +353,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         //dアカウントの検知処理を追加する
         setDaccountControl();
 
-        //TODO:ログイン処理未自走のため暫定対応(ログイン成功後に実行予定)
-        getUserInfoWebClient();
-
         DTVTLogger.end();
     }
 
@@ -541,6 +535,10 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      * dアカウント変更後の再起動時のダイアログ
      */
     private void restartMessageDialog() {
+
+        //アカウント変更時にユーザ情報取得処理を叩く
+        getUserInfoWebClient();
+
         //呼び出し用のアクティビティの退避
         final Activity activity = this;
 
@@ -1049,20 +1047,24 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     /**
      * ユーザ情報取得開始
      */
-    private void getUserInfoWebClient(){
-        if(mUserInfoList == null){
-            UserInfoWebClient userInfoWebClient = new UserInfoWebClient();
-            userInfoWebClient.getUserInfoApi(this);
-        }
+    protected void getUserInfoWebClient() {
+        UserInfoWebClient userInfoWebClient = new UserInfoWebClient();
+        userInfoWebClient.getUserInfoApi(this);
+    }
+
+    /**
+     * ユーザの年齢情報を返す
+     * 未ログイン状態の時はPG12の値を返す
+     *
+     * @return 年齢情報
+     */
+    public int getAgeReq() {
+        return SharedPreferencesUtils.getSharedPreferencesAgeReq(this);
     }
 
     @Override
-    public void getUserInfoResult(List<UserInfoList> userInfoList) {
-        mUserInfoList = userInfoList;
-    }
-
-    public List<UserInfoList> getUserInfoList() {
-        return mUserInfoList;
+    public void getUserInfoResult(int ageReq) {
+        SharedPreferencesUtils.setSharedPreferencesAgeReq(this, ageReq);
     }
 
     @Override

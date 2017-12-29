@@ -33,6 +33,8 @@ public class Schedule {
     private String chNo;
     //クリップリクエスト用データ
     private ClipRequestData mClipRequestData = null;
+    //パレンタル情報
+    private  String mRValue = null;
     //時間単価換算
     private static final float FORMAT = 1000 * 60 * 60;
     //日付format
@@ -115,6 +117,14 @@ public class Schedule {
 
     public void setClipRequestData(ClipRequestData mClipRequestData) {
         this.mClipRequestData = mClipRequestData;
+    }
+
+    public String getRValue() {
+        return mRValue;
+    }
+
+    public void setRValue(String mRValue) {
+        this.mRValue = mRValue;
     }
 
     /**

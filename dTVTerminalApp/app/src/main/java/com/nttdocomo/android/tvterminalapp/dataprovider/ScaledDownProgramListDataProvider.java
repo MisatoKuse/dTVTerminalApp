@@ -89,6 +89,7 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                         String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
                         String thumb = hashMap.get(JsonContents.META_RESPONSE_DEFAULT_THUMB);
                         String serviceId = hashMap.get(JsonContents.META_RESPONSE_SERVICE_ID);
+                        String rValue = hashMap.get(JsonContents.META_RESPONSE_R_VALUE);
 
                         Schedule mSchedule = new Schedule();
                         String startDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_START_DATE);
@@ -98,6 +99,7 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                         mSchedule.setImageUrl(thumb);
                         mSchedule.setTitle(title);
                         mSchedule.setChNo(chNo);
+                        mSchedule.setRValue(rValue);
                         mSchedule.setClipRequestData(setClipData((HashMap<String, String>) hashMap));
 
                         if (!TextUtils.isEmpty(chNo)) {
@@ -129,11 +131,13 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                             String thumb = hashMap.get(JsonContents.META_RESPONSE_DEFAULT_THUMB);
                             String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
                             String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
+                            String rValue = hashMap.get(JsonContents.META_RESPONSE_R_VALUE);
                             mSchedule.setStartTime(startDate);
                             mSchedule.setEndTime(endDate);
                             mSchedule.setImageUrl(thumb);
                             mSchedule.setTitle(title);
                             mSchedule.setChNo(chNo);
+                            mSchedule.setRValue(rValue);
                             mSchedule.setClipRequestData(setClipData((HashMap<String, String>) hashMap));
 
                             if (!TextUtils.isEmpty(chNo)) {//CH毎番組データ取得して、整形する
@@ -270,11 +274,13 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                         String thumb = hashMap.get(JsonContents.META_RESPONSE_DEFAULT_THUMB);
                         String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
                         String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
+                        String rValue = hashMap.get(JsonContents.META_RESPONSE_R_VALUE);
                         schedule.setStartTime(startDate);
                         schedule.setEndTime(endDate);
                         schedule.setImageUrl(thumb);
                         schedule.setTitle(title);
                         schedule.setChNo(chNo);
+                        schedule.setRValue(rValue);
                         schedule.setClipRequestData(setClipData(hashMap));
 
                         if (!TextUtils.isEmpty(chNo)) {//CH毎番組データ取得して、整形する

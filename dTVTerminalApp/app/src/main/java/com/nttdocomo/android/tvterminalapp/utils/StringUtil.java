@@ -12,9 +12,6 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
 import org.json.JSONArray;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 
 /**
  * 文字列加工に関する処理を記載する
@@ -22,6 +19,19 @@ import java.util.regex.Pattern;
 public class StringUtil {
 
     private Context mContext;
+
+    //年齢制限値=PG12
+    public static final String USER_R_VALUE_PG12 = "PG12";
+    public static final int USER_AGE_REQ_PG12 = 8;
+    //年齢制限値=R15
+    public static final String USER_R_VALUE_R15 = "R15";
+    public static final int USER_AGE_REQ_R15 = 15;
+    //年齢制限値=R18
+    public static final String USER_R_VALUE_R18 = "R18";
+    public static final int USER_AGE_REQ_R18 = 18;
+    //年齢制限値=R20
+    public static final String USER_R_VALUE_R20 = "R20";
+    public static final int USER_AGE_REQ_R20 = 20;
 
     public StringUtil(Context context) {
         mContext = context;
@@ -212,5 +222,35 @@ public class StringUtil {
             isHikari = true;
         }
         return isHikari;
+    }
+
+    /**
+     * 年齢パレンタル値(R_VALUE)を数値に変換
+     * @param ageValue 年齢パレンタル値(R_VALUE)
+     * @return 年齢情報
+     */
+    public static int convertRValueToAgeReq(String ageValue) {
+        int ageReq = 8;
+        if (ageValue != null) {
+            switch (ageValue) {
+                case USER_R_VALUE_PG12:
+                    ageReq = USER_AGE_REQ_PG12;
+                    break;
+                case USER_R_VALUE_R15:
+                    ageReq = USER_AGE_REQ_R15;
+                    break;
+                case USER_R_VALUE_R18:
+                    ageReq = USER_AGE_REQ_R18;
+                    break;
+                case USER_R_VALUE_R20:
+                    ageReq = USER_AGE_REQ_R20;
+                    break;
+            }
+        }
+        return ageReq;
+    }
+
+    public static String returnAsterisk(Context context){
+        return context.getString(R.string.message_three_asterisk);
     }
 }

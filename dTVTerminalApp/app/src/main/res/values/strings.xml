@@ -23,6 +23,7 @@
     <string name="vod_contents_message">ビデオ</string>
     <string name="app_finish_dialog_title">アプリ終了</string>
     <string name="app_finish_dialog_message">アプリ終了してよろしいでしょうか</string>
+    <string name="message_three_asterisk">＊＊＊</string>
 
     <!-- Launch -->
     <string name="str_app_title">dリモート</string>
