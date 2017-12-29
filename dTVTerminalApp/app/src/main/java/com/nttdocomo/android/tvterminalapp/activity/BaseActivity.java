@@ -35,6 +35,7 @@ import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
@@ -47,6 +48,9 @@ import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountControl;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipDeleteWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.UserInfoWebClient;
+
+import java.util.List;
 
 /**
  * クラス機能：
@@ -57,7 +61,7 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClie
 public class BaseActivity extends FragmentActivity implements MenuDisplayEventListener,
         DlnaDevListListener, View.OnClickListener, RemoteControllerView.OnStartRemoteControllerUIListener,
         ClipRegistWebClient.ClipRegistJsonParserCallback, ClipDeleteWebClient.ClipDeleteJsonParserCallback,
-        DaccountControl.DaccountControlCallBack {
+        DaccountControl.DaccountControlCallBack, UserInfoWebClient.UserInfoJsonParserCallback {
 
     private LinearLayout baseLinearLayout = null;
     private RelativeLayout headerLayout = null;
@@ -71,6 +75,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     private Context mContext = null;
     private RemoteControlRelayClient mRemoteControlRelayClient = null;
     private UserState sUserState = UserState.LOGIN_NG;
+    private List<UserInfoList> mUserInfoList = null;
 
     private long lastClickTime = 0;
 
@@ -320,6 +325,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         //dアカウントの検知処理を追加する
         setDaccountControl();
 
+        //TODO:ログイン処理未自走のため暫定対応(ログイン成功後に実行予定)
+        getUserInfoWebClient();
+
         DTVTLogger.end();
     }
 
@@ -445,11 +453,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                             }
                             break;
                         case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_APPLICATION_ID_NOTEXIST:
-//                            message = "APPLICATION_ID_NOTEXIST";
-//                            break;
                         case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_APPLICATION_START_FAILED:
-//                            message = "APPLICATION_START_FAILED";
-//                            break;
                         case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_INTERNAL_ERROR:
                             message = getResources().getString(R.string.main_setting_connect_error_message);
                             showErrorDialog(message);
@@ -1009,5 +1013,30 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             return true;
         }
         return false;
+    }
+
+    /**
+     * ユーザ情報取得開始
+     */
+    private void getUserInfoWebClient(){
+        if(mUserInfoList == null){
+            UserInfoWebClient userInfoWebClient = new UserInfoWebClient();
+            userInfoWebClient.getUserInfoApi(this);
+        }
+    }
+
+    @Override
+    public void getUserInfoResult(List<UserInfoList> userInfoList) {
+        mUserInfoList = userInfoList;
+    }
+
+    public List<UserInfoList> getUserInfoList() {
+        return mUserInfoList;
+    }
+
+    @Override
+    public void getUserInfoFailure() {
+        //TODO:暫定対応
+        Toast.makeText(this, "ユーザ情報取得失敗", Toast.LENGTH_SHORT);
     }
 }

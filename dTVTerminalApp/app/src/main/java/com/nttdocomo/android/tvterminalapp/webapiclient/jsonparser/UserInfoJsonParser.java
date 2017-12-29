@@ -63,11 +63,11 @@ public class UserInfoJsonParser extends AsyncTask<String, Object, List<UserInfoL
                 if (!jsonObj.isNull(USER_INFO_LIST_LOGGEDIN_ACCOUNT)) {
                     JSONObject loggedinObj = jsonObj.getJSONObject(USER_INFO_LIST_LOGGEDIN_ACCOUNT);
                     infoList.setLoggedinAccountList(sendUiList(loggedinObj));
+                }
 
-                    if (!loggedinObj.isNull(USER_INFO_LIST_H4D_CONTRACTED_ACCOUNT)) {
-                        JSONObject h4dObj = loggedinObj.getJSONObject(USER_INFO_LIST_H4D_CONTRACTED_ACCOUNT);
-                        infoList.setH4dAccountList(sendUiList(h4dObj));
-                    }
+                if (!jsonObj.isNull(USER_INFO_LIST_H4D_CONTRACTED_ACCOUNT)) {
+                    JSONObject h4dObj = jsonObj.getJSONObject(USER_INFO_LIST_H4D_CONTRACTED_ACCOUNT);
+                    infoList.setH4dAccountList(sendUiList(h4dObj));
                 }
 
                 List<UserInfoList> userInfoList = Arrays.asList(infoList);
@@ -100,8 +100,8 @@ public class UserInfoJsonParser extends AsyncTask<String, Object, List<UserInfoL
                         map.put(listPara[i], para);
                     }
                 }
-                list.add(map);
             }
+            list.add(map);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
