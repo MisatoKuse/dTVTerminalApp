@@ -13,14 +13,6 @@ public class UserInfoList {
     private List<HashMap<String, String>> mLoggedinAccountList = new ArrayList<>();
     private List<HashMap<String, String>> mH4dAccountList = new ArrayList<>();
 
-    public HashMap getUiMap() {
-        return mUiMap;
-    }
-
-    public void setUiMap(HashMap uiMap) {
-        this.mUiMap = uiMap;
-    }
-
     public List getLoggedinAccountList() {
         return mLoggedinAccountList;
     }

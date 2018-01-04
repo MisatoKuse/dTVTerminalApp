@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.UserInfoWebClient;
@@ -28,7 +29,6 @@ public class UserInfoJsonParser extends AsyncTask<String, Object, List<UserInfoL
     public static final String USER_INFO_LIST_CONTRACT_STATUS = "contract_status";
     public static final String USER_INFO_LIST_DCH_AGE_REQ = "dch_age_req";
     public static final String USER_INFO_LIST_H4D_AGE_REQ = "h4d_age_req";
-    public static final int USE_NONE_AGE_REQ = 8;
     private UserInfoWebClient.UserInfoJsonParserCallback userInfoJsonParserCallback = null;
 
     private static final String[] listPara = {USER_INFO_LIST_CONTRACT_STATUS, USER_INFO_LIST_DCH_AGE_REQ,
@@ -54,17 +54,17 @@ public class UserInfoJsonParser extends AsyncTask<String, Object, List<UserInfoL
         try {
             JSONObject jsonObj = new JSONObject(jsonStr);
 
-            if (jsonObj != null) {
-                HashMap<String, String> map = new HashMap<>();
+            if (jsonObj != null && jsonObj.length() > 0) {
                 if (!jsonObj.isNull(USER_INFO_LIST_STATUS)) {
                     String status = jsonObj.getString(USER_INFO_LIST_STATUS);
-                    map.put(USER_INFO_LIST_STATUS, status);
+                    if(!status.equals(JsonContents.META_RESPONSE_STATUS_OK)){
+                        return null;
+                    }
                 }
-                infoList.setUiMap(map);
 
                 if (!jsonObj.isNull(USER_INFO_LIST_LOGGEDIN_ACCOUNT)) {
-                    JSONObject loggedinObj = jsonObj.getJSONObject(USER_INFO_LIST_LOGGEDIN_ACCOUNT);
-                    infoList.setLoggedinAccountList(sendUiList(loggedinObj));
+                    JSONObject loggedInObj = jsonObj.getJSONObject(USER_INFO_LIST_LOGGEDIN_ACCOUNT);
+                    infoList.setLoggedinAccountList(sendUiList(loggedInObj));
                 }
 
                 if (!jsonObj.isNull(USER_INFO_LIST_H4D_CONTRACTED_ACCOUNT)) {
