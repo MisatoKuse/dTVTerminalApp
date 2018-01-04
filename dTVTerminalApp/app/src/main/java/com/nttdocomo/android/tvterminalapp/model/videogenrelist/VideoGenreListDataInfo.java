@@ -9,9 +9,7 @@ import android.os.Parcelable;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -67,27 +65,26 @@ public class VideoGenreListDataInfo implements Parcelable {
         }
     };
 
+    /**
+     * このクラスのジャンルデータを取得
+     * @return
+     */
     public VideoGenreList getVideoGenreListShowData() {
         VideoGenreList videoGenreList = null;
-        if(mContentsTree != null) {
-//            for(VideoGenreList data : mContentsTree) {
-//                if(mGenreId.equals(data.getGenreId())) {
-//                    videoGenreList = data;
-//                }
-//            }
+        if (mContentsTree != null) {
             videoGenreList = mContentsTree.get(mGenreId);
         }
         return videoGenreList;
     }
 
+    /**
+     * 引数で指定されたジャンルIDのデータを取得
+     * @param genreId
+     * @return
+     */
     public VideoGenreList getVideoGenreListData(String genreId) {
         VideoGenreList videoGenreList = null;
-        if(mContentsTree != null) {
-//            for (VideoGenreList data : mContentsTree) {
-//                if (genreId.equals(data.getGenreId())) {
-//                    videoGenreList = data;
-//                }
-//            }
+        if (mContentsTree != null) {
             videoGenreList = mContentsTree.get(genreId);
         }
         return videoGenreList;

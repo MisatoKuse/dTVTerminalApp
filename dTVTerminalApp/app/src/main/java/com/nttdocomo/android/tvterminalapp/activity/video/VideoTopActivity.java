@@ -13,16 +13,14 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.VideoGenreAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VideoGenreProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetMetaData;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreListData;
 import com.nttdocomo.android.tvterminalapp.model.videogenrelist.VideoGenreListDataInfo;
 
 import java.util.ArrayList;
@@ -40,23 +38,17 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
     private Boolean mIsMenuLaunch = false;
 
     private VideoGenreAdapter mVideoGenreAdapter;
-    private VideoGenreListData mVideoGenreListData;
     private VideoGenreListDataInfo mVideoGenreListDataInfo = null;
     private List<VideoGenreList> mShowContentsList = null;
     private VideoGenreProvider mVideoGenreProvider = null;
 
     // ジャンルIDのIntent KEY
     private static final String VIDEO_CONTENTS_BUNDLE_KEY = "videoContentKey";
-    private static final String GET_GENRE_MAP_BUNDLE_KEY = "getGenreMapBundleKey";
-
-    // サブジャンル有無判定用
-    private static final int SUB_GENRE_NOTHING_BORDER = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.video_genre_main_layout);
-//        mContentsList = new ArrayList();
         mMenuImageView = findViewById(R.id.header_layout_menu);
         mMenuImageView.setVisibility(View.VISIBLE);
         mMenuImageView.setOnClickListener(this);
@@ -64,18 +56,9 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
         mVideoGenreProvider = new VideoGenreProvider(this);
 
         Intent intent = getIntent();
-//        String genreId = intent.getStringExtra(VIDEO_CONTENTS_BUNDLE_KEY);
-//        mVideoGenreListData = intent.getParcelableExtra(GET_GENRE_MAP_BUNDLE_KEY);
         mVideoGenreListDataInfo = intent.getParcelableExtra(VIDEO_CONTENTS_BUNDLE_KEY);
         VideoGenreList showData = null;
-//        if (null != genreId) {
-//            // サブジャンル画面のタイトル
-//            setTitleText(mVideoGenreListData.getTitleMap().get(genreId));
-//        } else {
-//            // ジャンル画面のタイトル
-//            setTitleText(getString(R.string.video_content_top_title));
-//        }
-        if(mVideoGenreListDataInfo == null) {
+        if (mVideoGenreListDataInfo == null) {
             mVideoGenreListDataInfo = new VideoGenreListDataInfo();
             mShowContentsList = new ArrayList<VideoGenreList>();
             DTVTLogger.debug("mVideoGenreListData is Null");
@@ -89,7 +72,6 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
             // サブジャンル画面のタイトル
             setTitleText(showData.getTitle());
             mShowContentsList = new ArrayList<VideoGenreList>();
-            VideoGenreList videoGenreList = new VideoGenreList();
             List<String> genreIdList = new ArrayList<String>();
             // リスト表示データ取得
             for (int i = 0; i < showData.getSubGenre().size(); i++) {
@@ -149,7 +131,7 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
         VideoGenreList videoGenreList = (VideoGenreList) mContentsList.get(position);
 
         //"すべて"は画面遷移なし
-        if(videoGenreList.getTitle().equals(getString(R.string.video_content_all_title))){
+        if (videoGenreList.getTitle().equals(getString(R.string.video_content_all_title))) {
             return;
         }
 
@@ -184,12 +166,12 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
     @Override
     public void genreListCallback(List<GenreCountGetMetaData> genreList) {
         DTVTLogger.start();
-        if(genreList != null) {
+        if (genreList != null) {
             DTVTLogger.debug("Contents Count request is Success");
-            for (int i=0; i < mShowContentsList.size();i++) {
-                for(GenreCountGetMetaData cntData : genreList) {
+            for (int i = 0; i < mShowContentsList.size(); i++) {
+                for (GenreCountGetMetaData cntData : genreList) {
                     // 表示中の項目とジャンルIDが一致するものにコンテンツ数を設定する
-                    if(mShowContentsList.get(i).getGenreId().equals(cntData.getGenreId())) {
+                    if (mShowContentsList.get(i).getGenreId().equals(cntData.getGenreId())) {
                         mShowContentsList.get(i).setContentCount(String.valueOf(cntData.getCount()));
                     }
                 }
@@ -204,7 +186,7 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
 
     @Override
     public void genreListMapCallback(Map<String, VideoGenreList> listMap, List<String> firstGenreIdList) {
-        if(listMap != null && firstGenreIdList != null) {
+        if (listMap != null && firstGenreIdList != null) {
             DTVTLogger.start("ListMap.size() :" + listMap.size());
             // 次画面へ送信するデータを格納
             mVideoGenreListDataInfo.setSubGenre(listMap);

@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VideoGenreList implements Serializable{
+public class VideoGenreList implements Serializable {
     private String mGenreId; // ジャンルID
     private String mTitle; // タイトル
     private String mRValue; // パレンタル設定値
@@ -47,16 +47,9 @@ public class VideoGenreList implements Serializable{
     public void setRValue(String rValue) {
         this.mRValue = rValue;
     }
-//    public ArrayList<GenreListMetaData.SubContent> getSubGenre() {
-//        return mSubGenre;
-//    }
-//
-//    public void setSubGenre(ArrayList<GenreListMetaData.SubContent> subGenre) {
-//        this.mSubGenre = subGenre;
-//    }
 
     public void addSubGenreList(String subGenreId) {
-        if(mSubGenreIdList == null) {
+        if (mSubGenreIdList == null) {
             mSubGenreIdList = new ArrayList<String>();
         }
         mSubGenreIdList.add(subGenreId);
