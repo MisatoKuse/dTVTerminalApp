@@ -73,7 +73,7 @@ public class GenreCountGetWebClient
      * @param genreCountGetJsonParserCallback コールバック
      * @return パラメータエラーの場合はfalse
      */
-    public boolean getGenreCountGetApi(String filter, int ageReq, ArrayList<String> genreId, String type,
+    public boolean getGenreCountGetApi(String filter, int ageReq, List<String> genreId, String type,
                                        GenreCountGetJsonParserCallback
                                                genreCountGetJsonParserCallback) {
 
@@ -120,7 +120,7 @@ public class GenreCountGetWebClient
      * @param parserCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(String filter, int ageReq, ArrayList<String> genreId, String type,
+    private boolean checkNormalParameter(String filter, int ageReq, List<String> genreId, String type,
                                          GenreCountGetJsonParserCallback parserCallback) {
 
         //フィルターはヌルや空文字が有効なので、先に判定する
@@ -171,7 +171,7 @@ public class GenreCountGetWebClient
      * @param type    タイプ（hikaritv_vod/dtv_vod/hikaritv_and_dtv_vodのいずれかを指定。ヌルや空文字の場合は全てのVODとなる）
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(String filter, int ageReq, ArrayList<String> genreId, String type) {
+    private String makeSendParameter(String filter, int ageReq, List<String> genreId, String type) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {

@@ -9,6 +9,7 @@ import android.os.Parcelable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * ビデオ一覧用データクラス
@@ -16,17 +17,17 @@ import java.util.HashMap;
 public class VideoGenreListData implements Parcelable {
 
     private HashMap<String, String> mTitleMap;
-    private ArrayList<GenreListMetaData.SubContent> mSubGenre;
+    private ArrayList<VideoGenreList> mSubGenre;
 
     public VideoGenreListData(HashMap<String, String> title) {
         this.mTitleMap = title;
     }
 
-    public ArrayList<GenreListMetaData.SubContent> getSubGenre() {
+    public ArrayList<VideoGenreList> getSubGenre() {
         return mSubGenre;
     }
 
-    public void setSubGenre(ArrayList<GenreListMetaData.SubContent> subGenre) {
+    public void setSubGenre(ArrayList<VideoGenreList> subGenre) {
         this.mSubGenre = subGenre;
     }
 
@@ -47,8 +48,8 @@ public class VideoGenreListData implements Parcelable {
 
     protected VideoGenreListData(Parcel in) {
         this.mTitleMap = (HashMap<String, String>) in.readSerializable();
-        this.mSubGenre = new ArrayList<GenreListMetaData.SubContent>();
-        in.readList(this.mSubGenre, GenreListMetaData.SubContent.class.getClassLoader());
+        this.mSubGenre = new ArrayList<VideoGenreList>();
+        in.readList(this.mSubGenre, GenreListMetaData.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<VideoGenreListData> CREATOR = new Parcelable.Creator<VideoGenreListData>() {
