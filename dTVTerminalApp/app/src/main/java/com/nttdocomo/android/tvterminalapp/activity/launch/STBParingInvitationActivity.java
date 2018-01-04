@@ -30,6 +30,7 @@ public class STBParingInvitationActivity extends BaseActivity implements View.On
         DTVTLogger.start();
         setTitleText(getString(R.string.str_app_title));
         enableHeaderBackIcon(false);
+        enableStbStatusIcon(false);
         //TODO SharedPreferenceから初回表示判定を取得する
         //ペアリング勧誘
         //一度表示されたら以降表示されない

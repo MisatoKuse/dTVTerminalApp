@@ -253,8 +253,6 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         if(null==datas){
             return;
         }
-//        Bundle args = new Bundle();
-//        args.putParcelable( RecordedListActivity.RECORD_LIST_KEY, datas);
         if (null != mActivity) {
             Intent intent = new Intent(mActivity, DtvContentsDetailActivity.class);
             intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());

@@ -371,7 +371,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     protected void onResume() {
         super.onResume();
         DTVTLogger.start();
-        enableStbStatusIcon(true);
         registerDevListDlna();
 
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
