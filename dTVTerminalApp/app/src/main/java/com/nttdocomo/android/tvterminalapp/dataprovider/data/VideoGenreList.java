@@ -4,13 +4,16 @@
 
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
-public class VideoGenreList {
-    private String mGenreId;
-    private String mTitle;
-    private String mContentCount;
-    private ArrayList<GenreListMetaData.SubContent> mSubGenre;
+public class VideoGenreList implements Serializable {
+    private String mGenreId; // ジャンルID
+    private String mTitle; // タイトル
+    private String mRValue; // パレンタル設定値
+    private String mContentCount; // コンテンツ数
+    private List<String> mSubGenreIdList = null; // 本データを親とする子データのサブジャンルIDリスト
 
 
     public String getGenreId() {
@@ -37,11 +40,22 @@ public class VideoGenreList {
         this.mContentCount = contentCount;
     }
 
-    public ArrayList<GenreListMetaData.SubContent> getSubGenre() {
-        return mSubGenre;
+    public String getRValue() {
+        return mRValue;
     }
 
-    public void setSubGenre(ArrayList<GenreListMetaData.SubContent> subGenre) {
-        this.mSubGenre = subGenre;
+    public void setRValue(String rValue) {
+        this.mRValue = rValue;
+    }
+
+    public void addSubGenreList(String subGenreId) {
+        if (mSubGenreIdList == null) {
+            mSubGenreIdList = new ArrayList<String>();
+        }
+        mSubGenreIdList.add(subGenreId);
+    }
+
+    public List<String> getSubGenre() {
+        return mSubGenreIdList;
     }
 }

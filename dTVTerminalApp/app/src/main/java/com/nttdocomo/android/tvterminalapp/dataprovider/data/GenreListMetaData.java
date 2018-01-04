@@ -16,13 +16,16 @@ import java.util.ArrayList;
 
 public class GenreListMetaData implements Serializable {
     private static final long serialVersionUID = -4466388996087422463L;
+    public static String VIDEO_LIST_TITLE_NOD = "NOD";
+    public static String VIDEO_LIST_GENRE_ID_NOD = "genre_id_nod";
+
     private String mId;//id
     private String mTitle;//title
     private String mRValue;//r_value
-    private ArrayList<SubContent> mSubContent;
+    private ArrayList<GenreListMetaData> mSubContent = null;
 
     public GenreListMetaData() {
-        mSubContent = new ArrayList<SubContent>();
+        mSubContent = new ArrayList<GenreListMetaData>();
     }
 
     public String getId() {
@@ -49,8 +52,12 @@ public class GenreListMetaData implements Serializable {
         this.mRValue = mRValue;
     }
 
-    public ArrayList<SubContent> getSubContent() {
+    public ArrayList<GenreListMetaData> getSubContent() {
         return this.mSubContent;
+    }
+
+    public void setSubContentAll(ArrayList<GenreListMetaData> metaDataList) {
+        mSubContent.addAll(metaDataList);
     }
 
     public static final String GENRE_LIST_META_DATA_ID = "id";
@@ -114,7 +121,7 @@ public class GenreListMetaData implements Serializable {
      * @param jsonObj Jsonオブジェクト
      */
     public void setData(JSONObject jsonObj) {
-        SubContent subContent;
+        GenreListMetaData metaData;
         try {
             if (jsonObj != null) {
                 // 単一データ
@@ -129,93 +136,16 @@ public class GenreListMetaData implements Serializable {
                     if (sub.length() == 0) {
                         return;
                     }
+                    mSubContent = new ArrayList<GenreListMetaData>();
                     for (int i = 0; i < sub.length(); i++) {
-                        subContent = new SubContent();
-                        subContent.setSubData(sub.getJSONObject(i));
-                        mSubContent.add(subContent);
+                        metaData = new GenreListMetaData();
+                        metaData.setData(sub.getJSONObject(i));
+                        mSubContent.add(metaData);
                     }
                 }
             }
         } catch (JSONException e) {
             DTVTLogger.debug(e);
-        }
-    }
-
-    //サブジャンルコンテンツ
-    public static class SubContent implements Serializable {
-
-        private static final long serialVersionUID = 9019948926533001525L;
-        private String mId;
-        private String mTitle;
-        private String mRValue;
-
-        public String getId() {
-            return mId;
-        }
-
-        public void setId(String mId) {
-            this.mId = mId;
-        }
-
-        public String getTitle() {
-            return mTitle;
-        }
-
-        public void setTitle(String mTitle) {
-            this.mTitle = mTitle;
-        }
-
-        public String getRValue() {
-            return mRValue;
-        }
-
-        public void setRValue(String mRValue) {
-            this.mRValue = mRValue;
-        }
-
-        /**
-         * サーバから取得したデータをセット
-         *
-         * @param jsonObj Jsonオブジェクト
-         */
-        void setSubData(JSONObject jsonObj) {
-            //サブジャンルデータ
-            try {
-                if (jsonObj != null) {
-                    for (String item : mCommonData) {
-                        if (!jsonObj.isNull(item)) {
-                            setSubMember(item, jsonObj.get(item));
-                        }
-                    }
-                }
-            } catch (JSONException e) {
-                DTVTLogger.debug(e);
-            }
-        }
-
-        /**
-         * キーとキーの値をメンバーにセットする
-         *
-         * @param key  キー
-         * @param data キーの値
-         */
-        private void setSubMember(String key, Object data) {
-            if (key.isEmpty()) {
-                return;
-            } else {
-                switch (key) {
-                    case GENRE_LIST_META_DATA_ID:
-                        mId = (String) data;
-                        break;
-                    case GENRE_LIST_META_DATA_TITLE:
-                        mTitle = (String) data;
-                        break;
-                    case GENRE_LIST_META_DATA_R_VALUE:
-                        mRValue = (String) data;
-                        break;
-                    default:
-                }
-            }
         }
     }
 }

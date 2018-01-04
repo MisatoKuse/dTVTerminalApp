@@ -13,6 +13,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
 
 import java.util.List;
@@ -43,6 +44,7 @@ public class VideoGenreAdapter extends BaseAdapter implements AbsListView.OnScro
 
     @Override
     public View getView(int position, View view, ViewGroup parent) {
+        DTVTLogger.start();
         VideoGenreList videoGenreList = (VideoGenreList) mData.get(position);
         ViewHolder holder;
         if (null == view) {
@@ -62,6 +64,7 @@ public class VideoGenreAdapter extends BaseAdapter implements AbsListView.OnScro
         if (!TextUtils.isEmpty(videoGenreList.getTitle())) {
             holder.content_count.setText(videoGenreList.getContentCount());
         }
+        DTVTLogger.end();
         return view;
     }
 
