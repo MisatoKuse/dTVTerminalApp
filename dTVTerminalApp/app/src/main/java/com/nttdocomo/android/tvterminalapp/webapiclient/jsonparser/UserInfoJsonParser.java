@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.UserInfoWebClient;
 
@@ -48,42 +47,53 @@ public class UserInfoJsonParser extends AsyncTask<String, Object, Integer> {
     public int userInfoListSender(String jsonStr) {
 
         // オブジェクトクラスの定義
-        UserInfoList infoList;
+        List<HashMap<String, String>> userStateMapList = new ArrayList<>();
 
-        infoList = new UserInfoList();
+        //Jsonデータがないときはデフォルト値(PG12)を返却する
+        if(jsonStr == null || jsonStr.length() < 1){
+            return USE_NONE_AGE_REQ;
+        }
 
         try {
             JSONObject jsonObj = new JSONObject(jsonStr);
 
-            if (jsonObj != null && jsonObj.length() > 0) {
+            if (jsonObj.length() > 0) {
                 if (!jsonObj.isNull(USER_INFO_LIST_STATUS)) {
                     String status = jsonObj.getString(USER_INFO_LIST_STATUS);
                     if(!status.equals(JsonContents.META_RESPONSE_STATUS_OK)){
+                        getUserInfoFailure();
                         return USE_NONE_AGE_REQ;
                     }
                 }
 
                 if (!jsonObj.isNull(USER_INFO_LIST_LOGGEDIN_ACCOUNT)) {
                     JSONObject loggedInObj = jsonObj.getJSONObject(USER_INFO_LIST_LOGGEDIN_ACCOUNT);
-                    infoList.setLoggedinAccountList(sendUiList(loggedInObj));
+                    userStateMapList.add(sendUiList(loggedInObj));
+                } else {
+                    return USE_NONE_AGE_REQ;
                 }
 
                 if (!jsonObj.isNull(USER_INFO_LIST_H4D_CONTRACTED_ACCOUNT)) {
                     JSONObject h4dObj = jsonObj.getJSONObject(USER_INFO_LIST_H4D_CONTRACTED_ACCOUNT);
-                    infoList.setH4dAccountList(sendUiList(h4dObj));
+                    userStateMapList.add(sendUiList(h4dObj));
+                } else {
+                    return USE_NONE_AGE_REQ;
                 }
 
-                List<UserInfoList> userInfoList = Arrays.asList(infoList);
-
-                return getUserInfo(userInfoList);
+                return getUserInfo(userStateMapList);
             }
         } catch (JSONException e) {
             DTVTLogger.debug(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            DTVTLogger.debug(e);
         }
+
         return USE_NONE_AGE_REQ;
+    }
+
+    /**
+     * ユーザ情報取得失敗
+     */
+    private void getUserInfoFailure(){
+        userInfoJsonParserCallback.getUserInfoFailure();
     }
 
     /**
@@ -92,26 +102,24 @@ public class UserInfoJsonParser extends AsyncTask<String, Object, Integer> {
      * @param jsonObj
      * @return ユーザ情報List
      */
-    private List sendUiList(JSONObject jsonObj) {
-        List<HashMap<String, String>> list = new ArrayList<>();
+    private HashMap<String, String> sendUiList(JSONObject jsonObj) {
         HashMap<String, String> map = new HashMap<>();
         try {
-            for (int i = 0; i < listPara.length; i++) {
-                if (!jsonObj.isNull(listPara[i])) {
-                    if (!jsonObj.isNull(listPara[i])) {
-                        String para = jsonObj.getString(listPara[i]);
-                        map.put(listPara[i], para);
+            for (String aListPara : listPara) {
+                if (!jsonObj.isNull(aListPara)) {
+                    if (!jsonObj.isNull(aListPara)) {
+                        String para = jsonObj.getString(aListPara);
+                        map.put(aListPara, para);
                     }
                 }
             }
-            list.add(map);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
-        return list;
+        return map;
     }
 
     @Override
@@ -131,24 +139,31 @@ public class UserInfoJsonParser extends AsyncTask<String, Object, Integer> {
     /**
      * ユーザ年齢情報を取得する
      *
-     * @param userInfoList ユーザアカウント情報
+     * @param userInfoMapList ユーザアカウント情報
      * @return 年齢情報
      */
-    private int getUserInfo(List<UserInfoList> userInfoList){
-        final int INT_LIST_HEAD = 0;
+    private int getUserInfo(List<HashMap<String, String>> userInfoMapList) {
+        final int INT_LOGGED_IN_ACCOUNT_LIST = 0;
         final String USE_H4D_AGE_REQ = "001";
         final String USE_DCH_AGE_REQ = "002";
         String age = null;
         String contractStatus = null;
-        UserInfoList infoList = userInfoList.get(INT_LIST_HEAD);
-        List<HashMap<String, String>> mLoggedInAccountList = infoList.getLoggedinAccountList();
-        HashMap<String, String> mLoggedInAccount = mLoggedInAccountList.get(INT_LIST_HEAD);
+        int intAge = 8;
+        HashMap<String, String> mLoggedInAccount;
+//        UserInfoList infoList = userInfoList.get(INT_LIST_HEAD);
+//        List<HashMap<String, String>> mLoggedInAccountList = infoList.getLoggedinAccountList();
+
+        if (userInfoMapList != null && userInfoMapList.size() > 0) {
+            mLoggedInAccount = userInfoMapList.get(INT_LOGGED_IN_ACCOUNT_LIST);
+        } else {
+            return intAge;
+        }
+
         if (mLoggedInAccount != null && mLoggedInAccount.size() > 0) {
             contractStatus = mLoggedInAccount.get(UserInfoJsonParser.USER_INFO_LIST_CONTRACT_STATUS);
         }
 
         //contractStatusがないときはPG12制限を設定
-        int intAge = 8;
         if (contractStatus != null) {
             if (contractStatus.equals(USE_H4D_AGE_REQ)) {
                 //H4Dの制限情報がないときはDCH側を使用

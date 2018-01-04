@@ -5,10 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser;
-
-import java.util.List;
 
 public class UserInfoWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
@@ -29,7 +26,7 @@ public class UserInfoWebClient
     }
 
     //コールバックのインスタンス
-    private UserInfoJsonParserCallback mUserInfoJsonParserCallback;
+    private UserInfoJsonParserCallback mUserInfoJsonParserCallback = null;
 
     /**
      * 通信成功時のコールバック

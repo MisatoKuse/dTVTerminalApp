@@ -4,7 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.UserInfoWebClient;
 
 import org.junit.After;
@@ -41,9 +40,6 @@ public class UserInfoJsonParserTest {
     private UserInfoJsonParser mUserInfoJsonParser = null;
     private UserInfoWebClient.UserInfoJsonParserCallback mUserInfoJsonParserCallback = null;
     private List<HashMap<String, String>> mMapList = null;
-    private List<UserInfoList> mH4dUserInfoList = null;
-    private List<UserInfoList> mLoggedInUserInfoList = null;
-    private UserInfoList mUserInfo = null;
 
     @Before
     public void setUp() throws Exception {
@@ -173,64 +169,64 @@ public class UserInfoJsonParserTest {
         mJsonStrBlank = "{}";
 
 
-        //その他テスト用可変設定値
+        //その他テスト用可変設定値(それぞれの値にblank,null等を設定して使用)
+        final String OTHER_STATUS_KEY = "status";
         final String OTHER_STATUS = "OK";
+        final String OTHER_CONTRACT_STATUS_KEY = "contract_status";
         final String OTHER_CONTRACT_STATUS = "001";
+        final String OTHER_LOGGED_IN_ACCOUNT = "loggedin_account";
+        final String OTHER_H4D_CONTRACTED_ACCOUNT = "h4d_contracted_account";
+        final String OTHER_DCH_AGE_REQ = "dch_age_req";
+        final String OTHER_H4D_AGE_REQ = "h4d_age_req";
         final String OTHER_LOGIN_ACCOUNT_DCH_AGE_REQ = "";
         final String OTHER_LOGIN_ACCOUNT_H4D_AGE_REQ = "";
 
         //その他テスト用
         mJsonStrOtherStatus = "{\n" +
-                "  \"status\": \"" +
+                "  \"" +
+                OTHER_STATUS_KEY +
+                "\": \"" +
                 OTHER_STATUS +
                 "\",\n" +
-                "  \"loggedin_account\": {\n" +
-                "    \"contract_status\": \"" +
+                "  \"" +
+                OTHER_LOGGED_IN_ACCOUNT +
+                "\": {\n" +
+                "    \"" +
+                OTHER_CONTRACT_STATUS_KEY +
+                "\": \"" +
                 OTHER_CONTRACT_STATUS +
                 "\",\n" +
-                "    \"dch_age_req\": \"" +
+                "    \"" +
+                OTHER_DCH_AGE_REQ +
+                "\": \"" +
                 OTHER_LOGIN_ACCOUNT_DCH_AGE_REQ +
                 "\",\n" +
-                "    \"h4d_age_req\": \"" +
+                "    \"" +
+                OTHER_H4D_AGE_REQ +
+                "\": \"" +
                 OTHER_LOGIN_ACCOUNT_H4D_AGE_REQ +
                 "\"\n" +
                 "  },\n" +
-                "  \"h4d_contracted_account\": {\n" +
-                "    \"contract_status\": \"" +
+                "  \"" +
+                OTHER_H4D_CONTRACTED_ACCOUNT +
+                "\": {\n" +
+                "    \"" +
+                OTHER_CONTRACT_STATUS_KEY +
+                "\": \"" +
                 DCH_CONTRACT_STATUS +
                 "\",\n" +
-                "    \"dch_age_req\": \"" +
+                "    \"" +
+                OTHER_DCH_AGE_REQ +
+                "\": \"" +
                 H4D_CONTRACTED_ACCOUNT_DCH_AGE_REQ +
                 "\",\n" +
-                "    \"h4d_age_req\": \"" +
+                "    \"" +
+                OTHER_H4D_AGE_REQ +
+                "\": \"" +
                 H4D_CONTRACTED_ACCOUNT_H4D_AGE_REQ +
                 "\"\n" +
                 "  }\n" +
                 "}";
-
-        //contract_statusが002
-        HashMap<String, String> map = new HashMap<>();
-        mUserInfo = new UserInfoList();
-        mH4dUserInfoList = new ArrayList<>();
-        mMapList = new ArrayList<>();
-        map.put(DCH_AGE_REQ, H4D_CONTRACTED_ACCOUNT_DCH_AGE_REQ);
-        map.put(H4D_AGE_REQ, H4D_CONTRACTED_ACCOUNT_H4D_AGE_REQ);
-        map.put(CONTRACT_STATUS, DCH_CONTRACT_STATUS);
-        mMapList.add(map);
-        mUserInfo.setH4dAccountList(mMapList);
-        mH4dUserInfoList.add(mUserInfo);
-
-        map = new HashMap<>();
-        mUserInfo = new UserInfoList();
-        mLoggedInUserInfoList = new ArrayList<>();
-        mMapList = new ArrayList<>();
-        map = new HashMap<>();
-        map.put(DCH_AGE_REQ, LOGIN_ACCOUNT_DCH_AGE_REQ);
-        map.put(H4D_AGE_REQ, LOGIN_ACCOUNT_H4D_AGE_REQ);
-        map.put(CONTRACT_STATUS, DCH_CONTRACT_STATUS);
-        mMapList.add(map);
-        mUserInfo.setLoggedinAccountList(mMapList);
-        mLoggedInUserInfoList.add(mUserInfo);
     }
 
     @After
