@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public class UserInfoList {
-    private HashMap<String, String> mUiMap = new HashMap<>();
     private List<HashMap<String, String>> mLoggedinAccountList = new ArrayList<>();
     private List<HashMap<String, String>> mH4dAccountList = new ArrayList<>();
 

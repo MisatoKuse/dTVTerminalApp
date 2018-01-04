@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class UserInfoJsonParser extends AsyncTask<String, Object, List<UserInfoList>> {
+public class UserInfoJsonParser extends AsyncTask<String, Object, Integer> {
 
     private static final String USER_INFO_LIST_STATUS = "status";
 
@@ -29,6 +29,7 @@ public class UserInfoJsonParser extends AsyncTask<String, Object, List<UserInfoL
     public static final String USER_INFO_LIST_CONTRACT_STATUS = "contract_status";
     public static final String USER_INFO_LIST_DCH_AGE_REQ = "dch_age_req";
     public static final String USER_INFO_LIST_H4D_AGE_REQ = "h4d_age_req";
+    public static final int USE_NONE_AGE_REQ = 8;
     private UserInfoWebClient.UserInfoJsonParserCallback userInfoJsonParserCallback = null;
 
     private static final String[] listPara = {USER_INFO_LIST_CONTRACT_STATUS, USER_INFO_LIST_DCH_AGE_REQ,
@@ -44,7 +45,7 @@ public class UserInfoJsonParser extends AsyncTask<String, Object, List<UserInfoL
      * @param jsonStr ユーザ情報情報一覧
      * @return userInfoList
      */
-    public List<UserInfoList> userInfoListSender(String jsonStr) {
+    public int userInfoListSender(String jsonStr) {
 
         // オブジェクトクラスの定義
         UserInfoList infoList;
@@ -58,7 +59,7 @@ public class UserInfoJsonParser extends AsyncTask<String, Object, List<UserInfoL
                 if (!jsonObj.isNull(USER_INFO_LIST_STATUS)) {
                     String status = jsonObj.getString(USER_INFO_LIST_STATUS);
                     if(!status.equals(JsonContents.META_RESPONSE_STATUS_OK)){
-                        return null;
+                        return USE_NONE_AGE_REQ;
                     }
                 }
 
@@ -74,7 +75,7 @@ public class UserInfoJsonParser extends AsyncTask<String, Object, List<UserInfoL
 
                 List<UserInfoList> userInfoList = Arrays.asList(infoList);
 
-                return userInfoList;
+                return getUserInfo(userInfoList);
             }
         } catch (JSONException e) {
             DTVTLogger.debug(e);
@@ -82,7 +83,7 @@ public class UserInfoJsonParser extends AsyncTask<String, Object, List<UserInfoL
             // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
-        return null;
+        return USE_NONE_AGE_REQ;
     }
 
     /**
@@ -114,7 +115,7 @@ public class UserInfoJsonParser extends AsyncTask<String, Object, List<UserInfoL
     }
 
     @Override
-    protected List<UserInfoList> doInBackground(String... strings) {
+    protected Integer doInBackground(String... strings) {
         String jsonStr = null;
         if (strings != null && strings[0] != null) {
             jsonStr = strings[0];
@@ -123,13 +124,8 @@ public class UserInfoJsonParser extends AsyncTask<String, Object, List<UserInfoL
     }
 
     @Override
-    protected void onPostExecute(List<UserInfoList> list) {
-        if (list != null && list.size() > 0) {
-            int age = getUserInfo(list);
-            userInfoJsonParserCallback.getUserInfoResult(age);
-        } else {
-            userInfoJsonParserCallback.getUserInfoFailure();
-        }
+    protected void onPostExecute(Integer age) {
+        userInfoJsonParserCallback.getUserInfoResult(age);
     }
 
     /**
