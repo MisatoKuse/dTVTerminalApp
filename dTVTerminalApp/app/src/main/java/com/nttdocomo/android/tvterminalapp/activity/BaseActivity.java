@@ -353,6 +353,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         //dアカウントの検知処理を追加する
         setDaccountControl();
 
+        //TODO:正式な未ログインへの変更処理が実装されたらそちらへ移動する(dアカウント取得画面実装時)
+//        SharedPreferencesUtils.setSharedPreferencesAgeReq(this, UserInfoJsonParser.USE_NONE_AGE_REQ); //未ログインではPG12を設定する
+        //TODO:正式な未ログインへの変更処理が実装されたらそちらへ移動する(dアカウント取得画面実装時)
+        getUserInfoWebClient();  //ログイン済みになったらユーザ情報取得処理を叩く
+
         DTVTLogger.end();
     }
 
