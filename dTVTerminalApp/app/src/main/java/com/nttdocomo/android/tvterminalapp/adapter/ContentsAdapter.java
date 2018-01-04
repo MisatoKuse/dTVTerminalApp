@@ -78,11 +78,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
 
     public final static int DOWNLOAD_STATUS_LOADING = 1;
 
-    public final static int DOWNLOAD_STATUS_PAUSE = 2;
-
-    public final static int DOWNLOAD_STATUS_WAITING = 3;
-
-    public final static int DOWNLOAD_STATUS_COMPLETED = 4;
+    public final static int DOWNLOAD_STATUS_COMPLETED = 2;
 
     private DownloadCallback mDownloadCallback;
 
@@ -148,7 +144,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         if (view == null) {
             holder = new ViewHolder();
             view = setViewPattern(parent);
-            holder = setListItemPattern(holder, view, position);
+            holder = setListItemPattern(holder, view);
 
             //ディスプレイ基づいて、画像の長さと幅さを設定
             setView(holder);
@@ -177,7 +173,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 }
             });
         } else {
-            setDownloadStatus(holder,listContentInfo);
+            setDownloadStatus(holder,listContentInfo, position);
         }
 
         return view;
@@ -432,7 +428,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     /**
      * Itemのパターンを設定
      */
-    private ViewHolder setListItemPattern(ViewHolder holder, View view, int position) {
+    private ViewHolder setListItemPattern(ViewHolder holder, View view) {
         DTVTLogger.start();
         // TODO 録画予約一覧以外のパターンも共通項目以外を抽出し、修正する
         holder = setCommonListItem(holder, view);
@@ -452,8 +448,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_RECORDED_LIST: // 録画番組一覧
                 holder.tv_recorded_hyphen = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
                 holder.tv_recorded_ch_name = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
-                holder.tv_clip.setTag(position);
-                holder.tv_clip.setOnClickListener(this);
                 break;
             case TYPE_STB_SELECT_LIST:  //STBデバイス名一覧
                 holder.stb_device_name = view.findViewById(R.id.item_common_result_device_name);
@@ -539,15 +533,14 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     /**
      * ダウンロードステータス設定
      */
-    private void setDownloadStatus(ViewHolder holder, ContentsData listContentInfo) {
+    private void setDownloadStatus(ViewHolder holder, ContentsData listContentInfo, int position) {
         if (holder.tv_clip != null && listContentInfo != null) {
+            holder.tv_clip.setTag(position);
+            holder.tv_clip.setOnClickListener(this);
             switch (listContentInfo.getDownloadFlg()) {
                 case DOWNLOAD_STATUS_ALLOW:
                     holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_normal_download);
                     break;
-//                case DOWNLOAD_STATUS_PAUSE:
-//                    holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_active_play);
-//                    break;
                 case DOWNLOAD_STATUS_LOADING:
                     holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_active_pause);
                     break;

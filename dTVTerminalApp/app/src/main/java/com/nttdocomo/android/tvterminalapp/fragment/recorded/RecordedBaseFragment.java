@@ -54,6 +54,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     private DownloadParam downloadParam;
     private List<DlData> que = new ArrayList<>();
     private List<View> queView = new ArrayList<>();
+    private List<Integer> queIndex = new ArrayList<>();
 
     @Override
     public Context getContext() {
@@ -159,7 +160,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             @Override
             public void run() {
                 if(queView.size() > 0){
-                    setDownloadStatus(queView.get(0) , 0);
+                    setDownloadStatus(queView.get(0), queIndex.get(0) , 0);
                 }
             }
         });
@@ -188,7 +189,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 @Override
                 public void run() {
                 if(queView.size() > 0){
-                    setDownloadStatus(queView.get(0), newPercent);
+                    setDownloadStatus(queView.get(0), queIndex.get(0), newPercent);
                 }
                 }
             });
@@ -206,18 +207,22 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if(queView.size() > 0){
-                        View view = queView.get(0);
-                        view.setBackgroundResource(R.mipmap.icon_circle_normal_download_check);
-                        setDownloadStatusClear(view);
-                        mContentsData.get((int) view.getTag()).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
+                    if(queIndex.size() > 0){
+                        View view = mRecordedListview.getChildAt(queIndex.get(0)-mRecordedListview.getFirstVisiblePosition());
+                        if (view != null) {
+                            view.findViewById(R.id.item_common_result_clip_tv).setBackgroundResource(R.mipmap.icon_circle_normal_download_check);
+                            setDownloadStatusClear(view.findViewById(R.id.item_common_result_clip_tv));
+                        }
+                        mContentsData.get(queIndex.get(0)).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
+                        mContentsData.get(queIndex.get(0)).setDownloadStatus("");
                     }
                     if(que.size() > 0){
                         que.remove(0);
                         queView.remove(0);
+                        queIndex.remove(0);
                     }
                     if(que.size() > 0){
-                        prepareDownLoad(queView.get(0));
+                        prepareDownLoad(queIndex.get(0));
                     }
                     Toast.makeText(getActivity(),"download success",Toast.LENGTH_SHORT).show();
                 }
@@ -240,27 +245,31 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
 
     }
 
-    private void setDownloadStatus(View view, int progress){
-        TextView textView = ((RelativeLayout) view.getParent().getParent()).findViewById(R.id.item_common_result_recorded_content_channel_name);
-        switch (mContentsData.get((Integer)view.getTag()).getDownloadFlg()){
+    private void setDownloadStatus(View view, int index, int progress){
+        view = mRecordedListview.getChildAt(index-mRecordedListview.getFirstVisiblePosition());
+        TextView textView = null;
+        if (view != null) {
+            textView = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
+        }
+        switch (mContentsData.get(index).getDownloadFlg()){
             case ContentsAdapter.DOWNLOAD_STATUS_ALLOW :
-                //ダウンロード数が５個以上の場合、break
-                ((RelativeLayout) view.getParent().getParent()).findViewById(R.id.item_common_result_recorded_content_hyphen).setVisibility(View.VISIBLE);
-                textView.setTextColor(ContextCompat.getColor(mActivity, R.color.d_animation_title));
-                textView.setVisibility(View.VISIBLE);
-                textView.setText("ダウンロード中 " + progress + "%");
-                view.setBackgroundResource(R.mipmap.icon_circle_active_pause);
-                mContentsData.get((Integer) view.getTag()).setDownloadStatus("ダウンロード中 " + progress + "%");
-                mContentsData.get((Integer) view.getTag()).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_LOADING);
+                if (textView != null) {
+                    view.findViewById(R.id.item_common_result_recorded_content_hyphen).setVisibility(View.VISIBLE);
+                    textView.setTextColor(ContextCompat.getColor(mActivity, R.color.d_animation_title));
+                    textView.setVisibility(View.VISIBLE);
+                    textView.setText("ダウンロード中 " + progress + "%");
+                    view.findViewById(R.id.item_common_result_clip_tv).setBackgroundResource(R.mipmap.icon_circle_active_pause);
+                }
+                mContentsData.get(index).setDownloadStatus("ダウンロード中 " + progress + "%");
+                mContentsData.get(index).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_LOADING);
                 break;
             case ContentsAdapter.DOWNLOAD_STATUS_LOADING :
-                textView.setText("ダウンロード中 " + progress + "%");
-                mContentsData.get((Integer) view.getTag()).setDownloadStatus("ダウンロード中 " + progress + "%");
-                mContentsData.get((Integer) view.getTag()).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_LOADING);
+                if (textView != null) {
+                    textView.setText("ダウンロード中 " + progress + "%");
+                }
+                mContentsData.get(index).setDownloadStatus("ダウンロード中 " + progress + "%");
+                mContentsData.get(index).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_LOADING);
                 break;
-//            case ContentsAdapter.DOWNLOAD_STATUS_COMPLETED :
-//                showDialogToConfirmUnDownload(true, view);
-//                break;
             default:
                 break;
         }
@@ -270,11 +279,8 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     public void downloadClick(View view) {
         switch (mContentsData.get((int)view.getTag()).getDownloadFlg()) {
             case ContentsAdapter.DOWNLOAD_STATUS_ALLOW :
-            if (que.size() >= 5) {
-                showDialogToConfirmUnDownload(0, view);
-            } else {
                 if (que.size() == 0) {
-                    prepareDownLoad(view);
+                    prepareDownLoad((int)view.getTag());
                 }
                 DlData dlData = new DlData();
                 dlData.setItemId(mContentsList.get((int) view.getTag()).getItemId());
@@ -288,22 +294,22 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 dlData.setUpnpIcon(mContentsList.get((int) view.getTag()).getUpnpIcon());
                 mDlDataProvider.setDlData(dlData);
                 que.add(dlData);
+                queIndex.add((int)view.getTag());
                 queView.add(view);
-                setDownloadStatus(view , 0);
-            }
+                setDownloadStatus(view, (int)view.getTag(), 0);
             break;
             case ContentsAdapter.DOWNLOAD_STATUS_LOADING :
-                showDialogToConfirmUnDownload(2, view);
+                showDialogToConfirmUnDownload(false, view);
                 break;
             case ContentsAdapter.DOWNLOAD_STATUS_COMPLETED :
-                showDialogToConfirmUnDownload(1, view);
+                showDialogToConfirmUnDownload(true, view);
                 break;
             default:
                 break;
         }
     }
 
-    private void prepareDownLoad(View view) {
+    private void prepareDownLoad(int index) {
         try {
             if (mDlDataProvider == null) {
                 mDlDataProvider = new DlDataProvider(getActivity(), this);
@@ -315,7 +321,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             karidownloadparam.setContext(getActivity());
             karidownloadparam.setUrl("https://www.nhk.or.jp/prog/img/2209/2209.jpg");
 //            karidownloadparam.setUrl(mContentsList.get((int)view.getTag()).getResUrl());
-            karidownloadparam.setSaveFileName(mContentsList.get((int) view.getTag()).getTitle());
+            karidownloadparam.setSaveFileName(mContentsList.get(index).getTitle());
             karidownloadparam.setFileSize(203697);
 //            karidownloadparam.setFileSize(50000000);
             karidownloadparam.setSavePath(getContext().getCacheDir().getPath());
@@ -327,17 +333,13 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     /**
      * true  コンテンツを削除するダイアログ表示
      * false ダウンロードを取りやめるダイアログ表示
-     * @param completed
      */
-    private void showDialogToConfirmUnDownload(final int completed, final View view) {
+    private void showDialogToConfirmUnDownload(final boolean completed, final View view) {
         CustomDialog customDialog = new CustomDialog(getContext(), CONFIRM);
-        if (completed == 1){
+        if (completed){
             customDialog.setTitle("コンテンツを削除しますか？");
-        } else if (completed == 2) {
-            customDialog.setTitle("ダウンロードを取りやめますか？");
         } else {
-            customDialog = new CustomDialog(getContext(), ERROR);
-            customDialog.setTitle("最大5件ダウンロードできます");
+            customDialog.setTitle("ダウンロードを取りやめますか？");
         }
         customDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
@@ -358,6 +360,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                     setDownloadStatusClear(view);
                     view.setBackgroundResource(R.mipmap.icon_circle_normal_download);
                     mContentsData.get((Integer)view.getTag()).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_ALLOW);
+                    mContentsData.get((Integer)view.getTag()).setDownloadStatus("");
                 }
             }
         });
@@ -365,7 +368,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     }
 
     /**
-     * false ダウンロードを取りやめるダイアログ表示
+     * false ダウンロードステータスをクリア
      */
     private void setDownloadStatusClear(View view) {
         TextView textView = ((RelativeLayout) view.getParent().getParent()).findViewById(R.id.item_common_result_recorded_content_channel_name);
@@ -376,7 +379,6 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             textView.setText(mContentsData.get((Integer)view.getTag()).getRecordedChannelName());
             textView.setTextColor(ContextCompat.getColor(mActivity, R.color.content_time_text));
         }
-        mContentsData.get((Integer)view.getTag()).setDownloadStatus("");
     }
 
     @Override
