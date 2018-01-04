@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.player;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -11,6 +12,7 @@ import com.nttdocomo.android.tvterminalapp.activity.tvprogram.MyChannelEditActiv
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.WeekTvProgramListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 
 public class ChannelDetailPlayerActivity extends BaseActivity {
     @Override
@@ -25,7 +27,9 @@ public class ChannelDetailPlayerActivity extends BaseActivity {
      * @param view
      */
     public void selectChannelButton(View view) {
-        startActivity(DtvContentsDetailActivity.class, null);
+        Intent intent = new Intent(this, DtvContentsDetailActivity.class);
+        intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
+        startActivity(intent);
     }
 
     /**
@@ -52,6 +56,8 @@ public class ChannelDetailPlayerActivity extends BaseActivity {
      * @param view
      */
     public void tvProgramButton(View view) {
-        startActivity(DtvContentsDetailActivity.class, null);
+        Intent intent = new Intent(this, DtvContentsDetailActivity.class);
+        intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
+        startActivity(intent);
     }
 }

@@ -4,7 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.home.adapter;
 
-import android.content.Context;
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -16,9 +17,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.List;
 public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerViewAdapter.ViewHolder> {
     private LayoutInflater mInflater;
     private List<ContentsData> mContentList;
-    private Context context;
+    private Activity mContext;
     //サムネイル取得プロバイダー
     private ThumbnailProvider thumbnailProvider;
     //もっと見るフッター
@@ -40,10 +41,10 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     //普通
     private static final int TYPE_NORMAL = 2;
 
-    public HomeRecyclerViewAdapter(Context context, List<ContentsData> contentsDataList) {
+    public HomeRecyclerViewAdapter(Activity context, List<ContentsData> contentsDataList) {
         mInflater = LayoutInflater.from(context);
         this.mContentList = contentsDataList;
-        this.context = context;
+        this.mContext = context;
         thumbnailProvider = new ThumbnailProvider(context);
     }
 
@@ -86,7 +87,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         ViewHolder viewHolder = new ViewHolder(view);
         viewHolder.mImage = view.findViewById(R.id.home_main_recyclerview_item_iv);
         //コンテンツキャッシュを幅さ、長さ初期化
-        float widthPixels = context.getResources().getDisplayMetrics().widthPixels / 3 * 2;
+        float widthPixels = mContext.getResources().getDisplayMetrics().widthPixels / 3 * 2;
         float heightPixels = widthPixels / 1.8f;
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
                 (int) widthPixels,
@@ -139,7 +140,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         viewHolder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((BaseActivity)context).startActivity(DtvContentsDetailActivity.class, null);
+                Intent intent = new Intent(mContext, DtvContentsDetailActivity.class);
+                intent.putExtra(DTVTConstants.SOURCE_SCREEN, mContext.getComponentName().getClassName());
+                mContext.startActivity(intent);
             }
         });
     }

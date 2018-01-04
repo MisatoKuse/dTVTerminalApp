@@ -19,6 +19,7 @@ public class DTVTConstants {
     public static final String SEARCH_ERROR_ID_1 = "ERMD08001";
     public static final String SEARCH_ERROR_PARAM_NULL_REQ = "リクエストエラー(リクエストは空である)";
     public static final String GLOBAL_MENU_LAUNCH = "global_menu_launch";
+    public static final String SOURCE_SCREEN = "source_screen";
     //==================================== 定数定義 End ===================================
 
 }

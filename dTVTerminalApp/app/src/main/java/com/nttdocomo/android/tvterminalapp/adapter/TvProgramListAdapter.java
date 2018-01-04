@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.model.program.Channel;
@@ -205,7 +206,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         }
         float marginTop = itemSchedule.getMarginTop();
         float myHeight = itemSchedule.getMyHeight();
-        itemViewHolder.mLayoutParams.height = (int)(myHeight * (mScreenHeight / 3));
+        itemViewHolder.mLayoutParams.height = (int) (myHeight * (mScreenHeight / 3));
         itemViewHolder.mView.setLayoutParams(itemViewHolder.mLayoutParams);
         itemViewHolder.mView.setY(marginTop * (mScreenHeight / 3));
 
@@ -239,6 +240,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     if((int)view.getTag() == 1){
                         Intent intent = new Intent();
                         intent.setClass(mContext, DtvContentsDetailActivity.class);
+                        intent.putExtra(DTVTConstants.SOURCE_SCREEN, mContext.getComponentName().getClassName());
                         mContext.startActivityForResult(intent,0);
                     }
                 }

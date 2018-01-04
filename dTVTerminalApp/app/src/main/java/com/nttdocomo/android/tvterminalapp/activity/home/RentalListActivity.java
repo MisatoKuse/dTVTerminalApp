@@ -176,7 +176,9 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
         if (mLoadMoreView.equals(view)) {
             return;
         }
-        startActivity(DtvContentsDetailActivity.class, null);
+        Intent intent = new Intent(this, DtvContentsDetailActivity.class);
+        intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
+        startActivity(intent);
     }
 
     @Override

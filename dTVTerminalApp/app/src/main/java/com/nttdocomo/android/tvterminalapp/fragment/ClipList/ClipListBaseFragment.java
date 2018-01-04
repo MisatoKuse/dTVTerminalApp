@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.fragment.ClipList;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -16,10 +17,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ClipMainAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 
 import java.util.ArrayList;
@@ -48,9 +49,7 @@ public class ClipListBaseFragment extends Fragment
     private ClipListBaseFragmentScrollListener mClipListBaseFragmentScrollListener = null;
 
     public ClipListBaseFragment() {
-        if (mData == null) {
-            mData = new ArrayList();
-        }
+        mData = new ArrayList();
     }
 
     @Override
@@ -99,9 +98,8 @@ public class ClipListBaseFragment extends Fragment
     }
 
     private View initLoadingContentView() {
-        View defaultView = View.inflate(getActivity(),
+        return View.inflate(getActivity(),
                 R.layout.clip_list_default_loading_view, null);
-        return defaultView;
     }
 
     /*テレビタブコンテンツ初期化*/
@@ -222,7 +220,9 @@ public class ClipListBaseFragment extends Fragment
         }
 
         if (mActivity != null) {
-            ((BaseActivity) mActivity).startActivity(DtvContentsDetailActivity.class, null);
+            Intent intent = new Intent(mActivity, DtvContentsDetailActivity.class);
+            intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
+            startActivity(intent);
         }
     }
 }

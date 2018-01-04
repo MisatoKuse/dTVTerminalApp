@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.ranking;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
@@ -12,7 +13,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -20,6 +20,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
 
@@ -36,7 +37,6 @@ public class DailyTvRankingActivity extends BaseActivity implements
     // タイムアウト時間
     private final static int LOAD_PAGE_DELAY_TIME = 1000;
 
-    private ImageView mMenuImageView;
     private RankingTopDataProvider mRankingTopDataProvider;
     private ContentsAdapter mContentsAdapter;
 
@@ -257,7 +257,9 @@ public class DailyTvRankingActivity extends BaseActivity implements
         if (mLoadMoreView.equals(view)) {
             return;
         }
-        startActivity(DtvContentsDetailActivity.class, null);
+        Intent intent = new Intent(this, DtvContentsDetailActivity.class);
+        intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
+        startActivity(intent);
     }
 
     @Override
@@ -272,20 +274,19 @@ public class DailyTvRankingActivity extends BaseActivity implements
         if (null == contentsDataList || 0 == contentsDataList.size()) {
             return;
         }
-        List<ContentsData> rankingContentInfo = contentsDataList;
 
         //既に元のデータ以上の件数があれば足す物は無いので、更新せずに帰る
-        if (null != mContentsList && mContentsList.size() >= rankingContentInfo.size()) {
+        if (null != mContentsList && mContentsList.size() >= contentsDataList.size()) {
             displayMoreData(false);
             return;
         }
 
         int pageNumber = getCurrentNumber();
         for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1)
-                * NUM_PER_PAGE && i < rankingContentInfo.size(); ++i) {
+                * NUM_PER_PAGE && i < contentsDataList.size(); ++i) {
             DTVTLogger.debug("i = " + i);
             if (null != mContentsList) {
-                mContentsList.add(rankingContentInfo.get(i));
+                mContentsList.add(contentsDataList.get(i));
             }
             resetCommunication();
             synchronized (this) {

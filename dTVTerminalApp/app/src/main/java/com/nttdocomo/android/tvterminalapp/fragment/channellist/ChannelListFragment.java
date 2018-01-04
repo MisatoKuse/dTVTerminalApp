@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.fragment.channellist;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -15,10 +16,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ChannelListAdapter;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListItem;
@@ -30,27 +31,25 @@ import java.util.List;
 public class ChannelListFragment extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
 
     public interface ChannelListFragmentListener {
-        public void onScroll(ChannelListFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount);
-        public void onScrollStateChanged(ChannelListFragment fragment, AbsListView absListView, int scrollState);
-        public void setUserVisibleHint(boolean isVisibleToUser, ChannelListFragment fragment);
+        void onScroll(ChannelListFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount);
+        void onScrollStateChanged(ChannelListFragment fragment, AbsListView absListView, int scrollState);
+        void setUserVisibleHint(boolean isVisibleToUser, ChannelListFragment fragment);
     }
 
     private Context mActivity;
-    private List mData;
+    private List mData = null;
     private View mRootView;
     private ListView mListview;
     private ChannelListAdapter mChannelListAdapter;
     private ChannelListFragmentListener mScrollListener;
     private ChannelListAdapter.ChListDataType mChListDataType;
 
-    public ChannelListFragment(){
-        if(mData == null){
-            mData = new ArrayList();
-        }
+    public ChannelListFragment() {
+        mData = new ArrayList();
     }
 
     public void setChListDataType(ChannelListAdapter.ChListDataType type){
-        mChListDataType= type;
+        mChListDataType = type;
     }
 
     public ChannelListAdapter.ChListDataType getChListDataType(){
@@ -64,7 +63,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if(mData == null){
+        if (mData == null){
             mData = new ArrayList();
         }
         mRootView = View.inflate(getActivity(), R.layout.channel_list_content, null);
@@ -254,12 +253,14 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         if(null==datas){
             return;
         }
-        Bundle args = new Bundle();
-        args.putParcelable( RecordedListActivity.RECORD_LIST_KEY, datas);
+//        Bundle args = new Bundle();
+//        args.putParcelable( RecordedListActivity.RECORD_LIST_KEY, datas);
         if (null != mActivity) {
-            ((BaseActivity) mActivity).startActivity(DtvContentsDetailActivity.class, args);
+            Intent intent = new Intent(mActivity, DtvContentsDetailActivity.class);
+            intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
+            intent.putExtra(RecordedListActivity.RECORD_LIST_KEY, datas);
+            startActivity(intent);
         }
-
     }
 
     private RecordedContentsDetailData getParcleData(int i){

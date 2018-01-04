@@ -53,6 +53,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.DtvContentsDetailDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
@@ -108,6 +109,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     private Toast mToast = null;
 
     private TextView mHeaderTextView = null;
+    private ImageView mHeaderBackImageView = null;
     private LinearLayout mThumbnailBtn = null;
     private RelativeLayout mThumbnailRelativeLayout = null;
     private ImageView mThumbnail = null;
@@ -222,10 +224,11 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     private void initView() {
         mIntent = getIntent();
         mHeaderTextView = findViewById(R.id.contents_detail_header_layout_title);
+        mHeaderBackImageView = findViewById(R.id.contents_detail_header_layout_back);
         mThumbnailRelativeLayout = findViewById(R.id.dtv_contents_detail_layout);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 getWidthDensity(),
-                (int) (getWidthDensity() * SCREEN_RATIO_HEIGHT / SCREEN_RATIO_WIDTH));
+                (getWidthDensity() * SCREEN_RATIO_HEIGHT / SCREEN_RATIO_WIDTH));
         mThumbnailRelativeLayout.setLayoutParams(layoutParams);
         Object object = mIntent.getParcelableExtra(RecordedListActivity.RECORD_LIST_KEY);
         if (object instanceof RecordedContentsDetailData) {
@@ -234,6 +237,16 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             createRemoteControllerView();
             setStartRemoteControllerUIListener(this);
             initPlayer();
+        }
+
+        //ヘッダーの戻るアイコンと×ボタンの設定
+        String sourceClass = mIntent.getStringExtra(DTVTConstants.SOURCE_SCREEN);
+        if (sourceClass != null && !sourceClass.isEmpty()) {
+            //赤ヘッダーである遷移元クラス名を保持
+            setSourceScreenClass(sourceClass);
+        } else {
+            //詳細画面から詳細画面への遷移
+            mHeaderBackImageView.setVisibility(View.VISIBLE);
         }
         initContentsView();
     }
@@ -528,10 +541,10 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             @Override
             public boolean onSingleTapUp(MotionEvent e) {
                 DTVTLogger.start();
-                if (e.getY() > mRecordCtrlView.getHeight() / 3
+                if (e.getY() > (float) mRecordCtrlView.getHeight() / 3
                         && e.getY() < mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight() / 3) {
-                    if (e.getX() < mScreenWidth / 2 - mVideoPlayPause.getWidth() / 2
-                            && e.getX() > mScreenWidth / 6) {//10秒戻し
+                    if (e.getX() < (float) (mScreenWidth / 2 - mVideoPlayPause.getWidth() / 2)
+                            && e.getX() > (float) mScreenWidth / 6) {//10秒戻し
                         int pos = mPlayerController.getCurrentPosition();
                         pos -= REWIND_SECOND;
                         if (pos < 0) {
@@ -564,18 +577,18 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             @Override
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
                 DTVTLogger.start();
-                if (e1.getY() > mRecordCtrlView.getHeight() / 3
-                        && e2.getY() > mRecordCtrlView.getHeight() / 3
-                        && e2.getY() < mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight() / 3
-                        && e1.getY() < mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight() / 3) {
-                    if (e1.getX() > e2.getX() && e1.getX() < mScreenWidth / 2 - mVideoPlayPause.getWidth() / 2) {
+                if (e1.getY() > (float) mRecordCtrlView.getHeight() / 3
+                        && e2.getY() > (float) mRecordCtrlView.getHeight() / 3
+                        && e2.getY() < (float) (mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight() / 3)
+                        && e1.getY() < (float) (mRecordCtrlView.getHeight() - mRecordCtrlView.getHeight() / 3)) {
+                    if (e1.getX() > e2.getX() && e1.getX() < (float) (mScreenWidth / 2 - mVideoPlayPause.getWidth() / 2)) {
                         int pos = mPlayerController.getCurrentPosition();
                         pos -= REWIND_SECOND;
                         pos = pos < 0 ? 0 : pos;
                         mPlayerController.seekTo(pos);
                         mIsHideOperate = false;
                         showMessage("←10");
-                    } else if (e1.getX() < e2.getX() && e1.getX() > mScreenWidth / 2 + mVideoPlayPause.getWidth() / 2) {
+                    } else if (e1.getX() < e2.getX() && e1.getX() > (float) (mScreenWidth / 2 + mVideoPlayPause.getWidth() / 2)) {
                         int pos = mPlayerController.getCurrentPosition();
                         pos += FAST_SECOND;
                         pos = pos > mPlayerController.getDuration() ? mPlayerController.getDuration() : pos;
@@ -705,11 +718,11 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                 String ss = strs1[2];
                 int i = ss.indexOf('.');
                 if (i <= 0) {
-                    ret += 1000 * Integer.parseInt(ss);
+                    ret += 1000L * Integer.parseInt(ss);
                 } else {
                     String ss1 = ss.substring(0, i);
                     String ss2 = ss.substring(i + 1, ss.length());
-                    ret += 1000 * Integer.parseInt(ss1);
+                    ret += 1000L * Integer.parseInt(ss1);
                     try {
                         ret += Integer.parseInt(ss2);
                     } catch (Exception e2) {
@@ -976,7 +989,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         } else {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
             mScreenWidth = getWidthDensity();
-            playerParams.height = (int) (getWidthDensity() * SCREEN_RATIO_HEIGHT / SCREEN_RATIO_WIDTH);
+            playerParams.height = (getWidthDensity() * SCREEN_RATIO_HEIGHT / SCREEN_RATIO_WIDTH);
             headerLayout.setVisibility(View.VISIBLE);
             setPlayerProgressView(false);
             setRemoteControllerViewVisibility(View.VISIBLE);
@@ -1291,7 +1304,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             if (mDetailFullData != null) {
                 String[] credit_array = mDetailFullData.getmCredit_array();
                 List<String> staffList = getRoleList(credit_array, roleListInfo);
-                if (staffList != null && staffList.size() > 0) {
+                if (staffList.size() > 0) {
                     detailFragment.mOtherContentsDetailData.setStaffList(staffList);
                     detailFragment.refreshStaff();
                 }
@@ -1309,8 +1322,8 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     private List<String> getRoleList(String[] credit_array, ArrayList<RoleListMetaData> roleListInfo) {
         List<String> staffList = new ArrayList<>();
         StringBuilder ids = new StringBuilder();
-        for (int i = 0; i < credit_array.length; i++) {
-            String[] creditInfo = credit_array[i].split("\\|");
+        for (String aCredit_array : credit_array) {
+            String[] creditInfo = aCredit_array.split("\\|");
             if (creditInfo.length == 4) {
                 String creditId = creditInfo[2];
                 String creditName = creditInfo[3];
@@ -1399,8 +1412,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
      */
     private DtvContentsDetailFragment getDetailFragment() {
         Fragment currentFragment = mFragmentFactory.createFragment(0);
-        DtvContentsDetailFragment detailFragment = (DtvContentsDetailFragment) currentFragment;
-        return detailFragment;
+        return (DtvContentsDetailFragment) currentFragment;
     }
 
     @Override
@@ -1513,8 +1525,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         PackageManager packageManager = getPackageManager();
         try {
             PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
-            int versionCode = packageInfo.versionCode;
-            return versionCode;
+            return packageInfo.versionCode;
         } catch (PackageManager.NameNotFoundException e) {
             DTVTLogger.debug(e);
         }

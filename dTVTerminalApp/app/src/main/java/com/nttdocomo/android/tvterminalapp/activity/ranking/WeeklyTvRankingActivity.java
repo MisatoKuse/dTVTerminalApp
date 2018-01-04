@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.ranking;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,6 +26,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingBaseFragment;
@@ -39,7 +41,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
 
     private ImageView mMenuImageView;
     private boolean mIsCommunicating = false;
-    private final int NUM_PER_PAGE = 10;
+    private static final int NUM_PER_PAGE = 10;
     private String[] mTabNames;
     private RankingTopDataProvider mRankingDataProvider;
     private RankingFragmentFactory mRankingFragmentFactory = null;
@@ -284,7 +286,9 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
      * コンテンツ詳細への遷移
      */
     public void contentsDetailButton(View view) {
-        startActivity(DtvContentsDetailActivity.class, null);
+        Intent intent = new Intent(this, DtvContentsDetailActivity.class);
+        intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
+        startActivity(intent);
     }
 
     @Override

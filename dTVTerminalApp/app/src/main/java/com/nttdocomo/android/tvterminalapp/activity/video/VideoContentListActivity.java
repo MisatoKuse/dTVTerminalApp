@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.video;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VideoContentProvider;
@@ -248,8 +250,9 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         if (mLoadMoreView == view) {
             return;
         }
-        // TODO 本来コンテンツ詳細に飛ぶ
-        startActivity(DtvContentsDetailActivity.class, null);
+        Intent intent = new Intent(this, DtvContentsDetailActivity.class);
+        intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
+        startActivity(intent);
     }
 
     /**

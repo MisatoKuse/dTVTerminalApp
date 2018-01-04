@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.fragment.search;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -16,11 +17,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.SearchResultBaseAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 
 import java.util.ArrayList;
@@ -34,7 +35,6 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
     private TextView mCountText = null;
     private SearchBaseFragmentScrollListener mSearchBaseFragmentScrollListener = null;
     private View mLoadMoreView;
-    private View mLoadCompleteView;
     private SearchResultBaseAdapter mSearchResultBaseAdapter = null;
 
     public void setSearchBaseFragmentScrollListener(SearchBaseFragmentScrollListener lis) {
@@ -143,13 +143,14 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         ContentsData info =  mData.get(i);
-        Bundle args = new Bundle();
-        args.putParcelable(DtvContentsDetailActivity.RECOMMEND_INFO_BUNDLE_KEY,
-                getOtherContentsDetailData(info));
         if (mLoadMoreView.equals(view)) {
             return;
         }
-        ((BaseActivity) mActivity).startActivity(DtvContentsDetailActivity.class, args);
+        Intent intent = new Intent(mActivity, DtvContentsDetailActivity.class);
+        intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
+        intent.putExtra(DtvContentsDetailActivity.RECOMMEND_INFO_BUNDLE_KEY,
+                getOtherContentsDetailData(info));
+        startActivity(intent);
     }
 
     /**

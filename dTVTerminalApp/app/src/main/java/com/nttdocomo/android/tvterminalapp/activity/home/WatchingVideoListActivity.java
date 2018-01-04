@@ -13,7 +13,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -56,7 +55,6 @@ public class WatchingVideoListActivity extends BaseActivity implements
 
     private View mLoadMoreView = null;
     private ListView mListView = null;
-    private ImageView mMenuImageView = null;
 
     private WatchListenVideoBaseAdapter mWatchListenVideoBaseAdapter = null;
     //private boolean mPagingStatus = false;
@@ -201,10 +199,9 @@ public class WatchingVideoListActivity extends BaseActivity implements
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        if (mMenuImageView.equals(view)) {
-            return;
-        }
-        startActivity(DtvContentsDetailActivity.class, null);
+        Intent intent = new Intent(this, DtvContentsDetailActivity.class);
+        intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
+        startActivity(intent);
     }
 
     private void resetPaging() {

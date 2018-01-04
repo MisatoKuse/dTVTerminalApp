@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.ranking;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,7 +17,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +25,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
@@ -40,7 +41,6 @@ import java.util.Map;
 
 public class VideoRankingActivity extends BaseActivity implements
         VideoRankingApiDataProviderCallback, RankingFragmentScrollListener {
-    private ImageView mMenuImageView;
     private boolean mIsCommunicating = false;
     private final int NUM_PER_PAGE = 2;
     private String[] mTabNames;
@@ -63,6 +63,7 @@ public class VideoRankingActivity extends BaseActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.video_ranking_main_layout);
+        DTVTLogger.start();
 
         //Headerの設定
         setTitleText(getString(R.string.video_ranking_title));
@@ -237,24 +238,23 @@ public class VideoRankingActivity extends BaseActivity implements
             Toast.makeText(this, "ランキングデータ取得失敗", Toast.LENGTH_SHORT).show();
             return;
         }
-        List<ContentsData> rankingContentInfo = videoRankMapList;
 
 
         RankingBaseFragment fragment = mRankingFragmentFactory.createFragment
                 (RankingConstants.RANKING_MODE_NO_OF_VIDEO, mViewPager.getCurrentItem(), this);
 
         //既に元のデータ以上の件数があれば足す物は無いので、更新せずに帰る
-        if (null != fragment.mData && fragment.mData.size() >= rankingContentInfo.size()) {
+        if (null != fragment.mData && fragment.mData.size() >= videoRankMapList.size()) {
             fragment.displayMoreData(false);
             return;
         }
 
         int pageNumber = getCurrentNumber();
         for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE &&
-                i < rankingContentInfo.size(); ++i) {
+                i < videoRankMapList.size(); ++i) {
             DTVTLogger.debug("i = " + i);
             if (null != fragment.mData) {
-                fragment.mData.add(rankingContentInfo.get(i));
+                fragment.mData.add(videoRankMapList.get(i));
             }
         }
         DTVTLogger.debug("Fragment.mData.size :" + String.valueOf(fragment.mData.size()));
@@ -308,7 +308,9 @@ public class VideoRankingActivity extends BaseActivity implements
      * @param view
      */
     public void contentsDetailButton(View view) {
-        startActivity(DtvContentsDetailActivity.class, null);
+        Intent intent = new Intent(this, DtvContentsDetailActivity.class);
+        intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
+        startActivity(intent);
     }
 
     /**

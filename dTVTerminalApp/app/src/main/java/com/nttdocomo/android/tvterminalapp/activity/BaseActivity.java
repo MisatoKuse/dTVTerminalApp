@@ -36,7 +36,6 @@ import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
@@ -93,6 +92,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     /** dアカウント設定アプリ登録処理 */
     private DaccountControl mDaccountControl = null;
+
+    /** 詳細画面起動元Classを保存 */
+    private static String mSourceScreenClass = "";
 
     /**
      * Created on 2017/09/21.
@@ -683,8 +685,16 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      * @param view クローズボタンのビュー
      */
     public void contentsDetailCloseKey(View view) {
-        //TODO:コンテンツ詳細系の画面をクローズする処理を記載する
-        finish();
+        //コンテンツ詳細画面をクローズする処理
+        try {
+            Class sourceClass = Class.forName(getSourceScreenClass());
+            Intent intent = new Intent(this, sourceClass);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            setSourceScreenClass("");
+        } catch (ClassNotFoundException e) {
+            DTVTLogger.debug(e);
+        }
     }
 
     /**
@@ -1075,6 +1085,30 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     @Override
     public void getUserInfoFailure() {
         //TODO:暫定対応
-        Toast.makeText(this, "ユーザ情報取得失敗", Toast.LENGTH_SHORT);
+        Toast.makeText(this, "ユーザ情報取得失敗", Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * 詳細画面起動元のクラス名を保存するstaticクラス
+     * @param className コンテンツ詳細画面起動元のクラス名
+     */
+    public synchronized static void setSourceScreen(String className) {
+        BaseActivity.mSourceScreenClass = className;
+    }
+
+    /**
+     * コンテンツ詳細画面起動元のクラス名を保持する
+     * @param className クラス名
+     */
+    public void setSourceScreenClass(String className) {
+        setSourceScreen(className);
+    }
+
+    /**
+     * コンテンツ詳細画面起動元のクラス名を取得する
+     * @return クラス名
+     */
+    public String getSourceScreenClass() {
+        return mSourceScreenClass;
     }
 }

@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.fragment.ranking;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -16,10 +17,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 import java.util.ArrayList;
@@ -51,9 +52,7 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
     private float mStartY = 0;
 
     public RankingBaseFragment() {
-        if (mData == null) {
-            mData = new ArrayList();
-        }
+        mData = new ArrayList();
     }
 
     @Override
@@ -224,7 +223,9 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
         if(mLoadMoreView.equals(view) || mActivity == null) {
             return;
         }
-        ((BaseActivity) mActivity).startActivity(DtvContentsDetailActivity.class, null);
+        Intent intent = new Intent(mActivity, DtvContentsDetailActivity.class);
+        intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
+        startActivity(intent);
     }
 
     @Override

@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.fragment.recorded;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -20,12 +21,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.service.download.DlData;
@@ -144,10 +145,11 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        Bundle args = new Bundle();
-        args.putParcelable( RecordedListActivity.RECORD_LIST_KEY,mContentsList.get(i));
         if (null != mActivity) {
-            ((BaseActivity) mActivity).startActivity(DtvContentsDetailActivity.class, args);
+            Intent intent = new Intent(mActivity, DtvContentsDetailActivity.class);
+            intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
+            intent.putExtra(RecordedListActivity.RECORD_LIST_KEY, mContentsList.get(i));
+            startActivity(intent);
         }
     }
 
@@ -318,7 +320,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
 //            karidownloadparam.setFileSize(50000000);
             karidownloadparam.setSavePath(getContext().getCacheDir().getPath());
         } catch (Exception e) {
-
+            DTVTLogger.debug(e);
         }
     }
 
@@ -346,8 +348,9 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                         String fileName = mContentsList.get((int) view.getTag()).getTitle();
                         File file = new File(getContext().getCacheDir().getPath() + "/" + fileName);
                         if(file.exists()){
-                            if(file.delete())
-                            Toast.makeText(getContext(),"delete success",Toast.LENGTH_SHORT).show();
+                            if(file.delete()) {
+                                Toast.makeText(getContext(), "delete success", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     } else {
                         //ダウンロードを取りやめる

@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.fragment.recommend;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -15,10 +16,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.RecommendListBaseAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 
 import java.util.ArrayList;
@@ -138,10 +139,11 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         ContentsData info = mData.get(i);
-        Bundle args = new Bundle();
-        args.putParcelable(DtvContentsDetailActivity.RECOMMEND_INFO_BUNDLE_KEY,
+        Intent intent = new Intent(mActivity, DtvContentsDetailActivity.class);
+        intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
+        intent.putExtra(DtvContentsDetailActivity.RECOMMEND_INFO_BUNDLE_KEY,
                 getOtherContentsDetailData(info));
-        ((BaseActivity) mActivity).startActivity(DtvContentsDetailActivity.class, args);
+        startActivity(intent);
     }
 
     /**
