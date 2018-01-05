@@ -276,12 +276,27 @@ public class StringUtil {
         final String USE_DCH_AGE_REQ = "002";
         String age = null;
         String contractStatus = null;
+
+        //ユーザ情報がないときはPG12を返却
+        if(userInfoList == null || userInfoList.size() < 1){
+            return USER_AGE_REQ_PG12;
+        }
+
         UserInfoList infoList = userInfoList.get(INT_LIST_HEAD);
+
+        //ユーザ情報がないときはPG12を返却
+        if (infoList == null) {
+            return USER_AGE_REQ_PG12;
+        }
+
         List<UserInfoList.AccountList> mLoggedInAccountList = infoList.getmLoggedinAccount();
         UserInfoList.AccountList mLoggedInAccount = mLoggedInAccountList.get(INT_LIST_HEAD);
-        if (mLoggedInAccount != null) {
-            contractStatus = mLoggedInAccount.getmContractStatus();
+
+        //ユーザ情報がないときはPG12を返却
+        if (mLoggedInAccount == null) {
+            return USER_AGE_REQ_PG12;
         }
+        contractStatus = mLoggedInAccount.getmContractStatus();
 
         //contractStatusがないときはPG12制限を設定
         int intAge = USER_AGE_REQ_PG12;
