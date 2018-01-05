@@ -20,6 +20,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VideoGenreProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetMetaData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
 import com.nttdocomo.android.tvterminalapp.model.videogenrelist.VideoGenreListDataInfo;
 
@@ -72,16 +73,20 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
             // サブジャンル画面のタイトル
             setTitleText(showData.getTitle());
             mShowContentsList = new ArrayList<VideoGenreList>();
+            if (!GenreListMetaData.VIDEO_LIST_GENRE_ID_NOD.equals(mVideoGenreListDataInfo.getGenreId())) {
+                // "すべて" を一番上に表示する
+                mShowContentsList.add(mVideoGenreListDataInfo.getVideoGenreListData(GenreListMetaData.VIDEO_LIST_GENRE_ID_ALL_CONTENTS));
+            }
             List<String> genreIdList = new ArrayList<String>();
             // リスト表示データ取得
             for (int i = 0; i < showData.getSubGenre().size(); i++) {
                 mShowContentsList.add(mVideoGenreListDataInfo.getVideoGenreListData(showData.getSubGenre().get(i)));
                 genreIdList.add(showData.getSubGenre().get(i));
             }
+
             // 表示データのコンテンツ数を取得
             mVideoGenreProvider.getContentCountListData(genreIdList);
         }
-        mContentsList = mShowContentsList;
         mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
         if (mIsMenuLaunch) {
             enableHeaderBackIcon(false);
@@ -168,11 +173,57 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
         DTVTLogger.start();
         if (genreList != null) {
             DTVTLogger.debug("Contents Count request is Success");
+            int allContentsCnt = 0;
+            List<Integer> noContentsList = new ArrayList<Integer>();
             for (int i = 0; i < mShowContentsList.size(); i++) {
                 for (GenreCountGetMetaData cntData : genreList) {
                     // 表示中の項目とジャンルIDが一致するものにコンテンツ数を設定する
                     if (mShowContentsList.get(i).getGenreId().equals(cntData.getGenreId())) {
-                        mShowContentsList.get(i).setContentCount(String.valueOf(cntData.getCount()));
+                        if (cntData.getCount() != 0) {
+                            mShowContentsList.get(i).setContentCount(String.valueOf(cntData.getCount()));
+                            allContentsCnt += cntData.getCount();
+                        } else {
+                            noContentsList.add(i);
+                        }
+                    }
+                }
+            }
+            if (!GenreListMetaData.VIDEO_LIST_GENRE_ID_NOD.equals(mVideoGenreListDataInfo.getGenreId())) {
+                // "すべて" にコンテンツ数を設定
+                mShowContentsList.get(0).setContentCount(String.valueOf(allContentsCnt));
+            }
+            // 初回表示以外の場合
+            if (mVideoGenreListDataInfo.getGenreId() != null) {
+                if (allContentsCnt == 0) {
+                    // 表示項目のすべてが0件だった場合
+                    mShowContentsList = new ArrayList<VideoGenreList>();
+                } else {
+                    // 0件のコンテンツをリストから削除
+                    int position;
+                    for (int j = 0; j < noContentsList.size(); j++) {
+                        position = noContentsList.get(j) - j;
+                        mShowContentsList.remove(position);
+                    }
+                }
+            } else {
+                if (allContentsCnt == 0) {
+                    // 表示項目のすべてが0件だった場合
+                    // 0件のコンテンツをリストから削除
+                    int position;
+                    for (int j = 0; j < noContentsList.size(); j++) {
+                        position = noContentsList.get(j) - j;
+                        mShowContentsList.remove(position);
+                    }
+                    // "すべて" を削除
+                    if (!GenreListMetaData.VIDEO_LIST_GENRE_ID_NOD.equals(mVideoGenreListDataInfo.getGenreId())) {
+                        mShowContentsList.remove(0);
+                    }
+                } else {
+                    // 0件のコンテンツをリストから削除
+                    int position;
+                    for (int j = 0; j < noContentsList.size(); j++) {
+                        position = noContentsList.get(j) - j;
+                        mShowContentsList.remove(position);
                     }
                 }
             }
@@ -188,15 +239,21 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
     public void genreListMapCallback(Map<String, VideoGenreList> listMap, List<String> firstGenreIdList) {
         if (listMap != null && firstGenreIdList != null) {
             DTVTLogger.start("ListMap.size() :" + listMap.size());
+            List<String> requestGenreIdList = new ArrayList<String>();
             // 次画面へ送信するデータを格納
             mVideoGenreListDataInfo.setSubGenre(listMap);
             for (String genreId : firstGenreIdList) {
                 // ビデオ一覧画面の初回画面を表示
                 DTVTLogger.debug("Add GenreId:" + genreId);
                 mShowContentsList.add(listMap.get(genreId));
+                // "すべて"、"NOD"を除いたジャンルIDリストを生成
+                if (!GenreListMetaData.VIDEO_LIST_GENRE_ID_NOD.equals(genreId)
+                        && !GenreListMetaData.VIDEO_LIST_GENRE_ID_ALL_CONTENTS.equals(genreId)) {
+                    requestGenreIdList.add(genreId);
+                }
             }
             // 現在表示中の項目のコンテンツ数の取得要求を行う
-            mVideoGenreProvider.getContentCountListData(firstGenreIdList);
+            mVideoGenreProvider.getContentCountListData(requestGenreIdList);
             DTVTLogger.end();
         } else {
             DTVTLogger.debug("genreListMapCallback is Null");

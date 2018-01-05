@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 
+import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetResponse;
@@ -29,6 +30,7 @@ public class VideoGenreProvider implements
     private static final String VIDEO_GENRE_KEY_PLALA = "PLALA";
     private static final String VIDEO_GENRE_KEY_NOD = "NOD";
     private static final String VIDEO_GENRE_KEY_ARIB = "ARIB";
+    private Context mContext = null;
 
     private GenreListMapCallback genreListMapCallback;
 
@@ -65,9 +67,10 @@ public class VideoGenreProvider implements
      * ジャンル一覧
      * コンストラクタ
      */
-    public VideoGenreProvider(Context mContext) {
-        this.mApiGenreListDataProviderCallback = (apiGenreListDataProviderCallback) mContext;
-        genreListMapCallback = (GenreListMapCallback) mContext;
+    public VideoGenreProvider(Context context) {
+        this.mApiGenreListDataProviderCallback = (apiGenreListDataProviderCallback) context;
+        genreListMapCallback = (GenreListMapCallback) context;
+        mContext = context;
     }
 
     /**
@@ -122,13 +125,17 @@ public class VideoGenreProvider implements
         }
         //PLALAコンテンツデータをすべて取得
         if (listMap.get(VIDEO_GENRE_KEY_PLALA) != null) {
+            GenreListMetaData genreAll = new GenreListMetaData();
+            genreAll.setTitle(mContext.getResources().getString(R.string.video_list_genre_all));
+            genreAll.setId(GenreListMetaData.VIDEO_LIST_GENRE_ID_ALL_CONTENTS);
+            genreMetaDataList.add(genreAll);
             genreMetaDataList.addAll(listMap.get(VIDEO_GENRE_KEY_PLALA));
         }
 
         //NODコンテンツデータをすべて取得
         if (listMap.get(VIDEO_GENRE_KEY_NOD) != null) {
             GenreListMetaData firstNodData = new GenreListMetaData();
-            firstNodData.setTitle(GenreListMetaData.VIDEO_LIST_TITLE_NOD);
+            firstNodData.setTitle(mContext.getResources().getString(R.string.video_list_genre_nod));
             firstNodData.setId(GenreListMetaData.VIDEO_LIST_GENRE_ID_NOD);
             firstNodData.setSubContentAll(listMap.get(VIDEO_GENRE_KEY_NOD));
             genreMetaDataList.add(firstNodData);
