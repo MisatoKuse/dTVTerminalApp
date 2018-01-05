@@ -50,7 +50,6 @@ import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountControl;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipDeleteWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClient;
-import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.UserInfoWebClient;
 
 import java.util.List;
 
@@ -100,6 +99,15 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     /** 詳細画面起動元Classを保存 */
     private static String mSourceScreenClass = "";
+
+    /**
+     * 契約情報
+     */
+    private List<UserInfoList> mUserInfo;
+
+    /** ヘッダーに表示されているアイコンがメニューアイコンか×ボタンアイコンかを判別するタグ */
+    private static final String HEADER_ICON_MENU = "menu";
+    private static final String HEADER_ICON_CLOSE = "close";
 
     /**
      * Created on 2017/09/21.
@@ -213,7 +221,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     protected void enableStbStatusIcon(boolean isOn) {
         if (this instanceof LaunchActivity
                 //|| this instanceof RecordedListActivity
-                || this instanceof DtvContentsDetailActivity) {
+                ) {
             return;
         }
         if (null != mStbStatusIcon) {
@@ -265,8 +273,10 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         if (null != mMenuImageViewForBase) {
             if (isMenu) {
                 mMenuImageViewForBase.setImageResource(R.mipmap.ic_menu_white_24dp);
+                mMenuImageViewForBase.setTag(HEADER_ICON_MENU);
             } else {
                 mMenuImageViewForBase.setImageResource(R.mipmap.ic_clear_white_24dp);
+                mMenuImageViewForBase.setTag(HEADER_ICON_CLOSE);
             }
         }
     }
@@ -277,7 +287,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      * @param isOn true: stb接続中   false: stb未接続
      */
     protected void setStbStatus(final boolean isOn) {
-        //mStbStatusIcon.
         if (null != mStbStatusIcon) {
             mStbStatusIcon.post(new Runnable() {
                 @Override
@@ -310,11 +319,15 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * タイトルを隠す
+     * タイトルの表示非表示を設定
      */
-    protected void setNoTitle() {
+    protected void setTitleVisibility(Boolean visible) {
         if (headerLayout != null) {
-            headerLayout.setVisibility(View.GONE);
+            if (visible) {
+                headerLayout.setVisibility(View.VISIBLE);
+            } else {
+                headerLayout.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -327,6 +340,18 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         if (titleTextView != null) {
             titleTextView.setText(text);
         }
+    }
+
+    /**
+     * タイトル内容を取得
+     *
+     * @return タイトル内容
+     */
+    protected CharSequence getTitleText() {
+        if (titleTextView != null) {
+            return titleTextView.getText();
+        }
+        return "";
     }
 
     //契約・ペアリング済み用
@@ -425,7 +450,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         if (this instanceof STBSelectActivity
                 || this instanceof LaunchActivity
                 //|| this instanceof RecordedListActivity
-                || this instanceof DtvContentsDetailActivity) {
+                ) {
             DTVTLogger.end();
             return;
         }
@@ -788,9 +813,14 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     @Override
     public void onClick(View view) {
         if (mMenuImageViewForBase == view) {
-            //ダブルクリックを防ぐ
-            if (isFastClick()) {
-                onSampleGlobalMenuButton_PairLoginOk();
+            if (HEADER_ICON_CLOSE.equals(mMenuImageViewForBase.getTag())) {
+                //コンテンツ詳細画面の×ボタン時はコンテンツ詳細画面を閉じる
+                contentsDetailCloseKey(view);
+            } else {
+                //ダブルクリックを防ぐ
+                if (isFastClick()) {
+                    onSampleGlobalMenuButton_PairLoginOk();
+                }
             }
         }
     }
@@ -798,17 +828,13 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     /**
      * リモコン画面を生成する
      */
-    public void createRemoteControllerView() {
+    public void createRemoteControllerView(Boolean isFirstVisible) {
         DTVTLogger.debug("CreateRemoteControllerView");
         RelativeLayout layout = findViewById(R.id.base_remote_controller_rl);
         remoteControllerView = layout.findViewById(R.id.remote_control_view);
         remoteControllerView.init(this);
-        if (this instanceof DtvContentsDetailActivity) {
-            // nop.
-            DTVTLogger.debug("DtvContentsDetailActivity");
-        } else {
-            remoteControllerView.setOnStartRemoteControllerUI(this);
-        }
+        remoteControllerView.setIsFirstVisible(isFirstVisible);
+        remoteControllerView.setOnStartRemoteControllerUI(this);
         layout.setVisibility(View.VISIBLE);
     }
 
@@ -857,7 +883,18 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                 case R.id.header_stb_status_icon:
                     if (getStbStatus()) {
                         DTVTLogger.debug("Start RemoteControl");
-                        createRemoteControllerView();
+                        if (v.getContext() instanceof DtvContentsDetailActivity) {
+                            if (((DtvContentsDetailActivity) v.getContext()).getControllerVisible()) {
+                                // コンテンツ詳細画面でコントローラのヘッダーを表示する場合
+                                createRemoteControllerView(true);
+                            } else {
+                                // コンテンツ詳細画面でコントローラのヘッダーを表示しない場合
+                                createRemoteControllerView(false);
+                            }
+                        } else {
+                            // コンテンツ詳細画面以外の場合
+                            createRemoteControllerView(false);
+                        }
                         getRemoteControllerView().startRemoteUI();
                     }
                     break;
@@ -902,7 +939,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     public void menuRemoteController() {
         if (getStbStatus()) {
             DTVTLogger.debug("Start RemoteControl");
-            createRemoteControllerView();
+            createRemoteControllerView(false);
             getRemoteControllerView().startRemoteUI();
         }
     }

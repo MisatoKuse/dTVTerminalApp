@@ -41,6 +41,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     private float mVisibilityHeight = 0;
     private long mSysTime;//システムTime
     private boolean mIsClick = false;//クリックなのかスワイプなのか
+    private boolean mIsFirstVisible = false; //最初から表示されているか否か
 
     private View mChild = null;
     private Scroller mScroller = null;
@@ -53,7 +54,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     private LinearLayout mBottomLinearLayout, mTopLinearLayout = null;
     private OnStartRemoteControllerUIListener mStartUIListener = null;
 
-    private final long CLICK_MAX_TIME = 100;
+    private static final long CLICK_MAX_TIME = 100;
 
     /**
      * このViewがtopに表示された際に通知するリスナー
@@ -87,7 +88,11 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
 
-        //HeaderをリモコンViewの下部に移動させ、50dpだけ表示させる
+        // コンテンツ詳細画面でもコントローラのヘッダーを表示しない場合は高さを0に設定
+        if (!mIsFirstVisible) {
+            mHeaderHeight = 0;
+        }
+        // Headerを表示させる画面では、リモコンViewの下部に移動させ、50dpだけ表示させる
         DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
         mScrollHeight = (int) (mChild.getMeasuredHeight() - (mHeaderHeight * metrics.density));
         mVisibilityHeight = mHeaderHeight * metrics.density;
@@ -116,6 +121,14 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         synchronized (this) {
             mIsClick = is;
         }
+    }
+
+    /**
+     * リモコンの初期表示状態を指定する
+     * @param visible true:ヘッダーが表示されている false:ヘッダーが表示されていない
+     */
+    public void setIsFirstVisible(Boolean visible) {
+        mIsFirstVisible = visible;
     }
 
     /**
@@ -388,7 +401,13 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         if (mViewList.size() == 0) {
             setPager();
         }
-        mScroller.startScroll(0, 0, 0, (int) (mScrollHeight + mVisibilityHeight));
+
+        DTVTLogger.debug("getScrollY:"+getScrollY());
+        if (mIsFirstVisible) {
+            mScroller.startScroll(0, 0, 0, mScrollHeight);
+        } else {
+            mScroller.startScroll(0, 0, 0, (int) (mScrollHeight + mVisibilityHeight));
+        }
         invalidate();
         setHeaderContent();
     }
