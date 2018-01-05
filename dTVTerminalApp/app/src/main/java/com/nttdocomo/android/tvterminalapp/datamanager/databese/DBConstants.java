@@ -6,11 +6,8 @@ package com.nttdocomo.android.tvterminalapp.datamanager.databese;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser;
 
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser.USER_INFO_LIST_CONTRACT_STATUS;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser.USER_INFO_LIST_H4D_AGE_REQ;
-import static com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser.USER_INFO_LIST_LOGGEDIN_ACCOUNT;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_AGREEMENT;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID;
@@ -289,14 +286,15 @@ public class DBConstants {
 
     //Homeキャッシュデータ格納用テーブル
     public static final String USER_INFO_LIST_TABLE_NAME = "user_info_list";
-    public static final String CREATE_TABLE_USER_INFO_SQL = "" +
-            "create table " + USER_INFO_LIST_TABLE_NAME + " (" +
-            ID_COLUMN + " integer primary key autoincrement, " +
-            USER_INFO_LIST_LOGGEDIN_ACCOUNT + " text, " +
-            USER_INFO_LIST_CONTRACT_STATUS + " text, " +
-            USER_INFO_LIST_DCH_AGE_REQ +" text," +
-            USER_INFO_LIST_H4D_AGE_REQ + " text" +
-            ")";
+    public static final String CREATE_TABLE_USER_INFO_SQL = StringUtil.getConnectStrings(
+            "create table " , USER_INFO_LIST_TABLE_NAME , " (" ,
+            ID_COLUMN , " integer primary key autoincrement, " ,
+            UserInfoJsonParser.USER_INFO_LIST_LOGGEDIN_ACCOUNT , " text, " ,
+            UserInfoJsonParser.USER_INFO_LIST_CONTRACT_STATUS , " text, " ,
+            UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ , " text," ,
+            UserInfoJsonParser.USER_INFO_LIST_H4D_AGE_REQ , " text," ,
+            UserInfoJsonParser.USER_INFO_LIST_UPDATE_TIME , " integer" ,
+            ")");
 
     //Homeキャッシュデータ格納用テーブル
     public static final String VODCLIP_LIST_TABLE_NAME = "vod_clip_list";

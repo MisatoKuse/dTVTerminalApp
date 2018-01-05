@@ -22,7 +22,7 @@ public class UserInfoListDao {
     /**
      * コンストラクタ
      *
-     * @param db
+     * @param db データベース
      */
     public UserInfoListDao(SQLiteDatabase db) {
         this.db = db;
@@ -31,8 +31,8 @@ public class UserInfoListDao {
     /**
      * 配列で指定した列データをすべて取得
      *
-     * @param strings
-     * @return
+     * @param strings 列データ名
+     * @return 取得データ
      */
     public List<Map<String, String>> findById(String[] strings) {
         //特定IDのデータ取得はしない方針
@@ -66,10 +66,21 @@ public class UserInfoListDao {
     }
 
     /**
-     * データの登録
+     * データの登録・集合
      *
-     * @param value
-     * @return
+     * @param values 値の集合
+     * @return 書き込み位置
+     */
+    public long insert(ContentValues values) {
+        return db.insert(USER_INFO_LIST_TABLE_NAME, null, values);
+    }
+
+    /**
+     * データの登録・単独
+     *
+     * @param key   　書き込みキー名
+     * @param value 書き込み位置
+     * @return 書き込み位置
      */
     public long insert(String key, String value) {
         ContentValues values = new ContentValues();
@@ -85,7 +96,7 @@ public class UserInfoListDao {
     /**
      * データの削除
      *
-     * @return
+     * @return 削除行数
      */
     public int delete() {
         return db.delete(USER_INFO_LIST_TABLE_NAME, null, null);

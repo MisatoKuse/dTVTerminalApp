@@ -4,8 +4,13 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import android.content.Context;
+
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser;
+
+import java.util.List;
 
 public class UserInfoWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
@@ -15,62 +20,76 @@ public class UserInfoWebClient
      */
     public interface UserInfoJsonParserCallback {
         /**
-         * 登録が正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック
+         *
+         * @param userInfoLists JSONパース後のデータ
          */
-        void getUserInfoResult(int ageReq);
-
-        /**
-         * 登録が正常に終了した場合に呼ばれるコールバック
-         */
-        void getUserInfoFailure();
+        void onUserInfoJsonParsed(List<UserInfoList> userInfoLists);
     }
 
     //コールバックのインスタンス
-    private UserInfoJsonParserCallback mUserInfoJsonParserCallback = null;
+    private UserInfoJsonParserCallback mUserInfoJsonParserCallback;
 
-    /**
-     * 通信成功時のコールバック
-     *
-     * @param returnCode 戻り値構造体
-     */
     @Override
     public void onAnswer(ReturnCode returnCode) {
         //JSONをパースして、データを返す
         new UserInfoJsonParser(mUserInfoJsonParserCallback).execute(returnCode.bodyData);
     }
 
-    /**
-     * 通信失敗時のコールバック
-     */
     @Override
     public void onError() {
-        //エラーが発生したのでヌルを返す
-        mUserInfoJsonParserCallback.getUserInfoFailure();
+        if (mUserInfoJsonParserCallback != null) {
+            //エラーが発生したのでヌルを返す
+            mUserInfoJsonParserCallback.onUserInfoJsonParsed(null);
+        }
     }
 
     /**
-     * ユーザ情報取得
+     * 契約情報取得
      *
-     * @param userInfoJsonParserCallback callback
+     * @param userInfoJsonParserCallback コールバック
      * @return パラメータエラー等が発生した場合はfalse
      */
-    public boolean getUserInfoApi(UserInfoJsonParserCallback userInfoJsonParserCallback) {
+    public boolean getUserInfoApi(Context context,
+                                  UserInfoJsonParserCallback userInfoJsonParserCallback) {
         //パラメーターのチェック
-        if (userInfoJsonParserCallback == null) {
-            //callbackがなければ、falseで帰る
+        if (!checkNormalParameter(context, userInfoJsonParserCallback)) {
+            //パラメーターがおかしければ通信不能なので、falseで帰る
             return false;
         }
 
-        //コールバックの設定
+        //コールバックのセット
         mUserInfoJsonParserCallback = userInfoJsonParserCallback;
 
-        //パラメータがないのでBlankを設定する
-        String sendParameter = "";
+        //契約情報取得をワンタイムトークン付きで呼び出す
+        openUrlAddOtt(context, UrlConstants.WebApiUrl.USER_INFO_WEB_CLIENT, "",
+                this, null);
 
-        //チャンネル一覧を呼び出す
-        openUrl(UrlConstants.WebApiUrl.USER＿INFO_GET_WEB_CLIENT, sendParameter, this);
+        //今のところ失敗していないので、trueを返す
+        return true;
+    }
 
-        //現状失敗は無いのでtrue
+    /**
+     * 指定されたパラメータがおかしいかどうかのチェック
+     *
+     * @param context                    コンテキスト
+     * @param userInfoJsonParserCallback コールバック
+     * @return おかしい値があるならばfalse
+     */
+    private boolean checkNormalParameter(Context context,
+                                         UserInfoJsonParserCallback userInfoJsonParserCallback) {
+
+        //コンテキストが指定されていないならばfalse
+        if (context == null) {
+            return false;
+        }
+
+        //コールバックが指定されていないならばfalse
+        if (userInfoJsonParserCallback == null) {
+            return false;
+        }
+
+        //何もエラーが無いのでtrue
         return true;
     }
 }

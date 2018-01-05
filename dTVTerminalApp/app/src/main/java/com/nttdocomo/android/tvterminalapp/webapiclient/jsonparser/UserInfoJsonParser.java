@@ -7,19 +7,18 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.UserInfoWebClient;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
-public class UserInfoJsonParser extends AsyncTask<String, Object, Integer> {
+public class UserInfoJsonParser extends AsyncTask<Object, Object, Object> {
 
     private static final String USER_INFO_LIST_STATUS = "status";
 
@@ -28,14 +27,51 @@ public class UserInfoJsonParser extends AsyncTask<String, Object, Integer> {
     public static final String USER_INFO_LIST_CONTRACT_STATUS = "contract_status";
     public static final String USER_INFO_LIST_DCH_AGE_REQ = "dch_age_req";
     public static final String USER_INFO_LIST_H4D_AGE_REQ = "h4d_age_req";
-    public static final int USE_NONE_AGE_REQ = 8;
-    private UserInfoWebClient.UserInfoJsonParserCallback userInfoJsonParserCallback = null;
+    public static final String USER_INFO_LIST_UPDATE_TIME = "update_time";
+    private static final String BRACKET_LEFT = "[";
+    private static final String BRACKET_RIGHT = "]";
 
-    private static final String[] listPara = {USER_INFO_LIST_CONTRACT_STATUS, USER_INFO_LIST_DCH_AGE_REQ,
-            USER_INFO_LIST_H4D_AGE_REQ};
+    private UserInfoWebClient.UserInfoJsonParserCallback mUserInfoJsonParserCallback;
 
-    public UserInfoJsonParser(UserInfoWebClient.UserInfoJsonParserCallback callback) {
-        userInfoJsonParserCallback = callback;
+    private List<UserInfoList> mUserInfoListResponse;
+
+    /**
+     * コンストラクタ
+     */
+    public UserInfoJsonParser(UserInfoWebClient.UserInfoJsonParserCallback userInfoJsonParserCallback) {
+        mUserInfoJsonParserCallback = userInfoJsonParserCallback;
+        mUserInfoListResponse = new ArrayList<>();
+    }
+
+    @Override
+    protected void onPostExecute(Object s) {
+        if(s != null && s instanceof List) {
+            mUserInfoListResponse = (List<UserInfoList>) s;
+            mUserInfoJsonParserCallback.onUserInfoJsonParsed(
+                    mUserInfoListResponse);
+        }
+    }
+
+    @Override
+    protected Object doInBackground(Object... strings) {
+        String result = (String) strings[0];
+
+        //TODO:仮データ・後で消す事
+        result = "{\n" +
+                "  \"status\": \"OK\",\n" +
+                "  \"loggedin_account\": {\n" +
+                "    \"contract_status\": \"002\",\n" +
+                "    \"dch_age_req\": \"9\",\n" +
+                "    \"h4d_age_req\": \"17\"\n" +
+                "  },\n" +
+                "  \"h4d_contracted_account\": {\n" +
+                "    \"contract_status\": \"002\",\n" +
+                "    \"dch_age_req\": \"12\",\n" +
+                "    \"h4d_age_req\": \"17\"\n" +
+                "  }\n" +
+                "}";
+
+        return userInfoListSender(result);
     }
 
     /**
@@ -44,144 +80,111 @@ public class UserInfoJsonParser extends AsyncTask<String, Object, Integer> {
      * @param jsonStr ユーザ情報情報一覧
      * @return userInfoList
      */
-    public int userInfoListSender(String jsonStr) {
+    public List<UserInfoList> userInfoListSender(String jsonStr) {
 
         // オブジェクトクラスの定義
-        List<HashMap<String, String>> userStateMapList = new ArrayList<>();
+        UserInfoList infoList;
 
-        //Jsonデータがないときはデフォルト値(PG12)を返却する
-        if(jsonStr == null || jsonStr.length() < 1){
-            return USE_NONE_AGE_REQ;
-        }
+        infoList = new UserInfoList();
 
         try {
             JSONObject jsonObj = new JSONObject(jsonStr);
 
-            if (jsonObj.length() > 0) {
+            if (jsonObj != null) {
+                //ステータスの取得
                 if (!jsonObj.isNull(USER_INFO_LIST_STATUS)) {
                     String status = jsonObj.getString(USER_INFO_LIST_STATUS);
-                    if(!status.equals(JsonContents.META_RESPONSE_STATUS_OK)){
-                        getUserInfoFailure();
-                        return USE_NONE_AGE_REQ;
-                    }
+                    infoList.setmStatus(status);
                 }
+
+                //リクエストユーザデータの取得
+                ArrayList<UserInfoList.AccountList> loggedinAccount = new ArrayList<>();
 
                 if (!jsonObj.isNull(USER_INFO_LIST_LOGGEDIN_ACCOUNT)) {
-                    JSONObject loggedInObj = jsonObj.getJSONObject(USER_INFO_LIST_LOGGEDIN_ACCOUNT);
-                    userStateMapList.add(sendUiList(loggedInObj));
-                } else {
-                    return USE_NONE_AGE_REQ;
+                    Object arryCheck = jsonObj.getJSONObject(USER_INFO_LIST_LOGGEDIN_ACCOUNT);
+                    JSONArray sendData;
+                    if (arryCheck instanceof JSONArray) {
+                        //配列だったので、配列にする
+                        sendData = jsonObj.getJSONArray(USER_INFO_LIST_LOGGEDIN_ACCOUNT);
+                    } else {
+                        //前後に大かっこを足して配列化
+                        StringBuilder tempBuffer = new StringBuilder();
+                        tempBuffer.append(BRACKET_LEFT);
+                        tempBuffer.append(((JSONObject) arryCheck).toString());
+                        tempBuffer.append(BRACKET_RIGHT);
+                        sendData = new JSONArray(tempBuffer.toString());
+                    }
+
+                    getDataArray(loggedinAccount, sendData);
                 }
+
+                infoList.setmLoggedinAccount(loggedinAccount);
+
+
+                //H4D契約ユーザデータの取得
+                ArrayList<UserInfoList.AccountList> h4dContractedAccount = new ArrayList<>();
 
                 if (!jsonObj.isNull(USER_INFO_LIST_H4D_CONTRACTED_ACCOUNT)) {
-                    JSONObject h4dObj = jsonObj.getJSONObject(USER_INFO_LIST_H4D_CONTRACTED_ACCOUNT);
-                    userStateMapList.add(sendUiList(h4dObj));
-                } else {
-                    return USE_NONE_AGE_REQ;
-                }
-
-                return getUserInfo(userStateMapList);
-            }
-        } catch (JSONException e) {
-            DTVTLogger.debug(e);
-        }
-
-        return USE_NONE_AGE_REQ;
-    }
-
-    /**
-     * ユーザ情報取得失敗
-     */
-    private void getUserInfoFailure(){
-        userInfoJsonParserCallback.getUserInfoFailure();
-    }
-
-    /**
-     * ユーザ情報をList<HashMap>でオブジェクトクラスに格納
-     *
-     * @param jsonObj
-     * @return ユーザ情報List
-     */
-    private HashMap<String, String> sendUiList(JSONObject jsonObj) {
-        HashMap<String, String> map = new HashMap<>();
-        try {
-            for (String aListPara : listPara) {
-                if (!jsonObj.isNull(aListPara)) {
-                    if (!jsonObj.isNull(aListPara)) {
-                        String para = jsonObj.getString(aListPara);
-                        map.put(aListPara, para);
+                    Object arryCheck = jsonObj.getJSONObject(
+                            USER_INFO_LIST_H4D_CONTRACTED_ACCOUNT);
+                    JSONArray sendData;
+                    if (arryCheck instanceof JSONArray) {
+                        //配列だったので、配列にする
+                        sendData = jsonObj.getJSONArray(USER_INFO_LIST_H4D_CONTRACTED_ACCOUNT);
+                    } else {
+                        //前後に大かっこを足して配列化
+                        StringBuilder tempBuffer = new StringBuilder();
+                        tempBuffer.append(BRACKET_LEFT);
+                        tempBuffer.append(((JSONObject) arryCheck).toString());
+                        tempBuffer.append(BRACKET_RIGHT);
+                        sendData = new JSONArray(tempBuffer.toString());
                     }
+
+                    getDataArray(h4dContractedAccount, sendData);
                 }
+
+                infoList.setmH4dContractedAccount(h4dContractedAccount);
+
+                return Arrays.asList(infoList);
             }
         } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
             DTVTLogger.debug(e);
         }
-        return map;
-    }
 
-    @Override
-    protected Integer doInBackground(String... strings) {
-        String jsonStr = null;
-        if (strings != null && strings[0] != null) {
-            jsonStr = strings[0];
-        }
-        return userInfoListSender(jsonStr);
-    }
-
-    @Override
-    protected void onPostExecute(Integer age) {
-        userInfoJsonParserCallback.getUserInfoResult(age);
+        return null;
     }
 
     /**
-     * ユーザ年齢情報を取得する
+     * 取得した契約情報を蓄積する
      *
-     * @param userInfoMapList ユーザアカウント情報
-     * @return 年齢情報
+     * @param loggedinAccount 蓄積用データリスト
+     * @param loggedinArray   蓄積対象のリクエストユーザデータ又はH4D契約ユーザデータ
      */
-    private int getUserInfo(List<HashMap<String, String>> userInfoMapList) {
-        final int INT_LOGGED_IN_ACCOUNT_LIST = 0;
-        final String USE_H4D_AGE_REQ = "001";
-        final String USE_DCH_AGE_REQ = "002";
-        String age = null;
-        String contractStatus = null;
-        int intAge = 8;
-        HashMap<String, String> mLoggedInAccount;
-//        UserInfoList infoList = userInfoList.get(INT_LIST_HEAD);
-//        List<HashMap<String, String>> mLoggedInAccountList = infoList.getLoggedinAccountList();
+    void getDataArray(List<UserInfoList.AccountList> loggedinAccount, JSONArray loggedinArray) {
 
-        if (userInfoMapList != null && userInfoMapList.size() > 0) {
-            mLoggedInAccount = userInfoMapList.get(INT_LOGGED_IN_ACCOUNT_LIST);
-        } else {
-            return intAge;
-        }
+        UserInfoList.AccountList tempList = new UserInfoList.AccountList();
+        String temp;
+        for (int count = 0; count < loggedinArray.length(); count++) {
+            try {
+                JSONObject loggedinObj = loggedinArray.getJSONObject(count);
 
-        if (mLoggedInAccount != null && mLoggedInAccount.size() > 0) {
-            contractStatus = mLoggedInAccount.get(UserInfoJsonParser.USER_INFO_LIST_CONTRACT_STATUS);
-        }
+                temp = loggedinObj.getString(USER_INFO_LIST_CONTRACT_STATUS);
+                tempList.setmContractStatus(temp);
+                temp = loggedinObj.getString(USER_INFO_LIST_DCH_AGE_REQ);
+                tempList.setmDchAgeReq(temp);
 
-        //contractStatusがないときはPG12制限を設定
-        if (contractStatus != null) {
-            if (contractStatus.equals(USE_H4D_AGE_REQ)) {
-                //H4Dの制限情報がないときはDCH側を使用
-                age = mLoggedInAccount.get(UserInfoJsonParser.USER_INFO_LIST_H4D_AGE_REQ);
-                if (age == null || age.length() < 1) {
-                    age = mLoggedInAccount.get(UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ);
+                //この項目は省略される場合がある
+                if(loggedinObj.has(USER_INFO_LIST_H4D_AGE_REQ)) {
+                    temp = loggedinObj.getString(USER_INFO_LIST_H4D_AGE_REQ);
+                    tempList.setmH4dAgeReq(temp);
+                } else {
+                    //省略された場合は空文字
+                    tempList.setmH4dAgeReq("");
                 }
-            } else if (contractStatus.equals(USE_DCH_AGE_REQ)) {
-                //DCHの制限情報がないときはH4DDCH側を使用
-                age = mLoggedInAccount.get(UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ);
-                if (age == null || age.length() < 1) {
-                    age = mLoggedInAccount.get(UserInfoJsonParser.USER_INFO_LIST_H4D_AGE_REQ);
-                }
+                loggedinAccount.add(tempList);
+            } catch (JSONException e) {
+                //パースに失敗した場合は次のデータに行くので何もしない
             }
         }
-        if(DBUtils.isNumber(age)){
-            intAge = Integer.parseInt(age);
-        }
-        return intAge;
     }
 }

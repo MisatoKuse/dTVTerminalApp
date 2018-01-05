@@ -35,7 +35,9 @@ import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActi
 import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
+import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
@@ -50,6 +52,8 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipDeleteWebClie
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.UserInfoWebClient;
 
+import java.util.List;
+
 /**
  * クラス機能：
  * プロジェクトにて、すべての「Activity」のベースクラスである
@@ -59,6 +63,7 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.UserInfoWebClient
 public class BaseActivity extends FragmentActivity implements MenuDisplayEventListener,
         DlnaDevListListener, View.OnClickListener, RemoteControllerView.OnStartRemoteControllerUIListener,
         ClipRegistWebClient.ClipRegistJsonParserCallback, ClipDeleteWebClient.ClipDeleteJsonParserCallback,
+        DaccountControl.DaccountControlCallBack,UserInfoDataProvider.UserDataProviderCallback,
         DaccountControl.DaccountControlCallBack, UserInfoWebClient.UserInfoJsonParserCallback {
 
     private LinearLayout baseLinearLayout = null;
@@ -71,6 +76,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     private ImageView mMenuImageViewForBase = null;
     private RemoteControllerView remoteControllerView = null;
     private Context mContext = null;
+    private Activity mActivity = null;
     private RemoteControlRelayClient mRemoteControlRelayClient = null;
     private UserState sUserState = UserState.LOGIN_NG;
 
@@ -95,6 +101,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     /** 詳細画面起動元Classを保存 */
     private static String mSourceScreenClass = "";
+
+    /**
+     * 契約情報
+     */
+    private List<UserInfoList> mUserInfo;
 
     /**
      * Created on 2017/09/21.
@@ -348,6 +359,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_base);
         mContext = this;
+        mActivity = this;
         initView();
 
         mRemoteControlRelayClient = RemoteControlRelayClient.getInstance();
@@ -359,6 +371,10 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 //        SharedPreferencesUtils.setSharedPreferencesAgeReq(this, UserInfoJsonParser.USE_NONE_AGE_REQ); //未ログインではPG12を設定する
         //TODO:正式な未ログインへの変更処理が実装されたらそちらへ移動する(dアカウント取得画面実装時)
         getUserInfoWebClient();  //ログイン済みになったらユーザ情報取得処理を叩く
+
+        //ユーザー情報の変更検知
+        UserInfoDataProvider dataProvider = new UserInfoDataProvider(getApplicationContext(),this);
+        dataProvider.getUserInfo();
 
         DTVTLogger.end();
     }
@@ -1044,6 +1060,19 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         });
         applicationFinishDialog.showDialog();
     }
+
+    @Override
+    public void userInfoListCallback(boolean isDataChange,List<UserInfoList> list) {
+        //返却された契約情報を控える
+        if(isDataChange) {
+            //情報を控える
+            mUserInfo = list;
+
+            //以前の情報と異なっているので、ホーム画面に遷移
+            DAccountUtils.reStartApplication(mActivity);
+        }
+    }
+}
 
     /**
      * 機能: リモコンが表示されているか確認し、開いている場合は閉じる

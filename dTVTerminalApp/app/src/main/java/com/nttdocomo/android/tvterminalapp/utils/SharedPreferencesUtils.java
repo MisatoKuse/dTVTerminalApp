@@ -53,10 +53,13 @@ public class SharedPreferencesUtils {
     private static final String RESTART_FLAG = "RESTART_FLAG";
     /** ユーザ年齢情報キー */
     private static final String USER_AGE_REQ_SHARED_KEY = "USER_AGE_REQ_SHARED_KEY";
+    /** ユーザー情報取得日時 */
+    private static final String LAST_USER_INFO_DATE = "LAST_USER_INFO_DATE";
 
     /**
      * 独自の削除メソッドがある接続済みSTB情報以外の、dアカウントユーザー切り替え時の削除対象
-     * (チュートリアル表示済み判定以外は全て消すことになった)
+     * 新しい物を追加した場合は、基本的にこの配列に名前を追加してください。
+     * (チュートリアル表示済み判定以外は全て消すことになった。アプリ再起動フラグは自動で消えるので対象外)
      */
     private final static String[] DELETE_PREFERENCES_NAME = {
             // SharedPreferences ペアリング情報保存キー 親キー
@@ -77,6 +80,8 @@ public class SharedPreferencesUtils {
             LAST_D_ACCOUNT_ID,
             //最後に取得したワンタイムパスワード
             LAST_ONE_TIME_PASSWORD,
+            //ユーザー情報取得日時
+            LAST_USER_INFO_DATE,
     };
 
 
@@ -377,6 +382,42 @@ public class SharedPreferencesUtils {
                 LAST_ONE_TIME_PASSWORD, Context.MODE_PRIVATE);
 
         return data.getString(LAST_ONE_TIME_PASSWORD,"");
+    }
+
+    /**
+     * ユーザー情報の最終取得日時を保存
+     *
+     * @param context コンテキスト
+     * @param getTime 取得日時
+     */
+    public static void setSharedPreferencesUserInfoDate(Context context, long getTime) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                LAST_USER_INFO_DATE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putLong(LAST_USER_INFO_DATE, getTime);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * ユーザー情報の最終取得日時を取得
+     *
+     * @param context コンテキスト
+     * @return 最終取得日時
+     */
+    public static long getSharedPreferencesUserInfoDate(Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                LAST_USER_INFO_DATE, Context.MODE_PRIVATE);
+        long dateTime = data.getLong(LAST_USER_INFO_DATE,-1L);
+
+        //日時が負数ならばまだユーザー情報は読み込まれていないので、最大値を入れてかならず読むようにする
+        if(dateTime < 0) {
+            dateTime = Long.MAX_VALUE;
+        }
+
+        return dateTime;
     }
 
     /**
