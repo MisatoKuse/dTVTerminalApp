@@ -333,4 +333,8 @@
     <!-- お知らせ -->
     <string name="information_title">お知らせ</string>
 
+    <!-- ビデオ一覧 -->
+    <string name="video_list_genre_all">すべて</string>
+    <string name="video_list_genre_nod">ＮＯＤ</string>
+
 </resources>
