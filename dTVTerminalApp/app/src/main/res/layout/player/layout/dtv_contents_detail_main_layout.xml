@@ -8,11 +8,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- コンテンツ詳細用のヘッダ を読み込む -->
-    <include
-        android:id="@+id/contents_detail_main_layout_header"
-        layout="@layout/contents_detail_header_layout" />
-
     <ScrollView
         android:id="@+id/contents_detail_scroll_view"
         android:layout_width="match_parent"

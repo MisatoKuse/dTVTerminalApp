@@ -105,11 +105,10 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     private String[] mTabNames = null;
     private String mDate[] = {"日", "月", "火", "水", "木", "金", "土"};
     private boolean mIsPlayer = false;
+    private boolean mIsControllerVisible = false;
     private Intent mIntent = null;
     private Toast mToast = null;
 
-    private TextView mHeaderTextView = null;
-    private ImageView mHeaderBackImageView = null;
     private LinearLayout mThumbnailBtn = null;
     private RelativeLayout mThumbnailRelativeLayout = null;
     private ImageView mThumbnail = null;
@@ -199,7 +198,6 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         setContentView(R.layout.dtv_contents_detail_main_layout);
         DTVTLogger.start();
         setStatusBarColor(R.color.contents_header_background);
-        setNoTitle();
         initView();
     }
 
@@ -223,8 +221,6 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
      */
     private void initView() {
         mIntent = getIntent();
-        mHeaderTextView = findViewById(R.id.contents_detail_header_layout_title);
-        mHeaderBackImageView = findViewById(R.id.contents_detail_header_layout_back);
         mThumbnailRelativeLayout = findViewById(R.id.dtv_contents_detail_layout);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 getWidthDensity(),
@@ -234,20 +230,29 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         if (object instanceof RecordedContentsDetailData) {
             mIsPlayer = true;
             // リモコンUIのリスナーを設定
-            createRemoteControllerView();
+            createRemoteControllerView(true);
+            mIsControllerVisible = true;
             setStartRemoteControllerUIListener(this);
             initPlayer();
         }
 
-        //ヘッダーの戻るアイコンと×ボタンの設定
+        //ヘッダーの設定
         String sourceClass = mIntent.getStringExtra(DTVTConstants.SOURCE_SCREEN);
         if (sourceClass != null && !sourceClass.isEmpty()) {
             //赤ヘッダーである遷移元クラス名を保持
             setSourceScreenClass(sourceClass);
+            enableHeaderBackIcon(false);
         } else {
-            //詳細画面から詳細画面への遷移
-            mHeaderBackImageView.setVisibility(View.VISIBLE);
+            //詳細画面から詳細画面への遷移時は戻るアイコンを表示
+            enableHeaderBackIcon(true);
         }
+        setHeaderColor(false);
+        enableStbStatusIcon(true);
+        enableGlobalMenuIcon(true);
+        changeGlobalMenuIcon(false);
+        //テレビアイコンをタップされたらリモコンを起動する
+        findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
+
         initContentsView();
     }
 
@@ -662,7 +667,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             size = duration * bitRate;
         }
         String title = datas.getTitle();
-        mHeaderTextView.setText(title);
+        setTitleText(title);
         Uri uri = Uri.parse(url);
         String contentFormat = "contentFormat";
         String type2 = "";
@@ -839,7 +844,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
      */
     private void setTitleAndThumbnail(String title, String url) {
         if (!TextUtils.isEmpty(title)) {
-            mHeaderTextView.setText(title);
+            setTitleText(title);
         }
         if (!TextUtils.isEmpty(url)) {
             ThumbnailProvider mThumbnailProvider = new ThumbnailProvider(this);
@@ -869,7 +874,8 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                 if (serviceId == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID
                         || serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID) {
                     // リモコンUIのリスナーを設定
-                    createRemoteControllerView();
+                    createRemoteControllerView(true);
+                    mIsControllerVisible = true;
                     setStartRemoteControllerUIListener(this);
                 }
             }
@@ -933,7 +939,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         mTvTitle = playerViewLayout.findViewById(R.id.tv_player_main_layout_video_ctrl_player_title);
         mTvLogo = playerViewLayout.findViewById(R.id.tv_player_main_layout_video_ctrl_player_logo);
         setPlayerLogoThumbnail("https://www.hikaritv.net/resources/hikari/pc/images/ch_logo/ch220/101.png");
-        mTvTitle.setText(mHeaderTextView.getText());
+        mTvTitle.setText(getTitleText());
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 getWidthDensity(), getHeightDensity());
         setScreenSize(getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE, layoutParams);
@@ -975,12 +981,11 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
      */
     private void setScreenSize(boolean mIsLandscape, LinearLayout.LayoutParams playerParams) {
         DTVTLogger.start();
-        LinearLayout headerLayout = findViewById(R.id.contents_detail_main_layout_header);
         if (mIsLandscape) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-            headerLayout.setVisibility(View.GONE);
+            setTitleVisibility(false);
             playerParams.height = getScreenHeight();
             playerParams.width = getScreenWidth();
             mScreenWidth = getScreenWidth();
@@ -990,7 +995,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
             mScreenWidth = getWidthDensity();
             playerParams.height = (getWidthDensity() * SCREEN_RATIO_HEIGHT / SCREEN_RATIO_WIDTH);
-            headerLayout.setVisibility(View.VISIBLE);
+            setTitleVisibility(true);
             setPlayerProgressView(false);
             setRemoteControllerViewVisibility(View.VISIBLE);
         }
@@ -1084,8 +1089,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             resourceId = getResources().getIdentifier("navigation_bar_width",
                     "dimen", "android");
         }
-        int height = getResources().getDimensionPixelSize(resourceId);
-        return height;
+        return getResources().getDimensionPixelSize(resourceId);
     }
 
     private int getScreenHeight() {
@@ -1481,7 +1485,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                     break;
                 }
             default:
-                break;
+                super.onClick(v);
         }
         DTVTLogger.end();
     }
@@ -1847,5 +1851,13 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             }
         });
         return recordingReservationConfirmDialog;
+    }
+
+    /**
+     * コンテンツ詳細画面の下部にコントローラのヘッダーを表示するかどうかを返す
+     * @return true:表示する false:表示しない
+     */
+    public Boolean getControllerVisible() {
+        return mIsControllerVisible;
     }
 }
