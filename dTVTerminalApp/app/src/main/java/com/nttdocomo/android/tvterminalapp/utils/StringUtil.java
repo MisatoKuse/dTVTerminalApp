@@ -12,9 +12,6 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
 import org.json.JSONArray;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 
 /**
  * 文字列加工に関する処理を記載する
@@ -53,12 +50,23 @@ public class StringUtil {
      */
     public static String getConnectString(String[] strings) {
         StringBuilder builder = new StringBuilder();
-        String conString = null;
+        String conString;
         for (String string : strings) {
             builder.append(string);
         }
         conString = builder.toString();
         return conString;
+    }
+
+    /**
+     * 文字列を連結する・可変長引数版（言語仕様の都合で、オーバーロードの同じ名前にはできない）
+     *
+     * @param strings 連結したい文字列を必要な数だけ指定する。
+     * @return 連結後の文字列
+     */
+    public static String getConnectStrings(String... strings) {
+        //同じ名前にはできないが、処理は委譲する。
+        return getConnectString(strings);
     }
 
     /**
@@ -125,7 +133,7 @@ public class StringUtil {
      * 与えられたオブジェクトをチェックし、整数に変換する
      *
      * @param data オブジェクト
-     * @return 長整数変換後の値。変換できなければゼロ
+     * @return 整数変換後の値。変換できなければゼロ
      */
     public static int changeString2Int(Object data) {
         //既に数値かどうかを判定
@@ -153,10 +161,10 @@ public class StringUtil {
      * 与えられたオブジェクトをチェックし、文字列に変換する
      *
      * @param data オブジェクト
-     * @return 長整数変換後の値。変換できなければゼロ
+     * @return 変換後の文字列。変換できなければ空文字
      */
     public static String changeObject2String(Object data) {
-        //Strinかどうかを見る
+        //Stringかどうかを見る
         if (data instanceof String) {
             //そのまま返す
             return (String)data;

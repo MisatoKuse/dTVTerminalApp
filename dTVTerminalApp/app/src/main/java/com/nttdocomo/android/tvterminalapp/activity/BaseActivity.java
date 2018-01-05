@@ -34,7 +34,9 @@ import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActi
 import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
+import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
@@ -47,6 +49,9 @@ import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountControl;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipDeleteWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.UserInfoWebClient;
+
+import java.util.List;
 
 /**
  * クラス機能：
@@ -57,7 +62,7 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClie
 public class BaseActivity extends FragmentActivity implements MenuDisplayEventListener,
         DlnaDevListListener, View.OnClickListener, RemoteControllerView.OnStartRemoteControllerUIListener,
         ClipRegistWebClient.ClipRegistJsonParserCallback, ClipDeleteWebClient.ClipDeleteJsonParserCallback,
-        DaccountControl.DaccountControlCallBack {
+        DaccountControl.DaccountControlCallBack,UserInfoDataProvider.UserDataProviderCallback {
 
     private LinearLayout baseLinearLayout = null;
     private RelativeLayout headerLayout = null;
@@ -68,6 +73,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     private ImageView mMenuImageViewForBase = null;
     private RemoteControllerView remoteControllerView = null;
     private Context mContext = null;
+    private Activity mActivity = null;
     private RemoteControlRelayClient mRemoteControlRelayClient = null;
     private UserState sUserState = UserState.LOGIN_NG;
 
@@ -89,6 +95,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     /** dアカウント設定アプリ登録処理 */
     private DaccountControl mDaccountControl = null;
+
+    /**
+     * 契約情報
+     */
+    private List<UserInfoList> mUserInfo;
 
     /**
      * Created on 2017/09/21.
@@ -297,12 +308,17 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_base);
         mContext = this;
+        mActivity = this;
         initView();
 
         mRemoteControlRelayClient = RemoteControlRelayClient.getInstance();
         mRemoteControlRelayClient.setDebugRemoteIp("192.168.11.35");
         //dアカウントの検知処理を追加する
         setDaccountControl();
+
+        //ユーザー情報の変更検知
+        UserInfoDataProvider dataProvider = new UserInfoDataProvider(getApplicationContext(),this);
+        dataProvider.getUserInfo();
 
         DTVTLogger.end();
     }
@@ -953,5 +969,17 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     public void setRelayClientHandler() {
         // TODO MenuDisplay修正時に合わせて修正する
         mRemoteControlRelayClient.setHandler(mRerayClientHandler);
+    }
+
+    @Override
+    public void userInfoListCallback(boolean isDataChange,List<UserInfoList> list) {
+        //返却された契約情報を控える
+        if(isDataChange) {
+            //情報を控える
+            mUserInfo = list;
+
+            //以前の情報と異なっているので、ホーム画面に遷移
+            DAccountUtils.reStartApplication(mActivity);
+        }
     }
 }

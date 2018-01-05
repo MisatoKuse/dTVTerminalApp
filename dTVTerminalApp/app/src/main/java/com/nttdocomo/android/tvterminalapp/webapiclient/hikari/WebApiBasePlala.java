@@ -4,10 +4,12 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOTT;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -28,7 +30,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class WebApiBasePlala {
+public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
 
     private ReturnCode mReturnCode = null;
 
@@ -51,6 +53,25 @@ public class WebApiBasePlala {
 
     //リクエスト種別・基本はPOST
     private static final String REQUEST_METHOD = "POST";
+
+    //文字種別 UTF-8
+    private static final String UTF8_CHARACTER_SET = "UTF-8";
+
+    //POSTでJSONを送信する為のパラメータ群
+    private static final String CONTENT_TYPE_KEY_TEXT = "Content-Type";
+    private static final String CONTENT_TYPE_TEXT = "application/json; charset=" +
+            UTF8_CHARACTER_SET; //final同士なので、+での結合こそベスト
+    private static final String CONNECTION_KEY_TEXT = "Connection";
+    private static final String CONTENT_CLOSE_TEXT = "close";
+
+    //ワンタイムトークンの取得コールバックからのタスク呼び出し用
+    private CommunicationTask mCommunicationTask = null;
+
+    //TODO: 当面ワンタイムトークンは固定値とするので、その値
+    private static final String INTERIM_ONE_TIME_TOKEN = "test";
+
+    // 日付形式判定用
+    private static final String DATE_PATTERN = "yyyyMMdd";
 
     /**
      * データ受け渡しコールバック
@@ -249,6 +270,11 @@ public class WebApiBasePlala {
      */
     public static final String CLIP_TYPE_DTV_VOD = "dtv_vod";
 
+    /**
+     * ワンタイムトークンのキー名
+     */
+    private static final String ONE_TIME_TOKEN_KEY = "x-service-token";
+
     //戻り値用構造体
     static protected class ReturnCode {
         ERROR_TYPE errorType;
@@ -336,6 +362,7 @@ public class WebApiBasePlala {
      * 指定したAPIで通信を開始する
      *
      * @param sourceUrl               API呼び出し名
+     * @param receivedParameters      API呼び出し用パラメータ
      * @param webApiBasePlalaCallback コールバック
      */
     public void openUrl(final String sourceUrl, String receivedParameters,
@@ -378,6 +405,61 @@ public class WebApiBasePlala {
     }
 
     /**
+     * 指定したAPIをワンタイムトークン付きで通信を開始する
+     *
+     * @param context                 コンテキスト
+     * @param sourceUrl               API呼び出し名
+     * @param receivedParameters      API呼び出し用パラメータ
+     * @param webApiBasePlalaCallback 結果のコールバック
+     * @param extraDataSrc            拡張情報（使用しないときはヌルをセット）
+     */
+    public void openUrlAddOtt(Context context, final String sourceUrl, String receivedParameters,
+                              WebApiBasePlalaCallback webApiBasePlalaCallback,
+                              Bundle extraDataSrc) {
+
+        if (extraDataSrc == null) {
+            //拡張情報無しでタスクを作成する
+            mCommunicationTask = new CommunicationTask(sourceUrl, receivedParameters,
+                    null, true);
+        } else {
+            //拡張情報付きでタスクを作成する
+            mCommunicationTask = new CommunicationTask(sourceUrl, receivedParameters,
+                    extraDataSrc, true);
+        }
+
+        //コールバックの準備
+        mWebApiBasePlalaCallback = webApiBasePlalaCallback;
+
+        //ワンタイムパスワードの取得を起動
+        getOneTimePassword(context);
+    }
+
+    /**
+     * ワンタイムトークンを取得する為に、dアカウント設定アプリからワンタイムパスワードを取得する
+     *
+     * @param context コンテキスト
+     */
+    private void getOneTimePassword(Context context) {
+        //ワンタイムパスワードの取得
+        DaccountGetOTT getOtt = new DaccountGetOTT();
+        getOtt.execDaccountGetOTT(context, this);
+    }
+
+    @Override
+    public void getOttCallBack(int result, String id, String oneTimePassword) {
+        //ワンタイムパスワードを元に、ワンタイムトークンを取得する
+        //TODO: 本来、取得したワンタイムパスワードを元にしてワンタイムトークン取得のWebAPIを呼ばねばならない。
+        //TODO: しかしこれは別タスクになった。現在はワンタームトークンは固定値にする
+        mCommunicationTask.setmOneTimeToken(INTERIM_ONE_TIME_TOKEN);
+
+        //結果格納構造体の作成
+        ReturnCode returnCode = new ReturnCode();
+
+        //ワンタイムトークンの取得結果を元にして、通信を開始する
+        mCommunicationTask.execute(returnCode);
+    }
+
+    /**
      * ボディ部の読み込みを行う
      *
      * @param statusCode コネクションの際のステータス
@@ -402,7 +484,7 @@ public class WebApiBasePlala {
             stream = mUrlConnection.getInputStream();
             stringBuilder = new StringBuilder();
             String lineBuffer;
-            inputStreamReader = new InputStreamReader(stream, "UTF-8");
+            inputStreamReader = new InputStreamReader(stream, UTF8_CHARACTER_SET);
             bufferedReader = new BufferedReader(inputStreamReader);
 
             //内容が尽きるまで蓄積する
@@ -489,6 +571,20 @@ public class WebApiBasePlala {
         //拡張データ
         Bundle mExtraData = null;
 
+        //ワンタイムトークンの取得の有無
+        private boolean mIsGetOtt = false;
+
+        //ワンタイムトークンの値
+        private String mOneTimeToken = "";
+
+        /**
+         * ワンタイムトークンの値を設定する
+         * @param mOneTimeToken 設定したいワンタイムトークン
+         */
+        public void setmOneTimeToken(String mOneTimeToken) {
+            this.mOneTimeToken = mOneTimeToken;
+        }
+
         /**
          * コンストラクタ
          *
@@ -498,6 +594,10 @@ public class WebApiBasePlala {
         CommunicationTask(String sourceUrl, String receivedParameters) {
             mSourceUrl = sourceUrl;
             mSendParameter = receivedParameters;
+
+            //拡張データとワンタイムトークンは使用しない
+            mExtraData = null;
+            mIsGetOtt = false;
         }
 
         /**
@@ -513,6 +613,33 @@ public class WebApiBasePlala {
 
             //拡張データの確保
             mExtraData = extraDataSrc;
+
+            //ワンタイムトークンは使用しない
+            mIsGetOtt = false;
+        }
+
+        /**
+         * コンストラクタ（ワンタイムトークを使用する場合）
+         *
+         * @param sourceUrl          実行するAPIの名前
+         * @param receivedParameters 送るパラメータ
+         * @param extraDataSrc       受け渡す拡張情報
+         * @param isGetOtt           ワンタイムトークンの使用可否
+         */
+        CommunicationTask(String sourceUrl, String receivedParameters, Bundle extraDataSrc,
+                          boolean isGetOtt) {
+            mSourceUrl = sourceUrl;
+            mSendParameter = receivedParameters;
+
+            if (extraDataSrc != null) {
+                //拡張データの確保
+                mExtraData = extraDataSrc;
+            } else {
+                mExtraData = null;
+            }
+
+            //ワンタイムトークンの使用可否
+            mIsGetOtt = isGetOtt;
         }
 
         /**
@@ -601,14 +728,20 @@ public class WebApiBasePlala {
             byte[] sendParameterByte = mSendParameter.getBytes(StandardCharsets.UTF_8);
             int sendParameterLength = sendParameterByte.length;
 
+            //ワンタイムトークンに内容があれば、セットする
+            if (mIsGetOtt && !mOneTimeToken.isEmpty()) {
+                //ワンタイムトークンをセット
+                urlConnection.addRequestProperty(ONE_TIME_TOKEN_KEY, mOneTimeToken);
+            }
+
             //POSTでJSONを送ることを宣言
             urlConnection.setRequestMethod(REQUEST_METHOD);
             urlConnection.setDoOutput(true);
             urlConnection.setDoInput(true);
             urlConnection.setFixedLengthStreamingMode(sendParameterLength);
-            urlConnection.setRequestProperty("Content-Type",
-                    "application/json; charset=UTF-8");
-            mUrlConnection.setRequestProperty("Connection", "close");
+            urlConnection.setRequestProperty(CONTENT_TYPE_KEY_TEXT, CONTENT_TYPE_TEXT);
+
+            mUrlConnection.setRequestProperty(CONNECTION_KEY_TEXT, CONTENT_CLOSE_TEXT);
         }
 
         /**
@@ -624,7 +757,7 @@ public class WebApiBasePlala {
             DataOutputStream dataOutputStream = null;
             try {
                 dataOutputStream = new DataOutputStream(urlConnection.getOutputStream());
-                dataOutputStream.write(mSendParameter.getBytes("UTF-8"));
+                dataOutputStream.write(mSendParameter.getBytes(UTF8_CHARACTER_SET));
                 dataOutputStream.flush();
 
             } catch (IOException e) {
@@ -661,7 +794,7 @@ public class WebApiBasePlala {
      */
     boolean checkDateString(String dateString) {
         //日付フォーマットの設定
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd", Locale.JAPAN);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_PATTERN, Locale.JAPAN);
         dateFormat.setLenient(false);
         Date parsedDate;
         try {
