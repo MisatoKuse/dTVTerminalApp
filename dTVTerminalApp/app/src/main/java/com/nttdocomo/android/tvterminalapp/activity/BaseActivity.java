@@ -63,8 +63,7 @@ import java.util.List;
 public class BaseActivity extends FragmentActivity implements MenuDisplayEventListener,
         DlnaDevListListener, View.OnClickListener, RemoteControllerView.OnStartRemoteControllerUIListener,
         ClipRegistWebClient.ClipRegistJsonParserCallback, ClipDeleteWebClient.ClipDeleteJsonParserCallback,
-        DaccountControl.DaccountControlCallBack,UserInfoDataProvider.UserDataProviderCallback,
-        DaccountControl.DaccountControlCallBack, UserInfoWebClient.UserInfoJsonParserCallback {
+        DaccountControl.DaccountControlCallBack,UserInfoDataProvider.UserDataProviderCallback {
 
     private LinearLayout baseLinearLayout = null;
     private RelativeLayout headerLayout = null;
@@ -367,11 +366,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         //dアカウントの検知処理を追加する
         setDaccountControl();
 
-        //TODO:正式な未ログインへの変更処理が実装されたらそちらへ移動する(dアカウント取得画面実装時)
-//        SharedPreferencesUtils.setSharedPreferencesAgeReq(this, UserInfoJsonParser.USE_NONE_AGE_REQ); //未ログインではPG12を設定する
-        //TODO:正式な未ログインへの変更処理が実装されたらそちらへ移動する(dアカウント取得画面実装時)
-        getUserInfoWebClient();  //ログイン済みになったらユーザ情報取得処理を叩く
-
         //ユーザー情報の変更検知
         UserInfoDataProvider dataProvider = new UserInfoDataProvider(getApplicationContext(),this);
         dataProvider.getUserInfo();
@@ -557,9 +551,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      * dアカウント変更後の再起動時のダイアログ
      */
     private void restartMessageDialog() {
-
-        //アカウント変更時にユーザ情報取得処理を叩く
-        getUserInfoWebClient();
 
         //呼び出し用のアクティビティの退避
         final Activity activity = this;
@@ -1072,7 +1063,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             DAccountUtils.reStartApplication(mActivity);
         }
     }
-}
 
     /**
      * 機能: リモコンが表示されているか確認し、開いている場合は閉じる
@@ -1088,14 +1078,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * ユーザ情報取得開始
-     */
-    protected void getUserInfoWebClient() {
-        UserInfoWebClient userInfoWebClient = new UserInfoWebClient();
-        userInfoWebClient.getUserInfoApi(this);
-    }
-
-    /**
      * ユーザの年齢情報を返す
      * 未ログイン状態の時はPG12の値を返す
      *
@@ -1103,17 +1085,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      */
     public int getAgeReq() {
         return SharedPreferencesUtils.getSharedPreferencesAgeReq(this);
-    }
-
-    @Override
-    public void getUserInfoResult(int ageReq) {
-        SharedPreferencesUtils.setSharedPreferencesAgeReq(this, ageReq);
-    }
-
-    @Override
-    public void getUserInfoFailure() {
-        //TODO:暫定対応
-        Toast.makeText(this, "ユーザ情報取得失敗", Toast.LENGTH_SHORT).show();
     }
 
     /**
