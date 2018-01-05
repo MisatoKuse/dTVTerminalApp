@@ -74,6 +74,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         mMenuImageView.setVisibility(View.VISIBLE);
         mMenuImageView.setOnClickListener(this);
         setTitleText(getString(R.string.video_content_sub_genre_title));
+        enableStbStatusIcon(true);
 
         // TODO VideoTopActivityからジャンルIDの受け取り
         // IntentからGenreIdを受け取る
