@@ -479,13 +479,14 @@ public class SharedPreferencesUtils {
     }
 
     /**
-     * 最後に保存したワンタイムパスワードを取得
+     * 最後に保存した年齢情報を取得
      */
     public static int getSharedPreferencesAgeReq(Context context) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 USER_AGE_REQ_SHARED_KEY, Context.MODE_PRIVATE);
 
-        return data.getInt(USER_AGE_REQ_SHARED_KEY,8);
+        //保存した年齢情報がない場合はPG12を返却
+        return data.getInt(USER_AGE_REQ_SHARED_KEY, StringUtil.USER_AGE_REQ_PG12);
     }
 }

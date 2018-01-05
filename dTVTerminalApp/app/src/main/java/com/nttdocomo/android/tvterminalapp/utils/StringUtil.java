@@ -8,9 +8,12 @@ import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
 import org.json.JSONArray;
+
+import java.util.List;
 
 
 /**
@@ -261,7 +264,53 @@ public class StringUtil {
         return ageReq;
     }
 
-    public static String returnAsterisk(Context context){
+    /**
+     * ユーザ情報から年齢情報を取得する
+     *
+     * @param userInfoList ユーザ情報
+     * @return 年齢パレンタル情報
+     */
+    public static int getUserInfo(List<UserInfoList> userInfoList) {
+        final int INT_LIST_HEAD = 0;
+        final String USE_H4D_AGE_REQ = "001";
+        final String USE_DCH_AGE_REQ = "002";
+        String age = null;
+        String contractStatus = null;
+        UserInfoList infoList = userInfoList.get(INT_LIST_HEAD);
+        List<UserInfoList.AccountList> mLoggedInAccountList = infoList.getmLoggedinAccount();
+        UserInfoList.AccountList mLoggedInAccount = mLoggedInAccountList.get(INT_LIST_HEAD);
+        if (mLoggedInAccount != null) {
+            contractStatus = mLoggedInAccount.getmContractStatus();
+        }
+
+        //contractStatusがないときはPG12制限を設定
+        int intAge = USER_AGE_REQ_PG12;
+        if (contractStatus != null) {
+            if (contractStatus.equals(USE_H4D_AGE_REQ)) {
+                //H4Dの制限情報がないときはDCH側を使用
+                age = mLoggedInAccount.getmH4dAgeReq();
+                if (age == null || age.length() < 1) {
+                    age = mLoggedInAccount.getmDchAgeReq();
+                }
+            } else if (contractStatus.equals(USE_DCH_AGE_REQ)) {
+                //DCHの制限情報がないときはH4DDCH側を使用
+                age = mLoggedInAccount.getmDchAgeReq();
+            }
+        }
+        //年齢情報が数字ならINTに変換
+        if (DBUtils.isNumber(age)) {
+            intAge = Integer.parseInt(age);
+        }
+        return intAge;
+    }
+
+    /**
+     * フィルタリング文字を返却する
+     *
+     * @param context コンテキストファイル
+     * @return 伏字
+     */
+    public static String returnAsterisk(Context context) {
         return context.getString(R.string.message_three_asterisk);
     }
 }

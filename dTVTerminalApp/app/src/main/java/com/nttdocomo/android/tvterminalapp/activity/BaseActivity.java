@@ -63,7 +63,7 @@ import java.util.List;
 public class BaseActivity extends FragmentActivity implements MenuDisplayEventListener,
         DlnaDevListListener, View.OnClickListener, RemoteControllerView.OnStartRemoteControllerUIListener,
         ClipRegistWebClient.ClipRegistJsonParserCallback, ClipDeleteWebClient.ClipDeleteJsonParserCallback,
-        DaccountControl.DaccountControlCallBack,UserInfoDataProvider.UserDataProviderCallback {
+        DaccountControl.DaccountControlCallBack, UserInfoDataProvider.UserDataProviderCallback {
 
     private LinearLayout baseLinearLayout = null;
     private RelativeLayout headerLayout = null;
@@ -1058,6 +1058,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         if(isDataChange) {
             //情報を控える
             mUserInfo = list;
+
+            //年齢情報を保存する
+            SharedPreferencesUtils.setSharedPreferencesAgeReq(mContext, StringUtil.getUserInfo(mUserInfo));
 
             //以前の情報と異なっているので、ホーム画面に遷移
             DAccountUtils.reStartApplication(mActivity);
