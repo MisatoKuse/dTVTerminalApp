@@ -333,6 +333,10 @@
     <!-- お知らせ -->
     <string name="information_title">お知らせ</string>
 
+    <!-- ビデオ一覧 -->
+    <string name="video_list_genre_all">すべて</string>
+    <string name="video_list_genre_nod">ＮＯＤ</string>
+
     <!-- H4d契約情報取得 -->
     <string name="h4d_agreement_change">契約状態が変更されたため、トップ画面に戻ります。</string>
 
