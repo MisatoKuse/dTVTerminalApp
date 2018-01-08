@@ -10,10 +10,12 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
+import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser;
 
 import org.json.JSONArray;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -23,18 +25,22 @@ public class StringUtil {
 
     private Context mContext;
 
+    //データがないときのDefault値(PG12制限)
+    public static final int DEFAULT_USER_AGE_REQ = 8;
+    //データがないときのDefault値(無制限)
+    public static final int DEFAULT_R_VALUE = 0;
     //年齢制限値=PG12
     public static final String USER_R_VALUE_PG12 = "PG12";
-    public static final int USER_AGE_REQ_PG12 = 8;
+    public static final int USER_AGE_REQ_PG12 = 9;
     //年齢制限値=R15
     public static final String USER_R_VALUE_R15 = "R15";
-    public static final int USER_AGE_REQ_R15 = 15;
+    public static final int USER_AGE_REQ_R15 = 12;
     //年齢制限値=R18
     public static final String USER_R_VALUE_R18 = "R18";
-    public static final int USER_AGE_REQ_R18 = 18;
+    public static final int USER_AGE_REQ_R18 = 15;
     //年齢制限値=R20
     public static final String USER_R_VALUE_R20 = "R20";
-    public static final int USER_AGE_REQ_R20 = 20;
+    public static final int USER_AGE_REQ_R20 = 17;
     //契約情報
     public static final String CONTRACT_INFO_NONE = "none";
 
@@ -246,7 +252,7 @@ public class StringUtil {
      * @return 年齢情報
      */
     public static int convertRValueToAgeReq(String ageValue) {
-        int ageReq = 8;
+        int ageReq = DEFAULT_R_VALUE;
         if (ageValue != null) {
             switch (ageValue) {
                 case USER_R_VALUE_PG12:
@@ -272,46 +278,39 @@ public class StringUtil {
      * @param userInfoList ユーザ情報
      * @return 年齢パレンタル情報
      */
-    public static int getUserInfo(List<UserInfoList> userInfoList) {
+    public static int getUserAgeInfo(List<Map<String, String>> userInfoList) {
         final int INT_LIST_HEAD = 0;
         final String USE_H4D_AGE_REQ = "001";
         final String USE_DCH_AGE_REQ = "002";
         String age = null;
         String contractStatus = null;
 
-        //ユーザ情報がないときはPG12を返却
+        //ユーザ情報がないときはPG12制限値を返却
         if(userInfoList == null || userInfoList.size() < 1){
-            return USER_AGE_REQ_PG12;
+            return DEFAULT_USER_AGE_REQ;
         }
 
-        UserInfoList infoList = userInfoList.get(INT_LIST_HEAD);
+        Map<String, String> infoMap = userInfoList.get(INT_LIST_HEAD);
 
-        //ユーザ情報がないときはPG12を返却
-        if (infoList == null) {
-            return USER_AGE_REQ_PG12;
+        //ユーザ情報がないときはPG12制限値を返却
+        if (infoMap == null) {
+            return DEFAULT_USER_AGE_REQ;
         }
 
-        List<UserInfoList.AccountList> mLoggedInAccountList = infoList.getmLoggedinAccount();
-        UserInfoList.AccountList mLoggedInAccount = mLoggedInAccountList.get(INT_LIST_HEAD);
+        contractStatus = infoMap.get(UserInfoJsonParser.USER_INFO_LIST_CONTRACT_STATUS);
 
-        //ユーザ情報がないときはPG12を返却
-        if (mLoggedInAccount == null) {
-            return USER_AGE_REQ_PG12;
-        }
-        contractStatus = mLoggedInAccount.getmContractStatus();
-
-        //contractStatusがないときはPG12制限を設定
-        int intAge = USER_AGE_REQ_PG12;
+        //contractStatusがないときはPG12制限値を設定
+        int intAge = DEFAULT_USER_AGE_REQ;
         if (contractStatus != null) {
             if (contractStatus.equals(USE_H4D_AGE_REQ)) {
                 //H4Dの制限情報がないときはDCH側を使用
-                age = mLoggedInAccount.getmH4dAgeReq();
+                age = infoMap.get(UserInfoJsonParser.USER_INFO_LIST_H4D_AGE_REQ);
                 if (age == null || age.length() < 1) {
-                    age = mLoggedInAccount.getmDchAgeReq();
+                    age = infoMap.get(UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ);
                 }
             } else if (contractStatus.equals(USE_DCH_AGE_REQ)) {
                 //DCHの制限情報がないときはH4DDCH側を使用
-                age = mLoggedInAccount.getmDchAgeReq();
+                age = infoMap.get(UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ);
             }
         }
         //年齢情報が数字ならINTに変換

@@ -22,9 +22,9 @@ import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActi
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.model.program.Channel;
 import com.nttdocomo.android.tvterminalapp.model.program.Schedule;
-import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 
 import java.text.SimpleDateFormat;
@@ -45,6 +45,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     private ThumbnailProvider mThumbnailProvider = null;
     //現在時刻
     private String mCurDate = null;
+
     //年齢パレンタル情報
     private int mAgeReq = 8;
     //現在時刻フォマード
@@ -58,7 +59,8 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         this.mContext = mContext;
         mScreenWidth = mContext.getResources().getDisplayMetrics().widthPixels;
         mScreenHeight = mContext.getResources().getDisplayMetrics().heightPixels;
-        mAgeReq = SharedPreferencesUtils.getSharedPreferencesAgeReq(mContext);
+        UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
+        mAgeReq = userInfoDataProvider.getUserAge();
         mThumbnailProvider = new ThumbnailProvider(mContext);
         getCurTime();
         for(int i=0;i<mProgramList.size();i++){
@@ -100,6 +102,15 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             }
         }
         return null;
+    }
+
+    /**
+     * 年齢情報を設定する
+     *
+     * @param mAgeReq 年齢情報
+     */
+    public void setAgeReq(int mAgeReq) {
+        this.mAgeReq = mAgeReq;
     }
 
     /**

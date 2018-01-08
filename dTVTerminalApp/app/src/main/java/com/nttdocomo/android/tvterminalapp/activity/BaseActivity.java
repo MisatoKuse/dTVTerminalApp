@@ -1094,9 +1094,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             //契約情報を保存する
             SharedPreferencesUtils.setSharedPreferencesContractInfo(mContext, StringUtil.getUserContractInfo(mUserInfo));
 
-            //年齢情報を保存する
-            SharedPreferencesUtils.setSharedPreferencesAgeReq(mContext, StringUtil.getUserInfo(mUserInfo));
-
             //以前の情報と異なっているので、ホーム画面に遷移
             DAccountUtils.reStartApplication(mActivity);
         }
@@ -1113,16 +1110,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             return true;
         }
         return false;
-    }
-
-    /**
-     * ユーザの年齢情報を返す
-     * 未ログイン状態の時はPG12の値を返す
-     *
-     * @return 年齢情報
-     */
-    public int getAgeReq() {
-        return SharedPreferencesUtils.getSharedPreferencesAgeReq(this);
     }
 
     /**

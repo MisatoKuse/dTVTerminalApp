@@ -4,128 +4,86 @@
 
 package com.nttdocomo.android.tvterminalapp.utils;
 
-import android.support.test.InstrumentationRegistry;
-
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
+import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
 public class StringUtilTest {
 
-    private List<UserInfoList> mUserInfoH4dList = null;
-    private List<UserInfoList> mUserInfoH4dToDchList = null;
-    private List<UserInfoList> mUserInfoDchList = null;
-    private List<UserInfoList> mUserInfoOtherList = null;
     private StringUtil mStringUtils = null;
-    private final String CONTRACT_H4D = "001";
-    private final String CONTRACT_DCH = "002";
-    private final String DCH_AGE = "9";
-    private final String H4D_AGE = "18";
-    private final String DEFAULT_AGE = "8";
+    private final String CON_001 = "001";
+    private final String CON_002 = "002";
+    private final String BLANK = "";
+    private final String STR_A = "A";
+    private final String NULL_VL = null;
+    private final String DFT_008 = "8";
+    private final String H4D_018 = "18";
+    private final String DCH_015 = "15";
 
     @Before
     public void setUp() throws Exception {
-
-        mStringUtils = new StringUtil(InstrumentationRegistry.getTargetContext());
-
-        //ContractStatus = 001：h4d情報あり
-        UserInfoList.AccountList infoList = new UserInfoList.AccountList();
-        infoList.setmContractStatus(CONTRACT_H4D);
-        infoList.setmDchAgeReq(DCH_AGE);
-        infoList.setmH4dAgeReq(H4D_AGE);
-        List<UserInfoList.AccountList> mLoggedinAccount = new ArrayList<>();
-        mLoggedinAccount.add(infoList);
-        UserInfoList userInfoList = new UserInfoList();
-        userInfoList.setmLoggedinAccount(mLoggedinAccount);
-        mUserInfoH4dList = new ArrayList<>();
-        mUserInfoH4dList.add(userInfoList);
-
-        //ContractStatus = 001：h4d情報なし
-        infoList = new UserInfoList.AccountList();
-        infoList.setmContractStatus(CONTRACT_H4D);
-        infoList.setmDchAgeReq(DCH_AGE);
-        infoList.setmH4dAgeReq("");
-        mLoggedinAccount = new ArrayList<>();
-        mLoggedinAccount.add(infoList);
-        userInfoList = new UserInfoList();
-        userInfoList.setmLoggedinAccount(mLoggedinAccount);
-        mUserInfoH4dToDchList = new ArrayList<>();
-        mUserInfoH4dToDchList.add(userInfoList);
-
-        //ContractStatus = 002
-        infoList = new UserInfoList.AccountList();
-        infoList.setmContractStatus(CONTRACT_DCH);
-        infoList.setmDchAgeReq(DCH_AGE);
-        infoList.setmH4dAgeReq(H4D_AGE);
-        mLoggedinAccount = new ArrayList<>();
-        mLoggedinAccount.add(infoList);
-        userInfoList = new UserInfoList();
-        userInfoList.setmLoggedinAccount(mLoggedinAccount);
-        mUserInfoDchList = new ArrayList<>();
-        mUserInfoDchList.add(userInfoList);
-
-        //その他 網羅用(値を変更して使用)
-        String contractStatus = "001";
-        String dchAgeReq = "";
-        String h4dAgeReq = "";
-        infoList = new UserInfoList.AccountList();
-        infoList.setmContractStatus(contractStatus);
-        infoList.setmDchAgeReq(dchAgeReq);
-        infoList.setmH4dAgeReq(h4dAgeReq);
-//        infoList = null; nullチェック
-        mLoggedinAccount = new ArrayList<>();
-        mLoggedinAccount.add(infoList);
-        userInfoList = new UserInfoList();
-        userInfoList.setmLoggedinAccount(mLoggedinAccount);
-//        userInfoList = null; nullチェック
-        mUserInfoOtherList = new ArrayList<>();
-        mUserInfoOtherList.add(userInfoList);
+        //None
     }
 
     @After
     public void tearDown() throws Exception {
-
+        //None
     }
 
     @Test
     public void getUserInfo() throws Exception {
+        //網羅Test
+        // 年齢情報を「【dR】【共通系IF】インターフェース仕様書_20171128.doc」2.2ユーザ情報取得で得られる「loggedin_account」リスト内の「dch_age_req」、「h4d_age_req」をする。
+        //「contract_status」が「001」の場合
+        // 年齢情報の優先度はH4d＞dChとし、H4d側で値が取得できない場合はdChの値を使用すること。
+        //「contract_status」が「002」の場合
+        // dChの年齢値を使用すること。
+        //「contract_status」が「none」/未ログインのユーザの場合
+        // PG12制限(8が返却された場合と同等の状態を固定値で再現)を行う。
+        String contractStatus[] = {CON_001, CON_001, CON_001, CON_001, CON_001, CON_002, CON_002, CON_002, CON_002, BLANK,    BLANK,   NULL_VL, STR_A};
+        String dchAgeReq[] =      {DCH_015, DCH_015, STR_A,   BLANK,    NULL_VL, DCH_015, STR_A,   BLANK,   NULL_VL,  DCH_015, DCH_015, DCH_015, DCH_015};
+        String h4dAgeReq[] =      {H4D_018, BLANK,   BLANK,    BLANK,   NULL_VL, H4D_018, BLANK,   BLANK,    NULL_VL, H4D_018, H4D_018, H4D_018, BLANK};
+        String answer[] =         {H4D_018, DCH_015, DFT_008, DFT_008, DFT_008, DCH_015, DFT_008, DFT_008, DFT_008, DFT_008, DFT_008, DFT_008, DFT_008};
+        for (int i = 0; i < contractStatus.length; i++) {
+            UserInfoList.AccountList infoList = new UserInfoList.AccountList();
+            infoList.setmContractStatus(contractStatus[i]);
+            infoList.setmDchAgeReq(dchAgeReq[i]);
+            infoList.setmH4dAgeReq(h4dAgeReq[i]);
+            List<UserInfoList.AccountList> mLoggedinAccount = new ArrayList<>();
+            mLoggedinAccount.add(infoList);
+            Map<String, String> userInfoMap = new HashMap<>();
+            userInfoMap.put(UserInfoJsonParser.USER_INFO_LIST_CONTRACT_STATUS, contractStatus[i]);
+            userInfoMap.put(UserInfoJsonParser.USER_INFO_LIST_H4D_AGE_REQ, h4dAgeReq[i]);
+            userInfoMap.put(UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ, dchAgeReq[i]);
+            List<Map<String, String>> userInfoMapList = new ArrayList<>();
+            userInfoMapList.add(userInfoMap);
 
-        //ContractStatus = 001：h4d情報あり
-        assertEquals(mStringUtils.getUserInfo(mUserInfoH4dList), Integer.parseInt(H4D_AGE));
-
-        //ContractStatus = 001：h4d情報なし
-        assertEquals(mStringUtils.getUserInfo(mUserInfoH4dToDchList), Integer.parseInt(DCH_AGE));
-
-        //ContractStatus = 002
-        assertEquals(mStringUtils.getUserInfo(mUserInfoDchList), Integer.parseInt(DCH_AGE));
-
-        //その他
-        assertEquals(mStringUtils.getUserInfo(mUserInfoOtherList), Integer.parseInt(DEFAULT_AGE));
-
-        //null
-        assertEquals(mStringUtils.getUserInfo(null), Integer.parseInt(DEFAULT_AGE));
-
+            //その他
+            assertEquals(mStringUtils.getUserAgeInfo(userInfoMapList), Integer.parseInt(answer[i]));
+        }
     }
 
     @Test
     public void convertRValueToAgeReq() throws Exception {
 
-        //null 期待値：9
-        assertEquals(mStringUtils.convertRValueToAgeReq(null), StringUtil.USER_AGE_REQ_PG12);
+        //null 期待値：0
+        assertEquals(mStringUtils.convertRValueToAgeReq(null), StringUtil.DEFAULT_R_VALUE);
 
-        //blank 期待値：9
-        assertEquals(mStringUtils.convertRValueToAgeReq(""), StringUtil.USER_AGE_REQ_PG12);
+        //blank 期待値：0
+        assertEquals(mStringUtils.convertRValueToAgeReq(""), StringUtil.DEFAULT_R_VALUE);
 
-        //文字 期待値：9
-        assertEquals(mStringUtils.convertRValueToAgeReq("あ"), StringUtil.USER_AGE_REQ_PG12);
+        //文字 期待値：0
+        assertEquals(mStringUtils.convertRValueToAgeReq("あ"), StringUtil.DEFAULT_R_VALUE);
 
         //PG12 期待値：9
         assertEquals(mStringUtils.convertRValueToAgeReq(StringUtil.USER_R_VALUE_PG12), StringUtil.USER_AGE_REQ_PG12);

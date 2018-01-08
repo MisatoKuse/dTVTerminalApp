@@ -9,12 +9,15 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.UserInfoInsertDataManager;
+import com.nttdocomo.android.tvterminalapp.datamanager.select.UserInfoDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.UserInfoWebClient;
 
 import java.util.List;
+import java.util.Map;
 
 public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParserCallback {
 
@@ -54,6 +57,15 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
          * @param list コンテンツリスト
          */
         void userInfoListCallback(boolean isDataChange, List<UserInfoList> list);
+    }
+
+    /**
+     * コンストラクタ(getUserAge()用)
+     *
+     * @param mContext コンテキストファイル
+     */
+    public UserInfoDataProvider(Context mContext) {
+        this.mContext = mContext;
     }
 
     /**
@@ -148,5 +160,23 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
         //データを読み込んだ場合
         mUserDataProviderCallback.userInfoListCallback(true, userInfoLists);
 
+    }
+
+    /**
+     * 取得済みのユーザー年齢情報を取得する
+     */
+    public int getUserAge() {
+
+        //ユーザ情報をDBから取得する
+        int userAgeReq = StringUtil.DEFAULT_USER_AGE_REQ;
+        UserInfoDataManager userInfoDataManager = new UserInfoDataManager(mContext);
+        List<Map<String, String>> list = userInfoDataManager.selectUserAgeInfo();
+
+        //取得したユーザ情報から、年齢情報を抽出する
+        if (list != null && list.size() > 0) {
+            userAgeReq = StringUtil.getUserAgeInfo(list);
+        }
+
+        return userAgeReq;
     }
 }
