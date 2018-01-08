@@ -44,32 +44,20 @@ public class UserInfoJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     @Override
-    protected void onPostExecute(Object s) {
-        if(s != null && s instanceof List) {
-            mUserInfoListResponse = (List<UserInfoList>) s;
+    protected void onPostExecute(Object userInfoList) {
+        if (userInfoList != null && userInfoList instanceof List) {
+            mUserInfoListResponse = (List<UserInfoList>) userInfoList;
             mUserInfoJsonParserCallback.onUserInfoJsonParsed(
                     mUserInfoListResponse);
+        } else {
+            // データが無いのでヌルを返す
+            mUserInfoJsonParserCallback.onUserInfoJsonParsed(null);
         }
     }
 
     @Override
     protected Object doInBackground(Object... strings) {
         String result = (String) strings[0];
-
-        //TODO:仮データ・後で消す事
-        result = "{\n" +
-                "  \"status\": \"OK\",\n" +
-                "  \"loggedin_account\": {\n" +
-                "    \"contract_status\": \"002\",\n" +
-                "    \"dch_age_req\": \"9\",\n" +
-                "    \"h4d_age_req\": \"17\"\n" +
-                "  },\n" +
-                "  \"h4d_contracted_account\": {\n" +
-                "    \"contract_status\": \"002\",\n" +
-                "    \"dch_age_req\": \"12\",\n" +
-                "    \"h4d_age_req\": \"17\"\n" +
-                "  }\n" +
-                "}";
 
         return userInfoListSender(result);
     }
@@ -80,7 +68,7 @@ public class UserInfoJsonParser extends AsyncTask<Object, Object, Object> {
      * @param jsonStr ユーザ情報情報一覧
      * @return userInfoList
      */
-    public List<UserInfoList> userInfoListSender(String jsonStr) {
+    private List<UserInfoList> userInfoListSender(String jsonStr) {
 
         // オブジェクトクラスの定義
         UserInfoList infoList;
@@ -104,22 +92,22 @@ public class UserInfoJsonParser extends AsyncTask<Object, Object, Object> {
                     Object arryCheck = jsonObj.getJSONObject(USER_INFO_LIST_LOGGEDIN_ACCOUNT);
                     JSONArray sendData;
                     if (arryCheck instanceof JSONArray) {
-                        //配列だったので、配列にする
-                        sendData = jsonObj.getJSONArray(USER_INFO_LIST_LOGGEDIN_ACCOUNT);
+                        //配列だったので、そのまま使用する
+                        sendData = (JSONArray) arryCheck;
                     } else {
                         //前後に大かっこを足して配列化
-                        StringBuilder tempBuffer = new StringBuilder();
-                        tempBuffer.append(BRACKET_LEFT);
-                        tempBuffer.append(((JSONObject) arryCheck).toString());
-                        tempBuffer.append(BRACKET_RIGHT);
-                        sendData = new JSONArray(tempBuffer.toString());
+                        sendData = new JSONArray(makeJsonArray(arryCheck));
                     }
 
                     getDataArray(loggedinAccount, sendData);
                 }
 
-                infoList.setLoggedinAccount(loggedinAccount);
+                //こちらのデータは必須なので、データーが1件もない場合は、戻り値ヌルで帰る
+                if (loggedinAccount.size() == 0) {
+                    return null;
+                }
 
+                infoList.setLoggedinAccount(loggedinAccount);
 
                 //H4D契約ユーザデータの取得
                 ArrayList<UserInfoList.AccountList> h4dContractedAccount = new ArrayList<>();
@@ -129,15 +117,11 @@ public class UserInfoJsonParser extends AsyncTask<Object, Object, Object> {
                             USER_INFO_LIST_H4D_CONTRACTED_ACCOUNT);
                     JSONArray sendData;
                     if (arryCheck instanceof JSONArray) {
-                        //配列だったので、配列にする
-                        sendData = jsonObj.getJSONArray(USER_INFO_LIST_H4D_CONTRACTED_ACCOUNT);
+                        //配列だったので、そのまま使用する
+                        sendData = (JSONArray) arryCheck;
                     } else {
                         //前後に大かっこを足して配列化
-                        StringBuilder tempBuffer = new StringBuilder();
-                        tempBuffer.append(BRACKET_LEFT);
-                        tempBuffer.append(((JSONObject) arryCheck).toString());
-                        tempBuffer.append(BRACKET_RIGHT);
-                        sendData = new JSONArray(tempBuffer.toString());
+                        sendData = new JSONArray(makeJsonArray(arryCheck));
                     }
 
                     getDataArray(h4dContractedAccount, sendData);
@@ -155,12 +139,28 @@ public class UserInfoJsonParser extends AsyncTask<Object, Object, Object> {
     }
 
     /**
+     * JSONの前後に括弧を配置して配列に変換する
+     *
+     * @param source 元のJSON
+     * @return 変換後のJSON
+     */
+    private String makeJsonArray(Object source) {
+        //インスペクターはStringBuilderではなく+演算子での文字結合を推奨してくるが、禁止である。
+        StringBuilder tempBuffer = new StringBuilder();
+        tempBuffer.append(BRACKET_LEFT);
+        tempBuffer.append(((JSONObject) source).toString());
+        tempBuffer.append(BRACKET_RIGHT);
+
+        return tempBuffer.toString();
+    }
+
+    /**
      * 取得した契約情報を蓄積する
      *
      * @param loggedinAccount 蓄積用データリスト
      * @param loggedinArray   蓄積対象のリクエストユーザデータ又はH4D契約ユーザデータ
      */
-    void getDataArray(List<UserInfoList.AccountList> loggedinAccount, JSONArray loggedinArray) {
+    private void getDataArray(List<UserInfoList.AccountList> loggedinAccount, JSONArray loggedinArray) {
 
         UserInfoList.AccountList tempList = new UserInfoList.AccountList();
         String temp;
@@ -174,7 +174,7 @@ public class UserInfoJsonParser extends AsyncTask<Object, Object, Object> {
                 tempList.setDchAgeReq(temp);
 
                 //この項目は省略される場合がある
-                if(loggedinObj.has(USER_INFO_LIST_H4D_AGE_REQ)) {
+                if (loggedinObj.has(USER_INFO_LIST_H4D_AGE_REQ)) {
                     temp = loggedinObj.getString(USER_INFO_LIST_H4D_AGE_REQ);
                     tempList.setH4dAgeReq(temp);
                 } else {

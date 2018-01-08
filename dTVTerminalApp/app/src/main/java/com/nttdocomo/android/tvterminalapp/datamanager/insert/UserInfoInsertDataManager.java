@@ -329,8 +329,10 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
     protected Void doInBackground(List<UserInfoList>[] lists) {
         //書き込みと読み込みの切り替えを行う
         if (lists != null) {
+            //データの書き込みを行う
             insertUserInfoInsertList(lists[0]);
         } else {
+            //データの読み込みを行う
             readUserInfoInsertList();
         }
         return null;

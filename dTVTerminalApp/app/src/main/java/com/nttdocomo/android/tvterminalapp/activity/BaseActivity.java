@@ -104,7 +104,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      * 契約情報
      */
     private List<UserInfoList> mUserInfo;
-    
+
     /** ヘッダーに表示されているアイコンがメニューアイコンか×ボタンアイコンかを判別するタグ */
     private static final String HEADER_ICON_MENU = "menu";
     private static final String HEADER_ICON_CLOSE = "close";
@@ -568,16 +568,26 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * dアカウント変更後の再起動時のダイアログ
+     * 再起動時のダイアログ・引数無しに対応するため、可変長引数とする
+     *
+     * @param message 省略した場合はdアカウント用メッセージを表示。指定した場合は、常に先頭文字列のみ使用される
      */
-    private void restartMessageDialog() {
+    private void restartMessageDialog(String... message) {
 
         //呼び出し用のアクティビティの退避
         final Activity activity = this;
 
+        //出力メッセージのデフォルトはdアカウント用
+        String printMessage = getString(R.string.d_account_chamge_message);
+
+        //引数がある場合はその先頭を使用する
+        if (message != null && message.length > 0) {
+            printMessage = message[0];
+        }
+
         //ダイアログを、OKボタンのコールバックありに設定する
         CustomDialog restartDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
-        restartDialog.setContent(getString(R.string.d_account_chamge_message));
+        restartDialog.setContent(printMessage);
         //startAppDialog.setTitle(getString(R.string.dTV_content_service_start_dialog));
         restartDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
@@ -1085,17 +1095,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     @Override
-    public void userInfoListCallback(boolean isDataChange,List<UserInfoList> list) {
-        //返却された契約情報を控える
-        if(isDataChange) {
-            //情報を控える
-            mUserInfo = list;
-
-            //契約情報を保存する
-            SharedPreferencesUtils.setSharedPreferencesContractInfo(mContext, StringUtil.getUserContractInfo(mUserInfo));
-
-            //以前の情報と異なっているので、ホーム画面に遷移
-            DAccountUtils.reStartApplication(mActivity);
+    public void userInfoListCallback(boolean isChange,List<UserInfoList> list) {
+        //年齢情報に変化があったのでホーム画面に飛ぶ。ただし、初回実行時はチュートリアル等のスキップを防ぐために、必ずfalseになる
+        if (isChange) {
+            //以前の情報と異なっているので、メッセージの表示後にホーム画面に遷移
+            restartMessageDialog(getString(R.string.h4d_agreement_change));
         }
     }
 

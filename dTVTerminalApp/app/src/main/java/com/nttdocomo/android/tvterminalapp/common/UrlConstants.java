@@ -195,13 +195,8 @@ public class UrlConstants {
         /**
          * ユーザ情報取得
          */
-        public static final String USER＿INFO_GET_WEB_CLIENT =
+        public static final String USER_INFO_WEB_CLIENT =
                 PLALA_AUTH + "user/info";
 
-        /**
-         *  ユーザー情報取得
-         */
-        public static final String USER_INFO_WEB_CLIENT =
-                PLALA_BASE_URL + "user_info/get";
     }
 }

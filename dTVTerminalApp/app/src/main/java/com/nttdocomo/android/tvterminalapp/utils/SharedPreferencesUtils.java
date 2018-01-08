@@ -412,14 +412,9 @@ public class SharedPreferencesUtils {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 LAST_USER_INFO_DATE, Context.MODE_PRIVATE);
-        long dateTime = data.getLong(LAST_USER_INFO_DATE,-1L);
 
-        //日時が負数ならばまだユーザー情報は読み込まれていないので、最大値を入れてかならず読むようにする
-        if(dateTime < 0) {
-            dateTime = Long.MAX_VALUE;
-        }
-
-        return dateTime;
+        //最終取得日時を返す。存在していなければ、最小値を返す
+        return data.getLong(LAST_USER_INFO_DATE,Long.MIN_VALUE);
     }
 
     /**
