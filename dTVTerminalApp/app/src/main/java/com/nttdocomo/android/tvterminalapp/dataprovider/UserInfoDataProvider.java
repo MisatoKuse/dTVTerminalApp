@@ -8,6 +8,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.UserInfoInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.UserInfoDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
@@ -34,6 +35,8 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
 
     @Override
     public void onUserInfoJsonParsed(List<UserInfoList> userInfoLists) {
+        DTVTLogger.start();
+
         if (userInfoLists != null && mDataManager != null) {
             //取得したデータが返ってきたので、DBに格納する
             mDataManager.execute(userInfoLists);
@@ -48,6 +51,8 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
             //取得ができなかったので、DBから取得する
             afterProcess(null);
         }
+
+        DTVTLogger.end();
     }
 
     /**
@@ -78,6 +83,8 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
      * @param context コンテキスト
      */
     public UserInfoDataProvider(Context context, UserDataProviderCallback userDataProviderCallback) {
+        DTVTLogger.start();
+
         mContext = context;
 
         //データマネージャーの初期化
@@ -85,17 +92,23 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
 
         //コールバックの定義
         mUserDataProviderCallback = userDataProviderCallback;
+
+        DTVTLogger.end();
     }
 
     /**
      * ユーザーデータ取得を開始する
      */
     public void getUserInfo() {
+        DTVTLogger.start();
+
         //今設定されている最終更新日時を控えておく
         beforeDate = SharedPreferencesUtils.getSharedPreferencesUserInfoDate(mContext);
 
         //通信状況の取得
         if (!isOnline(mContext)) {
+            DTVTLogger.debug("OffLine");
+
             //通信不能なので、ヌルを指定して、前回の値をそのまま使用する。
             afterProcess(null);
             return;
@@ -103,6 +116,8 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
 
         //通信日時の確認
         if (!isUserInfoTimeOut()) {
+            DTVTLogger.debug("Less than 1 hour");
+
             //まだ取得後1時間が経過していないので、ヌルを指定して前回の値をそのまま使用する。
             afterProcess(null);
             return;
@@ -111,6 +126,8 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
         //新たなデータを取得する
         UserInfoWebClient userInfoWebClient = new UserInfoWebClient();
         userInfoWebClient.getUserInfoApi(mContext, this);
+
+        DTVTLogger.end();
     }
 
     /**
@@ -120,6 +137,8 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
      * @return 通信可能ならばtrue
      */
     private static boolean isOnline(Context context) {
+        DTVTLogger.start();
+
         //システムのネットワーク情報を取得する
         ConnectivityManager connectManager = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -127,6 +146,8 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
         if (connectManager != null) {
             networkInfo = connectManager.getActiveNetworkInfo();
         }
+
+        DTVTLogger.end();
 
         //通信手段が無い場合は、networkInfoがヌルになる
         //手段があっても接続されていないときは、isConnected()がfalseになる
@@ -140,15 +161,19 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
      * @return データが古いので、取得が必要ならばtrue
      */
     private boolean isUserInfoTimeOut() {
+        DTVTLogger.start();
+
         //最終取得日時の取得
         long lastTime = SharedPreferencesUtils.getSharedPreferencesUserInfoDate(mContext);
 
         //現在日時が最終取得日時+1時間以下ならば、まだデータは新しい
         if (System.currentTimeMillis() < lastTime + (DateUtils.EPOCH_TIME_ONE_HOUR * 1000)) {
+            DTVTLogger.end("false");
             return false;
         }
 
         //データは古くなった
+        DTVTLogger.end("true");
         return true;
     }
 
@@ -158,33 +183,51 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
      * @param userInfoLists 契約情報
      */
     private void afterProcess(List<UserInfoList> userInfoLists) {
+        DTVTLogger.start();
+        DTVTLogger.debug("userInfoLists " + userInfoLists);
+
         // trueならば、データ更新扱い許可とするフラグ
         boolean changeFlag = true;
 
         //初回実行時はホーム画面に飛ばさないために、許可フラグはfalseにする
         if (beforeDate == Long.MIN_VALUE) {
+            DTVTLogger.debug("first exec");
             changeFlag = false;
         }
 
         if (userInfoLists == null) {
+            DTVTLogger.debug("no user data");
             // データ指定がヌルなので、前回の値を指定する。
             // データマネージャーの取得に失敗していた場合は、以前の値を読めないので、リストはヌルのまま
             if (mDataManager != null) {
+                DTVTLogger.debug("no data manager");
                 // DBから契約情報を取得する
                 mDataManager.readUserInfoInsertList();
                 userInfoLists = mDataManager.getmUserData();
             }
         }
 
+        if(userInfoLists.get(0).getLoggedinAccount().size() == 0) {
+            //契約情報がゼロ件の場合、情報取得に失敗するので、userInfoListsをヌルにして、異常データであることを明示する
+            userInfoLists = null;
+        }
+
         //新旧の年齢データを比較する
         int beforeAge = SharedPreferencesUtils.getSharedPreferencesAgeReq(mContext);
         int newAge = StringUtil.getUserInfo(userInfoLists);
+
+        DTVTLogger.debug("before age " + beforeAge);
+        DTVTLogger.debug("new age " + newAge);
+
         boolean isChangeAge = false;
         if (beforeAge != newAge) {
+            DTVTLogger.debug("age data change");
+
             //新しい年齢情報を保存する
             SharedPreferencesUtils.setSharedPreferencesAgeReq(mContext, newAge);
 
             if (changeFlag) {
+                DTVTLogger.debug("go home");
                 //年齢情報が変化し初回実行でもないので、ホーム画面遷移フラグをONにする
                 isChangeAge = true;
             }
@@ -192,6 +235,8 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
 
         //結果を返すコールバックを呼ぶ
         mUserDataProviderCallback.userInfoListCallback(isChangeAge, userInfoLists);
+
+        DTVTLogger.end();
     }
 
     /**

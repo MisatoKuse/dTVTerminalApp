@@ -9,6 +9,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.UserInfoListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
@@ -73,6 +74,7 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
      * UserinfoAPIの解析結果をDBに格納する。
      */
     private void insertUserInfoInsertList(List<UserInfoList> userInfoList) {
+        DTVTLogger.start();
 
         //各種オブジェクト作成
         DBHelper userInfoListDBHelper = new DBHelper(mContext);
@@ -97,6 +99,8 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
 
             makeRecord(userInfoListDao, list2, H4D_HEADER);
         }
+
+        DTVTLogger.end();
     }
 
     /**
@@ -151,6 +155,8 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
      * データを読み込んでくる
      */
     public void readUserInfoInsertList() {
+        DTVTLogger.start();
+
         //各種オブジェクト作成
         DBHelper userInfoListDBHelper = new DBHelper(mContext);
         SQLiteDatabase db = userInfoListDBHelper.getWritableDatabase();
@@ -161,6 +167,8 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
 
         //データを戻す
         mUserData = decodeData(readMap);
+
+        DTVTLogger.end();
     }
 
     /**
@@ -327,6 +335,8 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
 
     @Override
     protected Void doInBackground(List<UserInfoList>[] lists) {
+        DTVTLogger.start("lists" + lists.toString());
+
         //書き込みと読み込みの切り替えを行う
         if (lists != null) {
             //データの書き込みを行う
@@ -335,6 +345,8 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
             //データの読み込みを行う
             readUserInfoInsertList();
         }
+
+        DTVTLogger.end();
         return null;
     }
 }
