@@ -19,6 +19,8 @@
     <dimen name="launch_text_right_padding">10dp</dimen>
     <dimen name="launch_text_end_padding">0dp</dimen>
     <dimen name="launch_device_list_layout_high">0dp</dimen>
+    <dimen name="launch_device_search_error_help">1dp</dimen>
+    <dimen name="launch_device_search_error_help_text">15dp</dimen>
     <dimen name="clip_toast_margin">10dp</dimen>
     <dimen name="clip_button_size">32dp</dimen>
     <dimen name="clip_common_margin">15dp</dimen>

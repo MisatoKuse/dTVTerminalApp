@@ -43,8 +43,13 @@
     <string name="str_d_account_resetting_title">dアカウント再設定</string>
     <string name="str_d_account_setting_help_title">dアカウント設定ヘルプ</string>
     <string name="str_d_account_reg_confirmation_title">dアカウント登録確認</string>
-    <string name="str_stb_select_result_text_failed">ドコモテレビターミナルがネットワークに\n接続されていないか、ドコモテレビターミナルの\nバージョンアップが必要です。</string>
-    <string name="str_stb_select_result_text_search">STB検索中</string>
+    <string name="str_stb_select_result_text_failed">ペアリング可能なデバイスが\n見つかりませんでした。</string>
+    <string name="str_stb_select_result_text_search">ペアリング可能なデバイスを\n探しています。</string>
+    <string name="str_stb_search_failed_help">STBとペアリングするには</string>
+    <string name="str_stb_search_failed_paring_again">再度ペアリングを実行する</string>
+    <string name="str_stb_search_failed_help_text">docomoSTBヘルプ</string>
+    <string name="str_stb_select_error">STB選択エラー</string>
+    <string name="str_stb_paring_help">ペアリングヘルプ</string>
 
     <!-- リモコン-->
     <string name="remote_controller_viewpager_record_list_button">録画リスト</string>

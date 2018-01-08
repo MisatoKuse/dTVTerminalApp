@@ -21,7 +21,6 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.temp.DAccountAppliActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
@@ -118,15 +117,16 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             return;
 
         } else if (mStartMode == (STBSelectFromMode.STBSelectFromMode_Setting.ordinal())) {
+            mCheckBoxSTBSelectActivity.setVisibility(View.GONE);
             setTitleText(getString(R.string.str_stb_paring_setting_title));
             //enableStbStatusIcon(true);
             setStbStatusIconVisibility(true);
-            boolean status=true;
+            boolean status = true;
             //sharedPreferencesからSTB情報を取得する
             DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-            if (null != dlnaDmsItem && null!=dlnaDmsItem.mUdn && 0==dlnaDmsItem.mUdn.length()) {
+            if (null != dlnaDmsItem && null != dlnaDmsItem.mUdn && 0 == dlnaDmsItem.mUdn.length()) {
                 //未ペアリング
-                status=false;
+                status = false;
             }
             setStbStatus(status);
 
@@ -156,7 +156,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                     mCheckMark.setVisibility(View.VISIBLE);
                     mParingDevice.setTextColor(Color.BLACK);
                     mParingDevice.setBackground(ResourcesCompat.getDrawable(
-                            getResources(),R.drawable.color_white,null));
+                            getResources(), R.drawable.color_white, null));
                     useWithoutPairingSTBParingInvitationTextView.setVisibility(View.VISIBLE);
                     useWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_paring_cancel_text);
                 }
@@ -393,16 +393,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             //ペアリング解除する場合、すべてのSTBキャッシュデータを削除して、ホーム画面に遷移する
             mDlnaProvDevList.dmsRemove();
             SharedPreferencesUtils.resetSharedPreferencesStbInfo(this);
-            startActivity(HomeActivity.class, null);
-
-        } else {
-            SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
-                    this, false);
-            if (SharedPreferencesUtils.getSharedPreferencesIsDisplayedParingInvitation(this)) {
-                startActivity(HomeActivity.class, null);
-            } else {
-                startActivity(STBParingInvitationActivity.class, null);
-            }
         }
         DTVTLogger.end();
     }
@@ -596,16 +586,21 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private void showTimeoutView() {
         DTVTLogger.start();
         displayMoreData((false));
-        // STB検索タイムアウト文言表示
-        TextView statusTextView = findViewById(R.id.stb_select_status_text);
-        if (mStartMode == STBSelectFromMode.STBSelectFromMode_Setting.ordinal() &&
-                !mParingDevice.getText().toString().isEmpty()) {
-            useWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_paring_cancel_text);
-        }
-        statusTextView.setText(R.string.str_stb_select_result_text_failed);
-        // リストを非表示
-        mDeviceListView.setVisibility(View.GONE);
         mDlnaProvDevList.stopListen();
+        if (mStartMode == STBSelectFromMode.STBSelectFromMode_Launch.ordinal()) {
+            startActivity(STBSelectErrorActivity.class, null);
+        } else {
+            TextView statusTextView = findViewById(R.id.stb_select_status_text);
+            if (mStartMode == STBSelectFromMode.STBSelectFromMode_Setting.ordinal() &&
+                    !mParingDevice.getText().toString().isEmpty()) {
+                useWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_paring_cancel_text);
+            }
+            // STB検索タイムアウト文言表示
+            statusTextView.setText(R.string.str_stb_select_result_text_failed);
+            // リストを非表示
+            mDeviceListView.setVisibility(View.GONE);
+
+        }
         DTVTLogger.end();
     }
 
