@@ -1860,4 +1860,11 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     public Boolean getControllerVisible() {
         return mIsControllerVisible;
     }
+
+    /* test code begin */
+    public void testButton(View v) {
+        //TODO 関連コンテンツボタン押下時の動作。後で削除する
+        startActivity(DtvContentsDetailActivity.class, null);
+    }
+    /* test code end */
 }

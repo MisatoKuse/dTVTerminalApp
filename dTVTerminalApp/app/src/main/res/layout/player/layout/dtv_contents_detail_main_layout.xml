@@ -104,6 +104,14 @@
                 android:id="@+id/dtv_contents_detail_main_layout_vp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+
+            <!-- テスト用関連コンテンツボタン. 本実装時に削除 -->
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:text="関連コンテンツ"
+                android:onClick="testButton" />
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
