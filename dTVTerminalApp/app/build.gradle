@@ -7,8 +7,8 @@ android {
         applicationId "com.nttdocomo.android.tvterminalapp"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "90.20.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         externalNativeBuild {
@@ -21,10 +21,37 @@ android {
             abiFilters 'armeabi' //'armeabi-v7a'
         }
     }
+    signingConfigs {
+        dcmeval {
+            storeFile file('keys/dcmEval20150128.keystore')
+            storePassword 'spmode20100901'
+            keyAlias 'dcmeval2048'
+            keyPassword 'dcmeval2048'
+        }
+    }
     buildTypes {
-        debug {
-            minifyEnabled false
+        // 未署名、debug・Log OFF
+        unsigned_off {
+            debuggable false
+            jniDebuggable false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            versionNameSuffix '0200'
+            externalNativeBuild {
+                cmake {
+                    cppFlags.add("-DENABLE_LOG_INFO")
+                    cppFlags.add("-DENABLE_LOG_ERROR")
+                    cFlags.add("-DENABLE_LOG_INFO")
+                    cFlags.add("-DENABLE_LOG_ERROR")
+                }
+            }
+        }
+        // 未署名、debug・Log ON
+        unsigned_on {
+            debuggable true
+            jniDebuggable true
+            minifyEnabled false
+            versionNameSuffix '1200'
             externalNativeBuild {
                 cmake {
                     cppFlags.add("-DENABLE_LOG_DEBUG")
@@ -36,13 +63,104 @@ android {
                 }
             }
         }
-        release {
+        // 開発署名付、debug・Log OFF
+        signed_off {
+            debuggable false
+            jniDebuggable false
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.dcmeval
+            versionNameSuffix '2200'
             externalNativeBuild {
                 cmake {
                     cppFlags.add("-DENABLE_LOG_INFO")
                     cppFlags.add("-DENABLE_LOG_ERROR")
+                    cFlags.add("-DENABLE_LOG_INFO")
+                    cFlags.add("-DENABLE_LOG_ERROR")
+                }
+            }
+        }
+        // 開発署名付、debug・Log ON
+        signed_on {
+            debuggable true
+            jniDebuggable true
+            minifyEnabled false
+            signingConfig signingConfigs.dcmeval
+            versionNameSuffix '3200'
+            externalNativeBuild {
+                cmake {
+                    cppFlags.add("-DENABLE_LOG_DEBUG")
+                    cppFlags.add("-DENABLE_LOG_INFO")
+                    cppFlags.add("-DENABLE_LOG_ERROR")
+                    cFlags.add("-DENABLE_LOG_DEBUG")
+                    cFlags.add("-DENABLE_LOG_INFO")
+                    cFlags.add("-DENABLE_LOG_ERROR")
+                }
+            }
+        }
+        // 検証サーバ向き、未署名、debug・Log OFF
+        _test_unsigned_off {
+            debuggable false
+            jniDebuggable false
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            versionNameSuffix '4200'
+            externalNativeBuild {
+                cmake {
+                    cppFlags.add("-DENABLE_LOG_INFO")
+                    cppFlags.add("-DENABLE_LOG_ERROR")
+                    cFlags.add("-DENABLE_LOG_INFO")
+                    cFlags.add("-DENABLE_LOG_ERROR")
+                }
+            }
+        }
+        // 検証サーバ向き、未署名、debug・Log O
+        _test_unsigned_on {
+            debuggable true
+            jniDebuggable true
+            minifyEnabled false
+            versionNameSuffix '5200'
+            externalNativeBuild {
+                cmake {
+                    cppFlags.add("-DENABLE_LOG_DEBUG")
+                    cppFlags.add("-DENABLE_LOG_INFO")
+                    cppFlags.add("-DENABLE_LOG_ERROR")
+                    cFlags.add("-DENABLE_LOG_DEBUG")
+                    cFlags.add("-DENABLE_LOG_INFO")
+                    cFlags.add("-DENABLE_LOG_ERROR")
+                }
+            }
+        }
+        // 検証サーバ向き、開発署名付、debug・Log OFF
+        _test_signed_off {
+            debuggable false
+            jniDebuggable false
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.dcmeval
+            versionNameSuffix '6200'
+            externalNativeBuild {
+                cmake {
+                    cppFlags.add("-DENABLE_LOG_INFO")
+                    cppFlags.add("-DENABLE_LOG_ERROR")
+                    cFlags.add("-DENABLE_LOG_INFO")
+                    cFlags.add("-DENABLE_LOG_ERROR")
+                }
+            }
+        }
+        // 検証サーバ向き、開発署名付、debug・Log ON
+        _test_signed_on {
+            debuggable true
+            jniDebuggable true
+            minifyEnabled false
+            signingConfig signingConfigs.dcmeval
+            versionNameSuffix '7200'
+            externalNativeBuild {
+                cmake {
+                    cppFlags.add("-DENABLE_LOG_DEBUG")
+                    cppFlags.add("-DENABLE_LOG_INFO")
+                    cppFlags.add("-DENABLE_LOG_ERROR")
+                    cFlags.add("-DENABLE_LOG_DEBUG")
                     cFlags.add("-DENABLE_LOG_INFO")
                     cFlags.add("-DENABLE_LOG_ERROR")
                 }
