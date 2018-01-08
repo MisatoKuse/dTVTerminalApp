@@ -19,4 +19,5 @@ public class SearchRequestKey {
     public static final String kServiceCategoryId = "&serviceCategoryId";
 //    public static final String kCategoryId = "&filterCategoryId";TODO:仕様確認後削除
     public static final String kCondition = "&condition";
+    public static final String kFilterViewableAge = "&filterViewableAge";
 }
