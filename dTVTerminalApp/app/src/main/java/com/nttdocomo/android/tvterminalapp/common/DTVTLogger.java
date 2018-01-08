@@ -6,6 +6,8 @@ package com.nttdocomo.android.tvterminalapp.common;
 
 import android.util.Log;
 
+import com.nttdocomo.android.tvterminalapp.BuildConfig;
+
 
 /**
  * dTVTアプリ共通ログクラス.
@@ -14,12 +16,16 @@ public class DTVTLogger {
     /**
      * ログレベル debug 有効/無効(リリース版ではfalseにする事).
      */
-    private static final boolean ENABLE_LOG_DEBUG = true;
+    private static final boolean ENABLE_LOG_DEBUG =
+            BuildConfig.BUILD_TYPE.equals("unsigned_on") || BuildConfig.BUILD_TYPE.equals("signed_on") ||
+                    BuildConfig.BUILD_TYPE.equals("_test_unsigned_on") || BuildConfig.BUILD_TYPE.equals("_test_signed_on");
 
     /**
      * ログレベル 関数 有効/無効(リリース版ではfalseにする事).
      */
-    private static final boolean ENABLE_LOG_METHOD_INOUT = true;
+    private static final boolean ENABLE_LOG_METHOD_INOUT =
+            BuildConfig.BUILD_TYPE.equals("unsigned_on") || BuildConfig.BUILD_TYPE.equals("signed_on") ||
+                    BuildConfig.BUILD_TYPE.equals("_test_unsigned_on") || BuildConfig.BUILD_TYPE.equals("_test_signed_on");
 
     /**
      * ログレベル info 有効/無効.
@@ -27,7 +33,7 @@ public class DTVTLogger {
     private static final boolean ENABLE_LOG_INFO = true;
 
     /**
-     * ログレベル err 有効/無効.
+     * ログレベル warning 有効/無効.
      */
     private static final boolean ENABLE_LOG_WARNING = true;
 
