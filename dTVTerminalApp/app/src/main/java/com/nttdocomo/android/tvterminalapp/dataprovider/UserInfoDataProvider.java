@@ -12,6 +12,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.insert.UserInfoInsertData
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.UserInfoWebClient;
 
 import java.util.List;
@@ -21,11 +22,13 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
     private Context mContext = null;
 
     //データを返すコールバック
-    private UserDataProviderCallback mUserDataProviderCallback;
+    private final UserDataProviderCallback mUserDataProviderCallback;
 
+    //データーマネージャー
     private UserInfoInsertDataManager mDataManager = null;
 
-    List<UserInfoList> mUserInfoLists;
+    //前回の日時
+    private long beforeDate = 0;
 
     @Override
     public void onUserInfoJsonParsed(List<UserInfoList> userInfoLists) {
@@ -39,8 +42,10 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
 
             //後処理を行う
             afterProcess(userInfoLists);
+        } else {
+            //取得ができなかったので、DBから取得する
+            afterProcess(null);
         }
-        //WEBAPIを取得できなかった場合は、既存のデータをそのまま使用するので、何もしない
     }
 
     /**
@@ -63,9 +68,8 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
      */
     public UserInfoDataProvider(Context context, UserDataProviderCallback userDataProviderCallback) {
         mContext = context;
-        //mApiDataProviderCallback = (ApiDataProviderCallback) mContext;
-        //mSetDB = false;
 
+        //データマネージャーの初期化
         mDataManager = new UserInfoInsertDataManager(mContext);
 
         //コールバックの定義
@@ -76,6 +80,9 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
      * ユーザーデータ取得を開始する
      */
     public void getUserInfo() {
+        //今設定されている最終更新日時を控えておく
+        beforeDate = SharedPreferencesUtils.getSharedPreferencesUserInfoDate(mContext);
+
         //通信状況の取得
         if (!isOnline(mContext)) {
             //通信不能なので、ヌルを指定して、前回の値をそのまま使用する。
@@ -84,7 +91,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
         }
 
         //通信日時の確認
-        if (isUserInfoTimeOut()) {
+        if (!isUserInfoTimeOut()) {
             //まだ取得後1時間が経過していないので、ヌルを指定して前回の値をそのまま使用する。
             afterProcess(null);
             return;
@@ -110,13 +117,14 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
             networkInfo = connectManager.getActiveNetworkInfo();
         }
 
-        //通信手段が無い場合は、networkInfoがヌルになるらしい。
+        //通信手段が無い場合は、networkInfoがヌルになる
         //手段があっても接続されていないときは、isConnected()がfalseになる
+        //どちらの場合も通信は不可能なので、falseを返す
         return (networkInfo != null && networkInfo.isConnected());
     }
 
     /**
-     * データ取得が必要かどうかを見る
+     * データの取得日時を見て、データ取得が必要かどうかを見る
      *
      * @return データが古いので、取得が必要ならばtrue
      */
@@ -124,8 +132,8 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
         //最終取得日時の取得
         long lastTime = SharedPreferencesUtils.getSharedPreferencesUserInfoDate(mContext);
 
-        //現在日時+1時間が最終取得日時以下ならば、まだデータは新しい
-        if (((DateUtils.EPOCH_TIME_ONE_HOUR * 1000) + System.currentTimeMillis()) < lastTime) {
+        //現在日時が最終取得日時+1時間以下ならば、まだデータは新しい
+        if (System.currentTimeMillis() < lastTime + (DateUtils.EPOCH_TIME_ONE_HOUR * 1000)) {
             return false;
         }
 
@@ -135,18 +143,43 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
 
     /**
      * データの取得やデータの取得の必要のない場合の後処理
+     *
+     * @param userInfoLists 契約情報
      */
     private void afterProcess(List<UserInfoList> userInfoLists) {
-        if (userInfoLists == null) {
-            //データ指定がヌルなので、前回の値を指定する。更新フラグは自動的にfalseになる
-            mDataManager.readUserInfoInsertList();
-            mUserDataProviderCallback.userInfoListCallback(false,
-                    mDataManager.getmUserData());
-            return;
+        // trueならば、データ更新扱い許可とするフラグ
+        boolean changeFlag = true;
+
+        //初回実行時はホーム画面に飛ばさないために、許可フラグはfalseにする
+        if (beforeDate == Long.MIN_VALUE) {
+            changeFlag = false;
         }
 
-        //データを読み込んだ場合
-        mUserDataProviderCallback.userInfoListCallback(true, userInfoLists);
+        if (userInfoLists == null) {
+            // データ指定がヌルなので、前回の値を指定する。
+            // データマネージャーの取得に失敗していた場合は、以前の値を読めないので、リストはヌルのまま
+            if (mDataManager != null) {
+                // DBから契約情報を取得する
+                mDataManager.readUserInfoInsertList();
+                userInfoLists = mDataManager.getmUserData();
+            }
+        }
 
+        //新旧の年齢データを比較する
+        int beforeAge = SharedPreferencesUtils.getSharedPreferencesAgeReq(mContext);
+        int newAge = StringUtil.getUserInfo(userInfoLists);
+        boolean isChangeAge = false;
+        if (beforeAge != newAge) {
+            //新しい年齢情報を保存する
+            SharedPreferencesUtils.setSharedPreferencesAgeReq(mContext, newAge);
+
+            if (changeFlag) {
+                //年齢情報が変化し初回実行でもないので、ホーム画面遷移フラグをONにする
+                isChangeAge = true;
+            }
+        }
+
+        //結果を返すコールバックを呼ぶ
+        mUserDataProviderCallback.userInfoListCallback(isChangeAge, userInfoLists);
     }
 }

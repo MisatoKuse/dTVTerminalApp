@@ -410,14 +410,9 @@ public class SharedPreferencesUtils {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 LAST_USER_INFO_DATE, Context.MODE_PRIVATE);
-        long dateTime = data.getLong(LAST_USER_INFO_DATE,-1L);
 
-        //日時が負数ならばまだユーザー情報は読み込まれていないので、最大値を入れてかならず読むようにする
-        if(dateTime < 0) {
-            dateTime = Long.MAX_VALUE;
-        }
-
-        return dateTime;
+        //最終取得日時を返す。存在していなければ、最小値を返す
+        return data.getLong(LAST_USER_INFO_DATE,Long.MIN_VALUE);
     }
 
     /**
@@ -479,13 +474,14 @@ public class SharedPreferencesUtils {
     }
 
     /**
-     * 最後に保存したワンタイムパスワードを取得
+     * 最後に保存した年齢情報を取得
      */
     public static int getSharedPreferencesAgeReq(Context context) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 USER_AGE_REQ_SHARED_KEY, Context.MODE_PRIVATE);
 
-        return data.getInt(USER_AGE_REQ_SHARED_KEY,8);
+        //保存した年齢情報がない場合はPG12を返却
+        return data.getInt(USER_AGE_REQ_SHARED_KEY, StringUtil.USER_AGE_REQ_PG12);
     }
 }

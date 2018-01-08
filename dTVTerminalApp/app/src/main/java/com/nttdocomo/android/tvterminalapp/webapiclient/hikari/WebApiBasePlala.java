@@ -417,15 +417,9 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                               WebApiBasePlalaCallback webApiBasePlalaCallback,
                               Bundle extraDataSrc) {
 
-        if (extraDataSrc == null) {
-            //拡張情報無しでタスクを作成する
-            mCommunicationTask = new CommunicationTask(sourceUrl, receivedParameters,
-                    null, true);
-        } else {
-            //拡張情報付きでタスクを作成する
-            mCommunicationTask = new CommunicationTask(sourceUrl, receivedParameters,
-                    extraDataSrc, true);
-        }
+        //タスクを作成する
+        mCommunicationTask = new CommunicationTask(sourceUrl, receivedParameters,
+                extraDataSrc, true);
 
         //コールバックの準備
         mWebApiBasePlalaCallback = webApiBasePlalaCallback;
