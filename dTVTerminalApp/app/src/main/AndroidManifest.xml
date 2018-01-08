@@ -78,10 +78,16 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.launch.STBSelectActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/STBTheme"/>
         <activity
             android:name=".activity.launch.TutorialActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".activity.launch.ParingHelpActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.launch.STBSelectErrorActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/STBTheme"/>
         <!-- ======================================  Launch グループ End ====================================== -->
 
 
