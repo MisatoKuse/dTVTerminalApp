@@ -31,7 +31,7 @@ public class UserInfoJsonParser extends AsyncTask<Object, Object, Object> {
     private static final String BRACKET_LEFT = "[";
     private static final String BRACKET_RIGHT = "]";
 
-    private UserInfoWebClient.UserInfoJsonParserCallback mUserInfoJsonParserCallback;
+    private final UserInfoWebClient.UserInfoJsonParserCallback mUserInfoJsonParserCallback;
 
     private List<UserInfoList> mUserInfoListResponse;
 

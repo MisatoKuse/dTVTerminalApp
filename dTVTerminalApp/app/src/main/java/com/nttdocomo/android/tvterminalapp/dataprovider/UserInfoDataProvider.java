@@ -151,7 +151,6 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
 
         //通信手段が無い場合は、networkInfoがヌルになる
         //手段があっても接続されていないときは、isConnected()がfalseになる
-        //どちらの場合も通信は不可能なので、falseを返す
         return (networkInfo != null && networkInfo.isConnected());
     }
 
