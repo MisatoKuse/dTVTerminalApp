@@ -41,7 +41,7 @@ public class SharedPreferencesUtils {
     private static final String SHARED_KEY_SCREEN_INFORMATION = "screen_information";
     /**  LaunchActivity チュートリアル表示済み判定 保存キー */
     private static final String SHARED_KEY_IS_DISPLAYED_TUTORIAL = "is_displayed_tutorial";
-    /**  SettinActivity 画質設定の設定値 */
+    /**  SettingActivity 画質設定の設定値 */
     private static final String SHARED_KEY_IMAGE_QUALITY = "image_quality";
     /**  持ち出しコンテンツダウンロード先 ture:内部 false:外部 */
     private static final String SHARED_KEY_STORAGE_PATH = "storage_path";
@@ -55,6 +55,8 @@ public class SharedPreferencesUtils {
     private static final String USER_AGE_REQ_SHARED_KEY = "USER_AGE_REQ_SHARED_KEY";
     /** ユーザー情報取得日時 */
     private static final String LAST_USER_INFO_DATE = "LAST_USER_INFO_DATE";
+
+    private static final String CONTRACT_INFO_SHARED_KEY = "CONTRACT_INFO_SHARED_KEY";
 
     /**
      * 独自の削除メソッドがある接続済みSTB情報以外の、dアカウントユーザー切り替え時の削除対象
@@ -483,5 +485,30 @@ public class SharedPreferencesUtils {
 
         //保存した年齢情報がない場合はPG12を返却
         return data.getInt(USER_AGE_REQ_SHARED_KEY, StringUtil.USER_AGE_REQ_PG12);
+    }
+
+    /**
+     * 取得したユーザーの契約情報を保存
+     *
+     * @param context コンテキスト
+     * @param info 契約情報
+     */
+    public static void setSharedPreferencesContractInfo(Context context, String info) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                CONTRACT_INFO_SHARED_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putString(CONTRACT_INFO_SHARED_KEY, info);
+        editor.apply();
+        DTVTLogger.end();
+    }
+
+    public static String getSharedPreferencesContractInfo(Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                CONTRACT_INFO_SHARED_KEY, Context.MODE_PRIVATE);
+
+        //保存した契約情報がない場合はnoneを返却する
+        return data.getString(CONTRACT_INFO_SHARED_KEY, "none");
     }
 }

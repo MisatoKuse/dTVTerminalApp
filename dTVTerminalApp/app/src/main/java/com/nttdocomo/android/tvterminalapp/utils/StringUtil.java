@@ -35,6 +35,8 @@ public class StringUtil {
     //年齢制限値=R20
     public static final String USER_R_VALUE_R20 = "R20";
     public static final int USER_AGE_REQ_R20 = 20;
+    //契約情報
+    public static final String CONTRACT_INFO_NONE = "none";
 
     public StringUtil(Context context) {
         mContext = context;
@@ -326,5 +328,40 @@ public class StringUtil {
      */
     public static String returnAsterisk(Context context) {
         return context.getString(R.string.message_three_asterisk);
+    }
+
+    public static String getUserContractInfo(List<UserInfoList> userInfoList) {
+        final int INT_LIST_HEAD = 0;
+        final String CONTRACT_DTV = "001";
+        final String CONTRACT_H4D = "002";
+        String contractStatus;
+
+        //ユーザ情報がないときは契約情報は無し
+        if(userInfoList == null || userInfoList.size() < 1){
+            return CONTRACT_INFO_NONE;
+        }
+
+        UserInfoList infoList = userInfoList.get(INT_LIST_HEAD);
+
+        //ユーザ情報がないときは契約情報は無し
+        if (infoList == null) {
+            return CONTRACT_INFO_NONE;
+        }
+
+        List<UserInfoList.AccountList> mLoggedInAccountList = infoList.getmLoggedinAccount();
+        UserInfoList.AccountList mLoggedInAccount = mLoggedInAccountList.get(INT_LIST_HEAD);
+
+        //ユーザ情報がないときは契約情報は無し
+        if (mLoggedInAccount == null) {
+            return CONTRACT_INFO_NONE;
+        }
+
+        // 契約中であれば契約情報を返す
+        contractStatus = mLoggedInAccount.getmContractStatus();
+        if (contractStatus.equals(CONTRACT_DTV) || contractStatus.equals(CONTRACT_H4D)) {
+            return contractStatus;
+        }
+
+        return CONTRACT_INFO_NONE;
     }
 }
