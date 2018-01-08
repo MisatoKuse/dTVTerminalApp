@@ -28,6 +28,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.SearchDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchResultError;
 import com.nttdocomo.android.tvterminalapp.model.ResultType;
@@ -315,6 +316,38 @@ public class SearchTopActivity extends BaseActivity
         return ret;
     }
 
+    /**
+     * リクエスト用ユーザ年齢情報を設定する
+     *
+     * @return
+     */
+    private int getUserAgeInfo() {
+        UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(this);
+        int userAge = -1;
+        if (null == mSearchViewPager) {
+            return userAge;
+        }
+        int pageIndex = mSearchViewPager.getCurrentItem();
+
+        switch (pageIndex) {
+            case PAGE_NO_OF_SERVICE_TEREBI: //テレビ
+                userAge = userInfoDataProvider.getUserAge();
+                break;
+            case PAGE_NO_OF_SERVICE_VIDEO: //ビデオ
+                userAge = userInfoDataProvider.getUserAge();
+                break;
+            case PAGE_NO_OF_SERVICE_DTV_CHANNEL: //dTVチャンネル
+                userAge = userInfoDataProvider.getUserAge();
+                break;
+            case PAGE_NO_OF_SERVICE_DTV: //DTV_CONTENTS
+            case PAGE_NO_OF_SERVICE_DANIME: //dアニメ
+                break;
+            default:
+                break;
+        }
+        return userAge;
+    }
+
     private void setSearchNarrowCondition() {
         if (null == mSearchNarrowCondition) {
             ArrayList<SearchFilterTypeMappable> arr = new ArrayList<>();
@@ -384,6 +417,7 @@ public class SearchTopActivity extends BaseActivity
                 mSearchNarrowCondition,
                 mSearchSortKind,
                 mPageNumber,
+                getUserAgeInfo(),
                 this
         );
         /* //for test
