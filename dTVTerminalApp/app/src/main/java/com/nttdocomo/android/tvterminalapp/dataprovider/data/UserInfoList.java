@@ -45,31 +45,31 @@ public class UserInfoList {
             this.mH4dAgeReq = "";
         }
 
-        public String getmContractStatus() {
+        public String getContractStatus() {
             return mContractStatus;
         }
 
-        public void setmContractStatus(String contractStatus) {
+        public void setContractStatus(String contractStatus) {
             if (contractStatus != null) {
                 this.mContractStatus = contractStatus;
             }
         }
 
-        public String getmDchAgeReq() {
+        public String getDchAgeReq() {
             return mDchAgeReq;
         }
 
-        public void setmDchAgeReq(String dchAgeReq) {
+        public void setDchAgeReq(String dchAgeReq) {
             if (dchAgeReq != null) {
                 this.mDchAgeReq = dchAgeReq;
             }
         }
 
-        public String getmH4dAgeReq() {
+        public String getH4dAgeReq() {
             return mH4dAgeReq;
         }
 
-        public void setmH4dAgeReq(String h4dAgeReq) {
+        public void setH4dAgeReq(String h4dAgeReq) {
             if (h4dAgeReq != null) {
                 this.mH4dAgeReq = h4dAgeReq;
             }
@@ -91,30 +91,30 @@ public class UserInfoList {
      */
     private List<AccountList> mH4dContractedAccount;
 
-    public String getmStatus() {
+    public String getStatus() {
         return mStatus;
     }
 
-    public void setmStatus(String mStatus) {
+    public void setStatus(String mStatus) {
         this.mStatus = mStatus;
     }
 
-    public List<AccountList> getmLoggedinAccount() {
+    public List<AccountList> getLoggedinAccount() {
         //リクエストユーザデータの取得
         return mLoggedinAccount;
     }
 
-    public void setmLoggedinAccount(List<AccountList> mLoggedinAccount) {
+    public void setLoggedinAccount(List<AccountList> mLoggedinAccount) {
         //リクエストユーザデータのセット
         this.mLoggedinAccount = mLoggedinAccount;
     }
 
-    public List<AccountList> getmH4dContractedAccount() {
+    public List<AccountList> getH4dContractedAccount() {
         //H4D契約ユーザデータの取得
         return mH4dContractedAccount;
     }
 
-    public void setmH4dContractedAccount(List<AccountList> mH4dContractedAccount) {
+    public void setH4dContractedAccount(List<AccountList> mH4dContractedAccount) {
         //H4D契約ユーザデータのセット
         this.mH4dContractedAccount = mH4dContractedAccount;
     }
