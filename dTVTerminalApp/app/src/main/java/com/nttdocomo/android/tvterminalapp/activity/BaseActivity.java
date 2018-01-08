@@ -1091,6 +1091,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             //情報を控える
             mUserInfo = list;
 
+            //契約情報を保存する
+            SharedPreferencesUtils.setSharedPreferencesContractInfo(mContext, StringUtil.getUserContractInfo(mUserInfo));
+
             //年齢情報を保存する
             SharedPreferencesUtils.setSharedPreferencesAgeReq(mContext, StringUtil.getUserInfo(mUserInfo));
 
