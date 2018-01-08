@@ -1117,16 +1117,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * ユーザの年齢情報を返す
-     * 未ログイン状態の時はPG12の値を返す
-     *
-     * @return 年齢情報
-     */
-    public int getAgeReq() {
-        return SharedPreferencesUtils.getSharedPreferencesAgeReq(this);
-    }
-
-    /**
      * 詳細画面起動元のクラス名を保存するstaticクラス
      * @param className コンテンツ詳細画面起動元のクラス名
      */
