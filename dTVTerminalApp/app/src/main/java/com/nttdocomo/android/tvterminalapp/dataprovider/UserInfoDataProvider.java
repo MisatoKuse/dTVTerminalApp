@@ -25,7 +25,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
     private Context mContext = null;
 
     //データを返すコールバック
-    private final UserDataProviderCallback mUserDataProviderCallback;
+    private UserDataProviderCallback mUserDataProviderCallback;
 
     //データーマネージャー
     private UserInfoInsertDataManager mDataManager = null;
