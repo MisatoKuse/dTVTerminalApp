@@ -27,6 +27,7 @@ android {
             storePassword 'spmode20100901'
             keyAlias 'dcmeval2048'
             keyPassword 'dcmeval2048'
+            v2SigningEnabled false
         }
     }
     buildTypes {
