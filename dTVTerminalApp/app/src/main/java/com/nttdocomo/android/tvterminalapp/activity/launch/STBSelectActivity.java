@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.temp.DAccountAppliActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
@@ -394,6 +395,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             mDlnaProvDevList.dmsRemove();
             SharedPreferencesUtils.resetSharedPreferencesStbInfo(this);
         }
+        startActivity(HomeActivity.class, null);
         DTVTLogger.end();
     }
 
