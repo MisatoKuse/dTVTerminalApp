@@ -64,6 +64,12 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
         }
         queryItems.put(SearchRequestKey.kCondition, concatFilterString());
 
+        //ユーザ情報が設定されている時のみパラメータを追加する
+        String filterViewableAge = data.filterViewableAge;
+        if (filterViewableAge != null) {
+            queryItems.put(SearchRequestKey.kFilterViewableAge, filterViewableAge);
+        }
+
         get(UrlConstants.WebApiUrl.totalSearchUrl, queryItems, this);
     }
 

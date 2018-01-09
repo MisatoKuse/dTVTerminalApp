@@ -9,6 +9,7 @@ import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.model.ResultType;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 import com.nttdocomo.android.tvterminalapp.model.search.SearchContentInfo;
 import com.nttdocomo.android.tvterminalapp.model.search.SearchNarrowCondition;
@@ -62,6 +63,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
                                 SearchNarrowCondition condition,
                                 SearchSortKind sortKind,
                                 int pageNumber,
+                                int userAge,
                                 /*TotalSearchContentInfo handler, */
                                 SearchDataProviderListener searchDataProviderListener) {
         TotalSearchWebApi totalSearchWebApi = null;
@@ -81,6 +83,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
         request.filterTypeList = condition.searchFilterList();
         request.maxResult = SearchConstants.Search.requestMaxResultCount;
         request.startIndex = pageNumber * SearchConstants.Search.requestMaxResultCount + 1;
+        request.filterViewableAge = UserInfoUtils.getRecommendUserAge(userAge);
 
         totalSearchWebApi = new TotalSearchWebApi();
         totalSearchWebApi.setDelegate(this);

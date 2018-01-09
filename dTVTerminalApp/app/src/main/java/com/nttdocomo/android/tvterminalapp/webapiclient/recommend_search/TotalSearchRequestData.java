@@ -37,4 +37,7 @@ public class TotalSearchRequestData {
 
     //取得対象サービスID,カテゴリIDセット
     public String serviceCategoryId = null;
+
+    //ユーザ年齢フィルタリング情報
+    public String filterViewableAge = null;
 }
