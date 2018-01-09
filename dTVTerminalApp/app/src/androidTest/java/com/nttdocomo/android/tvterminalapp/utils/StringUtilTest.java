@@ -4,6 +4,10 @@
 
 package com.nttdocomo.android.tvterminalapp.utils;
 
+import android.content.Context;
+import android.support.test.InstrumentationRegistry;
+
+import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser;
 
@@ -20,7 +24,7 @@ import static org.junit.Assert.*;
 
 public class StringUtilTest {
 
-    private StringUtil mStringUtils = null;
+    private Context mContext = null;
     private final String CON_001 = "001";
     private final String CON_002 = "002";
     private final String BLANK = "";
@@ -32,7 +36,8 @@ public class StringUtilTest {
 
     @Before
     public void setUp() throws Exception {
-        //None
+        //コンテクストを取得
+        mContext = InstrumentationRegistry.getTargetContext();
     }
 
     @After
@@ -69,7 +74,7 @@ public class StringUtilTest {
             userInfoMapList.add(userInfoMap);
 
             //その他
-            assertEquals(mStringUtils.getUserAgeInfo(userInfoMapList), Integer.parseInt(answer[i]));
+            assertEquals(StringUtil.getUserAgeInfo(userInfoMapList), Integer.parseInt(answer[i]));
         }
     }
 
@@ -77,24 +82,28 @@ public class StringUtilTest {
     public void convertRValueToAgeReq() throws Exception {
 
         //null 期待値：0
-        assertEquals(mStringUtils.convertRValueToAgeReq(null), StringUtil.DEFAULT_R_VALUE);
+        assertEquals(StringUtil.convertRValueToAgeReq(mContext, null), StringUtil.DEFAULT_R_VALUE);
 
         //blank 期待値：0
-        assertEquals(mStringUtils.convertRValueToAgeReq(""), StringUtil.DEFAULT_R_VALUE);
+        assertEquals(StringUtil.convertRValueToAgeReq(mContext, ""), StringUtil.DEFAULT_R_VALUE);
 
         //文字 期待値：0
-        assertEquals(mStringUtils.convertRValueToAgeReq("あ"), StringUtil.DEFAULT_R_VALUE);
+        assertEquals(StringUtil.convertRValueToAgeReq(mContext, "あ"), StringUtil.DEFAULT_R_VALUE);
 
         //PG12 期待値：9
-        assertEquals(mStringUtils.convertRValueToAgeReq(StringUtil.USER_R_VALUE_PG12), StringUtil.USER_AGE_REQ_PG12);
+        assertEquals(StringUtil.convertRValueToAgeReq(mContext,
+                mContext.getString(R.string.parental_pg_12)), StringUtil.USER_AGE_REQ_PG12);
 
         //R15 期待値：12
-        assertEquals(mStringUtils.convertRValueToAgeReq(StringUtil.USER_R_VALUE_R15), StringUtil.USER_AGE_REQ_R15);
+        assertEquals(StringUtil.convertRValueToAgeReq(mContext,
+                mContext.getString(R.string.parental_r_15)), StringUtil.USER_AGE_REQ_R15);
 
         //R18 期待値：15
-        assertEquals(mStringUtils.convertRValueToAgeReq(StringUtil.USER_R_VALUE_R18), StringUtil.USER_AGE_REQ_R18);
+        assertEquals(StringUtil.convertRValueToAgeReq(mContext,
+                mContext.getString(R.string.parental_r_18)), StringUtil.USER_AGE_REQ_R18);
 
         //R20 期待値：17
-        assertEquals(mStringUtils.convertRValueToAgeReq(StringUtil.USER_R_VALUE_R20), StringUtil.USER_AGE_REQ_R20);
+        assertEquals(StringUtil.convertRValueToAgeReq(mContext,
+                mContext.getString(R.string.parental_r_20)), StringUtil.USER_AGE_REQ_R20);
     }
 }

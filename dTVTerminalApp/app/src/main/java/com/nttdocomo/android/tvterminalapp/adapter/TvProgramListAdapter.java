@@ -239,7 +239,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             }
         }
         //年齢制限フラグ
-        boolean isParental = setParental(StringUtil.convertRValueToAgeReq(itemSchedule.getRValue()));
+        boolean isParental = setParental(StringUtil.convertRValueToAgeReq(mContext, itemSchedule.getRValue()));
         String title;
         if(isParental){
             title = StringUtil.returnAsterisk(mContext);
