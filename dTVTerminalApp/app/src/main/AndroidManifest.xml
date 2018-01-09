@@ -71,6 +71,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".activity.launch.CheckStatusActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".activity.launch.STBConnectActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -194,7 +197,8 @@
                 <action android:name="com.nttdocomo.android.idmanager.action.DOCOMOID_LINKED_LINE" />
             </intent-filter>
         </receiver>
-        <service android:name=".service.download.DownloadService"/>
+
+        <service android:name=".service.download.DownloadService" />
     </application>
 
 </manifest>

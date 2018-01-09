@@ -4,7 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -12,7 +11,6 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListListener;
@@ -32,16 +30,16 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
     private static boolean mIsFirstRun = true;
 
-    Button firstLanchLanchYesActivity = null;
-    Button firstLanchLanchNoActivity = null;
+    private Button firstLanchLanchYesActivity = null;
+    private Button firstLanchLanchNoActivity = null;
     private DlnaProvRecVideo mDlnaProvRecVideo = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        DlnaProvTerChList dlnaProvTerChList = null;
-        DlnaProvBsChList dlnaProvBsChList = null;
+        DlnaProvTerChList dlnaProvTerChList;
+        DlnaProvBsChList dlnaProvBsChList;
 
         setContentView(R.layout.launch_main_layout);
         enableHeaderBackIcon(false);
@@ -79,13 +77,13 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
      * 画面設定を行う
      */
     private void setContents() {
-        TextView title = (TextView) findViewById(R.id.titleLanchActivity);
+        TextView title = findViewById(R.id.titleLanchActivity);
         title.setText(getScreenTitle());
 
-        firstLanchLanchYesActivity = (Button) findViewById(R.id.firstLanchLanchYesActivity);
+        firstLanchLanchYesActivity = findViewById(R.id.firstLanchLanchYesActivity);
         firstLanchLanchYesActivity.setOnClickListener(this);
 
-        firstLanchLanchNoActivity = (Button) findViewById(R.id.firstLanchLanchNoActivity);
+        firstLanchLanchNoActivity = findViewById(R.id.firstLanchLanchNoActivity);
         firstLanchLanchNoActivity.setOnClickListener(this);
         // TODO チュートリアル実装時にコメントアウトを外す
 //        if(SharedPreferencesUtils.getSharedPreferencesIsDisplayedTutorial(this)) {
@@ -102,7 +100,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
      */
     private boolean startDlna() {
         DlnaInterface di = DlnaInterface.getInstance();
-        boolean ret = false;
+        boolean ret;
         if (null == di) {
             ret = false;
         } else {
@@ -176,31 +174,11 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     }
 
     /**
-     * 次画面遷移判定
+     * 次画面遷移
      */
     private void doScreenTransition() {
         DTVTLogger.start();
-        if (SharedPreferencesUtils.getSharedPreferencesStbConnect(this)) {
-            // ペアリング済み HOME画面遷移
-            SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
-                    this, true);
-            startActivity(HomeActivity.class, null);
-            DTVTLogger.debug("ParingOK Start HomeActivity");
-        } else if (SharedPreferencesUtils.getSharedPreferencesStbSelect(this)) {
-            // 次回から表示しないをチェック済み
-            // 未ペアリング HOME画面遷移
-            SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
-                    this, false);
-            startActivity(HomeActivity.class, null);
-            DTVTLogger.debug("ParingNG Start HomeActivity");
-        } else {
-            // STB選択画面へ遷移
-            //startActivity(STBSelectActivity.class, null);
-            Intent intent = new Intent(getApplicationContext(),STBSelectActivity.class);
-            intent.putExtra(STBSelectActivity.FROM_WHERE, STBSelectActivity.STBSelectFromMode.STBSelectFromMode_Launch.ordinal());
-            startActivity(intent);
-            DTVTLogger.debug("Start STBSelectActivity");
-        }
+        startActivity(CheckStatusActivity.class, null);
         DTVTLogger.end();
     }
 
