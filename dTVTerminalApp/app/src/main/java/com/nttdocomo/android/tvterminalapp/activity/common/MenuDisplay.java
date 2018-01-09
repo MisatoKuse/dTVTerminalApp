@@ -35,6 +35,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,6 +124,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
         TextView title = view.findViewById(R.id.tv_title);
+        String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(mActivity);
         if (null != title) {
             String menuName = (String) title.getText();
 
@@ -269,35 +271,35 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                 if (null != mMenuDisplayEventListener) {
                     // TVアプリ起動導線(ひかりTV)
                     mActivity.setRelayClientHandler();
-                    RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.HIKARITV);
+                    RemoteControlRelayClient.getInstance().applicationStartRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.HIKARITV, userId);
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dtv_channel))) {
                 if (null != mMenuDisplayEventListener) {
                     // TVアプリ起動導線(dTVチャンネル)
                     // TODO BaseActivityで実行するのが望ましい
                     mActivity.setRelayClientHandler();
-                    RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL);
+                    RemoteControlRelayClient.getInstance().applicationStartRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL, userId);
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dtv))) {
                 if (null != mMenuDisplayEventListener) {
                     // TVアプリ起動導線(dTV)
                     // TODO BaseActivityで実行するのが望ましい
                     mActivity.setRelayClientHandler();
-                    RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTV);
+                    RemoteControlRelayClient.getInstance().applicationStartRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTV, userId);
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_d_animation))) {
                 if (null != mMenuDisplayEventListener) {
                     // TVアプリ起動導線(dアニメ)
                     // TODO BaseActivityで実行するのが望ましい
                     mActivity.setRelayClientHandler();
-                    RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE);
+                    RemoteControlRelayClient.getInstance().applicationStartRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE, userId);
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dazn))) {
                 if (null != mMenuDisplayEventListener) {
                     // TVアプリ起動導線(DAZN)
                     // TODO BaseActivityで実行するのが望ましい
                     mActivity.setRelayClientHandler();
-                    RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DAZN);
+                    RemoteControlRelayClient.getInstance().applicationStartRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DAZN, userId);
                 }
             }
             mPopupWindow.dismiss();
