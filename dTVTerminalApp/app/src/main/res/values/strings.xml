@@ -41,6 +41,7 @@
     <string name="str_stb_connect_success_text">STBとペアリングしました</string>
     <string name="str_stb_pair_invitation_title">STBペアリング勧誘</string>
     <string name="str_stb_no_pair_use_text">ペアリングしないでアプリを利用する</string>
+    <string name="str_stb_no_login_use_text">ログインしないでアプリを利用する</string>
     <string name="str_stb_paring_cancel_text">ペアリング解除する</string>
     <string name="str_stb_paring_setting_title">ペアリング設定</string>
     <string name="str_stb_pair_invitation_text">dリモートアプリは、STBとのペアリングによって\nご利用いただけます。</string>
@@ -48,6 +49,8 @@
     <string name="str_d_account_resetting_title">dアカウント再設定</string>
     <string name="str_d_account_setting_help_title">dアカウント設定ヘルプ</string>
     <string name="str_d_account_reg_confirmation_title">dアカウント登録確認</string>
+    <string name="str_d_account_app_not_install">STBとペアリングするには\ndアカウントでのログインが必要です</string>
+    <string name="str_d_account_app_download">dアカウントアプリをダウンロードする</string>
     <string name="str_stb_select_result_text_failed">ペアリング可能なデバイスが\n見つかりませんでした。</string>
     <string name="str_stb_select_result_text_search">ペアリング可能なデバイスを\n探しています。</string>
     <string name="str_stb_search_failed_help">STBとペアリングするには</string>
