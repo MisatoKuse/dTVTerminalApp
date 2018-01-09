@@ -75,8 +75,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
         }
 
         request.serviceId = getMappedData(serviceTypeArray, SearchDataProvider.comma);
-        request.serviceCategoryId = getMappedServiceCategory(categoryArray, SearchDataProvider.comma);
-//        request.categoryId = StringUtil.setCommaSeparate(categoryArray); TODO:仕様確認後削除
+        request.categoryId = getMappedData(categoryArray, SearchDataProvider.comma);
         request.sortKind = sortKind.searchWebSortType().ordinal();
         request.filterTypeList = condition.searchFilterList();
         request.maxResult = SearchConstants.Search.requestMaxResultCount;
@@ -106,25 +105,6 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
         for (int i = 0; i < serviceTypeArray.size(); ++i) {
             SearchServiceType sst = serviceTypeArray.get(i);
             ret.append(sst.serverRequestServiceIdString());
-            if (i != serviceTypeArray.size() - 1) {
-                ret.append(comma);
-            }
-        }
-        return ret.toString();
-    }
-
-    /**
-     * サービスIDとカテゴリIDをqueryItemに設定
-     *
-     * @param serviceTypeArray 　サービスID&カテゴリIDリスト
-     * @param comma            　カンマ(固定文字)
-     * @return serviceCategoryIdアイテム
-     */
-    private String getMappedServiceCategory(ArrayList<SearchServiceType> serviceTypeArray, String comma) {
-        StringBuilder ret = new StringBuilder("");
-        for (int i = 0; i < serviceTypeArray.size(); ++i) {
-            SearchServiceType sst = serviceTypeArray.get(i);
-            ret.append(sst.serverRequestServiceCategory());
             if (i != serviceTypeArray.size() - 1) {
                 ret.append(comma);
             }
