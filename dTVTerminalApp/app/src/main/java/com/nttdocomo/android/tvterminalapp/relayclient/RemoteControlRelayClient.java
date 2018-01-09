@@ -13,6 +13,8 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -181,6 +183,8 @@ public class RemoteControlRelayClient {
         DAZN
     }
 
+    // ハッシュアルゴリズム指定
+    private static final String HASH_ALGORITHME = "SHA-256";
     // アプリ起動要求に対応するアプリ名
     private static final String STB_APPLICATION_DTV = "dTV";  // dTV
     private static final String STB_APPLICATION_DANIMESTORE = "dANIMESTORE";  // dアニメストア
@@ -192,6 +196,7 @@ public class RemoteControlRelayClient {
     private static final String RELAY_COMMAND_TITLE_DETAIL = "TITLE_DETAIL";
     private static final String RELAY_COMMAND_START_APPLICATION = "START_APPLICATION";
     private static final String RELAY_COMMAND_APPLICATION_ID = "APP_ID";
+    private static final String RELAY_COMMAND_USER_ID = "USER_ID";
     private static final String RELAY_COMMAND_CONTENTS_ID = "CONTENTS_ID";
     private static final String RELAY_RESULT = "RESULT";
     private static final String RELAY_RESULT_OK = "OK";
@@ -404,12 +409,12 @@ public class RemoteControlRelayClient {
      * @param applicationType
      * @return
      */
-    public boolean startApplicationRequest(STB_APPLICATION_TYPES applicationType) {
+    public boolean applicationStartRequest(STB_APPLICATION_TYPES applicationType, String userId) {
         String applicationId = getApplicationId(applicationType);
         String requestParam;
 
         if (applicationId != null) {
-            requestParam = setApplicationStartRequest(applicationId);
+            requestParam = setApplicationStartRequest(applicationId, userId);
             if (requestParam != null) {
                 // アプリ起動要求を受信してインテントをSTBへ送信する
                 sendStartApplicationRequest(requestParam);
@@ -562,12 +567,13 @@ public class RemoteControlRelayClient {
      * @param applicationId
      * @return
      */
-    private String setApplicationStartRequest(String applicationId) {
+    private String setApplicationStartRequest(String applicationId, String userId) {
         JSONObject requestJson = new JSONObject();
         String request = null;
         try {
             requestJson.put(RELAY_COMMAND, RELAY_COMMAND_START_APPLICATION);
             requestJson.put(RELAY_COMMAND_APPLICATION_ID, applicationId);
+            requestJson.put(RELAY_COMMAND_USER_ID, toHashValue(userId));
             request = requestJson.toString();
         } catch (JSONException e) {
             DTVTLogger.debug(e);
@@ -627,5 +633,49 @@ public class RemoteControlRelayClient {
      */
     public void setDebugRemoteIp(String remoteIp) {
         ｍRemoteHost = remoteIp;
+    }
+
+    /**
+     * 文字列から ハッシュ値を取得する
+     *
+     * @return ハッシュ値
+     */
+    public String toHashValue(String value) {
+        byte[] hashValue = {};
+        StringBuilder sb = new StringBuilder();
+
+        hashValue = toHashBytes(value);
+        if (hashValue == null) {
+            DTVTLogger.debug("hash value is null");
+            return null;
+        }
+        for (byte hb : hashValue) {
+            String hex = String.format("%02x", hb);
+            sb.append(hex);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * ハッシュ化したソルトを取得
+     * ※ハッシュアルゴリズム：SHA-256
+     *
+     * @param salt ソルト
+     * @return ハッシュ化したバイト配列
+     */
+    private static byte[] toHashBytes(String salt) {
+        MessageDigest digest;
+
+        if (salt == null) {
+            return null;
+        }
+        try {
+            digest = MessageDigest.getInstance(HASH_ALGORITHME);
+        } catch (NoSuchAlgorithmException e) {
+            DTVTLogger.debug(e);
+            return null;
+        }
+        digest.update(salt.getBytes());
+        return digest.digest();
     }
 }
