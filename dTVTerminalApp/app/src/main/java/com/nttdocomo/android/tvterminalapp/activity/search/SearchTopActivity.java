@@ -331,11 +331,7 @@ public class SearchTopActivity extends BaseActivity
 
         switch (pageIndex) {
             case PAGE_NO_OF_SERVICE_TEREBI: //テレビ
-                userAge = userInfoDataProvider.getUserAge();
-                break;
             case PAGE_NO_OF_SERVICE_VIDEO: //ビデオ
-                userAge = userInfoDataProvider.getUserAge();
-                break;
             case PAGE_NO_OF_SERVICE_DTV_CHANNEL: //dTVチャンネル
                 userAge = userInfoDataProvider.getUserAge();
                 break;

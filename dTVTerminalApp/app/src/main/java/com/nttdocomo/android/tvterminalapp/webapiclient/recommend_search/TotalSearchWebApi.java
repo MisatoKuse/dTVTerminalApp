@@ -37,7 +37,7 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
         TotalSearchRequestData data = requestData;
         data.userId = "1234567890"; //KARI
 
-        LinkedHashMap queryItems=new LinkedHashMap();
+        LinkedHashMap<String, String> queryItems = new LinkedHashMap<>();
         queryItems.put(SearchRequestKey.kUserId, data.userId);
         queryItems.put(SearchRequestKey.kFunction, data.function.value()+"");   //ok
         //queryItems.put(SearchRequestKey.kFunction, new String(2+""));   //ng for test
