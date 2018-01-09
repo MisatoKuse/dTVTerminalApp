@@ -88,12 +88,12 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
         for (UserInfoList userInfo : userInfoList) {
 
             //リクエストユーザデータの蓄積
-            List<UserInfoList.AccountList> list1 = userInfo.getmLoggedinAccount();
+            List<UserInfoList.AccountList> list1 = userInfo.getLoggedinAccount();
 
             makeRecord(userInfoListDao, list1, "");
 
             //H4D契約ユーザデータの蓄積（データは横並びで記録するが、ステータスに接頭語を付けて区別を行う）
-            List<UserInfoList.AccountList> list2 = userInfo.getmH4dContractedAccount();
+            List<UserInfoList.AccountList> list2 = userInfo.getH4dContractedAccount();
 
             makeRecord(userInfoListDao, list2, H4D_HEADER);
         }
@@ -117,9 +117,9 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
         int counter = userInfoList.size();
         //後で分離できるように蓄積する
         for (UserInfoList.AccountList loggedinAccount : userInfoList) {
-            statusBuffer.append(loggedinAccount.getmContractStatus());
-            dchAgeBuffer.append(loggedinAccount.getmDchAgeReq());
-            h4dAgeBuffer.append(loggedinAccount.getmH4dAgeReq());
+            statusBuffer.append(loggedinAccount.getContractStatus());
+            dchAgeBuffer.append(loggedinAccount.getDchAgeReq());
+            h4dAgeBuffer.append(loggedinAccount.getH4dAgeReq());
 
             //最後以外ならば分離用文字列を挿入する
             counter--;
@@ -204,8 +204,8 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
 
         //統合して蓄積する
         UserInfoList userInfo = new UserInfoList();
-        userInfo.setmLoggedinAccount(lineBuffer);
-        userInfo.setmH4dContractedAccount(lineBufferH4d);
+        userInfo.setLoggedinAccount(lineBuffer);
+        userInfo.setH4dContractedAccount(lineBufferH4d);
         dataBuffer.add(userInfo);
 
         return dataBuffer;
@@ -291,13 +291,13 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
         for (int i = 0; i < maxLine; i++) {
             //存在している情報は追加する
             if (status.length >= i) {
-                account.setmContractStatus(status[i]);
+                account.setContractStatus(status[i]);
             }
             if (dchAge.length >= i) {
-                account.setmDchAgeReq(dchAge[i]);
+                account.setDchAgeReq(dchAge[i]);
             }
             if (h4dAge.length >= i) {
-                account.setmH4dAgeReq(h4dAge[i]);
+                account.setH4dAgeReq(h4dAge[i]);
             }
 
             lineBuffer.add(account);

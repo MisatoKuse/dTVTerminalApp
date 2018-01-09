@@ -14,6 +14,8 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonP
 
 import org.json.JSONArray;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -342,7 +344,7 @@ public class StringUtil {
             return CONTRACT_INFO_NONE;
         }
 
-        List<UserInfoList.AccountList> mLoggedInAccountList = infoList.getmLoggedinAccount();
+        List<UserInfoList.AccountList> mLoggedInAccountList = infoList.getLoggedinAccount();
         UserInfoList.AccountList mLoggedInAccount = mLoggedInAccountList.get(INT_LIST_HEAD);
 
         //ユーザ情報がないときは契約情報は無し
@@ -351,11 +353,58 @@ public class StringUtil {
         }
 
         // 契約中であれば契約情報を返す
-        contractStatus = mLoggedInAccount.getmContractStatus();
+        contractStatus = mLoggedInAccount.getContractStatus();
         if (contractStatus.equals(CONTRACT_DTV) || contractStatus.equals(CONTRACT_H4D)) {
             return contractStatus;
         }
 
         return CONTRACT_INFO_NONE;
+    }
+
+    /**
+     * UserInfoListのリストから年齢情報を取得する
+     *
+     * @param userInfoLists ユーザー情報のリスト
+     * @return 年齢情報
+     */
+    public static int getUserAgeInfoWrapper(List<UserInfoList> userInfoLists) {
+        //変換後のユーザー情報
+        List<Map<String, String>> newUserInfoLists = new ArrayList<>();
+
+        //ユーザー情報の数だけ回る
+        for(UserInfoList userInfo : userInfoLists) {
+            Map<String,String> dataBuffer1 = getAccountList(userInfo.getLoggedinAccount());
+            Map<String,String> dataBuffer2 = getAccountList(userInfo.getH4dContractedAccount());
+
+            newUserInfoLists.add(dataBuffer1);
+            newUserInfoLists.add(dataBuffer2);
+        }
+
+        //年齢情報の取得
+        return getUserAgeInfo(newUserInfoLists);
+    }
+
+    /**
+     * 契約情報をマップで蓄積
+     *
+     * @param accountBuffers 契約情報リスト
+     * @return マップ化契約情報
+     */
+    private static Map<String,String> getAccountList(
+            List<UserInfoList.AccountList> accountBuffers) {
+        Map<String,String> buffer = new HashMap<>();
+
+        //契約情報の数だけ回ってマップに変換する
+        for(UserInfoList.AccountList accountBuffer : accountBuffers) {
+            buffer.put(UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ,
+                    accountBuffer.getDchAgeReq());
+            buffer.put(UserInfoJsonParser.USER_INFO_LIST_H4D_AGE_REQ,
+                    accountBuffer.getH4dAgeReq());
+            buffer.put(UserInfoJsonParser.USER_INFO_LIST_LOGGEDIN_ACCOUNT, null);
+            buffer.put(UserInfoJsonParser.USER_INFO_LIST_CONTRACT_STATUS,
+                    accountBuffer.getContractStatus());
+        }
+
+        return buffer;
     }
 }

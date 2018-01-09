@@ -61,9 +61,9 @@ public class StringUtilTest {
         String answer[] =         {H4D_018, DCH_015, DFT_008, DFT_008, DFT_008, DCH_015, DFT_008, DFT_008, DFT_008, DFT_008, DFT_008, DFT_008, DFT_008};
         for (int i = 0; i < contractStatus.length; i++) {
             UserInfoList.AccountList infoList = new UserInfoList.AccountList();
-            infoList.setmContractStatus(contractStatus[i]);
-            infoList.setmDchAgeReq(dchAgeReq[i]);
-            infoList.setmH4dAgeReq(h4dAgeReq[i]);
+            infoList.setContractStatus(contractStatus[i]);
+            infoList.setDchAgeReq(dchAgeReq[i]);
+            infoList.setH4dAgeReq(h4dAgeReq[i]);
             List<UserInfoList.AccountList> mLoggedinAccount = new ArrayList<>();
             mLoggedinAccount.add(infoList);
             Map<String, String> userInfoMap = new HashMap<>();

@@ -94,7 +94,7 @@ public class UserInfoJsonParser extends AsyncTask<Object, Object, Object> {
                 //ステータスの取得
                 if (!jsonObj.isNull(USER_INFO_LIST_STATUS)) {
                     String status = jsonObj.getString(USER_INFO_LIST_STATUS);
-                    infoList.setmStatus(status);
+                    infoList.setStatus(status);
                 }
 
                 //リクエストユーザデータの取得
@@ -118,7 +118,7 @@ public class UserInfoJsonParser extends AsyncTask<Object, Object, Object> {
                     getDataArray(loggedinAccount, sendData);
                 }
 
-                infoList.setmLoggedinAccount(loggedinAccount);
+                infoList.setLoggedinAccount(loggedinAccount);
 
 
                 //H4D契約ユーザデータの取得
@@ -143,7 +143,7 @@ public class UserInfoJsonParser extends AsyncTask<Object, Object, Object> {
                     getDataArray(h4dContractedAccount, sendData);
                 }
 
-                infoList.setmH4dContractedAccount(h4dContractedAccount);
+                infoList.setH4dContractedAccount(h4dContractedAccount);
 
                 return Arrays.asList(infoList);
             }
@@ -169,17 +169,17 @@ public class UserInfoJsonParser extends AsyncTask<Object, Object, Object> {
                 JSONObject loggedinObj = loggedinArray.getJSONObject(count);
 
                 temp = loggedinObj.getString(USER_INFO_LIST_CONTRACT_STATUS);
-                tempList.setmContractStatus(temp);
+                tempList.setContractStatus(temp);
                 temp = loggedinObj.getString(USER_INFO_LIST_DCH_AGE_REQ);
-                tempList.setmDchAgeReq(temp);
+                tempList.setDchAgeReq(temp);
 
                 //この項目は省略される場合がある
                 if(loggedinObj.has(USER_INFO_LIST_H4D_AGE_REQ)) {
                     temp = loggedinObj.getString(USER_INFO_LIST_H4D_AGE_REQ);
-                    tempList.setmH4dAgeReq(temp);
+                    tempList.setH4dAgeReq(temp);
                 } else {
                     //省略された場合は空文字
-                    tempList.setmH4dAgeReq("");
+                    tempList.setH4dAgeReq("");
                 }
                 loggedinAccount.add(tempList);
             } catch (JSONException e) {
