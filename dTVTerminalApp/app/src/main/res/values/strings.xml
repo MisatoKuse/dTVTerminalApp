@@ -24,6 +24,10 @@
     <string name="app_finish_dialog_title">アプリ終了</string>
     <string name="app_finish_dialog_message">アプリ終了してよろしいでしょうか</string>
     <string name="message_three_asterisk">＊＊＊</string>
+    <string name="parental_pg_12">PG12</string>
+    <string name="parental_r_15">R15</string>
+    <string name="parental_r_18">R18</string>
+    <string name="parental_r_20">R20</string>
 
     <!-- Launch -->
     <string name="str_app_title">dリモート</string>
