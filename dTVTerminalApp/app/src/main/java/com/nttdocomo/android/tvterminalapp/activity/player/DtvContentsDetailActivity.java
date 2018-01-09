@@ -72,6 +72,7 @@ import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.view.ContentsDetailViewPager;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SendOperateLog;
 
 import java.io.File;
 import java.io.IOException;
@@ -1295,8 +1296,9 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             if (!TextUtils.isEmpty(mDetailFullData.getmService_id())) {
                 mDetailDataProvider.getChannelList(1, 1, "", 1);
             }
-
-
+            //if (UserState.LOGIN_NG != getUserState()){//ログイン状態でしか送信しない
+                new SendOperateLog(mDetailData, mDetailFullData, mIntent.getParcelableExtra(RECOMMEND_INFO_BUNDLE_KEY) != null).sendOpeLog();
+            //}
         }
     }
 

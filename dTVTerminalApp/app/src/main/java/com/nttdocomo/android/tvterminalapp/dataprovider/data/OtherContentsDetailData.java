@@ -43,6 +43,12 @@ public class OtherContentsDetailData extends RecordedContentsDetailData implemen
     //コンテンツIDを追加
     private String mContentId;
 
+    private String mChannelId = "";
+    private String mRecommendOrder = "";
+    private String mPageId = "";
+    private String mGroupId = "";
+    private String mRecommendMethodId = "";
+
     public String getChannelDate() {
         return mChannelDate;
     }
@@ -214,6 +220,11 @@ public class OtherContentsDetailData extends RecordedContentsDetailData implemen
         dest.writeString(this.categoryId);
         dest.writeString(this.reserved4);
         dest.writeStringList(this.staffList);
+        dest.writeString(this.mChannelId);
+        dest.writeString(this.mRecommendOrder);
+        dest.writeString(this.mPageId);
+        dest.writeString(this.mGroupId);
+        dest.writeString(this.mRecommendMethodId);
     }
 
     public OtherContentsDetailData() {
@@ -240,6 +251,11 @@ public class OtherContentsDetailData extends RecordedContentsDetailData implemen
         this.categoryId = in.readString();
         this.reserved4=in.readString();
         this.staffList = in.createStringArrayList();
+        this.mChannelId = in.readString();
+        this.mRecommendOrder = in.readString();
+        this.mPageId = in.readString();
+        this.mGroupId = in.readString();
+        this.mRecommendMethodId = in.readString();
     }
 
     public static final Creator<OtherContentsDetailData> CREATOR = new Creator<OtherContentsDetailData>() {
@@ -253,4 +269,44 @@ public class OtherContentsDetailData extends RecordedContentsDetailData implemen
             return new OtherContentsDetailData[size];
         }
     };
+
+    public String getChannelId() {
+        return mChannelId;
+    }
+
+    public void setChannelId(String mChannelId) {
+        this.mChannelId = mChannelId;
+    }
+
+    public String getRecommendOrder() {
+        return mRecommendOrder;
+    }
+
+    public void setRecommendOrder(String mRecommendOrder) {
+        this.mRecommendOrder = mRecommendOrder;
+    }
+
+    public String getPageId() {
+        return mPageId;
+    }
+
+    public void setPageId(String mPageId) {
+        this.mPageId = mPageId;
+    }
+
+    public String getGroupId() {
+        return mGroupId;
+    }
+
+    public void setGroupId(String mGroupId) {
+        this.mGroupId = mGroupId;
+    }
+
+    public String getRecommendMethodId() {
+        return mRecommendMethodId;
+    }
+
+    public void setRecommendMethodId(String mRecommendMethodId) {
+        this.mRecommendMethodId = mRecommendMethodId;
+    }
 }

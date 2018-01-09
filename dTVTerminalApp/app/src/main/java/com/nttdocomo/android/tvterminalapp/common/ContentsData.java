@@ -82,6 +82,12 @@ public class ContentsData {
     //ダウンロードステータス（進捗）
     private String mDownloadStatus = "";
 
+    private String mChannelId = "";
+    private String mRecommendOrder = "";
+    private String mPageId = "";
+    private String mGroupId = "";
+    private String mRecommendMethodId = "";
+
     public String getDeviceName() {
         return mDeviceName;
     }
@@ -367,5 +373,45 @@ public class ContentsData {
 
     public void setDownloadStatus(String mDownloadStatus) {
         this.mDownloadStatus = mDownloadStatus;
+    }
+
+    public String getChannelId() {
+        return mChannelId;
+    }
+
+    public void setChannelId(String mChannelId) {
+        this.mChannelId = mChannelId;
+    }
+
+    public String getRecommendOrder() {
+        return mRecommendOrder;
+    }
+
+    public void setRecommendOrder(String mRecommendOrder) {
+        this.mRecommendOrder = mRecommendOrder;
+    }
+
+    public String getPageId() {
+        return mPageId;
+    }
+
+    public void setPageId(String mPageId) {
+        this.mPageId = mPageId;
+    }
+
+    public String getGroupId() {
+        return mGroupId;
+    }
+
+    public void setGroupId(String mGroupId) {
+        this.mGroupId = mGroupId;
+    }
+
+    public String getRecommendMethodId() {
+        return mRecommendMethodId;
+    }
+
+    public void setRecommendMethodId(String mRecommendMethodId) {
+        this.mRecommendMethodId = mRecommendMethodId;
     }
 }

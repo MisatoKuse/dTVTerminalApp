@@ -80,6 +80,7 @@ public class DateUtils {
 
     //日付フォーマット
     private static final String DATE_YYYY_MM_DD = "yyyy/MM/dd";
+    private static final String DATE_YYYY_MM_DD_HH_MM_SS = "yyyyMMddHHmmss";
 
     //DB保存期限
     private static final int LIMIT_HOUR = 1;
@@ -236,6 +237,14 @@ public class DateUtils {
      */
     public static String formatEpochToString(long epochTime) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_PATTERN);
+        return dateFormat.format(new Date(epochTime * 1000));
+    }
+
+    /**
+     * エポック秒を yyyyMMddHHmmss かつString値に変換
+     */
+    public static String formatEpochToStringOpeLog(long epochTime) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_YYYY_MM_DD_HH_MM_SS);
         return dateFormat.format(new Date(epochTime * 1000));
     }
 
