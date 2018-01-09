@@ -261,13 +261,8 @@ public class SearchTopActivity extends BaseActivity
 
         switch (pageIndex) {
             case PAGE_NO_OF_SERVICE_TEREBI: //テレビ
-                ret.add(new SearchServiceType(SearchServiceType.ServiceId.HIKARI_TV_FOR_DOCOMO));
-                ret.add(new SearchServiceType(SearchServiceType.ServiceId.DTV_CHANNEL_CONTENTS));
-                break;
             case PAGE_NO_OF_SERVICE_VIDEO: //ビデオ
-                //ret.add(new SearchServiceType(SearchServiceType.ServiceId.HIKARI_TV_FOR_DOCOMO));
-                ret.add(new SearchServiceType(SearchServiceType.ServiceId.DTV_CONTENTS));
-                ret.add(new SearchServiceType(SearchServiceType.ServiceId.D_ANIMATION_CONTENTS));
+                ret.add(new SearchServiceType(SearchServiceType.ServiceId.HIKARI_TV_FOR_DOCOMO));
                 break;
             case PAGE_NO_OF_SERVICE_DTV_CHANNEL: //dTVチャンネル
                 ret.add(new SearchServiceType(SearchServiceType.ServiceId.DTV_CHANNEL_CONTENTS));
@@ -297,14 +292,17 @@ public class SearchTopActivity extends BaseActivity
 
         switch (pageIndex) {
             case PAGE_NO_OF_SERVICE_TEREBI: //テレビ
-                ret.add(new SearchServiceType(SearchServiceType.ServiceCategorySet.HIKARI_TV_FOR_DOCOMO_IP_TV));
-                ret.add(new SearchServiceType(SearchServiceType.ServiceCategorySet.HIKARI_TV_FOR_DOCOMO_DTV_CHANNEL_BROADCAST));
-                ret.add(new SearchServiceType(SearchServiceType.ServiceCategorySet.HIKARI_TV_FOR_DOCOMO_DTV_CHANNEL_RELATION));
-                ret.add(new SearchServiceType(SearchServiceType.ServiceCategorySet.HIKARI_TV_FOR_DOCOMO_HIKARI_TV_VOD));
-                ret.add(new SearchServiceType(SearchServiceType.ServiceCategorySet.HIKARI_TV_FOR_DOCOMO_DTV_SVOD));
+                ret.add(new SearchServiceType(SearchServiceType.CategoryId.H4D_CATEGORY_TERRESTRIAL_DIGITAL));
+                ret.add(new SearchServiceType(SearchServiceType.CategoryId.H4D_CATEGORY_SATELLITE_BROADCASTING));
+                ret.add(new SearchServiceType(SearchServiceType.CategoryId.H4D_CATEGORY_IP_TV));
+                ret.add(new SearchServiceType(SearchServiceType.CategoryId.H4D_CATEGORY_DTV_CHANNEL_BROADCAST));
+                ret.add(new SearchServiceType(SearchServiceType.CategoryId.H4D_CATEGORY_RECORDED_CONTENTS));
                 break;
             case PAGE_NO_OF_SERVICE_VIDEO: //ビデオ
-                ret.add(new SearchServiceType(SearchServiceType.ServiceCategorySet.HIKARI_TV_FOR_DOCOMO_WATCH_AGAIN));
+                ret.add(new SearchServiceType(SearchServiceType.CategoryId.H4D_CATEGORY_DTV_CHANNEL_WATCH_AGAIN));
+                ret.add(new SearchServiceType(SearchServiceType.CategoryId.H4D_CATEGORY_DTV_CHANNEL_RELATION));
+                ret.add(new SearchServiceType(SearchServiceType.CategoryId.H4D_CATEGORY_HIKARI_TV_VOD));
+                ret.add(new SearchServiceType(SearchServiceType.CategoryId.H4D_CATEGORY_DTV_SVOD));
                 break;
             case PAGE_NO_OF_SERVICE_DTV_CHANNEL: //dTVチャンネル
             case PAGE_NO_OF_SERVICE_DTV: //DTV_CONTENTS

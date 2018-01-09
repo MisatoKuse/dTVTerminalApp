@@ -27,16 +27,11 @@ public class TotalSearchRequestData {
 
     public ArrayList<SearchFilterType> filterTypeList=new ArrayList<SearchFilterType>();
 
-    public String condition = null;
-
     //取得対象サービスID
     public String serviceId = null;
 
     //検索絞込み用カテゴリーID
-//    public String categoryId = null;TODO:仕様確認後削除
-
-    //取得対象サービスID,カテゴリIDセット
-    public String serviceCategoryId = null;
+    public String categoryId = null;
 
     //ユーザ年齢フィルタリング情報
     public String filterViewableAge = null;
