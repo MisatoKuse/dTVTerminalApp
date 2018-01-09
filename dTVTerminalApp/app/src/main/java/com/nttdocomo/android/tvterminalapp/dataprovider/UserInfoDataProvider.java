@@ -214,7 +214,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
 
         //新旧の年齢データを比較する
         int beforeAge = SharedPreferencesUtils.getSharedPreferencesAgeReq(mContext);
-        int newAge = StringUtil.getUserInfo(userInfoLists);
+        int newAge = StringUtil.getUserAgeInfoWrapper(userInfoLists);
 
         DTVTLogger.debug("before age " + beforeAge);
         DTVTLogger.debug("new age " + newAge);
