@@ -6,7 +6,6 @@ package com.nttdocomo.android.tvterminalapp.utils;
 
 public class UserInfoUtils {
 
-    public static int RECOMMEND_USER_AGE_INFO_MAX_VALUE = 17;
     /**
      * レコメンドサーバ用に、ユーザ年齢情報を＋3して返却する
      *

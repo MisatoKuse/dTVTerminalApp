@@ -38,9 +38,9 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
     private SearchDataProviderListener mSearchDataProviderListener = null;
 
     public interface SearchDataProviderListener {
-        public void onSearchDataProviderFinishOk(ResultType<TotalSearchContentInfo> resultType);
+        void onSearchDataProviderFinishOk(ResultType<TotalSearchContentInfo> resultType);
 
-        public void onSearchDataProviderFinishNg(ResultType<SearchResultError> resultType);
+        void onSearchDataProviderFinishNg(ResultType<SearchResultError> resultType);
     }
 
     public SearchState getSearchState() {
@@ -54,8 +54,6 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
             mState = newSearchState;
         }
     }
-
-    private TotalSearchWebApi mTotalSearchWebApi = null;
 
     public void startSearchWith(String keyword,
                                 ArrayList<SearchServiceType> serviceTypeArray,
@@ -147,10 +145,10 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
         synchronized (this) {
             if (mState != SearchState.canceled) {
 
-                final ArrayList<SearchContentInfo> contentArray = new ArrayList<SearchContentInfo>();
+                final ArrayList<SearchContentInfo> contentArray = new ArrayList<>();
                 result.map(contentArray);
 
-                ResultType<TotalSearchContentInfo> resultType = new ResultType<TotalSearchContentInfo>();
+                ResultType<TotalSearchContentInfo> resultType = new ResultType<>();
                 TotalSearchContentInfo totalSearchContentInfo = new TotalSearchContentInfo();
                 totalSearchContentInfo.init(result.totalCount, contentArray);
                 resultType.success(totalSearchContentInfo);
@@ -224,7 +222,6 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
         if (SearchState.canceled != getSearchState()) {
 
             SearchResultError error = SearchResultError.systemError;
-            ;
             if (result.error.id.equals(SearchConstants.SearchResponseErrorId.requestError)) {
                 error = SearchResultError.requestError;
             } else if (result.error.id.equals(SearchConstants.SearchResponseErrorId.systemError)) {
@@ -233,7 +230,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
 
             //if(null!=handler){
 
-            ResultType<SearchResultError> resultType = new ResultType<SearchResultError>();
+            ResultType<SearchResultError> resultType = new ResultType<>();
             resultType.failure(error);
 
             //handler.init(resultType);
