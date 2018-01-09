@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    >
+
+    <TextView
+        android:gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/launch_text_layout_high_size"
+        android:text="@string/str_stb_search_failed_help_text"
+        android:layout_marginStart="@dimen/launch_stb_list_start_margin"
+        android:textColor="@drawable/color_gray"
+        android:id="@+id/docomo_stb_help_text" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/launch_text_layout_high_size"
+        android:layout_marginStart="@dimen/launch_stb_list_start_margin"
+        android:text="@string/str_stb_search_failed_help"
+        android:textColor="@color/white_text"
+        android:layout_below="@+id/docomo_stb_help_text"
+        android:layout_alignParentStart="true"
+        android:textSize="@dimen/launch_device_search_error_help_text"
+        android:id="@+id/stb_paring_help" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/launch_device_search_error_help"
+        android:id="@+id/divider_line"
+        android:background="@drawable/color_gray"
+        android:layout_below="@+id/stb_paring_help" />
+    <LinearLayout
+        android:id="@+id/paring_help_content"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_below="@+id/stb_paring_help">
+    </LinearLayout>
+</RelativeLayout>
