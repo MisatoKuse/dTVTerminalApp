@@ -10,7 +10,7 @@
         android:layout_marginEnd="@dimen/contents_detail_16dp"
         android:orientation="horizontal">
         <TextView
-            android:id="@+id/record_reservation_list_update_time"
+            android:id="@+id/reservation_update_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"

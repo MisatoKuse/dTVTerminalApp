@@ -4,8 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
-
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
 import org.json.JSONException;
@@ -17,43 +17,27 @@ public class RecordingReservationMetaData implements Serializable {
     private static final long serialVersionUID = -930749879941574984L;
     private final String CLASS_NAME = getClass().getSimpleName();
     private static final String SET_DATA = ".setData";
-    private int mPriority;
-    private String mPlatformType;
-    private String mDayOfTheWeek;
-    private String mAdultAttributeOfChannel;
-    private String mServiceId;
-    private long mStartScheduleTime;
-    private long mEndScheduleTime;
-    private String mEventId;
-    private String mTitle;
-    private int mParentalAgeAttributeOfProgram;
+    private int mPriority = 0;
+    private String mPlatformType = null;
+    private String mDayOfTheWeek = null;
+    private String mAdultAttributeOfChannel = null;
+    private String mServiceId = null;
+    private long mStartScheduleTime = 0;
+    private long mEndScheduleTime = 0;
+    private String mEventId = null;
+    private String mTitle = null;
+    private int mParentalAgeAttributeOfProgram = 0;
 
-    //ページャ詳細：キー名
-    public static final String RECORDING_RESERVATION_META_DATA_PAGER_LIMIT = "limit"; //レスポンスの最大件数
-    public static final String RECORDING_RESERVATION_META_DATA_PAGER_OFFSET = "offset"; //取得位置(0～)
-    public static final String RECORDING_RESERVATION_META_DATA_PAGER_COUNT = "count"; //レスポンス(list)件数
-    public static final String RECORDING_RESERVATION_META_DATA_PAGER_TOTAL = "total"; //全体の件数
-    //録画予約一覧リスト：キー名
-    public static final String RECORDING_RESERVATION_META_DATA_PRIORITY = "priority"; //予約情報の優先度
-    public static final String RECORDING_RESERVATION_META_DATA_PLATFORM_TYPE = "platform_type"; //予約されたサービス
-    public static final String RECORDING_RESERVATION_META_DATA_DAY_OF_THE_WEEK = "day_of_the_week"; //予約日時タイプ
-    public static final String RECORDING_RESERVATION_META_DATA_ADULT_ATTRIBUTE_OF_CHANNEL = "adult_attribute_of_channel";//アダルトタイプ
-    public static final String RECORDING_RESERVATION_META_DATA_SERVICE_ID = "service_id"; //サービスID（チャンネルを一意に識別するもの）
-    public static final String RECORDING_RESERVATION_META_DATA_START_SCHEDULE_TIME = "start_schedule_time";//予約の録画開始予定時刻
-    public static final String RECORDING_RESERVATION_META_DATA_END_SCHEDULE_TIME = "end_schedule_time";//予約の録画終了予定時刻
-    public static final String RECORDING_RESERVATION_META_DATA_EVENT_ID = "event_id"; //イベントID
-    public static final String RECORDING_RESERVATION_META_DATA_TITLE = "title";//ユーザが指定した予約のタイトル
-    public static final String RECORDING_RESERVATION_META_DATA_PARENTAL_AGE_ATTRIBUTE_OF_PROGRAM = "parental_age_attribute_of_program";//番組のPG値
+    public static final String[] mPagerPara = {JsonContents.META_RESPONSE_PAGER_LIMIT,
+            JsonContents.META_RESPONSE_OFFSET, JsonContents.META_RESPONSE_COUNT,
+            JsonContents.META_RESPONSE_TOTAL};
 
-    public static final String[] mPagerPara = {RECORDING_RESERVATION_META_DATA_PAGER_LIMIT,
-            RECORDING_RESERVATION_META_DATA_PAGER_OFFSET, RECORDING_RESERVATION_META_DATA_PAGER_COUNT,
-            RECORDING_RESERVATION_META_DATA_PAGER_TOTAL};
-    public static final String[] mReservationListPara = {RECORDING_RESERVATION_META_DATA_PRIORITY,
-            RECORDING_RESERVATION_META_DATA_PLATFORM_TYPE, RECORDING_RESERVATION_META_DATA_DAY_OF_THE_WEEK,
-            RECORDING_RESERVATION_META_DATA_ADULT_ATTRIBUTE_OF_CHANNEL, RECORDING_RESERVATION_META_DATA_SERVICE_ID,
-            RECORDING_RESERVATION_META_DATA_START_SCHEDULE_TIME, RECORDING_RESERVATION_META_DATA_END_SCHEDULE_TIME,
-            RECORDING_RESERVATION_META_DATA_EVENT_ID, RECORDING_RESERVATION_META_DATA_TITLE,
-            RECORDING_RESERVATION_META_DATA_PARENTAL_AGE_ATTRIBUTE_OF_PROGRAM};
+    public static final String[] mReservationListPara = {JsonContents.META_RESPONSE_PRIORITY,
+            JsonContents.META_RESPONSE_PLATFORM_TYPE, JsonContents.META_RESPONSE_DAY_OF_THE_WEEK,
+            JsonContents.META_RESPONSE_ADULT_ATTRIBUTE_OF_CHANNEL, JsonContents.META_RESPONSE_SERVICE_ID,
+            JsonContents.META_RESPONSE_START_SCHEDULE_TIME, JsonContents.META_RESPONSE_END_SCHEDULE_TIME,
+            JsonContents.META_RESPONSE_EVENT_ID, JsonContents.META_RESPONSE_TITLE,
+            JsonContents.META_RESPONSE_PARENTAL_AGE_ATTRIBUTE_OF_PROGRAM};
 
     /**
      * キーとキーの値をメンバーにセットする
@@ -66,34 +50,34 @@ public class RecordingReservationMetaData implements Serializable {
             return;
         } else {
             switch (key) {
-                case RECORDING_RESERVATION_META_DATA_PRIORITY:
+                case JsonContents.META_RESPONSE_PRIORITY:
                     mPriority = DBUtils.getNumeric(data);        //priority
                     break;
-                case RECORDING_RESERVATION_META_DATA_PLATFORM_TYPE:
+                case JsonContents.META_RESPONSE_PLATFORM_TYPE:
                     mPlatformType = (String) data;        //platform_type
                     break;
-                case RECORDING_RESERVATION_META_DATA_DAY_OF_THE_WEEK:
+                case JsonContents.META_RESPONSE_DAY_OF_THE_WEEK:
                     mDayOfTheWeek = (String) data;        //day_of_the_week
                     break;
-                case RECORDING_RESERVATION_META_DATA_ADULT_ATTRIBUTE_OF_CHANNEL:
+                case JsonContents.META_RESPONSE_ADULT_ATTRIBUTE_OF_CHANNEL:
                     mAdultAttributeOfChannel = (String) data;//adult_attribute_of_channel
                     break;
-                case RECORDING_RESERVATION_META_DATA_SERVICE_ID:
+                case JsonContents.META_RESPONSE_SERVICE_ID:
                     mServiceId = (String) data;           //service_id
                     break;
-                case RECORDING_RESERVATION_META_DATA_START_SCHEDULE_TIME:
+                case JsonContents.META_RESPONSE_START_SCHEDULE_TIME:
                     mStartScheduleTime = DBUtils.getLong(data);  //start_schedule_time
                     break;
-                case RECORDING_RESERVATION_META_DATA_END_SCHEDULE_TIME:
+                case JsonContents.META_RESPONSE_END_SCHEDULE_TIME:
                     mEndScheduleTime = DBUtils.getLong(data);     //end_schedule_time
                     break;
-                case RECORDING_RESERVATION_META_DATA_EVENT_ID:
+                case JsonContents.META_RESPONSE_EVENT_ID:
                     mEventId = (String) data;             //event_id
                     break;
-                case RECORDING_RESERVATION_META_DATA_TITLE:
+                case JsonContents.META_RESPONSE_TITLE:
                     mTitle = (String) data;               //title
                     break;
-                case RECORDING_RESERVATION_META_DATA_PARENTAL_AGE_ATTRIBUTE_OF_PROGRAM:
+                case JsonContents.META_RESPONSE_PARENTAL_AGE_ATTRIBUTE_OF_PROGRAM:
                     mParentalAgeAttributeOfProgram = DBUtils.getNumeric(data); //parental_age_attribute_of_program
                     break;
                 default:
@@ -111,25 +95,25 @@ public class RecordingReservationMetaData implements Serializable {
             return "";
         } else {
             switch (key) {
-                case RECORDING_RESERVATION_META_DATA_PRIORITY:
+                case JsonContents.META_RESPONSE_PRIORITY:
                     return mPriority;            //priority
-                case RECORDING_RESERVATION_META_DATA_PLATFORM_TYPE:
+                case JsonContents.META_RESPONSE_PLATFORM_TYPE:
                     return mPlatformType;        //platform_type
-                case RECORDING_RESERVATION_META_DATA_DAY_OF_THE_WEEK:
+                case JsonContents.META_RESPONSE_DAY_OF_THE_WEEK:
                     return mDayOfTheWeek;        //day_of_the_week
-                case RECORDING_RESERVATION_META_DATA_ADULT_ATTRIBUTE_OF_CHANNEL:
+                case JsonContents.META_RESPONSE_ADULT_ATTRIBUTE_OF_CHANNEL:
                     return mAdultAttributeOfChannel;//adult_attribute_of_channel
-                case RECORDING_RESERVATION_META_DATA_SERVICE_ID:
+                case JsonContents.META_RESPONSE_SERVICE_ID:
                     return mServiceId;           //service_id
-                case RECORDING_RESERVATION_META_DATA_START_SCHEDULE_TIME:
+                case JsonContents.META_RESPONSE_START_SCHEDULE_TIME:
                     return mStartScheduleTime;   //start_schedule_time
-                case RECORDING_RESERVATION_META_DATA_END_SCHEDULE_TIME:
+                case JsonContents.META_RESPONSE_END_SCHEDULE_TIME:
                     return mEndScheduleTime;     //end_schedule_time
-                case RECORDING_RESERVATION_META_DATA_EVENT_ID:
+                case JsonContents.META_RESPONSE_EVENT_ID:
                     return mEventId;             //event_id
-                case RECORDING_RESERVATION_META_DATA_TITLE:
+                case JsonContents.META_RESPONSE_TITLE:
                     return mTitle;               //title
-                case RECORDING_RESERVATION_META_DATA_PARENTAL_AGE_ATTRIBUTE_OF_PROGRAM:
+                case JsonContents.META_RESPONSE_PARENTAL_AGE_ATTRIBUTE_OF_PROGRAM:
                     return mParentalAgeAttributeOfProgram; //parental_age_attribute_of_program
                 default:
                     return "";
@@ -238,7 +222,7 @@ public class RecordingReservationMetaData implements Serializable {
                     try {
                         setMember(item, jsonObj.get(item));
                     } catch (JSONException e) {
-                        DTVTLogger.debug(CLASS_NAME + SET_DATA,e);
+                        DTVTLogger.debug(CLASS_NAME + SET_DATA, e);
                     }
                 }
             }

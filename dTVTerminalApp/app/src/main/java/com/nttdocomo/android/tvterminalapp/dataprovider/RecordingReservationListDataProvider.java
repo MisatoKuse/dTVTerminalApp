@@ -33,7 +33,7 @@ public class RecordingReservationListDataProvider implements
         ChannelWebClient.ChannelJsonParserCallback {
 
     private Context mContext;
-    private ApiDataProviderCallback apiDataProviderCallback;
+    private ApiDataProviderCallback mApiDataProviderCallback = null;
     // ソート完了リスト
     private List<ContentsData> mRecordingReservationList = null;
     // dリモートレスポンス　
@@ -44,6 +44,8 @@ public class RecordingReservationListDataProvider implements
     private SparseArray<List<RecordingReservationContentInfo>> mBuffMatchListMap = null;
     // チャンネル一覧
     private List<Map<String, String>> mTvScheduleList = null;
+    // 録画予約情報受信時刻
+    public String mReservationTime = null;
 
     // 録画予約ステータスの固定値
     public static final int RECORD_RESERVATION_SYNC_STATUS_REFLECTS_WAITING = 1; // チューナー反映待ち
@@ -122,7 +124,7 @@ public class RecordingReservationListDataProvider implements
             if (mDRemoteResponse != null && mTvScheduleList != null && mTvScheduleList.size() != 0) {
                 buttRecordingReservationListData();
                 sortRecordingReservationListData();
-                apiDataProviderCallback.recordingReservationListCallback(mRecordingReservationList);
+                mApiDataProviderCallback.recordingReservationListCallback(mRecordingReservationList);
             }
         } else {
             DTVTLogger.error("response is null");
@@ -136,11 +138,12 @@ public class RecordingReservationListDataProvider implements
         DTVTLogger.start();
         if (response != null) {
             mDRemoteResponse = response;
+            mReservationTime = DateUtils.getRecordShowListItem(Long.parseLong(response.getReservation()));
             // CH一覧取得,STB側との同期
             if (mStbResponse != null && mTvScheduleList != null && mTvScheduleList.size() != 0) {
                 buttRecordingReservationListData();
                 sortRecordingReservationListData();
-                apiDataProviderCallback.recordingReservationListCallback(mRecordingReservationList);
+                mApiDataProviderCallback.recordingReservationListCallback(mRecordingReservationList);
             }
         } else {
             DTVTLogger.error("response is null");
@@ -159,7 +162,7 @@ public class RecordingReservationListDataProvider implements
             if (mStbResponse != null && mDRemoteResponse != null) {
                 buttRecordingReservationListData();
                 sortRecordingReservationListData();
-                apiDataProviderCallback.recordingReservationListCallback(mRecordingReservationList);
+                mApiDataProviderCallback.recordingReservationListCallback(mRecordingReservationList);
             }
         } else {
             DTVTLogger.error("response is null");
@@ -188,7 +191,7 @@ public class RecordingReservationListDataProvider implements
      */
     public RecordingReservationListDataProvider(Context context) {
         this.mContext = context;
-        this.apiDataProviderCallback = (ApiDataProviderCallback) context;
+        this.mApiDataProviderCallback = (ApiDataProviderCallback) context;
     }
 
     /**

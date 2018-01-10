@@ -147,7 +147,7 @@ public class JsonContents {
     public static final String META_RESPONSE_RESV_ID = "resv_id";
     // OK
     public static final String META_RESPONSE_STATUS = "status";
-    //OK
+    // OK
     public static final String META_RESPONSE_STATUS_OK = "OK";
     // コンテンツ配列
     public static final String META_RESPONSE_LIST = "list";
@@ -315,4 +315,20 @@ public class JsonContents {
     public static final String META_RESPONSE_IS_NOTIFY = "is_notify";
     // エラー番号
     public static final String META_RESPONSE_NG_ERROR_NO = "errorno";
+    // 録画予約情報受信時刻
+    public static final String META_RESPONSE_RESERVATION = "reservation_date";
+    // 録画予約一覧
+    public static final String META_RESPONSE_RESERVATION_LIST = "reservation_list";
+    // 予約情報の優先度
+    public static final String META_RESPONSE_PRIORITY = "priority";
+    // 予約日時タイプ
+    public static final String META_RESPONSE_DAY_OF_THE_WEEK = "day_of_the_week";
+    // アダルトタイプ
+    public static final String META_RESPONSE_ADULT_ATTRIBUTE_OF_CHANNEL = "adult_attribute_of_channel";
+    // 予約の録画開始予定時刻
+    public static final String META_RESPONSE_START_SCHEDULE_TIME = "start_schedule_time";
+    // 予約の録画終了予定時刻
+    public static final String META_RESPONSE_END_SCHEDULE_TIME = "end_schedule_time";
+    // 番組のPG値
+    public static final String META_RESPONSE_PARENTAL_AGE_ATTRIBUTE_OF_PROGRAM = "parental_age_attribute_of_program";
 }
