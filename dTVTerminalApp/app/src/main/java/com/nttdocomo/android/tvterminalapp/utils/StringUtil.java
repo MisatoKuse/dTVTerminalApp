@@ -42,6 +42,9 @@ public class StringUtil {
     //契約情報
     public static final String CONTRACT_INFO_NONE = "none";
 
+    //カンマ
+    public static final String COMMA_SEPARATOR = ",";
+
     public StringUtil(Context context) {
         mContext = context;
     }
@@ -406,5 +409,29 @@ public class StringUtil {
         }
 
         return buffer;
+    }
+
+    /**
+     * 文字列リストをカンマ区切りで返す
+     *
+     * @param strings 変換対象
+     * @return 変換文字列
+     */
+    public static String setCommaSeparator(ArrayList<String> strings) {
+        String result;
+        StringBuilder builder = new StringBuilder();
+        if (strings != null && strings.size() > 0) {
+            for (int i = 0; i < strings.size(); i++) {
+                if (i == strings.size() - 1) {
+                    builder.append(strings.get(i));
+                    break;
+                } else {
+                    builder.append(strings.get(i));
+                    builder.append(COMMA_SEPARATOR);
+                }
+            }
+        }
+        result = builder.toString();
+        return result;
     }
 }
