@@ -82,68 +82,6 @@
         android:layout_above="@+id/checkBoxSTBSelectActivity">
     </ListView>
 
-    <Button
-        android:id="@+id/dAccountLoginYesSTBSelectActivity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
-        android:text="dアカウントログイン済 "
-        android:layout_above="@+id/dAccountLoginNoSTBSelectActivity"
-        android:layout_alignParentStart="true"
-        android:visibility="gone"/>
-
-    <Button
-        android:id="@+id/dAccountLoginNoSTBSelectActivity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
-        android:text="dアカウント未ログイン "
-        android:layout_above="@+id/dAccountAppliYesSTBSelectActivity"
-        android:layout_alignParentStart="true"
-        android:visibility="gone"/>
-
-    <Button
-        android:id="@+id/dAccountAppliYesSTBSelectActivity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
-        android:text="端末内にdアカウントアプリがある"
-        android:layout_centerVertical="true"
-        android:layout_alignParentStart="true"
-        android:visibility="gone"/>
-
-    <Button
-        android:id="@+id/dAccountAppliNoSTBSelectActivity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
-        android:text="端末内にdアカウントアプリがない"
-        android:layout_above="@+id/dAccountSameYesSTBSelectActivity"
-        android:layout_centerHorizontal="true"
-        android:visibility="gone"/>
-
-    <Button
-        android:id="@+id/dAccountSameYesSTBSelectActivity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
-        android:text="STBに同じdアカウントが登録されている"
-        android:layout_above="@+id/dAccountSameNoSTBSelectActivity"
-        android:layout_alignParentStart="true"
-        android:visibility="gone"/>
-
-    <Button
-        android:id="@+id/dAccountSameNoSTBSelectActivity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
-        android:text="STBに同じdアカウントが登録されていない"
-        android:layout_above="@+id/checkBoxSTBSelectActivity"
-        android:layout_centerHorizontal="true"
-        android:visibility="gone"/>
-
-
-
     <CheckBox
         android:id="@+id/checkBoxSTBSelectActivity"
         android:layout_width="match_parent"
@@ -170,5 +108,20 @@
         android:textColor="#000000"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/downloadDAccountApplication"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/launch_text_layout_high_size"
+        android:layout_marginLeft="@dimen/launch_stb_list_start_margin"
+        android:layout_marginRight="@dimen/launch_stb_list_start_margin"
+        android:layout_marginBottom="@dimen/launch_text_bottom_margin"
+        android:background="#FFFFFF"
+        android:gravity="center"
+        android:text="@string/str_d_account_app_download"
+        android:textColor="#000000"
+        android:layout_above="@+id/useWithoutPairingSTBParingInvitation"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone" />
 
 </RelativeLayout>

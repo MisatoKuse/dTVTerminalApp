@@ -4,15 +4,16 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.res.ResourcesCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -22,10 +23,11 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
-import com.nttdocomo.android.tvterminalapp.activity.temp.DAccountAppliActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
@@ -40,29 +42,35 @@ import java.util.TimerTask;
 
 public class STBSelectActivity extends BaseActivity implements View.OnClickListener,
         AdapterView.OnItemClickListener, DlnaDevListListener {
-    public static final String StateModeRepair = "Repair";
-    private boolean mIsNextTimeHide = false;
-    CheckBox mCheckBoxSTBSelectActivity = null;
-    TextView useWithoutPairingSTBParingInvitationTextView = null;
-    Button mDAccountLoginYesSTBSelectActivity = null;
-    Button mDAccountLoginNoSTBSelectActivity = null;
-    Button mDAccountAppliYesSTBSelectActivity = null;
-    Button mDAccountAppliNoSTBSelectActivity = null;
-    Button mDAccountSameYesSTBSelectActivity = null;
-    Button mDAccountSameNoSTBSelectActivity = null;
-    private ImageView mBackIcon;
-    private TextView mParingDevice;
-    private ListView mDeviceListView;
-    List<ContentsData> mContentsList;
-    List<DlnaDmsItem> mDlnaDmsItemList;
+
+    private List<ContentsData> mContentsList;
+    private List<DlnaDmsItem> mDlnaDmsItemList;
     private ContentsAdapter mContentsAdapter;
     private ProgressBar mLoadMoreView = null;
     private DlnaProvDevList mDlnaProvDevList = null;
     private StbInfoCallBackTimer mCallbackTimer = null;
     private DlnaDMSInfo mDlnaDMSInfo = null;
+    private DlnaDmsItem mDlnaDmsItem = null;
+
     private int mStartMode = 0;
+    private boolean mIsNextTimeHide = false;
+    private boolean mIsAppDL = false;
+
     private ImageView mCheckMark;
+    private ImageView mPairingImage;
+    private CheckBox mCheckBoxSTBSelectActivity = null;
+    private TextView useWithoutPairingSTBParingInvitationTextView = null;
+    private TextView mParingDevice;
+    private ListView mDeviceListView;
+
+    public static final String StateModeRepair = "Repair";
     public static final String FROM_WHERE = "FROM_WHERE";
+    //Dアカウントアプリ Package名
+    private static final String D_ACCOUNT_APP_PACKAGE_NAME = "com.nttdocomo.android.idmanager";
+    //Dアカウントアプリ Activity名
+    private static final String D_ACCOUNT_APP_ACTIVITY_NAME=".activity.DocomoIdTopActivity";
+    //DアカウントアプリURI
+    private static final String D_ACCOUNT_APP_URI = "market://details?id=com.nttdocomo.android.idmanager";
 
     private enum TimerStatus {
         TIMER_STATUS_DEFAULT,// 初期状態
@@ -83,24 +91,18 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         setContentView(R.layout.stb_select_main_layout);
         mContentsList = new ArrayList();
         mDlnaDmsItemList = new ArrayList<>();
-        setTitleText(getString(R.string.str_app_title));
-        enableHeaderBackIcon(false);
 
         DTVTLogger.end();
     }
-    //TODO 削除する予定
-//    @Override
-//    public void onBackPressed() {
-//        super.onBackPressed();
-//    }
 
     /**
      * 画面上に表示するコンテンツの初期化を行う
      */
     private void initView() {
+        DTVTLogger.start();
         mParingDevice = findViewById(R.id.stb_select_status_selected_text);
         mCheckMark = findViewById(R.id.stb_device_check_mark);
-        DTVTLogger.start();
+        mPairingImage = findViewById(R.id.paring_search_image);
         mDeviceListView = findViewById(R.id.stb_device_name_list);
         mContentsAdapter = new ContentsAdapter(this, mContentsList,
                 ContentsAdapter.ActivityTypeItem.TYPE_STB_SELECT_LIST);
@@ -109,19 +111,26 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         mDeviceListView.setVisibility(View.VISIBLE);
         mLoadMoreView = findViewById(R.id.stb_device_progress);
 
+        //起動元を判別し、処理を分ける
         Intent intent = getIntent();
         if (intent != null) {
             mStartMode = intent.getIntExtra(FROM_WHERE, -1);
         }
         if (mStartMode == (STBSelectFromMode.STBSelectFromMode_Launch.ordinal())) {
-            enableStbStatusIcon(false);
+            //初回起動時
+            enableHeaderBackIcon(false);
+            setTitleText(getString(R.string.str_app_title));
+            setStbStatusIconVisibility(false);
+            enableGlobalMenuIcon(false);
             return;
-
         } else if (mStartMode == (STBSelectFromMode.STBSelectFromMode_Setting.ordinal())) {
-            mCheckBoxSTBSelectActivity.setVisibility(View.GONE);
+            //設定画面からの遷移
+            enableHeaderBackIcon(true);
             setTitleText(getString(R.string.str_stb_paring_setting_title));
-            //enableStbStatusIcon(true);
             setStbStatusIconVisibility(true);
+            enableGlobalMenuIcon(true);
+            mCheckBoxSTBSelectActivity.setVisibility(View.GONE);
+
             boolean status = true;
             //sharedPreferencesからSTB情報を取得する
             DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
@@ -142,7 +151,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                     }
                 }
             });
-            enableHeaderBackIcon(true);
+
             if (null == dlnaDmsItem) {
                 //未ペアリング
                 return;
@@ -175,7 +184,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start();
         if (null == mDlnaProvDevList) {
             mDlnaProvDevList = new DlnaProvDevList();
-
         }
         mDlnaProvDevList.start(this);
         updateDeviceList(mDlnaProvDevList.getDlnaDMSInfo());
@@ -196,27 +204,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         mCheckBoxSTBSelectActivity.setOnClickListener(this);
         mCheckBoxSTBSelectActivity.setChecked(false);
 
-        // TODO dアカウント取得画面実装時に削除
-        mDAccountLoginYesSTBSelectActivity = findViewById(R.id.dAccountLoginYesSTBSelectActivity);
-        mDAccountLoginYesSTBSelectActivity.setOnClickListener(this);
-
-        mDAccountLoginNoSTBSelectActivity = findViewById(R.id.dAccountLoginNoSTBSelectActivity);
-        mDAccountLoginNoSTBSelectActivity.setOnClickListener(this);
-
-        mDAccountAppliYesSTBSelectActivity = findViewById(R.id.dAccountAppliYesSTBSelectActivity);
-        mDAccountAppliYesSTBSelectActivity.setOnClickListener(this);
-
-        mDAccountAppliNoSTBSelectActivity = findViewById(R.id.dAccountAppliNoSTBSelectActivity);
-        mDAccountAppliNoSTBSelectActivity.setOnClickListener(this);
-
-        mDAccountSameYesSTBSelectActivity = findViewById(R.id.dAccountSameYesSTBSelectActivity);
-        mDAccountSameYesSTBSelectActivity.setOnClickListener(this);
-
-        mDAccountSameNoSTBSelectActivity = findViewById(R.id.dAccountSameNoSTBSelectActivity);
-        mDAccountSameNoSTBSelectActivity.setOnClickListener(this);
-
-        setDAccountButtonVisibility(View.GONE);
-
         DTVTLogger.end();
     }
 
@@ -224,6 +211,22 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     public void onResume() {
         super.onResume();
         DTVTLogger.start();
+
+        if (mIsAppDL) {
+            //dアカウントアプリDLからの戻り時、各種Viewを初期状態に戻す
+            mIsAppDL = false;
+
+            TextView statusTextView = findViewById(R.id.stb_select_status_text);
+            TextView downloadTextView = findViewById(R.id.downloadDAccountApplication);
+
+            mPairingImage.setImageResource(R.drawable.paring_search_icon);
+            statusTextView.setText(R.string.str_stb_select_result_text_search);
+            downloadTextView.setVisibility(View.GONE);
+            mCheckBoxSTBSelectActivity.setVisibility(View.VISIBLE);
+            mDeviceListView.setVisibility(View.VISIBLE);
+            useWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_no_pair_use_text);
+        }
+
         setContents();
         initView();
         setDevListener();
@@ -251,7 +254,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     /**
      * 画面から離れる場合の処理
      */
-    public void leaveActivity() {
+    private void leaveActivity() {
         DTVTLogger.start();
         Handler handler = new Handler();
         handler.post(new Runnable() {
@@ -301,28 +304,35 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     /**
      * ボタン押されたときの動作
      *
-     * @param v
+     * @param v view
      */
     @Override
     public void onClick(View v) {
-        // TODO dアカウント取得画面実装時に一部を除いて削除
         DTVTLogger.start();
         if (v.equals(useWithoutPairingSTBParingInvitationTextView)) {
-            onUseWithoutPairingButton();
-        } else if (v.equals(mDAccountLoginYesSTBSelectActivity)) {
-            onDAccountLoginYesButton();
-        } else if (v.equals(mDAccountLoginNoSTBSelectActivity)) {
-            onDAccountLoginNoButton();
-        } else if (v.equals(mDAccountAppliYesSTBSelectActivity)) {
-            onDAccountAppliYesButton();
-        } else if (v.equals(mDAccountAppliNoSTBSelectActivity)) {
-            onDAccountAppliNoButton();
-        } else if (v.equals(mDAccountSameYesSTBSelectActivity)) {
-            onDAccountSameYesButton();
-        } else if (v.equals(mDAccountSameNoSTBSelectActivity)) {
-            onDAccountSameNoButton();
+            if (useWithoutPairingSTBParingInvitationTextView.getText().equals(
+                    getString(R.string.str_stb_no_pair_use_text))) {
+                onUseWithoutPairingButton();
+            } else if (useWithoutPairingSTBParingInvitationTextView.getText().equals(
+                    getString(R.string.str_d_account_app_not_install))) {
+                //dアカウント未登録時の"ログインしないで使用する"ボタン
+                startActivity(HomeActivity.class, null);
+            }
         } else if (v.equals(mCheckBoxSTBSelectActivity)) {
             mIsNextTimeHide = mCheckBoxSTBSelectActivity.isChecked();
+        } else if (v.getId() == R.id.downloadDAccountApplication) {
+            //Playストアへ誘導
+            CustomDialog dAccountInstallDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+            dAccountInstallDialog.setContent(getResources().getString(R.string.main_setting_d_account_message));
+            dAccountInstallDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                @Override
+                public void onOKCallback(boolean isOK) {
+                    Uri uri = Uri.parse(D_ACCOUNT_APP_URI);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
+                }
+            });
+            dAccountInstallDialog.showDialog();
         }
         DTVTLogger.end();
     }
@@ -355,36 +365,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         startActivity(DAccountSettingActivity.class, null);
     }
 
-    // TODO dアカウント取得画面実装時に削除
-
-    /**
-     * 端末内にdアカウントアプリがあるか --> ある
-     */
-    private void onDAccountAppliYesButton() {
-
-        startActivity(DAccountAppliActivity.class, null);
-    }
-
-    // TODO dアカウント取得画面実装時に削除
-
-    /**
-     * dアカウント登録状態チェック --> 未ログイン
-     */
-    private void onDAccountLoginNoButton() {
-        setDAccountAppliButtonsVisibility(View.VISIBLE);
-        setDAccountLoginButtonsVisibility(View.GONE);
-    }
-
-    // TODO dアカウント取得画面実装時に削除
-
-    /**
-     * dアカウント登録状態チェック --> ログイン済
-     */
-    private void onDAccountLoginYesButton() {
-        setDAccountLoginButtonsVisibility(View.GONE);
-        setDAccountSameButtonsVisibility(View.VISIBLE);
-    }
-
     private void onUseWithoutPairingButton() {
         DTVTLogger.start();
         mDlnaProvDevList.stopListen();
@@ -399,39 +379,24 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.end();
     }
 
-    //TODO　dアカウントクラス実装次第削除する予定
-    private void setDAccountButtonVisibility(int visibility) {
-        mDAccountLoginYesSTBSelectActivity.setVisibility(visibility);
-        mDAccountLoginNoSTBSelectActivity.setVisibility(visibility);
-
-        mDAccountAppliYesSTBSelectActivity.setVisibility(visibility);
-        mDAccountAppliNoSTBSelectActivity.setVisibility(visibility);
-
-        mDAccountSameYesSTBSelectActivity.setVisibility(visibility);
-        mDAccountSameNoSTBSelectActivity.setVisibility(visibility);
-    }
-
-    private void setDAccountLoginButtonsVisibility(int visibility) {
-        mDAccountLoginYesSTBSelectActivity.setVisibility(visibility);
-        mDAccountLoginNoSTBSelectActivity.setVisibility(visibility);
-    }
-
-    private void setDAccountAppliButtonsVisibility(int visibility) {
-        mDAccountAppliYesSTBSelectActivity.setVisibility(visibility);
-        mDAccountAppliNoSTBSelectActivity.setVisibility(visibility);
-    }
-
-    private void setDAccountSameButtonsVisibility(int visibility) {
-        mDAccountSameYesSTBSelectActivity.setVisibility(visibility);
-        mDAccountSameNoSTBSelectActivity.setVisibility(visibility);
-    }
-
     /**
      * STB選択画面でデバイス名Itemがタップされた時に画面遷移する
      */
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         DTVTLogger.start();
+
+        //dカウント登録状態チェック
+        if (checkDAccountLogin()) {
+            //未ログイン時の場合の処理
+            checkDAccountApp();
+            return;
+        } else {
+            //ログイン済みの場合の処理
+            //TODO STBに同じdアカウントが登録されているか確認する
+            DTVTLogger.debug("DAccount login");
+        }
+
         if (mCallbackTimer.getTimerStatus() != TimerStatus.TIMER_STATUS_DURING_STARTUP) {
             // SharedPreferencesにSTBデータを保存
             if (mDlnaDmsItemList != null) {
@@ -442,9 +407,9 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                     mCheckMark.setVisibility(View.GONE);
                 }
             }
-            // TODO dアカウントクラス実装時に遷移先を修正
-            startActivity(STBConnectActivity.class, null);
         }
+
+        startActivity(STBConnectActivity.class, null);
         DTVTLogger.end();
     }
 
@@ -678,6 +643,42 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
          */
         private TimerStatus getTimerStatus() {
             return mTimerStatus;
+        }
+    }
+
+    /**
+     * dアカウントの登録状態を確認する
+     */
+    private boolean checkDAccountLogin() {
+        UserState userState = getUserState();
+        return (UserState.LOGIN_NG == userState);
+    }
+
+    /**
+     * dアカウントアプリが端末にインストールされているか確認を行い、インストールされている場合は
+     * dアカウントアプリを起動する
+     */
+    private void checkDAccountApp() {
+        Intent intent = new Intent();
+        intent.setClassName(D_ACCOUNT_APP_PACKAGE_NAME,
+                D_ACCOUNT_APP_PACKAGE_NAME + D_ACCOUNT_APP_ACTIVITY_NAME);
+        try {
+            //端末内にdアカウントアプリがある場合はアプリ起動
+            startActivity(intent);
+            //ログイン後にユーザ操作でこの画面に戻ってきた際には再度STB選択を行わせる
+        } catch (ActivityNotFoundException e) {
+            //端末内にdアカウントアプリがない場合はdアカウントアプリDL誘導を行う
+            TextView statusTextView = findViewById(R.id.stb_select_status_text);
+            TextView downloadTextView = findViewById(R.id.downloadDAccountApplication);
+
+            mIsAppDL = true;
+            mPairingImage.setImageResource(R.drawable.paring_no_daccount_app);
+            statusTextView.setText(R.string.str_d_account_app_not_install);
+            downloadTextView.setVisibility(View.VISIBLE);
+            downloadTextView.setOnClickListener(this);
+            mCheckBoxSTBSelectActivity.setVisibility(View.GONE);
+            mDeviceListView.setVisibility(View.GONE);
+            useWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_no_login_use_text);
         }
     }
 }
