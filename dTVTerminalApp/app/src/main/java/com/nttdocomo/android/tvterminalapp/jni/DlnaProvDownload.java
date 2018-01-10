@@ -14,26 +14,14 @@ import com.nttdocomo.android.tvterminalapp.service.download.DtcpDownloadParam;
  * 機能：DlnaからActivityにDownload I/Fを提供するクラス
  */
 public class DlnaProvDownload {
+    DlnaInterfaceDl mDlnaInterfaceDl;
 
     /**
      * 機能：DlnaProvRecVideoを構造
      */
-    public DlnaProvDownload() {
+    public DlnaProvDownload() throws Exception{
         DTVTLogger.start();
-        DTVTLogger.end();
-    }
-
-    /**
-     * 機能：Listenを停止
-     */
-    public void stopListen(){
-        DTVTLogger.start();
-        DlnaInterface di= DlnaInterface.getInstance();
-        if(null==di){
-            DTVTLogger.end();
-            return;
-        }
-        di.setDlnaDlListener(null, null);
+        mDlnaInterfaceDl=new DlnaInterfaceDl();
         DTVTLogger.end();
     }
 
@@ -42,23 +30,13 @@ public class DlnaProvDownload {
      * @param lis listener
      * @return 成功true
      */
-    public boolean startListen(DlnaDmsItem item, DlnaDlListener lis, Context context){
+    public boolean startListen(DlnaDlListener lis, Context context){
         DTVTLogger.start();
-        DlnaInterface di= DlnaInterface.getInstance();
-        if(null==di){
+        if(null==mDlnaInterfaceDl) {
             DTVTLogger.end();
             return false;
         }
-        if(!di.startDlna()){
-            DTVTLogger.end();
-            return false;
-        }
-        boolean ret = di.registerCurrentDms(item);
-        if(!ret){
-            DTVTLogger.end();
-            return false;
-        }
-        di.setDlnaDlListener(lis, context);
+        mDlnaInterfaceDl.setDlnaDlListener(lis, context);
         DTVTLogger.end();
         return true;
     }
@@ -69,12 +47,22 @@ public class DlnaProvDownload {
      */
     public DlnaDownloadRet download(DtcpDownloadParam param){
         DTVTLogger.start();
-        DlnaInterface di= DlnaInterface.getInstance();
-        if(null==di){
+
+        DlnaInterface di = DlnaInterface.getInstance();
+        if(null==di) {
+            return DlnaDownloadRet.DownloadRet_ParamError;
+        }
+
+        String xml= di.getDlParam(param);
+        if(null==xml || 0==xml.length()){
+            return DlnaDownloadRet.DownloadRet_ParamError;
+        }
+
+        if(null==mDlnaInterfaceDl){
             DTVTLogger.end();
             return DlnaDownloadRet.DownloadRet_OtherError;
         }
         DTVTLogger.end();
-        return di.download(param);
+        return mDlnaInterfaceDl.download(param, xml);
     }
 }

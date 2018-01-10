@@ -194,12 +194,31 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                if(queView.size() > 0){
-                    setDownloadStatus(queView.get(0), queIndex.get(0), newPercent);
-                }
+                    if(queView.size() > 0){
+                        setDownloadStatus(queView.get(0), queIndex.get(0), newPercent);
+                    }
                 }
             });
         }
+//        final int newPercent = percent;
+//        Runnable r= new Runnable() {
+//            @Override
+//            public void run() {
+//                DTVTLogger.debug("HandlerThread:"+Thread.currentThread().getId());
+//                if(queView.size() > 0){
+//                    getActivity().runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            setDownloadStatus(queView.get(0), queIndex.get(0), newPercent);
+//                        }
+//                    });
+//
+//                }
+//            }
+//        };
+//        Thread t=new Thread (r);
+//        t.start();
+//        //mHandler.post(t);
     }
 
     @Override
@@ -250,6 +269,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    DTVTLogger.debug("HandlerThread:"+Thread.currentThread().getId());
                     if(queIndex.size() > 0){
                         View view = mRecordedListview.getChildAt(queIndex.get(0)-mRecordedListview.getFirstVisiblePosition());
                         if (view != null) {

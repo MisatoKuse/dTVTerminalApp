@@ -52,6 +52,8 @@ namespace dtvt {
         DLNA_MSG_ID_DL_PROGRESS = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 6,
         //Download progress
         DLNA_MSG_ID_DL_STATUS = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 7,
+        //Download param
+        DLNA_MSG_ID_DL_XMLPARAM = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 8,
         //invalid value
         DLNA_MSG_ID_INVALID = 0xffffffff,
     } DLNA_MSG_ID;
@@ -183,6 +185,10 @@ namespace dtvt {
         //const char* const DLNA_DMS_BS_CHANNEL = "0/smartphone/bs"; //本番
         const char* const DLNA_DMS_BS_CHANNEL = "0/video/all"; //nasでテスト
     #endif
+
+    /*----------------------------- function begin --------------------------------*/
+    extern bool setJavaObjectField(JNIEnv *env, jclass cls, const char* const  fieldName, const char* const classPath, std::string& value, jobject obj);
+    /*------------------------------ function end ---------------------------------*/
 
 } //namespace dtvt
 

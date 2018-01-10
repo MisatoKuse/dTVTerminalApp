@@ -56,13 +56,7 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
             return;
         }
 
-        DlnaDmsItem item= SharedPreferencesUtils.getSharedPreferencesStbInfo(context);
-        if(null==item.mUdn || item.mUdn.isEmpty()){
-            onFail(DownloadListener.DLError.DLError_DmsLost);
-            return;
-        }
-
-        boolean ret=mDlnaProvDownload.startListen(item, this, context);
+        boolean ret=mDlnaProvDownload.startListen(this, context);
         if(!ret){
             onFail(DownloadListener.DLError.DLError_DmsError);
             return;
@@ -127,6 +121,5 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
 
     private void onStopIt(){
         mFinishedBytes=0;
-        mDlnaProvDownload.stopListen();
     }
 }

@@ -254,6 +254,8 @@ add_library(
      ${CMAKE_SOURCE_DIR}/src/main/cpp/src/DlnaBSDigitalXmlParser.cpp
      ${CMAKE_SOURCE_DIR}/src/main/cpp/src/download/downloader.cc
      ${CMAKE_SOURCE_DIR}/src/main/cpp/src/download/dmspu_cipher_file.cc
+     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/download/DlnaDownload.cpp
+     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/download/DlnaJniCastDl.cpp
      )
 
 # 目標ライブラリをリンク

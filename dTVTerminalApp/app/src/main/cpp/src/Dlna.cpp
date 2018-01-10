@@ -11,37 +11,15 @@
 #include <dav_cds.h>
 #include <dupnp_soap.h>
 #include <cstring>
-#include <ddtcp.h>
-#include <cipher_file_context_global.h>
-#include <secure_io_global.h>
-#include <du_log.h>
+#include "Dlna.h"
 #include "download/dtcp.hpp"
 #include "download/downloader.h"
-#include "Dlna.h"
 #include "DmsInfo.h"
 #include "DlnaBSDigitalXmlParser.h"
 #include "DlnaTerChXmlParser.h"
 #include "DlnaHikariChXmlParser.h"
 
 namespace dtvt {
-
-    //local function b
-    string intToString(int n)  {
-        stringstream ss;
-        string str;
-        ss<<n;
-        ss>>str;
-        return str;
-    }
-
-    string longToString(long n)  {
-        stringstream ss;
-        string str;
-        ss<<n;
-        ss>>str;
-        return str;
-    }
-    //local function e
 
     Dlna::Dlna(): mDLNA_STATE(DLNA_STATE_STOP), mDlnaDevXmlParser(NULL), mRecursionXmlParser(NULL), mDlnaRecVideoXmlParser(NULL), mBsDigitalXmlParser(NULL), mTerChXmlParser(NULL), mHikariChXmlParser(NULL),
                   mRecordedVideoXml(NULL) {
@@ -535,24 +513,6 @@ namespace dtvt {
             }
         }
         du_str_array_free(&param_array);
-    }
-
-    void Dlna::downloaderStatusHandler(DownloaderStatus status, const du_uchar* http_status, void* arg){
-        if (NULL == arg) {
-            return;
-        }
-        Dlna *thiz = (Dlna *) arg;
-        std::string content= intToString(status);
-        thiz->notify(DLNA_MSG_ID_DL_STATUS, content);
-    }
-
-    void Dlna::downloaderProgressHandler(du_uint64 sent_size, du_uint64 total_size, void* arg){
-        if (NULL == arg) {
-            return;
-        }
-        Dlna *thiz = (Dlna *) arg;
-        std::string content= longToString(sent_size);
-        thiz->notify(DLNA_MSG_ID_DL_PROGRESS, content);
     }
 
     //bool Dlna::sendSoap(std::string controlUrl, std::string objectId="0", const int startingIndex=0, const int requestCount=0, std::string browseFlag="BrowseDirectChildren"){
@@ -1220,72 +1180,19 @@ namespace dtvt {
     }
 
     //実装中
-    void Dlna::dtcpDownload(JNIEnv *env, jobject instance, std::string dirToSave, std::string fileNameToSave, std::string dtcp1host_, int dtcp1port_, std::string url_, int cleartextSize, std::string itemId){
-        const du_uchar* dtcp1host = DU_UCHAR_CONST(dtcp1host_.c_str());
-        du_uint16 dtcp1port = dtcp1port_;
-        const du_uchar* url = DU_UCHAR_CONST(url_.c_str());
-        du_bool move = 1;
+    du_uchar* Dlna::dtcpDownloadParam(std::string itemId){
         bool retTmp=true;
-        string fileToDownload= dirToSave + "/" + fileNameToSave;
-        const du_uchar* dixim_file = DU_UCHAR_CONST(fileToDownload.c_str());
-        du_uint64 cleartext_size = cleartextSize;
-        du_str_array* request_header = 0;
-        const du_uchar* private_data_home_path = DU_UCHAR_CONST(dirToSave.c_str());
-        std::string xmlStr;
 
-        if (!cipher_file_context_global_create(secure_io_global_get_instance(), private_data_home_path)) {
-            goto error2;
-        }
-
-        du_uchar* xmlStrDu;
-        retTmp = getItemStringByItemId(mRecordedVideoXml, itemId, xmlStr, &xmlStrDu);
+        du_uchar* xmlStrDu=NULL;
+        retTmp = getItemStringByItemId(mRecordedVideoXml, itemId, &xmlStrDu);
         if(!retTmp){
-            goto error2;
+            DelIfNotNullArray(xmlStrDu);
+            return NULL;
         }
 
-        {
-            dixim::dmsp::dtcp::dtcp d;
-            d.private_data_home = (const char*)private_data_home_path;
-            d.ake_port = 53211;
-            if (!d.start(mEvent.mJavaVM, instance, this)) {
-                goto error3;
-            }
-            if (!downloader_download(
-                    d.d,
-                    dtcp1host,
-                    dtcp1port,
-                    url,
-                    move,
-                    (downloader_status_handler) downloaderStatusHandler,
-                    (downloader_progress_handler)downloaderProgressHandler,
-                    this, //handler arg
-                    dixim_file,
-                    xmlStrDu,
-                    cleartext_size,
-                    request_header)) {
-                goto error3;
-            }
-            d.stop();
-        }
-
-        cipher_file_context_global_free();
-        secure_io_global_free();
-        du_log_dv(0, DU_UCHAR_CONST("OK"));
-
-        return;
-
-        error3:
-            cipher_file_context_global_free();
-        error2:
-            secure_io_global_free();
-            du_log_wv(0, DU_UCHAR_CONST("ERROR"));
-            downloaderStatusHandler(DOWNLOADER_STATUS_ERROR_OCCURED, 0, this);
+        //notifyDuChar(DLNA_MSG_ID_DL_XMLPARAM, xmlStrDu);
+        return xmlStrDu;
     }
-
-    void Dlna::dtcpDownloadCancel(){
-        downloader_cancel();
-    }
-
 
     /**
      * デバイスディスクリプションを解析してデバイス情報を設定する
@@ -1366,7 +1273,7 @@ namespace dtvt {
         return 1;
     }
 
-    bool Dlna::getItemStringByItemId(du_uchar* allRecordedVideoXml, std::string itemId, std::string& outStr, du_uchar** outXmlStr){
+    bool Dlna::getItemStringByItemId(du_uchar* allRecordedVideoXml, std::string itemId, du_uchar** outXmlStr){
         bool ret=true;
         string begin = RecVideoXml_Item_Begin_Tag + itemId;
         static string end= RecVideoXml_Item_End_Tag;

@@ -128,6 +128,7 @@ public class DownloadService extends Service implements DownloadListener {
             stopForeground(true);
             stopSelf();
         }*/
+        startService();
         return super.onStartCommand(intent, flags, startId);
     }
 

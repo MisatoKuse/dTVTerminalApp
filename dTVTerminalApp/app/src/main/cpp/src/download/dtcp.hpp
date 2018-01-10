@@ -2,7 +2,7 @@
 #define DTCP_HPP
 
 #include <string>
-#include "../Dlna.h"
+#include "DlnaDownload.h"
 
 #include <du_log.h>
 #include <dupnp.h>
@@ -68,7 +68,7 @@ namespace dixim {
                     void* mac_address_method_id;
                 } dixim_hwif_private_data_io;
 
-                du_bool start(JavaVM *vm, jobject instance, dtvt::Dlna *myDlnaClass) {
+                du_bool start(JavaVM *vm, jobject instance, dtvt::DlnaDownload *myDlnaClass) {
                     JNIEnv *env = NULL;
                     int status = vm->GetEnv((void **) &env, JNI_VERSION_1_6);
                     if (status < 0) {
