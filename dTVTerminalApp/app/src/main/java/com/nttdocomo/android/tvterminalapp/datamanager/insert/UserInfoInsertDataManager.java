@@ -25,22 +25,22 @@ import java.util.Map;
 public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Void, Void> {
 
     /**
-     * H4Dの契約につける接頭語
+     * H4Dの契約につける接頭語.
      */
     private final static String H4D_HEADER = "h4d";
 
     /**
-     * 複数データが来た場合の分割用
+     * 複数データが来た場合の分割用.
      */
     private final static String SPLITTER = ",";
 
     /**
-     * DB書き込み日時
+     * DB書き込み日時.
      */
     private final static String OTT_MAKE_TIME = "ottMakeTime";
 
     //DB読み込み用項目名一覧
-    private final static String DATA_COLUMNS[] = {
+    private final static String[] DATA_COLUMNS = {
             UserInfoJsonParser.USER_INFO_LIST_CONTRACT_STATUS,
             UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ,
             UserInfoJsonParser.USER_INFO_LIST_H4D_AGE_REQ,
@@ -62,7 +62,7 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
     private ArrayList<String> mH4dH4dAge = new ArrayList<>();
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
      * @param context コンテキスト
      */
@@ -71,7 +71,7 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
     }
 
     /**
-     * UserinfoAPIの解析結果をDBに格納する。
+     * UserinfoAPIの解析結果をDBに格納する.
      */
     private void insertUserInfoInsertList(List<UserInfoList> userInfoList) {
         DTVTLogger.start();
@@ -104,7 +104,7 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
     }
 
     /**
-     * 蓄積用データを作成して、DBに書き込む処理
+     * 蓄積用データを作成して、DBに書き込む処理.
      *
      * @param userInfoListDao DBアクセス用
      * @param userInfoList    元データ
@@ -152,7 +152,7 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
     }
 
     /**
-     * データを読み込んでくる
+     * データを読み込んでくる.
      */
     public void readUserInfoInsertList() {
         DTVTLogger.start();
@@ -172,7 +172,7 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
     }
 
     /**
-     * DBから読んだデータを構造体に入れる
+     * DBから読んだデータを構造体に入れる.
      *
      * @param dataList DBから読んだデータ
      * @return ユーザー情報構造体
@@ -182,8 +182,6 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
 
         boolean h4dFlag;
 
-        String statusBuffer = "";
-        long recordTime = 0L;
         for (Map<String, String> map : dataList) {
             for (Map.Entry<String, String> entry : map.entrySet()) {
                 //値にh4d用ヘッダーがあれば、それを取り除いてフラグを立てる
@@ -220,7 +218,7 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
     }
 
     /**
-     * キーに応じた値の蓄積を行う
+     * キーに応じた値の蓄積を行う.
      *
      * @param keyBuffer キー名
      * @param value     値
@@ -233,7 +231,7 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
         }
 
         //分割してリストに変換する
-        String buffer[] = value.split(SPLITTER);
+        String[] buffer = value.split(SPLITTER);
 
         //h4dFlagが立っていた場合は、値からヘッダーを削除する
         if (h4dFlag) {
@@ -274,7 +272,7 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
     }
 
     /**
-     * 配列の各情報を一つにまとめる
+     * 配列の各情報を一つにまとめる.
      *
      * @param statusList 契約状態のリスト
      * @param dchAgeList dTVチャンネル視聴年齢のリスト
@@ -316,7 +314,7 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
     }
 
     /**
-     * 指定された値の中から最大の物を求める
+     * 指定された値の中から最大の物を求める.
      *
      * @param value 複数指定数字
      * @return 指定された数字の中で最大
@@ -335,10 +333,11 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
 
     @Override
     protected Void doInBackground(List<UserInfoList>[] lists) {
-        DTVTLogger.start("lists" + lists.toString());
+        DTVTLogger.start();
 
         //書き込みと読み込みの切り替えを行う
         if (lists != null) {
+            DTVTLogger.debug("lists" + Arrays.toString(lists));
             //データの書き込みを行う
             insertUserInfoInsertList(lists[0]);
         } else {

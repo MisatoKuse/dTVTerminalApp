@@ -92,7 +92,7 @@ public class DateUtils {
     public static final String MY_CHANNEL_LIST_LAST_INSERT = "MyChannelListLastInsert";
 
     /**
-     * 曜日の固定値
+     * 曜日の固定値.
      */
     public static final int DAY_OF_WEEK_SUNDAY = 1;
     public static final int DAY_OF_WEEK_MONDAY = 2;
@@ -103,13 +103,13 @@ public class DateUtils {
     public static final int DAY_OF_WEEK_SATURDAY = 7;
 
     /**
-     * 1日のエポック秒
+     * 1日のエポック秒.
      */
-    public static final long EPOCH_TIME_ONE_DAY = 86400;
+    private static final long EPOCH_TIME_ONE_DAY = 86400;
     public static final long EPOCH_TIME_ONE_HOUR = 3600;
 
     /**
-     * コンテキスト
+     * コンテキスト.
      *
      * @param mContext
      */
@@ -118,7 +118,7 @@ public class DateUtils {
     }
 
     /**
-     * 現在日時に1日加算した後に永続化
+     * 現在日時に1日加算した後に永続化.
      *
      * @param key
      */
@@ -126,6 +126,7 @@ public class DateUtils {
             String key) {
 
         // TODO:DBには取得日時を格納しておき、現在時刻よりもデータが未来の場合,キャッシュ切れと判断すべき
+        // TODO:UTCタイムスタンプで良い.無駄に複雑化させているだけ.
         //現在日時を取得
         Calendar c = Calendar.getInstance();
         c.add(Calendar.HOUR_OF_DAY, LIMIT_HOUR);
@@ -135,7 +136,7 @@ public class DateUtils {
     }
 
     /**
-     * 現在日時に1日加算した後に永続化
+     * 現在日時に1日加算した後に永続化.
      *
      * @param key   name
      * @param value value
@@ -149,7 +150,7 @@ public class DateUtils {
     }
 
     /**
-     * 現在日時に1日加算した後に永続化
+     * 現在日時に1日加算した後に永続化.
      *
      * @param key
      */
@@ -157,6 +158,7 @@ public class DateUtils {
             String key) {
 
         // TODO:DBには取得日時を格納しておき、現在時刻よりもデータが未来の場合,キャッシュ切れと判断すべき
+        // TODO:文字列でなくUTCのタイムスタンプでよい.無駄に複雑にしている.
         //現在日時を取得
         Calendar c = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_YYYY_MM_DD, Locale.JAPAN);
@@ -164,50 +166,49 @@ public class DateUtils {
     }
 
     /**
-     * 前回取得日時を返却
+     * 前回取得日時を返却.
      *
      * @param key ファイル名(KEY)
      * @return date 前回取得した時刻を返却
      */
     public String getLastDate(String key) {
         SharedPreferences data = mContext.getSharedPreferences(DATA_SAVE, Context.MODE_PRIVATE);
-        String date = data.getString(key, "");
-        return date;
+        return data.getString(key, "");
     }
 
     /**
-     * 日付が期限内か判定
+     * 日付が期限内か判定.
      *
      * @param str
      * @return
      */
     public boolean isBeforeLimitDate(String str) {
         // TODO:DBには取得日時を格納しておき、現在時刻よりもデータが未来の場合,キャッシュ切れと判断すべき
-        Calendar limit = new GregorianCalendar();
-        //現在日時を取得
-        Calendar now = Calendar.getInstance();
-
-        //文字列からCalender型に変換
+        // TODO:文字列でなくUTCのタイムスタンプでよい.無駄に複雑にしている.
         if (str == null) {
-            limit = null;
+            // null渡しされた場合は取得すべきとして期限切れ判定.
+            return true;
         } else {
+            Calendar limit = new GregorianCalendar();
+            //現在日時を取得
+            Calendar now = Calendar.getInstance();
+            boolean isExpired = false;
+            //文字列からCalender型に変換
             try {
                 SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
                 limit.setTime(sdf.parse(str.replace("-", "/")));
+                if (limit.compareTo(now) < 0) {
+                    isExpired = true;
+                }
             } catch (ParseException e) {
-                limit = null;
+                return false;
             }
+            return isExpired;
         }
-
-        boolean isExpired = false;
-        if (limit.compareTo(now) < 0) {
-            isExpired = true;
-        }
-        return isExpired;
     }
 
     /**
-     * 日付が期限内か判定
+     * 日付が期限内か判定.
      *
      * @param lastStr 前回取得できた日付
      * @return 現在日付と前回の比較の判定
@@ -233,7 +234,7 @@ public class DateUtils {
     }
 
     /**
-     * エポック秒を YYYY/MM/DD かつString値に変換
+     * エポック秒を YYYY/MM/DD かつString値に変換.
      */
     public static String formatEpochToString(long epochTime) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_PATTERN);
@@ -241,7 +242,7 @@ public class DateUtils {
     }
 
     /**
-     * エポック秒を yyyyMMddHHmmss かつString値に変換
+     * エポック秒を yyyyMMddHHmmss かつString値に変換.
      */
     public static String formatEpochToStringOpeLog(long epochTime) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_YYYY_MM_DD_HH_MM_SS);
@@ -249,7 +250,7 @@ public class DateUtils {
     }
 
     /**
-     * 現在日時エポック秒を取得
+     * 現在日時エポック秒を取得.
      */
     public static long getNowTimeFormatEpoch() {
         Calendar nowTime = Calendar.getInstance();
@@ -257,7 +258,7 @@ public class DateUtils {
     }
 
     /**
-     * 現在日の0時00分00秒をエポック秒で取得
+     * 現在日の0時00分00秒をエポック秒で取得.
      */
     public static long getTodayStartTimeFormatEpoch() {
         Calendar nowTime = Calendar.getInstance();
@@ -272,7 +273,7 @@ public class DateUtils {
     }
 
     /**
-     * 現在の曜日を取得
+     * 現在の曜日を取得.
      *
      * @return 日:1 ～ 土:7
      */
@@ -282,7 +283,7 @@ public class DateUtils {
     }
 
     /**
-     * 指定日（エポック秒：秒単位）から曜日を取得
+     * 指定日（エポック秒：秒単位）から曜日を取得.
      *
      * @param epochTime
      * @return 日:1 ～ 土:7
@@ -294,7 +295,7 @@ public class DateUtils {
     }
 
     /**
-     * 月曜日までの日数を取得
+     * 月曜日までの日数を取得.
      *
      * @param dayOfWeek
      * @return
@@ -308,7 +309,7 @@ public class DateUtils {
     }
 
     /**
-     * 日曜日までの日数を取得
+     * 日曜日までの日数を取得.
      *
      * @param dayOfWeek
      * @return
@@ -322,7 +323,7 @@ public class DateUtils {
     }
 
     /**
-     * 引数の日付(エポック秒)を M/d (DAY_OF_WEEK) hh:mm のString型に変換(録画予約一覧ListItem用)
+     * 引数の日付(エポック秒)を M/d (DAY_OF_WEEK) hh:mm のString型に変換(録画予約一覧ListItem用).
      */
     public static String getRecordShowListItem(long time) {
         Calendar cal = Calendar.getInstance();
@@ -335,14 +336,14 @@ public class DateUtils {
     }
 
     /**
-     * 引数の曜日（int型）をStringに変換する
+     * 引数の曜日（int型）をStringに変換する.
      */
     public static String getStringDayOfWeek(int dayOfWeek) {
         return STRING_DAY_OF_WEEK[dayOfWeek];
     }
 
     /**
-     * 録画予約開始時間の算出
+     * 録画予約開始時間の算出.
      * 引数日時（エポック秒）の0時00分00秒からの時間を算出
      */
     public static long getCalculationRecordingReservationStartTime(long startTime) {
@@ -350,7 +351,7 @@ public class DateUtils {
     }
 
     /**
-     * dアカウント切り替え時に、以前のデータを削除する
+     * dアカウント切り替え時に、以前のデータを削除する.
      *
      * @param context コンテキスト
      */
@@ -360,16 +361,16 @@ public class DateUtils {
     }
 
     /**
-     * エポック秒に変換する
+     * エポック秒に変換する.
      *
      * @param strDate
      * @return
      */
     public static long getEpochTime(String strDate) {
         long epochTime = 0;
-        Date lm = null;
         if (null != strDate) {
-            lm = new Date(strDate);
+            // TODO:非推奨API利用.要修正.
+            Date lm = new Date(strDate);
             try {
                 epochTime = lm.getTime();
             } catch (Exception e) {

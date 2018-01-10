@@ -56,12 +56,12 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
     }
 
     /**
-     * Ranking Top画面用データを返却するためのコールバック
+     * Ranking Top画面用データを返却するためのコールバック.
      */
     public interface UserDataProviderCallback {
 
         /**
-         * ユーザー情報一覧用コールバック
+         * ユーザー情報一覧用コールバック.
          *
          * @param list コンテンツリスト
          */
@@ -69,7 +69,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
     }
 
     /**
-     * コンストラクタ(getUserAge()用)
+     * コンストラクタ(getUserAge()用).
      *
      * @param mContext コンテキストファイル
      */
@@ -78,7 +78,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
     }
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
      * @param context コンテキスト
      */
@@ -97,7 +97,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
     }
 
     /**
-     * ユーザーデータ取得を開始する
+     * ユーザーデータ取得を開始する.
      */
     public void getUserInfo() {
         DTVTLogger.start();
@@ -131,7 +131,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
     }
 
     /**
-     * 通信可能確認
+     * 通信可能確認.
      *
      * @param context コンテキスト
      * @return 通信可能ならばtrue
@@ -156,7 +156,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
     }
 
     /**
-     * データの取得日時を見て、データ取得が必要かどうかを見る
+     * データの取得日時を見て、データ取得が必要かどうかを見る.
      *
      * @return データが古いので、取得が必要ならばtrue
      */
@@ -178,7 +178,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
     }
 
     /**
-     * データの取得やデータの取得の必要のない場合の後処理
+     * データの取得やデータの取得の必要のない場合の後処理.
      *
      * @param userInfoLists 契約情報
      */
@@ -205,9 +205,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
                 mDataManager.readUserInfoInsertList();
                 userInfoLists = mDataManager.getmUserData();
             }
-        }
-
-        if(userInfoLists.get(0).getLoggedinAccount().size() == 0) {
+        } else if (userInfoLists.get(0).getLoggedinAccount().size() == 0) {
             //契約情報がゼロ件の場合、情報取得に失敗するので、userInfoListsをヌルにして、異常データであることを明示する
             userInfoLists = null;
         }
@@ -240,7 +238,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
     }
 
     /**
-     * 取得済みのユーザー年齢情報を取得する
+     * 取得済みのユーザー年齢情報を取得する.
      */
     public int getUserAge() {
 
