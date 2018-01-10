@@ -68,7 +68,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     //Dアカウントアプリ Package名
     private static final String D_ACCOUNT_APP_PACKAGE_NAME = "com.nttdocomo.android.idmanager";
     //Dアカウントアプリ Activity名
-    private static final String D_ACCOUNT_APP_ACTIVITY_NAME=".activity.DocomoIdTopActivity";
+    private static final String D_ACCOUNT_APP_ACTIVITY_NAME = ".activity.DocomoIdTopActivity";
     //DアカウントアプリURI
     private static final String D_ACCOUNT_APP_URI = "market://details?id=com.nttdocomo.android.idmanager";
 
@@ -394,6 +394,10 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         } else {
             //ログイン済みの場合の処理
             //TODO STBに同じdアカウントが登録されているか確認する
+//            String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(this);
+//            if(userId != null) {
+//                RemoteControlRelayClient.getInstance().isUserAccountExistRequest(userId);
+//            }
             DTVTLogger.debug("DAccount login");
         }
 
