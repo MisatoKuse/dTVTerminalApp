@@ -22,8 +22,9 @@ public class RecordedContentsDetailData implements Parcelable {
     private String mResUrl;
     private String mUpnpIcon;
     private String mTitle;
-    private DetailParamFromWhere mDetailParamFromWhere=DetailParamFromWhere.DetailParamFromWhere_Other;
+    private DetailParamFromWhere mDetailParamFromWhere= DetailParamFromWhere.DetailParamFromWhere_Other;
     private String mVideoType;
+    private String mClearTextSize;
 
     public void setDetailParamFromWhere(DetailParamFromWhere from){
         mDetailParamFromWhere=from;
@@ -105,6 +106,16 @@ public class RecordedContentsDetailData implements Parcelable {
         this.mVideoType = type;
     }
 
+    public String getClearTextSize() {
+        return mClearTextSize;
+    }
+
+    public void setClearTextSize(String clearTextSize) {
+        this.mClearTextSize = clearTextSize;
+    }
+
+
+
     @Override
     public int describeContents() {
         return 0;
@@ -122,6 +133,7 @@ public class RecordedContentsDetailData implements Parcelable {
         dest.writeString(this.mTitle);
         dest.writeInt(this.mDetailParamFromWhere == null ? -1 : this.mDetailParamFromWhere.ordinal());
         dest.writeString(this.mVideoType);
+        dest.writeString(this.mClearTextSize);
     }
 
     public RecordedContentsDetailData() {
@@ -139,6 +151,7 @@ public class RecordedContentsDetailData implements Parcelable {
         int tmpMDetailParamFromWhere = in.readInt();
         this.mDetailParamFromWhere = tmpMDetailParamFromWhere == -1 ? null : DetailParamFromWhere.values()[tmpMDetailParamFromWhere];
         this.mVideoType = in.readString();
+        this.mClearTextSize=in.readString();
     }
 
     public static final Creator<RecordedContentsDetailData> CREATOR = new Creator<RecordedContentsDetailData>() {

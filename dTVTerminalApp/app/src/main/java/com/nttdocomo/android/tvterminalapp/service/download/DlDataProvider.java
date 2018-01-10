@@ -222,7 +222,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     @Override
-    public void onFail(DLError error) {
+    public void onFail(final DLError error) {
         if (null != mDlDataProviderListener) {
             mDlDataProviderListener.onFail(error);
         }

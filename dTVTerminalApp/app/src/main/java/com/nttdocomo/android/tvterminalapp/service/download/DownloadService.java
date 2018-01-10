@@ -11,12 +11,11 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
-import android.support.annotation.IntDef;
-import android.support.annotation.Nullable;
 import android.support.v7.app.NotificationCompat;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
+import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragment;
 
 public class DownloadService extends Service implements DownloadListener {
     private DownloadServiceListener mDownloadServiceListener;
@@ -172,7 +171,11 @@ public class DownloadService extends Service implements DownloadListener {
      */
     public void setDlParam(DownloadParam param) throws Exception{
         if(null==mDownloaderBase){
-            mDownloaderBase=new KariDownloader(param, this);
+            if(RecordedBaseFragment.Is_KariDownloader) {
+                mDownloaderBase = new KariDownloader(param, this);
+            } else {
+                mDownloaderBase = new DtcpDownloader(param, this);
+            }
         } else {
             mDownloaderBase.reset(param);
         }

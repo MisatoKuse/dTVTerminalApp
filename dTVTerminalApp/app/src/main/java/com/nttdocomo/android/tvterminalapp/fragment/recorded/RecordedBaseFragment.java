@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.fragment.recorded;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
@@ -20,6 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
@@ -29,18 +31,20 @@ import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.service.download.DlData;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProviderListener;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadParam;
+import com.nttdocomo.android.tvterminalapp.service.download.DtcpDownloadParam;
 import com.nttdocomo.android.tvterminalapp.service.download.KariDownloadParam;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.nttdocomo.android.tvterminalapp.common.CustomDialog.DialogType.CONFIRM;
-import static com.nttdocomo.android.tvterminalapp.common.CustomDialog.DialogType.ERROR;
 
 public class RecordedBaseFragment extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener, ContentsAdapter.DownloadCallback
 ,DlDataProviderListener {
@@ -55,6 +59,8 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     private List<DlData> que = new ArrayList<>();
     private List<View> queView = new ArrayList<>();
     private List<Integer> queIndex = new ArrayList<>();
+    private Handler mHandler=new Handler();
+    private final int mPercentToUpdateUi=1;
 
     @Override
     public Context getContext() {
@@ -197,8 +203,45 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     }
 
     @Override
-    public void onFail(DLError error) {
+    public void onFail(final DLError error) {
+        mHandler.post(
+                new Runnable(){
+                    @Override
+                    public void run() {
+                        switch (error){
+                            case DLError_NetLost:
+                                showMessage("ネットワークは接続していないので、ダウンロードは出来ませんでした");
+                                break;
+                            case DLError_DmsLost:
+                                showMessage("DMSと接続していないので、ダウンロードは出来ませんでした");
+                                break;
+                            case DLError_DmsError:
+                                showMessage("DMSはエラーになっているので、ダウンロードは出来ませんでした");
+                                break;
+                            case DLError_StorageNoSpace:
+                                showMessage("ストレージ容量不足なので、ダウンロードは出来ませんでした");
+                                break;
+                            case DLError_Download:
+                                showMessage("ダウンロードエラーは発生しました");
+                                break;
+                            case DLError_ParamError:
+                                showMessage("ダウンロードパーラメータエラーは発生しました");
+                                break;
+                            case DLError_Unactivated:
+                                showMessage("アクティベーションはまだですので、ダウンロードは出来ませんでした");
+                                break;
+                            case DLError_CopyKeyFileFailed:
+                                showMessage("キーファイルコピーエラーが発生しましたので、ダウンロードは出来ませんでした");
+                                break;
+                            case DLError_Other:
+                                showMessage("他のエラーが発生しましたので、ダウンロードは出来ませんでした");
+                                break;
+                            case DLError_NoError:
 
+                                break;
+                        }
+                    }
+                });
     }
 
     @Override
@@ -222,7 +265,10 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                         queIndex.remove(0);
                     }
                     if(que.size() > 0){
-                        prepareDownLoad(queIndex.get(0));
+                        boolean isOk=prepareDownLoad(queIndex.get(0));
+                        if(!isOk){
+                            return;
+                        }
                     }
                     Toast.makeText(getActivity(),"download success",Toast.LENGTH_SHORT).show();
                 }
@@ -280,12 +326,16 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         switch (mContentsData.get((int)view.getTag()).getDownloadFlg()) {
             case ContentsAdapter.DOWNLOAD_STATUS_ALLOW :
                 if (que.size() == 0) {
-                    prepareDownLoad((int)view.getTag());
+                    boolean isOk=prepareDownLoad((int)view.getTag());
+                    if(!isOk){
+                        return;
+                    }
                 }
                 DlData dlData = new DlData();
                 dlData.setItemId(mContentsList.get((int) view.getTag()).getItemId());
                 dlData.setSaveFile(getContext().getCacheDir().getPath());
-                dlData.setTotalSize(mContentsList.get((int) view.getTag()).getSize());
+                //dlData.setTotalSize(mContentsList.get((int) view.getTag()).getSize());
+                dlData.setTotalSize(mContentsList.get((int) view.getTag()).getClearTextSize());
                 dlData.setTitle(mContentsList.get((int) view.getTag()).getTitle());
                 dlData.setUrl(mContentsList.get((int) view.getTag()).getResUrl());
                 dlData.setBitrate(mContentsList.get((int) view.getTag()).getBitrate());
@@ -309,25 +359,140 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         }
     }
 
-    private void prepareDownLoad(int index) {
-        try {
+    public static final boolean Is_KariDownloader=false;
+
+    private boolean prepareDownLoad(int index) {
+        if(Is_KariDownloader) {
+            try {
+                if (mDlDataProvider == null) {
+                    mDlDataProvider = new DlDataProvider(getActivity(), this);
+                }
+                mDlDataProvider.beginProvider();
+
+                downloadParam = new KariDownloadParam();
+                KariDownloadParam karidownloadparam = (KariDownloadParam) downloadParam;
+                karidownloadparam.setContext(getActivity());
+                karidownloadparam.setUrl("https://www.nhk.or.jp/prog/img/2209/2209.jpg");
+                //            karidownloadparam.setUrl(mContentsList.get((int)view.getTag()).getResUrl());
+                karidownloadparam.setSaveFileName(mContentsList.get(index).getTitle());
+                karidownloadparam.setFileSize(203697);
+                //            karidownloadparam.setFileSize(50000000);
+                karidownloadparam.setSavePath(getContext().getCacheDir().getPath());
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+                return false;
+            }
+        } else {
+            Context context=getActivity();
+            if(null==context){
+                return false;
+            }
+            String dlPath=getDownloadPath(context);
+
+            RecordedContentsDetailData item=mContentsList.get(index);
+            try {
+                item = mContentsList.get(index);
+            }catch (Exception e){
+                DTVTLogger.debug(e);
+                showMessage("ダウンロードパラメーター初期化失敗しまして、ダウンロードできません。");
+                return false;
+            }
+            if(null==item){
+                showMessage("ダウンロードパラメーター初期化失敗しまして、ダウンロードできません。");
+                return false;
+            }
+
+            String dlFileName= "dtcp_test"; //todo design file name
+
+            DlnaDmsItem dmsItem= SharedPreferencesUtils.getSharedPreferencesStbInfo(context);
+            if(null==dmsItem.mUdn || dmsItem.mUdn.isEmpty()){
+                showMessage("DMS情報取得失敗しまして、ダウンロードできません。");
+                return false;
+            }
+
+            String ip= dmsItem.mIPAddress;
+            if(null==ip || ip.isEmpty()){
+                showMessage("ダウンロードパラメーター初期化失敗しまして、ダウンロードできません。");
+                return false;
+            }
+
+            String port= item.getVideoType();
+            int portInt= DlnaDmsItem.getPortFromProtocal(port);
+            if(portInt<0){
+                showMessage("ダウンロードパラメーター初期化失敗しまして、ダウンロードできません。");
+                return false;
+            }
+
+            String url=item.getResUrl();
+
+            String clearTextSize=item.getClearTextSize();
+            int clearTextSizeInt=0;
+            try {
+                clearTextSizeInt= Integer.parseInt(clearTextSize);
+            } catch (Exception e){
+                e.printStackTrace();
+                showMessage("DlDataProvider初期化失敗しまして、ダウンロードできません。");
+                return false;
+            }
+
+            downloadParam = new DtcpDownloadParam();
+            DtcpDownloadParam dtcpDownloadParam = (DtcpDownloadParam) downloadParam;
+
+            dtcpDownloadParam.setContext(context);
+            dtcpDownloadParam.setSavePath(dlPath);
+            dtcpDownloadParam.setSaveFileName(dlFileName);
+
+            dtcpDownloadParam.setDtcp1host(ip);
+            dtcpDownloadParam.setDtcp1port(portInt);
+            dtcpDownloadParam.setUrl(url);
+            dtcpDownloadParam.setCleartextSize(clearTextSizeInt);
+            dtcpDownloadParam.setItemId(item.getItemId());
+            dtcpDownloadParam.setPercentToNotify(mPercentToUpdateUi);
+
             if (mDlDataProvider == null) {
-                mDlDataProvider = new DlDataProvider(getActivity(), this);
+                try {
+                    mDlDataProvider = new DlDataProvider(getActivity(), this);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showMessage("DlDataProvider初期化失敗しまして、ダウンロードできません。");
+                    return false;
+                }
             }
             mDlDataProvider.beginProvider();
-
-            downloadParam = new KariDownloadParam();
-            KariDownloadParam karidownloadparam = (KariDownloadParam) downloadParam;
-            karidownloadparam.setContext(getActivity());
-            karidownloadparam.setUrl("https://www.nhk.or.jp/prog/img/2209/2209.jpg");
-//            karidownloadparam.setUrl(mContentsList.get((int)view.getTag()).getResUrl());
-            karidownloadparam.setSaveFileName(mContentsList.get(index).getTitle());
-            karidownloadparam.setFileSize(203697);
-//            karidownloadparam.setFileSize(50000000);
-            karidownloadparam.setSavePath(getContext().getCacheDir().getPath());
-        } catch (Exception e) {
-            DTVTLogger.debug(e);
         }
+
+        return true;
+    }
+
+    /**
+     * todo to do with sd card
+     * @return
+     */
+    private String getDownloadPath(Context context){
+        return EnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP); //内部ストレージ
+    }
+
+    private Toast mToast;
+    /**
+     * show Message
+     * @param msg
+     */
+    private void showMessage(String msg) {
+        DTVTLogger.start();
+        Context context=mActivity;
+        if(null==context){
+            context=getActivity();
+            if(null==context){
+                DTVTLogger.end();
+                return;
+            }
+        }
+        if (null == mToast) {
+            mToast = Toast.makeText(context, "", Toast.LENGTH_SHORT);
+        }
+        mToast.setText(msg);
+        mToast.show();
+        DTVTLogger.end();
     }
 
     /**

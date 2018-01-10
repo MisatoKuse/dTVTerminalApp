@@ -67,6 +67,7 @@ namespace dtvt {
         DlnaXmlParserBase* mBsDigitalXmlParser;
         DlnaXmlParserBase* mTerChXmlParser;
         DlnaXmlParserBase* mHikariChXmlParser;
+        du_uchar* mRecordedVideoXml;
 
     public:
         /**
@@ -96,15 +97,35 @@ namespace dtvt {
         bool browseRecVideoListDms(std::string controlUrl);
 
         /**
-         * 機能：BSデジタルに関して、チャンネルリストを発見
+         * 機能：BSデジタルに関して、チャンネルリストを取得
          * @param controlUrl
          * @return true: 成功  false:失敗
          */
         bool browseBsChListDms(std::string controlUrl);
 
+        /**
+         * 機能：Terに関して、チャンネルリストを取得
+         * @param controlUrl
+         * @return true: 成功  false:失敗
+         */
         bool browseTerChListDms(std::string controlUrl);
 
+        /**
+         * 機能：Hikariに関して、チャンネルリストを取得
+         * @param controlUrl
+         * @return true: 成功  false:失敗
+         */
         bool browseHikariChListDms(std::string controlUrl);
+
+        /**
+         * 機能：dtcp Download
+         * @param env env
+         * @param instance instance
+         * @param info private home dir
+         */
+        void dtcpDownload(JNIEnv *env, jobject instance, std::string dirToSave, std::string fileNameToSave, std::string dtcp1host, int dtcp1port, std::string url, int cleartextSize, std::string itemId);
+
+        void dtcpDownloadCancel();
 
         /**
          * 機能：Dlnaコールバック
@@ -143,6 +164,22 @@ namespace dtvt {
          */
         static void browseDirectChildrenResponseHandler(dupnp_http_response *response, void *arg);
 
+        /**
+         * Callback of [typedef void (*downloader_status_handler)(DownloaderStatus status, const du_uchar* http_status, void* arg);]
+         * @param status
+         * @param http_status
+         * @param arg
+         */
+        static void downloaderStatusHandler(DownloaderStatus status, const du_uchar* http_status, void* arg);
+
+        /**
+         * Callback of [typedef void (*downloader_progress_handler)(du_uint64 sent_size, du_uint64 total_size, void* arg);]
+         * @param sent_size
+         * @param total_size
+         * @param arg
+         */
+        static void downloaderProgressHandler(du_uint64 sent_size, du_uint64 total_size, void* arg);
+
     private:
         bool init();
 
@@ -162,6 +199,12 @@ namespace dtvt {
 
         void notify(int msg, std::string content);
         void notifyObject(DLNA_MSG_ID msg, vector<StringVector> & vecContents);
+
+        void getRecordedVideoXml(DlnaXmlParserBase* parser, dupnp_http_response *response);
+
+        bool getItemStringByItemId(du_uchar* allRecordedVideoXml, std::string itemId, std::string& outStr, du_uchar** outXmlStr);
+        void getDidlLiteDocHead(du_uchar* allRecordedVideoXml, std::string& outStr);
+        void getDidlLiteDocTail(du_uchar* allRecordedVideoXml, std::string& outStr);
     };
 
 } //namespace dtvt

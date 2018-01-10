@@ -16,6 +16,10 @@ public class DownloadParam {
     //通知の頻度
     private int mPercentToNotify;
 
+    public void setPercentToNotify(int mPercentToNotify) {
+        this.mPercentToNotify = mPercentToNotify;
+    }
+
     public int getPercentToNotity(){
         return mPercentToNotify;
     }
@@ -40,7 +44,7 @@ public class DownloadParam {
      * Getter
      * @return mSavePath
      */
-    String getSavePath() {
+    public String getSavePath() {
         return mSavePath;
     }
 
@@ -56,7 +60,7 @@ public class DownloadParam {
      * Getter
      * @return mSaveFileName
      */
-    String getSaveFileName() {
+    public String getSaveFileName() {
         return mSaveFileName;
     }
 
@@ -66,5 +70,16 @@ public class DownloadParam {
      */
     public void setSaveFileName(String saveFileName) {
         this.mSaveFileName = saveFileName;
+    }
+
+    /**
+     * 機能：Sub Classで実現し、パラメーター有効かを戻す
+     * @return
+     */
+    public boolean isParamValid(){
+        if(null==mContext || null==mSavePath || 1>mSavePath.length() || null==mSaveFileName || 1>mSaveFileName.length()) {
+            return false;
+        }
+        return true;
     }
 }

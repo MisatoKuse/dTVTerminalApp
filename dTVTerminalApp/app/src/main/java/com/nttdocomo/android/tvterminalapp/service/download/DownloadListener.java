@@ -14,6 +14,10 @@ interface DownloadListener {
         DLError_DmsLost,
         DLError_DmsError,
         DLError_StorageNoSpace,
+        DLError_Download,
+        DLError_ParamError,
+        DLError_Unactivated,
+        DLError_CopyKeyFileFailed,
         DLError_Other,
         DLError_NoError,
     }

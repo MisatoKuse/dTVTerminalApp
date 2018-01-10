@@ -19,6 +19,7 @@ abstract class DownloaderBase {
     private boolean mIsCanceled;
     private DownloadListener mDownloadListener;
     private DownLoadThread mDownLoadThread;
+    private int mNotifiedBytes;
 
     protected void setDownloadedBytes(int bytesDone){
         mDownloadedBytes=bytesDone;
@@ -61,9 +62,10 @@ abstract class DownloaderBase {
     protected void reset(){
         mDownloadedBytes=0;
         mTotalBytes=0;
-        mError=DownloadListener.DLError.DLError_NoError;
+        mError= DownloadListener.DLError.DLError_NoError;
         mIsPause=false;
         mIsCanceled=false;
+        mNotifiedBytes=0;
     }
 
     /**
@@ -115,14 +117,22 @@ abstract class DownloaderBase {
 
     protected void onProgress(int everyTimeBytes){
         if(mTotalBytes > 0){
-            float res = everyTimeBytes / mTotalBytes;
+            float res = ((float)(everyTimeBytes + mNotifiedBytes)) / ((float)mTotalBytes);
             int p = mDownloadParam.getPercentToNotity();
             float pp = p * 0.01f;
+            mDownloadedBytes += everyTimeBytes;
+            if(mDownloadedBytes==mTotalBytes){
+                mDownloadListener.onProgress(mTotalBytes, 100);
+                mNotifiedBytes=0;
+            }
             if (res >= pp) {
                 float f1 = ((float) mDownloadedBytes);
                 float f2 = ((float) mTotalBytes);
                 int ff = (int) ((f1 / f2) * 100);
                 mDownloadListener.onProgress(mDownloadedBytes, ff);
+                mNotifiedBytes=0;
+            } else {
+                mNotifiedBytes += everyTimeBytes;
             }
         }
     }
@@ -225,5 +235,14 @@ abstract class DownloaderBase {
      */
     long getInnerStorageSafeSpace(){
         return 200;
+    }
+
+    /**
+     * Sub Classでダウンロード成功したとき、この関数をコール
+     */
+    protected void onFail(DownloadListener.DLError error) {
+        if(null!=mDownloadListener){
+            mDownloadListener.onFail(error);
+        }
     }
 }

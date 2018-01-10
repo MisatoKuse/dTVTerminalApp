@@ -18,7 +18,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -447,6 +446,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             detailData.setDuration(curInfo.getRecordVideoLists().get(i).mDuration);
             detailData.setTitle(curInfo.getRecordVideoLists().get(i).mTitle);
             detailData.setVideoType(curInfo.getRecordVideoLists().get(i).mVideoType);
+            detailData.setClearTextSize(curInfo.getRecordVideoLists().get(i).mClearTextSize);
             baseFrgament.mContentsList.add(detailData);
         }
         List<ContentsData> listData = baseFrgament.getContentsData();

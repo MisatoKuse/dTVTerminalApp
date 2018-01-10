@@ -139,4 +139,43 @@ namespace dtvt {
         return ret;
     }
 
+    extern "C"  void JNICALL
+    Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterface_download(JNIEnv *env,
+                                                                            jobject instance, jlong thiz,
+                                                                        jstring dirToSave_, jstring fileNameToSave_, jstring dtcp1host_, int dtcp1port, jstring url_, int cleartextSize, jstring itemId_) {
+        if (NULL == dirToSave_ || NULL==fileNameToSave_ || NULL==url_ || 0==thiz || NULL==itemId_) {
+            return;
+        }
+
+        const char *dirToSave = env->GetStringUTFChars(dirToSave_, 0);
+        const char *fileNameToSave = env->GetStringUTFChars(fileNameToSave_, 0);
+        const char *dtcp1host = env->GetStringUTFChars(dtcp1host_, 0);
+        const char *url = env->GetStringUTFChars(url_, 0);
+        const char *itemId = env->GetStringUTFChars(itemId_, 0);
+
+        Dlna *dlnaPtr = (Dlna *) thiz;
+
+        //(JNIEnv *env, jobject instance, std::string dirToSave, std::string fileNameToSave, std::string dtcp1host, int dtcp1port, std::string url, int cleartextSize)
+        dlnaPtr->dtcpDownload(env, instance,
+                              string((char *) dirToSave), string((char *) fileNameToSave), string((char *) dtcp1host),
+                                dtcp1port, string((char *) url), cleartextSize, itemId);
+
+        env->ReleaseStringUTFChars(dirToSave_, (const char *) dirToSave);
+        env->ReleaseStringUTFChars(fileNameToSave_, (const char *) fileNameToSave);
+        env->ReleaseStringUTFChars(dtcp1host_, (const char *) dtcp1host);
+        env->ReleaseStringUTFChars(url_, (const char *) url);
+        env->ReleaseStringUTFChars(itemId_, (const char *) itemId);
+    }
+
+    extern "C"  void JNICALL
+    Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterface_downloadCancel(JNIEnv *env,
+                                                                        jobject instance, jlong thiz) {
+        if (0==thiz) {
+            return;
+        }
+
+        Dlna *dlnaPtr = (Dlna *) thiz;
+        dlnaPtr->dtcpDownloadCancel();
+    }
+
 } //end of namespace dtvt

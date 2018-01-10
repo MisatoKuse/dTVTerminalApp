@@ -35,6 +35,7 @@ public class DlnaRecVideoItem {
     //TODO コピー残り回数（まだ取得できない為ダミー）
     public int mAllowedUse = 0;
     public String mVideoType="";
+    public String mClearTextSize="";
 
     /**
      * 機能：DlnaRecVideoItem情報クラスを構造
