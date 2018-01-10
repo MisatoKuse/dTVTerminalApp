@@ -245,9 +245,12 @@
     <string name="contents_detail_tv_staff">キャスト・スタッフ</string>
     <string name="contents_detail_tv_staff_recommend">おすすめ作品</string>
     <string name="contents_detail_tv_label">|</string>
-    <string name="dTV_content_service_start_text">dTVで視聴</string>
-    <string name="dTV_content_service_start_dialog">dTVアプリを起動します</string>
-    <string name="dTV_content_service_update_dialog">dTVアプリのアップデートが必要です。</string>
+    <string name="dtv_content_service_start_text">dTVで視聴</string>
+    <string name="dtv_content_service_start_dialog">dTVアプリを起動します</string>
+    <string name="dtv_content_service_update_dialog">dTVアプリのアップデートが必要です。</string>
+    <string name="d_anime_store_content_service_start_text">dアニメストアで視聴</string>
+    <string name="d_anime_store_content_service_start_dialog">dアニメストアアプリを起動します</string>
+    <string name="d_anime_store_content_service_update_dialog">dアニメストアアプリのアップデートが必要です。</string>
     <string-array name="other_service_contents_detail_tabs">
         <item>作品情報</item>
     </string-array>

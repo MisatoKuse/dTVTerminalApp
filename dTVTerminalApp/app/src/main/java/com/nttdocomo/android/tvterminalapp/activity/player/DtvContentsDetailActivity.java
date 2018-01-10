@@ -136,6 +136,12 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     private static final String TITTLE_START_TYPE = "dmktvideosc:///openTitle?titleId=";
     private String errorMessage;
     /*DTV起動*/
+    /*dアニメストア起動*/
+    private static final String DANIMESTORE_PACKAGE_NAME="com.nttdocomo.android.danimeapp";
+    private static final String DANIMESTORE_GOOGLEPLAY_DOWNLOAD_URL="https://play.google.com/store/apps/details?id=com.nttdocomo.android.danimeapp";
+    private static final String DANIMESTORE_START_URL ="danimestore://openWebView?url=[URL]";
+    private static final int DANIMESTORE_VERSION_STANDARD =132;
+    /*dアニメストア起動*/
     /* player start */
     private static final long HIDE_IN_3_SECOND = 3 * 1000;
     private static final int REFRESH_VIDEO_VIEW = 0;
@@ -833,7 +839,12 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                 mThumbnailBtn.setVisibility(View.VISIBLE);
                 TextView startAppIcon = findViewById(R.id.view_contents_button_text);
                 startAppIcon.setVisibility(View.VISIBLE);
-                startAppIcon.setText(getResources().getString(R.string.dTV_content_service_start_text));
+                startAppIcon.setText(getResources().getString(R.string.dtv_content_service_start_text));
+            }else if (serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID){
+                mThumbnailBtn.setVisibility(View.VISIBLE);
+                TextView startAppIcon = findViewById(R.id.view_contents_button_text);
+                startAppIcon.setVisibility(View.VISIBLE);
+                startAppIcon.setText(getResources().getString(R.string.d_anime_store_content_service_start_text));
             }
             setTitleAndThumbnail(mDetailData.getTitle(), mDetailData.getThumb());
         }
@@ -1450,7 +1461,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                 //DTVの場合
                 if (mDetailData.getServiceId() == DTV_CONTENTS_SERVICE_ID) {
                     CustomDialog startAppDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-                    startAppDialog.setTitle(getResources().getString(R.string.dTV_content_service_start_dialog));
+                    startAppDialog.setTitle(getResources().getString(R.string.dtv_content_service_start_dialog));
                     startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                         @Override
                         public void onOKCallback(boolean isOK) {
@@ -1459,7 +1470,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                             if (isAppInstalled(DtvContentsDetailActivity.this, DTV_PACKAGE_NAME)) {
                                 //バージョンチェック
                                 if (localVersionCode < DTV_VERSION_STANDARD) {
-                                    errorMessage=getResources().getString(R.string.dTV_content_service_update_dialog);
+                                    errorMessage=getResources().getString(R.string.dtv_content_service_update_dialog);
                                     showErrorDialog(errorMessage);
                                 } else {
                                     //RESERVED4は4の場合
@@ -1484,6 +1495,31 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                     });
                     startAppDialog.showDialog();
 
+                    break;
+                } else if (mDetailData.getServiceId() == D_ANIMATION_CONTENTS_SERVICE_ID) {
+                    CustomDialog startAppDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+                    startAppDialog.setTitle(getResources().getString(R.string.d_anime_store_content_service_start_dialog));
+                    startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                        @Override
+                        public void onOKCallback(boolean isOK) {
+                            int localVersionCode = getVersionCode(DANIMESTORE_PACKAGE_NAME);
+                            //端末にdアニメストアアプリはすでに存在した場合
+                            if (isAppInstalled(DtvContentsDetailActivity.this, DANIMESTORE_PACKAGE_NAME)) {
+                                //バージョンチェック
+                                if (localVersionCode < DANIMESTORE_VERSION_STANDARD) {
+                                    errorMessage = getResources().getString(R.string.d_anime_store_content_service_update_dialog);
+                                    showErrorDialog(errorMessage);
+                                } else {
+                                    startApp(DANIMESTORE_START_URL);
+                                }
+                            } else {
+                                Uri uri = Uri.parse(DANIMESTORE_GOOGLEPLAY_DOWNLOAD_URL);
+                                Intent installIntent = new Intent(Intent.ACTION_VIEW, uri);
+                                startActivity(installIntent);
+                            }
+                        }
+                    });
+                    startAppDialog.showDialog();
                     break;
                 }
             default:
