@@ -315,4 +315,8 @@ public class JsonContents {
     public static final String META_RESPONSE_IS_NOTIFY = "is_notify";
     // エラー番号
     public static final String META_RESPONSE_NG_ERROR_NO = "errorno";
+    // アップデート要否
+    public static final String META_RESPONSE_IS_UPDATE = "is_update";
+    // 初回取得（必ずリストがほしい場合 true）
+    public static final String META_RESPONSE_IS_FORCE = "is_force";
 }

@@ -199,9 +199,16 @@ public class UrlConstants {
                 PLALA_AUTH + "user/info";
 
         /**
-         *  ユーザー情報取得
+         * ユーザー情報取得
          */
         public static final String USER_INFO_WEB_CLIENT =
                 PLALA_BASE_URL + "user_info/get";
+
+        /**
+         * クリップキー一覧の呼び出し先
+         */
+        // TODO QA確認中のため仮実装
+        public static final String CLIP_KEY_LIST_WEB_CLIENT =
+                PLALA_CLIENT + "user/clip/key/list";
     }
 }

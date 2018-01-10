@@ -7,7 +7,6 @@ package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ClipKeyListResponse {
 
@@ -19,7 +18,8 @@ public class ClipKeyListResponse {
     /**
      * response body
      */
-    private HashMap<String, String> mCkRespMap = new HashMap<String, String>();
+    private String mStatus = null;
+    private boolean mIsUpdate = false;
     /**
      * response body list
      */
@@ -28,12 +28,20 @@ public class ClipKeyListResponse {
     public ClipKeyListResponse() {
     }
 
-    public Map getCkRespMap() {
-        return mCkRespMap;
+    public void setStatus(String status) {
+        mStatus = status;
     }
 
-    public void setCkRespMap(HashMap map) {
-        this.mCkRespMap = map;
+    public String getStatus() {
+        return mStatus;
+    }
+
+    public void setIsUpdate(boolean isUpdate) {
+        mIsUpdate = isUpdate;
+    }
+
+    public boolean getIsUpdate() {
+        return mIsUpdate;
     }
 
     public List getCkList() {
