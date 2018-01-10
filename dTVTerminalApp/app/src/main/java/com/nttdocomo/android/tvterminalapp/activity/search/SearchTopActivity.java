@@ -75,15 +75,15 @@ public class SearchTopActivity extends BaseActivity
     private FragmentFactory mFragmentFactory = null;
 
     //テレビ
-    private static final int PAGE_NO_OF_SERVICE_TEREBI = 0;
+    private static final int PAGE_NO_OF_SERVICE_TELEVISION = 0;
     //ビデオ
-    private static final int PAGE_NO_OF_SERVICE_VIDEO = PAGE_NO_OF_SERVICE_TEREBI + 1;
+    private static final int PAGE_NO_OF_SERVICE_VIDEO = PAGE_NO_OF_SERVICE_TELEVISION + 1;
     //dTVチャンネル
-    private static final int PAGE_NO_OF_SERVICE_DTV_CHANNEL = PAGE_NO_OF_SERVICE_TEREBI + 2;
+    private static final int PAGE_NO_OF_SERVICE_DTV_CHANNEL = PAGE_NO_OF_SERVICE_TELEVISION + 2;
     //dTV
-    private static final int PAGE_NO_OF_SERVICE_DTV = PAGE_NO_OF_SERVICE_TEREBI + 3;
+    private static final int PAGE_NO_OF_SERVICE_DTV = PAGE_NO_OF_SERVICE_TELEVISION + 3;
     //dアニメ
-    private static final int PAGE_NO_OF_SERVICE_DANIME = PAGE_NO_OF_SERVICE_TEREBI + 4;
+    private static final int PAGE_NO_OF_SERVICE_DANIME = PAGE_NO_OF_SERVICE_TELEVISION + 4;
 
     public static final int SEARCH_DISPLAY_COUNT_ONCE = 20;
 
@@ -260,7 +260,7 @@ public class SearchTopActivity extends BaseActivity
         int pageIndex = mSearchViewPager.getCurrentItem();
 
         switch (pageIndex) {
-            case PAGE_NO_OF_SERVICE_TEREBI: //テレビ
+            case PAGE_NO_OF_SERVICE_TELEVISION: //テレビ
             case PAGE_NO_OF_SERVICE_VIDEO: //ビデオ
                 ret.add(new SearchServiceType(SearchServiceType.ServiceId.HIKARI_TV_FOR_DOCOMO));
                 break;
@@ -291,7 +291,7 @@ public class SearchTopActivity extends BaseActivity
         int pageIndex = mSearchViewPager.getCurrentItem();
 
         switch (pageIndex) {
-            case PAGE_NO_OF_SERVICE_TEREBI: //テレビ
+            case PAGE_NO_OF_SERVICE_TELEVISION: //テレビ
                 ret.add(new SearchServiceType(SearchServiceType.CategoryId.H4D_CATEGORY_TERRESTRIAL_DIGITAL));
                 ret.add(new SearchServiceType(SearchServiceType.CategoryId.H4D_CATEGORY_SATELLITE_BROADCASTING));
                 ret.add(new SearchServiceType(SearchServiceType.CategoryId.H4D_CATEGORY_IP_TV));
@@ -328,7 +328,7 @@ public class SearchTopActivity extends BaseActivity
         int pageIndex = mSearchViewPager.getCurrentItem();
 
         switch (pageIndex) {
-            case PAGE_NO_OF_SERVICE_TEREBI: //テレビ
+            case PAGE_NO_OF_SERVICE_TELEVISION: //テレビ
             case PAGE_NO_OF_SERVICE_VIDEO: //ビデオ
             case PAGE_NO_OF_SERVICE_DTV_CHANNEL: //dTVチャンネル
                 userAge = userInfoDataProvider.getUserAge();
