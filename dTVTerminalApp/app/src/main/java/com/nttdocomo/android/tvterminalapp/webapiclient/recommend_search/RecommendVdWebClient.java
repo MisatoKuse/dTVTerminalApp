@@ -18,10 +18,8 @@ public class RecommendVdWebClient extends WebApiBase implements WebApiCallback {
      * 種別・ビデオ
      */
     private static final String VIDEO_CATEGORY =
-            //TODO: ホーム画面におすすめビデオを表示する為の仮のカテゴリー
+            //ホーム画面におすすめビデオを表示する為のカテゴリー（仮の値から実際の値に昇格）
             "15:01,15:02,17:01,43:02,43:03,44:05,44:06,44:08,44:10&";
-    //TODO: 正当なカテゴリー値 サーバー側の準備が整った場合はこちらに変更する
-    //"44:06,44:08,44:10&";
 
     private RecommendVideoCallback mRecommendVideoCallback;
 
@@ -59,7 +57,8 @@ public class RecommendVdWebClient extends WebApiBase implements WebApiCallback {
         }
 
         //サーバーへおすすめ情報取得を依頼する
-        getReccomendInfo(UrlConstants.WebApiUrl.RECOMMEND_LIST_GET_URL + sendUrlAdder, queryItems, this);
+        getReccomendInfo(UrlConstants.WebApiUrl.RECOMMEND_LIST_GET_URL + sendUrlAdder,
+                queryItems, this);
     }
 
     @Override

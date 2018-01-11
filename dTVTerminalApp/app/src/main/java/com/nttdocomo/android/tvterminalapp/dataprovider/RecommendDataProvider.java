@@ -32,15 +32,28 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
 
     private RecommendApiDataProviderCallback mApiDataProviderCallback = null;
 
-    private int[] RECOMMEND_CATEGORY_ID_TELEVI
-            = {Integer.parseInt(recommendRequestId.HIKARITV_DOCOMO_IPTV.getCategoryId()),
+    /**
+     * テレビカテゴリー一覧（dTVチャンネル　VOD（見逃し）が無くなった等の新情報を反映）.
+     */
+    private final int[] RECOMMEND_CATEGORY_ID_TELEVI = {
+            Integer.parseInt(recommendRequestId.HIKARITV_DOCOMO_IPTV.getCategoryId()),
             Integer.parseInt(recommendRequestId.HIKARITV_DOCOMO_DTV_BLOADCAST.getCategoryId()),
-            Integer.parseInt(recommendRequestId.HIKARITV_DOCOMO_DTV_MISS.getCategoryId())
+            Integer.parseInt(recommendRequestId.DTVCHANNEL_BLOADCAST.getCategoryId()),
     };
-    private int[] RECOMMEND_CATEGORY_ID_VIDEO
-            = {Integer.parseInt(recommendRequestId.HIKARITV_DOCOMO_DTV_RELATION.getCategoryId()),
+
+    /**
+     * ビデオカテゴリー一覧（dTVチャンネル　VOD（見逃し）が追加された等の新情報を反映）.
+     */
+    private final int[] RECOMMEND_CATEGORY_ID_VIDEO = {
+            Integer.parseInt(recommendRequestId.HIKARITV_DOCOMO_DTV_MISS.getCategoryId()),
+            Integer.parseInt(recommendRequestId.HIKARITV_DOCOMO_DTV_RELATION.getCategoryId()),
             Integer.parseInt(recommendRequestId.HIKARITV_DOCOMO_HIKARITV_VOD.getCategoryId()),
-            Integer.parseInt(recommendRequestId.HIKARITV_DOCOMO_DTV_SVOD.getCategoryId())
+            Integer.parseInt(recommendRequestId.HIKARITV_DOCOMO_DTV_SVOD.getCategoryId()),
+            Integer.parseInt(recommendRequestId.DTV_SVOD.getCategoryId()),
+            Integer.parseInt(recommendRequestId.DTV_TVOD.getCategoryId()),
+            Integer.parseInt(recommendRequestId.DTVCHANNEL_MISS.getCategoryId()),
+            Integer.parseInt(recommendRequestId.DTVCHANNEL_RELATION.getCategoryId()),
+            Integer.parseInt(recommendRequestId.DANIME.getCategoryId()),
     };
 
     // 取得対象サービスID:カテゴリーID
@@ -98,55 +111,55 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     }
 
     /**
-     * Home画面用データを返却するためのコールバック
+     * Home画面用データを返却するためのコールバック.
      */
     public interface RecommendApiDataProviderCallback {
 
         /**
-         * おすすめ番組用コールバック
+         * おすすめ番組用コールバック.
          *
          * @param recommendContentInfoList
          */
         void RecommendChannelCallback(List<ContentsData> recommendContentInfoList);
 
         /**
-         * おすすめビデオ用コールバック
+         * おすすめビデオ用コールバック.
          *
          * @param recommendContentInfoList
          */
         void RecommendVideoCallback(List<ContentsData> recommendContentInfoList);
 
         /**
-         * おすすめdTV用コールバック
+         * おすすめdTV用コールバック.
          *
          * @param recommendContentInfoList
          */
         void RecommendDTVCallback(List<ContentsData> recommendContentInfoList);
 
         /**
-         * おすすめdアニメ用コールバック
+         * おすすめdアニメ用コールバック.
          *
          * @param recommendContentInfoList
          */
         void RecommendDAnimeCallback(List<ContentsData> recommendContentInfoList);
 
         /**
-         * おすすめdチャンネル用コールバック
+         * おすすめdチャンネル用コールバック.
          *
          * @param recommendContentInfoList
          */
         void RecommendDChannelCallback(List<ContentsData> recommendContentInfoList);
 
         /**
-         * 0件取得時のコールバック
+         * 0件取得時のコールバック.
          */
         void RecommendNGCallback();
     }
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
-     * @param mContext
+     * @param mContext コンテキスト
      */
     public RecommendDataProvider(Context mContext) {
         this.mContext = mContext;
@@ -154,7 +167,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     }
 
     /**
-     * キャッシュからデータを取得
+     * キャッシュからデータを取得.
      *
      * @param cacheDateKey  日付キー
      * @param requestPageNo タブNo
@@ -180,7 +193,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     }
 
     /**
-     * Activityからのデータ取得要求受付
+     * Activityからのデータ取得要求受付.
      *
      * @param requestPageNo タブ種別 ,startIndex 取得開始位置, maxResult 最大取得件数
      */
@@ -248,12 +261,12 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         requestData.startIndex = String.valueOf(startIndex);
         requestData.maxResult = String.valueOf(maxResult);
         // サーバへリクエストを送信
-        RecommendWebClient webClient = new RecommendWebClient(this);
+        RecommendWebClient webClient = new RecommendWebClient(this, mContext);
         webClient.getRecommendApi(requestData);
     }
 
     /**
-     * おすすめ番組データをServiceIdとCategoryIdを元にキャッシュし、Activityに送る
+     * おすすめ番組データをServiceIdとCategoryIdを元にキャッシュし、Activityに送る.
      *
      * @param recChList
      */
@@ -319,7 +332,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     }
 
     /**
-     * クリップ操作用レスポンスを作成
+     * クリップ操作用レスポンスを作成.
      *
      * @param map サーバレスポンスデータ
      * @return クリップ用リクエストデータ
@@ -345,7 +358,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     }
 
     /**
-     * おすすめ番組をDBに保存する
+     * おすすめ番組をDBに保存する.
      *
      * @param recommendChList
      */
@@ -358,7 +371,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     }
 
     /**
-     * おすすめテレビの取得対象サービスID:カテゴリーID文字列生成
+     * おすすめテレビの取得対象サービスID:カテゴリーID文字列生成.
      *
      * @return
      */
@@ -373,7 +386,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     }
 
     /**
-     * おすすめビデオの取得対象サービスID:カテゴリーID文字列生成
+     * おすすめビデオの取得対象サービスID:カテゴリーID文字列生成.
      *
      * @return
      */
@@ -388,7 +401,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     }
 
     /**
-     * おすすめdチャンネルの取得対象サービスID:カテゴリーID文字列生成
+     * おすすめdチャンネルの取得対象サービスID:カテゴリーID文字列生成.
      *
      * @return
      */
@@ -403,7 +416,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     }
 
     /**
-     * おすすめdTVの取得対象サービスID:カテゴリーID文字列生成
+     * おすすめdTVの取得対象サービスID:カテゴリーID文字列生成.
      *
      * @return
      */
@@ -417,7 +430,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     }
 
     /**
-     * おすすめdアニメの取得対象サービスID:カテゴリーID文字列生成
+     * おすすめdアニメの取得対象サービスID:カテゴリーID文字列生成.
      *
      * @return
      */

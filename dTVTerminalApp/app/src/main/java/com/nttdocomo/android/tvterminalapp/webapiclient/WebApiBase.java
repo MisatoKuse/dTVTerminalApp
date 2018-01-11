@@ -35,7 +35,14 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
         new HttpThread(url, this).start();
     }
 
-    private String createUrlComponents(String url, Map<String, String> queryItems) {
+    /**
+     * get呼び出し用に、URLとパラメータを統合する
+     *
+     * @param url 呼び出し用URL
+     * @param queryItems 呼び出し用パラメータ
+     * @return 統合後文字列
+     */
+    protected String createUrlComponents(String url, Map<String, String> queryItems) {
         StringBuffer stringBuffer = new StringBuffer("");
         if (null != url) {
 
@@ -51,7 +58,8 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
                             DTVTLogger.debug(e);
                         }
                         if (null != v) {
-                            stringBuffer.append(key + "=");
+                            stringBuffer.append(key);
+                            stringBuffer.append("=");
                             stringBuffer.append(queryItems.get(key));
                         } else {
                             DTVTLogger.debug("WebApiBase::createUrlComponents, queryItems.get(key) is NULL");
