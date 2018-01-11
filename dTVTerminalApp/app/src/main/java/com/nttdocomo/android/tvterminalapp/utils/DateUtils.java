@@ -105,7 +105,7 @@ public class DateUtils {
     /**
      * 1日のエポック秒.
      */
-    private static final long EPOCH_TIME_ONE_DAY = 86400;
+    public static final long EPOCH_TIME_ONE_DAY = 86400;
     public static final long EPOCH_TIME_ONE_HOUR = 3600;
 
     /**

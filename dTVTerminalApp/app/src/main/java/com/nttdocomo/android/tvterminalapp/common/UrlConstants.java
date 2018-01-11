@@ -112,6 +112,12 @@ public class UrlConstants {
                 PLALA_CLIENT + "meta/genrecontents";
 
         /**
+         * 購入済みチャンネル一覧取得
+         */
+        public static final String RENTAL_CH_LIST_WEB_CLIENT =
+                PLALA_CLIENT + "user/activelist/ch";
+
+        /**
          * 購入済みVOD一覧取得(レンタルビデオ用)
          */
         public static final String RENTAL_VOD_LIST_WEB_CLIENT =

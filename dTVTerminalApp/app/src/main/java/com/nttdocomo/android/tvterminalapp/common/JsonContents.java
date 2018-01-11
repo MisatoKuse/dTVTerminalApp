@@ -5,14 +5,49 @@
 package com.nttdocomo.android.tvterminalapp.common;
 
 /**
- * リクエストパラメータ定数定義クラス
+ * リクエストパラメータ定数定義クラス.
  */
 public class JsonContents {
 
+    /**
+     * アンダーライン.
+     */
     public static final String UNDER_LINE = "_";
 
     /**
-     * VOD＆EPGマージメタレスポンス（縮小版）
+     * チャンネルメタレスポンス（フル版）.
+     * metadata_listパラメータ
+     */
+    public static final String[] METADATA_LIST_PARA = {JsonContents.META_RESPONSE_CRID,
+            JsonContents.META_RESPONSE_SERVICE_ID, JsonContents.META_RESPONSE_CHNO,
+            JsonContents.META_RESPONSE_TITLE, JsonContents.META_RESPONSE_TITLERUBY,
+            JsonContents.META_RESPONSE_DISP_TYPE, JsonContents.META_RESPONSE_SERVICE,
+            JsonContents.META_RESPONSE_CH_TYPE, JsonContents.META_RESPONSE_AVAIL_START_DATE,
+            JsonContents.META_RESPONSE_AVAIL_END_DATE, JsonContents.META_RESPONSE_DEFAULT_THUMB,
+            JsonContents.META_RESPONSE_THUMB_640, JsonContents.META_RESPONSE_THUMB_448,
+            JsonContents.META_RESPONSE_DEMONG, JsonContents.META_RESPONSE_4KFLG,
+            JsonContents.META_RESPONSE_AVAIL_STATUS, JsonContents.META_RESPONSE_DELIVERY,
+            JsonContents.META_RESPONSE_R_VALUE, JsonContents.META_RESPONSE_ADULT,
+            JsonContents.META_RESPONSE_NG_FUNC, JsonContents.META_RESPONSE_GENRE_ARRAY,
+            JsonContents.META_RESPONSE_SYNOP, JsonContents.META_RESPONSE_CHSVOD,
+            JsonContents.META_RESPONSE_PUID, JsonContents.META_RESPONSE_SUB_PUID,
+            JsonContents.META_RESPONSE_PRICE, JsonContents.META_RESPONSE_QRANGE,
+            JsonContents.META_RESPONSE_QUNIT, JsonContents.META_RESPONSE_PU_START_DATE,
+            JsonContents.META_RESPONSE_PU_END_DATE, JsonContents.META_RESPONSE_CHPACK};
+
+    /**
+     * チャンネルメタレスポンス（フル版）.
+     * CHPACKパラメータ
+     */
+    public static final String[] CHPACK_PARA = {JsonContents.META_RESPONSE_CRID,
+            JsonContents.META_RESPONSE_TITLE, JsonContents.META_RESPONSE_DISP_TYPE,
+            JsonContents.META_RESPONSE_PUID, JsonContents.META_RESPONSE_SUB_PUID,
+            JsonContents.META_RESPONSE_PRICE, JsonContents.META_RESPONSE_QRANGE,
+            JsonContents.META_RESPONSE_QUNIT, JsonContents.META_RESPONSE_PU_START_DATE,
+            JsonContents.META_RESPONSE_PU_END_DATE};
+
+    /**
+     * VOD＆EPGマージメタレスポンス（縮小版）.
      * listパラメータ
      */
     public static final String[] LIST_PARA = {JsonContents.META_RESPONSE_CRID,
@@ -48,7 +83,7 @@ public class JsonContents {
             JsonContents.META_RESPONSE_RELATIONAL_ID_ARRAY};
 
     /**
-     * VOD＆EPGマージメタレスポンス（縮小版）
+     * VOD＆EPGマージメタレスポンス（縮小版）.
      * list ＞ PUINF パラメータ
      */
     public static final String[] PUINF_PARA = {JsonContents.META_RESPONSE_PUID,
@@ -59,27 +94,27 @@ public class JsonContents {
             JsonContents.META_RESPONSE_PU_START_DATE, JsonContents.META_RESPONSE_PU_END_DATE};
 
     /**
-     * 1：番組指定予約
+     * 1：番組指定予約.
      * 3：日時指定予約
      * 4：日時指定定期予約
      */
     public static final String META_RESPONSE_RESV_TYPE = "resv_type";
     /**
-     * 開始予定エポック秒
+     * 開始予定エポック秒.
      * loop_type_numが
      * 0の場合：予約開始時エポック秒
      * 0以外の場合：0時0分0秒からの通算秒
      */
     public static final String META_RESPONSE_START_TIME = "start_time";
     /**
-     * 定期予約指定値、0~10
+     * 定期予約指定値、0~10.
      * 定期予約しない：0
      * 毎週月曜：1 ～ 毎週日曜：7
      * 毎週月～金：8、 毎週月～土：9、 毎日：10
      */
     public static final String META_RESPONSE_LOOP_TYPE_NUM = "loop_type_num";
     /**
-     * 同期状態
+     * 同期状態.
      * 1：チューナー反映待ち
      * 2：チューナー反映中
      * 3：チューナー反映済み
@@ -87,7 +122,7 @@ public class JsonContents {
      */
     public static final String META_RESPONSE_SYNC_STATUS = "sync_status";
     /**
-     * 同期失敗理由
+     * 同期失敗理由.
      * 1：ネットワークエラー
      * 2：パラメータエラー
      * 3：最大予約件数超過
@@ -98,20 +133,20 @@ public class JsonContents {
      */
     public static final String META_RESPONSE_ = "sync_error_reason";
     /**
-     * titleruby_asc：タイトルルビ昇順
+     * titleruby_asc：タイトルルビ昇順.
      * avail_s_asc：配信開始日昇順
      * avail_e_desc：配信終了日降順
      * play_count_desc：人気順（前日の視聴回数数降順）
      */
     public static final String META_RESPONSE_SORT = "sort";
     /**
-     * dch：dチャンネル
+     * dch：dチャンネル.
      * hikaritv：ひかりTVの多ch
      * 指定なしの場合：すべて
      */
     public static final String META_RESPONSE_TYPE = "type";
     /**
-     * release、testa、demo
+     * release、testa、demo.
      * ※指定なしの場合release
      */
     public static final String META_RESPONSE_FILTER = "filter";

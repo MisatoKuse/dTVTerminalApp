@@ -357,12 +357,24 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
             String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
             String thumbnail = hashMap.get(JsonContents.META_RESPONSE_DEFAULT_THUMB);
             String serviceId = hashMap.get(JsonContents.META_RESPONSE_SERVICE_ID);
+            String chType = hashMap.get(JsonContents.META_RESPONSE_CH_TYPE);
+            String puId = hashMap.get(JsonContents.META_RESPONSE_PUID);
+            String subPuId = hashMap.get(JsonContents.META_RESPONSE_SUB_PUID);
+            String chPackPuId = hashMap.get(JsonContents.META_RESPONSE_CHPACK
+                    + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID);
+            String chPackSubPuId = hashMap.get(JsonContents.META_RESPONSE_CHPACK
+                    + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_SUB_PUID);
             if (!TextUtils.isEmpty(chNo)) {
                 Channel channel = new Channel();
                 channel.setTitle(title);
                 channel.setChNo(Integer.parseInt(chNo));
                 channel.setThumbnail(thumbnail);
                 channel.setServiceId(serviceId);
+                channel.setChType(chType);
+                channel.setPuId(puId);
+                channel.setSubPuId(subPuId);
+                channel.setChPackPuId(chPackPuId);
+                channel.setChPackSubPuId(chPackSubPuId);
                 channels.add(channel);
             }
         }
