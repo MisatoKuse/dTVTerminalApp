@@ -63,7 +63,7 @@ public class RecordingReservationListResponse {
         // OK 固定値
         mStatus = RECORDING_RESERVATION_FIXED;
         // 録画予約情報受信時刻
-        mReservation = RECORDING_RESERVATION_FIXED;
+        mReservation = null;
         // ページャ
         mPager = RECORDING_RESERVATION_FIXED;
         // 録画予約一覧

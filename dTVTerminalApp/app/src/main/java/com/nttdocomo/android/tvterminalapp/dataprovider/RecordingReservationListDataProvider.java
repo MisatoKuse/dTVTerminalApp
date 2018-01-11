@@ -138,7 +138,9 @@ public class RecordingReservationListDataProvider implements
         DTVTLogger.start();
         if (response != null) {
             mDRemoteResponse = response;
-            mReservationTime = DateUtils.getRecordShowListItem(Long.parseLong(response.getReservation()));
+            if (null != response.getReservation()) {
+                mReservationTime = DateUtils.getRecordShowListItem(Long.parseLong(response.getReservation()));
+            }
             // CH一覧取得,STB側との同期
             if (mStbResponse != null && mTvScheduleList != null && mTvScheduleList.size() != 0) {
                 buttRecordingReservationListData();
@@ -206,7 +208,7 @@ public class RecordingReservationListDataProvider implements
         stbWebClient.getRemoteRecordingReservationListApi(this);
 
         // dリモート側録画予約一覧取得要求
-        RecordingReservationListWebClient dRemoteWebClient= new RecordingReservationListWebClient();
+        RecordingReservationListWebClient dRemoteWebClient = new RecordingReservationListWebClient();
         int limit = 0;
         int offset = 0;
         dRemoteWebClient.getRecordingReservationListApi(limit, offset, this);
@@ -236,11 +238,11 @@ public class RecordingReservationListDataProvider implements
         List<HashMap<String, String>> list = new ArrayList<>();
         //通信クラスにデータ取得要求を出す
         ChannelWebClient webClient = new ChannelWebClient();
-        int pagetLimit = 1;
+        int pagerLimit = 1;
         int pagerOffset = 1;
         String filter = "";
         String type = "";
-        webClient.getChannelApi(pagetLimit, pagerOffset, filter, type, this);
+        webClient.getChannelApi(pagerLimit, pagerOffset, filter, type, this);
         DTVTLogger.end();
     }
 
@@ -442,7 +444,7 @@ public class RecordingReservationListDataProvider implements
         DTVTLogger.debug("toDayOfWeek = " + todayDayOfWeek);
         switch (loopTypeNum) {
             case RECORD_RESERVATION_LOOP_TYPE_NUM_EV_MONDAY: // 毎週月曜日
-                DTVTLogger.debug("case 1:dayOfweek 2");
+                DTVTLogger.debug("case 1:dayOfWeek 2");
                 if (todayDayOfWeek == DateUtils.DAY_OF_WEEK_MONDAY) {
                     if (buffStartTime(nowTimeEpoch, dataTimeEpoch)) {
                         key = RECORD_RESERVATION_MAP_INDEX_SEVEN_DAY_LATER;
@@ -452,7 +454,7 @@ public class RecordingReservationListDataProvider implements
                 }
                 break;
             case RECORD_RESERVATION_LOOP_TYPE_NUM_EV_TUESDAY: // 毎週火曜日
-                DTVTLogger.debug("case 2:dayOfweek 3");
+                DTVTLogger.debug("case 2:dayOfWeek 3");
                 if (todayDayOfWeek == DateUtils.DAY_OF_WEEK_TUESDAY) {
                     if (buffStartTime(nowTimeEpoch, dataTimeEpoch)) {
                         key = RECORD_RESERVATION_MAP_INDEX_SEVEN_DAY_LATER;
@@ -462,7 +464,7 @@ public class RecordingReservationListDataProvider implements
                 }
                 break;
             case RECORD_RESERVATION_LOOP_TYPE_NUM_EV_WEDNESDAY: // 毎週水曜日
-                DTVTLogger.debug("case 3:dayOfweek 4");
+                DTVTLogger.debug("case 3:dayOfWeek 4");
                 if (todayDayOfWeek == DateUtils.DAY_OF_WEEK_WEDNESDAY) {
                     if (buffStartTime(nowTimeEpoch, dataTimeEpoch)) {
                         key = RECORD_RESERVATION_MAP_INDEX_SEVEN_DAY_LATER;
@@ -472,7 +474,7 @@ public class RecordingReservationListDataProvider implements
                 }
                 break;
             case RECORD_RESERVATION_LOOP_TYPE_NUM_EV_THURSDAY: // 毎週木曜日
-                DTVTLogger.debug("case 4:dayOfweek 5");
+                DTVTLogger.debug("case 4:dayOfWeek 5");
                 if (todayDayOfWeek == DateUtils.DAY_OF_WEEK_THURSDAY) {
                     if (buffStartTime(nowTimeEpoch, dataTimeEpoch)) {
                         key = RECORD_RESERVATION_MAP_INDEX_SEVEN_DAY_LATER;
@@ -482,7 +484,7 @@ public class RecordingReservationListDataProvider implements
                 }
                 break;
             case RECORD_RESERVATION_LOOP_TYPE_NUM_EV_FRIDAY: // 毎週金曜日
-                DTVTLogger.debug("case 5:dayOfweek 6");
+                DTVTLogger.debug("case 5:dayOfWeek 6");
                 if (todayDayOfWeek == DateUtils.DAY_OF_WEEK_FRIDAY) {
                     if (buffStartTime(nowTimeEpoch, dataTimeEpoch)) {
                         key = RECORD_RESERVATION_MAP_INDEX_SEVEN_DAY_LATER;
@@ -492,7 +494,7 @@ public class RecordingReservationListDataProvider implements
                 }
                 break;
             case RECORD_RESERVATION_LOOP_TYPE_NUM_EV_SATURDAY: // 毎週土曜日
-                DTVTLogger.debug("case 6:dayOfweek 7");
+                DTVTLogger.debug("case 6:dayOfWeek 7");
                 if (todayDayOfWeek == DateUtils.DAY_OF_WEEK_SATURDAY) {
                     if (buffStartTime(nowTimeEpoch, dataTimeEpoch)) {
                         key = RECORD_RESERVATION_MAP_INDEX_SEVEN_DAY_LATER;
@@ -502,7 +504,7 @@ public class RecordingReservationListDataProvider implements
                 }
                 break;
             case RECORD_RESERVATION_LOOP_TYPE_NUM_EV_SUNDAY: // 毎週日曜日
-                DTVTLogger.debug("case 7:dayOfweek 1");
+                DTVTLogger.debug("case 7:dayOfWeek 1");
                 if (todayDayOfWeek == DateUtils.DAY_OF_WEEK_SUNDAY) {
                     if (buffStartTime(nowTimeEpoch, dataTimeEpoch)) {
                         key = RECORD_RESERVATION_MAP_INDEX_SEVEN_DAY_LATER;
