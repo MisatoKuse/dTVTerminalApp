@@ -30,7 +30,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     private Activity mActivity;
     private DlData dlData;
     private List<DlData> dlDataQue;
-    private static boolean isBinded = false;
+    public  boolean isBinded = false;
 
     public DlDataProvider(Activity activity, DlDataProviderListener dlDataProviderListener) throws Exception {
         if (null == activity) {
@@ -230,21 +230,43 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
 
     @Override
     public void onSuccess(String fullPath) {
-        if (null != mDlDataProviderListener) {
+        if (null != mDlDataProviderListener && isBinded) {
             mDlDataProviderListener.onSuccess(fullPath);
-            if (!isBinded) {
-                if (dlDataQue != null && dlDataQue.size() > 0) {
-                    endProvider();
-                    prepareDownLoad(dlDataQue.get(0));
+        } else {
+            if (dlDataQue != null && dlDataQue.size() > 0) {
+                try {
+                    setDlParam(getDownLoadParam());
                     start();
-                } else {
-                    stop();
+                } catch (Exception e){
+                    e.printStackTrace();
                 }
-            }else{
-                endProvider();
+            } else {
                 stop();
             }
         }
+    }
+
+    private DownloadParam getDownLoadParam(){
+        DownloadParam downloadParam = null;
+        if(dlDataQue != null && dlDataQue.size() > 0){
+            DlData item = dlDataQue.get(0);
+            Context context = null;
+            if(getDownloadService() != null){
+                context = getDownloadService().getApplicationContext();
+            }
+            downloadParam = new DtcpDownloadParam();
+            DtcpDownloadParam dtcpDownloadParam = (DtcpDownloadParam) downloadParam;
+            dtcpDownloadParam.setContext(context);
+            dtcpDownloadParam.setSavePath(item.getSaveFile());
+            dtcpDownloadParam.setSaveFileName(item.getTitle());
+            dtcpDownloadParam.setDtcp1host(item.getHost());
+            dtcpDownloadParam.setDtcp1port(Integer.parseInt(item.getPort()));
+            dtcpDownloadParam.setUrl(item.getUrl());
+            dtcpDownloadParam.setCleartextSize(Integer.parseInt(item.getTotalSize()));
+            dtcpDownloadParam.setItemId(item.getItemId());
+            dtcpDownloadParam.setPercentToNotify(Integer.parseInt(item.getPercentToNotify()));
+        }
+        return downloadParam;
     }
 
     @Override
@@ -259,10 +281,6 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         if (null != mDlDataProviderListener) {
             mDlDataProviderListener.onLowStorageSpace();
         }
-    }
-
-    private void prepareDownLoad(DlData dlData) {
-
     }
 
     private static final int DOWNLOAD_STATUS_SELECT = 1;
@@ -346,6 +364,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
 
     public void setQue(List<DlData> dlData) {
         this.dlDataQue = dlData;
+        isBinded = false;
     }
 
     private void dbOperationByThread(int operationId) {

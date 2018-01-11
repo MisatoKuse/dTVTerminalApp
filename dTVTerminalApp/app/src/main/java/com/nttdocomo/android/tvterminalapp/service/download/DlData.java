@@ -5,28 +5,29 @@
 package com.nttdocomo.android.tvterminalapp.service.download;
 
 public class DlData {
-    private  String mItemId;
-    private  String mUrl;
-    private  String mDidl;
-    private  String mHost;
-    private  String mPort;
-    private  String mSaveFile;
-    private  String mMimeType;
-    private  String mDownLoadSize;
-    private  String mDownLoadStatus;
-    private  String mTotalSize;
-    private  String mDuration;
-    private  String mResolution;
-    private  String mUpnpIcon;
-    private  String mBitrate;
-    private  String mIsSupportedByteSeek;
-    private  String mIsSupportedTimeSeek;
-    private  String mIsAvailableConnectionStalling;
-    private  String mIsLiveMode;
-    private  String mIsRemote;
-    private  String mTitle;
-    private  String mContentFormat;
-    private  String mVideoType;
+    private String mItemId;
+    private String mUrl;
+    private String mDidl;
+    private String mHost;
+    private String mPort;
+    private String mSaveFile;
+    private String mMimeType;
+    private String mDownLoadSize;
+    private String mDownLoadStatus;
+    private String mTotalSize;
+    private String mDuration;
+    private String mResolution;
+    private String mUpnpIcon;
+    private String mBitrate;
+    private String mIsSupportedByteSeek;
+    private String mIsSupportedTimeSeek;
+    private String mIsAvailableConnectionStalling;
+    private String mIsLiveMode;
+    private String mIsRemote;
+    private String mTitle;
+    private String mContentFormat;
+    private String mVideoType;
+    private String mPercentToNotify;
 
     public String getItemId() {
         return mItemId;
@@ -202,5 +203,13 @@ public class DlData {
 
     public void setVideoType(String mVideoType) {
         this.mVideoType = mVideoType;
+    }
+
+    public String getPercentToNotify() {
+        return mPercentToNotify;
+    }
+
+    public void setPercentToNotify(String mPercentToNotify) {
+        this.mPercentToNotify = mPercentToNotify;
     }
 }

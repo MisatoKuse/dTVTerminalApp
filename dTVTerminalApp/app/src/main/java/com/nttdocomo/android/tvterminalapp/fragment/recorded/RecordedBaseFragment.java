@@ -199,25 +199,6 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 }
             });
         }
-//        final int newPercent = percent;
-//        Runnable r= new Runnable() {
-//            @Override
-//            public void run() {
-//                DTVTLogger.debug("HandlerThread:"+Thread.currentThread().getId());
-//                if(queView.size() > 0){
-//                    getActivity().runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            setDownloadStatus(queView.get(0), queIndex.get(0), newPercent);
-//                        }
-//                    });
-//
-//                }
-//            }
-//        };
-//        Thread t=new Thread (r);
-//        t.start();
-//        //mHandler.post(t);
     }
 
     @Override
@@ -284,7 +265,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                         queIndex.remove(0);
                     }
                     if(que.size() > 0){
-                        boolean isOk = prepareDownLoad(queIndex.get(0), false);
+                        boolean isOk = prepareDownLoad(queIndex.get(0));
                         if(!isOk){
                             return;
                         }
@@ -293,6 +274,12 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                             mDlDataProvider.start();
                         } catch (Exception e){
                             e.printStackTrace();
+                        }
+                    } else {
+                        if(mDlDataProvider != null){
+                            mDlDataProvider.isBinded = false;
+                            mActivity.unbindService(mDlDataProvider);
+                            mDlDataProvider.stop();
                         }
                     }
                 }
@@ -348,21 +335,26 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         switch (mContentsData.get(index).getDownloadFlg()) {
             case ContentsAdapter.DOWNLOAD_STATUS_ALLOW :
                 if (que.size() == 0) {
-                    boolean isOk = prepareDownLoad(index, true);
+                    boolean isOk = prepareDownLoad(index);
                     if(!isOk){
                         return;
                     }
                 }
                 DlData dlData = new DlData();
-                dlData.setItemId(mContentsList.get(index).getItemId());
-                dlData.setSaveFile(getContext().getCacheDir().getPath());
-                dlData.setTotalSize(mContentsList.get(index).getClearTextSize());
-                dlData.setTitle(mContentsList.get(index).getTitle());
-                dlData.setUrl(mContentsList.get(index).getResUrl());
-                dlData.setBitrate(mContentsList.get(index).getBitrate());
-                dlData.setDuration(mContentsList.get(index).getDuration());
-                dlData.setVideoType(mContentsList.get(index).getVideoType());
-                dlData.setUpnpIcon(mContentsList.get(index).getUpnpIcon());
+                RecordedContentsDetailData itemData = mContentsList.get(index);
+                dlData.setItemId(itemData.getItemId());
+                dlData.setSaveFile(getDownloadPath(getContext()));
+                dlData.setTotalSize(itemData.getClearTextSize());
+                dlData.setTitle(DownloaderBase.getFileNameById(itemData.getItemId()));
+                dlData.setUrl(itemData.getResUrl());
+                dlData.setBitrate(itemData.getBitrate());
+                dlData.setPort(String.valueOf(DlnaDmsItem.getPortFromProtocal(itemData.getVideoType())));
+                dlData.setDuration(itemData.getDuration());
+                dlData.setVideoType(itemData.getVideoType());
+                dlData.setUpnpIcon(itemData.getUpnpIcon());
+                DlnaDmsItem dmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getContext());
+                dlData.setHost(dmsItem.mIPAddress);
+                dlData.setPercentToNotify(String.valueOf(mPercentToUpdateUi));
                 mDlDataProvider.setDlData(dlData);
                 que.add(dlData);
                 queIndex.add(index);
@@ -379,7 +371,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         }
     }
 
-    private boolean prepareDownLoad(int index, boolean isFirstFlg) {
+    private boolean prepareDownLoad(int index) {
         Context context = getActivity();
         if (null == context) {
             return false;
@@ -444,7 +436,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 return false;
             }
         }
-        if(isFirstFlg){
+        if(!mDlDataProvider.isBinded){
             mDlDataProvider.beginProvider();
         }
         return true;
@@ -508,7 +500,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                             if ((int) view.getTag() == queIndex.get(0)) {
                                 mDlDataProvider.cancel();
                                 if (queIndex.size() > 1) {
-                                    prepareDownLoad(queIndex.get(1), false);
+                                    prepareDownLoad(queIndex.get(1));
                                 }
                             }
                             if ((int) view.getTag() == queIndex.get(i)) {
@@ -554,7 +546,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     public void onDestroy() {
         super.onDestroy();
         if(mDlDataProvider != null){
-            mDlDataProvider.endProvider();
+            mActivity.unbindService(mDlDataProvider);
             if(que.size() > 0){
                 mDlDataProvider.setQue(que);
             }
