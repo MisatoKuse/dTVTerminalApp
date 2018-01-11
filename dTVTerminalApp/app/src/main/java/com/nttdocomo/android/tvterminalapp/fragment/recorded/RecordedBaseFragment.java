@@ -302,7 +302,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
 
     @Override
     public void onCancel() {
-
+        showMessage("ダウンロードはキャンセルしました。");
     }
 
     @Override
@@ -451,11 +451,23 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     }
 
     /**
-     * todo to do with sd card
+     * Get save path
      * @return
      */
     private String getDownloadPath(Context context){
-        return EnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP); //内部ストレージ
+        if(null==context){
+            return null;
+        }
+        Boolean isInternal= SharedPreferencesUtils.getSharedPreferencesStoragePath(context);
+        String internalPaht=EnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP); //内部ストレージ
+        if(isInternal){
+            return internalPaht;
+        }
+        String ret= DownloaderBase.getExtSDCardPath();
+        if(null==ret){
+            ret=internalPaht;
+        }
+        return ret;
     }
 
     /**

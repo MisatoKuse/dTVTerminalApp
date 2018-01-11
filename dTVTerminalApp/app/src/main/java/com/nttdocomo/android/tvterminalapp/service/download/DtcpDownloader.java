@@ -10,14 +10,11 @@ import android.content.Context;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDlListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDlStatus;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDownloadRet;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDownload;
-import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
-/**
- * todo 作成中
- */
+import java.io.File;
+
 public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
 
     private DlnaProvDownload mDlnaProvDownload;
@@ -43,6 +40,8 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
 
     @Override
     protected void download() {
+        DTVTLogger.debug("dtcp download begin, files");
+        printDlPathFiles();
         mFinishedBytes=0;
         DtcpDownloadParam param= (DtcpDownloadParam) getDownloadParam();
         if(!param.isParamValid()){
@@ -88,6 +87,13 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
     }
 
     @Override
+    protected void cancelImpl() {
+        if(null!=mDlnaProvDownload) {
+            mDlnaProvDownload.cancel();
+        }
+    }
+
+    @Override
     public void dlProgress(int sizeFinished) {
         if(isStorageSpaceLow()){
             setLowStorageSpace();
@@ -119,7 +125,29 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
         }
     }
 
+    private void printDlPathFiles(){
+        try {
+            DtcpDownloadParam dp = (DtcpDownloadParam) getDownloadParam();
+            if (null!=dp) {
+                String path=dp.getSavePath();
+                if(null!=path){
+                    File f= new File(path);
+                    File[] files= f.listFiles();
+                    DTVTLogger.debug("------------------------");
+                    for(File f2: files){
+                        DTVTLogger.debug(f2.getAbsolutePath() + ", size=" + f2.getTotalSpace());
+                    }
+                    DTVTLogger.debug("------------------------");
+                }
+            }
+        }catch (Exception e){
+
+        }
+    }
+
     private void onStopIt(){
         mFinishedBytes=0;
+        DTVTLogger.debug("dtcp download end, files");
+        printDlPathFiles();
     }
 }

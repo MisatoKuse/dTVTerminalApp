@@ -7,7 +7,12 @@ package com.nttdocomo.android.tvterminalapp.service.download;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class DownloaderBase {
 
@@ -154,9 +159,10 @@ public abstract class DownloaderBase {
     class DownLoadThread extends Thread {
         @Override
         public void run() {
-            if (mIsCanceled || mIsPause) {
-                return;
-            }
+//            if (mIsCanceled || mIsPause) {
+//                cancelImpl();
+//                return;
+//            }
             download();
         }
     }
@@ -206,16 +212,22 @@ public abstract class DownloaderBase {
         synchronized (this) {
             mIsPause=false;
             mIsCanceled=true;
+            cancelImpl();
         }
-        try{
-            mDownLoadThread.join();
-        }catch (Exception e){
-            DTVTLogger.debug("DownloaderBase.cancel, cause=" + e.getCause());
-        }
+//        try{
+//            mDownLoadThread.join();
+//        }catch (Exception e){
+//            DTVTLogger.debug("DownloaderBase.cancel, cause=" + e.getCause());
+//        }
         if(null!=mDownloadListener){
             mDownloadListener.onCancel();
         }
     }
+
+    /**
+     * Sub Classでダウンロード成功したとき、この関数をコール
+     */
+    protected abstract void cancelImpl();
 
     /**
      * ダウンロード容量不足
@@ -255,5 +267,39 @@ public abstract class DownloaderBase {
         String ret=id;
         ret=ret.replaceAll("[^a-z^A-Z^0-9]", "_");
         return "d_"+(new StringBuilder(ret)).toString();
+    }
+
+    /**
+     * 機能：一番目外部SDカードパスを戻す
+     * @return
+     */
+    public static String getExtSDCardPath() {
+        List<String> result = new ArrayList<String>();
+        try {
+            Runtime rt = Runtime.getRuntime();
+            Process proc = rt.exec("mount");
+            InputStream is = proc.getInputStream();
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr);
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.contains("extSdCard")) {
+                    String [] arr = line.split(" ");
+                    String path = arr[1];
+                    File file = new File(path);
+                    if (file.isDirectory()) {
+                        result.add(path);
+                    }
+                }
+            }
+            isr.close();
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+            return null;
+        }
+        if(0==result.size()){
+            return null;
+        }
+        return result.get(0);
     }
 }

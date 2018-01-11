@@ -65,4 +65,13 @@ public class DlnaProvDownload {
         DTVTLogger.end();
         return mDlnaInterfaceDl.download(param, xml);
     }
+
+    /**
+     *
+     */
+    public void cancel(){
+       if(null!=mDlnaInterfaceDl){
+           mDlnaInterfaceDl.downloadCancel();
+       }
+    }
 }

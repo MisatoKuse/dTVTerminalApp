@@ -9,6 +9,7 @@ import android.os.Handler;
 
 import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.jni.activation.NewEnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.service.download.DtcpDownloadParam;
 
 import java.io.File;
@@ -197,7 +198,7 @@ public class DlnaInterfaceDl {
         }
 
         String homeParent= getParentDir(homeDtcpPath);
-        int ret=NewEnvironmentUtil.copyDeviceKeyFromOtherCMWork(mContext, homeParent, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP);
+        int ret= NewEnvironmentUtil.copyDeviceKeyFromOtherCMWork(mContext, homeParent, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP);
         if(1!=ret && 3!=ret){
             DTVTLogger.end();
             return DlnaDownloadRet.DownloadRet_CopyKeyFileFailed;
@@ -232,7 +233,7 @@ public class DlnaInterfaceDl {
         return f.getParent();
     }
 
-    public void DownloadCancel(){
+    public void downloadCancel(){
         downloadCancel(mNativeDlna);
     }
 
