@@ -88,11 +88,13 @@ public class RecordReservationListActivity extends BaseActivity
      * リストの更新時間を取得
      */
     private void setUpdateTime() {
-        TextView textView = findViewById(R.id.reservation_update_time);
-        StringBuilder strBuilder = new StringBuilder();
-        strBuilder.append(getString(R.string.recording_reservation_list_update_time))
-        .append(mProvider.mReservationTime);
-        textView.setText(strBuilder.toString());
+        if (null != mProvider.mReservationTime) {
+            TextView textView = findViewById(R.id.reservation_update_time);
+            StringBuilder strBuilder = new StringBuilder();
+            strBuilder.append(getString(R.string.recording_reservation_list_update_time))
+                    .append(mProvider.mReservationTime);
+            textView.setText(strBuilder.toString());
+        }
     }
 
     // スクロール処理(ページング)

@@ -64,7 +64,7 @@ public class RecordingReservationListResponse {
         mStatus = RECORDING_RESERVATION_FIXED;
         // 録画予約情報受信時刻
         mReservation = RECORDING_RESERVATION_FIXED;
-        //ページャ
+        // ページャ
         mPager = RECORDING_RESERVATION_FIXED;
         // 録画予約一覧
         mRecordingReservationMetaData = new ArrayList<RecordingReservationMetaData>();
