@@ -43,6 +43,7 @@ namespace dtvt {
     const char * const RecVideoParse_Field_Res          ="res";
     const char * const RecVideoParse_Field_ProtocolInfo ="protocolInfo";
     const char * const RecVideoParse_Field_Size         ="size";
+    const char * const RecVideoParse_Field_ClearTextSize="cleartextSize";
     const char * const RecVideoParse_Field_Duration     ="duration";
     const char * const RecVideoParse_Field_Resolution   ="resolution";
     const char * const RecVideoParse_Field_Bitrate      ="bitrate";

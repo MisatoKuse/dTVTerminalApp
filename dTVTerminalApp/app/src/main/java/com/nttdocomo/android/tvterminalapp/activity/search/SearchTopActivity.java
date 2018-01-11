@@ -37,7 +37,6 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchD
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchFilterTypeMappable;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchGenreType;
 import com.nttdocomo.android.tvterminalapp.model.search.SearchNarrowCondition;
-import com.nttdocomo.android.tvterminalapp.model.search.SearchServiceType;
 import com.nttdocomo.android.tvterminalapp.model.search.SearchSortKind;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.TotalSearchContentInfo;
 import com.nttdocomo.android.tvterminalapp.fragment.search.FragmentFactory;
@@ -75,17 +74,15 @@ public class SearchTopActivity extends BaseActivity
     private FragmentFactory mFragmentFactory = null;
 
     //テレビ
-    private static final int PAGE_NO_OF_SERVICE_TEREBI = 0;
+    private static final int PAGE_NO_OF_SERVICE_TELEVISION = 0;
     //ビデオ
-    private static final int PAGE_NO_OF_SERVICE_VIDEO = PAGE_NO_OF_SERVICE_TEREBI + 1;
+    private static final int PAGE_NO_OF_SERVICE_VIDEO = PAGE_NO_OF_SERVICE_TELEVISION + 1;
     //dTVチャンネル
-    private static final int PAGE_NO_OF_SERVICE_DTV_CHANNEL = PAGE_NO_OF_SERVICE_TEREBI + 2;
+    private static final int PAGE_NO_OF_SERVICE_DTV_CHANNEL = PAGE_NO_OF_SERVICE_TELEVISION + 2;
     //dTV
-    private static final int PAGE_NO_OF_SERVICE_DTV = PAGE_NO_OF_SERVICE_TEREBI + 3;
+    private static final int PAGE_NO_OF_SERVICE_DTV = PAGE_NO_OF_SERVICE_TELEVISION + 3;
     //dアニメ
-    private static final int PAGE_NO_OF_SERVICE_DANIME = PAGE_NO_OF_SERVICE_TEREBI + 4;
-
-    public static final int SEARCH_DISPLAY_COUNT_ONCE = 20;
+    private static final int PAGE_NO_OF_SERVICE_DANIME = PAGE_NO_OF_SERVICE_TELEVISION + 4;
 
     private static final long SEARCH_INTERVAL = 1000;
 
@@ -252,96 +249,6 @@ public class SearchTopActivity extends BaseActivity
         mPageNumber = (mPageNumber < 0 ? 0 : mPageNumber);
     }
 
-    private ArrayList<SearchServiceType> getCurrentSearchServiceTypeArray() {
-        ArrayList<SearchServiceType> ret = new ArrayList<>();
-        if (null == mSearchViewPager) {
-            return ret;
-        }
-        int pageIndex = mSearchViewPager.getCurrentItem();
-
-        switch (pageIndex) {
-            case PAGE_NO_OF_SERVICE_TEREBI: //テレビ
-            case PAGE_NO_OF_SERVICE_VIDEO: //ビデオ
-                ret.add(new SearchServiceType(SearchServiceType.ServiceId.HIKARI_TV_FOR_DOCOMO));
-                break;
-            case PAGE_NO_OF_SERVICE_DTV_CHANNEL: //dTVチャンネル
-                ret.add(new SearchServiceType(SearchServiceType.ServiceId.DTV_CHANNEL_CONTENTS));
-                break;
-            case PAGE_NO_OF_SERVICE_DTV: //DTV_CONTENTS
-                ret.add(new SearchServiceType(SearchServiceType.ServiceId.DTV_CONTENTS));
-                break;
-            case PAGE_NO_OF_SERVICE_DANIME: //dアニメ
-                ret.add(new SearchServiceType(SearchServiceType.ServiceId.D_ANIMATION_CONTENTS));
-                break;
-            default:
-                break;
-        }
-        return ret;
-    }
-
-    /**
-     * リクエスト用カテゴリIDを設定する
-     * @return
-     */
-    private ArrayList<SearchServiceType> getCurrentSearchCategoryTypeArray() {
-        ArrayList<SearchServiceType> ret = new ArrayList<>();
-        if (null == mSearchViewPager) {
-            return ret;
-        }
-        int pageIndex = mSearchViewPager.getCurrentItem();
-
-        switch (pageIndex) {
-            case PAGE_NO_OF_SERVICE_TEREBI: //テレビ
-                ret.add(new SearchServiceType(SearchServiceType.CategoryId.H4D_CATEGORY_TERRESTRIAL_DIGITAL));
-                ret.add(new SearchServiceType(SearchServiceType.CategoryId.H4D_CATEGORY_SATELLITE_BROADCASTING));
-                ret.add(new SearchServiceType(SearchServiceType.CategoryId.H4D_CATEGORY_IP_TV));
-                ret.add(new SearchServiceType(SearchServiceType.CategoryId.H4D_CATEGORY_DTV_CHANNEL_BROADCAST));
-                ret.add(new SearchServiceType(SearchServiceType.CategoryId.H4D_CATEGORY_RECORDED_CONTENTS));
-                break;
-            case PAGE_NO_OF_SERVICE_VIDEO: //ビデオ
-                ret.add(new SearchServiceType(SearchServiceType.CategoryId.H4D_CATEGORY_DTV_CHANNEL_WATCH_AGAIN));
-                ret.add(new SearchServiceType(SearchServiceType.CategoryId.H4D_CATEGORY_DTV_CHANNEL_RELATION));
-                ret.add(new SearchServiceType(SearchServiceType.CategoryId.H4D_CATEGORY_HIKARI_TV_VOD));
-                ret.add(new SearchServiceType(SearchServiceType.CategoryId.H4D_CATEGORY_DTV_SVOD));
-                break;
-            case PAGE_NO_OF_SERVICE_DTV_CHANNEL: //dTVチャンネル
-            case PAGE_NO_OF_SERVICE_DTV: //DTV_CONTENTS
-            case PAGE_NO_OF_SERVICE_DANIME: //dアニメ
-                break;
-            default:
-                break;
-        }
-        return ret;
-    }
-
-    /**
-     * リクエスト用ユーザ年齢情報を設定する
-     *
-     * @return
-     */
-    private int getUserAgeInfo() {
-        UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(this);
-        int userAge = -1;
-        if (null == mSearchViewPager) {
-            return userAge;
-        }
-        int pageIndex = mSearchViewPager.getCurrentItem();
-
-        switch (pageIndex) {
-            case PAGE_NO_OF_SERVICE_TEREBI: //テレビ
-            case PAGE_NO_OF_SERVICE_VIDEO: //ビデオ
-            case PAGE_NO_OF_SERVICE_DTV_CHANNEL: //dTVチャンネル
-                userAge = userInfoDataProvider.getUserAge();
-                break;
-            case PAGE_NO_OF_SERVICE_DTV: //DTV_CONTENTS
-            case PAGE_NO_OF_SERVICE_DANIME: //dアニメ
-                break;
-            default:
-                break;
-        }
-        return userAge;
-    }
-
     private void setSearchNarrowCondition() {
         if (null == mSearchNarrowCondition) {
             ArrayList<SearchFilterTypeMappable> arr = new ArrayList<>();
@@ -401,17 +308,15 @@ public class SearchTopActivity extends BaseActivity
             return;
         }
 
+        //現在のページ番号を取得
+        int pageIndex = mSearchViewPager.getCurrentItem();
         //SearchDataProvider dp=new SearchDataProvider();
-        ArrayList<SearchServiceType> serviceTypeArray = getCurrentSearchServiceTypeArray();
-        ArrayList<SearchServiceType> serviceCategoryArray = getCurrentSearchCategoryTypeArray();
         mSearchDataProvider.startSearchWith(
                 sCurrentSearchText,
-                serviceTypeArray,
-                serviceCategoryArray,
                 mSearchNarrowCondition,
+                pageIndex,
                 mSearchSortKind,
                 mPageNumber,
-                getUserAgeInfo(),
                 this
         );
         /* //for test

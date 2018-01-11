@@ -12,6 +12,8 @@
 #include <du_libxml.h>
 #include <dav_didl_libxml.h>
 #include <map>
+#include <string>
+#include <vector>
 
 namespace dtvt {
 
@@ -46,13 +48,28 @@ namespace dtvt {
         DLNA_MSG_ID_TER_CHANNEL_LIST = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 4,
         //ひかりTV
         DLNA_MSG_ID_HIKARI_CHANNEL_LIST = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 5,
+        //Download progress
+        DLNA_MSG_ID_DL_PROGRESS = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 6,
+        //Download progress
+        DLNA_MSG_ID_DL_STATUS = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 7,
+        //Download param
+        DLNA_MSG_ID_DL_XMLPARAM = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 8,
         //invalid value
         DLNA_MSG_ID_INVALID = 0xffffffff,
     } DLNA_MSG_ID;
 
+    typedef enum {
+        DOWNLOADER_STATUS_UNKNOWN,
+        DOWNLOADER_STATUS_MOVING,
+        DOWNLOADER_STATUS_COMPLETED,
+        DOWNLOADER_STATUS_CANCELLED,
+        DOWNLOADER_STATUS_ERROR_OCCURED
+    } DownloaderStatus;
+
 
     //const du_uchar* BDC_FILTER = ...      --> can not compile, so do it as below
-    const du_uchar BDC_FILTER[] = "res,res@duration,res@bitrate,res@sampleFrequency,res@bitsPerSample,res@nrAudioChannels,res@size,res@colorDepth,res@resolution,res@dlna:ifoFileURI,upnp:album,dc:date,dc:creator,upnp:originalTrackNumber,upnp:albumArtURI,upnp:albumArtURI@dlna:profileID";
+    //const du_uchar BDC_FILTER[] = "res,res@duration,res@bitrate,res@sampleFrequency,res@bitsPerSample,res@nrAudioChannels,res@size,res@colorDepth,res@resolution,res@dlna:ifoFileURI,upnp:album,dc:date,dc:creator,upnp:originalTrackNumber,upnp:albumArtURI,upnp:albumArtURI@dlna:profileID";
+    const du_uchar BDC_FILTER[] = "*";  //todo 実機でnasuneからの結果を見ると、すべての情報が取得できるが、標準なAPI仕様でサポートするかを確認する必要
 
     #define READ_TIMEOUT_MS (30000)
     #define DEFAULT_USER_AGENT (DU_UCHAR_CONST("DLNADOC/1.50"))
@@ -75,6 +92,7 @@ namespace dtvt {
     const char * const RecVideoItem_Field_mUpnpIcon   ="mUpnpIcon";
     const char * const RecVideoItem_Field_mDate       ="mDate";
     const char * const RecVideoItem_Field_mVideoType       ="mVideoType";
+    const char * const RecVideoItem_Field_mClearTextSize   ="mClearTextSize";
     
     //DlnaBsChListItem フィールド定義
     const char * const DlnaBsChListItem_Field_mChannelNo ="mChannelNo";
@@ -115,7 +133,7 @@ namespace dtvt {
     //java string path
     const char * const Dlna_Java_String_Path = "java/lang/String";    //"Ljava/lang/String;";
 
-    //xml item key from DlnaRecVideoItem.java
+    //xml item key from DlnaRecVideoItem.java、「DlnaRecVideoXmlParser、DlnaTerChXmlParser、DlnaBsDigitalXmlParser」に共用される
     const int Xml_Item_Id=1;
     const int Xml_Item_Title= Xml_Item_Id + 1;
     const int Xml_Item_Size= Xml_Item_Id + 2;
@@ -127,6 +145,11 @@ namespace dtvt {
     const int Xml_Item_Date= Xml_Item_Id + 8;
     const int Xml_Item_AllowedUse= Xml_Item_Id + 9;
     const int Xml_Item_VideoType= Xml_Item_Id + 10;   //mVideoType
+    const int Xml_Item_ClearTextSize= Xml_Item_Id + 11;   //mClearTextSize
+
+    //for searching end tag
+    const char * const RecVideoXml_Item_Begin_Tag ="<item id=\"";
+    const char * const RecVideoXml_Item_End_Tag ="</item>";
 
 
 
@@ -135,6 +158,7 @@ namespace dtvt {
     #define IfNullReturn(var) { if (NULL == (var) ) { return; } }
     #define IfNullReturnFalse(var) { if (NULL == (var) ) { return false; } }
     #define DelIfNotNull(obj) {  if(NULL!=(obj)) { delete obj; obj = NULL; }  }
+    #define DelIfNotNullArray(obj) {  if(NULL!=(obj)) { delete[] obj; obj = NULL; }  }
 
     //開発段階にて、本番のDMSはないので、仮DMSを使っていますが、違うDMSを定義し、どのDMSを選択できるよう
     //#define DLNA_KARI_DMS_UNIVERSAL
@@ -161,6 +185,10 @@ namespace dtvt {
         //const char* const DLNA_DMS_BS_CHANNEL = "0/smartphone/bs"; //本番
         const char* const DLNA_DMS_BS_CHANNEL = "0/video/all"; //nasでテスト
     #endif
+
+    /*----------------------------- function begin --------------------------------*/
+    extern bool setJavaObjectField(JNIEnv *env, jclass cls, const char* const  fieldName, const char* const classPath, std::string& value, jobject obj);
+    /*------------------------------ function end ---------------------------------*/
 
 } //namespace dtvt
 

@@ -21,7 +21,7 @@ import java.net.URL;
  * todo: このクラスを実現
  * 仮データ
  */
-class KariDownloader extends DownloaderBase{
+class KariDownloader extends DownloaderBase {
     private KariDownloadParam downloadParam;
     KariDownloader(DownloadParam param, DownloadListener downloadListener)throws Exception{
         super(param, downloadListener);

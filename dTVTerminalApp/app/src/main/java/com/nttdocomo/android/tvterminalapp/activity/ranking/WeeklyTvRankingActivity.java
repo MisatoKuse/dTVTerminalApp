@@ -39,7 +39,6 @@ import java.util.List;
 public class WeeklyTvRankingActivity extends BaseActivity implements
         RankingTopDataProvider.WeeklyRankingApiDataProviderCallback, RankingFragmentScrollListener {
 
-    private ImageView mMenuImageView;
     private boolean mIsCommunicating = false;
     private static final int NUM_PER_PAGE = 10;
     private String[] mTabNames;
@@ -61,9 +60,9 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.weekly_tv_ranking_main_layout);
-        mMenuImageView = findViewById(R.id.header_layout_menu);
-        mMenuImageView.setVisibility(View.VISIBLE);
-        mMenuImageView.setOnClickListener(this);
+        ImageView menuImageView = findViewById(R.id.header_layout_menu);
+        menuImageView.setVisibility(View.VISIBLE);
+        menuImageView.setOnClickListener(this);
 
         //Headerの設定
         setTitleText(getString(R.string.weekly_tv_ranking_title));
@@ -90,7 +89,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
     }
 
     /**
-     * mIsCommunicationを変更
+     * mIsCommunicationを変更.
      */
     private void setCommunicatingStatus(boolean bool) {
         synchronized (this) {
@@ -99,7 +98,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
     }
 
     /**
-     * ページングを行った回数を取得
+     * ページングを行った回数を取得.
      *
      * @return ページング回数
      */
@@ -114,7 +113,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
     }
 
     /**
-     * データの初期化
+     * データの初期化.
      */
     private void initData() {
         mTabNames = getResources().getStringArray(R.array.ranking_tab_names);
@@ -137,8 +136,8 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         }
 
         for (int i = 0; i < tabCount; ++i) { // タブの数だけ処理を行う
-            RankingBaseFragment b = mRankingFragmentFactory.createFragment
-                    (RankingConstants.RANKING_MODE_NO_OF_WEEKLY, i, this);
+            RankingBaseFragment b = mRankingFragmentFactory.createFragment(
+                    RankingConstants.RANKING_MODE_NO_OF_WEEKLY, i, this);
             if (null != b) {
                 b.mData.clear();
             }
@@ -146,7 +145,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
     }
 
     /**
-     * Viewの初期化
+     * Viewの初期化.
      */
     private void initView() {
         //テレビアイコンをタップされたらリモコンを起動する
@@ -170,7 +169,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
     }
 
     /**
-     * タブ毎にリクエストを行う
+     * タブ毎にリクエストを行う.
      */
     private void getGenreData(int tabPageNo) {
         switch (tabPageNo) {
@@ -192,14 +191,13 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
     }
 
     /**
-     * tabのレイアウトを設定
+     * tabのレイアウトを設定.
      */
     private void initTabData() {
         mTabScrollView.removeAllViews();
         mLinearLayout = new LinearLayout(this);
         LinearLayout.LayoutParams layoutParams
-                = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT
-                , LinearLayout.LayoutParams.WRAP_CONTENT);
+                = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         mLinearLayout.setLayoutParams(layoutParams);
         mLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
         mLinearLayout.setBackgroundColor(Color.BLACK);
@@ -238,7 +236,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
     }
 
     /**
-     * 取得結果の設定・表示
+     * 取得結果の設定・表示.
      */
     private void setShowWeeklyRanking(List<ContentsData> contentsDataList) {
         if (null == contentsDataList || 0 == contentsDataList.size()) {
@@ -248,8 +246,8 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
             return;
         }
 
-        RankingBaseFragment fragment = mRankingFragmentFactory.createFragment
-                (RankingConstants.RANKING_MODE_NO_OF_WEEKLY, mViewPager.getCurrentItem(), this);
+        RankingBaseFragment fragment = mRankingFragmentFactory.createFragment(
+                RankingConstants.RANKING_MODE_NO_OF_WEEKLY, mViewPager.getCurrentItem(), this);
 
         //既に元のデータ以上の件数があれば足す物は無いので、更新せずに帰る
         if (null != fragment.mData && fragment.mData.size() >= contentsDataList.size()) {
@@ -264,14 +262,16 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
                 fragment.mData.add(contentsDataList.get(i));
             }
         }
-        DTVTLogger.end("Fragment.mData.size :" + String.valueOf(fragment.mData.size()));
+        if (fragment.mData != null) {
+            DTVTLogger.end("Fragment.mData.size :" + String.valueOf(fragment.mData.size()));
+        }
         resetCommunication();
         fragment.noticeRefresh();
     }
 
 
     /**
-     * 読み込み中表示を非表示に変更
+     * 読み込み中表示を非表示に変更.
      */
     private void resetCommunication() {
         RankingBaseFragment b = getCurrentFragment();
@@ -283,7 +283,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
     }
 
     /**
-     * コンテンツ詳細への遷移
+     * コンテンツ詳細への遷移.
      */
     public void contentsDetailButton(View view) {
         Intent intent = new Intent(this, DtvContentsDetailActivity.class);
@@ -328,9 +328,8 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
                 return;
             }
 
-            if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE &&
-                    absListView.getLastVisiblePosition() ==
-                            fragment.getRankingAdapter().getCount() - 1) {
+            if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
+                    && absListView.getLastVisiblePosition() == fragment.getRankingAdapter().getCount() - 1) {
 
                 if (mIsCommunicating) {
                     return;
@@ -352,9 +351,10 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         }
 
     }
-
-    /*インジケーター設置*/
-    public void setTab(int position) {
+    /**
+     * インジケーター設置.
+     */
+    private void setTab(int position) {
         //mCurrentPageNum = position;
         if (mLinearLayout != null) {
             for (int i = 0; i < mTabNames.length; i++) {
@@ -369,24 +369,24 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
     }
 
     /**
-     * Fragmentの取得
+     * Fragmentの取得.
      *
      * @return Fragment
      */
     private RankingBaseFragment getCurrentFragment() {
 
         int i = mViewPager.getCurrentItem();
-        return mRankingFragmentFactory.createFragment
-                (RankingConstants.RANKING_MODE_NO_OF_WEEKLY, i, this);
+        return mRankingFragmentFactory.createFragment(RankingConstants.RANKING_MODE_NO_OF_WEEKLY, i, this);
     }
 
-    public WeeklyTvRankingActivity getWeeklyTvRankingActivity() {
+    private WeeklyTvRankingActivity getWeeklyTvRankingActivity() {
         return this;
     }
 
 
     /**
-     * 取得条件"総合"用コールバック
+     * 取得条件"総合"用コールバック.
+     * TODO:正規のジャンルで動的に処理するようにしないといけない
      */
     @Override
     public void weeklyRankSynthesisCallback(List<ContentsData> contentsDataList) {
@@ -397,37 +397,37 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
     }
 
     /**
-     * 取得条件"海外映画"用コールバック
+     * 取得条件"海外映画"用コールバック.
+     * TODO:正規のジャンルで動的に処理するようにしないといけない
      */
     @Override
     public void weeklyRankOverseasMovieCallback(List<ContentsData> contentsDataList) {
         DTVTLogger.start("ResponseDataSize :" + contentsDataList.size());
-        if (mViewPager.getCurrentItem() ==
-                RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_MOVIE) {
+        if (mViewPager.getCurrentItem() == RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_MOVIE) {
             setShowWeeklyRanking(contentsDataList);
         }
     }
 
     /**
-     * 取得条件"国内映画"用コールバック
+     * 取得条件"国内映画"用コールバック.
+     * TODO:正規のジャンルで動的に処理するようにしないといけない
      */
     @Override
     public void weeklyRankDomesticMovieCallback(List<ContentsData> contentsDataList) {
         DTVTLogger.start("ResponseDataSize :" + contentsDataList.size());
-        if (mViewPager.getCurrentItem() ==
-                RankingConstants.RANKING_PAGE_NO_OF_DOMESTIC_MOVIE) {
+        if (mViewPager.getCurrentItem() == RankingConstants.RANKING_PAGE_NO_OF_DOMESTIC_MOVIE) {
             setShowWeeklyRanking(contentsDataList);
         }
     }
 
     /**
-     * 取得条件"海外TV番組・ドラマ"用コールバック
+     * 取得条件"海外TV番組・ドラマ"用コールバック.
+     * TODO:正規のジャンルで動的に処理するようにしないといけない
      */
     @Override
     public void weeklyRankOverseasChannelCallback(List<ContentsData> contentsDataList) {
         DTVTLogger.start("ResponseDataSize :" + contentsDataList.size());
-        if (mViewPager.getCurrentItem() ==
-                RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_CHANNEL) {
+        if (mViewPager.getCurrentItem() == RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_CHANNEL) {
             setShowWeeklyRanking(contentsDataList);
         }
     }
@@ -440,9 +440,9 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
 
         @Override
         public Fragment getItem(int position) {
-            return mRankingFragmentFactory.createFragment
-                    (RankingConstants.RANKING_MODE_NO_OF_WEEKLY,
-                            position, getWeeklyTvRankingActivity());
+            return mRankingFragmentFactory.createFragment(
+                    RankingConstants.RANKING_MODE_NO_OF_WEEKLY,
+                    position, getWeeklyTvRankingActivity());
         }
 
         @Override

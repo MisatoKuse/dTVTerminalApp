@@ -40,21 +40,4 @@ public class SearchServiceType {
         //dTV SVOD
         public static  final String H4D_CATEGORY_DTV_SVOD = "10";
     }
-
-    /**
-     * サービスIDを返す
-     *
-     * @return サービスID
-     */
-    public String serverRequestServiceIdString() {
-        if (mType.equals(ServiceId.DTV_CONTENTS)) {
-            return ServiceId.DTV_CONTENTS;
-        } else if (mType.equals(ServiceId.D_ANIMATION_CONTENTS)) {
-            return ServiceId.D_ANIMATION_CONTENTS;
-        } else if (mType.equals(ServiceId.DTV_CHANNEL_CONTENTS)) {
-            return ServiceId.DTV_CHANNEL_CONTENTS;
-        }
-
-        return ServiceId.HIKARI_TV_FOR_DOCOMO;
-    }
 }

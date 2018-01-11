@@ -16,7 +16,7 @@ namespace dtvt {
     }
 
     void DlnaXmlParserBase::parse(void *response, vector<StringVector>& out, std::string &containerId, std::string &isContainerId){
-        //録画一覧XMLパーサー
+        //XMLパーサー
         IfNullReturn(response);
         dupnp_http_response *newRes = ((dupnp_http_response *) response);
         IfNullReturn((char*)(newRes->body));

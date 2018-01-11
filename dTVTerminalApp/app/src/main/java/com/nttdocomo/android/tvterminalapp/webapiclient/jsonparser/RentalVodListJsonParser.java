@@ -152,11 +152,11 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
                     ActiveData activeData = new ActiveData();
 
                     //データを取得する
-                    if (!jsonObj.isNull(JsonContents.META_RESPONSE_LICENSE_ID)) {
+                    if (!listData.isNull(JsonContents.META_RESPONSE_LICENSE_ID)) {
                     activeData.setLicenseId(listData.getString(
                             JsonContents.META_RESPONSE_LICENSE_ID));
                     }
-                    if (!jsonObj.isNull(JsonContents.META_RESPONSE_VAILD_END_DATE)) {
+                    if (!listData.isNull(JsonContents.META_RESPONSE_VAILD_END_DATE)) {
                         activeData.setValidEndDate(StringUtil.changeString2Long(listData.getLong(
                                 JsonContents.META_RESPONSE_VAILD_END_DATE)));
                     }

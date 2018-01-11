@@ -33,6 +33,8 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountCheckService;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.IDimDefines;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +43,8 @@ import java.util.TimerTask;
 
 
 public class STBSelectActivity extends BaseActivity implements View.OnClickListener,
-        AdapterView.OnItemClickListener, DlnaDevListListener {
+        AdapterView.OnItemClickListener, DlnaDevListListener,
+        DaccountCheckService.DaccountCheckServiceCallBack{
 
     private List<ContentsData> mContentsList;
     private List<DlnaDmsItem> mDlnaDmsItemList;
@@ -53,6 +56,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private DlnaDmsItem mDlnaDmsItem = null;
 
     private int mStartMode = 0;
+    private int selectDevice;
     private boolean mIsNextTimeHide = false;
     private boolean mIsAppDL = false;
 
@@ -68,7 +72,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     //Dアカウントアプリ Package名
     private static final String D_ACCOUNT_APP_PACKAGE_NAME = "com.nttdocomo.android.idmanager";
     //Dアカウントアプリ Activity名
-    private static final String D_ACCOUNT_APP_ACTIVITY_NAME = ".activity.DocomoIdTopActivity";
+    private static final String D_ACCOUNT_APP_ACTIVITY_NAME=".activity.DocomoIdTopActivity";
     //DアカウントアプリURI
     private static final String D_ACCOUNT_APP_URI = "market://details?id=com.nttdocomo.android.idmanager";
 
@@ -386,25 +390,22 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         DTVTLogger.start();
 
-        //dカウント登録状態チェック
-        if (checkDAccountLogin()) {
-            //未ログイン時の場合の処理
-            checkDAccountApp();
-            return;
-        } else {
-            //ログイン済みの場合の処理
-            //TODO STBに同じdアカウントが登録されているか確認する
-//            String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(this);
-//            if(userId != null) {
-//                RemoteControlRelayClient.getInstance().isUserAccountExistRequest(userId);
-//            }
-            DTVTLogger.debug("DAccount login");
-        }
+        //選択されたSTB番号を保持
+        selectDevice = i;
 
+        //dカウント登録状態チェック
+        checkDAccountLogin();
+    }
+
+    /**
+     * 選択されたSTBを保存して画面遷移を行う
+     * @param selectDevice 選択されたSTB
+     */
+    private void storeSTBData(int selectDevice) {
         if (mCallbackTimer.getTimerStatus() != TimerStatus.TIMER_STATUS_DURING_STARTUP) {
             // SharedPreferencesにSTBデータを保存
             if (mDlnaDmsItemList != null) {
-                SharedPreferencesUtils.setSharedPreferencesStbInfo(this, mDlnaDmsItemList.get(i));
+                SharedPreferencesUtils.setSharedPreferencesStbInfo(this, mDlnaDmsItemList.get(selectDevice));
                 if (mStartMode == STBSelectFromMode.STBSelectFromMode_Setting.ordinal() && mParingDevice != null) {
                     mParingDevice.setBackgroundColor(Color.BLACK);
                     mParingDevice.setTextColor(Color.WHITE);
@@ -412,7 +413,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 }
             }
         }
-
         startActivity(STBConnectActivity.class, null);
         DTVTLogger.end();
     }
@@ -653,9 +653,26 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     /**
      * dアカウントの登録状態を確認する
      */
-    private boolean checkDAccountLogin() {
-        UserState userState = getUserState();
-        return (UserState.LOGIN_NG == userState);
+    private void checkDAccountLogin() {
+        DaccountCheckService checkService = new DaccountCheckService();
+        checkService.execDaccountCheckService(this, this);
+    }
+
+    @Override
+    public void checkServiceCallBack(int result) {
+        DTVTLogger.debug("result" + result);
+        if (result != IDimDefines.RESULT_NO_AVAILABLE_ID &&
+                result != IDimDefines.RESULT_NOT_AVAILABLE &&
+                result != IDimDefines.RESULT_INCOMPATIBLE_ENVIRONMENT &&
+                result != IDimDefines.RESULT_INTERNAL_ERROR) {
+            //dアカウントが登録されている場合の処理
+            //TODO STBに同じdアカウントが登録されているか確認する
+            DTVTLogger.debug("DAccount login");
+            storeSTBData(selectDevice);
+        } else {
+            //dアカウントが登録されていない場合の処理
+            checkDAccountApp();
+        }
     }
 
     /**

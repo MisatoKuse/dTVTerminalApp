@@ -139,4 +139,22 @@ namespace dtvt {
         return ret;
     }
 
+    extern "C"  jstring JNICALL
+    Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterface_getDlParam(JNIEnv *env, jobject instance, jlong thiz, jstring itemId_) {
+        if (0==thiz || NULL==itemId_) {
+            return NULL;
+        }
+
+        const char *itemId = env->GetStringUTFChars(itemId_, 0);
+        Dlna *dlnaPtr = (Dlna *) thiz;
+        du_uchar* ret= dlnaPtr->dtcpDownloadParam(itemId);
+        env->ReleaseStringUTFChars(itemId_, (const char *) itemId);
+        if(!ret){
+            return env->NewStringUTF("");
+        }
+        jstring js= env->NewStringUTF((const char *) ret);
+        DelIfNotNullArray(ret);
+        return js;
+    }
+
 } //end of namespace dtvt

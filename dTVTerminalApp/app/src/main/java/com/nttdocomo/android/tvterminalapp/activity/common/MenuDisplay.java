@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.common;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
@@ -35,7 +36,6 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
-import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +47,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     private MenuDisplayEventListener mMenuDisplayEventListener = null;
     // TODO BaseActivityを持つことは実装的に望ましくない
     private BaseActivity mActivity = null;
+    private Context mContext = null;
     private View mAccountName = null;
 
     private PopupWindow mPopupWindow = null;
@@ -69,14 +70,15 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
         return sMenuDisplay;
     }
 
-    public void setActivityAndListener(BaseActivity activity, MenuDisplayEventListener lis) throws Exception {
+    public void setActivityAndListener(BaseActivity activity, Context context) throws Exception {
         if (null == activity) {
             throw new Exception("MenuDisplay::setActivityAndListener() --> Param activity can not be null");
         }
 
         synchronized (MenuDisplay.class) {
+            mContext = context;
             mActivity = activity;
-            mMenuDisplayEventListener = lis;
+            mMenuDisplayEventListener = (MenuDisplayEventListener) context;
         }
     }
 
@@ -124,7 +126,6 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
         TextView title = view.findViewById(R.id.tv_title);
-        String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(mActivity);
         if (null != title) {
             String menuName = (String) title.getText();
 
@@ -271,35 +272,35 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                 if (null != mMenuDisplayEventListener) {
                     // TVアプリ起動導線(ひかりTV)
                     mActivity.setRelayClientHandler();
-                    RemoteControlRelayClient.getInstance().applicationStartRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.HIKARITV, userId);
+                    RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.HIKARITV, mContext);
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dtv_channel))) {
                 if (null != mMenuDisplayEventListener) {
                     // TVアプリ起動導線(dTVチャンネル)
                     // TODO BaseActivityで実行するのが望ましい
                     mActivity.setRelayClientHandler();
-                    RemoteControlRelayClient.getInstance().applicationStartRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL, userId);
+                    RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL, mContext);
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dtv))) {
                 if (null != mMenuDisplayEventListener) {
                     // TVアプリ起動導線(dTV)
                     // TODO BaseActivityで実行するのが望ましい
                     mActivity.setRelayClientHandler();
-                    RemoteControlRelayClient.getInstance().applicationStartRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTV, userId);
+                    RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTV, mContext);
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_d_animation))) {
                 if (null != mMenuDisplayEventListener) {
                     // TVアプリ起動導線(dアニメ)
                     // TODO BaseActivityで実行するのが望ましい
                     mActivity.setRelayClientHandler();
-                    RemoteControlRelayClient.getInstance().applicationStartRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE, userId);
+                    RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE, mContext);
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dazn))) {
                 if (null != mMenuDisplayEventListener) {
                     // TVアプリ起動導線(DAZN)
                     // TODO BaseActivityで実行するのが望ましい
                     mActivity.setRelayClientHandler();
-                    RemoteControlRelayClient.getInstance().applicationStartRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DAZN, userId);
+                    RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DAZN, mContext);
                 }
             }
             mPopupWindow.dismiss();

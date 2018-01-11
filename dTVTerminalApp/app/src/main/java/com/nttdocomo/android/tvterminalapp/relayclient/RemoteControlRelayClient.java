@@ -4,11 +4,13 @@
 
 package com.nttdocomo.android.tvterminalapp.relayclient;
 
+import android.content.Context;
 import android.os.Handler;
 import android.view.KeyEvent;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -448,9 +450,11 @@ public class RemoteControlRelayClient {
      * @param applicationType
      * @return
      */
-    public boolean applicationStartRequest(STB_APPLICATION_TYPES applicationType, String userId) {
+    public boolean startApplicationRequest(STB_APPLICATION_TYPES applicationType, Context context) {
         String applicationId = getApplicationId(applicationType);
         String requestParam;
+        //ユーザID取得
+        String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(context);
 
         if (applicationId != null) {
             requestParam = setApplicationStartRequest(applicationId, userId);

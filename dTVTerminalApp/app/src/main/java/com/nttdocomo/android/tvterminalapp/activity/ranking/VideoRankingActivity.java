@@ -90,7 +90,7 @@ public class VideoRankingActivity extends BaseActivity implements
     }
 
     /**
-     * mIsCommunicationを変更
+     * mIsCommunicationを変更.
      *
      * @param bool
      */
@@ -101,7 +101,7 @@ public class VideoRankingActivity extends BaseActivity implements
     }
 
     /**
-     * ページングを行った回数を取得
+     * ページングを行った回数を取得.
      *
      * @return
      */
@@ -116,7 +116,7 @@ public class VideoRankingActivity extends BaseActivity implements
     }
 
     /**
-     * データの初期化
+     * データの初期化.
      */
     private void initData() {
         mTabNames = getResources().getStringArray(R.array.ranking_tab_names);
@@ -150,7 +150,7 @@ public class VideoRankingActivity extends BaseActivity implements
     }
 
     /**
-     * Viewの初期化
+     * Viewの初期化.
      */
     private void initView() {
         //テレビアイコンをタップされたらリモコンを起動する
@@ -174,7 +174,7 @@ public class VideoRankingActivity extends BaseActivity implements
     }
 
     /**
-     * タブ毎にリクエストを行う
+     * タブ毎にリクエストを行う.
      *
      * @param tabPageNo
      */
@@ -183,7 +183,7 @@ public class VideoRankingActivity extends BaseActivity implements
     }
 
     /**
-     * tabのレイアウトを設定
+     * tabのレイアウトを設定.
      */
     private void initTabData() {
         mTabScrollView.removeAllViews();
@@ -229,7 +229,7 @@ public class VideoRankingActivity extends BaseActivity implements
     }
 
     /**
-     * 取得結果の設定・表示
+     * 取得結果の設定・表示.
      */
     private void setShowVideoRanking(List<ContentsData> videoRankMapList) {
         if (null == videoRankMapList || 0 == videoRankMapList.size()) {
@@ -240,8 +240,9 @@ public class VideoRankingActivity extends BaseActivity implements
         }
 
 
-        RankingBaseFragment fragment = mRankingFragmentFactory.createFragment
-                (RankingConstants.RANKING_MODE_NO_OF_VIDEO, mViewPager.getCurrentItem(), this);
+        RankingBaseFragment fragment = mRankingFragmentFactory.createFragment(
+                RankingConstants.RANKING_MODE_NO_OF_VIDEO,
+                mViewPager.getCurrentItem(), this);
 
         //既に元のデータ以上の件数があれば足す物は無いので、更新せずに帰る
         if (null != fragment.mData && fragment.mData.size() >= videoRankMapList.size()) {
@@ -250,14 +251,16 @@ public class VideoRankingActivity extends BaseActivity implements
         }
 
         int pageNumber = getCurrentNumber();
-        for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE &&
-                i < videoRankMapList.size(); ++i) {
+        for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE
+                && i < videoRankMapList.size(); ++i) {
             DTVTLogger.debug("i = " + i);
             if (null != fragment.mData) {
                 fragment.mData.add(videoRankMapList.get(i));
             }
         }
-        DTVTLogger.debug("Fragment.mData.size :" + String.valueOf(fragment.mData.size()));
+        if (fragment.mData != null) {
+            DTVTLogger.debug("Fragment.mData.size :" + String.valueOf(fragment.mData.size()));
+        }
         resetCommunication();
         fragment.noticeRefresh();
 
@@ -265,7 +268,7 @@ public class VideoRankingActivity extends BaseActivity implements
 
 
     /**
-     * 読み込み中表示を非表示に変更
+     * 読み込み中表示を非表示に変更.
      */
     private void resetCommunication() {
         RankingBaseFragment baseFragment = getCurrentFragment();
@@ -277,7 +280,7 @@ public class VideoRankingActivity extends BaseActivity implements
     }
 
     /**
-     * 取得したリストマップをContentsDataクラスへ入れる
+     * 取得したリストマップをContentsDataクラスへ入れる.
      */
     private List<ContentsData> setVideoRankingContentData(
             List<Map<String, String>> videoRankMapList) {
@@ -303,7 +306,7 @@ public class VideoRankingActivity extends BaseActivity implements
     }
 
     /**
-     * コンテンツ詳細への遷移
+     * コンテンツ詳細への遷移.
      *
      * @param view
      */
@@ -314,7 +317,7 @@ public class VideoRankingActivity extends BaseActivity implements
     }
 
     /**
-     * クリップボタン
+     * クリップボタン.
      *
      * @param view
      */
@@ -358,9 +361,8 @@ public class VideoRankingActivity extends BaseActivity implements
                 return;
             }
 
-            if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE &&
-                    absListView.getLastVisiblePosition()
-                            == fragment.getRankingAdapter().getCount() - 1) {
+            if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
+                    && absListView.getLastVisiblePosition() == fragment.getRankingAdapter().getCount() - 1) {
 
                 if (mIsCommunicating) {
                     return;
@@ -383,8 +385,10 @@ public class VideoRankingActivity extends BaseActivity implements
 
     }
 
-    /*インジケーター設置*/
-    public void setTab(int position) {
+    /**
+     * インジケーター設置.
+     */
+    private void setTab(int position) {
         //mCurrentPageNum = position;
         if (mLinearLayout != null) {
             for (int i = 0; i < mTabNames.length; i++) {
@@ -399,24 +403,24 @@ public class VideoRankingActivity extends BaseActivity implements
     }
 
     /**
-     * Fragmentの取得
+     * Fragmentの取得.
      *
      * @return
      */
     private RankingBaseFragment getCurrentFragment() {
 
         int i = mViewPager.getCurrentItem();
-        return mRankingFragmentFactory.createFragment
-                (RankingConstants.RANKING_MODE_NO_OF_VIDEO, i, this);
+        return mRankingFragmentFactory.createFragment(RankingConstants.RANKING_MODE_NO_OF_VIDEO, i, this);
     }
 
-    public VideoRankingActivity getVideoRankingActivity() {
+    private VideoRankingActivity getVideoRankingActivity() {
         return this;
     }
 
 
     /**
-     * 取得条件"総合"用コールバック
+     * 取得条件"総合"用コールバック.
+     * TODO:正規のジャンルで動的に処理するようにしないといけない
      *
      * @param videoRankList
      */
@@ -432,15 +436,14 @@ public class VideoRankingActivity extends BaseActivity implements
     }
 
     /**
-     * 取得条件"海外映画"用コールバック
-     *
+     * 取得条件"海外映画"用コールバック.
+     * TODO:正規のジャンルで動的に処理するようにしないといけない
      * @param videoRankList
      */
     @Override
     public void videoRankOverseasMovieCallback(List<ContentsData> videoRankList) {
         DTVTLogger.start("ResponseDataSize :" + videoRankList.size());
-        if (mViewPager.getCurrentItem() ==
-                RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_MOVIE) {
+        if (mViewPager.getCurrentItem() == RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_MOVIE) {
             setShowVideoRanking(videoRankList);
         } else {
             // nop.
@@ -449,15 +452,15 @@ public class VideoRankingActivity extends BaseActivity implements
     }
 
     /**
-     * 取得条件"国内映画"用コールバック
+     * 取得条件"国内映画"用コールバック.
+     * TODO:正規のジャンルで動的に処理するようにしないといけない
      *
      * @param videoRankList
      */
     @Override
     public void videoRankDomesticMovieCallback(List<ContentsData> videoRankList) {
         DTVTLogger.start("ResponseDataSize :" + videoRankList.size());
-        if (mViewPager.getCurrentItem() ==
-                RankingConstants.RANKING_PAGE_NO_OF_DOMESTIC_MOVIE) {
+        if (mViewPager.getCurrentItem() == RankingConstants.RANKING_PAGE_NO_OF_DOMESTIC_MOVIE) {
             setShowVideoRanking(videoRankList);
         } else {
             // nop.
@@ -466,15 +469,15 @@ public class VideoRankingActivity extends BaseActivity implements
     }
 
     /**
-     * 取得条件"海外TV番組・ドラマ"用コールバック
+     * 取得条件"海外TV番組・ドラマ"用コールバック.
+     * TODO:正規のジャンルで処理するようにしないといけない
      *
      * @param videoRankList
      */
     @Override
     public void videoRankOverseasChannelCallback(List<ContentsData> videoRankList) {
         DTVTLogger.start("ResponseDataSize :" + videoRankList.size());
-        if (mViewPager.getCurrentItem() ==
-                RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_CHANNEL) {
+        if (mViewPager.getCurrentItem() == RankingConstants.RANKING_PAGE_NO_OF_OVERSEAS_CHANNEL) {
             setShowVideoRanking(videoRankList);
         } else {
             // nop.
@@ -482,7 +485,9 @@ public class VideoRankingActivity extends BaseActivity implements
         DTVTLogger.end();
     }
 
-    /*検索結果タブ専用アダプター*/
+    /**
+     * 検索結果タブ専用アダプター.
+     */
     class RankingPagerAdapter extends FragmentStatePagerAdapter {
         public RankingPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -490,9 +495,9 @@ public class VideoRankingActivity extends BaseActivity implements
 
         @Override
         public Fragment getItem(int position) {
-            return mRankingFragmentFactory.createFragment
-                    (RankingConstants.RANKING_MODE_NO_OF_VIDEO,
-                            position, getVideoRankingActivity());
+            return mRankingFragmentFactory.createFragment(
+                    RankingConstants.RANKING_MODE_NO_OF_VIDEO,
+                    position, getVideoRankingActivity());
         }
 
         @Override

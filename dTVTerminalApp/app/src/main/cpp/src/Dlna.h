@@ -46,17 +46,6 @@ namespace dtvt {
             DLNA_STATE_STARTED,
         } DLNA_STATE;
 
-//        typedef enum {
-//            //Browseコンテンツ
-//            DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST = 0,
-//            //デバイスjoin
-//            DLNA_MSG_ID_DEV_DISP_JOIN = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 1,
-//            //デバイスleave
-//            DLNA_MSG_ID_DEV_DISP_LEAVE = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 2,
-//            //BSデジタルに関して、チャンネルリストを発見
-//            DLNA_MSG_ID_BS_CHANNEL_LIST = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 3,
-//        } DLNA_MSG_ID;
-
     private:
         dmp mDMP;
         DLNA_STATE mDLNA_STATE;
@@ -67,6 +56,7 @@ namespace dtvt {
         DlnaXmlParserBase* mBsDigitalXmlParser;
         DlnaXmlParserBase* mTerChXmlParser;
         DlnaXmlParserBase* mHikariChXmlParser;
+        du_uchar* mRecordedVideoXml;
 
     public:
         /**
@@ -96,15 +86,32 @@ namespace dtvt {
         bool browseRecVideoListDms(std::string controlUrl);
 
         /**
-         * 機能：BSデジタルに関して、チャンネルリストを発見
+         * 機能：BSデジタルに関して、チャンネルリストを取得
          * @param controlUrl
          * @return true: 成功  false:失敗
          */
         bool browseBsChListDms(std::string controlUrl);
 
+        /**
+         * 機能：Terに関して、チャンネルリストを取得
+         * @param controlUrl
+         * @return true: 成功  false:失敗
+         */
         bool browseTerChListDms(std::string controlUrl);
 
+        /**
+         * 機能：Hikariに関して、チャンネルリストを取得
+         * @param controlUrl
+         * @return true: 成功  false:失敗
+         */
         bool browseHikariChListDms(std::string controlUrl);
+
+        /**
+         * 機能：dtcp Download
+         * @param itemId itemId
+         * @return du_char*
+         */
+        du_uchar* dtcpDownloadParam(std::string itemId);
 
         /**
          * 機能：Dlnaコールバック
@@ -161,7 +168,14 @@ namespace dtvt {
         bool sendSoap(std::string controlUrl, std::string objectId="0", const int startingIndex=0, const int requestCount=0, std::string browseFlag="BrowseDirectChildren");
 
         void notify(int msg, std::string content);
+        //void notifyDuChar(int msg, du_uchar* content);
         void notifyObject(DLNA_MSG_ID msg, vector<StringVector> & vecContents);
+
+        void getRecordedVideoXml(DlnaXmlParserBase* parser, dupnp_http_response *response);
+
+        bool getItemStringByItemId(du_uchar* allRecordedVideoXml, std::string itemId, du_uchar** outXmlStr);
+        void getDidlLiteDocHead(du_uchar* allRecordedVideoXml, std::string& outStr);
+        void getDidlLiteDocTail(du_uchar* allRecordedVideoXml, std::string& outStr);
     };
 
 } //namespace dtvt

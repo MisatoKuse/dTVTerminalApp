@@ -21,11 +21,11 @@ import java.util.Map;
 
 
 /**
- * 文字列加工に関する処理を記載する
+ * 文字列加工に関する処理を記載する.
  */
 public class StringUtil {
 
-    private Context mContext;
+    private final Context mContext;
 
     //データがないときのDefault値(PG12制限)
     public static final int DEFAULT_USER_AGE_REQ = 8;
@@ -42,12 +42,15 @@ public class StringUtil {
     //契約情報
     public static final String CONTRACT_INFO_NONE = "none";
 
+    //カンマ
+    private static final String COMMA_SEPARATOR = ",";
+
     public StringUtil(Context context) {
         mContext = context;
     }
 
     /**
-     * サービスID(dTV関連)に応じたサービス名を返す
+     * サービスID(dTV関連)に応じたサービス名を返す.
      *
      * @param id サービスID
      * @return サービス名
@@ -65,7 +68,7 @@ public class StringUtil {
     }
 
     /**
-     * 文字列を連結する
+     * 文字列を連結する.
      *
      * @param strings 連結したい文字列配列
      * @return 連結後の文字列
@@ -81,7 +84,7 @@ public class StringUtil {
     }
 
     /**
-     * 文字列を連結する・可変長引数版（言語仕様の都合で、オーバーロードの同じ名前にはできない）
+     * 文字列を連結する・可変長引数版（言語仕様の都合で、オーバーロードの同じ名前にはできない）.
      *
      * @param strings 連結したい文字列を必要な数だけ指定する。
      * @return 連結後の文字列
@@ -92,7 +95,7 @@ public class StringUtil {
     }
 
     /**
-     * JSonArrayを文字列配列に変換する
+     * JSonArrayを文字列配列に変換する.
      *
      * @param jsonArray JsonArray
      * @return 文字列配列
@@ -124,7 +127,7 @@ public class StringUtil {
     }
 
     /**
-     * 与えられたオブジェクトをチェックし、長整数に変換する
+     * 与えられたオブジェクトをチェックし、長整数に変換する.
      *
      * @param data オブジェクト
      * @return 長整数変換後の値。変換できなければゼロ
@@ -136,9 +139,9 @@ public class StringUtil {
             return (long) data;
         }
 
-        if(data instanceof Integer) {
+        if (data instanceof Integer) {
             //整数なので長整数に変換
-            return ((Integer)data).longValue();
+            return ((Integer) data).longValue();
         }
 
         //数字の文字列かどうかの判定
@@ -152,7 +155,7 @@ public class StringUtil {
     }
 
     /**
-     * 与えられたオブジェクトをチェックし、整数に変換する
+     * 与えられたオブジェクトをチェックし、整数に変換する.
      *
      * @param data オブジェクト
      * @return 整数変換後の値。変換できなければゼロ
@@ -161,12 +164,12 @@ public class StringUtil {
         //既に数値かどうかを判定
         if(data instanceof Integer) {
             //整数なのでそのまま返す
-            return (Integer)data;
+            return (Integer) data;
         }
 
         if (data instanceof Long) {
             //長整数なので整数に変換
-            return ((Long)data).intValue();
+            return ((Long) data).intValue();
         }
 
         //数字の文字列かどうかの判定
@@ -180,7 +183,7 @@ public class StringUtil {
     }
 
     /**
-     * 与えられたオブジェクトをチェックし、文字列に変換する
+     * 与えられたオブジェクトをチェックし、文字列に変換する.
      *
      * @param data オブジェクト
      * @return 変換後の文字列。変換できなければ空文字
@@ -189,25 +192,25 @@ public class StringUtil {
         //Stringかどうかを見る
         if (data instanceof String) {
             //そのまま返す
-            return (String)data;
+            return (String) data;
         }
 
         //intかどうかを判定
-        if(data instanceof Integer) {
+        if (data instanceof Integer) {
             //intを文字に変換して返す
-            return String.valueOf((int)data);
+            return String.valueOf((int) data);
         }
 
         //longかどうかを判定
-        if(data instanceof Long) {
+        if (data instanceof Long) {
             //longを文字に変換して返す
-            return String.valueOf((long)data);
+            return String.valueOf((long) data);
         }
 
         //doubleかどうかを判定
-        if(data instanceof Double) {
+        if (data instanceof Double) {
             //doubleを文字に変換して返す
-            return String.valueOf((double)data);
+            return String.valueOf((double) data);
         }
 
         //変換できなかったので空文字
@@ -215,7 +218,7 @@ public class StringUtil {
     }
 
     /**
-     * ひかりコンテンツ判定(ひかり内DTVのみ)
+     * ひかりコンテンツ判定(ひかり内DTVのみ).
      *
      * @param type
      * @return
@@ -229,7 +232,7 @@ public class StringUtil {
     }
 
     /**
-     * ひかりコンテンツ判定
+     * ひかりコンテンツ判定.
      *
      * @param type
      * @return
@@ -245,7 +248,7 @@ public class StringUtil {
     }
 
     /**
-     * 年齢パレンタル値(R_VALUE)を数値に変換
+     * 年齢パレンタル値(R_VALUE)を数値に変換.
      *
      * @param context  コンテクストファイル
      * @param ageValue 年齢パレンタル値(R_VALUE)
@@ -254,7 +257,7 @@ public class StringUtil {
     public static int convertRValueToAgeReq(Context context, String ageValue) {
 
         int ageReq = DEFAULT_R_VALUE;
-        if(ageValue != null){
+        if (ageValue != null) {
             if (ageValue.equals(context.getString(R.string.parental_pg_12))) {
                 ageReq = USER_AGE_REQ_PG12;
             } else if (ageValue.equals(context.getString(R.string.parental_r_15))) {
@@ -269,7 +272,7 @@ public class StringUtil {
     }
 
     /**
-     * ユーザ情報から年齢情報を取得する
+     * ユーザ情報から年齢情報を取得する.
      *
      * @param userInfoList ユーザ情報
      * @return 年齢パレンタル情報
@@ -279,10 +282,9 @@ public class StringUtil {
         final String USE_H4D_AGE_REQ = "001";
         final String USE_DCH_AGE_REQ = "002";
         String age = null;
-        String contractStatus = null;
 
         //ユーザ情報がないときはPG12制限値を返却
-        if(userInfoList == null || userInfoList.size() < 1){
+        if (userInfoList == null || userInfoList.size() < 1) {
             return DEFAULT_USER_AGE_REQ;
         }
 
@@ -293,7 +295,7 @@ public class StringUtil {
             return DEFAULT_USER_AGE_REQ;
         }
 
-        contractStatus = infoMap.get(UserInfoJsonParser.USER_INFO_LIST_CONTRACT_STATUS);
+        String contractStatus = infoMap.get(UserInfoJsonParser.USER_INFO_LIST_CONTRACT_STATUS);
 
         //contractStatusがないときはPG12制限値を設定
         int intAge = DEFAULT_USER_AGE_REQ;
@@ -305,7 +307,7 @@ public class StringUtil {
                     age = infoMap.get(UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ);
                 }
             } else if (contractStatus.equals(USE_DCH_AGE_REQ)) {
-                //DCHの制限情報がないときはH4DDCH側を使用
+                //DCHの制限情報がないときはH4D DCH側を使用
                 age = infoMap.get(UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ);
             }
         }
@@ -317,7 +319,7 @@ public class StringUtil {
     }
 
     /**
-     * フィルタリング文字を返却する
+     * フィルタリング文字を返却する.
      *
      * @param context コンテキストファイル
      * @return 伏字
@@ -333,7 +335,7 @@ public class StringUtil {
         String contractStatus;
 
         //ユーザ情報がないときは契約情報は無し
-        if(userInfoList == null || userInfoList.size() < 1){
+        if (userInfoList == null || userInfoList.size() < 1) {
             return CONTRACT_INFO_NONE;
         }
 
@@ -362,7 +364,7 @@ public class StringUtil {
     }
 
     /**
-     * UserInfoListのリストから年齢情報を取得する
+     * UserInfoListのリストから年齢情報を取得する.
      *
      * @param userInfoLists ユーザー情報のリスト
      * @return 年齢情報
@@ -371,31 +373,32 @@ public class StringUtil {
         //変換後のユーザー情報
         List<Map<String, String>> newUserInfoLists = new ArrayList<>();
 
-        //ユーザー情報の数だけ回る
-        for(UserInfoList userInfo : userInfoLists) {
-            Map<String,String> dataBuffer1 = getAccountList(userInfo.getLoggedinAccount());
-            Map<String,String> dataBuffer2 = getAccountList(userInfo.getH4dContractedAccount());
+        if (userInfoLists != null) {
+            //ユーザー情報の数だけ回る
+            for (UserInfoList userInfo : userInfoLists) {
+                Map<String, String> dataBuffer1 = getAccountList(userInfo.getLoggedinAccount());
+                Map<String, String> dataBuffer2 = getAccountList(userInfo.getH4dContractedAccount());
 
-            newUserInfoLists.add(dataBuffer1);
-            newUserInfoLists.add(dataBuffer2);
+                newUserInfoLists.add(dataBuffer1);
+                newUserInfoLists.add(dataBuffer2);
+            }
         }
-
         //年齢情報の取得
         return getUserAgeInfo(newUserInfoLists);
     }
 
     /**
-     * 契約情報をマップで蓄積
+     * 契約情報をマップで蓄積.
      *
      * @param accountBuffers 契約情報リスト
      * @return マップ化契約情報
      */
-    private static Map<String,String> getAccountList(
+    private static Map<String, String> getAccountList(
             List<UserInfoList.AccountList> accountBuffers) {
-        Map<String,String> buffer = new HashMap<>();
+        Map<String, String> buffer = new HashMap<>();
 
         //契約情報の数だけ回ってマップに変換する
-        for(UserInfoList.AccountList accountBuffer : accountBuffers) {
+        for (UserInfoList.AccountList accountBuffer : accountBuffers) {
             buffer.put(UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ,
                     accountBuffer.getDchAgeReq());
             buffer.put(UserInfoJsonParser.USER_INFO_LIST_H4D_AGE_REQ,
@@ -406,5 +409,29 @@ public class StringUtil {
         }
 
         return buffer;
+    }
+
+    /**
+     * 文字列リストをカンマ区切りで返す.
+     *
+     * @param strings 変換対象
+     * @return 変換文字列
+     */
+    public static String setCommaSeparator(ArrayList<String> strings) {
+        String result;
+        StringBuilder builder = new StringBuilder();
+        if (strings != null && strings.size() > 0) {
+            for (int i = 0; i < strings.size(); i++) {
+                if (i == strings.size() - 1) {
+                    builder.append(strings.get(i));
+                    break;
+                } else {
+                    builder.append(strings.get(i));
+                    builder.append(COMMA_SEPARATOR);
+                }
+            }
+        }
+        result = builder.toString();
+        return result;
     }
 }

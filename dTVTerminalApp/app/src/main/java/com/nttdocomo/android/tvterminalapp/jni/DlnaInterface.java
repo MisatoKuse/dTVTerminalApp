@@ -4,11 +4,15 @@
 
 package com.nttdocomo.android.tvterminalapp.jni;
 
+import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
+import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.service.download.DtcpDownloadParam;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -31,6 +35,12 @@ public class DlnaInterface {
     private static final int DLNA_MSG_ID_TER_CHANNEL_LIST = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 4;
     //ひかりTVに関して、チャンネルリストを発見
     private static final int DLNA_MSG_ID_HIKARI_CHANNEL_LIST = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 5;
+    //Download progress
+    public static final int DLNA_MSG_ID_DL_PROGRESS = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 6;
+    //Download status
+    public static final int DLNA_MSG_ID_DL_STATUS = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 7;
+    //Download param
+    private static final int DLNA_MSG_ID_DL_XMLPARAM = DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST + 8;
 
     //DMS情報
     private DlnaDMSInfo mDMSInfo = new DlnaDMSInfo();
@@ -49,6 +59,10 @@ public class DlnaInterface {
     private DlnaBsChListInfo mDlnaBsChListInfo;
     private DlnaTerChListInfo mDlnaTerChListInfo;
     private Handler mHandler= new Handler();
+
+//    //Download
+//    private DlnaDlListener mDlnaDlListener;
+//    private Context mContext;
 
     /**
      * 機能：デフォールト構造を禁止
@@ -300,7 +314,7 @@ public class DlnaInterface {
      * @param content content
      */
     public void notifyFromNative(int msg, String content) {
-        Log.d("", "msg=" + msg + ", content=" + content);
+        DTVTLogger.debug("msg=" + msg + ", content=" + content);
         switch (msg) {
             case DLNA_MSG_ID_DEV_DISP_LEAVE:
                 removeDms(content);
@@ -316,7 +330,7 @@ public class DlnaInterface {
      * @param content content
      */
     public void notifyObjFromNative(int msg, ArrayList<Object> content) {
-        Log.d("", "msg=" + msg + ", content=" + content);
+        DTVTLogger.debug("msg=" + msg + ", content=" + content);
         if(onError(msg, content)){
             return;
         }
@@ -453,7 +467,9 @@ public class DlnaInterface {
         }
 
         DlnaDmsItem item = (DlnaDmsItem) content.get(0);
-        if(null==item || null==item.mUdn){
+        //if(null==item || null==item.mUdn){
+        if(!DlnaDmsItem.isDmsItemValid(item)){
+            DTVTLogger.debug("onDeviceJoin(), DlnaDmsItem invallid so skip");
             return;
         }
         mDMSInfo.add(item);
@@ -461,7 +477,7 @@ public class DlnaInterface {
         if (null != mDlnaDevListListener) {
             mDlnaDevListListener.onDeviceJoin(mDMSInfo, item);
         }
-        if(mCurrentDmsItem.mUdn.equals(item.mUdn)){
+        if(null!=mCurrentDmsItem && null!=mCurrentDmsItem.mUdn && mCurrentDmsItem.mUdn.equals(item.mUdn)){
             mCurrentDmsItem=item;
             //本番ソース begin
             browseBsChListDms();
@@ -494,7 +510,7 @@ public class DlnaInterface {
      * @param item 使用しているDlnaDmsItem
      */
     public boolean registerCurrentDms(DlnaDmsItem item) {
-        if (null != mDMSInfo && null!=item) {
+        if (null != mDMSInfo && DlnaDmsItem.isDmsItemValid(item) ) {
             mCurrentDmsItem = item;
             return true;
         }
@@ -578,4 +594,17 @@ public class DlnaInterface {
     public void toDoWithWiFiLost(){
 
     }
+
+    /**
+     * 機能：download
+     * @param param
+     * @return
+     */
+    public String getDlParam(final DtcpDownloadParam param) {
+        DTVTLogger.start();
+        DTVTLogger.end();
+        return getDlParam(mNativeDlna, param.getItemId());
+    }
+
+    private native String getDlParam(long prt, String itemId);
 }
