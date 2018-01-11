@@ -461,17 +461,18 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         final RecordedBaseFragment baseFrgament = getCurrentRecordedBaseFragment(0);
         baseFrgament.mContentsList = new ArrayList<>();
         for (int i = 0; i < curInfo.getRecordVideoLists().size(); ++i) {
+            DlnaRecVideoItem itemData = curInfo.getRecordVideoLists().get(i);
             RecordedContentsDetailData detailData = new RecordedContentsDetailData();
-            detailData.setItemId(curInfo.getRecordVideoLists().get(i).mItemId);
-            detailData.setUpnpIcon(curInfo.getRecordVideoLists().get(i).mUpnpIcon);
-            detailData.setSize(curInfo.getRecordVideoLists().get(i).mSize);
-            detailData.setResUrl(curInfo.getRecordVideoLists().get(i).mResUrl);
-            detailData.setResolution(curInfo.getRecordVideoLists().get(i).mResolution);
-            detailData.setBitrate(curInfo.getRecordVideoLists().get(i).mBitrate);
-            detailData.setDuration(curInfo.getRecordVideoLists().get(i).mDuration);
-            detailData.setTitle(curInfo.getRecordVideoLists().get(i).mTitle);
-            detailData.setVideoType(curInfo.getRecordVideoLists().get(i).mVideoType);
-            detailData.setClearTextSize(curInfo.getRecordVideoLists().get(i).mClearTextSize);
+            detailData.setItemId(itemData.mItemId);
+            detailData.setUpnpIcon(itemData.mUpnpIcon);
+            detailData.setSize(itemData.mSize);
+            detailData.setResUrl(itemData.mResUrl);
+            detailData.setResolution(itemData.mResolution);
+            detailData.setBitrate(itemData.mBitrate);
+            detailData.setDuration(itemData.mDuration);
+            detailData.setTitle(itemData.mTitle);
+            detailData.setVideoType(itemData.mVideoType);
+            detailData.setClearTextSize(itemData.mClearTextSize);
             baseFrgament.mContentsList.add(detailData);
         }
         List<ContentsData> listData = baseFrgament.getContentsData();

@@ -46,8 +46,8 @@ import java.util.List;
 
 import static com.nttdocomo.android.tvterminalapp.common.CustomDialog.DialogType.CONFIRM;
 
-public class RecordedBaseFragment extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener, ContentsAdapter.DownloadCallback
-,DlDataProviderListener {
+public class RecordedBaseFragment extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener,
+        ContentsAdapter.DownloadCallback, DlDataProviderListener {
 
     public Context mActivity;
     public List<ContentsData> mContentsData;
@@ -58,8 +58,8 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     private DownloadParam downloadParam;
     private List<DlData> que = new ArrayList<>();
     private List<Integer> queIndex = new ArrayList<>();
-    private Handler mHandler=new Handler();
-    private final int mPercentToUpdateUi=1;
+    private Handler mHandler = new Handler();
+    private final int mPercentToUpdateUi = 1;
 
     @Override
     public Context getContext() {
@@ -79,7 +79,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     //モックデータ
     private void initData() {
         DTVTLogger.start();
-        mContentsData = new ArrayList();
+        mContentsData = new ArrayList<>();
     }
 
     private View mRecordedFragmentView;
@@ -356,7 +356,6 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 DlData dlData = new DlData();
                 dlData.setItemId(mContentsList.get(index).getItemId());
                 dlData.setSaveFile(getContext().getCacheDir().getPath());
-                //dlData.setTotalSize(mContentsList.get((int) view.getTag()).getSize());
                 dlData.setTotalSize(mContentsList.get(index).getClearTextSize());
                 dlData.setTitle(mContentsList.get(index).getTitle());
                 dlData.setUrl(mContentsList.get(index).getResUrl());
@@ -368,7 +367,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 que.add(dlData);
                 queIndex.add(index);
                 setDownloadStatus(index, 0);
-            break;
+                break;
             case ContentsAdapter.DOWNLOAD_STATUS_LOADING :
                 showDialogToConfirmUnDownload(false, view);
                 break;
