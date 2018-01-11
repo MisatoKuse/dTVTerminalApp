@@ -9,7 +9,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 import java.io.File;
 
-abstract class DownloaderBase {
+public abstract class DownloaderBase {
 
     private DownloadParam mDownloadParam;
     private int mDownloadedBytes;
@@ -244,5 +244,16 @@ abstract class DownloaderBase {
         if(null!=mDownloadListener){
             mDownloadListener.onFail(error);
         }
+    }
+
+    /**
+     * 機能：xml item idからストレージ名を戻す
+     * @param id xml item id
+     * @return ret ret
+     */
+    public static String getFileNameById(String id) {
+        String ret=id;
+        ret=ret.replaceAll("[^a-z^A-Z^0-9]", "_");
+        return "d_"+(new StringBuilder(ret)).toString();
     }
 }

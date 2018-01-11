@@ -36,6 +36,7 @@ import com.nttdocomo.android.tvterminalapp.service.download.DlData;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProviderListener;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadParam;
+import com.nttdocomo.android.tvterminalapp.service.download.DownloaderBase;
 import com.nttdocomo.android.tvterminalapp.service.download.DtcpDownloadParam;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
@@ -267,6 +268,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    showMessage("download success");
                     DTVTLogger.debug("HandlerThread:"+Thread.currentThread().getId());
                     if(queIndex.size() > 0){
                         View view = mRecordedListview.getChildAt(queIndex.get(0)-mRecordedListview.getFirstVisiblePosition());
@@ -293,7 +295,6 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                             e.printStackTrace();
                         }
                     }
-                    Toast.makeText(getActivity(),"download success",Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -393,11 +394,11 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             showMessage("ダウンロードパラメーター初期化失敗しまして、ダウンロードできません。");
             return false;
         }
-        if (null == item) {
+        if (null == item ) {
             showMessage("ダウンロードパラメーター初期化失敗しまして、ダウンロードできません。");
             return false;
         }
-        String dlFileName = "dtcp_test"; //todo design file name
+        String dlFileName = DownloaderBase.getFileNameById(item.getItemId());
         DlnaDmsItem dmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(context);
         if (null == dmsItem.mUdn || dmsItem.mUdn.isEmpty()) {
             showMessage("DMS情報取得失敗しまして、ダウンロードできません。");
