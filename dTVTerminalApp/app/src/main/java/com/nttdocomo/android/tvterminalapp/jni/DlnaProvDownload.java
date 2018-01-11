@@ -47,23 +47,12 @@ public class DlnaProvDownload {
      */
     public DlnaDownloadRet download(DtcpDownloadParam param){
         DTVTLogger.start();
-
-        DlnaInterface di = DlnaInterface.getInstance();
-        if(null==di) {
-            return DlnaDownloadRet.DownloadRet_ParamError;
-        }
-
-        String xml= di.getDlParam(param);
-        if(null==xml || 0==xml.length()){
-            return DlnaDownloadRet.DownloadRet_ParamError;
-        }
-
         if(null==mDlnaInterfaceDl){
             DTVTLogger.end();
             return DlnaDownloadRet.DownloadRet_OtherError;
         }
         DTVTLogger.end();
-        return mDlnaInterfaceDl.download(param, xml);
+        return mDlnaInterfaceDl.download(param);
     }
 
     /**

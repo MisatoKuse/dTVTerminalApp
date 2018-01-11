@@ -28,6 +28,7 @@ public class DlData {
     private String mContentFormat;
     private String mVideoType;
     private String mPercentToNotify;
+    private String mXmlToDl;
 
     public String getItemId() {
         return mItemId;
@@ -211,5 +212,13 @@ public class DlData {
 
     public void setPercentToNotify(String mPercentToNotify) {
         this.mPercentToNotify = mPercentToNotify;
+    }
+
+    public void setXmlToDl(String xml){
+        mXmlToDl=xml;
+    }
+
+    public String getXmlToDl(){
+        return mXmlToDl;
     }
 }

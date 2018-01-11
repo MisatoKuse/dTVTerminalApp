@@ -162,7 +162,7 @@ public class DlnaInterfaceDl {
      *          DownloadRet_CopyKeyFileFailed: copy key file error
      *          DownloadRet_OtherError: other error
      */
-    public DlnaDownloadRet download(final DtcpDownloadParam param, final String xml) {
+    public DlnaDownloadRet download(final DtcpDownloadParam param/*, final String xml*/) {
         DTVTLogger.start();
 
         if(null==mContext){
@@ -220,7 +220,7 @@ public class DlnaInterfaceDl {
 //                download(mNativeDlna, param.getSavePath(), param.getSaveFileName(), param.getDtcp1host(), param.getDtcp1port(), param.getUrl(), param.getCleartextSize(), xml);
 //            }
 //        });
-        download(mNativeDlna, param.getSavePath(), param.getSaveFileName(), param.getDtcp1host(), param.getDtcp1port(), param.getUrl(), param.getCleartextSize(), xml);
+        download(mNativeDlna, param.getSavePath(), param.getSaveFileName(), param.getDtcp1host(), param.getDtcp1port(), param.getUrl(), param.getCleartextSize(), param.getXmlToDl());
         DTVTLogger.end();
         return DlnaDownloadRet.DownloadRet_Succeed;
     }

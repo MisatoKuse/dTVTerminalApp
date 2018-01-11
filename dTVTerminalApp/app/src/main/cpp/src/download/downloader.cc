@@ -8,6 +8,7 @@
 
 #include "downloader.h"
 #include "dmspu_cipher_file.h"
+#include "../DTVTLogger.h"
 
 #include <cipher_file.h>
 #include <cipher_file_context_global.h>
@@ -1274,6 +1275,8 @@
         DTCP = dtcp;
         du_bool ok = false;
 
+        DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>downloader.cc download(), enter");
+
         du_log_dv(0, DU_UCHAR_CONST(
                           "+++ downloader_download [%s:%u] [move:%d] [url:%s] [path:%s] [size:%llu]"),
                   dtcp1host, dtcp1port, move, url, dixim_file, size);
@@ -1289,6 +1292,7 @@
 
         if (!create_temporary_file(dixim_file, &temp_path)) {
             LOGW;
+            DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>downloader.cc download(), create_temporary_file");
             goto error;
         }
         temp_path_ = du_uchar_array_get(&temp_path);
@@ -1297,6 +1301,7 @@
         if (!cipher_file_open_truncate(&cf, temp_path_,
                                        cipher_file_context_global_get_instance())) {
             LOGW;
+            DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>downloader.cc download(), cipher_file_open_truncate");
             goto error;
         }
         opened = 1;
@@ -1304,42 +1309,50 @@
         reserved_space *= 1024 * 1024;
         if (!check_drive_free_space(temp_path_, size, reserved_space)) {
             LOGW;
+            DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>downloader.cc download(), check_drive_free_space");
             goto error2;
         }
 
         if (!downloader_write_thread_info_init(&info, d, move, cf, size, temp_path_, reserved_space,
                                                progress_handler, handler_arg)) {
             LOGW;
+            DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>downloader.cc download(), downloader_write_thread_info_init");
             goto error2;
         }
 
         if (!du_http_client_init(&hc, DOWNLOADER_HTTP_CLIENT_BUF_SIZE,
                                  DOWNLOADER_HTTP_CLIENT_BUF_SIZE)) {
             LOGW;
+            DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>downloader.cc download(), du_http_client_init");
             goto error3;
         }
 
         if (!ake_handler_info_create(&hinfo)) {
             LOGW;
+            DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>downloader.cc download(), ake_handler_info_create");
             goto error6;
         }
         if (!do_ake(&ake, &hinfo, dtcp1host, dtcp1port, move)) {
             LOGW;
+            DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>downloader.cc download(), do_ake");
             goto error7;
         }
 
         if (!start_http_connection_dtcp(&hc, url, didl_xml, move, &stream, ake, request_header)) {
             LOGW;
+            DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>downloader.cc download(), start_http_connection_dtcp");
             goto error7;
         }
 
         if (!read_body_move_dn(&info, &hc, stream, move)) {
             LOGW;
+            DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>downloader.cc download(), read_body_move_dn");
             goto error8;
         }
 
         if (!info.completed) {
             LOGW;
+            DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>downloader.cc download(), !info.completed");
             goto error8;
         }
 
@@ -1348,11 +1361,13 @@
         if (info.need_commit) {
             if (!pre_commit_file(cf, temp_path_, didl_xml, url, &tshr_xml, info.e_emi, &opened)) {
                 LOGW;
+                DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>downloader.cc download(), !pre_commit_file");
                 goto error7;
             }
             if (move) {
                 if (!commit(ake, &hinfo)) {
                     LOGW;
+                    DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>downloader.cc download(), commit");
                     goto error7;
                 }
             }
@@ -1362,6 +1377,7 @@
                 //if (!cipher_file_close_truncate(cf, DDTCP_E_EMI_INVALID, 0)) {LOGW; goto error7;}
                 if (!cipher_file_close_truncate(&cf, DDTCP_E_EMI_INVALID, 0)) {
                     LOGW;
+                    DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>downloader.cc download(), cipher_file_close_truncate");
                     goto error7;
                 }
                 opened = 0;
@@ -1371,6 +1387,7 @@
         if (move || info.e_emi == DDTCP_E_EMI_NMC) {
             if (!post_commit_file(cf, temp_path_)) {
                 LOGW;
+                DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>downloader.cc download(), post_commit_file");
                 goto error7;
             }
         }
@@ -1391,6 +1408,7 @@
         du_uchar_array_free(&temp_path);
         du_uchar_array_free(&tshr_xml);
         du_log_dv(0, DU_UCHAR_CONST("--- downloader_download"));
+        DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>downloader.cc download(), exit true");
         return 1;
 
         error8:
@@ -1419,6 +1437,7 @@
         du_uchar_array_free(&tshr_xml);
         du_log_dv(0, DU_UCHAR_CONST("--- downloader_download"));
         du_log_dv(0, DU_UCHAR_CONST("!!! downloader_download"));
+        DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>downloader.cc download(), exit false");
         return 0;
     }
 

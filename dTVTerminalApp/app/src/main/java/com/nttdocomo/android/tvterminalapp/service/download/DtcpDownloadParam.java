@@ -13,6 +13,7 @@ public class DtcpDownloadParam extends DownloadParam {
     private int mDtcp1port; //e.g. 57343
     private String mUrl;    //e.g. "http://192.168.11.5:58890/web/video/pvr?id=15131320570000000041&quality=mobile"
     private int mCleartextSize;
+    private String mXmlToDl;
 
     public String getDtcp1host() {
         return mDtcp1host;
@@ -58,9 +59,18 @@ public class DtcpDownloadParam extends DownloadParam {
     public boolean isParamValid(){
         if(null==mDtcp1host || 7>mDtcp1host.length()
                 || 0==mDtcp1port
-                || null==mUrl || 1>mUrl.length()){
+                || null==mUrl || 1>mUrl.length()
+                || null==mXmlToDl || mXmlToDl.isEmpty()){
             return false;
         }
         return super.isParamValid();
+    }
+
+    public String getXmlToDl(){
+        return mXmlToDl;
+    }
+
+    public void setXmlToDl(String xmlToDl){
+        mXmlToDl=xmlToDl;
     }
 }

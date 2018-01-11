@@ -4,15 +4,10 @@
 
 package com.nttdocomo.android.tvterminalapp.jni;
 
-import android.content.Context;
 import android.os.Handler;
-import android.util.Log;
 
-import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.service.download.DtcpDownloadParam;
 
-import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -597,14 +592,22 @@ public class DlnaInterface {
 
     /**
      * 機能：download
-     * @param param
-     * @return
+     * @param itemId itemId
+     * @return xmlToDl xmlToDl
      */
-    public String getDlParam(final DtcpDownloadParam param) {
+    public String getDlParam(final String itemId) {
         DTVTLogger.start();
         DTVTLogger.end();
-        return getDlParam(mNativeDlna, param.getItemId());
+        return getDlParam(mNativeDlna, itemId);
     }
 
     private native String getDlParam(long prt, String itemId);
+
+    public static String getXmlToDl(String itemId){
+        if(null==sDlnaInterface || null==itemId || itemId.isEmpty()) {
+            return null;
+        }
+
+        return sDlnaInterface.getDlParam(itemId);
+    }
 }

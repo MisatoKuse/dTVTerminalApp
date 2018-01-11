@@ -33,6 +33,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
 import com.nttdocomo.android.tvterminalapp.service.download.DlData;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProviderListener;
@@ -360,6 +361,14 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 DlnaDmsItem dmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getContext());
                 dlData.setHost(dmsItem.mIPAddress);
                 dlData.setPercentToNotify(String.valueOf(mPercentToUpdateUi));
+
+                String xml=getXmlToDl(itemData.getItemId());
+                if(null==xml){
+                    showMessage("Xmlパラメーター取得失敗しまして、ダウンロードできません。");
+                    return;
+                }
+                dlData.setXmlToDl(xml);
+
                 mDlDataProvider.setDlData(dlData);
                 que.add(dlData);
                 queIndex.add(index);
@@ -374,6 +383,10 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             default:
                 break;
         }
+    }
+
+    private String getXmlToDl(String itemId){
+        return DlnaInterface.getXmlToDl(itemId);
     }
 
     private boolean prepareDownLoad(int index) {
@@ -432,6 +445,14 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         dtcpDownloadParam.setCleartextSize(clearTextSizeInt);
         dtcpDownloadParam.setItemId(item.getItemId());
         dtcpDownloadParam.setPercentToNotify(mPercentToUpdateUi);
+
+        String xml=getXmlToDl(item.getItemId());
+        if(null==xml){
+            showMessage("Xmlパラメーター取得失敗しまして、ダウンロードできません。");
+            return false;
+        }
+        dtcpDownloadParam.setXmlToDl(xml);
+
         if (mDlDataProvider == null) {
             try {
                 mDlDataProvider = new DlDataProvider(getActivity(), this);
@@ -456,7 +477,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             return null;
         }
         Boolean isInternal= SharedPreferencesUtils.getSharedPreferencesStoragePath(context);
-        String internalPaht=EnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP); //内部ストレージ
+        String internalPaht= EnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP); //内部ストレージ
         if(isInternal){
             return internalPaht;
         }

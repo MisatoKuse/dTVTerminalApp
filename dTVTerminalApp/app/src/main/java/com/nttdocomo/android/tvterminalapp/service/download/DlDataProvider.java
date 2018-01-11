@@ -236,13 +236,14 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         } else {
             if (dlDataQue != null && dlDataQue.size() > 0) {
                 dlDataQue.remove(0);
+                DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok");
                 if(0==dlDataQue.size()){
                     stop();
                     return;
                 }
                 try {
                     Thread.sleep(1000*2);
-                    DTVTLogger.debug(">>>>>>>>>>>>>>>>>>");
+                    DTVTLogger.debug(">>>>>>>>>>>>>>>>>> new dl");
                     setDlParam(getDownLoadParam());
                     start();
                 } catch (Exception e){
@@ -273,6 +274,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
             dtcpDownloadParam.setCleartextSize(Integer.parseInt(item.getTotalSize()));
             dtcpDownloadParam.setItemId(item.getItemId());
             dtcpDownloadParam.setPercentToNotify(Integer.parseInt(item.getPercentToNotify()));
+            dtcpDownloadParam.setXmlToDl(item.getXmlToDl());
         }
         return downloadParam;
     }
