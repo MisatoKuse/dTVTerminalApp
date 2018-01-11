@@ -56,8 +56,6 @@ public class SharedPreferencesUtils {
     /** ユーザー情報取得日時 */
     private static final String LAST_USER_INFO_DATE = "LAST_USER_INFO_DATE";
 
-    private static final String CONTRACT_INFO_SHARED_KEY = "CONTRACT_INFO_SHARED_KEY";
-
     /**
      * 独自の削除メソッドがある接続済みSTB情報以外の、dアカウントユーザー切り替え時の削除対象
      * 新しい物を追加した場合は、基本的にこの配列に名前を追加してください。
@@ -485,30 +483,5 @@ public class SharedPreferencesUtils {
 
         //保存した年齢情報がない場合はPG12を返却
         return data.getInt(USER_AGE_REQ_SHARED_KEY, StringUtil.USER_AGE_REQ_PG12);
-    }
-
-    /**
-     * 取得したユーザーの契約情報を保存
-     *
-     * @param context コンテキスト
-     * @param info 契約情報
-     */
-    public static void setSharedPreferencesContractInfo(Context context, String info) {
-        DTVTLogger.start();
-        SharedPreferences data = context.getSharedPreferences(
-                CONTRACT_INFO_SHARED_KEY, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = data.edit();
-        editor.putString(CONTRACT_INFO_SHARED_KEY, info);
-        editor.apply();
-        DTVTLogger.end();
-    }
-
-    public static String getSharedPreferencesContractInfo(Context context) {
-        DTVTLogger.start();
-        SharedPreferences data = context.getSharedPreferences(
-                CONTRACT_INFO_SHARED_KEY, Context.MODE_PRIVATE);
-
-        //保存した契約情報がない場合はnoneを返却する
-        return data.getString(CONTRACT_INFO_SHARED_KEY, "none");
     }
 }

@@ -55,9 +55,15 @@ import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.UserInfoInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.DtvContentsDetailDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChListResponse;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationResultResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
@@ -184,6 +190,24 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     private final int RECORDING_RESERVATION_DIALOG_INDEX_1 = 1; // キャンセル
     // 他サービスフラグ
     boolean mIsOtherService = false;
+
+    //視聴判定
+    /**
+     * 対象コンテンツが視聴期限以内かどうか.
+     */
+    private boolean mIsLimitThirtyDay = false;
+    /**
+     * 対象コンテンツが視聴期限以内かどうか(VOD).
+     */
+    private boolean mIsVodLimitThirtyDay = false;
+    /**
+     * 対象コンテンツのチャンネルデータ.
+     */
+    private Channel mChannel = null;
+    /**
+     * 一ヶ月(30日).
+     */
+    private static final int ONE_MONTH = 30;
 
     private Runnable mHideCtrlViewThread = new Runnable() {
 
@@ -1378,6 +1402,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                 for (int i = 0; i < channels.size(); i++) {
                     Channel channel = channels.get(i);
                     if (mDetailFullData.getmService_id().equals(channel.getServiceId())) {
+                        mChannel = channel;
                         String channelName = channel.getTitle();
                         detailFragment.mOtherContentsDetailData.setChannelName(channelName);
                         String channelStartDate = channel.getStartDate();
@@ -1388,6 +1413,8 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                 }
                 detailFragment.refreshChannelInfo();
             }
+            //コンテンツの視聴可否判定を行う
+            checkWatchContents();
         }
     }
 
@@ -1896,6 +1923,302 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
      */
     public Boolean getControllerVisible() {
         return mIsControllerVisible;
+    }
+
+    /**
+     * コンテンツの視聴可否判定を行う.
+     */
+    private void checkWatchContents() {
+        final String CONTRACT_STATUS_NONE = "none";
+        final String CONTRACT_STATUS_DTV = "001";
+        final String CONTRACT_STATUS_H4D = "002";
+        final String TV_PROGRAM = "tv_program";
+        final String VIDEO_PROGRAM = "video_program";
+        final String SUBSCRIPTION_PACKAGE = "subscription_package";
+        final String CH_TYPE_KIHON = "kihon_ch";
+        final String CH_TYPE_BASIC = "basic_ch";
+        final String CH_TYPE_TRIAL = "trial_free";
+        final String CH_TYPE_PREMIUM = "premium_ch";
+        final String IS_TV_SERVICE_FLAG = "1";
+        final String NOT_TV_SERVICE_FLAG = "0";
+        final String IS_DTV_FLAG = "1";
+        final String NOT_DTV_FLAG = "0";
+        final String IS_BV_FLAG = "1";
+
+        //DBに保存されているUserInfoから契約情報を確認する
+        UserInfoInsertDataManager dataManager = new UserInfoInsertDataManager(this);
+        dataManager.readUserInfoInsertList();
+        String contractInfo = StringUtil.getUserContractInfo(dataManager.getmUserData());
+        DTVTLogger.debug("contractInfo: " + contractInfo);
+
+        if (contractInfo == null || contractInfo.isEmpty() || CONTRACT_STATUS_NONE.equals(contractInfo)) {
+            //契約情報が未設定、または"none"の場合は視聴不可
+            Toast.makeText(this, "視聴不可(未契約)", Toast.LENGTH_SHORT).show();
+        } else if (CONTRACT_STATUS_DTV.equals(contractInfo)) {
+            //契約情報が"001"の場合
+            DTVTLogger.debug("disp_type: " + mDetailFullData.getDisp_type());
+            //"disp_type"の値を確認する
+            if (TV_PROGRAM.equals(mDetailFullData.getDisp_type())) {
+                DTVTLogger.debug("tv_service: " + mDetailFullData.getmTv_service());
+                //"tv_service"の値を確認する
+                if (IS_TV_SERVICE_FLAG.equals(mDetailFullData.getmTv_service())) {
+                    if (checkWatchDate(mDetailFullData.getAvail_start_date(), mDetailFullData.getAvail_end_date())) {
+                        Toast.makeText(this, "視聴可能. 30日以内:" + mIsLimitThirtyDay, Toast.LENGTH_SHORT).show();
+                    } else if (mDetailFullData.getAvail_start_date() > DateUtils.getNowTimeFormatEpoch()) {
+                        Toast.makeText(this, "視聴不可(放送時間外のため再生導線を非表示)", Toast.LENGTH_SHORT).show();
+                    }  else if (mDetailFullData.getAvail_end_date() <= DateUtils.getNowTimeFormatEpoch()) {
+                        if (checkVodDate(mDetailFullData.getmVod_start_date(), mDetailFullData.getmVod_end_date())) {
+                            Toast.makeText(this, "視聴可能. 30日以内:" + mIsVodLimitThirtyDay, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(this, "視聴不可", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+                Toast.makeText(this, "視聴不可", Toast.LENGTH_SHORT).show();
+            }
+            Toast.makeText(this, "視聴不可", Toast.LENGTH_SHORT).show();
+        } else if (CONTRACT_STATUS_H4D.equals(contractInfo)) {
+            //契約情報が"002"の場合
+            DTVTLogger.debug("disp_type: " + mDetailFullData.getDisp_type());
+            //"disp_type"の値を確認する
+            switch (mDetailFullData.getDisp_type()) {
+                case TV_PROGRAM:
+                    DTVTLogger.debug("tv_service: " + mDetailFullData.getmTv_service());
+                    //"tv_service"の値を確認する
+                    if (NOT_TV_SERVICE_FLAG.equals(mDetailFullData.getmTv_service())) {
+                        //"tv_service"が0の場合（ひかりTV多ch）
+                        if (mChannel != null) {
+                            DTVTLogger.debug("service_id: " + mDetailFullData.getmService_id());
+                            DTVTLogger.debug("CH_service_id: " + mChannel.getServiceId());
+                            DTVTLogger.debug("CH_ch_type: " + mChannel.getChType());
+                            if (mChannel.getServiceId().equals(mDetailFullData.getmService_id())) {
+                                if (CH_TYPE_KIHON.equals(mChannel.getChType())
+                                        || CH_TYPE_BASIC.equals(mChannel.getChType())
+                                        || CH_TYPE_TRIAL.equals(mChannel.getChType())) {
+                                    if (mDetailFullData.getAvail_start_date() <= DateUtils.getNowTimeFormatEpoch()
+                                            && DateUtils.getNowTimeFormatEpoch() < mDetailFullData.getAvail_end_date()) {
+                                        Toast.makeText(this, "視聴可能", Toast.LENGTH_SHORT).show();
+                                    } else if (mDetailFullData.getAvail_start_date() > DateUtils.getNowTimeFormatEpoch()
+                                            || DateUtils.getNowTimeFormatEpoch() >= mDetailFullData.getAvail_end_date()) {
+                                        //視聴期間外のため視聴不可
+                                        Toast.makeText(this, "視聴不可(放送時間外のため再生導線を非表示)", Toast.LENGTH_SHORT).show();
+                                    }
+                                } else if (CH_TYPE_PREMIUM.equals(mChannel.getChType())) {
+                                    DTVTLogger.debug("premium");
+                                    //購入済みチャンネル一覧を取得
+                                    mDetailDataProvider.getChListData();
+                                    //onRentalChListCallbackで続きの判定を行う
+                                }
+                            }
+                        }
+                        Toast.makeText(this, "視聴不可", Toast.LENGTH_SHORT).show();
+                    } else if (IS_TV_SERVICE_FLAG.equals(mDetailFullData.getmTv_service())) {
+                        //"tv_service"が1の場合（dチャンネル）
+                        if (checkWatchDate(mDetailFullData.getAvail_start_date(), mDetailFullData.getAvail_end_date())) {
+                            Toast.makeText(this, "視聴可能. 30日以内:" + mIsVodLimitThirtyDay, Toast.LENGTH_SHORT).show();
+                        } else if (mDetailFullData.getAvail_start_date() > DateUtils.getNowTimeFormatEpoch()) {
+                            Toast.makeText(this, "視聴不可(放送時間外のため再生導線を非表示)", Toast.LENGTH_SHORT).show();
+                        } else if (mDetailFullData.getAvail_end_date() <= DateUtils.getNowTimeFormatEpoch()) {
+                            if (checkVodDate(mDetailFullData.getmVod_start_date(), mDetailFullData.getmVod_end_date())) {
+                                Toast.makeText(this, "視聴可能. 30日以内:" + mIsVodLimitThirtyDay, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                    Toast.makeText(this, "視聴不可", Toast.LENGTH_SHORT).show();
+                    break;
+                case VIDEO_PROGRAM:
+                    //"dtv"の値を確認する
+                    DTVTLogger.debug("dtv: " + mDetailFullData.getDtv());
+                    if (IS_DTV_FLAG.equals(mDetailFullData.getDtv())) {
+                        //視聴可能期限の確認
+                        if (checkWatchDate(mDetailFullData.getAvail_start_date(), mDetailFullData.getAvail_end_date())) {
+                            Toast.makeText(this, "視聴可能. 30日以内:" + mIsLimitThirtyDay, Toast.LENGTH_SHORT).show();
+                        } else {
+                            //視聴可能期限内ではないので視聴不可
+                            Toast.makeText(this, "視聴不可", Toast.LENGTH_SHORT).show();
+                        }
+                    } else if (NOT_DTV_FLAG.equals(mDetailFullData.getDtv())) {
+                        //"dtv"の値が0の場合、"bvflg"の値を確認する
+                        DTVTLogger.debug("bvflg: " + mDetailFullData.getBvflg());
+                        if (IS_BV_FLAG.equals(mDetailFullData.getBvflg())) {
+                            //視聴可能期限の確認
+                            if (checkWatchDate(mDetailFullData.getAvail_start_date(), mDetailFullData.getAvail_end_date())) {
+                                Toast.makeText(this, "視聴可能. 30日以内:" + mIsLimitThirtyDay, Toast.LENGTH_SHORT).show();
+                            } else {
+                                //視聴可能期限内ではないので視聴不可
+                                Toast.makeText(this, "視聴不可", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            //bvflgが1ではないので視聴不可
+                            Toast.makeText(this, "視聴不可", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    break;
+                case SUBSCRIPTION_PACKAGE:
+                    //レンタルコンテンツ(購入済みVOD)一覧を取得
+                    mDetailDataProvider.getVodListData();
+                    //onRentalVodListCallbackで続きの判定を行う
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    /**
+     * vodコンテンツが視聴可能な期間内であるかを返す.
+     *
+     * @param startDate 視聴可能開始日時
+     * @param endDate 視聴可能期限
+     * @return true:視聴可能 false:視聴不可
+     */
+    private Boolean checkVodDate(final Long startDate, final Long endDate) {
+        Long now = DateUtils.getNowTimeFormatEpoch();
+
+        if (null == startDate || startDate == 0) {
+            //開始日時未設定時は視聴不可
+            return false;
+        } else if (endDate <= now) {
+            //視聴可能期限を超えているため視聴不可
+            return false;
+        } else if (startDate <= now && now < endDate) {
+            //視聴可能期限まで一ヶ月以内かどうか
+            if (endDate - now < DateUtils.EPOCH_TIME_ONE_DAY * ONE_MONTH) {
+                mIsVodLimitThirtyDay = true;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * コンテンツが視聴可能な期間であるかを返す.
+     *
+     * @param startDate 視聴可能開始日時
+     * @param endDate 視聴可能期限
+     * @return true:視聴可能 false:視聴不可
+     */
+    private Boolean checkWatchDate(final Long startDate, final Long endDate) {
+        final int ONE_MONTH = 30;
+
+        Long now = DateUtils.getNowTimeFormatEpoch();
+        //視聴可能期限内かどうか
+        if (startDate <= now && now < endDate) {
+            //視聴可能期限まで一ヶ月以内かどうか
+            if (endDate - now < DateUtils.EPOCH_TIME_ONE_DAY * ONE_MONTH) {
+                mIsLimitThirtyDay = true;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onRentalVodListCallback(final PurchasedVodListResponse response) {
+        DTVTLogger.start();
+        //購入済みVOD取得からの戻り(視聴可否判定)
+        ArrayList<ActiveData> activeDatas = response.getVodActiveData();
+
+        String[] liinfArray = mDetailFullData.getmLiinf_array();
+        String puid = mDetailFullData.getPuid();
+        for (String liinf : liinfArray) {
+            //liinfを"|"区切りで分解する
+            String[] column = liinf.split("|", 0);
+            for (ActiveData activeData : activeDatas) {
+                String license_id = activeData.getLicenseId();
+                if (license_id.equals(column[1]) || license_id.equals(puid)) {
+                    //購入済みVODのlicense_idと、対象コンテンツのpuidかliinf_arrayのライセンスIDが一致
+                    if (activeData.getValidEndDate() > DateUtils.getNowTimeFormatEpoch()) {
+                        //視聴可能期限内なので、activeData全体から最長の期限を探す
+                        long activeDataDate = activeData.getValidEndDate();
+                        for (ActiveData activeDataEndDate : activeDatas) {
+                            if (activeDataDate < activeDataEndDate.getValidEndDate()) {
+                                activeDataDate = activeDataEndDate.getValidEndDate();
+                            }
+                        }
+                        //視聴可能期限まで一ヶ月以内かどうか
+                        if (activeData.getValidEndDate() - DateUtils.getNowTimeFormatEpoch()
+                                < DateUtils.EPOCH_TIME_ONE_DAY * ONE_MONTH) {
+                            mIsLimitThirtyDay = true;
+                        }
+                        //視聴可能
+                        Toast.makeText(this, "視聴可能. 30日以内:" + mIsLimitThirtyDay, Toast.LENGTH_SHORT).show();
+                    } else {
+                        //視聴期限範囲外のため視聴不可だが他のactive_listをチェックするためここでは何もしない
+                        DTVTLogger.debug("Out of date range");
+                    }
+                }
+            }
+        }
+        Toast.makeText(this, "視聴不可(契約導線を表示)", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onRentalChListCallback(final PurchasedChListResponse response) {
+        //購入済みCH一覧取得からの戻り
+        DTVTLogger.start();
+        ChannelList channelList = response.getChannelListData();
+        List<HashMap<String, String>> chList = channelList.getClList();
+
+        if (checkChServiceIdListSame(chList)) {
+            //購入CHと対象CHのservice_idが一致
+            ArrayList<ActiveData> activeDatas = response.getChActiveData();
+            //購入済みCHのactive_list内のlicense_idと、対象CHのpuid, sub_puid, CHPACK-puid, CHPACK-sub_puidを比較
+            for (ActiveData activeData : activeDatas) {
+                if (activeData.getLicenseId().equals(mChannel.getPuId())
+                        || activeData.getLicenseId().equals(mChannel.getSubPuId())
+                        || activeData.getLicenseId().equals(mChannel.getChPackPuId())
+                        || activeData.getLicenseId().equals(mChannel.getChPackSubPuId())) {
+                    if (activeData.getValidEndDate() > DateUtils.getNowTimeFormatEpoch()) {
+                        //視聴可能期限内なので、activeData全体から最長の期限を探す
+                        long activeDataDate = activeData.getValidEndDate();
+                        for (ActiveData activeDataEndDate : activeDatas) {
+                            if (activeDataDate < activeDataEndDate.getValidEndDate()) {
+                                activeDataDate = activeDataEndDate.getValidEndDate();
+                            }
+                        }
+                        //視聴可能期限まで一ヶ月以内かどうか
+                        if (activeData.getValidEndDate() - DateUtils.getNowTimeFormatEpoch()
+                                < DateUtils.EPOCH_TIME_ONE_DAY * ONE_MONTH) {
+                            mIsLimitThirtyDay = true;
+                        }
+                        //視聴可能
+                        Toast.makeText(this, "視聴可能. 30日以内:" + mIsLimitThirtyDay, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    //license_id不一致のため視聴不可だが他のlicense_idをチェックするためここでは何もしない
+                    DTVTLogger.debug("Mismatch of active_list");
+                }
+            }
+        }
+        Toast.makeText(this, "視聴不可(契約導線を表示)", Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * 購入済みCH一覧のservice_idと対象のCHのservice_idが一致するか確認.
+     *
+     * @param chList 購入済みCHリスト
+     * @return true:一致 false:不一致
+     */
+    private boolean checkChServiceIdListSame(final List<HashMap<String, String>> chList) {
+        List<String> chServiceIds = new ArrayList<>();
+
+        //CHのservice_id一覧を取得
+        for (HashMap<String, String> hashMap : chList) {
+            String serviceId = hashMap.get(JsonContents.META_RESPONSE_SERVICE_ID);
+            if (serviceId != null && serviceId.isEmpty()) {
+                chServiceIds.add(serviceId);
+            }
+        }
+
+        //service_idが一致するか
+        for (String serviceId : chServiceIds) {
+            if (serviceId.equals(mChannel.getServiceId())) {
+                //service_idが一致
+                return true;
+            }
+        }
+        return false;
     }
 
     /* test code begin */
