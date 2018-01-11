@@ -18,6 +18,13 @@ public class UrlConstants {
         public static final String RECOMMEND_LIST_GET_URL =
                 "https://ve.m.service.smt.docomo.ne.jp/srermd/recommend/index.do";
 
+        /**
+         * ワンタイムパスワードでレコメンドサーバーを認証するURL
+         */
+        public static final String ONE_TIME_PASSWORD_AUTH_URL =
+                "https://ve.m.cfg.smt.docomo.ne.jp/auth/cgi/aplpwdauth";
+        //"https://ve.m.service.smt.docomo.ne.jp/auth/cgi/aplpwdauth";
+
         //TODO: 本物のぷららサーバーが提供されるまでは、テストサーバーのアドレスを指定する
         /**
          * ぷららサーバーAPIアクセス用のベースURL
