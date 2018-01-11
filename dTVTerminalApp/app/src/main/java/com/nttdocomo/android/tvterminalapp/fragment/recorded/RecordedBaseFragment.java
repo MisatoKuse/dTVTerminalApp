@@ -323,21 +323,18 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         switch (mContentsData.get(index).getDownloadFlg()){
             case ContentsAdapter.DOWNLOAD_STATUS_ALLOW :
                 if (textView != null) {
-                    view.findViewById(R.id.item_common_result_recorded_content_hyphen).setVisibility(View.VISIBLE);
-                    textView.setTextColor(ContextCompat.getColor(mActivity, R.color.d_animation_title));
-                    textView.setVisibility(View.VISIBLE);
-                    textView.setText("ダウンロード中 " + progress + "%");
                     view.findViewById(R.id.item_common_result_clip_tv).setBackgroundResource(R.mipmap.icon_circle_active_pause);
                 }
-                mContentsData.get(index).setDownloadStatus("ダウンロード中 " + progress + "%");
                 mContentsData.get(index).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_LOADING);
                 break;
             case ContentsAdapter.DOWNLOAD_STATUS_LOADING :
                 if (textView != null) {
+                    view.findViewById(R.id.item_common_result_recorded_content_hyphen).setVisibility(View.VISIBLE);
+                    textView.setVisibility(View.VISIBLE);
+                    textView.setTextColor(ContextCompat.getColor(mActivity, R.color.d_animation_title));
                     textView.setText("ダウンロード中 " + progress + "%");
                 }
                 mContentsData.get(index).setDownloadStatus("ダウンロード中 " + progress + "%");
-                mContentsData.get(index).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_LOADING);
                 break;
             default:
                 break;
@@ -494,17 +491,28 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             @Override
             public void onOKCallback(boolean isOK) {
                 if (isOK) {
-                    if (true){
-                        //コンテンツを削除する
-                        String fileName = mContentsList.get((int) view.getTag()).getTitle();
-                        File file = new File(getContext().getCacheDir().getPath() + "/" + fileName);
-                        if(file.exists()){
-                            if(file.delete()) {
-                                Toast.makeText(getContext(), "delete success", Toast.LENGTH_SHORT).show();
+                    if (!completed){
+                        for (int i = 0; i < queIndex.size(); i++) {
+                            if ((int) view.getTag() == queIndex.get(0)) {
+                                mDlDataProvider.cancel();
+                                if (queIndex.size() > 1) {
+                                    prepareDownLoad(queIndex.get(1));
+                                }
+                            }
+                            if ((int) view.getTag() == queIndex.get(i)) {
+                                que.remove(i);
+                                queIndex.remove(i);
+                                break;
                             }
                         }
-                    } else {
-                        //ダウンロードを取りやめる
+                    }
+                    //コンテンツを削除する
+                    String fileName = mContentsList.get((int) view.getTag()).getTitle();
+                    File file = new File(getContext().getCacheDir().getPath() + "/" + fileName);
+                    if(file.exists()){
+                        if(file.delete()) {
+                            Toast.makeText(getContext(), "delete success", Toast.LENGTH_SHORT).show();
+                        }
                     }
                     setDownloadStatusClear(view);
                     view.setBackgroundResource(R.mipmap.icon_circle_normal_download);
