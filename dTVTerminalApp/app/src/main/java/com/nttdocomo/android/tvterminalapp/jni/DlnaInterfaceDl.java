@@ -61,7 +61,7 @@ public class DlnaInterfaceDl {
      * @param content content
      */
     public void notifyFromNative(int msg, String content) {
-        DTVTLogger.debug("msg=" + msg + ", content=" + content);
+        //DTVTLogger.debug("msg=" + msg + ", content=" + content);
         switch (msg) {
             case DlnaInterface.DLNA_MSG_ID_DL_PROGRESS:
                 dlProgress(content);

@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.fragment.recorded;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -161,7 +162,11 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
 
     @Override
     public void onStart(int totalFileByteSize) {
-        getActivity().runOnUiThread(new Runnable() {
+        Activity act= getActivity();
+        if(null==act){
+            return;
+        }
+        act.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if(queIndex.size() > 0){

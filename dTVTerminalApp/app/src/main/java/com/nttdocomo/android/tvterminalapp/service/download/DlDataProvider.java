@@ -12,6 +12,7 @@ import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DownLoadListDataManager;
@@ -194,7 +195,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
 
     @Override
     public void onStart(int totalFileByteSize) {
-        if (null != mDlDataProviderListener) {
+        if (null != mDlDataProviderListener &&isBinded) {
             mDlDataProviderListener.onStart(totalFileByteSize);
             saveDownLoad(totalFileByteSize);
         }
@@ -234,7 +235,14 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
             mDlDataProviderListener.onSuccess(fullPath);
         } else {
             if (dlDataQue != null && dlDataQue.size() > 0) {
+                dlDataQue.remove(0);
+                if(0==dlDataQue.size()){
+                    stop();
+                    return;
+                }
                 try {
+                    Thread.sleep(1000*2);
+                    DTVTLogger.debug(">>>>>>>>>>>>>>>>>>");
                     setDlParam(getDownLoadParam());
                     start();
                 } catch (Exception e){

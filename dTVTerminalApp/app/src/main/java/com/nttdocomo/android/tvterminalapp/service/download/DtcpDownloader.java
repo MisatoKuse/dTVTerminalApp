@@ -135,7 +135,7 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
                     File[] files= f.listFiles();
                     DTVTLogger.debug("------------------------");
                     for(File f2: files){
-                        DTVTLogger.debug(f2.getAbsolutePath() + ", size=" + f2.getTotalSpace());
+                        DTVTLogger.debug(f2.getAbsolutePath() + ", size=" + f2.length());
                     }
                     DTVTLogger.debug("------------------------");
                 }

@@ -92,11 +92,11 @@ namespace dtvt {
                               string((char *) dirToSave), string((char *) fileNameToSave), string((char *) dtcp1host),
                               dtcp1port, string((char *) url), cleartextSize, xml);
 
-        env->ReleaseStringUTFChars(dirToSave_, (const char *) dirToSave);
-        env->ReleaseStringUTFChars(fileNameToSave_, (const char *) fileNameToSave);
-        env->ReleaseStringUTFChars(dtcp1host_, (const char *) dtcp1host);
-        env->ReleaseStringUTFChars(url_, (const char *) url);
-        env->ReleaseStringUTFChars(xml_, (const char *) xml);
+//        env->ReleaseStringUTFChars(dirToSave_, (const char *) dirToSave);
+//        env->ReleaseStringUTFChars(fileNameToSave_, (const char *) fileNameToSave);
+//        env->ReleaseStringUTFChars(dtcp1host_, (const char *) dtcp1host);
+//        env->ReleaseStringUTFChars(url_, (const char *) url);
+//        env->ReleaseStringUTFChars(xml_, (const char *) xml);
     }
 
     extern "C"  void JNICALL
