@@ -1307,7 +1307,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                 mDetailDataProvider.getChannelList(1, 1, "", 1);
             }
             //if (UserState.LOGIN_NG != getUserState()){//ログイン状態でしか送信しない
-                new SendOperateLog(mDetailData, mDetailFullData, mIntent.getParcelableExtra(RECOMMEND_INFO_BUNDLE_KEY) != null).sendOpeLog();
+                new SendOperateLog(mDetailData, mDetailFullData).sendOpeLog();
             //}
         }
     }

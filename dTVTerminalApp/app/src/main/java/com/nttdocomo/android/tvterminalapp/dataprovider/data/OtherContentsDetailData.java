@@ -43,11 +43,18 @@ public class OtherContentsDetailData extends RecordedContentsDetailData implemen
     //コンテンツIDを追加
     private String mContentId;
 
+    // チャンネルID
     private String mChannelId = "";
+    // おすすめ順
     private String mRecommendOrder = "";
+    // 画面ID
     private String mPageId = "";
+    // ユーザグループID
     private String mGroupId = "";
+    // レコメンド手法ID
     private String mRecommendMethodId = "";
+    // レコメンドフラグ
+    private String mRecommendFlg = "";
 
     public String getChannelDate() {
         return mChannelDate;
@@ -225,6 +232,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData implemen
         dest.writeString(this.mPageId);
         dest.writeString(this.mGroupId);
         dest.writeString(this.mRecommendMethodId);
+        dest.writeString(this.mRecommendFlg);
     }
 
     public OtherContentsDetailData() {
@@ -256,6 +264,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData implemen
         this.mPageId = in.readString();
         this.mGroupId = in.readString();
         this.mRecommendMethodId = in.readString();
+        this.mRecommendFlg = in.readString();
     }
 
     public static final Creator<OtherContentsDetailData> CREATOR = new Creator<OtherContentsDetailData>() {
@@ -308,5 +317,13 @@ public class OtherContentsDetailData extends RecordedContentsDetailData implemen
 
     public void setRecommendMethodId(String mRecommendMethodId) {
         this.mRecommendMethodId = mRecommendMethodId;
+    }
+
+    public String getRecommendFlg() {
+        return mRecommendFlg;
+    }
+
+    public void setRecommendFlg(String mRecommendFlg) {
+        this.mRecommendFlg = mRecommendFlg;
     }
 }

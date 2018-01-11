@@ -14,13 +14,15 @@ public class SearchContentInfo {
     public String synop;
     public String comment;
     public String highlight;
+    public String rank;
 
-    public SearchContentInfo(boolean clipFlag, String contentId, int serviceId, String contentPictureUrl, String title) {
+    public SearchContentInfo(boolean clipFlag, String contentId, int serviceId, String contentPictureUrl, String title, int rank) {
         this.clipFlag = clipFlag;
         this.contentId = contentId;
         this.serviceId = serviceId;
         this.contentPictureUrl = contentPictureUrl;
         this.title = title;
+        this.rank = String.valueOf(rank);
         //TODO:↓レコメンドサーバからコンテンツ詳細情報が取得できるようになったら、synop、comment、highlight取得に関する一連の処理を追加する
         this.synop = "";
         this.comment = "※解説(ダミー)【吹替版】" +

@@ -82,10 +82,15 @@ public class ContentsData {
     //ダウンロードステータス（進捗）
     private String mDownloadStatus = "";
 
+    // チャンネルID
     private String mChannelId = "";
+    // おすすめ順
     private String mRecommendOrder = "";
+    // 画面ID
     private String mPageId = "";
+    // ユーザグループID
     private String mGroupId = "";
+    // レコメンド手法ID
     private String mRecommendMethodId = "";
 
     public String getDeviceName() {

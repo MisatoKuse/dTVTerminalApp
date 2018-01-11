@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
 import android.text.TextUtils;
 
+import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecommendDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
@@ -16,13 +17,11 @@ public class SendOperateLog extends WebApiBase {
 
     private OtherContentsDetailData mDetailData =  null;
     private VodMetaFullData mDetailFullData =  null;
-    private boolean mRecommendFlg = false;
     private StringBuffer mUrl = new StringBuffer("https://ve.m.service.smt.docomo.ne.jp/srermd/operateLog/index.do");
 
-    public SendOperateLog(OtherContentsDetailData mDetailData, VodMetaFullData mDetailFullData, boolean mRecommendFlg) {
+    public SendOperateLog(OtherContentsDetailData mDetailData, VodMetaFullData mDetailFullData) {
         this.mDetailData = mDetailData;
         this.mDetailFullData = mDetailFullData;
-        this.mRecommendFlg = mRecommendFlg;
     }
 
     public void sendOpeLog() {
@@ -40,8 +39,10 @@ public class SendOperateLog extends WebApiBase {
         if (OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
             getCategorvId();
         } else {
-            mUrl.append("&categorvId=");
-            mUrl.append(mDetailData.getCategoryId());
+            if (!TextUtils.isEmpty(mDetailData.getCategoryId())) {
+                mUrl.append("&categorvId=");
+                mUrl.append(mDetailData.getCategoryId());
+            }
         }
         if (!TextUtils.isEmpty(mDetailData.getChannelId())) {
             mUrl.append("&channelId=");
@@ -50,7 +51,7 @@ public class SendOperateLog extends WebApiBase {
         mUrl.append("&cid=");
         mUrl.append(mDetailData.getContentId());
         mUrl.append("&operateKind=");
-        if (mRecommendFlg){
+        if (DtvContentsDetailActivity.RECOMMEND_INFO_BUNDLE_KEY.equals(mDetailData.getRecommendFlg())){
             mUrl.append("412");
         } else {
             mUrl.append("411");
@@ -93,11 +94,7 @@ public class SendOperateLog extends WebApiBase {
             mUrl.append("&cid=");
             mUrl.append(mDetailFullData.getCid());
             mUrl.append("&operateKind=");
-            if (mRecommendFlg) {
-                mUrl.append("412");
-            } else {
-                mUrl.append("411");
-            }
+            mUrl.append("411");
             mUrl.append("&operateDate=");
             mUrl.append(DateUtils.formatEpochToStringOpeLog(DateUtils.getNowTimeFormatEpoch()));
             return mUrl.toString();
@@ -147,7 +144,7 @@ public class SendOperateLog extends WebApiBase {
             }
         }
         if (!TextUtils.isEmpty(categorvId)){
-            return new StringBuffer("&categorvId=").append(categorvId).toString();
+            return "&categorvId=" + categorvId;
         }
         return "";
     }

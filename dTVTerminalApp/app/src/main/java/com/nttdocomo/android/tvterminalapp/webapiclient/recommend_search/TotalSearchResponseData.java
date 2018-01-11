@@ -47,7 +47,7 @@ public class TotalSearchResponseData {
             searchContentInfoArray.clear();
         }
         for(Content content: contentList){
-            SearchContentInfo info= new SearchContentInfo(false, content.ctId, content.serviceId, content.ctPicURL, content.title);
+            SearchContentInfo info= new SearchContentInfo(false, content.ctId, content.serviceId, content.ctPicURL, content.title, content.rank);
             searchContentInfoArray.add(info);
         }
     }

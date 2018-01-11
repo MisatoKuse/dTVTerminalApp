@@ -170,6 +170,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
 
         //コンテンツIDの受け渡しを追加
         detailData.setContentId(info.getContentsId());
+        detailData.setRecommendOrder(info.getRecommendOrder());
 
         return detailData;
     }

@@ -198,6 +198,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
             contentsData.setServiceId(String.valueOf(ci.serviceId));
             contentsData.setThumURL(ci.contentPictureUrl);
             contentsData.setTitle(ci.title);
+            contentsData.setRecommendOrder(ci.rank);
 
             SearchContentInfo searchContentInfo = resultType.getResultType().searchContentInfo.get(i);
 

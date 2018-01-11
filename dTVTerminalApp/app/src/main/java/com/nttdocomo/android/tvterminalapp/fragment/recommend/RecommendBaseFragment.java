@@ -170,6 +170,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
         detailData.setGroupId(info.getGroupId());
         detailData.setRecommendMethodId(info.getRecommendMethodId());
         detailData.setCategoryId(info.getCategoryId());
+        detailData.setRecommendFlg(DtvContentsDetailActivity.RECOMMEND_INFO_BUNDLE_KEY);
 
         return detailData;
     }
