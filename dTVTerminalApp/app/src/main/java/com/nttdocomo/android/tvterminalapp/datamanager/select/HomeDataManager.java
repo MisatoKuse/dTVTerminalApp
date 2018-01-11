@@ -13,6 +13,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.DailyRankLis
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendChannelListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendVideolListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RoleListDao;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvClipListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvScheduleListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VodClipListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WeeklyRankListDao;
@@ -36,14 +37,36 @@ public class HomeDataManager {
     }
 
     /**
-     * ホーム画面用クリップデータを返却する
+     * ホーム画面用クリップ[テレビ]データを返却する
      *
      * @return list
      */
-    public List<Map<String, String>> selectClipHomeData() {
+    public List<Map<String, String>> selectTvClipHomeData() {
         //ホーム画面に必要な列を列挙する
-        String[] columns = {JsonContents.META_RESPONSE_THUMB_448, JsonContents.META_RESPONSE_TITLE,
-                JsonContents.META_RESPONSE_DISPLAY_START_DATE, JsonContents.META_RESPONSE_DISP_TYPE};
+        String[] columns = {JsonContents.META_RESPONSE_THUMB_448,
+                JsonContents.META_RESPONSE_TITLE, JsonContents.META_RESPONSE_DISP_TYPE};
+
+        //Daoクラス使用準備
+        DBHelper tvClipListDBHelper = new DBHelper(mContext);
+        SQLiteDatabase db = tvClipListDBHelper.getWritableDatabase();
+        TvClipListDao tvClipListDao = new TvClipListDao(db);
+
+        //ホーム画面用データ取得
+        List<Map<String, String>> list = tvClipListDao.findById(columns);
+        db.close();
+        tvClipListDBHelper.close();
+        return list;
+    }
+
+    /**
+     * ホーム画面用クリップ[ビデオ]データを返却する
+     *
+     * @return list
+     */
+    public List<Map<String, String>> selectVodClipHomeData() {
+        //ホーム画面に必要な列を列挙する
+        String[] columns = {JsonContents.META_RESPONSE_THUMB_448,
+                JsonContents.META_RESPONSE_TITLE, JsonContents.META_RESPONSE_DISP_TYPE};
 
         //Daoクラス使用準備
         DBHelper vodClipListDBHelper = new DBHelper(mContext);

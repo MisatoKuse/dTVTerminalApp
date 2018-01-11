@@ -14,6 +14,7 @@ import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DailyRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendChInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendVdInsertDataManager;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.TvClipInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.TvScheduleInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.VideoRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.VodClipInsertDataManager;
@@ -22,12 +23,14 @@ import com.nttdocomo.android.tvterminalapp.datamanager.select.RankingTopDataMana
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendVdList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvClipList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.DailyRankWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvClipWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvScheduleWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendChWebClient;
@@ -39,7 +42,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallback,
+public class HomeDataProvider implements
+        TvClipWebClient.TvClipJsonParserCallback,
+        VodClipWebClient.VodClipJsonParserCallback,
         TvScheduleWebClient.TvScheduleJsonParserCallback,
         DailyRankWebClient.DailyRankJsonParserCallback,
         ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback,
@@ -49,6 +54,16 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
     private Context mContext = null;
 
     private ApiDataProviderCallback mApiDataProviderCallback = null;
+
+    @Override
+    public void onTvClipJsonParsed(List<TvClipList> tvClipLists) {
+        if (tvClipLists != null && tvClipLists.size() > 0) {
+            TvClipList list = tvClipLists.get(0);
+            setStructDB(list);
+        } else {
+            //TODO:WEBAPIを取得できなかった時の処理を記載予定
+        }
+    }
 
     @Override
     public void onVodClipJsonParsed(List<VodClipList> vodClipLists) {
@@ -136,11 +151,18 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
         void userInfoCallback(List<Map<String, String>> userList);
 
         /**
-         * クリップリスト用コールバック
+         * クリップ[テレビ]リスト用コールバック
          *
-         * @param clipList
+         * @param tvClipList
          */
-        void vodClipListCallback(List<ContentsData> clipList);
+        void tvClipListCallback(List<ContentsData> tvClipList);
+
+        /**
+         * クリップ[ビデオ]リスト用コールバック
+         *
+         * @param vodClipList
+         */
+        void vodClipListCallback(List<ContentsData> vodClipList);
 
         /**
          * ビデオランキング用コールバック
@@ -213,7 +235,12 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
             if (VideoRankList != null && VideoRankList.size() > 0) {
                 sendVideoRankListData(VideoRankList);
             }
-            //クリップ
+            //クリップ[テレビ]
+            List<Map<String, String>> tvClipList = getTvClipListData();
+            if (tvClipList != null && tvClipList.size() > 0) {
+                sendTvClipListData(tvClipList);
+            }
+            //クリップ[ビデオ]
             List<Map<String, String>> vodClipList = getVodClipListData();
             if (vodClipList != null && vodClipList.size() > 0) {
                 sendVodClipListData(vodClipList);
@@ -268,7 +295,16 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
     }
 
     /**
-     * VodクリップリストをHomeActivityに送る
+     * クリップ[テレビ]リストをHomeActivityに送る
+     *
+     * @param list
+     */
+    public void sendTvClipListData(List<Map<String, String>> list) {
+        mApiDataProviderCallback.tvClipListCallback(setHomeContentData(list));
+    }
+
+    /**
+     * クリップ[ビデオ]リストをHomeActivityに送る
      *
      * @param list
      */
@@ -388,17 +424,44 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
     }
 
     /**
-     * Vodクリップリストデータ取得開始
+     * クリップ[テレビ]リストデータ取得開始
+     */
+    private List<Map<String, String>> getTvClipListData() {
+        DateUtils dateUtils = new DateUtils(mContext);
+        String lastDate = dateUtils.getLastDate(DateUtils.TV_LAST_INSERT);
+        List<Map<String, String>> list = new ArrayList<>();
+        //クリップ[テレビ]一覧のDB保存履歴と、有効期間を確認
+        if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
+            //データをDBから取得する
+            HomeDataManager homeDataManager = new HomeDataManager(mContext);
+            list = homeDataManager.selectTvClipHomeData();
+        } else {
+            //通信クラスにデータ取得要求を出す
+            TvClipWebClient webClient = new TvClipWebClient();
+            int ageReq = 1;
+            int upperPageLimit = 1;
+            int lowerPageLimit = 1;
+            int pagerOffset = 1;
+            String pagerDirection = "";
+
+            webClient.getTvClipApi(ageReq, upperPageLimit,
+                    lowerPageLimit, pagerOffset, pagerDirection, this);
+        }
+        return list;
+    }
+
+    /**
+     * クリップ[ビデオ]リストデータ取得開始
      */
     private List<Map<String, String>> getVodClipListData() {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.VOD_LAST_INSERT);
         List<Map<String, String>> list = new ArrayList<>();
-        //Vodクリップ一覧のDB保存履歴と、有効期間を確認
+        //クリップ[ビデオ]一覧のDB保存履歴と、有効期間を確認
         if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
             //データをDBから取得する
             HomeDataManager homeDataManager = new HomeDataManager(mContext);
-            list = homeDataManager.selectClipHomeData();
+            list = homeDataManager.selectVodClipHomeData();
         } else {
             //通信クラスにデータ取得要求を出す
             VodClipWebClient webClient = new VodClipWebClient();
@@ -535,7 +598,20 @@ public class HomeDataProvider implements VodClipWebClient.VodClipJsonParserCallb
     }
 
     /**
-     * Vodクリップ一覧データをDBに格納する
+     * クリップ[テレビ]一覧データをDBに格納する
+     *
+     * @param tvClipList
+     */
+    public void setStructDB(TvClipList tvClipList) {
+        DateUtils dateUtils = new DateUtils(mContext);
+        dateUtils.addLastDate(DateUtils.TV_LAST_INSERT);
+        TvClipInsertDataManager dataManager = new TvClipInsertDataManager(mContext);
+        dataManager.insertTvClipInsertList(tvClipList);
+        sendTvClipListData(tvClipList.getVcList());
+    }
+
+    /**
+     * クリップ[ビデオ]一覧データをDBに格納する
      *
      * @param vodClipList
      */
