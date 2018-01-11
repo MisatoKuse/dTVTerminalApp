@@ -262,13 +262,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     private void prepareDownLoad(DlData dlData) {
-        DownloadParam downloadParam = new KariDownloadParam();
-        KariDownloadParam karidownloadparam = (KariDownloadParam) downloadParam;
-//            karidownloadparam.setContext(getActivity());
-        karidownloadparam.setUrl("https://www.nhk.or.jp/prog/img/2209/2209.jpg");
-        karidownloadparam.setSaveFileName(dlData.getTitle());
-        karidownloadparam.setFileSize(203697);
-        karidownloadparam.setSavePath(dlData.getSaveFile());
+
     }
 
     private static final int DOWNLOAD_STATUS_SELECT = 1;

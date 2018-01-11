@@ -172,11 +172,7 @@ public class DownloadService extends Service implements DownloadListener {
      */
     public void setDlParam(DownloadParam param) throws Exception{
         if(null==mDownloaderBase){
-            if(RecordedBaseFragment.Is_KariDownloader) {
-                mDownloaderBase = new KariDownloader(param, this);
-            } else {
-                mDownloaderBase = new DtcpDownloader(param, this);
-            }
+            mDownloaderBase = new DtcpDownloader(param, this);
         } else {
             mDownloaderBase.reset(param);
         }

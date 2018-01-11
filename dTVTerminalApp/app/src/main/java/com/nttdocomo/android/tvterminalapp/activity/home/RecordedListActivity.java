@@ -382,22 +382,38 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      */
     private void getData() {
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-        if (mDlnaProvRecVideo == null) {
-            mDlnaProvRecVideo = new DlnaProvRecVideo();
-        }
-        if (mDlnaProvRecVideo.start(dlnaDmsItem, this)) {
-            mDlnaProvRecVideo.browseRecVideoDms();
+        // 未ペアリング時
+        if (dlnaDmsItem.mControlUrl.isEmpty()) {
+            Toast.makeText(this, getString(R.string.main_setting_not_paring) ,Toast.LENGTH_SHORT).show();
+            setProgressBarGone();
+        } else {
+            if (mDlnaProvRecVideo == null) {
+                mDlnaProvRecVideo = new DlnaProvRecVideo();
+            }
+            if (mDlnaProvRecVideo.start(dlnaDmsItem, this)) {
+                mDlnaProvRecVideo.browseRecVideoDms();
+            } else {
+                setProgressBarGone();
+            }
         }
     }
 
     /**
      * フラグメント生成
      */
-    private RecordedBaseFragment getCurrentRecordedBaseFragment() {
+    private RecordedBaseFragment getCurrentRecordedBaseFragment(int... position) {
         DTVTLogger.start();
-        int currentPageNo = mViewPager.getCurrentItem();
-        RecordedBaseFragment baseFragment = mRecordedFragmentFactory.createFragment(currentPageNo, this);
-        return baseFragment;
+        int tabIndex;
+        if(position != null && position.length > 0){
+            tabIndex = position[0];
+        } else {
+            tabIndex = mViewPager.getCurrentItem();
+        }
+        return mRecordedFragmentFactory.createFragment(tabIndex, this);
+    }
+
+    public int getCurrentPosition(){
+        return mViewPager.getCurrentItem();
     }
 
     /**
@@ -424,16 +440,25 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         if (curInfo != null && curInfo.getRecordVideoLists() != null) {
             setVideoBrows(curInfo);
         }
+        setProgressBarGone();
+    }
+
+    /**
+     * 進捗バー閉じる
+     */
+    private void setProgressBarGone(){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                progressBar.setVisibility(View.GONE);
+                if(progressBar != null){
+                    progressBar.setVisibility(View.GONE);
+                }
             }
         });
     }
 
     private void setVideoBrows(DlnaRecVideoInfo curInfo) {
-        final RecordedBaseFragment baseFrgament = getCurrentRecordedBaseFragment();
+        final RecordedBaseFragment baseFrgament = getCurrentRecordedBaseFragment(0);
         baseFrgament.mContentsList = new ArrayList<>();
         for (int i = 0; i < curInfo.getRecordVideoLists().size(); ++i) {
             RecordedContentsDetailData detailData = new RecordedContentsDetailData();
@@ -506,6 +531,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 showMessage(msg2);
             }
         });
+        setProgressBarGone();
     }
 
     /**
