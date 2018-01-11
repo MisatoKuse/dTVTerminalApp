@@ -32,9 +32,10 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 検索画面用データプロバイダ.
+ */
 public class SearchDataProvider implements TotalSearchWebApiDelegate {
-
-    public static final String comma = ",";
 
     private SearchState mState = SearchState.inital;
 
@@ -51,31 +52,65 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
     //dアニメ
     private static final int PAGE_NO_OF_SERVICE_DANIME = PAGE_NO_OF_SERVICE_TELEVISION + 4;
 
+    /**
+     * 検索データプロバイダリスナーインターフェース.
+     */
     public interface SearchDataProviderListener {
+
+        /**
+         * 検索リクエスト成功コールバック.
+         *
+         * @param resultType 検索結果
+         */
         void onSearchDataProviderFinishOk(ResultType<TotalSearchContentInfo> resultType);
 
+        /**
+         * 検索リクエスト失敗コールバック.
+         *
+         * @param resultType 検索結果
+         */
         void onSearchDataProviderFinishNg(ResultType<SearchResultError> resultType);
     }
 
-    public SearchState getSearchState() {
+    /**
+     * 検索状態取得.
+     *
+     * @return 検索状態
+     */
+    private SearchState getSearchState() {
         synchronized (this) {
             return mState;
         }
     }
 
-    private void setSearchState(SearchState newSearchState) {
+    /**
+     * 検索状態設定.
+     *
+     * @param newSearchState 検索状態
+     */
+    private void setSearchState(final SearchState newSearchState) {
         synchronized (this) {
             mState = newSearchState;
         }
     }
 
-    public void startSearchWith(String keyword,
-                                SearchNarrowCondition condition,
-                                int pageIndex,
-                                SearchSortKind sortKind,
-                                int pageNumber,
+    /**
+     * 検索リクエスト開始.
+     *
+     * @param keyword    検索キーザード
+     * @param condition  フィルタタイプ設定
+     * @param pageIndex  ページ位置
+     * @param sortKind   ソート設定
+     * @param pageNumber 検索結果返却開始位置
+     * @param context    コンテクストファイル
+     */
+    public void startSearchWith(final String keyword,
+                                final SearchNarrowCondition condition,
+                                final int pageIndex,
+                                final SearchSortKind sortKind,
+                                final int pageNumber,
                                 /*TotalSearchContentInfo handler, */
-                                Context context) {
+                                final Context context) {
         TotalSearchWebApi totalSearchWebApi = null;
         //this.handler = handler;
         setSearchState(SearchState.running);
@@ -100,13 +135,16 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
         totalSearchWebApi.request(request);
     }
 
+    /**
+     * TODO:検索中止処理開始用.
+     */
     public void cancelSearch() {
         setSearchState(SearchState.canceled);
         DTVTLogger.debug("SearchDataProvider::cancelSearch()");
     }
 
     @Override
-    public void onSuccess(TotalSearchResponseData result) {
+    public void onSuccess(final TotalSearchResponseData result) {
         /* //for test
         try {
             Thread.sleep(3000);
@@ -136,12 +174,12 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
     }
 
     /**
-     * クリップ画面表示データ作成
+     * クリップ画面表示データ作成.
      *
      * @param resultType サーバレスポンス
      * @return クリップ画面表示データ
      */
-    private ResultType<TotalSearchContentInfo> onSetClipRequestData(ResultType<TotalSearchContentInfo> resultType) {
+    private ResultType<TotalSearchContentInfo> onSetClipRequestData(final ResultType<TotalSearchContentInfo> resultType) {
         TotalSearchContentInfo content = resultType.getResultType();
 
         List<ContentsData> contentsDataList = new ArrayList<>();
@@ -191,7 +229,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
     }
 
     @Override
-    public void onFailure(TotalSearchErrorData result) {
+    public void onFailure(final TotalSearchErrorData result) {
         if (SearchState.canceled != getSearchState()) {
 
             SearchResultError error = SearchResultError.systemError;
@@ -217,10 +255,12 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
     }
 
     /**
-     * リクエスト用カテゴリIDを設定する
-     * @return
+     * リクエスト用カテゴリIDを設定する.
+     *
+     * @param pageIndex ページ位置
+     * @return カテゴリID
      */
-    private ArrayList<String> getCurrentSearchCategoryTypeArray(int pageIndex) {
+    private ArrayList<String> getCurrentSearchCategoryTypeArray(final int pageIndex) {
         ArrayList<String> ret = new ArrayList<>();
 
         switch (pageIndex) {
@@ -247,7 +287,13 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
         return ret;
     }
 
-    private ArrayList<String> getCurrentSearchServiceTypeArray(int pageIndex) {
+    /**
+     * リクエスト用サービスIDを設定する.
+     *
+     * @param pageIndex ページ位置
+     * @return サービスID
+     */
+    private ArrayList<String> getCurrentSearchServiceTypeArray(final int pageIndex) {
         ArrayList<String> ret = new ArrayList<>();
 
         switch (pageIndex) {
@@ -271,11 +317,13 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
     }
 
     /**
-     * リクエスト用ユーザ年齢情報を設定する
+     * リクエスト用ユーザ年齢情報を設定する.
      *
-     * @return
+     * @param context   コンテクストファイル
+     * @param pageIndex ページ番号
+     * @return 年齢情報
      */
-    private int getUserAgeInfo(Context context, int pageIndex) {
+    private int getUserAgeInfo(final Context context, final int pageIndex) {
         UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(context);
         int userAge = -1;
 

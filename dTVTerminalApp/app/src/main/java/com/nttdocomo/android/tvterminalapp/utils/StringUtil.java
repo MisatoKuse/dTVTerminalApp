@@ -25,6 +25,7 @@ import java.util.Map;
  */
 public class StringUtil {
 
+    private static String type;
     private final Context mContext;
 
     //データがないときのDefault値(PG12制限)
@@ -45,7 +46,7 @@ public class StringUtil {
     //カンマ
     private static final String COMMA_SEPARATOR = ",";
 
-    public StringUtil(Context context) {
+    public StringUtil(final Context context) {
         mContext = context;
     }
 
@@ -55,7 +56,7 @@ public class StringUtil {
      * @param id サービスID
      * @return サービス名
      */
-    public String getContentsServiceName(int id) {
+    public String getContentsServiceName(final int id) {
         switch (id) {
             case DtvContentsDetailActivity.DTV_CONTENTS_SERVICE_ID:
                 return mContext.getString(R.string.dtv_contents_service_name);
@@ -73,7 +74,7 @@ public class StringUtil {
      * @param strings 連結したい文字列配列
      * @return 連結後の文字列
      */
-    public static String getConnectString(String[] strings) {
+    public static String getConnectString(final String[] strings) {
         StringBuilder builder = new StringBuilder();
         String conString;
         for (String string : strings) {
@@ -89,7 +90,7 @@ public class StringUtil {
      * @param strings 連結したい文字列を必要な数だけ指定する。
      * @return 連結後の文字列
      */
-    public static String getConnectStrings(String... strings) {
+    public static String getConnectStrings(final String... strings) {
         //同じ名前にはできないが、処理は委譲する。
         return getConnectString(strings);
     }
@@ -100,7 +101,7 @@ public class StringUtil {
      * @param jsonArray JsonArray
      * @return 文字列配列
      */
-    public static String[] JSonArray2StringArray(JSONArray jsonArray) {
+    public static String[] JSonArray2StringArray(final JSONArray jsonArray) {
         //出力文字列
         String[] stringArr;
 
@@ -132,7 +133,7 @@ public class StringUtil {
      * @param data オブジェクト
      * @return 長整数変換後の値。変換できなければゼロ
      */
-    public static long changeString2Long(Object data) {
+    public static long changeString2Long(final Object data) {
         //既に数値かどうかを判定
         if (data instanceof Long) {
             //長整数なのでそのまま返す
@@ -160,7 +161,7 @@ public class StringUtil {
      * @param data オブジェクト
      * @return 整数変換後の値。変換できなければゼロ
      */
-    public static int changeString2Int(Object data) {
+    public static int changeString2Int(final Object data) {
         //既に数値かどうかを判定
         if(data instanceof Integer) {
             //整数なのでそのまま返す
@@ -188,7 +189,7 @@ public class StringUtil {
      * @param data オブジェクト
      * @return 変換後の文字列。変換できなければ空文字
      */
-    public static String changeObject2String(Object data) {
+    public static String changeObject2String(final Object data) {
         //Stringかどうかを見る
         if (data instanceof String) {
             //そのまま返す
@@ -220,10 +221,10 @@ public class StringUtil {
     /**
      * ひかりコンテンツ判定(ひかり内DTVのみ).
      *
-     * @param type
-     * @return
+     * @param type コンテンツタイプ
+     * @return ひかり内DTVフラグ
      */
-    public static boolean isHikariInDtvContents(String type) {
+    public static boolean isHikariInDtvContents(final String type) {
         boolean isHikariIn = false;
         if (type != null && (type.equals(WebApiBasePlala.CLIP_TYPE_DTV_VOD))) {
             isHikariIn = true;
@@ -234,14 +235,14 @@ public class StringUtil {
     /**
      * ひかりコンテンツ判定.
      *
-     * @param type
-     * @return
+     * @param contentsType コンテンツタイプ
+     * @return ひかりコンテンツ：true ,ひかり以外：false
      */
-    public static boolean isHikariContents(String type) {
+    public static boolean isHikariContents(final String contentsType) {
         boolean isHikari = false;
-        if (type != null && (type.equals(WebApiBasePlala.CLIP_TYPE_H4D_IPTV)
-                || type.equals(WebApiBasePlala.CLIP_TYPE_H4D_VOD)
-                || type.equals(WebApiBasePlala.CLIP_TYPE_DCH))) {
+        if (contentsType != null && (contentsType.equals(WebApiBasePlala.CLIP_TYPE_H4D_IPTV)
+                || contentsType.equals(WebApiBasePlala.CLIP_TYPE_H4D_VOD)
+                || contentsType.equals(WebApiBasePlala.CLIP_TYPE_DCH))) {
             isHikari = true;
         }
         return isHikari;
@@ -254,7 +255,7 @@ public class StringUtil {
      * @param ageValue 年齢パレンタル値(R_VALUE)
      * @return 年齢情報
      */
-    public static int convertRValueToAgeReq(Context context, String ageValue) {
+    public static int convertRValueToAgeReq(final Context context, final String ageValue) {
 
         int ageReq = DEFAULT_R_VALUE;
         if (ageValue != null) {
@@ -277,7 +278,7 @@ public class StringUtil {
      * @param userInfoList ユーザ情報
      * @return 年齢パレンタル情報
      */
-    public static int getUserAgeInfo(List<Map<String, String>> userInfoList) {
+    public static int getUserAgeInfo(final List<Map<String, String>> userInfoList) {
         final int INT_LIST_HEAD = 0;
         final String USE_H4D_AGE_REQ = "001";
         final String USE_DCH_AGE_REQ = "002";
@@ -324,11 +325,11 @@ public class StringUtil {
      * @param context コンテキストファイル
      * @return 伏字
      */
-    public static String returnAsterisk(Context context) {
+    public static String returnAsterisk(final Context context) {
         return context.getString(R.string.message_three_asterisk);
     }
 
-    public static String getUserContractInfo(List<UserInfoList> userInfoList) {
+    public static String getUserContractInfo(final List<UserInfoList> userInfoList) {
         final int INT_LIST_HEAD = 0;
         final String CONTRACT_DTV = "001";
         final String CONTRACT_H4D = "002";
@@ -369,7 +370,7 @@ public class StringUtil {
      * @param userInfoLists ユーザー情報のリスト
      * @return 年齢情報
      */
-    public static int getUserAgeInfoWrapper(List<UserInfoList> userInfoLists) {
+    public static int getUserAgeInfoWrapper(final List<UserInfoList> userInfoLists) {
         //変換後のユーザー情報
         List<Map<String, String>> newUserInfoLists = new ArrayList<>();
 
@@ -394,7 +395,7 @@ public class StringUtil {
      * @return マップ化契約情報
      */
     private static Map<String, String> getAccountList(
-            List<UserInfoList.AccountList> accountBuffers) {
+            final List<UserInfoList.AccountList> accountBuffers) {
         Map<String, String> buffer = new HashMap<>();
 
         //契約情報の数だけ回ってマップに変換する
@@ -417,7 +418,7 @@ public class StringUtil {
      * @param strings 変換対象
      * @return 変換文字列
      */
-    public static String setCommaSeparator(ArrayList<String> strings) {
+    public static String setCommaSeparator(final ArrayList<String> strings) {
         String result;
         StringBuilder builder = new StringBuilder();
         if (strings != null && strings.size() > 0) {
