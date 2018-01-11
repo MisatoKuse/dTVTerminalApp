@@ -496,7 +496,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                             if ((int) view.getTag() == queIndex.get(0)) {
                                 mDlDataProvider.cancel();
                                 if (queIndex.size() > 1) {
-                                    prepareDownLoad(queIndex.get(1));
+                                    prepareDownLoad(queIndex.get(1), false);
                                 }
                             }
                             if ((int) view.getTag() == queIndex.get(i)) {
