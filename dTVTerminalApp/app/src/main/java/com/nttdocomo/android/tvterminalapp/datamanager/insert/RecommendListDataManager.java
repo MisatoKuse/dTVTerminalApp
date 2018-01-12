@@ -112,7 +112,12 @@ public class RecommendListDataManager {
                 RECOMMENDCHANNEL_LIST_SERVICEID,
                 RECOMMENDCHANNEL_LIST_CTPICURL1,
                 RECOMMENDCHANNEL_LIST_TITLE,
-                RECOMMENDCHANNEL_LIST_STARTVIEWING
+                RECOMMENDCHANNEL_LIST_STARTVIEWING,
+                RECOMMENDCHANNEL_LIST_CHANNELID,
+                RECOMMENDCHANNEL_LIST_RECOMMENDORDER,
+                RECOMMENDCHANNEL_LIST_PAGEID,
+                RECOMMENDCHANNEL_LIST_GROUPID,
+                RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID
         };
         int maxResultData = startIndex + maxResult - 1;
         List<Map<String, String>> resultList

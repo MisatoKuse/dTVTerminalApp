@@ -1338,7 +1338,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             }
             //ログイン状態でしか送信しない
             if (UserInfoUtils.getUserLoggedinInfo(this)) {
-                new SendOperateLog(mDetailData, mDetailFullData).sendOpeLog();
+                new SendOperateLog().sendOpeLog(mDetailData, mDetailFullData);
             }
             if (mDetailData == null) {
                 mDetailData = mIntent.getParcelableExtra(PLALA_INFO_BUNDLE_KEY);
