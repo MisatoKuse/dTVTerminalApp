@@ -20,6 +20,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
 import com.nttdocomo.android.tvterminalapp.model.program.Channel;
 import com.nttdocomo.android.tvterminalapp.model.program.ChannelsInfo;
 import com.nttdocomo.android.tvterminalapp.model.program.Schedule;
+import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvScheduleWebClient;
@@ -90,6 +91,10 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                         String thumb = hashMap.get(JsonContents.META_RESPONSE_DEFAULT_THUMB);
                         String serviceId = hashMap.get(JsonContents.META_RESPONSE_SERVICE_ID);
                         String rValue = hashMap.get(JsonContents.META_RESPONSE_R_VALUE);
+                        String dispType = hashMap.get(JsonContents.META_RESPONSE_DISP_TYPE);
+                        String searchOk = hashMap.get(JsonContents.META_RESPONSE_SEARCH_OK);
+                        String dtv = hashMap.get(JsonContents.META_RESPONSE_DTV);
+                        String dtvType = hashMap.get(JsonContents.META_RESPONSE_DTV_TYPE);
 
                         Schedule mSchedule = new Schedule();
                         String startDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_START_DATE);
@@ -99,11 +104,10 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                         mSchedule.setImageUrl(thumb);
                         mSchedule.setTitle(title);
                         mSchedule.setChNo(chNo);
-                        mSchedule.setRValue(rValue);
-                        mSchedule.setDispType(JsonContents.META_RESPONSE_DISP_TYPE);
-                        mSchedule.setSearchOk(JsonContents.META_RESPONSE_SEARCH_OK);
-                        mSchedule.setDtv(JsonContents.META_RESPONSE_DTV);
-                        mSchedule.setDispType(JsonContents.META_RESPONSE_DTV_TYPE);
+                        mSchedule.setContentType(hashMap.get(JsonContents.META_RESPONSE_CONTENT_TYPE));
+                        mSchedule.setDtv(dtv);
+                        mSchedule.setDispType(dispType);
+                        mSchedule.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
                         mSchedule.setClipRequestData(setClipData((HashMap<String, String>) hashMap));
 
                         if (!TextUtils.isEmpty(chNo)) {
@@ -136,16 +140,20 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                             String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
                             String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
                             String rValue = hashMap.get(JsonContents.META_RESPONSE_R_VALUE);
+                            String dispType = hashMap.get(JsonContents.META_RESPONSE_DISP_TYPE);
+                            String searchOk = hashMap.get(JsonContents.META_RESPONSE_SEARCH_OK);
+                            String dtv = hashMap.get(JsonContents.META_RESPONSE_DTV);
+                            String dtvType = hashMap.get(JsonContents.META_RESPONSE_DTV_TYPE);
                             mSchedule.setStartTime(startDate);
                             mSchedule.setEndTime(endDate);
                             mSchedule.setImageUrl(thumb);
                             mSchedule.setTitle(title);
                             mSchedule.setChNo(chNo);
                             mSchedule.setRValue(rValue);
-                            mSchedule.setDispType(JsonContents.META_RESPONSE_DISP_TYPE);
-                            mSchedule.setSearchOk(JsonContents.META_RESPONSE_SEARCH_OK);
-                            mSchedule.setDtv(JsonContents.META_RESPONSE_DTV);
-                            mSchedule.setDispType(JsonContents.META_RESPONSE_DTV_TYPE);
+                            mSchedule.setContentType(hashMap.get(JsonContents.META_RESPONSE_CONTENT_TYPE));
+                            mSchedule.setDtv(dtv);
+                            mSchedule.setDispType(dispType);
+                            mSchedule.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
                             mSchedule.setClipRequestData(setClipData((HashMap<String, String>) hashMap));
 
                             if (!TextUtils.isEmpty(chNo)) {//CH毎番組データ取得して、整形する
@@ -283,16 +291,20 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                         String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
                         String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
                         String rValue = hashMap.get(JsonContents.META_RESPONSE_R_VALUE);
+                        String dispType = hashMap.get(JsonContents.META_RESPONSE_DISP_TYPE);
+                        String searchOk = hashMap.get(JsonContents.META_RESPONSE_SEARCH_OK);
+                        String dtv = hashMap.get(JsonContents.META_RESPONSE_DTV);
+                        String dtvType = hashMap.get(JsonContents.META_RESPONSE_DTV_TYPE);
                         schedule.setStartTime(startDate);
                         schedule.setEndTime(endDate);
                         schedule.setImageUrl(thumb);
                         schedule.setTitle(title);
                         schedule.setChNo(chNo);
                         schedule.setRValue(rValue);
-                        schedule.setDispType(JsonContents.META_RESPONSE_DISP_TYPE);
-                        schedule.setSearchOk(JsonContents.META_RESPONSE_SEARCH_OK);
-                        schedule.setDtv(JsonContents.META_RESPONSE_DTV);
-                        schedule.setDispType(JsonContents.META_RESPONSE_DTV_TYPE);
+                        schedule.setContentType(hashMap.get(JsonContents.META_RESPONSE_CONTENT_TYPE));
+                        schedule.setDtv(dtv);
+                        schedule.setDispType(dispType);
+                        schedule.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
                         schedule.setClipRequestData(setClipData(hashMap));
 
                         if (!TextUtils.isEmpty(chNo)) {//CH毎番組データ取得して、整形する
