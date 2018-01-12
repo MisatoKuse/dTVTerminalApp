@@ -13,7 +13,6 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CHANNEL_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_CHANNEL_SQL;
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_CLIP_KEY_LIST_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_DAILY_RANK_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_DOWNLOAD_LIST_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_RANKING_VIDEO_SQL;
@@ -76,7 +75,8 @@ public class DBHelper extends SQLiteOpenHelper {
     /**
      * クリップキー一覧 テーブル削除用SQL
      */
-    private static final String DROP_CLIP_KEY_LIST_TABLE_SQL = "drop table if exists " + DBConstants.CLIP_KEY_LIST_TABLE_NAME;
+    private static final String DROP_TV_CLIP_KEY_LIST_TABLE_SQL = "drop table if exists " + DBConstants.TV_CLIP_KEY_LIST_TABLE_NAME;
+    private static final String DROP_VOD_CLIP_KEY_LIST_TABLE_SQL = "drop table if exists " + DBConstants.VOD_CLIP_KEY_LIST_TABLE_NAME;
 
     /**
      * コンストラクタ
@@ -114,9 +114,14 @@ public class DBHelper extends SQLiteOpenHelper {
             DTVTLogger.debug("HomeDBHelper::onCreate, create " + CREATE_TABLE_RENTAL_LIST_SQL + " table failed, cause=" + e.getCause());
         }
         try {
-            sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_CLIP_KEY_LIST_SQL);// クリップキー一覧
+            sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_TV_CLIP_KEY_LIST_SQL);// クリップキー一覧(TV)
         } catch (Exception e) {
-            DTVTLogger.debug("HomeDBHelper::onCreate, create " + CREATE_TABLE_CLIP_KEY_LIST_SQL + " table failed, cause=" + e.getCause());
+            DTVTLogger.debug("HomeDBHelper::onCreate, create " + DBConstants.CREATE_TABLE_TV_CLIP_KEY_LIST_SQL + " table failed, cause=" + e.getCause());
+        }
+        try {
+            sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_VOD_CLIP_KEY_LIST_SQL);// クリップキー一覧(VOD)
+        } catch (Exception e) {
+            DTVTLogger.debug("HomeDBHelper::onCreate, create " + DBConstants.CREATE_TABLE_VOD_CLIP_KEY_LIST_SQL + " table failed, cause=" + e.getCause());
         }
 
     }
@@ -139,6 +144,7 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(DROP_DOWNLOAD_LIST_TABLE_SQL);
         sqLiteDatabase.execSQL(DROP_TVCLIP_TABLE_SQL);  //クリップ一覧画面用
         sqLiteDatabase.execSQL(DROP_RENTAL_TABLE_SQL);  //レンタル一覧画面用
-        sqLiteDatabase.execSQL(DROP_CLIP_KEY_LIST_TABLE_SQL); // クリップキー一覧
+        sqLiteDatabase.execSQL(DROP_TV_CLIP_KEY_LIST_TABLE_SQL); // クリップキー一覧(TV)
+        sqLiteDatabase.execSQL(DROP_VOD_CLIP_KEY_LIST_TABLE_SQL); // クリップキー一覧(VOD)
     }
 }

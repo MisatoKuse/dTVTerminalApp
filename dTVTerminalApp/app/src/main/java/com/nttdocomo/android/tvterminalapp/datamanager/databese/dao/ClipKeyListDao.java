@@ -22,6 +22,17 @@ public class ClipKeyListDao {
     // SQLiteDatabase
     private SQLiteDatabase db;
 
+    public enum CONTENT_TYPE {
+        TV,
+        VOD,
+        DTV
+    }
+
+    public enum TABLE_TYPE {
+        TV,
+        VOD,
+    }
+
     /**
      * コンストラクタ
      *
@@ -37,15 +48,16 @@ public class ClipKeyListDao {
      * @param strings 列パラメータ
      * @return list クリップキー一覧
      */
-    public List<Map<String, String>> findById(String[] strings) {
+    public List<Map<String, String>> findById(String[] strings, TABLE_TYPE type, String selection, String[] args) {
+        DTVTLogger.start();
         List<Map<String, String>> list = new ArrayList<>();
         Cursor cursor = null;
         try {
             cursor = db.query(
-                    DBConstants.CLIP_KEY_LIST_TABLE_NAME,
+                    getTableName(type),
                     strings,
-                    null,
-                    null,
+                    selection,
+                    args,
                     null,
                     null,
                     null);
@@ -69,16 +81,19 @@ public class ClipKeyListDao {
         }
         cursor.close();
 
+        DTVTLogger.end();
         return list;
     }
 
     /**
      * データの登録
      *
+     * @param type
      * @param values
      */
-    public long insert(ContentValues values) {
-        return db.insert(DBConstants.CLIP_KEY_LIST_TABLE_NAME, null, values);
+    public long insert(TABLE_TYPE type, ContentValues values) {
+        DTVTLogger.debug("Insert Data");
+        return db.insert(getTableName(type), null, values);
     }
 
     public int update() {
@@ -87,9 +102,32 @@ public class ClipKeyListDao {
     }
 
     /**
+     * データの削除(type指定)
+     */
+    public int delete(TABLE_TYPE type) {
+        DTVTLogger.debug("Delete Data : " + type);
+        return db.delete(getTableName(type), null, null);
+    }
+
+    /**
      * データの削除
      */
-    public int delete() {
-        return db.delete(DBConstants.CLIP_KEY_LIST_TABLE_NAME, null, null);
+    public void delete() {
+        DTVTLogger.debug("Delete All Data");
+        delete(TABLE_TYPE.TV);
+        delete(TABLE_TYPE.VOD);
+    }
+
+    private String getTableName(TABLE_TYPE type) {
+        String tableName = null;
+        switch (type) {
+            case TV:
+                tableName = DBConstants.TV_CLIP_KEY_LIST_TABLE_NAME;
+                break;
+            case VOD:
+                tableName = DBConstants.VOD_CLIP_KEY_LIST_TABLE_NAME;
+                break;
+        }
+        return tableName;
     }
 }

@@ -37,17 +37,17 @@ public class ClipKeyListInsertDataManager {
      *
      * @param clipKeyListResponse クリップキー一覧 レスポンスデータ
      */
-    public void insertClipKeyListInsert(ClipKeyListResponse clipKeyListResponse) {
-
+    public void insertClipKeyListInsert(ClipKeyListDao.TABLE_TYPE type, ClipKeyListResponse clipKeyListResponse) {
+        DTVTLogger.start();
         //各種オブジェクト作成
         DBHelper ClipKeyListDBHelper = new DBHelper(mContext);
         SQLiteDatabase db = ClipKeyListDBHelper.getWritableDatabase();
         ClipKeyListDao ClipKeyListDao = new ClipKeyListDao(db);
         List<HashMap<String, String>> hashMaps = clipKeyListResponse.getCkList();
 
-        //DB保存前に前回取得したデータは全消去する
+        //DB保存前に前回取得したデータを消去する
         try {
-            ClipKeyListDao.delete();
+            ClipKeyListDao.delete(type);
         } catch (Exception e) {
             DTVTLogger.debug("ClipKeyListInsertDataManager::insertClipKeyListInsert, e.cause=" + e.getCause());
         }
@@ -62,7 +62,8 @@ public class ClipKeyListInsertDataManager {
                 String valName = (String) entry.getValue();
                 values.put(DBUtils.fourKFlgConversion(keyName), valName);
             }
-            ClipKeyListDao.insert(values);
+            ClipKeyListDao.insert(type, values);
         }
+        DTVTLogger.end();
     }
 }

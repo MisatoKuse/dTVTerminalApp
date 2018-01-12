@@ -24,8 +24,12 @@ public class ClipKeyListWebClient
     @Override
     public void onParserFinished(Object parsedData) {
         //パース後のデータを返す
-        if (null != mClipKeyListJsonParserCallback) {
-            mClipKeyListJsonParserCallback.onClipKeyListJsonParsed((ClipKeyListResponse) parsedData);
+        if (null != mTvClipKeyListJsonParserCallback) {
+            mTvClipKeyListJsonParserCallback.onTvClipKeyListJsonParsed((ClipKeyListResponse) parsedData);
+        }
+        //パース後のデータを返す
+        if (null != mVodClipKeyListJsonParserCallback) {
+            mVodClipKeyListJsonParserCallback.onVodClipKeyListJsonParsed((ClipKeyListResponse) parsedData);
         }
     }
 
@@ -34,26 +38,38 @@ public class ClipKeyListWebClient
         ClipKeyListJsonParser clipKeyListJsonParser = new ClipKeyListJsonParser();
         ClipKeyListResponse pursedRespData;
         pursedRespData = clipKeyListJsonParser.clipKeyListSender(body);
-        if (mRequest != null) {
-            pursedRespData.setRequest(mRequest);
-        }
+
         return pursedRespData;
     }
 
     /**
      * コールバック
      */
-    public interface ClipKeyListJsonParserCallback {
+    public interface TvClipKeyListJsonParserCallback {
         /**
          * 正常に終了した場合に呼ばれるコールバック
          *
          * @param clipKeyListResponse JSONパース後のデータ
          */
-        void onClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse);
+        void onTvClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse);
     }
 
-    //コールバックのインスタンス
-    private ClipKeyListJsonParserCallback mClipKeyListJsonParserCallback;
+    /**
+     * コールバック
+     */
+    public interface VodClipKeyListJsonParserCallback {
+        /**
+         * 正常に終了した場合に呼ばれるコールバック
+         *
+         * @param clipKeyListResponse JSONパース後のデータ
+         */
+        void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse);
+    }
+
+    //コールバックのインスタンス(TV)
+    private TvClipKeyListJsonParserCallback mTvClipKeyListJsonParserCallback;
+    //コールバックのインスタンス(VOD)
+    private VodClipKeyListJsonParserCallback mVodClipKeyListJsonParserCallback;
 
     /**
      * 通信成功時のコールバック
@@ -77,27 +93,36 @@ public class ClipKeyListWebClient
      */
     @Override
     public void onError() {
-        //エラーが発生したのでヌルを返す
-        mClipKeyListJsonParserCallback.onClipKeyListJsonParsed(null);
-
+        //エラーが発生したのでレスポンスデータにnullを設定してを返す
+        if (null != mTvClipKeyListJsonParserCallback) {
+            mTvClipKeyListJsonParserCallback.onTvClipKeyListJsonParsed(null);
+        }
+        if (null != mVodClipKeyListJsonParserCallback) {
+            mVodClipKeyListJsonParserCallback.onVodClipKeyListJsonParsed(null);
+        }
     }
 
     /**
      * クリップキー一覧取得
      *
-     * @param requestParam                  クリップキー一覧リクエスト
-     * @param clipKeyListJsonParserCallback コールバック
+     * @param requestParam                     クリップキー一覧リクエスト
+     * @param tvClipKeyListJsonParserCallback  コールバック
+     * @param vodClipKeyListJsonParserCallback コールバック
      * @return パラメータ等に問題があった場合はfalse
      */
-    public boolean getClipKeyListApi(ClipKeyListRequest requestParam, ClipKeyListJsonParserCallback clipKeyListJsonParserCallback) {
+    public boolean getClipKeyListApi(ClipKeyListRequest requestParam,
+                                     TvClipKeyListJsonParserCallback tvClipKeyListJsonParserCallback,
+                                     VodClipKeyListJsonParserCallback vodClipKeyListJsonParserCallback) {
+        mRequest = requestParam;
         //パラメーターのチェック
-        if (!checkNormalParameter(requestParam, clipKeyListJsonParserCallback)) {
+        if (!checkNormalParameter(requestParam, tvClipKeyListJsonParserCallback, vodClipKeyListJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、ヌルで帰る
             return false;
         }
 
         //コールバックの準備
-        mClipKeyListJsonParserCallback = clipKeyListJsonParserCallback;
+        mTvClipKeyListJsonParserCallback = tvClipKeyListJsonParserCallback;
+        mVodClipKeyListJsonParserCallback = vodClipKeyListJsonParserCallback;
 
         //送信用パラメータの作成
         String sendParameter = makeSendParameter(requestParam);
@@ -106,7 +131,7 @@ public class ClipKeyListWebClient
         if (sendParameter.isEmpty()) {
             return false;
         }
-        mRequest = requestParam;
+
         //クリップキー一覧を呼び出す
         openUrl(UrlConstants.WebApiUrl.CLIP_KEY_LIST_WEB_CLIENT,
                 sendParameter, this);
@@ -118,19 +143,22 @@ public class ClipKeyListWebClient
     /**
      * 指定されたパラメータがおかしいかどうかのチェック
      *
-     * @param requestParam                  リクエストパラメータ
-     * @param clipKeyListJsonParserCallback コールバック
+     * @param requestParam                     リクエストパラメータ
+     * @param tvClipKeyListJsonParserCallback  コールバック
+     * @param vodClipKeyListJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
     private boolean checkNormalParameter(ClipKeyListRequest requestParam,
-                                         ClipKeyListJsonParserCallback clipKeyListJsonParserCallback) {
+                                         TvClipKeyListJsonParserCallback tvClipKeyListJsonParserCallback,
+                                         VodClipKeyListJsonParserCallback vodClipKeyListJsonParserCallback) {
         // 必須項目に値が入っていなければエラー
         if (ClipKeyListRequest.DEFAULT_STRING.equals(requestParam.getType())) {
             return false;
         }
 
         //コールバックが含まれていないならばエラー
-        if (clipKeyListJsonParserCallback == null) {
+        if (tvClipKeyListJsonParserCallback == null
+                && vodClipKeyListJsonParserCallback == null) {
             return false;
         }
 

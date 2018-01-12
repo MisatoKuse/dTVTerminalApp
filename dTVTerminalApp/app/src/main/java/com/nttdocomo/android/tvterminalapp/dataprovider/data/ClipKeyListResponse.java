@@ -11,11 +11,6 @@ import java.util.List;
 public class ClipKeyListResponse {
 
     /**
-     * リクエスト
-     */
-    private ClipKeyListRequest mRequest = null;
-
-    /**
      * response body
      */
     private String mStatus = null;
@@ -52,11 +47,4 @@ public class ClipKeyListResponse {
         this.mCkList = list;
     }
 
-    public ClipKeyListRequest getRequest() {
-        return mRequest;
-    }
-
-    public void setRequest(ClipKeyListRequest request) {
-        mRequest = request;
-    }
 }

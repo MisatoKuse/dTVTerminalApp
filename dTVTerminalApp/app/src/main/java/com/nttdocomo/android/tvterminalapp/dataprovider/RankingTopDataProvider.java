@@ -12,6 +12,8 @@ import com.nttdocomo.android.tvterminalapp.datamanager.insert.WeeklyRankInsertDa
 import com.nttdocomo.android.tvterminalapp.datamanager.select.HomeDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.RankingTopDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.callback.VideoRankingApiDataProviderCallback;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
@@ -30,7 +32,7 @@ import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.DAILY_RANK_LAS
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.VIDEO_RANK_LAST_INSERT;
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.WEEKLY_RANK_LAST_INSERT;
 
-public class RankingTopDataProvider implements
+public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         DailyRankWebClient.DailyRankJsonParserCallback,
         WeeklyRankWebClient.WeeklyRankJsonParserCallback,
         ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback {
@@ -42,6 +44,8 @@ public class RankingTopDataProvider implements
     private WeeklyRankingApiDataProviderCallback mWeeklyRankingApiCallback = null;
     // VideoRanking用コールバック
     private VideoRankingApiDataProviderCallback mVideoRankingApiDataProviderCallback = null;
+    //
+    WeeklyRankList mWeeklyRankList = null;
 
 
     @Override
@@ -57,14 +61,27 @@ public class RankingTopDataProvider implements
 
     @Override
     public void onWeeklyRankJsonParsed(List<WeeklyRankList> weeklyRankLists) {
+        DTVTLogger.start();
         if (weeklyRankLists != null && weeklyRankLists.size() > 0) {
             WeeklyRankList list = weeklyRankLists.get(0);
 
             setStructDB(list);
-
+            mWeeklyRankList = list;
+            // コールバック判定
+            // TODO ClipKeyListResponseをUI側へ送る
+            if (!requiredClipKeyList
+                    || mResponse != null) {
+                if (mApiDataProviderCallback != null) {
+                    DTVTLogger.debug("WeeklyRankList Callback");
+                    sendWeeklyRankListData(list.getWrList());
+                } else {
+                    sendWeeklyGenreRankListData(list.getWrList(), list.getExtraData().getString("genreId"));
+                }
+            }
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
         }
+        DTVTLogger.end();
     }
 
     @Override
@@ -75,6 +92,40 @@ public class RankingTopDataProvider implements
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
         }
+    }
+
+    @Override
+    public void onTvClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+        DTVTLogger.start();
+        super.onTvClipKeyListJsonParsed(clipKeyListResponse);
+        // コールバック判定
+        // TODO ClipKeyListResponseをUI側へ送る
+        if (mWeeklyRankList != null) {
+            if (mApiDataProviderCallback != null) {
+                DTVTLogger.debug("WeeklyRankList Callback");
+                sendWeeklyRankListData(mWeeklyRankList.getWrList());
+            } else {
+                sendWeeklyGenreRankListData(mWeeklyRankList.getWrList(), mWeeklyRankList.getExtraData().getString("genreId"));
+            }
+        }
+        DTVTLogger.end();
+    }
+
+    @Override
+    public void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+        DTVTLogger.start();
+        super.onVodClipKeyListJsonParsed(clipKeyListResponse);
+        // コールバック判定
+        // TODO ClipKeyListResponseをUI側へ送る
+        if (mWeeklyRankList != null) {
+            if (mApiDataProviderCallback != null) {
+                DTVTLogger.debug("WeeklyRankList Callback");
+                sendWeeklyRankListData(mWeeklyRankList.getWrList());
+            } else {
+                sendWeeklyGenreRankListData(mWeeklyRankList.getWrList(), mWeeklyRankList.getExtraData().getString("genreId"));
+            }
+        }
+        DTVTLogger.end();
     }
 
     /**
@@ -128,6 +179,7 @@ public class RankingTopDataProvider implements
      * @param context
      */
     public RankingTopDataProvider(Context context) {
+        super(context);
         this.mContext = context;
         this.mApiDataProviderCallback = (ApiDataProviderCallback) context;
     }
@@ -136,6 +188,7 @@ public class RankingTopDataProvider implements
      * 週間・ビデオ用コンストラクタ
      */
     public RankingTopDataProvider(Context mContext, int mMode) {
+        super(mContext);
         this.mContext = mContext;
         if (mMode == RankingConstants.RANKING_MODE_NO_OF_WEEKLY) {
             this.mWeeklyRankingApiCallback = (WeeklyRankingApiDataProviderCallback) mContext;
@@ -158,6 +211,7 @@ public class RankingTopDataProvider implements
         List<Map<String, String>> weeklyRankList
                 = getWeeklyRankListData(RankingConstants.RANKING_GENRE_ID_SYNTHESIS);
         if (weeklyRankList != null && weeklyRankList.size() > 0) {
+            // 週間テレビランキング取得
             sendWeeklyRankListData(weeklyRankList);
         }
         //ビデオのランキング
@@ -215,6 +269,9 @@ public class RankingTopDataProvider implements
             default:
                 break;
         }
+        // クリップキー一覧取得
+        mResponse = null;
+        getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.TV));
         // データを取得
         List<Map<String, String>> weeklyRankList = getWeeklyRankListData(genreId);
         List<ContentsData> contentsDataList = setRankingContentData(weeklyRankList);
@@ -319,6 +376,9 @@ public class RankingTopDataProvider implements
             String dTv = map.get(JsonContents.META_RESPONSE_DTV);
             requestData.setIsNotify(dispType, contentsType, linearEndDate, tvService, dTv);
             rankingContentInfo.setRequestData(requestData);
+
+            // TODO クリップ状態を反映
+//            mTvResponse.getRequestData();
 
             rankingContentsDataList.add(rankingContentInfo);
             DTVTLogger.info("RankingContentInfo " + rankingContentInfo.getRank());
@@ -469,11 +529,6 @@ public class RankingTopDataProvider implements
         dateUtils.addLastDate(WEEKLY_RANK_LAST_INSERT);
         WeeklyRankInsertDataManager dataManager = new WeeklyRankInsertDataManager(mContext);
         dataManager.insertWeeklyRankInsertList(weeklyRankList);
-        if (mApiDataProviderCallback != null) {
-            sendWeeklyRankListData(weeklyRankList.getWrList());
-        } else {
-            sendWeeklyGenreRankListData(weeklyRankList.getWrList(), weeklyRankList.getExtraData().getString("genreId"));
-        }
     }
 
     /**

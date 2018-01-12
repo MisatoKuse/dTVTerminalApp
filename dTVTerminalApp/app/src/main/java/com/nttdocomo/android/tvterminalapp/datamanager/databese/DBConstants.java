@@ -882,10 +882,11 @@ public class DBConstants {
             ")";
 
     // クリップキー一覧 キャッシュデータ格納用テーブル
-    public static final String CLIP_KEY_LIST_TABLE_NAME = "clip_key_list";
-    private static final String CREATE_TABLE_CLIP_KEY_LIST_SQL_NAMES[] = {
+    public static final String TV_CLIP_KEY_LIST_TABLE_NAME = "tv_clip_key_list";
+    // クリップキー一覧テーブル用 colum ("vod"or"tv")
+    private static final String CREATE_TABLE_TV_CLIP_KEY_LIST_SQL_NAMES[] = {
             CREATE_TABLE_TEXT,
-            CLIP_KEY_LIST_TABLE_NAME,
+            TV_CLIP_KEY_LIST_TABLE_NAME,
             OPEN_BRACKETS_TEXT,
             ID_COLUMN,
             CREATE_TABLE_PRIMARY_TEXT,
@@ -893,19 +894,28 @@ public class DBConstants {
             JsonContents.META_RESPONSE_SERVICE_ID, TEXT_WITH_COMMA_TEXT,
             JsonContents.META_RESPONSE_EVENT_ID, TEXT_WITH_COMMA_TEXT,
             JsonContents.META_RESPONSE_TYPE, TEXT_WITH_COMMA_TEXT,
-            JsonContents.META_RESPONSE_TITLE_ID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_TITLE_ID, TEXT_WITHOUT_COMMA_TEXT,
             CLOSE_BRACKETS_TEXT
     };
-    public static final String CREATE_TABLE_CLIP_KEY_LIST_SQL = StringUtil.getConnectString(
-            CREATE_TABLE_CLIP_KEY_LIST_SQL_NAMES);
-//    public static final String CREATE_TABLE_CLIP_KEY_LIST_SQL =
-//    "create table" + CLIP_KEY_LIST_TABLE_NAME + " (" +
-//    ID_COLUMN + " integer primary key autoincrement, " +
-//    JsonContents.META_RESPONSE_CRID + " text, " +
-//    JsonContents.META_RESPONSE_SERVICE_ID + " text, " +
-//    JsonContents.META_RESPONSE_EVENT_ID + " text, " +
-//    JsonContents.META_RESPONSE_TYPE + " text, " +
-//    JsonContents.META_RESPONSE_TITLE_ID + " text " +
-//            ")";
+    public static final String CREATE_TABLE_TV_CLIP_KEY_LIST_SQL = StringUtil.getConnectString(
+            CREATE_TABLE_TV_CLIP_KEY_LIST_SQL_NAMES);
 
+    // クリップキー一覧 キャッシュデータ格納用テーブル
+    public static final String VOD_CLIP_KEY_LIST_TABLE_NAME = "vod_clip_key_list";
+    // クリップキー一覧テーブル用 colum ("vod"or"tv")
+    private static final String CREATE_TABLE_VOD_CLIP_KEY_LIST_SQL_NAMES[] = {
+            CREATE_TABLE_TEXT,
+            VOD_CLIP_KEY_LIST_TABLE_NAME,
+            OPEN_BRACKETS_TEXT,
+            ID_COLUMN,
+            CREATE_TABLE_PRIMARY_TEXT,
+            JsonContents.META_RESPONSE_CRID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_SERVICE_ID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_EVENT_ID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_TYPE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_TITLE_ID, TEXT_WITHOUT_COMMA_TEXT,
+            CLOSE_BRACKETS_TEXT
+    };
+    public static final String CREATE_TABLE_VOD_CLIP_KEY_LIST_SQL = StringUtil.getConnectString(
+            CREATE_TABLE_VOD_CLIP_KEY_LIST_SQL_NAMES);
 }
