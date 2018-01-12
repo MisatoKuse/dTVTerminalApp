@@ -96,6 +96,8 @@ public class ContentsData {
     private String mDtvType = null;
     // クリップ可否
     private boolean mClipExec = false;
+    // クリップ可否
+    private boolean mClipStatus = false;
 
     public String getDeviceName() {
         return mDeviceName;
@@ -438,5 +440,13 @@ public class ContentsData {
 
     public void setClipExec(boolean mClipExec) {
         this.mClipExec = mClipExec;
+    }
+
+    public boolean isClipStatus() {
+        return mClipStatus;
+    }
+
+    public void setClipStatus(boolean mClipStatus) {
+        this.mClipStatus = mClipStatus;
     }
 }
