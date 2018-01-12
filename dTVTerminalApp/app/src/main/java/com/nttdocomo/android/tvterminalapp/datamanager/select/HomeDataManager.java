@@ -159,7 +159,8 @@ public class HomeDataManager {
                 JsonContents.META_RESPONSE_TITLE_ID, JsonContents.META_RESPONSE_R_VALUE,
                 JsonContents.META_RESPONSE_AVAIL_START_DATE, JsonContents.META_RESPONSE_AVAIL_END_DATE,
                 JsonContents.META_RESPONSE_DISP_TYPE, JsonContents.META_RESPONSE_CONTENT_TYPE,
-                JsonContents.META_RESPONSE_DTV, JsonContents.META_RESPONSE_TV_SERVICE};
+                JsonContents.META_RESPONSE_DTV, JsonContents.META_RESPONSE_TV_SERVICE,
+                JsonContents.META_RESPONSE_DTV_TYPE};
 
         //Daoクラス使用準備
         DBHelper dailyRankListDBHelper = new DBHelper(mContext);

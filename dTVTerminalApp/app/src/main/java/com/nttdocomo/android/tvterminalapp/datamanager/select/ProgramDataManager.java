@@ -45,7 +45,7 @@ public class ProgramDataManager {
         //ホーム画面に必要な列を列挙する
         String[] columns = {JsonContents.META_RESPONSE_CHNO, JsonContents.META_RESPONSE_DEFAULT_THUMB, JsonContents.META_RESPONSE_TITLE,
                 JsonContents.META_RESPONSE_AVAIL_START_DATE, JsonContents.META_RESPONSE_AVAIL_END_DATE,
-                JsonContents.META_RESPONSE_DISP_TYPE, JsonContents.META_RESPONSE_SERVICE_ID,
+                JsonContents.META_RESPONSE_DISP_TYPE, JsonContents.META_RESPONSE_SERVICE_ID, JsonContents.META_RESPONSE_DTV_TYPE,
                 JsonContents.META_RESPONSE_CH_TYPE, JsonContents.META_RESPONSE_PUID, JsonContents.META_RESPONSE_SUB_PUID,
                 JsonContents.META_RESPONSE_CHPACK + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID,
                 JsonContents.META_RESPONSE_CHPACK + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_SUB_PUID};
@@ -78,7 +78,7 @@ public class ProgramDataManager {
                 JsonContents.META_RESPONSE_SERVICE_ID, JsonContents.META_RESPONSE_EVENT_ID,
                 JsonContents.META_RESPONSE_TITLE_ID, JsonContents.META_RESPONSE_R_VALUE,
                 JsonContents.META_RESPONSE_CONTENT_TYPE, JsonContents.META_RESPONSE_DTV,
-                JsonContents.META_RESPONSE_TV_SERVICE};
+                JsonContents.META_RESPONSE_TV_SERVICE, JsonContents.META_RESPONSE_DTV_TYPE};
 
         //Daoクラス使用準備
         DBHelper channelListDBHelper = new DBHelper(mContext);
