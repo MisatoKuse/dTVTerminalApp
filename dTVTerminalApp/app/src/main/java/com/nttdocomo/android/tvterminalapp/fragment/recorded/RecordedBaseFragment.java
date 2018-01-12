@@ -154,10 +154,18 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         if (null != mActivity) {
-            Intent intent = new Intent(mActivity, DtvContentsDetailActivity.class);
-            intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
-            intent.putExtra(RecordedListActivity.RECORD_LIST_KEY, mContentsList.get(i));
-            startActivity(intent);
+            if(que != null && que.size() > 0){
+                showMessage("ダウンロード中のため、再生できません");
+            } else {
+                if(getActivity() != null){
+                    if(((RecordedListActivity)getActivity()).getCurrentPosition() == 0){
+                        Intent intent = new Intent(mActivity, DtvContentsDetailActivity.class);
+                        intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
+                        intent.putExtra(RecordedListActivity.RECORD_LIST_KEY, mContentsList.get(i));
+                        startActivity(intent);
+                    }
+                }
+            }
         }
     }
 
