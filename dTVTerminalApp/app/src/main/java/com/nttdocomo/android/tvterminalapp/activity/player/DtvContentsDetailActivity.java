@@ -76,6 +76,7 @@ import com.nttdocomo.android.tvterminalapp.model.player.MediaVideoInfo;
 import com.nttdocomo.android.tvterminalapp.model.program.Channel;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.ContentsDetailViewPager;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SendOperateLog;
@@ -1331,9 +1332,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                 mDetailDataProvider.getChannelList(1, 1, "", 1);
             }
             //ログイン状態でしか送信しない
-            UserInfoInsertDataManager dataManager = new UserInfoInsertDataManager(this);
-            dataManager.readUserInfoInsertList();
-            if (!TextUtils.isEmpty(StringUtil.getUserContractInfo(dataManager.getmUserData()))){
+            if (UserInfoUtils.getUserLoggedinInfo(this)) {
                 new SendOperateLog(mDetailData, mDetailFullData).sendOpeLog();
             }
         }
