@@ -31,10 +31,18 @@ public class Schedule {
     private String imageUrl;
     //チャンネル ID
     private String chNo;
-    //クリップリクエスト用データ
-    private ClipRequestData mClipRequestData = null;
     //パレンタル情報
     private  String mRValue = null;
+    //表示タイプ
+    private  String mDispType = null;
+    //クリップ判定情報
+    private  String mSearchOk = null;
+    //dTVフラグ
+    private  String mDtv = null;
+    //dTVタイプ
+    private  String mDtvType = null;
+    //クリップリクエスト用データ
+    private ClipRequestData mClipRequestData = null;
     //時間単価換算
     private static final float FORMAT = 1000 * 60 * 60;
     //日付format
@@ -125,6 +133,38 @@ public class Schedule {
 
     public void setRValue(String mRValue) {
         this.mRValue = mRValue;
+    }
+
+    public String getDispType() {
+        return mDispType;
+    }
+
+    public void setDispType(String mDispType) {
+        this.mDispType = mDispType;
+    }
+
+    public String getSearchOk() {
+        return mSearchOk;
+    }
+
+    public void setSearchOk(String mSearchOk) {
+        this.mSearchOk = mSearchOk;
+    }
+
+    public String getDtv() {
+        return mDtv;
+    }
+
+    public void setDtv(String mDtv) {
+        this.mDtv = mDtv;
+    }
+
+    public String getDtvType() {
+        return mDtvType;
+    }
+
+    public void setmDtvType(String mDtvType) {
+        this.mDtvType = mDtvType;
     }
 
     /**

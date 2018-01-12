@@ -80,18 +80,20 @@ public class ContentsData {
     //ダウンロードフラグ
     private int mDownloadFlg = 0;
     //ダウンロードステータス（進捗）
-    private String mDownloadStatus = "";
+    private String mDownloadStatus = null;
 
     // チャンネルID
-    private String mChannelId = "";
+    private String mChannelId = null;
     // おすすめ順
-    private String mRecommendOrder = "";
+    private String mRecommendOrder = null;
     // 画面ID
-    private String mPageId = "";
+    private String mPageId = null;
     // ユーザグループID
-    private String mGroupId = "";
+    private String mGroupId = null;
     // レコメンド手法ID
-    private String mRecommendMethodId = "";
+    private String mRecommendMethodId = null;
+    // dTVタイプ
+    private String mDtvType = null;
 
     public String getDeviceName() {
         return mDeviceName;
@@ -418,5 +420,13 @@ public class ContentsData {
 
     public void setRecommendMethodId(String mRecommendMethodId) {
         this.mRecommendMethodId = mRecommendMethodId;
+    }
+
+    public String getDtvType() {
+        return mDtvType;
+    }
+
+    public void setDtvType(String mDtvType) {
+        this.mDtvType = mDtvType;
     }
 }

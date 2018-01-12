@@ -105,6 +105,8 @@ public class TvClipDataProvider implements TvClipWebClient.TvClipJsonParserCallb
             rankingContentInfo.setSearchOk(search);
             rankingContentInfo.setDispType(clipMapList.get(i).get(dispType));
             rankingContentInfo.setRatStar(clipMapList.get(i).get(JsonContents.META_RESPONSE_RATING));
+            rankingContentInfo.setDtv(clipMapList.get(i).get(JsonContents.META_RESPONSE_DTV));
+            rankingContentInfo.setDtvType(clipMapList.get(i).get(JsonContents.META_RESPONSE_DTV_TYPE));
 
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();

@@ -145,6 +145,9 @@ public class RentalDataProvider implements RentalVodListWebClient.RentalVodListJ
             data.setRatStar(String.valueOf(vodMetaFullData.getRating()));
             data.setThumURL(vodMetaFullData.getmThumb_448_252());
             data.setSearchOk(search);
+            data.setDispType(vodMetaFullData.getDisp_type());
+            data.setDtv(vodMetaFullData.getDtv());
+            data.setDtvType(vodMetaFullData.getDtvType());
 
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();

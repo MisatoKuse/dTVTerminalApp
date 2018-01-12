@@ -100,6 +100,10 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                         mSchedule.setTitle(title);
                         mSchedule.setChNo(chNo);
                         mSchedule.setRValue(rValue);
+                        mSchedule.setDispType(JsonContents.META_RESPONSE_DISP_TYPE);
+                        mSchedule.setSearchOk(JsonContents.META_RESPONSE_SEARCH_OK);
+                        mSchedule.setDtv(JsonContents.META_RESPONSE_DTV);
+                        mSchedule.setDispType(JsonContents.META_RESPONSE_DTV_TYPE);
                         mSchedule.setClipRequestData(setClipData((HashMap<String, String>) hashMap));
 
                         if (!TextUtils.isEmpty(chNo)) {
@@ -138,6 +142,10 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                             mSchedule.setTitle(title);
                             mSchedule.setChNo(chNo);
                             mSchedule.setRValue(rValue);
+                            mSchedule.setDispType(JsonContents.META_RESPONSE_DISP_TYPE);
+                            mSchedule.setSearchOk(JsonContents.META_RESPONSE_SEARCH_OK);
+                            mSchedule.setDtv(JsonContents.META_RESPONSE_DTV);
+                            mSchedule.setDispType(JsonContents.META_RESPONSE_DTV_TYPE);
                             mSchedule.setClipRequestData(setClipData((HashMap<String, String>) hashMap));
 
                             if (!TextUtils.isEmpty(chNo)) {//CH毎番組データ取得して、整形する
@@ -281,6 +289,10 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                         schedule.setTitle(title);
                         schedule.setChNo(chNo);
                         schedule.setRValue(rValue);
+                        schedule.setDispType(JsonContents.META_RESPONSE_DISP_TYPE);
+                        schedule.setSearchOk(JsonContents.META_RESPONSE_SEARCH_OK);
+                        schedule.setDtv(JsonContents.META_RESPONSE_DTV);
+                        schedule.setDispType(JsonContents.META_RESPONSE_DTV_TYPE);
                         schedule.setClipRequestData(setClipData(hashMap));
 
                         if (!TextUtils.isEmpty(chNo)) {//CH毎番組データ取得して、整形する

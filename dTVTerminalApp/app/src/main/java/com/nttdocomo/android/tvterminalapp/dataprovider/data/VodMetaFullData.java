@@ -102,6 +102,8 @@ public class VodMetaFullData implements Serializable {
     private double mRating = 0;
     // dTVフラグ
     private String mDtv = null;
+    // dTVタイプ.
+    private String mDtvType = null;
     // CHSVOD
     private String mChsvod = null;
     // クリップ判定に利用(※一部コンテンツはこれだけでは判定不可)
@@ -1418,5 +1420,13 @@ public class VodMetaFullData implements Serializable {
                     return "";
             }
         }
+    }
+
+    public String getDtvType() {
+        return mDtvType;
+    }
+
+    public void setDtvType(String mDtvType) {
+        this.mDtvType = mDtvType;
     }
 }

@@ -299,6 +299,9 @@ public class RankingTopDataProvider implements
             rankingContentInfo.setSearchOk(search);
             rankingContentInfo.setRank(String.valueOf(i + 1));
             rankingContentInfo.setRatStar(map.get(JsonContents.META_RESPONSE_RATING));
+            rankingContentInfo.setDispType(map.get(JsonContents.META_RESPONSE_DISP_TYPE));
+            rankingContentInfo.setDtv(map.get(JsonContents.META_RESPONSE_DTV));
+            rankingContentInfo.setDtvType(map.get(JsonContents.META_RESPONSE_DTV_TYPE));
 
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
