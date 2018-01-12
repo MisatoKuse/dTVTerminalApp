@@ -16,19 +16,22 @@ import java.util.Map;
 
 public class RentalListDataManager {
 
+    /**
+     * コンテキスト.
+     */
     private Context mContext;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
      * @param mContext コンテキスト
      */
-    public RentalListDataManager(Context mContext) {
+    public RentalListDataManager(final Context mContext) {
         this.mContext = mContext;
     }
 
     /**
-     * レンタル一覧画面用クリップデータを返却する
+     * レンタル一覧画面用クリップデータを返却する.
      *
      * @return クリップデータリスト
      */
@@ -41,7 +44,10 @@ public class RentalListDataManager {
                 JsonContents.META_RESPONSE_TITLE_ID, JsonContents.META_RESPONSE_R_VALUE,
                 JsonContents.META_RESPONSE_AVAIL_START_DATE, JsonContents.META_RESPONSE_AVAIL_END_DATE,
                 JsonContents.META_RESPONSE_DTV, JsonContents.META_RESPONSE_TV_SERVICE,
-                JsonContents.META_RESPONSE_CONTENT_TYPE, JsonContents.META_RESPONSE_DTV_TYPE};
+                JsonContents.META_RESPONSE_CONTENT_TYPE, JsonContents.META_RESPONSE_DTV_TYPE, JsonContents.META_RESPONSE_ACTIVE_LIST,
+                JsonContents.META_RESPONSE_ACTIVE_LIST + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_LICENSE_ID,
+                JsonContents.META_RESPONSE_ACTIVE_LIST + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_VAILD_END_DATE
+        };
 
         //Daoクラス使用準備
         DBHelper homeDBHelper = new DBHelper(mContext);
@@ -54,5 +60,31 @@ public class RentalListDataManager {
         homeDBHelper.close();
         return list;
     }
-    
+
+    /**
+     * 購入済みCH一覧データを返却する.
+     *
+     * @return 購入済みCH一覧デー
+     */
+    public List<Map<String, String>> selectRentalChListData() {
+        //必要な列を列挙する
+        String[] columns = {JsonContents.META_RESPONSE_CHNO, JsonContents.META_RESPONSE_DEFAULT_THUMB, JsonContents.META_RESPONSE_TITLE,
+                JsonContents.META_RESPONSE_AVAIL_START_DATE, JsonContents.META_RESPONSE_AVAIL_END_DATE,
+                JsonContents.META_RESPONSE_DISP_TYPE, JsonContents.META_RESPONSE_SERVICE_ID,
+                JsonContents.META_RESPONSE_CH_TYPE, JsonContents.META_RESPONSE_ACTIVE_LIST,
+                JsonContents.META_RESPONSE_PUID, JsonContents.META_RESPONSE_SUB_PUID,
+                JsonContents.META_RESPONSE_CHPACK + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID,
+                JsonContents.META_RESPONSE_CHPACK + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_SUB_PUID};
+
+        //Daoクラス使用準備
+        DBHelper dbHelper = new DBHelper(mContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        RentalListDao rentalListDao = new RentalListDao(db);
+
+        //データ取得
+        List<Map<String, String>> list = rentalListDao.chFindById(columns);
+        db.close();
+        dbHelper.close();
+        return list;
+    }
 }

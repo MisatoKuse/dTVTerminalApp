@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RENTAL_CHANNEL_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RENTAL_LIST_TABLE_NAME;
 
 
@@ -76,6 +77,49 @@ public class RentalListDao {
     }
 
     /**
+     * 配列で指定した列データをすべて取得(CH).
+     *
+     * @param strings columns
+     * @return 取得結果
+     */
+    public List<Map<String, String>> chFindById(final String[] strings) {
+        //特定IDのデータ取得はしない方針
+        List<Map<String, String>> list = new ArrayList<>();
+
+        Cursor cursor =null;
+        try {
+            cursor = mSQLiteDatabase.query(
+                    RENTAL_CHANNEL_LIST_TABLE_NAME,
+                    strings,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null);
+        }catch(Exception e){
+            DTVTLogger.debug(e);
+            return null;
+        }
+
+        //参照先を一番始めに
+        boolean isEof = cursor.moveToFirst();
+
+        //データを一行ずつ格納する
+        while (isEof) {
+            HashMap<String, String> map = new HashMap<>();
+            for (int i = 0; i < strings.length; i++) {
+                map.put(strings[i], cursor.getString(cursor.getColumnIndex(strings[i])));
+            }
+            list.add(map);
+
+            isEof = cursor.moveToNext();
+        }
+        cursor.close();
+
+        return list;
+    }
+
+    /**
      * データの登録
      *
      * @param values
@@ -83,6 +127,16 @@ public class RentalListDao {
      */
     public long insert(ContentValues values) {
         return mSQLiteDatabase.insert(RENTAL_LIST_TABLE_NAME, null, values);
+    }
+
+    /**
+     * 購入済みチャンネル一覧のデータ登録.
+     *
+     * @param values 保存する値
+     * @return 結果
+     */
+    public long insertCh(final ContentValues values) {
+        return mSQLiteDatabase.insert(RENTAL_CHANNEL_LIST_TABLE_NAME, null, values);
     }
 
     public int update() {
@@ -97,5 +151,14 @@ public class RentalListDao {
      */
     public int delete() {
         return mSQLiteDatabase.delete(RENTAL_LIST_TABLE_NAME, null, null);
+    }
+
+    /**
+     * 購入済みチャンネル一覧のデータ削除.
+     *
+     * @return 結果
+     */
+    public int deleteCh() {
+        return mSQLiteDatabase.delete(RENTAL_CHANNEL_LIST_TABLE_NAME, null, null);
     }
 }

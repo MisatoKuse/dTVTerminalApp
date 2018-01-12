@@ -59,6 +59,12 @@ public class DateUtils {
     //おすすめdTV取得日付キー
     public static final String RECOMMEND_DANIME_LAST_INSERT = "RecommendDAnimeLastInsert";
 
+    //購入済みVOD取得日付キー
+    public static final String RENTAL_VOD_LAST_UPDATE = "RentalVodLastUpdate";
+
+    //購入済みチャンネル取得日付キー
+    public static final String RENTAL_CHANNEL_LAST_UPDATE = "RentalChannelLastUpdate";
+
     //チャンネル取得日付キー
     public static final String CHANNEL_LAST_UPDATE = "ChannelLastUpdate";
 
