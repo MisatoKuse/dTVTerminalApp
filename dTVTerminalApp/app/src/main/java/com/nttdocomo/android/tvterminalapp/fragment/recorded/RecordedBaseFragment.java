@@ -263,7 +263,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    showMessage("download success");
+//                    showMessage("download success");
                     DTVTLogger.debug("HandlerThread:"+Thread.currentThread().getId());
                     if(queIndex.size() > 0){
                         View view = mRecordedListview.getChildAt(queIndex.get(0)-mRecordedListview.getFirstVisiblePosition());
@@ -502,13 +502,10 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
      */
     private void showMessage(String msg) {
         DTVTLogger.start();
-        Context context=mActivity;
+        Context context=getActivity();
         if(null == context){
-            context = getActivity();
-            if(null == context){
-                DTVTLogger.end();
-                return;
-            }
+            DTVTLogger.end();
+            return;
         }
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
         DTVTLogger.end();

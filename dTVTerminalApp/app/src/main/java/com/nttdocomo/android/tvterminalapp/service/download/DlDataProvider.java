@@ -233,6 +233,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     @Override
     public void onSuccess(String fullPath) {
         if (null != mDlDataProviderListener && isBinded) {
+            DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok");
             mDlDataProviderListener.onSuccess(fullPath);
         } else {
             if (dlDataQue != null && dlDataQue.size() > 0) {
