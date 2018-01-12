@@ -112,6 +112,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
 
     private String[] mTabNames = null;
     private String[] mDate = {"日", "月", "火", "水", "木", "金", "土"};
+    private String[] mDisPlayTypes ={"video_program","series","wizard","video_package","subscription_package","series_svod"};
     private boolean mIsPlayer = false;
     private boolean mIsControllerVisible = false;
     private Intent mIntent = null;
@@ -133,6 +134,8 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     /* コンテンツ詳細 end */
     /*DTV起動*/
     private static final int DTV_VERSION_STANDARD = 52000;
+    private static final String METARESPONSE1 = "1";
+    private static final String METARESPONSE2 = "2";
     private static final String RESERVED4_TYPE4 = "4";
     private static final String RESERVED4_TYPE7 = "7";
     private static final String RESERVED4_TYPE8 = "8";
@@ -859,20 +862,22 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                         || OtherContentsDetailData.HIKARI_CONTENTS_CATEGORY_ID_IPTV.equals(categoryId)) {
                     //TODO  放送中の場合
                 }
-            } else if (serviceId == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID) {
-                mThumbnailBtn.setVisibility(View.VISIBLE);
-                TextView startAppIcon = findViewById(R.id.view_contents_button_text);
-                startAppIcon.setVisibility(View.VISIBLE);
-                startAppIcon.setText(getResources().getString(R.string.dtv_content_service_start_text));
-            } else if (serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID) {
-                mThumbnailBtn.setVisibility(View.VISIBLE);
-                TextView startAppIcon = findViewById(R.id.view_contents_button_text);
-                startAppIcon.setVisibility(View.VISIBLE);
-                startAppIcon.setText(getResources().getString(R.string.d_anime_store_content_service_start_text));
             }
             setTitleAndThumbnail(mDetailData.getTitle(), mDetailData.getThumb());
         }
         getContentsData();
+    }
+
+    /**
+     * サムネイルエリア文字表示
+     *
+     * @param content 表示内容
+     */
+    private void setThrumnailText(String content) {
+        mThumbnailBtn.setVisibility(View.VISIBLE);
+        TextView startAppIcon = findViewById(R.id.view_contents_button_text);
+        startAppIcon.setVisibility(View.VISIBLE);
+        startAppIcon.setText(content);
     }
 
     /**
@@ -1335,6 +1340,32 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             if (UserInfoUtils.getUserLoggedinInfo(this)) {
                 new SendOperateLog(mDetailData, mDetailFullData).sendOpeLog();
             }
+            if (mDetailData == null) {
+                mDetailData = mIntent.getParcelableExtra(PLALA_INFO_BUNDLE_KEY);
+                if (mDetailData != null) {
+                    // TODO: 2018/01/12 契約状態判定
+                    setThrumnailText(getResources().getString(R.string.dtv_content_service_start_text));
+                }
+                setThrumnailText(getResources().getString(R.string.dtv_content_service_start_text));
+            } else {
+                if (mDetailData.getServiceId() == OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID) {
+                    String mDisPlayType = mDetailFullData.getDisp_type();
+                    for (int i = 0; i < mDisPlayTypes.length; i++) {
+                        if (mDisPlayTypes[i].equals(mDisPlayType)) {
+                            //ひかりTV中にDTVの場合
+                            if (METARESPONSE1.equals(mDetailFullData.getDtv())) {
+                                setThrumnailText(getResources().getString(R.string.dtv_content_service_start_text));
+                            }
+                        }
+                    }
+                    //ｄアニメストアの場合
+                } else if (mDetailData.getServiceId() == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID) {
+                    setThrumnailText(getResources().getString(R.string.d_anime_store_content_service_start_text));
+                    //ｄTVの場合
+                } else if (mDetailData.getServiceId() == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID) {
+                    setThrumnailText(getResources().getString(R.string.dtv_content_service_start_text));
+                }
+            }
         }
     }
 
@@ -1487,7 +1518,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                 break;
             case R.id.dtv_contents_detail_main_layout_thumbnail_btn:
                 //DTVの場合
-                if (mDetailData.getServiceId() == DTV_CONTENTS_SERVICE_ID) {
+                if (mDetailData!= null && mDetailData.getServiceId() == DTV_CONTENTS_SERVICE_ID) {
                     CustomDialog startAppDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
                     startAppDialog.setTitle(getResources().getString(R.string.dtv_content_service_start_dialog));
                     startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
@@ -1524,7 +1555,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                     startAppDialog.showDialog();
 
                     break;
-                } else if (mDetailData.getServiceId() == D_ANIMATION_CONTENTS_SERVICE_ID) {
+                } else if (mDetailData!= null && mDetailData.getServiceId() == D_ANIMATION_CONTENTS_SERVICE_ID) {
                     CustomDialog startAppDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
                     startAppDialog.setTitle(getResources().getString(R.string.d_anime_store_content_service_start_dialog));
                     startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
@@ -1549,6 +1580,16 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                     });
                     startAppDialog.showDialog();
                     break;
+                } else if (METARESPONSE1.equals(mDetailFullData.getDtv())) {
+                    // TODO: dtvType　はVOD＆EPGマージメタレスポンス」(縮小/フル共に)にて返却されるレスポンスとなる、現在テストのため定義した
+                    String dtvType = null;
+                    if (dtvType != null && dtvType.equals(METARESPONSE1)) {
+                        startApp(WORK_START_TYPE + mDetailFullData.getTitle_id());
+                    } else if (dtvType != null && dtvType.equals(METARESPONSE2)) {
+                        startApp(SUPER_SPEED_START_TYPE + mDetailFullData.getTitle_id());
+                    } else {
+                        startApp(TITTLE_START_TYPE + mDetailFullData.getTitle_id());
+                    }
                 }
             default:
                 super.onClick(v);
@@ -1559,7 +1600,6 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     /**
      * 機能：APP起動.
      *
-     * @param url
      */
     private void startApp(String url) {
         Uri uri = Uri.parse(url);
