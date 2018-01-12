@@ -28,6 +28,7 @@ import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.HomeDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.RecommendDataPreloader;
 
 import java.util.List;
 import java.util.Map;
@@ -76,6 +77,16 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         //Home画面用データを取得
         HomeDataProvider homeDataProvider = new HomeDataProvider(this);
         homeDataProvider.getHomeData();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        //レコメンドデータ先読みの開始
+        RecommendDataPreloader preloader = new RecommendDataPreloader();
+        preloader.execute(getApplicationContext());
+
     }
 
     @Override

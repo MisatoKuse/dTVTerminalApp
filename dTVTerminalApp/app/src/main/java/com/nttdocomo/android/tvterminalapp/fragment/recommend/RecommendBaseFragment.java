@@ -120,6 +120,11 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     }
 
     public void clear() {
+        //データがヌルなら初期化する
+        if(mData == null) {
+            initData();
+        }
+
         mData.clear();
     }
 
