@@ -856,6 +856,10 @@ public class DBConstants {
      * レンタル一覧テーブル.
      */
     public static final String RENTAL_LIST_TABLE_NAME = "rental_list";
+    /**
+     * 購入済みCH一覧テーブル.
+     */
+    public static final String RENTAL_CHANNEL_LIST_TABLE_NAME = "rental_cnannel_list";
 
     /**
      * レンタル一覧テーブル作成SQL文.

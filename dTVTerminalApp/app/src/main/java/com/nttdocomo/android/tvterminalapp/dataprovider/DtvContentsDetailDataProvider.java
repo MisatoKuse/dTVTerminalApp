@@ -12,9 +12,12 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.RentalListInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RoleListInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.HomeDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.ProgramDataManager;
+import com.nttdocomo.android.tvterminalapp.datamanager.select.RentalListDataManager;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ContentsDetailGetResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChListResponse;
@@ -59,6 +62,14 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
      */
     private Context mContext = null;
     /**
+     * 購入済みVODリスト情報を保持.
+     */
+    private PurchasedVodListResponse mPurchasedVodListResponse = null;
+    /**
+     * 購入済みチャンネルリスト情報を保持.
+     */
+    private PurchasedChListResponse mPurchasedChListResponse = null;
+    /**
      * チャンネルリスト情報を保持.
      */
     private ChannelList mChannelList = null;
@@ -84,6 +95,22 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
      */
     private static final int ROLELIST_SELECT = 4;
     /**
+     * 購入済みチャンネルリスト更新.
+     */
+    private static final int RENTAL_VOD_UPDATE = 5;
+    /**
+     * 購入済みチャンネルリスト取得.
+     */
+    private static final int RENTAL_VOD_SELECT = 6;
+    /**
+     * 購入済みチャンネルリスト更新.
+     */
+    private static final int RENTAL_CHANNEL_UPDATE = 7;
+    /**
+     * 購入済みチャンネルリスト取得.
+     */
+    private static final int RENTAL_CHANNEL_SELECT = 8;
+    /**
      * ディスプレイタイプ.
      */
     private static final String[] DISPLAY_TYPE = {"", "hikaritv", "dch"};
@@ -105,6 +132,40 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
             if (detailListInfo != null) {
                 mApiDataProviderCallback.onContentsDetailInfoCallback(detailListInfo);
             }
+        }
+    }
+
+    @Override
+    public void onRentalVodListJsonParsed(final PurchasedVodListResponse purchasedVodListResponse) {
+        mPurchasedVodListResponse = purchasedVodListResponse;
+        if (mPurchasedVodListResponse != null) {
+            Handler handler = new Handler(); //チャンネル情報更新
+            try {
+                DbThread t = new DbThread(handler, this, RENTAL_VOD_UPDATE);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
+        }
+        if (mPurchasedVodListResponse != null) {
+            mApiDataProviderCallback.onRentalVodListCallback(mPurchasedVodListResponse);
+        }
+    }
+
+    @Override
+    public void onRentalChListJsonParsed(final PurchasedChListResponse purchasedChListResponse) {
+        mPurchasedChListResponse = purchasedChListResponse;
+        if (mPurchasedChListResponse != null) {
+            Handler handler = new Handler(); //チャンネル情報更新
+            try {
+                DbThread t = new DbThread(handler, this, RENTAL_CHANNEL_UPDATE);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
+        }
+        if (mPurchasedChListResponse != null) {
+            mApiDataProviderCallback.onRentalChListCallback(purchasedChListResponse);
         }
     }
 
@@ -205,6 +266,46 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
                         mApiDataProviderCallback.onRoleListCallback(roleListData);
                     }
                     break;
+                case RENTAL_VOD_SELECT:
+                    PurchasedVodListResponse purchasedVodListData = new PurchasedVodListResponse();
+                    ArrayList<ActiveData> activeDatas = new ArrayList<>();
+                    for (int i = 0; i < resultSet.size(); i++) {
+                        Map<String, String> hashMap = resultSet.get(i);
+                        String active_list_license_id = hashMap.get(JsonContents.META_RESPONSE_ACTIVE_LIST
+                                + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_LICENSE_ID);
+                        String active_list_valid_end_date = hashMap.get(JsonContents.META_RESPONSE_ACTIVE_LIST
+                                + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_VAILD_END_DATE);
+                        ActiveData activeDate = new ActiveData();
+                        activeDate.setLicenseId(active_list_license_id);
+                        activeDate.setValidEndDate(Long.parseLong(active_list_valid_end_date));
+                        activeDatas.add(activeDate);
+                    }
+                    purchasedVodListData.setVodActiveData(activeDatas);
+                    if (null != mApiDataProviderCallback) {
+                        mApiDataProviderCallback.onRentalVodListCallback(purchasedVodListData);
+                    }
+                    break;
+                case RENTAL_CHANNEL_SELECT:
+                    PurchasedChListResponse purchasedChListResponse = new PurchasedChListResponse();
+                    ArrayList<ActiveData> activeChDatas = new ArrayList<>();
+                    for (int i = 0; i < resultSet.size(); i++) {
+                        Map<String, String> hashMap = resultSet.get(i);
+
+                        String active_list_license_id = hashMap.get(JsonContents.META_RESPONSE_ACTIVE_LIST
+                                + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_LICENSE_ID);
+                        String active_list_valid_end_date = hashMap.get(JsonContents.META_RESPONSE_ACTIVE_LIST
+                                + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_VAILD_END_DATE);
+                        ActiveData activeDate = new ActiveData();
+                        activeDate.setLicenseId(active_list_license_id);
+                        activeDate.setValidEndDate(Long.parseLong(active_list_valid_end_date));
+
+                        activeChDatas.add(activeDate);
+                    }
+                    purchasedChListResponse.setChActiveData(activeChDatas);
+                    if (null != mApiDataProviderCallback) {
+                        mApiDataProviderCallback.onRentalChListCallback(purchasedChListResponse);
+                    }
+                    break;
                 default:
                     break;
             }
@@ -215,36 +316,42 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
     public List<Map<String, String>> dbOperation(final int operationId) throws Exception {
         List<Map<String, String>> resultSet = null;
         switch (operationId) {
-            case ROLELIST_UPDATE://サーバーから取得したロールリストデータをDBに保存する
+            case ROLELIST_UPDATE: //サーバーから取得したロールリストデータをDBに保存する
                 RoleListInsertDataManager roleListInsertDataManager = new RoleListInsertDataManager(mContext);
                 roleListInsertDataManager.insertRoleList(mRoleListInfo);
                 break;
-            case ROLELIST_SELECT://DBからロールリストデータを取得して、画面に返却する
+            case ROLELIST_SELECT: //DBからロールリストデータを取得して、画面に返却する
                 HomeDataManager homeDataManager = new HomeDataManager(mContext);
                 resultSet = homeDataManager.selectRoleListData();
                 break;
-            case CHANNEL_UPDATE://サーバーから取得したチャンネルデータをDBに保存する
+            case CHANNEL_UPDATE: //サーバーから取得したチャンネルデータをDBに保存する
                 ChannelInsertDataManager channelInsertDataManager = new ChannelInsertDataManager(mContext);
                 channelInsertDataManager.insertChannelInsertList(mChannelList, DISPLAY_TYPE[mChannelDisplayType]);
                 break;
-            case CHANNEL_SELECT://DBからチャンネルデータを取得して、画面に返却する
+            case CHANNEL_SELECT: //DBからチャンネルデータを取得して、画面に返却する
                 ProgramDataManager channelDataManager = new ProgramDataManager(mContext);
                 resultSet = channelDataManager.selectChannelListProgramData(DISPLAY_TYPE[mChannelDisplayType]);
+                break;
+            case RENTAL_VOD_UPDATE: //サーバーから取得した購入済みVODデータをDBに保存する
+                RentalListInsertDataManager rentalListInsertDataManager = new RentalListInsertDataManager(mContext);
+                rentalListInsertDataManager.insertRentalListInsertList(mPurchasedVodListResponse);
+                break;
+            case RENTAL_VOD_SELECT: //DBから購入済みVODデータを取得して返却する
+                RentalListDataManager rentalListDataManager = new RentalListDataManager(mContext);
+                resultSet = rentalListDataManager.selectRentalListData();
+                break;
+            case RENTAL_CHANNEL_UPDATE: //サーバーから取得した購入済みCHデータをDBに保存する
+                RentalListInsertDataManager rentalChListInsertDataManager = new RentalListInsertDataManager(mContext);
+                rentalChListInsertDataManager.insertChRentalListInsertList(mPurchasedChListResponse);
+                break;
+            case RENTAL_CHANNEL_SELECT: //DBから購入済みCHデータを取得して返却する
+                RentalListDataManager rentalChListDataManager = new RentalListDataManager(mContext);
+                resultSet = rentalChListDataManager.selectRentalChListData();
                 break;
             default:
                 break;
         }
         return resultSet;
-    }
-
-    @Override
-    public void onRentalVodListJsonParsed(final PurchasedVodListResponse response) {
-        mApiDataProviderCallback.onRentalVodListCallback(response);
-    }
-
-    @Override
-    public void onRentalChListJsonParsed(final PurchasedChListResponse response) {
-        mApiDataProviderCallback.onRentalChListCallback(response);
     }
 
     @Override
@@ -353,6 +460,30 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
      * 購入済みVOD一覧取得.
      */
     public void getVodListData() {
+        DateUtils dateUtils = new DateUtils(mContext);
+        String lastDate = dateUtils.getLastDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
+        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate)) {
+            //データをDBから取得する
+            Handler handler = new Handler(); //チャンネル情報更新
+            try {
+                DbThread t = new DbThread(handler, this, RENTAL_VOD_SELECT);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
+        } else {
+            dateUtils.addLastProgramDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
+            RentalVodListWebClient rentalVodListWebClient = new RentalVodListWebClient();
+            rentalVodListWebClient.getRentalVodListApi(this);
+        }
+    }
+
+    /**
+     * 購入済みVOD一覧を強制的にサーバーから取得.
+     */
+    public void getForceVodListData() {
+        DateUtils dateUtils = new DateUtils(mContext);
+        dateUtils.addLastProgramDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
         RentalVodListWebClient rentalVodListWebClient = new RentalVodListWebClient();
         rentalVodListWebClient.getRentalVodListApi(this);
     }
@@ -361,6 +492,30 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
      * 購入済みCH一覧取得.
      */
     public void getChListData() {
+        DateUtils dateUtils = new DateUtils(mContext);
+        String lastDate = dateUtils.getLastDate(DateUtils.RENTAL_CHANNEL_LAST_UPDATE);
+        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate)) {
+            //データをDBから取得する
+            Handler handler = new Handler(); //チャンネル情報更新
+            try {
+                DbThread t = new DbThread(handler, this, RENTAL_CHANNEL_SELECT);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
+        } else {
+            dateUtils.addLastProgramDate(DateUtils.RENTAL_CHANNEL_LAST_UPDATE);
+            RentalChListWebClient rentalChListWebClient = new RentalChListWebClient();
+            rentalChListWebClient.getRentalChListApi(this);
+        }
+    }
+
+    /**
+     * 購入済みCH一覧を強制的にサーバーから取得.
+     */
+    public void getForceChListData() {
+        DateUtils dateUtils = new DateUtils(mContext);
+        dateUtils.addLastProgramDate(DateUtils.RENTAL_CHANNEL_LAST_UPDATE);
         RentalChListWebClient rentalChListWebClient = new RentalChListWebClient();
         rentalChListWebClient.getRentalChListApi(this);
     }
