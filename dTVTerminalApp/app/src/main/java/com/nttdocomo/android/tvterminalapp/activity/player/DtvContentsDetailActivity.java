@@ -1330,9 +1330,12 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             if (!TextUtils.isEmpty(mDetailFullData.getmService_id())) {
                 mDetailDataProvider.getChannelList(1, 1, "", 1);
             }
-            //if (UserState.LOGIN_NG != getUserState()){//ログイン状態でしか送信しない
+            //ログイン状態でしか送信しない
+            UserInfoInsertDataManager dataManager = new UserInfoInsertDataManager(this);
+            dataManager.readUserInfoInsertList();
+            if (!TextUtils.isEmpty(StringUtil.getUserContractInfo(dataManager.getmUserData()))){
                 new SendOperateLog(mDetailData, mDetailFullData).sendOpeLog();
-            //}
+            }
         }
     }
 
