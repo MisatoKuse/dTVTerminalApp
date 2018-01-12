@@ -96,7 +96,7 @@ public class ContentsData {
     private String mDtvType = null;
     // クリップ可否
     private boolean mClipExec = false;
-    // クリップ可否
+    // クリップ未/済
     private boolean mClipStatus = false;
 
     public String getDeviceName() {

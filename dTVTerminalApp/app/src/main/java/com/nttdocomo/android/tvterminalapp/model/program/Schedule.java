@@ -52,6 +52,8 @@ public class Schedule {
     private static final String PROGRAM_FORMAT = "yyyy-MM-dd";
     // クリップ可否
     private boolean mClipExec = false;
+    // クリップ未/済
+    private boolean mClipStatus = false;
 
     /*
      * タイトルを取得する
@@ -185,6 +187,14 @@ public class Schedule {
 
     public void setContentType(String mContentType) {
         this.mContentType = mContentType;
+    }
+
+    public boolean isClipStatus() {
+        return mClipStatus;
+    }
+
+    public void setClipStatus(boolean mClipStatus) {
+        this.mClipStatus = mClipStatus;
     }
 
     /**
