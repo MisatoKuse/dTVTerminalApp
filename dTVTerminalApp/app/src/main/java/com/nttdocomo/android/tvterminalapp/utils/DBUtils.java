@@ -4,7 +4,12 @@
 
 package com.nttdocomo.android.tvterminalapp.utils;
 
+import android.content.Context;
+import android.database.DatabaseUtils;
+
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 
 import org.json.JSONArray;
 
@@ -171,5 +176,39 @@ public class DBUtils {
         }
 
         return answer;
+    }
+
+    /**
+     * 引数指定されたテーブルにレコードが存在するかを返す
+     *
+     * @param context
+     * @param tableName
+     * @return
+     */
+    public static boolean isCachingRecord(Context context, String tableName) {
+        DBHelper dBHelper = new DBHelper(context);
+        long recordCount = DatabaseUtils.queryNumEntries(dBHelper.getWritableDatabase(), tableName);
+        if (recordCount > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 引数指定されたテーブルにレコードが存在するかを返す
+     *
+     * @param context
+     * @param tableName テーブル名
+     * @param selection WHERE句の内容
+     * @param args      selectionに"?" が入っている場合のパラメータ
+     * @return
+     */
+    public static boolean isCachingRecord(Context context, String tableName, String selection, String[] args) {
+        DBHelper dBHelper = new DBHelper(context);
+        long recordCount = DatabaseUtils.queryNumEntries(dBHelper.getWritableDatabase(), tableName, selection, args);
+        if (recordCount > 0) {
+            return true;
+        }
+        return false;
     }
 }
