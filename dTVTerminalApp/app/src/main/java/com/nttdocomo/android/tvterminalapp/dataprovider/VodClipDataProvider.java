@@ -13,6 +13,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.insert.VodClipInsertDataM
 import com.nttdocomo.android.tvterminalapp.datamanager.select.VodClipDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
+import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
 
@@ -86,12 +87,12 @@ public class VodClipDataProvider implements VodClipWebClient.VodClipJsonParserCa
     }
 
     /**
-     * 取得したリストマップをContentsDataクラスへ入れる
+     * 取得したリストマップをContentsDataクラスへ入れる.
      *
      * @param clipMapList コンテンツリストデータ
      * @return ListView表示用データ
      */
-    private List<ContentsData> setVodClipContentData(List<Map<String, String>> clipMapList) {
+    private List<ContentsData> setVodClipContentData(final List<Map<String, String>> clipMapList) {
         List<ContentsData> clipDataList = new ArrayList<>();
 
         ContentsData clipContentInfo;
@@ -99,35 +100,41 @@ public class VodClipDataProvider implements VodClipWebClient.VodClipJsonParserCa
         for (int i = 0; i < clipMapList.size(); i++) {
             clipContentInfo = new ContentsData();
 
-            String title = clipMapList.get(i).get(JsonContents.META_RESPONSE_TITLE);
-            String search = clipMapList.get(i).get(JsonContents.META_RESPONSE_SEARCH_OK);
-            String linearEndDate = clipMapList.get(i).get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
-            String dispType = clipMapList.get(i).get(JsonContents.META_RESPONSE_DISP_TYPE);
+            Map<String, String> map = clipMapList.get(i);
+
+            String title = map.get(JsonContents.META_RESPONSE_TITLE);
+            String searchOk = map.get(JsonContents.META_RESPONSE_SEARCH_OK);
+            String linearEndDate = map.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
+            String dispType = map.get(JsonContents.META_RESPONSE_DISP_TYPE);
+            String dtv = map.get(JsonContents.META_RESPONSE_DTV);
+            String dtvType = map.get(JsonContents.META_RESPONSE_DTV_TYPE);
 
             clipContentInfo.setRank(String.valueOf(i + 1));
-            clipContentInfo.setThumURL(clipMapList.get(i).get(JsonContents.META_RESPONSE_THUMB_448));
+            clipContentInfo.setThumURL(map.get(JsonContents.META_RESPONSE_THUMB_448));
             clipContentInfo.setTitle(title);
-            clipContentInfo.setTime(clipMapList.get(i).get(JsonContents.META_RESPONSE_DISPLAY_START_DATE));
-            clipContentInfo.setSearchOk(search);
-            clipContentInfo.setDispType(clipMapList.get(i).get(dispType));
-            clipContentInfo.setRatStar(clipMapList.get(i).get(JsonContents.META_RESPONSE_RATING));
-
+            clipContentInfo.setTime(map.get(JsonContents.META_RESPONSE_DISPLAY_START_DATE));
+            clipContentInfo.setSearchOk(searchOk);
+            clipContentInfo.setRatStar(map.get(JsonContents.META_RESPONSE_RATING));
+            clipContentInfo.setContentsType(map.get(JsonContents.META_RESPONSE_CONTENT_TYPE));
+            clipContentInfo.setDtv(dtv);
+            clipContentInfo.setDispType(dispType);
+            clipContentInfo.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
-            requestData.setCrid(clipMapList.get(i).get(JsonContents.META_RESPONSE_CRID));
-            requestData.setServiceId(clipMapList.get(i).get(JsonContents.META_RESPONSE_SERVICE_ID));
-            requestData.setEventId(clipMapList.get(i).get(JsonContents.META_RESPONSE_EVENT_ID));
-            requestData.setTitleId(clipMapList.get(i).get(JsonContents.META_RESPONSE_TITLE_ID));
+            requestData.setCrid(map.get(JsonContents.META_RESPONSE_CRID));
+            requestData.setServiceId(map.get(JsonContents.META_RESPONSE_SERVICE_ID));
+            requestData.setEventId(map.get(JsonContents.META_RESPONSE_EVENT_ID));
+            requestData.setTitleId(map.get(JsonContents.META_RESPONSE_TITLE_ID));
             requestData.setTitle(title);
-            requestData.setRValue(clipMapList.get(i).get(JsonContents.META_RESPONSE_R_VALUE));
-            requestData.setLinearStartDate(clipMapList.get(i).get(JsonContents.META_RESPONSE_AVAIL_START_DATE));
+            requestData.setRValue(map.get(JsonContents.META_RESPONSE_R_VALUE));
+            requestData.setLinearStartDate(map.get(JsonContents.META_RESPONSE_AVAIL_START_DATE));
             requestData.setLinearEndDate(linearEndDate);
-            requestData.setSearchOk(search);
+            requestData.setSearchOk(searchOk);
 
             //視聴通知判定生成
-            String contentsType = clipMapList.get(i).get(JsonContents.META_RESPONSE_CONTENT_TYPE);
-            String tvService = clipMapList.get(i).get(JsonContents.META_RESPONSE_TV_SERVICE);
-            String dTv = clipMapList.get(i).get(JsonContents.META_RESPONSE_DTV);
+            String contentsType = map.get(JsonContents.META_RESPONSE_CONTENT_TYPE);
+            String tvService = map.get(JsonContents.META_RESPONSE_TV_SERVICE);
+            String dTv = map.get(JsonContents.META_RESPONSE_DTV);
             requestData.setIsNotify(dispType, contentsType, linearEndDate, tvService, dTv);
             clipContentInfo.setRequestData(requestData);
 

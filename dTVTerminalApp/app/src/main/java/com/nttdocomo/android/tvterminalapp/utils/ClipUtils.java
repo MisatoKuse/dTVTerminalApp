@@ -76,11 +76,11 @@ public class ClipUtils {
                                     case DTV_TYPE_ONE:
                                     case DTV_TYPE_TWO:
                                     case DTV_TYPE_THREE:
-                                        //dtvType"1"、"2"、"3"の時はクリップ可
-                                        return true;
-                                    default:
-                                        //dtvType"1"、"2"、"3"以外はクリップ不可
+                                        //dtvType"1"、"2"、"3"の時はクリップ不可
                                         return false;
+                                    default:
+                                        //dtvType"1"、"2"、"3"以外はクリップ可
+                                        return true;
                                 }
                             default:
                                 return false;

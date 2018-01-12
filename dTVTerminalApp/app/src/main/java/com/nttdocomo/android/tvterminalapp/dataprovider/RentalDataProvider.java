@@ -11,6 +11,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.insert.RentalListInsertDa
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
+import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalVodListWebClient;
 
@@ -138,16 +139,20 @@ public class RentalDataProvider implements RentalVodListWebClient.RentalVodListJ
             VodMetaFullData vodMetaFullData = metaFullData.get(i);
 
             String title = vodMetaFullData.getTitle();
-            String search = vodMetaFullData.getmSearch_ok();
+            String searchOk = vodMetaFullData.getmSearch_ok();
+            String dispType = vodMetaFullData.getDisp_type();
+            String dtv = vodMetaFullData.getDtv();
+            String dtvType = vodMetaFullData.getDtvType();
             data.setTitle(title);
             //エポック秒から文字に変換
             data.setTime(DateUtils.formatEpochToString(vodMetaFullData.getAvail_end_date()));
             data.setRatStar(String.valueOf(vodMetaFullData.getRating()));
             data.setThumURL(vodMetaFullData.getmThumb_448_252());
-            data.setSearchOk(search);
-            data.setDispType(vodMetaFullData.getDisp_type());
-            data.setDtv(vodMetaFullData.getDtv());
-            data.setDtvType(vodMetaFullData.getDtvType());
+            data.setSearchOk(searchOk);
+            data.setContentsType(vodMetaFullData.getmContent_type());
+            data.setDtv(dtv);
+            data.setDispType(dispType);
+            data.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
 
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
@@ -162,10 +167,9 @@ public class RentalDataProvider implements RentalVodListWebClient.RentalVodListJ
             requestData.setRValue(vodMetaFullData.getR_value());
             requestData.setLinearStartDate(String.valueOf(vodMetaFullData.getAvail_start_date()));
             requestData.setLinearEndDate(linearEndDate);
-            requestData.setSearchOk(search);
+            requestData.setSearchOk(searchOk);
 
             //視聴通知判定生成
-            String dispType = vodMetaFullData.getDisp_type();
             String contentsType = vodMetaFullData.getmContent_type();
             String tvService = vodMetaFullData.getmTv_service();
             String dTv = vodMetaFullData.getDtv();
