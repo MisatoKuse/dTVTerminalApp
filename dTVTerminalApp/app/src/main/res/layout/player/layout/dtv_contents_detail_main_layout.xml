@@ -77,17 +77,18 @@
                         android:id="@+id/dtv_contents_view_button"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
+                        android:layout_gravity="center_horizontal"
                         android:contentDescription="@string/contents_info_thumbnail_button"
                         android:src="@mipmap/ic_play_arrow_white_24dp" />
                     <!--テキスト-->
                     <TextView
                         android:id="@+id/view_contents_button_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:gravity="center"
                         android:textColor="@color/white_text"
-                        android:maxLines="1"
-                        android:textSize="@dimen/contents_detail_10dp"
+                        android:layout_gravity="center_horizontal"
+                        android:textSize="@dimen/contents_detail_16dp"
                         android:visibility="gone" />
                 </LinearLayout>
             </RelativeLayout>
