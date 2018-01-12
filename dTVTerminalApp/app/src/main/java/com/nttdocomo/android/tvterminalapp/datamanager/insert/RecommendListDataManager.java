@@ -22,10 +22,15 @@ import java.util.Map;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CATEGORYID;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_GROUPID;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_PAGEID;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDORDER;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED4;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID;
 
 public class RecommendListDataManager {
 
@@ -126,6 +131,11 @@ public class RecommendListDataManager {
             contentsData.setTitle(map.get(RECOMMENDCHANNEL_LIST_TITLE));
             contentsData.setStartViewing(map.get(RECOMMENDCHANNEL_LIST_STARTVIEWING));
             contentsData.setReserved(map.get(RECOMMENDCHANNEL_LIST_RESERVED4));
+            contentsData.setChannelId(map.get(RECOMMENDCHANNEL_LIST_CHANNELID));
+            contentsData.setRecommendOrder(map.get(RECOMMENDCHANNEL_LIST_RECOMMENDORDER));
+            contentsData.setPageId(map.get(RECOMMENDCHANNEL_LIST_PAGEID));
+            contentsData.setGroupId(map.get(RECOMMENDCHANNEL_LIST_GROUPID));
+            contentsData.setRecommendMethodId(map.get(RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID));
             recommendContentInfoList.add(contentsData);
         }
         return recommendContentInfoList;
