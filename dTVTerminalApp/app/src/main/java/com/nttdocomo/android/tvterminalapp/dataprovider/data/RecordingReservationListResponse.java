@@ -5,20 +5,26 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
 
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 public class RecordingReservationListResponse {
-    private String mStatus;// status
-    private String mPager;//pager
+    private String mStatus = null;
+    private String mReservation = null;
+    private String mPager = null;
     private ArrayList<RecordingReservationMetaData> mRecordingReservationMetaData;  // 録画予約一覧リスト
 
-    public static final String RECORDING_RESERVATION_META_RESPONSE_RESERVATION_LIST = "reservation_list";
     private static final String RECORDING_RESERVATION_FIXED = "";
 
     public String getStatus() {
         return mStatus;
+    }
+
+    public String getReservation() {
+        return mReservation;
     }
 
     public String getPager() {
@@ -27,6 +33,10 @@ public class RecordingReservationListResponse {
 
     public void setStatus(String status) {
         mStatus = status;
+    }
+
+    public void setReservation(String reservation) {
+        mReservation = reservation;
     }
 
     public void setPager(JSONObject pager) {
@@ -50,8 +60,13 @@ public class RecordingReservationListResponse {
      * コンストラクタ
      */
     public RecordingReservationListResponse() {
-        mStatus = RECORDING_RESERVATION_FIXED;     // OK 固定値
-        mPager = RECORDING_RESERVATION_FIXED;    //ページャ
-        mRecordingReservationMetaData = new ArrayList<RecordingReservationMetaData>();  // 録画予約一覧
+        // OK 固定値
+        mStatus = RECORDING_RESERVATION_FIXED;
+        // 録画予約情報受信時刻
+        mReservation = null;
+        // ページャ
+        mPager = RECORDING_RESERVATION_FIXED;
+        // 録画予約一覧
+        mRecordingReservationMetaData = new ArrayList<RecordingReservationMetaData>();
     }
 }

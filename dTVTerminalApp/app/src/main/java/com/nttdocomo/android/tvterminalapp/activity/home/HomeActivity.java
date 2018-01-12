@@ -32,28 +32,31 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.HomeDataProvider;
 import java.util.List;
 import java.util.Map;
 
-public class HomeActivity extends BaseActivity implements View.OnClickListener, HomeDataProvider.ApiDataProviderCallback {
+public class HomeActivity extends BaseActivity implements View.OnClickListener,
+        HomeDataProvider.ApiDataProviderCallback {
 
     private LinearLayout mLinearLayout = null;
 
     //外部ブラウザー遷移先
     private final static String PR_URL = "https://www.hikaritv.net/video";
     //コンテンツ一覧数
-    private final static int CONTENT_LIST_COUNT = 6;
+    private final static int HOME_CONTENTS_LIST_COUNT = 7;
     //ヘッダのmargin
-    private final static int CONTENT_LIST_START_INDEX = 2;
+    private final static int HOME_CONTENTS_LIST_START_INDEX = 2;
     //UIの上下表示順(NOW ON AIR)
-    private final static int CHANNEL_SORT = 2;
+    private final static int HOME_CONTENTS_SORT_CHANNEL = HOME_CONTENTS_LIST_START_INDEX;
     //UIの上下表示順(おすすめ番組)
-    private final static int REDCH_SORT = 3;
+    private final static int HOME_CONTENTS_SORT_RECOMMEND_PROGRAM = HOME_CONTENTS_LIST_START_INDEX + 1;
     //UIの上下表示順(おすすめビデオ)
-    private final static int REDVD_SORT = 4;
+    private final static int HOME_CONTENTS_SORT_RECOMMEND_VOD = HOME_CONTENTS_LIST_START_INDEX + 2;
     //UIの上下表示順(今日のテレビランキング)
-    private final static int TODAY_SORT = 5;
+    private final static int HOME_CONTENTS_SORT_TODAY = HOME_CONTENTS_LIST_START_INDEX + 3;
     //UIの上下表示順(ビデオランキング)
-    private final static int VIDEO_SORT = 6;
-    //UIの上下表示順(クリップ)
-    private final static int CLIP_SORT = 7;
+    private final static int HOME_CONTENTS_SORT_VIDEO = HOME_CONTENTS_LIST_START_INDEX + 4;
+    //UIの上下表示順(クリップ[テレビ])
+    private final static int HOME_CONTENTS_SORT_TV_CLIP = HOME_CONTENTS_LIST_START_INDEX + 5;
+    //UIの上下表示順(クリップ[ビデオ])
+    private final static int HOME_CONTENTS_SORT_VOD_CLIP = HOME_CONTENTS_LIST_START_INDEX + 6;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,7 +153,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         agreementTextView.setOnClickListener(this);
         prImageView.setOnClickListener(this);
         //各コンテンツのビューを作成する
-        for (int i = CONTENT_LIST_START_INDEX; i < CONTENT_LIST_COUNT + CONTENT_LIST_START_INDEX; i++) {
+        for (int i = HOME_CONTENTS_LIST_START_INDEX; i < HOME_CONTENTS_LIST_COUNT + HOME_CONTENTS_LIST_START_INDEX; i++) {
             View view = LayoutInflater.from(this).inflate(R.layout.home_main_layout_item, null, false);
             RelativeLayout relativeLayout = view.findViewById(R.id.home_main_item_type_rl);
             LinearLayout.LayoutParams relIp = new LinearLayout.LayoutParams(
@@ -200,23 +203,26 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     private String getContentTypeName(int tag) {
         String typeName = "";
         switch (tag) {
-            case 2:
+            case HOME_CONTENTS_SORT_CHANNEL:
                 typeName = getResources().getString(R.string.home_label_now_on_air);
                 break;
-            case 3:
+            case HOME_CONTENTS_SORT_RECOMMEND_PROGRAM:
                 typeName = getResources().getString(R.string.home_label_recommend_program);
                 break;
-            case 4:
+            case HOME_CONTENTS_SORT_RECOMMEND_VOD:
                 typeName = getResources().getString(R.string.home_label_recommend_video);
                 break;
-            case 5:
+            case HOME_CONTENTS_SORT_TODAY:
                 typeName = getResources().getString(R.string.daily_tv_ranking_title);
                 break;
-            case 6:
+            case HOME_CONTENTS_SORT_VIDEO:
                 typeName = getResources().getString(R.string.video_ranking_title);
                 break;
-            case 7:
-                typeName = getResources().getString(R.string.nav_menu_item_clip);
+            case HOME_CONTENTS_SORT_TV_CLIP:
+                typeName = getResources().getString(R.string.nav_menu_item_tv_clip);
+                break;
+            case HOME_CONTENTS_SORT_VOD_CLIP:
+                typeName = getResources().getString(R.string.nav_menu_item_vod_clip);
                 break;
             default:
                 break;
@@ -253,24 +259,25 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
      */
     private void startTo(int index) {
         switch (index) {
-            case 2:
+            case HOME_CONTENTS_SORT_CHANNEL:
                 //チャンネルリスト一覧へ遷移
                 startActivity(ChannelListActivity.class, null);
                 break;
-            case 3:
-            case 4:
+            case HOME_CONTENTS_SORT_RECOMMEND_PROGRAM:
+            case HOME_CONTENTS_SORT_RECOMMEND_VOD:
                 //おすすめへ遷移
                 startActivity(RecommendActivity.class, null);
                 break;
-            case 5:
+            case HOME_CONTENTS_SORT_TODAY:
                 //今日のテレビランキングへ遷移
                 startActivity(DailyTvRankingActivity.class, null);
                 break;
-            case 6:
+            case HOME_CONTENTS_SORT_VIDEO:
                 //ビデオランキングへ遷移
                 startActivity(VideoRankingActivity.class, null);
                 break;
-            case 7:
+            case HOME_CONTENTS_SORT_TV_CLIP:
+            case HOME_CONTENTS_SORT_VOD_CLIP:
                 //クリップ一覧へ遷移
                 startActivity(ClipListActivity.class, null);
                 break;
@@ -289,7 +296,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     public void tvScheduleListCallback(List<ContentsData> channelList) {
         if (channelList != null && channelList.size() > 0) {
-            Message msg = Message.obtain(mHandler, CHANNEL_SORT, channelList);
+            Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_CHANNEL, channelList);
             mHandler.sendMessage(msg);
         }
     }
@@ -297,15 +304,23 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     public void dailyRankListCallback(List<ContentsData> dailyRankList) {
         if (dailyRankList != null && dailyRankList.size() > 0) {
-            Message msg = Message.obtain(mHandler, TODAY_SORT, dailyRankList);
+            Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_TODAY, dailyRankList);
             mHandler.sendMessage(msg);
         }
     }
 
     @Override
-    public void vodClipListCallback(List<ContentsData> clipList) {
-        if (clipList != null && clipList.size() > 0) {
-            Message msg = Message.obtain(mHandler, CLIP_SORT, clipList);
+    public void tvClipListCallback(List<ContentsData> tvClipList) {
+        if (tvClipList != null && tvClipList.size() > 0) {
+            Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_TV_CLIP, tvClipList);
+            mHandler.sendMessage(msg);
+        }
+    }
+
+    @Override
+    public void vodClipListCallback(List<ContentsData> vodClipList) {
+        if (vodClipList != null && vodClipList.size() > 0) {
+            Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_VOD_CLIP, vodClipList);
             mHandler.sendMessage(msg);
         }
     }
@@ -313,7 +328,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     public void videoRankCallback(List<ContentsData> videoRankList) {
         if (videoRankList != null && videoRankList.size() > 0) {
-            Message msg = Message.obtain(mHandler, VIDEO_SORT, videoRankList);
+            Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_VIDEO, videoRankList);
             mHandler.sendMessage(msg);
         }
     }
@@ -321,7 +336,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     public void recommendChannelCallback(List<ContentsData> redChList) {
         if (redChList != null && redChList.size() > 0) {
-            Message msg = Message.obtain(mHandler, REDCH_SORT, redChList);
+            Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_RECOMMEND_PROGRAM, redChList);
             mHandler.sendMessage(msg);
         }
     }
@@ -329,7 +344,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     public void recommendVideoCallback(List<ContentsData> redVdList) {
         if (redVdList != null && redVdList.size() > 0) {
-            Message msg = Message.obtain(mHandler, REDVD_SORT, redVdList);
+            Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_RECOMMEND_VOD, redVdList);
             mHandler.sendMessage(msg);
         }
     }

@@ -4,7 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,7 +25,6 @@ import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
-import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +70,6 @@ public class RecordReservationListActivity extends BaseActivity
         DTVTLogger.start();
         // ContentsListAdapter設定
         mListView = findViewById(R.id.record_reservation_list_view);
-        setUpdateTime();
         mListView.setOnItemClickListener(this);
         mListView.setOnScrollListener(this);
         if (mContentsList == null) {
@@ -91,11 +88,13 @@ public class RecordReservationListActivity extends BaseActivity
      * リストの更新時間を取得
      */
     private void setUpdateTime() {
-        TextView textView = findViewById(R.id.record_reservation_list_update_time);
-        StringBuilder strBuilder = new StringBuilder();
-        strBuilder.append(DateUtils.getRecordShowListItem(DateUtils.getNowTimeFormatEpoch()))
-                .append(getString(R.string.recording_reservation_list_update_time));
-        textView.setText(strBuilder.toString());
+        if (null != mProvider.mReservationTime) {
+            TextView textView = findViewById(R.id.reservation_update_time);
+            StringBuilder strBuilder = new StringBuilder();
+            strBuilder.append(getString(R.string.recording_reservation_list_update_time))
+                    .append(mProvider.mReservationTime);
+            textView.setText(strBuilder.toString());
+        }
     }
 
     // スクロール処理(ページング)
@@ -209,6 +208,7 @@ public class RecordReservationListActivity extends BaseActivity
     @Override
     public void recordingReservationListCallback(List<ContentsData> dataList) {
         DTVTLogger.start();
+        setUpdateTime();
         if (null == dataList) {
             //通信とJSON Parseに関してのerror処理
             // TODO データ取得失敗時の仕様決定後に修正が必要
@@ -232,7 +232,6 @@ public class RecordReservationListActivity extends BaseActivity
                 mContentsList.add(dataList.get(i));
             }
         }
-        setUpdateTime();
         DTVTLogger.debug("Callback, mData.size==" + mContentsList.size());
         resetCommunication();
         mContentsAdapter.notifyDataSetChanged();

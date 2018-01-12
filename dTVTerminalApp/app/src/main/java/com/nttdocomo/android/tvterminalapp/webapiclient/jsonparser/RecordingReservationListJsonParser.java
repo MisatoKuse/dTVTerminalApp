@@ -4,7 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
-
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -18,8 +17,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-
-import static com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationListResponse.RECORDING_RESERVATION_META_RESPONSE_RESERVATION_LIST;
 
 public class RecordingReservationListJsonParser extends AsyncTask<Object, Object, Object> {
     private final String CLASS_NAME = getClass().getSimpleName();
@@ -101,6 +98,14 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
                 }
             }
 
+            // 録画予約情報受信時刻を取得しセットする
+            if (!jsonObj.isNull(JsonContents.META_RESPONSE_RESERVATION)) {
+                String reservation = jsonObj.getString(JsonContents.META_RESPONSE_RESERVATION);
+                if (mRecordingReservationListResponse != null) {
+                    mRecordingReservationListResponse.setReservation(reservation);
+                }
+            }
+
             //pagerの値を取得しセットする
             if (!jsonObj.isNull(JsonContents.META_RESPONSE_PAGER)) {
                 JSONObject pager = jsonObj.getJSONObject(JsonContents.META_RESPONSE_PAGER);
@@ -124,10 +129,10 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
         try {
             ArrayList<RecordingReservationMetaData> recordingReservationMetaDataList =
                     new ArrayList<RecordingReservationMetaData>();
-            if (!jsonObj.isNull(RECORDING_RESERVATION_META_RESPONSE_RESERVATION_LIST)) {
+            if (!jsonObj.isNull(JsonContents.META_RESPONSE_RESERVATION_LIST)) {
                 // 録画予約一覧をJSONArrayにパースする
                 JSONArray lists = jsonObj.getJSONArray(
-                        RECORDING_RESERVATION_META_RESPONSE_RESERVATION_LIST);
+                        JsonContents.META_RESPONSE_RESERVATION_LIST);
                 if (lists.length() == 0) {
                     return;
                 }
