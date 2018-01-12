@@ -30,15 +30,17 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     private DownloadService.Binder mBinder;
     private Activity mActivity;
     private DlData dlData;
-    private List<DlData> dlDataQue;
-    public  boolean isBinded = false;
 
     public DlDataProvider(Activity activity, DlDataProviderListener dlDataProviderListener) throws Exception {
         if (null == activity) {
             throw new Exception("DlDataProvider.DlDataProvider, null activity");
         }
-        mActivity = activity;
+        this.mActivity = activity;
         mDlDataProviderListener = dlDataProviderListener;
+    }
+
+    public DlDataProvider(Activity activity){
+        this.mActivity = activity;
     }
 
     /**
@@ -48,10 +50,22 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         if (null == mActivity) {
             return;
         }
-        isBinded = true;
+        DownloadService.isBinded = true;
         Intent intent = new Intent(mActivity, DownloadService.class);
         mActivity.bindService(intent, this, Context.BIND_AUTO_CREATE);
         startService();
+    }
+
+    /**
+     * 再バインド
+     */
+    public void rebind() {
+        if (null == mActivity) {
+            return;
+        }
+        DownloadService.isBinded = true;
+        Intent intent = new Intent(mActivity, DownloadService.class);
+        mActivity.bindService(intent, this, Context.BIND_AUTO_CREATE);
     }
 
     /**
@@ -69,10 +83,10 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
      * DlDataProvider機能を無効
      */
     public void endProvider() {
-        if (null == mActivity || !isBinded) {
+        if (null == mActivity || !DownloadService.isBinded) {
             return;
         }
-        isBinded = false;
+        DownloadService.isBinded = false;
         mActivity.unbindService(this);
     }
 
@@ -196,7 +210,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
 
     @Override
     public void onStart(int totalFileByteSize) {
-        if (null != mDlDataProviderListener &&isBinded) {
+        if (null != mDlDataProviderListener && DownloadService.isBinded) {
             mDlDataProviderListener.onStart(totalFileByteSize);
             saveDownLoad(totalFileByteSize);
         }
@@ -232,14 +246,14 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
 
     @Override
     public void onSuccess(String fullPath) {
-        if (null != mDlDataProviderListener && isBinded) {
+        if (null != mDlDataProviderListener && DownloadService.isBinded) {
             DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok");
             mDlDataProviderListener.onSuccess(fullPath);
         } else {
-            if (dlDataQue != null && dlDataQue.size() > 0) {
-                dlDataQue.remove(0);
+            if (DownloadService.dlDataQue != null && DownloadService.dlDataQue.size() > 0) {
+                DownloadService.dlDataQue.remove(0);
                 DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok");
-                if(0==dlDataQue.size()){
+                if(0 == DownloadService.dlDataQue.size()){
                     stop();
                     return;
                 }
@@ -259,8 +273,8 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
 
     private DownloadParam getDownLoadParam(){
         DownloadParam downloadParam = null;
-        if(dlDataQue != null && dlDataQue.size() > 0){
-            DlData item = dlDataQue.get(0);
+        if(DownloadService.dlDataQue != null && DownloadService.dlDataQue.size() > 0){
+            DlData item = DownloadService.dlDataQue.get(0);
             Context context = null;
             if(getDownloadService() != null){
                 context = getDownloadService().getApplicationContext();
@@ -349,18 +363,27 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                 resultSet = downLoadListDataManager.selectDownLoadListVideoData();
                 break;
             case DOWNLOAD_TOTALSIZE_SELECT:
-                downLoadListDataManager.selectDownLoadListByTotal();
+                downLoadListDataManager.selectDownLoadList();
                 break;
             case DOWNLOAD_INSERT:
-                downLoadListDataManager.insertDownload(dlData);
+                if(dlData != null){
+                    downLoadListDataManager.insertDownload(dlData);
+                }
                 break;
             case DOWNLOAD_UPDATE:
-                downLoadListDataManager.updateDownload(dlData);
+                if(dlData != null) {
+                    downLoadListDataManager.updateDownload(dlData);
+                }
                 break;
             default:
                 break;
         }
         return resultSet;
+    }
+
+    public List<Map<String, String>> getDownloadListData(){
+        DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(mActivity);
+        return downLoadListDataManager.selectDownLoadList();
     }
 
     private void saveDownLoad(int totalFileByteSize) {
@@ -375,8 +398,8 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     public void setQue(List<DlData> dlData) {
-        this.dlDataQue = dlData;
-        isBinded = false;
+        DownloadService.dlDataQue = dlData;
+        DownloadService.isBinded = false;
     }
 
     private void dbOperationByThread(int operationId) {

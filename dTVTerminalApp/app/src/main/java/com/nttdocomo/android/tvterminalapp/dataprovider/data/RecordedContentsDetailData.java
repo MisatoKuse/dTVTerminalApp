@@ -25,6 +25,7 @@ public class RecordedContentsDetailData implements Parcelable {
     private DetailParamFromWhere mDetailParamFromWhere= DetailParamFromWhere.DetailParamFromWhere_Other;
     private String mVideoType;
     private String mClearTextSize;
+    private int mDownLoadStatus;
 
     public void setDetailParamFromWhere(DetailParamFromWhere from){
         mDetailParamFromWhere=from;
@@ -114,7 +115,13 @@ public class RecordedContentsDetailData implements Parcelable {
         this.mClearTextSize = clearTextSize;
     }
 
+    public int getDownLoadStatus() {
+        return mDownLoadStatus;
+    }
 
+    public void setDownLoadStatus(int mDownLoadStatus) {
+        this.mDownLoadStatus = mDownLoadStatus;
+    }
 
     @Override
     public int describeContents() {
@@ -134,6 +141,7 @@ public class RecordedContentsDetailData implements Parcelable {
         dest.writeInt(this.mDetailParamFromWhere == null ? -1 : this.mDetailParamFromWhere.ordinal());
         dest.writeString(this.mVideoType);
         dest.writeString(this.mClearTextSize);
+        dest.writeInt(this.mDownLoadStatus);
     }
 
     public RecordedContentsDetailData() {
@@ -152,6 +160,7 @@ public class RecordedContentsDetailData implements Parcelable {
         this.mDetailParamFromWhere = tmpMDetailParamFromWhere == -1 ? null : DetailParamFromWhere.values()[tmpMDetailParamFromWhere];
         this.mVideoType = in.readString();
         this.mClearTextSize=in.readString();
+        this.mDownLoadStatus=in.readInt();
     }
 
     public static final Creator<RecordedContentsDetailData> CREATOR = new Creator<RecordedContentsDetailData>() {

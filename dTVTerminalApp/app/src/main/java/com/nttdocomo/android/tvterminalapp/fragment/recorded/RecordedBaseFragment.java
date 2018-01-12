@@ -38,6 +38,7 @@ import com.nttdocomo.android.tvterminalapp.service.download.DlData;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProviderListener;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadParam;
+import com.nttdocomo.android.tvterminalapp.service.download.DownloadService;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloaderBase;
 import com.nttdocomo.android.tvterminalapp.service.download.DtcpDownloadParam;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
@@ -58,8 +59,8 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     private ContentsAdapter mContentsAdapter = null;
     public DlDataProvider mDlDataProvider = null;
     private DownloadParam downloadParam;
-    private List<DlData> que = new ArrayList<>();
-    private List<Integer> queIndex = new ArrayList<>();
+    public List<DlData> que = new ArrayList<>();
+    public List<Integer> queIndex = new ArrayList<>();
     private Handler mHandler = new Handler();
     private final int mPercentToUpdateUi = 1;
 
@@ -291,7 +292,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                         }
                     } else {
                         if(mDlDataProvider != null){
-                            mDlDataProvider.isBinded = false;
+                            DownloadService.isBinded = false;
                             mActivity.unbindService(mDlDataProvider);
                             mDlDataProvider.stop();
                         }
@@ -354,33 +355,13 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                         return;
                     }
                 }
-                DlData dlData = new DlData();
-                RecordedContentsDetailData itemData = mContentsList.get(index);
-                dlData.setItemId(itemData.getItemId());
-                dlData.setSaveFile(getDownloadPath(getContext()));
-                dlData.setTotalSize(itemData.getClearTextSize());
-                dlData.setTitle(DownloaderBase.getFileNameById(itemData.getItemId()));
-                dlData.setUrl(itemData.getResUrl());
-                dlData.setBitrate(itemData.getBitrate());
-                dlData.setPort(String.valueOf(DlnaDmsItem.getPortFromProtocal(itemData.getVideoType())));
-                dlData.setDuration(itemData.getDuration());
-                dlData.setVideoType(itemData.getVideoType());
-                dlData.setUpnpIcon(itemData.getUpnpIcon());
-                DlnaDmsItem dmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getContext());
-                dlData.setHost(dmsItem.mIPAddress);
-                dlData.setPercentToNotify(String.valueOf(mPercentToUpdateUi));
-
-                String xml=getXmlToDl(itemData.getItemId());
-                if(null==xml){
-                    showMessage("Xmlパラメーター取得失敗しまして、ダウンロードできません。");
-                    return;
+                DlData dlData = setDlData(index);
+                if(dlData != null){
+                    mDlDataProvider.setDlData(dlData);
+                    que.add(dlData);
+                    queIndex.add(index);
+                    setDownloadStatus(index, 0);
                 }
-                dlData.setXmlToDl(xml);
-
-                mDlDataProvider.setDlData(dlData);
-                que.add(dlData);
-                queIndex.add(index);
-                setDownloadStatus(index, 0);
                 break;
             case ContentsAdapter.DOWNLOAD_STATUS_LOADING :
                 showDialogToConfirmUnDownload(false, view);
@@ -391,6 +372,32 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             default:
                 break;
         }
+    }
+
+    private DlData setDlData(int index){
+        DlData dlData = new DlData();
+        RecordedContentsDetailData itemData = mContentsList.get(index);
+        dlData.setItemId(itemData.getItemId());
+        dlData.setSaveFile(getDownloadPath(getContext()));
+        dlData.setTotalSize(itemData.getClearTextSize());
+        dlData.setTitle(DownloaderBase.getFileNameById(itemData.getItemId()));
+        dlData.setUrl(itemData.getResUrl());
+        dlData.setBitrate(itemData.getBitrate());
+        dlData.setPort(String.valueOf(DlnaDmsItem.getPortFromProtocal(itemData.getVideoType())));
+        dlData.setDuration(itemData.getDuration());
+        dlData.setVideoType(itemData.getVideoType());
+        dlData.setUpnpIcon(itemData.getUpnpIcon());
+        DlnaDmsItem dmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getContext());
+        dlData.setHost(dmsItem.mIPAddress);
+        dlData.setPercentToNotify(String.valueOf(mPercentToUpdateUi));
+
+        String xml=getXmlToDl(itemData.getItemId());
+        if(null==xml){
+            showMessage("Xmlパラメーター取得失敗しまして、ダウンロードできません。");
+            return null;
+        }
+        dlData.setXmlToDl(xml);
+        return dlData;
     }
 
     private String getXmlToDl(String itemId){
@@ -470,10 +477,25 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 return false;
             }
         }
-        if(!mDlDataProvider.isBinded){
+        if(!DownloadService.isBinded){
             mDlDataProvider.beginProvider();
         }
         return true;
+    }
+
+    public void bindServiceFromBackgroud(boolean serviceIsRun){
+        if(serviceIsRun){
+            DownloadService.isBinded = true;
+        } else {
+            DownloadService.isBinded = false;
+        }
+        if(queIndex != null && queIndex.size() > 0){
+            for(int i=0;i < queIndex.size(); i++){
+                DlData dlData = setDlData(queIndex.get(i));
+                que.add(dlData);
+            }
+            prepareDownLoad(queIndex.get(0));
+        }
     }
 
     /**

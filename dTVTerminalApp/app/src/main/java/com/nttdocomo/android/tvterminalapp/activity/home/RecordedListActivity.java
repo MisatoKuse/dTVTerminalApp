@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
+import android.app.ActivityManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,6 +14,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,9 +27,11 @@ import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragmentScrollListener;
@@ -38,6 +42,9 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaProvRecVideo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoListener;
+import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
+import com.nttdocomo.android.tvterminalapp.service.download.DownloadService;
+import com.nttdocomo.android.tvterminalapp.service.download.DownloaderBase;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 
@@ -48,6 +55,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -457,9 +465,35 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         });
     }
 
+    private boolean isDownloadServiceRunning(){
+        ActivityManager mActivityManager = (ActivityManager)getSystemService(ACTIVITY_SERVICE);
+        List<ActivityManager.RunningServiceInfo> mServiceList = mActivityManager.getRunningServices(Integer.MAX_VALUE);
+        return serviceIsStart(mServiceList, DownloadService.class.getName());
+    }
+
+    private boolean serviceIsStart(List<ActivityManager.RunningServiceInfo> list, String className) {
+        for (int i = 0; i < list.size(); i++) {
+            if (className.equals(list.get(i).service.getClassName()))
+                return true;
+        }
+        return false;
+    }
+
+    private List<Map<String, String>> getDownloadListFromDb(){
+        DlDataProvider dlDataProvider = new DlDataProvider(this);
+        List<Map<String, String>> resultList = null;
+        try {
+            resultList = dlDataProvider.getDownloadListData();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return resultList;
+    }
+
     private void setVideoBrows(DlnaRecVideoInfo curInfo) {
         final RecordedBaseFragment baseFrgament = getCurrentRecordedBaseFragment(0);
         baseFrgament.mContentsList = new ArrayList<>();
+        List<Map<String, String>> resultList = getDownloadListFromDb();
         for (int i = 0; i < curInfo.getRecordVideoLists().size(); ++i) {
             DlnaRecVideoItem itemData = curInfo.getRecordVideoLists().get(i);
             RecordedContentsDetailData detailData = new RecordedContentsDetailData();
@@ -473,6 +507,23 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             detailData.setTitle(itemData.mTitle);
             detailData.setVideoType(itemData.mVideoType);
             detailData.setClearTextSize(itemData.mClearTextSize);
+            if(resultList != null && resultList.size() > 0){
+                for (int j = 0; j < resultList.size(); j++) {
+                    Map<String, String> hashMap = resultList.get(i);
+                    String itemId = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_TITLE);
+                    if(!TextUtils.isEmpty(itemId)){
+                        if(itemId.equals(DownloaderBase.getFileNameById(itemData.mItemId))){
+                            String downloadStatus = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
+                            if(!TextUtils.isEmpty(downloadStatus)){
+                                detailData.setDownLoadStatus(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
+                            } else {
+                                detailData.setDownLoadStatus(ContentsAdapter.DOWNLOAD_STATUS_LOADING);
+                                baseFrgament.queIndex.add(i);
+                            }
+                        }
+                    }
+                }
+            }
             baseFrgament.mContentsList.add(detailData);
         }
         List<ContentsData> listData = baseFrgament.getContentsData();
@@ -500,6 +551,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                             String.valueOf(calendar.get(Calendar.MINUTE))};
                     String selectDate = util.getConnectString(strings);
                     contentsData.setTime(selectDate);
+                    contentsData.setDownloadFlg(baseFrgament.mContentsList.get(i).getDownLoadStatus());
                 } catch (ParseException e) {
                     DTVTLogger.debug(e);
                 }
@@ -512,6 +564,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             @Override
             public void run() {
                 baseFrgament.notifyDataSetChanged();
+                if(baseFrgament.queIndex.size() > 0){
+                    baseFrgament.bindServiceFromBackgroud(isDownloadServiceRunning());
+                }
             }
         });
     }

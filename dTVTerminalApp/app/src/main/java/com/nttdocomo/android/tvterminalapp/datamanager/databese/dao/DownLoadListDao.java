@@ -73,16 +73,11 @@ public class DownLoadListDao {
      * 配列で指定した列データをすべて取得
      *
      * @param strings
-     * @return リスト
+     * @return ダウンロードリスト
      */
-    public List<Map<String, String>> findByTotalSize(String[] strings) {
+    public List<Map<String, String>> findAllDowloadList(String[] strings) {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
-        StringBuilder selectSelection = new StringBuilder();
-        /*selectSelection.append(DBConstants.DOWNLOAD_LIST_COLUM_USER_ID);
-        selectSelection.append("=? AND ");*/
-        selectSelection.append(DBConstants.DOWNLOAD_LIST_COLUM_SIZE);
-        selectSelection.append("=? ");
         Cursor cursor = db.query(
                 DOWNLOAD_LIST_TABLE_NAME,
                 strings,
