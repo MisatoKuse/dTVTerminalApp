@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 
@@ -142,6 +143,10 @@ public class VodMetaFullData implements Serializable {
     private String[] mAdinfo_array = null;
     // 関連VODのcrid
     private String[] mRelational_id_array = null;
+    // クリップ可否
+    private boolean mClipExec = false;
+    // クリップ未/済
+    private boolean mClipStatus = false;
 
     private static final long serialVersionUID = 3855428172716406303L;
 
@@ -623,6 +628,22 @@ public class VodMetaFullData implements Serializable {
         this.mRelational_id_array = mRelational_id_array.clone();
     }
 
+    public boolean isClipExec() {
+        return mClipExec;
+    }
+
+    public void setClipExec(boolean mClipExec) {
+        this.mClipExec = mClipExec;
+    }
+
+    public boolean isClipStatus() {
+        return mClipStatus;
+    }
+
+    public void setClipStatus(boolean mClipStatus) {
+        this.mClipStatus = mClipStatus;
+    }
+
     /**
      * 販売情報リストの内容
      */
@@ -897,7 +918,7 @@ public class VodMetaFullData implements Serializable {
             JsonContents.META_RESPONSE_EVENT_ID, JsonContents.META_RESPONSE_CHNO,
             JsonContents.META_RESPONSE_TV_SERVICE, JsonContents.META_RESPONSE_CONTENT_TYPE,
             JsonContents.META_RESPONSE_VOD_START_DATE, JsonContents.META_RESPONSE_VOD_END_DATE,
-            JsonContents.META_RESPONSE_MAIN_GENRE,
+            JsonContents.META_RESPONSE_MAIN_GENRE, JsonContents.META_RESPONSE_DTV_TYPE,
             //JsonContents.META_RESPONSE_SECOND_GENRE_ARRAY,
             JsonContents.META_RESPONSE_COPY,
             //JsonContents.META_RESPONSE_ADINFO_ARRAY,
@@ -951,6 +972,7 @@ public class VodMetaFullData implements Serializable {
                 for (String item : mRootPara) {
                     if (!jsonObj.isNull(item)) {
                         setMember(item, jsonObj.get(item));
+                        setClipExec(ClipUtils.isCanClip(getDisp_type(), getmSearch_ok(), getDtv(), getDtvType()));
                     }
                 }
 
