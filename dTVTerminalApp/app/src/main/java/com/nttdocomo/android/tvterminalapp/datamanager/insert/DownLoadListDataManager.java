@@ -20,6 +20,8 @@ public class DownLoadListDataManager {
 
     private Context mContext;
 
+    private final static String DOWNLOAD_OK = "OK";
+
     /**
      * コンストラクタ
      *
@@ -76,6 +78,25 @@ public class DownLoadListDataManager {
         values.put(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID, dlDatas.getItemId());
         values.put(DBConstants.DOWNLOAD_LIST_COLUM_SIZE, dlDatas.getTotalSize());
         downloadListDao.updatebyItemId(values, dlDatas.getItemId());
+        DataBaseManager.getInstance().closeDatabase();
+    }
+
+    /**
+     * 持ち出しのダウンロード情報をDBに更新する。
+     *
+     */
+    public void updateDownloadByItemId(String itemId) {
+
+        //各種オブジェクト作成
+        DBHelper downLoadListDBHelper = new DBHelper(mContext);
+        DataBaseManager.initializeInstance(downLoadListDBHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        DownLoadListDao downloadListDao = new DownLoadListDao(database);
+
+        //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
+        ContentValues values = new ContentValues();
+        values.put(DBConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS, DOWNLOAD_OK);
+        downloadListDao.updatebyItemId(values, itemId);
         DataBaseManager.getInstance().closeDatabase();
     }
 

@@ -11,12 +11,14 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
+import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DownLoadListDataManager;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +32,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     private DownloadService.Binder mBinder;
     private Activity mActivity;
     private DlData dlData;
+    private String itemId;
 
     public DlDataProvider(Activity activity, DlDataProviderListener dlDataProviderListener) throws Exception {
         if (null == activity) {
@@ -246,6 +249,14 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
 
     @Override
     public void onSuccess(String fullPath) {
+        if(!TextUtils.isEmpty(fullPath)){
+            if(fullPath.contains(File.separator)){
+                itemId = fullPath.split(File.separator)[1];
+                if(!TextUtils.isEmpty(itemId)){
+                    updateDownloadStatusToDb();
+                }
+            }
+        }
         if (null != mDlDataProviderListener && DownloadService.isBinded) {
             DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok");
             mDlDataProviderListener.onSuccess(fullPath);
@@ -258,7 +269,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                     return;
                 }
                 try {
-                    Thread.sleep(1000*2);
+                    Thread.sleep(1000 * 2);
                     DTVTLogger.debug(">>>>>>>>>>>>>>>>>> new dl");
                     setDlParam(getDownLoadParam());
                     start();
@@ -372,7 +383,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                 break;
             case DOWNLOAD_UPDATE:
                 if(dlData != null) {
-                    downLoadListDataManager.updateDownload(dlData);
+                    downLoadListDataManager.updateDownloadByItemId(itemId);
                 }
                 break;
             default:
@@ -397,7 +408,14 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         dbOperationByThread(DOWNLOAD_INSERT);
     }
 
+    private void updateDownloadStatusToDb(){
+        dbOperationByThread(DOWNLOAD_UPDATE);
+    }
+
     public void setQue(List<DlData> dlData) {
+        if(DownloadService.dlDataQue != null && DownloadService.dlDataQue.size() > 0){
+            DownloadService.dlDataQue.clear();
+        }
         DownloadService.dlDataQue = dlData;
         DownloadService.isBinded = false;
     }

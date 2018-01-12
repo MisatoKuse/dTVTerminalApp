@@ -377,10 +377,10 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     private DlData setDlData(int index){
         DlData dlData = new DlData();
         RecordedContentsDetailData itemData = mContentsList.get(index);
-        dlData.setItemId(itemData.getItemId());
+        dlData.setItemId(DownloaderBase.getFileNameById(itemData.getItemId()));
         dlData.setSaveFile(getDownloadPath(getContext()));
         dlData.setTotalSize(itemData.getClearTextSize());
-        dlData.setTitle(DownloaderBase.getFileNameById(itemData.getItemId()));
+        dlData.setTitle(itemData.getTitle());
         dlData.setUrl(itemData.getResUrl());
         dlData.setBitrate(itemData.getBitrate());
         dlData.setPort(String.valueOf(DlnaDmsItem.getPortFromProtocal(itemData.getVideoType())));

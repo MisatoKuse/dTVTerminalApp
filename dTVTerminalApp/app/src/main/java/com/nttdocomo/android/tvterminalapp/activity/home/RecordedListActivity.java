@@ -509,8 +509,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             detailData.setClearTextSize(itemData.mClearTextSize);
             if(resultList != null && resultList.size() > 0){
                 for (int j = 0; j < resultList.size(); j++) {
-                    Map<String, String> hashMap = resultList.get(i);
-                    String itemId = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_TITLE);
+                    Map<String, String> hashMap = resultList.get(j);
+                    String itemId = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
                     if(!TextUtils.isEmpty(itemId)){
                         if(itemId.equals(DownloaderBase.getFileNameById(itemData.mItemId))){
                             String downloadStatus = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
