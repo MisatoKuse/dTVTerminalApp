@@ -23,9 +23,10 @@ import java.util.Map;
 
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.VOD_LAST_INSERT;
 
-
-public class VodClipDataProvider implements VodClipWebClient.VodClipJsonParserCallback
-{
+/**
+ * クリップ(ビデオ)データプロバイダ.
+ */
+public class VodClipDataProvider implements VodClipWebClient.VodClipJsonParserCallback {
 
     private Context mContext;
 
@@ -36,20 +37,20 @@ public class VodClipDataProvider implements VodClipWebClient.VodClipJsonParserCa
             setStructDB(list);
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
-            if(null!=apiDataProviderCallback){
+            if (null != apiDataProviderCallback) {
                 apiDataProviderCallback.vodClipListCallback(null);
             }
         }
     }
 
     /**
-     * 画面用データを返却するためのコールバック
+     * 画面用データを返却するためのコールバック.
      */
     public interface ApiDataProviderCallback {
         /**
-         * クリップリスト用コールバック
+         * クリップリスト用コールバック.
          *
-         * @param clipContentInfo
+         * @param clipContentInfo クリップ表示用データ
          */
         void vodClipListCallback(List<ContentsData> clipContentInfo);
     }
@@ -57,32 +58,37 @@ public class VodClipDataProvider implements VodClipWebClient.VodClipJsonParserCa
     private ApiDataProviderCallback apiDataProviderCallback;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
-     * @param mContext
+     * @param mContext コンテクスト
      */
-    public VodClipDataProvider(Context mContext) {
+    public VodClipDataProvider(final Context mContext) {
         this.mContext = mContext;
         this.apiDataProviderCallback = (ApiDataProviderCallback) mContext;
     }
 
     /**
-     * Activityからのデータ取得要求受付
+     * Activityからのデータ取得要求受付.
+     *
+     * @param pagerOffset ページオフセット
      */
-    public void getClipData(int pagerOffset) {
-        List<Map<String, String>> vodClipList = getVodClipListData(pagerOffset);
+    public void getClipData(final int pagerOffset) {
+        //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
+//        List<Map<String, String>> vodClipList = getVodClipListData(pagerOffset);
+        getVodClipListData(pagerOffset);
 
-        if(vodClipList != null && vodClipList.size() > 0){
-            sendVodClipListData(vodClipList);
-        }
+//        if(vodClipList != null && vodClipList.size() > 0){
+//            sendVodClipListData(vodClipList);
+//        }
     }
 
     /**
-     * VodクリップリストをActivityに送る
+     * VodクリップリストをActivityに送る.
      *
-     * @param list
+     * @param list Vodクリップリスト
      */
-    public void sendVodClipListData(List<Map<String, String>> list) {
+    public void sendVodClipListData(final List<Map<String, String>> list) {
+        //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
         apiDataProviderCallback.vodClipListCallback(setVodClipContentData(list));
     }
 
@@ -146,50 +152,54 @@ public class VodClipDataProvider implements VodClipWebClient.VodClipJsonParserCa
     }
 
     /**
-     * Vodクリップリストデータ取得開始
+     * Vodクリップリストデータ取得開始.
+     *
+     * @param pagerOffset ページオフセット
      */
-    private List<Map<String, String>> getVodClipListData(int pagerOffset) {
-        DateUtils dateUtils = new DateUtils(mContext);
+    private void getVodClipListData(final int pagerOffset) {
+        //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
+//    private List<Map<String, String>> getVodClipListData(int pagerOffset) {
+/*        DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(VOD_LAST_INSERT);
 
         List<Map<String, String>> list = new ArrayList<>();
         //Vodクリップ一覧のDB保存履歴と、有効期間を確認
-        boolean fromDb=lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate);
+        boolean fromDb = lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate);
         if (fromDb) {
             //データをDBから取得する
             VodClipDataManager vodClipDataManager = new VodClipDataManager(mContext);
             list = vodClipDataManager.selectVodClipData();
-            if(null==list || 0==list.size()){
-                fromDb=false;
+            if (null == list || 0 == list.size()) {
+                fromDb = false;
             }
         }
+*/
+//        if(!fromDb){
+        //通信クラスにデータ取得要求を出す
+        VodClipWebClient webClient = new VodClipWebClient();
+        int ageReq = 1;
+        int upperPageLimit = 1;
+        int lowerPageLimit = 1;
+        //int pagerOffset = 1;
+        String direction = "";
 
-        if(!fromDb){
-            //通信クラスにデータ取得要求を出す
-            VodClipWebClient webClient = new VodClipWebClient();
-            int ageReq = 1;
-            int upperPageLimit = 1;
-            int lowerPageLimit = 1;
-            //int pagerOffset = 1;
-            String direction = "";
-
-            webClient.getVodClipApi(ageReq, upperPageLimit,
-                    lowerPageLimit, pagerOffset, direction, this);
-        }
-        return list;
+        webClient.getVodClipApi(ageReq, upperPageLimit,
+                lowerPageLimit, pagerOffset, direction, this);
+//        }
+//        return list;
     }
 
     /**
-     * Vodクリップ一覧データをDBに格納する
+     * Vodクリップ一覧データをDBに格納する.
      *
      * @param vodClipList
      */
     private void setStructDB(VodClipList vodClipList) {
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(VOD_LAST_INSERT);
-        VodClipInsertDataManager dataManager = new VodClipInsertDataManager(mContext);
-        dataManager.insertVodClipInsertList(vodClipList);
+        //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
+//        DateUtils dateUtils = new DateUtils(mContext);
+//        dateUtils.addLastDate(VOD_LAST_INSERT);
+//        VodClipInsertDataManager dataManager = new VodClipInsertDataManager(mContext);
+//        dataManager.insertVodClipInsertList(vodClipList);
         sendVodClipListData(vodClipList.getVcList());
     }
-
 }

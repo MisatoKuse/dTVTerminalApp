@@ -41,11 +41,13 @@ public class TvClipDataProvider implements TvClipWebClient.TvClipJsonParserCallb
     }
 
     /**
-     * 画面用データを返却するためのコールバック
+     * 画面用データを返却するためのコールバック.
      */
     public interface TvClipDataProviderCallback {
         /**
-         * クリップリスト用コールバック
+         * クリップリスト用コールバック.
+         *
+         * @param clipContentInfo クリップ表示情報
          */
         void tvClipListCallback(List<ContentsData> clipContentInfo);
     }
@@ -53,30 +55,34 @@ public class TvClipDataProvider implements TvClipWebClient.TvClipJsonParserCallb
     private TvClipDataProviderCallback apiDataProviderCallback;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
-     * @param context
+     * @param context コンテクスト
      */
-    public TvClipDataProvider(Context context) {
+    public TvClipDataProvider(final Context context) {
         this.mContext = context;
         this.apiDataProviderCallback = (TvClipDataProviderCallback) context;
     }
 
     /**
-     * Activityからのデータ取得要求受付
+     * Activityからのデータ取得要求受付.
+     *
+     * @param pagerOffset ページオフセット
      */
-    public void getClipData(int pagerOffset) {
-        List<Map<String, String>> tvClipList = getTvClipListData(pagerOffset);
+    public void getClipData(final int pagerOffset) {
+        //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
+//        List<Map<String, String>> tvClipList = getTvClipListData(pagerOffset);
+        getTvClipListData(pagerOffset);
 
-        if (tvClipList != null && tvClipList.size() > 0) {
-            sendTvClipListData(tvClipList);
-        }
+//        if (tvClipList != null && tvClipList.size() > 0) {
+//            sendTvClipListData(tvClipList);
+//        }
     }
 
     /**
-     * TvクリップリストをActivityに送る
+     * TvクリップリストをActivityに送る.
      */
-    private void sendTvClipListData(List<Map<String, String>> list) {
+    private void sendTvClipListData(final List<Map<String, String>> list) {
         apiDataProviderCallback.tvClipListCallback(setClipContentData(list));
     }
 
@@ -140,16 +146,20 @@ public class TvClipDataProvider implements TvClipWebClient.TvClipJsonParserCallb
     }
 
     /**
-     * Tvクリップリストデータ取得開始
+     * Tvクリップリストデータ取得開始.
+     *
+     * @param pagerOffset ページオフセット
      */
-    private List<Map<String, String>> getTvClipListData(int pagerOffset) {
-        DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(TV_LAST_INSERT);
+    private void getTvClipListData(final int pagerOffset) {
+        //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
+//    private List<Map<String, String>> getTvClipListData(int pagerOffset) {
+//        DateUtils dateUtils = new DateUtils(mContext);
+//        String lastDate = dateUtils.getLastDate(TV_LAST_INSERT);
 
         List<Map<String, String>> list = new ArrayList<>();
         //Vodクリップ一覧のDB保存履歴と、有効期間を確認
         //if (true) { //test
-        boolean fromDb = lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate);
+/*        boolean fromDb = lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate);
         if (fromDb) {
             //データをDBから取得する
             TvClipDataManager tvClipDataManager = new TvClipDataManager(mContext);
@@ -157,31 +167,31 @@ public class TvClipDataProvider implements TvClipWebClient.TvClipJsonParserCallb
             if (null == list || 0 == list.size()) {
                 fromDb = false;
             }
-        }
+        }*/
 
-        if (!fromDb) {
-            //通信クラスにデータ取得要求を出す
-            TvClipWebClient webClient = new TvClipWebClient();
-            int ageReq = 1;
-            int upperPageLimit = 1;
-            int lowerPageLimit = 1;
-            //int pagerOffset = 1;
-            String pagerDirection = "";
-            webClient.getTvClipApi(ageReq, upperPageLimit,
-                    lowerPageLimit, pagerOffset, pagerDirection, this);
-        }
-        return list;
+//        if (!fromDb) {
+        //通信クラスにデータ取得要求を出す
+        TvClipWebClient webClient = new TvClipWebClient();
+        int ageReq = 1;
+        int upperPageLimit = 1;
+        int lowerPageLimit = 1;
+        //int pagerOffset = 1;
+        String pagerDirection = "";
+        webClient.getTvClipApi(ageReq, upperPageLimit,
+                lowerPageLimit, pagerOffset, pagerDirection, this);
+//        }
+//        return list;
     }
 
     /**
      * Vodクリップ一覧データをDBに格納する
      */
-    private void setStructDB(TvClipList tvClipList) {
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(TV_LAST_INSERT);
-        TvClipInsertDataManager dataManager = new TvClipInsertDataManager(mContext);
-        dataManager.insertTvClipInsertList(tvClipList);
+    private void setStructDB(final TvClipList tvClipList) {
+        //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
+//        DateUtils dateUtils = new DateUtils(mContext);
+//        dateUtils.addLastDate(TV_LAST_INSERT);
+//        TvClipInsertDataManager dataManager = new TvClipInsertDataManager(mContext);
+//        dataManager.insertTvClipInsertList(tvClipList);
         sendTvClipListData(tvClipList.getVcList());
     }
-
 }
