@@ -235,6 +235,8 @@ public class RemoteControlRelayClient {
 
     private static final String RELAY_RESULT_NOT_REGISTERED_SERVICE = "NOT_REGISTERED_SERVICE";
     private static final String RELAY_RESULT_UNREGISTERED_USER_ID = "UNREGISTERED_USER_ID";
+    private static final String RELAY_RESULT_CONNECTION_TIMEOUT ="CONNECTION_TIMEOUT";
+    private static final String RELAY_RESULT_RELAY_SERVICE_BUSY = "SERVICE_BUSY";
 
     // アプリ起動要求種別に対応するアプリ名シンボル
     private static final Map<STB_APPLICATION_TYPES, String> mStbApplicationSymbolMap = new HashMap<STB_APPLICATION_TYPES, String>() {
@@ -331,6 +333,8 @@ public class RemoteControlRelayClient {
 
         public static final int RELAY_RESULT_NOT_REGISTERED_SERVICE = 16;
         public static final int RELAY_RESULT_UNREGISTERED_USER_ID = 17;
+        public static final int RELAY_RESULT_CONNECTION_TIMEOUT = 18;
+        public static final int RELAY_RESULT_RELAY_SERVICE_BUSY = 19;
 
         private int mResult = RELAY_RESULT_OK;
         private int mResultCode = RELAY_RESULT_SUCCESS;
@@ -356,6 +360,8 @@ public class RemoteControlRelayClient {
 
                 put(RemoteControlRelayClient.RELAY_RESULT_NOT_REGISTERED_SERVICE, RELAY_RESULT_NOT_REGISTERED_SERVICE);
                 put(RemoteControlRelayClient.RELAY_RESULT_UNREGISTERED_USER_ID, RELAY_RESULT_UNREGISTERED_USER_ID);
+                put(RemoteControlRelayClient.RELAY_RESULT_CONNECTION_TIMEOUT,RELAY_RESULT_CONNECTION_TIMEOUT);
+                put(RemoteControlRelayClient.RELAY_RESULT_RELAY_SERVICE_BUSY,RELAY_RESULT_RELAY_SERVICE_BUSY);
             }
         };
         // リクエストコマンド応答結果コードの変換

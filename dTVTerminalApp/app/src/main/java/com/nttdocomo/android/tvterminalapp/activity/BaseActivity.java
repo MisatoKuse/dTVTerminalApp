@@ -66,8 +66,8 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         ClipRegistWebClient.ClipRegistJsonParserCallback, ClipDeleteWebClient.ClipDeleteJsonParserCallback,
         DaccountControl.DaccountControlCallBack, UserInfoDataProvider.UserDataProviderCallback {
 
-    private LinearLayout baseLinearLayout = null;
-    private RelativeLayout headerLayout = null;
+    private LinearLayout mBaseLinearLayout = null;
+    private RelativeLayout mHeaderLayout = null;
     protected TextView titleTextView = null;
     private ImageView mHeaderBackIcon = null;
     private ImageView mStbStatusIcon = null;
@@ -78,9 +78,10 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     private Context mContext = null;
     private Activity mActivity = null;
     private RemoteControlRelayClient mRemoteControlRelayClient = null;
-    private UserState sUserState = UserState.LOGIN_NG;
+    private UserState mUserState = UserState.LOGIN_NG;
 
-    private long lastClickTime = 0;
+    private long mLastClickTime = 0;
+    protected boolean mIsFromSelect = false;
 
     /**
      * クリップ対象
@@ -177,7 +178,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT);
         view.setLayoutParams(lp);
-        baseLinearLayout.addView(view);
+        mBaseLinearLayout.addView(view);
         DTVTLogger.end();
     }
 
@@ -186,12 +187,12 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      */
     private void initView() {
         DTVTLogger.start();
-        baseLinearLayout = findViewById(R.id.base_ll);
-        headerLayout = findViewById(R.id.base_title);
+        mBaseLinearLayout = findViewById(R.id.base_ll);
+        mHeaderLayout = findViewById(R.id.base_title);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 getHeightDensity() / 15);
-        headerLayout.setLayoutParams(lp);
+        mHeaderLayout.setLayoutParams(lp);
         titleTextView = findViewById(R.id.header_layout_text);
         DTVTLogger.end();
         mHeaderBackIcon = findViewById(R.id.header_layout_back);
@@ -205,11 +206,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      * @param isColorRed true:ヘッダー色=赤 false:ヘッダー色=黒
      */
     protected void setHeaderColor(Boolean isColorRed) {
-        if (null != headerLayout) {
+        if (null != mHeaderLayout) {
             if (isColorRed) {
-                headerLayout.setBackgroundColor(ContextCompat.getColor(mContext, R.color.header_background_color_red));
+                mHeaderLayout.setBackgroundColor(ContextCompat.getColor(mContext, R.color.header_background_color_red));
             } else {
-                headerLayout.setBackgroundColor(ContextCompat.getColor(mContext, R.color.header_background_color_black));
+                mHeaderLayout.setBackgroundColor(ContextCompat.getColor(mContext, R.color.header_background_color_black));
             }
         }
     }
@@ -313,10 +314,10 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                                 mStbStatusIcon.setImageResource(R.mipmap.ic_stb_status_icon_white);
                                 mIsStbStatusOn = true;
                                 //ペアリングアイコンが点灯になった際にdアカチェックを行う
-//                                    String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(getApplicationContext());
-//                                    if(userId != null) {
-//                                        RemoteControlRelayClient.getInstance().isUserAccountExistRequest(userId);
-//                                    }
+                                String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(getApplicationContext());
+                                if(userId != null) {
+                                    RemoteControlRelayClient.getInstance().isUserAccountExistRequest(userId);
+                                }
                             } else {
                                 mStbStatusIcon.setImageResource(R.mipmap.ic_stb_status_icon_gray);
                                 mIsStbStatusOn = false;
@@ -343,11 +344,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      * タイトルの表示非表示を設定
      */
     protected void setTitleVisibility(Boolean visible) {
-        if (headerLayout != null) {
+        if (mHeaderLayout != null) {
             if (visible) {
-                headerLayout.setVisibility(View.VISIBLE);
+                mHeaderLayout.setVisibility(View.VISIBLE);
             } else {
-                headerLayout.setVisibility(View.GONE);
+                mHeaderLayout.setVisibility(View.GONE);
             }
         }
     }
@@ -450,6 +451,16 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         DTVTLogger.end();
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        if(this.getStbStatus()){
+            String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(getApplicationContext());
+            RemoteControlRelayClient.getInstance().isUserAccountExistRequest(userId);
+        }
+    }
+
     /**
      * 機能：onStop
      * Sub classにて、super.onStop()をコールする必要がある
@@ -500,7 +511,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         public void handleMessage(Message msg) {
             RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES requestCommand
                     = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getRequestCommandTypes();
-//            String message = "OK";
             switch (msg.what) {
                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_OK:
                     switch (requestCommand) {
@@ -510,13 +520,14 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                             break;
                         case RELAY_COMMAND_IS_USER_ACCOUNT_EXIST:
                             // チェック処理の状態で処理を分岐する
-//                           if (mIsUserAccountExistStatus == INITIAL_STB_CONNECTING) {
-//                               mIsUserAccountExistStatus = STATUS_NONE;
-//                               startActivity("ホーム画面（ペアリング・ログイン）";
-//                               startActivity(STBConnectActivity.class,null);
-//                           } else {
-                            // nothing to do
-//                           }
+                            if (mIsFromSelect) {
+                                //STBデバイスがタップされた場合
+                                mIsFromSelect = false;
+                                startActivity(STBConnectActivity.class,null);
+                            } else {
+                                //宅外から宅内に移動した場合
+                                //nothing to do
+                            }
                             break;
                         default:
                             break;
@@ -533,13 +544,21 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                             break;
                         case RELAY_COMMAND_IS_USER_ACCOUNT_EXIST:
                             switch (resultcode) {
-                                case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_INTERNAL_ERROR:
-                                case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE://できない
+                                case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_INTERNAL_ERROR://サーバエラー
+                                case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE://ユーザアカウントチェックサービス未登録
+                                case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY:// //中継アプリからの応答待ち中に新しい要求を行った場合
                                     break;
-                                case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID:
+                                case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_CONNECTION_TIMEOUT: //dTV アプリが STBの中継アプリに接続できない場合
+                                    //ペアリングアイコンをOFFにする
+                                    setStbStatus(false);
+                                    break;
+                                case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
                                     // チェック処理の状態で処理を分岐する
+                                    SharedPreferencesUtils.resetSharedPreferencesStbInfo(getApplicationContext());
                                     startActivity(DAccountReSettingActivity.class, null);
-//                                    mIsUserAccountExistStatus = STATUS_NONE;
+                                    mIsFromSelect = false;
+                                    break;
+                                default:
                                     break;
                             }
                             break;
@@ -615,6 +634,13 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                         break;
                 }
                 break;
+            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_CONNECTION_TIMEOUT:
+                //dTV アプリが STBの中継アプリに接続できない場合
+                setStbStatus(false);
+                break;
+            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY:
+                //中継アプリからの応答待ち中に新しい要求を行った場合
+                break;
             default:
                 message = getResources().getString(R.string.main_setting_connect_error_message);
                 showErrorDialog(message);
@@ -672,10 +698,10 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     protected boolean isFastClick() {
         boolean flag = false;
         long curClickTime = System.currentTimeMillis();
-        if ((curClickTime - lastClickTime) >= MIN_CLICK_DELAY_TIME) {
+        if ((curClickTime - mLastClickTime) >= MIN_CLICK_DELAY_TIME) {
             flag = true;
         }
-        lastClickTime = curClickTime;
+        mLastClickTime = curClickTime;
         return flag;
     }
 
@@ -732,12 +758,12 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     public UserState getUserState() {
-        return sUserState;
+        return mUserState;
     }
 
     public void setUserState(MenuItemParam param) {
         synchronized (this) {
-            sUserState = param.getUserState();
+            mUserState = param.getUserState();
             MenuDisplay menu = MenuDisplay.getInstance();
             try {
                 menu.setActivityAndListener(this, this);

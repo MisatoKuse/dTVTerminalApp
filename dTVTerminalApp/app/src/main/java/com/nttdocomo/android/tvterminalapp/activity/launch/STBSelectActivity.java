@@ -27,11 +27,11 @@ import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
+import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountCheckService;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.IDimDefines;
@@ -56,14 +56,14 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private DlnaDmsItem mDlnaDmsItem = null;
 
     private int mStartMode = 0;
-    private int selectDevice;
+    private int mSelectDevice;
     private boolean mIsNextTimeHide = false;
     private boolean mIsAppDL = false;
 
     private ImageView mCheckMark;
     private ImageView mPairingImage;
     private CheckBox mCheckBoxSTBSelectActivity = null;
-    private TextView useWithoutPairingSTBParingInvitationTextView = null;
+    private TextView mUseWithoutPairingSTBParingInvitationTextView = null;
     private TextView mParingDevice;
     private ListView mDeviceListView;
 
@@ -144,7 +144,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             }
             setStbStatus(status);
 
-            useWithoutPairingSTBParingInvitationTextView.setVisibility(View.GONE);
+            mUseWithoutPairingSTBParingInvitationTextView.setVisibility(View.GONE);
             ImageView mMenuImageView = findViewById(R.id.header_layout_menu);
             mMenuImageView.setVisibility(View.VISIBLE);
             mMenuImageView.setOnClickListener(new View.OnClickListener() {
@@ -171,8 +171,8 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                     mParingDevice.setTextColor(Color.BLACK);
                     mParingDevice.setBackground(ResourcesCompat.getDrawable(
                             getResources(), R.drawable.color_white, null));
-                    useWithoutPairingSTBParingInvitationTextView.setVisibility(View.VISIBLE);
-                    useWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_paring_cancel_text);
+                    mUseWithoutPairingSTBParingInvitationTextView.setVisibility(View.VISIBLE);
+                    mUseWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_paring_cancel_text);
                 }
             }
         } else {
@@ -199,9 +199,9 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private void setContents() {
         DTVTLogger.start();
-        useWithoutPairingSTBParingInvitationTextView = findViewById(
+        mUseWithoutPairingSTBParingInvitationTextView = findViewById(
                 R.id.useWithoutPairingSTBParingInvitation);
-        useWithoutPairingSTBParingInvitationTextView.setOnClickListener(this);
+        mUseWithoutPairingSTBParingInvitationTextView.setOnClickListener(this);
 
         mCheckBoxSTBSelectActivity = findViewById(R.id.checkBoxSTBSelectActivity);
         mCheckBoxSTBSelectActivity.setVisibility(View.VISIBLE);
@@ -228,7 +228,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             downloadTextView.setVisibility(View.GONE);
             mCheckBoxSTBSelectActivity.setVisibility(View.VISIBLE);
             mDeviceListView.setVisibility(View.VISIBLE);
-            useWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_no_pair_use_text);
+            mUseWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_no_pair_use_text);
         }
 
         setContents();
@@ -313,11 +313,13 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         DTVTLogger.start();
-        if (v.equals(useWithoutPairingSTBParingInvitationTextView)) {
-            if (useWithoutPairingSTBParingInvitationTextView.getText().equals(
-                    getString(R.string.str_stb_no_pair_use_text))) {
+        if (v.equals(mUseWithoutPairingSTBParingInvitationTextView)) {
+            if (mUseWithoutPairingSTBParingInvitationTextView.getText().equals(
+                    getString(R.string.str_stb_no_pair_use_text)) ||
+                    mUseWithoutPairingSTBParingInvitationTextView.getText().equals
+                            (getString(R.string.str_stb_paring_cancel_text))) {
                 onUseWithoutPairingButton();
-            } else if (useWithoutPairingSTBParingInvitationTextView.getText().equals(
+            } else if (mUseWithoutPairingSTBParingInvitationTextView.getText().equals(
                     getString(R.string.str_d_account_app_not_install))) {
                 //dアカウント未登録時の"ログインしないで使用する"ボタン
                 startActivity(HomeActivity.class, null);
@@ -391,7 +393,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start();
 
         //選択されたSTB番号を保持
-        selectDevice = i;
+        mSelectDevice = i;
 
         //dカウント登録状態チェック
         checkDAccountLogin();
@@ -407,9 +409,15 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             if (mDlnaDmsItemList != null) {
                 SharedPreferencesUtils.setSharedPreferencesStbInfo(this, mDlnaDmsItemList.get(selectDevice));
                 if (mStartMode == STBSelectFromMode.STBSelectFromMode_Setting.ordinal() && mParingDevice != null) {
-                    mParingDevice.setBackgroundColor(Color.BLACK);
-                    mParingDevice.setTextColor(Color.WHITE);
-                    mCheckMark.setVisibility(View.GONE);
+                    this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mParingDevice.setBackgroundColor(Color.BLACK);
+                            mParingDevice.setTextColor(Color.WHITE);
+                            mCheckMark.setVisibility(View.GONE);
+                        }
+                    });
+
                 }
             }
         }
@@ -564,7 +572,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             TextView statusTextView = findViewById(R.id.stb_select_status_text);
             if (mStartMode == STBSelectFromMode.STBSelectFromMode_Setting.ordinal() &&
                     !mParingDevice.getText().toString().isEmpty()) {
-                useWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_paring_cancel_text);
+                mUseWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_paring_cancel_text);
             }
             // STB検索タイムアウト文言表示
             statusTextView.setText(R.string.str_stb_select_result_text_failed);
@@ -664,11 +672,19 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         if (result != IDimDefines.RESULT_NO_AVAILABLE_ID &&
                 result != IDimDefines.RESULT_NOT_AVAILABLE &&
                 result != IDimDefines.RESULT_INCOMPATIBLE_ENVIRONMENT &&
-                result != IDimDefines.RESULT_INTERNAL_ERROR) {
+                result != IDimDefines.RESULT_INTERNAL_ERROR ) {
             //dアカウントが登録されている場合の処理
             //TODO STBに同じdアカウントが登録されているか確認する
-            DTVTLogger.debug("DAccount login");
-            storeSTBData(selectDevice);
+
+//            String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(this);
+//            if(userId != null) {
+//                mIsFromSelect = true;
+//                RemoteControlRelayClient.getInstance().isUserAccountExistRequest(userId);
+//            } else {
+//                startActivity(STBConnectActivity.class, null);
+//            }
+//            DTVTLogger.debug("DAccount login");
+            storeSTBData(mSelectDevice);
         } else {
             //dアカウントが登録されていない場合の処理
             checkDAccountApp();
@@ -699,7 +715,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             downloadTextView.setOnClickListener(this);
             mCheckBoxSTBSelectActivity.setVisibility(View.GONE);
             mDeviceListView.setVisibility(View.GONE);
-            useWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_no_login_use_text);
+            mUseWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_no_login_use_text);
         }
     }
 }
