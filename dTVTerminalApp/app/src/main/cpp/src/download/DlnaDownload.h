@@ -10,10 +10,13 @@
 #include <jni.h>
 
 #include "../Common.h"
+//#include "dtcp.hpp"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
+
+//class dixim::dmsp::dtcp::dtcp;
 
 namespace dtvt {
 
@@ -37,13 +40,15 @@ namespace dtvt {
          */
         DlnaDownload();
 
+        virtual ~DlnaDownload();
+
         /**
          * 機能：DlnaDownloadをスタート
          * @param env
          * @param obj
          * @return true: 成功 false: 失敗
          */
-        bool start(JNIEnv *env, jobject obj);
+        bool start(JNIEnv *env, jobject obj, std::string dirToSave);
 
         /**
          * 機能：DlnaDownloadをストプ
@@ -56,7 +61,7 @@ namespace dtvt {
          * @param instance instance
          * @param info private home dir
          */
-        void dtcpDownload(JNIEnv *env, jobject instance, std::string dirToSave, std::string fileNameToSave, std::string dtcp1host, int dtcp1port, std::string url, int cleartextSize, const char *xml);
+        void dtcpDownload(std::string fileNameToSave, std::string dtcp1host, int dtcp1port, std::string url, int cleartextSize, const char *xml);
 
         void dtcpDownloadCancel();
 
@@ -77,12 +82,15 @@ namespace dtvt {
         static void downloaderProgressHandler(du_uint64 sent_size, du_uint64 total_size, void* arg);
 
     private:
-        bool initDevEnv();
+        bool startDlEnv(JNIEnv *env, jobject obj, std::string& dirToSave);
 
         void notify(int msg, std::string content);
+        bool isStarted();
 
     private:
         Event mEvent;
+        void* mDtcp;
+        std::string mDirToSave;
     };
 
 } //namespace dtvt

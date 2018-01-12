@@ -19,9 +19,9 @@ public class DlnaProvDownload {
     /**
      * 機能：DlnaProvRecVideoを構造
      */
-    public DlnaProvDownload() throws Exception{
+    public DlnaProvDownload(String savePath) throws Exception{
         DTVTLogger.start();
-        mDlnaInterfaceDl=new DlnaInterfaceDl();
+        mDlnaInterfaceDl=new DlnaInterfaceDl(savePath);
         DTVTLogger.end();
     }
 
@@ -30,13 +30,17 @@ public class DlnaProvDownload {
      * @param lis listener
      * @return 成功true
      */
-    public boolean startListen(DlnaDlListener lis, Context context){
+    public boolean startListen(DlnaDlListener lis, Context context, String savePath){
         DTVTLogger.start();
         if(null==mDlnaInterfaceDl) {
             DTVTLogger.end();
             return false;
         }
         mDlnaInterfaceDl.setDlnaDlListener(lis, context);
+        if(!mDlnaInterfaceDl.startDtcpDl(savePath)){
+            DTVTLogger.end();
+            return false;
+        }
         DTVTLogger.end();
         return true;
     }
@@ -53,6 +57,18 @@ public class DlnaProvDownload {
         }
         DTVTLogger.end();
         return mDlnaInterfaceDl.download(param);
+    }
+
+    /**
+     * 機能：
+     *      １．Download Uiがなくなる場合、必ずこれをコールする
+     *      ２．Download Uiがない場合、Serviceは閉じる時、必ずこれをコールする
+     */
+    public void finishDl(){
+        if(null==mDlnaInterfaceDl){
+            return;
+        }
+        mDlnaInterfaceDl.stopDtcpDl();
     }
 
     /**

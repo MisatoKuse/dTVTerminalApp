@@ -126,6 +126,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     public void stop() {
         DownloadService ds = getDownloadService();
         if (null != ds) {
+            ds.finishDl();
             ds.stopService();
         }
     }

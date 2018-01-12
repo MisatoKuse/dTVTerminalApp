@@ -3,6 +3,7 @@
 
 #include <string>
 #include "DlnaDownload.h"
+#include "../DTVTLogger.h"
 
 #include <du_log.h>
 #include <dupnp.h>
@@ -13,7 +14,6 @@
 #include <ddtcp_plus.h>
 #include <ddtcp_plus_source.h>
 #endif
-
 
 namespace dixim {
     namespace dmsp {
@@ -69,11 +69,13 @@ namespace dixim {
                 } dixim_hwif_private_data_io;
 
                 du_bool start(JavaVM *vm, jobject instance, dtvt::DlnaDownload *myDlnaClass) {
+                    DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start enter");
                     JNIEnv *env = NULL;
                     int status = vm->GetEnv((void **) &env, JNI_VERSION_1_6);
                     if (status < 0) {
                         status = vm->AttachCurrentThread(&env, NULL);
                         if (status < 0 || NULL == env) {
+                            DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start failed, status < 0 || NULL == env");
                             return false;
                         }
                     }
@@ -83,12 +85,14 @@ namespace dixim {
                     jmethodID mid = env->GetMethodID(clazz, "getUniqueId",
                                                      "()Ljava/lang/String;");
                     if (env->ExceptionCheck()) {
+                        DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start failed, env->ExceptionCheck");
                         return false;
                     }
 
                     jstring strObj = (jstring) env->CallObjectMethod(objTmp,
                                                                      mid);
                     if (env->ExceptionCheck()) {
+                        DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start failed, jstring strObj");
                         return false;
                     }
 
@@ -105,7 +109,10 @@ namespace dixim {
 
                     du_log_dv(LOG_CATEGORY, DU_UCHAR_CONST("+++ start"));
 
-                    if (running) return 1;
+                    if (running) {
+                        DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start, running");
+                        return 1;
+                    }
 
                     //ret = ddtcp_set_additional_param(d, DDTCP_ADDITINAL_PARAM_TYPE_PRIVATE_DATA_IO, (void*)private_data_home.c_str());
                     ret = ddtcp_set_additional_param(d, DDTCP_ADDITINAL_PARAM_TYPE_PRIVATE_DATA_IO,
@@ -113,12 +120,14 @@ namespace dixim {
                     if (DDTCP_FAILED(ret)) {
                         du_log_ev(LOG_CATEGORY,
                                   DU_UCHAR_CONST("Failed to set additional param: ret=%x."), ret);
+                        DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start failed, ddtcp_set_additional_param");
                         goto error;
                     }
 
                     ret = ddtcp_startup(d);
                     if (DDTCP_FAILED(ret)) {
                         du_log_ev(LOG_CATEGORY, DU_UCHAR_CONST("Failed to startup: ret=%x."), ret);
+                        DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start failed, ddtcp_startup");
                         goto error;
                     }
 
@@ -126,6 +135,7 @@ namespace dixim {
                     if (DDTCP_FAILED(ret)) {
                         du_log_ev(LOG_CATEGORY,
                                   DU_UCHAR_CONST("Failed to source listen ake: ret=%x."), ret);
+                        DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start failed, ddtcp_source_listen_ake");
                         goto error2;
                     }
 
@@ -139,6 +149,7 @@ namespace dixim {
 
                     running = 1;
                     du_log_dv(LOG_CATEGORY, DU_UCHAR_CONST("--- start"));
+                    DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start exit true");
                     return 1;
 
 #ifdef DTCP_PLUS
@@ -151,10 +162,12 @@ namespace dixim {
                     error:
                     last_error_code = ret;
                     du_log_dv(LOG_CATEGORY, DU_UCHAR_CONST("!!! start"));
+                    DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start exit false");
                     return 0;
                 }
 
                 void stop() {
+                    DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.stop enter");
                     du_log_dv(LOG_CATEGORY, DU_UCHAR_CONST("+++ stop"));
 
                     if (!running) return;
@@ -167,6 +180,7 @@ namespace dixim {
                     running = 0;
 
                     du_log_dv(LOG_CATEGORY, DU_UCHAR_CONST("--- stop"));
+                    DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.stop exit");
                 }
 
                 ~dtcp() {
