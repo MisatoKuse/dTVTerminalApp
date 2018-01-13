@@ -170,7 +170,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
      */
     // TODO チュートリアル画面作成時に削除
     private void onFirstLaunchYesButton() {
-        startActivity(DAccountReSettingActivity.class, null);
+        startActivity(TutorialActivity.class, null);
     }
 
     /**
