@@ -61,8 +61,8 @@
 
         <ImageView
             android:id="@+id/tv_program_item_panel_content_thumbnail_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="122dp"
+            android:layout_height="69dp"
             android:layout_below="@id/tv_program_item_panel_content_des_tv"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="16dp"
