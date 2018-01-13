@@ -481,12 +481,15 @@ public class RemoteControlRelayClient {
      * @param contentsId      コンテンツID
      * @return
      */
-    public boolean startApplicationRequest(STB_APPLICATION_TYPES applicationType, String contentsId) {
+    public boolean startApplicationRequest(STB_APPLICATION_TYPES applicationType, String contentsId, Context context) {
         String applicationId = getApplicationId(applicationType);
         String requestParam;
 
+        //ユーザID取得
+        String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(context);
+
         if (applicationId != null && contentsId != null) {
-            requestParam = setTitleDetailRequest(applicationId, contentsId);
+            requestParam = setTitleDetailRequest(applicationId, contentsId, userId);
             if (requestParam != null) {
                 // アプリ起動要求を受信してインテントをSTBへ送信する
                 sendStartApplicationRequest(requestParam);
@@ -499,17 +502,20 @@ public class RemoteControlRelayClient {
     /**
      * dアカチェック要求を受信してdアカチェックリクエストをSTBへ送信する
      *
-     * @param userId
+     * @param context
      * @return
      */
-    public void isUserAccountExistRequest(String userId) {
+    public void isUserAccountExistRequest(Context context) {
         String requestParam;
 
+        //ユーザID取得
+        String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(context);
+
         requestParam = setAccountCheckRequest(userId);
-        if (requestParam != null)
+        if (requestParam != null) {
             // dアカチェック要求を受信してdアカチェックリクエストをSTBへ送信する
             sendStartApplicationRequest(requestParam);
-
+        }
     }
 
     /**
@@ -653,9 +659,8 @@ public class RemoteControlRelayClient {
      * アプリ起動要求送信スレッドを開始
      */
     private void sendStartApplicationRequest(String requestParam) {
-        Thread mThread = new Thread(new StartApplicationRequestTask(requestParam));
-        mThread.start();
-//        new Thread(new StartApplicationRequestTask(requestParam)).start();
+        Thread thread = new Thread(new StartApplicationRequestTask(requestParam));
+        thread.start();
     }
 
     /**
@@ -686,13 +691,14 @@ public class RemoteControlRelayClient {
      * @param contentsId
      * @return
      */
-    private static String setTitleDetailRequest(String applicationId, String contentsId) {
+    private String setTitleDetailRequest(String applicationId, String contentsId, String userId) {
         JSONObject requestJson = new JSONObject();
         String request = null;
         try {
             requestJson.put(RELAY_COMMAND, RELAY_COMMAND_TITLE_DETAIL);
             requestJson.put(RELAY_COMMAND_APPLICATION_ID, applicationId);
             requestJson.put(RELAY_COMMAND_CONTENTS_ID, contentsId);
+            requestJson.put(RELAY_COMMAND_USER_ID, toHashValue(userId));
             request = requestJson.toString();
         } catch (JSONException e) {
             DTVTLogger.debug(e);

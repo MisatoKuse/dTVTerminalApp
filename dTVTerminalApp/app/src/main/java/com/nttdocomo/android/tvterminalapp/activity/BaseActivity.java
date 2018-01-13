@@ -456,8 +456,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         super.onRestart();
 
         if(this.getStbStatus()){
-            String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(getApplicationContext());
-            RemoteControlRelayClient.getInstance().isUserAccountExistRequest(userId);
+            RemoteControlRelayClient.getInstance().isUserAccountExistRequest(getApplicationContext());
         }
     }
 

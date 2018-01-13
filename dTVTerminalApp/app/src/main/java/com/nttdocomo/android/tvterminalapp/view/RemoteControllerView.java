@@ -440,7 +440,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      */
     public void sendStartApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES type, String contentsId) {
         DTVTLogger.start();
-        remoteControllerSendKeyAction.getRelayClient().startApplicationRequest(type, contentsId);
+        remoteControllerSendKeyAction.getRelayClient().startApplicationRequest(type, contentsId, mContext);
         DTVTLogger.end();
     }
 
