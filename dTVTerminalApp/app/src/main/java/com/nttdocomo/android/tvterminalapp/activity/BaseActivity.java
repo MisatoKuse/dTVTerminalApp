@@ -315,7 +315,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                                 mIsStbStatusOn = true;
                                 //ペアリングアイコンが点灯になった際にdアカチェックを行う
                                 String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(getApplicationContext());
-                                if(userId != null) {
+                                if (userId != null) {
                                     RemoteControlRelayClient.getInstance().isUserAccountExistRequest(userId);
                                 }
                             } else {
@@ -455,7 +455,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     protected void onRestart() {
         super.onRestart();
 
-        if(this.getStbStatus()){
+        if (this.getStbStatus()) {
             String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(getApplicationContext());
             RemoteControlRelayClient.getInstance().isUserAccountExistRequest(userId);
         }
@@ -523,7 +523,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                             if (mIsFromSelect) {
                                 //STBデバイスがタップされた場合
                                 mIsFromSelect = false;
-                                startActivity(STBConnectActivity.class,null);
+                                startActivity(STBConnectActivity.class, null);
                             } else {
                                 //宅外から宅内に移動した場合
                                 //nothing to do
