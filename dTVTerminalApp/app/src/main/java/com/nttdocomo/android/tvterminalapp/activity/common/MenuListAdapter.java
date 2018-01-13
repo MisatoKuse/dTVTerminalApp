@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.dataprovider.RecommendDataPreloader;
 import com.nttdocomo.android.tvterminalapp.utils.ColorUtils;
 
 import java.util.List;
@@ -128,6 +129,13 @@ public class MenuListAdapter extends BaseAdapter {
                 marginLayoutParams.setMargins(intCustomTitleLeftMargin, 0, 0, 0);
             }
             textView.setLayoutParams(marginLayoutParams);
+
+            //対象が「おすすめ番組」でレコメンド情報の読み込みが終わっていない場合は文字を暗くする
+            if(title.equals(mContext.getString(
+                    R.string.nav_menu_item_recommend_program_video)) &&
+                    !RecommendDataPreloader.isEndPreload()) {
+                colorUtils.setTextViewColor(textView, R.color.gray_text);
+            }
         }
     }
 
