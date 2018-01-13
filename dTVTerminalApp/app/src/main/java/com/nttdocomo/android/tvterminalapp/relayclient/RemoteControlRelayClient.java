@@ -194,7 +194,8 @@ public class RemoteControlRelayClient {
     public enum STB_REQUEST_COMMAND_TYPES {
         IS_USER_ACCOUNT_EXIST,
         TITLE_DETAIL,
-        START_APPLICATION
+        START_APPLICATION,
+        COMMAND_UNKNOWN
     }
 
     // ハッシュアルゴリズム指定
@@ -210,6 +211,7 @@ public class RemoteControlRelayClient {
     private static final String RELAY_COMMAND_TITLE_DETAIL = "TITLE_DETAIL";
     private static final String RELAY_COMMAND_IS_USER_ACCOUNT_EXIST = "IS_USER_ACCOUNT_EXIST";
     private static final String RELAY_COMMAND_START_APPLICATION = "START_APPLICATION";
+    private static final String RELAY_COMMAND_UNKNOWN = "COMMAND_UNKNOWN";
     private static final String RELAY_COMMAND_APPLICATION_ID = "APP_ID";
     private static final String RELAY_COMMAND_REQUEST_COMMAND = "REQUEST_COMMAND";
     private static final String RELAY_COMMAND_USER_ID = "USER_ID";
@@ -371,6 +373,7 @@ public class RemoteControlRelayClient {
                 put(RemoteControlRelayClient.RELAY_COMMAND_IS_USER_ACCOUNT_EXIST, STB_REQUEST_COMMAND_TYPES.IS_USER_ACCOUNT_EXIST);
                 put(RemoteControlRelayClient.RELAY_COMMAND_TITLE_DETAIL, STB_REQUEST_COMMAND_TYPES.TITLE_DETAIL);
                 put(RemoteControlRelayClient.RELAY_COMMAND_START_APPLICATION, STB_REQUEST_COMMAND_TYPES.START_APPLICATION);
+                put(RemoteControlRelayClient.RELAY_COMMAND_UNKNOWN, STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
             }
         };
 
@@ -452,7 +455,7 @@ public class RemoteControlRelayClient {
     }
 
     /**
-     * アプリ起動要求を受信してアプリ起動リクエストをSTBへ送信する
+     * アプリ起動要求を受信してアプリ起動リクエストをSTBへ送信する.
      *
      * @param applicationType
      * @return
@@ -475,7 +478,7 @@ public class RemoteControlRelayClient {
     }
 
     /**
-     * アプリ起動要求を受信してタイトル詳細表示のリクエストをSTBへ送信する
+     * アプリ起動要求を受信してタイトル詳細表示のリクエストをSTBへ送信する.
      *
      * @param applicationType
      * @param contentsId      コンテンツID
@@ -500,7 +503,7 @@ public class RemoteControlRelayClient {
     }
 
     /**
-     * dアカチェック要求を受信してdアカチェックリクエストをSTBへ送信する
+     * dアカチェック要求を受信してdアカチェックリクエストをSTBへ送信する.
      *
      * @param context
      * @return
@@ -519,7 +522,7 @@ public class RemoteControlRelayClient {
     }
 
     /**
-     * dアカチェック要求のメッセージ（JSON形式）を作成する
+     * dアカチェック要求のメッセージ（JSON形式）を作成する.
      *
      * @param userId
      * @return
@@ -538,7 +541,7 @@ public class RemoteControlRelayClient {
     }
 
     /**
-     * アプリ起動要求種別に対応するアプリID
+     * アプリ起動要求種別に対応するアプリID.
      *
      * @param applicationType
      * @return アプリ起動要求種別に対応するアプリID（アプリ起動要求種別が不明の場合は null）
@@ -552,7 +555,7 @@ public class RemoteControlRelayClient {
     }
 
     /**
-     * アプリ起動要求をSTBへ送信するスレッド
+     * アプリ起動要求をSTBへ送信するスレッド.
      */
     private class StartApplicationRequestTask implements Runnable {
 
@@ -563,7 +566,7 @@ public class RemoteControlRelayClient {
         }
 
         /**
-         * アプリ起動要求をSTBへ送信して処理結果応答を取得する
+         * アプリ起動要求をSTBへ送信して処理結果応答を取得する.
          */
         @Override
         public void run() {
@@ -591,7 +594,7 @@ public class RemoteControlRelayClient {
         }
 
         /**
-         * 処理結果応答をハンドラーへ通知する
+         * 処理結果応答をハンドラーへ通知する.
          *
          * @param response
          */
@@ -602,7 +605,7 @@ public class RemoteControlRelayClient {
         }
 
         /**
-         * 中継アプリの応答を返す
+         * 中継アプリの応答を返す.
          *
          * @param recvResult
          * @return
@@ -615,6 +618,9 @@ public class RemoteControlRelayClient {
             String appId = null;
             ResponseMessage response = new ResponseMessage();
             try {
+                response.setResult(ResponseMessage.RELAY_RESULT_ERROR);
+                response.setResultCode(ResponseMessage.RELAY_RESULT_INTERNAL_ERROR);
+                response.setRequestCommandTypes(STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
                 if (recvResult != null) {
                     recvJson = new JSONObject(recvResult);
                     response.setResult(response.mResultMap.get(recvJson.get(RELAY_RESULT).toString()));
@@ -650,21 +656,21 @@ public class RemoteControlRelayClient {
                 DTVTLogger.debug(e);
                 response.setResult(ResponseMessage.RELAY_RESULT_ERROR);
                 response.setResultCode(ResponseMessage.RELAY_RESULT_INTERNAL_ERROR);
+                response.setRequestCommandTypes(STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
             }
             return response;
         }
     }
 
     /**
-     * アプリ起動要求送信スレッドを開始
+     * アプリ起動要求送信スレッドを開始.
      */
     private void sendStartApplicationRequest(String requestParam) {
-        Thread thread = new Thread(new StartApplicationRequestTask(requestParam));
-        thread.start();
+        new Thread(new StartApplicationRequestTask(requestParam)).start();
     }
 
     /**
-     * アプリ起動要求のメッセージ（JSON形式）を作成する
+     * アプリ起動要求のメッセージ（JSON形式）を作成する.
      *
      * @param applicationId
      * @return
