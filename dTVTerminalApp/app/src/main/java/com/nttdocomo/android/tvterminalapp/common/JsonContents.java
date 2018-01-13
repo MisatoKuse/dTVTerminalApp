@@ -33,7 +33,9 @@ public class JsonContents {
             JsonContents.META_RESPONSE_PUID, JsonContents.META_RESPONSE_SUB_PUID,
             JsonContents.META_RESPONSE_PRICE, JsonContents.META_RESPONSE_QRANGE,
             JsonContents.META_RESPONSE_QUNIT, JsonContents.META_RESPONSE_PU_START_DATE,
-            JsonContents.META_RESPONSE_PU_END_DATE, JsonContents.META_RESPONSE_CHPACK};
+            JsonContents.META_RESPONSE_PU_END_DATE, JsonContents.META_RESPONSE_CHPACK,
+            JsonContents.META_RESPONSE_DTV_TYPE, JsonContents.META_RESPONSE_DTV,
+            JsonContents.META_RESPONSE_SEARCH_OK, JsonContents.META_RESPONSE_CONTENT_TYPE};
 
     /**
      * チャンネルメタレスポンス（フル版）.
@@ -80,7 +82,7 @@ public class JsonContents {
             JsonContents.META_RESPONSE_VOD_START_DATE, JsonContents.META_RESPONSE_VOD_END_DATE,
             JsonContents.META_RESPONSE_MAIN_GENRE, JsonContents.META_RESPONSE_SECOND_GENRE_ARRAY,
             JsonContents.META_RESPONSE_COPY, JsonContents.META_RESPONSE_ADINFO_ARRAY,
-            JsonContents.META_RESPONSE_RELATIONAL_ID_ARRAY};
+            JsonContents.META_RESPONSE_RELATIONAL_ID_ARRAY, JsonContents.META_RESPONSE_DTV_TYPE};
 
     /**
      * VOD＆EPGマージメタレスポンス（縮小版）.
@@ -371,4 +373,8 @@ public class JsonContents {
      * dTVタイプ.
      */
     public static final String META_RESPONSE_DTV_TYPE = "dtv_type";
+    // アップデート要否
+    public static final String META_RESPONSE_IS_UPDATE = "is_update";
+    // 初回取得（必ずリストがほしい場合 true）
+    public static final String META_RESPONSE_IS_FORCE = "is_force";
 }

@@ -94,6 +94,10 @@ public class ContentsData {
     private String mRecommendMethodId = null;
     // dTVタイプ
     private String mDtvType = null;
+    // クリップ可否
+    private boolean mClipExec = false;
+    // クリップ未/済
+    private boolean mClipStatus = false;
 
     public String getDeviceName() {
         return mDeviceName;
@@ -428,5 +432,21 @@ public class ContentsData {
 
     public void setDtvType(String mDtvType) {
         this.mDtvType = mDtvType;
+    }
+
+    public boolean isClipExec() {
+        return mClipExec;
+    }
+
+    public void setClipExec(boolean mClipExec) {
+        this.mClipExec = mClipExec;
+    }
+
+    public boolean isClipStatus() {
+        return mClipStatus;
+    }
+
+    public void setClipStatus(boolean mClipStatus) {
+        this.mClipStatus = mClipStatus;
     }
 }

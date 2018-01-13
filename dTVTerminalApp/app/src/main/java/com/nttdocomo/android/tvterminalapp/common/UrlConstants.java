@@ -211,5 +211,11 @@ public class UrlConstants {
         public static final String USER_INFO_WEB_CLIENT =
                 PLALA_AUTH + "user/info";
 
+        /**
+         * クリップキー一覧の呼び出し先
+         */
+        // TODO QA確認中のため仮実装
+        public static final String CLIP_KEY_LIST_WEB_CLIENT =
+                PLALA_CLIENT + "user/clip/key/list";
     }
 }

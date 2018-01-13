@@ -41,6 +41,8 @@ public class Schedule {
     private  String mDtv = null;
     //dTVタイプ
     private  String mDtvType = null;
+    //コンテンツタイプ
+    private  String mContentType = null;
     //クリップリクエスト用データ
     private ClipRequestData mClipRequestData = null;
     //時間単価換算
@@ -48,6 +50,10 @@ public class Schedule {
     //日付format
     private static final String DATE_FORMAT = "yyyy/MM/ddHH:mm:ss";
     private static final String PROGRAM_FORMAT = "yyyy-MM-dd";
+    // クリップ可否
+    private boolean mClipExec = false;
+    // クリップ未/済
+    private boolean mClipStatus = false;
 
     /*
      * タイトルを取得する
@@ -163,8 +169,32 @@ public class Schedule {
         return mDtvType;
     }
 
-    public void setmDtvType(String mDtvType) {
+    public void setDtvType(String mDtvType) {
         this.mDtvType = mDtvType;
+    }
+
+    public boolean isClipExec() {
+        return mClipExec;
+    }
+
+    public void setClipExec(boolean mClipExec) {
+        this.mClipExec = mClipExec;
+    }
+
+    public String getContentType() {
+        return mContentType;
+    }
+
+    public void setContentType(String mContentType) {
+        this.mContentType = mContentType;
+    }
+
+    public boolean isClipStatus() {
+        return mClipStatus;
+    }
+
+    public void setClipStatus(boolean mClipStatus) {
+        this.mClipStatus = mClipStatus;
     }
 
     /**

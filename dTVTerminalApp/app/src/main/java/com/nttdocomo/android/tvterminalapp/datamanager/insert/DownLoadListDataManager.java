@@ -20,6 +20,8 @@ public class DownLoadListDataManager {
 
     private Context mContext;
 
+    private final static String DOWNLOAD_OK = "OK";
+
     /**
      * コンストラクタ
      *
@@ -54,6 +56,7 @@ public class DownLoadListDataManager {
         values.put(DBConstants.DOWNLOAD_LIST_COLUM_RESOLUTION, dlDatas.getResolution());
         values.put(DBConstants.DOWNLOAD_LIST_COLUM_BITRATE, dlDatas.getBitrate());
         values.put(DBConstants.DOWNLOAD_LIST_COLUM_UPNP_ICON, dlDatas.getUpnpIcon());
+        values.put(DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL, dlDatas.getSaveFile());
         downloadListDao.insert(values);
         DataBaseManager.getInstance().closeDatabase();
     }
@@ -75,6 +78,25 @@ public class DownLoadListDataManager {
         values.put(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID, dlDatas.getItemId());
         values.put(DBConstants.DOWNLOAD_LIST_COLUM_SIZE, dlDatas.getTotalSize());
         downloadListDao.updatebyItemId(values, dlDatas.getItemId());
+        DataBaseManager.getInstance().closeDatabase();
+    }
+
+    /**
+     * 持ち出しのダウンロード情報をDBに更新する。
+     *
+     */
+    public void updateDownloadByItemId(String itemId) {
+
+        //各種オブジェクト作成
+        DBHelper downLoadListDBHelper = new DBHelper(mContext);
+        DataBaseManager.initializeInstance(downLoadListDBHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        DownLoadListDao downloadListDao = new DownLoadListDao(database);
+
+        //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
+        ContentValues values = new ContentValues();
+        values.put(DBConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS, DOWNLOAD_OK);
+        downloadListDao.updatebyItemId(values, itemId);
         DataBaseManager.getInstance().closeDatabase();
     }
 
@@ -105,9 +127,19 @@ public class DownLoadListDataManager {
      *
      * @return list ダウンロードしたデータ状態
      */
-    public List<Map<String, String>> selectDownLoadListByTotal() {
+    public List<Map<String, String>> selectDownLoadList() {
         //ホーム画面に必要な列を列挙する
-        String[] columns = {DBConstants.DOWNLOAD_LIST_COLUM_SIZE};
+        String[] columns = {DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID, DBConstants.DOWNLOAD_LIST_COLUM_URL,
+                DBConstants.DOWNLOAD_LIST_COLUM_SAVE_DIDL, DBConstants.DOWNLOAD_LIST_COLUM_SAVE_HOST,
+                DBConstants.DOWNLOAD_LIST_COLUM_SAVE_PORT, DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL,
+                DBConstants.DOWNLOAD_LIST_COLUM_TYPE, DBConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_SIZE,
+                DBConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS, DBConstants.DOWNLOAD_LIST_COLUM_SIZE,
+                DBConstants.DOWNLOAD_LIST_COLUM_DURATION, DBConstants.DOWNLOAD_LIST_COLUM_RESOLUTION,
+                DBConstants.DOWNLOAD_LIST_COLUM_UPNP_ICON, DBConstants.DOWNLOAD_LIST_COLUM_BITRATE,
+                DBConstants.DOWNLOAD_LIST_COLUM_IS_SUPPORTED_BYTE_SEEK, DBConstants.DOWNLOAD_LIST_COLUM_IS_SUPPORTED_TIME_SEEK,
+                DBConstants.DOWNLOAD_LIST_COLUM_IS_AVAILABLE_CONNECTION_STALLING, DBConstants.DOWNLOAD_LIST_COLUM_IS_LIVE_MODE,
+                DBConstants.DOWNLOAD_LIST_COLUM_IS_REMOTE, DBConstants.DOWNLOAD_LIST_COLUM_TITLE,
+                DBConstants.DOWNLOAD_LIST_COLUM_CONTENTFORMAT};
 
         //Daoクラス使用準備
         DBHelper downLoadListDBHelper = new DBHelper(mContext);
@@ -116,7 +148,7 @@ public class DownLoadListDataManager {
         DownLoadListDao downLoadListDao = new DownLoadListDao(database);
 
         //持ち出し画面用データ取得
-        List<Map<String, String>> list = downLoadListDao.findByTotalSize(columns);
+        List<Map<String, String>> list = downLoadListDao.findAllDowloadList(columns);
         DataBaseManager.getInstance().closeDatabase();
         return list;
     }

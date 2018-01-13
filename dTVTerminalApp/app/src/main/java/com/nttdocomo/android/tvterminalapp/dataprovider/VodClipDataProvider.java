@@ -13,6 +13,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.insert.VodClipInsertDataM
 import com.nttdocomo.android.tvterminalapp.datamanager.select.VodClipDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
+import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
 
@@ -22,9 +23,10 @@ import java.util.Map;
 
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.VOD_LAST_INSERT;
 
-
-public class VodClipDataProvider implements VodClipWebClient.VodClipJsonParserCallback
-{
+/**
+ * クリップ(ビデオ)データプロバイダ.
+ */
+public class VodClipDataProvider implements VodClipWebClient.VodClipJsonParserCallback {
 
     private Context mContext;
 
@@ -35,20 +37,20 @@ public class VodClipDataProvider implements VodClipWebClient.VodClipJsonParserCa
             setStructDB(list);
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
-            if(null!=apiDataProviderCallback){
+            if (null != apiDataProviderCallback) {
                 apiDataProviderCallback.vodClipListCallback(null);
             }
         }
     }
 
     /**
-     * 画面用データを返却するためのコールバック
+     * 画面用データを返却するためのコールバック.
      */
     public interface ApiDataProviderCallback {
         /**
-         * クリップリスト用コールバック
+         * クリップリスト用コールバック.
          *
-         * @param clipContentInfo
+         * @param clipContentInfo クリップ表示用データ
          */
         void vodClipListCallback(List<ContentsData> clipContentInfo);
     }
@@ -56,42 +58,47 @@ public class VodClipDataProvider implements VodClipWebClient.VodClipJsonParserCa
     private ApiDataProviderCallback apiDataProviderCallback;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
-     * @param mContext
+     * @param mContext コンテクスト
      */
-    public VodClipDataProvider(Context mContext) {
+    public VodClipDataProvider(final Context mContext) {
         this.mContext = mContext;
         this.apiDataProviderCallback = (ApiDataProviderCallback) mContext;
     }
 
     /**
-     * Activityからのデータ取得要求受付
+     * Activityからのデータ取得要求受付.
+     *
+     * @param pagerOffset ページオフセット
      */
-    public void getClipData(int pagerOffset) {
-        List<Map<String, String>> vodClipList = getVodClipListData(pagerOffset);
+    public void getClipData(final int pagerOffset) {
+        //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
+//        List<Map<String, String>> vodClipList = getVodClipListData(pagerOffset);
+        getVodClipListData(pagerOffset);
 
-        if(vodClipList != null && vodClipList.size() > 0){
-            sendVodClipListData(vodClipList);
-        }
+//        if(vodClipList != null && vodClipList.size() > 0){
+//            sendVodClipListData(vodClipList);
+//        }
     }
 
     /**
-     * VodクリップリストをActivityに送る
+     * VodクリップリストをActivityに送る.
      *
-     * @param list
+     * @param list Vodクリップリスト
      */
-    public void sendVodClipListData(List<Map<String, String>> list) {
+    public void sendVodClipListData(final List<Map<String, String>> list) {
+        //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
         apiDataProviderCallback.vodClipListCallback(setVodClipContentData(list));
     }
 
     /**
-     * 取得したリストマップをContentsDataクラスへ入れる
+     * 取得したリストマップをContentsDataクラスへ入れる.
      *
      * @param clipMapList コンテンツリストデータ
      * @return ListView表示用データ
      */
-    private List<ContentsData> setVodClipContentData(List<Map<String, String>> clipMapList) {
+    private List<ContentsData> setVodClipContentData(final List<Map<String, String>> clipMapList) {
         List<ContentsData> clipDataList = new ArrayList<>();
 
         ContentsData clipContentInfo;
@@ -99,35 +106,41 @@ public class VodClipDataProvider implements VodClipWebClient.VodClipJsonParserCa
         for (int i = 0; i < clipMapList.size(); i++) {
             clipContentInfo = new ContentsData();
 
-            String title = clipMapList.get(i).get(JsonContents.META_RESPONSE_TITLE);
-            String search = clipMapList.get(i).get(JsonContents.META_RESPONSE_SEARCH_OK);
-            String linearEndDate = clipMapList.get(i).get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
-            String dispType = clipMapList.get(i).get(JsonContents.META_RESPONSE_DISP_TYPE);
+            Map<String, String> map = clipMapList.get(i);
+
+            String title = map.get(JsonContents.META_RESPONSE_TITLE);
+            String searchOk = map.get(JsonContents.META_RESPONSE_SEARCH_OK);
+            String linearEndDate = map.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
+            String dispType = map.get(JsonContents.META_RESPONSE_DISP_TYPE);
+            String dtv = map.get(JsonContents.META_RESPONSE_DTV);
+            String dtvType = map.get(JsonContents.META_RESPONSE_DTV_TYPE);
 
             clipContentInfo.setRank(String.valueOf(i + 1));
-            clipContentInfo.setThumURL(clipMapList.get(i).get(JsonContents.META_RESPONSE_THUMB_448));
+            clipContentInfo.setThumURL(map.get(JsonContents.META_RESPONSE_THUMB_448));
             clipContentInfo.setTitle(title);
-            clipContentInfo.setTime(clipMapList.get(i).get(JsonContents.META_RESPONSE_DISPLAY_START_DATE));
-            clipContentInfo.setSearchOk(search);
-            clipContentInfo.setDispType(clipMapList.get(i).get(dispType));
-            clipContentInfo.setRatStar(clipMapList.get(i).get(JsonContents.META_RESPONSE_RATING));
-
+            clipContentInfo.setTime(map.get(JsonContents.META_RESPONSE_DISPLAY_START_DATE));
+            clipContentInfo.setSearchOk(searchOk);
+            clipContentInfo.setRatStar(map.get(JsonContents.META_RESPONSE_RATING));
+            clipContentInfo.setContentsType(map.get(JsonContents.META_RESPONSE_CONTENT_TYPE));
+            clipContentInfo.setDtv(dtv);
+            clipContentInfo.setDispType(dispType);
+            clipContentInfo.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
-            requestData.setCrid(clipMapList.get(i).get(JsonContents.META_RESPONSE_CRID));
-            requestData.setServiceId(clipMapList.get(i).get(JsonContents.META_RESPONSE_SERVICE_ID));
-            requestData.setEventId(clipMapList.get(i).get(JsonContents.META_RESPONSE_EVENT_ID));
-            requestData.setTitleId(clipMapList.get(i).get(JsonContents.META_RESPONSE_TITLE_ID));
+            requestData.setCrid(map.get(JsonContents.META_RESPONSE_CRID));
+            requestData.setServiceId(map.get(JsonContents.META_RESPONSE_SERVICE_ID));
+            requestData.setEventId(map.get(JsonContents.META_RESPONSE_EVENT_ID));
+            requestData.setTitleId(map.get(JsonContents.META_RESPONSE_TITLE_ID));
             requestData.setTitle(title);
-            requestData.setRValue(clipMapList.get(i).get(JsonContents.META_RESPONSE_R_VALUE));
-            requestData.setLinearStartDate(clipMapList.get(i).get(JsonContents.META_RESPONSE_AVAIL_START_DATE));
+            requestData.setRValue(map.get(JsonContents.META_RESPONSE_R_VALUE));
+            requestData.setLinearStartDate(map.get(JsonContents.META_RESPONSE_AVAIL_START_DATE));
             requestData.setLinearEndDate(linearEndDate);
-            requestData.setSearchOk(search);
+            requestData.setSearchOk(searchOk);
 
             //視聴通知判定生成
-            String contentsType = clipMapList.get(i).get(JsonContents.META_RESPONSE_CONTENT_TYPE);
-            String tvService = clipMapList.get(i).get(JsonContents.META_RESPONSE_TV_SERVICE);
-            String dTv = clipMapList.get(i).get(JsonContents.META_RESPONSE_DTV);
+            String contentsType = map.get(JsonContents.META_RESPONSE_CONTENT_TYPE);
+            String tvService = map.get(JsonContents.META_RESPONSE_TV_SERVICE);
+            String dTv = map.get(JsonContents.META_RESPONSE_DTV);
             requestData.setIsNotify(dispType, contentsType, linearEndDate, tvService, dTv);
             clipContentInfo.setRequestData(requestData);
 
@@ -139,50 +152,54 @@ public class VodClipDataProvider implements VodClipWebClient.VodClipJsonParserCa
     }
 
     /**
-     * Vodクリップリストデータ取得開始
+     * Vodクリップリストデータ取得開始.
+     *
+     * @param pagerOffset ページオフセット
      */
-    private List<Map<String, String>> getVodClipListData(int pagerOffset) {
-        DateUtils dateUtils = new DateUtils(mContext);
+    private void getVodClipListData(final int pagerOffset) {
+        //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
+//    private List<Map<String, String>> getVodClipListData(int pagerOffset) {
+/*        DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(VOD_LAST_INSERT);
 
         List<Map<String, String>> list = new ArrayList<>();
         //Vodクリップ一覧のDB保存履歴と、有効期間を確認
-        boolean fromDb=lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate);
+        boolean fromDb = lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate);
         if (fromDb) {
             //データをDBから取得する
             VodClipDataManager vodClipDataManager = new VodClipDataManager(mContext);
             list = vodClipDataManager.selectVodClipData();
-            if(null==list || 0==list.size()){
-                fromDb=false;
+            if (null == list || 0 == list.size()) {
+                fromDb = false;
             }
         }
+*/
+//        if(!fromDb){
+        //通信クラスにデータ取得要求を出す
+        VodClipWebClient webClient = new VodClipWebClient();
+        int ageReq = 1;
+        int upperPageLimit = 1;
+        int lowerPageLimit = 1;
+        //int pagerOffset = 1;
+        String direction = "";
 
-        if(!fromDb){
-            //通信クラスにデータ取得要求を出す
-            VodClipWebClient webClient = new VodClipWebClient();
-            int ageReq = 1;
-            int upperPageLimit = 1;
-            int lowerPageLimit = 1;
-            //int pagerOffset = 1;
-            String direction = "";
-
-            webClient.getVodClipApi(ageReq, upperPageLimit,
-                    lowerPageLimit, pagerOffset, direction, this);
-        }
-        return list;
+        webClient.getVodClipApi(ageReq, upperPageLimit,
+                lowerPageLimit, pagerOffset, direction, this);
+//        }
+//        return list;
     }
 
     /**
-     * Vodクリップ一覧データをDBに格納する
+     * Vodクリップ一覧データをDBに格納する.
      *
      * @param vodClipList
      */
     private void setStructDB(VodClipList vodClipList) {
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(VOD_LAST_INSERT);
-        VodClipInsertDataManager dataManager = new VodClipInsertDataManager(mContext);
-        dataManager.insertVodClipInsertList(vodClipList);
+        //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
+//        DateUtils dateUtils = new DateUtils(mContext);
+//        dateUtils.addLastDate(VOD_LAST_INSERT);
+//        VodClipInsertDataManager dataManager = new VodClipInsertDataManager(mContext);
+//        dataManager.insertVodClipInsertList(vodClipList);
         sendVodClipListData(vodClipList.getVcList());
     }
-
 }

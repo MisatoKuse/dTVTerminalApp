@@ -42,6 +42,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * ホーム画面用データプロバイダ.
+ */
 public class HomeDataProvider implements
         TvClipWebClient.TvClipJsonParserCallback,
         VodClipWebClient.VodClipJsonParserCallback,
@@ -126,60 +129,60 @@ public class HomeDataProvider implements
     }
 
     /**
-     * Home画面用データを返却するためのコールバック
+     * Home画面用データを返却するためのコールバック.
      */
     public interface ApiDataProviderCallback {
         /**
-         * チャンネル一覧用コールバック
+         * チャンネル一覧用コールバック.
          *
          * @param channelList
          */
         void tvScheduleListCallback(List<ContentsData> channelList);
 
         /**
-         * デイリーランキング用コールバック
+         * デイリーランキング用コールバック.
          *
          * @param dailyList
          */
         void dailyRankListCallback(List<ContentsData> dailyList);
 
         /**
-         * ユーザ情報用コールバック
+         * ユーザ情報用コールバック.
          *
          * @param userList
          */
         void userInfoCallback(List<Map<String, String>> userList);
 
         /**
-         * クリップ[テレビ]リスト用コールバック
+         * クリップ[テレビ]リスト用コールバック.
          *
          * @param tvClipList
          */
         void tvClipListCallback(List<ContentsData> tvClipList);
 
         /**
-         * クリップ[ビデオ]リスト用コールバック
+         * クリップ[ビデオ]リスト用コールバック.
          *
          * @param vodClipList
          */
         void vodClipListCallback(List<ContentsData> vodClipList);
 
         /**
-         * ビデオランキング用コールバック
+         * ビデオランキング用コールバック.
          *
          * @param videoRankList
          */
         void videoRankCallback(List<ContentsData> videoRankList);
 
         /**
-         * おすすめ番組用コールバック
+         * おすすめ番組用コールバック.
          *
          * @param recChList
          */
         void recommendChannelCallback(List<ContentsData> recChList);
 
         /**
-         * おすすめビデオ用コールバック
+         * おすすめビデオ用コールバック.
          *
          * @param recVdList
          */
@@ -187,17 +190,17 @@ public class HomeDataProvider implements
     }
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
      * @param mContext
      */
-    public HomeDataProvider(Context mContext) {
+    public HomeDataProvider(final Context mContext) {
         this.mContext = mContext;
         this.mApiDataProviderCallback = (ApiDataProviderCallback) mContext;
     }
 
     /**
-     * Activityからのデータ取得要求受付
+     * Activityからのデータ取得要求受付.
      */
     public void getHomeData() {
         //非同期処理でデータの取得を行う
@@ -205,7 +208,7 @@ public class HomeDataProvider implements
     }
 
     /**
-     * 非同期処理でHOME画面に表示するデータの取得を行う
+     * 非同期処理でHOME画面に表示するデータの取得を行う.
      */
     private AsyncTask<Void, Void, Void> homeDataDownloadTask = new AsyncTask<Void, Void, Void>() {
         @Override
@@ -250,86 +253,86 @@ public class HomeDataProvider implements
     };
 
     /**
-     * NOW ON AIRをHomeActivityに送る
+     * NOW ON AIRをHomeActivityに送る.
      *
      * @param list
      */
-    public void sendTvScheduleListData(List<Map<String, String>> list) {
+    public void sendTvScheduleListData(final List<Map<String, String>> list) {
         mApiDataProviderCallback.tvScheduleListCallback(setHomeContentData(list));
     }
 
     /**
-     * おすすめ番組をHomeActivityに送る
+     * おすすめ番組をHomeActivityに送る.
      *
      * @param list
      */
-    public void sendRecommendChListData(List<Map<String, String>> list) {
+    public void sendRecommendChListData(final List<Map<String, String>> list) {
         mApiDataProviderCallback.recommendChannelCallback(setHomeContentData(list));
     }
 
     /**
-     * おすすめビデオをHomeActivityに送る
+     * おすすめビデオをHomeActivityに送る.
      *
      * @param list
      */
-    public void sendRecommendVdListData(List<Map<String, String>> list) {
+    public void sendRecommendVdListData(final List<Map<String, String>> list) {
         mApiDataProviderCallback.recommendVideoCallback(setHomeContentData(list));
     }
 
     /**
-     * 今日のランキングをHomeActivityに送る
+     * 今日のランキングをHomeActivityに送る.
      *
      * @param list
      */
-    public void sendDailyRankListData(List<Map<String, String>> list) {
+    public void sendDailyRankListData(final List<Map<String, String>> list) {
         mApiDataProviderCallback.dailyRankListCallback(setHomeContentData(list));
     }
 
     /**
-     * ビデオランキングをHomeActivityに送る
+     * ビデオランキングをHomeActivityに送る.
      *
      * @param list
      */
-    public void sendVideoRankListData(List<Map<String, String>> list) {
+    public void sendVideoRankListData(final List<Map<String, String>> list) {
         mApiDataProviderCallback.videoRankCallback(setHomeContentData(list));
     }
 
     /**
-     * クリップ[テレビ]リストをHomeActivityに送る
+     * クリップ[テレビ]リストをHomeActivityに送る.
      *
      * @param list
      */
-    public void sendTvClipListData(List<Map<String, String>> list) {
+    public void sendTvClipListData(final List<Map<String, String>> list) {
         mApiDataProviderCallback.tvClipListCallback(setHomeContentData(list));
     }
 
     /**
-     * クリップ[ビデオ]リストをHomeActivityに送る
+     * クリップ[ビデオ]リストをHomeActivityに送る.
      *
      * @param list
      */
-    public void sendVodClipListData(List<Map<String, String>> list) {
+    public void sendVodClipListData(final List<Map<String, String>> list) {
         mApiDataProviderCallback.vodClipListCallback(setHomeContentData(list));
     }
 
     /**
-     * ユーザ情報をHomeActivityに送る
+     * ユーザ情報をHomeActivityに送る.
      *
      * @param list
      */
-    public void sendUserInfoListData(List<Map<String, String>> list) {
+    public void sendUserInfoListData(final List<Map<String, String>> list) {
         mApiDataProviderCallback.userInfoCallback(list);
     }
 
 
     /**
-     * 取得したリストマップをContentsDataクラスへ入れる
+     * 取得したリストマップをContentsDataクラスへ入れる.
      *
      * @param mapList コンテンツリストデータ
      * @return dataList ListView表示用データ
      */
     private List<ContentsData> setHomeContentData(
-            List<Map<String, String>> mapList) {
+            final List<Map<String, String>> mapList) {
         List<ContentsData> rankingContentsDataList = new ArrayList<>();
 
         ContentsData rankingContentInfo;
@@ -357,7 +360,9 @@ public class HomeDataProvider implements
     }
 
     /**
-     * NOW ON AIR 情報取得
+     * NOW ON AIR 情報取得.
+     *
+     * @return
      */
     private List<Map<String, String>> getTvScheduleListData() {
         DateUtils dateUtils = new DateUtils(mContext);
@@ -384,7 +389,9 @@ public class HomeDataProvider implements
     }
 
     /**
-     * おすすめ番組情報取得
+     * おすすめ番組情報取得.
+     *
+     * @return
      */
     private List<Map<String, String>> getRecommendChListData() {
         DateUtils dateUtils = new DateUtils(mContext);
@@ -404,7 +411,9 @@ public class HomeDataProvider implements
     }
 
     /**
-     * おすすめビデオ情報取得
+     * おすすめビデオ情報取得.
+     *
+     * @return
      */
     private List<Map<String, String>> getRecommendVdListData() {
         DateUtils dateUtils = new DateUtils(mContext);
@@ -424,7 +433,9 @@ public class HomeDataProvider implements
     }
 
     /**
-     * クリップ[テレビ]リストデータ取得開始
+     * クリップ[テレビ]リストデータ取得開始.
+     *
+     * @return
      */
     private List<Map<String, String>> getTvClipListData() {
         DateUtils dateUtils = new DateUtils(mContext);
@@ -451,7 +462,9 @@ public class HomeDataProvider implements
     }
 
     /**
-     * クリップ[ビデオ]リストデータ取得開始
+     * クリップ[ビデオ]リストデータ取得開始.
+     *
+     * @return
      */
     private List<Map<String, String>> getVodClipListData() {
         DateUtils dateUtils = new DateUtils(mContext);
@@ -478,7 +491,9 @@ public class HomeDataProvider implements
     }
 
     /**
-     * 今日のテレビランキング情報取得
+     * 今日のテレビランキング情報取得.
+     *
+     * @return
      */
     private List<Map<String, String>> getDailyRankListData() {
         DateUtils dateUtils = new DateUtils(mContext);
@@ -504,7 +519,9 @@ public class HomeDataProvider implements
     }
 
     /**
-     * ビデオランキング情報取得
+     * ビデオランキング情報取得.
+     *
+     * @return ビデオランキング情報
      */
     private List<Map<String, String>> getVideoRankListData() {
         DateUtils dateUtils = new DateUtils(mContext);
@@ -533,11 +550,11 @@ public class HomeDataProvider implements
     }
 
     /**
-     * チャンネル一覧データをDBに格納する
+     * チャンネル一覧データをDBに格納する.
      *
      * @param tvScheduleList
      */
-    public void setStructDB(TvScheduleList tvScheduleList) {
+    private void setStructDB(TvScheduleList tvScheduleList) {
         DateUtils dateUtils = new DateUtils(mContext);
         dateUtils.addLastDate(DateUtils.TV_SCHEDULE_LAST_INSERT);
         TvScheduleInsertDataManager dataManager = new TvScheduleInsertDataManager(mContext);
@@ -546,11 +563,11 @@ public class HomeDataProvider implements
     }
 
     /**
-     * おすすめ番組をDBに保存する
+     * おすすめ番組をDBに保存する.
      *
      * @param recommendChList
      */
-    public void setStructDB(RecommendChList recommendChList) {
+    private void setStructDB(RecommendChList recommendChList) {
         DateUtils dateUtils = new DateUtils(mContext);
         dateUtils.addLastDate(DateUtils.RECOMMEND_CH_LAST_INSERT);
         RecommendChInsertDataManager dataManager = new RecommendChInsertDataManager(mContext);
@@ -559,11 +576,11 @@ public class HomeDataProvider implements
     }
 
     /**
-     * おすすめビデオをDBに保存する
+     * おすすめビデオをDBに保存する.
      *
      * @param recommendVdList
      */
-    public void setStructDB(RecommendVdList recommendVdList) {
+    private void setStructDB(RecommendVdList recommendVdList) {
         DateUtils dateUtils = new DateUtils(mContext);
         dateUtils.addLastDate(DateUtils.RECOMMEND_VD_LAST_INSERT);
         RecommendVdInsertDataManager dataManager = new RecommendVdInsertDataManager(mContext);
@@ -572,11 +589,11 @@ public class HomeDataProvider implements
     }
 
     /**
-     * デイリーランキングデータをDBに格納する
+     * デイリーランキングデータをDBに格納する.
      *
      * @param dailyRankList
      */
-    public void setStructDB(DailyRankList dailyRankList) {
+    private void setStructDB(final DailyRankList dailyRankList) {
         DateUtils dateUtils = new DateUtils(mContext);
         dateUtils.addLastDate(DateUtils.DAILY_RANK_LAST_INSERT);
         DailyRankInsertDataManager dataManager = new DailyRankInsertDataManager(mContext);
@@ -585,11 +602,11 @@ public class HomeDataProvider implements
     }
 
     /**
-     * ビデオランキングデータをDBに格納する
+     * ビデオランキングデータをDBに格納する.
      *
      * @param videoRankList
      */
-    public void setStructDB(VideoRankList videoRankList) {
+    private void setStructDB(final VideoRankList videoRankList) {
         DateUtils dateUtils = new DateUtils(mContext);
         dateUtils.addLastDate(DateUtils.VIDEO_RANK_LAST_INSERT);
         VideoRankInsertDataManager dataManager = new VideoRankInsertDataManager(mContext);
@@ -597,29 +614,31 @@ public class HomeDataProvider implements
         sendVideoRankListData(videoRankList.getVrList());
     }
 
-    /**
+    /*
      * クリップ[テレビ]一覧データをDBに格納する
      *
      * @param tvClipList
      */
     public void setStructDB(TvClipList tvClipList) {
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(DateUtils.TV_LAST_INSERT);
-        TvClipInsertDataManager dataManager = new TvClipInsertDataManager(mContext);
-        dataManager.insertTvClipInsertList(tvClipList);
+        //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
+//        DateUtils dateUtils = new DateUtils(mContext);
+//        dateUtils.addLastDate(DateUtils.TV_LAST_INSERT);
+//        TvClipInsertDataManager dataManager = new TvClipInsertDataManager(mContext);
+//        dataManager.insertTvClipInsertList(tvClipList);
         sendTvClipListData(tvClipList.getVcList());
     }
 
-    /**
+    /*
      * クリップ[ビデオ]一覧データをDBに格納する
      *
      * @param vodClipList
      */
     public void setStructDB(VodClipList vodClipList) {
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(DateUtils.VOD_LAST_INSERT);
-        VodClipInsertDataManager dataManager = new VodClipInsertDataManager(mContext);
-        dataManager.insertVodClipInsertList(vodClipList);
+        //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
+//        DateUtils dateUtils = new DateUtils(mContext);
+//        dateUtils.addLastDate(DateUtils.VOD_LAST_INSERT);
+//        VodClipInsertDataManager dataManager = new VodClipInsertDataManager(mContext);
+//        dataManager.insertVodClipInsertList(vodClipList);
         sendVodClipListData(vodClipList.getVcList());
     }
 }

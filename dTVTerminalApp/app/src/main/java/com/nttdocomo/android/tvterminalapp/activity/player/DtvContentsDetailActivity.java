@@ -194,6 +194,8 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     private final int RECORDING_RESERVATION_DIALOG_INDEX_1 = 1; // キャンセル
     // 他サービスフラグ
     boolean mIsOtherService = false;
+    //年齢
+    private int mAge = 0;
 
     //視聴判定
     /**
@@ -247,6 +249,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             }
             initSecurePlayer();
             setPlayerEvent();
+            setUserAgeInfo();
         }
         DTVTLogger.end();
     }
@@ -1730,7 +1733,39 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     @Override
     public void onFormatChanged(MediaPlayerController mediaPlayerController) {
         DTVTLogger.start();
+        //パレンタルチェック
+        if (mAge < mediaPlayerController.getParentalRating()) {
+            showDialogToConfirmClose();
+        }
         DTVTLogger.end();
+    }
+
+    /**
+     * ユーザ年齢をセット.
+     */
+    private void setUserAgeInfo() {
+        UserInfoInsertDataManager dataManager = new UserInfoInsertDataManager(this);
+        if (dataManager != null) {
+            dataManager.readUserInfoInsertList();
+            mAge = StringUtil.getUserAgeInfoWrapper(dataManager.getmUserData());
+        }
+    }
+
+    /**
+     * 年齢制限ダイアログを表示.
+     */
+    private void showDialogToConfirmClose() {
+        mPlayerController.stop();
+        CustomDialog closeDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+        closeDialog.setContent("年齢制限のため視聴できません");
+        closeDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+            @Override
+            public void onOKCallback(boolean isOK) {
+                contentsDetailCloseKey(null);
+            }
+        });
+        closeDialog.setCancelable(false);
+        closeDialog.showDialog();
     }
 
     /**

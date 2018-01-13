@@ -15,13 +15,17 @@ import android.support.v7.app.NotificationCompat;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
-import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragment;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DownloadService extends Service implements DownloadListener {
     private DownloadServiceListener mDownloadServiceListener;
     private DownloaderBase mDownloaderBase;
     private String mData;
     private static final int DOWNLOAD_SERVICE_ID = 1;
+    public static List<DlData> dlDataQue = new ArrayList<>();
+    public static boolean isBinded = false;
 
     public void setDownloadServiceListener(DownloadServiceListener dlServiceListener){
         mDownloadServiceListener=dlServiceListener;
@@ -283,4 +287,15 @@ public class DownloadService extends Service implements DownloadListener {
         }
     }
 
+    /**
+     * 機能：
+     *      １．Download Uiがなくなる場合、必ずこれをコールする
+     *      ２．Download Uiがない場合、Serviceは閉じる時、必ずこれをコールする
+     */
+    public void finishDl() {
+        if (null == mDownloaderBase) {
+            return;
+        }
+        mDownloaderBase.finishDl();
+    }
 }

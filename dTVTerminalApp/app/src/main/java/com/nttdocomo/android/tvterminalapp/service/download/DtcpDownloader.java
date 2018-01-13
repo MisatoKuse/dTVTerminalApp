@@ -22,7 +22,8 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
 
     public DtcpDownloader(DownloadParam param, DownloadListener downloadListener)throws Exception{
         super(param, downloadListener);
-        mDlnaProvDownload=new DlnaProvDownload();
+        DtcpDownloadParam p = (DtcpDownloadParam) param;
+        mDlnaProvDownload=new DlnaProvDownload(p.getSavePath());
     }
 
     @Override
@@ -55,7 +56,7 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
             return;
         }
 
-        boolean ret=mDlnaProvDownload.startListen(this, context);
+        boolean ret=mDlnaProvDownload.startListen(this, context, param.getSavePath());
         if(!ret){
             onFail(DownloadListener.DLError.DLError_DmsError);
             return;
@@ -149,5 +150,18 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
         mFinishedBytes=0;
         DTVTLogger.debug("dtcp download end, files");
         printDlPathFiles();
+    }
+
+    /**
+     * 機能：
+     *      １．Download Uiがなくなる場合、必ずこれをコールする
+     *      ２．Download Uiがない場合、Serviceは閉じる時、必ずこれをコールする
+     */
+    @Override
+    public void finishDl() {
+        if (null == mDlnaProvDownload) {
+            return;
+        }
+        mDlnaProvDownload.finishDl();
     }
 }

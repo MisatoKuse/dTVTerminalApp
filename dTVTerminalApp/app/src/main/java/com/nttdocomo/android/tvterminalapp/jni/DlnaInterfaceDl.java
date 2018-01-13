@@ -28,25 +28,73 @@ public class DlnaInterfaceDl {
     /**
      * 機能：デフォールト構造
      */
-    public DlnaInterfaceDl() throws Exception{
-        if(!startDlna()){
-            throw new Exception("DlnaInterfaceDl.DlnaInterfaceDl() constructor failed");
-        }
+    public DlnaInterfaceDl(String savePath)/* throws Exception*/ {
+//        if(!startDtcpDl(savePath)){
+//            throw new Exception("DlnaInterfaceDl.DlnaInterfaceDl() constructor failed");
+//        }
     }
 
     /**
-     * 機能：Dlna機能を開始
+     * 機能：Dlna機能を開始。「stopDtcpDl」とPairで使用しなければならない
      *
      * @return boolean
      */
-    private boolean startDlna(){
+    public boolean startDtcpDl(String pathToSave){
         if (0 == mNativeDlna) {
             mNativeDlna = nativeCreateDlnaDownloadObject();
         }
         if(0==mNativeDlna){
             return false;
         }
-        return nativeStartDlna(mNativeDlna);
+
+        String homeDtcpPath = pathToSave;  //e.g. EnvironmentUtil.getPrivateDataHome(mContext, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP);
+        String homePlayerPath = NewEnvironmentUtil.getPrivateDataHome(mContext, EnvironmentUtil.ACTIVATE_DATA_HOME.PLAYER);
+        String db_post = homePlayerPath + "/" + "db_post";
+
+        File f=new File(db_post);
+        boolean has=f.exists();
+        if(!has){
+            DTVTLogger.end();
+            //return DlnaDownloadRet.DownloadRet_Unactivated;   //unactivated
+            return false;
+        }
+
+//        File homePlayerPathDir=new File(homePlayerPath);
+//        File[] allFile=homePlayerPathDir.listFiles();
+//        for(File file:allFile){
+//            DTVTLogger.debug("player dir dtcp before copy db_post, ---------------->" + file.getName());
+//        }
+//
+//        File homeDtcpPathDir=new File(homeDtcpPath);
+//        allFile=homeDtcpPathDir.listFiles();
+//        for(File file:allFile){
+//            DTVTLogger.debug("dtcp before copy db_post, ---------------->"+file.getName());
+//        }
+
+        String homeParent= getParentDir(homeDtcpPath);
+        int ret= NewEnvironmentUtil.copyDeviceKeyFromOtherCMWork(mContext, homeParent, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP);
+        if(1!=ret && 3!=ret){
+            DTVTLogger.end();
+            //return DlnaDownloadRet.DownloadRet_CopyKeyFileFailed;
+            return false;
+        }
+
+//        allFile=homeDtcpPathDir.listFiles();
+//        for(File file:allFile){
+//            DTVTLogger.debug("dtcp after copy db_post, ---------------->"+ file.getName());
+//        }
+
+        long id=Thread.currentThread().getId();
+        DTVTLogger.debug("HandlerThread:"+id);
+
+        return nativeStartDlna(mNativeDlna, pathToSave);
+    }
+
+    /**
+     * 機能：Dlna機能を停止。「startDtcpDl」とPairで使用しなければならない
+     */
+    public void stopDtcpDl(){
+        nativeStop(mNativeDlna);
     }
 
     /**
@@ -173,45 +221,6 @@ public class DlnaInterfaceDl {
         if(null==param || !param.isParamValid()){
             return DlnaDownloadRet.DownloadRet_ParamError;
         }
-
-        String homeDtcpPath = param.getSavePath();  //e.g. EnvironmentUtil.getPrivateDataHome(mContext, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP);
-        String homePlayerPath = EnvironmentUtil.getPrivateDataHome(mContext, EnvironmentUtil.ACTIVATE_DATA_HOME.PLAYER);
-        String db_post = homePlayerPath + "/" + "db_post";
-
-        File f=new File(db_post);
-        boolean has=f.exists();
-        if(!has){
-            DTVTLogger.end();
-            return DlnaDownloadRet.DownloadRet_Unactivated;   //unactivated
-        }
-
-        File homePlayerPathDir=new File(homePlayerPath);
-        File[] allFile=homePlayerPathDir.listFiles();
-        for(File file:allFile){
-            DTVTLogger.debug("player dir dtcp before copy db_post, ---------------->" + file.getName());
-        }
-
-        File homeDtcpPathDir=new File(homeDtcpPath);
-        allFile=homeDtcpPathDir.listFiles();
-        for(File file:allFile){
-            DTVTLogger.debug("dtcp before copy db_post, ---------------->"+file.getName());
-        }
-
-        String homeParent= getParentDir(homeDtcpPath);
-        int ret= NewEnvironmentUtil.copyDeviceKeyFromOtherCMWork(mContext, homeParent, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP);
-        if(1!=ret && 3!=ret){
-            DTVTLogger.end();
-            return DlnaDownloadRet.DownloadRet_CopyKeyFileFailed;
-        }
-
-        allFile=homeDtcpPathDir.listFiles();
-        for(File file:allFile){
-            DTVTLogger.debug("dtcp after copy db_post, ---------------->"+ file.getName());
-        }
-
-        long id=Thread.currentThread().getId();
-        DTVTLogger.debug("HandlerThread:"+id);
-
 //        mHandler.post(new Runnable() {
 //            @Override
 //            public void run() {
@@ -220,7 +229,7 @@ public class DlnaInterfaceDl {
 //                download(mNativeDlna, param.getSavePath(), param.getSaveFileName(), param.getDtcp1host(), param.getDtcp1port(), param.getUrl(), param.getCleartextSize(), xml);
 //            }
 //        });
-        download(mNativeDlna, param.getSavePath(), param.getSaveFileName(), param.getDtcp1host(), param.getDtcp1port(), param.getUrl(), param.getCleartextSize(), param.getXmlToDl());
+        download(mNativeDlna, param.getSaveFileName(), param.getDtcp1host(), param.getDtcp1port(), param.getUrl(), param.getCleartextSize(), param.getXmlToDl());
         DTVTLogger.end();
         return DlnaDownloadRet.DownloadRet_Succeed;
     }
@@ -240,20 +249,25 @@ public class DlnaInterfaceDl {
     /**
      * 機能：jni関数
      * @param prt prt
-     * @param dirToSave dirToSave
      * @param fileNameToSave fileNameToSave
      * @param dtcp1host dtcp1host
      * @param dtcp1port dtcp1port
      * @param url url
      * @param cleartextSize cleartextSize
      */
-    private native void download(long prt, String dirToSave, String fileNameToSave, String dtcp1host, int dtcp1port, String url, int cleartextSize, String itemId);
+    private native void download(long prt, String fileNameToSave, String dtcp1host, int dtcp1port, String url, int cleartextSize, String itemId);
 
     /**
      * 機能：jni関数
      * @return 操作結果
      */
-    private native boolean nativeStartDlna(long prt);
+    private native boolean nativeStartDlna(long prt, String pathToSave);
+
+    /**
+     * 機能：jni関数
+     * @return 操作結果
+     */
+    private native boolean nativeStop(long prt);
 
     /**
      * Download Cancel
