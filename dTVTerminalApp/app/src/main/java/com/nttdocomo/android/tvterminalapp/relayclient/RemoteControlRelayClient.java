@@ -192,9 +192,9 @@ public class RemoteControlRelayClient {
      */
 
     public enum STB_REQUEST_COMMAND_TYPES {
-        RELAY_COMMAND_IS_USER_ACCOUNT_EXIST,
-        RELAY_COMMAND_TITLE_DETAIL,
-        RELAY_COMMAND_START_APPLICATION
+        IS_USER_ACCOUNT_EXIST,
+        TITLE_DETAIL,
+        START_APPLICATION
     }
 
     // ハッシュアルゴリズム指定
@@ -211,6 +211,7 @@ public class RemoteControlRelayClient {
     private static final String RELAY_COMMAND_IS_USER_ACCOUNT_EXIST = "IS_USER_ACCOUNT_EXIST";
     private static final String RELAY_COMMAND_START_APPLICATION = "START_APPLICATION";
     private static final String RELAY_COMMAND_APPLICATION_ID = "APP_ID";
+    private static final String RELAY_COMMAND_REQUEST_COMMAND = "REQUEST_COMMAND";
     private static final String RELAY_COMMAND_USER_ID = "USER_ID";
     private static final String RELAY_COMMAND_CONTENTS_ID = "CONTENTS_ID";
     private static final String RELAY_RESULT = "RESULT";
@@ -367,9 +368,9 @@ public class RemoteControlRelayClient {
         // リクエストコマンド応答結果コードの変換
         public final Map<String, STB_REQUEST_COMMAND_TYPES> mRequestCommandMap = new HashMap<String, STB_REQUEST_COMMAND_TYPES>() {
             {
-                put(RemoteControlRelayClient.RELAY_COMMAND_IS_USER_ACCOUNT_EXIST, STB_REQUEST_COMMAND_TYPES.RELAY_COMMAND_IS_USER_ACCOUNT_EXIST);
-                put(RemoteControlRelayClient.RELAY_COMMAND_TITLE_DETAIL, STB_REQUEST_COMMAND_TYPES.RELAY_COMMAND_TITLE_DETAIL);
-                put(RemoteControlRelayClient.RELAY_COMMAND_START_APPLICATION, STB_REQUEST_COMMAND_TYPES.RELAY_COMMAND_START_APPLICATION);
+                put(RemoteControlRelayClient.RELAY_COMMAND_IS_USER_ACCOUNT_EXIST, STB_REQUEST_COMMAND_TYPES.IS_USER_ACCOUNT_EXIST);
+                put(RemoteControlRelayClient.RELAY_COMMAND_TITLE_DETAIL, STB_REQUEST_COMMAND_TYPES.TITLE_DETAIL);
+                put(RemoteControlRelayClient.RELAY_COMMAND_START_APPLICATION, STB_REQUEST_COMMAND_TYPES.START_APPLICATION);
             }
         };
 
@@ -501,17 +502,14 @@ public class RemoteControlRelayClient {
      * @param userId
      * @return
      */
-    public boolean isUserAccountExistRequest(String userId) {
+    public void isUserAccountExistRequest(String userId) {
         String requestParam;
 
         requestParam = setAccountCheckRequest(userId);
-        if (requestParam != null) {
+        if (requestParam != null)
             // dアカチェック要求を受信してdアカチェックリクエストをSTBへ送信する
             sendStartApplicationRequest(requestParam);
-            return true;
 
-        }
-        return false;
     }
 
     /**
@@ -633,8 +631,8 @@ public class RemoteControlRelayClient {
                         }
                     }
                     // dアカチェック要求のリクエストコマンド種別をリクエストコマンド種別に変換
-                    if (recvJson.has(RELAY_COMMAND_IS_USER_ACCOUNT_EXIST)) {
-                        requestCommand = recvJson.get(RELAY_COMMAND_IS_USER_ACCOUNT_EXIST).toString();
+                    if (recvJson.has(RELAY_COMMAND_REQUEST_COMMAND)) {
+                        requestCommand = recvJson.get(RELAY_COMMAND_REQUEST_COMMAND).toString();
                         if (response.mRequestCommandMap.containsKey(requestCommand)) {
                             response.setRequestCommandTypes(response.mRequestCommandMap.get(requestCommand));
                         } else {
@@ -655,7 +653,9 @@ public class RemoteControlRelayClient {
      * アプリ起動要求送信スレッドを開始
      */
     private void sendStartApplicationRequest(String requestParam) {
-        new Thread(new StartApplicationRequestTask(requestParam)).start();
+        Thread mThread = new Thread(new StartApplicationRequestTask(requestParam));
+        mThread.start();
+//        new Thread(new StartApplicationRequestTask(requestParam)).start();
     }
 
     /**

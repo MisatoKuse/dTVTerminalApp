@@ -514,11 +514,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             switch (msg.what) {
                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_OK:
                     switch (requestCommand) {
-                        case RELAY_COMMAND_START_APPLICATION:
-                        case RELAY_COMMAND_TITLE_DETAIL:
+                        case START_APPLICATION:
+                        case TITLE_DETAIL:
                             menuRemoteController();
                             break;
-                        case RELAY_COMMAND_IS_USER_ACCOUNT_EXIST:
+                        case IS_USER_ACCOUNT_EXIST:
                             // チェック処理の状態で処理を分岐する
                             if (mIsFromSelect) {
                                 //STBデバイスがタップされた場合
@@ -536,13 +536,13 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_ERROR:
                     int resultcode = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getResultCode();
                     switch (requestCommand) {
-                        case RELAY_COMMAND_START_APPLICATION:
-                        case RELAY_COMMAND_TITLE_DETAIL:
+                        case START_APPLICATION:
+                        case TITLE_DETAIL:
                             RemoteControlRelayClient.STB_APPLICATION_TYPES appId
                                     = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getApplicationTypes();
                             startApplicationErrorHander(resultcode, appId);
                             break;
-                        case RELAY_COMMAND_IS_USER_ACCOUNT_EXIST:
+                        case IS_USER_ACCOUNT_EXIST:
                             switch (resultcode) {
                                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_INTERNAL_ERROR://サーバエラー
                                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE://ユーザアカウントチェックサービス未登録
