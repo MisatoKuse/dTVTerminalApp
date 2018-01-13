@@ -314,10 +314,10 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                                 mStbStatusIcon.setImageResource(R.mipmap.ic_stb_status_icon_white);
                                 mIsStbStatusOn = true;
                                 //ペアリングアイコンが点灯になった際にdアカチェックを行う
-                                String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(getApplicationContext());
-                                if(userId != null) {
-                                    RemoteControlRelayClient.getInstance().isUserAccountExistRequest(userId);
-                                }
+//                                String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(getApplicationContext());
+//                                if(userId != null) {
+//                                    RemoteControlRelayClient.getInstance().isUserAccountExistRequest(userId);
+//                                }
                             } else {
                                 mStbStatusIcon.setImageResource(R.mipmap.ic_stb_status_icon_gray);
                                 mIsStbStatusOn = false;

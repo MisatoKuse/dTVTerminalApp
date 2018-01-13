@@ -676,15 +676,15 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             //dアカウントが登録されている場合の処理
             //TODO STBに同じdアカウントが登録されているか確認する
 
-            String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(this);
-            if(userId != null) {
-                mIsFromSelect = true;
-                RemoteControlRelayClient.getInstance().isUserAccountExistRequest(userId);
-            } else {
-                startActivity(STBConnectActivity.class, null);
-            }
+//            String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(this);
+//            if(userId != null) {
+//                mIsFromSelect = true;
+//                RemoteControlRelayClient.getInstance().isUserAccountExistRequest(userId);
+//            } else {
+//                startActivity(STBConnectActivity.class, null);
+//            }
 //            DTVTLogger.debug("DAccount login");
-//            storeSTBData(mSelectDevice);
+            storeSTBData(mSelectDevice);
         } else {
             //dアカウントが登録されていない場合の処理
             checkDAccountApp();
