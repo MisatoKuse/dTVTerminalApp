@@ -31,6 +31,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.model.search.SearchServiceType;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 
 import java.util.List;
@@ -52,6 +53,10 @@ public class DtvContentsDetailFragment extends Fragment {
     private TextView txtChannelDate = null;
     private TextView txtChannelLabel = null;
     private boolean mIsAllText = false;
+    /**
+     * 契約フラグ.
+     */
+    private boolean mIsContract = true;
     //クリップボタン
     private ImageView mClipButton = null;
     //サムネイルmargintop
@@ -62,7 +67,7 @@ public class DtvContentsDetailFragment extends Fragment {
     private final static int THUMBNAIL_MARGINBOTTOM = 10;
     //サムネイル幅さ display3分の1
     private final static int THUMBNAIL_WIDTH = 3;
-    //サムネイル高さ サムネイル幅さ2分の1
+    //サムネイル高さ サムネイル幅2分の1
     private final static int THUMBNAIL_HEIGHT = 2;
     //margin0
     private final static int THUMBNAIL_MARGIN0 = 0;
@@ -77,16 +82,19 @@ public class DtvContentsDetailFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         //コンテンツ詳細表示に必要なデータを取得する
         mOtherContentsDetailData = getArguments().getParcelable(DtvContentsDetailActivity.RECOMMEND_INFO_BUNDLE_KEY);
         return initView(container);
     }
 
     /**
-     * 各タブ画面は別々に実現して表示されること
+     * 各タブ画面は別々に実現して表示されること.
+     *
+     * @param container コンテナ
+     * @return view
      */
-    private View initView(ViewGroup container) {
+    private View initView(final ViewGroup container) {
         DTVTLogger.start();
         if (null == view) {
             view = LayoutInflater.from(getContext()).inflate(R.layout.dtv_contents_detail_fragment, container, false);
@@ -132,17 +140,17 @@ public class DtvContentsDetailFragment extends Fragment {
     }
 
     /**
-     * クリップボタンの表示/非表示を
-     * @param clipButton
+     * クリップボタンの表示/非表示を.
+     * @param clipButton クリップボタン
      */
-    private void setClipButton(ImageView clipButton){
+    private void setClipButton(final ImageView clipButton) {
 
         //他サービスならクリップボタン非表示
         if (mOtherContentsDetailData != null) {
             String serviceId = String.valueOf(mOtherContentsDetailData.getServiceId());
-            if(serviceId.equals(SearchServiceType.ServiceId.HIKARI_TV_FOR_DOCOMO)){
+            if (serviceId.equals(SearchServiceType.ServiceId.HIKARI_TV_FOR_DOCOMO)) {
                 clipButton.setVisibility(View.VISIBLE);
-            }else{
+            } else {
                 clipButton.setVisibility(View.GONE);
             }
         } else {
@@ -153,17 +161,23 @@ public class DtvContentsDetailFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 //クリップボタンイベント
-                ((BaseActivity) mActivity).sendClipRequest(setClipData(mOtherContentsDetailData.getVodMetaFullData()));
+                if (mIsContract) {
+                    ((BaseActivity) mActivity).sendClipRequest(setClipData(mOtherContentsDetailData.getVodMetaFullData()));
+                } else {
+                    //未契約時は契約導線を表示するためActivityに通知
+                    ((DtvContentsDetailActivity) mActivity).leadingContract();
+                }
             }
         });
     }
+
     /**
-     * クリップリクエストに必要なデータを作成する(コンテンツ詳細用)
+     * クリップリクエストに必要なデータを作成する(コンテンツ詳細用).
      *
      * @param metaFullData VODメタデータ
      * @return Clipリクエストに必要なデータ
      */
-    private static ClipRequestData setClipData(VodMetaFullData metaFullData){
+    private static ClipRequestData setClipData(final VodMetaFullData metaFullData) {
         //コンテンツ詳細は、メタデータを丸ごと持っているため、そのまま利用する
         ClipRequestData requestData = new ClipRequestData();
         requestData.setCrid(metaFullData.getCrid());
@@ -180,6 +194,9 @@ public class DtvContentsDetailFragment extends Fragment {
         return requestData;
     }
 
+    /**
+     * 各Viewにコンテンツの詳細情報を渡す.
+     */
     private void setDetailData() {
         headerText.setText(mOtherContentsDetailData.getTitle());
         //画面表示
@@ -210,6 +227,9 @@ public class DtvContentsDetailFragment extends Fragment {
         }
     }
 
+    /**
+     * スタッフ情報を表示する.
+     */
     private void setStaff() {
         List<String> staffList = mOtherContentsDetailData.getStaffList();
         staffLayout.setVisibility(View.VISIBLE);
@@ -308,21 +328,21 @@ public class DtvContentsDetailFragment extends Fragment {
     }
 
     /**
-     * 詳細情報の更新
+     * 詳細情報の更新.
      */
     public void noticeRefresh() {
         setDetailData();
     }
 
     /**
-     * スタッフ情報の更新
+     * スタッフ情報の更新.
      */
     public void refreshStaff() {
         setStaff();
     }
 
     /**
-     * チャンネル情報の更新
+     * チャンネル情報の更新.
      */
     public void refreshChannelInfo() {
         boolean flag = false;
@@ -341,24 +361,24 @@ public class DtvContentsDetailFragment extends Fragment {
     }
 
     /**
-     * 次の優先順位で、商品詳細を返却する
+     * 次の優先順位で、商品詳細を返却する.
      * 1:商品詳細2(あらすじ)
      * 2:商品詳細1(解説)
      * 3:商品詳細3(みどころ)
      *
-     * @return
+     * @return 商品詳細文字列
      */
     private String selectDetail() {
-        if (mOtherContentsDetailData.getDetail() != null &&
-                !mOtherContentsDetailData.getDetail().isEmpty()) {
+        if (mOtherContentsDetailData.getDetail() != null
+                && !mOtherContentsDetailData.getDetail().isEmpty()) {
             //"あらすじ"を返却
             return mOtherContentsDetailData.getDetail();
-        } else if (mOtherContentsDetailData.getComment() != null &&
-                !mOtherContentsDetailData.getComment().isEmpty()) {
+        } else if (mOtherContentsDetailData.getComment() != null
+                && !mOtherContentsDetailData.getComment().isEmpty()) {
             //"解説"を返却
             return mOtherContentsDetailData.getComment();
-        } else if (mOtherContentsDetailData.getHighlight() != null &&
-                !mOtherContentsDetailData.getHighlight().isEmpty()) {
+        } else if (mOtherContentsDetailData.getHighlight() != null
+                && !mOtherContentsDetailData.getHighlight().isEmpty()) {
             //"みどころ"を返却
             return mOtherContentsDetailData.getHighlight();
         } else {
@@ -367,20 +387,22 @@ public class DtvContentsDetailFragment extends Fragment {
     }
 
     /**
-     * 録画予約アイコンの 表示/非表示 を切り替え
+     * 録画予約アイコンの 表示/非表示 を切り替え.
      *
-     * @param visiblity
+     * @param visibility 表示/非表示の指定
      */
-    public void changeVisiblityRecordingReservationIcon(int visiblity) {
-        DTVTLogger.start("setVisiblity:" + visiblity);
-        view.findViewById(R.id.dtv_contents_detail_fragment_rec_iv).setVisibility(visiblity);
+    public void changeVisiblityRecordingReservationIcon(final int visibility) {
+        DTVTLogger.start("setVisibility:" + visibility);
+        view.findViewById(R.id.dtv_contents_detail_fragment_rec_iv).setVisibility(visibility);
         DTVTLogger.end();
     }
 
     /**
-     * 録画予約アイコンにOnClickListenerを登録
+     * 録画予約アイコンにOnClickListenerを登録.
+     *
+     * @param listener リスナー
      */
-    public void setRecordingReservationIconListener(RecordingReservationIconListener listener) {
+    public void setRecordingReservationIconListener(final RecordingReservationIconListener listener) {
         DTVTLogger.start();
         if (listener != null) {
             DTVTLogger.debug("setOnClickListener");
@@ -402,9 +424,55 @@ public class DtvContentsDetailFragment extends Fragment {
     }
 
     /**
-     * 録画予約アイコンのonClickを通知するリスナー
+     * 録画予約アイコンのonClickを通知するリスナー.
      */
     public interface RecordingReservationIconListener {
+        /**
+         * 録画予約アイコンのonClickを通知する.
+         *
+         * @param v View
+         */
         void onClickRecordingReservationIcon(View v);
+    }
+
+    /**
+     * 〇〇日までという視聴期限を表示する.
+     *
+     * @param endDate 視聴期限文字列
+     */
+    public void displayEndDate(final long endDate) {
+        DTVTLogger.start();
+        String date = DateUtils.formatEpochToString(endDate);
+
+        if (txtChannelDate != null) {
+            String untilDate = StringUtil.getConnectStrings(date, getString(R.string.contents_detail_until_date));
+            txtChannelDate.setText(untilDate);
+        }
+    }
+
+    /**
+     * クリップボタンの表示/非表示を変更する.
+     *
+     * @param visibility true:表示 false:非表示
+     */
+    public void changeClipButtonVisibility(final boolean visibility) {
+        DTVTLogger.start();
+        if (mClipButton != null) {
+            if (visibility) {
+                mClipButton.setVisibility(View.VISIBLE);
+            } else {
+                mClipButton.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    /**
+     * 契約情報を更新する.
+     *
+     * @param isContract 契約情報
+     */
+    public void setContractInfo(final boolean isContract) {
+        DTVTLogger.start();
+        mIsContract = isContract;
     }
 }
