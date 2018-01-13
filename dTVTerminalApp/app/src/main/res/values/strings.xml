@@ -58,6 +58,12 @@
     <string name="str_stb_search_failed_help_text">docomoSTBヘルプ</string>
     <string name="str_stb_select_error">STB選択エラー</string>
     <string name="str_stb_paring_help">ペアリングヘルプ</string>
+    <string name="str_stb_not_registration_account_message">STBにdアカウントが登録されていません。</string>
+    <string name="str_stb_login_other_account">別のdアカウントでログインする</string>
+    <string name="str_stb_d_account_registration_help">STBにdアカウントを登録するには</string>
+    <string name="str_stb_input_activation_code">アクティベーションコードを入力する</string>
+    <string name="str_stb_again_pairing">再度ペアリングを実行する</string>
+
 
     <!-- リモコン-->
     <string name="remote_controller_viewpager_record_list_button">録画リスト</string>

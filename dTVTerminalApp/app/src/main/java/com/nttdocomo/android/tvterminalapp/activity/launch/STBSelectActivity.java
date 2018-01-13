@@ -44,7 +44,7 @@ import java.util.TimerTask;
 
 public class STBSelectActivity extends BaseActivity implements View.OnClickListener,
         AdapterView.OnItemClickListener, DlnaDevListListener,
-        DaccountCheckService.DaccountCheckServiceCallBack{
+        DaccountCheckService.DaccountCheckServiceCallBack {
 
     private List<ContentsData> mContentsList;
     private List<DlnaDmsItem> mDlnaDmsItemList;
@@ -72,7 +72,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     //Dアカウントアプリ Package名
     private static final String D_ACCOUNT_APP_PACKAGE_NAME = "com.nttdocomo.android.idmanager";
     //Dアカウントアプリ Activity名
-    private static final String D_ACCOUNT_APP_ACTIVITY_NAME=".activity.DocomoIdTopActivity";
+    private static final String D_ACCOUNT_APP_ACTIVITY_NAME = ".activity.DocomoIdTopActivity";
     //DアカウントアプリURI
     private static final String D_ACCOUNT_APP_URI = "market://details?id=com.nttdocomo.android.idmanager";
 
@@ -401,6 +401,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 
     /**
      * 選択されたSTBを保存して画面遷移を行う
+     *
      * @param selectDevice 選択されたSTB
      */
     private void storeSTBData(int selectDevice) {
@@ -672,18 +673,18 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         if (result != IDimDefines.RESULT_NO_AVAILABLE_ID &&
                 result != IDimDefines.RESULT_NOT_AVAILABLE &&
                 result != IDimDefines.RESULT_INCOMPATIBLE_ENVIRONMENT &&
-                result != IDimDefines.RESULT_INTERNAL_ERROR ) {
+                result != IDimDefines.RESULT_INTERNAL_ERROR) {
             //dアカウントが登録されている場合の処理
             //TODO STBに同じdアカウントが登録されているか確認する
 
-//            String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(this);
-//            if(userId != null) {
-//                mIsFromSelect = true;
-//                RemoteControlRelayClient.getInstance().isUserAccountExistRequest(userId);
-//            } else {
-//                startActivity(STBConnectActivity.class, null);
-//            }
-//            DTVTLogger.debug("DAccount login");
+            String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(this);
+            if (userId != null) {
+                mIsFromSelect = true;
+                RemoteControlRelayClient.getInstance().isUserAccountExistRequest(userId);
+            } else {
+                startActivity(STBConnectActivity.class, null);
+            }
+            DTVTLogger.debug("DAccount login");
             storeSTBData(mSelectDevice);
         } else {
             //dアカウントが登録されていない場合の処理
