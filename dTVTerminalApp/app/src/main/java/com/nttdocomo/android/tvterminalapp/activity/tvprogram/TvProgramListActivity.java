@@ -384,8 +384,8 @@ public class TvProgramListActivity extends BaseActivity
      */
     private void setTagView() {
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                mScreenWidth / SCREEN_TIME_WIDTH_PERCENT,
-                mScreenWidth / SCREEN_TIME_WIDTH_PERCENT);
+                dip2px(44),
+                dip2px(44));
         mTagImageView.setLayoutParams(layoutParams);
         mTagImageView.setImageResource(R.mipmap.ic_event_note_white_24dp);
     }
@@ -408,8 +408,8 @@ public class TvProgramListActivity extends BaseActivity
         for (int i = START_TIME; i < STANDARD_TIME + START_TIME; i++) {
             TextView tabTextView = new TextView(this);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    mScreenWidth / SCREEN_TIME_WIDTH_PERCENT,
-                    mScreenHeight / SCREEN_TIME_HEIGHT_PERCENT);
+                    dip2px(44),
+                    dip2px(180));
             tabTextView.setLayoutParams(params);
             int curTime = i;
             if (curTime >= STANDARD_TIME) {

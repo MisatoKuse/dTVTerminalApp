@@ -23,6 +23,8 @@ public class Schedule {
 
     //タイトル
     private String title;
+    //番組詳細
+    private String detail;
     //開始時間
     private String startTime;
     //終了時間
@@ -53,6 +55,20 @@ public class Schedule {
      */
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    /*
+     * 詳細を取得する
+     */
+    public String getDetail() {
+        return detail;
+    }
+
+    /*
+     * 詳細を設定する
+     */
+    public void setDetail(String detail) {
+        this.detail = detail;
     }
 
     /*

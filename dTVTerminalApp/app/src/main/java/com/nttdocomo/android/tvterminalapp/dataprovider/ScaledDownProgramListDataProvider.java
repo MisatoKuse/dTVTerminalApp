@@ -128,14 +128,16 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                             Schedule mSchedule = new Schedule();
                             String startDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_START_DATE);
                             String endDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
-                            String thumb = hashMap.get(JsonContents.META_RESPONSE_DEFAULT_THUMB);
+                            String thumb = hashMap.get(JsonContents.META_RESPONSE_THUMB_448);
                             String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
+                            String detail = hashMap.get(JsonContents.META_RESPONSE_EPITITLE);
                             String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
                             String rValue = hashMap.get(JsonContents.META_RESPONSE_R_VALUE);
                             mSchedule.setStartTime(startDate);
                             mSchedule.setEndTime(endDate);
                             mSchedule.setImageUrl(thumb);
                             mSchedule.setTitle(title);
+                            mSchedule.setDetail(detail);
                             mSchedule.setChNo(chNo);
                             mSchedule.setRValue(rValue);
                             mSchedule.setClipRequestData(setClipData((HashMap<String, String>) hashMap));
@@ -271,14 +273,16 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                     //TODO 番組表表示させるため、コメントアウトします
                     /*if(day.compareTo(selectStartDate) !=-1 && day.compareTo(selectEndDate)!=1){*/
                         String endDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
-                        String thumb = hashMap.get(JsonContents.META_RESPONSE_DEFAULT_THUMB);
+                        String thumb = hashMap.get(JsonContents.META_RESPONSE_THUMB_448);
                         String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
+                        String detail = hashMap.get(JsonContents.META_RESPONSE_EPITITLE);
                         String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
                         String rValue = hashMap.get(JsonContents.META_RESPONSE_R_VALUE);
                         schedule.setStartTime(startDate);
                         schedule.setEndTime(endDate);
                         schedule.setImageUrl(thumb);
                         schedule.setTitle(title);
+                        schedule.setDetail(detail);
                         schedule.setChNo(chNo);
                         schedule.setRValue(rValue);
                         schedule.setClipRequestData(setClipData(hashMap));

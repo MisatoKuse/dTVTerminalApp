@@ -1135,4 +1135,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     public String getSourceScreenClass() {
         return mSourceScreenClass;
     }
+
+    /** dip → px */
+    public int dip2px(int dip) {
+        return (int) (dip * getDensity() + 0.5f);
+    }
 }

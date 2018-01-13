@@ -7,22 +7,25 @@
     android:background="#222222"
     android:baselineAligned="false"
     android:orientation="horizontal"
-    android:paddingBottom="10dp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
-    android:paddingTop="10dp">
+    android:paddingBottom="15dp"
+    android:paddingLeft="7dp"
+    android:paddingRight="8dp"
+    android:paddingTop="12dp">
 
     <RelativeLayout
         android:id="@+id/tv_program_item_panel_clip_rv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:layout_weight="3">
 
         <TextView
             android:id="@+id/tv_program_item_panel_clip_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="8dp"
+            android:textSize="13dp"
             android:textColor="@android:color/white" />
 
         <ImageView
@@ -31,7 +34,9 @@
             android:layout_height="@dimen/clip_button_size"
             android:layout_below="@id/tv_program_item_panel_clip_tv"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="2dp"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="7dp"
+            android:layout_marginTop="8dp"
             android:contentDescription="@null"
             android:clickable="true"
             android:scaleType="fitCenter"
@@ -42,15 +47,17 @@
         android:id="@+id/tv_program_item_panel_content_rl"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="5">
+        android:layout_weight="13">
 
         <TextView
             android:id="@+id/tv_program_item_panel_content_des_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textSize="13dp"
+            android:textStyle="bold"
             android:ellipsize="end"
-            android:maxLines="4"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"/>
 
         <ImageView
             android:id="@+id/tv_program_item_panel_content_thumbnail_iv"
@@ -58,8 +65,18 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_program_item_panel_content_des_tv"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
-            android:background="@mipmap/loading"
+            android:layout_marginTop="16dp"
+            android:scaleType="fitXY"
             android:contentDescription="@null" />
+
+        <TextView
+            android:id="@+id/tv_program_item_panel_content_detail_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:textSize="11dp"
+            android:layout_below="@id/tv_program_item_panel_content_thumbnail_iv"
+            android:layout_marginTop="4dp"
+            android:textColor="@android:color/white" />
     </RelativeLayout>
 </LinearLayout>
