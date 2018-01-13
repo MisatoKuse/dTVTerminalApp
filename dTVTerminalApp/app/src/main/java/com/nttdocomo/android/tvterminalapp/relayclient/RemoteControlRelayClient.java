@@ -158,9 +158,11 @@ public class RemoteControlRelayClient {
         {
             put(R.id.remote_controller_bt_ddata, "KEYCODE_TV_DATA_SERVICE");
         }  // dデータ
+
         {
             put(R.id.remote_controller_iv_power, "KEYCODE_POWER");
         }  // 電源(KEYCODE_STB_POWERの可能性あり)
+
         {
             put(R.id.remote_controller_bt_record_list, "KEYCODE_REC_LIST");
         }  // 録画リスト // 録画リスト
@@ -185,6 +187,16 @@ public class RemoteControlRelayClient {
         DAZN
     }
 
+    /**
+     * リクエストコマンド種別
+     */
+
+    public enum STB_REQUEST_COMMAND_TYPES {
+        RELAY_COMMAND_IS_USER_ACCOUNT_EXIST,
+        RELAY_COMMAND_TITLE_DETAIL,
+        RELAY_COMMAND_START_APPLICATION
+    }
+
     // ハッシュアルゴリズム指定
     private static final String HASH_ALGORITHME = "SHA-256";
     // アプリ起動要求に対応するアプリ名
@@ -196,6 +208,7 @@ public class RemoteControlRelayClient {
     // 中継アプリクライアントが送信するアプリ起動要求のメッセージ定数
     private static final String RELAY_COMMAND = "COMMAND";
     private static final String RELAY_COMMAND_TITLE_DETAIL = "TITLE_DETAIL";
+    private static final String RELAY_COMMAND_IS_USER_ACCOUNT_EXIST = "IS_USER_ACCOUNT_EXIST";
     private static final String RELAY_COMMAND_START_APPLICATION = "START_APPLICATION";
     private static final String RELAY_COMMAND_APPLICATION_ID = "APP_ID";
     private static final String RELAY_COMMAND_USER_ID = "USER_ID";
@@ -214,11 +227,16 @@ public class RemoteControlRelayClient {
     // 中継アプリのエラーコード定数
     private static final String RELAY_RESULT_ERROR_CODE = "ERROR_CODE";
     private static final String RELAY_RESULT_INTERNAL_ERROR = "INTERNAL_ERROR";
-    private static final String RELAY_RESULT_APPLICATION_NOT_INSTALL  = "APPLICATION_NOT_INSTALL";
-    private static final String RELAY_RESULT_APPLICATION_ID_NOTEXIST  = "APPLICATION_ID_NOTEXIST";
-    private static final String RELAY_RESULT_APPLICATION_START_FAILED  = "APPLICATION_START_FAILED";
-    private static final String RELAY_RESULT_VERSION_CODE_INCOMPATIBLE  = "VERSION_CODE_INCOMPATIBLE";
-    private static final String RELAY_RESULT_CONTENTS_ID_NOTEXIST  = "CONTENTS_ID_NOTEXIST";
+    private static final String RELAY_RESULT_APPLICATION_NOT_INSTALL = "APPLICATION_NOT_INSTALL";
+    private static final String RELAY_RESULT_APPLICATION_ID_NOTEXIST = "APPLICATION_ID_NOTEXIST";
+    private static final String RELAY_RESULT_APPLICATION_START_FAILED = "APPLICATION_START_FAILED";
+    private static final String RELAY_RESULT_VERSION_CODE_INCOMPATIBLE = "VERSION_CODE_INCOMPATIBLE";
+    private static final String RELAY_RESULT_CONTENTS_ID_NOTEXIST = "CONTENTS_ID_NOTEXIST";
+
+    private static final String RELAY_RESULT_NOT_REGISTERED_SERVICE = "NOT_REGISTERED_SERVICE";
+    private static final String RELAY_RESULT_UNREGISTERED_USER_ID = "UNREGISTERED_USER_ID";
+    private static final String RELAY_RESULT_CONNECTION_TIMEOUT ="CONNECTION_TIMEOUT";
+    private static final String RELAY_RESULT_RELAY_SERVICE_BUSY = "SERVICE_BUSY";
 
     // アプリ起動要求種別に対応するアプリ名シンボル
     private static final Map<STB_APPLICATION_TYPES, String> mStbApplicationSymbolMap = new HashMap<STB_APPLICATION_TYPES, String>() {
@@ -301,8 +319,7 @@ public class RemoteControlRelayClient {
     }
 
     /**
-     *  処理結果応答を通知する情報
-     *
+     * 処理結果応答を通知する情報
      */
     public class ResponseMessage {
         public static final int RELAY_RESULT_OK = 0;
@@ -312,11 +329,17 @@ public class RemoteControlRelayClient {
         public static final int RELAY_RESULT_APPLICATION_NOT_INSTALL = 12;
         public static final int RELAY_RESULT_APPLICATION_ID_NOTEXIST = 13;
         public static final int RELAY_RESULT_APPLICATION_START_FAILED = 14;
-        public static final int RELAY_RESULT_VERSION_CODE_INCOMPATIBLE  = 15;
+        public static final int RELAY_RESULT_VERSION_CODE_INCOMPATIBLE = 15;
+
+        public static final int RELAY_RESULT_NOT_REGISTERED_SERVICE = 16;
+        public static final int RELAY_RESULT_UNREGISTERED_USER_ID = 17;
+        public static final int RELAY_RESULT_CONNECTION_TIMEOUT = 18;
+        public static final int RELAY_RESULT_RELAY_SERVICE_BUSY = 19;
 
         private int mResult = RELAY_RESULT_OK;
         private int mResultCode = RELAY_RESULT_SUCCESS;
         private STB_APPLICATION_TYPES mApplicationTypes;
+        private STB_REQUEST_COMMAND_TYPES mRequestCommandTypes;
 
         // 応答結果の変換
         public final Map<String, Integer> mResultMap = new HashMap<String, Integer>() {
@@ -334,6 +357,19 @@ public class RemoteControlRelayClient {
                 put(RemoteControlRelayClient.RELAY_RESULT_APPLICATION_ID_NOTEXIST, RELAY_RESULT_APPLICATION_ID_NOTEXIST);
                 put(RemoteControlRelayClient.RELAY_RESULT_APPLICATION_START_FAILED, RELAY_RESULT_APPLICATION_START_FAILED);
                 put(RemoteControlRelayClient.RELAY_RESULT_VERSION_CODE_INCOMPATIBLE, RELAY_RESULT_VERSION_CODE_INCOMPATIBLE);
+
+                put(RemoteControlRelayClient.RELAY_RESULT_NOT_REGISTERED_SERVICE, RELAY_RESULT_NOT_REGISTERED_SERVICE);
+                put(RemoteControlRelayClient.RELAY_RESULT_UNREGISTERED_USER_ID, RELAY_RESULT_UNREGISTERED_USER_ID);
+                put(RemoteControlRelayClient.RELAY_RESULT_CONNECTION_TIMEOUT,RELAY_RESULT_CONNECTION_TIMEOUT);
+                put(RemoteControlRelayClient.RELAY_RESULT_RELAY_SERVICE_BUSY,RELAY_RESULT_RELAY_SERVICE_BUSY);
+            }
+        };
+        // リクエストコマンド応答結果コードの変換
+        public final Map<String, STB_REQUEST_COMMAND_TYPES> mRequestCommandMap = new HashMap<String, STB_REQUEST_COMMAND_TYPES>() {
+            {
+                put(RemoteControlRelayClient.RELAY_COMMAND_IS_USER_ACCOUNT_EXIST, STB_REQUEST_COMMAND_TYPES.RELAY_COMMAND_IS_USER_ACCOUNT_EXIST);
+                put(RemoteControlRelayClient.RELAY_COMMAND_TITLE_DETAIL, STB_REQUEST_COMMAND_TYPES.RELAY_COMMAND_TITLE_DETAIL);
+                put(RemoteControlRelayClient.RELAY_COMMAND_START_APPLICATION, STB_REQUEST_COMMAND_TYPES.RELAY_COMMAND_START_APPLICATION);
             }
         };
 
@@ -381,7 +417,16 @@ public class RemoteControlRelayClient {
         public void setApplicationTypes(STB_APPLICATION_TYPES applicationTypes) {
             mApplicationTypes = applicationTypes;
         }
+
+        public void setRequestCommandTypes(STB_REQUEST_COMMAND_TYPES requestCommandTypes) {
+            mRequestCommandTypes = requestCommandTypes;
+        }
+
+        public STB_REQUEST_COMMAND_TYPES getRequestCommandTypes() {
+            return mRequestCommandTypes;
+        }
     }
+
     /**
      * キーコードをSTBへ送信するスレッド
      */
@@ -432,7 +477,7 @@ public class RemoteControlRelayClient {
      * アプリ起動要求を受信してタイトル詳細表示のリクエストをSTBへ送信する
      *
      * @param applicationType
-     * @param contentsId コンテンツID
+     * @param contentsId      コンテンツID
      * @return
      */
     public boolean startApplicationRequest(STB_APPLICATION_TYPES applicationType, String contentsId) {
@@ -448,6 +493,44 @@ public class RemoteControlRelayClient {
             }
         }
         return false;
+    }
+
+    /**
+     * dアカチェック要求を受信してdアカチェックリクエストをSTBへ送信する
+     *
+     * @param userId
+     * @return
+     */
+    public boolean isUserAccountExistRequest(String userId) {
+        String requestParam;
+
+        requestParam = setAccountCheckRequest(userId);
+        if (requestParam != null) {
+            // dアカチェック要求を受信してdアカチェックリクエストをSTBへ送信する
+            sendStartApplicationRequest(requestParam);
+            return true;
+
+        }
+        return false;
+    }
+
+    /**
+     * dアカチェック要求のメッセージ（JSON形式）を作成する
+     *
+     * @param userId
+     * @return
+     */
+    private String setAccountCheckRequest(String userId) {
+        JSONObject requestJson = new JSONObject();
+        String request = null;
+        try {
+            requestJson.put(RELAY_COMMAND, RELAY_COMMAND_IS_USER_ACCOUNT_EXIST);
+            requestJson.put(RELAY_COMMAND_USER_ID, toHashValue(userId));
+            request = requestJson.toString();
+        } catch (JSONException e) {
+            DTVTLogger.debug(e);
+        }
+        return request;
     }
 
     /**
@@ -509,7 +592,7 @@ public class RemoteControlRelayClient {
          * @param response
          */
         private void sendResponseMessage(ResponseMessage response) {
-            if (mHandler != null){
+            if (mHandler != null) {
                 mHandler.sendMessage(mHandler.obtainMessage(response.getResult(), response));
             }
         }
@@ -524,6 +607,7 @@ public class RemoteControlRelayClient {
             JSONObject recvJson = new JSONObject();
             String message = null;
             String errorcode = null;
+            String requestCommand= null;
             String appId = null;
             ResponseMessage response = new ResponseMessage();
             try {
@@ -531,7 +615,7 @@ public class RemoteControlRelayClient {
                     recvJson = new JSONObject(recvResult);
                     response.setResult(response.mResultMap.get(recvJson.get(RELAY_RESULT).toString()));
                     // エラーの場合、応答結果コードをエラーコード値に変換
-                    if (recvJson.has(RELAY_RESULT_ERROR_CODE)){
+                    if (recvJson.has(RELAY_RESULT_ERROR_CODE)) {
                         errorcode = recvJson.get(RELAY_RESULT_ERROR_CODE).toString();
                         if (response.mResultCodeMap.containsKey(errorcode)) {
                             response.setResultCode(response.mResultCodeMap.get(errorcode));
@@ -544,6 +628,15 @@ public class RemoteControlRelayClient {
                         appId = recvJson.get(RELAY_COMMAND_APPLICATION_ID).toString();
                         if (response.mStbApplicationEnumMap.containsKey(appId)) {
                             response.setApplicationTypes(response.mStbApplicationEnumMap.get(appId));
+                        } else {
+                            response.setResultCode(ResponseMessage.RELAY_RESULT_INTERNAL_ERROR);
+                        }
+                    }
+                    // dアカチェック要求のリクエストコマンド種別をリクエストコマンド種別に変換
+                    if (recvJson.has(RELAY_COMMAND_IS_USER_ACCOUNT_EXIST)) {
+                        requestCommand = recvJson.get(RELAY_COMMAND_IS_USER_ACCOUNT_EXIST).toString();
+                        if (response.mRequestCommandMap.containsKey(requestCommand)) {
+                            response.setRequestCommandTypes(response.mRequestCommandMap.get(requestCommand));
                         } else {
                             response.setResultCode(ResponseMessage.RELAY_RESULT_INTERNAL_ERROR);
                         }
