@@ -315,13 +315,13 @@ public class DBConstants {
     //Homeキャッシュデータ格納用テーブル
     public static final String USER_INFO_LIST_TABLE_NAME = "user_info_list";
     public static final String CREATE_TABLE_USER_INFO_SQL = StringUtil.getConnectStrings(
-            "create table " , USER_INFO_LIST_TABLE_NAME , " (" ,
-            ID_COLUMN , " integer primary key autoincrement, " ,
-            UserInfoJsonParser.USER_INFO_LIST_LOGGEDIN_ACCOUNT , " text, " ,
-            UserInfoJsonParser.USER_INFO_LIST_CONTRACT_STATUS , " text, " ,
-            UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ , " text," ,
-            UserInfoJsonParser.USER_INFO_LIST_H4D_AGE_REQ , " text," ,
-            UserInfoJsonParser.USER_INFO_LIST_UPDATE_TIME , " integer" ,
+            "create table ", USER_INFO_LIST_TABLE_NAME, " (",
+            ID_COLUMN, " integer primary key autoincrement, ",
+            UserInfoJsonParser.USER_INFO_LIST_LOGGEDIN_ACCOUNT, " text, ",
+            UserInfoJsonParser.USER_INFO_LIST_CONTRACT_STATUS, " text, ",
+            UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ, " text,",
+            UserInfoJsonParser.USER_INFO_LIST_H4D_AGE_REQ, " text,",
+            UserInfoJsonParser.USER_INFO_LIST_UPDATE_TIME, " integer",
             ")");
 
     //Homeキャッシュデータ格納用テーブル
@@ -828,27 +828,27 @@ public class DBConstants {
             OPEN_BRACKETS_TEXT,
             ID_COLUMN,
             CREATE_TABLE_PRIMARY_TEXT,
-            DOWNLOAD_LIST_COLUM_ITEM_ID,TEXT_WITH_COMMA_TEXT,
-            DOWNLOAD_LIST_COLUM_URL,TEXT_WITH_COMMA_TEXT,
-            DOWNLOAD_LIST_COLUM_SAVE_DIDL,TEXT_WITH_COMMA_TEXT,
-            DOWNLOAD_LIST_COLUM_SAVE_HOST,TEXT_WITH_COMMA_TEXT,
-            DOWNLOAD_LIST_COLUM_SAVE_PORT,TEXT_WITH_COMMA_TEXT,
-            DOWNLOAD_LIST_COLUM_SAVE_URL,TEXT_WITH_COMMA_TEXT,
-            DOWNLOAD_LIST_COLUM_TYPE,TEXT_WITH_COMMA_TEXT,
-            DOWNLOAD_LIST_COLUM_DOWNLOAD_SIZE,TEXT_WITH_COMMA_TEXT,
-            DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS,TEXT_WITH_COMMA_TEXT,
-            DOWNLOAD_LIST_COLUM_SIZE,TEXT_WITH_COMMA_TEXT,
-            DOWNLOAD_LIST_COLUM_DURATION,TEXT_WITH_COMMA_TEXT,
-            DOWNLOAD_LIST_COLUM_RESOLUTION,TEXT_WITH_COMMA_TEXT,
-            DOWNLOAD_LIST_COLUM_UPNP_ICON,TEXT_WITH_COMMA_TEXT,
-            DOWNLOAD_LIST_COLUM_BITRATE,TEXT_WITH_COMMA_TEXT,
-            DOWNLOAD_LIST_COLUM_IS_SUPPORTED_BYTE_SEEK,TEXT_WITH_COMMA_TEXT,
-            DOWNLOAD_LIST_COLUM_IS_SUPPORTED_TIME_SEEK,TEXT_WITH_COMMA_TEXT,
-            DOWNLOAD_LIST_COLUM_IS_AVAILABLE_CONNECTION_STALLING,TEXT_WITH_COMMA_TEXT,
-            DOWNLOAD_LIST_COLUM_IS_LIVE_MODE,TEXT_WITH_COMMA_TEXT,
-            DOWNLOAD_LIST_COLUM_IS_REMOTE,TEXT_WITH_COMMA_TEXT,
-            DOWNLOAD_LIST_COLUM_TITLE,TEXT_WITH_COMMA_TEXT,
-            DOWNLOAD_LIST_COLUM_CONTENTFORMAT,TEXT_WITHOUT_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_ITEM_ID, TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_URL, TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_SAVE_DIDL, TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_SAVE_HOST, TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_SAVE_PORT, TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_SAVE_URL, TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_TYPE, TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_DOWNLOAD_SIZE, TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS, TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_SIZE, TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_DURATION, TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_RESOLUTION, TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_UPNP_ICON, TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_BITRATE, TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_IS_SUPPORTED_BYTE_SEEK, TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_IS_SUPPORTED_TIME_SEEK, TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_IS_AVAILABLE_CONNECTION_STALLING, TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_IS_LIVE_MODE, TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_IS_REMOTE, TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_TITLE, TEXT_WITH_COMMA_TEXT,
+            DOWNLOAD_LIST_COLUM_CONTENTFORMAT, TEXT_WITHOUT_COMMA_TEXT,
             CLOSE_BRACKETS_TEXT
     };
 
@@ -940,12 +940,48 @@ public class DBConstants {
             "create table " + MY_CHANNEL_LIST_TABLE_NAME + " (" +
             ID_COLUMN + " integer primary key autoincrement, " +
             JsonContents.META_RESPONSE_CRID + " text, " +
-            JsonContents.META_RESPONSE_SERVICE_ID  + " text, " +
+            JsonContents.META_RESPONSE_SERVICE_ID + " text, " +
             JsonContents.META_RESPONSE_TITLE + " text, " +
-            JsonContents.META_RESPONSE_R_VALUE  + " text, " +
-            JsonContents.META_RESPONSE_ADULT_TYPE  + " text, " +
-            JsonContents.META_RESPONSE_INDEX  + " text " +
+            JsonContents.META_RESPONSE_R_VALUE + " text, " +
+            JsonContents.META_RESPONSE_ADULT_TYPE + " text, " +
+            JsonContents.META_RESPONSE_INDEX + " text " +
             ")";
 
+    // クリップキー一覧 キャッシュデータ格納用テーブル
+    public static final String TV_CLIP_KEY_LIST_TABLE_NAME = "tv_clip_key_list";
+    // クリップキー一覧テーブル用 colum ("vod"or"tv")
+    private static final String CREATE_TABLE_TV_CLIP_KEY_LIST_SQL_NAMES[] = {
+            CREATE_TABLE_TEXT,
+            TV_CLIP_KEY_LIST_TABLE_NAME,
+            OPEN_BRACKETS_TEXT,
+            ID_COLUMN,
+            CREATE_TABLE_PRIMARY_TEXT,
+            JsonContents.META_RESPONSE_CRID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_SERVICE_ID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_EVENT_ID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_TYPE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_TITLE_ID, TEXT_WITHOUT_COMMA_TEXT,
+            CLOSE_BRACKETS_TEXT
+    };
+    public static final String CREATE_TABLE_TV_CLIP_KEY_LIST_SQL = StringUtil.getConnectString(
+            CREATE_TABLE_TV_CLIP_KEY_LIST_SQL_NAMES);
 
+    // クリップキー一覧 キャッシュデータ格納用テーブル
+    public static final String VOD_CLIP_KEY_LIST_TABLE_NAME = "vod_clip_key_list";
+    // クリップキー一覧テーブル用 colum ("vod"or"tv")
+    private static final String CREATE_TABLE_VOD_CLIP_KEY_LIST_SQL_NAMES[] = {
+            CREATE_TABLE_TEXT,
+            VOD_CLIP_KEY_LIST_TABLE_NAME,
+            OPEN_BRACKETS_TEXT,
+            ID_COLUMN,
+            CREATE_TABLE_PRIMARY_TEXT,
+            JsonContents.META_RESPONSE_CRID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_SERVICE_ID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_EVENT_ID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_TYPE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_TITLE_ID, TEXT_WITHOUT_COMMA_TEXT,
+            CLOSE_BRACKETS_TEXT
+    };
+    public static final String CREATE_TABLE_VOD_CLIP_KEY_LIST_SQL = StringUtil.getConnectString(
+            CREATE_TABLE_VOD_CLIP_KEY_LIST_SQL_NAMES);
 }
