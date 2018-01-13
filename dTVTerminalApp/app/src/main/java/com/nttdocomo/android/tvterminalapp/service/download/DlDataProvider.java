@@ -397,6 +397,47 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         return downLoadListDataManager.selectDownLoadList();
     }
 
+    public void deleteAllDownLoadContents(){
+        DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(mActivity);
+        List<Map<String, String>> downLoadList = downLoadListDataManager.selectDownLoadList();
+        for(int i=0; i < downLoadList.size(); i++){
+            Map<String, String> hashMap = downLoadList.get(i);
+            String path = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL);
+            if(!TextUtils.isEmpty(path)){
+                deleteAllFiles(new File(path));
+            }
+        }
+    }
+
+    public void deleteAllFiles(File root) {
+        File files[] = root.listFiles();
+        if (files != null){
+            for (File f : files) {
+                if (f.isDirectory()) {
+                    deleteAllFiles(f);
+                    try {
+                        if (f.delete()) {
+                            DTVTLogger.debug("delete download file fail ");
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    if (f.exists()) {
+                        deleteAllFiles(f);
+                        try {
+                            if (f.delete()) {
+                                DTVTLogger.debug("delete download file fail ");
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private void saveDownLoad(int totalFileByteSize) {
         if (dlData != null) {
             dlData.setTotalSize(String.valueOf(totalFileByteSize));
