@@ -238,7 +238,15 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     public void onProgress(int receivedBytes, int percent) {
         if (null != mDlDataProviderListener && DownloadService.isBinded) {
             mDlDataProviderListener.onProgress(receivedBytes, percent);
+            DownloadService ds = getDownloadService();
+            if (null != ds) {
+                Intent intent = new Intent();
+                intent.setAction(DownloadService.DONWLOAD_UPDATE);
+                intent.putExtra("progress", percent);
+                ds.sendBroadcast(intent);
+            }
         }
+
     }
 
     @Override
