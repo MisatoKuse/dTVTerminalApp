@@ -222,8 +222,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV: //テレビ
                 resultList = getRecommendListDataCache
                         (DateUtils.RECOMMEND_CH_LAST_INSERT, requestPageNo, startIndex, maxResult);
-                //if (resultList.size() < maxResult) { // キャッシュ内のデータ数が20件未満の場合
-                if (resultList.size() < 0) { // キャッシュ内にデータがある場合
+                if (resultList.size() < maxResult) { // キャッシュ内のデータ数が20件未満の場合
                     requestData.serviceCategoryId = getTerebiRequestSCIdStr();
                 } else {
                     mApiDataProviderCallback.RecommendChannelCallback(resultList);
