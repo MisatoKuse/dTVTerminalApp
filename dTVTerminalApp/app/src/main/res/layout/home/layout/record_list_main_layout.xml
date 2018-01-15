@@ -15,15 +15,6 @@
         android:layout_marginTop="@dimen/recorded_searchview_top_margin"
         android:background="@color/keyword_search_background" />
 
-    <TextView
-        android:id="@+id/record_list_main_layout_percent"
-        android:layout_width="match_parent"
-        android:gravity="center"
-        android:textSize="20sp"
-        android:textColor="@android:color/holo_red_dark"
-        android:layout_height="50dp"
-        android:background="@android:color/white"/>
-
     <!-- 検索結果画面 -->
     <RelativeLayout
         android:id="@+id/record_list_main_layout_result"

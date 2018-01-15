@@ -96,7 +96,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private static final String DATE_FORMAT = "yyyy/MM/ddHH:mm:ss";
     private String mDate[] = {"日", "月", "火", "水", "木", "金", "土"};
     public ArrayList<DlnaRecVideoItem> mList;
-    TextView textViewPercent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -437,82 +436,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         return mViewPager.getCurrentItem();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if(isDownloadServiceRunning()){
-            textViewPercent = findViewById(R.id.record_list_main_layout_percent);
-            try{
-                DlDataProvider mDlDataProvider = new DlDataProvider(this, dlDataProviderListener);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-    }
-
-    DlDataProviderListener dlDataProviderListener = new DlDataProviderListener() {
-        @Override
-        public void dlDataProviderAvailable() {
-
-        }
-
-        @Override
-        public void dlDataProviderUnavailable() {
-
-        }
-
-        @Override
-        public void onDownLoadListCallBack(List<DlData> list) {
-
-        }
-
-        @Override
-        public void onStart(int totalFileByteSize) {
-
-        }
-
-        @Override
-        public void onPause() {
-
-        }
-
-        @Override
-        public void onResume() {
-
-        }
-
-        @Override
-        public void onProgress(int receivedBytes, int percent) {
-            final int newPercent = percent;
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    textViewPercent.setText("download " + newPercent + "%");
-                }
-            });
-        }
-
-        @Override
-        public void onFail(DLError error) {
-
-        }
-
-        @Override
-        public void onSuccess(String fullPath) {
-
-        }
-
-        @Override
-        public void onCancel() {
-
-        }
-
-        @Override
-        public void onLowStorageSpace() {
-
-        }
-    };
-
     /**
      * フラグメントをクリア
      */
@@ -655,7 +578,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             public void run() {
                 baseFrgament.notifyDataSetChanged();
                 if(baseFrgament.queIndex.size() > 0){
-//                    baseFrgament.bindServiceFromBackgroud(isDownloadServiceRunning());
+                    baseFrgament.bindServiceFromBackgroud(isDownloadServiceRunning());
                 }
             }
         });
