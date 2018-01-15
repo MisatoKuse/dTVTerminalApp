@@ -523,8 +523,15 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 //TODO:録画予約一覧等、クリップボタンを表示しない画面はここで外す
                 if (!mType.equals(TYPE_RECORDING_RESERVATION_LIST) && !mType.equals(TYPE_STB_SELECT_LIST)) {
                     //クリップ状態が1以外の時は、非活性クリップボタンを表示
-                    holder.tv_clip.setVisibility(View.VISIBLE);
-                    holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
+                    if (listContentInfo.isClipExec()) {
+                        holder.tv_clip.setVisibility(View.GONE);
+                    } else {
+                        if (listContentInfo.isClipStatus()) {
+                            holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
+                        } else {
+                            holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+                        }
+                    }
                 }
             }
         }

@@ -113,6 +113,17 @@ public class ClipMainAdapter extends BaseAdapter {
                 if (null != holder.rb_clip_video_rating_count) {
                     //holder.rb_clip_video_rating_count.setVisibility(View.INVISIBLE);
                 }
+                if (null != holder.bt_video_clip) {
+                    if (tvClipContentInfoItem.isClipExec()) {
+                        holder.bt_video_clip.setVisibility(View.GONE);
+                    } else {
+                        if (tvClipContentInfoItem.isClipStatus()) {
+                            holder.bt_video_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
+                        } else {
+                            holder.bt_video_clip.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+                        }
+                    }
+                }
 
                 break;
             case CLIP_LIST_MODE_VIDEO:
@@ -148,6 +159,17 @@ public class ClipMainAdapter extends BaseAdapter {
                 if (null != holder.rb_clip_video_rating_count) {
                     //holder.rb_clip_video_rating_count.setVisibility(View.VISIBLE);
                     holder.rb_clip_video_rating_count.setText(clipContentInfoItem.getRatStar());
+                }
+                if (null != holder.bt_video_clip) {
+                    if (clipContentInfoItem.isClipExec()) {
+                        holder.bt_video_clip.setVisibility(View.INVISIBLE);
+                    } else {
+                        if (clipContentInfoItem.isClipStatus()) {
+                            holder.bt_video_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
+                        } else {
+                            holder.bt_video_clip.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+                        }
+                    }
                 }
 
                 break;
