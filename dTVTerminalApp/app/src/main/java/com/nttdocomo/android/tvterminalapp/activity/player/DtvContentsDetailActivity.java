@@ -227,6 +227,10 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
      */
     private static final int DISABLE_WATCH_LEAD_CONTRACT = -1;
     /**
+     * 視聴不可判定未実施
+     */
+    private static final int ENABLE_WATCH_NO_DEFINE = 0;
+    /**
      * 視聴可能(視聴可能期限無し).
      */
     private static final int ENABLE_WATCH_NO_LIMIT = 1;
@@ -237,7 +241,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     /**
      * 視聴可能かどうか.
      */
-    private int mIsEnableWatch = DISABLE_WATCH_NO_PLAY;
+    private int mIsEnableWatch = ENABLE_WATCH_NO_DEFINE;
 
     private Runnable mHideCtrlViewThread = new Runnable() {
 
@@ -1476,7 +1480,9 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             //コンテンツの視聴可否判定を行う
             checkWatchContents();
             //コンテンツの視聴可否判定に基づいてUI操作を行う
-            changeUIBasedContractInfo();
+            if (mIsEnableWatch != ENABLE_WATCH_NO_DEFINE) {
+                changeUIBasedContractInfo();
+            }
         }
     }
 
@@ -2047,6 +2053,9 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         final String CONTRACT_STATUS_DTV = "001";
         final String CONTRACT_STATUS_H4D = "002";
 
+        //視聴可否判定がまだ行われていない状態に設定
+        mIsEnableWatch = ENABLE_WATCH_NO_DEFINE;
+
         //DBに保存されているUserInfoから契約情報を確認する
         UserInfoInsertDataManager dataManager = new UserInfoInsertDataManager(this);
         dataManager.readUserInfoInsertList();
@@ -2372,6 +2381,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                             mIsEnableWatch = ENABLE_WATCH_NO_LIMIT;
                         }
                         Toast.makeText(this, "視聴可能. 30日以内:" + mIsLimitThirtyDay, Toast.LENGTH_SHORT).show();
+                        changeUIBasedContractInfo();
                         return;
                     } else {
                         //視聴期限範囲外のため視聴不可だが他のactive_listをチェックするためここでは何もしない
@@ -2383,6 +2393,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         //視聴不可(契約導線を表示) STB側で契約が必要なパターンの可能性あり
         mIsEnableWatch = DISABLE_WATCH_LEAD_CONTRACT;
         Toast.makeText(this, "視聴不可(契約導線を表示)", Toast.LENGTH_SHORT).show();
+        changeUIBasedContractInfo();
     }
 
     @Override
@@ -2421,6 +2432,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                             mIsEnableWatch = ENABLE_WATCH_NO_LIMIT;
                         }
                         Toast.makeText(this, "視聴可能. 30日以内:" + mIsLimitThirtyDay, Toast.LENGTH_SHORT).show();
+                        changeUIBasedContractInfo();
                         return;
                     }
                 } else {
@@ -2432,6 +2444,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         //視聴不可(契約導線を表示) STB側で契約が必要なパターンの可能性あり
         mIsEnableWatch = DISABLE_WATCH_LEAD_CONTRACT;
         Toast.makeText(this, "視聴不可(契約導線を表示)", Toast.LENGTH_SHORT).show();
+        changeUIBasedContractInfo();
     }
 
     /**
@@ -2502,7 +2515,6 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             default:
                 break;
         }
-        mIsEnableWatch = DISABLE_WATCH_LEAD_CONTRACT;
     }
 
     /**
