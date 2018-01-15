@@ -1063,22 +1063,15 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * クリップ処理でのトースト表示
+     * クリップ処理でのトースト表示.
      *
      * @param msgId 各ステータスのメッセージID
      */
-    private void showClipToast(int msgId) {
+    private void showClipToast(final int msgId) {
         //クリップ対象がない場合には、トーストのメッセージに不整合が生じるため、表示しない
         if (mClipTarget != null && mClipTarget.length() > 0) {
             String[] strings = {mClipTarget, getString(msgId)};
-            LayoutInflater inflater = getLayoutInflater();
-            View view = inflater.inflate(R.layout.clip_toast_layout, null);
-            TextView textView = view.findViewById(R.id.clip_toast_textView);
-            textView.setText(StringUtil.getConnectString(strings));
-            Toast toast = new Toast(this);
-            toast.setDuration(Toast.LENGTH_SHORT);
-            toast.setView(view);
-            toast.show();
+            Toast.makeText(this, StringUtil.getConnectString(strings), Toast.LENGTH_SHORT).show();
         }
     }
 
