@@ -96,7 +96,7 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback,
             queryItems = new LinkedHashMap();
         }
 
-        //返ってきたURLとパラメータで通信を行う
+        //指定されたURLとパラメータで通信を行う
         getReccomendInfo(url, queryItems, this);
     }
 
