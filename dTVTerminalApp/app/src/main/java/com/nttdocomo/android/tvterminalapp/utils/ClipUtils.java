@@ -4,10 +4,27 @@
 
 package com.nttdocomo.android.tvterminalapp.utils;
 
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
+
 /**
  * クリップ関連のUtilクラス.
  */
 public class ClipUtils {
+
+    /**
+     * 種別：ひかりＴＶビデオ、dTVチャンネル.
+     */
+    private static final int HIKARI_TV_VIDEO_CLIP_KEY = 0;
+
+    /**
+     * 種別：多チャンネル.
+     */
+    private static final int HIKARI_MULTI_CHANNEL_CLIP_KEY = 1;
+
+    /**
+     * 種別：dTV.
+     */
+    private static final int DTV_CLIP_KEY = 2;
 
     /**
      * クリップ可否フラグを返却する.
@@ -89,5 +106,68 @@ public class ClipUtils {
             default:
                 return false;
         }
+    }
+
+    /**
+     * クリップ種別を返却.
+     *
+     * @param data クリップリクエスト用データ
+     * @return クリップ種別(該当なしの場合は負の値を返却)
+     */
+    public static int getClipType(final ClipRequestData data) {
+        //TODO：他のクラスから使用されない場合はprivateに変更する
+        int clipStatus = -1;
+
+        //各データの有無によりクリップ種別を取得する
+        if (data != null) {
+            String crId = data.getCrid();
+            String service_id = data.getServiceId();
+            String event_id = data.getEventId();
+            String type = data.getType();
+            String title_id = data.getTitleId();
+            if (crId != null && crId.length() > 0) {
+                clipStatus = HIKARI_TV_VIDEO_CLIP_KEY;
+            } else if (service_id != null && event_id != null && type != null
+                    && service_id.length() > 0 && event_id.length() > 0 && type.length() > 0) {
+                clipStatus = HIKARI_MULTI_CHANNEL_CLIP_KEY;
+            } else if (title_id != null && title_id.length() > 0) {
+                clipStatus = DTV_CLIP_KEY;
+            }
+        }
+        return clipStatus;
+    }
+
+    /**
+     * クリップ状態をDB保存.
+     *
+     * @param data クリップリクエスト用データ
+     * @return DB保存実行開始フラグ
+     */
+    public static boolean setClipStatusToDB(final ClipRequestData data) {
+
+        boolean result = false;
+
+        //クリップ種別に応じたDB保存処理を実施
+        if (data != null) {
+            int clipType = getClipType(data);
+            switch (clipType) {
+                case HIKARI_TV_VIDEO_CLIP_KEY:
+                    //TODO:クリップDB登録処理
+                    result = true;
+                    break;
+                case HIKARI_MULTI_CHANNEL_CLIP_KEY:
+                    //TODO:クリップDB登録処理
+                    result = true;
+                    break;
+                case DTV_CLIP_KEY:
+                    //TODO:クリップDB登録処理
+                    result = true;
+                    break;
+                default:
+                    result = false;
+                    break;
+            }
+        }
+        return result;
     }
 }
