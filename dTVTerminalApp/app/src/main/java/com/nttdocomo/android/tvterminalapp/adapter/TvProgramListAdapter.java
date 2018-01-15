@@ -156,7 +156,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 @Override
                 public void onClick(View view) {
                     //クリップボタンイベント
-                    ((BaseActivity) mContext).sendClipRequest(schedule.getClipRequestData());
+                    ((BaseActivity) mContext).sendClipRequest(schedule.getClipRequestData(), mClipButton);
                 }
             });
             setComponentParameters();

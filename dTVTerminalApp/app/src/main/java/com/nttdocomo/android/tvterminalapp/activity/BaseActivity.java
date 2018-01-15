@@ -1035,13 +1035,18 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         }
     }
 
+    private ImageView mClipButton = null;
     /**
-     * クリップ登録/削除処理追加
+     * クリップ登録/削除処理追加.
      *
-     * @param data クリップ処理用データ
+     * @param data       クリップ処理用データ
+     * @param clipButton クリップボタン
      */
-    public void sendClipRequest(ClipRequestData data) {
-        if (data != null) {
+    public void sendClipRequest(final ClipRequestData data, final ImageView clipButton) {
+
+        if (data != null && clipButton != null) {
+
+            mClipButton = clipButton;
 
             //クリップ対象を格納
             if (data.getIsNotify()) {
@@ -1077,25 +1082,23 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     @Override
     public void onClipRegistResult() {
-        //TODO:クリップ登録成功時の正式なトースト実装
         showClipToast(R.string.clip_regist_result_message);
+        mClipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
     }
 
     @Override
     public void onClipRegistFailure() {
-        //TODO:クリップ登録失敗時の正式なトースト実装
         showClipToast(R.string.clip_regist_error_message);
     }
 
     @Override
     public void onClipDeleteResult() {
-        //TODO:クリップ削除成功時の正式なトースト実装
         showClipToast(R.string.clip_delete_result_message);
+        mClipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
     }
 
     @Override
     public void onClipDeleteFailure() {
-        //TODO:クリップ削除失敗時の正式なトースト実装
         showClipToast(R.string.clip_delete_error_message);
     }
 

@@ -73,11 +73,12 @@ public class ClipMainAdapter extends BaseAdapter {
             holder.rb_clip_video_rating = view.findViewById(R.id.rb_clip_video_rating);
             holder.rb_clip_video_rating_count = view.findViewById(R.id.rb_clip_video_rating_count);
             holder.bt_video_clip = view.findViewById(R.id.bt_video_clip);
+            final ImageView clipButton = holder.bt_video_clip;
             holder.bt_video_clip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     //クリップボタンイベント
-                    ((BaseActivity) mContext).sendClipRequest(mData.get(position).getRequestData());
+                    ((BaseActivity) mContext).sendClipRequest(mData.get(position).getRequestData(), clipButton);
                 }
             });
             convertView = view;
