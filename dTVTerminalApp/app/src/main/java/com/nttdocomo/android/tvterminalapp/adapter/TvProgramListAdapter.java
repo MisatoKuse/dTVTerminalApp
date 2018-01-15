@@ -7,11 +7,13 @@ package com.nttdocomo.android.tvterminalapp.adapter;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -19,6 +21,7 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
@@ -34,9 +37,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import static android.widget.ImageView.ScaleType.FIT_XY;
+
 public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdapter.MyViewHolder> {
 
-    private Activity mContext = null;
+    private static final int THUMBNAIL_HEIGHT = 69;
+    private static final int THUMBNAIL_WIDTH = 122;
+    private TvProgramListActivity mContext = null;
     //ディスプレイ幅さ
     private int mScreenWidth = 0;
     //ディスプレイ高さ
@@ -53,10 +60,14 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     private List<ItemViewHolder> mItemViews = new ArrayList<>();
     //番組データ
     private List<Channel> mProgramList = null;
+    //サムネイルとエピソードタイトルを含むスペース
+    private int mThumbEpiSpace;
+    //エピソードタイトルを含むスペース
+    private int mEpiSpace;
 
     public TvProgramListAdapter(Activity mContext, ArrayList<Channel> mProgramList) {
         this.mProgramList = mProgramList;
-        this.mContext = mContext;
+        this.mContext = (TvProgramListActivity) mContext;
         mScreenWidth = mContext.getResources().getDisplayMetrics().widthPixels;
         mScreenHeight = mContext.getResources().getDisplayMetrics().heightPixels;
         UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
@@ -126,6 +137,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         ImageView mThumbnail = null;
         RelativeLayout.LayoutParams mLayoutParams = null;
         ImageView mClipButton = null;
+        TextView mDetail = null;
 
         void setUsing(){
             mInUsage =true;
@@ -136,6 +148,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             mStartM = mView.findViewById(R.id.tv_program_item_panel_clip_tv);
             mContent = mView.findViewById(R.id.tv_program_item_panel_content_des_tv);
             mThumbnail = mView.findViewById(R.id.tv_program_item_panel_content_thumbnail_iv);
+            mDetail = mView.findViewById(R.id.tv_program_item_panel_content_detail_tv);
             mLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
             mInUsage =false;
             mClipButton = mView.findViewById(R.id.tv_program_item_panel_clip_iv);
@@ -146,6 +159,14 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     ((BaseActivity) mContext).sendClipRequest(schedule.getClipRequestData());
                 }
             });
+            setComponentParameters();
+        }
+
+        private void setComponentParameters() {
+            mView.setPadding(7,12,8,15);
+            mContent.setTextSize(13.0f);
+            mContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+            mDetail.setTextSize(11.0f);
         }
     }
 
@@ -154,8 +175,8 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         View view = LayoutInflater.from(mContext).inflate(R.layout.tv_program_item, parent, false);
         MyViewHolder holder = new MyViewHolder(view);
         holder.layout = (RelativeLayout) view;
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((mScreenWidth - mScreenWidth / 9) / 2,
-                mScreenHeight / 3 * 24);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((mScreenWidth - mContext.dip2px(44)) / 2,
+                mContext.dip2px(180) * 24);
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
         holder.layout.setLayoutParams(layoutParams);
         return holder;
@@ -188,6 +209,13 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     itemViewHolder.mThumbnail.setTag(thumbnailURL);
                     Bitmap bitmap = mThumbnailProvider.getThumbnailImage(itemViewHolder.mThumbnail, thumbnailURL);
                     if (bitmap != null) {
+                        int thumbnailWidth = itemViewHolder.mView.getWidth() - mContext.dip2px(30)- mContext.dip2px(8);
+                        int thumbnailHeight = mContext.dip2px(THUMBNAIL_HEIGHT)* thumbnailWidth / mContext.dip2px(THUMBNAIL_WIDTH);
+                        if(thumbnailWidth > 0 && thumbnailHeight > 0){
+                            bitmap.setWidth(thumbnailWidth);
+                            bitmap.setHeight(thumbnailHeight);
+                        }
+                        itemViewHolder.mThumbnail.setScaleType(FIT_XY);
                         itemViewHolder.mThumbnail.setImageBitmap(bitmap);
                     }
                 }
@@ -217,9 +245,9 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         }
         float marginTop = itemSchedule.getMarginTop();
         float myHeight = itemSchedule.getMyHeight();
-        itemViewHolder.mLayoutParams.height = (int) (myHeight * (mScreenHeight / 3));
+        itemViewHolder.mLayoutParams.height = (int) (myHeight * (mContext.dip2px(180)));
         itemViewHolder.mView.setLayoutParams(itemViewHolder.mLayoutParams);
-        itemViewHolder.mView.setY(marginTop * (mScreenHeight / 3));
+        itemViewHolder.mView.setY(marginTop * (mContext.dip2px(180)));
 
         if(isLast){
             if(date1.compareTo(date2) == -1){
@@ -271,6 +299,92 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             });
         }
         itemViewHolder.mContent.setText(title);
+        String detail = itemSchedule.getDetail();
+        itemViewHolder.mDetail.setText(detail);
+        changeProgramInfoInOrderToShow(itemViewHolder);
+    }
+
+    /**
+     * 番組情報表示順変更
+     * @param itemViewHolder
+     */
+    private void changeProgramInfoInOrderToShow(final ItemViewHolder itemViewHolder) {
+        itemViewHolder.mContent.getViewTreeObserver()//タイトル
+                .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                itemViewHolder.mContent.getViewTreeObserver().removeOnPreDrawListener(this);
+                displayProgramTitle(itemViewHolder);
+                return true;
+            }
+        });
+        itemViewHolder.mDetail.getViewTreeObserver()//詳細エピソード
+                .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                itemViewHolder.mContent.getViewTreeObserver().removeOnPreDrawListener(this);
+                displayProgramEpi(itemViewHolder);
+                return true;
+            }
+        });
+    }
+
+    /**
+     * エピソード詳細表示
+     * @param itemViewHolder
+     */
+    private void displayProgramEpi(final ItemViewHolder itemViewHolder) {
+        int epiLineHeight = itemViewHolder.mDetail.getLineHeight();
+        if (mEpiSpace <= mContext.dip2px(4)) {
+            itemViewHolder.mDetail.setVisibility(View.INVISIBLE);
+        } else {
+            mEpiSpace = mEpiSpace-mContext.dip2px(4)-epiLineHeight;
+            if (mEpiSpace / epiLineHeight > 0) {
+                itemViewHolder.mDetail.setMaxLines(mEpiSpace / epiLineHeight);
+            } else {
+                itemViewHolder.mDetail.setVisibility(View.INVISIBLE);
+            }
+        }
+    }
+
+    /**
+     *番組タイトル表示
+     * @param itemViewHolder
+     */
+    private void displayProgramTitle(ItemViewHolder itemViewHolder) {
+        int availableSpace = itemViewHolder.mView.getHeight() - mContext.dip2px(12)- mContext.dip2px(15);
+        int titleLineHeight = itemViewHolder.mContent.getLineHeight();
+        int titleLineCount = itemViewHolder.mContent.getLineCount();
+        int titleSpace = titleLineHeight*titleLineCount;
+        if(titleSpace > availableSpace){//パネルスペースを超えるタイトル
+            int maxDisplayLine;
+            if(availableSpace / titleLineHeight > 0){
+                 maxDisplayLine = availableSpace / titleLineHeight;
+            }else {
+                 maxDisplayLine = 1;
+            }
+            itemViewHolder.mContent.setMaxLines(maxDisplayLine);
+            itemViewHolder.mThumbnail.setVisibility(View.INVISIBLE);
+            itemViewHolder.mDetail.setVisibility(View.INVISIBLE);
+        }else if(titleSpace == availableSpace){
+            itemViewHolder.mThumbnail.setVisibility(View.INVISIBLE);
+            itemViewHolder.mDetail.setVisibility(View.INVISIBLE);
+        }else {//パネルスペースを超えてないタイトル
+            int thumbnailWidth = itemViewHolder.mView.getWidth() - mContext.dip2px(30) - mContext.dip2px(8);
+            int thumbnailHeight = mContext.dip2px(THUMBNAIL_HEIGHT) * thumbnailWidth / mContext.dip2px(THUMBNAIL_WIDTH);
+            if(availableSpace - titleSpace <= mContext.dip2px(16)){
+                itemViewHolder.mThumbnail.setVisibility(View.INVISIBLE);
+                itemViewHolder.mDetail.setVisibility(View.INVISIBLE);
+            }else {
+                if(availableSpace - titleSpace - mContext.dip2px(16) >= thumbnailHeight){//サムネル表示
+                    mThumbEpiSpace = availableSpace - titleSpace - mContext.dip2px(16);
+                    mEpiSpace = mThumbEpiSpace - thumbnailHeight;
+                }else {//サムネル非表示
+                    itemViewHolder.mThumbnail.setVisibility(View.GONE);
+                    mEpiSpace = availableSpace - titleSpace - mContext.dip2px(16);
+                }
+            }
+        }
     }
 
     private boolean setParental(int age){
