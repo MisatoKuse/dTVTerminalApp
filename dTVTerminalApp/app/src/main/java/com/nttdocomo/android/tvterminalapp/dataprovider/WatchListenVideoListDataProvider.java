@@ -9,6 +9,8 @@ import android.content.Context;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WatchListenVideoList;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
@@ -19,20 +21,37 @@ import java.util.List;
 import java.util.Map;
 
 
-public class WatchListenVideoListDataProvider implements WatchListenVideoWebClient.WatchListenVideoJsonParserCallback {
+public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider implements WatchListenVideoWebClient.WatchListenVideoJsonParserCallback {
 
     private Context mContext = null;
+    private WatchListenVideoList mWatchListenVideoList = null;
 
     @Override
     public void onWatchListenVideoJsonParsed(List<WatchListenVideoList> watchListenVideoList) {
         if (watchListenVideoList != null && watchListenVideoList.size() > 0) {
             WatchListenVideoList list = watchListenVideoList.get(0);
-            sendTvClipListData(list.getVcList());
+            if (!mRequiredClipKeyList
+                    || mResponse != null) {
+                sendWatchListenVideoListData(list.getVcList());
+            } else {
+                mWatchListenVideoList = list;
+            }
         } else {
             if (null != mApiDataProviderCallback) {
                 mApiDataProviderCallback.watchListenVideoListCallback(null);
             }
         }
+    }
+
+    @Override
+    public void onTvClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+        DTVTLogger.start();
+        super.onTvClipKeyListJsonParsed(clipKeyListResponse);
+        // コールバック判定
+        if(mWatchListenVideoList != null) {
+            sendWatchListenVideoListData(mWatchListenVideoList.getVcList());
+        }
+        DTVTLogger.end();
     }
 
     /**
@@ -55,6 +74,7 @@ public class WatchListenVideoListDataProvider implements WatchListenVideoWebClie
      * @param context
      */
     public WatchListenVideoListDataProvider(Context context) {
+        super(context);
         this.mContext = context;
         this.mApiDataProviderCallback = (WatchListenVideoListProviderCallback) context;
     }
@@ -63,6 +83,12 @@ public class WatchListenVideoListDataProvider implements WatchListenVideoWebClie
      * Activityからのデータ取得要求受付
      */
     public void getWatchListenVideoData(int pagerOffset) {
+        mWatchListenVideoList = null;
+        // クリップキー一覧を取得
+        if(mRequiredClipKeyList) {
+            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+        }
+
         WatchListenVideoWebClient webClient = new WatchListenVideoWebClient();
         int ageReq = 1;
         int upperPageLimit = 1;
@@ -79,13 +105,13 @@ public class WatchListenVideoListDataProvider implements WatchListenVideoWebClie
      *
      * @param mapList コンテンツリストデータ
      */
-    private void sendTvClipListData(final List<Map<String, String>> mapList) {
+    private void sendWatchListenVideoListData(final List<Map<String, String>> mapList) {
         List<ContentsData> rankingContentsDataList = new ArrayList<>();
 
-        ContentsData rankingContentInfo;
+        ContentsData contentInfo;
 
         for (int i = 0; i < mapList.size(); i++) {
-            rankingContentInfo = new ContentsData();
+            contentInfo = new ContentsData();
 
             Map<String, String> map = mapList.get(i);
             String title = map.get(JsonContents.META_RESPONSE_TITLE);
@@ -95,17 +121,17 @@ public class WatchListenVideoListDataProvider implements WatchListenVideoWebClie
             String dtv = map.get(JsonContents.META_RESPONSE_DTV);
             String dtvType = map.get(JsonContents.META_RESPONSE_DTV_TYPE);
 
-            rankingContentInfo.setRank(String.valueOf(i + 1));
-            rankingContentInfo.setThumURL(map.get(JsonContents.META_RESPONSE_THUMB_448));
-            rankingContentInfo.setTitle(title);
-            rankingContentInfo.setTime(map.get(JsonContents.META_RESPONSE_DISPLAY_START_DATE));
-            rankingContentInfo.setSearchOk(searchOk);
-            rankingContentInfo.setRank(String.valueOf(i + 1));
-            rankingContentInfo.setRatStar(map.get(JsonContents.META_RESPONSE_RATING));
-            rankingContentInfo.setContentsType(map.get(JsonContents.META_RESPONSE_CONTENT_TYPE));
-            rankingContentInfo.setDtv(dtv);
-            rankingContentInfo.setDispType(dispType);
-            rankingContentInfo.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
+            contentInfo.setRank(String.valueOf(i + 1));
+            contentInfo.setThumURL(map.get(JsonContents.META_RESPONSE_THUMB_448));
+            contentInfo.setTitle(title);
+            contentInfo.setTime(map.get(JsonContents.META_RESPONSE_DISPLAY_START_DATE));
+            contentInfo.setSearchOk(searchOk);
+            contentInfo.setRank(String.valueOf(i + 1));
+            contentInfo.setRatStar(map.get(JsonContents.META_RESPONSE_RATING));
+            contentInfo.setContentsType(map.get(JsonContents.META_RESPONSE_CONTENT_TYPE));
+            contentInfo.setDtv(dtv);
+            contentInfo.setDispType(dispType);
+            contentInfo.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
             requestData.setCrid(map.get(JsonContents.META_RESPONSE_CRID));
@@ -123,10 +149,18 @@ public class WatchListenVideoListDataProvider implements WatchListenVideoWebClie
             String tvService = map.get(JsonContents.META_RESPONSE_TV_SERVICE);
             String dTv = map.get(JsonContents.META_RESPONSE_DTV);
             requestData.setIsNotify(dispType, contentsType, linearEndDate, tvService, dTv);
-            rankingContentInfo.setRequestData(requestData);
+            contentInfo.setRequestData(requestData);
 
-            rankingContentsDataList.add(rankingContentInfo);
-            DTVTLogger.info("RankingContentInfo " + rankingContentInfo.getRank());
+            if(mRequiredClipKeyList) {
+                // クリップ状態をコンテンツリストに格納
+                contentInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv,
+                        contentInfo.getCrid(), contentInfo.getServiceId(),
+                        contentInfo.getEventId(), contentInfo.getContentsType(),
+                        contentInfo.getTitleId()));
+            }
+
+            rankingContentsDataList.add(contentInfo);
+            DTVTLogger.info("RankingContentInfo " + contentInfo.getRank());
         }
 
         mApiDataProviderCallback.watchListenVideoListCallback(rankingContentsDataList);

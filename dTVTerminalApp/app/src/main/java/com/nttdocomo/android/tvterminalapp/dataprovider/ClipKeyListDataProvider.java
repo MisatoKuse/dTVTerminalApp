@@ -7,6 +7,8 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity;
+import com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivity;
+import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.WeeklyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
@@ -100,6 +102,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      */
     public void getClipKeyList(ClipKeyListRequest request) {
         DTVTLogger.start();
+        mResponse = null;
         request.setIsForce(isCachingClipKeyListRecord(request.getType()));
         ClipKeyListWebClient client = new ClipKeyListWebClient();
         // リクエストによってコールバックを変える
@@ -139,8 +142,9 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      * クリップキー一覧取得を実行するActivityかを判定
      */
     private boolean checkInstance(Context context) {
-        if (context instanceof LaunchActivity
-                || context instanceof WeeklyTvRankingActivity) {
+        if (context instanceof WeeklyTvRankingActivity
+                || context instanceof DailyTvRankingActivity
+                || context instanceof VideoRankingActivity) {
             DTVTLogger.debug("Need Getting ClipKeyList");
             return true;
         }
@@ -264,5 +268,38 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         List<Map<String, String>> clipKeyList = dataManager.selectClipKeyDbDtvData(type, titleId);
         DTVTLogger.end();
         return clipKeyList != null && clipKeyList.size() > 0;
+    }
+
+    /**
+     * DBから取得したキー値を元にクリップ状態を判定する
+     * @param dispType
+     * @param contentsType
+     * @param dTv
+     * @param crid
+     * @param serviceId
+     * @param eventId
+     * @param type
+     * @param titleId
+     * @return
+     */
+    protected boolean getClipStatus(String dispType, String contentsType, String dTv,
+                                    String crid, String serviceId, String eventId,
+                                    String type, String titleId) {
+        boolean clipStatus = false;
+        ClipKeyListDao.CONTENT_TYPE contentType = searchContentsType(dispType, contentsType, dTv);
+        ClipKeyListDao.TABLE_TYPE tableType = decisionTableType(dispType, contentsType);
+        switch (contentType) {
+            case TV:
+                clipStatus = findDbTvClipKeyData(tableType,
+                        serviceId, eventId, type);
+                break;
+            case VOD:
+                clipStatus = findDbVodClipKeyData(tableType, crid);
+                break;
+            case DTV:
+                clipStatus = findDbDtvClipKeyData(tableType, titleId);
+                break;
+        }
+        return clipStatus;
     }
 }
