@@ -78,7 +78,7 @@ public class ClipKeyListInsertDataManager {
      * @param type      クリップ種別
      * @param titleId   タイトルID
      */
-    public void makeInsertRowSql(final ClipKeyListDao.TABLE_TYPE tableType, final String serviceId,
+    public void insertRowSqlStart(final ClipKeyListDao.TABLE_TYPE tableType, final String serviceId,
                               final String eventId, final String type, final String titleId) {
         DTVTLogger.start();
         //各種オブジェクト作成
@@ -104,7 +104,7 @@ public class ClipKeyListInsertDataManager {
      * @param eventId   イベントID
      * @param titleId   タイトルID
      */
-    public void makeDeleteRowSql(final ClipKeyListDao.TABLE_TYPE tableType, final String serviceId,
+    public void deleteRowSqlStart(final ClipKeyListDao.TABLE_TYPE tableType, final String serviceId,
                                  final String eventId, final String titleId) {
         DTVTLogger.start();
         //各種オブジェクト作成

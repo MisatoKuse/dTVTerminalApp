@@ -174,6 +174,9 @@ public class RentalDataProvider implements RentalVodListWebClient.RentalVodListJ
             String tvService = vodMetaFullData.getmTv_service();
             String dTv = vodMetaFullData.getDtv();
             requestData.setIsNotify(dispType, contentsType, linearEndDate, tvService, dTv);
+            requestData.setDispType(dispType);
+            requestData.setContentType(contentsType);
+//            requestData.setTableType(decisionTableType(contentsType, contentsType));
             data.setRequestData(requestData);
 
             list.add(data);
