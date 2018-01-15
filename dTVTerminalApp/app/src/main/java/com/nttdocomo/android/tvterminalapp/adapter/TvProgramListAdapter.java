@@ -238,6 +238,19 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 itemViewHolder.mView.setTag(1);
             }
         }
+        if (itemViewHolder.mClipButton != null){
+            if (itemSchedule.isClipExec()){
+                itemViewHolder.mClipButton.setVisibility(View.GONE);
+            }else{
+                if (itemSchedule.isClipStatus()){
+                    itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
+                }else{
+                    itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+                }
+            }
+
+        }
+
         //年齢制限フラグ
         boolean isParental = setParental(StringUtil.convertRValueToAgeReq(mContext, itemSchedule.getRValue()));
         String title;

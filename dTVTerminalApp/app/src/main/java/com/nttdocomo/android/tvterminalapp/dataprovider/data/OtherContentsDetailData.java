@@ -55,6 +55,10 @@ public class OtherContentsDetailData extends RecordedContentsDetailData implemen
     private String mRecommendMethodId = "";
     // レコメンドフラグ
     private String mRecommendFlg = "";
+    // クリップ可否
+    private boolean mClipExec = false;
+    // クリップ未/済
+    private boolean mClipStatus = false;
 
     public String getChannelDate() {
         return mChannelDate;
@@ -325,5 +329,20 @@ public class OtherContentsDetailData extends RecordedContentsDetailData implemen
 
     public void setRecommendFlg(String mRecommendFlg) {
         this.mRecommendFlg = mRecommendFlg;
+    }
+    public boolean ismClipExec() {
+        return mClipExec;
+    }
+
+    public void setmClipExec(boolean mClipExec) {
+        this.mClipExec = mClipExec;
+    }
+
+    public boolean ismClipStatus() {
+        return ismClipStatus();
+    }
+
+    public void setmClipStatus(boolean mClipStatus) {
+        this.mClipStatus = mClipStatus;
     }
 }
