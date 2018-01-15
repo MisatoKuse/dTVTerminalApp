@@ -265,4 +265,12 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         DTVTLogger.end();
         return clipKeyList != null && clipKeyList.size() > 0;
     }
+
+    public void clipResultDelete() {
+
+    }
+
+    public void clipResultInsert() {
+
+    }
 }

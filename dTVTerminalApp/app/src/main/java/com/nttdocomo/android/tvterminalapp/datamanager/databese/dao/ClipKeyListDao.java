@@ -140,4 +140,16 @@ public class ClipKeyListDao {
         }
         return tableName;
     }
+
+    /**
+     * 条件に一致する行を削除する.
+     *
+     * @param tableType テーブル種別(TV/VOD)
+     * @param query クエリ
+     * @param columns   対象列名
+     */
+    public int deleteRowData(final TABLE_TYPE tableType, final String query, final String[] columns) {
+        DTVTLogger.debug("Delete Row : " + tableType);
+        return db.delete(getTableName(tableType), query, columns);
+    }
 }

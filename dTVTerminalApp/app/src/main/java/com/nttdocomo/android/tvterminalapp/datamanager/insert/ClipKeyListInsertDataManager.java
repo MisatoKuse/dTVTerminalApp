@@ -9,10 +9,12 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -65,5 +67,58 @@ public class ClipKeyListInsertDataManager {
             ClipKeyListDao.insert(type, values);
         }
         DTVTLogger.end();
+    }
+
+    /**
+     * クリップ登録成功後の行データ挿入.
+     *
+     * @param tableType テーブル種別(TV/VOD)
+     * @param serviceId サービスID
+     * @param eventId   イベントID
+     * @param type      クリップ種別
+     * @param titleId   タイトルID
+     */
+    public void makeInsertRowSql(final ClipKeyListDao.TABLE_TYPE tableType, final String serviceId,
+                              final String eventId, final String type, final String titleId) {
+        DTVTLogger.start();
+        //各種オブジェクト作成
+        DBHelper ClipKeyListDBHelper = new DBHelper(mContext);
+        SQLiteDatabase db = ClipKeyListDBHelper.getWritableDatabase();
+        ClipKeyListDao clipKeyListDao = new ClipKeyListDao(db);
+
+        //コンテンツデータ作成
+        ContentValues values = new ContentValues();
+        values.put(JsonContents.META_RESPONSE_SERVICE_ID, serviceId);
+        values.put(JsonContents.META_RESPONSE_EVENT_ID, eventId);
+        values.put(JsonContents.META_RESPONSE_TYPE, type);
+        values.put(JsonContents.META_RESPONSE_TITLE_ID, titleId);
+        clipKeyListDao.insert(tableType, values);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 条件に一致する行を削除する.
+     *
+     * @param tableType テーブル種別(TV/VOD)
+     * @param serviceId サービスID
+     * @param eventId   イベントID
+     * @param titleId   タイトルID
+     */
+    public void makeDeleteRowSql(final ClipKeyListDao.TABLE_TYPE tableType, final String serviceId,
+                                 final String eventId, final String titleId) {
+        DTVTLogger.start();
+        //各種オブジェクト作成
+        DBHelper ClipKeyListDBHelper = new DBHelper(mContext);
+        SQLiteDatabase db = ClipKeyListDBHelper.getWritableDatabase();
+        ClipKeyListDao clipKeyListDao = new ClipKeyListDao(db);
+
+        String query = StringUtil.getConnectStrings(JsonContents.META_RESPONSE_CRID, "=? OR",
+                JsonContents.META_RESPONSE_SERVICE_ID, "=? AND",
+                JsonContents.META_RESPONSE_EVENT_ID, "=? AND",
+                JsonContents.META_RESPONSE_TYPE, "=h4d_iptv OR",
+                JsonContents.META_RESPONSE_TITLE_ID, "=?");
+
+        String[] columns = {serviceId, eventId, titleId};
+        clipKeyListDao.deleteRowData(tableType, query, columns);
     }
 }
