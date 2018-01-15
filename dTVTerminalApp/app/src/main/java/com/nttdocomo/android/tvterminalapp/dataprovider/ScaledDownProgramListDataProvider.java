@@ -355,6 +355,8 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
      * @return Clipリクエストに必要なデータ
      */
     private static ClipRequestData setClipData(HashMap<String, String> hashMap){
+        String dispType = hashMap.get(JsonContents.META_RESPONSE_DISP_TYPE);
+        String contentsType = hashMap.get(JsonContents.META_RESPONSE_CONTENT_TYPE);
         ClipRequestData requestData = new ClipRequestData();
         requestData.setCrid(hashMap.get(JsonContents.META_RESPONSE_CRID));
         requestData.setServiceId(hashMap.get(JsonContents.META_RESPONSE_SERVICE_ID));
@@ -365,10 +367,12 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
         requestData.setLinearStartDate(String.valueOf(hashMap.get(JsonContents.META_RESPONSE_AVAIL_START_DATE)));
         requestData.setLinearEndDate(String.valueOf(hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE)));
         requestData.setSearchOk(hashMap.get(JsonContents.META_RESPONSE_SEARCH_OK));
-        requestData.setIsNotify(hashMap.get(JsonContents.META_RESPONSE_DISP_TYPE),
-                hashMap.get(JsonContents.META_RESPONSE_CONTENT_TYPE),
+        requestData.setIsNotify(dispType, contentsType,
                 String.valueOf(hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE)),
                 hashMap.get(JsonContents.META_RESPONSE_TV_SERVICE), hashMap.get(JsonContents.META_RESPONSE_DTV));
+        requestData.setDispType(dispType);
+        requestData.setContentType(contentsType);
+//        requestData.setTableType(decisionTableType(contentsType, contentsType));
         return requestData;
     }
     /**

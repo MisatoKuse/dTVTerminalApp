@@ -136,6 +136,9 @@ public class TvClipDataProvider implements TvClipWebClient.TvClipJsonParserCallb
             String tvService = map.get(JsonContents.META_RESPONSE_TV_SERVICE);
             String dTv = map.get(JsonContents.META_RESPONSE_DTV);
             requestData.setIsNotify(dispType, contentsType, linearEndDate, tvService, dTv);
+            requestData.setDispType(dispType);
+            requestData.setContentType(contentsType);
+//            requestData.setTableType(decisionTableType(contentsType, contentsType));
             rankingContentInfo.setRequestData(requestData);
 
             rankingContentsDataList.add(rankingContentInfo);

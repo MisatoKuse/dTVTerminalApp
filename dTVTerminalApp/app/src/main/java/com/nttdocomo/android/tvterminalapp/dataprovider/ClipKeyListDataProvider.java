@@ -5,16 +5,19 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
+import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.WeeklyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ClipKeyListInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.ClipKeyListDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipKeyListWebClient;
 
@@ -22,10 +25,16 @@ import java.util.List;
 import java.util.Map;
 
 
-public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyListJsonParserCallback, ClipKeyListWebClient.VodClipKeyListJsonParserCallback {
+public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyListJsonParserCallback,
+        ClipKeyListWebClient.VodClipKeyListJsonParserCallback, DbThread.DbOperation {
     private Context mContext;
     protected boolean mRequiredClipKeyList = false;
     protected ClipKeyListResponse mResponse = null;
+
+    private ClipRequestData mClipRequestData = null;
+
+    private static final int CLIP_ROW_DELETE = 0;
+    private static final int CLIP_ROW_INSERT = 1;
 
     @Override
     public void onTvClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
@@ -266,11 +275,46 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         return clipKeyList != null && clipKeyList.size() > 0;
     }
 
-    public void clipResultDelete() {
+    public void clipResultDelete(ClipRequestData data) {
+        mClipRequestData = data;
+        //DB操作
+        Handler handler = new Handler(); //チャンネル情報更新
+        try {
+            DbThread t = new DbThread(handler, this, CLIP_ROW_DELETE);
+            t.start();
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+        }
+    }
+
+    public void clipResultInsert(ClipRequestData data) {
+        mClipRequestData = data;
+        //DB操作
+        Handler handler = new Handler(); //チャンネル情報更新
+        try {
+            DbThread t = new DbThread(handler, this, CLIP_ROW_INSERT);
+            t.start();
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+        }
+    }
+
+    @Override
+    public void onDbOperationFinished(boolean isSuccessful, List<Map<String, String>> resultSet, int operationId) {
 
     }
 
-    public void clipResultInsert() {
-
+    @Override
+    public List<Map<String, String>> dbOperation(int operationId) throws Exception {
+        switch (operationId) {
+            case CLIP_ROW_DELETE:
+//                ClipKeyListDao.TABLE_TYPE tableType = decisionTableType(dispType, contentsType);
+                break;
+            case CLIP_ROW_INSERT:
+                break;
+            default:
+                break;
+        }
+        return null;
     }
 }
