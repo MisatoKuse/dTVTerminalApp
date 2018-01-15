@@ -301,7 +301,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
 
     @Override
     public void onDbOperationFinished(boolean isSuccessful, List<Map<String, String>> resultSet, int operationId) {
-
+        //TODO:DB保存後の処理があればここに記載
     }
 
     @Override
