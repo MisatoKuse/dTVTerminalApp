@@ -170,7 +170,7 @@ public class DtvContentsDetailFragment extends Fragment {
             public void onClick(View view) {
                 //クリップボタンイベント
                 if (mIsContract) {
-                    ((BaseActivity) mActivity).sendClipRequest(setClipData(mOtherContentsDetailData.getVodMetaFullData()));
+                    ((BaseActivity) mActivity).sendClipRequest(setClipData(mOtherContentsDetailData.getVodMetaFullData()), clipButton);
                 } else {
                     //未契約時は契約導線を表示するためActivityに通知
                     ((DtvContentsDetailActivity) mActivity).leadingContract();
