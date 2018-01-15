@@ -21,13 +21,23 @@ public class ClipKeyListDao {
 
     // SQLiteDatabase
     private SQLiteDatabase db;
+    public static final String META_DISP_TYPE_TV_PROGRAM = "tv_program";
+    public static final String META_DTV_FLAG_FALSE = "0";
+    public static final String META_DTV_FLAG_TRUE = "1";
 
+
+    /**
+     * コンテンツの種類
+     */
     public enum CONTENT_TYPE {
         TV,
         VOD,
         DTV
     }
 
+    /**
+     * テーブルの種類
+     */
     public enum TABLE_TYPE {
         TV,
         VOD,
