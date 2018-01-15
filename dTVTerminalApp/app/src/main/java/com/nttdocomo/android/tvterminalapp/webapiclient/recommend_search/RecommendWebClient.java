@@ -66,8 +66,8 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback,
      */
     public static final String AIRTIME = "airtime";
 
-    //ホーム画面用最大件数.
-    public static final String HOME_PAGE_MAX = "10&";
+    //ホーム画面用最大件数（レコメンド情報の先読み分を含むので、100件に増加）.
+    public static final String HOME_PAGE_MAX = "100&";
 
     //ホーム画面用開始位置.
     public static final String HOME_PAGE_START = "1&";

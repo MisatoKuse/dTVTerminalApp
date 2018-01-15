@@ -174,16 +174,10 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                 //項目の色を取得する
                 ColorUtils colorUtils = new ColorUtils(mContext);
 
-                if (null != mMenuDisplayEventListener &&
-                        title.getCurrentTextColor() !=
-                                ColorUtils.getColor(mContext,R.color.gray_text)) {
-                    //レコメンド情報の事前ロードが終わっていた場合は、文字色は灰色ではないので、アクティビティを呼び出す
-                    mMenuDisplayEventListener.onMenuItemSelected(MenuItem.RECOMMEND_PRO_VIDEO);
-                    if (!(mActivity instanceof RecommendActivity)) {
-                        intent.setClass(mActivity, RecommendActivity.class);
-                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
-                        mActivity.startActivity(intent);
-                    }
+                if (null != mMenuDisplayEventListener) {
+                    intent.setClass(mActivity, RecommendActivity.class);
+                    intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                    mActivity.startActivity(intent);
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_staff_recommend))) {
                 if (null != mMenuDisplayEventListener) {

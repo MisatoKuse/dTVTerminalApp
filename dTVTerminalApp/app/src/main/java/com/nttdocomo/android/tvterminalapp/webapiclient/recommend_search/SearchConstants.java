@@ -18,11 +18,6 @@ public class SearchConstants {
 
     public static class RecommendList {
         public static final int requestMaxCount_Recommend = 20;
-
-        /**
-         * ホーム画面で事前に先読みする件数.
-         */
-        public static final int REQUEST_MAX_CCOUNT_RECOMMEND_PRELOAD = 100;
     }
 
     public static class RecommendResponseErrorId {

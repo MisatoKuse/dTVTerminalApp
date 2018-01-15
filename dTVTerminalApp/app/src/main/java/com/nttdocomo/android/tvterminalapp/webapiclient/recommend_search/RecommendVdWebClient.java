@@ -42,7 +42,7 @@ public class RecommendVdWebClient extends WebApiBase implements WebApiCallback {
         //開始位置
         queryItems.put(RecommendWebClient.START_INDEX, RecommendWebClient.HOME_PAGE_START);
 
-        //最大件数
+        //最大件数(おすすめ画面用の先読みもここで行うので、件数を100件に変更)
         queryItems.put(RecommendWebClient.MAX_RESULT, RecommendWebClient.HOME_PAGE_MAX);
 
         //TODO: ページIDは払い出されていないのでダミー値
