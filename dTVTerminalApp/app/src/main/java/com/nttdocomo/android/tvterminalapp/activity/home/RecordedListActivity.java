@@ -359,7 +359,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         List<ContentsData> list = baseFragment.getContentsData();
         if (list != null) {
             list.clear();
-            File file = new File(getCacheDir().getPath());
+            File file = new File(baseFragment.getDownloadPath(this));
             File listFiles[] = file.listFiles();
             if(listFiles != null && listFiles.length > 0){
                 for(File file1: listFiles){
@@ -473,8 +473,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     private boolean serviceIsStart(List<ActivityManager.RunningServiceInfo> list, String className) {
         for (int i = 0; i < list.size(); i++) {
-            if (className.equals(list.get(i).service.getClassName()))
+            if (className.equals(list.get(i).service.getClassName())){
                 return true;
+            }
         }
         return false;
     }

@@ -62,10 +62,10 @@ public class DownLoadListDataManager {
     }
 
     /**
-     * 持ち出しのダウンロード情報をDBに更新する。
+     * 持ち出しのダウンロード情報をDBに格納する。
      *
      */
-    public void updateDownload(DlData dlDatas) {
+    public void deleteDownloadAllContents() {
 
         //各種オブジェクト作成
         DBHelper downLoadListDBHelper = new DBHelper(mContext);
@@ -73,11 +73,7 @@ public class DownLoadListDataManager {
         SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
         DownLoadListDao downloadListDao = new DownLoadListDao(database);
 
-        //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
-        ContentValues values = new ContentValues();
-        values.put(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID, dlDatas.getItemId());
-        values.put(DBConstants.DOWNLOAD_LIST_COLUM_SIZE, dlDatas.getTotalSize());
-        downloadListDao.updatebyItemId(values, dlDatas.getItemId());
+        downloadListDao.delete();
         DataBaseManager.getInstance().closeDatabase();
     }
 

@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
@@ -34,6 +35,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
+import com.nttdocomo.android.tvterminalapp.jni.activation.NewEnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.service.download.DlData;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProviderListener;
@@ -63,6 +65,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     public List<Integer> queIndex = new ArrayList<>();
     private Handler mHandler = new Handler();
     private final int mPercentToUpdateUi = 1;
+    private Activity activity;
 
     @Override
     public Context getContext() {
@@ -158,10 +161,10 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             if(que != null && que.size() > 0){
                 showMessage("ダウンロード中のため、再生できません");
             } else {
-                if(getActivity() != null){
-                    if(((RecordedListActivity)getActivity()).getCurrentPosition() == 0){
+                if(activity != null){
+                    if(((RecordedListActivity)activity).getCurrentPosition() == 0){
                         Intent intent = new Intent(mActivity, DtvContentsDetailActivity.class);
-                        intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
+                        intent.putExtra(DTVTConstants.SOURCE_SCREEN, activity.getComponentName().getClassName());
                         intent.putExtra(RecordedListActivity.RECORD_LIST_KEY, mContentsList.get(i));
                         startActivity(intent);
                     }
@@ -170,13 +173,28 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         }
     }
 
+    private static final int DOWNLAD_PROGRESS = 1;
+
+    private Handler downLoadStatusHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case DOWNLAD_PROGRESS:
+                    if(queIndex.size() > 0){
+                        int percent = (int) msg.obj;
+                        setDownloadStatus(queIndex.get(0), percent);
+                    }
+                    break;
+            }
+        }
+    };
+
     @Override
     public void onStart(int totalFileByteSize) {
-        Activity act= getActivity();
-        if(null==act){
+        if(null==activity){
             return;
         }
-        act.runOnUiThread(new Runnable() {
+        activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if(queIndex.size() > 0){
@@ -200,12 +218,11 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     public void dlDataProviderUnavailable() {
 
     }
-
     @Override
     public void onProgress(int receivedBytes, int percent) {
         final int newPercent = percent;
-        if(getActivity() != null){
-            getActivity().runOnUiThread(new Runnable() {
+        if(activity != null){
+            activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     if(queIndex.size() > 0){
@@ -214,6 +231,17 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 }
             });
         }
+//        Message msg = Message.obtain(downLoadStatusHandler, DOWNLAD_PROGRESS, percent);
+//        downLoadStatusHandler.sendMessage(msg);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            activity = (Activity) context;
+        }
+
     }
 
     @Override
@@ -260,11 +288,10 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
 
     @Override
     public void onSuccess(String fullPath) {
-        if(getActivity() != null){
-            getActivity().runOnUiThread(new Runnable() {
+        if(activity != null){
+            activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-//                    showMessage("download success");
                     DTVTLogger.debug("HandlerThread:"+Thread.currentThread().getId());
                     if(queIndex.size() > 0){
                         View view = mRecordedListview.getChildAt(queIndex.get(0)-mRecordedListview.getFirstVisiblePosition());
@@ -460,17 +487,15 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         dtcpDownloadParam.setCleartextSize(clearTextSizeInt);
         dtcpDownloadParam.setItemId(item.getItemId());
         dtcpDownloadParam.setPercentToNotify(mPercentToUpdateUi);
-
         String xml=getXmlToDl(item.getItemId());
         if(null==xml){
             showMessage("Xmlパラメーター取得失敗しまして、ダウンロードできません。");
             return false;
         }
         dtcpDownloadParam.setXmlToDl(xml);
-
         if (mDlDataProvider == null) {
             try {
-                mDlDataProvider = new DlDataProvider(getActivity(), this);
+                mDlDataProvider = new DlDataProvider(activity, this);
             } catch (Exception e) {
                 e.printStackTrace();
                 showMessage("DlDataProvider初期化失敗しまして、ダウンロードできません。");
@@ -479,6 +504,8 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         }
         if(!DownloadService.isBinded){
             mDlDataProvider.beginProvider();
+        } else {
+            mDlDataProvider.rebind();
         }
         return true;
     }
@@ -502,12 +529,12 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
      * Get save path
      * @return
      */
-    private String getDownloadPath(Context context){
+    public String getDownloadPath(Context context){
         if(null==context){
             return null;
         }
         Boolean isInternal= SharedPreferencesUtils.getSharedPreferencesStoragePath(context);
-        String internalPaht= EnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP); //内部ストレージ
+        String internalPaht= NewEnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP); //内部ストレージ
         if(isInternal){
             return internalPaht;
         }
@@ -599,10 +626,10 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     public void onDestroy() {
         super.onDestroy();
         if(mDlDataProvider != null){
-            mActivity.unbindService(mDlDataProvider);
-            if(que.size() > 0){
-                mDlDataProvider.setQue(que);
+            if(mDlDataProvider.isRegistered){
+                mActivity.unbindService(mDlDataProvider);
             }
+            mDlDataProvider.setQue(que);
         }
     }
 

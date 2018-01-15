@@ -33,6 +33,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     private Activity mActivity;
     private DlData dlData;
     private String itemId;
+    public boolean isRegistered;
 
     public DlDataProvider(Activity activity, DlDataProviderListener dlDataProviderListener) throws Exception {
         if (null == activity) {
@@ -55,7 +56,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
         DownloadService.isBinded = true;
         Intent intent = new Intent(mActivity, DownloadService.class);
-        mActivity.bindService(intent, this, Context.BIND_AUTO_CREATE);
+        isRegistered = mActivity.bindService(intent, this, Context.BIND_AUTO_CREATE);
         startService();
     }
 
@@ -235,7 +236,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
 
     @Override
     public void onProgress(int receivedBytes, int percent) {
-        if (null != mDlDataProviderListener) {
+        if (null != mDlDataProviderListener && DownloadService.isBinded) {
             mDlDataProviderListener.onProgress(receivedBytes, percent);
         }
     }
@@ -251,7 +252,8 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     public void onSuccess(String fullPath) {
         if(!TextUtils.isEmpty(fullPath)){
             if(fullPath.contains(File.separator)){
-                itemId = fullPath.split(File.separator)[1];
+                String paths[] = fullPath.split(File.separator);
+                itemId = fullPath.split(File.separator)[paths.length-1];
                 if(!TextUtils.isEmpty(itemId)){
                     updateDownloadStatusToDb();
                 }
@@ -324,6 +326,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     private static final int DOWNLOAD_INSERT = 2;
     private static final int DOWNLOAD_UPDATE = 3;
     private static final int DOWNLOAD_TOTALSIZE_SELECT = 4;
+    private static final int DOWNLOAD_DELETE_ALL = 5;
 
     public void getDownLoadStatus() {
         dbOperationByThread(DOWNLOAD_STATUS_SELECT);
@@ -386,6 +389,9 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                     downLoadListDataManager.updateDownloadByItemId(itemId);
                 }
                 break;
+            case DOWNLOAD_DELETE_ALL:
+                downLoadListDataManager.deleteDownloadAllContents();
+                break;
             default:
                 break;
         }
@@ -400,12 +406,15 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     public void deleteAllDownLoadContents(){
         DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(mActivity);
         List<Map<String, String>> downLoadList = downLoadListDataManager.selectDownLoadList();
-        for(int i=0; i < downLoadList.size(); i++){
-            Map<String, String> hashMap = downLoadList.get(i);
-            String path = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL);
-            if(!TextUtils.isEmpty(path)){
-                deleteAllFiles(new File(path));
+        if(downLoadList != null && downLoadList.size() > 0){
+            for(int i=0; i < downLoadList.size(); i++){
+                Map<String, String> hashMap = downLoadList.get(i);
+                String path = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL);
+                if(!TextUtils.isEmpty(path)){
+                    deleteAllFiles(new File(path));
+                }
             }
+            downLoadListDataManager.deleteDownloadAllContents();
         }
     }
 
@@ -416,7 +425,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                 if (f.isDirectory()) {
                     deleteAllFiles(f);
                     try {
-                        if (f.delete()) {
+                        if (!f.delete()) {
                             DTVTLogger.debug("delete download file fail ");
                         }
                     } catch (Exception e) {
@@ -426,7 +435,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                     if (f.exists()) {
                         deleteAllFiles(f);
                         try {
-                            if (f.delete()) {
+                            if (!f.delete()) {
                                 DTVTLogger.debug("delete download file fail ");
                             }
                         } catch (Exception e) {
@@ -450,7 +459,10 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     private void updateDownloadStatusToDb(){
-        dbOperationByThread(DOWNLOAD_UPDATE);
+        if(mActivity != null){
+            DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(mActivity);
+            downLoadListDataManager.updateDownloadByItemId(itemId);
+        }
     }
 
     public void setQue(List<DlData> dlData) {
