@@ -32,6 +32,9 @@ public class ClipKeyListDataManager {
     /**
      * クリップキー一覧を返却する
      *
+     * @param type      テーブルの種類
+     * @param selection WHERE句
+     * @param args
      * @return
      */
     public List<Map<String, String>> selectClipKeyListData(ClipKeyListDao.TABLE_TYPE type, String selection, String[] args) {
@@ -57,15 +60,21 @@ public class ClipKeyListDataManager {
         return list;
     }
 
+    /**
+     * コンテンツの種類によってWHERE句を変える
+     *
+     * @param contentType
+     * @return
+     */
     private String getSQLWhereStr(ClipKeyListDao.CONTENT_TYPE contentType) {
         StringBuilder strBuilder = new StringBuilder();
 
         switch (contentType) {
-            case TV:
+            case VOD:
                 strBuilder.append(JsonContents.META_RESPONSE_CRID)
                         .append(" = ? ");
                 break;
-            case VOD:
+            case TV:
                 strBuilder.append(JsonContents.META_RESPONSE_SERVICE_ID)
                         .append(" = ? ,")
                         .append(JsonContents.META_RESPONSE_EVENT_ID)
@@ -81,24 +90,54 @@ public class ClipKeyListDataManager {
         return strBuilder.toString();
     }
 
-    public List<Map<String, String>> selectVodData(ClipKeyListDao.TABLE_TYPE tableType, String serviceId, String eventId, String type) {
+    /**
+     * TVコンテンツのクリップキーをID指定取得
+     *
+     * @param tableType
+     * @param serviceId
+     * @param eventId
+     * @param type
+     * @return
+     */
+    public List<Map<String, String>> selectClipKeyDbTvData(ClipKeyListDao.TABLE_TYPE tableType, String serviceId, String eventId, String type) {
         String[] args = {serviceId, eventId, type};
-        String selection = getSQLWhereStr(ClipKeyListDao.CONTENT_TYPE.VOD);
-        return selectClipKeyListData(tableType, selection, args);
-    }
-
-    public List<Map<String, String>> selectdTVData(ClipKeyListDao.TABLE_TYPE tableType, String titleId) {
-        String[] args = {titleId};
-        String selection = getSQLWhereStr(ClipKeyListDao.CONTENT_TYPE.DTV);
-        return selectClipKeyListData(tableType, selection, args);
-    }
-
-    public List<Map<String, String>> selectTvData(ClipKeyListDao.TABLE_TYPE tableType, String crid) {
-        String[] args = {crid};
         String selection = getSQLWhereStr(ClipKeyListDao.CONTENT_TYPE.TV);
         return selectClipKeyListData(tableType, selection, args);
     }
 
+    /**
+     * dTVコンテンツのクリップキーをID指定取得
+     *
+     * @param tableType
+     * @param titleId
+     * @return
+     */
+    public List<Map<String, String>> selectClipKeyDbDtvData(ClipKeyListDao.TABLE_TYPE tableType, String titleId) {
+        String[] args = {titleId};
+        String selection = getSQLWhereStr(ClipKeyListDao.CONTENT_TYPE.DTV);
+
+        return selectClipKeyListData(tableType, selection, args);
+    }
+
+    /**
+     * VODコンテンツのクリップキーをID指定取得
+     *
+     * @param tableType
+     * @param crid
+     * @return
+     */
+    public List<Map<String, String>> selectClipKeyDbVodData(ClipKeyListDao.TABLE_TYPE tableType, String crid) {
+        String[] args = {crid};
+        String selection = getSQLWhereStr(ClipKeyListDao.CONTENT_TYPE.VOD);
+        return selectClipKeyListData(tableType, selection, args);
+    }
+
+    /**
+     * 引数指定のクリップキーテーブルから一覧を取得
+     *
+     * @param tableType
+     * @return
+     */
     public List<Map<String, String>> selectListData(ClipKeyListDao.TABLE_TYPE tableType) {
         return selectClipKeyListData(tableType, null, null);
     }
