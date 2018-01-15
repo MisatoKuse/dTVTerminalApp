@@ -42,7 +42,9 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaProvRecVideo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoListener;
+import com.nttdocomo.android.tvterminalapp.service.download.DlData;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
+import com.nttdocomo.android.tvterminalapp.service.download.DlDataProviderListener;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadService;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloaderBase;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
@@ -94,6 +96,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private static final String DATE_FORMAT = "yyyy/MM/ddHH:mm:ss";
     private String mDate[] = {"日", "月", "火", "水", "木", "金", "土"};
     public ArrayList<DlnaRecVideoItem> mList;
+    TextView textViewPercent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -359,17 +362,27 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         List<ContentsData> list = baseFragment.getContentsData();
         if (list != null) {
             list.clear();
-            File file = new File(baseFragment.getDownloadPath(this));
-            File listFiles[] = file.listFiles();
-            if(listFiles != null && listFiles.length > 0){
-                for(File file1: listFiles){
-                    if(file1.isDirectory()){
-                        continue;
+            List<Map<String, String>> resultList = getDownloadListFromDb();
+            if(resultList != null && resultList.size() > 0){
+                for (int i = 0; i < resultList.size(); i++) {
+                    Map<String, String> hashMap = resultList.get(i);
+                    String downloadStatus = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
+                    if(!TextUtils.isEmpty(downloadStatus)){
+                        String path = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL);
+                        String itemId = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
+                        String title = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_TITLE);
+                        String fullPath = path + File.separator + itemId;
+                        File file = new File(fullPath);
+                        if(file.isDirectory()){
+                            continue;
+                        }
+                        if(file.exists()){
+                            ContentsData contentsData = new ContentsData();
+                            contentsData.setTitle(title);
+                            contentsData.setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
+                            list.add(contentsData);
+                        }
                     }
-                    ContentsData contentsData = new ContentsData();
-                    contentsData.setTitle(file1.getName());
-                    contentsData.setDownloadFlg(-1);
-                    list.add(contentsData);
                 }
             }
             baseFragment.notifyDataSetChanged();
@@ -423,6 +436,82 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     public int getCurrentPosition(){
         return mViewPager.getCurrentItem();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(isDownloadServiceRunning()){
+            textViewPercent = findViewById(R.id.record_list_main_layout_percent);
+            try{
+                DlDataProvider mDlDataProvider = new DlDataProvider(this, dlDataProviderListener);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    DlDataProviderListener dlDataProviderListener = new DlDataProviderListener() {
+        @Override
+        public void dlDataProviderAvailable() {
+
+        }
+
+        @Override
+        public void dlDataProviderUnavailable() {
+
+        }
+
+        @Override
+        public void onDownLoadListCallBack(List<DlData> list) {
+
+        }
+
+        @Override
+        public void onStart(int totalFileByteSize) {
+
+        }
+
+        @Override
+        public void onPause() {
+
+        }
+
+        @Override
+        public void onResume() {
+
+        }
+
+        @Override
+        public void onProgress(int receivedBytes, int percent) {
+            final int newPercent = percent;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    textViewPercent.setText("download " + newPercent + "%");
+                }
+            });
+        }
+
+        @Override
+        public void onFail(DLError error) {
+
+        }
+
+        @Override
+        public void onSuccess(String fullPath) {
+
+        }
+
+        @Override
+        public void onCancel() {
+
+        }
+
+        @Override
+        public void onLowStorageSpace() {
+
+        }
+    };
 
     /**
      * フラグメントをクリア
@@ -566,7 +655,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             public void run() {
                 baseFrgament.notifyDataSetChanged();
                 if(baseFrgament.queIndex.size() > 0){
-                    baseFrgament.bindServiceFromBackgroud(isDownloadServiceRunning());
+//                    baseFrgament.bindServiceFromBackgroud(isDownloadServiceRunning());
                 }
             }
         });

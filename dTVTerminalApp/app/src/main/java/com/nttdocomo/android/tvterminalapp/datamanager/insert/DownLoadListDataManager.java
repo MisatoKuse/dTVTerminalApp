@@ -62,7 +62,7 @@ public class DownLoadListDataManager {
     }
 
     /**
-     * 持ち出しのダウンロード情報をDBに格納する。
+     * 持ち出しのダウンロード情報をDBから削除する。
      *
      */
     public void deleteDownloadAllContents() {
@@ -74,6 +74,22 @@ public class DownLoadListDataManager {
         DownLoadListDao downloadListDao = new DownLoadListDao(database);
 
         downloadListDao.delete();
+        DataBaseManager.getInstance().closeDatabase();
+    }
+
+    /**
+     * 持ち出しのダウンロード情報をDBに格納する。
+     *
+     */
+    public void deleteDownloadContentByItemId(String itemId) {
+
+        //各種オブジェクト作成
+        DBHelper downLoadListDBHelper = new DBHelper(mContext);
+        DataBaseManager.initializeInstance(downLoadListDBHelper);
+        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        DownLoadListDao downloadListDao = new DownLoadListDao(database);
+
+        downloadListDao.deleteByItemId(itemId);
         DataBaseManager.getInstance().closeDatabase();
     }
 

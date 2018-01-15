@@ -584,18 +584,15 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                                 }
                             }
                             if ((int) view.getTag() == queIndex.get(i)) {
+                                StringBuilder path=new StringBuilder();
+                                path.append(que.get(i).getSaveFile());
+                                path.append(File.separator);
+                                path.append(DownloaderBase.getFileNameById(que.get(i).getItemId()));
+                                mDlDataProvider.cancelDownLoadStatus(path.toString());
                                 que.remove(i);
                                 queIndex.remove(i);
                                 break;
                             }
-                        }
-                    }
-                    //コンテンツを削除する
-                    String fileName = mContentsList.get((int) view.getTag()).getTitle();
-                    File file = new File(getContext().getCacheDir().getPath() + "/" + fileName);
-                    if(file.exists()){
-                        if(file.delete()) {
-                            Toast.makeText(getContext(), "delete success", Toast.LENGTH_SHORT).show();
                         }
                     }
                     setDownloadStatusClear(view);

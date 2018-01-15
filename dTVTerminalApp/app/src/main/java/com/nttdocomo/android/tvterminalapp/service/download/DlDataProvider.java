@@ -253,7 +253,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         if(!TextUtils.isEmpty(fullPath)){
             if(fullPath.contains(File.separator)){
                 String paths[] = fullPath.split(File.separator);
-                itemId = fullPath.split(File.separator)[paths.length-1];
+                itemId = fullPath.split(File.separator)[paths.length - 1];
                 if(!TextUtils.isEmpty(itemId)){
                     updateDownloadStatusToDb();
                 }
@@ -398,6 +398,26 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         return resultSet;
     }
 
+    public void cancelDownLoadStatus(String path){
+        if(!TextUtils.isEmpty(path)){
+            if(path.contains(File.separator)){
+                String paths[] = path.split(File.separator);
+                itemId = path.split(File.separator)[paths.length - 1];
+                if(!TextUtils.isEmpty(itemId)){
+                    DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(mActivity);
+                    downLoadListDataManager.deleteDownloadContentByItemId(itemId);
+                    //ディスクからコンテンツを削除する
+                    File file = new File(path);
+                    if(file.exists()){
+                        if(!file.delete()) {
+                            DTVTLogger.debug("delete cacel file fail ");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public List<Map<String, String>> getDownloadListData(){
         DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(mActivity);
         return downLoadListDataManager.selectDownLoadList();
@@ -418,7 +438,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
     }
 
-    public void deleteAllFiles(File root) {
+    private void deleteAllFiles(File root) {
         File files[] = root.listFiles();
         if (files != null){
             for (File f : files) {
