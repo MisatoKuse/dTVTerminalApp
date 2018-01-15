@@ -288,28 +288,30 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         itemViewHolder.mContent.setText(title);
         String detail = itemSchedule.getDetail();
         itemViewHolder.mDetail.setText(detail);
-        changeProgramInfoInOrderShow(itemViewHolder);
+        changeProgramInfoInOrderToShow(itemViewHolder);
     }
 
     /**
      * 番組情報表示順変更
      * @param itemViewHolder
      */
-    private void changeProgramInfoInOrderShow(final ItemViewHolder itemViewHolder) {
-        itemViewHolder.mContent.getViewTreeObserver().addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        itemViewHolder.mContent.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        displayProgramTitle(itemViewHolder);
-                    }
-                });
-        itemViewHolder.mDetail.getViewTreeObserver().addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener() {
+    private void changeProgramInfoInOrderToShow(final ItemViewHolder itemViewHolder) {
+        itemViewHolder.mContent.getViewTreeObserver()//タイトル
+                .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
-            public void onGlobalLayout() {
-                itemViewHolder.mDetail.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            public boolean onPreDraw() {
+                itemViewHolder.mContent.getViewTreeObserver().removeOnPreDrawListener(this);
+                displayProgramTitle(itemViewHolder);
+                return true;
+            }
+        });
+        itemViewHolder.mDetail.getViewTreeObserver()//詳細エピソード
+                .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                itemViewHolder.mContent.getViewTreeObserver().removeOnPreDrawListener(this);
                 displayProgramEpi(itemViewHolder);
+                return true;
             }
         });
     }
