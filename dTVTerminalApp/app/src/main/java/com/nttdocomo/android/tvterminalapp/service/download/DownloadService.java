@@ -25,7 +25,11 @@ public class DownloadService extends Service implements DownloadListener {
     private String mData;
     private static final int DOWNLOAD_SERVICE_ID = 1;
     public static List<DlData> dlDataQue = new ArrayList<>();
-    public static boolean isBinded = false;
+    public static int BINDSTATUS = 0;
+    public static final int UNBINED = 1;
+    public static final int BINDED = 2;
+    public static final int BACKGROUD = 3;
+
     public static final String DONWLOAD_UPDATE = "update";
     public static final String DONWLOAD_SUCCESS = "success";
 

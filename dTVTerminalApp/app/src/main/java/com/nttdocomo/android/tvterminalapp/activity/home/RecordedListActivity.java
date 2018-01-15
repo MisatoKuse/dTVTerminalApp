@@ -582,10 +582,21 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 baseFrgament.notifyDataSetChanged();
                 if(baseFrgament.queIndex.size() > 0){
                     baseFrgament.bindServiceFromBackgroud(isDownloadServiceRunning());
-                    registReceiver();
                 }
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registReceiver();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(downloadReceiver);
     }
 
     private void registReceiver(){
@@ -600,10 +611,12 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         @Override
         public void onReceive(Context context, Intent intent) {
             if (DownloadService.DONWLOAD_UPDATE.equals(intent.getAction())) {
-                int progress = intent.getIntExtra("progress", 0);
-                setTitleText("download " + progress + "%");
+                int progress = intent.getIntExtra(DownloadService.DONWLOAD_UPDATE, 0);
+                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+                baseFragment.setDownladProgressByBg(progress);
             } else if (DownloadService.DONWLOAD_SUCCESS.equals(intent.getAction())) {
-                Toast.makeText(RecordedListActivity.this,"download success------",Toast.LENGTH_SHORT).show();
+                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+                baseFragment.setDownladSuccessByBg();
             }
         }
     };
