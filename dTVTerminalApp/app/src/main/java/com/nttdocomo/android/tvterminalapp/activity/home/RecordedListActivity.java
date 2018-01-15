@@ -5,7 +5,10 @@
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
 import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -579,10 +582,31 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 baseFrgament.notifyDataSetChanged();
                 if(baseFrgament.queIndex.size() > 0){
                     baseFrgament.bindServiceFromBackgroud(isDownloadServiceRunning());
+                    registReceiver();
                 }
             }
         });
     }
+
+    private void registReceiver(){
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(DownloadService.DONWLOAD_UPDATE);
+        filter.addAction(DownloadService.DONWLOAD_SUCCESS);
+        registerReceiver(downloadReceiver, filter);
+    }
+
+    private BroadcastReceiver downloadReceiver = new BroadcastReceiver(){
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (DownloadService.DONWLOAD_UPDATE.equals(intent.getAction())) {
+                int progress = intent.getIntExtra("progress", 0);
+                setTitleText("download " + progress + "%");
+            } else if (DownloadService.DONWLOAD_SUCCESS.equals(intent.getAction())) {
+                Toast.makeText(RecordedListActivity.this,"download success------",Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
 
     @Override
     public void onDeviceLeave(DlnaDMSInfo curInfo, String leaveDmsUdn) {
