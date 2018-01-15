@@ -52,6 +52,7 @@ import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
+import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -750,20 +751,43 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         } else {
             type2 = type;
         }
-        mCurrentMediaInfo = new MediaVideoInfo(
-                uri,           //uri
-                type2,         //"application/x-dtcp1", "video/mp4", RESOURCE_MIMETYPE
-                0,             //SIZE
-                duration,      //DURATION
-                0,             //BITRATE
-                true,         //IS_SUPPORTED_BYTE_SEEK
-                true,         //IS_SUPPORTED_TIME_SEEK
-                true,         //IS_AVAILABLE_CONNECTION_STALLING
-                true,         //IS_LIVE_MODE
-                false,        //IS_REMOTE
-                title,         //TITLE
-                contentFormat
-        );
+
+        boolean isDownloaded= ( ContentsAdapter.DOWNLOAD_STATUS_COMPLETED == datas.getDownLoadStatus() );
+        if(!isDownloaded) {
+            mCurrentMediaInfo = new MediaVideoInfo(
+                    uri,           //uri
+                    type2,         //"application/x-dtcp1", "video/mp4", RESOURCE_MIMETYPE
+                    0,             //SIZE
+                    duration,      //DURATION
+                    0,             //BITRATE
+                    true,         //IS_SUPPORTED_BYTE_SEEK
+                    true,         //IS_SUPPORTED_TIME_SEEK
+                    true,         //IS_AVAILABLE_CONNECTION_STALLING
+                    true,         //IS_LIVE_MODE
+                    false,        //IS_REMOTE
+                    title,         //TITLE
+                    contentFormat
+            );
+        } else {
+            String dlFile= datas.getDlFileFullPath();
+            StringBuilder sb=new StringBuilder("file://");
+            sb.append(dlFile);
+            uri = Uri.parse(sb.toString());
+            mCurrentMediaInfo = new MediaVideoInfo(
+                    uri,           //uri
+                    type2,         //"application/x-dtcp1", "video/mp4", RESOURCE_MIMETYPE
+                    0,             //SIZE
+                    duration,      //DURATION
+                    0,             //BITRATE
+                    true,         //IS_SUPPORTED_BYTE_SEEK
+                    true,         //IS_SUPPORTED_TIME_SEEK
+                    false,         //IS_AVAILABLE_CONNECTION_STALLING
+                    false,         //IS_LIVE_MODE
+                    false,        //IS_REMOTE
+                    title,         //TITLE
+                    contentFormat
+            );
+        }
 
         DTVTLogger.end();
         return true;

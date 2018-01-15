@@ -81,6 +81,8 @@ public class ContentsData {
     private int mDownloadFlg = 0;
     //ダウンロードステータス（進捗）
     private String mDownloadStatus = null;
+    //ダウンロードパス
+    private String mDlFileFullPath = null;
 
     // チャンネルID
     private String mChannelId = null;
@@ -448,5 +450,13 @@ public class ContentsData {
 
     public void setClipStatus(boolean mClipStatus) {
         this.mClipStatus = mClipStatus;
+    }
+
+    public void setDlFileFullPath(String path){
+        mDlFileFullPath=path;
+    }
+
+    public String getDlFileFullPath(){
+        return mDlFileFullPath;
     }
 }

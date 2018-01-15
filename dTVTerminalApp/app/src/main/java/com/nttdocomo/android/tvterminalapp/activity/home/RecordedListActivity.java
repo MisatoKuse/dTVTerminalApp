@@ -382,6 +382,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                             ContentsData contentsData = new ContentsData();
                             contentsData.setTitle(title);
                             contentsData.setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
+                            contentsData.setDlFileFullPath(fullPath);
                             list.add(contentsData);
                         }
                     }
@@ -527,11 +528,14 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 for (int j = 0; j < resultList.size(); j++) {
                     Map<String, String> hashMap = resultList.get(j);
                     String itemId = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
+                    String path = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL);
+                    String fullPath = path + File.separator + itemId;
                     if(!TextUtils.isEmpty(itemId)){
                         if(itemId.equals(DownloaderBase.getFileNameById(itemData.mItemId))){
                             String downloadStatus = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
                             if(!TextUtils.isEmpty(downloadStatus)){
                                 detailData.setDownLoadStatus(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
+                                detailData.setDlFileFullPath(fullPath);
                             } else {
                                 detailData.setDownLoadStatus(ContentsAdapter.DOWNLOAD_STATUS_LOADING);
                                 baseFrgament.queIndex.add(i);
@@ -616,7 +620,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 baseFragment.setDownladProgressByBg(progress);
             } else if (DownloadService.DONWLOAD_SUCCESS.equals(intent.getAction())) {
                 RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
-                baseFragment.setDownladSuccessByBg();
+                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_PATH);
+                baseFragment.setDownladSuccessByBg(fullPath);
             }
         }
     };

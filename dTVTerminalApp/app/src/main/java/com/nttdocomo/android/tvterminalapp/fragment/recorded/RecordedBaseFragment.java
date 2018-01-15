@@ -288,18 +288,19 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
 
     @Override
     public void onSuccess(String fullPath) {
+        final String fullPath2=fullPath;
         if(activity != null){
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     DTVTLogger.debug("HandlerThread:"+Thread.currentThread().getId());
-                    setSuccessStatus();
+                    setSuccessStatus(fullPath2);
                 }
             });
         }
     }
 
-    private void setSuccessStatus(){
+    private void setSuccessStatus(String fullPath){
         if(queIndex.size() > 0){
             View view = mRecordedListview.getChildAt(queIndex.get(0)-mRecordedListview.getFirstVisiblePosition());
             if (view != null) {
@@ -308,6 +309,10 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             }
             mContentsData.get(queIndex.get(0)).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
             mContentsData.get(queIndex.get(0)).setDownloadStatus("");
+            int idx= queIndex.get(0);
+            if(null!=mContentsList){
+                mContentsList.get(idx).setDlFileFullPath(fullPath);
+            }
         }
         if(que.size() > 0){
             que.remove(0);
@@ -537,8 +542,8 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         }
     }
 
-    public void setDownladSuccessByBg(){
-         setSuccessStatus();
+    public void setDownladSuccessByBg(String fullPath){
+         setSuccessStatus(fullPath);
     }
 
     /**

@@ -276,6 +276,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
             if (null != ds) {
                 Intent intent = new Intent();
                 intent.setAction(DownloadService.DONWLOAD_SUCCESS);
+                intent.putExtra(DownloadService.DONWLOAD_PATH, fullPath);
                 ds.sendBroadcast(intent);
             }
         } else {

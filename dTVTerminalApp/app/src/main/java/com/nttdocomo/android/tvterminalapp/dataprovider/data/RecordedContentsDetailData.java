@@ -26,6 +26,7 @@ public class RecordedContentsDetailData implements Parcelable {
     private String mVideoType;
     private String mClearTextSize;
     private int mDownLoadStatus;
+    private String mDlFileFullPath;
 
     public void setDetailParamFromWhere(DetailParamFromWhere from){
         mDetailParamFromWhere=from;
@@ -123,6 +124,16 @@ public class RecordedContentsDetailData implements Parcelable {
         this.mDownLoadStatus = mDownLoadStatus;
     }
 
+    public String getDlFileFullPath() {
+        return mDlFileFullPath;
+    }
+
+    public void setDlFileFullPath(String dlFileFullPath) {
+        this.mDlFileFullPath = dlFileFullPath;
+    }
+
+
+
     @Override
     public int describeContents() {
         return 0;
@@ -142,6 +153,7 @@ public class RecordedContentsDetailData implements Parcelable {
         dest.writeString(this.mVideoType);
         dest.writeString(this.mClearTextSize);
         dest.writeInt(this.mDownLoadStatus);
+        dest.writeString(this.mDlFileFullPath);
     }
 
     public RecordedContentsDetailData() {
@@ -161,6 +173,7 @@ public class RecordedContentsDetailData implements Parcelable {
         this.mVideoType = in.readString();
         this.mClearTextSize=in.readString();
         this.mDownLoadStatus=in.readInt();
+        this.mDlFileFullPath=in.readString();
     }
 
     public static final Creator<RecordedContentsDetailData> CREATOR = new Creator<RecordedContentsDetailData>() {
