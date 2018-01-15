@@ -293,39 +293,45 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 @Override
                 public void run() {
                     DTVTLogger.debug("HandlerThread:"+Thread.currentThread().getId());
-                    if(queIndex.size() > 0){
-                        View view = mRecordedListview.getChildAt(queIndex.get(0)-mRecordedListview.getFirstVisiblePosition());
-                        if (view != null) {
-                            view.findViewById(R.id.item_common_result_clip_tv).setBackgroundResource(R.mipmap.icon_circle_normal_download_check);
-                            setDownloadStatusClear(view.findViewById(R.id.item_common_result_clip_tv));
-                        }
-                        mContentsData.get(queIndex.get(0)).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
-                        mContentsData.get(queIndex.get(0)).setDownloadStatus("");
-                    }
-                    if(que.size() > 0){
-                        que.remove(0);
-                        queIndex.remove(0);
-                    }
-                    if(que.size() > 0){
-                        boolean isOk = prepareDownLoad(queIndex.get(0));
-                        if(!isOk){
-                            return;
-                        }
-                        try {
-                            mDlDataProvider.setDlParam(downloadParam);
-                            mDlDataProvider.start();
-                        } catch (Exception e){
-                            e.printStackTrace();
-                        }
-                    } else {
-                        if(mDlDataProvider != null){
-                            DownloadService.isBinded = false;
-                            mActivity.unbindService(mDlDataProvider);
-                            mDlDataProvider.stop();
-                        }
-                    }
+                    setSuccessStatus();
                 }
             });
+        }
+    }
+
+    private void setSuccessStatus(){
+        if(queIndex.size() > 0){
+            View view = mRecordedListview.getChildAt(queIndex.get(0)-mRecordedListview.getFirstVisiblePosition());
+            if (view != null) {
+                view.findViewById(R.id.item_common_result_clip_tv).setBackgroundResource(R.mipmap.icon_circle_normal_download_check);
+                setDownloadStatusClear(view.findViewById(R.id.item_common_result_clip_tv));
+            }
+            mContentsData.get(queIndex.get(0)).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
+            mContentsData.get(queIndex.get(0)).setDownloadStatus("");
+        }
+        if(que.size() > 0){
+            que.remove(0);
+            queIndex.remove(0);
+        }
+        if(que.size() > 0){
+            boolean isOk = prepareDownLoad(queIndex.get(0));
+            if(!isOk){
+                return;
+            }
+            try {
+                mDlDataProvider.setDlParam(downloadParam);
+                mDlDataProvider.start();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        } else {
+            if(mDlDataProvider != null){
+                if(DownloadService.BINDSTATUS == DownloadService.BINDED){
+                    mActivity.unbindService(mDlDataProvider);
+                }
+                DownloadService.BINDSTATUS = DownloadService.UNBINED;
+                mDlDataProvider.stop();
+            }
         }
     }
 
@@ -502,19 +508,19 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 return false;
             }
         }
-        if(!DownloadService.isBinded){
+        if(DownloadService.BINDSTATUS == DownloadService.UNBINED){
             mDlDataProvider.beginProvider();
         } else {
-            mDlDataProvider.rebind();
+//            mDlDataProvider.rebind();
         }
         return true;
     }
 
     public void bindServiceFromBackgroud(boolean serviceIsRun){
         if(serviceIsRun){
-            DownloadService.isBinded = true;
+            DownloadService.BINDSTATUS = DownloadService.BACKGROUD;
         } else {
-            DownloadService.isBinded = false;
+            DownloadService.BINDSTATUS = DownloadService.UNBINED;
         }
         if(queIndex != null && queIndex.size() > 0){
             for(int i=0;i < queIndex.size(); i++){
@@ -523,6 +529,16 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             }
             prepareDownLoad(queIndex.get(0));
         }
+    }
+
+    public void setDownladProgressByBg(int percent){
+        if(queIndex.size() > 0){
+            setDownloadStatus(queIndex.get(0), percent);
+        }
+    }
+
+    public void setDownladSuccessByBg(){
+         setSuccessStatus();
     }
 
     /**
