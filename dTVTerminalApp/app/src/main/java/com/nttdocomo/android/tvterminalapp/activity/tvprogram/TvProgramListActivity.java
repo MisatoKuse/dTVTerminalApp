@@ -133,7 +133,6 @@ public class TvProgramListActivity extends BaseActivity
         mProgramRecyclerView = findViewById(R.id.tv_program_list_main_layout_channeldetail_rv);
         final ProgramScrollView programScrollView = findViewById(R.id.tv_program_list_main_layout_channeldetail_sl);
         mTagImageView = findViewById(R.id.tv_program_list_main_layout_curtime_iv);
-        RelativeLayout changeModeLayout = findViewById(R.id.tv_program_list_main_layout_changemode_rl);
 
         mTagImageView.setOnClickListener(this);
         titleTextView.setOnClickListener(this);
@@ -149,13 +148,6 @@ public class TvProgramListActivity extends BaseActivity
                 return false;
             }
         });
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                (int) ((double) mScreenWidth / (double) SCREEN_TIME_WIDTH_PERCENT * 2.0),
-                (int) ((double) mScreenWidth / (double) SCREEN_TIME_WIDTH_PERCENT * 3.5));
-        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
-        changeModeLayout.setLayoutParams(layoutParams);
-        changeModeLayout.setOnClickListener(this);
     }
 
     @Override
@@ -473,10 +465,6 @@ public class TvProgramListActivity extends BaseActivity
                 //日付選択ダイアログ
                 showDatePickDlg();
                 break;
-            case R.id.tv_program_list_main_layout_changemode_rl:
-                //番組表モード切替
-                // TODO: 拡大・縮小番組表切替
-                break;
             default:
                 super.onClick(v);
         }
@@ -609,12 +597,10 @@ public class TvProgramListActivity extends BaseActivity
         if(isShowFlag){
             findViewById(R.id.tv_program_list_main_layout_time_sl).setVisibility(View.INVISIBLE);
             findViewById(R.id.tv_program_list_main_layout_curtime_iv).setVisibility(View.INVISIBLE);
-            findViewById(R.id.tv_program_list_main_layout_changemode_rl).setVisibility(View.INVISIBLE);
             findViewById(R.id.tv_program_list_main_layout_tip_tv).setVisibility(View.VISIBLE);
         }else {
             findViewById(R.id.tv_program_list_main_layout_time_sl).setVisibility(View.VISIBLE);
             findViewById(R.id.tv_program_list_main_layout_curtime_iv).setVisibility(View.VISIBLE);
-            findViewById(R.id.tv_program_list_main_layout_changemode_rl).setVisibility(View.VISIBLE);
             findViewById(R.id.tv_program_list_main_layout_tip_tv).setVisibility(View.INVISIBLE);
         }
     }
