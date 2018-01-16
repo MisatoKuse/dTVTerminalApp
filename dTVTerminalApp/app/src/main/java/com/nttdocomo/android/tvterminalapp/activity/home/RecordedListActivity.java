@@ -124,7 +124,12 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void initDl() {
-        mIsDlOk= DlnaProvDownload.initGlobalDl(DownloaderBase.getDownloadPath(this));
+        boolean isRunning= isDownloadServiceRunning();
+        if(isRunning){
+            mIsDlOk=true;
+        }else {
+            mIsDlOk= DlnaProvDownload.initGlobalDl(DownloaderBase.getDownloadPath(this));
+        }
     }
 
     /**
@@ -614,7 +619,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(downloadReceiver);
-        DlnaProvDownload.uninitGlobalDl();
+        boolean isRunning= isDownloadServiceRunning();
+        if(!isRunning){
+            DlnaProvDownload.uninitGlobalDl();
+        }
     }
 
     private void registReceiver(){

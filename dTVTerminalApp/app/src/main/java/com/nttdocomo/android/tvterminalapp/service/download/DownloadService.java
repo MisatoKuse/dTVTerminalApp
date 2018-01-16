@@ -15,6 +15,7 @@ import android.support.v7.app.NotificationCompat;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDownload;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -174,6 +175,22 @@ public class DownloadService extends Service implements DownloadListener {
     public void stopService(){
         stopForeground(true);
         stopSelf();
+        boolean isUiRunning=isUiRunning();
+        if(!isUiRunning) {
+            DlnaProvDownload.uninitGlobalDl();
+        }
+    }
+
+    private boolean isUiRunning(){
+        switch (BINDSTATUS) {
+            case BACKGROUD:
+                return false;
+            case UNBINED:
+                return true;
+            case BINDED:
+                return true;
+        }
+        return true;
     }
 
     /**

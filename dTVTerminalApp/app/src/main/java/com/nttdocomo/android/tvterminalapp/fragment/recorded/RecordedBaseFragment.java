@@ -621,6 +621,11 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         if(mDlDataProvider != null){
