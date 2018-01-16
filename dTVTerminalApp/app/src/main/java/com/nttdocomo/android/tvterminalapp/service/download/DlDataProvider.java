@@ -289,7 +289,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                     return;
                 }
                 try {
-                    Thread.sleep(1000 * 2);
+                    Thread.sleep(300);
                     DTVTLogger.debug(">>>>>>>>>>>>>>>>>> new dl");
                     setDlParam(getDownLoadParam());
                     start();

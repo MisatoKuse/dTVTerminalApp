@@ -368,10 +368,11 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     /**
      * 持ち出しリスト生成
      */
-    private void setRecordedTakeOutContents() {
+    public void setRecordedTakeOutContents() {
         DTVTLogger.start();
         RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment();
         List<ContentsData> list = baseFragment.getContentsData();
+        baseFragment.mContentsList = new ArrayList<>();
         if (list != null) {
             list.clear();
             List<Map<String, String>> resultList = getDownloadListFromDb();
@@ -394,6 +395,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                             contentsData.setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
                             contentsData.setDlFileFullPath(fullPath);
                             list.add(contentsData);
+                            RecordedContentsDetailData detailData = new RecordedContentsDetailData();
+                            detailData.setItemId(itemId);
+                            baseFragment.mContentsList.add(detailData);
                         }
                     }
                 }
@@ -524,6 +528,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         setTakeOutContentsToAll(dlnaRecVideoItems, resultList);
         List<ContentsData> listData = baseFrgament.getContentsData();
         listData.clear();
+        baseFrgament.queIndex.clear();
         for (int i = 0; i < dlnaRecVideoItems.size(); i++) {
             DlnaRecVideoItem itemData = dlnaRecVideoItems.get(i);
             RecordedContentsDetailData detailData = new RecordedContentsDetailData();
