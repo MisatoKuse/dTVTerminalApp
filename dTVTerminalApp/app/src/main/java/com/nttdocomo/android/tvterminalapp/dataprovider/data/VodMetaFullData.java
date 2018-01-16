@@ -1171,7 +1171,10 @@ public class VodMetaFullData implements Serializable {
                     // dTVフラグ
                     mDtv = (String) data;
                     break;
-
+                case JsonContents.META_RESPONSE_DTV_TYPE:
+                    // dTVフラグ
+                    mDtvType = (String) data;
+                    break;
                 case JsonContents.META_RESPONSE_CHSVOD:
                     //CHSVOD
                     mChsvod = (String) data;

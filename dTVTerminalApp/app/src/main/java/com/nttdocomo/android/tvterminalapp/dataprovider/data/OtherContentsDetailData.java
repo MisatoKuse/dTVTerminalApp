@@ -5,11 +5,12 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
 import android.os.Parcel;
-import android.os.Parcelable;
+
+import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 
 import java.util.List;
 
-public class OtherContentsDetailData extends RecordedContentsDetailData implements Parcelable {
+public class OtherContentsDetailData extends RecordedContentsDetailData {
 
     public static final int DTV_CONTENTS_SERVICE_ID = 15;
     public static final int D_ANIMATION_CONTENTS_SERVICE_ID = 17;
@@ -55,6 +56,14 @@ public class OtherContentsDetailData extends RecordedContentsDetailData implemen
     private String mRecommendMethodId = "";
     // レコメンドフラグ
     private String mRecommendFlg = "";
+    // 表示タイプ
+    private String mDispType = "";
+    // クリップ情報
+    private String mSearchOk = "";
+    // dTVフラグ
+    private String mDtv = "";
+    // dTVタイプ
+    private String mDtvType = "";
     // クリップ可否
     private boolean mClipExec = false;
     // クリップ未/済
@@ -204,85 +213,6 @@ public class OtherContentsDetailData extends RecordedContentsDetailData implemen
         this.mVodMetaFullData = mVodMetaFullData;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        super.writeToParcel(dest, flags);
-        dest.writeString(this.mThumb);
-        dest.writeString(this.mChannelDate);
-        dest.writeString(this.mChannelName);
-        dest.writeInt(this.mServiceId);
-        dest.writeString(this.mDetail);
-        dest.writeString(this.mComment);
-        dest.writeString(this.mHighlight);
-        dest.writeString(this.mContentsType);
-
-        //contentIdを追加
-        dest.writeString(this.mContentId);
-        dest.writeInt(this.mAge);
-        dest.writeStringArray(this.roleList);
-        dest.writeString(this.availStartDate);
-        dest.writeString(this.availEndDate);
-        dest.writeString(this.displayType);
-        dest.writeString(this.categoryId);
-        dest.writeString(this.reserved4);
-        dest.writeStringList(this.staffList);
-        dest.writeString(this.mChannelId);
-        dest.writeString(this.mRecommendOrder);
-        dest.writeString(this.mPageId);
-        dest.writeString(this.mGroupId);
-        dest.writeString(this.mRecommendMethodId);
-        dest.writeString(this.mRecommendFlg);
-    }
-
-    public OtherContentsDetailData() {
-    }
-
-    protected OtherContentsDetailData(Parcel in) {
-        super(in);
-        this.mThumb = in.readString();
-        this.mChannelDate = in.readString();
-        this.mChannelName = in.readString();
-        this.mServiceId = in.readInt();
-        this.mDetail = in.readString();
-        this.mComment = in.readString();
-        this.mHighlight = in.readString();
-        this.mContentsType = in.readString();
-
-        //contentIdを追加
-        this.mContentId = in.readString();
-        this.mAge = in.readInt();
-        this.roleList = in.createStringArray();
-        this.availStartDate = in.readString();
-        this.availEndDate = in.readString();
-        this.displayType = in.readString();
-        this.categoryId = in.readString();
-        this.reserved4=in.readString();
-        this.staffList = in.createStringArrayList();
-        this.mChannelId = in.readString();
-        this.mRecommendOrder = in.readString();
-        this.mPageId = in.readString();
-        this.mGroupId = in.readString();
-        this.mRecommendMethodId = in.readString();
-        this.mRecommendFlg = in.readString();
-    }
-
-    public static final Creator<OtherContentsDetailData> CREATOR = new Creator<OtherContentsDetailData>() {
-        @Override
-        public OtherContentsDetailData createFromParcel(Parcel source) {
-            return new OtherContentsDetailData(source);
-        }
-
-        @Override
-        public OtherContentsDetailData[] newArray(int size) {
-            return new OtherContentsDetailData[size];
-        }
-    };
-
     public String getChannelId() {
         return mChannelId;
     }
@@ -330,19 +260,141 @@ public class OtherContentsDetailData extends RecordedContentsDetailData implemen
     public void setRecommendFlg(String mRecommendFlg) {
         this.mRecommendFlg = mRecommendFlg;
     }
-    public boolean ismClipExec() {
-        return mClipExec;
+
+    public String getDispType() {
+        return mDispType;
     }
 
-    public void setmClipExec(boolean mClipExec) {
+    public void setDispType(String mDispType) {
+        this.mDispType = mDispType;
+    }
+
+    public String getSearchOk() {
+        return mSearchOk;
+    }
+
+    public void setSearchOk(String mSearchOk) {
+        this.mSearchOk = mSearchOk;
+    }
+
+    public String getDtv() {
+        return mDtv;
+    }
+
+    public void setDtv(String mDtv) {
+        this.mDtv = mDtv;
+    }
+
+    public String getDtvType() {
+        return mDtvType;
+    }
+
+    public void setDtvType(String mDtvType) {
+        this.mDtvType = mDtvType;
+    }
+
+    public boolean isClipExec() {
+        return ClipUtils.isCanClip(mDispType, mSearchOk, mDtv, mDtvType);
+    }
+
+    public void setClipExec(boolean mClipExec) {
         this.mClipExec = mClipExec;
     }
 
-    public boolean ismClipStatus() {
-        return ismClipStatus();
+    public boolean isClipStatus() {
+        return mClipStatus;
     }
 
-    public void setmClipStatus(boolean mClipStatus) {
+    public void setClipStatus(boolean mClipStatus) {
         this.mClipStatus = mClipStatus;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeString(this.mThumb);
+        dest.writeString(this.mChannelDate);
+        dest.writeString(this.mChannelName);
+        dest.writeInt(this.mServiceId);
+        dest.writeString(this.mDetail);
+        dest.writeString(this.mComment);
+        dest.writeString(this.mHighlight);
+        dest.writeString(this.mContentsType);
+        dest.writeInt(this.mAge);
+        dest.writeStringArray(this.roleList);
+        dest.writeString(this.availStartDate);
+        dest.writeString(this.availEndDate);
+        dest.writeString(this.displayType);
+        dest.writeString(this.categoryId);
+        dest.writeString(this.reserved4);
+        dest.writeStringList(this.staffList);
+        dest.writeSerializable(this.mVodMetaFullData);
+        dest.writeString(this.mContentId);
+        dest.writeString(this.mChannelId);
+        dest.writeString(this.mRecommendOrder);
+        dest.writeString(this.mPageId);
+        dest.writeString(this.mGroupId);
+        dest.writeString(this.mRecommendMethodId);
+        dest.writeString(this.mRecommendFlg);
+        dest.writeString(this.mDispType);
+        dest.writeString(this.mSearchOk);
+        dest.writeString(this.mDtv);
+        dest.writeString(this.mDtvType);
+        dest.writeByte(this.mClipExec ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.mClipStatus ? (byte) 1 : (byte) 0);
+    }
+
+    public OtherContentsDetailData() {
+    }
+
+    protected OtherContentsDetailData(Parcel in) {
+        super(in);
+        this.mThumb = in.readString();
+        this.mChannelDate = in.readString();
+        this.mChannelName = in.readString();
+        this.mServiceId = in.readInt();
+        this.mDetail = in.readString();
+        this.mComment = in.readString();
+        this.mHighlight = in.readString();
+        this.mContentsType = in.readString();
+        this.mAge = in.readInt();
+        this.roleList = in.createStringArray();
+        this.availStartDate = in.readString();
+        this.availEndDate = in.readString();
+        this.displayType = in.readString();
+        this.categoryId = in.readString();
+        this.reserved4 = in.readString();
+        this.staffList = in.createStringArrayList();
+        this.mVodMetaFullData = (VodMetaFullData) in.readSerializable();
+        this.mContentId = in.readString();
+        this.mChannelId = in.readString();
+        this.mRecommendOrder = in.readString();
+        this.mPageId = in.readString();
+        this.mGroupId = in.readString();
+        this.mRecommendMethodId = in.readString();
+        this.mRecommendFlg = in.readString();
+        this.mDispType = in.readString();
+        this.mSearchOk = in.readString();
+        this.mDtv = in.readString();
+        this.mDtvType = in.readString();
+        this.mClipExec = in.readByte() != 0;
+        this.mClipStatus = in.readByte() != 0;
+    }
+
+    public static final Creator<OtherContentsDetailData> CREATOR = new Creator<OtherContentsDetailData>() {
+        @Override
+        public OtherContentsDetailData createFromParcel(Parcel source) {
+            return new OtherContentsDetailData(source);
+        }
+
+        @Override
+        public OtherContentsDetailData[] newArray(int size) {
+            return new OtherContentsDetailData[size];
+        }
+    };
 }
