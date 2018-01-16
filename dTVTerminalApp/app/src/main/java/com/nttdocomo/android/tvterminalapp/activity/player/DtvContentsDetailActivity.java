@@ -83,6 +83,8 @@ import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SendOperateLog;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -780,16 +782,17 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                 return false;
             }
             //test b
-//            File f2=new File("/data/user/0/com.nttdocomo.android.tvterminalapp/files/cm_work_dmp/");
-//            File[] f2s= f2.listFiles();
+            File f2=new File("/data/user/0/com.nttdocomo.android.tvterminalapp/files/cm_work_dmp/");
+            File[] f2s= f2.listFiles();
+            long fSize= getFileSize(f);
             //test e
             uri = Uri.parse(sb.toString());
             long ss= (long)Integer.parseInt(datas.getClearTextSize());
             mCurrentMediaInfo = new MediaVideoInfo(
                     uri,           //uri
                     type2,         //"application/x-dtcp1", "video/mp4", RESOURCE_MIMETYPE
-                    //0,             //SIZE
-                    ss, //test
+                    0,             //SIZE
+                    //fSize, //test
                     duration,      //DURATION
                     0,             //BITRATE
                     true,         //IS_SUPPORTED_BYTE_SEEK
@@ -804,6 +807,24 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
 
         DTVTLogger.end();
         return true;
+    }
+
+    private static long getFileSize(File file) {
+        if (file == null) {
+            return 0;
+        }
+        long size = 0;
+        if (file.exists()) {
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(file);
+                size = fis.available();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+                return 0;
+            }
+        }
+        return size;
     }
 
     /**
