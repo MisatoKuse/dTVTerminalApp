@@ -72,6 +72,18 @@ public class DlnaProvDownload {
 //    }
 
     /**
+     * 機能：
+     *      １．Download Uiがなくなる場合、且サービスにqueueはない場合、必ずこれをコールする
+     *      ２．Download Uiがない場合、Serviceは閉じる時、必ずこれをコールする
+     */
+    public void stopListen(){
+        if(null==mDlnaInterfaceDl){
+            return;
+        }
+        mDlnaInterfaceDl.stopDtcpDl();
+    }
+
+    /**
      *
      */
     public void cancel(){
