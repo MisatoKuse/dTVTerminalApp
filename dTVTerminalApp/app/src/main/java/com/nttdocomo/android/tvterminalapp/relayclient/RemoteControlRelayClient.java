@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.relayclient;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.view.View;
 
@@ -271,6 +272,45 @@ public class RemoteControlRelayClient {
 
     // 処理結果応答を通知するハンドラー
     private Handler mHandler = null;
+
+    // 最後にSTBへアプリケーション要求したシステム時刻からの経過時間
+    private long mRequestStbElapsedTime = 0;
+
+    /**
+     * 最後にSTBへアプリケーション要求したシステム時刻からの経過時間.
+     * @return
+     */
+    private long getRequestStbElapsedTime() {
+        return SystemClock.elapsedRealtime() - mRequestStbElapsedTime;
+    }
+
+    /**
+     * 最後にSTBへアプリケーション要求したシステム時刻からの経過時間.
+     * @return
+     */
+    private boolean isRequestStbElapsedTime() {
+        if (getRequestStbElapsedTime() > TcpClient.SEND_RECV_TIMEOUT) {
+            DTVTLogger.debug(String.format("RequestStbElapsedTime [%d] exceeded TCP timeout :[%d]", getRequestStbElapsedTime(), TcpClient.SEND_RECV_TIMEOUT));
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 最後にSTBへアプリケーション要求したシステム時刻.
+     */
+    private void setRequestStbElapsedTime() {
+        mRequestStbElapsedTime = SystemClock.elapsedRealtime();
+        DTVTLogger.debug(String.format("RequestStbElapsedTime:[%d]", mRequestStbElapsedTime));
+    }
+
+    /**
+     * 最後にSTBへアプリケーション要求した時刻のリセット
+     */
+    private void resetRequestStbElapsedTime() {
+        mRequestStbElapsedTime = 0;
+        DTVTLogger.debug(String.format("resetRequestStbElapsedTime"));
+    }
 
     /**
      * シングルトン.
@@ -617,6 +657,7 @@ public class RemoteControlRelayClient {
          * @param response
          */
         private void sendResponseMessage(ResponseMessage response) {
+            resetRequestStbElapsedTime();
             if (mHandler != null) {
                 mHandler.sendMessage(mHandler.obtainMessage(response.getResult(), response));
             }
@@ -684,6 +725,11 @@ public class RemoteControlRelayClient {
      * アプリ起動要求送信スレッドを開始.
      */
     private void sendStartApplicationRequest(String requestParam) {
+        if (!isRequestStbElapsedTime()) {
+            return;
+        }
+        setRequestStbElapsedTime();
+
         Thread mThread = new Thread(new StartApplicationRequestTask(requestParam));
         mThread.start();
 //        new Thread(new StartApplicationRequestTask(requestParam)).start();
