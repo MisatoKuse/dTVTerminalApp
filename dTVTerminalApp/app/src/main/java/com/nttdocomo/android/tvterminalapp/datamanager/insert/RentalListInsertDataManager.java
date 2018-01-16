@@ -64,7 +64,6 @@ public class RentalListInsertDataManager {
         DBHelper rentalListDBHelper = new DBHelper(mContext);
         SQLiteDatabase db = rentalListDBHelper.getWritableDatabase();
         RentalListDao rentalListDao = new RentalListDao(db);
-        String status = rentalList.getStatus();
         ArrayList<VodMetaFullData> vodMetaFullDataList = rentalList.getVodMetaFullData();
         ArrayList<ActiveData> activeDataList = rentalList.getVodActiveData();
 
@@ -76,21 +75,17 @@ public class RentalListInsertDataManager {
         }
 
         ContentValues values = new ContentValues();
-        values.put(JsonContents.META_RESPONSE_STATUS, status);
-        rentalListDao.insert(values);
 
         //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
         for (int i = 0; i < vodMetaFullDataList.size(); i++) {
             VodMetaFullData vodMetaFullData = vodMetaFullDataList.get(i);
-            ContentValues vodValues = new ContentValues();
 
             for (String item:vodMetaFullData.getRootPara()) {
-                String keyName = item;
                 //データがString型だけではなくなったので、変換を行ってから蓄積する
                 String valName = StringUtil.changeObject2String(vodMetaFullData.getMember(item));
-                vodValues.put(DBUtils.fourKFlgConversion(keyName), valName);
+                values.put(DBUtils.fourKFlgConversion(item), valName);
             }
-            rentalListDao.insert(vodValues);
+            rentalListDao.insert(values);
         }
 
         for (int i = 0; i <  activeDataList.size(); i++) {
@@ -107,7 +102,7 @@ public class RentalListInsertDataManager {
             String valName2 = StringUtil.changeObject2String(activeData.getValidEndDate());
             activeValues.put(DBUtils.fourKFlgConversion(keyName2), valName2);
 
-            rentalListDao.insert(activeValues);
+            rentalListDao.insertActiveList(activeValues);
         }
     }
 
@@ -121,7 +116,6 @@ public class RentalListInsertDataManager {
         DBHelper rentalListDBHelper = new DBHelper(mContext);
         SQLiteDatabase db = rentalListDBHelper.getWritableDatabase();
         RentalListDao rentalListDao = new RentalListDao(db);
-        String status = rentalChList.getStatus();
         List<HashMap<String, String>> clList = rentalChList.getChannelListData().getClList();
         ArrayList<ActiveData> activeDataList = rentalChList.getChActiveData();
 
@@ -132,10 +126,7 @@ public class RentalListInsertDataManager {
             DTVTLogger.debug(e.toString());
         }
 
-        //statusの保存
         ContentValues values = new ContentValues();
-        values.put(JsonContents.META_RESPONSE_STATUS, status);
-        rentalListDao.insertCh(values);
 
         //チャンネルメタデータの保存
         for (int i = 0; i < clList.size(); i++) {
@@ -168,7 +159,7 @@ public class RentalListInsertDataManager {
             String valName2 = StringUtil.changeObject2String(activeData.getValidEndDate());
             activeValues.put(DBUtils.fourKFlgConversion(keyName2), valName2);
 
-            rentalListDao.insertCh(activeValues);
+            rentalListDao.insertChActiveList(activeValues);
         }
     }
  }
