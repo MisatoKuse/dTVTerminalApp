@@ -509,6 +509,7 @@ public class RemoteControlRelayClient {
      * @return
      */
     public void isUserAccountExistRequest(Context context) {
+
         String requestParam;
 
         //ユーザID取得
@@ -666,7 +667,9 @@ public class RemoteControlRelayClient {
      * アプリ起動要求送信スレッドを開始.
      */
     private void sendStartApplicationRequest(String requestParam) {
-        new Thread(new StartApplicationRequestTask(requestParam)).start();
+        Thread mThread = new Thread(new StartApplicationRequestTask(requestParam));
+        mThread.start();
+//        new Thread(new StartApplicationRequestTask(requestParam)).start();
     }
 
     /**
