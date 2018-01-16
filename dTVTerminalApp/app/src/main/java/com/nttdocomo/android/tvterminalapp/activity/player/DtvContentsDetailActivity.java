@@ -1743,17 +1743,23 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     }
 
     @Override
-    public void onStartRemoteControl() {
+    public void onStartRemoteControl(boolean isFromHeader) {
         DTVTLogger.start();
         // サービスIDにより起動するアプリを変更する
         if (mDetailData != null) {
             setRelayClientHandler();
             switch (mDetailData.getServiceId()) {
                 case DTV_CONTENTS_SERVICE_ID: // dTV
+                    if(!isFromHeader){
+                        setRemoteProgressVisible(View.VISIBLE);
+                    }
                     requestStartApplication(
                             RemoteControlRelayClient.STB_APPLICATION_TYPES.DTV, mDetailData.getContentId());
                     break;
                 case D_ANIMATION_CONTENTS_SERVICE_ID: // dアニメ
+                    if(!isFromHeader){
+                        setRemoteProgressVisible(View.VISIBLE);
+                    }
                     requestStartApplication(
                             RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE, mDetailData.getContentId());
                     break;
@@ -1765,7 +1771,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                     break;
             }
         }
-        super.onStartRemoteControl();
+        super.onStartRemoteControl(isFromHeader);
         DTVTLogger.end();
     }
 
