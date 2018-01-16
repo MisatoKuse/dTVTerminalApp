@@ -37,6 +37,7 @@ import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActi
 import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.DownLoadListDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
@@ -1264,6 +1265,12 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         if (isChange) {
             //以前の情報と異なっているので、メッセージの表示後にホーム画面に遷移
             restartMessageDialog(getString(R.string.h4d_agreement_change));
+
+            //持ち出しコンテンツをすべて削除する
+            DownLoadListDataManager downLoadListDataManager =
+                    new DownLoadListDataManager(getApplicationContext());
+            downLoadListDataManager.deleteDownloadAllContents();
+
         }
     }
 
