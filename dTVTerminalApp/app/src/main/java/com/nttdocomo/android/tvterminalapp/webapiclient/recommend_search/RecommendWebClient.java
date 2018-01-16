@@ -148,25 +148,7 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback,
         } else {
             //パラメータに誤りがあったので、ヌルを返却する
             if (mRecommendCallback != null) {
-                //コールバック処理の定義
-                runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        //ヌルをコールバックに返す
-                        mRecommendCallback.RecommendCallback(null);
-
-                        //後始末
-                        // **FindBugs** Bad pratice handler初期化されていないとfindbugは警告するが、
-                        // handlerに値が入っていなければここに来ることはありえないので、対処は行わない
-                        handler.removeCallbacks(runnable);
-                        runnable = null;
-                        handler = null;
-                    }
-                };
-
-                //コールバック処理を呼び出す
-                handler = new Handler();
-                handler.post(runnable);
+                mRecommendCallback.RecommendCallback(null);
             }
         }
     }

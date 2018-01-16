@@ -29,10 +29,10 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     private static final String SEPARATOR = ":";
 
     //テレビのレコメンド情報のタブ番号
-    static final int TV_NO = 1;
+    static final int TV_NO = 0;
 
     //ビデオのレコメンド情報のタブ番号
-    static final int VIDEO_NO = 2;
+    static final int VIDEO_NO = 1;
 
     // ページング判定
     private boolean mIsPaging = false;
@@ -311,7 +311,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     /**
      * おすすめ番組データをServiceIdとCategoryIdを元にキャッシュし、Activityに送る.
      *
-     * @param recChList
+     * @param recChList おすすめ番組データ
      */
     public void sendRecommendChListData(RecommendChList recChList) {
         List<Map<String, String>> recList = recChList.getmRcList();
