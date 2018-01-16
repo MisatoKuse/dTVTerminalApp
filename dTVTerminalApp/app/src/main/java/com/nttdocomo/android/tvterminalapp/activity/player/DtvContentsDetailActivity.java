@@ -1389,8 +1389,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     }
 
     @Override
-    public void onContentsDetailInfoCallback(ArrayList<VodMetaFullData> contentsDetailInfo) {
-        RecordingReservationContentsDetailInfo recordingReservationContentsDetailInfo = null;
+    public void onContentsDetailInfoCallback(ArrayList<VodMetaFullData> contentsDetailInfo, boolean clipStatus) {
         //詳細情報取得して、更新する
         if (contentsDetailInfo != null) {
             DtvContentsDetailFragment detailFragment = getDetailFragment();
@@ -1418,6 +1417,9 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             }
             detailFragment.mOtherContentsDetailData.setVodMetaFullData(contentsDetailInfo.get(FIRST_VOD_META_DATA));
             detailFragment.mOtherContentsDetailData.setDetail(mDetailFullData.getSynop());
+            // コンテンツ状態を反映
+            detailFragment.mOtherContentsDetailData.setmClipStatus(clipStatus);
+
             detailFragment.noticeRefresh();
             String[] credit_array = mDetailFullData.getmCredit_array();
             if (credit_array != null && credit_array.length > 0) {

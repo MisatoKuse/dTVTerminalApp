@@ -7,7 +7,10 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RentalListInsertDataManager;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
@@ -18,25 +21,42 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalVodListWebC
 import java.util.ArrayList;
 import java.util.List;
 
-public class RentalDataProvider implements RentalVodListWebClient.RentalVodListJsonParserCallback {
+public class RentalDataProvider extends ClipKeyListDataProvider implements RentalVodListWebClient.RentalVodListJsonParserCallback {
 
     private Context mContext = null;
     private boolean mSetDB = false;
 
     private ApiDataProviderCallback mApiDataProviderCallback = null;
+    private PurchasedVodListResponse mPurchasedVodListResponse = null;
 
     @Override
     public void onRentalVodListJsonParsed(PurchasedVodListResponse response) {
         if (response != null) {
             setStructDB(response);
-            sendRentalListData(response);
+            if (!mRequiredClipKeyList
+                    || mResponse != null) {
+                sendRentalListData(response);
+            } else {
+                mPurchasedVodListResponse = response;
+            }
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
         }
     }
 
+    @Override
+    public void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+        DTVTLogger.start();
+        super.onVodClipKeyListJsonParsed(clipKeyListResponse);
+        // コールバック判定
+        if(mPurchasedVodListResponse != null) {
+            sendRentalListData(mPurchasedVodListResponse);
+        }
+        DTVTLogger.end();
+    }
+
     /**
-     * Ranking Top画面用データを返却するためのコールバック
+     * 一覧画面用データを返却するためのコールバック
      */
     public interface ApiDataProviderCallback {
 
@@ -54,17 +74,23 @@ public class RentalDataProvider implements RentalVodListWebClient.RentalVodListJ
      * @param mContext コンテキスト
      */
     public RentalDataProvider(Context mContext) {
+        super(mContext);
         this.mContext = mContext;
         this.mApiDataProviderCallback = (ApiDataProviderCallback) mContext;
         this.mSetDB = false;
     }
 
     /**
-     * RankingTopActivityからのデータ取得要求受付
+     * RentalListActivityからのデータ取得要求受付
      *
      * @param flg 初回取得時のみDB保存する
      */
     public void getRentalData(boolean flg) {
+        mPurchasedVodListResponse = null;
+        // クリップキー一覧を取得
+        if(mRequiredClipKeyList) {
+            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+        }
         mSetDB = flg;
         //レンタル一覧取得
         getRentalListData();
@@ -93,7 +119,6 @@ public class RentalDataProvider implements RentalVodListWebClient.RentalVodListJ
         //通信クラスにデータ取得要求を出す
         RentalVodListWebClient webClient = new RentalVodListWebClient();
         webClient.getRentalVodListApi(this);
-
         //TODO: Display用ダミーデータ(消去予定)ここから
 //        ArrayList<VodMetaFullData> list = new ArrayList<>();
 //        for (int i = 0; i < 30; i++) {
@@ -178,6 +203,13 @@ public class RentalDataProvider implements RentalVodListWebClient.RentalVodListJ
             requestData.setContentType(contentsType);
 //            requestData.setTableType(decisionTableType(contentsType, contentsType));
             data.setRequestData(requestData);
+
+            if(mRequiredClipKeyList) {
+                // クリップ状態をコンテンツリストに格納
+                data.setClipStatus(getClipStatus(dispType, contentsType, dTv,
+                        data.getCrid(), data.getServiceId(),
+                        data.getEventId(), data.getTitleId()));
+            }
 
             list.add(data);
         }

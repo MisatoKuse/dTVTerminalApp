@@ -15,6 +15,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataM
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.TvScheduleInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.ProgramDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
 import com.nttdocomo.android.tvterminalapp.model.program.Channel;
@@ -39,7 +40,7 @@ import java.util.Map;
  * 縮小番組表用データプロバイダークラス
  * 機能：　縮小番組表画面で使うデータを提供するクラスである
  */
-public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
+public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider implements DbThread.DbOperation,
         ChannelWebClient.ChannelJsonParserCallback,
         TvScheduleWebClient.TvScheduleJsonParserCallback {
 
@@ -67,12 +68,17 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
     private static final String PROGRAM_LIST_CHANNEL_PROGRAM_FILTER_TESTA = "testa";
     private static final String PROGRAM_LIST_CHANNEL_PROGRAM_FILTER_DEMO = "demo";
 
+    // クリップキーリスト取得済み判定
+    private boolean tvClipKeyListResponse = false;
+    private boolean vodClipKeyListResponse = false;
+
     /**
      * コンストラクタ
      *
      * @param mContext TvProgramListActivity
      */
     public ScaledDownProgramListDataProvider(Context mContext) {
+        super(mContext);
         this.mContext = mContext;
         this.mApiDataProviderCallback = (ApiDataProviderCallback) mContext;
     }
@@ -246,47 +252,91 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
 
     @Override
     public void onTvScheduleJsonParsed(List<TvScheduleList> tvScheduleList) {
-        ChannelsInfo channelsInfo = null;
         if (tvScheduleList != null) {
             //チャンネルデータ
             mTvScheduleList = tvScheduleList.get(0);
-            List<HashMap<String, String>> mChannelProgramList = mTvScheduleList.geTvsList();
-            if (mChannelProgramList != null) {
-                channelsInfo = new ChannelsInfo();
-                ArrayList<Schedule> mScheduleList;
-                StringBuilder baseStartDate = new StringBuilder();
-                baseStartDate.append(mProgramSelectDate);
-                baseStartDate.append("04:00:00");
-                StringBuilder baseEndDate = new StringBuilder();
-                baseEndDate.append(mProgramSelectDate);
-                baseEndDate.append("03:00:00");
-                Date selectStartDate = new Date();
-                Date selectEndDate = new Date();
-                SimpleDateFormat format = new SimpleDateFormat(SELECT_TIME_FORMAT, Locale.JAPAN);
+            if(mRequiredClipKeyList) {
+                // クリップキーリストを取得
+                tvClipKeyListResponse = false;
+                vodClipKeyListResponse = false;
+                getClipKeyList();
+            } else {
+                if (null != mApiDataProviderCallback) {
+                    mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
+                }
+            }
+        } else {
+            // TODO 番組メタデータが取得できなかった際の処理を記載
+        }
+
+    }
+
+    @Override
+    public void onTvClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+        super.onTvClipKeyListJsonParsed(clipKeyListResponse);
+        if(vodClipKeyListResponse) {
+            if (null != mApiDataProviderCallback) {
+                mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
+            }
+        } else {
+            tvClipKeyListResponse = true;
+        }
+    }
+
+    @Override
+    public void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+        super.onVodClipKeyListJsonParsed(clipKeyListResponse);
+        if(tvClipKeyListResponse) {
+            if (null != mApiDataProviderCallback) {
+                mApiDataProviderCallback.channelInfoCallback(setProgramListContentData());
+            }
+        } else {
+            vodClipKeyListResponse = true;
+        }
+    }
+
+    /**
+     * 番組表用に番組のメタデータを整形
+     */
+    private ChannelsInfo setProgramListContentData() {
+        ChannelsInfo channelsInfo = null;
+        List<HashMap<String, String>> mChannelProgramList = mTvScheduleList.geTvsList();
+        if (mChannelProgramList != null) {
+            channelsInfo = new ChannelsInfo();
+            ArrayList<Schedule> mScheduleList;
+            StringBuilder baseStartDate = new StringBuilder();
+            baseStartDate.append(mProgramSelectDate);
+            baseStartDate.append("04:00:00");
+            StringBuilder baseEndDate = new StringBuilder();
+            baseEndDate.append(mProgramSelectDate);
+            baseEndDate.append("03:00:00");
+            Date selectStartDate = new Date();
+            Date selectEndDate = new Date();
+            SimpleDateFormat format = new SimpleDateFormat(SELECT_TIME_FORMAT, Locale.JAPAN);
+            try {
+                selectStartDate = format.parse(baseStartDate.toString());
+                selectEndDate = format.parse(baseEndDate.toString());
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
+            GregorianCalendar gc = new GregorianCalendar();
+            gc.setTime(selectEndDate);
+            gc.add(Calendar.DAY_OF_MONTH, +1);
+            selectEndDate = gc.getTime();
+            for (int i = 0; i < mChannelProgramList.size(); i++) {//CH毎番組データ取得して、整形する
+                HashMap<String, String> hashMap = mChannelProgramList.get(i);
+                Schedule schedule = new Schedule();
+                String startDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_START_DATE);
+                StringBuilder startBuilder = new StringBuilder();
+                startBuilder.append(startDate.substring(0, 10));
+                startBuilder.append(startDate.substring(11, 19));
+                Date day = new Date();
                 try {
-                    selectStartDate = format.parse(baseStartDate.toString());
-                    selectEndDate = format.parse(baseEndDate.toString());
+                    day = format.parse(startBuilder.toString());
                 } catch (Exception e) {
                     DTVTLogger.debug(e);
                 }
-                GregorianCalendar gc = new GregorianCalendar();
-                gc.setTime(selectEndDate);
-                gc.add(Calendar.DAY_OF_MONTH, +1);
-                selectEndDate = gc.getTime();
-                for (int i = 0; i < mChannelProgramList.size(); i++) {//CH毎番組データ取得して、整形する
-                    HashMap<String, String> hashMap = mChannelProgramList.get(i);
-                    Schedule schedule = new Schedule();
-                    String startDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_START_DATE);
-                    StringBuilder startBuilder = new StringBuilder();
-                    startBuilder.append(startDate.substring(0, 10));
-                    startBuilder.append(startDate.substring(11, 19));
-                    Date day = new Date();
-                    try {
-                        day = format.parse(startBuilder.toString());
-                    } catch (Exception e) {
-                        DTVTLogger.debug(e);
-                    }
-                    //TODO 番組表表示させるため、コメントアウトします
+                //TODO 番組表表示させるため、コメントアウトします
                     /*if(day.compareTo(selectStartDate) !=-1 && day.compareTo(selectEndDate)!=1){*/
                         String endDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
                         String thumb = hashMap.get(JsonContents.META_RESPONSE_THUMB_448);
@@ -298,6 +348,7 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                         String searchOk = hashMap.get(JsonContents.META_RESPONSE_SEARCH_OK);
                         String dtv = hashMap.get(JsonContents.META_RESPONSE_DTV);
                         String dtvType = hashMap.get(JsonContents.META_RESPONSE_DTV_TYPE);
+                String contentType = hashMap.get(JsonContents.META_RESPONSE_CONTENT_TYPE);
                         schedule.setStartTime(startDate);
                         schedule.setEndTime(endDate);
                         schedule.setImageUrl(thumb);
@@ -305,51 +356,54 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                         schedule.setDetail(detail);
                         schedule.setChNo(chNo);
                         schedule.setRValue(rValue);
-                        schedule.setContentType(hashMap.get(JsonContents.META_RESPONSE_CONTENT_TYPE));
+                schedule.setContentType(contentType);
                         schedule.setDtv(dtv);
                         schedule.setDispType(dispType);
                         schedule.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
                         schedule.setClipRequestData(setClipData(hashMap));
 
-                        if (!TextUtils.isEmpty(chNo)) {//CH毎番組データ取得して、整形する
-                            ArrayList<Channel> oldChannelList = channelsInfo.getChannels();
-                            boolean isExist = false;
-                            if (oldChannelList.size() > 0) {//番組ID存在するのをチェックする
-                                for (int j = 0; j < oldChannelList.size(); j++) {
-                                    Channel oldChannel = oldChannelList.get(j);
-                                    if (oldChannel.getChNo() == Integer.valueOf(chNo)) {//番組ID存在する場合
-                                        ArrayList<Schedule> oldSchedule = oldChannel.getSchedules();
-                                        oldSchedule.add(schedule);
-                                        isExist = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (!isExist) {//番組ID存在しない場合
-                                mScheduleList = new ArrayList<>();
-                                mScheduleList.add(schedule);
-                                Channel channel = new Channel();
-                                channel.setChNo(Integer.parseInt(chNo));
-                                channel.setTitle(title);
-                                channel.setSchedules(mScheduleList);
-                                channelsInfo.addChannel(channel);
+                schedule.setClipStatus(getClipStatus(dispType, contentType, dtv,
+                        hashMap.get(JsonContents.META_RESPONSE_CRID),
+                        hashMap.get(JsonContents.META_RESPONSE_SERVICE_ID),
+                        hashMap.get(JsonContents.META_RESPONSE_EVENT_ID),
+                        hashMap.get(JsonContents.META_RESPONSE_TITLE_ID)));
+
+                if (!TextUtils.isEmpty(chNo)) {//CH毎番組データ取得して、整形する
+                    ArrayList<Channel> oldChannelList = channelsInfo.getChannels();
+                    boolean isExist = false;
+                    if (oldChannelList.size() > 0) {//番組ID存在するのをチェックする
+                        for (int j = 0; j < oldChannelList.size(); j++) {
+                            Channel oldChannel = oldChannelList.get(j);
+                            if (oldChannel.getChNo() == Integer.valueOf(chNo)) {//番組ID存在する場合
+                                ArrayList<Schedule> oldSchedule = oldChannel.getSchedules();
+                                oldSchedule.add(schedule);
+                                isExist = true;
+                                break;
                             }
                         }
-                    //TODO 番組表表示させるため、コメントアウトします
+                    }
+                    if (!isExist) {//番組ID存在しない場合
+                        mScheduleList = new ArrayList<>();
+                        mScheduleList.add(schedule);
+                        Channel channel = new Channel();
+                        channel.setChNo(Integer.parseInt(chNo));
+                        channel.setTitle(title);
+                        channel.setSchedules(mScheduleList);
+                        channelsInfo.addChannel(channel);
+                    }
+                }
+                //TODO 番組表表示させるため、コメントアウトします
                     /*}*/
-                }
-                Handler handler = new Handler();//番組情報更新
-                try {
-                    DbThread t = new DbThread(handler, this, SCHEDULE_UPDATE);
-                    t.start();
-                } catch (Exception e) {
-                    DTVTLogger.debug(e);
-                }
+            }
+            Handler handler = new Handler();//番組情報更新
+            try {
+                DbThread t = new DbThread(handler, this, SCHEDULE_UPDATE);
+                t.start();
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
             }
         }
-        if (null != mApiDataProviderCallback) {
-            mApiDataProviderCallback.channelInfoCallback(channelsInfo);
-        }
+        return channelsInfo;
     }
 
     /**
@@ -379,6 +433,7 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
 //        requestData.setTableType(decisionTableType(contentsType, contentsType));
         return requestData;
     }
+
     /**
      * チャンネルデータの整形
      */
