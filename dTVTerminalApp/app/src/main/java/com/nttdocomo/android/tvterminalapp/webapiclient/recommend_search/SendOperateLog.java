@@ -16,27 +16,29 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.WebApiBase;
 public class SendOperateLog extends WebApiBase {
 
     private StringBuffer mUrl = new StringBuffer("https://ve.m.service.smt.docomo.ne.jp/srermd/operateLog/index.do");
+    private String mCategoryId = "";
 
     public void sendOpeLog(OtherContentsDetailData mDetailData, VodMetaFullData mDetailFullData) {
         if (mDetailData != null) {
-            new HttpThread(getUrl(mDetailData, mDetailFullData), null).start();
-        } else {
-            //テスト用仮データ用
-            new HttpThread(getUrlKari(mDetailData, mDetailFullData), null).start();
+            if (OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
+                mCategoryId = getCategoryId(mDetailFullData);
+            } else {
+                mCategoryId = mDetailData.getCategoryId();
+            }
+            if (!TextUtils.isEmpty(mCategoryId)) {
+                new HttpThread(getUrl(mDetailData), null).start();
+            }
         }
     }
 
-    private String getUrl(OtherContentsDetailData mDetailData, VodMetaFullData mDetailFullData){
+    /**
+     * Urlを設定.
+     */
+    private String getUrl(OtherContentsDetailData mDetailData){
         mUrl.append("?serviceId=");
         mUrl.append(String.valueOf(mDetailData.getServiceId()));
-        if (OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
-            mUrl.append(getCategoryId(mDetailFullData));
-        } else {
-            if (!TextUtils.isEmpty(mDetailData.getCategoryId())) {
-                mUrl.append("&categoryId=");
-                mUrl.append(mDetailData.getCategoryId());
-            }
-        }
+        mUrl.append("&categoryId=");
+        mUrl.append(mCategoryId);
         if (!TextUtils.isEmpty(mDetailData.getChannelId())) {
             mUrl.append("&channelId=");
             mUrl.append(mDetailData.getChannelId());
@@ -70,47 +72,25 @@ public class SendOperateLog extends WebApiBase {
         return mUrl.toString();
     }
 
-    private String getUrlKari(OtherContentsDetailData mDetailData, VodMetaFullData mDetailFullData){
-        if (mDetailFullData != null) {
-            mUrl.append("?serviceId=");
-            mUrl.append(String.valueOf(mDetailFullData.getmService_id()));
-            if (String.valueOf(OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID).equals(mDetailFullData.getmService_id())) {
-                mUrl.append(getCategoryId(mDetailFullData));
-            } else {
-                mUrl.append("&categoryId=");
-                mUrl.append(mDetailFullData.getCrid());
-            }
-            if (!TextUtils.isEmpty(mDetailFullData.getmChno())) {
-                mUrl.append("&channelId=");
-                mUrl.append(mDetailFullData.getmChno());
-            }
-            mUrl.append("&cid=");
-            mUrl.append(mDetailFullData.getCid());
-            mUrl.append("&operateKind=");
-            mUrl.append("411");
-            mUrl.append("&operateDate=");
-            mUrl.append(DateUtils.formatEpochToStringOpeLog(DateUtils.getNowTimeFormatEpoch()));
-            return mUrl.toString();
-        }
-        return "";
-    }
-
+    /**
+     * カテゴリーIDを設定.
+     */
     private String getCategoryId(VodMetaFullData mDetailFullData){
         if (mDetailFullData != null) {
             switch (mDetailFullData.getDisp_type()) {
                 case "tv_program":
                     switch (mDetailFullData.getmTv_service()) {
                         case "0":
-                            return "&categoryId=" + RecommendDataProvider.recommendRequestId.HIKARITV_DOCOMO_IPTV.getCategoryId();
+                            return RecommendDataProvider.recommendRequestId.HIKARITV_DOCOMO_IPTV.getCategoryId();
                         case "1":
                             switch (mDetailFullData.getmContent_type()) {
                                 case "0":
-                                    return "&categoryId=" + RecommendDataProvider.recommendRequestId.HIKARITV_DOCOMO_DTV_BLOADCAST.getCategoryId();
+                                    return RecommendDataProvider.recommendRequestId.HIKARITV_DOCOMO_DTV_BLOADCAST.getCategoryId();
                                 case "1":
                                 case "2":
-                                    return "&categoryId=" + RecommendDataProvider.recommendRequestId.HIKARITV_DOCOMO_DTV_MISS.getCategoryId();
+                                    return RecommendDataProvider.recommendRequestId.HIKARITV_DOCOMO_DTV_MISS.getCategoryId();
                                 case "3":
-                                    return "&categoryId=" + RecommendDataProvider.recommendRequestId.HIKARITV_DOCOMO_DTV_RELATION.getCategoryId();
+                                    return RecommendDataProvider.recommendRequestId.HIKARITV_DOCOMO_DTV_RELATION.getCategoryId();
                                 default:
                                     break;
                             }
@@ -120,9 +100,9 @@ public class SendOperateLog extends WebApiBase {
                 default:
                     switch (mDetailFullData.getDtv()) {
                         case "0":
-                            return "&categoryId=" + RecommendDataProvider.recommendRequestId.HIKARITV_DOCOMO_HIKARITV_VOD.getCategoryId();
+                            return RecommendDataProvider.recommendRequestId.HIKARITV_DOCOMO_HIKARITV_VOD.getCategoryId();
                         case "1":
-                            return "&categoryId=" + RecommendDataProvider.recommendRequestId.HIKARITV_DOCOMO_DTV_SVOD.getCategoryId();
+                            return RecommendDataProvider.recommendRequestId.HIKARITV_DOCOMO_DTV_SVOD.getCategoryId();
                         default:
                             break;
                     }
