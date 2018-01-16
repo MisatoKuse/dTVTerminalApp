@@ -70,6 +70,8 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     //エピソードタイトルを含むスペース
     private int mEpiSpace;
     private boolean isShowThumb;
+    private int CLIP_BUTTON_SIZE = 32;
+    private int CHANNEL_WIDTH = 720;
 
     //年齢制限有効フラグ
     private boolean mIsParental = false;
@@ -364,6 +366,26 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                         return true;
                     }
                 });
+        itemViewHolder.mClipButton.getViewTreeObserver()//クリップボタン
+                .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                    @Override
+                    public boolean onPreDraw() {
+                        itemViewHolder.mClipButton.getViewTreeObserver().removeOnPreDrawListener(this);
+                        displayProgramClip(itemViewHolder);
+                        return true;
+                    }
+                });
+    }
+
+    /**
+     * クリップ表示
+     * @param itemViewHolder ビューホルダー
+     */
+    private void displayProgramClip(ItemViewHolder itemViewHolder) {
+        int clipHeight = itemViewHolder.mClipButton.getHeight();
+        if(clipHeight < CLIP_BUTTON_SIZE){
+            itemViewHolder.mClipButton.setVisibility(View.INVISIBLE);
+        }
     }
 
     /**
@@ -378,10 +400,12 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         } else {
             if (!isShowThumb) {
                 mEpiSpace = mEpiSpace - mContext.dip2px(4) + epiLineHeight;
-                isShowThumb = true;
-            } else {// TODO: 2018/01/16 将来タブレットに調整可能性がある
-                mEpiSpace = mEpiSpace - mContext.dip2px(4) - epiLineHeight;
-                isShowThumb = false;
+            } else {
+                if ((mScreenWidth - mContext.dip2px(44)) / 2 < CHANNEL_WIDTH) {//チャンネル幅判断
+                    mEpiSpace = mEpiSpace - mContext.dip2px(4) - epiLineHeight;
+                } else {
+                    mEpiSpace = mEpiSpace - mContext.dip2px(4);
+                }
             }
             if (mEpiSpace / epiLineHeight > 0) {
                 itemViewHolder.mDetail.setMaxLines(mEpiSpace / epiLineHeight);
