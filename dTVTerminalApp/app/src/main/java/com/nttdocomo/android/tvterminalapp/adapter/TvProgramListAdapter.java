@@ -64,6 +64,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     private int mThumbEpiSpace;
     //エピソードタイトルを含むスペース
     private int mEpiSpace;
+    private boolean isShowThumb;
 
     public TvProgramListAdapter(Activity mContext, ArrayList<Channel> mProgramList) {
         this.mProgramList = mProgramList;
@@ -338,7 +339,13 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         if (mEpiSpace <= mContext.dip2px(4)) {
             itemViewHolder.mDetail.setVisibility(View.INVISIBLE);
         } else {
-            mEpiSpace = mEpiSpace-mContext.dip2px(4)-epiLineHeight;
+            if(!isShowThumb){
+                mEpiSpace = mEpiSpace-mContext.dip2px(4)+epiLineHeight;
+                isShowThumb = true;
+            }else {// TODO: 2018/01/16 将来タブレットに調整可能性がある 
+                mEpiSpace = mEpiSpace-mContext.dip2px(4)-epiLineHeight;
+                isShowThumb = false;
+            }
             if (mEpiSpace / epiLineHeight > 0) {
                 itemViewHolder.mDetail.setMaxLines(mEpiSpace / epiLineHeight);
             } else {
@@ -379,9 +386,11 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 if(availableSpace - titleSpace - mContext.dip2px(16) >= thumbnailHeight){//サムネル表示
                     mThumbEpiSpace = availableSpace - titleSpace - mContext.dip2px(16);
                     mEpiSpace = mThumbEpiSpace - thumbnailHeight;
+                    isShowThumb = true;
                 }else {//サムネル非表示
                     itemViewHolder.mThumbnail.setVisibility(View.GONE);
                     mEpiSpace = availableSpace - titleSpace - mContext.dip2px(16);
+                    isShowThumb = false;
                 }
             }
         }
