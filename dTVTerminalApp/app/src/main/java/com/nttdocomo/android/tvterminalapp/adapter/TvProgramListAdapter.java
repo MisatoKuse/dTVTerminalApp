@@ -69,6 +69,8 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     private int mEpiSpace;
     private boolean isShowThumb;
 
+    //年齢制限有効フラグ
+    private boolean mIsParental = false;
     /**
      * コンストラクタ.
      *
@@ -250,6 +252,10 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * @param isLast         末尾フラグ
      */
     private void setView(final ItemViewHolder itemViewHolder, final Schedule itemSchedule, final boolean isLast) {
+
+        //年齢制限フラグ
+        mIsParental = setParental(StringUtil.convertRValueToAgeReq(mContext, itemSchedule.getRValue()));
+
         String startTime = itemSchedule.getStartTime();
         String endTime = itemSchedule.getEndTime();
         if (!TextUtils.isEmpty(startTime)) {
@@ -289,7 +295,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             }
         }
         if (itemViewHolder.mClipButton != null) {
-            if (itemSchedule.isClipExec()) {
+            if (itemSchedule.isClipExec() || mIsParental) {
                 itemViewHolder.mClipButton.setVisibility(View.GONE);
             } else {
                 if (itemSchedule.isClipStatus()) {
@@ -298,13 +304,10 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
                 }
             }
-
         }
 
-        //年齢制限フラグ
-        boolean isParental = setParental(StringUtil.convertRValueToAgeReq(mContext, itemSchedule.getRValue()));
         String title;
-        if (isParental) {
+        if (mIsParental) {
             title = StringUtil.returnAsterisk(mContext);
         } else {
             title = itemSchedule.getTitle();
@@ -319,10 +322,10 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     }
                 }
             });
+            String detail = itemSchedule.getDetail();
+            itemViewHolder.mDetail.setText(detail);
         }
         itemViewHolder.mContent.setText(title);
-        String detail = itemSchedule.getDetail();
-        itemViewHolder.mDetail.setText(detail);
         changeProgramInfoInOrderToShow(itemViewHolder);
     }
 
@@ -417,6 +420,11 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     isShowThumb = false;
                 }
             }
+        }
+
+        //年齢制限有効時はサムネイル非表示
+        if (!mIsParental) {
+            itemViewHolder.mThumbnail.setVisibility(View.GONE);
         }
     }
 
