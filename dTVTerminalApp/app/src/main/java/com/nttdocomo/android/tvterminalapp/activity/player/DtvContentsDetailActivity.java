@@ -92,6 +92,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class DtvContentsDetailActivity extends BaseActivity implements DtvContentsDetailDataProvider.ApiDataProviderCallback,
         View.OnClickListener, MediaPlayerController.OnStateChangeListener, MediaPlayerController.OnFormatChangeListener,
@@ -228,7 +229,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
      */
     private static final int DISABLE_WATCH_LEAD_CONTRACT = -1;
     /**
-     * 視聴不可判定未実施
+     * 視聴不可判定未実施.
      */
     private static final int ENABLE_WATCH_NO_DEFINE = 0;
     /**
@@ -2101,8 +2102,8 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
 
         if (contractInfo == null || contractInfo.isEmpty() || CONTRACT_STATUS_NONE.equals(contractInfo)) {
             //契約情報が未設定、または"none"の場合は視聴不可(契約導線を表示)
-            mIsEnableWatch = DISABLE_WATCH_NO_PLAY;
-            Toast.makeText(this, "視聴不可(未契約)", Toast.LENGTH_SHORT).show();
+            mIsEnableWatch = DISABLE_WATCH_LEAD_CONTRACT;
+            DTVTLogger.debug("視聴不可(未契約)");
         } else if (CONTRACT_STATUS_DTV.equals(contractInfo)) {
             contractInfoOne();
         } else if (CONTRACT_STATUS_H4D.equals(contractInfo)) {
@@ -2133,12 +2134,12 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                         //視聴可能
                         mIsEnableWatch = ENABLE_WATCH_NO_LIMIT;
                     }
-                    Toast.makeText(this, "視聴可能. 30日以内:" + mIsLimitThirtyDay, Toast.LENGTH_SHORT).show();
+                    DTVTLogger.debug("視聴可能. 30日以内:" + mIsLimitThirtyDay);
                     return;
                 } else if (mDetailFullData.getAvail_start_date() > DateUtils.getNowTimeFormatEpoch()) {
                     //視聴不可(視聴導線を非表示)
                     mIsEnableWatch = DISABLE_WATCH_NO_PLAY;
-                    Toast.makeText(this, "視聴不可(放送時間外のため再生導線を非表示)", Toast.LENGTH_SHORT).show();
+                    DTVTLogger.debug("視聴不可(放送時間外のため再生導線を非表示)");
                     return;
                 }  else if (mDetailFullData.getAvail_end_date() <= DateUtils.getNowTimeFormatEpoch()) {
                     if (checkVodDate(mDetailFullData.getmVod_start_date(), mDetailFullData.getmVod_end_date())) {
@@ -2150,25 +2151,25 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                             //視聴可能
                             mIsEnableWatch = ENABLE_WATCH_NO_LIMIT;
                         }
-                        Toast.makeText(this, "視聴可能. 30日以内:" + mIsVodLimitThirtyDay, Toast.LENGTH_SHORT).show();
+                        DTVTLogger.debug("視聴可能. 30日以内:" + mIsVodLimitThirtyDay);
                         return;
                     } else {
                         //視聴不可(視聴導線を非表示)
                         mIsEnableWatch = DISABLE_WATCH_NO_PLAY;
-                        Toast.makeText(this, "視聴不可", Toast.LENGTH_SHORT).show();
+                        DTVTLogger.debug("視聴不可(VOD期限範囲外");
                         return;
                     }
                 }
             } else if (NOT_TV_SERVICE_FLAG.equals(mDetailFullData.getmTv_service())) {
                 //視聴不可(視聴導線を非表示)
                 mIsEnableWatch = DISABLE_WATCH_NO_PLAY;
-                Toast.makeText(this, "視聴不可", Toast.LENGTH_SHORT).show();
+                DTVTLogger.debug("視聴不可(tv_service = 0)");
                 return;
             }
         }
         //コンテンツの詳細情報が不正
         mIsEnableWatch = DISABLE_WATCH_NO_PLAY;
-        Toast.makeText(this, "視聴不可", Toast.LENGTH_SHORT).show();
+        DTVTLogger.debug("視聴不可(disp_type不一致)");
     }
 
     /**
@@ -2207,13 +2208,13 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                                 if (mDetailFullData.getAvail_start_date() <= DateUtils.getNowTimeFormatEpoch()
                                         && DateUtils.getNowTimeFormatEpoch() < mDetailFullData.getAvail_end_date()) {
                                     mIsEnableWatch = ENABLE_WATCH_NO_LIMIT;
-                                    Toast.makeText(this, "視聴可能", Toast.LENGTH_SHORT).show();
+                                    DTVTLogger.debug("視聴可能");
                                     return;
                                 } else if (mDetailFullData.getAvail_start_date() > DateUtils.getNowTimeFormatEpoch()
                                         || DateUtils.getNowTimeFormatEpoch() >= mDetailFullData.getAvail_end_date()) {
                                     //視聴期間外のため視聴不可
                                     mIsEnableWatch = DISABLE_WATCH_NO_PLAY;
-                                    Toast.makeText(this, "視聴不可(放送時間外のため再生導線を非表示)", Toast.LENGTH_SHORT).show();
+                                    DTVTLogger.debug("視聴不可(放送時間外のため再生導線を非表示)");
                                     return;
                                 }
                             } else if (CH_TYPE_PREMIUM.equals(mChannel.getChType())) {
@@ -2227,7 +2228,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                     }
                     //取得したチャンネル情報が不正の場合
                     mIsEnableWatch = DISABLE_WATCH_NO_PLAY;
-                    Toast.makeText(this, "視聴不可", Toast.LENGTH_SHORT).show();
+                    DTVTLogger.debug("視聴不可(チャンネル情報不正)");
                 } else if (IS_TV_SERVICE_FLAG.equals(mDetailFullData.getmTv_service())) {
                     //"tv_service"が1の場合（dチャンネル）
                     if (checkWatchDate(mDetailFullData.getAvail_start_date(), mDetailFullData.getAvail_end_date())) {
@@ -2238,12 +2239,12 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                             //視聴可能
                             mIsEnableWatch = ENABLE_WATCH_NO_LIMIT;
                         }
-                        Toast.makeText(this, "視聴可能. 30日以内:" + mIsVodLimitThirtyDay, Toast.LENGTH_SHORT).show();
+                        DTVTLogger.debug("視聴可能. 30日以内:" + mIsVodLimitThirtyDay);
                         return;
                     } else if (mDetailFullData.getAvail_start_date() > DateUtils.getNowTimeFormatEpoch()) {
                         //視聴不可(視聴導線を非表示)
                         mIsEnableWatch = DISABLE_WATCH_NO_PLAY;
-                        Toast.makeText(this, "視聴不可(放送時間外のため再生導線を非表示)", Toast.LENGTH_SHORT).show();
+                        DTVTLogger.debug("視聴不可(放送時間外のため再生導線を非表示)");
                         return;
                     } else if (mDetailFullData.getAvail_end_date() <= DateUtils.getNowTimeFormatEpoch()) {
                         if (checkVodDate(mDetailFullData.getmVod_start_date(), mDetailFullData.getmVod_end_date())) {
@@ -2255,19 +2256,19 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                                 //視聴可能
                                 mIsEnableWatch = ENABLE_WATCH_NO_LIMIT;
                             }
-                            Toast.makeText(this, "視聴可能. 30日以内:" + mIsVodLimitThirtyDay, Toast.LENGTH_SHORT).show();
+                            DTVTLogger.debug("視聴可能. 30日以内:" + mIsVodLimitThirtyDay);
                             return;
                         } else {
                             //視聴可能期限内ではないので視聴不可
                             mIsEnableWatch = DISABLE_WATCH_NO_PLAY;
-                            Toast.makeText(this, "視聴不可", Toast.LENGTH_SHORT).show();
+                            DTVTLogger.debug("視聴不可(視聴期限外)");
                             return;
                         }
                     }
                 }
                 //コンテンツの詳細情報が不正
                 mIsEnableWatch = DISABLE_WATCH_NO_PLAY;
-                Toast.makeText(this, "視聴不可", Toast.LENGTH_SHORT).show();
+                DTVTLogger.debug("視聴不可(コンテンツ詳細情報不正)");
                 break;
             case VIDEO_PROGRAM:
                 //"dtv"の値を確認する
@@ -2283,12 +2284,12 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                             //視聴可能
                             mIsEnableWatch = ENABLE_WATCH_NO_LIMIT;
                         }
-                        Toast.makeText(this, "視聴可能. 30日以内:" + mIsLimitThirtyDay, Toast.LENGTH_SHORT).show();
+                        DTVTLogger.debug("視聴可能. 30日以内:" + mIsLimitThirtyDay);
                         return;
                     } else {
                         //視聴可能期限内ではないので視聴不可
                         mIsEnableWatch = DISABLE_WATCH_NO_PLAY;
-                        Toast.makeText(this, "視聴不可", Toast.LENGTH_SHORT).show();
+                        DTVTLogger.debug("視聴不可(視聴期限外)");
                         return;
                     }
                 } else if (NOT_DTV_FLAG.equals(mDetailFullData.getDtv())) {
@@ -2305,24 +2306,24 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                                 //視聴可能
                                 mIsEnableWatch = ENABLE_WATCH_NO_LIMIT;
                             }
-                            Toast.makeText(this, "視聴可能. 30日以内:" + mIsLimitThirtyDay, Toast.LENGTH_SHORT).show();
+                            DTVTLogger.debug("視聴可能. 30日以内:" + mIsLimitThirtyDay);
                             return;
                         } else {
                             //視聴可能期限内ではないので視聴不可
                             mIsEnableWatch = DISABLE_WATCH_NO_PLAY;
-                            Toast.makeText(this, "視聴不可", Toast.LENGTH_SHORT).show();
+                            DTVTLogger.debug("視聴不可(視聴期限外)");
                             return;
                         }
                     } else {
                         //bvflgが1ではないので視聴不可
                         mIsEnableWatch = DISABLE_WATCH_NO_PLAY;
-                        Toast.makeText(this, "視聴不可", Toast.LENGTH_SHORT).show();
+                        DTVTLogger.debug("視聴不可(bvflgが1以外)");
                         return;
                     }
                 }
                 //コンテンツの詳細情報が不正
                 mIsEnableWatch = DISABLE_WATCH_NO_PLAY;
-                Toast.makeText(this, "視聴不可", Toast.LENGTH_SHORT).show();
+                DTVTLogger.debug("視聴不可(コンテンツのdtvの値が不正)");
                 break;
             case SUBSCRIPTION_PACKAGE:
                 //レンタルコンテンツ(購入済みVOD)一覧を取得
@@ -2393,10 +2394,10 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         String puid = mDetailFullData.getPuid();
         for (String liinf : liinfArray) {
             //liinfを"|"区切りで分解する
-            String[] column = liinf.split("|", 0);
+            String[] column = liinf.split(Pattern.quote("|"), 0);
             for (ActiveData activeData : activeDatas) {
                 String license_id = activeData.getLicenseId();
-                if (license_id.equals(column[1]) || license_id.equals(puid)) {
+                if (license_id.equals(column[0]) || license_id.equals(puid)) {
                     //購入済みVODのlicense_idと、対象コンテンツのpuidかliinf_arrayのライセンスIDが一致
                     if (activeData.getValidEndDate() > DateUtils.getNowTimeFormatEpoch()) {
                         //視聴可能期限内なので、activeData全体から最長の期限を探す
@@ -2417,19 +2418,19 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                             //視聴可能
                             mIsEnableWatch = ENABLE_WATCH_NO_LIMIT;
                         }
-                        Toast.makeText(this, "視聴可能. 30日以内:" + mIsLimitThirtyDay, Toast.LENGTH_SHORT).show();
+                        DTVTLogger.debug("視聴可能. 30日以内:" + mIsLimitThirtyDay);
                         changeUIBasedContractInfo();
                         return;
                     } else {
                         //視聴期限範囲外のため視聴不可だが他のactive_listをチェックするためここでは何もしない
-                        DTVTLogger.debug("Out of date range");
+                        DTVTLogger.debug("視聴期間外(判定中)");
                     }
                 }
             }
         }
         //視聴不可(契約導線を表示) STB側で契約が必要なパターンの可能性あり
         mIsEnableWatch = DISABLE_WATCH_LEAD_CONTRACT;
-        Toast.makeText(this, "視聴不可(契約導線を表示)", Toast.LENGTH_SHORT).show();
+        DTVTLogger.debug("視聴不可(VOD購入済み情報不一致)");
         changeUIBasedContractInfo();
     }
 
@@ -2458,7 +2459,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                             }
                         }
                         //視聴可能期限まで一ヶ月以内かどうか
-                        if (activeData.getValidEndDate() - DateUtils.getNowTimeFormatEpoch()
+                        if (activeDataDate - DateUtils.getNowTimeFormatEpoch()
                                 < DateUtils.EPOCH_TIME_ONE_DAY * ONE_MONTH) {
                             mIsLimitThirtyDay = true;
                             //視聴可能(期限まで30日以内)
@@ -2468,19 +2469,19 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                             //視聴可能
                             mIsEnableWatch = ENABLE_WATCH_NO_LIMIT;
                         }
-                        Toast.makeText(this, "視聴可能. 30日以内:" + mIsLimitThirtyDay, Toast.LENGTH_SHORT).show();
+                        DTVTLogger.debug("視聴可能. 30日以内:" + mIsLimitThirtyDay);
                         changeUIBasedContractInfo();
                         return;
                     }
                 } else {
                     //license_id不一致のため視聴不可だが他のlicense_idをチェックするためここでは何もしない
-                    DTVTLogger.debug("Mismatch of active_list_license_id");
+                    DTVTLogger.debug("視聴期間外(判定中)");
                 }
             }
         }
         //視聴不可(契約導線を表示) STB側で契約が必要なパターンの可能性あり
         mIsEnableWatch = DISABLE_WATCH_LEAD_CONTRACT;
-        Toast.makeText(this, "視聴不可(契約導線を表示)", Toast.LENGTH_SHORT).show();
+        DTVTLogger.debug("視聴不可(契約導線を表示)");
         changeUIBasedContractInfo();
     }
 
@@ -2496,7 +2497,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         //CHのservice_id一覧を取得
         for (HashMap<String, String> hashMap : chList) {
             String serviceId = hashMap.get(JsonContents.META_RESPONSE_SERVICE_ID);
-            if (serviceId != null && serviceId.isEmpty()) {
+            if (serviceId != null && !serviceId.isEmpty()) {
                 chServiceIds.add(serviceId);
             }
         }
@@ -2529,7 +2530,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             case DISABLE_WATCH_LEAD_CONTRACT:
                 //再生、クリップ、録画、評価、ダウンロード、番組表編集 の操作時に契約導線を表示
 
-                //TODO 再生、評価はコンテンツ毎の詳細画面の表示が行われてから対応する。録画、ダウンロードは要確認
+                //TODO 再生、評価はコンテンツ毎の詳細画面の表示が行われてから対応する。
 
                 //Fragmentに未契約状態であることを通知する
                 detailFragment.setContractInfo(false);
@@ -2546,8 +2547,9 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                 detailFragment.changeVisiblityRecordingReservationIcon(View.INVISIBLE);
 
                 //サムネイル上のdTVで視聴、dアニメストアで視聴を非表示
-                TextView startAppIcon = findViewById(R.id.view_contents_button_text);
-                startAppIcon.setVisibility(View.GONE);
+                if (mThumbnailBtn != null) {
+                    mThumbnailBtn.setVisibility(View.GONE);
+                }
                 break;
             default:
                 break;

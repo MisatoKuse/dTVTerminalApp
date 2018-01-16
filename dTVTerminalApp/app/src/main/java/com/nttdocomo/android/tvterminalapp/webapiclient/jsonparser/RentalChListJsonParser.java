@@ -116,7 +116,7 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
                 // コンテンツリストのList<HashMap>を用意
                 List<HashMap<String, String>> vcList = new ArrayList<>();
                 // コンテンツリストをJSONArrayにパースする
-                JSONArray jsonArr = jsonObj.getJSONArray(JsonContents.META_RESPONSE_LIST);
+                JSONArray jsonArr = jsonObj.getJSONArray(JsonContents.META_RESPONSE_METADATE_LIST);
                 if (jsonArr.length() == 0) {
                     return;
                 }
@@ -134,25 +134,28 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
                                 JSONArray para = jsonObject.getJSONArray(JsonContents.METADATA_LIST_PARA[j]);
                                 vcListMap.put(JsonContents.METADATA_LIST_PARA[j], para.toString());
                             } else if (JsonContents.METADATA_LIST_PARA[j].equals(JsonContents.META_RESPONSE_CHPACK)) {
-                                JSONObject para = jsonObject.getJSONObject(JsonContents.METADATA_LIST_PARA[j]);
-                                for (int c = 0; c < JsonContents.CHPACK_PARA.length; c++) {
-                                    if (!jsonObject.isNull(JsonContents.CHPACK_PARA[c])) {
-                                        String value = para.getString(JsonContents.CHPACK_PARA[c]);
-                                        //書き込み用項目名の作成
-                                        StringBuilder stringBuffer = new StringBuilder();
-                                        stringBuffer.append(JsonContents.METADATA_LIST_PARA[j]);
-                                        stringBuffer.append(JsonContents.UNDER_LINE);
-                                        stringBuffer.append(JsonContents.CHPACK_PARA[c]);
+                                JSONArray jsonArrayCHPACK = jsonObject.getJSONArray(JsonContents.METADATA_LIST_PARA[j]);
+                                for (int k = 0; k < jsonArrayCHPACK.length(); k++) {
+                                    JSONObject jsonObjectChPack = jsonArrayCHPACK.getJSONObject(k);
+                                    for (int c = 0; c < JsonContents.CHPACK_PARA.length; c++) {
+                                        if (!jsonObjectChPack.isNull(JsonContents.CHPACK_PARA[c])) {
+                                            String value = jsonObjectChPack.getString(JsonContents.CHPACK_PARA[c]);
+                                            //書き込み用項目名の作成
+                                            StringBuilder stringBuffer = new StringBuilder();
+                                            stringBuffer.append(JsonContents.METADATA_LIST_PARA[j]);
+                                            stringBuffer.append(JsonContents.UNDER_LINE);
+                                            stringBuffer.append(JsonContents.CHPACK_PARA[c]);
 
-                                        //日付項目チェック
-                                        if (DBUtils.isDateItem(JsonContents.CHPACK_PARA[c])) {
-                                            //日付なので変換して格納する
-                                            String dateBuffer = DateUtils.formatEpochToString(
-                                                    StringUtil.changeString2Long(value));
-                                            vcListMap.put(stringBuffer.toString(), dateBuffer);
-                                        } else {
-                                            //日付ではないのでそのまま格納する
-                                            vcListMap.put(stringBuffer.toString(), value);
+                                            //日付項目チェック
+                                            if (DBUtils.isDateItem(JsonContents.CHPACK_PARA[c])) {
+                                                //日付なので変換して格納する
+                                                String dateBuffer = DateUtils.formatEpochToString(
+                                                        StringUtil.changeString2Long(value));
+                                                vcListMap.put(stringBuffer.toString(), dateBuffer);
+                                            } else {
+                                                //日付ではないのでそのまま格納する
+                                                vcListMap.put(stringBuffer.toString(), value);
+                                            }
                                         }
                                     }
                                 }

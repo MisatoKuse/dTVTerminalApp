@@ -52,17 +52,17 @@ import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.Recomme
 public class DBConstants {
 
     /**
-     * DB吁E
+     * DB名.
      */
     public static final String DATABASE_NAME = "db_data";
 
     /**
-     * DBVersion
+     * DBVersion.
      */
     public static final int DATABASE_VERSION = 1;
 
     /**
-     * Jsonのキー名が数字から始まってる時の対策用定数
+     * Jsonのキー名が数字から始まってる時の対策用定数.
      */
     public static final String FOUR_K_FLG = "4kflg";
     public static final String UNDER_BAR_FOUR_K_FLG = "_4kflg";
@@ -822,7 +822,7 @@ public class DBConstants {
     public static final String DOWNLOAD_LIST_COLUM_TITLE = "title";
     public static final String DOWNLOAD_LIST_COLUM_CONTENTFORMAT = "contentFormat";
     public static final String DOWNLOAD_LIST_TABLE_NAME = "download_list";
-    public static final String CREATE_TABLE_DOWNLOAD_LIST_SQL_NAMES[] = {
+    public static final String[] CREATE_TABLE_DOWNLOAD_LIST_SQL_NAMES = {
             CREATE_TABLE_TEXT,
             DOWNLOAD_LIST_TABLE_NAME,
             OPEN_BRACKETS_TEXT,
@@ -856,10 +856,6 @@ public class DBConstants {
      * レンタル一覧テーブル.
      */
     public static final String RENTAL_LIST_TABLE_NAME = "rental_list";
-    /**
-     * 購入済みCH一覧テーブル.
-     */
-    public static final String RENTAL_CHANNEL_LIST_TABLE_NAME = "rental_cnannel_list";
 
     /**
      * レンタル一覧テーブル作成SQL文.
@@ -911,7 +907,131 @@ public class DBConstants {
             JsonContents.META_RESPONSE_PU_END_DATE, TEXT_WITH_COMMA_TEXT,
             JsonContents.META_RESPONSE_CREDIT_ARRAY, TEXT_WITH_COMMA_TEXT,
             JsonContents.META_RESPONSE_RATING, TEXT_WITH_COMMA_TEXT,
-            JsonContents.META_RESPONSE_DTV, TEXT_WITHOUT_COMMA_TEXT,
+            JsonContents.META_RESPONSE_DTV, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CHSVOD, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_SEARCH_OK, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_LIINF_ARRAY, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_PUINF, JsonContents.UNDER_LINE, JsonContents.META_RESPONSE_PUID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_PUINF, JsonContents.UNDER_LINE, JsonContents.META_RESPONSE_CRID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_PUINF, JsonContents.UNDER_LINE, JsonContents.META_RESPONSE_TITLE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_PUINF, JsonContents.UNDER_LINE, JsonContents.META_RESPONSE_EPITITLE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_PUINF, JsonContents.UNDER_LINE, JsonContents.META_RESPONSE_DISP_TYPE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_PUINF, JsonContents.UNDER_LINE, JsonContents.META_RESPONSE_CHSVOD, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_PUINF, JsonContents.UNDER_LINE, JsonContents.META_RESPONSE_PRICE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_PUINF, JsonContents.UNDER_LINE, JsonContents.META_RESPONSE_QUNIT, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_PUINF, JsonContents.UNDER_LINE, JsonContents.META_RESPONSE_QRANGE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_PUINF, JsonContents.UNDER_LINE, JsonContents.META_RESPONSE_PU_START_DATE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_PUINF, JsonContents.UNDER_LINE, JsonContents.META_RESPONSE_PU_END_DATE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CAPL, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_BILINGAL, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_TV_CID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_SERVICE_ID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_EVENT_ID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CHNO, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_TV_SERVICE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CONTENT_TYPE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_VOD_START_DATE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_VOD_END_DATE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_MAIN_GENRE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_SECOND_GENRE_ARRAY, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_COPY, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_ADINFO_ARRAY, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_RELATIONAL_ID_ARRAY, TEXT_WITHOUT_COMMA_TEXT,
+            CLOSE_BRACKETS_TEXT);
+
+    /**
+     * レンタルのactive_list一覧テーブル.
+     */
+    public static final String RENTAL_ACTIVE_LIST_TABLE_NAME = "rental_active_list";
+
+    /**
+     * レンタルのactive_list一覧テーブル作成SQL文.
+     */
+    public static final String CREATE_TABLE_RENTAL_ACTIVE_LIST_SQL = StringUtil.getConnectStrings(
+            CREATE_TABLE_TEXT, RENTAL_ACTIVE_LIST_TABLE_NAME, OPEN_BRACKETS_TEXT,
+            ID_COLUMN, CREATE_TABLE_PRIMARY_TEXT,
+            JsonContents.META_RESPONSE_ACTIVE_LIST, JsonContents.UNDER_LINE, JsonContents.META_RESPONSE_LICENSE_ID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_ACTIVE_LIST, JsonContents.UNDER_LINE, JsonContents.META_RESPONSE_VAILD_END_DATE, TEXT_WITHOUT_COMMA_TEXT,
+            CLOSE_BRACKETS_TEXT);
+
+    /**
+     * 購入済みCH一覧テーブル.
+     */
+    public static final String RENTAL_CHANNEL_LIST_TABLE_NAME = "rental_cnannel_list";
+
+    /**
+     * レンタル一覧テーブル作成SQL文.
+     */
+    public static final String CREATE_TABLE_RENTAL_CHANNEL_LIST_SQL = StringUtil.getConnectStrings(
+            CREATE_TABLE_TEXT, RENTAL_CHANNEL_LIST_TABLE_NAME, OPEN_BRACKETS_TEXT,
+            ID_COLUMN, CREATE_TABLE_PRIMARY_TEXT,
+            JsonContents.META_RESPONSE_CRID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_SERVICE_ID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CHNO, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_TITLE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_TITLERUBY, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_DISP_TYPE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_SERVICE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CH_TYPE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_AVAIL_START_DATE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_AVAIL_END_DATE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_DEFAULT_THUMB, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_THUMB_640, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_THUMB_448, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_DEMONG, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_DTV_TYPE, TEXT_WITH_COMMA_TEXT,
+            UNDER_BAR_FOUR_K_FLG, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_AVAIL_STATUS, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_DELIVERY, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_R_VALUE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_ADULT, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_NG_FUNC, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_GENRE_ARRAY, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_SYNOP, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CHSVOD, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_PUID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_SUB_PUID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_PRICE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_QRANGE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_QUNIT, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_PU_START_DATE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_PU_END_DATE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE,
+            JsonContents.META_RESPONSE_CRID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE,
+            JsonContents.META_RESPONSE_TITLE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE,
+            JsonContents.META_RESPONSE_DISP_TYPE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE,
+            JsonContents.META_RESPONSE_PUID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE,
+            JsonContents.META_RESPONSE_SUB_PUID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE,
+            JsonContents.META_RESPONSE_PRICE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE,
+            JsonContents.META_RESPONSE_QRANGE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE,
+            JsonContents.META_RESPONSE_QUNIT, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE,
+            JsonContents.META_RESPONSE_PU_START_DATE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE,
+            JsonContents.META_RESPONSE_PU_END_DATE, TEXT_WITH_COMMA_TEXT,
+            DATE_TYPE, TEXT_WITH_COMMA_TEXT, UPDATE_DATE, TEXT_WITHOUT_COMMA_TEXT,
+            CLOSE_BRACKETS_TEXT);
+
+    /**
+     * 購入済みCHのactive_list一覧テーブル.
+     */
+    public static final String RENTAL_CHANNEL_ACTIVE_LIST_TABLE_NAME = "rental_cnannel_active_list";
+
+    /**
+     * 購入済みCHのactive_list一覧テーブル作成SQL文.
+     */
+    public static final String CREATE_TABLE_RENTAL_CHANNEL_ACTIVE_LIST_SQL = StringUtil.getConnectStrings(
+            CREATE_TABLE_TEXT, RENTAL_CHANNEL_ACTIVE_LIST_TABLE_NAME, OPEN_BRACKETS_TEXT,
+            ID_COLUMN, CREATE_TABLE_PRIMARY_TEXT,
+            JsonContents.META_RESPONSE_ACTIVE_LIST, JsonContents.UNDER_LINE, JsonContents.META_RESPONSE_LICENSE_ID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_ACTIVE_LIST, JsonContents.UNDER_LINE, JsonContents.META_RESPONSE_VAILD_END_DATE, TEXT_WITHOUT_COMMA_TEXT,
             CLOSE_BRACKETS_TEXT);
 
     /**
@@ -950,7 +1070,7 @@ public class DBConstants {
     // クリップキー一覧 キャッシュデータ格納用テーブル
     public static final String TV_CLIP_KEY_LIST_TABLE_NAME = "tv_clip_key_list";
     // クリップキー一覧テーブル用 colum ("vod"or"tv")
-    private static final String CREATE_TABLE_TV_CLIP_KEY_LIST_SQL_NAMES[] = {
+    private static final String[] CREATE_TABLE_TV_CLIP_KEY_LIST_SQL_NAMES = {
             CREATE_TABLE_TEXT,
             TV_CLIP_KEY_LIST_TABLE_NAME,
             OPEN_BRACKETS_TEXT,
@@ -969,7 +1089,7 @@ public class DBConstants {
     // クリップキー一覧 キャッシュデータ格納用テーブル
     public static final String VOD_CLIP_KEY_LIST_TABLE_NAME = "vod_clip_key_list";
     // クリップキー一覧テーブル用 colum ("vod"or"tv")
-    private static final String CREATE_TABLE_VOD_CLIP_KEY_LIST_SQL_NAMES[] = {
+    private static final String[] CREATE_TABLE_VOD_CLIP_KEY_LIST_SQL_NAMES = {
             CREATE_TABLE_TEXT,
             VOD_CLIP_KEY_LIST_TABLE_NAME,
             OPEN_BRACKETS_TEXT,
