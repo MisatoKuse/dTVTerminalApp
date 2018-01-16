@@ -141,10 +141,10 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     /**
      * ダウンロード停止
      */
-    public void stop() {
+    public void stopService() {
         DownloadService ds = getDownloadService();
         if (null != ds) {
-//            ds.finishDl();
+            ds.stop();
             ds.stopService();
         }
     }
@@ -284,7 +284,8 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                 DownloadService.dlDataQue.remove(0);
                 DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok");
                 if(0 == DownloadService.dlDataQue.size()){
-                    stop();
+                    isRegistered = false;
+                    stopService();
                     return;
                 }
                 try {
@@ -296,7 +297,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                     e.printStackTrace();
                 }
             } else {
-                stop();
+                stopService();
             }
         }
     }
@@ -517,4 +518,16 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
             e.printStackTrace();
         }
     }
+
+//    /**
+//     * 機能：
+//     *      １．Download Uiがなくなる場合、且サービスにqueueはない場合、必ずこれをコールする
+//     *      ２．Download Uiがない場合、Serviceは閉じる時、必ずこれをコールする
+//     */
+//    public void stop(){
+//        DownloadService ds = getDownloadService();
+//        if (null != ds) {
+//            ds.stop();
+//        }
+//    }
 }

@@ -48,6 +48,17 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
 
     private static final int THUMBNAIL_HEIGHT = 69;
     private static final int THUMBNAIL_WIDTH = 122;
+    private static final int ONE_HOUR_UNIT = 180;
+    private static final int TIME_LINE_WIDTH = 44;
+    private static final int PADDING_TOP = 12;
+    private static final int PADDING_BOTTOM = 15;
+    private static final int THUMB_MARGIN_TOP_TITLE = 16;
+    private static final int THUMB_MARGIN_LEFT = 30;
+    private static final int PADDING_RIGHT = 8;
+    private static final int PADDING_LEFT = 7;
+    private static final int EPI_MARGIN_TOP_THUMB = 4;
+    private static final float TITLE_TEXT_SIZE = 13.0f;
+    private static final float EPI_TEXT_SIZE = 11.0f;
     private TvProgramListActivity mContext = null;
     //ディスプレイ幅さ
     private int mScreenWidth = 0;
@@ -70,6 +81,8 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     //エピソードタイトルを含むスペース
     private int mEpiSpace;
     private boolean isShowThumb;
+    private int CLIP_BUTTON_SIZE = 32;
+    private int CHANNEL_WIDTH = 720;
 
     //年齢制限有効フラグ
     private boolean mIsParental = false;
@@ -194,10 +207,10 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
          * デザイン設定.
          */
         private void setComponentParameters() {
-            mView.setPadding(7, 12, 8, 15);
-            mContent.setTextSize(13.0f);
+            mView.setPadding(PADDING_LEFT, PADDING_TOP, PADDING_RIGHT, PADDING_BOTTOM);
+            mContent.setTextSize(TITLE_TEXT_SIZE);
             mContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-            mDetail.setTextSize(11.0f);
+            mDetail.setTextSize(EPI_TEXT_SIZE);
         }
     }
 
@@ -206,8 +219,9 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         View view = LayoutInflater.from(mContext).inflate(R.layout.tv_program_item, parent, false);
         MyViewHolder holder = new MyViewHolder(view);
         holder.layout = (RelativeLayout) view;
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((mScreenWidth - mContext.dip2px(44)) / 2,
-                mContext.dip2px(180) * 24);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout
+                .LayoutParams((mScreenWidth - mContext.dip2px(TIME_LINE_WIDTH)) / 2
+                ,mContext.dip2px(ONE_HOUR_UNIT) * 24);
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
         holder.layout.setLayoutParams(layoutParams);
         return holder;
@@ -284,9 +298,9 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         }
         float marginTop = itemSchedule.getMarginTop();
         float myHeight = itemSchedule.getMyHeight();
-        itemViewHolder.mLayoutParams.height = (int) (myHeight * (mContext.dip2px(180)));
+        itemViewHolder.mLayoutParams.height = (int) (myHeight * (mContext.dip2px(ONE_HOUR_UNIT)));
         itemViewHolder.mView.setLayoutParams(itemViewHolder.mLayoutParams);
-        itemViewHolder.mView.setY(marginTop * (mContext.dip2px(180)));
+        itemViewHolder.mView.setY(marginTop * (mContext.dip2px(ONE_HOUR_UNIT)));
 
         if (isLast) {
             if (date1.compareTo(date2) == -1) {
@@ -364,6 +378,26 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                         return true;
                     }
                 });
+        itemViewHolder.mClipButton.getViewTreeObserver()//クリップボタン
+                .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                    @Override
+                    public boolean onPreDraw() {
+                        itemViewHolder.mClipButton.getViewTreeObserver().removeOnPreDrawListener(this);
+                        displayProgramClip(itemViewHolder);
+                        return true;
+                    }
+                });
+    }
+
+    /**
+     * クリップ表示
+     * @param itemViewHolder ビューホルダー
+     */
+    private void displayProgramClip(ItemViewHolder itemViewHolder) {
+        int clipHeight = itemViewHolder.mClipButton.getHeight();
+        if(clipHeight < CLIP_BUTTON_SIZE){
+            itemViewHolder.mClipButton.setVisibility(View.INVISIBLE);
+        }
     }
 
     /**
@@ -373,15 +407,17 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      */
     private void displayProgramEpi(final ItemViewHolder itemViewHolder) {
         int epiLineHeight = itemViewHolder.mDetail.getLineHeight();
-        if (mEpiSpace <= mContext.dip2px(4)) {
+        if (mEpiSpace <= mContext.dip2px(EPI_MARGIN_TOP_THUMB)) {
             itemViewHolder.mDetail.setVisibility(View.INVISIBLE);
         } else {
             if (!isShowThumb) {
-                mEpiSpace = mEpiSpace - mContext.dip2px(4) + epiLineHeight;
-                isShowThumb = true;
-            } else {// TODO: 2018/01/16 将来タブレットに調整可能性がある
-                mEpiSpace = mEpiSpace - mContext.dip2px(4) - epiLineHeight;
-                isShowThumb = false;
+                mEpiSpace = mEpiSpace - mContext.dip2px(EPI_MARGIN_TOP_THUMB) + epiLineHeight;
+            } else {
+                if ((mScreenWidth - mContext.dip2px(TIME_LINE_WIDTH)) / 2 < CHANNEL_WIDTH) {//チャンネル幅判断
+                    mEpiSpace = mEpiSpace - mContext.dip2px(EPI_MARGIN_TOP_THUMB) - epiLineHeight;
+                } else {
+                    mEpiSpace = mEpiSpace - mContext.dip2px(EPI_MARGIN_TOP_THUMB);
+                }
             }
             if (mEpiSpace / epiLineHeight > 0) {
                 itemViewHolder.mDetail.setMaxLines(mEpiSpace / epiLineHeight);
@@ -397,7 +433,8 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * @param itemViewHolder ビューホルダー
      */
     private void displayProgramTitle(final ItemViewHolder itemViewHolder) {
-        int availableSpace = itemViewHolder.mView.getHeight() - mContext.dip2px(12) - mContext.dip2px(15);
+        int availableSpace = itemViewHolder.mView.getHeight()
+                - mContext.dip2px(PADDING_TOP) - mContext.dip2px(PADDING_BOTTOM);
         int titleLineHeight = itemViewHolder.mContent.getLineHeight();
         int titleLineCount = itemViewHolder.mContent.getLineCount();
         int titleSpace = titleLineHeight * titleLineCount;
@@ -415,19 +452,21 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             itemViewHolder.mThumbnail.setVisibility(View.INVISIBLE);
             itemViewHolder.mDetail.setVisibility(View.INVISIBLE);
         } else {//パネルスペースを超えてないタイトル
-            int thumbnailWidth = itemViewHolder.mView.getWidth() - mContext.dip2px(30) - mContext.dip2px(8);
+            int thumbnailWidth = itemViewHolder.mView.getWidth() - mContext
+                    .dip2px(THUMB_MARGIN_LEFT) - mContext.dip2px(PADDING_RIGHT);
             int thumbnailHeight = mContext.dip2px(THUMBNAIL_HEIGHT) * thumbnailWidth / mContext.dip2px(THUMBNAIL_WIDTH);
-            if (availableSpace - titleSpace <= mContext.dip2px(16)) {
+            if (availableSpace - titleSpace <= mContext.dip2px(THUMB_MARGIN_TOP_TITLE)) {
                 itemViewHolder.mThumbnail.setVisibility(View.INVISIBLE);
                 itemViewHolder.mDetail.setVisibility(View.INVISIBLE);
             } else {
-                if (availableSpace - titleSpace - mContext.dip2px(16) >= thumbnailHeight && mIsParental) {//サムネル表示
-                    mThumbEpiSpace = availableSpace - titleSpace - mContext.dip2px(16);
+                if (availableSpace - titleSpace - mContext
+                        .dip2px(THUMB_MARGIN_TOP_TITLE) >= thumbnailHeight && mIsParental) {//サムネル表示
+                    mThumbEpiSpace = availableSpace - titleSpace - mContext.dip2px(THUMB_MARGIN_TOP_TITLE);
                     mEpiSpace = mThumbEpiSpace - thumbnailHeight;
                     isShowThumb = true;
                 } else {//サムネル非表示
                     itemViewHolder.mThumbnail.setVisibility(View.GONE);
-                    mEpiSpace = availableSpace - titleSpace - mContext.dip2px(16);
+                    mEpiSpace = availableSpace - titleSpace - mContext.dip2px(THUMB_MARGIN_TOP_TITLE);
                     isShowThumb = false;
                 }
             }

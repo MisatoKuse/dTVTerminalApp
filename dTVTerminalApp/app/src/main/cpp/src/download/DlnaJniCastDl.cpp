@@ -35,12 +35,11 @@ namespace dtvt {
     extern "C" jboolean JNICALL
     Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterfaceDl_nativeStartDlna(JNIEnv *env, jobject obj, jlong thiz, jstring dirToSave_) {
         unsigned char ret = 0;
-        DlnaDownload *dlnaDownloadPtr = (DlnaDownload *) thiz;
-        if (NULL == dlnaDownloadPtr) {
+        if (NULL == thiz) {
             DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterfaceDl_nativeStartDlna exit, 0==thiz");
-            dlnaDownloadPtr->downloaderStatusHandler(DOWNLOADER_STATUS_UNKNOWN, NULL, dlnaDownloadPtr);
             return (jboolean) ret;
         }
+        DlnaDownload *dlnaDownloadPtr = (DlnaDownload *) thiz;
 
         if (NULL == dirToSave_) {
             DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterfaceDl_nativeStartDlna exit, param error dirToSave_");
@@ -61,6 +60,20 @@ namespace dtvt {
         env->ReleaseStringUTFChars(dirToSave_, (const char *) dirToSave);
 
         return (jboolean) ret;
+    }
+
+    /**
+     * 機能：dlを開始
+     */
+    extern "C" void JNICALL
+    Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterfaceDl_nativeStopDlna(JNIEnv *env, jobject obj, jlong thiz) {
+        unsigned char ret = 0;
+        if (NULL == thiz) {
+            DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterfaceDl_nativeStartDlna exit, 0==thiz");
+            return;
+        }
+        DlnaDownload *dlnaDownloadPtr = (DlnaDownload *) thiz;
+        dlnaDownloadPtr->stop();
     }
 
 //    extern "C" void JNICALL
@@ -177,6 +190,7 @@ namespace dtvt {
         DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterfaceDl_uninitGlobalDl exit, cipher_file_context_global_free ok");
         secure_io_global_free();
         DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterfaceDl_uninitGlobalDl exit, secure_io_global_free ok");
+        gIsGlobalDtcpInited=false;
     }
 
 
