@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivity;
+import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.WeeklyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -137,9 +138,15 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             }
         }
         // ビデオランキング
-        if(mContext instanceof DailyTvRankingActivity) {
+        if(mContext instanceof VideoRankingActivity) {
             if (mVideoRankList != null) {
-                sendVideoRankListData(mVideoRankList.getVrList());
+                if (mApiDataProviderCallback != null) {
+                    DTVTLogger.debug("WeeklyRankList Callback");
+                    sendVideoRankListData(mVideoRankList.getVrList());
+                } else {
+                    sendVideoGenreRankListData(setRankingContentData(mVideoRankList.getVrList()),
+                            mVideoRankList.getExtraData().getString("genreId"));
+                }
             }
         }
 
@@ -167,9 +174,14 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             }
         }
         // ビデオランキング
-        if(mContext instanceof DailyTvRankingActivity) {
+        if(mContext instanceof VideoRankingActivity) {
             if (mVideoRankList != null) {
-                sendVideoRankListData(mVideoRankList.getVrList());
+                if (mApiDataProviderCallback != null) {
+                    DTVTLogger.debug("VideoRankList Callback");
+                    sendVideoRankListData(mVideoRankList.getVrList());
+                } else {
+                    sendVideoGenreRankListData(setRankingContentData(mVideoRankList.getVrList()), mVideoRankList.getExtraData().getString("genreId"));
+                }
             }
         }
         DTVTLogger.end();
@@ -219,7 +231,6 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
          */
         void weeklyRankOverseasChannelCallback(List<ContentsData> contentsDataList);
     }
-
     /**
      * コンストラクタ
      *
