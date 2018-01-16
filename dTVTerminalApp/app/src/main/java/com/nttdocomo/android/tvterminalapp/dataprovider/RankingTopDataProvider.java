@@ -9,7 +9,6 @@ import com.nttdocomo.android.tvterminalapp.activity.ranking.WeeklyTvRankingActiv
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DailyRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.VideoRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.WeeklyRankInsertDataManager;
@@ -62,7 +61,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             DailyRankList list = dailyRankLists.get(0);
             setStructDB(list);
             if (!mRequiredClipKeyList
-                    || mResponse != null) {
+                    || mResponseEndFlag) {
                 sendDailyRankListData(list.getDrList());
             } else {
                 mDailyRankList = list;
@@ -82,7 +81,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             setStructDB(list);
             // コールバック判定
             if (!mRequiredClipKeyList
-                    || mResponse != null) {
+                    || mResponseEndFlag) {
                 if (mApiDataProviderCallback != null) {
                     DTVTLogger.debug("WeeklyRankList Callback");
                     sendWeeklyRankListData(list.getWrList());
@@ -104,7 +103,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             VideoRankList list = contentsListPerGenre.get(0);
             setStructDB(list);
             if (!mRequiredClipKeyList
-                    || mResponse != null) {
+                    || mResponseEndFlag) {
                 sendVideoRankListData(list.getVrList());
             } else {
                 mVideoRankList = list;
@@ -254,7 +253,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         List<Map<String, String>> dailyRankList = getDailyRankListData();
         if (dailyRankList != null && dailyRankList.size() > 0) {
             if(!mRequiredClipKeyList
-                    || mResponse != null) {
+                    || mResponseEndFlag ) {
                 sendDailyRankListData(dailyRankList);
             } else {
                 mDailyRankList = new DailyRankList();
@@ -331,7 +330,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
 
         if (weeklyRankList != null && weeklyRankList.size() > 0) {
             if(!mRequiredClipKeyList
-                    || mResponse != null) {
+                    || mResponseEndFlag) {
                 List<ContentsData> contentsDataList = setRankingContentData(weeklyRankList);
                 sendWeeklyGenreRankListData(contentsDataList, genreId);
             } else {
@@ -359,7 +358,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         List<Map<String, String>> videoRankList = getVideoRankListData(genreId);
         if (videoRankList != null && videoRankList.size() > 0) {
             if(!mRequiredClipKeyList
-                    || mResponse != null) {
+                    || mResponseEndFlag) {
                 List<ContentsData> contentsDataList = setRankingContentData(videoRankList);
                 sendVideoGenreRankListData(contentsDataList, genreId);
             } else {

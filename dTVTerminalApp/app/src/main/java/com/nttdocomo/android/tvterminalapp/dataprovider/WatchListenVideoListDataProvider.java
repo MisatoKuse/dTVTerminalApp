@@ -31,7 +31,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
         if (watchListenVideoList != null && watchListenVideoList.size() > 0) {
             WatchListenVideoList list = watchListenVideoList.get(0);
             if (!mRequiredClipKeyList
-                    || mResponse != null) {
+                    || mResponseEndFlag) {
                 sendWatchListenVideoListData(list.getVcList());
             } else {
                 mWatchListenVideoList = list;

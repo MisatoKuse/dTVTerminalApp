@@ -34,7 +34,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
         if (response != null) {
             setStructDB(response);
             if (!mRequiredClipKeyList
-                    || mResponse != null) {
+                    || mResponseEndFlag) {
                 sendRentalListData(response);
             } else {
                 mPurchasedVodListResponse = response;

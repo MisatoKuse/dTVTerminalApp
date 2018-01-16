@@ -9,22 +9,16 @@ import android.content.Context;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.VodClipInsertDataManager;
-import com.nttdocomo.android.tvterminalapp.datamanager.select.VodClipDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
-import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.VOD_LAST_INSERT;
 
 /**
  * クリップ(ビデオ)データプロバイダ.
@@ -40,7 +34,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
             VodClipList list = vodClipLists.get(0);
 //            setStructDB(list);
             if (!mRequiredClipKeyList
-                    || mResponse != null) {
+                    || mResponseEndFlag) {
                 sendVodClipListData(list.getVcList());
             } else {
                 mClipList = list;

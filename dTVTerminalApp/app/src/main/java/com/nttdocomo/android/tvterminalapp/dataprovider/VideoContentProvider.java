@@ -169,7 +169,7 @@ public class VideoContentProvider  extends  ClipKeyListDataProvider implements
         if (contentsListPerGenre != null && contentsListPerGenre.size() > 0) {
             VideoRankList list = contentsListPerGenre.get(0);
             if (!mRequiredClipKeyList
-                    || mResponse != null) {
+                    || mResponseEndFlag) {
                 sendContentListData(list.getVrList());
             } else {
                 mVideoRankList = list;
