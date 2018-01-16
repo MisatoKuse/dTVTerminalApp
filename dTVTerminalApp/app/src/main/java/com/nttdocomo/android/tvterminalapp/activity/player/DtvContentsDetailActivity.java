@@ -1687,8 +1687,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                     startAppDialog.showDialog();
                     break;
                 } else if (METARESPONSE1.equals(mDetailFullData.getDtv())) {
-                    // TODO: dtvType　はVOD＆EPGマージメタレスポンス」(縮小/フル共に)にて返却されるレスポンスとなる、現在テストのため定義した
-                    String dtvType = null;
+                    String dtvType = mDetailFullData.getDtvType();
                     if (dtvType != null && dtvType.equals(METARESPONSE1)) {
                         startApp(WORK_START_TYPE + mDetailFullData.getTitle_id());
                     } else if (dtvType != null && dtvType.equals(METARESPONSE2)) {
