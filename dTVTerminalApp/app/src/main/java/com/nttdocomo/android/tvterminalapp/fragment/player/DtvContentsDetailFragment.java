@@ -32,7 +32,6 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
-import com.nttdocomo.android.tvterminalapp.model.search.SearchServiceType;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 
@@ -131,9 +130,9 @@ public class DtvContentsDetailFragment extends Fragment {
         });
 
         mClipButton = view.findViewById(R.id.contents_detail_clip_button);
-        setClipButton(mClipButton);
 
         if (mOtherContentsDetailData != null) {
+            setClipButton(mClipButton);
             setDetailData();
         } else {
             mOtherContentsDetailData = new OtherContentsDetailData();
@@ -149,16 +148,11 @@ public class DtvContentsDetailFragment extends Fragment {
 
         //他サービスならクリップボタン非表示
         if (mOtherContentsDetailData != null) {
-            String serviceId = String.valueOf(mOtherContentsDetailData.getServiceId());
-            if (serviceId.equals(SearchServiceType.ServiceId.HIKARI_TV_FOR_DOCOMO)) {
-                if (mOtherContentsDetailData.ismClipExec()){
-                    if (mOtherContentsDetailData.ismClipStatus()){
-                        clipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
-                    }else{
-                        clipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
-                    }
-                }else{
-                    clipButton.setVisibility(View.GONE);
+            if (mOtherContentsDetailData.isClipExec()) {
+                if (mOtherContentsDetailData.isClipStatus()) {
+                    clipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+                } else {
+                    clipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
                 }
             } else {
                 clipButton.setVisibility(View.GONE);
@@ -172,16 +166,17 @@ public class DtvContentsDetailFragment extends Fragment {
             public void onClick(View view) {
                 //クリップボタンイベント
                 if (mIsContract) {
+                    ClipRequestData data = setClipData(mOtherContentsDetailData.getVodMetaFullData());
                     //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、画像比較でクリップ済/未を判定する
                     Bitmap clipButtonBitmap = ((BitmapDrawable) clipButton.getBackground()).getBitmap();
                     Bitmap activeClipBitmap = ((BitmapDrawable) ResourcesCompat.getDrawable(getResources(),
                             R.mipmap.icon_circle_active_clip, null)).getBitmap();
                     if (clipButtonBitmap.equals(activeClipBitmap)) {
-                        mOtherContentsDetailData.getVodMetaFullData().setClipStatus(true);
+                        data.setClipStatus(true);
                     } else {
-                        mOtherContentsDetailData.getVodMetaFullData().setClipStatus(false);
+                        data.setClipStatus(false);
                     }
-                    ((BaseActivity) mActivity).sendClipRequest(setClipData(mOtherContentsDetailData.getVodMetaFullData()), clipButton);
+                    ((BaseActivity) mActivity).sendClipRequest(data, clipButton);
                 } else {
                     //未契約時は契約導線を表示するためActivityに通知
                     ((DtvContentsDetailActivity) mActivity).leadingContract();
@@ -244,6 +239,7 @@ public class DtvContentsDetailFragment extends Fragment {
             mTxtTitleShortDetail.setText(contentsDetailInfo);
             mTxtTitleAllDetail.setText(contentsDetailInfo);
         }
+        setClipButton(mClipButton);
     }
 
     /**

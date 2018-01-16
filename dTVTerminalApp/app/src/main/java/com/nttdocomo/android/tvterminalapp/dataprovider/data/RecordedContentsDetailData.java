@@ -132,8 +132,6 @@ public class RecordedContentsDetailData implements Parcelable {
         this.mDlFileFullPath = dlFileFullPath;
     }
 
-
-
     @Override
     public int describeContents() {
         return 0;
@@ -171,9 +169,9 @@ public class RecordedContentsDetailData implements Parcelable {
         int tmpMDetailParamFromWhere = in.readInt();
         this.mDetailParamFromWhere = tmpMDetailParamFromWhere == -1 ? null : DetailParamFromWhere.values()[tmpMDetailParamFromWhere];
         this.mVideoType = in.readString();
-        this.mClearTextSize=in.readString();
-        this.mDownLoadStatus=in.readInt();
-        this.mDlFileFullPath=in.readString();
+        this.mClearTextSize = in.readString();
+        this.mDownLoadStatus = in.readInt();
+        this.mDlFileFullPath = in.readString();
     }
 
     public static final Creator<RecordedContentsDetailData> CREATOR = new Creator<RecordedContentsDetailData>() {

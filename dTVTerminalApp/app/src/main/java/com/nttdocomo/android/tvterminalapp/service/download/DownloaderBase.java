@@ -317,6 +317,13 @@ public abstract class DownloaderBase {
 //    public abstract void finishDl();
 
     /**
+     * 機能：
+     *      １．Download Uiがなくなる場合、且サービスにqueueはない場合、必ずこれをコールする
+     *      ２．Download Uiがない場合、Serviceは閉じる時、必ずこれをコールする
+     */
+    public abstract void stop();
+
+    /**
      * Get save path
      * @return
      */
