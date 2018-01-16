@@ -15,13 +15,14 @@ import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * キーコードをSTBへ送信する
+ * キーコードをSTBへ送信する.
  */
 public class RemoteControlRelayClient {
 
@@ -172,7 +173,7 @@ public class RemoteControlRelayClient {
     private static RemoteControlRelayClient mInstance = new RemoteControlRelayClient();
 
     /**
-     * アプリ起動要求種別
+     * アプリ起動要求種別.
      */
     public enum STB_APPLICATION_TYPES {
         // dTV
@@ -188,14 +189,17 @@ public class RemoteControlRelayClient {
     }
 
     /**
-     * リクエストコマンド種別
+     * リクエストコマンド種別.
      */
-
     public enum STB_REQUEST_COMMAND_TYPES {
+        // 受信タイムアウト時
+        COMMAND_UNKNOWN,
+        // ユーザ登録チェック
         IS_USER_ACCOUNT_EXIST,
+        // サービスアプリ：タイトル詳細表示起動要求
         TITLE_DETAIL,
-        START_APPLICATION,
-        COMMAND_UNKNOWN
+        // サービスアプリ：起動要求
+        START_APPLICATION
     }
 
     // ハッシュアルゴリズム指定
@@ -238,8 +242,9 @@ public class RemoteControlRelayClient {
 
     private static final String RELAY_RESULT_NOT_REGISTERED_SERVICE = "NOT_REGISTERED_SERVICE";
     private static final String RELAY_RESULT_UNREGISTERED_USER_ID = "UNREGISTERED_USER_ID";
-    private static final String RELAY_RESULT_CONNECTION_TIMEOUT ="CONNECTION_TIMEOUT";
+    private static final String RELAY_RESULT_CONNECTION_TIMEOUT = "CONNECTION_TIMEOUT";
     private static final String RELAY_RESULT_RELAY_SERVICE_BUSY = "SERVICE_BUSY";
+    private static final String RELAY_RESULT_USER_INVALID_STATE = "USER_INVALID_STATE";
 
     // アプリ起動要求種別に対応するアプリ名シンボル
     private static final Map<STB_APPLICATION_TYPES, String> mStbApplicationSymbolMap = new HashMap<STB_APPLICATION_TYPES, String>() {
@@ -264,13 +269,13 @@ public class RemoteControlRelayClient {
     private Handler mHandler = null;
 
     /**
-     * シングルトン
+     * シングルトン.
      */
     private RemoteControlRelayClient() {
     }
 
     /**
-     * シングルトン・インスタンス
+     * シングルトン・インスタンス.
      *
      * @return mInstance
      */
@@ -279,7 +284,7 @@ public class RemoteControlRelayClient {
     }
 
     /**
-     * 処理結果応答を通知するハンドラーの設定
+     * 処理結果応答を通知するハンドラーの設定.
      *
      * @param handler
      */
@@ -288,14 +293,14 @@ public class RemoteControlRelayClient {
     }
 
     /**
-     * 処理結果応答を通知するハンドラーの設定の解除
+     * 処理結果応答を通知するハンドラーの設定の解除.
      */
     public void resetHandler() {
         mHandler = null;
     }
 
     /**
-     * キーコード名をキーコードに変換する
+     * キーコード名をキーコードに変換する.
      *
      * @param keycodeRid キーコードR.id
      * @return キーコード名（キーコードがない場合は null）
@@ -309,7 +314,7 @@ public class RemoteControlRelayClient {
     }
 
     /**
-     * キーコードをSTBへ送信する
+     * キーコードをSTBへ送信する.
      *
      * @param keycodeRid
      */
@@ -322,7 +327,7 @@ public class RemoteControlRelayClient {
     }
 
     /**
-     * 処理結果応答を通知する情報
+     * 処理結果応答を通知する情報.
      */
     public class ResponseMessage {
         public static final int RELAY_RESULT_OK = 0;
@@ -338,6 +343,7 @@ public class RemoteControlRelayClient {
         public static final int RELAY_RESULT_UNREGISTERED_USER_ID = 17;
         public static final int RELAY_RESULT_CONNECTION_TIMEOUT = 18;
         public static final int RELAY_RESULT_RELAY_SERVICE_BUSY = 19;
+        public static final int RELAY_RESULT_USER_INVALID_STATE = 20;
 
         private int mResult = RELAY_RESULT_OK;
         private int mResultCode = RELAY_RESULT_SUCCESS;
@@ -363,17 +369,18 @@ public class RemoteControlRelayClient {
 
                 put(RemoteControlRelayClient.RELAY_RESULT_NOT_REGISTERED_SERVICE, RELAY_RESULT_NOT_REGISTERED_SERVICE);
                 put(RemoteControlRelayClient.RELAY_RESULT_UNREGISTERED_USER_ID, RELAY_RESULT_UNREGISTERED_USER_ID);
-                put(RemoteControlRelayClient.RELAY_RESULT_CONNECTION_TIMEOUT,RELAY_RESULT_CONNECTION_TIMEOUT);
-                put(RemoteControlRelayClient.RELAY_RESULT_RELAY_SERVICE_BUSY,RELAY_RESULT_RELAY_SERVICE_BUSY);
+                put(RemoteControlRelayClient.RELAY_RESULT_CONNECTION_TIMEOUT, RELAY_RESULT_CONNECTION_TIMEOUT);
+                put(RemoteControlRelayClient.RELAY_RESULT_RELAY_SERVICE_BUSY, RELAY_RESULT_RELAY_SERVICE_BUSY);
+                put(RemoteControlRelayClient.RELAY_RESULT_USER_INVALID_STATE, RELAY_RESULT_USER_INVALID_STATE);
             }
         };
         // リクエストコマンド応答結果コードの変換
         public final Map<String, STB_REQUEST_COMMAND_TYPES> mRequestCommandMap = new HashMap<String, STB_REQUEST_COMMAND_TYPES>() {
             {
+                put(RemoteControlRelayClient.RELAY_COMMAND_UNKNOWN, STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
                 put(RemoteControlRelayClient.RELAY_COMMAND_IS_USER_ACCOUNT_EXIST, STB_REQUEST_COMMAND_TYPES.IS_USER_ACCOUNT_EXIST);
                 put(RemoteControlRelayClient.RELAY_COMMAND_TITLE_DETAIL, STB_REQUEST_COMMAND_TYPES.TITLE_DETAIL);
                 put(RemoteControlRelayClient.RELAY_COMMAND_START_APPLICATION, STB_REQUEST_COMMAND_TYPES.START_APPLICATION);
-                put(RemoteControlRelayClient.RELAY_COMMAND_UNKNOWN, STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
             }
         };
 
@@ -432,7 +439,7 @@ public class RemoteControlRelayClient {
     }
 
     /**
-     * キーコードをSTBへ送信するスレッド
+     * キーコードをSTBへ送信するスレッド.
      */
     private class KeycodeRerayTask implements Runnable {
         private String mKeycodeRequest;
@@ -442,7 +449,7 @@ public class RemoteControlRelayClient {
         }
 
         /**
-         * キーコードをSTBへ送信する
+         * キーコードをSTBへ送信する.
          */
         @Override
         public void run() {
@@ -588,6 +595,7 @@ public class RemoteControlRelayClient {
                     DTVTLogger.debug("STBとの接続に失敗しました。");
                     response.setResult(ResponseMessage.RELAY_RESULT_ERROR);
                     response.setResultCode(ResponseMessage.RELAY_RESULT_INTERNAL_ERROR);
+                    response.setRequestCommandTypes(STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
                 }
                 sendResponseMessage(response);
             }
@@ -690,7 +698,7 @@ public class RemoteControlRelayClient {
     }
 
     /**
-     * アプリ起動要求のメッセージ（JSON形式）を作成する
+     * アプリ起動要求のメッセージ（JSON形式）を作成する.
      * タイトル詳細表示のリクエスト
      *
      * @param applicationId
@@ -713,7 +721,7 @@ public class RemoteControlRelayClient {
     }
 
     /**
-     * キーイベント送信要求のメッセージ（JSON形式）を作成する
+     * キーイベント送信要求のメッセージ（JSON形式）を作成する.
      *
      * @param keycode
      * @param action
@@ -735,7 +743,7 @@ public class RemoteControlRelayClient {
     }
 
     /**
-     * Socket通信／データグラム送信の送信先のIPアドレスを設定
+     * Socket通信／データグラム送信の送信先のIPアドレスを設定.
      * TODO: デバッグ用
      *
      * @param remoteIp
@@ -745,7 +753,7 @@ public class RemoteControlRelayClient {
     }
 
     /**
-     * 文字列から ハッシュ値を取得する
+     * 文字列から ハッシュ値を取得する.
      *
      * @return ハッシュ値
      */
@@ -766,7 +774,7 @@ public class RemoteControlRelayClient {
     }
 
     /**
-     * ハッシュ化したソルトを取得
+     * ハッシュ化したソルトを取得.
      * ※ハッシュアルゴリズム：SHA-256
      *
      * @param salt ソルト
@@ -784,7 +792,7 @@ public class RemoteControlRelayClient {
             DTVTLogger.debug(e);
             return null;
         }
-        digest.update(salt.getBytes());
+        digest.update(salt.getBytes(StandardCharsets.UTF_8));
         return digest.digest();
     }
 }
