@@ -595,6 +595,22 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                                 break;
                             }
                         }
+                    } else {
+                        int index = (int)view.getTag();
+                        RecordedContentsDetailData itemData = mContentsList.get(index);
+                        StringBuilder path=new StringBuilder();
+                        path.append(DownloaderBase.getDownloadPath(getContext()));
+                        path.append(File.separator);
+                        path.append(DownloaderBase.getFileNameById(itemData.getItemId()));
+                        if (mDlDataProvider == null) {
+                            try {
+                                mDlDataProvider = new DlDataProvider(activity, RecordedBaseFragment.this);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                showMessage("DlDataProvider初期化失敗しまして、ダウンロードできません。");
+                            }
+                        }
+                        mDlDataProvider.cancelDownLoadStatus(path.toString());
                     }
                     setDownloadStatusClear(view);
                     view.setBackgroundResource(R.mipmap.icon_circle_normal_download);
