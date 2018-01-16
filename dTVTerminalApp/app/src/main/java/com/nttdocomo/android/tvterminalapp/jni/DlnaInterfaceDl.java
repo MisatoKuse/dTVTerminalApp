@@ -90,12 +90,12 @@ public class DlnaInterfaceDl {
         return nativeStartDlna(mNativeDlna, pathToSave);
     }
 
-//    /**
-//     * 機能：Dlna機能を停止。「startDtcpDl」とPairで使用しなければならない
-//     */
-//    public void stopDtcpDl(){
-//        nativeStop(mNativeDlna);
-//    }
+    /**
+     * 機能：Dlna機能を停止。「startDtcpDl」とPairで使用しなければならない
+     */
+    public void stopDtcpDl(){
+        nativeStopDlna(mNativeDlna);
+    }
 
     /**
      * 機能：jni関数
@@ -262,6 +262,11 @@ public class DlnaInterfaceDl {
      * @return 操作結果
      */
     private native boolean nativeStartDlna(long prt, String pathToSave);
+
+    /**
+     * 機能：jni関数
+     */
+    private native void nativeStopDlna(long prt);
 
 //    /**
 //     * 機能：jni関数

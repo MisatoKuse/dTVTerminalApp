@@ -64,6 +64,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     private Handler mHandler = new Handler();
     private final int mPercentToUpdateUi = 1;
     private Activity activity;
+    private boolean mIsJustCanceled=false;
 
     @Override
     public Context getContext() {
@@ -262,7 +263,12 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                                 showMessage("ストレージ容量不足なので、ダウンロードは出来ませんでした");
                                 break;
                             case DLError_Download:
-                                showMessage("ダウンロードエラーは発生しました");
+                                if(mIsJustCanceled){
+                                    mIsJustCanceled=false;
+                                    return;
+                                } else {
+                                    showMessage("ダウンロードエラーは発生しました");
+                                }
                                 break;
                             case DLError_ParamError:
                                 showMessage("ダウンロードパーラメータエラーは発生しました");
@@ -334,7 +340,8 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                     mActivity.unbindService(mDlDataProvider);
                 }
                 DownloadService.BINDSTATUS = DownloadService.UNBINED;
-                mDlDataProvider.stop();
+                mDlDataProvider.isRegistered = false;
+                mDlDataProvider.stopService();
             }
         }
     }
@@ -342,6 +349,9 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     @Override
     public void onCancel() {
         showMessage("ダウンロードはキャンセルしました。");
+        if(!mIsJustCanceled){
+            mIsJustCanceled=true;
+        }
     }
 
     @Override

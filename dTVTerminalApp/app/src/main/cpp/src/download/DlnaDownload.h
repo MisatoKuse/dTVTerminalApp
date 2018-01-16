@@ -50,10 +50,10 @@ namespace dtvt {
          */
         bool start(JNIEnv *env, jobject obj, std::string dirToSave);
 
-//        /**
-//         * 機能：DlnaDownloadをストプ
-//         */
-//        void stop();
+        /**
+         * 機能：DlnaDownloadをストプ
+         */
+        void stop();
 
         /**
          * 機能：dtcp Download
@@ -86,7 +86,6 @@ namespace dtvt {
 
         void notify(int msg, std::string content);
         bool isStarted();
-        void stop();
 
     private:
         Event mEvent;

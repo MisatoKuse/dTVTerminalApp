@@ -802,7 +802,8 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                     false,         //IS_LIVE_MODE
                     false,        //IS_REMOTE
                     title,         //TITLE
-                    contentFormat
+                    contentFormat //本番
+                    //"" 3002;     //"CONTENTFORMAT=\"video/vnd.dlna.mpeg-tts\""   3002;   //"application/x-dtcp1;CONTENTFORMAT=\"video/vnd.dlna.mpeg-tts\""  3002  //test
             );
         }
 

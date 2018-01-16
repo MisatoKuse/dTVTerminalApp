@@ -164,4 +164,17 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
 //        }
 //        mDlnaProvDownload.finishDl();
 //    }
+
+    /**
+     * 機能：
+     *      １．Download Uiがなくなる場合、且サービスにqueueはない場合、必ずこれをコールする
+     *      ２．Download Uiがない場合、Serviceは閉じる時、必ずこれをコールする
+     */
+    @Override
+    public void stop(){
+        if (null == mDlnaProvDownload) {
+            return;
+        }
+        mDlnaProvDownload.stopListen();
+    }
 }
