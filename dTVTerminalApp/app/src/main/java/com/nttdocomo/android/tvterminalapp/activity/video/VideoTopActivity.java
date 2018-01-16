@@ -190,10 +190,6 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
                     }
                 }
             }
-            if (!GenreListMetaData.VIDEO_LIST_GENRE_ID_NOD.equals(mVideoGenreListDataInfo.getGenreId())) {
-                // "すべて" にコンテンツ数を設定
-                mShowContentsList.get(0).setContentCount(String.valueOf(allContentsCnt));
-            }
             // 初回表示以外の場合
             if (mVideoGenreListDataInfo.getGenreId() != null) {
                 if (allContentsCnt == 0) {
