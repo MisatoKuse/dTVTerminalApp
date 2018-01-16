@@ -523,9 +523,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     public Handler mRelayClientHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+            DTVTLogger.debug(String.format("msg:%s", msg));
             setRemoteProgressVisible(View.GONE);
             RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES requestCommand
                     = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getRequestCommandTypes();
+            DTVTLogger.debug(String.format("requestCommand:%s", requestCommand));
             switch (msg.what) {
                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_OK:
                     switch (requestCommand) {
@@ -544,6 +546,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                                 //nothing to do
                             }
                             break;
+                        case COMMAND_UNKNOWN:
                         default:
                             break;
                     }
@@ -573,10 +576,19 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                                     startActivity(DAccountReSettingActivity.class, null);
                                     mIsFromSelect = false;
                                     break;
+                                case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
+                                    break;
                                 default:
                                     break;
                             }
                             break;
+                        case COMMAND_UNKNOWN:
+                            switch (resultcode) {
+                                case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
+                                    break;
+                                default:
+                                    break;
+                            }
                         default:
                             break;
                     }
@@ -662,6 +674,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY:
                 //中継アプリからの応答待ち中に新しい要求を行った場合
                 break;
+            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
             default:
                 message = getResources().getString(R.string.main_setting_connect_error_message);
                 showErrorDialog(message);

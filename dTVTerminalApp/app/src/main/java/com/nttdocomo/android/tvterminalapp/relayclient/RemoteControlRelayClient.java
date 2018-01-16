@@ -178,6 +178,8 @@ public class RemoteControlRelayClient {
      * アプリ起動要求種別.
      */
     public enum STB_APPLICATION_TYPES {
+        // 初期値
+        UNKNOWN,
         // dTV
         DTV,
         // dアニメストア
@@ -346,11 +348,12 @@ public class RemoteControlRelayClient {
         public static final int RELAY_RESULT_CONNECTION_TIMEOUT = 18;
         public static final int RELAY_RESULT_RELAY_SERVICE_BUSY = 19;
         public static final int RELAY_RESULT_USER_INVALID_STATE = 20;
+        public static final int RELAY_RESULT_DISTINATION_UNREACHABLE = 21;
 
         private int mResult = RELAY_RESULT_OK;
         private int mResultCode = RELAY_RESULT_SUCCESS;
-        private STB_APPLICATION_TYPES mApplicationTypes;
-        private STB_REQUEST_COMMAND_TYPES mRequestCommandTypes;
+        private STB_APPLICATION_TYPES mApplicationTypes = STB_APPLICATION_TYPES.UNKNOWN;
+        private STB_REQUEST_COMMAND_TYPES mRequestCommandTypes = STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN;
 
         // 応答結果の変換
         public final Map<String, Integer> mResultMap = new HashMap<String, Integer>() {
@@ -601,7 +604,7 @@ public class RemoteControlRelayClient {
                 } else {
                     DTVTLogger.debug("STBとの接続に失敗しました。");
                     response.setResult(ResponseMessage.RELAY_RESULT_ERROR);
-                    response.setResultCode(ResponseMessage.RELAY_RESULT_INTERNAL_ERROR);
+                    response.setResultCode(ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE);
                     response.setRequestCommandTypes(STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
                 }
                 sendResponseMessage(response);
