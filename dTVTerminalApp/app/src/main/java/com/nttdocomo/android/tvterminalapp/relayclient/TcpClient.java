@@ -26,8 +26,8 @@ public class TcpClient {
     private String mRemoteIp = null;
     private int mRemotePort = 0;
 
-    // STBスタンバイ状態からの電源ONとユーザアカウント切り替えに必要な最大所要時間（ミリ秒）
-    private static final int SEND_RECV_TIMEOUT = 6000;
+    // STBスタンバイ状態からの電源ONとユーザアカウント切り替えに必要な最大待ち時間（ミリ秒）
+    private static final int SEND_RECV_TIMEOUT = 7000;
 
     public TcpClient() {
         mSocket = null;
@@ -51,7 +51,18 @@ public class TcpClient {
 
         try {
             mSocket.connect(remoteAddress, SEND_RECV_TIMEOUT);
-            mSocket.setTcpNoDelay(true);
+            // アプリ起動時にここで mSocket が null になる場合がある
+            if (null == mSocket) {
+                DTVTLogger.debug("connect is null!");
+                disconnect();
+                return false;
+            }
+            if (mSocket.isConnected() && mSocket.isBound()) {
+                mSocket.setTcpNoDelay(true);
+            } else {
+                disconnect();
+                return false;
+            }
         } catch (SocketTimeoutException e) {
             DTVTLogger.debug(e);
             this.disconnect();
@@ -73,13 +84,17 @@ public class TcpClient {
      */
     public void disconnect() {
         if (mSocket != null) {
+            DTVTLogger.debug("disconnecting");
             if (mSocket.isConnected()) {
+                DTVTLogger.debug("isConnected() is true");
                 try {
+                    DTVTLogger.debug("Socket.close()");
                     mSocket.close();
                 } catch (IOException e) {
                     DTVTLogger.debug(e);
                 }
             }
+            DTVTLogger.debug("Socket is set null");
             mSocket = null;
         }
     }
@@ -94,12 +109,13 @@ public class TcpClient {
         StringBuilder data = null;
         String recvdata = null;
 
-        DTVTLogger.debug("TcpServer receive");
+        DTVTLogger.debug("receive start");
         if (mSocket == null) {
-            DTVTLogger.debug("mSocket == null");
+            DTVTLogger.debug("mSocket is null!");
             return null;
         }
         try {
+            DTVTLogger.debug("getInputStream()");
             InputStream inputStream = mSocket.getInputStream();
             InputStreamReader streamReader = new InputStreamReader(mSocket.getInputStream(), StandardCharsets.UTF_8);
 
@@ -110,6 +126,7 @@ public class TcpClient {
                 if (inputStream.available() == 0) {
                     continue;
                 }
+                DTVTLogger.debug(String.format("streamReader.read(%d)", inputStream.available()));
                 char[] line = new char[inputStream.available()];
                 if (streamReader.read(line) == -1) {
                     continue;
@@ -118,7 +135,9 @@ public class TcpClient {
                 break;
             }
         } catch (IOException e) {
-            DTVTLogger.debug(e);
+            DTVTLogger.debug(String.format("??? :%s", e.getMessage()));
+        } catch (Exception e) {
+            DTVTLogger.debug(String.format("??? :%s", e.getMessage()));
         } finally {
             if (data != null && data.length() != 0) {
                 recvdata = data.toString();
@@ -137,12 +156,12 @@ public class TcpClient {
 
         OutputStreamWriter out = null;
         if (mSocket == null) {
-            DTVTLogger.debug("mSocket == null");
+            DTVTLogger.debug("mSocket is null!");
             return false;
         }
 
         try {
-            DTVTLogger.debug("TcpServer send() data:" + data);
+            DTVTLogger.debug("data:" + data);
             out = new OutputStreamWriter(mSocket.getOutputStream(), StandardCharsets.UTF_8);
             out.write(data);
             out.flush();
