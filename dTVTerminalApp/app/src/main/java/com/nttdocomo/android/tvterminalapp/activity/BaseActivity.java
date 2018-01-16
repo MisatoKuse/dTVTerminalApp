@@ -15,7 +15,6 @@ import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
@@ -59,7 +58,7 @@ import java.util.List;
 /**
  * クラス機能：
  * プロジェクトにて、すべての「Activity」のベースクラスである
- * 「Activity」全体にとって、共通の機能があれば、追加すること
+ * 「Activity」全体にとって、共通の機能があれば、追加すること.
  */
 
 public class BaseActivity extends FragmentActivity implements MenuDisplayEventListener,
@@ -87,6 +86,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     private ImageView mClipButton = null;
     private ClipRequestData mClipRequestData = null;
 
+    private boolean mClipRunTime = false;
     /**
      * クリップ対象.
      */
@@ -425,7 +425,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     /**
      * 機能：onResume
-     * Sub classにて、super.onResume()をコールする必要がある
+     * Sub classにて、super.onResume()をコールする必要がある.
      */
     @Override
     protected void onResume() {
@@ -442,8 +442,8 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             setStbStatus(isAvai);
         }
 
-        DTVTLogger.debug("RestartFlag check " +
-                SharedPreferencesUtils.getSharedPreferencesRestartFlag(getApplicationContext()));
+        DTVTLogger.debug("RestartFlag check "
+                + SharedPreferencesUtils.getSharedPreferencesRestartFlag(getApplicationContext()));
 
         // 再起動フラグがtrueならば、再起動メッセージを表示する
         if (SharedPreferencesUtils.getSharedPreferencesRestartFlag(getApplicationContext())) {
@@ -453,8 +453,8 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         //再起動フラグをOFFにする
         SharedPreferencesUtils.setSharedPreferencesRestartFlag(getApplicationContext(), false);
 
-        DTVTLogger.debug("RestartFlag falsed " +
-                SharedPreferencesUtils.getSharedPreferencesRestartFlag(getApplicationContext()));
+        DTVTLogger.debug("RestartFlag falsed "
+                + SharedPreferencesUtils.getSharedPreferencesRestartFlag(getApplicationContext()));
 
         DTVTLogger.end();
     }
@@ -463,14 +463,14 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     protected void onRestart() {
         super.onRestart();
 
-        if(this.getStbStatus()){
+        if (this.getStbStatus()) {
             RemoteControlRelayClient.getInstance().isUserAccountExistRequest(getApplicationContext());
         }
     }
 
     /**
      * 機能：onStop
-     * Sub classにて、super.onStop()をコールする必要がある
+     * Sub classにて、super.onStop()をコールする必要がある.
      */
     @Override
     protected void onStop() {
@@ -513,7 +513,10 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         DTVTLogger.end();
     }
 
-    public Handler mRerayClientHandler = new Handler() {
+    /**
+     * STB送信ハンドラ.
+     */
+    public Handler mRelayClientHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES requestCommand
@@ -530,7 +533,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                             if (mIsFromSelect) {
                                 //STBデバイスがタップされた場合
                                 mIsFromSelect = false;
-                                startActivity(STBConnectActivity.class,null);
+                                startActivity(STBConnectActivity.class, null);
                             } else {
                                 //宅外から宅内に移動した場合
                                 //nothing to do
@@ -580,9 +583,15 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         }
     };
 
-    private void startApplicationErrorHander(int resultcode, RemoteControlRelayClient.STB_APPLICATION_TYPES appId) {
+    /**
+     * dTVアプリ起動エラーハンドラ.
+     *
+     * @param resultCode 実行コード
+     * @param appId      アプリID
+     */
+    private void startApplicationErrorHander(final int resultCode, final RemoteControlRelayClient.STB_APPLICATION_TYPES appId) {
         String message = "OK";
-        switch (resultcode) {
+        switch (resultCode) {
             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_APPLICATION_NOT_INSTALL:
                 switch (appId) {
                     case DTV:
@@ -701,6 +710,8 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     /**
      * 機能
      * ダブルクリック防止.
+     *
+     * @return クリック状態
      */
     protected boolean isFastClick() {
         boolean flag = false;
@@ -768,7 +779,12 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         return mUserState;
     }
 
-    public void setUserState(MenuItemParam param) {
+    /**
+     * ユーザ状態設定.
+     *
+     * @param param メニュー表示情報
+     */
+    public void setUserState(final MenuItemParam param) {
         synchronized (this) {
             mUserState = param.getUserState();
             MenuDisplay menu = MenuDisplay.getInstance();
@@ -782,6 +798,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         }
     }
 
+    /**
+     * ユーザ状態毎の表示.
+     */
     public void displayMenu() {
         try {
             MenuDisplay.getInstance().display();
@@ -1055,7 +1074,10 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      */
     public void sendClipRequest(final ClipRequestData data, final ImageView clipButton) {
 
-        if (data != null && clipButton != null) {
+        if (data != null && clipButton != null && !mClipRunTime) {
+
+            //クリップ多重実行に対応していないため実行中フラグで管理
+            mClipRunTime = true;
 
             mClipButton = clipButton;
             mClipRequestData = data;
@@ -1090,12 +1112,14 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             String[] strings = {mClipTarget, getString(msgId)};
             Toast.makeText(this, StringUtil.getConnectString(strings), Toast.LENGTH_SHORT).show();
         }
+        //クリップ処理終了メッセージ後にフラグを実行中から終了に変更
+        mClipRunTime = false;
     }
 
     @Override
     public void onClipRegistResult() {
-        showClipToast(R.string.clip_regist_result_message);
         mClipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+        showClipToast(R.string.clip_regist_result_message);
 
         //DB登録開始
         ClipKeyListDataProvider clipKeyListDataProvider = new ClipKeyListDataProvider(this);
@@ -1110,8 +1134,8 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     @Override
     public void onClipDeleteResult() {
-        showClipToast(R.string.clip_delete_result_message);
         mClipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
+        showClipToast(R.string.clip_delete_result_message);
 
         //DB削除開始
         ClipKeyListDataProvider clipKeyListDataProvider = new ClipKeyListDataProvider(this);
@@ -1173,7 +1197,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      */
     public void setRelayClientHandler() {
         // TODO MenuDisplay修正時に合わせて修正する
-        mRemoteControlRelayClient.setHandler(mRerayClientHandler);
+        mRemoteControlRelayClient.setHandler(mRelayClientHandler);
     }
 
     /**
