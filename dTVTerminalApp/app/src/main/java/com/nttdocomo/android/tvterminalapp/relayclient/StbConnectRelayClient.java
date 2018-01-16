@@ -14,7 +14,7 @@ import java.net.Socket;
 import java.net.SocketException;
 
 /**
- * 中継アプリとの Socket通信処理
+ * 中継アプリとの Socket通信処理.
  */
 
 public class StbConnectRelayClient {
@@ -30,13 +30,13 @@ public class StbConnectRelayClient {
     private static StbConnectRelayClient mInstance = new StbConnectRelayClient();
 
     /**
-     * シングルトン
+     * シングルトン.
      */
     private StbConnectRelayClient() {
     }
 
     /**
-     * シングルトン・インスタンス
+     * シングルトン・インスタンス.
      *
      * @return mInstance
      */
@@ -45,14 +45,14 @@ public class StbConnectRelayClient {
     }
 
     /**
-     * STBとSocket通信を開始する
+     * STBとSocket通信を開始する.
      * Socketに送受信タイムアウト（接続タイムアウト含む）を設定する
      *
      * @return
      */
     public boolean connect() {
         if (mRemoteIp == null) {
-            DTVTLogger.debug("mRemoteIp == null");
+            DTVTLogger.debug("mRemoteIp is null!");
             return false;
         }
         this.disconnect();
@@ -62,7 +62,7 @@ public class StbConnectRelayClient {
     }
 
     /**
-     * Socket通信を切断する
+     * Socket通信を切断する.
      */
     public void disconnect() {
         if (mTcpClient != null) {
@@ -72,7 +72,7 @@ public class StbConnectRelayClient {
     }
 
     /**
-     * 　STBへメッセージ（JSON形式）を送信後する
+     * 　STBへメッセージ（JSON形式）を送信後する.
      *
      * @param data
      * @return
@@ -80,32 +80,32 @@ public class StbConnectRelayClient {
     public boolean send(String data) {
         boolean ret;
         if (mTcpClient == null) {
-            DTVTLogger.debug("mTcpClient == null");
+            DTVTLogger.debug("mTcpClient is null!");
             return false;
         }
-        DTVTLogger.debug("send() data:" + data);
+        DTVTLogger.debug("data :" + data);
         ret = mTcpClient.send(data);
         return ret;
     }
 
     /**
-     * STBへメッセージ送信後に応答（JSON形式）を受信する
+     * STBへメッセージ送信後に応答（JSON形式）を受信する.
      *
      * @return
      */
     public String receive() {
         String recvdata = null;
         if (mTcpClient == null) {
-            DTVTLogger.debug("mTcpClient == null");
+            DTVTLogger.debug("mTcpClient is null!");
             return null;
         }
         recvdata = mTcpClient.receive();
-        DTVTLogger.debug("receive() data:" + recvdata);
+        DTVTLogger.debug("data:" + recvdata);
         return recvdata;
     }
 
     /**
-     * 　STBへメッセージを送信後する
+     * 　STBへメッセージを送信後する.
      *
      * @param data
      * @return
@@ -135,7 +135,7 @@ public class StbConnectRelayClient {
 
 
     /**
-     * Socket通信の送信先のIPアドレスを設定
+     * Socket通信の送信先のIPアドレスを設定.
      *
      * @param remoteIp
      */
@@ -144,7 +144,8 @@ public class StbConnectRelayClient {
     }
 
     /**
-     * Socket通信の送信先の受信ポート
+     * Socket通信の送信先の受信ポート.
+     *
      * @param remoteSocketPort
      */
     public void setRemoteSocketPort(int remoteSocketPort) {
@@ -152,7 +153,8 @@ public class StbConnectRelayClient {
     }
 
     /**
-     * Datagram通信の送信先の受信ポート
+     * Datagram通信の送信先の受信ポート.
+     *
      * @param remoteDatagramPort
      */
     public void setRemoteDatagramPort(int remoteDatagramPort) {
