@@ -45,9 +45,9 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
     }
 
     @Override
-    public void onTvClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+    public void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
-        super.onTvClipKeyListJsonParsed(clipKeyListResponse);
+        super.onVodClipKeyListJsonParsed(clipKeyListResponse);
         // コールバック判定
         if(mPurchasedVodListResponse != null) {
             sendRentalListData(mPurchasedVodListResponse);
@@ -205,8 +205,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
                 // クリップ状態をコンテンツリストに格納
                 data.setClipStatus(getClipStatus(dispType, contentsType, dTv,
                         data.getCrid(), data.getServiceId(),
-                        data.getEventId(), data.getContentsType(),
-                        data.getTitleId()));
+                        data.getEventId(), data.getTitleId()));
             }
 
             list.add(data);

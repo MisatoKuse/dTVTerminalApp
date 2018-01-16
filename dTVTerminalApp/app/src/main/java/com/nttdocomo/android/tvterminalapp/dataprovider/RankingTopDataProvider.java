@@ -81,7 +81,6 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
 
             setStructDB(list);
             // コールバック判定
-            // TODO 他の取得が必要なDataProviderにも判定文追加
             if (!mRequiredClipKeyList
                     || mResponse != null) {
                 if (mApiDataProviderCallback != null) {
@@ -115,7 +114,6 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         }
     }
 
-    // TODO 他の取得が必要なDataProviderにも判定文追加
     @Override
     public void onTvClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
@@ -149,7 +147,6 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         DTVTLogger.end();
     }
 
-    // TODO 他の取得が必要なDataProviderにも判定文追加
     @Override
     public void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
@@ -466,13 +463,11 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             requestData.setIsNotify(dispType, contentsType, linearEndDate, tvService, dTv);
             rankingContentInfo.setRequestData(requestData);
 
-            // TODO 他の取得が必要なDataProviderにも追加
-            if(mRequiredClipKeyList) {
+            if (mRequiredClipKeyList) {
                 // クリップ状態をコンテンツリストに格納
                 rankingContentInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv,
                         rankingContentInfo.getCrid(), rankingContentInfo.getServiceId(),
-                        rankingContentInfo.getEventId(), rankingContentInfo.getContentsType(),
-                        rankingContentInfo.getTitleId()));
+                        rankingContentInfo.getEventId(), rankingContentInfo.getTitleId()));
             }
 
             rankingContentsDataList.add(rankingContentInfo);

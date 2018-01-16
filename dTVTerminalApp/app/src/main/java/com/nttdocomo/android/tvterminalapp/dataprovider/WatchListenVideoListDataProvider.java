@@ -44,9 +44,9 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     }
 
     @Override
-    public void onTvClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+    public void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
-        super.onTvClipKeyListJsonParsed(clipKeyListResponse);
+        super.onVodClipKeyListJsonParsed(clipKeyListResponse);
         // コールバック判定
         if(mWatchListenVideoList != null) {
             sendWatchListenVideoListData(mWatchListenVideoList.getVcList());
@@ -155,8 +155,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
                 // クリップ状態をコンテンツリストに格納
                 contentInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv,
                         contentInfo.getCrid(), contentInfo.getServiceId(),
-                        contentInfo.getEventId(), contentInfo.getContentsType(),
-                        contentInfo.getTitleId()));
+                        contentInfo.getEventId(), contentInfo.getTitleId()));
             }
 
             rankingContentsDataList.add(contentInfo);

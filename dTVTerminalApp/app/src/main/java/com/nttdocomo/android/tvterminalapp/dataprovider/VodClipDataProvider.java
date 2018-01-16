@@ -54,9 +54,9 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
     }
 
     @Override
-    public void onTvClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+    public void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
-        super.onTvClipKeyListJsonParsed(clipKeyListResponse);
+        super.onVodClipKeyListJsonParsed(clipKeyListResponse);
         // コールバック判定
         if(mClipList != null) {
             sendVodClipListData(mClipList.getVcList());
@@ -174,8 +174,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
                 // クリップ状態をコンテンツリストに格納
                 clipContentInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv,
                         clipContentInfo.getCrid(), clipContentInfo.getServiceId(),
-                        clipContentInfo.getEventId(), clipContentInfo.getContentsType(),
-                        clipContentInfo.getTitleId()));
+                        clipContentInfo.getEventId(), clipContentInfo.getTitleId()));
             }
 
             clipDataList.add(clipContentInfo);

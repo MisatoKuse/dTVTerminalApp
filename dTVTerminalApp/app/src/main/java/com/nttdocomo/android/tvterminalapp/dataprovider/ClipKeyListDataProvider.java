@@ -35,6 +35,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     private Context mContext;
     protected boolean mRequiredClipKeyList = false;
     protected ClipKeyListResponse mResponse = null;
+    private static final String CLIP_KEY_LIST_TYPE_OTHER_CHANNEL = "h4d_iptv";
 
     @Override
     public void onTvClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
@@ -195,6 +196,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      * @return
      */
     protected ClipKeyListDao.CONTENT_TYPE searchContentsType(String dispType, String contentType, String dTv) {
+        // TODO DREM-767 QA回答により別BLにて判定処理を修正
         if (ClipKeyListDao.META_DISP_TYPE_TV_PROGRAM.equals(dispType)
                 && contentType.isEmpty()) {
             return ClipKeyListDao.CONTENT_TYPE.TV;
@@ -286,26 +288,26 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
 
     /**
      * DBから取得したキー値を元にクリップ状態を判定する
+     *
      * @param dispType
      * @param contentsType
      * @param dTv
      * @param crid
      * @param serviceId
      * @param eventId
-     * @param type
      * @param titleId
      * @return
      */
     protected boolean getClipStatus(String dispType, String contentsType, String dTv,
-                                    String crid, String serviceId, String eventId,
-                                    String type, String titleId) {
+                                    String crid, String serviceId, String eventId, String titleId) {
+        DTVTLogger.start();
         boolean clipStatus = false;
         ClipKeyListDao.CONTENT_TYPE contentType = searchContentsType(dispType, contentsType, dTv);
         ClipKeyListDao.TABLE_TYPE tableType = decisionTableType(dispType, contentsType);
         switch (contentType) {
             case TV:
                 clipStatus = findDbTvClipKeyData(tableType,
-                        serviceId, eventId, type);
+                        serviceId, eventId, CLIP_KEY_LIST_TYPE_OTHER_CHANNEL);
                 break;
             case VOD:
                 clipStatus = findDbVodClipKeyData(tableType, crid);
@@ -314,6 +316,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
                 clipStatus = findDbDtvClipKeyData(tableType, titleId);
                 break;
         }
+        DTVTLogger.end();
         return clipStatus;
     }
 }

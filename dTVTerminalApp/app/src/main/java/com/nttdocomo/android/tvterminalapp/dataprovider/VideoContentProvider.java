@@ -152,8 +152,7 @@ public class VideoContentProvider  extends  ClipKeyListDataProvider implements
                 // クリップ状態をコンテンツリストに格納
                 contentsData.setClipStatus(getClipStatus(dispType, contentsType, dTv,
                         contentsData.getCrid(), contentsData.getServiceId(),
-                        contentsData.getEventId(), contentsData.getContentsType(),
-                        contentsData.getTitleId()));
+                        contentsData.getEventId(), contentsData.getTitleId()));
             }
 
             videoContentsDataList.add(contentsData);
@@ -178,11 +177,11 @@ public class VideoContentProvider  extends  ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onTvClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+    public void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
-        super.onTvClipKeyListJsonParsed(clipKeyListResponse);
+        super.onVodClipKeyListJsonParsed(clipKeyListResponse);
         // コールバック判定
-        if(mVideoRankList != null) {
+        if (mVideoRankList != null) {
             sendContentListData(mVideoRankList.getVrList());
         }
         DTVTLogger.end();
