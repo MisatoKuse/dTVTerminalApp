@@ -43,8 +43,7 @@ import java.util.TimerTask;
 
 
 public class STBSelectActivity extends BaseActivity implements View.OnClickListener,
-        AdapterView.OnItemClickListener, DlnaDevListListener,
-        DaccountCheckService.DaccountCheckServiceCallBack{
+        AdapterView.OnItemClickListener, DlnaDevListListener {
 
     private List<ContentsData> mContentsList;
     private List<DlnaDmsItem> mDlnaDmsItemList;
@@ -97,6 +96,11 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         mDlnaDmsItemList = new ArrayList<>();
 
         DTVTLogger.end();
+    }
+
+    @Override
+    protected void checkDAccountOnRestart() {
+        DTVTLogger.start();
     }
 
     /**
@@ -306,6 +310,19 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     }
 
     /**
+     * ペアリング中画面表示を設定
+     */
+    private void showPairingeView() {
+        DTVTLogger.start();
+        TextView statusTextView = findViewById(R.id.stb_select_status_text);
+        statusTextView.setText(R.string.str_stb_pairing);
+        mLoadMoreView.setVisibility(View.VISIBLE);
+        mDeviceListView.setVisibility(View.GONE);
+        mCheckBoxSTBSelectActivity.setVisibility(View.GONE);
+        DTVTLogger.end();
+    }
+
+    /**
      * ボタン押されたときの動作
      *
      * @param v view
@@ -392,11 +409,15 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         DTVTLogger.start();
 
+        showPairingeView();
+
+        checkDAccountApp();
+
         //選択されたSTB番号を保持
         mSelectDevice = i;
 
-        //dカウント登録状態チェック
-        checkDAccountLogin();
+//        //dカウント登録状態チェック
+//        checkDAccountLogin();
     }
 
     /**
@@ -404,6 +425,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      * @param selectDevice 選択されたSTB
      */
     private void storeSTBData(int selectDevice) {
+        DTVTLogger.start();
         if (mCallbackTimer.getTimerStatus() != TimerStatus.TIMER_STATUS_DURING_STARTUP) {
             // SharedPreferencesにSTBデータを保存
             if (mDlnaDmsItemList != null) {
@@ -662,26 +684,15 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     /**
      * dアカウントの登録状態を確認する
      */
-    private void checkDAccountLogin() {
-        DaccountCheckService checkService = new DaccountCheckService();
-        checkService.execDaccountCheckService(this, this);
-    }
-
-    @Override
-    public void checkServiceCallBack(int result) {
-        DTVTLogger.debug("result" + result);
-        if (result != IDimDefines.RESULT_NO_AVAILABLE_ID &&
-                result != IDimDefines.RESULT_NOT_AVAILABLE &&
-                result != IDimDefines.RESULT_INCOMPATIBLE_ENVIRONMENT &&
-                result != IDimDefines.RESULT_INTERNAL_ERROR ) {
-            //dアカウントが登録されている場合の処理
-            //TODO STBに同じdアカウントが登録されているか確認する
-
-            storeSTBData(mSelectDevice);
-            DTVTLogger.debug("DAccount login");
+    private boolean checkDAccountLogin() {
+        DTVTLogger.start();
+        String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(this);
+        if (userId != null && !userId.equals("")) {
+            DTVTLogger.debug("checkDAccountLogin() true");
+            return true;
         } else {
-//            dアカウントが登録されていない場合の処理
-            checkDAccountApp();
+            DTVTLogger.debug("checkDAccountLogin() false");
+            return false;
         }
     }
 
@@ -690,14 +701,29 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      * dアカウントアプリを起動する
      */
     private void checkDAccountApp() {
+        DTVTLogger.start();
         Intent intent = new Intent();
         intent.setClassName(D_ACCOUNT_APP_PACKAGE_NAME,
                 D_ACCOUNT_APP_PACKAGE_NAME + D_ACCOUNT_APP_ACTIVITY_NAME);
         try {
             //端末内にdアカウントアプリがある場合はアプリ起動
-            startActivity(intent);
+//            startActivity(intent);
+
+            //dカウント登録状態チェック
+            boolean isDAccountFlag = checkDAccountLogin();
+
+            if (isDAccountFlag) {
+                mIsFromSelect = true;
+                RemoteControlRelayClient.getInstance().isUserAccountExistRequest(this);
+            } else {
+                startActivity(intent);
+            }
+            // ワンタイムトークン
+
+
             //ログイン後にユーザ操作でこの画面に戻ってきた際には再度STB選択を行わせる
         } catch (ActivityNotFoundException e) {
+            DTVTLogger.debug("not daccount app");
             //端末内にdアカウントアプリがない場合はdアカウントアプリDL誘導を行う
             TextView statusTextView = findViewById(R.id.stb_select_status_text);
             TextView downloadTextView = findViewById(R.id.downloadDAccountApplication);
@@ -711,5 +737,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             mDeviceListView.setVisibility(View.GONE);
             mUseWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_no_login_use_text);
         }
+        DTVTLogger.end();
     }
 }

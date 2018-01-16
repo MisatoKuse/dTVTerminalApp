@@ -28,6 +28,7 @@ import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplayEventListener;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuItem;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuItemParam;
+import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.DAccountReSettingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.STBConnectActivity;
@@ -318,8 +319,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                                 mStbStatusIcon.setImageResource(R.mipmap.ic_stb_status_icon_white);
                                 //ペアリングアイコンがOFF→ON(点灯)になった際にdアカチェックを行う
                                 if (!mIsStbStatusOn) {
-                                    setRelayClientHandler();
-                                    RemoteControlRelayClient.getInstance().isUserAccountExistRequest(getApplicationContext());
+                                    checkDAccountOnRestart();
                                 }
 
                             } else {
@@ -412,7 +412,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         initView();
 
         mRemoteControlRelayClient = RemoteControlRelayClient.getInstance();
-        mRemoteControlRelayClient.setDebugRemoteIp("192.168.11.8");
+        mRemoteControlRelayClient.setDebugRemoteIp("162.164.0.5");
         //dアカウントの検知処理を追加する
         setDaccountControl();
 
@@ -464,12 +464,14 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         super.onRestart();
         DTVTLogger.start();
 
+        checkDAccountOnRestart();
+    }
 
+    protected void checkDAccountOnRestart() {
         //BGからFGに遷移するときにdアカチェックを行う
         setRelayClientHandler();
         RemoteControlRelayClient.getInstance().isUserAccountExistRequest(getApplicationContext());
         DTVTLogger.end();
-
     }
 
     /**
@@ -527,6 +529,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             setRemoteProgressVisible(View.GONE);
             RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES requestCommand
                     = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getRequestCommandTypes();
+            DTVTLogger.debug("msg.what: " + msg.what + "requestCommand: " + requestCommand + "mIsFromSelect: " + mIsFromSelect);
             DTVTLogger.debug(String.format("requestCommand:%s", requestCommand));
             switch (msg.what) {
                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_OK:
@@ -541,6 +544,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                                 //STBデバイスがタップされた場合
                                 mIsFromSelect = false;
                                 startActivity(STBConnectActivity.class, null);
+                                Intent intent = new Intent(mActivity, HomeActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
                             } else {
                                 //宅外から宅内に移動した場合あるいは画面遷移行う場合
                                 //nothing to do
@@ -553,6 +559,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                     break;
                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_ERROR:
                     int resultcode = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getResultCode();
+                    DTVTLogger.debug("resultcode: " + resultcode);
                     switch (requestCommand) {
                         case START_APPLICATION:
                         case TITLE_DETAIL:
@@ -565,16 +572,30 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_INTERNAL_ERROR://サーバエラー
                                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE://ユーザアカウントチェックサービス未登録
                                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY:// //中継アプリからの応答待ち中に新しい要求を行った場合
+                                    if (mIsFromSelect) {
+                                        createErrorDialog();
+                                        mIsFromSelect = false;
+                                    }
                                     break;
                                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_CONNECTION_TIMEOUT: //アプリが STBの中継アプリに接続できない場合
+                                    if (mIsFromSelect) {
+                                        // TODO STBと接続しないとHOMEにいけない為、本体側のSTB機能が搭載されるまでは一旦ホームに遷移させておく.
+
+                                        Intent intent = new Intent(mActivity, HomeActivity.class);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        startActivity(intent);
+
+                                        mIsFromSelect = false;
+                                    }
                                     //ペアリングアイコンをOFFにする
                                     setStbStatus(false);
                                     break;
                                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
                                     // チェック処理の状態で処理を分岐する
                                     SharedPreferencesUtils.resetSharedPreferencesStbInfo(getApplicationContext());
-                                    startActivity(DAccountReSettingActivity.class, null);
-                                    mIsFromSelect = false;
+                                    Intent intent = new Intent(mActivity, DAccountReSettingActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(intent);
                                     break;
                                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
                                     break;
@@ -599,6 +620,18 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             mRemoteControlRelayClient.resetHandler();
         }
     };
+
+    /**
+     * エラーダイアログ表示.
+     */
+    private CustomDialog createErrorDialog() {
+        CustomDialog failedRecordingReservationDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+        failedRecordingReservationDialog.setContent(getResources().getString(R.string.str_stb_stb_error));
+        failedRecordingReservationDialog.setCancelText(R.string.recording_reservation_failed_dialog_confirm);
+        // Cancelable
+        failedRecordingReservationDialog.setCancelable(false);
+        return failedRecordingReservationDialog;
+    }
 
     /**
      * dTVアプリ起動エラーハンドラ.

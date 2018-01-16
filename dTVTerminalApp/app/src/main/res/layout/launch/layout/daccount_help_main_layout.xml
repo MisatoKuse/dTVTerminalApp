@@ -1,59 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    style="@style/default_layout_style"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <WebView
+        android:id="@+id/d_account_help_webView"
         android:layout_width="match_parent"
-        android:layout_height="46dp"
-        android:background="#FF0000">
-        <TextView
-            android:id="@+id/titleDAccounHelpActivity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/str_d_account_setting_help_title"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:textSize="18sp"/>
-    </RelativeLayout>
+        android:layout_height="match_parent"
+        />
 
-    <LinearLayout
-        android:id="@+id/content"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="bottom"
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/activationCodeInputDAccounHelpActivity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
-            android:text="アクティベーションコードを入力する" />
-
-        <Button
-            android:id="@+id/repairDAccounHelpActivity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
-            android:text="再度ペアリングを実行する" />
-
-        <Button
-            android:id="@+id/returnDAccounHelpActivity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
-            android:text="戻る" />
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>
