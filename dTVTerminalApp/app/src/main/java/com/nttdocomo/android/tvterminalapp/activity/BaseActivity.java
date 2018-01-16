@@ -525,9 +525,12 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     public Handler mRelayClientHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+            DTVTLogger.debug(String.format("msg:%s", msg));
+            setRemoteProgressVisible(View.GONE);
             RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES requestCommand
                     = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getRequestCommandTypes();
             DTVTLogger.debug("msg.what: " + msg.what + "requestCommand: " + requestCommand + "mIsFromSelect: " + mIsFromSelect);
+            DTVTLogger.debug(String.format("requestCommand:%s", requestCommand));
             switch (msg.what) {
                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_OK:
                     switch (requestCommand) {
@@ -549,6 +552,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                                 //nothing to do
                             }
                             break;
+                        case COMMAND_UNKNOWN:
                         default:
                             break;
                     }
@@ -588,16 +592,24 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                                     break;
                                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
                                     // チェック処理の状態で処理を分岐する
-                                    // mIsFromSelect = false;
                                     SharedPreferencesUtils.resetSharedPreferencesStbInfo(getApplicationContext());
                                     Intent intent = new Intent(mActivity, DAccountReSettingActivity.class);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(intent);
                                     break;
+                                case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
+                                    break;
                                 default:
                                     break;
                             }
                             break;
+                        case COMMAND_UNKNOWN:
+                            switch (resultcode) {
+                                case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
+                                    break;
+                                default:
+                                    break;
+                            }
                         default:
                             break;
                     }
@@ -695,6 +707,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY:
                 //中継アプリからの応答待ち中に新しい要求を行った場合
                 break;
+            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
             default:
                 message = getResources().getString(R.string.main_setting_connect_error_message);
                 showErrorDialog(message);
@@ -1067,7 +1080,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     };
 
     @Override
-    public void onStartRemoteControl() {
+    public void onStartRemoteControl(boolean isFromHeader) {
         DTVTLogger.debug("base_start_control");
         View base = findViewById(R.id.base_motion_detection_rl);
         base.setOnClickListener(mRemoteControllerOnClickListener);
@@ -1127,10 +1140,19 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                 mClipTarget = getString(R.string.vod_contents_message);
             }
             boolean isParamCheck;
-            ClipRegistWebClient registWebClient = new ClipRegistWebClient();
-            isParamCheck = registWebClient.getClipRegistApi(data.getType(), data.getCrid(), data.getServiceId(),
-                    data.getEventId(), data.getTitleId(), data.getTitle(), data.getRValue(),
-                    data.getLinearStartDate(), data.getLinearEndDate(), data.getIsNotify(), this);
+
+            //クリップ状態によりクリップ登録/削除実行
+            if (data.isClipStatus()) {
+                ClipDeleteWebClient deleteWebClient = new ClipDeleteWebClient();
+                isParamCheck = deleteWebClient.getClipDeleteApi(data.getType(), data.getCrid(),
+                        data.getTitle(), this);
+            } else {
+                ClipRegistWebClient registWebClient = new ClipRegistWebClient();
+                isParamCheck = registWebClient.getClipRegistApi(data.getType(), data.getCrid(),
+                        data.getServiceId(), data.getEventId(), data.getTitleId(), data.getTitle(),
+                        data.getRValue(), data.getLinearStartDate(), data.getLinearEndDate(),
+                        data.getIsNotify(), this);
+            }
 
             //パラメータチェックではじかれたら失敗表示
             if (!isParamCheck) {
@@ -1317,5 +1339,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     /** dip → px */
     public int dip2px(int dip) {
         return (int) (dip * getDensity() + 0.5f);
+    }
+
+    public void setRemoteProgressVisible(int visible){
+        findViewById(R.id.base_progress_rl).setVisibility(visible);
     }
 }

@@ -6,7 +6,9 @@ package com.nttdocomo.android.tvterminalapp.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -166,9 +168,15 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             clipButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //クリップボタンのイベントを親に渡す
-//                    ((ListView) parent).performItemClick(mView, position, R.id.item_common_result_clip_tv);
-                    //TODO:親に処理を渡すか検討中
+                    //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、画像比較でクリップ済/未を判定する
+                    Bitmap clipButtonBitmap = ((BitmapDrawable) clipButton.getBackground()).getBitmap();
+                    Bitmap activeClipBitmap = ((BitmapDrawable) ResourcesCompat.getDrawable(mContext.getResources(),
+                            R.mipmap.icon_circle_active_clip, null)).getBitmap();
+                    if (clipButtonBitmap.equals(activeClipBitmap)) {
+                        requestData.setClipStatus(true);
+                    } else {
+                        requestData.setClipStatus(false);
+                    }
                     ((BaseActivity) mContext).sendClipRequest(requestData, clipButton);
                 }
             });
@@ -524,13 +532,13 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 if (!mType.equals(TYPE_RECORDING_RESERVATION_LIST) && !mType.equals(TYPE_STB_SELECT_LIST)) {
                     //クリップ状態が1以外の時は、非活性クリップボタンを表示
                     if (listContentInfo.isClipExec()) {
-                        holder.tv_clip.setVisibility(View.GONE);
-                    } else {
                         if (listContentInfo.isClipStatus()) {
-                            holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
-                        } else {
                             holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+                        } else {
+                            holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
                         }
+                    } else {
+                        holder.tv_clip.setVisibility(View.GONE);
                     }
                 }
             }

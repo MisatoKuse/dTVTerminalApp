@@ -18,6 +18,7 @@ import java.util.List;
 
 public class WeeklyRankWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
+    public static final String WEEKLY_RANK_CLIENT_BUNDLE_KEY = "genreId";
 
     /**
      * コールバック
@@ -87,7 +88,7 @@ public class WeeklyRankWebClient
 
         //拡張情報の作成
         Bundle bundle = new Bundle();
-        bundle.putString("genreId",genreId);
+        bundle.putString(WEEKLY_RANK_CLIENT_BUNDLE_KEY,genreId);
 
         //週毎ランク一覧を呼び出す
         openUrlWithExtraData(UrlConstants.WebApiUrl.WEEKLY_RANK_LIST,sendParameter,this,bundle);

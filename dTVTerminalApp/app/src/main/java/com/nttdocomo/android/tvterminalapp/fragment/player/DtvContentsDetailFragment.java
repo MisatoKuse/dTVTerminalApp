@@ -7,8 +7,10 @@ package com.nttdocomo.android.tvterminalapp.fragment.player;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.text.Layout;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -150,13 +152,13 @@ public class DtvContentsDetailFragment extends Fragment {
             String serviceId = String.valueOf(mOtherContentsDetailData.getServiceId());
             if (serviceId.equals(SearchServiceType.ServiceId.HIKARI_TV_FOR_DOCOMO)) {
                 if (mOtherContentsDetailData.ismClipExec()){
-                    clipButton.setVisibility(View.GONE);
-                }else{
                     if (mOtherContentsDetailData.ismClipStatus()){
-                        clipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
-                    }else{
                         clipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+                    }else{
+                        clipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
                     }
+                }else{
+                    clipButton.setVisibility(View.GONE);
                 }
             } else {
                 clipButton.setVisibility(View.GONE);
@@ -170,6 +172,15 @@ public class DtvContentsDetailFragment extends Fragment {
             public void onClick(View view) {
                 //クリップボタンイベント
                 if (mIsContract) {
+                    //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、画像比較でクリップ済/未を判定する
+                    Bitmap clipButtonBitmap = ((BitmapDrawable) clipButton.getBackground()).getBitmap();
+                    Bitmap activeClipBitmap = ((BitmapDrawable) ResourcesCompat.getDrawable(getResources(),
+                            R.mipmap.icon_circle_active_clip, null)).getBitmap();
+                    if (clipButtonBitmap.equals(activeClipBitmap)) {
+                        mOtherContentsDetailData.getVodMetaFullData().setClipStatus(true);
+                    } else {
+                        mOtherContentsDetailData.getVodMetaFullData().setClipStatus(false);
+                    }
                     ((BaseActivity) mActivity).sendClipRequest(setClipData(mOtherContentsDetailData.getVodMetaFullData()), clipButton);
                 } else {
                     //未契約時は契約導線を表示するためActivityに通知

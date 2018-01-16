@@ -9,38 +9,53 @@ import android.content.Context;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.VodClipInsertDataManager;
-import com.nttdocomo.android.tvterminalapp.datamanager.select.VodClipDataManager;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
-import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.VOD_LAST_INSERT;
-
 /**
  * クリップ(ビデオ)データプロバイダ.
  */
-public class VodClipDataProvider implements VodClipWebClient.VodClipJsonParserCallback {
+public class VodClipDataProvider extends ClipKeyListDataProvider implements VodClipWebClient.VodClipJsonParserCallback {
 
     private Context mContext;
+    private VodClipList mClipList = null;
 
     @Override
     public void onVodClipJsonParsed(List<VodClipList> vodClipLists) {
         if (vodClipLists != null && vodClipLists.size() > 0) {
             VodClipList list = vodClipLists.get(0);
-            setStructDB(list);
+//            setStructDB(list);
+            if (!mRequiredClipKeyList
+                    || mResponseEndFlag) {
+                sendVodClipListData(list.getVcList());
+            } else {
+                mClipList = list;
+            }
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
             if (null != apiDataProviderCallback) {
                 apiDataProviderCallback.vodClipListCallback(null);
             }
         }
+    }
+
+    @Override
+    public void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+        DTVTLogger.start();
+        super.onVodClipKeyListJsonParsed(clipKeyListResponse);
+        // コールバック判定
+        if(mClipList != null) {
+            sendVodClipListData(mClipList.getVcList());
+        }
+        DTVTLogger.end();
     }
 
     /**
@@ -63,6 +78,7 @@ public class VodClipDataProvider implements VodClipWebClient.VodClipJsonParserCa
      * @param mContext コンテクスト
      */
     public VodClipDataProvider(final Context mContext) {
+        super(mContext);
         this.mContext = mContext;
         this.apiDataProviderCallback = (ApiDataProviderCallback) mContext;
     }
@@ -73,10 +89,14 @@ public class VodClipDataProvider implements VodClipWebClient.VodClipJsonParserCa
      * @param pagerOffset ページオフセット
      */
     public void getClipData(final int pagerOffset) {
+        mClipList = null;
+        // クリップキー一覧を取得
+        if(mRequiredClipKeyList) {
+            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+        }
         //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
 //        List<Map<String, String>> vodClipList = getVodClipListData(pagerOffset);
         getVodClipListData(pagerOffset);
-
 //        if(vodClipList != null && vodClipList.size() > 0){
 //            sendVodClipListData(vodClipList);
 //        }
@@ -123,6 +143,7 @@ public class VodClipDataProvider implements VodClipWebClient.VodClipJsonParserCa
             clipContentInfo.setRatStar(map.get(JsonContents.META_RESPONSE_RATING));
             clipContentInfo.setContentsType(map.get(JsonContents.META_RESPONSE_CONTENT_TYPE));
             clipContentInfo.setDtv(dtv);
+            clipContentInfo.setDtvType(dtvType);
             clipContentInfo.setDispType(dispType);
             clipContentInfo.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
             //クリップリクエストデータ作成
@@ -143,6 +164,13 @@ public class VodClipDataProvider implements VodClipWebClient.VodClipJsonParserCa
             String dTv = map.get(JsonContents.META_RESPONSE_DTV);
             requestData.setIsNotify(dispType, contentsType, linearEndDate, tvService, dTv);
             clipContentInfo.setRequestData(requestData);
+
+            if(mRequiredClipKeyList) {
+                // クリップ状態をコンテンツリストに格納
+                clipContentInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv,
+                        clipContentInfo.getCrid(), clipContentInfo.getServiceId(),
+                        clipContentInfo.getEventId(), clipContentInfo.getTitleId()));
+            }
 
             clipDataList.add(clipContentInfo);
             DTVTLogger.info("RankingContentInfo " + clipContentInfo.getRank());
@@ -200,6 +228,5 @@ public class VodClipDataProvider implements VodClipWebClient.VodClipJsonParserCa
 //        dateUtils.addLastDate(VOD_LAST_INSERT);
 //        VodClipInsertDataManager dataManager = new VodClipInsertDataManager(mContext);
 //        dataManager.insertVodClipInsertList(vodClipList);
-        sendVodClipListData(vodClipList.getVcList());
     }
 }

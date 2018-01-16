@@ -8,6 +8,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -172,6 +174,15 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             mClipButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、画像比較でクリップ済/未を判定する
+                    Bitmap clipButtonBitmap = ((BitmapDrawable) mClipButton.getBackground()).getBitmap();
+                    Bitmap activeClipBitmap = ((BitmapDrawable) ResourcesCompat.getDrawable(mContext.getResources(),
+                            R.mipmap.icon_circle_active_clip, null)).getBitmap();
+                    if (clipButtonBitmap.equals(activeClipBitmap)) {
+                        schedule.getClipRequestData().setClipStatus(true);
+                    } else {
+                        schedule.getClipRequestData().setClipStatus(false);
+                    }
                     //クリップボタンイベント
                     ((BaseActivity) mContext).sendClipRequest(schedule.getClipRequestData(), mClipButton);
                 }
@@ -296,13 +307,13 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         }
         if (itemViewHolder.mClipButton != null) {
             if (itemSchedule.isClipExec() || mIsParental) {
-                itemViewHolder.mClipButton.setVisibility(View.GONE);
-            } else {
                 if (itemSchedule.isClipStatus()) {
-                    itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
-                } else {
                     itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+                } else {
+                    itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
                 }
+            } else {
+                itemViewHolder.mClipButton.setVisibility(View.GONE);
             }
         }
 
@@ -410,7 +421,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 itemViewHolder.mThumbnail.setVisibility(View.INVISIBLE);
                 itemViewHolder.mDetail.setVisibility(View.INVISIBLE);
             } else {
-                if (availableSpace - titleSpace - mContext.dip2px(16) >= thumbnailHeight) {//サムネル表示
+                if (availableSpace - titleSpace - mContext.dip2px(16) >= thumbnailHeight && mIsParental) {//サムネル表示
                     mThumbEpiSpace = availableSpace - titleSpace - mContext.dip2px(16);
                     mEpiSpace = mThumbEpiSpace - thumbnailHeight;
                     isShowThumb = true;
@@ -420,11 +431,6 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     isShowThumb = false;
                 }
             }
-        }
-
-        //年齢制限有効時はサムネイル非表示
-        if (!mIsParental) {
-            itemViewHolder.mThumbnail.setVisibility(View.GONE);
         }
     }
 

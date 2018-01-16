@@ -6,6 +6,8 @@ package com.nttdocomo.android.tvterminalapp.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -54,7 +56,7 @@ public class SearchResultBaseAdapter extends BaseAdapter {
     public View getView(int position, View view, ViewGroup parent) {
         final ContentsData searchContentInfo =  mData.get(position);
         ViewHolder holder;
-        if(null==view){
+        if (null == view) {
             view = View.inflate(mContext, R.layout.item_search_result_televi, null);
             holder = new ViewHolder();
             holder.iv_thumbnail = view.findViewById(R.id.iv_thumbnail);
@@ -63,7 +65,7 @@ public class SearchResultBaseAdapter extends BaseAdapter {
             holder.iv_clip = view.findViewById(R.id.iv_clip);
 
             //ひかりコンテンツのみクリップボタンを表示する
-            if(searchContentInfo.getServiceId().equals(SearchServiceType.ServiceId.HIKARI_TV_FOR_DOCOMO)){
+            if (searchContentInfo.getServiceId().equals(SearchServiceType.ServiceId.HIKARI_TV_FOR_DOCOMO)) {
 
                 holder.iv_clip.setVisibility(View.VISIBLE);
 
@@ -71,22 +73,31 @@ public class SearchResultBaseAdapter extends BaseAdapter {
                 holder.iv_clip.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、画像比較でクリップ済/未を判定する
+                        Bitmap clipButtonBitmap = ((BitmapDrawable) clipButton.getBackground()).getBitmap();
+                        Bitmap activeClipBitmap = ((BitmapDrawable) ResourcesCompat.getDrawable(mContext.getResources(),
+                                R.mipmap.icon_circle_active_clip, null)).getBitmap();
+                        if (clipButtonBitmap.equals(activeClipBitmap)) {
+                            searchContentInfo.getRequestData().setClipStatus(true);
+                        } else {
+                            searchContentInfo.getRequestData().setClipStatus(false);
+                        }
                         // クリップ処理
                         ((BaseActivity) mContext).sendClipRequest(searchContentInfo.getRequestData(), clipButton);
                     }
                 });
-            }else{
+            } else {
                 holder.iv_clip.setVisibility(View.GONE);
             }
             float mWidth = (float)mContext.getResources().getDisplayMetrics().widthPixels / 3;
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int)mWidth,(int)mWidth/2);
             holder.iv_thumbnail.setLayoutParams(layoutParams);
             view.setTag(holder);
-        }else {
+        } else {
             holder = (ViewHolder) view.getTag();
         }
 
-        if(null != holder.tv_title){
+        if (null != holder.tv_title) {
             holder.tv_title.setText(searchContentInfo.getTitle());
         }
 

@@ -10,6 +10,7 @@ import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RentalListInsertDataManager;
@@ -19,6 +20,8 @@ import com.nttdocomo.android.tvterminalapp.datamanager.select.ProgramDataManager
 import com.nttdocomo.android.tvterminalapp.datamanager.select.RentalListDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ContentsDetailGetResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
@@ -44,7 +47,7 @@ import java.util.Map;
 /**
  * コンテンツ詳細画面のDataProvider.
  */
-public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient.ContentsDetailJsonParserCallback,
+public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider implements ContentsDetailGetWebClient.ContentsDetailJsonParserCallback,
         RoleListWebClient.RoleListJsonParserCallback, ChannelWebClient.ChannelJsonParserCallback,
         DbThread.DbOperation, RemoteRecordingReservationWebClient.RemoteRecordingReservationJsonParserCallback,
         RentalVodListWebClient.RentalVodListJsonParserCallback, RentalChListWebClient.RentalChListJsonParserCallback {
@@ -123,12 +126,15 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
      */
     private static final String[] DISPLAY_TYPE = {"", "hikaritv", "dch"};
 
+    private ArrayList<VodMetaFullData> mVodMetaFullDataList = null;
+
     /**
      * コンストラクタ.
      *
      * @param context TvProgramListActivity
      */
     public DtvContentsDetailDataProvider(final Context context) {
+        super(context);
         this.mContext = context;
         this.mApiDataProviderCallback = (ApiDataProviderCallback) context;
     }
@@ -138,9 +144,29 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
         if (ContentsDetailLists != null) {
             ArrayList<VodMetaFullData> detailListInfo = ContentsDetailLists.getVodMetaFullData();
             if (detailListInfo != null) {
-                mApiDataProviderCallback.onContentsDetailInfoCallback(detailListInfo);
+                if (!mRequiredClipKeyList) {
+                    mApiDataProviderCallback.onContentsDetailInfoCallback(
+                            detailListInfo, getContentsDetailClipStatus(detailListInfo.get(0)));
+                } else {
+                    mVodMetaFullDataList = detailListInfo;
+                    requestGetClipKeyList(detailListInfo.get(0));
+                }
             }
         }
+    }
+
+    @Override
+    public void onTvClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+        super.onTvClipKeyListJsonParsed(clipKeyListResponse);
+        mApiDataProviderCallback.onContentsDetailInfoCallback(
+                mVodMetaFullDataList, getContentsDetailClipStatus(mVodMetaFullDataList.get(0)));
+    }
+
+    @Override
+    public void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+        super.onVodClipKeyListJsonParsed(clipKeyListResponse);
+        mApiDataProviderCallback.onContentsDetailInfoCallback(
+                mVodMetaFullDataList, getContentsDetailClipStatus(mVodMetaFullDataList.get(0)));
     }
 
     @Override
@@ -430,7 +456,7 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
          *
          * @param contentsDetailInfo 画面に渡すチャンネル番組情報
          */
-        void onContentsDetailInfoCallback(ArrayList<VodMetaFullData> contentsDetailInfo);
+        void onContentsDetailInfoCallback(ArrayList<VodMetaFullData> contentsDetailInfo,boolean clipStatus);
 
         /**
          * ロールリスト情報取得.
@@ -602,5 +628,33 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
     public void requestRecordingReservation(final RecordingReservationContentsDetailInfo info) {
         RemoteRecordingReservationWebClient client = new RemoteRecordingReservationWebClient();
         client.getRemoteRecordingReservationApi(info, this);
+    }
+
+    /**
+     * コンテンツ詳細情報のメタデータを元にクリップ状態を取得
+     */
+    private boolean getContentsDetailClipStatus(VodMetaFullData metaFullData) {
+        return getClipStatus(metaFullData.getDisp_type(),
+                metaFullData.getmContent_type(),
+                metaFullData.getDtv(),
+                metaFullData.getCrid(),
+                metaFullData.getmService_id(),
+                metaFullData.getmEvent_id(),
+                metaFullData.getTitle_id());
+    }
+
+    /**
+     * コンテンツ詳細情報を元にクリップキー一覧の取得を要求
+     */
+    private void requestGetClipKeyList(VodMetaFullData metaFullData) {
+        ClipKeyListDao.TABLE_TYPE tableType = decisionTableType(metaFullData.getDisp_type(),metaFullData.getmContent_type());
+        switch (tableType) {
+            case TV:
+                getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.TV));
+                break;
+            case VOD:
+                getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+                break;
+        }
     }
 }

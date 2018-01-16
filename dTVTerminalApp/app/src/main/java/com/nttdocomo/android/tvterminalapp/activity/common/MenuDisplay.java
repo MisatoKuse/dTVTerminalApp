@@ -279,6 +279,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                     RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL, mContext);
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_dtv))) {
+                mActivity.setRemoteProgressVisible(View.VISIBLE);
                 if (null != mMenuDisplayEventListener) {
                     // TVアプリ起動導線(dTV)
                     // TODO BaseActivityで実行するのが望ましい
@@ -286,6 +287,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                     RemoteControlRelayClient.getInstance().startApplicationRequest(RemoteControlRelayClient.STB_APPLICATION_TYPES.DTV, mContext);
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_d_animation))) {
+                mActivity.setRemoteProgressVisible(View.VISIBLE);
                 if (null != mMenuDisplayEventListener) {
                     // TVアプリ起動導線(dアニメ)
                     // TODO BaseActivityで実行するのが望ましい

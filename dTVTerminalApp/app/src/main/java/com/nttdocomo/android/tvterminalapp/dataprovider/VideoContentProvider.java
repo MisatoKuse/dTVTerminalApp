@@ -7,7 +7,10 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
@@ -20,7 +23,7 @@ import java.util.Map;
 /**
  * ビデオ一覧専用DPクラス
  */
-public class VideoContentProvider implements
+public class VideoContentProvider  extends  ClipKeyListDataProvider implements
         ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback {
 
     private Context mContext = null;
@@ -28,6 +31,7 @@ public class VideoContentProvider implements
     // ビデオコンテンツ画面用コールバック
     private apiVideoContentDataProviderCallback mApiVideoContentDataProviderCallback = null;
     private List<Map<String, String>> videoContentMapList;
+    private VideoRankList mVideoRankList = null;
 
     /**
      * コンストラクタ
@@ -35,6 +39,7 @@ public class VideoContentProvider implements
      * @param mContext
      */
     public VideoContentProvider(Context mContext) {
+        super(mContext);
         this.mContext = mContext;
         this.mApiVideoContentDataProviderCallback = (apiVideoContentDataProviderCallback) mContext;
     }
@@ -55,6 +60,10 @@ public class VideoContentProvider implements
      * VideoContentListActivityからのデータ取得要求受付
      */
     public void getVideoContentData(String genreId) {
+        mVideoRankList = null;
+        if(mRequiredClipKeyList) {
+            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+        }
         // コンテンツ数
         getVideoContentListData(genreId);
     }
@@ -117,6 +126,7 @@ public class VideoContentProvider implements
             contentsData.setRatStar(map.get(JsonContents.META_RESPONSE_RATING));
             contentsData.setContentsType(map.get(JsonContents.META_RESPONSE_CONTENT_TYPE));
             contentsData.setDtv(dtv);
+            contentsData.setDtvType(dtvType);
             contentsData.setDispType(dispType);
             contentsData.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
             //クリップリクエストデータ作成
@@ -142,6 +152,13 @@ public class VideoContentProvider implements
 //            requestData.setTableType(decisionTableType(contentsType, contentsType));
             contentsData.setRequestData(requestData);
 
+            if(mRequiredClipKeyList) {
+                // クリップ状態をコンテンツリストに格納
+                contentsData.setClipStatus(getClipStatus(dispType, contentsType, dTv,
+                        contentsData.getCrid(), contentsData.getServiceId(),
+                        contentsData.getEventId(), contentsData.getTitleId()));
+            }
+
             videoContentsDataList.add(contentsData);
         }
 
@@ -152,9 +169,25 @@ public class VideoContentProvider implements
     public void onContentsListPerGenreJsonParsed(List<VideoRankList> contentsListPerGenre) {
         if (contentsListPerGenre != null && contentsListPerGenre.size() > 0) {
             VideoRankList list = contentsListPerGenre.get(0);
-            sendContentListData(list.getVrList());
+            if (!mRequiredClipKeyList
+                    || mResponseEndFlag) {
+                sendContentListData(list.getVrList());
+            } else {
+                mVideoRankList = list;
+            }
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
         }
+    }
+
+    @Override
+    public void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+        DTVTLogger.start();
+        super.onVodClipKeyListJsonParsed(clipKeyListResponse);
+        // コールバック判定
+        if (mVideoRankList != null) {
+            sendContentListData(mVideoRankList.getVrList());
+        }
+        DTVTLogger.end();
     }
 }

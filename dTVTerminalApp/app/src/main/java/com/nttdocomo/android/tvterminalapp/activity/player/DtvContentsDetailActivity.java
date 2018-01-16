@@ -1389,8 +1389,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     }
 
     @Override
-    public void onContentsDetailInfoCallback(ArrayList<VodMetaFullData> contentsDetailInfo) {
-        RecordingReservationContentsDetailInfo recordingReservationContentsDetailInfo = null;
+    public void onContentsDetailInfoCallback(ArrayList<VodMetaFullData> contentsDetailInfo, boolean clipStatus) {
         //詳細情報取得して、更新する
         if (contentsDetailInfo != null) {
             DtvContentsDetailFragment detailFragment = getDetailFragment();
@@ -1418,6 +1417,9 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             }
             detailFragment.mOtherContentsDetailData.setVodMetaFullData(contentsDetailInfo.get(FIRST_VOD_META_DATA));
             detailFragment.mOtherContentsDetailData.setDetail(mDetailFullData.getSynop());
+            // コンテンツ状態を反映
+            detailFragment.mOtherContentsDetailData.setmClipStatus(clipStatus);
+
             detailFragment.noticeRefresh();
             String[] credit_array = mDetailFullData.getmCredit_array();
             if (credit_array != null && credit_array.length > 0) {
@@ -1743,17 +1745,23 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     }
 
     @Override
-    public void onStartRemoteControl() {
+    public void onStartRemoteControl(boolean isFromHeader) {
         DTVTLogger.start();
         // サービスIDにより起動するアプリを変更する
         if (mDetailData != null) {
             setRelayClientHandler();
             switch (mDetailData.getServiceId()) {
                 case DTV_CONTENTS_SERVICE_ID: // dTV
+                    if(!isFromHeader){
+                        setRemoteProgressVisible(View.VISIBLE);
+                    }
                     requestStartApplication(
                             RemoteControlRelayClient.STB_APPLICATION_TYPES.DTV, mDetailData.getContentId());
                     break;
                 case D_ANIMATION_CONTENTS_SERVICE_ID: // dアニメ
+                    if(!isFromHeader){
+                        setRemoteProgressVisible(View.VISIBLE);
+                    }
                     requestStartApplication(
                             RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE, mDetailData.getContentId());
                     break;
@@ -1765,7 +1773,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                     break;
             }
         }
-        super.onStartRemoteControl();
+        super.onStartRemoteControl(isFromHeader);
         DTVTLogger.end();
     }
 
@@ -2157,7 +2165,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                     }
                     DTVTLogger.debug("視聴可能. 30日以内:" + mIsLimitThirtyDay);
                     return;
-                } else if (mDetailFullData.getAvail_start_date() > DateUtils.getNowTimeFormatEpoch()) {
+                } else if (mDetailFullData.getAvail_start_date() >= DateUtils.getNowTimeFormatEpoch()) {
                     //視聴不可(視聴導線を非表示)
                     mIsEnableWatch = DISABLE_WATCH_NO_PLAY;
                     DTVTLogger.debug("視聴不可(放送時間外のため再生導線を非表示)");
@@ -2262,7 +2270,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                         }
                         DTVTLogger.debug("視聴可能. 30日以内:" + mIsVodLimitThirtyDay);
                         return;
-                    } else if (mDetailFullData.getAvail_start_date() > DateUtils.getNowTimeFormatEpoch()) {
+                    } else if (mDetailFullData.getAvail_start_date() >= DateUtils.getNowTimeFormatEpoch()) {
                         //視聴不可(視聴導線を非表示)
                         mIsEnableWatch = DISABLE_WATCH_NO_PLAY;
                         DTVTLogger.debug("視聴不可(放送時間外のため再生導線を非表示)");
@@ -2429,7 +2437,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                             }
                         }
                         //視聴可能期限まで一ヶ月以内かどうか
-                        if (activeData.getValidEndDate() - DateUtils.getNowTimeFormatEpoch()
+                        if (activeDataDate - DateUtils.getNowTimeFormatEpoch()
                                 < DateUtils.EPOCH_TIME_ONE_DAY * ONE_MONTH) {
                             mIsLimitThirtyDay = true;
                             //視聴可能(期限まで30日以内)
