@@ -28,6 +28,12 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     private static final String COMMA = ",";
     private static final String SEPARATOR = ":";
 
+    //テレビのレコメンド情報のタブ番号
+    static final int TV_NO = 1;
+
+    //ビデオのレコメンド情報のタブ番号
+    static final int VIDEO_NO = 2;
+
     // ページング判定
     private boolean mIsPaging = false;
 
@@ -209,10 +215,14 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
 
     /**
      * Activityからのデータ取得要求受付.
-     *
-     * @param requestPageNo タブ種別 ,startIndex 取得開始位置, maxResult 最大取得件数
+     * @param requestPageNo 使用するタブ番号
+     * @param startIndex 読み込み初期位置
+     * @param maxResult 読み込み最大件数
+     * @param hasReturnValue DBにデータがある場合それをすぐ使用するならばtrue。データは常にコールバック経由ならばfalse
+     * @return hasReturnValueがtrueでDBにデータがあるならばそれを返す。それ以外はヌルとなる
      */
-    public void startGetRecommendData(int requestPageNo, int startIndex, int maxResult) {
+    public List<ContentsData> startGetRecommendData(int requestPageNo, int startIndex,
+                                      int maxResult,boolean hasReturnValue) {
         DTVTLogger.debug("requestPageNo:" + requestPageNo);
         // RequestDataのインスタンス生成
         RecommendRequestData requestData = new RecommendRequestData();
@@ -225,8 +235,11 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 if (resultList.size() < maxResult) { // キャッシュ内のデータ数が20件未満の場合
                     requestData.serviceCategoryId = getTerebiRequestSCIdStr();
                 } else {
-                    mApiDataProviderCallback.RecommendChannelCallback(resultList);
-                    return;
+                    //戻り値を使用する指定が無い場合は、コールバックに値を渡す
+                    if(!hasReturnValue) {
+                        mApiDataProviderCallback.RecommendChannelCallback(resultList);
+                    }
+                    return resultList;
                 }
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO: //ビデオ
@@ -235,8 +248,11 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 if (resultList.size() < maxResult) { // キャッシュ内のデータ数が20件未満の場合
                     requestData.serviceCategoryId = getVideoRequestSCIdStr();
                 } else {
-                    mApiDataProviderCallback.RecommendVideoCallback(resultList);
-                    return;
+                    //戻り値を使用する指定が無い場合は、コールバックに値を渡す
+                    if(!hasReturnValue) {
+                        mApiDataProviderCallback.RecommendVideoCallback(resultList);
+                    }
+                    return resultList;
                 }
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL: //dTVチャンネル
@@ -245,8 +261,11 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 if (resultList.size() < maxResult) { // キャッシュ内のデータ数が20件未満の場合
                     requestData.serviceCategoryId = getDCHRequestSCIdStr();
                 } else {
-                    mApiDataProviderCallback.RecommendDChannelCallback(resultList);
-                    return;
+                    //戻り値を使用する指定が無い場合は、コールバックに値を渡す
+                    if(!hasReturnValue) {
+                        mApiDataProviderCallback.RecommendDChannelCallback(resultList);
+                    }
+                    return resultList;
                 }
 
                 break;
@@ -256,8 +275,11 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 if (resultList.size() < maxResult) { // キャッシュ内のデータ数が20件未満の場合
                     requestData.serviceCategoryId = getDTVRequestSCIdStr();
                 } else {
-                    mApiDataProviderCallback.RecommendDTVCallback(resultList);
-                    return;
+                    //戻り値を使用する指定が無い場合は、コールバックに値を渡す
+                    if(!hasReturnValue) {
+                        mApiDataProviderCallback.RecommendDTVCallback(resultList);
+                    }
+                    return resultList;
                 }
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME: //dアニメ
@@ -266,8 +288,11 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 if (resultList.size() < maxResult) { // キャッシュ内のデータ数が20件未満の場合
                     requestData.serviceCategoryId = getDAnimeRequestSCIdStr();
                 } else {
-                    mApiDataProviderCallback.RecommendDAnimeCallback(resultList);
-                    return;
+                    //戻り値を使用する指定が無い場合は、コールバックに値を渡す
+                    if(!hasReturnValue) {
+                        mApiDataProviderCallback.RecommendDAnimeCallback(resultList);
+                    }
+                    return resultList;
                 }
                 break;
             default:
@@ -278,6 +303,9 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         // サーバへリクエストを送信
         RecommendWebClient webClient = new RecommendWebClient(this, mContext);
         webClient.getRecommendApi(requestData);
+
+        //戻り値はコールバック任せとなるので、こちらはヌルを返す
+        return null;
     }
 
     /**

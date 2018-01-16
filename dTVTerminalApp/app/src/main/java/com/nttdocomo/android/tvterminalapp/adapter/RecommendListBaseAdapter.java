@@ -63,6 +63,7 @@ public class RecommendListBaseAdapter extends BaseAdapter {
             holder.tv_des = view.findViewById(R.id.recommend_des);
             holder.iv_clip = view.findViewById(R.id.recommend_iv_clip);
 
+            final ImageView clipButton = holder.iv_clip;
             //ひかりコンテンツのみクリップボタンを表示する
             if(recommendContentInfo.getServiceId().equals(SearchServiceType.ServiceId.HIKARI_TV_FOR_DOCOMO)){
                 holder.iv_clip.setVisibility(View.VISIBLE);
@@ -70,7 +71,7 @@ public class RecommendListBaseAdapter extends BaseAdapter {
                     @Override
                     public void onClick(View view) {
                         //クリップボタンイベント
-                        ((BaseActivity) mContext).sendClipRequest(recommendContentInfo.getRequestData());
+                        ((BaseActivity) mContext).sendClipRequest(recommendContentInfo.getRequestData(), clipButton);
                     }
                 });
             }else{

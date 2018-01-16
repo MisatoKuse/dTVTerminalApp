@@ -12,17 +12,11 @@ import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DailyRankInsertDataManager;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendChInsertDataManager;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendVdInsertDataManager;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.TvClipInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.TvScheduleInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.VideoRankInsertDataManager;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.VodClipInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.HomeDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.RankingTopDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendVdList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvClipList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
@@ -32,10 +26,9 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGe
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.DailyRankWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvClipWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvScheduleWebClient;
-import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendChWebClient;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendVdWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser;
 
 import java.util.ArrayList;
@@ -51,8 +44,7 @@ public class HomeDataProvider implements
         TvScheduleWebClient.TvScheduleJsonParserCallback,
         DailyRankWebClient.DailyRankJsonParserCallback,
         ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback,
-        RecommendChWebClient.RecommendChannelCallback,
-        RecommendVdWebClient.RecommendVideoCallback {
+        RecommendDataProvider.RecommendApiDataProviderCallback {
 
     private Context mContext = null;
 
@@ -103,26 +95,6 @@ public class HomeDataProvider implements
         if (contentsListPerGenre != null && contentsListPerGenre.size() > 0) {
             VideoRankList list = contentsListPerGenre.get(0);
             setStructDB(list);
-        } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
-        }
-    }
-
-    @Override
-    public void RecommendChannelCallback(RecommendChList mRecommendChList) {
-        if (mRecommendChList != null && mRecommendChList.getmRcList() != null &&
-                mRecommendChList.getmRcList().size() > 0) {
-            setStructDB(mRecommendChList);
-        } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
-        }
-    }
-
-    @Override
-    public void RecommendVideoCallback(RecommendVdList mRecommendVdList) {
-        if (mRecommendVdList != null && mRecommendVdList.getmRvList() != null &&
-                mRecommendVdList.getmRvList().size() > 0) {
-            setStructDB(mRecommendVdList);
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
         }
@@ -218,13 +190,13 @@ public class HomeDataProvider implements
             if (tvScheduleListData != null && tvScheduleListData.size() > 0) {
                 sendTvScheduleListData(tvScheduleListData);
             }
-            //おすすめ番組
-            List<Map<String, String>> recommendChListData = getRecommendChListData();
+            //おすすめ番組・レコメンド情報は最初からContentsDataのリストなので、そのまま使用する
+            List<ContentsData> recommendChListData = getRecommendChListData();
             if (recommendChListData != null && recommendChListData.size() > 0) {
                 sendRecommendChListData(recommendChListData);
             }
-            //おすすめビデオ
-            List<Map<String, String>> recommendVdListData = getRecommendVdListData();
+            //おすすめビデオ・レコメンド情報は最初からContentsDataのリストなので、そのまま使用する
+            List<ContentsData> recommendVdListData = getRecommendVdListData();
             if (recommendVdListData != null && recommendVdListData.size() > 0) {
                 sendRecommendVdListData(recommendVdListData);
             }
@@ -264,19 +236,19 @@ public class HomeDataProvider implements
     /**
      * おすすめ番組をHomeActivityに送る.
      *
-     * @param list
+     * @param list おすすめ番組のコンテンツ情報
      */
-    public void sendRecommendChListData(final List<Map<String, String>> list) {
-        mApiDataProviderCallback.recommendChannelCallback(setHomeContentData(list));
+    public void sendRecommendChListData(List<ContentsData> list) {
+        mApiDataProviderCallback.recommendChannelCallback(list);
     }
 
     /**
      * おすすめビデオをHomeActivityに送る.
      *
-     * @param list
+     * @param list おすすめビデオのコンテンツ情報
      */
-    public void sendRecommendVdListData(final List<Map<String, String>> list) {
-        mApiDataProviderCallback.recommendVideoCallback(setHomeContentData(list));
+    public void sendRecommendVdListData(List<ContentsData> list) {
+        mApiDataProviderCallback.recommendVideoCallback(list);
     }
 
     /**
@@ -390,46 +362,42 @@ public class HomeDataProvider implements
 
     /**
      * おすすめ番組情報取得.
+     * 認証処理が必要になったので、レコメンド情報はレコメンドデータプロバイダ経由で取得するように変更
      *
-     * @return
+     * @return おすすめ番組情報
      */
-    private List<Map<String, String>> getRecommendChListData() {
-        DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(DateUtils.RECOMMEND_CH_LAST_INSERT);
-        List<Map<String, String>> list = new ArrayList<>();
-        //おすすめ番組一覧のDB保存履歴と、有効期間を確認
-        if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
-            //データをDBから取得する
-            HomeDataManager homeDataManager = new HomeDataManager(mContext);
-            list = homeDataManager.selectRecommendChListHomeData();
-        } else {
-            //通信クラスにデータ取得要求を出す
-            RecommendChWebClient mRecommendChWebClient = new RecommendChWebClient(this);
-            mRecommendChWebClient.getRecommendChannelApi();
-        }
-        return list;
+    private List<ContentsData> getRecommendChListData() {
+        RecommendDataProvider recommendDataProvider = new RecommendDataProvider(
+                mContext.getApplicationContext(), this);
+
+        //レコメンドデータプロバイダーからおすすめ番組情報を取得する・DBに既に入っていた場合はその値を使用するので、trueを指定する
+        List<ContentsData> recommendTvData =
+                recommendDataProvider.startGetRecommendData(RecommendDataProvider.TV_NO,
+                        SearchConstants.RecommendList.FIRST_POSITION,
+                        SearchConstants.RecommendList.RECOMMEND_PRELOAD_COUNT, true);
+
+        //取得したデータを渡す
+        return recommendTvData;
     }
 
     /**
      * おすすめビデオ情報取得.
+     * 認証処理が必要になったので、レコメンド情報はレコメンドデータプロバイダ経由で取得するように変更
      *
-     * @return
+     * @return おすすめビデオ情報
      */
-    private List<Map<String, String>> getRecommendVdListData() {
-        DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(DateUtils.RECOMMEND_VD_LAST_INSERT);
-        List<Map<String, String>> list = new ArrayList<>();
-        //おすすめビデオのDB保存履歴と、有効期間を確認
-        if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
-            //データをDBから取得する
-            HomeDataManager homeDataManager = new HomeDataManager(mContext);
-            list = homeDataManager.selectRecommendVdListHomeData();
-        } else {
-            //通信クラスにデータ取得要求を出す
-            RecommendVdWebClient mRecommendChWebClient = new RecommendVdWebClient(this);
-            mRecommendChWebClient.getRecommendVideoApi();
-        }
-        return list;
+    private List<ContentsData> getRecommendVdListData() {
+        RecommendDataProvider recommendDataProvider = new RecommendDataProvider(
+                mContext.getApplicationContext(), this);
+
+        //レコメンドデータプロバイダーからおすすめビデオ情報を取得する・DBに既に入っていた場合はその値を使用するので、trueを指定する
+        List<ContentsData> recommendVideoData =
+                recommendDataProvider.startGetRecommendData(RecommendDataProvider.VIDEO_NO,
+                        SearchConstants.RecommendList.FIRST_POSITION,
+                        SearchConstants.RecommendList.RECOMMEND_PRELOAD_COUNT, true);
+
+        //取得したデータを渡す
+        return recommendVideoData;
     }
 
     /**
@@ -563,32 +531,6 @@ public class HomeDataProvider implements
     }
 
     /**
-     * おすすめ番組をDBに保存する.
-     *
-     * @param recommendChList
-     */
-    private void setStructDB(RecommendChList recommendChList) {
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(DateUtils.RECOMMEND_CH_LAST_INSERT);
-        RecommendChInsertDataManager dataManager = new RecommendChInsertDataManager(mContext);
-        dataManager.insertRecommendChInsertList(recommendChList);
-        sendRecommendChListData(recommendChList.getmRcList());
-    }
-
-    /**
-     * おすすめビデオをDBに保存する.
-     *
-     * @param recommendVdList
-     */
-    private void setStructDB(RecommendVdList recommendVdList) {
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(DateUtils.RECOMMEND_VD_LAST_INSERT);
-        RecommendVdInsertDataManager dataManager = new RecommendVdInsertDataManager(mContext);
-        dataManager.insertRecommendVdInsertList(recommendVdList);
-        sendRecommendVdListData(recommendVdList.getmRvList());
-    }
-
-    /**
      * デイリーランキングデータをDBに格納する.
      *
      * @param dailyRankList
@@ -640,5 +582,65 @@ public class HomeDataProvider implements
 //        VodClipInsertDataManager dataManager = new VodClipInsertDataManager(mContext);
 //        dataManager.insertVodClipInsertList(vodClipList);
         sendVodClipListData(vodClipList.getVcList());
+    }
+
+    /**
+     * レコメンドのテレビ情報のコールバック.
+     *
+     * @param recommendContentInfoList テレビレコメンド情報
+     */
+    @Override
+    public void RecommendChannelCallback(List<ContentsData> recommendContentInfoList) {
+        //送られてきたデータをアクティビティに渡す
+        sendRecommendChListData(recommendContentInfoList);
+    }
+
+    /**
+     * レコメンドのビデオ情報のコールバック.
+     *
+     * @param recommendContentInfoList ビデオレコメンド情報
+     */
+    @Override
+    public void RecommendVideoCallback(List<ContentsData> recommendContentInfoList) {
+        //送られてきたデータをアクティビティに渡す
+        sendRecommendVdListData(recommendContentInfoList);
+    }
+
+    /**
+     * レコメンドのDTV情報のコールバック.
+     *
+     * @param recommendContentInfoList DTVレコメンド情報
+     */
+    @Override
+    public void RecommendDTVCallback(List<ContentsData> recommendContentInfoList) {
+        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+    }
+
+    /**
+     * レコメンドのdアニメ情報のコールバック.
+     *
+     * @param recommendContentInfoList dアニメレコメンド情報
+     */
+    @Override
+    public void RecommendDAnimeCallback(List<ContentsData> recommendContentInfoList) {
+        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+    }
+
+    /**
+     * レコメンドのDチャンネル情報のコールバック.
+     *
+     * @param recommendContentInfoList Dチャンネルのレコメンド情報
+     */
+    @Override
+    public void RecommendDChannelCallback(List<ContentsData> recommendContentInfoList) {
+        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+    }
+
+    /**
+     * レコメンドのエラーのコールバック.
+     */
+    @Override
+    public void RecommendNGCallback() {
+        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 }

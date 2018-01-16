@@ -59,6 +59,8 @@ public class RecommendActivity extends BaseActivity implements
     private static int sCntPageing = 0;
     // ページング判定
     private boolean mIsPaging = false;
+    //アクティビティ初回起動フラグ
+    private boolean mIsFirst = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,9 +77,25 @@ public class RecommendActivity extends BaseActivity implements
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
 
-        initData();
-        initRecommendListView();
-        requestRecommendData();
+        //初回起動フラグをONにする
+        mIsFirst = true;
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        //フォーカスを得て、初回起動だった場合の判定
+        if(hasFocus && mIsFirst) {
+            //画面の初期表示処理は、onCreateでは実行が早すぎて画面に表示されないので、こちらに移動
+            initData();
+            initRecommendListView();
+            setSearchStart(false);
+            requestRecommendData();
+
+            //初回起動の処理が終了したので、falseとする
+            mIsFirst = false;
+        }
     }
 
     /**
@@ -122,8 +140,11 @@ public class RecommendActivity extends BaseActivity implements
 
         int requestService = mRecommendViewPager.getCurrentItem();
         int startIndex = sShowListSize + 1;
+
+        //戻り値を使用せず、データは必ずコールバック経由なので、falseを指定する
         mRecommendDataProvider.startGetRecommendData(
-                requestService, startIndex, SearchConstants.RecommendList.requestMaxCount_Recommend);
+                requestService, startIndex,
+                SearchConstants.RecommendList.requestMaxCount_Recommend,false);
     }
 
     /**

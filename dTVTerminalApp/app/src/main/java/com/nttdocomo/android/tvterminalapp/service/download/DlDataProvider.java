@@ -29,7 +29,7 @@ import java.util.Map;
  */
 public class DlDataProvider implements ServiceConnection, DownloadServiceListener, DbThread.DbOperation {
     private DlDataProviderListener mDlDataProviderListener;
-    private DownloadService.Binder mBinder;
+    private static DownloadService.Binder mBinder;
     private Activity mActivity;
     private DlData dlData;
     private String itemId;

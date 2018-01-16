@@ -301,16 +301,26 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
 
     @Override
     public void onDbOperationFinished(boolean isSuccessful, List<Map<String, String>> resultSet, int operationId) {
-
+        //TODO:DB保存後の処理があればここに記載
     }
 
     @Override
     public List<Map<String, String>> dbOperation(int operationId) throws Exception {
+        ClipKeyListInsertDataManager dataManager = new ClipKeyListInsertDataManager(mContext);
+        String dispType = mClipRequestData.getDispType();
+        String contentType = mClipRequestData.getContentType();
+        String serviceId = mClipRequestData.getServiceId();
+        String eventId = mClipRequestData.getEventId();
+        String type = mClipRequestData.getType();
+        String titleId = mClipRequestData.getTitleId();
+        ClipKeyListDao.TABLE_TYPE tableType = decisionTableType(dispType, contentType);
+
         switch (operationId) {
             case CLIP_ROW_DELETE:
-//                ClipKeyListDao.TABLE_TYPE tableType = decisionTableType(dispType, contentsType);
+                dataManager.deleteRowSqlStart(tableType, serviceId, eventId, titleId);
                 break;
             case CLIP_ROW_INSERT:
+                dataManager.insertRowSqlStart(tableType, serviceId, eventId, type, titleId);
                 break;
             default:
                 break;
