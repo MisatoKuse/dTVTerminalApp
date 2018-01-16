@@ -421,7 +421,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 itemViewHolder.mThumbnail.setVisibility(View.INVISIBLE);
                 itemViewHolder.mDetail.setVisibility(View.INVISIBLE);
             } else {
-                if (availableSpace - titleSpace - mContext.dip2px(16) >= thumbnailHeight) {//サムネル表示
+                if (availableSpace - titleSpace - mContext.dip2px(16) >= thumbnailHeight && mIsParental) {//サムネル表示
                     mThumbEpiSpace = availableSpace - titleSpace - mContext.dip2px(16);
                     mEpiSpace = mThumbEpiSpace - thumbnailHeight;
                     isShowThumb = true;
@@ -431,11 +431,6 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     isShowThumb = false;
                 }
             }
-        }
-
-        //年齢制限有効時はサムネイル非表示
-        if (!mIsParental) {
-            itemViewHolder.mThumbnail.setVisibility(View.GONE);
         }
     }
 
