@@ -9,6 +9,7 @@
 #include <secure_io_global.h>
 #include "DlnaDownload.h"
 #include "../DTVTLogger.h"
+#include "../android_log_handler.h"
 
 /**
  * 機能： JNI cast
@@ -164,6 +165,8 @@ namespace dtvt {
         env->ReleaseStringUTFChars(privateHome_, (const char *) privateHome);
         ret=1;
         gIsGlobalDtcpInited=true;
+
+        set_android_log_handler();
 
         return (jboolean)ret;
     }
