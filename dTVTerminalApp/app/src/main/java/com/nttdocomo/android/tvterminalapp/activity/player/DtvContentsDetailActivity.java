@@ -1419,6 +1419,10 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             detailFragment.mOtherContentsDetailData.setDetail(mDetailFullData.getSynop());
             // コンテンツ状態を反映
             detailFragment.mOtherContentsDetailData.setClipStatus(clipStatus);
+            detailFragment.mOtherContentsDetailData.setDispType(mDetailFullData.getDisp_type());
+            detailFragment.mOtherContentsDetailData.setSearchOk(mDetailFullData.getmSearch_ok());
+            detailFragment.mOtherContentsDetailData.setDtv(mDetailFullData.getDtv());
+            detailFragment.mOtherContentsDetailData.setDtvType(mDetailFullData.getDtvType());
 
             detailFragment.noticeRefresh();
             String[] credit_array = mDetailFullData.getmCredit_array();
