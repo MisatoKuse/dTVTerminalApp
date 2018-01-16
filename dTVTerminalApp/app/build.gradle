@@ -208,10 +208,18 @@ dependencies {
     compile 'com.android.support:support-v4:26.1.0'
     compile 'com.android.support:design:26.1.0'
     testCompile 'junit:junit:4.12'
-    //DiXiM SecurePlayer SDK
-    compile(name: 'dixim-android-activation-lib', ext: 'aar')
-    compile(name: 'dixim-android-player-lib', ext: 'aar')
-    compile(name: 'dixim-android-player-secure-nativecodec', ext: 'aar')
-    compile(name: 'dixim-android-player-secure-openmaxal', ext: 'aar')
-    compile(name: 'dixim-android-util2', ext: 'aar')
+
+//    //DiXiM SecurePlayer SDK Release Version
+//    compile(name: 'dixim-android-activation-lib', ext: 'aar')
+//    compile(name: 'dixim-android-player-lib', ext: 'aar')
+//    compile(name: 'dixim-android-player-secure-nativecodec', ext: 'aar')
+//    compile(name: 'dixim-android-player-secure-openmaxal', ext: 'aar')
+//    compile(name: 'dixim-android-util2', ext: 'aar')
+    //DiXiM SecurePlayer SDK Debug Version
+    compile(name: 'dixim-android-activation-lib-debug', ext: 'aar')
+    compile(name: 'dixim-android-player-lib-debug', ext: 'aar')
+    compile(name: 'dixim-android-player-secure-nativecodec-debug', ext: 'aar')
+    compile(name: 'dixim-android-player-secure-openmaxal-debug', ext: 'aar')
+    compile(name: 'dixim-android-util2-debug', ext: 'aar')
+
 }
