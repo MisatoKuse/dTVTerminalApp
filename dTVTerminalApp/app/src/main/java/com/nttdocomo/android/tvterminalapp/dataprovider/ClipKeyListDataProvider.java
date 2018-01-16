@@ -6,10 +6,17 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 
+import com.nttdocomo.android.tvterminalapp.activity.home.ClipListActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.RentalListActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.WatchingVideoListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity;
+import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.WeeklyTvRankingActivity;
+import com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActivity;
+import com.nttdocomo.android.tvterminalapp.activity.video.VideoContentListActivity;
+import com.nttdocomo.android.tvterminalapp.activity.video.VideoPurchListActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
@@ -144,7 +151,14 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     private boolean checkInstance(Context context) {
         if (context instanceof WeeklyTvRankingActivity
                 || context instanceof DailyTvRankingActivity
-                || context instanceof VideoRankingActivity) {
+                || context instanceof VideoRankingActivity
+                || context instanceof ClipListActivity
+                || context instanceof RentalListActivity
+                || context instanceof WatchingVideoListActivity
+                || context instanceof DtvContentsDetailActivity
+                || context instanceof TvProgramListActivity
+                || context instanceof VideoContentListActivity
+                || context instanceof VideoPurchListActivity) {
             DTVTLogger.debug("Need Getting ClipKeyList");
             return true;
         }
