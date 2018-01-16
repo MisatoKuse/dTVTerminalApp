@@ -171,9 +171,13 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_recommend_program_video))) {
                 if (null != mMenuDisplayEventListener) {
-                    intent.setClass(mActivity, RecommendActivity.class);
-                    intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
-                    mActivity.startActivity(intent);
+                    //「おすすめ番組・ビデオ」画面も、他の画面と同様に同一画面表示中の起動抑止を追加
+                    mMenuDisplayEventListener.onMenuItemSelected(MenuItem.RECOMMEND_PRO_VIDEO);
+                    if(!(mActivity instanceof RecommendActivity)) {
+                        intent.setClass(mActivity, RecommendActivity.class);
+                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                        mActivity.startActivity(intent);
+                    }
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_staff_recommend))) {
                 if (null != mMenuDisplayEventListener) {
