@@ -82,7 +82,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     private UserState mUserState = UserState.LOGIN_NG;
 
     private long mLastClickTime = 0;
-    protected boolean mIsFromSelect = false;
 
     private ImageView mClipButton = null;
     private ClipRequestData mClipRequestData = null;
@@ -411,8 +410,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         mActivity = this;
         initView();
 
+        //TODO: STBのIPアドレスはSTBにDMS機能が搭載された暁にはペアリング時に保存した値を用いるようにする.
         mRemoteControlRelayClient = RemoteControlRelayClient.getInstance();
-        mRemoteControlRelayClient.setDebugRemoteIp("162.164.0.5");
+        mRemoteControlRelayClient.setDebugRemoteIp("192.168.11.35");
         //dアカウントの検知処理を追加する
         setDaccountControl();
 
@@ -527,111 +527,82 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         public void handleMessage(Message msg) {
             DTVTLogger.debug(String.format("msg:%s", msg));
             setRemoteProgressVisible(View.GONE);
-            RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES requestCommand
-                    = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getRequestCommandTypes();
-            DTVTLogger.debug("msg.what: " + msg.what + "requestCommand: " + requestCommand + "mIsFromSelect: " + mIsFromSelect);
-            DTVTLogger.debug(String.format("requestCommand:%s", requestCommand));
-            switch (msg.what) {
-                case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_OK:
-                    switch (requestCommand) {
-                        case START_APPLICATION:
-                        case TITLE_DETAIL:
-                            menuRemoteController();
-                            break;
-                        case IS_USER_ACCOUNT_EXIST:
-                            // チェック処理の状態で処理を分岐する
-                            if (mIsFromSelect) {
-                                //STBデバイスがタップされた場合
-                                mIsFromSelect = false;
-                                startActivity(STBConnectActivity.class, null);
-                                Intent intent = new Intent(mActivity, HomeActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                startActivity(intent);
-                            } else {
-                                //宅外から宅内に移動した場合あるいは画面遷移行う場合
-                                //nothing to do
-                            }
-                            break;
-                        case COMMAND_UNKNOWN:
-                        default:
-                            break;
-                    }
-                    break;
-                case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_ERROR:
-                    int resultcode = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getResultCode();
-                    DTVTLogger.debug("resultcode: " + resultcode);
-                    switch (requestCommand) {
-                        case START_APPLICATION:
-                        case TITLE_DETAIL:
-                            RemoteControlRelayClient.STB_APPLICATION_TYPES appId
-                                    = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getApplicationTypes();
-                            startApplicationErrorHander(resultcode, appId);
-                            break;
-                        case IS_USER_ACCOUNT_EXIST:
-                            switch (resultcode) {
-                                case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_INTERNAL_ERROR://サーバエラー
-                                case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE://ユーザアカウントチェックサービス未登録
-                                case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY:// //中継アプリからの応答待ち中に新しい要求を行った場合
-                                    if (mIsFromSelect) {
-                                        createErrorDialog();
-                                        mIsFromSelect = false;
-                                    }
-                                    break;
-                                case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_CONNECTION_TIMEOUT: //アプリが STBの中継アプリに接続できない場合
-                                    if (mIsFromSelect) {
-                                        // TODO STBと接続しないとHOMEにいけない為、本体側のSTB機能が搭載されるまでは一旦ホームに遷移させておく.
-
-                                        Intent intent = new Intent(mActivity, HomeActivity.class);
-                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                        startActivity(intent);
-
-                                        mIsFromSelect = false;
-                                    }
-                                    //ペアリングアイコンをOFFにする
-                                    setStbStatus(false);
-                                    break;
-                                case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
-                                    // チェック処理の状態で処理を分岐する
-                                    SharedPreferencesUtils.resetSharedPreferencesStbInfo(getApplicationContext());
-                                    Intent intent = new Intent(mActivity, DAccountReSettingActivity.class);
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    startActivity(intent);
-                                    break;
-                                case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
-                                    break;
-                                default:
-                                    break;
-                            }
-                            break;
-                        case COMMAND_UNKNOWN:
-                            switch (resultcode) {
-                                case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
-                                    break;
-                                default:
-                                    break;
-                            }
-                        default:
-                            break;
-                    }
-                    break;
-                default:
-                    break;
-            }
+            onStbClientResponce(msg);
             mRemoteControlRelayClient.resetHandler();
         }
     };
 
     /**
-     * エラーダイアログ表示.
+     * STB応答時処理.
      */
-    private CustomDialog createErrorDialog() {
-        CustomDialog failedRecordingReservationDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
-        failedRecordingReservationDialog.setContent(getResources().getString(R.string.str_stb_stb_error));
-        failedRecordingReservationDialog.setCancelText(R.string.recording_reservation_failed_dialog_confirm);
-        // Cancelable
-        failedRecordingReservationDialog.setCancelable(false);
-        return failedRecordingReservationDialog;
+    protected void onStbClientResponce(Message msg){
+        RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES requestCommand
+                = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getRequestCommandTypes();
+        DTVTLogger.debug("msg.what: " + msg.what + "requestCommand: " + requestCommand);
+        DTVTLogger.debug(String.format("requestCommand:%s", requestCommand));
+        switch (msg.what) {
+            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_OK:
+                switch (requestCommand) {
+                    case START_APPLICATION:
+                    case TITLE_DETAIL:
+                        menuRemoteController();
+                        break;
+                    case IS_USER_ACCOUNT_EXIST:
+                    case COMMAND_UNKNOWN:
+                    default:
+                        break;
+                }
+                break;
+            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_ERROR:
+                int resultcode = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getResultCode();
+                DTVTLogger.debug("resultcode: " + resultcode);
+                switch (requestCommand) {
+                    case START_APPLICATION:
+                    case TITLE_DETAIL:
+                        RemoteControlRelayClient.STB_APPLICATION_TYPES appId
+                                = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getApplicationTypes();
+                        startApplicationErrorHander(resultcode, appId);
+                        break;
+                    case IS_USER_ACCOUNT_EXIST:
+                        switch (resultcode) {
+                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_INTERNAL_ERROR://サーバエラー
+                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE://ユーザアカウントチェックサービス未登録
+                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY:// //中継アプリからの応答待ち中に新しい要求を行った場合
+                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_CONNECTION_TIMEOUT: //STBの中継アプリ~応答が無かった場合(要求はできたのでSTBとの通信はOK)
+                                break;
+                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
+                                // チェック処理の状態で処理を分岐する
+                                SharedPreferencesUtils.resetSharedPreferencesStbInfo(getApplicationContext());
+                                Intent intent = new Intent(mActivity, DAccountReSettingActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                startActivity(intent);
+                                break;
+                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
+                                //ペアリングアイコンをOFFにする
+                                setStbStatus(false);
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case COMMAND_UNKNOWN:
+                        switch (resultcode) {
+                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
+                                //ペアリングアイコンをOFFにする
+                                setStbStatus(false);
+                                break;
+                            default:
+                                break;
+                        }
+                    default:
+                        break;
+                }
+                break;
+            default:
+                break;
+        }
     }
+
 
     /**
      * dTVアプリ起動エラーハンドラ.
@@ -639,7 +610,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      * @param resultCode 実行コード
      * @param appId      アプリID
      */
-    private void startApplicationErrorHander(final int resultCode, final RemoteControlRelayClient.STB_APPLICATION_TYPES appId) {
+    protected void startApplicationErrorHander(final int resultCode, final RemoteControlRelayClient.STB_APPLICATION_TYPES appId) {
         String message = "OK";
         switch (resultCode) {
             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_APPLICATION_NOT_INSTALL:
