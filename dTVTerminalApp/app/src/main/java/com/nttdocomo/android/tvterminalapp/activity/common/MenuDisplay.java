@@ -36,7 +36,6 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
-import com.nttdocomo.android.tvterminalapp.utils.ColorUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -171,9 +170,6 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                     }
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_recommend_program_video))) {
-                //項目の色を取得する
-                ColorUtils colorUtils = new ColorUtils(mContext);
-
                 if (null != mMenuDisplayEventListener) {
                     intent.setClass(mActivity, RecommendActivity.class);
                     intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
