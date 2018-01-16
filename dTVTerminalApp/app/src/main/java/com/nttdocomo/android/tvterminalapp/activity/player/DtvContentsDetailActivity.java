@@ -4,8 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.player;
 
-import android.content.Context;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
@@ -72,9 +72,9 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.model.detail.RecordingReservationContentsDetailInfo;
-import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.model.player.MediaVideoInfo;
 import com.nttdocomo.android.tvterminalapp.model.program.Channel;
+import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
@@ -772,11 +772,24 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             String dlFile= datas.getDlFileFullPath();
             StringBuilder sb=new StringBuilder("file://");
             sb.append(dlFile);
+
+            File f=new File(dlFile);
+            if(!f.exists()){
+                DTVTLogger.debug(f  + " not exists");
+                onError("再生するファイルは存在しません");
+                return false;
+            }
+            //test b
+//            File f2=new File("/data/user/0/com.nttdocomo.android.tvterminalapp/files/cm_work_dmp/");
+//            File[] f2s= f2.listFiles();
+            //test e
             uri = Uri.parse(sb.toString());
+            long ss= (long)Integer.parseInt(datas.getClearTextSize());
             mCurrentMediaInfo = new MediaVideoInfo(
                     uri,           //uri
                     type2,         //"application/x-dtcp1", "video/mp4", RESOURCE_MIMETYPE
-                    0,             //SIZE
+                    //0,             //SIZE
+                    ss, //test
                     duration,      //DURATION
                     0,             //BITRATE
                     true,         //IS_SUPPORTED_BYTE_SEEK

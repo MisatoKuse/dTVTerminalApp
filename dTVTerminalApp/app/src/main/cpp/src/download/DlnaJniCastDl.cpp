@@ -5,6 +5,8 @@
 #include <jni.h>
 #include <string>
 
+#include <cipher_file_context_global.h>
+#include <secure_io_global.h>
 #include "DlnaDownload.h"
 #include "../DTVTLogger.h"
 
@@ -12,6 +14,9 @@
  * 機能： JNI cast
  */
 namespace dtvt {
+
+    //global var
+    bool gIsGlobalDtcpInited=false;
 
     /**
      * 機能：DlnaDownload objectを作成
@@ -57,16 +62,16 @@ namespace dtvt {
         return (jboolean) ret;
     }
 
-    extern "C" void JNICALL
-    Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterfaceDl_nativeStop(JNIEnv *env, jobject obj, jlong thiz) {
-        DlnaDownload *dlnaDownloadPtr = (DlnaDownload *) thiz;
-        if (NULL == dlnaDownloadPtr) {
-            DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterfaceDl_nativeStop exit, 0==thiz");
-            dlnaDownloadPtr->downloaderStatusHandler(DOWNLOADER_STATUS_UNKNOWN, NULL, dlnaDownloadPtr);
-            return;
-        }
-        dlnaDownloadPtr->stop();
-    }
+//    extern "C" void JNICALL
+//    Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterfaceDl_nativeStop(JNIEnv *env, jobject obj, jlong thiz) {
+//        DlnaDownload *dlnaDownloadPtr = (DlnaDownload *) thiz;
+//        if (NULL == dlnaDownloadPtr) {
+//            DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterfaceDl_nativeStop exit, 0==thiz");
+//            dlnaDownloadPtr->downloaderStatusHandler(DOWNLOADER_STATUS_UNKNOWN, NULL, dlnaDownloadPtr);
+//            return;
+//        }
+//        dlnaDownloadPtr->stop();
+//    }
 
     extern "C"  void JNICALL
     Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterfaceDl_download(JNIEnv *env,
@@ -134,5 +139,43 @@ namespace dtvt {
         DlnaDownload *DlnaDownloadPtr = (DlnaDownload *) thiz;
         DlnaDownloadPtr->dtcpDownloadCancel();
     }
+
+    extern "C"  jboolean JNICALL
+    Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterfaceDl_initGlobalDl(JNIEnv *env, jobject instance, jstring privateHome_) {
+        gIsGlobalDtcpInited=false;
+        unsigned char ret = 0;
+        if(!secure_io_global_create()){
+            DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterfaceDl_download exit, secure_io_global_create error");
+            ret = 0;
+        }
+        DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterfaceDl_download exit, secure_io_global_create ok");
+
+        const char *privateHome = env->GetStringUTFChars(privateHome_, 0);
+        if(NULL==privateHome){
+            DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterfaceDl_initGlobalDl exit, param error");
+            return (jboolean)0;
+        }
+        if (!cipher_file_context_global_create(secure_io_global_get_instance(), (const du_uchar *) privateHome)) {
+            DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterfaceDl_initGlobalDl exit, cipher_file_context_global_create error");
+            secure_io_global_free();
+            return (jboolean)0;
+        }
+        DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterfaceDl_download exit, cipher_file_context_global_create ok");
+        env->ReleaseStringUTFChars(privateHome_, (const char *) privateHome);
+        ret=1;
+        gIsGlobalDtcpInited=true;
+
+        return (jboolean)ret;
+    }
+
+    extern "C"  void JNICALL
+    Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterfaceDl_uninitGlobalDl(JNIEnv *env, jobject instance) {
+        cipher_file_context_global_free();
+        DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterfaceDl_uninitGlobalDl exit, cipher_file_context_global_free ok");
+        secure_io_global_free();
+        DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterfaceDl_uninitGlobalDl exit, secure_io_global_free ok");
+    }
+
+
 
 } //end of namespace dtvt

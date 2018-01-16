@@ -152,16 +152,16 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
         printDlPathFiles();
     }
 
-    /**
-     * 機能：
-     *      １．Download Uiがなくなる場合、必ずこれをコールする
-     *      ２．Download Uiがない場合、Serviceは閉じる時、必ずこれをコールする
-     */
-    @Override
-    public void finishDl() {
-        if (null == mDlnaProvDownload) {
-            return;
-        }
-        mDlnaProvDownload.finishDl();
-    }
+//    /**
+//     * 機能：
+//     *      １．Download Uiがなくなる場合、必ずこれをコールする
+//     *      ２．Download Uiがない場合、Serviceは閉じる時、必ずこれをコールする
+//     */
+//    @Override
+//    public void finishDl() {
+//        if (null == mDlnaProvDownload) {
+//            return;
+//        }
+//        mDlnaProvDownload.finishDl();
+//    }
 }

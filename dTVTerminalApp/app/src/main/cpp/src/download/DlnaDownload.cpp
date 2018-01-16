@@ -16,6 +16,9 @@
 
 namespace dtvt {
 
+    //global var
+    extern bool gIsGlobalDtcpInited;
+
     //local function b
     string intToString(int n)  {
         stringstream ss;
@@ -89,10 +92,10 @@ namespace dtvt {
         if(mDtcp){
             dixim::dmsp::dtcp::dtcp* dtcp= (dixim::dmsp::dtcp::dtcp *) mDtcp;
             dtcp->stop();
-            cipher_file_context_global_free();
-            secure_io_global_free();
-            DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaDownload.cpp DlnaDownload::stop, cipher_file_context_global_free");
-            DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaDownload.cpp DlnaDownload::stop, secure_io_global_free");
+//            cipher_file_context_global_free();
+//            secure_io_global_free();
+//            DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaDownload.cpp DlnaDownload::stop, cipher_file_context_global_free");
+//            DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaDownload.cpp DlnaDownload::stop, secure_io_global_free");
         }
 //        if(mEvent.mJavaVM){
 //            JNIEnv *env= NULL;
@@ -108,17 +111,27 @@ namespace dtvt {
     }
 
     bool DlnaDownload::startDlEnv(JNIEnv *env, jobject instance, std::string& dirToSave){
+        if(false==gIsGlobalDtcpInited){
+            return false;
+        }
+        if(mDtcp){
+            return true;
+        }
+//        if (!secure_io_global_create()) {
+//            return false;
+//        }
+
         const du_uchar* private_data_home_path = DU_UCHAR_CONST(dirToSave.c_str());
         JavaVM *vm=NULL;
         dixim::dmsp::dtcp::dtcp* dtcp=NULL;
 
-        if (!cipher_file_context_global_create(secure_io_global_get_instance(), private_data_home_path)) {
-            goto error2;
-        }
-        DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaDownload.cpp DlnaDownload::startDlEnv, secure_io_global_get_instance");
-        DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaDownload.cpp DlnaDownload::startDlEnv, cipher_file_context_global_create");
+//        if (!cipher_file_context_global_create(secure_io_global_get_instance(), private_data_home_path)) {
+//            goto error2;
+//        }
+//        DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaDownload.cpp DlnaDownload::startDlEnv, secure_io_global_get_instance");
+//        DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaDownload.cpp DlnaDownload::startDlEnv, cipher_file_context_global_create");
 
-        DelIfNotNull(mDtcp);
+        //DelIfNotNull(mDtcp);
         mDtcp = new dixim::dmsp::dtcp::dtcp();
         if(!mDtcp){
             return false;
@@ -196,6 +209,7 @@ namespace dtvt {
         const du_uchar* dtcp1host = DU_UCHAR_CONST(dtcp1host_.c_str());
         du_uint16 dtcp1port = dtcp1port_;
         const du_uchar* url = DU_UCHAR_CONST(url_.c_str());
+        //du_bool move = 0;
         du_bool move = 1;
         string fileToDownload= mDirToSave + "/" + fileNameToSave;
         const du_uchar* dixim_file = DU_UCHAR_CONST(fileToDownload.c_str());

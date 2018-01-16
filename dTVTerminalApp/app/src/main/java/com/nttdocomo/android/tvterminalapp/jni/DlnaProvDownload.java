@@ -59,17 +59,17 @@ public class DlnaProvDownload {
         return mDlnaInterfaceDl.download(param);
     }
 
-    /**
-     * 機能：
-     *      １．Download Uiがなくなる場合、必ずこれをコールする
-     *      ２．Download Uiがない場合、Serviceは閉じる時、必ずこれをコールする
-     */
-    public void finishDl(){
-        if(null==mDlnaInterfaceDl){
-            return;
-        }
-        mDlnaInterfaceDl.stopDtcpDl();
-    }
+//    /**
+//     * 機能：
+//     *      １．Download Uiがなくなる場合、必ずこれをコールする
+//     *      ２．Download Uiがない場合、Serviceは閉じる時、必ずこれをコールする
+//     */
+//    public void finishDl(){
+//        if(null==mDlnaInterfaceDl){
+//            return;
+//        }
+//        mDlnaInterfaceDl.stopDtcpDl();
+//    }
 
     /**
      *
@@ -78,5 +78,13 @@ public class DlnaProvDownload {
        if(null!=mDlnaInterfaceDl){
            mDlnaInterfaceDl.downloadCancel();
        }
+    }
+
+    public static boolean initGlobalDl(String saveDir){
+        return DlnaInterfaceDl.initGlobalDl(saveDir);
+    }
+
+    public static void uninitGlobalDl(){
+        DlnaInterfaceDl.uninitGlobalDl();
     }
 }

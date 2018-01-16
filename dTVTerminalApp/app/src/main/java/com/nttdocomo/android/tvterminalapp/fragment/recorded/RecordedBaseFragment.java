@@ -23,7 +23,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
@@ -35,7 +34,6 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
-import com.nttdocomo.android.tvterminalapp.jni.activation.NewEnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.service.download.DlData;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProviderListener;
@@ -311,6 +309,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             mContentsData.get(queIndex.get(0)).setDownloadStatus("");
             int idx= queIndex.get(0);
             if(null!=mContentsList){
+                mContentsList.get(idx).setDownLoadStatus(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
                 mContentsList.get(idx).setDlFileFullPath(fullPath);
             }
         }
@@ -416,7 +415,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         DlData dlData = new DlData();
         RecordedContentsDetailData itemData = mContentsList.get(index);
         dlData.setItemId(DownloaderBase.getFileNameById(itemData.getItemId()));
-        dlData.setSaveFile(getDownloadPath(getContext()));
+        dlData.setSaveFile(DownloaderBase.getDownloadPath(getContext()));
         dlData.setTotalSize(itemData.getClearTextSize());
         dlData.setTitle(itemData.getTitle());
         dlData.setUrl(itemData.getResUrl());
@@ -447,7 +446,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         if (null == context) {
             return false;
         }
-        String dlPath = getDownloadPath(context);
+        String dlPath = DownloaderBase.getDownloadPath(context);
         RecordedContentsDetailData item;
         try {
             item = mContentsList.get(index);
@@ -548,26 +547,6 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     }
 
     /**
-     * Get save path
-     * @return
-     */
-    public String getDownloadPath(Context context){
-        if(null==context){
-            return null;
-        }
-        Boolean isInternal= SharedPreferencesUtils.getSharedPreferencesStoragePath(context);
-        String internalPaht= NewEnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP); //内部ストレージ
-        if(isInternal){
-            return internalPaht;
-        }
-        String ret= DownloaderBase.getExtSDCardPath();
-        if(null==ret){
-            ret=internalPaht;
-        }
-        return ret;
-    }
-
-    /**
      * show Message
      * @param msg
      */
@@ -609,7 +588,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                                 StringBuilder path=new StringBuilder();
                                 path.append(que.get(i).getSaveFile());
                                 path.append(File.separator);
-                                path.append(DownloaderBase.getFileNameById(que.get(i).getItemId()));
+                                path.append(que.get(i).getItemId());
                                 mDlDataProvider.cancelDownLoadStatus(path.toString());
                                 que.remove(i);
                                 queIndex.remove(i);

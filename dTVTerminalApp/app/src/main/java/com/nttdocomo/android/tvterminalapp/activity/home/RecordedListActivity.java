@@ -41,6 +41,7 @@ import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragmen
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDownload;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvRecVideo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoItem;
@@ -97,6 +98,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private static final String DATE_FORMAT = "yyyy/MM/ddHH:mm:ss";
     private String mDate[] = {"日", "月", "火", "水", "木", "金", "土"};
 
+    private boolean mIsDlOk=false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,12 +114,17 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
 
+        initDl();
         initView();
         getData();
         initTabVIew();
         setPagerAdapter();
         setSearchViewState();
         DTVTLogger.end();
+    }
+
+    private void initDl() {
+        mIsDlOk= DlnaProvDownload.initGlobalDl(DownloaderBase.getDownloadPath(this));
     }
 
     /**
@@ -531,7 +539,11 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                     String path = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL);
                     String fullPath = path + File.separator + itemId;
                     if(!TextUtils.isEmpty(itemId)){
-                        if(itemId.equals(DownloaderBase.getFileNameById(itemData.mItemId))){
+                        String allItemId = itemData.mItemId;
+                        if(!TextUtils.isEmpty(allItemId) && !allItemId.startsWith(DownloaderBase.sDlPrefix)){
+                            allItemId = DownloaderBase.getFileNameById(itemData.mItemId);
+                        }
+                        if(itemId.equals(allItemId)){
                             String downloadStatus = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
                             if(!TextUtils.isEmpty(downloadStatus)){
                                 detailData.setDownLoadStatus(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
@@ -602,6 +614,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(downloadReceiver);
+        DlnaProvDownload.uninitGlobalDl();
     }
 
     private void registReceiver(){
