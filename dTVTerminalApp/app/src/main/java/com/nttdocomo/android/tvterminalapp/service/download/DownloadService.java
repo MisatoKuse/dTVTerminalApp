@@ -184,9 +184,9 @@ public class DownloadService extends Service implements DownloadListener {
     private boolean isUiRunning(){
         switch (BINDSTATUS) {
             case BACKGROUD:
-                return false;
-            case UNBINED:
                 return true;
+            case UNBINED:
+                return false;
             case BINDED:
                 return true;
         }
