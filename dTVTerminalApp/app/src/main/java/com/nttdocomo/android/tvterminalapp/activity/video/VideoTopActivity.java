@@ -59,7 +59,9 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
         Intent intent = getIntent();
         mVideoGenreListDataInfo = intent.getParcelableExtra(VIDEO_CONTENTS_BUNDLE_KEY);
         VideoGenreList showData = null;
-        if (mVideoGenreListDataInfo == null) {
+        // 初回 + VideoTopActivityが消えていない状態で遷移した際に初期画面を表示する
+        if (mVideoGenreListDataInfo == null
+                || mVideoGenreListDataInfo.getVideoGenreListShowData().getSubGenre() == null) {
             mVideoGenreListDataInfo = new VideoGenreListDataInfo();
             mShowContentsList = new ArrayList<VideoGenreList>();
             DTVTLogger.debug("mVideoGenreListData is Null");
