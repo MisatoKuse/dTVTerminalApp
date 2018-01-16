@@ -339,9 +339,9 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 if(DownloadService.BINDSTATUS == DownloadService.BINDED){
                     mActivity.unbindService(mDlDataProvider);
                 }
-                DownloadService.BINDSTATUS = DownloadService.UNBINED;
                 mDlDataProvider.isRegistered = false;
                 mDlDataProvider.stopService();
+                DownloadService.BINDSTATUS = DownloadService.UNBINED;
             }
         }
     }
@@ -611,7 +611,11 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                         StringBuilder path=new StringBuilder();
                         path.append(DownloaderBase.getDownloadPath(getContext()));
                         path.append(File.separator);
-                        path.append(DownloaderBase.getFileNameById(itemData.getItemId()));
+                        String itemId = itemData.getItemId();
+                        if(!TextUtils.isEmpty(itemId) && !itemId.startsWith(DownloaderBase.sDlPrefix)){
+                            itemId = DownloaderBase.getFileNameById(itemId);
+                        }
+                        path.append(itemId);
                         if (mDlDataProvider == null) {
                             try {
                                 mDlDataProvider = new DlDataProvider(activity, RecordedBaseFragment.this);
@@ -626,6 +630,9 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                     view.setBackgroundResource(R.mipmap.icon_circle_normal_download);
                     mContentsData.get((Integer)view.getTag()).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_ALLOW);
                     mContentsData.get((Integer)view.getTag()).setDownloadStatus("");
+                    if(((RecordedListActivity)activity).getCurrentPosition() == 1){
+                        ((RecordedListActivity)activity).setRecordedTakeOutContents();
+                    }
                 }
             }
         });
