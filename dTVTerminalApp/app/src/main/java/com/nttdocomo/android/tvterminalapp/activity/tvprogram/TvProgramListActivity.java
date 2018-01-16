@@ -71,6 +71,8 @@ public class TvProgramListActivity extends BaseActivity
     private static final int STANDARD_TIME = 24;
     private static final int SCREEN_TIME_WIDTH_PERCENT = 9;
     private static final int SCREEN_TIME_HEIGHT_PERCENT = 3;
+    private static final int TIME_LINE_WIDTH = 44;
+    private static final int ONE_HOUR_UNIT = 180;
     private static final String DATE_FORMAT = "yyyy年MM月dd日 (E)";
     private static final String DATE_SELECT_FORMAT = "yyyy-MM-dd";
     private static final String SELECT_DATE_FORMAT = "yyyy年MM月dd日";
@@ -376,8 +378,8 @@ public class TvProgramListActivity extends BaseActivity
      */
     private void setTagView() {
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                dip2px(44),
-                dip2px(44));
+                dip2px(TIME_LINE_WIDTH),
+                dip2px(TIME_LINE_WIDTH));
         mTagImageView.setLayoutParams(layoutParams);
         mTagImageView.setImageResource(R.mipmap.ic_event_note_white_24dp);
     }
@@ -400,8 +402,8 @@ public class TvProgramListActivity extends BaseActivity
         for (int i = START_TIME; i < STANDARD_TIME + START_TIME; i++) {
             TextView tabTextView = new TextView(this);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    dip2px(44),
-                    dip2px(180));
+                    dip2px(TIME_LINE_WIDTH),
+                    dip2px(ONE_HOUR_UNIT));
             tabTextView.setLayoutParams(params);
             int curTime = i;
             if (curTime >= STANDARD_TIME) {

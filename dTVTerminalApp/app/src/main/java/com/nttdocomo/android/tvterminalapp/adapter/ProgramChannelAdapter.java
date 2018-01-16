@@ -28,6 +28,7 @@ public class ProgramChannelAdapter extends
     private ArrayList<Channel> channelList;
     private int screenWidth = 0;
     private ChannelItemClickListener channelItemClickListener;
+    private static final int TIME_LINE_WIDTH = 44;
 
 
     public ProgramChannelAdapter(Context context, ArrayList<Channel> channelList) {
@@ -47,8 +48,8 @@ public class ProgramChannelAdapter extends
         View view = mInflater.inflate(R.layout.tv_program_channel_list_item_layout,
                 viewGroup, false);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                (screenWidth - mContext.dip2px(44))/2,
-                mContext.dip2px(44));
+                (screenWidth - mContext.dip2px(TIME_LINE_WIDTH))/2,
+                mContext.dip2px(TIME_LINE_WIDTH));
         layoutParams.gravity = Gravity.CENTER;
         view.setLayoutParams(layoutParams);
         ViewHolder viewHolder = new ViewHolder(view, channelItemClickListener);
