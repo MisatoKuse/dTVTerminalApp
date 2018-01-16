@@ -136,8 +136,9 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                             Schedule mSchedule = new Schedule();
                             String startDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_START_DATE);
                             String endDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
-                            String thumb = hashMap.get(JsonContents.META_RESPONSE_DEFAULT_THUMB);
+                            String thumb = hashMap.get(JsonContents.META_RESPONSE_THUMB_448);
                             String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
+                            String detail = hashMap.get(JsonContents.META_RESPONSE_EPITITLE);
                             String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
                             String rValue = hashMap.get(JsonContents.META_RESPONSE_R_VALUE);
                             String dispType = hashMap.get(JsonContents.META_RESPONSE_DISP_TYPE);
@@ -148,6 +149,7 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                             mSchedule.setEndTime(endDate);
                             mSchedule.setImageUrl(thumb);
                             mSchedule.setTitle(title);
+                            mSchedule.setDetail(detail);
                             mSchedule.setChNo(chNo);
                             mSchedule.setRValue(rValue);
                             mSchedule.setContentType(hashMap.get(JsonContents.META_RESPONSE_CONTENT_TYPE));
@@ -287,8 +289,9 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                     //TODO 番組表表示させるため、コメントアウトします
                     /*if(day.compareTo(selectStartDate) !=-1 && day.compareTo(selectEndDate)!=1){*/
                         String endDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
-                        String thumb = hashMap.get(JsonContents.META_RESPONSE_DEFAULT_THUMB);
+                        String thumb = hashMap.get(JsonContents.META_RESPONSE_THUMB_448);
                         String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
+                        String detail = hashMap.get(JsonContents.META_RESPONSE_EPITITLE);
                         String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
                         String rValue = hashMap.get(JsonContents.META_RESPONSE_R_VALUE);
                         String dispType = hashMap.get(JsonContents.META_RESPONSE_DISP_TYPE);
@@ -299,6 +302,7 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
                         schedule.setEndTime(endDate);
                         schedule.setImageUrl(thumb);
                         schedule.setTitle(title);
+                        schedule.setDetail(detail);
                         schedule.setChNo(chNo);
                         schedule.setRValue(rValue);
                         schedule.setContentType(hashMap.get(JsonContents.META_RESPONSE_CONTENT_TYPE));
@@ -355,6 +359,8 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
      * @return Clipリクエストに必要なデータ
      */
     private static ClipRequestData setClipData(HashMap<String, String> hashMap){
+        String dispType = hashMap.get(JsonContents.META_RESPONSE_DISP_TYPE);
+        String contentsType = hashMap.get(JsonContents.META_RESPONSE_CONTENT_TYPE);
         ClipRequestData requestData = new ClipRequestData();
         requestData.setCrid(hashMap.get(JsonContents.META_RESPONSE_CRID));
         requestData.setServiceId(hashMap.get(JsonContents.META_RESPONSE_SERVICE_ID));
@@ -365,10 +371,12 @@ public class ScaledDownProgramListDataProvider implements DbThread.DbOperation,
         requestData.setLinearStartDate(String.valueOf(hashMap.get(JsonContents.META_RESPONSE_AVAIL_START_DATE)));
         requestData.setLinearEndDate(String.valueOf(hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE)));
         requestData.setSearchOk(hashMap.get(JsonContents.META_RESPONSE_SEARCH_OK));
-        requestData.setIsNotify(hashMap.get(JsonContents.META_RESPONSE_DISP_TYPE),
-                hashMap.get(JsonContents.META_RESPONSE_CONTENT_TYPE),
+        requestData.setIsNotify(dispType, contentsType,
                 String.valueOf(hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE)),
                 hashMap.get(JsonContents.META_RESPONSE_TV_SERVICE), hashMap.get(JsonContents.META_RESPONSE_DTV));
+        requestData.setDispType(dispType);
+        requestData.setContentType(contentsType);
+//        requestData.setTableType(decisionTableType(contentsType, contentsType));
         return requestData;
     }
     /**

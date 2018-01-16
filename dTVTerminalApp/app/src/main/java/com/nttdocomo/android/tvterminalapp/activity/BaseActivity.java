@@ -15,7 +15,6 @@ import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
@@ -37,6 +36,7 @@ import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActi
 import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
+import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
@@ -58,7 +58,7 @@ import java.util.List;
 /**
  * クラス機能：
  * プロジェクトにて、すべての「Activity」のベースクラスである
- * 「Activity」全体にとって、共通の機能があれば、追加すること
+ * 「Activity」全体にとって、共通の機能があれば、追加すること.
  */
 
 public class BaseActivity extends FragmentActivity implements MenuDisplayEventListener,
@@ -83,45 +83,49 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     private long mLastClickTime = 0;
     protected boolean mIsFromSelect = false;
 
+    private ImageView mClipButton = null;
+    private ClipRequestData mClipRequestData = null;
+
+    private boolean mClipRunTime = false;
     /**
-     * クリップ対象
+     * クリップ対象.
      */
     private String mClipTarget = null;
 
     /**
-     * stb status icon状態
+     * stb status icon状態.
      */
     private boolean mIsStbStatusOn = false;
 
     /**
-     * タイムアウト時間
+     * タイムアウト時間.
      */
     public static final int LOAD_PAGE_DELAY_TIME = 1000;
 
     private static final int MIN_CLICK_DELAY_TIME = 1000;
 
     /**
-     * クリップ未登録状態
+     * クリップ未登録状態.
      */
     private static final String CLIP_RESULT_STATUS = "1";
 
     /**
-     * dアカウント設定アプリ登録処理
+     * dアカウント設定アプリ登録処理.
      */
     private DaccountControl mDaccountControl = null;
 
     /**
-     * 詳細画面起動元Classを保存
+     * 詳細画面起動元Classを保存.
      */
     private static String mSourceScreenClass = "";
 
     /**
-     * 契約情報
+     * 契約情報.
      */
     private List<UserInfoList> mUserInfo;
 
     /**
-     * ヘッダーに表示されているアイコンがメニューアイコンか×ボタンアイコンかを判別するタグ
+     * ヘッダーに表示されているアイコンがメニューアイコンか×ボタンアイコンかを判別するタグ.
      */
     private static final String HEADER_ICON_MENU = "menu";
     private static final String HEADER_ICON_CLOSE = "close";
@@ -152,12 +156,12 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     /**
      * 関数機能：
-     * Activityを起動する
+     * Activityを起動する.
      *
      * @param clz    起動するアクティビティ
      * @param bundle 受け渡すパラメータ
      */
-    public void startActivity(Class<?> clz, Bundle bundle) {
+    public void startActivity(final Class<?> clz, final Bundle bundle) {
         Intent intent = new Intent(this, clz);
         if (bundle != null) {
             intent.putExtras(bundle);
@@ -166,12 +170,12 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * タイトルビュー
+     * タイトルビュー.
      *
      * @param resId リソースID
      */
     @Override
-    public void setContentView(int resId) {
+    public void setContentView(final int resId) {
         DTVTLogger.start("resId:" + resId);
         View view = getLayoutInflater().inflate(resId, null);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -183,7 +187,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * タイトルビユー初期化
+     * タイトルビユー初期化.
      */
     private void initView() {
         DTVTLogger.start();
@@ -201,11 +205,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * 機能：ヘッダー色を変更する
+     * 機能：ヘッダー色を変更する.
      *
      * @param isColorRed true:ヘッダー色=赤 false:ヘッダー色=黒
      */
-    protected void setHeaderColor(Boolean isColorRed) {
+    protected void setHeaderColor(final Boolean isColorRed) {
         if (null != mHeaderLayout) {
             if (isColorRed) {
                 mHeaderLayout.setBackgroundColor(ContextCompat.getColor(mContext, R.color.header_background_color_red));
@@ -216,11 +220,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * 機能：ヘッダーの戻るアイコン"<"有効
+     * 機能：ヘッダーの戻るアイコン"<"有効.
      *
      * @param isOn true: 表示  false: 非表示
      */
-    protected void enableHeaderBackIcon(boolean isOn) {
+    protected void enableHeaderBackIcon(final boolean isOn) {
         if (null != mHeaderBackIcon) {
             if (isOn) {
                 mHeaderBackIcon.setVisibility(View.VISIBLE);
@@ -231,11 +235,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * 機能：STB接続アイコンを有効
+     * 機能：STB接続アイコンを有効.
      *
      * @param isOn true: 表示  false: 非表示
      */
-    protected void enableStbStatusIcon(boolean isOn) {
+    protected void enableStbStatusIcon(final boolean isOn) {
         if (this instanceof LaunchActivity
             //|| this instanceof RecordedListActivity
                 ) {
@@ -251,11 +255,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * 機能：STB接続アイコンを表示
+     * 機能：STB接続アイコンを表示.
      *
      * @param isOn true: 表示  false: 非表示
      */
-    protected void setStbStatusIconVisibility(boolean isOn) {
+    protected void setStbStatusIconVisibility(final boolean isOn) {
         if (null != mStbStatusIcon) {
             if (isOn) {
                 mStbStatusIcon.setVisibility(View.VISIBLE);
@@ -266,11 +270,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * 機能：Global menuアイコンを有効
+     * 機能：Global menuアイコンを有効.
      *
      * @param isOn true: 表示  false: 非表示
      */
-    protected void enableGlobalMenuIcon(boolean isOn) {
+    protected void enableGlobalMenuIcon(final boolean isOn) {
         if (null != mMenuImageViewForBase) {
             if (isOn) {
                 mMenuImageViewForBase.setVisibility(View.VISIBLE);
@@ -282,11 +286,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * 機能：Global menuアイコンと×ボタンアイコンを切り替える
+     * 機能：Global menuアイコンと×ボタンアイコンを切り替える.
      *
      * @param isMenu true:menuアイコン false:×ボタンアイコン
      */
-    protected void changeGlobalMenuIcon(boolean isMenu) {
+    protected void changeGlobalMenuIcon(final boolean isMenu) {
         if (null != mMenuImageViewForBase) {
             if (isMenu) {
                 mMenuImageViewForBase.setImageResource(R.mipmap.ic_menu_white_24dp);
@@ -299,7 +303,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * 機能：STBステータスを変更
+     * 機能：STBステータスを変更.
      *
      * @param isOn true: stb接続中   false: stb未接続
      */
@@ -312,16 +316,16 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                         synchronized (this) {
                             if (isOn) {
                                 mStbStatusIcon.setImageResource(R.mipmap.ic_stb_status_icon_white);
-                                mIsStbStatusOn = true;
-                                //ペアリングアイコンが点灯になった際にdアカチェックを行う
-                                String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(getApplicationContext());
-                                if (userId != null) {
-                                    RemoteControlRelayClient.getInstance().isUserAccountExistRequest(userId);
+                                //ペアリングアイコンがOFF→ON(点灯)になった際にdアカチェックを行う
+                                if (!mIsStbStatusOn) {
+                                    setRelayClientHandler();
+                                    RemoteControlRelayClient.getInstance().isUserAccountExistRequest(getApplicationContext());
                                 }
+
                             } else {
                                 mStbStatusIcon.setImageResource(R.mipmap.ic_stb_status_icon_gray);
-                                mIsStbStatusOn = false;
                             }
+                            mIsStbStatusOn = isOn;
                         }
                     } catch (Exception e) {
                         DTVTLogger.debug("BaseActivity::setStbStatus, stb status png file not found");
@@ -332,7 +336,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * 機能：STB接続ステータスを戻す
+     * 機能：STB接続ステータスを戻す.
      *
      * @return true: stb接続中   false: stb未接続
      */
@@ -341,9 +345,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * タイトルの表示非表示を設定
+     * タイトルの表示非表示を設定.
+     *
+     * @param visible 表示状態
      */
-    protected void setTitleVisibility(Boolean visible) {
+    protected void setTitleVisibility(final Boolean visible) {
         if (mHeaderLayout != null) {
             if (visible) {
                 mHeaderLayout.setVisibility(View.VISIBLE);
@@ -354,18 +360,18 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * タイトル内容を設定
+     * タイトル内容を設定.
      *
      * @param text 設定する文字列
      */
-    protected void setTitleText(CharSequence text) {
+    protected void setTitleText(final CharSequence text) {
         if (titleTextView != null) {
             titleTextView.setText(text);
         }
     }
 
     /**
-     * タイトル内容を取得
+     * タイトル内容を取得.
      *
      * @return タイトル内容
      */
@@ -376,7 +382,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         return "";
     }
 
-    //契約・ペアリング済み用
+    /**
+     * 契約・ペアリング済み用.
+     */
     protected void onSampleGlobalMenuButton_PairLoginOk() {
         MenuItemParam param = new MenuItemParam();
         param.setParamForContractOkPairingOk(3, 1, 2, 6, 8);
@@ -417,7 +425,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     /**
      * 機能：onResume
-     * Sub classにて、super.onResume()をコールする必要がある
+     * Sub classにて、super.onResume()をコールする必要がある.
      */
     @Override
     protected void onResume() {
@@ -434,8 +442,8 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             setStbStatus(isAvai);
         }
 
-        DTVTLogger.debug("RestartFlag check " +
-                SharedPreferencesUtils.getSharedPreferencesRestartFlag(getApplicationContext()));
+        DTVTLogger.debug("RestartFlag check "
+                + SharedPreferencesUtils.getSharedPreferencesRestartFlag(getApplicationContext()));
 
         // 再起動フラグがtrueならば、再起動メッセージを表示する
         if (SharedPreferencesUtils.getSharedPreferencesRestartFlag(getApplicationContext())) {
@@ -445,8 +453,8 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         //再起動フラグをOFFにする
         SharedPreferencesUtils.setSharedPreferencesRestartFlag(getApplicationContext(), false);
 
-        DTVTLogger.debug("RestartFlag falsed " +
-                SharedPreferencesUtils.getSharedPreferencesRestartFlag(getApplicationContext()));
+        DTVTLogger.debug("RestartFlag falsed "
+                + SharedPreferencesUtils.getSharedPreferencesRestartFlag(getApplicationContext()));
 
         DTVTLogger.end();
     }
@@ -454,16 +462,19 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     @Override
     protected void onRestart() {
         super.onRestart();
+        DTVTLogger.start();
 
-        if (this.getStbStatus()) {
-            String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(getApplicationContext());
-            RemoteControlRelayClient.getInstance().isUserAccountExistRequest(userId);
-        }
+
+        //BGからFGに遷移するときにdアカチェックを行う
+        setRelayClientHandler();
+        RemoteControlRelayClient.getInstance().isUserAccountExistRequest(getApplicationContext());
+        DTVTLogger.end();
+
     }
 
     /**
      * 機能：onStop
-     * Sub classにて、super.onStop()をコールする必要がある
+     * Sub classにて、super.onStop()をコールする必要がある.
      */
     @Override
     protected void onStop() {
@@ -475,7 +486,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * 機能：ActivityのSTB接続アイコン
+     * 機能：ActivityのSTB接続アイコン.
      */
     private void registerDevListDlna() {
         DTVTLogger.start();
@@ -492,7 +503,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * 機能：ActivityのSTB接続アイコン
+     * 機能：ActivityのSTB接続アイコン.
      */
     private void unregisterDevListDlna() {
         DTVTLogger.start();
@@ -506,7 +517,10 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         DTVTLogger.end();
     }
 
-    public Handler mRerayClientHandler = new Handler() {
+    /**
+     * STB送信ハンドラ.
+     */
+    public Handler mRelayClientHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES requestCommand
@@ -514,18 +528,18 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             switch (msg.what) {
                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_OK:
                     switch (requestCommand) {
-                        case RELAY_COMMAND_START_APPLICATION:
-                        case RELAY_COMMAND_TITLE_DETAIL:
+                        case START_APPLICATION:
+                        case TITLE_DETAIL:
                             menuRemoteController();
                             break;
-                        case RELAY_COMMAND_IS_USER_ACCOUNT_EXIST:
+                        case IS_USER_ACCOUNT_EXIST:
                             // チェック処理の状態で処理を分岐する
                             if (mIsFromSelect) {
                                 //STBデバイスがタップされた場合
                                 mIsFromSelect = false;
                                 startActivity(STBConnectActivity.class, null);
                             } else {
-                                //宅外から宅内に移動した場合
+                                //宅外から宅内に移動した場合あるいは画面遷移行う場合
                                 //nothing to do
                             }
                             break;
@@ -536,19 +550,19 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_ERROR:
                     int resultcode = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getResultCode();
                     switch (requestCommand) {
-                        case RELAY_COMMAND_START_APPLICATION:
-                        case RELAY_COMMAND_TITLE_DETAIL:
+                        case START_APPLICATION:
+                        case TITLE_DETAIL:
                             RemoteControlRelayClient.STB_APPLICATION_TYPES appId
                                     = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getApplicationTypes();
                             startApplicationErrorHander(resultcode, appId);
                             break;
-                        case RELAY_COMMAND_IS_USER_ACCOUNT_EXIST:
+                        case IS_USER_ACCOUNT_EXIST:
                             switch (resultcode) {
                                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_INTERNAL_ERROR://サーバエラー
                                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE://ユーザアカウントチェックサービス未登録
                                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY:// //中継アプリからの応答待ち中に新しい要求を行った場合
                                     break;
-                                case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_CONNECTION_TIMEOUT: //dTV アプリが STBの中継アプリに接続できない場合
+                                case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_CONNECTION_TIMEOUT: //アプリが STBの中継アプリに接続できない場合
                                     //ペアリングアイコンをOFFにする
                                     setStbStatus(false);
                                     break;
@@ -573,9 +587,15 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         }
     };
 
-    private void startApplicationErrorHander(int resultcode, RemoteControlRelayClient.STB_APPLICATION_TYPES appId) {
+    /**
+     * dTVアプリ起動エラーハンドラ.
+     *
+     * @param resultCode 実行コード
+     * @param appId      アプリID
+     */
+    private void startApplicationErrorHander(final int resultCode, final RemoteControlRelayClient.STB_APPLICATION_TYPES appId) {
         String message = "OK";
-        switch (resultcode) {
+        switch (resultCode) {
             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_APPLICATION_NOT_INSTALL:
                 switch (appId) {
                     case DTV:
@@ -649,22 +669,22 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * 機能 エラーメッセージの表示
+     * 機能 エラーメッセージの表示.
      *
      * @param errorMessage dialog content
      */
-    protected void showErrorDialog(String errorMessage) {
+    protected void showErrorDialog(final String errorMessage) {
         CustomDialog errorDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
         errorDialog.setContent(errorMessage);
         errorDialog.showDialog();
     }
 
     /**
-     * 再起動時のダイアログ・引数無しに対応するため、可変長引数とする
+     * 再起動時のダイアログ・引数無しに対応するため、可変長引数とする.
      *
      * @param message 省略した場合はdアカウント用メッセージを表示。指定した場合は、常に先頭文字列のみ使用される
      */
-    private void restartMessageDialog(String... message) {
+    private void restartMessageDialog(final String... message) {
 
         //呼び出し用のアクティビティの退避
         final Activity activity = this;
@@ -693,7 +713,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     /**
      * 機能
-     * ダブルクリック防止
+     * ダブルクリック防止.
+     *
+     * @return クリック状態
      */
     protected boolean isFastClick() {
         boolean flag = false;
@@ -707,7 +729,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     /**
      * 機能
-     * 密度取得
+     * 密度取得.
      *
      * @return 密度
      */
@@ -717,9 +739,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     /**
      * 機能
-     * ディスプレイ幅さ取得
+     * ディスプレイ幅取得.
      *
-     * @return ディスプレイ幅さ
+     * @return ディスプレイ幅
      */
     protected int getWidthDensity() {
         return getDisplayMetrics().widthPixels;
@@ -727,9 +749,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     /**
      * 機能
-     * ディスプレイ幅さ取得
+     * ディスプレイ高さ取得.
      *
-     * @return ディスプレイ幅さ
+     * @return ディスプレイ高さ
      */
     protected int getHeightDensity() {
         return getDisplayMetrics().heightPixels;
@@ -737,7 +759,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     /**
      * 機能
-     * ディスプレイインスタンス取得
+     * ディスプレイインスタンス取得.
      *
      * @return ディスプレイインスタンス
      */
@@ -749,7 +771,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     /**
      * 機能
-     * カレントユーザ名を戻す
+     * カレントユーザ名を戻す.
      *
      * @return カレントユーザ名
      */
@@ -761,7 +783,12 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         return mUserState;
     }
 
-    public void setUserState(MenuItemParam param) {
+    /**
+     * ユーザ状態設定.
+     *
+     * @param param メニュー表示情報
+     */
+    public void setUserState(final MenuItemParam param) {
         synchronized (this) {
             mUserState = param.getUserState();
             MenuDisplay menu = MenuDisplay.getInstance();
@@ -775,6 +802,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         }
     }
 
+    /**
+     * ユーザ状態毎の表示.
+     */
     public void displayMenu() {
         try {
             MenuDisplay.getInstance().display();
@@ -784,11 +814,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * ステータスバーの色変更
+     * ステータスバーの色変更.
      *
      * @param resId colorリソースID
      */
-    protected void setStatusBarColor(int resId) {
+    protected void setStatusBarColor(final int resId) {
         //ステータスバーの色変更方法をLOLLIPOPを境界に変更する
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
@@ -799,20 +829,20 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * コンテンツ詳細の戻るボタン
+     * コンテンツ詳細の戻るボタン.
      *
      * @param view 戻るボタンのビュー
      */
-    public void contentsDetailBackKey(View view) {
+    public void contentsDetailBackKey(final View view) {
         finish();
     }
 
     /**
-     * コンテンツ詳細のクローズボタン
+     * コンテンツ詳細のクローズボタン.
      *
      * @param view クローズボタンのビュー
      */
-    public void contentsDetailCloseKey(View view) {
+    public void contentsDetailCloseKey(final View view) {
         //コンテンツ詳細画面をクローズする処理
         try {
             Class sourceClass = Class.forName(getSourceScreenClass());
@@ -826,7 +856,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * 録画コンテンツダウンロード済みかどうか
+     * 録画コンテンツダウンロード済みかどうか.
      *
      * @return DL済み true
      */
@@ -852,13 +882,13 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * 機能：DMSを加入する場合コールされる
+     * 機能：DMSを加入する場合コールされる.
      *
      * @param curInfo カレントDlnaDMSInfo
      * @param newItem 新しいDms情報
      */
     @Override
-    public void onDeviceJoin(DlnaDMSInfo curInfo, DlnaDmsItem newItem) {
+    public void onDeviceJoin(final DlnaDMSInfo curInfo, final DlnaDmsItem newItem) {
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
         if (null == dlnaDmsItem) {
             setStbStatus(false);
@@ -870,13 +900,13 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * 機能：DMSをなくなる場合コールされる
+     * 機能：DMSをなくなる場合コールされる.
      *
      * @param curInfo     　　　カレントDlnaDMSInfo
      * @param leaveDmsUdn 　消えるDmsのudn名
      */
     @Override
-    public void onDeviceLeave(DlnaDMSInfo curInfo, String leaveDmsUdn) {
+    public void onDeviceLeave(final DlnaDMSInfo curInfo, final String leaveDmsUdn) {
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
         if (null == dlnaDmsItem) {
             setStbStatus(false);
@@ -888,22 +918,22 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * 機能：DLNAはerrorを発生する場合コールされる
+     * 機能：DLNAはerrorを発生する場合コールされる.
      *
      * @param msg エラー情報
      */
     @Override
-    public void onError(String msg) {
+    public void onError(final String msg) {
 
     }
 
     /**
-     * 機能：onClick event for menu
+     * 機能：onClick event for menu.
      *
      * @param view メニューアイコンのビュー
      */
     @Override
-    public void onClick(View view) {
+    public void onClick(final View view) {
         if (mMenuImageViewForBase == view) {
             if (HEADER_ICON_CLOSE.equals(mMenuImageViewForBase.getTag())) {
                 //コンテンツ詳細画面の×ボタン時はコンテンツ詳細画面を閉じる
@@ -918,9 +948,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * リモコン画面を生成する
+     * リモコン画面を生成する.
+     *
+     * @param isFirstVisible 表示状態
      */
-    public void createRemoteControllerView(Boolean isFirstVisible) {
+    public void createRemoteControllerView(final Boolean isFirstVisible) {
         DTVTLogger.debug("CreateRemoteControllerView");
         RelativeLayout layout = findViewById(R.id.base_remote_controller_rl);
         remoteControllerView = layout.findViewById(R.id.remote_control_view);
@@ -940,24 +972,26 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * リモコンUIにリスナーを設定する
+     * リモコンUIにリスナーを設定する.
+     *
+     * @param listener リスナ
      */
-    protected void setStartRemoteControllerUIListener(RemoteControllerView.OnStartRemoteControllerUIListener listener) {
+    protected void setStartRemoteControllerUIListener(final RemoteControllerView.OnStartRemoteControllerUIListener listener) {
         remoteControllerView.setOnStartRemoteControllerUI(listener);
     }
 
     /**
-     * 中継アプリのdアプリ起動リクエスト処理を実行
+     * 中継アプリのdアプリ起動リクエスト処理を実行.
      *
      * @param type       アプリのタイプ
      * @param contentsId コンテンツID
      */
-    protected void requestStartApplication(RemoteControlRelayClient.STB_APPLICATION_TYPES type, String contentsId) {
+    protected void requestStartApplication(final RemoteControlRelayClient.STB_APPLICATION_TYPES type, final String contentsId) {
         remoteControllerView.sendStartApplicationRequest(type, contentsId);
     }
 
     /**
-     * リモコンUI画面を取得
+     * リモコンUI画面を取得.
      *
      * @return RemoteControllerView
      */
@@ -966,7 +1000,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * リモコンUI画面用 onClickListener
+     * リモコンUI画面用 onClickListener.
      */
     protected View.OnClickListener mRemoteControllerOnClickListener = new View.OnClickListener() {
         @Override
@@ -1015,18 +1049,18 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * リモートコントローラーViewのVisibilityを変更
+     * リモートコントローラーViewのVisibilityを変更.
      *
      * @param visibility 表示非表示指定
      */
-    protected void setRemoteControllerViewVisibility(int visibility) {
+    protected void setRemoteControllerViewVisibility(final int visibility) {
         if (remoteControllerView != null) {
             findViewById(R.id.base_remote_controller_rl).setVisibility(visibility);
         }
     }
 
     /**
-     * グローバルメニューからのリモコン表示
+     * グローバルメニューからのリモコン表示.
      */
     public void menuRemoteController() {
         if (getStbStatus()) {
@@ -1037,12 +1071,20 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * クリップ登録/削除処理追加
+     * クリップ登録/削除処理追加.
      *
-     * @param data クリップ処理用データ
+     * @param data       クリップ処理用データ
+     * @param clipButton クリップボタン
      */
-    public void sendClipRequest(ClipRequestData data) {
-        if (data != null) {
+    public void sendClipRequest(final ClipRequestData data, final ImageView clipButton) {
+
+        if (data != null && clipButton != null && !mClipRunTime) {
+
+            //クリップ多重実行に対応していないため実行中フラグで管理
+            mClipRunTime = true;
+
+            mClipButton = clipButton;
+            mClipRequestData = data;
 
             //クリップ対象を格納
             if (data.getIsNotify()) {
@@ -1064,51 +1106,53 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * クリップ処理でのトースト表示
+     * クリップ処理でのトースト表示.
      *
      * @param msgId 各ステータスのメッセージID
      */
-    private void showClipToast(int msgId) {
+    private void showClipToast(final int msgId) {
         //クリップ対象がない場合には、トーストのメッセージに不整合が生じるため、表示しない
         if (mClipTarget != null && mClipTarget.length() > 0) {
             String[] strings = {mClipTarget, getString(msgId)};
-            LayoutInflater inflater = getLayoutInflater();
-            View view = inflater.inflate(R.layout.clip_toast_layout, null);
-            TextView textView = view.findViewById(R.id.clip_toast_textView);
-            textView.setText(StringUtil.getConnectString(strings));
-            Toast toast = new Toast(this);
-            toast.setDuration(Toast.LENGTH_SHORT);
-            toast.setView(view);
-            toast.show();
+            Toast.makeText(this, StringUtil.getConnectString(strings), Toast.LENGTH_SHORT).show();
         }
+        //クリップ処理終了メッセージ後にフラグを実行中から終了に変更
+        mClipRunTime = false;
     }
 
     @Override
     public void onClipRegistResult() {
-        //TODO:クリップ登録成功時の正式なトースト実装
+        mClipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
         showClipToast(R.string.clip_regist_result_message);
+
+        //DB登録開始
+        ClipKeyListDataProvider clipKeyListDataProvider = new ClipKeyListDataProvider(this);
+        clipKeyListDataProvider.clipResultInsert(mClipRequestData);
+
     }
 
     @Override
     public void onClipRegistFailure() {
-        //TODO:クリップ登録失敗時の正式なトースト実装
         showClipToast(R.string.clip_regist_error_message);
     }
 
     @Override
     public void onClipDeleteResult() {
-        //TODO:クリップ削除成功時の正式なトースト実装
+        mClipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
         showClipToast(R.string.clip_delete_result_message);
+
+        //DB削除開始
+        ClipKeyListDataProvider clipKeyListDataProvider = new ClipKeyListDataProvider(this);
+        clipKeyListDataProvider.clipResultDelete(mClipRequestData);
     }
 
     @Override
     public void onClipDeleteFailure() {
-        //TODO:クリップ削除失敗時の正式なトースト実装
         showClipToast(R.string.clip_delete_error_message);
     }
 
     /**
-     * dアカウントの切り替えや無効化を受信できるように設定を行う
+     * dアカウントの切り替えや無効化を受信できるように設定を行う.
      */
     private void setDaccountControl() {
         //dアカウント関連の処理を依頼する
@@ -1153,15 +1197,15 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * RemoteControlRelayClientにHandlerを設定する
+     * RemoteControlRelayClientにHandlerを設定する.
      */
     public void setRelayClientHandler() {
         // TODO MenuDisplay修正時に合わせて修正する
-        mRemoteControlRelayClient.setHandler(mRerayClientHandler);
+        mRemoteControlRelayClient.setHandler(mRelayClientHandler);
     }
 
     /**
-     * 機能: バックキー押下によるアプリ終了ダイアログを表示
+     * 機能: バックキー押下によるアプリ終了ダイアログを表示.
      */
     protected void showTips() {
         DTVTLogger.start();
@@ -1197,7 +1241,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * 機能: リモコンが表示されているか確認し、開いている場合は閉じる
+     * 機能: リモコンが表示されているか確認し、開いている場合は閉じる.
      *
      * @return true:リモコン表示、リモコンを閉じる false:リモコン非表示
      */
@@ -1210,29 +1254,34 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * 詳細画面起動元のクラス名を保存するstaticクラス
+     * 詳細画面起動元のクラス名を保存するstaticクラス.
      *
      * @param className コンテンツ詳細画面起動元のクラス名
      */
-    public synchronized static void setSourceScreen(String className) {
+    public synchronized static void setSourceScreen(final String className) {
         BaseActivity.mSourceScreenClass = className;
     }
 
     /**
-     * コンテンツ詳細画面起動元のクラス名を保持する
+     * コンテンツ詳細画面起動元のクラス名を保持する.
      *
      * @param className クラス名
      */
-    public void setSourceScreenClass(String className) {
+    public void setSourceScreenClass(final String className) {
         setSourceScreen(className);
     }
 
     /**
-     * コンテンツ詳細画面起動元のクラス名を取得する
+     * コンテンツ詳細画面起動元のクラス名を取得する.
      *
      * @return クラス名
      */
     public String getSourceScreenClass() {
         return mSourceScreenClass;
+    }
+
+    /** dip → px */
+    public int dip2px(int dip) {
+        return (int) (dip * getDensity() + 0.5f);
     }
 }

@@ -78,7 +78,8 @@ public class ProgramDataManager {
                 JsonContents.META_RESPONSE_SERVICE_ID, JsonContents.META_RESPONSE_EVENT_ID,
                 JsonContents.META_RESPONSE_TITLE_ID, JsonContents.META_RESPONSE_R_VALUE,
                 JsonContents.META_RESPONSE_CONTENT_TYPE, JsonContents.META_RESPONSE_DTV,
-                JsonContents.META_RESPONSE_TV_SERVICE, JsonContents.META_RESPONSE_DTV_TYPE};
+                JsonContents.META_RESPONSE_TV_SERVICE, JsonContents.META_RESPONSE_DTV_TYPE,
+                JsonContents.META_RESPONSE_EPITITLE};
 
         //Daoクラス使用準備
         DBHelper channelListDBHelper = new DBHelper(mContext);

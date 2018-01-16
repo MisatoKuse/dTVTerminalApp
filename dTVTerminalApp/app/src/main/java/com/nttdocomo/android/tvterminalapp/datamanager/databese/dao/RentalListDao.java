@@ -15,35 +15,39 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RENTAL_ACTIVE_LIST_TABLE_NAME;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RENTAL_CHANNEL_ACTIVE_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RENTAL_CHANNEL_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RENTAL_LIST_TABLE_NAME;
 
 
 public class RentalListDao {
 
-    // SQLiteDatabase
+    /**
+     * SQLiteDatabase.
+     */
     private SQLiteDatabase mSQLiteDatabase = null;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
-     * @param db
+     * @param db データベース
      */
-    public RentalListDao(SQLiteDatabase db) {
+    public RentalListDao(final SQLiteDatabase db) {
         this.mSQLiteDatabase = db;
     }
 
     /**
-     * 配列で指定した列データをすべて取得
+     * 配列で指定した列データをすべて取得.
      *
-     * @param strings
-     * @return
+     * @param strings columns
+     * @return 取得結果
      */
-    public List<Map<String, String>> findById(String[] strings) {
+    public List<Map<String, String>> findById(final String[] strings) {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
 
-        Cursor cursor =null;
+        Cursor cursor;
         try {
             cursor = mSQLiteDatabase.query(
                     RENTAL_LIST_TABLE_NAME,
@@ -53,7 +57,7 @@ public class RentalListDao {
                     null,
                     null,
                     null);
-        }catch(Exception e){
+        } catch (Exception e) {
             DTVTLogger.debug(e);
             return null;
         }
@@ -64,8 +68,51 @@ public class RentalListDao {
         //データを一行ずつ格納する
         while (isEof) {
             HashMap<String, String> map = new HashMap<>();
-            for (int i = 0; i < strings.length; i++) {
-                map.put(strings[i], cursor.getString(cursor.getColumnIndex(strings[i])));
+            for (String string : strings) {
+                map.put(string, cursor.getString(cursor.getColumnIndex(string)));
+            }
+            list.add(map);
+
+            isEof = cursor.moveToNext();
+        }
+        cursor.close();
+
+        return list;
+    }
+
+    /**
+     * 配列で指定した列データをすべて取得(active_list).
+     *
+     * @param strings columns
+     * @return 取得結果
+     */
+    public List<Map<String, String>> activeListfindById(final String[] strings) {
+        //特定IDのデータ取得はしない方針
+        List<Map<String, String>> list = new ArrayList<>();
+
+        Cursor cursor;
+        try {
+            cursor = mSQLiteDatabase.query(
+                    RENTAL_ACTIVE_LIST_TABLE_NAME,
+                    strings,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null);
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+            return null;
+        }
+
+        //参照先を一番始めに
+        boolean isEof = cursor.moveToFirst();
+
+        //データを一行ずつ格納する
+        while (isEof) {
+            HashMap<String, String> map = new HashMap<>();
+            for (String string : strings) {
+                map.put(string, cursor.getString(cursor.getColumnIndex(string)));
             }
             list.add(map);
 
@@ -86,7 +133,7 @@ public class RentalListDao {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
 
-        Cursor cursor =null;
+        Cursor cursor;
         try {
             cursor = mSQLiteDatabase.query(
                     RENTAL_CHANNEL_LIST_TABLE_NAME,
@@ -96,7 +143,7 @@ public class RentalListDao {
                     null,
                     null,
                     null);
-        }catch(Exception e){
+        } catch (Exception e) {
             DTVTLogger.debug(e);
             return null;
         }
@@ -107,8 +154,8 @@ public class RentalListDao {
         //データを一行ずつ格納する
         while (isEof) {
             HashMap<String, String> map = new HashMap<>();
-            for (int i = 0; i < strings.length; i++) {
-                map.put(strings[i], cursor.getString(cursor.getColumnIndex(strings[i])));
+            for (String string : strings) {
+                map.put(string, cursor.getString(cursor.getColumnIndex(string)));
             }
             list.add(map);
 
@@ -120,14 +167,68 @@ public class RentalListDao {
     }
 
     /**
-     * データの登録
+     * 配列で指定した列データをすべて取得(CHのactive_list).
      *
-     * @param values
-     * @return
+     * @param strings columns
+     * @return 取得結果
      */
-    public long insert(ContentValues values) {
+    public List<Map<String, String>> chActiveListfindById(final String[] strings) {
+        //特定IDのデータ取得はしない方針
+        List<Map<String, String>> list = new ArrayList<>();
+
+        Cursor cursor;
+        try {
+            cursor = mSQLiteDatabase.query(
+                    RENTAL_CHANNEL_ACTIVE_LIST_TABLE_NAME,
+                    strings,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null);
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+            return null;
+        }
+
+        //参照先を一番始めに
+        boolean isEof = cursor.moveToFirst();
+
+        //データを一行ずつ格納する
+        while (isEof) {
+            HashMap<String, String> map = new HashMap<>();
+            for (String string : strings) {
+                map.put(string, cursor.getString(cursor.getColumnIndex(string)));
+            }
+            list.add(map);
+
+            isEof = cursor.moveToNext();
+        }
+        cursor.close();
+
+        return list;
+    }
+
+    /**
+     * データの登録.
+     *
+     * @param values 保存するデータ
+     * @return 結果
+     */
+    public long insert(final ContentValues values) {
         return mSQLiteDatabase.insert(RENTAL_LIST_TABLE_NAME, null, values);
     }
+
+    /**
+     * レンタル一覧のactive_listのデータ登録.
+     *
+     * @param values 保存するデータ
+     * @return 結果
+     */
+    public long insertActiveList(final ContentValues values) {
+        return mSQLiteDatabase.insert(RENTAL_ACTIVE_LIST_TABLE_NAME, null, values);
+    }
+
 
     /**
      * 購入済みチャンネル一覧のデータ登録.
@@ -139,18 +240,42 @@ public class RentalListDao {
         return mSQLiteDatabase.insert(RENTAL_CHANNEL_LIST_TABLE_NAME, null, values);
     }
 
+    /**
+     * 購入済みチャンネル一覧のactive_listのデータ登録.
+     *
+     * @param values 保存するデータ
+     * @return 結果
+     */
+    public long insertChActiveList(final ContentValues values) {
+        return mSQLiteDatabase.insert(RENTAL_CHANNEL_ACTIVE_LIST_TABLE_NAME, null, values);
+    }
+
+    /**
+     * アップデート.
+     *
+     * @return 結果
+     */
     public int update() {
         //基本的にデータの更新はしない予定
         return 0;
     }
 
     /**
-     * データの削除
+     * データの削除.
      *
-     * @return
+     * @return 結果
      */
     public int delete() {
         return mSQLiteDatabase.delete(RENTAL_LIST_TABLE_NAME, null, null);
+    }
+
+    /**
+     * レンタル一覧のactive_listのデータ削除.
+     *
+     * @return 結果
+     */
+    public int deleteActiveList() {
+        return mSQLiteDatabase.delete(RENTAL_ACTIVE_LIST_TABLE_NAME, null, null);
     }
 
     /**
@@ -160,5 +285,14 @@ public class RentalListDao {
      */
     public int deleteCh() {
         return mSQLiteDatabase.delete(RENTAL_CHANNEL_LIST_TABLE_NAME, null, null);
+    }
+
+    /**
+     * レンタル一覧のactive_listのデータ削除.
+     *
+     * @return 結果
+     */
+    public int deleteChActiveList() {
+        return mSQLiteDatabase.delete(RENTAL_CHANNEL_ACTIVE_LIST_TABLE_NAME, null, null);
     }
 }

@@ -5,7 +5,10 @@
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
 import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -38,6 +41,7 @@ import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragmen
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDownload;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvRecVideo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoItem;
@@ -93,7 +97,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     //設定するマージンのピクセル数
     private static final String DATE_FORMAT = "yyyy/MM/ddHH:mm:ss";
     private String mDate[] = {"日", "月", "火", "水", "木", "金", "土"};
-    public ArrayList<DlnaRecVideoItem> mList;
+
+    private boolean mIsDlOk=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,12 +114,22 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
 
+        initDl();
         initView();
         getData();
         initTabVIew();
         setPagerAdapter();
         setSearchViewState();
         DTVTLogger.end();
+    }
+
+    private void initDl() {
+        boolean isRunning= isDownloadServiceRunning();
+        if(isRunning){
+            mIsDlOk=true;
+        }else {
+            mIsDlOk= DlnaProvDownload.initGlobalDl(DownloaderBase.getDownloadPath(this));
+        }
     }
 
     /**
@@ -359,17 +374,28 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         List<ContentsData> list = baseFragment.getContentsData();
         if (list != null) {
             list.clear();
-            File file = new File(getCacheDir().getPath());
-            File listFiles[] = file.listFiles();
-            if(listFiles != null && listFiles.length > 0){
-                for(File file1: listFiles){
-                    if(file1.isDirectory()){
-                        continue;
+            List<Map<String, String>> resultList = getDownloadListFromDb();
+            if(resultList != null && resultList.size() > 0){
+                for (int i = 0; i < resultList.size(); i++) {
+                    Map<String, String> hashMap = resultList.get(i);
+                    String downloadStatus = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
+                    if(!TextUtils.isEmpty(downloadStatus)){
+                        String path = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL);
+                        String itemId = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
+                        String title = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_TITLE);
+                        String fullPath = path + File.separator + itemId;
+                        File file = new File(fullPath);
+                        if(file.isDirectory()){
+                            continue;
+                        }
+                        if(file.exists()){
+                            ContentsData contentsData = new ContentsData();
+                            contentsData.setTitle(title);
+                            contentsData.setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
+                            contentsData.setDlFileFullPath(fullPath);
+                            list.add(contentsData);
+                        }
                     }
-                    ContentsData contentsData = new ContentsData();
-                    contentsData.setTitle(file1.getName());
-                    contentsData.setDownloadFlg(-1);
-                    list.add(contentsData);
                 }
             }
             baseFragment.notifyDataSetChanged();
@@ -446,7 +472,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onVideoBrows(DlnaRecVideoInfo curInfo) {
         if (curInfo != null && curInfo.getRecordVideoLists() != null) {
-            setVideoBrows(curInfo);
+            setVideoBrows(curInfo.getRecordVideoLists());
         }
         setProgressBarGone();
     }
@@ -473,8 +499,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     private boolean serviceIsStart(List<ActivityManager.RunningServiceInfo> list, String className) {
         for (int i = 0; i < list.size(); i++) {
-            if (className.equals(list.get(i).service.getClassName()))
+            if (className.equals(list.get(i).service.getClassName())){
                 return true;
+            }
         }
         return false;
     }
@@ -490,12 +517,15 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         return resultList;
     }
 
-    private void setVideoBrows(DlnaRecVideoInfo curInfo) {
+    private void setVideoBrows(ArrayList<DlnaRecVideoItem>  dlnaRecVideoItems) {
         final RecordedBaseFragment baseFrgament = getCurrentRecordedBaseFragment(0);
         baseFrgament.mContentsList = new ArrayList<>();
         List<Map<String, String>> resultList = getDownloadListFromDb();
-        for (int i = 0; i < curInfo.getRecordVideoLists().size(); ++i) {
-            DlnaRecVideoItem itemData = curInfo.getRecordVideoLists().get(i);
+        setTakeOutContentsToAll(dlnaRecVideoItems, resultList);
+        List<ContentsData> listData = baseFrgament.getContentsData();
+        listData.clear();
+        for (int i = 0; i < dlnaRecVideoItems.size(); i++) {
+            DlnaRecVideoItem itemData = dlnaRecVideoItems.get(i);
             RecordedContentsDetailData detailData = new RecordedContentsDetailData();
             detailData.setItemId(itemData.mItemId);
             detailData.setUpnpIcon(itemData.mUpnpIcon);
@@ -511,11 +541,18 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 for (int j = 0; j < resultList.size(); j++) {
                     Map<String, String> hashMap = resultList.get(j);
                     String itemId = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
+                    String path = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL);
+                    String fullPath = path + File.separator + itemId;
                     if(!TextUtils.isEmpty(itemId)){
-                        if(itemId.equals(DownloaderBase.getFileNameById(itemData.mItemId))){
+                        String allItemId = itemData.mItemId;
+                        if(!TextUtils.isEmpty(allItemId) && !allItemId.startsWith(DownloaderBase.sDlPrefix)){
+                            allItemId = DownloaderBase.getFileNameById(itemData.mItemId);
+                        }
+                        if(itemId.equals(allItemId)){
                             String downloadStatus = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
                             if(!TextUtils.isEmpty(downloadStatus)){
                                 detailData.setDownLoadStatus(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
+                                detailData.setDlFileFullPath(fullPath);
                             } else {
                                 detailData.setDownLoadStatus(ContentsAdapter.DOWNLOAD_STATUS_LOADING);
                                 baseFrgament.queIndex.add(i);
@@ -525,40 +562,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 }
             }
             baseFrgament.mContentsList.add(detailData);
-        }
-        List<ContentsData> listData = baseFrgament.getContentsData();
-        listData.clear();
-        mList = getTakeOutContents(curInfo.getRecordVideoLists());
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.JAPAN);
-        for (int i = 0; i < mList.size(); i++) {
-            // TODO 年齢取得未実装の為、固定値を返却
-            boolean isAge = true;
-            DlnaRecVideoItem dlnaRecVideoItem = mList.get(i);
-            ContentsData contentsData = new ContentsData();
-            int currentPageNo = mViewPager.getCurrentItem();
-            if (isAge) {
-                contentsData.setTitle(dlnaRecVideoItem.mTitle);
-                contentsData.setAllowedUse(dlnaRecVideoItem.mAllowedUse);
-                String time = dlnaRecVideoItem.mDate.replaceAll("-", "/").replace("T", "");
-                try {
-                    Calendar calendar = Calendar.getInstance(Locale.JAPAN);
-                    calendar.setTime(sdf.parse(time));
-                    StringUtil util = new StringUtil(this);
-                    String[] strings = {String.valueOf(calendar.get(Calendar.MONTH)), "/",
-                            String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)), " (",
-                            mDate[calendar.get(Calendar.DAY_OF_WEEK) - 1], ") ",
-                            String.valueOf(calendar.get(Calendar.HOUR_OF_DAY)), ":",
-                            String.valueOf(calendar.get(Calendar.MINUTE))};
-                    String selectDate = util.getConnectString(strings);
-                    contentsData.setTime(selectDate);
-                    contentsData.setDownloadFlg(baseFrgament.mContentsList.get(i).getDownLoadStatus());
-                } catch (ParseException e) {
-                    DTVTLogger.debug(e);
-                }
-                listData.add(contentsData);
-            } else {
-                // NOP
-            }
+            setNotifyData(baseFrgament, itemData, i);
         }
         runOnUiThread(new Runnable() {
             @Override
@@ -570,6 +574,79 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             }
         });
     }
+
+    private void setNotifyData(RecordedBaseFragment baseFrgament, DlnaRecVideoItem dlnaRecVideoItem, int i){
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.JAPAN);
+        // TODO 年齢取得未実装の為、固定値を返却
+        boolean isAge = true;
+        ContentsData contentsData = new ContentsData();
+        int currentPageNo = mViewPager.getCurrentItem();
+        if (isAge) {
+            contentsData.setTitle(dlnaRecVideoItem.mTitle);
+            contentsData.setAllowedUse(dlnaRecVideoItem.mAllowedUse);
+            String selectDate = "";
+            if(!TextUtils.isEmpty(dlnaRecVideoItem.mDate)){
+                String time = dlnaRecVideoItem.mDate.replaceAll("-", "/").replace("T", "");
+                try {
+                    Calendar calendar = Calendar.getInstance(Locale.JAPAN);
+                    calendar.setTime(sdf.parse(time));
+                    StringUtil util = new StringUtil(this);
+                    String[] strings = {String.valueOf(calendar.get(Calendar.MONTH)), "/",
+                            String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)), " (",
+                            mDate[calendar.get(Calendar.DAY_OF_WEEK) - 1], ") ",
+                            String.valueOf(calendar.get(Calendar.HOUR_OF_DAY)), ":",
+                            String.valueOf(calendar.get(Calendar.MINUTE))};
+                    selectDate = util.getConnectString(strings);
+                } catch (ParseException e) {
+                    DTVTLogger.debug(e);
+                }
+            }
+            contentsData.setTime(selectDate);
+            contentsData.setDownloadFlg(baseFrgament.mContentsList.get(i).getDownLoadStatus());
+            baseFrgament.getContentsData().add(contentsData);
+        } else {
+            // NOP
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registReceiver();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(downloadReceiver);
+        boolean isRunning= isDownloadServiceRunning();
+        if(!isRunning){
+            DlnaProvDownload.uninitGlobalDl();
+        }
+    }
+
+    private void registReceiver(){
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(DownloadService.DONWLOAD_UPDATE);
+        filter.addAction(DownloadService.DONWLOAD_SUCCESS);
+        registerReceiver(downloadReceiver, filter);
+    }
+
+    private BroadcastReceiver downloadReceiver = new BroadcastReceiver(){
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (DownloadService.DONWLOAD_UPDATE.equals(intent.getAction())) {
+                int progress = intent.getIntExtra(DownloadService.DONWLOAD_UPDATE, 0);
+                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+                baseFragment.setDownladProgressByBg(progress);
+            } else if (DownloadService.DONWLOAD_SUCCESS.equals(intent.getAction())) {
+                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_PATH);
+                baseFragment.setDownladSuccessByBg(fullPath);
+            }
+        }
+    };
 
     @Override
     public void onDeviceLeave(DlnaDMSInfo curInfo, String leaveDmsUdn) {
@@ -653,23 +730,38 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      *
      * @return list　生成した[すべて]一覧に表示するリスト
      */
-    private ArrayList<DlnaRecVideoItem> getTakeOutContents(ArrayList<DlnaRecVideoItem> list) {
-        // 持ち出しLIST
-        ArrayList<DlnaRecVideoItem> takeoutList = new ArrayList<>();
+    private ArrayList<DlnaRecVideoItem> setTakeOutContentsToAll(ArrayList<DlnaRecVideoItem> list, List<Map<String, String>> takeoutList) {
         // 返却するリスト
         ArrayList<DlnaRecVideoItem> allList = list;
-        if (allList != null && takeoutList != null) {
+        if(allList == null){
+            allList = new ArrayList<>();
+        }
+        if (takeoutList != null) {
             for (int i = 0; i < takeoutList.size(); i++) {
-                int getPosition = -1;
+                Map<String, String> hashMap = takeoutList.get(i);
+                String itemId = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
                 boolean isExist = false;
-                for (int j = 0; j < allList.size(); j++) {
-                    if (takeoutList.get(i).equals(allList.get(j))) {
-                        isExist = true;
-                        break;
+                if(!TextUtils.isEmpty(itemId)){
+                    for (int j = 0; j < allList.size(); j++) {
+                        String allItemId = DownloaderBase.getFileNameById(allList.get(j).mItemId);
+                        if (itemId.equals(allItemId)) {
+                            isExist = true;
+                            break;
+                        }
                     }
-                }
-                if (!isExist) {
-                    allList.add(takeoutList.get(i));
+                    if (!isExist) {
+                        String bitrate = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_BITRATE);
+                        String duration = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_DURATION);
+                        String title = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_TITLE);
+                        String totalSize = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_SIZE);
+                        DlnaRecVideoItem dlnaRecVideoItem = new DlnaRecVideoItem();
+                        dlnaRecVideoItem.mItemId = itemId;
+                        dlnaRecVideoItem.mClearTextSize = totalSize;
+                        dlnaRecVideoItem.mTitle = title;
+                        dlnaRecVideoItem.mDuration = duration;
+                        dlnaRecVideoItem.mBitrate = bitrate;
+                        allList.add(dlnaRecVideoItem);
+                    }
                 }
             }
         }

@@ -5,24 +5,36 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
+import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.WeeklyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ClipKeyListInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.ClipKeyListDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipKeyListWebClient;
 
+import java.util.List;
+import java.util.Map;
 
-public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyListJsonParserCallback, ClipKeyListWebClient.VodClipKeyListJsonParserCallback {
+
+public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyListJsonParserCallback,
+        ClipKeyListWebClient.VodClipKeyListJsonParserCallback, DbThread.DbOperation {
     private Context mContext;
-    protected boolean requiredClipKeyList = false;
+    protected boolean mRequiredClipKeyList = false;
     protected ClipKeyListResponse mResponse = null;
+
+    private ClipRequestData mClipRequestData = null;
+
+    private static final int CLIP_ROW_DELETE = 0;
+    private static final int CLIP_ROW_INSERT = 1;
 
     @Override
     public void onTvClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
@@ -73,7 +85,9 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     public ClipKeyListDataProvider(Context context) {
         this.mContext = context;
         if (checkInstance(context)) {
-            requiredClipKeyList = true;
+            mRequiredClipKeyList = true;
+        } else {
+            mRequiredClipKeyList = false;
         }
     }
 
@@ -161,5 +175,156 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
 
         DTVTLogger.end();
         return DBUtils.isCachingRecord(mContext, tableName);
+    }
+
+    /**
+     * コンテンツタイプ判定 TV or VOD or dTV
+     *
+     * @param dispType
+     * @param contentType
+     * @param dTv
+     * @return
+     */
+    protected ClipKeyListDao.CONTENT_TYPE searchContentsType(String dispType, String contentType, String dTv) {
+        if (ClipKeyListDao.META_DISP_TYPE_TV_PROGRAM.equals(dispType)
+                && contentType.isEmpty()) {
+            return ClipKeyListDao.CONTENT_TYPE.TV;
+        }
+        if (!ClipKeyListDao.META_DISP_TYPE_TV_PROGRAM.equals(dispType)
+                && ClipKeyListDao.META_DTV_FLAG_TRUE.equals(dTv)) {
+            return ClipKeyListDao.CONTENT_TYPE.VOD;
+        }
+        if (ClipKeyListDao.META_DISP_TYPE_TV_PROGRAM.equals(dispType)
+                && !contentType.isEmpty()
+                && ClipKeyListDao.META_DTV_FLAG_TRUE.equals(dTv)) {
+            return ClipKeyListDao.CONTENT_TYPE.VOD;
+        }
+        if (!ClipKeyListDao.META_DISP_TYPE_TV_PROGRAM.equals(dispType)
+                && ClipKeyListDao.META_DTV_FLAG_FALSE.equals(dTv)) {
+            return ClipKeyListDao.CONTENT_TYPE.DTV;
+        }
+        if (ClipKeyListDao.META_DISP_TYPE_TV_PROGRAM.equals(dispType)
+                && !contentType.isEmpty()
+                && ClipKeyListDao.META_DTV_FLAG_FALSE.equals(dTv)) {
+            return ClipKeyListDao.CONTENT_TYPE.DTV;
+        }
+        return null;
+    }
+
+    /**
+     * 使用テーブル判定 TV or VOD
+     *
+     * @param dispType
+     * @param contentType
+     * @return
+     */
+    protected ClipKeyListDao.TABLE_TYPE decisionTableType(String dispType, String contentType) {
+        if (ClipKeyListDao.META_DISP_TYPE_TV_PROGRAM.equals(dispType)
+                && contentType == null) {
+            return ClipKeyListDao.TABLE_TYPE.TV;
+        }
+        return ClipKeyListDao.TABLE_TYPE.VOD;
+    }
+
+    /**
+     * DB内に該当するCridのレコードが存在するかを判定
+     *
+     * @param type
+     * @param crid
+     * @return ListView表示用データ
+     */
+    protected boolean findDbVodClipKeyData(ClipKeyListDao.TABLE_TYPE type, String crid) {
+        DTVTLogger.start();
+        ClipKeyListDataManager dataManager = new ClipKeyListDataManager(mContext);
+        List<Map<String, String>> clipKeyList = dataManager.selectClipKeyDbVodData(type, crid);
+        DTVTLogger.end();
+        return clipKeyList != null && clipKeyList.size() > 0;
+    }
+
+    /**
+     * DB内に該当するServiceId,EventId,ContentsTypeのレコードが存在するかを判定
+     *
+     * @param tableType
+     * @param serviceId
+     * @param eventId
+     * @param type
+     * @return ListView表示用データ
+     */
+    protected boolean findDbTvClipKeyData(ClipKeyListDao.TABLE_TYPE tableType,
+                                          String serviceId, String eventId, String type) {
+        DTVTLogger.start();
+        ClipKeyListDataManager dataManager = new ClipKeyListDataManager(mContext);
+        List<Map<String, String>> clipKeyList = dataManager.selectClipKeyDbTvData(tableType, serviceId, eventId, type);
+        DTVTLogger.end();
+
+        return clipKeyList != null && clipKeyList.size() > 0;
+    }
+
+    /**
+     * DB内に該当するTitleIdのレコードが存在するかを判定
+     *
+     * @param type
+     * @param titleId
+     * @return ListView表示用データ
+     */
+    protected boolean findDbDtvClipKeyData(ClipKeyListDao.TABLE_TYPE type, String titleId) {
+        DTVTLogger.start();
+        ClipKeyListDataManager dataManager = new ClipKeyListDataManager(mContext);
+        List<Map<String, String>> clipKeyList = dataManager.selectClipKeyDbDtvData(type, titleId);
+        DTVTLogger.end();
+        return clipKeyList != null && clipKeyList.size() > 0;
+    }
+
+    public void clipResultDelete(ClipRequestData data) {
+        mClipRequestData = data;
+        //DB操作
+        Handler handler = new Handler(); //チャンネル情報更新
+        try {
+            DbThread t = new DbThread(handler, this, CLIP_ROW_DELETE);
+            t.start();
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+        }
+    }
+
+    public void clipResultInsert(ClipRequestData data) {
+        mClipRequestData = data;
+        //DB操作
+        Handler handler = new Handler(); //チャンネル情報更新
+        try {
+            DbThread t = new DbThread(handler, this, CLIP_ROW_INSERT);
+            t.start();
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+        }
+    }
+
+    @Override
+    public void onDbOperationFinished(boolean isSuccessful, List<Map<String, String>> resultSet, int operationId) {
+        //TODO:DB保存後の処理があればここに記載
+    }
+
+    @Override
+    public List<Map<String, String>> dbOperation(int operationId) throws Exception {
+        ClipKeyListInsertDataManager dataManager = new ClipKeyListInsertDataManager(mContext);
+        String dispType = mClipRequestData.getDispType();
+        String contentType = mClipRequestData.getContentType();
+        String serviceId = mClipRequestData.getServiceId();
+        String eventId = mClipRequestData.getEventId();
+        String type = mClipRequestData.getType();
+        String titleId = mClipRequestData.getTitleId();
+        ClipKeyListDao.TABLE_TYPE tableType = decisionTableType(dispType, contentType);
+
+        switch (operationId) {
+            case CLIP_ROW_DELETE:
+                dataManager.deleteRowSqlStart(tableType, serviceId, eventId, titleId);
+                break;
+            case CLIP_ROW_INSERT:
+                dataManager.insertRowSqlStart(tableType, serviceId, eventId, type, titleId);
+                break;
+            default:
+                break;
+        }
+        return null;
     }
 }

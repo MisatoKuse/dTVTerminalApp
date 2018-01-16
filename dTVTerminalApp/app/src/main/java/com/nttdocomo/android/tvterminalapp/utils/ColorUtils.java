@@ -36,4 +36,33 @@ public class ColorUtils {
             textView.setTextColor(ContextCompat.getColor(mContext, colorId));
         }
     }
+
+    /**
+     * 色のリソースから色コードを返す.
+     *
+     * @param context コンテキスト
+     * @param colorId 色のリソース番号
+     * @return 色コード
+     */
+    public static int getColor(Context context, int colorId) {
+        //色の結果
+        int color;
+
+        //コンテキストがヌルならば、色は取れないのでゼロを返す
+        if(context == null) {
+            return 0;
+        }
+
+        //バージョン番号で処理を分ける
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            //OSが古いので、古い方法を使用する
+            color = context.getResources().getColor(colorId);
+        } else {
+            //OSが新しいので、新しい方法を使用する
+            color = ContextCompat.getColor(context, colorId);
+        }
+
+        //色コードを返す
+        return color;
+    }
 }

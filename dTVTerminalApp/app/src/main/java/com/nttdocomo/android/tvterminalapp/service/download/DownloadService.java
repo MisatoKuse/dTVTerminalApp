@@ -15,6 +15,7 @@ import android.support.v7.app.NotificationCompat;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDownload;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,14 @@ public class DownloadService extends Service implements DownloadListener {
     private String mData;
     private static final int DOWNLOAD_SERVICE_ID = 1;
     public static List<DlData> dlDataQue = new ArrayList<>();
-    public static boolean isBinded = false;
+    public static int BINDSTATUS = 1;
+    public static final int UNBINED = 1;
+    public static final int BINDED = 2;
+    public static final int BACKGROUD = 3;
+
+    public static final String DONWLOAD_UPDATE = "update";
+    public static final String DONWLOAD_SUCCESS = "success";
+    public static final String DONWLOAD_PATH = "path";
 
     public void setDownloadServiceListener(DownloadServiceListener dlServiceListener){
         mDownloadServiceListener=dlServiceListener;
@@ -167,6 +175,22 @@ public class DownloadService extends Service implements DownloadListener {
     public void stopService(){
         stopForeground(true);
         stopSelf();
+        boolean isUiRunning=isUiRunning();
+        if(!isUiRunning) {
+            DlnaProvDownload.uninitGlobalDl();
+        }
+    }
+
+    private boolean isUiRunning(){
+        switch (BINDSTATUS) {
+            case BACKGROUD:
+                return true;
+            case UNBINED:
+                return false;
+            case BINDED:
+                return true;
+        }
+        return true;
     }
 
     /**
@@ -287,15 +311,15 @@ public class DownloadService extends Service implements DownloadListener {
         }
     }
 
-    /**
-     * 機能：
-     *      １．Download Uiがなくなる場合、必ずこれをコールする
-     *      ２．Download Uiがない場合、Serviceは閉じる時、必ずこれをコールする
-     */
-    public void finishDl() {
-        if (null == mDownloaderBase) {
-            return;
-        }
-        mDownloaderBase.finishDl();
-    }
+//    /**
+//     * 機能：
+//     *      １．Download Uiがなくなる場合、必ずこれをコールする
+//     *      ２．Download Uiがない場合、Serviceは閉じる時、必ずこれをコールする
+//     */
+//    public void finishDl() {
+//        if (null == mDownloaderBase) {
+//            return;
+//        }
+//        mDownloaderBase.finishDl();
+//    }
 }

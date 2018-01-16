@@ -51,14 +51,16 @@ public class RecommendActivity extends BaseActivity implements
 
     // レコメンドコンテンツ最大件数（システム制約）
     private int maxShowListSize = 100;
-    // 表示中レコメンドコンテンツ件数
-    private int mShowListSize = 0;
+    // 表示中レコメンドコンテンツ件数(staticにしないと前回の値が維持され、データの更新に失敗する場合がある)
+    private static int sShowListSize = 0;
     // 表示中の最後の行を保持
     private int mSearchLastItem = 0;
-    // ページングの回数
-    private int mCntPageing = 0;
+    // ページングの回数(staticにしないと前回の値が維持され、データの更新に失敗する場合がある)
+    private static int sCntPageing = 0;
     // ページング判定
     private boolean mIsPaging = false;
+    //アクティビティ初回起動フラグ
+    private boolean mIsFirst = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,9 +77,25 @@ public class RecommendActivity extends BaseActivity implements
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
 
-        initData();
-        initRecommendListView();
-        requestRecommendData();
+        //初回起動フラグをONにする
+        mIsFirst = true;
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        //フォーカスを得て、初回起動だった場合の判定
+        if(hasFocus && mIsFirst) {
+            //画面の初期表示処理は、onCreateでは実行が早すぎて画面に表示されないので、こちらに移動
+            initData();
+            initRecommendListView();
+            setSearchStart(false);
+            requestRecommendData();
+
+            //初回起動の処理が終了したので、falseとする
+            mIsFirst = false;
+        }
     }
 
     /**
@@ -121,9 +139,12 @@ public class RecommendActivity extends BaseActivity implements
         }
 
         int requestService = mRecommendViewPager.getCurrentItem();
-        int startIndex = mShowListSize + 1;
+        int startIndex = sShowListSize + 1;
+
+        //戻り値を使用せず、データは必ずコールバック経由なので、falseを指定する
         mRecommendDataProvider.startGetRecommendData(
-                requestService, startIndex, SearchConstants.RecommendList.requestMaxCount_Recommend);
+                requestService, startIndex,
+                SearchConstants.RecommendList.requestMaxCount_Recommend,false);
     }
 
     /**
@@ -147,8 +168,10 @@ public class RecommendActivity extends BaseActivity implements
                 setTab(position);
                 clearAllFragment();
                 setPagingStatus(false);
-                mShowListSize = 0;
-                mCntPageing = 0;
+                sShowListSize = 0;
+                sCntPageing = 0;
+                //ここでフラグをクリアしないと、以後の更新が行われなくなる場合がある
+                setSearchStart(false);
                 requestRecommendData();
             }
         });
@@ -195,8 +218,10 @@ public class RecommendActivity extends BaseActivity implements
                     int position = (int) view.getTag();
                     mRecommendViewPager.setCurrentItem(position);
                     setTab(position);
-                    mShowListSize = 0;
-                    mCntPageing = 0;
+                    sShowListSize = 0;
+                    sCntPageing = 0;
+                    //ここでフラグをクリアしないと、以後の更新が行われなくなる場合がある
+                    setSearchStart(false);
                     requestRecommendData();
                 }
             });
@@ -253,7 +278,7 @@ public class RecommendActivity extends BaseActivity implements
         if (0 < resultInfoList.size()) {
             for (ContentsData info : resultInfoList) {
                 baseFragment.mData.add(info);
-                mShowListSize += 1;
+                sShowListSize += 1;
             }
 
             DTVTLogger.debug("baseFragment.mData.size = " + baseFragment.mData.size());
@@ -342,14 +367,14 @@ public class RecommendActivity extends BaseActivity implements
     public void onScroll(RecommendBaseFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         mSearchLastItem = firstVisibleItem + visibleItemCount - 1;
 
-        int pageMax = (mCntPageing + 1) * SearchConstants.RecommendList.requestMaxCount_Recommend;
+        int pageMax = (sCntPageing + 1) * SearchConstants.RecommendList.requestMaxCount_Recommend;
         DTVTLogger.debug("onScroll.first:" + firstVisibleItem +
                 " .visible:" + visibleItemCount + " .total:" + totalItemCount +
                 " dataSize:" + fragment.mData.size());
         if (maxShowListSize > fragment.mData.size() && // システム制約最大値 100件
                 fragment.mData.size() != 0 && // 取得結果0件以外
                 firstVisibleItem + visibleItemCount >= pageMax) { // 表示中の最下まで行ったかの判定
-            mCntPageing += 1;
+            sCntPageing += 1;
             setPagingStatus(true);
             fragment.displayLoadMore(true);
 

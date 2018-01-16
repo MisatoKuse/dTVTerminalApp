@@ -21,6 +21,9 @@ import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstan
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_RECOMMEND_DCHANNEL_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_RECOMMEND_DTV_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_RECOMMEND_VIDEO_SQL;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_RENTAL_ACTIVE_LIST_SQL;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_RENTAL_CHANNEL_ACTIVE_LIST_SQL;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_RENTAL_CHANNEL_LIST_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_RENTAL_LIST_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_ROLE_LIST_SQL;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.CREATE_TABLE_TVCLIP_LIST_SQL;
@@ -37,6 +40,9 @@ import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstan
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RECOMMEND_LIST_DCHANNEL_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RECOMMEND_LIST_DTV_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RECOMMEND_VIDEO_LIST_TABLE_NAME;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RENTAL_ACTIVE_LIST_TABLE_NAME;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RENTAL_CHANNEL_ACTIVE_LIST_TABLE_NAME;
+import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RENTAL_CHANNEL_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.RENTAL_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.ROLE_LIST_TABLE_NAME;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.TVCLIP_LIST_TABLE_NAME;
@@ -48,7 +54,7 @@ import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstan
 public class DBHelper extends SQLiteOpenHelper {
 
     /**
-     * 「channel_list」テーブルの削除用SQL
+     * 「channel_list」テーブルの削除用SQL.
      */
     private static final String DROP_CHANNEL_TABLE_SQL = "drop table if exists " + CHANNEL_LIST_TABLE_NAME;
     private static final String DROP_DAILYRANK_TABLE_SQL = "drop table if exists " + DAILYRANK_LIST_TABLE_NAME;
@@ -65,23 +71,35 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String DROP_DOWNLOAD_LIST_TABLE_SQL = "drop table if exists " + DOWNLOAD_LIST_TABLE_NAME;
     private static final String DROP_RECOMMEND_DANIME_TABLE_SQL = "drop table if exists " + RECOMMEND_LIST_DANIME_TABLE_NAME;
     /**
-     * 「tv clip list」テーブルの削除用SQL
+     * 「tv clip list」テーブルの削除用SQL.
      */
     private static final String DROP_TVCLIP_TABLE_SQL = "drop table if exists " + TVCLIP_LIST_TABLE_NAME;
     /**
-     * 「レンタル一覧」テーブルの削除用SQL
+     * 「レンタル一覧」テーブルの削除用SQL.
      */
     private static final String DROP_RENTAL_TABLE_SQL = "drop table if exists " + RENTAL_LIST_TABLE_NAME;
     /**
-     * クリップキー一覧 テーブル削除用SQL
+     * 「レンタル一覧」のactive_listテーブルの削除用SQL.
+     */
+    private static final String DROP_RENTAL_ACTIVE_LIST_SQL = "drop table if exists " + RENTAL_ACTIVE_LIST_TABLE_NAME;
+    /**
+     * 「購入済みCH一覧」テーブルの削除用SQL.
+     */
+    private static final String DROP_RENTAL_CHANNEL_TABLE_SQL = "drop table if exists " + RENTAL_CHANNEL_LIST_TABLE_NAME;
+    /**
+     * 「購入済みCH一覧」のactive_listテーブルの削除用SQL.
+     */
+    private static final String DROP_RENTAL_CHANNEL_ACTIVE_LIST_SQL = "drop table if exists " + RENTAL_CHANNEL_ACTIVE_LIST_TABLE_NAME;
+    /**
+     * クリップキー一覧 テーブル削除用SQL.
      */
     private static final String DROP_TV_CLIP_KEY_LIST_TABLE_SQL = "drop table if exists " + DBConstants.TV_CLIP_KEY_LIST_TABLE_NAME;
     private static final String DROP_VOD_CLIP_KEY_LIST_TABLE_SQL = "drop table if exists " + DBConstants.VOD_CLIP_KEY_LIST_TABLE_NAME;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
-     * @param context
+     * @param context コンテキスト
      */
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -114,12 +132,27 @@ public class DBHelper extends SQLiteOpenHelper {
             DTVTLogger.debug("HomeDBHelper::onCreate, create " + CREATE_TABLE_RENTAL_LIST_SQL + " table failed, cause=" + e.getCause());
         }
         try {
-            sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_TV_CLIP_KEY_LIST_SQL);// クリップキー一覧(TV)
+            sqLiteDatabase.execSQL(CREATE_TABLE_RENTAL_ACTIVE_LIST_SQL);   //レンタルのactive_list一覧用
+        } catch (Exception e) {
+            DTVTLogger.debug("HomeDBHelper::onCreate, create " + CREATE_TABLE_RENTAL_ACTIVE_LIST_SQL + " table failed, cause=" + e.getCause());
+        }
+        try {
+            sqLiteDatabase.execSQL(CREATE_TABLE_RENTAL_CHANNEL_LIST_SQL);   //購入済みCH一覧用
+        } catch (Exception e) {
+            DTVTLogger.debug("HomeDBHelper::onCreate, create " + CREATE_TABLE_RENTAL_CHANNEL_LIST_SQL + " table failed, cause=" + e.getCause());
+        }
+        try {
+            sqLiteDatabase.execSQL(CREATE_TABLE_RENTAL_CHANNEL_ACTIVE_LIST_SQL);   //購入済みCHのactive_lis一覧用
+        } catch (Exception e) {
+            DTVTLogger.debug("HomeDBHelper::onCreate, create " + CREATE_TABLE_RENTAL_CHANNEL_ACTIVE_LIST_SQL + " table failed, cause=" + e.getCause());
+        }
+        try {
+            sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_TV_CLIP_KEY_LIST_SQL); // クリップキー一覧(TV)
         } catch (Exception e) {
             DTVTLogger.debug("HomeDBHelper::onCreate, create " + DBConstants.CREATE_TABLE_TV_CLIP_KEY_LIST_SQL + " table failed, cause=" + e.getCause());
         }
         try {
-            sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_VOD_CLIP_KEY_LIST_SQL);// クリップキー一覧(VOD)
+            sqLiteDatabase.execSQL(DBConstants.CREATE_TABLE_VOD_CLIP_KEY_LIST_SQL); // クリップキー一覧(VOD)
         } catch (Exception e) {
             DTVTLogger.debug("HomeDBHelper::onCreate, create " + DBConstants.CREATE_TABLE_VOD_CLIP_KEY_LIST_SQL + " table failed, cause=" + e.getCause());
         }
@@ -144,6 +177,9 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(DROP_DOWNLOAD_LIST_TABLE_SQL);
         sqLiteDatabase.execSQL(DROP_TVCLIP_TABLE_SQL);  //クリップ一覧画面用
         sqLiteDatabase.execSQL(DROP_RENTAL_TABLE_SQL);  //レンタル一覧画面用
+        sqLiteDatabase.execSQL(DROP_RENTAL_ACTIVE_LIST_SQL);  //レンタル一覧のactive_list用
+        sqLiteDatabase.execSQL(DROP_RENTAL_CHANNEL_TABLE_SQL);  //購入済みCH一覧用
+        sqLiteDatabase.execSQL(DROP_RENTAL_CHANNEL_ACTIVE_LIST_SQL);  //購入済みCH一覧のactive_list用
         sqLiteDatabase.execSQL(DROP_TV_CLIP_KEY_LIST_TABLE_SQL); // クリップキー一覧(TV)
         sqLiteDatabase.execSQL(DROP_VOD_CLIP_KEY_LIST_TABLE_SQL); // クリップキー一覧(VOD)
     }

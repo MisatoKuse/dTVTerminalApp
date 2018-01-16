@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
@@ -29,10 +30,16 @@ public class ClipRequestData {
     private String mLinearEndDate = null;
     // クリップ状態
     private String mSearchOk = null;
-    // クリップ対象
-    private String mClipTarget = null;
+    // 表示タイプ
+    private String mDispType = null;
+    // コンテンツタイプ
+    private String mContentType = null;
+    // テーブルタイプ
+    private ClipKeyListDao.TABLE_TYPE mTableType = null;
     // 視聴通知判定
     private boolean mIsNotify = false;
+    // クリップ未/済
+    private boolean mClipStatus = false;
     //EPG判定用
     private String TV_PROGRAM_CHECK = "tv_program";
     //h4d_iptv
@@ -134,8 +141,39 @@ public class ClipRequestData {
         return mIsNotify;
     }
 
+    public String getDispType() {
+        return mDispType;
+    }
+
+    public void setDispType(String mDispType) {
+        this.mDispType = mDispType;
+    }
+
+    public String getContentType() {
+        return mContentType;
+    }
+
+    public void setContentType(String mContentType) {
+        this.mContentType = mContentType;
+    }
+
+    public ClipKeyListDao.TABLE_TYPE getTableType() {
+        return mTableType;
+    }
+
+    public void setTableType(ClipKeyListDao.TABLE_TYPE mTableType) {
+        this.mTableType = mTableType;
+    }
+
+    public boolean isClipStatus() {
+        return mClipStatus;
+    }
+
+    public void setClipStatus(boolean mClipStatus) {
+        this.mClipStatus = mClipStatus;
+    }
     /**
-     * 視聴通知とコンテンツタイプを指定する
+     * 視聴通知とコンテンツタイプを指定する.
      *
      * @param dispType      　番組種別
      * @param contentsType  　コンテンツ種別
@@ -143,7 +181,8 @@ public class ClipRequestData {
      * @param tvService     　サービス種別
      * @param dTV           dTVフラグ
      */
-    public void setIsNotify(String dispType, String contentsType, String linearEndDate, String tvService, String dTV) {
+    public void setIsNotify(final String dispType, final String contentsType,
+                            final String linearEndDate, final String tvService, final String dTV) {
 
         //yyyy/MM/dd HH:mm:ss形式の時はエポック秒に変換する
         String epocLinearEndDate = linearEndDate;
@@ -151,9 +190,9 @@ public class ClipRequestData {
             epocLinearEndDate = String.valueOf(DateUtils.getEpochTime(epocLinearEndDate));
         }
         //EPG/DTVはdispType,contentsTypeの内容で判定する
-        if (dispType != null && dispType.equals(TV_PROGRAM_CHECK) &&
-                contentsType != null && contentsType.length() > 0 &&
-                Long.parseLong(epocLinearEndDate) < DateUtils.getNowTimeFormatEpoch()) {
+        if (dispType != null && dispType.equals(TV_PROGRAM_CHECK)
+                && contentsType != null && contentsType.length() > 0
+                && Long.parseLong(epocLinearEndDate) < DateUtils.getNowTimeFormatEpoch()) {
             //dispTypeがtv_programかつcontentsTypeにデータが存在かつ番組終了時間が現在時刻未満であればEPGと判断
             mIsNotify = true;
             setTvType(tvService);
@@ -164,11 +203,11 @@ public class ClipRequestData {
     }
 
     /**
-     * TV種別設定
+     * TV種別設定.
      *
      * @param tvService TV種別
      */
-    private void setTvType(String tvService) {
+    private void setTvType(final String tvService) {
         if (tvService != null) {
             if (tvService.equals(H4D_IPTV_SERVICE_CONTENTS)) {
                 //h4d_iptv
@@ -184,11 +223,11 @@ public class ClipRequestData {
     }
 
     /**
-     * DTV種別設定
+     * DTV種別設定.
      *
      * @param dtv dTV種別
      */
-    private void setDtvType(String dtv) {
+    private void setDtvType(final String dtv) {
         if (dtv != null && dtv.equals(DTV_SERVICE_CONTENTS_TRUE)) {
             //dtv_vod
             mType = WebApiBasePlala.CLIP_TYPE_DTV_VOD;

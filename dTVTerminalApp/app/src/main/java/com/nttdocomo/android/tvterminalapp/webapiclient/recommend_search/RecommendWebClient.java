@@ -66,8 +66,8 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback,
      */
     public static final String AIRTIME = "airtime";
 
-    //ホーム画面用最大件数.
-    public static final String HOME_PAGE_MAX = "10&";
+    //ホーム画面用最大件数（レコメンド情報の先読み分を含むので、100件に増加）.
+    public static final String HOME_PAGE_MAX = "100&";
 
     //ホーム画面用開始位置.
     public static final String HOME_PAGE_START = "1&";
@@ -96,7 +96,7 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback,
             queryItems = new LinkedHashMap();
         }
 
-        //返ってきたURLとパラメータで通信を行う
+        //指定されたURLとパラメータで通信を行う
         getReccomendInfo(url, queryItems, this);
     }
 
@@ -148,25 +148,7 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback,
         } else {
             //パラメータに誤りがあったので、ヌルを返却する
             if (mRecommendCallback != null) {
-                //コールバック処理の定義
-                runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        //ヌルをコールバックに返す
-                        mRecommendCallback.RecommendCallback(null);
-
-                        //後始末
-                        // **FindBugs** Bad pratice handler初期化されていないとfindbugは警告するが、
-                        // handlerに値が入っていなければここに来ることはありえないので、対処は行わない
-                        handler.removeCallbacks(runnable);
-                        runnable = null;
-                        handler = null;
-                    }
-                };
-
-                //コールバック処理を呼び出す
-                handler = new Handler();
-                handler.post(runnable);
+                mRecommendCallback.RecommendCallback(null);
             }
         }
     }

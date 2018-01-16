@@ -67,11 +67,12 @@ public class SearchResultBaseAdapter extends BaseAdapter {
 
                 holder.iv_clip.setVisibility(View.VISIBLE);
 
+                final ImageView clipButton = holder.iv_clip;
                 holder.iv_clip.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         // クリップ処理
-                        ((BaseActivity) mContext).sendClipRequest(searchContentInfo.getRequestData());
+                        ((BaseActivity) mContext).sendClipRequest(searchContentInfo.getRequestData(), clipButton);
                     }
                 });
             }else{

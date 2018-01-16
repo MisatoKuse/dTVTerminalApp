@@ -29,10 +29,11 @@ import java.util.Map;
  */
 public class DlDataProvider implements ServiceConnection, DownloadServiceListener, DbThread.DbOperation {
     private DlDataProviderListener mDlDataProviderListener;
-    private DownloadService.Binder mBinder;
+    private static DownloadService.Binder mBinder;
     private Activity mActivity;
     private DlData dlData;
     private String itemId;
+    public boolean isRegistered;
 
     public DlDataProvider(Activity activity, DlDataProviderListener dlDataProviderListener) throws Exception {
         if (null == activity) {
@@ -53,9 +54,9 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         if (null == mActivity) {
             return;
         }
-        DownloadService.isBinded = true;
+        DownloadService.BINDSTATUS = DownloadService.BINDED;
         Intent intent = new Intent(mActivity, DownloadService.class);
-        mActivity.bindService(intent, this, Context.BIND_AUTO_CREATE);
+        isRegistered = mActivity.bindService(intent, this, Context.BIND_AUTO_CREATE);
         startService();
     }
 
@@ -66,7 +67,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         if (null == mActivity) {
             return;
         }
-        DownloadService.isBinded = true;
+        DownloadService.BINDSTATUS = DownloadService.BINDED;
         Intent intent = new Intent(mActivity, DownloadService.class);
         mActivity.bindService(intent, this, Context.BIND_AUTO_CREATE);
     }
@@ -86,10 +87,10 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
      * DlDataProvider機能を無効
      */
     public void endProvider() {
-        if (null == mActivity || !DownloadService.isBinded) {
+        if (null == mActivity || DownloadService.BINDSTATUS == DownloadService.UNBINED) {
             return;
         }
-        DownloadService.isBinded = false;
+        DownloadService.BINDSTATUS = DownloadService.UNBINED;
         mActivity.unbindService(this);
     }
 
@@ -143,7 +144,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     public void stop() {
         DownloadService ds = getDownloadService();
         if (null != ds) {
-            ds.finishDl();
+//            ds.finishDl();
             ds.stopService();
         }
     }
@@ -213,7 +214,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
 
     @Override
     public void onStart(int totalFileByteSize) {
-        if (null != mDlDataProviderListener && DownloadService.isBinded) {
+        if (null != mDlDataProviderListener && DownloadService.BINDSTATUS == DownloadService.BINDED) {
             mDlDataProviderListener.onStart(totalFileByteSize);
             saveDownLoad(totalFileByteSize);
         }
@@ -235,8 +236,17 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
 
     @Override
     public void onProgress(int receivedBytes, int percent) {
-        if (null != mDlDataProviderListener) {
+        if (null != mDlDataProviderListener && DownloadService.BINDSTATUS == DownloadService.BINDED) {
             mDlDataProviderListener.onProgress(receivedBytes, percent);
+        }
+        if(DownloadService.BINDSTATUS == DownloadService.BACKGROUD){
+            DownloadService ds = getDownloadService();
+            if (null != ds) {
+                Intent intent = new Intent();
+                intent.setAction(DownloadService.DONWLOAD_UPDATE);
+                intent.putExtra(DownloadService.DONWLOAD_UPDATE, percent);
+                ds.sendBroadcast(intent);
+            }
         }
     }
 
@@ -251,15 +261,24 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     public void onSuccess(String fullPath) {
         if(!TextUtils.isEmpty(fullPath)){
             if(fullPath.contains(File.separator)){
-                itemId = fullPath.split(File.separator)[1];
+                String paths[] = fullPath.split(File.separator);
+                itemId = fullPath.split(File.separator)[paths.length - 1];
                 if(!TextUtils.isEmpty(itemId)){
                     updateDownloadStatusToDb();
                 }
             }
         }
-        if (null != mDlDataProviderListener && DownloadService.isBinded) {
+        if (null != mDlDataProviderListener && DownloadService.BINDSTATUS == DownloadService.BINDED) {
             DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok");
             mDlDataProviderListener.onSuccess(fullPath);
+        } else if(DownloadService.BINDSTATUS == DownloadService.BACKGROUD){
+            DownloadService ds = getDownloadService();
+            if (null != ds) {
+                Intent intent = new Intent();
+                intent.setAction(DownloadService.DONWLOAD_SUCCESS);
+                intent.putExtra(DownloadService.DONWLOAD_PATH, fullPath);
+                ds.sendBroadcast(intent);
+            }
         } else {
             if (DownloadService.dlDataQue != null && DownloadService.dlDataQue.size() > 0) {
                 DownloadService.dlDataQue.remove(0);
@@ -324,6 +343,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     private static final int DOWNLOAD_INSERT = 2;
     private static final int DOWNLOAD_UPDATE = 3;
     private static final int DOWNLOAD_TOTALSIZE_SELECT = 4;
+    private static final int DOWNLOAD_DELETE_ALL = 5;
 
     public void getDownLoadStatus() {
         dbOperationByThread(DOWNLOAD_STATUS_SELECT);
@@ -386,10 +406,31 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                     downLoadListDataManager.updateDownloadByItemId(itemId);
                 }
                 break;
+            case DOWNLOAD_DELETE_ALL:
+                downLoadListDataManager.deleteDownloadAllContents();
+                break;
             default:
                 break;
         }
         return resultSet;
+    }
+
+    public void cancelDownLoadStatus(String path){
+        if(!TextUtils.isEmpty(path) && path.contains(File.separator)){
+            String paths[] = path.split(File.separator);
+            String itemId = path.split(File.separator)[paths.length - 1];
+            if(!TextUtils.isEmpty(itemId)){
+                DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(mActivity);
+                downLoadListDataManager.deleteDownloadContentByItemId(itemId);
+                //ディスクからコンテンツを削除する
+                File file = new File(path);
+                if(file.exists()){
+                    if(!file.delete()) {
+                        DTVTLogger.debug("delete cacel file fail ");
+                    }
+                }
+            }
+        }
     }
 
     public List<Map<String, String>> getDownloadListData(){
@@ -400,23 +441,26 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     public void deleteAllDownLoadContents(){
         DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(mActivity);
         List<Map<String, String>> downLoadList = downLoadListDataManager.selectDownLoadList();
-        for(int i=0; i < downLoadList.size(); i++){
-            Map<String, String> hashMap = downLoadList.get(i);
-            String path = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL);
-            if(!TextUtils.isEmpty(path)){
-                deleteAllFiles(new File(path));
+        if(downLoadList != null && downLoadList.size() > 0){
+            for(int i=0; i < downLoadList.size(); i++){
+                Map<String, String> hashMap = downLoadList.get(i);
+                String path = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL);
+                if(!TextUtils.isEmpty(path)){
+                    deleteAllFiles(new File(path));
+                }
             }
+            downLoadListDataManager.deleteDownloadAllContents();
         }
     }
 
-    public void deleteAllFiles(File root) {
+    private void deleteAllFiles(File root) {
         File files[] = root.listFiles();
         if (files != null){
             for (File f : files) {
                 if (f.isDirectory()) {
                     deleteAllFiles(f);
                     try {
-                        if (f.delete()) {
+                        if (!f.delete()) {
                             DTVTLogger.debug("delete download file fail ");
                         }
                     } catch (Exception e) {
@@ -426,7 +470,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                     if (f.exists()) {
                         deleteAllFiles(f);
                         try {
-                            if (f.delete()) {
+                            if (!f.delete()) {
                                 DTVTLogger.debug("delete download file fail ");
                             }
                         } catch (Exception e) {
@@ -450,7 +494,10 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     private void updateDownloadStatusToDb(){
-        dbOperationByThread(DOWNLOAD_UPDATE);
+        if(mActivity != null){
+            DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(mActivity);
+            downLoadListDataManager.updateDownloadByItemId(itemId);
+        }
     }
 
     public void setQue(List<DlData> dlData) {
@@ -458,7 +505,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
             DownloadService.dlDataQue.clear();
         }
         DownloadService.dlDataQue = dlData;
-        DownloadService.isBinded = false;
+        DownloadService.BINDSTATUS = DownloadService.UNBINED;
     }
 
     private void dbOperationByThread(int operationId) {

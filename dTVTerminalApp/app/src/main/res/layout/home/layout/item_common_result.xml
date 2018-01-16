@@ -45,7 +45,7 @@
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true">
 
-        <TextView
+        <ImageView
             android:id="@+id/item_common_result_clip_tv"
             android:layout_width="@dimen/clip_button_size"
             android:layout_height="@dimen/clip_button_size"

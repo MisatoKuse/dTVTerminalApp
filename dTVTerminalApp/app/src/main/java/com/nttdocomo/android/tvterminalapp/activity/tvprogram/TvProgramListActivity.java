@@ -133,7 +133,6 @@ public class TvProgramListActivity extends BaseActivity
         mProgramRecyclerView = findViewById(R.id.tv_program_list_main_layout_channeldetail_rv);
         final ProgramScrollView programScrollView = findViewById(R.id.tv_program_list_main_layout_channeldetail_sl);
         mTagImageView = findViewById(R.id.tv_program_list_main_layout_curtime_iv);
-        RelativeLayout changeModeLayout = findViewById(R.id.tv_program_list_main_layout_changemode_rl);
 
         mTagImageView.setOnClickListener(this);
         titleTextView.setOnClickListener(this);
@@ -149,13 +148,6 @@ public class TvProgramListActivity extends BaseActivity
                 return false;
             }
         });
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                (int) ((double) mScreenWidth / (double) SCREEN_TIME_WIDTH_PERCENT * 2.0),
-                (int) ((double) mScreenWidth / (double) SCREEN_TIME_WIDTH_PERCENT * 3.5));
-        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
-        changeModeLayout.setLayoutParams(layoutParams);
-        changeModeLayout.setOnClickListener(this);
     }
 
     @Override
@@ -384,8 +376,8 @@ public class TvProgramListActivity extends BaseActivity
      */
     private void setTagView() {
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                mScreenWidth / SCREEN_TIME_WIDTH_PERCENT,
-                mScreenWidth / SCREEN_TIME_WIDTH_PERCENT);
+                dip2px(44),
+                dip2px(44));
         mTagImageView.setLayoutParams(layoutParams);
         mTagImageView.setImageResource(R.mipmap.ic_event_note_white_24dp);
     }
@@ -408,8 +400,8 @@ public class TvProgramListActivity extends BaseActivity
         for (int i = START_TIME; i < STANDARD_TIME + START_TIME; i++) {
             TextView tabTextView = new TextView(this);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    mScreenWidth / SCREEN_TIME_WIDTH_PERCENT,
-                    mScreenHeight / SCREEN_TIME_HEIGHT_PERCENT);
+                    dip2px(44),
+                    dip2px(180));
             tabTextView.setLayoutParams(params);
             int curTime = i;
             if (curTime >= STANDARD_TIME) {
@@ -472,10 +464,6 @@ public class TvProgramListActivity extends BaseActivity
             case R.id.header_layout_text:
                 //日付選択ダイアログ
                 showDatePickDlg();
-                break;
-            case R.id.tv_program_list_main_layout_changemode_rl:
-                //番組表モード切替
-                // TODO: 拡大・縮小番組表切替
                 break;
             default:
                 super.onClick(v);
@@ -609,12 +597,10 @@ public class TvProgramListActivity extends BaseActivity
         if(isShowFlag){
             findViewById(R.id.tv_program_list_main_layout_time_sl).setVisibility(View.INVISIBLE);
             findViewById(R.id.tv_program_list_main_layout_curtime_iv).setVisibility(View.INVISIBLE);
-            findViewById(R.id.tv_program_list_main_layout_changemode_rl).setVisibility(View.INVISIBLE);
             findViewById(R.id.tv_program_list_main_layout_tip_tv).setVisibility(View.VISIBLE);
         }else {
             findViewById(R.id.tv_program_list_main_layout_time_sl).setVisibility(View.VISIBLE);
             findViewById(R.id.tv_program_list_main_layout_curtime_iv).setVisibility(View.VISIBLE);
-            findViewById(R.id.tv_program_list_main_layout_changemode_rl).setVisibility(View.VISIBLE);
             findViewById(R.id.tv_program_list_main_layout_tip_tv).setVisibility(View.INVISIBLE);
         }
     }

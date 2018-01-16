@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActivity;
 import com.nttdocomo.android.tvterminalapp.model.program.Channel;
 import com.nttdocomo.android.tvterminalapp.model.program.ChannelItemClickListener;
 
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 
 public class ProgramChannelAdapter extends
         RecyclerView.Adapter<ProgramChannelAdapter.ViewHolder> {
+    private final TvProgramListActivity mContext;
     private LayoutInflater mInflater;
     private ArrayList<Channel> channelList;
     private int screenWidth = 0;
@@ -31,6 +33,7 @@ public class ProgramChannelAdapter extends
     public ProgramChannelAdapter(Context context, ArrayList<Channel> channelList) {
         mInflater = LayoutInflater.from(context);
         this.channelList = channelList;
+        this.mContext = (TvProgramListActivity) context;
         screenWidth = context.getResources().getDisplayMetrics().widthPixels;
     }
 
@@ -44,8 +47,8 @@ public class ProgramChannelAdapter extends
         View view = mInflater.inflate(R.layout.tv_program_channel_list_item_layout,
                 viewGroup, false);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                (screenWidth - screenWidth / 9)/2,
-                screenWidth / 9);
+                (screenWidth - mContext.dip2px(44))/2,
+                mContext.dip2px(44));
         layoutParams.gravity = Gravity.CENTER;
         view.setLayoutParams(layoutParams);
         ViewHolder viewHolder = new ViewHolder(view, channelItemClickListener);

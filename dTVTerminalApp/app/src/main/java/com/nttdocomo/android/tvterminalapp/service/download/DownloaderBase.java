@@ -5,7 +5,12 @@
 package com.nttdocomo.android.tvterminalapp.service.download;
 
 
+import android.content.Context;
+
+import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.jni.activation.NewEnvironmentUtil;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -25,6 +30,7 @@ public abstract class DownloaderBase {
     private DownloadListener mDownloadListener;
     private DownLoadThread mDownLoadThread;
     private int mNotifiedBytes;
+    public static final String sDlPrefix = "d_";
 
     protected void setDownloadedBytes(int bytesDone){
         mDownloadedBytes=bytesDone;
@@ -266,7 +272,7 @@ public abstract class DownloaderBase {
     public static String getFileNameById(String id) {
         String ret=id;
         ret=ret.replaceAll("[^a-z^A-Z^0-9]", "_");
-        return "d_"+(new StringBuilder(ret)).toString();
+        return sDlPrefix + (new StringBuilder(ret)).toString();
     }
 
     /**
@@ -303,10 +309,30 @@ public abstract class DownloaderBase {
         return result.get(0);
     }
 
+//    /**
+//     * 機能：
+//     *      １．Download Uiがなくなる場合、必ずこれをコールする
+//     *      ２．Download Uiがない場合、Serviceは閉じる時、必ずこれをコールする
+//     */
+//    public abstract void finishDl();
+
     /**
-     * 機能：
-     *      １．Download Uiがなくなる場合、必ずこれをコールする
-     *      ２．Download Uiがない場合、Serviceは閉じる時、必ずこれをコールする
+     * Get save path
+     * @return
      */
-    public abstract void finishDl();
+    public static String getDownloadPath(Context context){
+        if(null==context){
+            return null;
+        }
+        Boolean isInternal= SharedPreferencesUtils.getSharedPreferencesStoragePath(context);
+        String internalPaht= NewEnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP); //内部ストレージ
+        if(isInternal){
+            return internalPaht;
+        }
+        String ret= DownloaderBase.getExtSDCardPath();
+        if(null==ret){
+            ret=internalPaht;
+        }
+        return ret;
+    }
 }

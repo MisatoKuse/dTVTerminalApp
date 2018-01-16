@@ -171,12 +171,9 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_recommend_program_video))) {
                 if (null != mMenuDisplayEventListener) {
-                    mMenuDisplayEventListener.onMenuItemSelected(MenuItem.RECOMMEND_PRO_VIDEO);
-                    if (!(mActivity instanceof RecommendActivity)) {
-                        intent.setClass(mActivity, RecommendActivity.class);
-                        intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
-                        mActivity.startActivity(intent);
-                    }
+                    intent.setClass(mActivity, RecommendActivity.class);
+                    intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                    mActivity.startActivity(intent);
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_staff_recommend))) {
                 if (null != mMenuDisplayEventListener) {

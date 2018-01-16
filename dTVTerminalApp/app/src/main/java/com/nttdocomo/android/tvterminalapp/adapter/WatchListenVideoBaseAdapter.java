@@ -66,11 +66,12 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter
             holder.wl_rating_count = view.findViewById(R.id.wl_rating_count);
             holder.wl_clip = view.findViewById(R.id.wl_clip);
 
+            final ImageView clipButton = holder.wl_clip;
             holder.wl_clip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     //クリップボタンイベント
-                    ((BaseActivity) mContext).sendClipRequest(contentsData.getRequestData());
+                    ((BaseActivity) mContext).sendClipRequest(contentsData.getRequestData(), clipButton);
                 }
             });
             float mWidth = (float) mContext.getResources().getDisplayMetrics().widthPixels / 3;
@@ -112,6 +113,18 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter
             holder.wl_video_rating.setRating(Float.parseFloat(ratingValue));
             holder.wl_rating_count.setText(ratingValue);
         }
+        if (null != holder.wl_clip) {
+            if (contentsData.isClipExec()) {
+                holder.wl_clip.setVisibility(View.INVISIBLE);
+            } else {
+                if (contentsData.isClipStatus()) {
+                    holder.wl_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
+                } else {
+                    holder.wl_clip.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+                }
+            }
+        }
+
         return view;
     }
 

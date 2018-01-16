@@ -18,7 +18,7 @@ import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 
 /**
- * TCPクライアント
+ * TCPクライアント.
  */
 public class TcpClient {
 
@@ -26,7 +26,8 @@ public class TcpClient {
     private String mRemoteIp = null;
     private int mRemotePort = 0;
 
-    private static final int SEND_RECV_TIMEOUT = 3000;
+    // STBスタンバイ状態からの電源ONとユーザアカウント切り替えに必要な最大所要時間（ミリ秒）
+    private static final int SEND_RECV_TIMEOUT = 6000;
 
     public TcpClient() {
         mSocket = null;
@@ -34,6 +35,8 @@ public class TcpClient {
     }
 
     /**
+     * Socket通信でSTBへ接続する.
+     *
      * @param remoteIp
      * @param remotePort
      * @return
@@ -66,7 +69,7 @@ public class TcpClient {
     }
 
     /**
-     * Socket通信を切断する
+     * Socket通信を切断する.
      */
     public void disconnect() {
         if (mSocket != null) {
@@ -82,7 +85,7 @@ public class TcpClient {
     }
 
     /**
-     * Socket通信のメッセージを受信する
+     * Socket通信のメッセージを受信する.
      * 中継アプリから JSON形式の応答メッセージを受信する
      *
      * @return
@@ -108,7 +111,9 @@ public class TcpClient {
                     continue;
                 }
                 char[] line = new char[inputStream.available()];
-                streamReader.read(line);
+                if (streamReader.read(line) == -1) {
+                    continue;
+                }
                 data.append(String.valueOf(line));
                 break;
             }
@@ -123,10 +128,10 @@ public class TcpClient {
     }
 
     /**
-     * 　STBへメッセージ（JSON形式）を送信する
+     * STBへメッセージ（JSON形式）を送信する.
      *
      * @param data
-     * @return
+     * @return true 送信した場合
      */
     public boolean send(String data) {
 

@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DailyRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.VideoRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.WeeklyRankInsertDataManager;
@@ -21,7 +22,6 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.WeeklyRankList;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingConstants;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.DailyRankWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WeeklyRankWebClient;
@@ -70,8 +70,8 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             setStructDB(list);
             mWeeklyRankList = list;
             // コールバック判定
-            // TODO ClipKeyListResponseをUI側へ送る
-            if (!requiredClipKeyList
+            // TODO 他の取得が必要なDataProviderにも判定文追加
+            if (!mRequiredClipKeyList
                     || mResponse != null) {
                 if (mApiDataProviderCallback != null) {
                     DTVTLogger.debug("WeeklyRankList Callback");
@@ -96,12 +96,12 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         }
     }
 
+    // TODO 他の取得が必要なDataProviderにも判定文追加
     @Override
     public void onTvClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
         super.onTvClipKeyListJsonParsed(clipKeyListResponse);
         // コールバック判定
-        // TODO ClipKeyListResponseをUI側へ送る
         if (mWeeklyRankList != null) {
             if (mApiDataProviderCallback != null) {
                 DTVTLogger.debug("WeeklyRankList Callback");
@@ -113,12 +113,12 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         DTVTLogger.end();
     }
 
+    // TODO 他の取得が必要なDataProviderにも判定文追加
     @Override
     public void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
         super.onVodClipKeyListJsonParsed(clipKeyListResponse);
         // コールバック判定
-        // TODO ClipKeyListResponseをUI側へ送る
         if (mWeeklyRankList != null) {
             if (mApiDataProviderCallback != null) {
                 DTVTLogger.debug("WeeklyRankList Callback");
@@ -383,10 +383,35 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             String tvService = map.get(JsonContents.META_RESPONSE_TV_SERVICE);
             String dTv = map.get(JsonContents.META_RESPONSE_DTV);
             requestData.setIsNotify(dispType, contentsType, linearEndDate, tvService, dTv);
+            requestData.setDispType(dispType);
+            requestData.setContentType(contentsType);
+            requestData.setTableType(decisionTableType(contentsType, contentsType));
             rankingContentInfo.setRequestData(requestData);
 
-            // TODO クリップ状態を反映
-//            mTvResponse.getRequestData();
+            // TODO 他の取得が必要なDataProviderにも追加
+            if(mRequiredClipKeyList) {
+                // クリップ状態をコンテンツリストに格納
+                boolean isCripped = false;
+                ClipKeyListDao.CONTENT_TYPE contentType = searchContentsType(dispType, contentsType, dTv);
+                ClipKeyListDao.TABLE_TYPE tableType = decisionTableType(dispType, contentsType);
+                switch (contentType) {
+                    case TV:
+                        isCripped = findDbTvClipKeyData(tableType,
+                                rankingContentInfo.getServiceId(),
+                                rankingContentInfo.getEventId(),
+                                rankingContentInfo.getContentsType());
+                        break;
+                    case VOD:
+                        isCripped = findDbVodClipKeyData(tableType,
+                                rankingContentInfo.getCrid());
+                        break;
+                    case DTV:
+                        isCripped = findDbDtvClipKeyData(tableType,
+                                rankingContentInfo.getTitleId());
+                        break;
+                }
+                rankingContentInfo.setClipStatus(isCripped);
+            }
 
             rankingContentsDataList.add(rankingContentInfo);
             DTVTLogger.info("RankingContentInfo " + rankingContentInfo.getRank());

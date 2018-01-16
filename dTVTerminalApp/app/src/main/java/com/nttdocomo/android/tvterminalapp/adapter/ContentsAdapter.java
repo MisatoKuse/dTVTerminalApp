@@ -161,15 +161,15 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         if (!ActivityTypeItem.TYPE_RECORDED_LIST.equals(mType)) {
             //クリップボタン処理を設定する
             final ClipRequestData requestData = listContentInfo.getRequestData();
-            TextView textView = view.findViewById(R.id.item_common_result_clip_tv);
-            listContentInfo.setClipButton(textView);
-            textView.setOnClickListener(new OnClickListener() {
+            final ImageView clipButton = view.findViewById(R.id.item_common_result_clip_tv);
+            listContentInfo.setClipButton(clipButton);
+            clipButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     //クリップボタンのイベントを親に渡す
 //                    ((ListView) parent).performItemClick(mView, position, R.id.item_common_result_clip_tv);
                     //TODO:親に処理を渡すか検討中
-                    ((BaseActivity) mContext).sendClipRequest(requestData);
+                    ((BaseActivity) mContext).sendClipRequest(requestData, clipButton);
                 }
             });
         } else {
@@ -523,8 +523,15 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 //TODO:録画予約一覧等、クリップボタンを表示しない画面はここで外す
                 if (!mType.equals(TYPE_RECORDING_RESERVATION_LIST) && !mType.equals(TYPE_STB_SELECT_LIST)) {
                     //クリップ状態が1以外の時は、非活性クリップボタンを表示
-                    holder.tv_clip.setVisibility(View.VISIBLE);
-                    holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
+                    if (listContentInfo.isClipExec()) {
+                        holder.tv_clip.setVisibility(View.GONE);
+                    } else {
+                        if (listContentInfo.isClipStatus()) {
+                            holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
+                        } else {
+                            holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+                        }
+                    }
                 }
             }
         }
@@ -589,7 +596,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         //メインタイトル
         TextView tv_title;
         //操作アイコンボタン
-        TextView tv_clip;
+        ImageView tv_clip;
         //ライン
         TextView tv_line;
         // 録画予約ステータス

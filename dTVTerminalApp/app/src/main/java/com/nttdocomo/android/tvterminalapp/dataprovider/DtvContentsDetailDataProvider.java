@@ -66,9 +66,17 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
      */
     private PurchasedVodListResponse mPurchasedVodListResponse = null;
     /**
+     * 購入済みVODのactive_listの情報を保持.
+     */
+    private List<Map<String, String>> mPurchasedVodActiveList = null;
+    /**
      * 購入済みチャンネルリスト情報を保持.
      */
     private PurchasedChListResponse mPurchasedChListResponse = null;
+    /**
+     * 購入済みチャンネルのactive_listの情報を保持.
+     */
+    private List<Map<String, String>> mPurchasedChActiveList = null;
     /**
      * チャンネルリスト情報を保持.
      */
@@ -269,8 +277,8 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
                 case RENTAL_VOD_SELECT:
                     PurchasedVodListResponse purchasedVodListData = new PurchasedVodListResponse();
                     ArrayList<ActiveData> activeDatas = new ArrayList<>();
-                    for (int i = 0; i < resultSet.size(); i++) {
-                        Map<String, String> hashMap = resultSet.get(i);
+                    for (int i = 0; i < mPurchasedVodActiveList.size(); i++) {
+                        Map<String, String> hashMap = mPurchasedVodActiveList.get(i);
                         String active_list_license_id = hashMap.get(JsonContents.META_RESPONSE_ACTIVE_LIST
                                 + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_LICENSE_ID);
                         String active_list_valid_end_date = hashMap.get(JsonContents.META_RESPONSE_ACTIVE_LIST
@@ -287,9 +295,23 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
                     break;
                 case RENTAL_CHANNEL_SELECT:
                     PurchasedChListResponse purchasedChListResponse = new PurchasedChListResponse();
-                    ArrayList<ActiveData> activeChDatas = new ArrayList<>();
+                    ChannelList channelList = new ChannelList();
+                    List<HashMap<String, String>> list = new ArrayList<>();
+
                     for (int i = 0; i < resultSet.size(); i++) {
                         Map<String, String> hashMap = resultSet.get(i);
+                        HashMap<String, String> vcListMap = new HashMap<>();
+                        for (String para : JsonContents.METADATA_LIST_PARA) {
+                            vcListMap.put(para, hashMap.get(para));
+                        }
+                        list.add(vcListMap);
+                    }
+                    channelList.setClList(list);
+                    purchasedChListResponse.setChannelListData(channelList);
+
+                    ArrayList<ActiveData> activeChDatas = new ArrayList<>();
+                    for (int i = 0; i < mPurchasedChActiveList.size(); i++) {
+                        Map<String, String> hashMap = mPurchasedChActiveList.get(i);
 
                         String active_list_license_id = hashMap.get(JsonContents.META_RESPONSE_ACTIVE_LIST
                                 + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_LICENSE_ID);
@@ -339,6 +361,7 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
             case RENTAL_VOD_SELECT: //DBから購入済みVODデータを取得して返却する
                 RentalListDataManager rentalListDataManager = new RentalListDataManager(mContext);
                 resultSet = rentalListDataManager.selectRentalListData();
+                mPurchasedVodActiveList = rentalListDataManager.selectRentalActiveListData();
                 break;
             case RENTAL_CHANNEL_UPDATE: //サーバーから取得した購入済みCHデータをDBに保存する
                 RentalListInsertDataManager rentalChListInsertDataManager = new RentalListInsertDataManager(mContext);
@@ -347,6 +370,7 @@ public class DtvContentsDetailDataProvider implements ContentsDetailGetWebClient
             case RENTAL_CHANNEL_SELECT: //DBから購入済みCHデータを取得して返却する
                 RentalListDataManager rentalChListDataManager = new RentalListDataManager(mContext);
                 resultSet = rentalChListDataManager.selectRentalChListData();
+                mPurchasedChActiveList = rentalChListDataManager.selectRentalChActiveListData();
                 break;
             default:
                 break;

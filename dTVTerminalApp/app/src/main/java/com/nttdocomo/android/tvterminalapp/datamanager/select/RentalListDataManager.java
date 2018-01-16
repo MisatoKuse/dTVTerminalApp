@@ -14,6 +14,9 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 購入済みコンテンツ情報を取得するDataManager.
+ */
 public class RentalListDataManager {
 
     /**
@@ -44,9 +47,7 @@ public class RentalListDataManager {
                 JsonContents.META_RESPONSE_TITLE_ID, JsonContents.META_RESPONSE_R_VALUE,
                 JsonContents.META_RESPONSE_AVAIL_START_DATE, JsonContents.META_RESPONSE_AVAIL_END_DATE,
                 JsonContents.META_RESPONSE_DTV, JsonContents.META_RESPONSE_TV_SERVICE,
-                JsonContents.META_RESPONSE_CONTENT_TYPE, JsonContents.META_RESPONSE_DTV_TYPE, JsonContents.META_RESPONSE_ACTIVE_LIST,
-                JsonContents.META_RESPONSE_ACTIVE_LIST + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_LICENSE_ID,
-                JsonContents.META_RESPONSE_ACTIVE_LIST + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_VAILD_END_DATE
+                JsonContents.META_RESPONSE_CONTENT_TYPE, JsonContents.META_RESPONSE_DTV_TYPE
         };
 
         //Daoクラス使用準備
@@ -62,19 +63,40 @@ public class RentalListDataManager {
     }
 
     /**
+     * レンタル一覧のactive_listデータを返却する.
+     *
+     * @return 購入済みCH一覧データ
+     */
+    public List<Map<String, String>> selectRentalActiveListData() {
+        //必要な列を列挙する
+        String[] activeColumns = {JsonContents.META_RESPONSE_ACTIVE_LIST + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_LICENSE_ID,
+                JsonContents.META_RESPONSE_ACTIVE_LIST + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_VAILD_END_DATE
+        };
+
+        //Daoクラス使用準備
+        DBHelper homeDBHelper = new DBHelper(mContext);
+        SQLiteDatabase db = homeDBHelper.getWritableDatabase();
+        RentalListDao rentalListDao = new RentalListDao(db);
+
+        //データ取得
+        List<Map<String, String>> list = rentalListDao.activeListfindById(activeColumns);
+        db.close();
+        homeDBHelper.close();
+        return list;
+    }
+
+    /**
      * 購入済みCH一覧データを返却する.
      *
-     * @return 購入済みCH一覧デー
+     * @return 購入済みCH一覧データ
      */
     public List<Map<String, String>> selectRentalChListData() {
         //必要な列を列挙する
         String[] columns = {JsonContents.META_RESPONSE_CHNO, JsonContents.META_RESPONSE_DEFAULT_THUMB, JsonContents.META_RESPONSE_TITLE,
                 JsonContents.META_RESPONSE_AVAIL_START_DATE, JsonContents.META_RESPONSE_AVAIL_END_DATE,
                 JsonContents.META_RESPONSE_DISP_TYPE, JsonContents.META_RESPONSE_SERVICE_ID,
-                JsonContents.META_RESPONSE_CH_TYPE, JsonContents.META_RESPONSE_ACTIVE_LIST,
-                JsonContents.META_RESPONSE_PUID, JsonContents.META_RESPONSE_SUB_PUID,
-                JsonContents.META_RESPONSE_CHPACK + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID,
-                JsonContents.META_RESPONSE_CHPACK + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_SUB_PUID};
+                JsonContents.META_RESPONSE_CH_TYPE, JsonContents.META_RESPONSE_PUID, JsonContents.META_RESPONSE_SUB_PUID
+        };
 
         //Daoクラス使用準備
         DBHelper dbHelper = new DBHelper(mContext);
@@ -85,6 +107,29 @@ public class RentalListDataManager {
         List<Map<String, String>> list = rentalListDao.chFindById(columns);
         db.close();
         dbHelper.close();
+        return list;
+    }
+
+    /**
+     * 購入済みCH一覧のactive_listデータを返却する.
+     *
+     * @return 購入済みCH一覧データ
+     */
+    public List<Map<String, String>> selectRentalChActiveListData() {
+        //必要な列を列挙する
+        String[] activeColumns = {JsonContents.META_RESPONSE_ACTIVE_LIST + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_LICENSE_ID,
+                JsonContents.META_RESPONSE_ACTIVE_LIST + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_VAILD_END_DATE
+        };
+
+        //Daoクラス使用準備
+        DBHelper homeDBHelper = new DBHelper(mContext);
+        SQLiteDatabase db = homeDBHelper.getWritableDatabase();
+        RentalListDao rentalListDao = new RentalListDao(db);
+
+        //データ取得
+        List<Map<String, String>> list = rentalListDao.chActiveListfindById(activeColumns);
+        db.close();
+        homeDBHelper.close();
         return list;
     }
 }

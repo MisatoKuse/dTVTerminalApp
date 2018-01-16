@@ -9,7 +9,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
-import com.nttdocomo.android.tvterminalapp.service.download.DlData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,7 +64,6 @@ public class DownLoadListDao {
             isEof = cursor.moveToNext();
         }
         cursor.close();
-        db.close();
         return list;
     }
 
@@ -101,7 +99,6 @@ public class DownLoadListDao {
             isEof = cursor.moveToNext();
         }
         cursor.close();
-        db.close();
         return list;
     }
 
@@ -142,7 +139,6 @@ public class DownLoadListDao {
             isEof = cursor.moveToNext();
         }
         cursor.close();
-        db.close();
         return list;
     }
 
