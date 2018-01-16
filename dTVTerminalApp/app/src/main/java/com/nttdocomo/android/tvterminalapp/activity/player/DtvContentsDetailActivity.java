@@ -2165,7 +2165,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                     }
                     DTVTLogger.debug("視聴可能. 30日以内:" + mIsLimitThirtyDay);
                     return;
-                } else if (mDetailFullData.getAvail_start_date() > DateUtils.getNowTimeFormatEpoch()) {
+                } else if (mDetailFullData.getAvail_start_date() >= DateUtils.getNowTimeFormatEpoch()) {
                     //視聴不可(視聴導線を非表示)
                     mIsEnableWatch = DISABLE_WATCH_NO_PLAY;
                     DTVTLogger.debug("視聴不可(放送時間外のため再生導線を非表示)");
@@ -2270,7 +2270,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                         }
                         DTVTLogger.debug("視聴可能. 30日以内:" + mIsVodLimitThirtyDay);
                         return;
-                    } else if (mDetailFullData.getAvail_start_date() > DateUtils.getNowTimeFormatEpoch()) {
+                    } else if (mDetailFullData.getAvail_start_date() >= DateUtils.getNowTimeFormatEpoch()) {
                         //視聴不可(視聴導線を非表示)
                         mIsEnableWatch = DISABLE_WATCH_NO_PLAY;
                         DTVTLogger.debug("視聴不可(放送時間外のため再生導線を非表示)");
@@ -2437,7 +2437,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                             }
                         }
                         //視聴可能期限まで一ヶ月以内かどうか
-                        if (activeData.getValidEndDate() - DateUtils.getNowTimeFormatEpoch()
+                        if (activeDataDate - DateUtils.getNowTimeFormatEpoch()
                                 < DateUtils.EPOCH_TIME_ONE_DAY * ONE_MONTH) {
                             mIsLimitThirtyDay = true;
                             //視聴可能(期限まで30日以内)
