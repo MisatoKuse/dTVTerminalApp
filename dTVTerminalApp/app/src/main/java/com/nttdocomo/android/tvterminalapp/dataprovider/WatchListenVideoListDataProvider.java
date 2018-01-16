@@ -130,6 +130,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
             contentInfo.setRatStar(map.get(JsonContents.META_RESPONSE_RATING));
             contentInfo.setContentsType(map.get(JsonContents.META_RESPONSE_CONTENT_TYPE));
             contentInfo.setDtv(dtv);
+            contentInfo.setDtvType(dtvType);
             contentInfo.setDispType(dispType);
             contentInfo.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
             //クリップリクエストデータ作成

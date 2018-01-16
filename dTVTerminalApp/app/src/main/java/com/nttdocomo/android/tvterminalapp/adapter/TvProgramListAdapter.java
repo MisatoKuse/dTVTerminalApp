@@ -8,6 +8,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -172,6 +174,15 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             mClipButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、画像比較でクリップ済/未を判定する
+                    Bitmap clipButtonBitmap = ((BitmapDrawable) mClipButton.getBackground()).getBitmap();
+                    Bitmap activClipBitmap = ((BitmapDrawable) ResourcesCompat.getDrawable(mContext.getResources(),
+                            R.mipmap.icon_circle_active_clip, null)).getBitmap();
+                    if (clipButtonBitmap.equals(activClipBitmap)) {
+                        schedule.getClipRequestData().setClipStatus(true);
+                    } else {
+                        schedule.getClipRequestData().setClipStatus(false);
+                    }
                     //クリップボタンイベント
                     ((BaseActivity) mContext).sendClipRequest(schedule.getClipRequestData(), mClipButton);
                 }

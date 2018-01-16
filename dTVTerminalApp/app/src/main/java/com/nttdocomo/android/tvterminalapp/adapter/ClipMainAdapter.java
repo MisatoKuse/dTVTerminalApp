@@ -6,6 +6,8 @@ package com.nttdocomo.android.tvterminalapp.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -77,6 +79,15 @@ public class ClipMainAdapter extends BaseAdapter {
             holder.bt_video_clip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、画像比較でクリップ済/未を判定する
+                    Bitmap clipButtonBitmap = ((BitmapDrawable) clipButton.getBackground()).getBitmap();
+                    Bitmap activClipBitmap = ((BitmapDrawable) ResourcesCompat.getDrawable(mContext.getResources(),
+                            R.mipmap.icon_circle_active_clip, null)).getBitmap();
+                    if (clipButtonBitmap.equals(activClipBitmap)) {
+                        mData.get(position).getRequestData().setClipStatus(true);
+                    } else {
+                        mData.get(position).getRequestData().setClipStatus(false);
+                    }
                     //クリップボタンイベント
                     ((BaseActivity) mContext).sendClipRequest(mData.get(position).getRequestData(), clipButton);
                 }

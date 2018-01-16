@@ -6,7 +6,9 @@ package com.nttdocomo.android.tvterminalapp.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -166,9 +168,15 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             clipButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //クリップボタンのイベントを親に渡す
-//                    ((ListView) parent).performItemClick(mView, position, R.id.item_common_result_clip_tv);
-                    //TODO:親に処理を渡すか検討中
+                    //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、画像比較でクリップ済/未を判定する
+                    Bitmap clipButtonBitmap = ((BitmapDrawable) clipButton.getBackground()).getBitmap();
+                    Bitmap activClipBitmap = ((BitmapDrawable) ResourcesCompat.getDrawable(mContext.getResources(),
+                            R.mipmap.icon_circle_active_clip, null)).getBitmap();
+                    if (clipButtonBitmap.equals(activClipBitmap)) {
+                        requestData.setClipStatus(true);
+                    } else {
+                        requestData.setClipStatus(false);
+                    }
                     ((BaseActivity) mContext).sendClipRequest(requestData, clipButton);
                 }
             });
