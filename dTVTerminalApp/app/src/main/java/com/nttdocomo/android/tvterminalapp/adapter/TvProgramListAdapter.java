@@ -307,13 +307,13 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         }
         if (itemViewHolder.mClipButton != null) {
             if (itemSchedule.isClipExec() || mIsParental) {
-                itemViewHolder.mClipButton.setVisibility(View.GONE);
-            } else {
                 if (itemSchedule.isClipStatus()) {
-                    itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
-                } else {
                     itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+                } else {
+                    itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
                 }
+            } else {
+                itemViewHolder.mClipButton.setVisibility(View.GONE);
             }
         }
 

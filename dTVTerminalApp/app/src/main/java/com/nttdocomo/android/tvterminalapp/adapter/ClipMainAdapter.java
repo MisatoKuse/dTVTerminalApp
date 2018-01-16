@@ -127,13 +127,13 @@ public class ClipMainAdapter extends BaseAdapter {
                 }
                 if (null != holder.bt_video_clip) {
                     if (tvClipContentInfoItem.isClipExec()) {
-                        holder.bt_video_clip.setVisibility(View.GONE);
-                    } else {
                         if (tvClipContentInfoItem.isClipStatus()) {
-                            holder.bt_video_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
-                        } else {
                             holder.bt_video_clip.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+                        } else {
+                            holder.bt_video_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
                         }
+                    } else {
+                        holder.bt_video_clip.setVisibility(View.GONE);
                     }
                 }
 
@@ -174,13 +174,13 @@ public class ClipMainAdapter extends BaseAdapter {
                 }
                 if (null != holder.bt_video_clip) {
                     if (clipContentInfoItem.isClipExec()) {
-                        holder.bt_video_clip.setVisibility(View.INVISIBLE);
-                    } else {
                         if (clipContentInfoItem.isClipStatus()) {
-                            holder.bt_video_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
-                        } else {
                             holder.bt_video_clip.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+                        } else {
+                            holder.bt_video_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
                         }
+                    } else {
+                        holder.bt_video_clip.setVisibility(View.INVISIBLE);
                     }
                 }
 

@@ -126,13 +126,13 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter
         }
         if (null != holder.wl_clip) {
             if (contentsData.isClipExec()) {
-                holder.wl_clip.setVisibility(View.INVISIBLE);
-            } else {
                 if (contentsData.isClipStatus()) {
-                    holder.wl_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
-                } else {
                     holder.wl_clip.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+                } else {
+                    holder.wl_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
                 }
+            } else {
+                holder.wl_clip.setVisibility(View.INVISIBLE);
             }
         }
 

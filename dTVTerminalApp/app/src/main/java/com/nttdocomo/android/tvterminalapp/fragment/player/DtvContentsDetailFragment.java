@@ -152,13 +152,13 @@ public class DtvContentsDetailFragment extends Fragment {
             String serviceId = String.valueOf(mOtherContentsDetailData.getServiceId());
             if (serviceId.equals(SearchServiceType.ServiceId.HIKARI_TV_FOR_DOCOMO)) {
                 if (mOtherContentsDetailData.ismClipExec()){
-                    clipButton.setVisibility(View.GONE);
-                }else{
                     if (mOtherContentsDetailData.ismClipStatus()){
-                        clipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
-                    }else{
                         clipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+                    }else{
+                        clipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
                     }
+                }else{
+                    clipButton.setVisibility(View.GONE);
                 }
             } else {
                 clipButton.setVisibility(View.GONE);
