@@ -57,10 +57,15 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
         mVideoGenreProvider = new VideoGenreProvider(this);
 
         Intent intent = getIntent();
-        mVideoGenreListDataInfo = intent.getParcelableExtra(VIDEO_CONTENTS_BUNDLE_KEY);
+        if (intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false)) {
+            mVideoGenreListDataInfo = null;
+        } else {
+            mVideoGenreListDataInfo = intent.getParcelableExtra(VIDEO_CONTENTS_BUNDLE_KEY);
+        }
         VideoGenreList showData = null;
         // 初回 + VideoTopActivityが消えていない状態で遷移した際に初期画面を表示する
         if (mVideoGenreListDataInfo == null
+                || mVideoGenreListDataInfo.getVideoGenreListShowData() == null
                 || mVideoGenreListDataInfo.getVideoGenreListShowData().getSubGenre() == null) {
             mVideoGenreListDataInfo = new VideoGenreListDataInfo();
             mShowContentsList = new ArrayList<VideoGenreList>();
@@ -77,7 +82,9 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
             mShowContentsList = new ArrayList<VideoGenreList>();
             if (!GenreListMetaData.VIDEO_LIST_GENRE_ID_NOD.equals(mVideoGenreListDataInfo.getGenreId())) {
                 // "すべて" を一番上に表示する
-                mShowContentsList.add(mVideoGenreListDataInfo.getVideoGenreListData(GenreListMetaData.VIDEO_LIST_GENRE_ID_ALL_CONTENTS));
+                VideoGenreList firstList = mVideoGenreListDataInfo.getVideoGenreListData(GenreListMetaData.VIDEO_LIST_GENRE_ID_ALL_CONTENTS);
+                firstList.setGenreId(mVideoGenreListDataInfo.getGenreId());
+                mShowContentsList.add(firstList);
             }
             List<String> genreIdList = new ArrayList<String>();
             // リスト表示データ取得
@@ -137,14 +144,15 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
         Bundle bundle = new Bundle();
         VideoGenreList videoGenreList = (VideoGenreList) mContentsList.get(position);
 
-        //"すべて"は画面遷移なし
-        if (videoGenreList.getTitle().equals(getString(R.string.video_content_all_title))) {
-            return;
-        }
-
         // 次画面遷移用データを設定
         VideoGenreListDataInfo info = new VideoGenreListDataInfo();
-        info.setGenreId(videoGenreList.getGenreId());
+        // "すべて"をタップ
+        if (videoGenreList.getGenreId().equals(GenreListMetaData.VIDEO_LIST_GENRE_ID_ALL_CONTENTS)) {
+            DTVTLogger.debug("Select Genre ALL Contents");
+            info.setGenreId(null);
+        } else {
+            info.setGenreId(videoGenreList.getGenreId());
+        }
         info.setSubGenre(mVideoGenreListDataInfo.getSubGenre());
 
         bundle.putParcelable(VIDEO_CONTENTS_BUNDLE_KEY, info);
