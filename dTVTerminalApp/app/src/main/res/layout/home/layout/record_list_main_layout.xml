@@ -47,7 +47,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true" />
 
-        <!-- 仕様通りに表示させるため、一時↓のように構成 -->
+        <!-- 仕様通りに表示させるため、一時↓のように構成
         <com.nttdocomo.android.tvterminalapp.model.program.ChangeModeActionButton
             android:id="@+id/recorded_List_filtering_layout_button"
             android:layout_width="match_parent"
@@ -64,6 +64,6 @@
                 android:scaleType="fitCenter"
                 android:src="@mipmap/ic_fiber_manual_record_white_24dp"/>
 
-        </com.nttdocomo.android.tvterminalapp.model.program.ChangeModeActionButton>
+        </com.nttdocomo.android.tvterminalapp.model.program.ChangeModeActionButton>-->
     </RelativeLayout>
 </LinearLayout>

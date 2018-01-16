@@ -509,6 +509,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         baseFrgament.mContentsList = new ArrayList<>();
         List<Map<String, String>> resultList = getDownloadListFromDb();
         setTakeOutContentsToAll(dlnaRecVideoItems, resultList);
+        List<ContentsData> listData = baseFrgament.getContentsData();
+        listData.clear();
         for (int i = 0; i < dlnaRecVideoItems.size(); i++) {
             DlnaRecVideoItem itemData = dlnaRecVideoItems.get(i);
             RecordedContentsDetailData detailData = new RecordedContentsDetailData();
@@ -557,8 +559,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void setNotifyData(RecordedBaseFragment baseFrgament, DlnaRecVideoItem dlnaRecVideoItem, int i){
-        List<ContentsData> listData = baseFrgament.getContentsData();
-        listData.clear();
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.JAPAN);
         // TODO 年齢取得未実装の為、固定値を返却
         boolean isAge = true;
@@ -586,7 +586,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             }
             contentsData.setTime(selectDate);
             contentsData.setDownloadFlg(baseFrgament.mContentsList.get(i).getDownLoadStatus());
-            listData.add(contentsData);
+            baseFrgament.getContentsData().add(contentsData);
         } else {
             // NOP
         }

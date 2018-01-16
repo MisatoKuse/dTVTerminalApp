@@ -9,8 +9,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.DataBaseManager;
-import com.nttdocomo.android.tvterminalapp.service.download.DlData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,7 +64,6 @@ public class DownLoadListDao {
             isEof = cursor.moveToNext();
         }
         cursor.close();
-        db.close();
         return list;
     }
 
@@ -102,7 +99,6 @@ public class DownLoadListDao {
             isEof = cursor.moveToNext();
         }
         cursor.close();
-        db.close();
         return list;
     }
 
@@ -143,7 +139,6 @@ public class DownLoadListDao {
             isEof = cursor.moveToNext();
         }
         cursor.close();
-        db.close();
         return list;
     }
 
@@ -169,9 +164,6 @@ public class DownLoadListDao {
         StringBuilder updateSelection = new StringBuilder();
         updateSelection.append(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
         updateSelection.append("=? ");
-        if(!db.isOpen()){
-            db = DataBaseManager.getInstance().openDatabase();
-        }
         return db.update(DOWNLOAD_LIST_TABLE_NAME, contentValues , updateSelection.toString(), new String[]{itemId});
     }
 

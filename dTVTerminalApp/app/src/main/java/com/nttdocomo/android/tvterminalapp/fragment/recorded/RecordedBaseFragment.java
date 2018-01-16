@@ -528,6 +528,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             DownloadService.BINDSTATUS = DownloadService.UNBINED;
         }
         if(queIndex != null && queIndex.size() > 0){
+            que.clear();
             for(int i=0;i < queIndex.size(); i++){
                 DlData dlData = setDlData(queIndex.get(i));
                 que.add(dlData);
