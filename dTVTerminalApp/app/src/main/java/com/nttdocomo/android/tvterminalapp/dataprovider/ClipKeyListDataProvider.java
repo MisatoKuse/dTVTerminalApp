@@ -10,7 +10,6 @@ import android.os.Handler;
 import com.nttdocomo.android.tvterminalapp.activity.home.ClipListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RentalListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.WatchingVideoListActivity;
-import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
@@ -38,7 +37,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         ClipKeyListWebClient.VodClipKeyListJsonParserCallback, DbThread.DbOperation {
     private Context mContext;
     protected boolean mRequiredClipKeyList = false;
-    protected ClipKeyListResponse mResponse = null;
+    protected boolean mResponseEndFlag = false;
     private static final String CLIP_KEY_LIST_TYPE_OTHER_CHANNEL = "h4d_iptv";
 
     private ClipRequestData mClipRequestData = null;
@@ -53,12 +52,12 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
             if (clipKeyListResponse.getIsUpdate()) {
                 DTVTLogger.debug("ClipKeyListResponse Insert DB");
                 setStructDB(ClipKeyListDao.TABLE_TYPE.TV, clipKeyListResponse);
-                mResponse = clipKeyListResponse;
+                mResponseEndFlag = true;
             } else {
                 // DBから取得
                 DTVTLogger.debug("ClipKeyListResponse Select DB");
                 getClipKeyListDbData(ClipKeyListDao.TABLE_TYPE.TV, clipKeyListResponse);
-                mResponse = clipKeyListResponse;
+                mResponseEndFlag = true;
             }
         } else {
             // TODO パラメータエラー時の処理を記載
@@ -73,12 +72,12 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
             if (clipKeyListResponse.getIsUpdate()) {
                 DTVTLogger.debug("ClipKeyListResponse Insert DB");
                 setStructDB(ClipKeyListDao.TABLE_TYPE.VOD, clipKeyListResponse);
-                mResponse = clipKeyListResponse;
+                mResponseEndFlag = true;
             } else {
                 // DBから取得
                 DTVTLogger.debug("ClipKeyListResponse Select DB");
                 getClipKeyListDbData(ClipKeyListDao.TABLE_TYPE.VOD, clipKeyListResponse);
-                mResponse = clipKeyListResponse;
+                mResponseEndFlag = true;
             }
         } else {
             // TODO パラメータエラー時の処理を記載
@@ -119,7 +118,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      */
     public void getClipKeyList(ClipKeyListRequest request) {
         DTVTLogger.start();
-        mResponse = null;
+        mResponseEndFlag = false;
         request.setIsForce(isCachingClipKeyListRecord(request.getType()));
         ClipKeyListWebClient client = new ClipKeyListWebClient();
         // リクエストによってコールバックを変える

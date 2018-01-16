@@ -9,22 +9,16 @@ import android.content.Context;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.TvClipInsertDataManager;
-import com.nttdocomo.android.tvterminalapp.datamanager.select.TvClipDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvClipList;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
-import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvClipWebClient;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.TV_LAST_INSERT;
 
 
 public class TvClipDataProvider extends ClipKeyListDataProvider implements TvClipWebClient.TvClipJsonParserCallback {
@@ -37,7 +31,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
             TvClipList list = tvClipLists.get(0);
 //            setStructDB(list);
             if (!mRequiredClipKeyList
-                    || mResponse != null) {
+                    || mResponseEndFlag) {
                 sendTvClipListData(list.getVcList());
             } else {
                 mClipList = list;

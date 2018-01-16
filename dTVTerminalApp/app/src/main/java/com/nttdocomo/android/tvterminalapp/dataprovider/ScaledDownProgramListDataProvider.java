@@ -338,29 +338,29 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 }
                 //TODO 番組表表示させるため、コメントアウトします
                     /*if(day.compareTo(selectStartDate) !=-1 && day.compareTo(selectEndDate)!=1){*/
-                        String endDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
-                        String thumb = hashMap.get(JsonContents.META_RESPONSE_THUMB_448);
-                        String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
-                        String detail = hashMap.get(JsonContents.META_RESPONSE_EPITITLE);
-                        String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
-                        String rValue = hashMap.get(JsonContents.META_RESPONSE_R_VALUE);
-                        String dispType = hashMap.get(JsonContents.META_RESPONSE_DISP_TYPE);
-                        String searchOk = hashMap.get(JsonContents.META_RESPONSE_SEARCH_OK);
-                        String dtv = hashMap.get(JsonContents.META_RESPONSE_DTV);
-                        String dtvType = hashMap.get(JsonContents.META_RESPONSE_DTV_TYPE);
+                String endDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
+                String thumb = hashMap.get(JsonContents.META_RESPONSE_THUMB_448);
+                String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
+                String detail = hashMap.get(JsonContents.META_RESPONSE_EPITITLE);
+                String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
+                String rValue = hashMap.get(JsonContents.META_RESPONSE_R_VALUE);
+                String dispType = hashMap.get(JsonContents.META_RESPONSE_DISP_TYPE);
+                String searchOk = hashMap.get(JsonContents.META_RESPONSE_SEARCH_OK);
+                String dtv = hashMap.get(JsonContents.META_RESPONSE_DTV);
+                String dtvType = hashMap.get(JsonContents.META_RESPONSE_DTV_TYPE);
                 String contentType = hashMap.get(JsonContents.META_RESPONSE_CONTENT_TYPE);
-                        schedule.setStartTime(startDate);
-                        schedule.setEndTime(endDate);
-                        schedule.setImageUrl(thumb);
-                        schedule.setTitle(title);
-                        schedule.setDetail(detail);
-                        schedule.setChNo(chNo);
-                        schedule.setRValue(rValue);
+                schedule.setStartTime(startDate);
+                schedule.setEndTime(endDate);
+                schedule.setImageUrl(thumb);
+                schedule.setTitle(title);
+                schedule.setDetail(detail);
+                schedule.setChNo(chNo);
+                schedule.setRValue(rValue);
                 schedule.setContentType(contentType);
-                        schedule.setDtv(dtv);
-                        schedule.setDispType(dispType);
-                        schedule.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
-                        schedule.setClipRequestData(setClipData(hashMap));
+                schedule.setDtv(dtv);
+                schedule.setDispType(dispType);
+                schedule.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
+                schedule.setClipRequestData(setClipData(hashMap));
 
                 schedule.setClipStatus(getClipStatus(dispType, contentType, dtv,
                         hashMap.get(JsonContents.META_RESPONSE_CRID),
