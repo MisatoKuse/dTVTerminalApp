@@ -316,16 +316,16 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                         synchronized (this) {
                             if (isOn) {
                                 mStbStatusIcon.setImageResource(R.mipmap.ic_stb_status_icon_white);
-                                mIsStbStatusOn = true;
-                                //ペアリングアイコンが点灯になった際にdアカチェックを行う
-//                                String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(getApplicationContext());
-//                                if(userId != null) {
-//                                    RemoteControlRelayClient.getInstance().isUserAccountExistRequest(userId);
-//                                }
+                                //ペアリングアイコンがOFF→ON(点灯)になった際にdアカチェックを行う
+                                if (!mIsStbStatusOn) {
+                                    setRelayClientHandler();
+                                    RemoteControlRelayClient.getInstance().isUserAccountExistRequest(getApplicationContext());
+                                }
+
                             } else {
                                 mStbStatusIcon.setImageResource(R.mipmap.ic_stb_status_icon_gray);
-                                mIsStbStatusOn = false;
                             }
+                            mIsStbStatusOn = isOn;
                         }
                     } catch (Exception e) {
                         DTVTLogger.debug("BaseActivity::setStbStatus, stb status png file not found");
@@ -462,10 +462,14 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     @Override
     protected void onRestart() {
         super.onRestart();
+        DTVTLogger.start();
 
-        if (this.getStbStatus()) {
-            RemoteControlRelayClient.getInstance().isUserAccountExistRequest(getApplicationContext());
-        }
+
+        //BGからFGに遷移するときにdアカチェックを行う
+        setRelayClientHandler();
+        RemoteControlRelayClient.getInstance().isUserAccountExistRequest(getApplicationContext());
+        DTVTLogger.end();
+
     }
 
     /**
@@ -535,7 +539,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                                 mIsFromSelect = false;
                                 startActivity(STBConnectActivity.class, null);
                             } else {
-                                //宅外から宅内に移動した場合
+                                //宅外から宅内に移動した場合あるいは画面遷移行う場合
                                 //nothing to do
                             }
                             break;
@@ -558,7 +562,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE://ユーザアカウントチェックサービス未登録
                                 case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY:// //中継アプリからの応答待ち中に新しい要求を行った場合
                                     break;
-                                case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_CONNECTION_TIMEOUT: //dTV アプリが STBの中継アプリに接続できない場合
+                                case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_CONNECTION_TIMEOUT: //アプリが STBの中継アプリに接続できない場合
                                     //ペアリングアイコンをOFFにする
                                     setStbStatus(false);
                                     break;
