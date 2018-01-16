@@ -1493,8 +1493,10 @@
 
         du_byte_zero((du_uint8 *) &d, sizeof(downloader));
 
-        return download(&d, dtcp, dtcp1host, dtcp1port, url, move, status_handler, progress_handler,
+        du_bool ret= download(&d, dtcp, dtcp1host, dtcp1port, url, move, status_handler, progress_handler,
                         handler_arg, dixim_file, didl_xml, size, request_header);
+        du_log_dv(0, DU_UCHAR_CONST("+++ downloader_download [%s:%u] [move:%d] [url:%s] [path:%s] [size:%llu]"), dtcp1host, dtcp1port, move, url, dixim_file, size);
+        return ret;
     }
 
     du_bool
