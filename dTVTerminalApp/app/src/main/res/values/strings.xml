@@ -64,6 +64,10 @@
     <string name="str_stb_input_activation_code">アクティベーションコードを入力する</string>
     <string name="str_stb_again_pairing">再度ペアリングを実行する</string>
 
+    <string name="str_stb_pairing">ペアリング中</string>
+    <string name="str_stb_stb_error">STBの処理に失敗しました</string>
+    <string name="str_stb_tv_terminal_error">ドコモTVターミナルとの接続に失敗しました</string>
+
     <!-- リモコン-->
     <string name="remote_controller_viewpager_record_list_button">録画リスト</string>
     <string name="remote_controller_viewpager_program_list_button">番組表</string>

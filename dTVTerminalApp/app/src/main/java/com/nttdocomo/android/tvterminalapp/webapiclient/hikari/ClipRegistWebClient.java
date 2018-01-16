@@ -4,7 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
-import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
@@ -17,20 +16,23 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+/**
+ * クリップ登録処理.
+ */
 public class ClipRegistWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
     /**
-     * コールバック
+     * コールバック.
      */
     public interface ClipRegistJsonParserCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
          */
         void onClipRegistResult();
 
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
          */
         void onClipRegistFailure();
     }
@@ -39,7 +41,7 @@ public class ClipRegistWebClient
     private ClipRegistJsonParserCallback mClipRegistJsonParserCallback;
 
     /**
-     * 通信成功時のコールバック
+     * 通信成功時のコールバック.
      *
      * @param returnCode 戻り値構造体
      */
@@ -50,7 +52,7 @@ public class ClipRegistWebClient
     }
 
     /**
-     * 通信失敗時のコールバック
+     * 通信失敗時のコールバック.
      */
     @Override
     public void onError() {
@@ -59,7 +61,7 @@ public class ClipRegistWebClient
     }
 
     /**
-     * チャンネル一覧取得
+     * チャンネル一覧取得.
      *
      * @param type                         タイプ　h4d_iptv：多チャンネル、h4d_vod：ビデオ、dch：dTVチャンネル、dtv_vod：dTV
      * @param crid                         コンテンツ識別子
@@ -74,10 +76,11 @@ public class ClipRegistWebClient
      * @param clipRegistJsonParserCallback callback
      * @return パラメータエラー等が発生した場合はfalse
      */
-    public boolean getClipRegistApi(String type, String crid, String serviceId, String eventId,
-                                    String titleId, String title, String r_value,
-                                    String linearStartDate, String linearEndDate, boolean isNotify,
-                                    ClipRegistJsonParserCallback clipRegistJsonParserCallback) {
+    public boolean getClipRegistApi(final String type, final String crid, final String serviceId,
+                                    final String eventId, final String titleId, final String title,
+                                    final String r_value, final String linearStartDate,
+                                    final String linearEndDate, final boolean isNotify,
+                                    final ClipRegistJsonParserCallback clipRegistJsonParserCallback) {
         //パラメーターのチェック
         if (!checkParameter(type, crid, serviceId, eventId, titleId, title, r_value,
                 linearStartDate, linearEndDate, isNotify, clipRegistJsonParserCallback)) {
@@ -85,9 +88,10 @@ public class ClipRegistWebClient
             return false;
         }
 
+        String strEndDate = linearEndDate;
         //パラメータチェック終了後にlinearEndDateをyyyy/MM/dd HH:mm:ss形式に変換する
-        if(linearEndDate != null && DBUtils.isNumber(linearEndDate)){
-            linearEndDate = DateUtils.formatEpochToString(Long.parseLong(linearEndDate));
+        if (strEndDate != null && DBUtils.isNumber(strEndDate)) {
+            strEndDate = DateUtils.formatEpochToString(Long.parseLong(strEndDate));
         }
 
         //コールバックの設定
@@ -95,7 +99,7 @@ public class ClipRegistWebClient
 
         //送信用パラメータの作成
         String sendParameter = makeSendParameter(type, crid, serviceId, eventId, titleId, title, r_value,
-                linearStartDate, linearEndDate, isNotify);
+                linearStartDate, strEndDate, isNotify);
 
         //JSONの組み立てに失敗していれば、falseで帰る
         if (sendParameter.isEmpty()) {
@@ -110,7 +114,7 @@ public class ClipRegistWebClient
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param type                         タイプ　h4d_iptv：多チャンネル、h4d_vod：ビデオ、dch：dTVチャンネル、dtv_vod：dTV
      * @param crid                         コンテンツ識別子
@@ -125,10 +129,11 @@ public class ClipRegistWebClient
      * @param clipRegistJsonParserCallback callback
      * @return 値がおかしいならばfalse
      */
-    private boolean checkParameter(String type, String crid, String serviceId, String eventId,
-                                   String titleId, String title, String r_value,
-                                   String linearStartDate, String linearEndDate, boolean isNotify,
-                                   ClipRegistJsonParserCallback clipRegistJsonParserCallback) {
+    private boolean checkParameter(final String type, final String crid, final String serviceId,
+                                   final String eventId, final String titleId, final String title,
+                                   final String r_value, final String linearStartDate,
+                                   final String linearEndDate, final boolean isNotify,
+                                   final ClipRegistJsonParserCallback clipRegistJsonParserCallback) {
         //文字列がヌルならfalse
         if (type == null) {
             return false;
@@ -164,19 +169,21 @@ public class ClipRegistWebClient
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック(FindBugs対応のため2分割)
+     * 指定されたパラメータがおかしいかどうかのチェック(FindBugs対応のため2分割).
      *
-     * @param type            タイプ　h4d_iptv：多チャンネル、h4d_vod：ビデオ、dch：dTVチャンネル、dtv_vod：dTV
-     * @param title           コンテンツタイトル
-     * @param r_value         番組のパレンタル設定値
-     * @param linearStartDate 放送開始日時
-     * @param linearEndDate   放送終了日時
-     * @param isNotify        視聴通知するか否か
+     * @param type                         タイプ　h4d_iptv：多チャンネル、h4d_vod：ビデオ、dch：dTVチャンネル、dtv_vod：dTV
+     * @param title                        コンテンツタイトル
+     * @param r_value                      番組のパレンタル設定値
+     * @param linearStartDate              放送開始日時
+     * @param linearEndDate                放送終了日時
+     * @param isNotify                     視聴通知するか否か
+     * @param clipRegistJsonParserCallback callback
      * @return 値がおかしいならばfalse
      */
-    private boolean checkLatterHalfParameter(String type, String title, String r_value,
-                                             String linearStartDate, String linearEndDate, boolean isNotify,
-                                             ClipRegistJsonParserCallback clipRegistJsonParserCallback) {
+    private boolean checkLatterHalfParameter(final String type, final String title,
+                                             final String r_value, final String linearStartDate,
+                                             final String linearEndDate, final boolean isNotify,
+                                             final ClipRegistJsonParserCallback clipRegistJsonParserCallback) {
 
         //コンテンツタイトル、番組のパレンタル設定値 type=h4d_iptv、h4d_vod、is_notify=true の場合必須
         if ((type.equals(CLIP_TYPE_H4D_IPTV) || type.equals(CLIP_TYPE_H4D_VOD)
@@ -205,7 +212,7 @@ public class ClipRegistWebClient
     }
 
     /**
-     * 指定されたパラメータをJSONで組み立てて文字列にする
+     * 指定されたパラメータをJSONで組み立てて文字列にする.
      *
      * @param type            タイプ　h4d_iptv：多チャンネル、h4d_vod：ビデオ、dch：dTVチャンネル、dtv_vod：dTV
      * @param crid            コンテンツ識別子
@@ -219,9 +226,10 @@ public class ClipRegistWebClient
      * @param isNotify        視聴通知するか否か
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(String type, String crid, String serviceId, String eventId,
-                                     String titleId, String title, String r_value,
-                                     String linearStartDate, String linearEndDate, boolean isNotify) {
+    private String makeSendParameter(final String type, final String crid, final String serviceId,
+                                     final String eventId, final String titleId, final String title,
+                                     final String r_value, final String linearStartDate,
+                                     final String linearEndDate, final boolean isNotify) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
