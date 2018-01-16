@@ -38,6 +38,8 @@ public class ClipRequestData {
     private ClipKeyListDao.TABLE_TYPE mTableType = null;
     // 視聴通知判定
     private boolean mIsNotify = false;
+    // クリップ未/済
+    private boolean mClipStatus = false;
     //EPG判定用
     private String TV_PROGRAM_CHECK = "tv_program";
     //h4d_iptv
@@ -163,6 +165,13 @@ public class ClipRequestData {
         this.mTableType = mTableType;
     }
 
+    public boolean isClipStatus() {
+        return mClipStatus;
+    }
+
+    public void setClipStatus(boolean mClipStatus) {
+        this.mClipStatus = mClipStatus;
+    }
     /**
      * 視聴通知とコンテンツタイプを指定する.
      *
