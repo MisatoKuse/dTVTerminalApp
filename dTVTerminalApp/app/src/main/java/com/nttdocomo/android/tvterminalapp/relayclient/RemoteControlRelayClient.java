@@ -7,8 +7,10 @@ package com.nttdocomo.android.tvterminalapp.relayclient;
 import android.content.Context;
 import android.os.Handler;
 import android.view.KeyEvent;
+import android.view.View;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
@@ -504,7 +506,11 @@ public class RemoteControlRelayClient {
                 // アプリ起動要求を受信してインテントをSTBへ送信する
                 sendStartApplicationRequest(requestParam);
                 return true;
+            } else {
+                ((BaseActivity) context).setRemoteProgressVisible(View.GONE);
             }
+        } else {
+            ((BaseActivity) context).setRemoteProgressVisible(View.GONE);
         }
         return false;
     }

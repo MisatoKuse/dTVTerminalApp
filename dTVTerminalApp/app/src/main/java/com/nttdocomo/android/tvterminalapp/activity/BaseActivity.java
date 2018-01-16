@@ -523,6 +523,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     public Handler mRelayClientHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+            setRemoteProgressVisible(View.GONE);
             RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES requestCommand
                     = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getRequestCommandTypes();
             switch (msg.what) {
@@ -1033,7 +1034,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     };
 
     @Override
-    public void onStartRemoteControl() {
+    public void onStartRemoteControl(boolean isFromHeader) {
         DTVTLogger.debug("base_start_control");
         View base = findViewById(R.id.base_motion_detection_rl);
         base.setOnClickListener(mRemoteControllerOnClickListener);
@@ -1292,5 +1293,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     /** dip → px */
     public int dip2px(int dip) {
         return (int) (dip * getDensity() + 0.5f);
+    }
+
+    public void setRemoteProgressVisible(int visible){
+        findViewById(R.id.base_progress_rl).setVisibility(visible);
     }
 }

@@ -60,7 +60,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * このViewがtopに表示された際に通知するリスナー
      */
     public interface OnStartRemoteControllerUIListener {
-        void onStartRemoteControl();
+        void onStartRemoteControl(boolean isFromHeader);
 
         void onEndRemoteControl();
     }
@@ -200,7 +200,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                 if (mDownY > mScrollHeight - mVisibilityHeight && mIsClick && !mIsTop) {
                     mScroller.startScroll(0, -getScrollY(), 0, mScrollHeight - getScrollY());
                     postInvalidate();
-                    setHeaderContent();
+                    setHeaderContent(false);
                     break;
                 }
                 //指が離すまで子ビュ―の移動した距離は子ビューの1/4に超えた場合、
@@ -208,7 +208,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                 if (mMovedY > mScrollHeight / 4 && !mIsTop) {
                     mScroller.startScroll(0, getScrollY(), 0, (mScrollHeight - getScrollY()));
                     invalidate();
-                    setHeaderContent();
+                    setHeaderContent(false);
                 } else {
                     //1/4に満たしていない場合、元の位置に戻る
                     //表示するコンテンツを設定する
@@ -235,7 +235,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     }
 
     //子ビュ―が一番上まで移動した場合表示するコンテンツを設定する
-    private void setHeaderContent() {
+    private void setHeaderContent(boolean isFromHeader) {
         DTVTLogger.start();
         mMovedY = mScrollHeight;
         mIsTop = true;
@@ -246,7 +246,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         mFrameLayout = findViewById(R.id.header_watch_by_tv);
         mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_top_corner, null));
         if (mIsTop) {
-            startRemoteControl();
+            startRemoteControl(isFromHeader);
         }
         DTVTLogger.end();
     }
@@ -279,7 +279,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
         setRemoteControllerViewAction();
         if (mIsTop) {
-            startRemoteControl();
+            startRemoteControl(false);
         }
     }
 
@@ -409,7 +409,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
             mScroller.startScroll(0, 0, 0, (int) (mScrollHeight + mVisibilityHeight));
         }
         invalidate();
-        setHeaderContent();
+        setHeaderContent(true);
     }
 
     /**
@@ -425,10 +425,10 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     /**
      * リスナーが設定されている場合、通知処理を実行
      */
-    private void startRemoteControl() {
+    private void startRemoteControl(boolean isFromHeader) {
         if (mStartUIListener != null && mIsTop) {
             DTVTLogger.debug("StartUIListener.onStartRemoteControl");
-            mStartUIListener.onStartRemoteControl();
+            mStartUIListener.onStartRemoteControl(isFromHeader);
         }
     }
 
