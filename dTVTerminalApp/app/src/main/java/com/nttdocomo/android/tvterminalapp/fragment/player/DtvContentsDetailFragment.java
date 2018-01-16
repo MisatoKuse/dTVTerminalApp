@@ -174,9 +174,9 @@ public class DtvContentsDetailFragment extends Fragment {
                 if (mIsContract) {
                     //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、画像比較でクリップ済/未を判定する
                     Bitmap clipButtonBitmap = ((BitmapDrawable) clipButton.getBackground()).getBitmap();
-                    Bitmap activClipBitmap = ((BitmapDrawable) ResourcesCompat.getDrawable(getResources(),
+                    Bitmap activeClipBitmap = ((BitmapDrawable) ResourcesCompat.getDrawable(getResources(),
                             R.mipmap.icon_circle_active_clip, null)).getBitmap();
-                    if (clipButtonBitmap.equals(activClipBitmap)) {
+                    if (clipButtonBitmap.equals(activeClipBitmap)) {
                         mOtherContentsDetailData.getVodMetaFullData().setClipStatus(true);
                     } else {
                         mOtherContentsDetailData.getVodMetaFullData().setClipStatus(false);

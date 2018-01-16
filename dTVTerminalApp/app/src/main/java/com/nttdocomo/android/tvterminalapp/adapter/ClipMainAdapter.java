@@ -81,9 +81,9 @@ public class ClipMainAdapter extends BaseAdapter {
                 public void onClick(View view) {
                     //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、画像比較でクリップ済/未を判定する
                     Bitmap clipButtonBitmap = ((BitmapDrawable) clipButton.getBackground()).getBitmap();
-                    Bitmap activClipBitmap = ((BitmapDrawable) ResourcesCompat.getDrawable(mContext.getResources(),
+                    Bitmap activeClipBitmap = ((BitmapDrawable) ResourcesCompat.getDrawable(mContext.getResources(),
                             R.mipmap.icon_circle_active_clip, null)).getBitmap();
-                    if (clipButtonBitmap.equals(activClipBitmap)) {
+                    if (clipButtonBitmap.equals(activeClipBitmap)) {
                         mData.get(position).getRequestData().setClipStatus(true);
                     } else {
                         mData.get(position).getRequestData().setClipStatus(false);
