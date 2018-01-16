@@ -386,7 +386,6 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             requestData.setDispType(dispType);
             requestData.setContentType(contentsType);
             requestData.setTableType(decisionTableType(contentsType, contentsType));
-            rankingContentInfo.setRequestData(requestData);
 
             // TODO 他の取得が必要なDataProviderにも追加
             if(mRequiredClipKeyList) {
@@ -411,8 +410,10 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                         break;
                 }
                 rankingContentInfo.setClipStatus(isCripped);
+                requestData.setClipStatus(isCripped);
             }
 
+            rankingContentInfo.setRequestData(requestData);
             rankingContentsDataList.add(rankingContentInfo);
             DTVTLogger.info("RankingContentInfo " + rankingContentInfo.getRank());
         }

@@ -14,20 +14,23 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+/**
+ * クリップ削除処理.
+ */
 public class ClipDeleteWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
     /**
-     * コールバック
+     * コールバック.
      */
     public interface ClipDeleteJsonParserCallback {
         /**
-         * 登録が正常に終了した場合に呼ばれるコールバック
+         * 登録が正常に終了した場合に呼ばれるコールバック.
          */
         void onClipDeleteResult();
 
         /**
-         * 登録が正常に終了した場合に呼ばれるコールバック
+         * 登録が正常に終了した場合に呼ばれるコールバック.
          */
         void onClipDeleteFailure();
     }
@@ -36,7 +39,7 @@ public class ClipDeleteWebClient
     private ClipDeleteJsonParserCallback mClipDeleteJsonParserCallback;
 
     /**
-     * 通信成功時のコールバック
+     * 通信成功時のコールバック.
      *
      * @param returnCode 戻り値構造体
      */
@@ -47,7 +50,7 @@ public class ClipDeleteWebClient
     }
 
     /**
-     * 通信失敗時のコールバック
+     * 通信失敗時のコールバック.
      */
     @Override
     public void onError() {
@@ -56,7 +59,7 @@ public class ClipDeleteWebClient
     }
 
     /**
-     * チャンネル一覧取得
+     * チャンネル一覧取得.
      *
      * @param type                         タイプ　h4d_iptv：多チャンネル、h4d_vod：ビデオ、dch：dTVチャンネル、dtv_vod：dTV
      * @param crid                         コンテンツ識別子
@@ -64,8 +67,8 @@ public class ClipDeleteWebClient
      * @param clipDeleteJsonParserCallback callback
      * @return パラメータエラー等が発生した場合はfalse
      */
-    public boolean getClipDeleteApi(String type, String crid, String titleId,
-                                    ClipDeleteJsonParserCallback clipDeleteJsonParserCallback) {
+    public boolean getClipDeleteApi(final String type, final String crid, final String titleId,
+                                    final ClipDeleteJsonParserCallback clipDeleteJsonParserCallback) {
         //パラメーターのチェック
         if (!checkParameter(type, crid, titleId, clipDeleteJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、falseで帰る
@@ -91,7 +94,7 @@ public class ClipDeleteWebClient
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param type                         タイプ　h4d_iptv：多チャンネル、h4d_vod：ビデオ、dch：dTVチャンネル、dtv_vod：dTV
      * @param crid                         コンテンツ識別子
@@ -99,8 +102,8 @@ public class ClipDeleteWebClient
      * @param clipDeleteJsonParserCallback callback
      * @return 値がおかしいならばfalse
      */
-    private boolean checkParameter(String type, String crid, String titleId,
-                                   ClipDeleteJsonParserCallback clipDeleteJsonParserCallback) {
+    private boolean checkParameter(final String type, final String crid, final String titleId,
+                                   final ClipDeleteJsonParserCallback clipDeleteJsonParserCallback) {
         //文字列がヌルならfalse
         if (type == null) {
             return false;
@@ -132,14 +135,14 @@ public class ClipDeleteWebClient
     }
 
     /**
-     * 指定されたパラメータをJSONで組み立てて文字列にする
+     * 指定されたパラメータをJSONで組み立てて文字列にする.
      *
      * @param type    タイプ　h4d_iptv：多チャンネル、h4d_vod：ビデオ、dch：dTVチャンネル、dtv_vod：dTV
      * @param crid    コンテンツ識別子
      * @param titleId タイトルID
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(String type, String crid, String titleId) {
+    private String makeSendParameter(final String type, final String crid, final String titleId) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
