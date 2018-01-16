@@ -574,6 +574,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
                                 // チェック処理の状態で処理を分岐する
                                 SharedPreferencesUtils.resetSharedPreferencesStbInfo(getApplicationContext());
+                                //TODO:アプリのキャッシュをきれいにクリアする処理が必要
                                 Intent intent = new Intent(mActivity, DAccountReSettingActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                 startActivity(intent);
