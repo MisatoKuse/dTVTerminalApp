@@ -139,6 +139,8 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
             contentInfo.setDtv(dtv);
             contentInfo.setDtvType(dtvType);
             contentInfo.setDispType(dispType);
+            contentInfo.setServiceId(map.get(JsonContents.META_RESPONSE_SERVICE_ID));
+            contentInfo.setEventId(map.get(JsonContents.META_RESPONSE_EVENT_ID));
             contentInfo.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
 
             //クリップリクエストデータ作成

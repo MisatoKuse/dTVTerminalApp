@@ -239,7 +239,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      */
     protected ClipKeyListDao.TABLE_TYPE decisionTableType(String dispType, String contentType) {
         if (ClipKeyListDao.META_DISP_TYPE_TV_PROGRAM.equals(dispType)
-                && contentType == null) {
+                && contentType.length() < 1) {
             return ClipKeyListDao.TABLE_TYPE.TV;
         }
         return ClipKeyListDao.TABLE_TYPE.VOD;

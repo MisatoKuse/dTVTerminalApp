@@ -76,9 +76,9 @@ public class ClipKeyListDataManager {
                 break;
             case TV:
                 strBuilder.append(JsonContents.META_RESPONSE_SERVICE_ID)
-                        .append(" = ? ,")
+                        .append(" = ? AND ")
                         .append(JsonContents.META_RESPONSE_EVENT_ID)
-                        .append(" = ? ,")
+                        .append(" = ? AND ")
                         .append(JsonContents.META_RESPONSE_TYPE)
                         .append(" = ? ");
                 break;
