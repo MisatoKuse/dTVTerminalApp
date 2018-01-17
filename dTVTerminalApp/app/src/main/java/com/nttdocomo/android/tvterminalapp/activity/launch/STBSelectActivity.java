@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v4.content.res.ResourcesCompat;
 import android.text.TextUtils;
 import android.view.View;
@@ -43,8 +44,7 @@ import java.util.TimerTask;
 
 
 public class STBSelectActivity extends BaseActivity implements View.OnClickListener,
-        AdapterView.OnItemClickListener, DlnaDevListListener,
-        DaccountCheckService.DaccountCheckServiceCallBack{
+        AdapterView.OnItemClickListener, DlnaDevListListener {
 
     private List<ContentsData> mContentsList;
     private List<DlnaDmsItem> mDlnaDmsItemList;
@@ -97,6 +97,11 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         mDlnaDmsItemList = new ArrayList<>();
 
         DTVTLogger.end();
+    }
+
+    @Override
+    protected void checkDAccountOnRestart() {
+        DTVTLogger.start();
     }
 
     /**
@@ -306,6 +311,19 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     }
 
     /**
+     * ペアリング中画面表示を設定
+     */
+    private void showPairingeView() {
+        DTVTLogger.start();
+        TextView statusTextView = findViewById(R.id.stb_select_status_text);
+        statusTextView.setText(R.string.str_stb_pairing);
+        mLoadMoreView.setVisibility(View.VISIBLE);
+        mDeviceListView.setVisibility(View.GONE);
+        mCheckBoxSTBSelectActivity.setVisibility(View.GONE);
+        DTVTLogger.end();
+    }
+
+    /**
      * ボタン押されたときの動作
      *
      * @param v view
@@ -392,11 +410,15 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         DTVTLogger.start();
 
+        showPairingeView();
+
+        checkDAccountApp();
+
         //選択されたSTB番号を保持
         mSelectDevice = i;
 
-        //dカウント登録状態チェック
-        checkDAccountLogin();
+//        //dカウント登録状態チェック
+//        checkDAccountLogin();
     }
 
     /**
@@ -404,6 +426,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      * @param selectDevice 選択されたSTB
      */
     private void storeSTBData(int selectDevice) {
+        DTVTLogger.start();
         if (mCallbackTimer.getTimerStatus() != TimerStatus.TIMER_STATUS_DURING_STARTUP) {
             // SharedPreferencesにSTBデータを保存
             if (mDlnaDmsItemList != null) {
@@ -422,7 +445,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             }
         }
         //dアカチェックテスト終わったら、コメントアウト
-        startActivity(STBConnectActivity.class, null);
+//        startActivity(STBConnectActivity.class, null);
         DTVTLogger.end();
     }
 
@@ -662,26 +685,15 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     /**
      * dアカウントの登録状態を確認する
      */
-    private void checkDAccountLogin() {
-        DaccountCheckService checkService = new DaccountCheckService();
-        checkService.execDaccountCheckService(this, this);
-    }
-
-    @Override
-    public void checkServiceCallBack(int result) {
-        DTVTLogger.debug("result" + result);
-        if (result != IDimDefines.RESULT_NO_AVAILABLE_ID &&
-                result != IDimDefines.RESULT_NOT_AVAILABLE &&
-                result != IDimDefines.RESULT_INCOMPATIBLE_ENVIRONMENT &&
-                result != IDimDefines.RESULT_INTERNAL_ERROR ) {
-            //dアカウントが登録されている場合の処理
-            //TODO STBに同じdアカウントが登録されているか確認する
-
-            storeSTBData(mSelectDevice);
-            DTVTLogger.debug("DAccount login");
+    private boolean checkDAccountLogin() {
+        DTVTLogger.start();
+        String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(this);
+        if (userId != null && !userId.equals("")) {
+            DTVTLogger.debug("checkDAccountLogin() true");
+            return true;
         } else {
-//            dアカウントが登録されていない場合の処理
-            checkDAccountApp();
+            DTVTLogger.debug("checkDAccountLogin() false");
+            return false;
         }
     }
 
@@ -690,26 +702,149 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      * dアカウントアプリを起動する
      */
     private void checkDAccountApp() {
+        DTVTLogger.start();
         Intent intent = new Intent();
         intent.setClassName(D_ACCOUNT_APP_PACKAGE_NAME,
                 D_ACCOUNT_APP_PACKAGE_NAME + D_ACCOUNT_APP_ACTIVITY_NAME);
         try {
             //端末内にdアカウントアプリがある場合はアプリ起動
-            startActivity(intent);
+//            startActivity(intent);
+
+            //dカウント登録状態チェック
+            boolean isDAccountFlag = checkDAccountLogin();
+
+            if (isDAccountFlag) {
+                setRelayClientHandler();
+                RemoteControlRelayClient.getInstance().isUserAccountExistRequest(this);
+
+                storeSTBData(mSelectDevice);
+            } else {
+                startActivity(intent);
+            }
+            // ワンタイムトークン
+
+
             //ログイン後にユーザ操作でこの画面に戻ってきた際には再度STB選択を行わせる
         } catch (ActivityNotFoundException e) {
-            //端末内にdアカウントアプリがない場合はdアカウントアプリDL誘導を行う
-            TextView statusTextView = findViewById(R.id.stb_select_status_text);
-            TextView downloadTextView = findViewById(R.id.downloadDAccountApplication);
-
-            mIsAppDL = true;
-            mPairingImage.setImageResource(R.drawable.paring_no_daccount_app);
-            statusTextView.setText(R.string.str_d_account_app_not_install);
-            downloadTextView.setVisibility(View.VISIBLE);
-            downloadTextView.setOnClickListener(this);
-            mCheckBoxSTBSelectActivity.setVisibility(View.GONE);
-            mDeviceListView.setVisibility(View.GONE);
-            mUseWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_no_login_use_text);
+            revertSelectStbState();
         }
+        DTVTLogger.end();
+    }
+
+    /**
+     * 再度STB選択状態へ戻す.
+     */
+    private void revertSelectStbState() {
+        DTVTLogger.debug("not daccount app");
+        //端末内にdアカウントアプリがない場合はdアカウントアプリDL誘導を行う
+        TextView statusTextView = findViewById(R.id.stb_select_status_text);
+        TextView downloadTextView = findViewById(R.id.downloadDAccountApplication);
+
+        mIsAppDL = true;
+        mPairingImage.setImageResource(R.drawable.paring_no_daccount_app);
+        statusTextView.setText(R.string.str_d_account_app_not_install);
+        downloadTextView.setVisibility(View.VISIBLE);
+        downloadTextView.setOnClickListener(this);
+        mCheckBoxSTBSelectActivity.setVisibility(View.GONE);
+        mDeviceListView.setVisibility(View.GONE);
+        mUseWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_no_login_use_text);
+    }
+
+    @Override
+    protected void onStbClientResponce(Message msg){
+        RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES requestCommand
+                = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getRequestCommandTypes();
+        DTVTLogger.debug("msg.what: " + msg.what + "requestCommand: " + requestCommand);
+        DTVTLogger.debug(String.format("requestCommand:%s", requestCommand));
+        switch (msg.what) {
+            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_OK:
+                switch (requestCommand) {
+                    case START_APPLICATION:
+                    case TITLE_DETAIL:
+                        menuRemoteController();
+                        break;
+                    case IS_USER_ACCOUNT_EXIST:
+                        startActivity(STBConnectActivity.class, null);
+                        Intent intent = new Intent(this, STBConnectActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                        break;
+                    case COMMAND_UNKNOWN:
+                    default:
+                        break;
+                }
+                break;
+            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_ERROR:
+                int resultcode = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getResultCode();
+                DTVTLogger.debug("resultcode: " + resultcode);
+                switch (requestCommand) {
+                    case START_APPLICATION:
+                    case TITLE_DETAIL:
+                        RemoteControlRelayClient.STB_APPLICATION_TYPES appId
+                                = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getApplicationTypes();
+                        startApplicationErrorHander(resultcode, appId);
+                        break;
+                    case IS_USER_ACCOUNT_EXIST:
+                        switch (resultcode) {
+                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_INTERNAL_ERROR://サーバエラー
+                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE://ユーザアカウントチェックサービス未登録
+                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY:// //中継アプリからの応答待ち中に新しい要求を行った場合
+                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_CONNECTION_TIMEOUT: //STBの中継アプリ~応答が無かった場合(要求はできたのでSTBとの通信はOK)
+                                createErrorDialog();
+                                break;
+                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
+                                // チェック処理の状態で処理を分岐する
+                                SharedPreferencesUtils.resetSharedPreferencesStbInfo(getApplicationContext());
+                                Intent intent = new Intent(this, DAccountReSettingActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                break;
+                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
+                                // TODO STBと接続しないとHOMEにいけない為、本体側のSTB機能が搭載されるまでは一旦ホームに遷移させておく.
+                                Intent homeintent = new Intent(this, STBConnectActivity.class);
+                                homeintent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(homeintent);
+
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case COMMAND_UNKNOWN:
+                        switch (resultcode) {
+                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
+                                // TODO STBと接続しないとHOMEにいけない為、本体側のSTB機能が搭載されるまでは一旦ホームに遷移させておく.
+                                Intent homestartintent = new Intent(this, STBConnectActivity.class);
+                                homestartintent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(homestartintent);
+                                break;
+                            default:
+                                break;
+                        }
+                    default:
+                        break;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * エラーダイアログ表示.
+     */
+    private CustomDialog createErrorDialog() {
+        CustomDialog failedRecordingReservationDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+        failedRecordingReservationDialog.setContent(getResources().getString(R.string.str_stb_stb_error));
+        failedRecordingReservationDialog.setCancelText(R.string.recording_reservation_failed_dialog_confirm);
+        // Cancelable
+        failedRecordingReservationDialog.setCancelable(false);
+        failedRecordingReservationDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+            @Override
+            public void onOKCallback(boolean isOK) {
+                revertSelectStbState();
+            }
+        });
+        return failedRecordingReservationDialog;
     }
 }

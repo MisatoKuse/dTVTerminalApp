@@ -26,6 +26,7 @@ import java.util.Map;
 
 /**
  * キーコードをSTBへ送信する.
+ *
  */
 public class RemoteControlRelayClient {
 
@@ -565,17 +566,19 @@ public class RemoteControlRelayClient {
      * @return
      */
     public void isUserAccountExistRequest(Context context) {
-
+        DTVTLogger.start();
         String requestParam;
 
         //ユーザID取得
         String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(context);
-
-        requestParam = setAccountCheckRequest(userId);
-        if (requestParam != null) {
-            // dアカチェック要求を受信してdアカチェックリクエストをSTBへ送信する
-            sendStartApplicationRequest(requestParam);
+        if (userId != null && !userId.equals("")) {
+            requestParam = setAccountCheckRequest(userId);
+            if (requestParam != null) {
+                // dアカチェック要求を受信してdアカチェックリクエストをSTBへ送信する
+                sendStartApplicationRequest(requestParam);
+            }
         }
+        DTVTLogger.end();
     }
 
     /**

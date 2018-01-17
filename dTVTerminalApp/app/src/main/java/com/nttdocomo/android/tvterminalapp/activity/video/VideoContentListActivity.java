@@ -24,6 +24,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VideoContentProvider;
+import com.nttdocomo.android.tvterminalapp.model.videogenrelist.VideoGenreListDataInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +63,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
     //指を置いたY座標
     private float mStartY = 0;
 
-    // ジャンルIDのIntent KEY
+    // ビデオ一覧（コンテンツツリー）からののIntent KEY
     public static final String VIDEO_CONTENTS_BUNDLE_KEY = "videoContentKey";
 
     @Override
@@ -76,9 +77,9 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         setTitleText(getString(R.string.video_content_sub_genre_title));
         enableStbStatusIcon(true);
 
-        // TODO VideoTopActivityからジャンルIDの受け取り
-        // IntentからGenreIdを受け取る
-        mGenreId = getIntent().getStringExtra(VIDEO_CONTENTS_BUNDLE_KEY);
+        // コンテンツツリー画面からのデータ受け取り
+        VideoGenreListDataInfo info = getIntent().getParcelableExtra(VIDEO_CONTENTS_BUNDLE_KEY);
+        mGenreId = info.getGenreId();
 
         resetPaging();
 
