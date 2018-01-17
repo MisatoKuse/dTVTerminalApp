@@ -445,7 +445,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             }
         }
         //dアカチェックテスト終わったら、コメントアウト
-        startActivity(STBConnectActivity.class, null);
+//        startActivity(STBConnectActivity.class, null);
         DTVTLogger.end();
     }
 
@@ -716,6 +716,8 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             if (isDAccountFlag) {
                 setRelayClientHandler();
                 RemoteControlRelayClient.getInstance().isUserAccountExistRequest(this);
+
+                storeSTBData(mSelectDevice);
             } else {
                 startActivity(intent);
             }
