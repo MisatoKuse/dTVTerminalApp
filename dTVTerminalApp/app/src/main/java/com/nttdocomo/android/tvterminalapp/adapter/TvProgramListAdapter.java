@@ -84,8 +84,6 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     private int CLIP_BUTTON_SIZE = 32;
     private int CHANNEL_WIDTH = 720;
 
-    //年齢制限有効フラグ
-    private boolean mIsParental = false;
     /**
      * コンストラクタ.
      *
@@ -147,7 +145,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      *
      * @param mAgeReq 年齢情報
      */
-    public void setAgeReq(int mAgeReq) {
+    public void setAgeReq(final int mAgeReq) {
         this.mAgeReq = mAgeReq;
     }
 
@@ -197,7 +195,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                         schedule.getClipRequestData().setClipStatus(false);
                     }
                     //クリップボタンイベント
-                    ((BaseActivity) mContext).sendClipRequest(schedule.getClipRequestData(), mClipButton);
+                    mContext.sendClipRequest(schedule.getClipRequestData(), mClipButton);
                 }
             });
             setComponentParameters();
@@ -230,6 +228,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Channel itemChannel = mProgramList.get(position);
+
         if (holder.layout != null) {
             holder.layout.removeAllViews();
         }
@@ -279,7 +278,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     private void setView(final ItemViewHolder itemViewHolder, final Schedule itemSchedule, final boolean isLast) {
 
         //年齢制限フラグ
-        mIsParental = setParental(StringUtil.convertRValueToAgeReq(mContext, itemSchedule.getRValue()));
+        boolean isParental = setParental(StringUtil.convertRValueToAgeReq(mContext, itemSchedule.getRValue()));
 
         String startTime = itemSchedule.getStartTime();
         String endTime = itemSchedule.getEndTime();
@@ -319,20 +318,14 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 itemViewHolder.mView.setTag(1);
             }
         }
-        if (itemViewHolder.mClipButton != null) {
-            if (itemSchedule.isClipExec() || mIsParental) {
-                if (itemSchedule.isClipStatus()) {
-                    itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
-                } else {
-                    itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
-                }
-            } else {
-                itemViewHolder.mClipButton.setVisibility(View.GONE);
-            }
+
+        boolean isClipHide = false;
+        if (!itemSchedule.isClipExec() || isParental) {
+            isClipHide = true;
         }
 
         String title;
-        if (mIsParental) {
+        if (isParental) {
             title = StringUtil.returnAsterisk(mContext);
         } else {
             title = itemSchedule.getTitle();
@@ -347,25 +340,26 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     }
                 }
             });
-            String detail = itemSchedule.getDetail();
-            itemViewHolder.mDetail.setText(detail);
         }
+        String detail = itemSchedule.getDetail();
+        itemViewHolder.mDetail.setText(detail);
+        changeProgramInfoInOrderToShow(itemViewHolder, isParental, isClipHide, itemSchedule.isClipStatus());
         itemViewHolder.mContent.setText(title);
-        changeProgramInfoInOrderToShow(itemViewHolder);
     }
 
     /**
      * 番組情報表示順変更.
      *
      * @param itemViewHolder ビューホルダー
+     * @param isParental 年齢制限フラグ
      */
-    private void changeProgramInfoInOrderToShow(final ItemViewHolder itemViewHolder) {
+    private void changeProgramInfoInOrderToShow(final ItemViewHolder itemViewHolder, final boolean isParental, final boolean isClipHide, final boolean isClipStatus) {
         itemViewHolder.mContent.getViewTreeObserver()//タイトル
                 .addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                     @Override
                     public boolean onPreDraw() {
                         itemViewHolder.mContent.getViewTreeObserver().removeOnPreDrawListener(this);
-                        displayProgramTitle(itemViewHolder);
+                        displayProgramTitle(itemViewHolder, isParental);
                         return true;
                     }
                 });
@@ -374,7 +368,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     @Override
                     public boolean onPreDraw() {
                         itemViewHolder.mContent.getViewTreeObserver().removeOnPreDrawListener(this);
-                        displayProgramEpi(itemViewHolder);
+                        displayProgramEpi(itemViewHolder, isParental);
                         return true;
                     }
                 });
@@ -383,47 +377,66 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     @Override
                     public boolean onPreDraw() {
                         itemViewHolder.mClipButton.getViewTreeObserver().removeOnPreDrawListener(this);
-                        displayProgramClip(itemViewHolder);
+                        displayProgramClip(itemViewHolder, isClipHide, isClipStatus);
                         return true;
                     }
                 });
     }
 
     /**
-     * クリップ表示
+     * エピソード詳細表示.
+     *
      * @param itemViewHolder ビューホルダー
+     * @param isParental 年齢制限フラグ
      */
-    private void displayProgramClip(ItemViewHolder itemViewHolder) {
-        int clipHeight = itemViewHolder.mClipButton.getHeight();
-        if(clipHeight < CLIP_BUTTON_SIZE){
-            itemViewHolder.mClipButton.setVisibility(View.INVISIBLE);
+    private void displayProgramEpi(final ItemViewHolder itemViewHolder, final boolean isParental) {
+        int epiLineHeight = itemViewHolder.mDetail.getLineHeight();
+        if (!isParental) {
+            if (mEpiSpace <= mContext.dip2px(EPI_MARGIN_TOP_THUMB)) {
+                itemViewHolder.mDetail.setVisibility(View.INVISIBLE);
+            } else {
+                if (!isShowThumb) {
+                    mEpiSpace = mEpiSpace - mContext.dip2px(EPI_MARGIN_TOP_THUMB) + epiLineHeight;
+                } else {
+                    if ((mScreenWidth - mContext.dip2px(TIME_LINE_WIDTH)) / 2 < CHANNEL_WIDTH) {
+                        //チャンネル幅判断
+                        mEpiSpace = mEpiSpace - mContext.dip2px(EPI_MARGIN_TOP_THUMB) - epiLineHeight;
+                    } else {
+                        mEpiSpace = mEpiSpace - mContext.dip2px(EPI_MARGIN_TOP_THUMB);
+                    }
+                }
+                if (mEpiSpace / epiLineHeight > 0) {
+                    itemViewHolder.mDetail.setMaxLines(mEpiSpace / epiLineHeight);
+                } else {
+                    itemViewHolder.mDetail.setVisibility(View.INVISIBLE);
+                }
+            }
+        } else {
+            itemViewHolder.mDetail.setVisibility(View.GONE);
         }
     }
 
     /**
-     * エピソード詳細表示.
+     * クリップ表示.
      *
      * @param itemViewHolder ビューホルダー
+     * @param isParental     年齢制限フラグ
      */
-    private void displayProgramEpi(final ItemViewHolder itemViewHolder) {
-        int epiLineHeight = itemViewHolder.mDetail.getLineHeight();
-        if (mEpiSpace <= mContext.dip2px(EPI_MARGIN_TOP_THUMB)) {
-            itemViewHolder.mDetail.setVisibility(View.INVISIBLE);
-        } else {
-            if (!isShowThumb) {
-                mEpiSpace = mEpiSpace - mContext.dip2px(EPI_MARGIN_TOP_THUMB) + epiLineHeight;
+    private void displayProgramClip(final ItemViewHolder itemViewHolder, final boolean isParental, final boolean isClipStatus) {
+        int clipHeight = itemViewHolder.mClipButton.getHeight();
+        if (!isParental) {
+            if (clipHeight < CLIP_BUTTON_SIZE) {
+                itemViewHolder.mClipButton.setVisibility(View.INVISIBLE);
             } else {
-                if ((mScreenWidth - mContext.dip2px(TIME_LINE_WIDTH)) / 2 < CHANNEL_WIDTH) {//チャンネル幅判断
-                    mEpiSpace = mEpiSpace - mContext.dip2px(EPI_MARGIN_TOP_THUMB) - epiLineHeight;
+
+                if (isClipStatus) {
+                    itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
                 } else {
-                    mEpiSpace = mEpiSpace - mContext.dip2px(EPI_MARGIN_TOP_THUMB);
+                    itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
                 }
             }
-            if (mEpiSpace / epiLineHeight > 0) {
-                itemViewHolder.mDetail.setMaxLines(mEpiSpace / epiLineHeight);
-            } else {
-                itemViewHolder.mDetail.setVisibility(View.INVISIBLE);
-            }
+        } else {
+            itemViewHolder.mClipButton.setVisibility(View.GONE);
         }
     }
 
@@ -431,14 +444,16 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * 番組タイトル表示.
      *
      * @param itemViewHolder ビューホルダー
+     * @param isParental 年齢制限フラグ
      */
-    private void displayProgramTitle(final ItemViewHolder itemViewHolder) {
+    private void displayProgramTitle(final ItemViewHolder itemViewHolder, final boolean isParental) {
         int availableSpace = itemViewHolder.mView.getHeight()
                 - mContext.dip2px(PADDING_TOP) - mContext.dip2px(PADDING_BOTTOM);
         int titleLineHeight = itemViewHolder.mContent.getLineHeight();
         int titleLineCount = itemViewHolder.mContent.getLineCount();
         int titleSpace = titleLineHeight * titleLineCount;
-        if (titleSpace > availableSpace) {//パネルスペースを超えるタイトル
+        if (titleSpace > availableSpace) {
+            //パネルスペースを超えるタイトル
             int maxDisplayLine;
             if (availableSpace / titleLineHeight > 0) {
                 maxDisplayLine = availableSpace / titleLineHeight;
@@ -451,7 +466,8 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         } else if (titleSpace == availableSpace) {
             itemViewHolder.mThumbnail.setVisibility(View.INVISIBLE);
             itemViewHolder.mDetail.setVisibility(View.INVISIBLE);
-        } else {//パネルスペースを超えてないタイトル
+        } else {
+            //パネルスペースを超えてないタイトル
             int thumbnailWidth = itemViewHolder.mView.getWidth() - mContext
                     .dip2px(THUMB_MARGIN_LEFT) - mContext.dip2px(PADDING_RIGHT);
             int thumbnailHeight = mContext.dip2px(THUMBNAIL_HEIGHT) * thumbnailWidth / mContext.dip2px(THUMBNAIL_WIDTH);
@@ -460,11 +476,13 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 itemViewHolder.mDetail.setVisibility(View.INVISIBLE);
             } else {
                 if (availableSpace - titleSpace - mContext
-                        .dip2px(THUMB_MARGIN_TOP_TITLE) >= thumbnailHeight && mIsParental) {//サムネル表示
+                        .dip2px(THUMB_MARGIN_TOP_TITLE) >= thumbnailHeight && !isParental) {
+                    //サムネイル表示
                     mThumbEpiSpace = availableSpace - titleSpace - mContext.dip2px(THUMB_MARGIN_TOP_TITLE);
                     mEpiSpace = mThumbEpiSpace - thumbnailHeight;
                     isShowThumb = true;
-                } else {//サムネル非表示
+                } else {
+                    //サムネイル非表示
                     itemViewHolder.mThumbnail.setVisibility(View.GONE);
                     mEpiSpace = availableSpace - titleSpace - mContext.dip2px(THUMB_MARGIN_TOP_TITLE);
                     isShowThumb = false;
