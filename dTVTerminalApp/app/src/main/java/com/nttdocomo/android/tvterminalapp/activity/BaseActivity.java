@@ -640,7 +640,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_APPLICATION_ID_NOTEXIST:
             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_APPLICATION_START_FAILED:
             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_INTERNAL_ERROR:
-                message = getResources().getString(R.string.main_setting_connect_error_message);
+                message = getResources().getString(R.string.main_setting_stb_application_launch_fail);
                 showErrorDialog(message);
                 break;
             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_VERSION_CODE_INCOMPATIBLE:
@@ -678,7 +678,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                 break;
             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
             default:
-                message = getResources().getString(R.string.main_setting_connect_error_message);
+                message = getResources().getString(R.string.main_setting_stb_application_launch_fail);
                 showErrorDialog(message);
                 break;
         }
@@ -1197,8 +1197,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
         if (mDaccountControl == null) {
             //処理には失敗したが、動作の続行ができないので、ここで終わらせる。ただ、このコールバックを受けている以上、ヌルになることありえないはず
-            Toast.makeText(getApplicationContext(),
-                    R.string.d_account_regist_error, Toast.LENGTH_LONG).show();
+            CustomDialog errorDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
+            errorDialog.setContent(getString(R.string.d_account_regist_error));
+            errorDialog.showDialog();
             DTVTLogger.end("null end");
             return;
         }
@@ -1239,7 +1240,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             return;
         }
         CustomDialog applicationFinishDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-        applicationFinishDialog.setTitle(getString(R.string.app_finish_dialog_title));
         applicationFinishDialog.setContent(getString(R.string.app_finish_dialog_message));
         applicationFinishDialog.setCancelable(false);
         applicationFinishDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {

@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+
 import java.util.List;
 
 public class CustomDialog {
@@ -35,6 +36,14 @@ public class CustomDialog {
     private String confirmText = null;
     private String cancelText = null;
     private boolean cancelable = true;
+    /**
+     * ダイアログのOKボタン
+     */
+    private TextView mOkButton = null;
+    /**
+     * ダイアログのキャンセルボタン
+     */
+    private TextView mCancelButton = null;
 
     private int cancelVisibility = View.VISIBLE;
     private int confirmVisibility = View.VISIBLE;
@@ -131,23 +140,23 @@ public class CustomDialog {
         } else {
             contentTextView.setText(content);
         }
-        TextView tv_confirm = window.findViewById(R.id.custom_dialog_confirm);
-        TextView tv_cancel = window.findViewById(R.id.custom_dialog_cancel);
+        mOkButton = window.findViewById(R.id.custom_dialog_confirm);
+        mCancelButton = window.findViewById(R.id.custom_dialog_cancel);
         switch (dialogType) {
             case ERROR:
-                tv_cancel.setVisibility(View.GONE);
-                if(confirmText != null) {
-                    tv_confirm.setText(confirmText);
+                mCancelButton.setVisibility(View.GONE);
+                if (confirmText != null) {
+                    mOkButton.setText(confirmText);
                 }
                 break;
             case SELECT:
-                if(isConfirmVisibilityChanged) {
-                    tv_confirm.setVisibility(confirmVisibility);
+                if (isConfirmVisibilityChanged) {
+                    mOkButton.setVisibility(confirmVisibility);
                 } else {
-                    tv_confirm.setVisibility(View.GONE);
+                    mOkButton.setVisibility(View.GONE);
                 }
-                if(isCancelVisibilityChanged) {
-                    tv_cancel.setVisibility(cancelVisibility);
+                if (isCancelVisibilityChanged) {
+                    mCancelButton.setVisibility(cancelVisibility);
                 }
                 window.findViewById(R.id.custom_dialog_line_separete).setVisibility(View.VISIBLE);
                 window.findViewById(R.id.custom_dialog_sl).setVisibility(View.VISIBLE);
@@ -173,8 +182,8 @@ public class CustomDialog {
                                 if (apiSelectCallback != null) {
                                     apiSelectCallback.onSelectCallback(position);
                                 }
-                                if(apiItemSelectCallback != null) {
-                                    apiItemSelectCallback.onItemSelectCallback(dialog ,position);
+                                if (apiItemSelectCallback != null) {
+                                    apiItemSelectCallback.onItemSelectCallback(dialog, position);
                                 }
                             }
                         });
@@ -183,19 +192,19 @@ public class CustomDialog {
                 }
                 break;
             case CONFIRM:
-                if(confirmText != null) {
-                    tv_confirm.setText(confirmText);
+                if (confirmText != null) {
+                    mOkButton.setText(confirmText);
                 }
-                if(cancelText != null) {
-                    tv_cancel.setText(cancelText);
+                if (cancelText != null) {
+                    mCancelButton.setText(cancelText);
                 }
                 break;
             default:
                 break;
 
         }
-        if(tv_confirm.getVisibility() == View.VISIBLE){
-            tv_confirm.setOnClickListener(new OnClickListener() {
+        if (mOkButton.getVisibility() == View.VISIBLE) {
+            mOkButton.setOnClickListener(new OnClickListener() {
 
                 @Override
                 public void onClick(View view) {
@@ -206,8 +215,8 @@ public class CustomDialog {
                 }
             });
         }
-        if (tv_cancel.getVisibility() == View.VISIBLE){
-            tv_cancel.setOnClickListener(new OnClickListener() {
+        if (mCancelButton.getVisibility() == View.VISIBLE) {
+            mCancelButton.setOnClickListener(new OnClickListener() {
 
                 @Override
                 public void onClick(View view) {
@@ -284,5 +293,27 @@ public class CustomDialog {
     public void setCancelVisibility(int visibility) {
         isCancelVisibilityChanged = true;
         cancelVisibility = visibility;
+    }
+
+    /**
+     * OKボタンの表示文言を変更する.
+     *
+     * @param text 表示文言
+     */
+    public void setOkButtonText(final String text) {
+        if (mOkButton != null) {
+            mOkButton.setText(text);
+        }
+    }
+
+    /**
+     * CANCELボタンの表示文言を変更する.
+     *
+     * @param text 表示文言
+     */
+    public void setCancelButtonText(final String text) {
+        if (mCancelButton != null) {
+            mCancelButton.setText(text);
+        }
     }
 }

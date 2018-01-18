@@ -13,7 +13,7 @@
     <string name="contents_more">more</string>
     <string name="positive_response">はい</string>
     <string name="negative_response">いいえ</string>
-    <string name="custom_dialog_ok">確定</string>
+    <string name="custom_dialog_ok">OK</string>
     <string name="custom_dialog_cancel">キャンセル</string>
     <string name="clip_regist_result_message">をクリップしました</string>
     <string name="clip_regist_error_message">のクリップに失敗しました</string>
@@ -21,8 +21,7 @@
     <string name="clip_delete_error_message">のクリップ削除に失敗しました</string>
     <string name="epg_contents_message">番組</string>
     <string name="vod_contents_message">ビデオ</string>
-    <string name="app_finish_dialog_title">アプリ終了</string>
-    <string name="app_finish_dialog_message">アプリ終了してよろしいでしょうか</string>
+    <string name="app_finish_dialog_message">アプリを終了しますか？</string>
     <string name="message_three_asterisk">＊＊＊</string>
     <string name="parental_pg_12">PG12</string>
     <string name="parental_r_15">R15</string>
@@ -314,16 +313,17 @@
     <string name="main_setting_image_quality_high">最高画質</string>
     <string name="main_setting_quality_setting_header">外出先視聴時の画質設定</string>
     <string name="main_setting_quality_status">status</string>
+    <string name="main_setting_stb_application_launch_fail">ドコモテレビターミナルのアプリの起動に失敗しました</string>
     <string name="main_setting_dtv_uninstall_message">ドコモテレビターミナルのdTVアプリはインストールされてない</string>
-    <string name="main_setting_dtv_update_message">ドコモテレビターミナルのdTVアプリのアップデートが必要です。</string>
-    <string name="main_setting_d_anime_store_uninstall_message">ドコモテレビターミナルのdアニメストアアプリはインストールされてない</string>
-    <string name="main_setting_d_anime_store_update_message">ドコモテレビターミナルのdアニメストアアプリのアップデートが必要です。</string>
-    <string name="main_setting_dtv_channel_uninstall_message">ドコモテレビターミナルのdTVチャンネルアプリはインストールされてない</string>
-    <string name="main_setting_dtv_channel_update_message">ドコモテレビターミナルのdTVチャンネルアプリのアップデートが必要です。</string>
-    <string name="main_setting_hikari_tv_uninstall_message">ドコモテレビターミナルのひかりTVはインストールされてない</string>
-    <string name="main_setting_hikari_tv_update_message">ドコモテレビターミナルのひかりTVアプリのアップデートが必要です。</string>
-    <string name="main_setting_dazn_uninstall_message">ドコモテレビターミナルのDAZNアプリはインストールされてない</string>
-    <string name="main_setting_dazn_update_message">ドコモテレビターミナルのDAZNアプリのアップデートが必要です。</string>
+    <string name="main_setting_dtv_update_message">ドコモテレビターミナルのdTVのバージョンアップが必要です。</string>
+    <string name="main_setting_d_anime_store_uninstall_message">ドコモテレビターミナルのdアニメストアの起動に失敗しました</string>
+    <string name="main_setting_d_anime_store_update_message">ドコモテレビターミナルのdアニメストアのバージョンアップが必要です。</string>
+    <string name="main_setting_dtv_channel_uninstall_message">ドコモテレビターミナルのdTVチャンネルの起動に失敗しました</string>
+    <string name="main_setting_dtv_channel_update_message">ドコモテレビターミナルのdTVチャンネルのバージョンアップが必要です。</string>
+    <string name="main_setting_hikari_tv_uninstall_message">ドコモテレビターミナルのひかりTVの起動に失敗しました</string>
+    <string name="main_setting_hikari_tv_update_message">ドコモテレビターミナルのひかりTVのバージョンアップが必要です。</string>
+    <string name="main_setting_dazn_uninstall_message">ドコモテレビターミナルのダ・ゾーンの起動に失敗しました</string>
+    <string name="main_setting_dazn_update_message">ドコモテレビターミナルのダ・ゾーンのバージョンアップが必要です。</string>
     <string name="main_setting_connect_error_message">STBとの接続に失敗しました。</string>
     <string-array name="main_setting_items">
         <item>dアカウント設定</item>
@@ -355,8 +355,8 @@
     <string name="my_channel_list_setting_dialog_content_unregister">本当削除しますか?</string>
 
     <!-- dアカウント登録 -->
-    <string name="d_account_regist_error">dアカウントの処理に失敗しました。</string>
-    <string name="d_account_chamge_message">dアカウントが変更されました。初期画面に戻ります。</string>
+    <string name="d_account_regist_error">dアカウントの処理に失敗しました</string>
+    <string name="d_account_chamge_message">dアカウントが変更されたため、トップ画面に戻ります。</string>
 
     <!-- お知らせ -->
     <string name="information_title">お知らせ</string>
