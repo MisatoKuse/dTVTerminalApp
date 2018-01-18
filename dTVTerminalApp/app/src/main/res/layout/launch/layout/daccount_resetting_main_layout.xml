@@ -4,31 +4,20 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/list_item_background">
+    android:background="@color/stb_select_black_color">
 
     <RelativeLayout
         android:id="@+id/stb_icon_relative_layout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/launch_relative_layout_high_size"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:gravity="center|bottom">
-
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/paring_search_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/stb_select_d_account_setting_icon" />
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/launch_exclamation_mark_margin"
-                android:src="@drawable/exclamation_mark" />
-        </FrameLayout>
-
+        android:layout_height="@dimen/launch_relative_layout_high_size">
+        <ImageView
+         android:id="@+id/paring_search_image"
+         android:layout_width="@dimen/launch_stb_start_up_icon1_width"
+         android:layout_height="@dimen/launch_stb_start_up_icon1_high"
+         android:src="@mipmap/stb_select_d_account_setting_icon"
+         android:layout_alignParentBottom="true"
+         android:layout_centerHorizontal="true"
+         android:layout_marginBottom="@dimen/launch_image_bottom_margin"/>
     </RelativeLayout>
 
     <TextView
@@ -39,7 +28,7 @@
         android:layout_below="@+id/stb_icon_relative_layout"
         android:gravity="center"
         android:text="@string/str_stb_not_registration_account_message"
-        android:textColor="@color/white_text"
+        android:textColor="@color/stb_select_white_color"
         android:textSize="@dimen/launch_text_size" />
 
     <TextView
@@ -49,10 +38,11 @@
         android:layout_below="@id/d_account_not_registration_message"
         android:layout_marginLeft="@dimen/launch_stb_list_start_margin"
         android:layout_marginRight="@dimen/launch_stb_list_start_margin"
-        android:background="@color/white_text"
+        android:background="@color/stb_select_white_color"
         android:gravity="center"
+        android:textSize="@dimen/launch_text_size"
         android:text="@string/str_stb_d_account_registration_help"
-        android:textColor="@color/list_item_background" />
+        android:textColor="@color/stb_select_black_color" />
 
     <TextView
         android:id="@+id/d_account_input_activation_code"
@@ -61,11 +51,12 @@
         android:layout_below="@id/d_account_registration_help"
         android:layout_marginLeft="@dimen/launch_stb_list_start_margin"
         android:layout_marginRight="@dimen/launch_stb_list_start_margin"
-        android:layout_marginTop="4dp"
-        android:background="@color/white_text"
+        android:layout_marginTop="@dimen/launch_text_bottom_margin"
+        android:background="@color/stb_select_white_color"
         android:gravity="center"
+        android:textSize="@dimen/launch_text_size"
         android:text="@string/str_stb_input_activation_code"
-        android:textColor="@color/list_item_background" />
+        android:textColor="@color/stb_select_black_color" />
 
     <TextView
         android:id="@+id/d_account_again_pairing"
@@ -74,9 +65,10 @@
         android:layout_below="@id/d_account_input_activation_code"
         android:layout_marginLeft="@dimen/launch_stb_list_start_margin"
         android:layout_marginRight="@dimen/launch_stb_list_start_margin"
-        android:layout_marginTop="4dp"
-        android:background="@color/white_text"
+        android:layout_marginTop="@dimen/launch_text_bottom_margin"
+        android:background="@color/stb_select_white_color"
         android:gravity="center"
+        android:textSize="@dimen/launch_text_size"
         android:text="@string/str_stb_again_pairing"
         android:textColor="@color/list_item_background" />
 
@@ -88,9 +80,11 @@
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="@dimen/launch_stb_list_start_margin"
         android:layout_marginRight="@dimen/launch_stb_list_start_margin"
-        android:background="@color/white_text"
+        android:background="@color/stb_select_white_color"
         android:gravity="center"
+        android:textSize="@dimen/launch_text_size"
         android:text="@string/str_stb_login_other_account"
-        android:textColor="@color/list_item_background" />
+        android:textColor="@color/stb_select_black_color"
+        android:layout_marginBottom="@dimen/launch_image_bottom_margin"/>
 
 </RelativeLayout>

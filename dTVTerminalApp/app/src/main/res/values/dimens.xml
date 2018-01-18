@@ -4,24 +4,34 @@
 
 <resources>
 
-    <!--Launch-->
-    <dimen name="launch_relative_layout_high_size">100dp</dimen>
-    <dimen name="launch_text_layout_high_size">40dp</dimen>
-    <dimen name="launch_image_bottom_margin">10dp</dimen>
+    <dimen name="launch_relative_layout_high_size">116dp</dimen>
+    <dimen name="launch_text_layout_high_size">44dp</dimen>
+    <dimen name="launch_image_bottom_margin">16dp</dimen>
     <dimen name="launch_paring_result_bottom_margin">10dp</dimen>
-    <dimen name="launch_text_size">13dp</dimen>
-    <dimen name="launch_text_bottom_margin">4dp</dimen>
+    <dimen name="launch_text_size">14dp</dimen>
+    <dimen name="launch_text_bottom_margin">6dp</dimen>
     <dimen name="launch_exclamation_mark_margin">48dp</dimen>
-    <dimen name="launch_stb_list_start_margin">10dp</dimen>
-    <dimen name="launch_stb_checkbox_bottom_margin">10dp</dimen>
+    <dimen name="launch_stb_list_start_margin">16dp</dimen>
+    <dimen name="launch_stb_checkbox_bottom_margin">27dp</dimen>
     <dimen name="launch_stb_checkbox_top_margin">6dp</dimen>
-    <dimen name="launch_stb_paring_result_layout">65dp</dimen>
-    <dimen name="launch_text_left_padding">30dp</dimen>
-    <dimen name="launch_text_right_padding">10dp</dimen>
+    <dimen name="launch_stb_paring_result_layout">48dp</dimen>
+    <dimen name="launch_text_left_padding">24dp</dimen>
+    <dimen name="launch_text_right_padding">0dp</dimen>
     <dimen name="launch_text_end_padding">0dp</dimen>
     <dimen name="launch_device_list_layout_high">0dp</dimen>
     <dimen name="launch_device_search_error_help">1dp</dimen>
     <dimen name="launch_device_search_error_help_text">15dp</dimen>
+    <dimen name="launch_stb_checkbox_start_margin">19dp</dimen>
+    <dimen name="launch_stb_checkbox_right_margin">11dp</dimen>
+    <dimen name="launch_stb_device_font_size">16dp</dimen>
+    <dimen name="launch_stb_checkbox_high">18dp</dimen>
+    <dimen name="launch_stb_margin_top">32dp</dimen>
+    <dimen name ="launch_stb_progress_bar_padding">15dp</dimen>
+    <dimen name ="launch_stb_start_up_icon1_high">36dp</dimen>
+    <dimen name ="launch_stb_start_up_icon1_width">70dp</dimen>
+    <dimen name="launch_stb_start_up_icon3_width">162dp</dimen>
+    <dimen name="launch_stb_start_up_icon2_high">44dp</dimen>
+    <dimen name="launch_stb_start_up_icon2_width">163dp</dimen>
     <dimen name="clip_toast_margin">10dp</dimen>
     <dimen name="clip_button_size">32dp</dimen>
     <dimen name="clip_common_margin">15dp</dimen>

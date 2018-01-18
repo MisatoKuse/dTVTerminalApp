@@ -31,7 +31,7 @@ public class STBSelectErrorActivity extends BaseActivity {
      * 画面上に表示するコンテンツを設定する
      */
     private void setContents() {
-        setTitleText(getString(R.string.str_stb_select_error));
+        setTitleText(getString(R.string.str_app_title));
         mParingAgain = findViewById(R.id.stb_search_failed_paring_again);
         mParingHelp = findViewById(R.id.stb_paring_failed_help);
         findViewById(R.id.header_layout_back).setVisibility(View.GONE);

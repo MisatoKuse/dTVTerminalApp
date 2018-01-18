@@ -66,7 +66,9 @@
     <!--//STB選択-->
     <drawable name="color_white">#ffffff</drawable>
     <drawable name="color_black">#000000</drawable>
-    <drawable name="color_gray">#555555</drawable>
+    <drawable name="color_gray">#4a4a4a</drawable>
+    <color name ="stb_select_black_color">#000000</color>
+    <color name ="stb_select_white_color">#ffffff</color>
 
     <!--//リモコン画面-->
     <drawable name="color_blue">#0099ff</drawable>
