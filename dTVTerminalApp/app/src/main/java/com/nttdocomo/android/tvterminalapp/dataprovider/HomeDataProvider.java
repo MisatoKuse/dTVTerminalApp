@@ -349,7 +349,7 @@ public class HomeDataProvider implements
             list = homeDataManager.selectTvScheduleListHomeData();
         } else {
             //通信クラスにデータ取得要求を出す
-            TvScheduleWebClient webClient = new TvScheduleWebClient();
+            TvScheduleWebClient webClient = new TvScheduleWebClient(mContext);
             int[] ageReq = {1};
             String[] upperPageLimit = {WebApiBasePlala.DATE_NOW};
             String lowerPageLimit = "";
@@ -416,7 +416,7 @@ public class HomeDataProvider implements
             list = homeDataManager.selectTvClipHomeData();
         } else {
             //通信クラスにデータ取得要求を出す
-            TvClipWebClient webClient = new TvClipWebClient();
+            TvClipWebClient webClient = new TvClipWebClient(mContext);
             int ageReq = 1;
             int upperPageLimit = 1;
             int lowerPageLimit = 1;
@@ -445,7 +445,7 @@ public class HomeDataProvider implements
             list = homeDataManager.selectVodClipHomeData();
         } else {
             //通信クラスにデータ取得要求を出す
-            VodClipWebClient webClient = new VodClipWebClient();
+            VodClipWebClient webClient = new VodClipWebClient(mContext);
             int ageReq = 1;
             int upperPageLimit = 1;
             int lowerPageLimit = 1;
@@ -474,7 +474,7 @@ public class HomeDataProvider implements
             list = homeDataManager.selectDailyRankListHomeData();
         } else {
             //通信クラスにデータ取得要求を出す
-            DailyRankWebClient webClient = new DailyRankWebClient();
+            DailyRankWebClient webClient = new DailyRankWebClient(mContext);
             int ageReq = 1;
             int upperPageLimit = 1;
             String lowerPageLimit = "";
@@ -502,7 +502,7 @@ public class HomeDataProvider implements
             list = rankingTopDataManager.selectVideoRankListData();
         } else {
             //通信クラスにデータ取得要求を出す
-            ContentsListPerGenreWebClient webClient = new ContentsListPerGenreWebClient();
+            ContentsListPerGenreWebClient webClient = new ContentsListPerGenreWebClient(mContext);
             int limit = 1;
             int offset = 1;
             String filter = "";

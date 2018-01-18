@@ -204,7 +204,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
 */
 //        if(!fromDb){
         //通信クラスにデータ取得要求を出す
-        VodClipWebClient webClient = new VodClipWebClient();
+        VodClipWebClient webClient = new VodClipWebClient(mContext);
         int ageReq = 1;
         int upperPageLimit = 1;
         int lowerPageLimit = 1;

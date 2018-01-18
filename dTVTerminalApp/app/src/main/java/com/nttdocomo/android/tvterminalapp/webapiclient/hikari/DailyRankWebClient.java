@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import android.content.Context;
+
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
@@ -31,6 +33,15 @@ public class DailyRankWebClient
 
     //コールバックのインスタンス
     private DailyRankJsonParserCallback mDailyRankJsonParserCallback;
+
+    /**
+     * コンテキストを継承元のコンストラクタに送る
+     *
+     * @param context コンテキスト
+     */
+    public DailyRankWebClient(Context context) {
+        super(context);
+    }
 
     @Override
     public void onAnswer(ReturnCode returnCode) {

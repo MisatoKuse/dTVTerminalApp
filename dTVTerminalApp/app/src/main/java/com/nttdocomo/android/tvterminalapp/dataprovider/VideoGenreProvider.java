@@ -86,7 +86,7 @@ public class VideoGenreProvider implements
      */
     private void getGenreListData() {
         // TODO 仮実装 IF仕様が固まったらパラメータを送るように修正
-        GenreListWebClient webClient = new GenreListWebClient();
+        GenreListWebClient webClient = new GenreListWebClient(mContext);
         int limit = 1;
         int offset = 1;
         String filter = "";
@@ -101,7 +101,7 @@ public class VideoGenreProvider implements
      */
     public void getContentCountListData(List<String> genreId) {
         //通信クラスにデータ取得要求を出す
-        GenreCountGetWebClient webClient = new GenreCountGetWebClient();
+        GenreCountGetWebClient webClient = new GenreCountGetWebClient(mContext);
         int limit = 1;
         int offset = 1;
         String filter = "";

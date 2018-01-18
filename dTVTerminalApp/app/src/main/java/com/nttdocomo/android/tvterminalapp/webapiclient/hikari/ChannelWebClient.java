@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import android.content.Context;
+
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
@@ -30,6 +32,15 @@ public class ChannelWebClient
 
     //コールバックのインスタンス
     private ChannelJsonParserCallback mChannelJsonParserCallback;
+
+    /**
+     * コンテキストを継承元のコンストラクタに送る
+     *
+     * @param context コンテキスト
+     */
+    public ChannelWebClient(Context context) {
+        super(context);
+    }
 
     /**
      * 通信成功時のコールバック

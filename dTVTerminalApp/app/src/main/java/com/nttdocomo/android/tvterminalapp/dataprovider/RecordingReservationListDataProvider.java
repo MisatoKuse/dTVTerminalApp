@@ -204,11 +204,13 @@ public class RecordingReservationListDataProvider implements
         initDataList();
 
         // STB側録画予約一覧取得要求
-        RemoteRecordingReservationListWebClient stbWebClient = new RemoteRecordingReservationListWebClient();
+        RemoteRecordingReservationListWebClient stbWebClient =
+                new RemoteRecordingReservationListWebClient(mContext);
         stbWebClient.getRemoteRecordingReservationListApi(this);
 
         // dリモート側録画予約一覧取得要求
-        RecordingReservationListWebClient dRemoteWebClient = new RecordingReservationListWebClient();
+        RecordingReservationListWebClient dRemoteWebClient =
+                new RecordingReservationListWebClient(mContext);
         int limit = 0;
         int offset = 0;
         dRemoteWebClient.getRecordingReservationListApi(limit, offset, this);
@@ -237,7 +239,7 @@ public class RecordingReservationListDataProvider implements
         DTVTLogger.start();
         List<HashMap<String, String>> list = new ArrayList<>();
         //通信クラスにデータ取得要求を出す
-        ChannelWebClient webClient = new ChannelWebClient();
+        ChannelWebClient webClient = new ChannelWebClient(mContext);
         int pagerLimit = 1;
         int pagerOffset = 1;
         String filter = "";

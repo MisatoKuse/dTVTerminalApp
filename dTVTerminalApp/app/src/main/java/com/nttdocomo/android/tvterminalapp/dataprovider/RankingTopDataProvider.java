@@ -545,7 +545,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             list = homeDataManager.selectDailyRankListHomeData();
         } else {
             //通信クラスにデータ取得要求を出す
-            DailyRankWebClient webClient = new DailyRankWebClient();
+            DailyRankWebClient webClient = new DailyRankWebClient(mContext);
             int ageReq = 1;
             int upperPageLimit = 1;
             String lowerPageLimit = "";
@@ -575,7 +575,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             list = homeDataManager.selectWeeklyRankListHomeData();
         } else {
             //通信クラスにデータ取得要求を出す
-            WeeklyRankWebClient webClient = new WeeklyRankWebClient();
+            WeeklyRankWebClient webClient = new WeeklyRankWebClient(mContext);
             int limit = 1;
             int offset = 1;
             String filter = "";
@@ -605,7 +605,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             list = rankingTopDataManager.selectVideoRankListData();
         } else {
             //通信クラスにデータ取得要求を出す
-            ContentsListPerGenreWebClient webClient = new ContentsListPerGenreWebClient();
+            ContentsListPerGenreWebClient webClient = new ContentsListPerGenreWebClient(mContext);
             int limit = 1;
             int offset = 1;
             String filter = "";

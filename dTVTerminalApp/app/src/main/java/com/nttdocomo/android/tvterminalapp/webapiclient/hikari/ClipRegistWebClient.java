@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import android.content.Context;
+
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
@@ -39,6 +41,15 @@ public class ClipRegistWebClient
 
     //コールバックのインスタンス
     private ClipRegistJsonParserCallback mClipRegistJsonParserCallback;
+
+    /**
+     * コンテキストを継承元のコンストラクタに送る
+     *
+     * @param context コンテキスト
+     */
+    public ClipRegistWebClient(Context context) {
+        super(context);
+    }
 
     /**
      * 通信成功時のコールバック.

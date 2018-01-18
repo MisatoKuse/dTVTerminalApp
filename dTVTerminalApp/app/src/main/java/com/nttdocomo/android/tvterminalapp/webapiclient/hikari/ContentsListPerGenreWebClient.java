@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
@@ -36,6 +37,15 @@ public class ContentsListPerGenreWebClient
     //コールバックのインスタンス
     private ContentsListPerGenreJsonParserCallback
             mContentsListPerGenreJsonParserCallback;
+
+    /**
+     * コンテキストを継承元のコンストラクタに送る
+     *
+     * @param context コンテキスト
+     */
+    public ContentsListPerGenreWebClient(Context context) {
+        super(context);
+    }
 
     /**
      * 通信成功時のコールバック

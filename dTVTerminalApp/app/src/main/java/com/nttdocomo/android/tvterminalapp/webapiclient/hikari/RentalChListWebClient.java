@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import android.content.Context;
+
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChListResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.RentalChListJsonParser;
@@ -30,6 +32,15 @@ public class RentalChListWebClient
      * コールバックのインスタンス.
      */
     private RentalChListJsonParserCallback mRentalChListJsonParserCallback;
+
+    /**
+     * コンテキストを継承元のコンストラクタに送る
+     *
+     * @param context コンテキスト
+     */
+    public RentalChListWebClient(Context context) {
+        super(context);
+    }
 
     @Override
     public void onAnswer(final ReturnCode returnCode) {
