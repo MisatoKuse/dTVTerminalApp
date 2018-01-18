@@ -194,10 +194,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         DTVTLogger.start();
         mBaseLinearLayout = findViewById(R.id.base_ll);
         mHeaderLayout = findViewById(R.id.base_title);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                getHeightDensity() / 15);
-        mHeaderLayout.setLayoutParams(lp);
         titleTextView = findViewById(R.id.header_layout_text);
         DTVTLogger.end();
         mHeaderBackIcon = findViewById(R.id.header_layout_back);
@@ -230,7 +226,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             if (isOn) {
                 mHeaderBackIcon.setVisibility(View.VISIBLE);
             } else {
-                mHeaderBackIcon.setVisibility(View.GONE);
+                mHeaderBackIcon.setVisibility(View.INVISIBLE);
             }
         }
     }
@@ -250,7 +246,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             if (isOn) {
                 mStbStatusIcon.setVisibility(View.VISIBLE);
             } else {
-                mStbStatusIcon.setVisibility(View.GONE);
+                mStbStatusIcon.setVisibility(View.INVISIBLE);
             }
         }
     }
@@ -265,7 +261,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             if (isOn) {
                 mStbStatusIcon.setVisibility(View.VISIBLE);
             } else {
-                mStbStatusIcon.setVisibility(View.GONE);
+                mStbStatusIcon.setVisibility(View.INVISIBLE);
             }
         }
     }
@@ -281,7 +277,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                 mMenuImageViewForBase.setVisibility(View.VISIBLE);
                 mMenuImageViewForBase.setOnClickListener(this);
             } else {
-                mMenuImageViewForBase.setVisibility(View.GONE);
+                mMenuImageViewForBase.setVisibility(View.INVISIBLE);
             }
         }
     }

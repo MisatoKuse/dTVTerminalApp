@@ -18,7 +18,7 @@
     <color name="content_time_text">#AAAAAA</color>
     <color name="result_line">#222222</color>
     <color name="custom_toast_background">#000000</color>
-    <color name="header_background_color_red">#ff0000</color>
+    <color name="header_background_color_red">#cc0033</color>
     <color name="header_background_color_black">#000000</color>
     <!--Global Menu-->
     <color name="hikari_tv_and_dtv_channel_title">#00FFFF</color>
