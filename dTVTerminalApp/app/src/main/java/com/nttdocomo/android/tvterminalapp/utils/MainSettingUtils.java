@@ -4,55 +4,71 @@
 
 package com.nttdocomo.android.tvterminalapp.utils;
 
+/**
+ * 設定画面用データ.
+ */
 public class MainSettingUtils {
+    /**
+     * 項目名.
+     */
     private String mText;
+    /**
+     * ステータス.
+     */
     private String mStateText;
-    private Boolean mIsForward;
-    private Boolean mIsCategory;
 
+    /**
+     * コンストラクタ.
+     */
     public MainSettingUtils() {
         mText = "";
         mStateText = "";
-        mIsForward = false;
-        mIsCategory = false;
     }
 
-    public MainSettingUtils(String text, String stateText, Boolean forward, Boolean category) {
+    /**
+     * コンストラクタ.
+     *
+     * @param text 項目名
+     * @param stateText ステータス
+     */
+    public MainSettingUtils(final String text, final String stateText) {
         mText = text;
         mStateText = stateText;
-        mIsForward = forward;
-        mIsCategory = category;
     }
 
+    /**
+     * 項目名を取得.
+     *
+     * @return 項目名
+     */
     public String getText() {
         return mText;
     }
 
+    /**
+     * ステータスを取得.
+     *
+     * @return ステータス
+     */
     public String getStateText() {
         return mStateText;
     }
 
-    public Boolean isArrow() {
-        return mIsForward;
-    }
-
-    public Boolean isCategory() {
-        return mIsCategory;
-    }
-
-    public void setText(String text) {
+    /**
+     * 項目名を保存.
+     *
+     * @param text 項目名
+     */
+    public void setText(final String text) {
         mText = text;
     }
 
-    public void setStateText(String stateText) {
+    /**
+     * ステータスを保存.
+     *
+     * @param stateText ステータス
+     */
+    public void setStateText(final String stateText) {
         mStateText = stateText;
-    }
-
-    public void setIsArrow(Boolean forward) {
-        mIsForward = forward;
-    }
-
-    public void setIsCategory(Boolean category) {
-        mIsCategory = category;
     }
 }

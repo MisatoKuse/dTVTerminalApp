@@ -327,21 +327,14 @@
     <string name="main_setting_connect_error_message">STBとの接続に失敗しました。</string>
     <string-array name="main_setting_items">
         <item>dアカウント設定</item>
-        <item>dアカウント設定</item>
-        <item>機器設定</item>
         <item>ペアリング設定</item>
-        <item>番組表設定</item>
         <item>マイ番組表設定</item>
-        <item>ダウンロード設定</item>
-        <item>ダウンロード先</item>
         <item>外出先視聴時の画質設定</item>
-        <item>外出先視聴時の画質設定</item>
-        <item>FAQ</item>
         <item>FAQ</item>
         <item>アプリケーション情報</item>
-        <item>バージョン情報</item>
         <item>ライセンス情報</item>
         <item>プライバシーポリシー</item>
+        <item>APP</item>
         <item>利用規約</item>
     </string-array>
 

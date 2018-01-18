@@ -15,15 +15,30 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
+/**
+ * 設定画面の外出先視聴時の画質設定の設定画面.
+ */
 public class SettingImageQualityActivity extends BaseActivity implements View.OnClickListener {
 
+    /**
+     * 画質の設定値.
+     */
     private String mStatus;
+    /**
+     * 最高画質用チェックボックス.
+     */
     private CheckBox checkBoxHigh;
+    /**
+     * 高画質用チェックボックス.
+     */
     private CheckBox checkBoxMiddle;
+    /**
+     * 標準画質用チェックボックス.
+     */
     private CheckBox checkBoxLow;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DTVTLogger.start();
         setContentView(R.layout.setting_quality_change);
@@ -58,7 +73,7 @@ public class SettingImageQualityActivity extends BaseActivity implements View.On
     }
 
     @Override
-    public void onClick(View view) {
+    public void onClick(final View view) {
         super.onClick(view);
         switch (view.getId()) {
             case R.id.main_setting_relativelayout_quality_high:
@@ -88,7 +103,7 @@ public class SettingImageQualityActivity extends BaseActivity implements View.On
     }
 
     /**
-     * CheckBoxの初期状態を設定
+     * CheckBoxの初期状態を設定.
      */
     private void initCheckBox() {
         if (mStatus.equals(getString(R.string.main_setting_image_quality_high))) {
@@ -101,15 +116,15 @@ public class SettingImageQualityActivity extends BaseActivity implements View.On
     }
 
     /**
-     * タップされた設定値を保存する
+     * タップされた設定値を保存する.
      * @param status 画質の設定値
      */
-    private void storeStatus(String status) {
+    private void storeStatus(final String status) {
         SharedPreferencesUtils.setSharedPreferencesImageQuality(this, status);
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         DTVTLogger.start();
         if (checkRemoteControllerView()) {
             return false;
