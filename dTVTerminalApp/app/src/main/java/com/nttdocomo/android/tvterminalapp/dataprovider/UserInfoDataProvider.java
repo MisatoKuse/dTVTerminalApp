@@ -124,8 +124,8 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
         }
 
         //新たなデータを取得する
-        UserInfoWebClient userInfoWebClient = new UserInfoWebClient();
-        userInfoWebClient.getUserInfoApi(mContext, this);
+        UserInfoWebClient userInfoWebClient = new UserInfoWebClient(mContext);
+        userInfoWebClient.getUserInfoApi(this);
 
         DTVTLogger.end();
     }

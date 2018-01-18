@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import android.content.Context;
+
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
@@ -33,6 +35,15 @@ public class RemoteRecordingReservationWebClient
     //コールバックのインスタンス
     private RemoteRecordingReservationJsonParserCallback
             mRemoteRecordingReservationJsonParserCallback;
+
+    /**
+     * コンテキストを継承元のコンストラクタに送る
+     *
+     * @param context コンテキスト
+     */
+    public RemoteRecordingReservationWebClient(Context context) {
+        super(context);
+    }
 
     @Override
     public void onAnswer(ReturnCode returnCode) {

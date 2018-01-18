@@ -75,7 +75,7 @@ public class VideoContentProvider  extends  ClipKeyListDataProvider implements
      */
     private void getVideoContentListData(String genreId) {
         //通信クラスにデータ取得要求を出す
-        ContentsListPerGenreWebClient webClient = new ContentsListPerGenreWebClient();
+        ContentsListPerGenreWebClient webClient = new ContentsListPerGenreWebClient(mContext);
         int limit = 1;
         int offset = 1;
         String filter = "";

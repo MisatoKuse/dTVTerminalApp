@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import android.content.Context;
 import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -20,6 +21,15 @@ import java.util.List;
 
 public class WatchListenVideoWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback, JsonParserThread.JsonParser {
+
+    /**
+     * コンテキストを継承元のコンストラクタに送る
+     *
+     * @param context コンテキスト
+     */
+    public WatchListenVideoWebClient(Context context) {
+        super(context);
+    }
 
     @Override
     public void onParserFinished(Object parsedData) {

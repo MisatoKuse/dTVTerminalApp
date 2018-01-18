@@ -221,5 +221,8 @@ dependencies {
     compile(name: 'dixim-android-player-secure-nativecodec-debug', ext: 'aar')
     compile(name: 'dixim-android-player-secure-openmaxal-debug', ext: 'aar')
     compile(name: 'dixim-android-util2-debug', ext: 'aar')
-
+    //SSLチェックライブラリ
+    compile files('libs/ocsplib2.0.jar')
+    //SSLチェックライブラリのエラー動作用スタブ
+    compile files('libs/ocsplib-stub2.0.jar')
 }

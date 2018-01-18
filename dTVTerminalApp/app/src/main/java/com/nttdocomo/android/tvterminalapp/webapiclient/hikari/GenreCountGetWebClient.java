@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import android.content.Context;
+
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetResponse;
@@ -42,6 +44,15 @@ public class GenreCountGetWebClient
     //コールバックのインスタンス
     private GenreCountGetJsonParserCallback
             mGenreCountGetJsonParserCallback;
+
+    /**
+     * コンテキストを継承元のコンストラクタに送る
+     *
+     * @param context コンテキスト
+     */
+    public GenreCountGetWebClient(Context context) {
+        super(context);
+    }
 
     @Override
     public void onAnswer(ReturnCode returnCode) {

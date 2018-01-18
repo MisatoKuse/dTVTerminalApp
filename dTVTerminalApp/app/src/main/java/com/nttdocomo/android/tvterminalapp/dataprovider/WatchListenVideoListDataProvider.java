@@ -61,7 +61,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
         /**
          * クリップリスト用コールバック
          *
-         * @param clipContentInfo
+         * @param clipContentInfo コンテンツ情報
          */
         void watchListenVideoListCallback(List<ContentsData> clipContentInfo);
     }
@@ -71,7 +71,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     /**
      * コンストラクタ
      *
-     * @param context
+     * @param context コンテキスト
      */
     public WatchListenVideoListDataProvider(Context context) {
         super(context);
@@ -89,7 +89,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
             getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
         }
 
-        WatchListenVideoWebClient webClient = new WatchListenVideoWebClient();
+        WatchListenVideoWebClient webClient = new WatchListenVideoWebClient(mContext);
         int ageReq = 1;
         int upperPageLimit = 1;
         int lowerPageLimit = 1;

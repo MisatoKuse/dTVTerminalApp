@@ -1112,11 +1112,13 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
             //クリップ状態によりクリップ登録/削除実行
             if (data.isClipStatus()) {
-                ClipDeleteWebClient deleteWebClient = new ClipDeleteWebClient();
+                ClipDeleteWebClient deleteWebClient =
+                        new ClipDeleteWebClient(getApplicationContext());
                 isParamCheck = deleteWebClient.getClipDeleteApi(data.getType(), data.getCrid(),
                         data.getTitle(), this);
             } else {
-                ClipRegistWebClient registWebClient = new ClipRegistWebClient();
+                ClipRegistWebClient registWebClient =
+                        new ClipRegistWebClient(getApplicationContext());
                 isParamCheck = registWebClient.getClipRegistApi(data.getType(), data.getCrid(),
                         data.getServiceId(), data.getEventId(), data.getTitleId(), data.getTitle(),
                         data.getRValue(), data.getLinearStartDate(), data.getLinearEndDate(),

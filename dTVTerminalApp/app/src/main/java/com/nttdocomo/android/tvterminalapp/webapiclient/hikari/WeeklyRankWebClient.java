@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
@@ -35,6 +36,15 @@ public class WeeklyRankWebClient
     //コールバックのインスタンス
     private WeeklyRankJsonParserCallback mWeeklyRankJsonParserCallback;
 
+
+    /**
+     * コンテキストを継承元のコンストラクタに送る
+     *
+     * @param context コンテキスト
+     */
+    public WeeklyRankWebClient(Context context) {
+        super(context);
+    }
 
     @Override
     public void onAnswer(ReturnCode returnCode) {

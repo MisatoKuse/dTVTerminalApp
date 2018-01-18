@@ -4,10 +4,16 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import com.nttdocomo.android.ocsplib.OcspURLConnection;
+import com.nttdocomo.android.ocsplib.OcspUtil;
+import com.nttdocomo.android.ocsplib.exception.OcspParameterException;
+import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOTT;
 
@@ -30,9 +36,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
+import javax.net.ssl.SSLHandshakeException;
+import javax.net.ssl.SSLPeerUnverifiedException;
 
+public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
+    //エラー値
     private ReturnCode mReturnCode = null;
+
+    //コンテキスト
+    private Context mContext = null;
 
     /**
      * コールバックのインスタンス
@@ -50,6 +62,9 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
 
     //結果を受け取るバッファ
     private String mAnswerBuffer = "";
+
+    //SSLエラー連続表示抑止フラグ
+    static private boolean sSslErrorAlreadyOccurrence = false;
 
     //リクエスト種別・基本はPOST
     private static final String REQUEST_METHOD = "POST";
@@ -106,6 +121,11 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
          * HTTP通信エラー
          */
         HTTP_ERROR,
+
+        /**
+         * SSLエラー
+         */
+        SSL_ERROR,
 
         /**
          * データなし
@@ -294,7 +314,10 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
     /**
      * コンストラクタ
      */
-    public WebApiBasePlala() {
+    public WebApiBasePlala(Context context) {
+        //コンテキストの退避
+        mContext = context;
+
         //コネクション蓄積が存在しなければ作成する
         if (mUrlConnections == null) {
             mUrlConnections = new ArrayList<>();
@@ -407,16 +430,14 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
     /**
      * 指定したAPIをワンタイムトークン付きで通信を開始する
      *
-     * @param context                 コンテキスト
      * @param sourceUrl               API呼び出し名
      * @param receivedParameters      API呼び出し用パラメータ
      * @param webApiBasePlalaCallback 結果のコールバック
      * @param extraDataSrc            拡張情報（使用しないときはヌルをセット）
      */
-    public void openUrlAddOtt(Context context, final String sourceUrl, String receivedParameters,
+    public void openUrlAddOtt(final String sourceUrl, String receivedParameters,
                               WebApiBasePlalaCallback webApiBasePlalaCallback,
                               Bundle extraDataSrc) {
-
         //タスクを作成する
         mCommunicationTask = new CommunicationTask(sourceUrl, receivedParameters,
                 extraDataSrc, true);
@@ -425,7 +446,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
         mWebApiBasePlalaCallback = webApiBasePlalaCallback;
 
         //ワンタイムパスワードの取得を起動
-        getOneTimePassword(context);
+        getOneTimePassword(mContext);
     }
 
     /**
@@ -654,8 +675,18 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                 //事前設定パラメータのセット
                 setParameters(mUrlConnection);
 
-                //通信開始
-                mUrlConnection.connect();
+                //コンテキストがあればSSL証明書失効チェックを行う
+                if(mContext != null) {
+                    //SSL証明書失効チェックライブラリの初期化を行う
+                    OcspUtil.init(mContext);
+
+                    //通信開始時にSSL証明書失効チェックを併せて行う
+                    OcspURLConnection ocspURLConnection = new OcspURLConnection(mUrlConnection);
+                    ocspURLConnection.connect();
+                } else {
+                    //SSL失効チェックライブラリは動かせないので、既存の通信開始処理
+                    mUrlConnection.connect();
+                }
 
                 //パラメータを渡す
                 setPostData(mUrlConnection);
@@ -670,9 +701,21 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
             } catch (ConnectException e) {
                 //通信エラー扱いとする
                 mReturnCode.errorType = ERROR_TYPE.COMMUNICATION_ERROR;
+            } catch (SSLHandshakeException e) {
+                //SSL証明書が失効している
+                mReturnCode.errorType = ERROR_TYPE.SSL_ERROR;
+                DTVTLogger.debug(e);
+            } catch (SSLPeerUnverifiedException e) {
+                //SSLチェックライブラリの初期化が行われていない
+                mReturnCode.errorType = ERROR_TYPE.SSL_ERROR;
+                DTVTLogger.debug(e);
             } catch (IOException e) {
                 //通信エラー扱いとする
                 mReturnCode.errorType = ERROR_TYPE.COMMUNICATION_ERROR;
+                DTVTLogger.debug(e);
+            } catch (OcspParameterException e) {
+                //SSLチェックの初期化に失敗している・通常は発生しないとの事
+                mReturnCode.errorType = ERROR_TYPE.SSL_ERROR;
                 DTVTLogger.debug(e);
             } finally {
                 //最後なので初期化
@@ -695,20 +738,56 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
             }
 
             //呼び出し元に伝える情報を判断する
-            if (returnCode.errorType == ERROR_TYPE.SUCCESS) {
-                if (mAnswerBuffer.isEmpty()) {
-                    //エラーが無いので、失敗を伝える
+            switch (returnCode.errorType) {
+                case SUCCESS:
+                    if (mAnswerBuffer.isEmpty()) {
+                        //結果の値が無いので、失敗を伝える
+                        mWebApiBasePlalaCallback.onError();
+                    } else {
+                        //通信に成功したので、値を伝える
+                        // **FindBugs** Bad practice FindBugsは不使用なのでbodyDataは消せと警告するが、
+                        // コールバック先では使用するため対応しない
+                        returnCode.bodyData = mAnswerBuffer;
+                        mWebApiBasePlalaCallback.onAnswer(returnCode);
+                    }
+                    break;
+                case SSL_ERROR:
+                    //SSLエラー重複表示抑止判定
+                    if(!sSslErrorAlreadyOccurrence) {
+                        //SSLエラー発生済みフラグをONにする
+                        sSslErrorAlreadyOccurrence = true;
+
+                        //SSLエラーが発生したので、ダイアログを出す
+                        CustomDialog sslErrorDialog = new CustomDialog(mContext,
+                                CustomDialog.DialogType.ERROR);
+                        sslErrorDialog.setTitle(
+                                mContext.getString(R.string.SSL_REVOCATION_ERROR_TITLE));
+                        sslErrorDialog.setContent(
+                                mContext.getString(R.string.SSL_REVOCATION_ERROR_MESSAGE));
+                        sslErrorDialog.setCancelable(false);
+                        sslErrorDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                            @Override
+                            public void onOKCallback(boolean isOK) {
+                                //OKが押された場合、呼び出し元にはエラーを伝える
+                                mWebApiBasePlalaCallback.onError();
+
+                                //ダイアログを表示し終えたので、フラグを戻す
+                                sSslErrorAlreadyOccurrence = false;
+                            }
+                        });
+                        sslErrorDialog.showDialog();
+                    } else {
+                        //既にダイアログは表示済みなので、呼び出し元には即座にエラーを伝える
+                        mWebApiBasePlalaCallback.onError();
+                    }
+                    break;
+                case HTTP_ERROR:
+                case COMMUNICATION_ERROR:
+                case OTHER_ERROR:
+                case NO_DATA:
+                    //その他のエラーなので、呼び出し元にはエラーを伝える
                     mWebApiBasePlalaCallback.onError();
-                } else {
-                    //通信に成功したので、値を伝える
-                    // **FindBugs** Bad practice FindBugsは不使用なのでbodyDataは消せと警告するが、
-                    // コールバック先では使用するため対応しない
-                    returnCode.bodyData = mAnswerBuffer;
-                    mWebApiBasePlalaCallback.onAnswer(returnCode);
-                }
-            } else {
-                //エラーがあったので、失敗を伝える
-                mWebApiBasePlalaCallback.onError();
+                    break;
             }
         }
 

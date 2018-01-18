@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import android.content.Context;
+
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
@@ -37,6 +39,15 @@ public class ClipDeleteWebClient
 
     //コールバックのインスタンス
     private ClipDeleteJsonParserCallback mClipDeleteJsonParserCallback;
+
+    /**
+     * コンテキストを継承元のコンストラクタに送る
+     *
+     * @param context コンテキスト
+     */
+    public ClipDeleteWebClient(Context context) {
+        super(context);
+    }
 
     /**
      * 通信成功時のコールバック.
