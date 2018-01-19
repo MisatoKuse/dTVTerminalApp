@@ -11,11 +11,14 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -27,16 +30,23 @@ import com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivi
 import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.HomeDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
+import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 
 import java.util.List;
-import java.util.Map;
 
 public class HomeActivity extends BaseActivity implements View.OnClickListener,
-        HomeDataProvider.ApiDataProviderCallback {
+        HomeDataProvider.ApiDataProviderCallback, UserInfoDataProvider.UserDataProviderCallback {
 
     private LinearLayout mLinearLayout = null;
 
+    private boolean mIsCloseDialog = false;
+    private boolean mIsOnCreateFinish = false;
     //外部ブラウザー遷移先
     private final static String PR_URL = "https://www.hikaritv.net/video";
     //コンテンツ一覧数
@@ -66,13 +76,69 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         setTitleText(getString(R.string.home_header_title));
         enableHeaderBackIcon(false);
         enableStbStatusIcon(true);
-        //ビューの初期化処理
-        initView();
+        mIsOnCreateFinish = false;
+        if (!NetWorkUtils.isOnline(this)) {
+            String message = getResources().getString(R.string.activity_start_network_error_message);
+            errorDialog(message, R.string.custom_dialog_ok);
+        } else {
+            getUserInfo();
+            initView();
+        }
+    }
+
+    /**
+     * 汎用エラーダイアログ.
+     *
+     * @param message
+     * @param confirmTextId
+     */
+    private void errorDialog(final String message, final int confirmTextId) {
+        if(!mIsCloseDialog){
+            CustomDialog failedRecordingReservationDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+            failedRecordingReservationDialog.setContent(message);
+            failedRecordingReservationDialog.setConfirmText(confirmTextId);
+            // Cancelable
+            failedRecordingReservationDialog.setCancelable(false);
+            failedRecordingReservationDialog.showDialog();
+            mIsCloseDialog = true;
+            failedRecordingReservationDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                @Override
+                public void onOKCallback(boolean isOK) {
+                    initView();
+                    mIsCloseDialog = false;
+                }
+            });
+        }
+    }
+
+    /**
+     * プログレスバー表示.
+     */
+    private void initData() {
+        //プログレスダイアログを表示する
+        mLinearLayout = findViewById(R.id.home_main_layout_linearLayout);
+        mLinearLayout.setVisibility(View.VISIBLE);
+        ProgressBar progressBar = new ProgressBar(HomeActivity.this, null, android.R.attr.progressBarStyle);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.gravity = Gravity.CENTER_VERTICAL;
+        mLinearLayout.addView(progressBar, params);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        //アプリ起動時のデータ取得はonCreateで実施済みのためonResumeでは行わない
+        if (mIsOnCreateFinish) {
+            requestHomeData();
+        }
+        mIsOnCreateFinish = true;
+    }
+
+    /**
+     * ホーム画面用データ取得開始.
+     */
+    private void requestHomeData() {
         //Home画面用データを取得
         HomeDataProvider homeDataProvider = new HomeDataProvider(this);
         homeDataProvider.getHomeData();
@@ -116,7 +182,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     /**
      * 機能
-     * 外部ブラウザーを起動する
+     * 外部ブラウザーを起動する.
      */
     private void startBrowser() {
         Intent intent = new Intent();
@@ -128,15 +194,21 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     /**
      * 機能
-     * ビューの初期化処理
+     * ビューの初期化処理.
      */
     private void initView() {
         mLinearLayout = findViewById(R.id.home_main_layout_linearLayout);
+        mLinearLayout.setVisibility(View.VISIBLE);
         ImageView menuImageView = findViewById(R.id.header_layout_menu);
         menuImageView.setVisibility(View.VISIBLE);
         TextView agreementTextView = findViewById(R.id.home_main_layout_kytv);
         LinearLayout agreementRl = findViewById(R.id.home_main_layout_kyrl);
         ImageView prImageView = findViewById(R.id.home_main_layout_pr);
+        agreementTextView.setVisibility(View.VISIBLE);
+        agreementRl.setVisibility(View.VISIBLE);
+        prImageView.setVisibility(View.VISIBLE);
+        //TODO:暫定的にサンプル画像を設定する
+        prImageView.setBackgroundResource(R.mipmap.home_pr);
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         int height = getHeightDensity();
@@ -167,10 +239,38 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     /**
-     * 機能
-     * コンテンツ一覧ビューを設定
+     * Viewを非表示にする.
      */
-    private void setRecyclerView(List<ContentsData> contentsDataList, final int tag) {
+    private void clearView() {
+        mLinearLayout = findViewById(R.id.home_main_layout_linearLayout);
+        mLinearLayout.setVisibility(View.VISIBLE);
+        ImageView menuImageView = findViewById(R.id.header_layout_menu);
+        TextView agreementTextView = findViewById(R.id.home_main_layout_kytv);
+        LinearLayout agreementRl = findViewById(R.id.home_main_layout_kyrl);
+        ImageView prImageView = findViewById(R.id.home_main_layout_pr);
+        menuImageView.setVisibility(View.GONE);
+        agreementTextView.setVisibility(View.GONE);
+        agreementRl.setVisibility(View.GONE);
+        prImageView.setVisibility(View.GONE);
+        //各コンテンツのビューを作成する
+        for (int i = HOME_CONTENTS_LIST_START_INDEX; i < HOME_CONTENTS_LIST_COUNT + HOME_CONTENTS_LIST_START_INDEX; i++) {
+            View view = LayoutInflater.from(this).inflate(R.layout.home_main_layout_item, null, false);
+            RelativeLayout relativeLayout = view.findViewById(R.id.home_main_item_type_rl);
+            view.setVisibility(View.GONE);
+            mLinearLayout.addView(view);
+        }
+        RecyclerView mRecyclerView = mLinearLayout.findViewById(R.id.home_main_item_recyclerview);
+
+    }
+
+    /**
+     * 機能
+     * コンテンツ一覧ビューを設定.
+     *
+     * @param contentsDataList コンテンツ情報
+     * @param tag              遷移先
+     */
+    private void setRecyclerView(final List<ContentsData> contentsDataList, final int tag) {
         String typeContentName = getContentTypeName(tag);
         String resultCount = String.valueOf(contentsDataList.size());
         View view = mLinearLayout.getChildAt(tag);
@@ -198,9 +298,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     /**
      * 機能
-     * コンテンツ一覧タイトル取得
+     * コンテンツ一覧タイトル取得.
+     *
+     * @param tag コンテンツ種別
+     * @return コンテンツ表示名
      */
-    private String getContentTypeName(int tag) {
+    private String getContentTypeName(final int tag) {
         String typeName = "";
         switch (tag) {
             case HOME_CONTENTS_SORT_CHANNEL:
@@ -232,9 +335,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     /**
      * 機能
-     * コンテンツ一覧データを設定
+     * コンテンツ一覧データを設定.
+     *
+     * @param mRecyclerView    リサイクルビュー
+     * @param contentsDataList コンテンツ情報
+     * @param index            遷移先
      */
-    private void setRecyclerViewData(RecyclerView mRecyclerView, List<ContentsData> contentsDataList, final int index) {
+    private void setRecyclerViewData(final RecyclerView mRecyclerView, final List<ContentsData> contentsDataList, final int index) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mRecyclerView.setLayoutManager(linearLayoutManager);
@@ -255,9 +362,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     /**
      * 機能
-     * 遷移先を設定
+     * 遷移先を設定.
+     *
+     * @param index 遷移先
      */
-    private void startTo(int index) {
+    private void startTo(final int index) {
         switch (index) {
             case HOME_CONTENTS_SORT_CHANNEL:
                 //チャンネルリスト一覧へ遷移
@@ -286,6 +395,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         }
     }
 
+    /**
+     * コンテンツ情報取得ハンドラ.
+     */
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -330,6 +442,17 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         if (videoRankList != null && videoRankList.size() > 0) {
             Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_VIDEO, videoRankList);
             mHandler.sendMessage(msg);
+        } else {
+
+            //仮実装
+            //データ取得失敗ダイアログ
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String message = getResources().getString(R.string.get_contents_data_error_message);
+                    errorDialog(message, R.string.custom_dialog_ok);
+                }
+            });
         }
     }
 
@@ -349,7 +472,85 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         }
     }
 
+    //検討中
+//    @Override
+//    public void userInfoCallback(List<Map<String, String>> userList) {
+//        if (!DBUtils.isCachingRecord(this, DBConstants.USER_INFO_LIST_TABLE_NAME)) {
+//            //UserInfoテーブルにデータがないため初回取得と判定
+//            if (userList == null || userList.size() < 1) {
+//                // 初回起動時または1度もH4d契約情報取得に成功していない状態で、
+//                // H4d契約情報取得に失敗した場合は「ひかりTV for docomoの契約情報取得に失敗しました。」
+//                // エラーダイアログ、「閉じる」「リトライ」ボタンを表示すること。
+//                //契約情報取得失敗
+//                getUserInfoErrorDialog();
+//            } else {
+//                //契約情報取得成功
+//                initView();
+//                requestHomeData();
+//            }
+//        } else {
+//            //UserInfo取得済み
+//            if(false){
+//                //情報取得失敗
+//            }
+//        }
+//    }
+
+    /**
+     * ユーザ情報取得処理.
+     */
+    private void getUserInfo() {
+        //ユーザー情報の変更検知
+        UserInfoDataProvider dataProvider = new UserInfoDataProvider(this, (UserInfoDataProvider.UserDataProviderCallback) this);
+        dataProvider.getUserInfo();
+    }
+
+    /**
+     * ネットワーク接続エラーダイアログ.
+     */
+    private void getUserInfoErrorDialog() {
+        CustomDialog failedRecordingReservationDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+        failedRecordingReservationDialog.setContent(getResources().getString(R.string.get_user_info_error_message));
+        failedRecordingReservationDialog.setConfirmText(R.string.common_text_close);
+        // Cancelable
+        failedRecordingReservationDialog.setCancelText(R.string.common_text_retry);
+        failedRecordingReservationDialog.showDialog();
+        failedRecordingReservationDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+            @Override
+            public void onOKCallback(boolean isOK) {
+                //ユーザ情報なし(未契約表示)
+                initView();
+                requestHomeData();
+            }
+        });
+        failedRecordingReservationDialog.setApiCancelCallback(new CustomDialog.ApiCancelCallback() {
+            @Override
+            public void onCancelCallback() {
+                //リトライ
+                clearView();
+                initData();
+                getUserInfo();
+            }
+        });
+    }
+
     @Override
-    public void userInfoCallback(List<Map<String, String>> userList) {
+    public void userInfoListCallback(boolean isDataChange, List<UserInfoList> userList) {
+        if (!DBUtils.isCachingRecord(this, DBConstants.USER_INFO_LIST_TABLE_NAME)) {
+            //UserInfoテーブルにデータがないため初回取得と判定
+            if (userList == null || userList.size() < 1) {
+                // 初回起動時または1度もH4d契約情報取得に成功していない状態で、
+                // H4d契約情報取得に失敗した場合は「ひかりTV for docomoの契約情報取得に失敗しました。」
+                // エラーダイアログ、「閉じる」「リトライ」ボタンを表示すること。
+                //契約情報取得失敗
+                getUserInfoErrorDialog();
+            } else {
+                //契約情報取得成功
+                initView();
+            }
+        } else {
+            //UserInfo取得済み
+            requestHomeData();
+        }
     }
 }

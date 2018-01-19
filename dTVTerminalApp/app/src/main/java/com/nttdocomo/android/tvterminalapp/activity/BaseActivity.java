@@ -66,7 +66,7 @@ import java.util.List;
 public class BaseActivity extends FragmentActivity implements MenuDisplayEventListener,
         DlnaDevListListener, View.OnClickListener, RemoteControllerView.OnStartRemoteControllerUIListener,
         ClipRegistWebClient.ClipRegistJsonParserCallback, ClipDeleteWebClient.ClipDeleteJsonParserCallback,
-        DaccountControl.DaccountControlCallBack, UserInfoDataProvider.UserDataProviderCallback {
+        DaccountControl.DaccountControlCallBack {
 
     private LinearLayout mBaseLinearLayout = null;
     private RelativeLayout mHeaderLayout = null;
@@ -414,8 +414,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         setDaccountControl();
 
         //ユーザー情報の変更検知
-        UserInfoDataProvider dataProvider = new UserInfoDataProvider(getApplicationContext(), this);
-        dataProvider.getUserInfo();
+        //検討中
+//        UserInfoDataProvider dataProvider = new UserInfoDataProvider(getApplicationContext(), this);
+//        dataProvider.getUserInfo();
 
         DTVTLogger.end();
     }
@@ -1257,21 +1258,21 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         });
         applicationFinishDialog.showDialog();
     }
-
-    @Override
-    public void userInfoListCallback(boolean isChange, List<UserInfoList> list) {
-        //年齢情報に変化があったのでホーム画面に飛ぶ。ただし、初回実行時はチュートリアル等のスキップを防ぐために、必ずfalseになる
-        if (isChange) {
-            //以前の情報と異なっているので、メッセージの表示後にホーム画面に遷移
-            restartMessageDialog(getString(R.string.h4d_agreement_change));
-
-            //持ち出しコンテンツをすべて削除する
-            DownLoadListDataManager downLoadListDataManager =
-                    new DownLoadListDataManager(getApplicationContext());
-            downLoadListDataManager.deleteDownloadAllContents();
-
-        }
-    }
+//検討中
+//    @Override
+//    public void userInfoListCallback(boolean isChange, List<UserInfoList> list) {
+//        //年齢情報に変化があったのでホーム画面に飛ぶ。ただし、初回実行時はチュートリアル等のスキップを防ぐために、必ずfalseになる
+//        if (isChange) {
+//            //以前の情報と異なっているので、メッセージの表示後にホーム画面に遷移
+//            restartMessageDialog(getString(R.string.h4d_agreement_change));
+//
+//            //持ち出しコンテンツをすべて削除する
+//            DownLoadListDataManager downLoadListDataManager =
+//                    new DownLoadListDataManager(getApplicationContext());
+//            downLoadListDataManager.deleteDownloadAllContents();
+//
+//        }
+//    }
 
     /**
      * 機能: リモコンが表示されているか確認し、開いている場合は閉じる.

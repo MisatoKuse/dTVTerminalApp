@@ -31,6 +31,7 @@ public class CustomDialog {
     private String content;
     private List<String> list;
     private ApiOKCallback apiOKCallback;
+    private ApiCancelCallback mApiCancelCallback = null;
     private ApiSelectCallback apiSelectCallback;
     private ApiItemSelectCallback apiItemSelectCallback;
     private String confirmText = null;
@@ -58,6 +59,13 @@ public class CustomDialog {
     }
 
     /**
+     * Cancelを返却するためのコールバック
+     */
+    public interface ApiCancelCallback {
+        void onCancelCallback();
+    }
+
+    /**
      * SELECTを返却するためのコールバック
      */
     public interface ApiSelectCallback {
@@ -73,6 +81,10 @@ public class CustomDialog {
 
     public void setOkCallBack(ApiOKCallback apiOKCallback) {
         this.apiOKCallback = apiOKCallback;
+    }
+
+    public void setApiCancelCallback(ApiCancelCallback apiCancelCallback) {
+        this.mApiCancelCallback = apiCancelCallback;
     }
 
     public void setSelectCallBack(ApiSelectCallback apiSelectCallback) {
@@ -220,7 +232,10 @@ public class CustomDialog {
 
                 @Override
                 public void onClick(View view) {
-                    dialog.dismiss();
+                    dismissDialog();
+                    if (mApiCancelCallback != null) {
+                        mApiCancelCallback.onCancelCallback();
+                    }
                 }
             });
         }

@@ -27,6 +27,8 @@
     <string name="parental_r_15">R15</string>
     <string name="parental_r_18">R18</string>
     <string name="parental_r_20">R20</string>
+    <string name="common_text_close">閉じる</string>
+    <string name="common_text_retry">リトライ</string>
 
     <!-- Launch -->
     <string name="str_app_title">ドコモテレビターミナル</string>
@@ -115,6 +117,9 @@
     <string name="recording_reservation_status_accepting">受付中</string>
     <string name="recording_reservation_status_accept_failure">受付失敗</string>
     <string name="recording_reservation_list_update_time">現在</string>
+    <string name="activity_start_network_error_message">ネットワークに接続できませんでした。\nネットワーク状態を確認してください。</string>
+    <string name="get_user_info_error_message">ひかりTV for docomoの契約情報取得に失敗しました。</string>
+    <string name="get_contents_data_error_message">情報の取得に失敗したため、一部のコンテンツのみ表示します。\nしばらく時間が経ってから再度お試しください。</string>
 
     <!-- クリップ一覧 -->
     <string name="str_clip_activity_title">クリップ</string>

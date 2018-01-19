@@ -118,12 +118,12 @@ public class HomeDataProvider implements
          */
         void dailyRankListCallback(List<ContentsData> dailyList);
 
-        /**
-         * ユーザ情報用コールバック.
-         *
-         * @param userList
-         */
-        void userInfoCallback(List<Map<String, String>> userList);
+//        /**
+//         * ユーザ情報用コールバック.
+//         *
+//         * @param userList
+//         */
+//        void userInfoCallback(List<Map<String, String>> userList);
 
         /**
          * クリップ[テレビ]リスト用コールバック.
@@ -293,7 +293,8 @@ public class HomeDataProvider implements
      * @param list
      */
     public void sendUserInfoListData(final List<Map<String, String>> list) {
-        mApiDataProviderCallback.userInfoCallback(list);
+        //検討中(メソッド毎消去)
+//        mApiDataProviderCallback.userInfoCallback(list);
     }
 
 
