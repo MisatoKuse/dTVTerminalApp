@@ -82,9 +82,9 @@ import com.nttdocomo.android.tvterminalapp.view.ContentsDetailViewPager;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SendOperateLog;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -777,6 +777,9 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             sb.append(dlFile);
 
             File f=new File(dlFile);
+            if(f.isDirectory()){
+                File[] fs= f.listFiles();
+            }
             if(!f.exists()){
                 DTVTLogger.debug(f  + " not exists");
                 onError("再生するファイルは存在しません");
@@ -786,6 +789,32 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             File f2=new File("/data/user/0/com.nttdocomo.android.tvterminalapp/files/cm_work_dmp/");
             File[] f2s= f2.listFiles();
             long fSize= getFileSize(f);
+
+            File f3=new File("/data/user/0/com.nttdocomo.android.tvterminalapp/files/cm_work_player/");
+            File[] f3s= f3.listFiles();
+            File[] fs= f.listFiles();
+
+            File hwidPlayer=new File("/data/user/0/com.nttdocomo.android.tvterminalapp/files/cm_work_player/hwid");
+            File hwidDmp= new File("/data/user/0/com.nttdocomo.android.tvterminalapp/files/cm_work_dmp/hwid");
+            String hwidPlayerS = ReadFile(hwidPlayer);
+            String hwidDmpS = ReadFile(hwidDmp);
+            boolean isSame=true;
+            if(hwidPlayerS.length()!=hwidDmpS.length()){
+                isSame=false;
+            }else {
+                isSame= hwidPlayerS.equals(hwidDmpS);
+            }
+
+            File db_postPlayer=new File("/data/user/0/com.nttdocomo.android.tvterminalapp/files/cm_work_player/db_post");
+            File db_postDmp= new File("/data/user/0/com.nttdocomo.android.tvterminalapp/files/cm_work_dmp/db_post");
+            String db_postPlayerS = ReadFile(db_postPlayer);
+            String db_postDmpS = ReadFile(db_postDmp);
+            if(db_postPlayerS.length()!=db_postDmpS.length()){
+                isSame=false;
+            }else {
+                isSame= db_postPlayerS.equals(db_postDmpS);
+            }
+
             //test e
             uri = Uri.parse(sb.toString());
             long ss= (long)Integer.parseInt(datas.getClearTextSize());
@@ -810,6 +839,39 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         DTVTLogger.end();
         return true;
     }
+
+    //test b
+    public String ReadFile(File file)
+    {
+        FileInputStream inStream = null;
+        ByteArrayOutputStream outStream=null;
+        byte[] data;
+        try {
+            inStream = new FileInputStream(file);
+            byte[] buffer = new byte[1024];
+            int len = 0;
+            outStream = new ByteArrayOutputStream();
+            while( (len = inStream.read(buffer))!= -1)
+            {
+                outStream.write(buffer, 0, len);
+            }
+
+            data = outStream.toByteArray();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }finally {
+            try {
+                outStream.close();
+                inStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return new String(data);
+    }
+    //test e
 
     private static long getFileSize(File file) {
         if (file == null) {

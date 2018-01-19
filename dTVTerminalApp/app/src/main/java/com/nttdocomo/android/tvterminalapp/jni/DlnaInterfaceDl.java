@@ -39,12 +39,12 @@ public class DlnaInterfaceDl {
      *
      * @return boolean
      */
-    public boolean startDtcpDl(String pathToSave){
+    public DlnaDownloadRet startDtcpDl(String pathToSave){
         if (0 == mNativeDlna) {
             mNativeDlna = nativeCreateDlnaDownloadObject();
         }
         if(0==mNativeDlna){
-            return false;
+            return DlnaDownloadRet.DownloadRet_ParamError;
         }
 
         String homeDtcpPath = pathToSave;  //e.g. EnvironmentUtil.getPrivateDataHome(mContext, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP);
@@ -55,8 +55,7 @@ public class DlnaInterfaceDl {
         boolean has=f.exists();
         if(!has){
             DTVTLogger.end();
-            //return DlnaDownloadRet.DownloadRet_Unactivated;   //unactivated
-            return false;
+            return DlnaDownloadRet.DownloadRet_Unactivated;   //unactivated
         }
 
 //        File homePlayerPathDir=new File(homePlayerPath);
@@ -75,8 +74,7 @@ public class DlnaInterfaceDl {
         int ret= NewEnvironmentUtil.copyDeviceKeyFromOtherCMWork(mContext, homeParent, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP);
         if(1!=ret && 3!=ret){
             DTVTLogger.end();
-            //return DlnaDownloadRet.DownloadRet_CopyKeyFileFailed;
-            return false;
+            return DlnaDownloadRet.DownloadRet_CopyKeyFileFailed;
         }
 
 //        allFile=homeDtcpPathDir.listFiles();
@@ -87,7 +85,12 @@ public class DlnaInterfaceDl {
         long id=Thread.currentThread().getId();
         DTVTLogger.debug("HandlerThread:"+id);
 
-        return nativeStartDlna(mNativeDlna, pathToSave);
+        boolean r= nativeStartDlna(mNativeDlna, pathToSave);
+        if(!r){
+            return DlnaDownloadRet.DownloadRet_OtherError;
+        }
+
+        return DlnaDownloadRet.DownloadRet_Succeed;
     }
 
     /**

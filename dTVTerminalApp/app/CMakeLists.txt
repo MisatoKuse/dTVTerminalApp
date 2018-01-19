@@ -129,10 +129,10 @@ set_target_properties(libdixim_dtcp_sink
   PROPERTIES IMPORTED_LOCATION
   ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/libdixim_dtcp_sink.a)
 
-add_library(libdixim_dtcp_util STATIC IMPORTED)
-set_target_properties(libdixim_dtcp_util
-  PROPERTIES IMPORTED_LOCATION
-  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/libdixim_dtcp_util.a)
+#add_library(libdixim_dtcp_util STATIC IMPORTED)
+#set_target_properties(libdixim_dtcp_util
+#  PROPERTIES IMPORTED_LOCATION
+#  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/libdixim_dtcp_util.a)
 
 add_library(libdixim_dtcp_private_data_io STATIC IMPORTED)
 set_target_properties(libdixim_dtcp_private_data_io
@@ -273,7 +273,7 @@ target_link_libraries(
     libonig
     libuchardet
     libdixim_dtcp_bridge
-    libdixim_dtcp_util_ttl_no_check
+    #libdixim_dtcp_util_ttl_no_check
     libnmcc_db
     libts2tts
     libcheck_wlan_wep
@@ -293,7 +293,8 @@ target_link_libraries(
     libdixim_dtcp_crypto_sha
     libtomcrypt
     libtommath
-    libdixim_dtcp_util
+    #libdixim_dtcp_util
+    libdixim_dtcp_util_ttl_no_check
     libsecure_io
     libchunked_file
     libdixim_av
