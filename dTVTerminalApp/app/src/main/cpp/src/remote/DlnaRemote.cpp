@@ -17,7 +17,7 @@ namespace dtvt {
     //global var
     extern bool gIsGlobalDtcpInited;
 
-    DlnaRemote::DlnaRemote(): mDtcp(NULL), mDirToSave("") {
+    DlnaRemote::DlnaRemote(): mDtcp(NULL), mConfDir("") {
         mEvent.mJavaVM=NULL;
         mEvent.mJObject=NULL;
     }
