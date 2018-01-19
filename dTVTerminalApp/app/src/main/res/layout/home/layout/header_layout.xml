@@ -37,6 +37,7 @@
 
     <TextView
         android:id="@+id/header_layout_text"
+        style="@style/autoscroll"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
@@ -44,6 +45,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:gravity="center"
+        android:scrollHorizontally="true"
         android:textColor="#FFFFFF"
         android:textSize="@dimen/main_header_title_text_size"
         android:textStyle="bold" />
