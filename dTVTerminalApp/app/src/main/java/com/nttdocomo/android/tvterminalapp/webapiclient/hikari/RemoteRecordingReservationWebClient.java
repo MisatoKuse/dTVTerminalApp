@@ -56,8 +56,13 @@ public class RemoteRecordingReservationWebClient
         }
     }
 
+    /**
+     * 通信失敗時のコールバック.
+     *
+     * @param returnCode 戻り値構造体
+     */
     @Override
-    public void onError() {
+    public void onError(ReturnCode returnCode) {
         DTVTLogger.debug("Client onError");
         if (mRemoteRecordingReservationJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す

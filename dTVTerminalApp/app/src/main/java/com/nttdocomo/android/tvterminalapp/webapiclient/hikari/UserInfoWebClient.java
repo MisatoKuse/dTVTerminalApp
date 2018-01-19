@@ -45,8 +45,13 @@ public class UserInfoWebClient
         new UserInfoJsonParser(mUserInfoJsonParserCallback).execute(returnCode.bodyData);
     }
 
+    /**
+     * 通信失敗時のコールバック.
+     *
+     * @param returnCode 戻り値構造体
+     */
     @Override
-    public void onError() {
+    public void onError(ReturnCode returnCode) {
         if (mUserInfoJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
             mUserInfoJsonParserCallback.onUserInfoJsonParsed(null);

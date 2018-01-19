@@ -4,7 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,8 +11,6 @@ import android.os.Bundle;
 import com.nttdocomo.android.ocsplib.OcspURLConnection;
 import com.nttdocomo.android.ocsplib.OcspUtil;
 import com.nttdocomo.android.ocsplib.exception.OcspParameterException;
-import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOTT;
 
@@ -97,15 +94,17 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
         void onAnswer(ReturnCode returnCode);
 
         /**
-         * 異常時のコールバック
+         * 通信失敗時のコールバック.
+         *
+         * @param returnCode 値を返す構造体
          */
-        void onError();
+        void onError(ReturnCode returnCode);
     }
 
     /**
-     * 内部エラー情報（継承先クラスで判定する場合の為にprotected指定）
+     * エラー情報（データプロバイダー等で使われる予定があるので、パブリック指定）
      */
-    protected enum ERROR_TYPE {
+    public enum ERROR_TYPE {
         /**
          * 成功
          */
@@ -128,6 +127,11 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
          * データなし
          */
         NO_DATA,
+
+        /**
+         * レスポンス解析エラー
+         */
+        ANALYSIS_ERROR,
 
         /**
          * その他エラー
@@ -591,6 +595,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
 
         /**
          * ワンタイムトークンの値を設定する
+         *
          * @param mOneTimeToken 設定したいワンタイムトークン
          */
         public void setmOneTimeToken(String mOneTimeToken) {
@@ -673,7 +678,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                 setParameters(mUrlConnection);
 
                 //コンテキストがあればSSL証明書失効チェックを行う
-                if(mContext != null) {
+                if (mContext != null) {
                     //SSL証明書失効チェックライブラリの初期化を行う
                     OcspUtil.init(mContext);
 
@@ -739,7 +744,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                 case SUCCESS:
                     if (mAnswerBuffer.isEmpty()) {
                         //結果の値が無いので、失敗を伝える
-                        mWebApiBasePlalaCallback.onError();
+                        mWebApiBasePlalaCallback.onError(returnCode);
                     } else {
                         //通信に成功したので、値を伝える
                         // **FindBugs** Bad practice FindBugsは不使用なのでbodyDataは消せと警告するが、
@@ -750,14 +755,16 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                     break;
                 case SSL_ERROR:
                     //SSLチェックライブラリのエラーなので、呼び出し元にエラーを伝える
-                    mWebApiBasePlalaCallback.onError();
+                    mWebApiBasePlalaCallback.onError(returnCode);
                     break;
                 case HTTP_ERROR:
                 case COMMUNICATION_ERROR:
                 case OTHER_ERROR:
+                case ANALYSIS_ERROR:
                 case NO_DATA:
+                default:
                     //その他のエラーなので、呼び出し元にはエラーを伝える
-                    mWebApiBasePlalaCallback.onError();
+                    mWebApiBasePlalaCallback.onError(returnCode);
                     break;
             }
         }

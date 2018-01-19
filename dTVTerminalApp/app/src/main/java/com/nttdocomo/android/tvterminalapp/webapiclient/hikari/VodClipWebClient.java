@@ -84,15 +84,17 @@ public class VodClipWebClient
             t.start();
         } catch (Exception e) {
             DTVTLogger.debug(e);
-            onError();
+            onError(returnCode);
         }
     }
 
     /**
-     * 通信失敗時のコールバック
+     * 通信失敗時のコールバック.
+     *
+     * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError() {
+    public void onError(ReturnCode returnCode) {
         //エラーが発生したのでヌルを返す
         mVodClipJsonParserCallback.onVodClipJsonParsed(null);
 
