@@ -426,8 +426,16 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                 //ディスクからコンテンツを削除する
                 File file = new File(path);
                 if(file.exists()){
-                    if(!file.delete()) {
-                        DTVTLogger.debug("delete cacel file fail ");
+                    File files[] = file.listFiles();
+                    for(File file1:files){
+                        if(!file1.delete()){
+                            DTVTLogger.debug("delete cacel file fail ");
+                        }
+                    }
+                    if(file.exists()){
+                        if(!file.delete()) {
+                            DTVTLogger.debug("delete cacel directory fail ");
+                        }
                     }
                 }
             }
