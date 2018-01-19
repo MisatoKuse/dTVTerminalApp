@@ -313,11 +313,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             }
             mContentsData.get(queIndex.get(0)).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
             mContentsData.get(queIndex.get(0)).setDownloadStatus("");
-            int idx= queIndex.get(0);
-            if(null!=mContentsList){
-                mContentsList.get(idx).setDownLoadStatus(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
-                mContentsList.get(idx).setDlFileFullPath(fullPath);
-            }
+            setContentListStatusContent(queIndex.get(0), ContentsAdapter.DOWNLOAD_STATUS_COMPLETED, fullPath);
         }
         if(que.size() > 0){
             que.remove(0);
@@ -344,6 +340,19 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 DownloadService.BINDSTATUS = DownloadService.UNBINED;
             }
         }
+    }
+
+    private void setContentListStatusContent(int index, int status, String path) {
+        if(null==mContentsList || mContentsList.size()<=index ||0>index){
+            return;
+        }
+
+        RecordedContentsDetailData item= mContentsList.get(index);
+        if(null==item){
+            return;
+        }
+        item.setDownLoadStatus(status);
+        mContentsList.get(index).setDlFileFullPath(path);
     }
 
     @Override
@@ -633,6 +642,8 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                     if(((RecordedListActivity)activity).getCurrentPosition() == 1){
                         ((RecordedListActivity)activity).setRecordedTakeOutContents();
                     }
+                    int idx=(Integer)view.getTag();
+                    setContentListStatusContent(idx, ContentsAdapter.DOWNLOAD_STATUS_ALLOW, "");
                 }
             }
         });

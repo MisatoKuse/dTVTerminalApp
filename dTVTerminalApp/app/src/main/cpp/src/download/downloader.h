@@ -10,6 +10,7 @@
 #include <dupnp.h>
 #include <dupnp_dvcdsc_device.h>
 #include "../Common.h"
+#include "CommonDl.h"
 
 #ifdef __cplusplus
 extern "C" {
