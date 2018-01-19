@@ -7,6 +7,7 @@
 
 #include <cipher_file_context_global.h>
 #include <secure_io_global.h>
+#include "CommonDl.h"
 #include "DlnaDownload.h"
 #include "../DTVTLogger.h"
 #include "../android_log_handler.h"

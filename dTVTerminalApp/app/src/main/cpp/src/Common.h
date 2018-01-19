@@ -58,13 +58,13 @@ namespace dtvt {
         DLNA_MSG_ID_INVALID = 0xffffffff,
     } DLNA_MSG_ID;
 
-    typedef enum {
-        DOWNLOADER_STATUS_UNKNOWN,
-        DOWNLOADER_STATUS_MOVING,
-        DOWNLOADER_STATUS_COMPLETED,
-        DOWNLOADER_STATUS_CANCELLED,
-        DOWNLOADER_STATUS_ERROR_OCCURED
-    } DownloaderStatus;
+//    typedef enum {
+//        DOWNLOADER_STATUS_UNKNOWN,
+//        DOWNLOADER_STATUS_MOVING,
+//        DOWNLOADER_STATUS_COMPLETED,
+//        DOWNLOADER_STATUS_CANCELLED,
+//        DOWNLOADER_STATUS_ERROR_OCCURED
+//    } DownloaderStatus;
 
 
     //const du_uchar* BDC_FILTER = ...      --> can not compile, so do it as below

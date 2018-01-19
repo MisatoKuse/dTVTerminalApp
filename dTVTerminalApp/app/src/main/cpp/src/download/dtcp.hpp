@@ -2,14 +2,14 @@
 #define DTCP_HPP
 
 #include <string>
-#include "DlnaDownload.h"
-#include "../DTVTLogger.h"
-
 #include <du_log.h>
 #include <dupnp.h>
 #include <ddtcp.h>
 #include <ddtcp_source.h>
 #include <ddtcp_private.h>
+#include "DlnaDownload.h"
+#include "../DTVTLogger.h"
+
 #ifdef DTCP_PLUS
 #include <ddtcp_plus.h>
 #include <ddtcp_plus_source.h>
