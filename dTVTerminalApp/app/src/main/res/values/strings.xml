@@ -361,9 +361,4 @@
     <!-- H4d契約情報取得 -->
     <string name="h4d_agreement_change">契約状態が変更されたため、トップ画面に戻ります。</string>
 
-    <!-- SSL証明書失効エラー -->
-    <string name="SSL_REVOCATION_ERROR_TITLE">SSL証明書エラー</string>
-    <string name="SSL_REVOCATION_ERROR_MESSAGE">SSL証明書が失効しているので、通信が行えません。</string>
-
-
 </resources>

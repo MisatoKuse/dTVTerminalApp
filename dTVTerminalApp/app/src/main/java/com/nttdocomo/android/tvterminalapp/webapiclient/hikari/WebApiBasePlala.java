@@ -63,9 +63,6 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
     //結果を受け取るバッファ
     private String mAnswerBuffer = "";
 
-    //SSLエラー連続表示抑止フラグ
-    static private boolean sSslErrorAlreadyOccurrence = false;
-
     //リクエスト種別・基本はPOST
     private static final String REQUEST_METHOD = "POST";
 
@@ -752,34 +749,8 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                     }
                     break;
                 case SSL_ERROR:
-                    //SSLエラー重複表示抑止判定
-                    if(!sSslErrorAlreadyOccurrence) {
-                        //SSLエラー発生済みフラグをONにする
-                        sSslErrorAlreadyOccurrence = true;
-
-                        //SSLエラーが発生したので、ダイアログを出す
-                        CustomDialog sslErrorDialog = new CustomDialog(mContext,
-                                CustomDialog.DialogType.ERROR);
-                        sslErrorDialog.setTitle(
-                                mContext.getString(R.string.SSL_REVOCATION_ERROR_TITLE));
-                        sslErrorDialog.setContent(
-                                mContext.getString(R.string.SSL_REVOCATION_ERROR_MESSAGE));
-                        sslErrorDialog.setCancelable(false);
-                        sslErrorDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-                            @Override
-                            public void onOKCallback(boolean isOK) {
-                                //OKが押された場合、呼び出し元にはエラーを伝える
-                                mWebApiBasePlalaCallback.onError();
-
-                                //ダイアログを表示し終えたので、フラグを戻す
-                                sSslErrorAlreadyOccurrence = false;
-                            }
-                        });
-                        sslErrorDialog.showDialog();
-                    } else {
-                        //既にダイアログは表示済みなので、呼び出し元には即座にエラーを伝える
-                        mWebApiBasePlalaCallback.onError();
-                    }
+                    //SSLチェックライブラリのエラーなので、呼び出し元にエラーを伝える
+                    mWebApiBasePlalaCallback.onError();
                     break;
                 case HTTP_ERROR:
                 case COMMUNICATION_ERROR:
