@@ -257,6 +257,8 @@ add_library(
      ${CMAKE_SOURCE_DIR}/src/main/cpp/src/download/DlnaDownload.cpp
      ${CMAKE_SOURCE_DIR}/src/main/cpp/src/download/DlnaJniCastDl.cpp
      ${CMAKE_SOURCE_DIR}/src/main/cpp/src/android_log_handler.c
+     #${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/DlnaRemote.cpp
+     #${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/DlnaJniCastRm.cpp
      )
 
 # 目標ライブラリをリンク
@@ -304,3 +306,54 @@ target_link_libraries(
     libxml2
     ${log-lib}
     )
+
+#===================== drm begin =====================#
+add_library(libactc_drm STATIC IMPORTED)
+set_target_properties(libactc_drm
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/drm/libactc.a)
+
+add_library(libdixim_hwif_drm STATIC IMPORTED)
+set_target_properties(libdixim_hwif_drm
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/drm/libdixim_hwif.a)
+
+add_library(libactc_is_done_drm STATIC IMPORTED)
+set_target_properties(libactc_is_done_drm
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/drm/libactc_is_done.a)
+
+add_library(libchunked_file_drm STATIC IMPORTED)
+set_target_properties(libchunked_file_drm
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/libchunked_file.a)
+
+add_library(libsecure_io_drm STATIC IMPORTED)
+set_target_properties(libsecure_io_drm
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/drm/libsecure_io.a)
+
+add_library(libdixim_dtcp_private_data_io_drm STATIC IMPORTED)
+set_target_properties(libdixim_dtcp_private_data_io_drm
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/drm/libdixim_dtcp_private_data_io.a)
+
+add_library(
+     dtvtlibdrm # dynamic lib name
+     SHARED  # share
+     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/DlnaRemote.cpp
+     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/DlnaJniCastRm.cpp
+     )
+
+target_link_libraries(
+    dtvtlibdrm
+    libactc_drm
+    libactc_is_done_drm
+    libdixim_hwif_drm
+    libcipher_file
+    libchunked_file_drm
+    libsecure_io_drm
+    libmedia_mpeg
+    ${log-lib}
+    )
+#====================== drm end ======================#
