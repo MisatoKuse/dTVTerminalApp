@@ -219,12 +219,12 @@ public class RemoteControllerSendKeyAction {
                     DTVTLogger.debug("MotionEvemt ACTION_UP");
                     if (mRepeatStateManagement.mStatus == RepeatTaskStatus.REPEAT_STATUS_EXECUTION) {
                         // リピート実行中の場合
-                        sendKeyCode(v.getId(),SEND_KEYCODE_PARAM_ACTION_UP,true);
+                        sendKeyCode(v.getId(),SEND_KEYCODE_PARAM_ACTION_UP,true, mContext);
                         mRepeatStateManagement.repeatCancel();
                         mRepeatStateManagement.setRepeatTaskStatus(RepeatTaskStatus.REPEAT_STATUS_STAND_BY);
                     } else if (mRepeatStateManagement.mStatus == RepeatTaskStatus.REPEAT_STATUS_DURING_STARTUP) {
                         // リピート処理を1度も行っていない場合
-                        sendKeyCode(v.getId(),SEND_KEYCODE_PARAM_ACTION_UP,false);
+                        sendKeyCode(v.getId(),SEND_KEYCODE_PARAM_ACTION_UP,false, mContext);
                         mRepeatStateManagement.repeatCancel();
                         mRepeatStateManagement.setRepeatTaskStatus(RepeatTaskStatus.REPEAT_STATUS_STAND_BY);
                         DTVTLogger.debug("sendKeyCode");
@@ -233,7 +233,7 @@ public class RemoteControllerSendKeyAction {
                     }
                     break;
                 case MotionEvent.ACTION_DOWN:
-                    sendKeyCode(v.getId(),SEND_KEYCODE_PARAM_ACTION_DOWN,false);
+                    sendKeyCode(v.getId(),SEND_KEYCODE_PARAM_ACTION_DOWN,false, mContext);
                     DTVTLogger.debug("MotionEvemt ACTION_DOWN");
                     if (mRepeatStateManagement == null) {
                         mRepeatStateManagement = new RepeatStateManagement(mHandler, v.getId());
@@ -246,7 +246,7 @@ public class RemoteControllerSendKeyAction {
                     }
                     break;
                 case MotionEvent.ACTION_CANCEL:
-                    sendKeyCode(v.getId(),SEND_KEYCODE_PARAM_ACTION_UP,true);
+                    sendKeyCode(v.getId(),SEND_KEYCODE_PARAM_ACTION_UP,true, mContext);
                     DTVTLogger.debug("MotionEvemt ACTION_CANCEL");
                     if (null != mRepeatStateManagement) {
                         mRepeatStateManagement.repeatCancel();
@@ -276,8 +276,8 @@ public class RemoteControllerSendKeyAction {
      * キーコードを送信する
      * @param viewId
      */
-    private void sendKeyCode(int viewId,int action,boolean isCancelFlg) {
-        mRemoteControlRelayClient.sendKeycode(viewId, action, isCancelFlg);
+    private void sendKeyCode(int viewId,int action,boolean isCancelFlg, Context context) {
+        mRemoteControlRelayClient.sendKeycode(viewId, action, isCancelFlg, context);
     }
 
 
@@ -338,7 +338,7 @@ public class RemoteControllerSendKeyAction {
                         mStatus = RepeatTaskStatus.REPEAT_STATUS_EXECUTION;
                     }
                     // クリック処理を実行する
-                    sendKeyCode(mRepeatButtonId,SEND_KEYCODE_PARAM_ACTION_DOWN,false);
+                    sendKeyCode(mRepeatButtonId,SEND_KEYCODE_PARAM_ACTION_DOWN,false, mContext);
                     DTVTLogger.debug("sendKeyCode");
 
                     DTVTLogger.end();
