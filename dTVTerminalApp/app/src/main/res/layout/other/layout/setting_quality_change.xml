@@ -22,7 +22,7 @@
             android:gravity="center_vertical"
             android:text="@string/main_setting_image_quality_high"
             android:textColor="@color/white_text"
-            android:textSize="@dimen/main_setting_list_detail_item_textsize" />
+            android:textSize="@dimen/main_setting_list_item_textsize" />
         <CheckBox
             android:id="@+id/main_setting_quality_checkbox_high"
             android:button="@null"
@@ -54,7 +54,7 @@
             android:gravity="center_vertical"
             android:text="@string/main_setting_image_quality_middle"
             android:textColor="@color/white_text"
-            android:textSize="@dimen/main_setting_list_detail_item_textsize" />
+            android:textSize="@dimen/main_setting_list_item_textsize" />
         <CheckBox
             android:id="@+id/main_setting_quality_checkbox_middle"
             android:button="@null"
@@ -86,7 +86,7 @@
             android:gravity="center_vertical"
             android:text="@string/main_setting_image_quality_low"
             android:textColor="@color/white_text"
-            android:textSize="@dimen/main_setting_list_detail_item_textsize" />
+            android:textSize="@dimen/main_setting_list_item_textsize" />
         <CheckBox
             android:id="@+id/main_setting_quality_checkbox_low"
             android:button="@null"

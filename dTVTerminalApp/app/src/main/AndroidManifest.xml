@@ -107,9 +107,6 @@
         <activity
             android:name=".activity.other.SettingImageQualityActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.other.SettingDownloadPathActivity"
-            android:screenOrientation="portrait" />
         <!-- ======================================  Other グループ End ====================================== -->
 
 
