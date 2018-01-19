@@ -29,15 +29,15 @@
     <string name="parental_r_20">R20</string>
 
     <!-- Launch -->
-    <string name="str_app_title">dリモート</string>
+    <string name="str_app_title">ドコモテレビターミナル</string>
     <string name="str_launch_title">起動画面</string>
     <string name="str_tutorial_title">チュートリアル画面</string>
     <string name="str_get_info_title">情報取得中</string>
     <string name="str_stb_select_title">STB選択</string>
     <string name="str_stb_select_result_text">ペアリング可能なデバイスが\n見つかりました。</string>
-    <string name="str_stb_next_not_display_text">\t次回以降表示しない</string>
+    <string name="str_stb_next_not_display_text">次回以降表示しない</string>
     <string name="str_stb_connect_title">STB接続</string>
-    <string name="str_stb_connect_success_text">STBとペアリングしました</string>
+    <string name="str_stb_connect_success_text">ドコモテレビターミナルとペアリングしました。</string>
     <string name="str_stb_pair_invitation_title">STBペアリング勧誘</string>
     <string name="str_stb_no_pair_use_text">ペアリングしないでアプリを利用する</string>
     <string name="str_stb_no_login_use_text">ログインしないでアプリを利用する</string>
@@ -48,22 +48,22 @@
     <string name="str_d_account_resetting_title">dアカウント再設定</string>
     <string name="str_d_account_setting_help_title">dアカウント設定ヘルプ</string>
     <string name="str_d_account_reg_confirmation_title">dアカウント登録確認</string>
-    <string name="str_d_account_app_not_install">STBとペアリングするには\ndアカウントでのログインが必要です</string>
+    <string name="str_d_account_app_not_install">ドコモテレビターミナルとペアリングするには\ndアカウントでのログインが必要です</string>
     <string name="str_d_account_app_download">dアカウントアプリをダウンロードする</string>
     <string name="str_stb_select_result_text_failed">ペアリング可能なデバイスが\n見つかりませんでした。</string>
     <string name="str_stb_select_result_text_search">ペアリング可能なデバイスを\n探しています。</string>
-    <string name="str_stb_search_failed_help">STBとペアリングするには</string>
+    <string name="str_stb_search_failed_help">ドコモテレビターミナルとペアリングするには</string>
     <string name="str_stb_search_failed_paring_again">再度ペアリングを実行する</string>
     <string name="str_stb_search_failed_help_text">docomoSTBヘルプ</string>
     <string name="str_stb_select_error">STB選択エラー</string>
     <string name="str_stb_paring_help">ペアリングヘルプ</string>
-    <string name="str_stb_not_registration_account_message">STBにdアカウントが登録されていません。</string>
+    <string name="str_stb_not_registration_account_message">ドコモテレビターミナルに\ndアカウントが登録されていません。</string>
     <string name="str_stb_login_other_account">別のdアカウントでログインする</string>
-    <string name="str_stb_d_account_registration_help">STBにdアカウントを登録するには</string>
+    <string name="str_stb_d_account_registration_help">ドコモテレビターミナルにdアカウントを登録するには</string>
     <string name="str_stb_input_activation_code">アクティベーションコードを入力する</string>
     <string name="str_stb_again_pairing">再度ペアリングを実行する</string>
 
-    <string name="str_stb_pairing">ペアリング中</string>
+    <string name="str_stb_pairing">ドコモテレビターミナルとペアリング中です。</string>
     <string name="str_stb_stb_error">STBの処理に失敗しました</string>
     <string name="str_stb_tv_terminal_error">ドコモTVターミナルとの接続に失敗しました</string>
 

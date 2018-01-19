@@ -167,6 +167,7 @@
         android:id="@+id/item_common_result_device_name"
         android:layout_width="match_parent"
         android:layout_height="@dimen/launch_text_layout_high_size"
+        android:textSize="@dimen/launch_stb_device_font_size"
         android:gravity="center_vertical|start"
         android:background="@drawable/selector_btn_click_bg"
         android:textColor="@drawable/selector_text_click_bg"

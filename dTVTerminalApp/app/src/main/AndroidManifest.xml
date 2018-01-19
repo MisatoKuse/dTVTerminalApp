@@ -77,9 +77,6 @@
             android:name=".activity.launch.STBConnectActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.launch.STBParingInvitationActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".activity.launch.STBSelectActivity"
             android:screenOrientation="portrait"
             android:theme="@style/STBTheme"/>
