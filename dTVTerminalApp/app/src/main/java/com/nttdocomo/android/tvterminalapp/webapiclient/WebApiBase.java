@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient;
 
+import android.content.Context;
 import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -17,22 +18,37 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
 
     private WebApiCallback mWebApiCallback = null;
 
-    public void get(String urlString, LinkedHashMap<String, String> queryItems, WebApiCallback callback) {
+    /**
+     * 情報通信処理
+     *
+     * @param urlString URL
+     * @param queryItems 通信パラメータ
+     * @param callback 終了コールバック
+     * @param context コンテキスト
+     */
+    public void get(String urlString, LinkedHashMap<String, String> queryItems,
+                    WebApiCallback callback, Context context) {
         Handler handler = new Handler();
         String url = createUrlComponents(urlString, queryItems);
         mWebApiCallback = callback;
         //Log.d(DCommon.LOG_DEF_TAG, "WebApiBase::get, url= " + url);
-        new HttpThread(url, handler, this).start();
+        new HttpThread(url, handler, this, context).start();
     }
 
     /**
-     * Handlerが使用できないASyncTaskの処理内で使用する
+     * 情報通信処理・Handlerが使用できないASyncTaskの処理内で使用する
+     *
+     * @param urlString URL
+     * @param queryItems 通信用パラメータ
+     * @param callback 終了コールバック
+     * @param context コンテキスト
      */
-    public void getReccomendInfo(String urlString, LinkedHashMap<String, String> queryItems, WebApiCallback callback) {
+    public void getReccomendInfo(String urlString, LinkedHashMap<String, String> queryItems,
+                                 WebApiCallback callback, Context context) {
         String url = createUrlComponents(urlString, queryItems);
         mWebApiCallback = callback;
         //Log.d(DCommon.LOG_DEF_TAG, "WebApiBase::get, url= " + url);
-        new HttpThread(url, this).start();
+        new HttpThread(url, this, context).start();
     }
 
     /**
@@ -100,7 +116,7 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
     }
 
     @Override
-    public void onHttpThreadFinish(String str) {
+    public void onHttpThreadFinish(String str, HttpThread.ErrorStatus errorStatus) {
         if (null != mWebApiCallback) {
             mWebApiCallback.onFinish(str);
         }

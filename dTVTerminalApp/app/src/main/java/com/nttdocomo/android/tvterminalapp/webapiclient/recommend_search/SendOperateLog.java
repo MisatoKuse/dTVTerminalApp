@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
@@ -18,6 +19,18 @@ public class SendOperateLog extends WebApiBase {
     private StringBuffer mUrl = new StringBuffer("https://ve.m.service.smt.docomo.ne.jp/srermd/operateLog/index.do");
     private String mCategoryId = "";
 
+    //SSLチェック用コンテキスト
+    private Context mContext;
+
+    /**
+     * コンストラクタ
+     * @param context コンテキスト
+     */
+    public SendOperateLog(Context context) {
+        //コンテキストの退避
+        mContext = context;
+    }
+
     public void sendOpeLog(OtherContentsDetailData mDetailData, VodMetaFullData mDetailFullData) {
         if (mDetailData != null) {
             if (OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
@@ -26,7 +39,7 @@ public class SendOperateLog extends WebApiBase {
                 mCategoryId = mDetailData.getCategoryId();
             }
             if (!TextUtils.isEmpty(mCategoryId)) {
-                new HttpThread(getUrl(mDetailData), null).start();
+                new HttpThread(getUrl(mDetailData), null, mContext).start();
             }
         }
     }

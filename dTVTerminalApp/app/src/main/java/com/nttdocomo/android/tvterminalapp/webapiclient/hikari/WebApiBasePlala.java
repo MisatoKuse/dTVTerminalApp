@@ -11,6 +11,7 @@ import android.os.Bundle;
 import com.nttdocomo.android.ocsplib.OcspURLConnection;
 import com.nttdocomo.android.ocsplib.OcspUtil;
 import com.nttdocomo.android.ocsplib.exception.OcspParameterException;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOTT;
 
@@ -99,44 +100,6 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
          * @param returnCode 値を返す構造体
          */
         void onError(ReturnCode returnCode);
-    }
-
-    /**
-     * エラー情報（データプロバイダー等で使われる予定があるので、パブリック指定）
-     */
-    public enum ERROR_TYPE {
-        /**
-         * 成功
-         */
-        SUCCESS,
-        /**
-         * 通信エラー
-         */
-        COMMUNICATION_ERROR,
-        /**
-         * HTTP通信エラー
-         */
-        HTTP_ERROR,
-
-        /**
-         * SSLエラー
-         */
-        SSL_ERROR,
-
-        /**
-         * データなし
-         */
-        NO_DATA,
-
-        /**
-         * レスポンス解析エラー
-         */
-        ANALYSIS_ERROR,
-
-        /**
-         * その他エラー
-         */
-        OTHER_ERROR,
     }
 
     //指定文字列パラメータ群
@@ -298,7 +261,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
 
     //戻り値用構造体
     static protected class ReturnCode {
-        ERROR_TYPE errorType;
+        DTVTConstants.ERROR_TYPE errorType;
         String bodyData;
         Bundle extraData;
 
@@ -306,7 +269,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
          * コンストラクタ
          */
         ReturnCode() {
-            errorType = ERROR_TYPE.SUCCESS;
+            errorType = DTVTConstants.ERROR_TYPE.SUCCESS;
             bodyData = "";
             extraData = null;
         }
@@ -484,7 +447,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
     private String readConnectionBody(int statusCode) {
         if (statusCode != HttpURLConnection.HTTP_OK) {
             //HTTP通信エラーとして元に返す
-            mReturnCode.errorType = ERROR_TYPE.HTTP_ERROR;
+            mReturnCode.errorType = DTVTConstants.ERROR_TYPE.HTTP_ERROR;
             return "";
         }
 
@@ -511,13 +474,13 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
 
         } catch (UnsupportedEncodingException e) {
             //HTTP通信エラーとして元に返す
-            mReturnCode.errorType = ERROR_TYPE.OTHER_ERROR;
+            mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
             DTVTLogger.debug(e);
         } catch (IOException e) {
             //全通信停止発行済みならば、正常な動作となる
             if (!mIsStopAllConnections) {
                 //通信停止ではないので、通信エラー
-                mReturnCode.errorType = ERROR_TYPE.OTHER_ERROR;
+                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
                 DTVTLogger.debug(e);
             }
         } finally {
@@ -550,7 +513,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                 stream.close();
             } catch (IOException e) {
                 //クローズ失敗は通信エラー
-                mReturnCode.errorType = ERROR_TYPE.OTHER_ERROR;
+                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
                 DTVTLogger.debug(e);
             }
         }
@@ -559,7 +522,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                 inputStreamReader.close();
             } catch (IOException e) {
                 //クローズ失敗は通信エラー
-                mReturnCode.errorType = ERROR_TYPE.OTHER_ERROR;
+                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
                 DTVTLogger.debug(e);
             }
         }
@@ -568,7 +531,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                 bufferedReader.close();
             } catch (IOException e) {
                 //クローズ失敗は通信エラー
-                mReturnCode.errorType = ERROR_TYPE.OTHER_ERROR;
+                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
                 DTVTLogger.debug(e);
             }
         }
@@ -702,22 +665,22 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                 removeConnections(mUrlConnection);
             } catch (ConnectException e) {
                 //通信エラー扱いとする
-                mReturnCode.errorType = ERROR_TYPE.COMMUNICATION_ERROR;
+                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.COMMUNICATION_ERROR;
             } catch (SSLHandshakeException e) {
                 //SSL証明書が失効している
-                mReturnCode.errorType = ERROR_TYPE.SSL_ERROR;
+                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.SSL_ERROR;
                 DTVTLogger.debug(e);
             } catch (SSLPeerUnverifiedException e) {
                 //SSLチェックライブラリの初期化が行われていない
-                mReturnCode.errorType = ERROR_TYPE.SSL_ERROR;
+                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.SSL_ERROR;
                 DTVTLogger.debug(e);
             } catch (IOException e) {
                 //通信エラー扱いとする
-                mReturnCode.errorType = ERROR_TYPE.COMMUNICATION_ERROR;
+                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.COMMUNICATION_ERROR;
                 DTVTLogger.debug(e);
             } catch (OcspParameterException e) {
                 //SSLチェックの初期化に失敗している・通常は発生しないとの事
-                mReturnCode.errorType = ERROR_TYPE.SSL_ERROR;
+                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.SSL_ERROR;
                 DTVTLogger.debug(e);
             } finally {
                 //最後なので初期化

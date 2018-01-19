@@ -129,7 +129,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
         request.startIndex = pageNumber * SearchConstants.Search.requestMaxResultCount + 1;
         request.filterViewableAge = UserInfoUtils.getRecommendUserAge(getUserAgeInfo(context, pageIndex));
 
-        totalSearchWebApi = new TotalSearchWebApi();
+        totalSearchWebApi = new TotalSearchWebApi(context);
         totalSearchWebApi.setDelegate(this);
         mSearchDataProviderListener = (SearchDataProviderListener) context;
         totalSearchWebApi.request(request);
