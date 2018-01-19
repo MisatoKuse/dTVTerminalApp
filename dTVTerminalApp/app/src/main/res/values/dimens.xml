@@ -148,4 +148,9 @@
     <dimen name="main_setting_list_checkbox_length">32dp</dimen>
     <dimen name="main_setting_checkbox_margin">10dp</dimen>
     <dimen name="main_setting_quality_list_separate">1dp</dimen>
+
+    <!--縮小番組表-->
+    <dimen name="tv_program_list_time_scrollview_width">44dp</dimen>
+    <dimen name="tv_program_list_time_line_width">48dp</dimen>
+    <dimen name="tv_program_list_time_line_height">25dp</dimen>
 </resources>

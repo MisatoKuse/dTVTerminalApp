@@ -87,4 +87,7 @@
     <color name="item_num_black">#000000</color>
     <color name="item_num_register_bg_black">#FFFFFF</color>
     <color name="item_num_unregister_bg_black">#333333</color>
+
+    <!--//縮小番組表-->
+    <color name="tv_program_list_time_line_now">#fd0003</color>
 </resources>
