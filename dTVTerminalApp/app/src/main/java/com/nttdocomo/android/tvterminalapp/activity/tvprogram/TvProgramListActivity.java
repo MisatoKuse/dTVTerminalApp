@@ -53,6 +53,7 @@ public class TvProgramListActivity extends BaseActivity
         implements ChannelItemClickListener,
         View.OnClickListener,
         ScaledDownProgramListDataProvider.ApiDataProviderCallback,
+        ProgramScrollView.OnScrollOffsetListener,
         MyChannelDataProvider.ApiDataProviderCallback{
 
     private static final int INDEX_TAB_HIKARI = 1;
@@ -93,6 +94,8 @@ public class TvProgramListActivity extends BaseActivity
     private ArrayList<Channel> hikariChannels;
     private ArrayList<Channel> mappedMyChannelList;
     private ArrayList<MyChannelMetaData> myChannelDataList;
+    private RelativeLayout mTimeLine;
+    private ImageView mNowImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +138,8 @@ public class TvProgramListActivity extends BaseActivity
         mProgramRecyclerView = findViewById(R.id.tv_program_list_main_layout_channeldetail_rv);
         final ProgramScrollView programScrollView = findViewById(R.id.tv_program_list_main_layout_channeldetail_sl);
         mTagImageView = findViewById(R.id.tv_program_list_main_layout_curtime_iv);
+        mTimeLine = findViewById(R.id.tv_program_list_main_layout_time_line);
+        mNowImage = findViewById(R.id.tv_program_list_main_layout_time_line_now);
 
         mTagImageView.setOnClickListener(this);
         titleTextView.setOnClickListener(this);
@@ -161,6 +166,8 @@ public class TvProgramListActivity extends BaseActivity
         } else {
             mIsFromBackFlag = false;
         }
+        scrollToCurTime();
+        refreshTimeLine();
     }
 
     /**
@@ -462,6 +469,8 @@ public class TvProgramListActivity extends BaseActivity
             case R.id.tv_program_list_main_layout_curtime_iv:
                 //システム時間軸にスクロール
                 scrollToCurTime();
+                //現在時刻ラインの表示更新
+                refreshTimeLine();
                 break;
             case R.id.header_layout_text:
                 //日付選択ダイアログ
@@ -484,6 +493,10 @@ public class TvProgramListActivity extends BaseActivity
         mProgramRecyclerView.setAdapter(mTvProgramListAdapter);
         mProgramRecyclerView.setItemViewCacheSize(channelInfo.size());
         mProgramRecyclerView.getRecycledViewPool().setMaxRecycledViews(mTvProgramListAdapter.getItemViewType(0), 3);
+        //スクロール時、リスナー設置
+        mTimeScrollView.setOnScrollOffsetListener(this);
+        scrollToCurTime();
+        refreshTimeLine();
     }
 
     /**
@@ -527,6 +540,18 @@ public class TvProgramListActivity extends BaseActivity
             }
         }
         mTimeScrollView.smoothScrollTo(0, scrollDis);
+    }
+
+    /**
+     * 分、秒を時に転換する
+     * @param curMin
+     * @param curSec
+     * @return
+     */
+    private float MinSec2Hour(int curMin, int curSec) {
+        int sec = curMin * 60;
+        float hour = ((float) sec + curSec) / 3600;
+        return hour;
     }
 
     @Override
@@ -664,6 +689,52 @@ public class TvProgramListActivity extends BaseActivity
     @Override
     public void onMyChannelDeleteCallback(String result) {
         //nothing to do
+    }
+
+    /**
+     * スクロール時、スクロール距離を返すコールバック
+     * @param offset
+     */
+    @Override
+    public void onScrollOffset(int offset) {
+        String curTime = new SimpleDateFormat(TIME_FORMAT, Locale.JAPAN).format(new Date());
+        int curClock = Integer.parseInt(curTime.substring(0, 2));
+        int curMin = Integer.parseInt(curTime.substring(2, 4));
+        int curSec = Integer.parseInt(curTime.substring(4, 6));
+        float channelRvHeight = (float) mChannelRecyclerView.getHeight();
+        float timeLinePosition = 0;
+        if (START_TIME <= curClock && curClock < STANDARD_TIME) {
+            timeLinePosition = (curClock - START_TIME) * dip2px(ONE_HOUR_UNIT) + (
+                    dip2px(ONE_HOUR_UNIT) + 0.5f) * MinSec2Hour(curMin, curSec) + channelRvHeight;
+        } else {
+            if (0 <= curClock && curClock <= 3) {
+                timeLinePosition = (STANDARD_TIME - START_TIME + curClock) * dip2px(ONE_HOUR_UNIT) + (
+                        dip2px(ONE_HOUR_UNIT) + 0.5f) * MinSec2Hour(curMin, curSec) + channelRvHeight;
+            }
+        }
+        mTimeLine.setY(timeLinePosition - mNowImage.getHeight() / 2 - offset);
+    }
+
+    /**
+     * 機能
+     * 現在時刻ラインの表示位置を更新
+     */
+    private void refreshTimeLine() {
+        String curTime = new SimpleDateFormat(TIME_FORMAT, Locale.JAPAN).format(new Date());
+        int curClock = Integer.parseInt(curTime.substring(0, 2));
+        int curMin = Integer.parseInt(curTime.substring(2, 4));
+        int curSec = Integer.parseInt(curTime.substring(4, 6));
+        float channelRvHeight = (float) mChannelRecyclerView.getHeight();
+        float timeLinePosition = 0;
+        if (START_TIME <= curClock && curClock < STANDARD_TIME) {
+            timeLinePosition = (dip2px(ONE_HOUR_UNIT) + 0.5f) * MinSec2Hour(curMin, curSec) + channelRvHeight;
+        } else {
+            if (0 <= curClock && curClock <= 3) {//底から完全に見える"1時間単位"をマーナイスする
+                timeLinePosition = (dip2px(ONE_HOUR_UNIT) + 0.5f) * MinSec2Hour(curMin, curSec)
+                        + channelRvHeight+(mTimeScrollView.getHeight()-(START_TIME-curClock)*dip2px(ONE_HOUR_UNIT));
+            }
+        }
+        mTimeLine.setY(timeLinePosition - mNowImage.getHeight() / 2);
     }
 
     /**
