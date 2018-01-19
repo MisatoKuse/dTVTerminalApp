@@ -645,7 +645,7 @@ public class RemoteControlRelayClient {
                     }
                     stbConnection.disconnect();
                 } else {
-                    DTVTLogger.debug("STBとの接続に失敗しました。");
+                    DTVTLogger.debug("failed to connect to the STB");
                     response.setResult(ResponseMessage.RELAY_RESULT_ERROR);
                     response.setResultCode(ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE);
                     response.setRequestCommandTypes(STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
