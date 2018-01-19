@@ -91,8 +91,8 @@ public class RecordReservationListActivity extends BaseActivity
         if (null != mProvider.mReservationTime) {
             TextView textView = findViewById(R.id.reservation_update_time);
             StringBuilder strBuilder = new StringBuilder();
-            strBuilder.append(getString(R.string.recording_reservation_list_update_time))
-                    .append(mProvider.mReservationTime);
+            strBuilder.append(mProvider.mReservationTime)
+                    .append(getString(R.string.recording_reservation_list_update_time));
             textView.setText(strBuilder.toString());
         }
     }
