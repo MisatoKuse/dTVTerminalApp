@@ -82,7 +82,7 @@ public class DateUtils {
 
     //日付フォーマット
     private static final String DATE_PATTERN = "yyyy/MM/dd HH:mm:ss";
-    private static final String DATE_PATTERN_RECORDING_RESERVATION = "MM/dd (E) HH:mm";
+    private static final String DATE_PATTERN_RECORDING_RESERVATION = "M/d (E) HH:mm";
 
     //日付フォーマット
     private static final String DATE_YYYY_MM_DD = "yyyy/MM/dd";

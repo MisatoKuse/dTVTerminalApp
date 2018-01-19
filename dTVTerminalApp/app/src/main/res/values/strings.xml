@@ -114,7 +114,7 @@
     <string name="recording_reservation_list_error_toast">録画予約一覧取得失敗</string>
     <string name="recording_reservation_status_accepting">受付中</string>
     <string name="recording_reservation_status_accept_failure">受付失敗</string>
-    <string name="recording_reservation_list_update_time">[取得時刻]</string>
+    <string name="recording_reservation_list_update_time">現在</string>
 
     <!-- クリップ一覧 -->
     <string name="str_clip_activity_title">クリップ</string>
