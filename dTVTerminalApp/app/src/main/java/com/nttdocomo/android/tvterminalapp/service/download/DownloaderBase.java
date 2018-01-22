@@ -341,13 +341,18 @@ public abstract class DownloaderBase {
                 for(int i = files.length-1; i >= 0; i--){
                     File file = files[i];
                     if(file != null){
-                        String dmp=getDmpFolderName(context);
-                        if(null==dmp || dmp.isEmpty()){
-                            downLoadPath="";
+                        if(1==i){
+                            String dmp=getDmpFolderName(context);
+                            if(null==dmp || dmp.isEmpty()){
+                                downLoadPath="";
+                                continue;
+                            }
+                            downLoadPath = file.getAbsolutePath() + File.separator + dmp;
+                            break;
+                        }else {
+                            downLoadPath = file.getAbsolutePath();
                             break;
                         }
-                        downLoadPath = file.getAbsolutePath() + File.separator + dmp;
-                        break;
                     }
                 }
             }
