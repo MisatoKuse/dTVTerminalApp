@@ -104,6 +104,21 @@
         <activity
             android:name=".activity.other.SettingImageQualityActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.other.SettingMenuAppActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.other.SettingMenuFaqActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.other.SettingMenuLicenseActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.other.SettingMenuPrivacyPolicyActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.other.SettingMenuTermsOfServiceActivity"
+            android:screenOrientation="portrait" />
         <!-- ======================================  Other グループ End ====================================== -->
 
 
