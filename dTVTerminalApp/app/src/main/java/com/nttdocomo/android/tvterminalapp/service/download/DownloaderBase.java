@@ -341,7 +341,12 @@ public abstract class DownloaderBase {
                 for(int i = files.length-1; i >= 0; i--){
                     File file = files[i];
                     if(file != null){
-                        downLoadPath = file.getAbsolutePath();
+                        String dmp=getDmpFolderName(context);
+                        if(null==dmp || dmp.isEmpty()){
+                            downLoadPath="";
+                            break;
+                        }
+                        downLoadPath = file.getAbsolutePath() + File.separator + dmp;
                         break;
                     }
                 }
@@ -351,5 +356,19 @@ public abstract class DownloaderBase {
             downLoadPath = NewEnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP);
         }
         return downLoadPath;
+    }
+
+    public static String getDmpFolderName(final Context context){
+        if(null==context){
+            return null;
+        }
+        String ret=EnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP);
+        String sp= File.separator;
+        int i= ret.lastIndexOf(sp);
+        int l=ret.length();
+        if(0>i || i>=l){
+            return "";
+        }
+        return ret.substring(i+1, l);
     }
 }
