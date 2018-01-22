@@ -64,7 +64,7 @@ public class DlnaInterfaceDl {
 //            DTVTLogger.debug("player dir dtcp before copy db_post, ---------------->" + file.getName());
 //        }
 //
-//        File homeDtcpPathDir=new File(homeDtcpPath);
+        File homeDtcpPathDir=new File(homeDtcpPath);
 //        allFile=homeDtcpPathDir.listFiles();
 //        for(File file:allFile){
 //            DTVTLogger.debug("dtcp before copy db_post, ---------------->"+file.getName());
@@ -77,10 +77,10 @@ public class DlnaInterfaceDl {
             return DlnaDownloadRet.DownloadRet_CopyKeyFileFailed;
         }
 
-//        allFile=homeDtcpPathDir.listFiles();
-//        for(File file:allFile){
-//            DTVTLogger.debug("dtcp after copy db_post, ---------------->"+ file.getName());
-//        }
+        File[] allFile=homeDtcpPathDir.listFiles();
+        for(File file:allFile){
+            DTVTLogger.debug("dtcp after copy db_post, ---------------->"+ file.getName());
+        }
 
         long id=Thread.currentThread().getId();
         DTVTLogger.debug("HandlerThread:"+id);
@@ -240,7 +240,10 @@ public class DlnaInterfaceDl {
     private String getParentDir(String dir){
         File f=new File(dir);
         if(!f.exists()){
-            return "";
+            boolean r=f.mkdirs();
+            if(!r){
+                return "";
+            }
         }
         return f.getParent();
     }
