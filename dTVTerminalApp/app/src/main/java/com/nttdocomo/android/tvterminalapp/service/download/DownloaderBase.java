@@ -6,6 +6,8 @@ package com.nttdocomo.android.tvterminalapp.service.download;
 
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 
 import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -328,18 +330,25 @@ public abstract class DownloaderBase {
      * @return
      */
     public static String getDownloadPath(Context context){
-        if(null==context){
+        String downLoadPath = null;
+        if(null == context){
             return null;
         }
-        Boolean isInternal= SharedPreferencesUtils.getSharedPreferencesStoragePath(context);
-        String internalPaht= NewEnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP); //内部ストレージ
-        if(isInternal){
-            return internalPaht;
+        File[] files =  ContextCompat.getExternalFilesDirs(context, null);
+        if(files != null){
+            if(files.length > 0){
+                for(int i = files.length-1; i >= 0; i--){
+                    File file = files[i];
+                    if(file != null){
+                        downLoadPath = file.getAbsolutePath();
+                        break;
+                    }
+                }
+            }
         }
-        String ret= DownloaderBase.getExtSDCardPath();
-        if(null==ret){
-            ret=internalPaht;
+        if(TextUtils.isEmpty(downLoadPath)){
+            downLoadPath = NewEnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP);
         }
-        return ret;
+        return downLoadPath;
     }
 }
