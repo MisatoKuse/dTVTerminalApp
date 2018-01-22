@@ -786,34 +786,34 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                 return false;
             }
             //test b
-            File f2=new File("/data/user/0/com.nttdocomo.android.tvterminalapp/files/cm_work_dmp/");
-            File[] f2s= f2.listFiles();
-            long fSize= getFileSize(f);
-
-            File f3=new File("/data/user/0/com.nttdocomo.android.tvterminalapp/files/cm_work_player/");
-            File[] f3s= f3.listFiles();
-            File[] fs= f.listFiles();
-
-            File hwidPlayer=new File("/data/user/0/com.nttdocomo.android.tvterminalapp/files/cm_work_player/hwid");
-            File hwidDmp= new File("/data/user/0/com.nttdocomo.android.tvterminalapp/files/cm_work_dmp/hwid");
-            String hwidPlayerS = ReadFile(hwidPlayer);
-            String hwidDmpS = ReadFile(hwidDmp);
-            boolean isSame=true;
-            if(hwidPlayerS.length()!=hwidDmpS.length()){
-                isSame=false;
-            }else {
-                isSame= hwidPlayerS.equals(hwidDmpS);
-            }
-
-            File db_postPlayer=new File("/data/user/0/com.nttdocomo.android.tvterminalapp/files/cm_work_player/db_post");
-            File db_postDmp= new File("/data/user/0/com.nttdocomo.android.tvterminalapp/files/cm_work_dmp/db_post");
-            String db_postPlayerS = ReadFile(db_postPlayer);
-            String db_postDmpS = ReadFile(db_postDmp);
-            if(db_postPlayerS.length()!=db_postDmpS.length()){
-                isSame=false;
-            }else {
-                isSame= db_postPlayerS.equals(db_postDmpS);
-            }
+//            File f2=new File("/data/user/0/com.nttdocomo.android.tvterminalapp/files/cm_work_dmp/");
+//            File[] f2s= f2.listFiles();
+//            long fSize= getFileSize(f);
+//
+//            File f3=new File("/data/user/0/com.nttdocomo.android.tvterminalapp/files/cm_work_player/");
+//            File[] f3s= f3.listFiles();
+//            File[] fs= f.listFiles();
+//
+//            File hwidPlayer=new File("/data/user/0/com.nttdocomo.android.tvterminalapp/files/cm_work_player/hwid");
+//            File hwidDmp= new File("/data/user/0/com.nttdocomo.android.tvterminalapp/files/cm_work_dmp/hwid");
+//            String hwidPlayerS = ReadFile(hwidPlayer);
+//            String hwidDmpS = ReadFile(hwidDmp);
+//            boolean isSame=true;
+//            if(hwidPlayerS.length()!=hwidDmpS.length()){
+//                isSame=false;
+//            }else {
+//                isSame= hwidPlayerS.equals(hwidDmpS);
+//            }
+//
+//            File db_postPlayer=new File("/data/user/0/com.nttdocomo.android.tvterminalapp/files/cm_work_player/db_post");
+//            File db_postDmp= new File("/data/user/0/com.nttdocomo.android.tvterminalapp/files/cm_work_dmp/db_post");
+//            String db_postPlayerS = ReadFile(db_postPlayer);
+//            String db_postDmpS = ReadFile(db_postDmp);
+//            if(db_postPlayerS.length()!=db_postDmpS.length()){
+//                isSame=false;
+//            }else {
+//                isSame= db_postPlayerS.equals(db_postDmpS);
+//            }
 
             //test e
             uri = Uri.parse(sb.toString());

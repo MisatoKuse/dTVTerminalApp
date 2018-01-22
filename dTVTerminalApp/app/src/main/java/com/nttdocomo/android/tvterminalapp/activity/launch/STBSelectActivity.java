@@ -228,7 +228,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             TextView statusTextView = findViewById(R.id.stb_select_status_text);
             TextView downloadTextView = findViewById(R.id.downloadDAccountApplication);
 
-            mPairingImage.setImageResource(R.mipmap.paring_search_icon);
+            //mPairingImage.setImageResource(R.drawable.paring_search_icon);
             statusTextView.setText(R.string.str_stb_select_result_text_search);
             downloadTextView.setVisibility(View.GONE);
             mCheckBoxSTBSelectActivity.setVisibility(View.VISIBLE);
@@ -712,14 +712,15 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 
             //dカウント登録状態チェック
             boolean isDAccountFlag = checkDAccountLogin();
-
+            isDAccountFlag=false; //test
             if (isDAccountFlag) {
                 setRelayClientHandler();
                 RemoteControlRelayClient.getInstance().isUserAccountExistRequest(this);
 
                 storeSTBData(mSelectDevice);
             } else {
-                startActivity(intent);
+                startActivity(HomeActivity.class,null);//test
+                storeSTBData(mSelectDevice);//test
             }
             // ワンタイムトークン
 
@@ -741,7 +742,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         TextView downloadTextView = findViewById(R.id.downloadDAccountApplication);
 
         mIsAppDL = true;
-        mPairingImage.setImageResource(R.mipmap.stb_select_error_device_icon);
+        mPairingImage.setImageResource(R.drawable.paring_no_daccount_app);
         statusTextView.setText(R.string.str_d_account_app_not_install);
         downloadTextView.setVisibility(View.VISIBLE);
         downloadTextView.setOnClickListener(this);
