@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:background="@color/stb_select_black_color"
     android:layout_height="match_parent">
@@ -87,19 +86,33 @@
 
     <CheckBox
         android:id="@+id/checkBoxSTBSelectActivity"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/launch_stb_checkbox_high"
         android:layout_height="@dimen/launch_stb_checkbox_high"
-        android:layout_marginLeft="@dimen/launch_stb_list_start_margin"
-        android:layout_marginRight="@dimen/launch_stb_list_start_margin"
-        android:text="@string/str_stb_next_not_display_text"
-        android:textColor="@color/stb_select_white_color"
-        android:theme="@style/CheckBox"
+        android:layout_marginStart="@dimen/launch_stb_checkbox_start_margin"
+        android:button="@null"
+        android:background="@drawable/ic_check_box_outline_blank_white_24dp"
         android:layout_marginBottom="@dimen/launch_stb_checkbox_bottom_margin"
         android:layout_marginTop="@dimen/launch_stb_checkbox_top_margin"
         android:paddingStart="@dimen/launch_stb_checkbox_right_margin"
         android:paddingEnd="@dimen/launch_text_end_padding"
         android:layout_above="@+id/useWithoutPairingSTBParingInvitation"
-        android:layout_centerHorizontal="true" />
+        />
+
+    <TextView
+        android:id="@+id/launch_select_check_box_text"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/launch_stb_checkbox_high"
+        android:text="@string/str_stb_next_not_display_text"
+        android:textSize="@dimen/launch_text_size"
+        android:paddingStart="@dimen/launch_stb_checkbox_right_margin"
+        android:paddingEnd="@dimen/launch_text_end_padding"
+        android:gravity="center|start"
+        android:textColor="@color/stb_select_white_color"
+        android:layout_toEndOf="@+id/checkBoxSTBSelectActivity"
+        android:layout_above="@+id/useWithoutPairingSTBParingInvitation"
+        android:layout_marginBottom="@dimen/launch_stb_checkbox_bottom_margin"
+        />
+
 
     <TextView
         android:id="@+id/useWithoutPairingSTBParingInvitation"

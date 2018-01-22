@@ -16,6 +16,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -34,8 +35,8 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
-import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountCheckService;
-import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.IDimDefines;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +66,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private CheckBox mCheckBoxSTBSelectActivity = null;
     private TextView mUseWithoutPairingSTBParingInvitationTextView = null;
     private TextView mParingDevice;
+    private TextView mCheckboxText;
     private ListView mDeviceListView;
 
     public static final String StateModeRepair = "Repair";
@@ -139,6 +141,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             setStbStatusIconVisibility(true);
             enableGlobalMenuIcon(true);
             mCheckBoxSTBSelectActivity.setVisibility(View.GONE);
+            mCheckboxText.setVisibility(View.GONE);
 
             boolean status = true;
             //sharedPreferencesからSTB情報を取得する
@@ -209,9 +212,25 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         mUseWithoutPairingSTBParingInvitationTextView.setOnClickListener(this);
 
         mCheckBoxSTBSelectActivity = findViewById(R.id.checkBoxSTBSelectActivity);
+        mCheckboxText = findViewById(R.id.launch_select_check_box_text);
         mCheckBoxSTBSelectActivity.setVisibility(View.VISIBLE);
+        mCheckboxText.setVisibility(View.VISIBLE);
         mCheckBoxSTBSelectActivity.setOnClickListener(this);
+        mCheckboxText.setOnClickListener(this);
         mCheckBoxSTBSelectActivity.setChecked(false);
+        mCheckBoxSTBSelectActivity.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        if(mCheckBoxSTBSelectActivity.isChecked()){
+                            mCheckBoxSTBSelectActivity.setBackgroundResource(R.drawable.
+                                    ic_check_box_outline_blank_white_24dp);
+                        }else{
+                            mCheckBoxSTBSelectActivity.setBackgroundResource(R.drawable.
+                                    ic_check_box_white_24dp);
+                        }
+                    }
+                });
 
         DTVTLogger.end();
     }
@@ -232,6 +251,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             statusTextView.setText(R.string.str_stb_select_result_text_search);
             downloadTextView.setVisibility(View.GONE);
             mCheckBoxSTBSelectActivity.setVisibility(View.VISIBLE);
+            mCheckboxText.setVisibility(View.INVISIBLE);
             mDeviceListView.setVisibility(View.VISIBLE);
             mUseWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_no_pair_use_text);
         }
@@ -320,6 +340,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         mLoadMoreView.setVisibility(View.VISIBLE);
         mDeviceListView.setVisibility(View.GONE);
         mCheckBoxSTBSelectActivity.setVisibility(View.GONE);
+        mCheckboxText.setVisibility(View.GONE);
         DTVTLogger.end();
     }
 
@@ -357,6 +378,14 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 }
             });
             dAccountInstallDialog.showDialog();
+        }else if(v.getId() ==R.id.launch_select_check_box_text){
+            if(!mCheckBoxSTBSelectActivity.isChecked()){
+                mCheckBoxSTBSelectActivity.setChecked(true);
+            }else{
+                if(mCheckBoxSTBSelectActivity.isChecked()){
+                    mCheckBoxSTBSelectActivity.setChecked(false);
+                }
+            }
         }
         DTVTLogger.end();
     }
@@ -746,6 +775,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         downloadTextView.setVisibility(View.VISIBLE);
         downloadTextView.setOnClickListener(this);
         mCheckBoxSTBSelectActivity.setVisibility(View.GONE);
+        mCheckboxText.setVisibility(View.GONE);
         mDeviceListView.setVisibility(View.GONE);
         mUseWithoutPairingSTBParingInvitationTextView.setText(R.string.str_stb_no_login_use_text);
     }

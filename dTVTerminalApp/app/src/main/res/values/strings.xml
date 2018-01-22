@@ -50,6 +50,7 @@
     <string name="str_d_account_resetting_title">dアカウント再設定</string>
     <string name="str_d_account_setting_help_title">dアカウント設定ヘルプ</string>
     <string name="str_d_account_reg_confirmation_title">dアカウント登録確認</string>
+    <string name="str_d_account_application_download">dアカウントアプリをダウンロードする</string>
     <string name="str_d_account_app_not_install">ドコモテレビターミナルとペアリングするには\ndアカウントでのログインが必要です</string>
     <string name="str_d_account_app_download">dアカウントアプリをダウンロードする</string>
     <string name="str_stb_select_result_text_failed">ペアリング可能なデバイスが\n見つかりませんでした。</string>
