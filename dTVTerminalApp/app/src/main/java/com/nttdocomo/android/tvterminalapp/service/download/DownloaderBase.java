@@ -261,8 +261,9 @@ public abstract class DownloaderBase {
      * Sub Classでダウンロード成功したとき、この関数をコール
      */
     protected void onFail(DownloadListener.DLError error) {
-        if(null!=mDownloadListener){
-            mDownloadListener.onFail(error);
+        if(null!=mDownloadListener && null!=mDownloadParam){
+            final String savePath= mDownloadParam.getSavePath();
+            mDownloadListener.onFail(error, savePath);
         }
     }
 
