@@ -288,6 +288,8 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                 intent.setAction(DownloadService.DONWLOAD_SUCCESS);
                 intent.putExtra(DownloadService.DONWLOAD_PATH, fullPath);
                 ds.sendBroadcast(intent);
+            } else {
+                DTVTLogger.debug("ダウンロードサービス取得失敗しました。");
             }
         } else {
             setNextDownLoad();
@@ -344,6 +346,8 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     public void onCancel() {
         if (null != mDlDataProviderListener) {
             mDlDataProviderListener.onCancel();
+        } else {
+            DTVTLogger.debug("ダウンロードはキャンセルしました。 ");
         }
     }
 
@@ -511,9 +515,13 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
     }
 
-    public void setDlData(DlData dlData) {
-        this.dlData = dlData;
-        dbOperationByThread(DOWNLOAD_INSERT);
+    public void setDlData(DlData dlData) throws Exception{
+        try {
+            this.dlData = dlData;
+            dbOperationByThread(DOWNLOAD_INSERT);
+        } catch (Exception e) {
+            throw new Exception("DlDataProvider.DlDataProvider, DB insert Fail ");
+        }
     }
 
     private void updateDownloadStatusToDb(){
