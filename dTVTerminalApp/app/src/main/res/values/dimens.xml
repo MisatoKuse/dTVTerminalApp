@@ -37,14 +37,13 @@
     <dimen name="clip_common_margin">15dp</dimen>
 
     <!--Global Menu-->
-    <dimen name="global_menu_list_item_bottom_margin">15dp</dimen>
-    <dimen name="global_menu_list_item_top_margin">15dp</dimen>
-    <dimen name="global_menu_list_item_default_title_left_margin">16dp</dimen>
-    <dimen name="global_menu_list_item_sub_title_left_margin">40dp</dimen>
-    <dimen name="global_menu_list_item_dazn_title_left_margin">10dp</dimen>
-    <dimen name="global_menu_list_item_arrow_right_margin">20dp</dimen>
-    <dimen name="global_menu_list_item_count_right_margin">25dp</dimen>
-    <dimen name="global_menu_list_item_title_icon_left_margin">32dp</dimen>
+    <dimen name="global_menu_list_height">44sp</dimen>
+    <dimen name="global_menu_list_right_arrow_icon_size">30sp</dimen>
+    <dimen name="global_menu_list_item_default_title_left_margin">16sp</dimen>
+    <dimen name="global_menu_list_item_sub_title_left_margin">32sp</dimen>
+    <dimen name="global_menu_list_item_dazn_title_left_margin">8sp</dimen>
+    <dimen name="global_menu_list_item_count_right_margin">6sp</dimen>
+    <dimen name="global_menu_list_item_title_icon_left_margin">32sp</dimen>
 
     <!--Common-->
     <dimen name="main_header_height">44dp</dimen>
