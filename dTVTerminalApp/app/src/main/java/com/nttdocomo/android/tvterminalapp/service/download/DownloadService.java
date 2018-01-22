@@ -262,9 +262,9 @@ public class DownloadService extends Service implements DownloadListener {
      * @param error　error
      */
     @Override
-    public void onFail(DLError error) {
+    public void onFail(DLError error, final String savePath) {
         if(null!=mDownloadServiceListener){
-            mDownloadServiceListener.onFail(error);
+            mDownloadServiceListener.onFail(error, savePath);
         }
     }
 

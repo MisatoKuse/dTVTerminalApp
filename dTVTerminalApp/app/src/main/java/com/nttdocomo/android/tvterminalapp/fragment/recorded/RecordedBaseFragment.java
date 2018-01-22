@@ -244,7 +244,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     }
 
     @Override
-    public void onFail(final DLError error) {
+    public void onFail(final DLError error, final String savePath) {
         mHandler.post(
                 new Runnable(){
                     @Override

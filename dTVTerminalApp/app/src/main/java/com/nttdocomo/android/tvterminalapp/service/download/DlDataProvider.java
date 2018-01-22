@@ -251,9 +251,9 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     @Override
-    public void onFail(final DLError error) {
+    public void onFail(final DLError error, final String savePath) {
         if (null != mDlDataProviderListener) {
-            mDlDataProviderListener.onFail(error);
+            mDlDataProviderListener.onFail(error, savePath);
         }
     }
 
@@ -376,7 +376,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                 case DOWNLOAD_TOTALSIZE_SELECT:
                     if (null != mDlDataProviderListener) {
                         if (resultSet != null && resultSet.size() > 5) {
-                            mDlDataProviderListener.onFail(DLError.DLError_Other);
+                            mDlDataProviderListener.onFail(DLError.DLError_Other, "");
                         }
                     }
                     break;

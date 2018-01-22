@@ -6,13 +6,21 @@ package com.nttdocomo.android.tvterminalapp.jni;
 
 import android.content.Context;
 import android.os.Handler;
+import android.text.TextUtils;
 
 import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.jni.activation.NewEnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.service.download.DtcpDownloadParam;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * 機能：For Dlna Remote
@@ -54,6 +62,29 @@ public class DlnaInterfaceRI {
     public static String copyConfFiles(Context context, String assetsConfPath, String oldPath, String whatReplace, String replace, boolean forceUpdate){
         String newPath = getConfPathDir(context);
 
+//        if (TextUtils.isEmpty(assetDir) || TextUtils.isEmpty(targetDir)) {
+//            return;
+//        }
+//        String separator = File.separator;
+//        try {
+//            // 获取assets目录assetDir下一级所有文件以及文件夹
+//            String[] fileNames = context.getResources().getAssets().list(assetDir);
+//            // 如果是文件夹(目录),则继续递归遍历
+//            if (fileNames.length > 0) {
+//                File targetFile = new File(targetDir);
+//                if (!targetFile.exists() && !targetFile.mkdirs()) {
+//                    return;
+//                }
+//                for (String fileName : fileNames) {
+//                    copyAssets(context, assetDir + separator + fileName, targetDir + separator + fileName);
+//                }
+//            } else { // 文件,则执行拷贝
+//                copy(context, assetDir, targetDir);
+//            }
+//        } catch (Exception e) {
+//            DTVTLogger.debug(e);;
+//        }
+
         return newPath;
     }
 
@@ -67,8 +98,75 @@ public class DlnaInterfaceRI {
      * @return  true: ok    false: ng
      */
     private static boolean copyConfFiles(Context context, String oldPath, String newPath, String whatReplace, String replace){
-
+        if (TextUtils.isEmpty(oldPath) || TextUtils.isEmpty(newPath)) {
+            return false;
+        }
+        File dest = new File(newPath);
+        boolean r=dest.getParentFile().mkdirs();
+        if(!r){
+            return false;
+        }
+        InputStream in = null;
+        OutputStream out = null;
+        try {
+            in = new BufferedInputStream(context.getAssets().open(oldPath));
+            out = new BufferedOutputStream(new FileOutputStream(dest));
+            byte[] buffer = new byte[1024];
+            int length = 0;
+            while ((length = in.read(buffer)) != -1) {
+                out.write(buffer, 0, length);
+            }
+        } catch (Exception e) {
+            DTVTLogger.debug(e);;
+        } finally {
+            try {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    DTVTLogger.debug(e);;
+                }
+                in.close();
+            } catch (IOException e) {
+                DTVTLogger.debug(e);;
+            }
+        }
         return true;
+    }
+
+    public static void copy(Context context, String zPath, String targetPath) {
+        if (TextUtils.isEmpty(zPath) || TextUtils.isEmpty(targetPath)) {
+            return;
+        }
+        final int BUFFER_SIZE= 1024;
+        File dest = new File(targetPath);
+        boolean r=dest.getParentFile().mkdirs();
+        if(!r){
+            return;
+        }
+        InputStream in = null;
+        OutputStream out = null;
+        try {
+            in = new BufferedInputStream(context.getAssets().open(zPath));
+            out = new BufferedOutputStream(new FileOutputStream(dest));
+            byte[] buffer = new byte[BUFFER_SIZE];
+            int length = 0;
+            while ((length = in.read(buffer)) != -1) {
+                out.write(buffer, 0, length);
+            }
+        } catch (Exception e) {
+            DTVTLogger.debug(e);;
+        } finally {
+            try {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    DTVTLogger.debug(e);;
+                }
+                in.close();
+            } catch (IOException e) {
+                DTVTLogger.debug(e);;
+            }
+        }
     }
 
     /**
