@@ -252,8 +252,18 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
 
     @Override
     public void onFail(final DLError error, final String savePath) {
-        if (null != mDlDataProviderListener) {
+        if (null != mDlDataProviderListener && DownloadService.BINDSTATUS == DownloadService.BINDED) {
             mDlDataProviderListener.onFail(error, savePath);
+        } else if(DownloadService.BINDSTATUS == DownloadService.BACKGROUD){
+            DownloadService ds = getDownloadService();
+            if (null != ds) {
+                Intent intent = new Intent();
+                intent.setAction(DownloadService.DONWLOAD_FAIL);
+                intent.putExtra(DownloadService.DONWLOAD_PATH, savePath);
+                ds.sendBroadcast(intent);
+            }
+        } else {
+            setNextDownLoad();
         }
     }
 
@@ -280,25 +290,29 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                 ds.sendBroadcast(intent);
             }
         } else {
-            if (DownloadService.dlDataQue != null && DownloadService.dlDataQue.size() > 0) {
-                DownloadService.dlDataQue.remove(0);
-                DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok");
-                if(0 == DownloadService.dlDataQue.size()){
-                    isRegistered = false;
-                    stopService();
-                    return;
-                }
-                try {
-                    Thread.sleep(300);
-                    DTVTLogger.debug(">>>>>>>>>>>>>>>>>> new dl");
-                    setDlParam(getDownLoadParam());
-                    start();
-                } catch (Exception e){
-                    e.printStackTrace();
-                }
-            } else {
+            setNextDownLoad();
+        }
+    }
+
+    private void setNextDownLoad(){
+        if (DownloadService.dlDataQue != null && DownloadService.dlDataQue.size() > 0) {
+            DownloadService.dlDataQue.remove(0);
+            DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok");
+            if(0 == DownloadService.dlDataQue.size()){
+                isRegistered = false;
                 stopService();
+                return;
             }
+            try {
+                Thread.sleep(300);
+                DTVTLogger.debug(">>>>>>>>>>>>>>>>>> new dl");
+                setDlParam(getDownLoadParam());
+                start();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        } else {
+            stopService();
         }
     }
 

@@ -57,6 +57,7 @@ public class DownLoadListDataManager {
         values.put(DBConstants.DOWNLOAD_LIST_COLUM_BITRATE, dlDatas.getBitrate());
         values.put(DBConstants.DOWNLOAD_LIST_COLUM_UPNP_ICON, dlDatas.getUpnpIcon());
         values.put(DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL, dlDatas.getSaveFile());
+        values.put(DBConstants.DOWNLOAD_LIST_COLUM_TYPE, dlDatas.getVideoType());
         downloadListDao.insert(values);
         DataBaseManager.getInstance().closeDatabase();
     }

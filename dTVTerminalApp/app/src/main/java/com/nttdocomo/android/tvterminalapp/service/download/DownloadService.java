@@ -33,6 +33,7 @@ public class DownloadService extends Service implements DownloadListener {
 
     public static final String DONWLOAD_UPDATE = "update";
     public static final String DONWLOAD_SUCCESS = "success";
+    public static final String DONWLOAD_FAIL = "fail";
     public static final String DONWLOAD_PATH = "path";
 
     public void setDownloadServiceListener(DownloadServiceListener dlServiceListener){

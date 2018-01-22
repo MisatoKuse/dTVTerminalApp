@@ -161,12 +161,10 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 showMessage("ダウンロード中のため、再生できません");
             } else {
                 if(activity != null){
-                    if(((RecordedListActivity)activity).getCurrentPosition() == 0){
-                        Intent intent = new Intent(mActivity, DtvContentsDetailActivity.class);
-                        intent.putExtra(DTVTConstants.SOURCE_SCREEN, activity.getComponentName().getClassName());
-                        intent.putExtra(RecordedListActivity.RECORD_LIST_KEY, mContentsList.get(i));
-                        startActivity(intent);
-                    }
+                    Intent intent = new Intent(mActivity, DtvContentsDetailActivity.class);
+                    intent.putExtra(DTVTConstants.SOURCE_SCREEN, activity.getComponentName().getClassName());
+                    intent.putExtra(RecordedListActivity.RECORD_LIST_KEY, mContentsList.get(i));
+                    startActivity(intent);
                 }
             }
         }
@@ -286,6 +284,10 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
 
                                 break;
                         }
+                        if(mDlDataProvider != null){
+                            mDlDataProvider.cancelDownLoadStatus(savePath);
+                        }
+                        setNextDownLoad();
                     }
                 });
     }
@@ -315,6 +317,10 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             mContentsData.get(queIndex.get(0)).setDownloadStatus("");
             setContentListStatusContent(queIndex.get(0), ContentsAdapter.DOWNLOAD_STATUS_COMPLETED, fullPath);
         }
+        setNextDownLoad();
+    }
+
+    private void setNextDownLoad(){
         if(que.size() > 0){
             que.remove(0);
             queIndex.remove(0);
@@ -563,6 +569,13 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
 
     public void setDownladSuccessByBg(String fullPath){
          setSuccessStatus(fullPath);
+    }
+
+    public void setDownladFailByBg(String fullPath){
+        if(mDlDataProvider != null){
+            mDlDataProvider.cancelDownLoadStatus(fullPath);
+        }
+        setNextDownLoad();
     }
 
     /**
