@@ -128,9 +128,24 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
             Intent intent = new Intent(this, SettingImageQualityActivity.class);
             intent.putExtra(getString(R.string.main_setting_quality_status), mSettingList.get(i).getStateText());
             startActivity(intent);
+        } else if (tappedItemName.equals(mItemName[4])) {
+            //FAQ
+            startActivity(SettingMenuFaqActivity.class, null);
         } else if (tappedItemName.equals(mItemName[5])) {
             //アプリケーション情報への遷移
             startActivity(ApplicationInfoActivity.class, null);
+        } else if (tappedItemName.equals(mItemName[6])) {
+            //ライセンス
+            startActivity(SettingMenuLicenseActivity.class, null);
+        } else if (tappedItemName.equals(mItemName[7])) {
+            //プライバシーポリシー
+            startActivity(SettingMenuPrivacyPolicyActivity.class, null);
+        } else if (tappedItemName.equals(mItemName[8])) {
+            //APP
+            startActivity(SettingMenuAppActivity.class, null);
+        } else if (tappedItemName.equals(mItemName[9])) {
+            //利用規約
+            startActivity(SettingMenuTermsOfServiceActivity.class, null);
         }
     }
 

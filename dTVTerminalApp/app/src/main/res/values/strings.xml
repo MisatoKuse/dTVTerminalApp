@@ -332,6 +332,12 @@
     <string name="main_setting_dazn_uninstall_message">ドコモテレビターミナルのダ・ゾーンの起動に失敗しました</string>
     <string name="main_setting_dazn_update_message">ドコモテレビターミナルのダ・ゾーンのバージョンアップが必要です。</string>
     <string name="main_setting_connect_error_message">STBとの接続に失敗しました。</string>
+    <string name="main_setting_menu_title_faq_list">FAQ一覧</string>
+    <string name="main_setting_menu_title_faq">FAQ</string>
+    <string name="main_setting_menu_title_license">ライセンス情報</string>
+    <string name="main_setting_menu_title_privacy_policy">プライバシーポリシー</string>
+    <string name="main_setting_menu_title_app">APP</string>
+    <string name="main_setting_menu_title_terms_of_service">利用規約</string>
     <string-array name="main_setting_items">
         <item>dアカウント設定</item>
         <item>ペアリング設定</item>
