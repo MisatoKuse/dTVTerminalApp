@@ -31,8 +31,8 @@
     <!--検索画面アイテムRatingBar -->
     <style name="roomRatingBar" parent="@android:style/Widget.RatingBar">
         <item name="android:progressDrawable">@drawable/video_item_ratingbar</item>
-        <item name="android:minHeight">10dp</item>
-        <item name="android:maxHeight">10dp</item>
+        <item name="android:minHeight">11dp</item>
+        <item name="android:maxHeight">11dp</item>
     </style>
     <!--Activity遷移時トランザクションをなくす -->
     <style name="STBTheme" parent="Theme.AppCompat.Light.DarkActionBar">

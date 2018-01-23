@@ -140,7 +140,7 @@
     </string-array>
 
     <!-- WatchingVideoActivity -->
-    <string name="str_watching_video_activity_title">視聴中ビデオ一覧</string>
+    <string name="str_watching_video_activity_title">視聴中ビデオ</string>
 
     <!-- TvProgram -->
     <string-array name="tv_program_list_tab_names">
@@ -234,7 +234,7 @@
 
     <!-- 検索画面 Begin -->
     <string name="search_load_finish">load finished</string>
-    <string name="search_loading">loading...</string>
+    <string name="search_loading">loading&#8230;</string>
     <!--  検索画面 End  -->
 
     <!-- レンタル -->
