@@ -13,9 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RatingBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -27,16 +25,13 @@ import java.util.List;
 
 public class WatchListenVideoBaseAdapter extends BaseAdapter
         implements  AbsListView.OnScrollListener {
-
     private Context mContext = null;
     private List<ContentsData> mData = null;
-    //    private int layoutid;
     private ThumbnailProvider mThumbnailProvider = null;
 
     public WatchListenVideoBaseAdapter(Context context, List data, int id) {
         this.mContext = context;
         this.mData = data;
-//        this.layoutid = id;
         mThumbnailProvider = new ThumbnailProvider(mContext);
     }
 
@@ -85,9 +80,6 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter
                     ((BaseActivity) mContext).sendClipRequest(contentsData.getRequestData(), clipButton);
                 }
             });
-            float mWidth = (float) mContext.getResources().getDisplayMetrics().widthPixels / 3;
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int) mWidth, (int) mWidth / 2);
-            holder.wl_thumbnail.setLayoutParams(layoutParams);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
@@ -97,21 +89,11 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter
             holder.wl_title.setText(contentsData.getTitle());
         }
 
-//        if(null != holder.wl_des){
-//            holder.wl_des.setText("");
-//        }
-//
-//        if(watchListenVideoInfo.mClipFlag){
-//            holder.wl_clip.setVisibility(View.VISIBLE);
-//
-//        }
-        holder.wl_thumbnail.setBackgroundResource(R.mipmap.loading);
-
         if (null != holder.wl_thumbnail) {
-
+            holder.wl_thumbnail.setBackgroundResource(R.mipmap.loading);
             String thumbUrl = contentsData.getThumURL();
             holder.wl_thumbnail.setTag(thumbUrl);
-            if (null != thumbUrl && 0 < thumbUrl.length()) {
+            if ( 0 < thumbUrl.length()) {
                 Bitmap bp = mThumbnailProvider.getThumbnailImage(holder.wl_thumbnail, thumbUrl);
                 if (null != bp) {
                     holder.wl_thumbnail.setImageBitmap(bp);
@@ -151,9 +133,7 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter
         ImageView wl_thumbnail;
         TextView wl_title;
         TextView wl_rating_count;
-        //        TextView wl_des;
         ImageView wl_clip;
         RatingBar wl_video_rating;
-        ProgressBar wl_progressBar;
     }
 }
