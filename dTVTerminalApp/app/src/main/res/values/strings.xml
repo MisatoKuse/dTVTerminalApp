@@ -106,6 +106,7 @@
     <string name="home_header_title">ホーム</string>
     <string name="now_on_air_list">NOW ON AIR</string>
     <string name="recommend_list_title">おすすめ番組・ビデオ</string>
+    <string name="home_now_on_air_channel_list">チャンネルリスト</string>
     <string-array name="recommend_list_tab_names">
         <item>テレビ</item>
         <item>ビデオ</item>
@@ -121,6 +122,9 @@
     <string name="activity_start_network_error_message">ネットワークに接続できませんでした。\nネットワーク状態を確認してください。</string>
     <string name="get_user_info_error_message">ひかりTV for docomoの契約情報取得に失敗しました。</string>
     <string name="get_contents_data_error_message">情報の取得に失敗したため、一部のコンテンツのみ表示します。\nしばらく時間が経ってから再度お試しください。</string>
+    <string name="home_no_contract_info_text">ご利用中のdアカウントでひかりTV for docomoの契約がありません。</string>
+    <string name="home_contract_button_text">契約する</string>
+    <string name="home_contents_list_see_all">すべてを見る</string>
 
     <!-- クリップ一覧 -->
     <string name="str_clip_activity_title">クリップ</string>

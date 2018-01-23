@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import com.nttdocomo.android.ocsplib.OcspURLConnection;
 import com.nttdocomo.android.ocsplib.OcspUtil;
 import com.nttdocomo.android.ocsplib.exception.OcspParameterException;
+import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 
@@ -24,13 +25,25 @@ import java.net.URL;
 import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLPeerUnverifiedException;
 
+/**
+ * サムネイル画像取得タスク.
+ */
 public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
-
+    /**
+     * サムネイルのURL.
+     */
     private String imageUrl;
+    /**
+     * 取得したサムネイルを表示するImageView.
+     */
     private ImageView imageView;
+    /**
+     * サムネイルプロバイダー.
+     */
     private ThumbnailProvider thumbnailProvider;
-
-    //SSLチェック用コンテキスト
+    /**
+     * SSLチェック用コンテキスト.
+     */
     private Context mContext;
 
     /**
@@ -40,7 +53,7 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
      * @param thumbnailProvider サムネイルプロバイダー
      * @param context コンテキスト
      */
-    public ThumbnailDownloadTask(ImageView imageView, ThumbnailProvider thumbnailProvider,Context context) {
+    public ThumbnailDownloadTask(ImageView imageView, ThumbnailProvider thumbnailProvider, Context context) {
         this.imageView = imageView;
         this.thumbnailProvider = thumbnailProvider;
 
@@ -106,11 +119,19 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
     @Override
     protected void onPostExecute(Bitmap result) {
         super.onPostExecute(result);
-        if (result != null && imageView!=null) {
-            // 画像のpositionをズレないよう
-            if (imageView.getTag() != null && imageView.getTag().equals(imageUrl)) {
-                imageView.setImageBitmap(result);
-                DTVTLogger.debug("download end..... url=" + imageUrl);
+        if (imageView != null) {
+            if (result != null) {
+                // 画像のpositionをズレないよう
+                if (imageView.getTag() != null && imageUrl.equals(imageView.getTag())) {
+                    imageView.setImageBitmap(result);
+                    DTVTLogger.debug("download end..... url=" + imageUrl);
+                }
+            } else {
+                // 画像取得失敗のケース
+                if (imageView.getTag() != null && imageUrl.equals(imageView.getTag())) {
+                    imageView.setImageResource(R.mipmap.thumbnail_error);
+                    DTVTLogger.debug("download fail..... url=" + imageUrl);
+                }
             }
         }
         --thumbnailProvider.currentQueueCount;

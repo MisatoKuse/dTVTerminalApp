@@ -18,14 +18,15 @@
     <!-- ID設定状態取得 I/Fを利用する場合に記載が必要. -->
     <uses-permission android:name="com.nttdocomo.android.idmanager.permission.GET_ID_STATE"/>
 
-
     <application
+        xmlns:tools="http://schemas.android.com/tools"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:resizeableActivity="false" tools:targetApi="24">
 
         <!-- ====================================== Home グループ Begin ====================================== -->
         <activity
