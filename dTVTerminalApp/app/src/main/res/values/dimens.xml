@@ -166,4 +166,12 @@
     <dimen name="tv_program_list_time_scrollview_width">44dp</dimen>
     <dimen name="tv_program_list_time_line_width">48dp</dimen>
     <dimen name="tv_program_list_time_line_height">25dp</dimen>
+
+    <!--アプリケーション情報-->
+    <dimen name="application_info_image_width">138dp</dimen>
+    <dimen name="application_info_image_height">138dp</dimen>
+    <dimen name="application_info_application_name_height">20dp</dimen>
+    <dimen name="application_info_application_title_text_size">16dp</dimen>
+    <dimen name="application_info_application_name_value_text_size">20dp</dimen>
+    <dimen name="application_info_application_provider_height">20dp</dimen>
 </resources>
