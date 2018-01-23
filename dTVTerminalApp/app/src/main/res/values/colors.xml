@@ -93,4 +93,8 @@
 
     <!--//縮小番組表-->
     <color name="tv_program_list_time_line_now">#fd0003</color>
+
+    <!--//アプリケーション情報-->
+    <color name="application_info_application_title">#808080</color>
+    <color name="application_info_application_title_value">#ffffff</color>
 </resources>

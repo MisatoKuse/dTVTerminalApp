@@ -128,6 +128,9 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
             Intent intent = new Intent(this, SettingImageQualityActivity.class);
             intent.putExtra(getString(R.string.main_setting_quality_status), mSettingList.get(i).getStateText());
             startActivity(intent);
+        } else if (tappedItemName.equals(mItemName[5])) {
+            //アプリケーション情報への遷移
+            startActivity(ApplicationInfoActivity.class, null);
         }
     }
 

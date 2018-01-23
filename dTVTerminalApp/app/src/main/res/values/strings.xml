@@ -318,6 +318,7 @@
     <string name="main_setting_image_quality_middle">高画質</string>
     <string name="main_setting_image_quality_high">最高画質</string>
     <string name="main_setting_quality_setting_header">外出先視聴時の画質設定</string>
+    <string name="main_setting_application_info_header">アプリケーション情報</string>
     <string name="main_setting_quality_status">status</string>
     <string name="main_setting_stb_application_launch_fail">ドコモテレビターミナルのアプリの起動に失敗しました</string>
     <string name="main_setting_dtv_uninstall_message">ドコモテレビターミナルのdTVアプリはインストールされてない</string>
@@ -367,4 +368,9 @@
     <!-- H4d契約情報取得 -->
     <string name="h4d_agreement_change">契約状態が変更されたため、トップ画面に戻ります。</string>
 
+    <!-- アプリケーション情報 -->
+    <string name="application_info_application_name">アプリケーション名</string>
+    <string name="application_info_application_provider">提供者</string>
+    <string name="application_info_application_version">バージョン</string>
+    <string name="application_info_application_provider_value">株式会社NTTドコモ</string>
 </resources>
