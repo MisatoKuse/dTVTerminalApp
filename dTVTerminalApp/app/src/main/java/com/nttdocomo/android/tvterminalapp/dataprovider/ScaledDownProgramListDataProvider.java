@@ -237,7 +237,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         ArrayList<Channel> channels = null;
         if (channelLists != null) {
             mChannelList = channelLists.get(0);
-            List<HashMap<String, String>> channelList = mChannelList.getClList();
+            List<HashMap<String, String>> channelList = mChannelList.getChannelList();
             if (channelList != null) {
                 channels = new ArrayList<>();
                 setChannelData(channels, channelList);

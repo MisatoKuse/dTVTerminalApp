@@ -227,7 +227,7 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
         ArrayList<Channel> channels = null;
         if (channelLists != null) {
             mChannelList = channelLists.get(0);
-            List<HashMap<String, String>> channelList = mChannelList.getClList();
+            List<HashMap<String, String>> channelList = mChannelList.getChannelList();
             if (channelList != null) {
                 channels = new ArrayList<>();
                 setChannelData(channels, channelList);
@@ -332,7 +332,7 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                         }
                         list.add(vcListMap);
                     }
-                    channelList.setClList(list);
+                    channelList.setChannelList(list);
                     purchasedChListResponse.setChannelListData(channelList);
 
                     ArrayList<ActiveData> activeChDatas = new ArrayList<>();

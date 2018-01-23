@@ -23,31 +23,39 @@ import java.util.Map;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATE_TYPE;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.UPDATE_DATE;
 
+/**
+ * チャンネルリストデータ管理.
+ */
 public class ChannelInsertDataManager {
 
-    private Context mContext;
+    /**
+     * 利用元コンテキスト.
+     */
+    private final Context mContext;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
-     * @param context
+     * @param context  利用元コンテキスト
      */
     public ChannelInsertDataManager(Context context) {
         mContext = context;
     }
 
     /**
-     * ChannelAPIの解析結果をDBに格納する。
-     *
+     * チャンネル一覧の情報をDBに格納する.
+     * @param channelList  チャンネルリスト情報
+     * @param display_type  ひかりTV or dCh
      */
     public void insertChannelInsertList(ChannelList channelList, String display_type) {
 
         //各種オブジェクト作成
         DBHelper channelListDBHelper = new DBHelper(mContext);
         DataBaseManager.initializeInstance(channelListDBHelper);
-        SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
+        DataBaseManager dbm = DataBaseManager.getInstance();
+        SQLiteDatabase database = dbm.openDatabase();
         ChannelListDao channelListDao = new ChannelListDao(database);
-        List<HashMap<String,String>> hashMaps = channelList.getClList();
+        List<HashMap<String, String>> hashMaps = channelList.getChannelList();
 
         //DB保存前に前回取得したデータは全消去する
         channelListDao.deleteByType(display_type);
@@ -55,19 +63,20 @@ public class ChannelInsertDataManager {
         //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
         for (int i = 0; i < hashMaps.size(); i++) {
             Iterator entries = hashMaps.get(i).entrySet().iterator();
+
             ContentValues values = new ContentValues();
             while (entries.hasNext()) {
                 Map.Entry entry = (Map.Entry) entries.next();
                 String keyName = (String) entry.getKey();
                 String valName = (String) entry.getValue();
-                if(JsonContents.META_RESPONSE_AVAIL_START_DATE.equals(keyName)){
-                    values.put(UPDATE_DATE, !TextUtils.isEmpty(valName)?valName.substring(0,10):"");
+                if (JsonContents.META_RESPONSE_AVAIL_START_DATE.equals(keyName)) {
+                    values.put(UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
                 }
                 values.put(DBUtils.fourKFlgConversion(keyName), valName);
                 values.put(DATE_TYPE, "program");
             }
             channelListDao.insert(values);
         }
-        DataBaseManager.getInstance().closeDatabase();
+        dbm.closeDatabase();
     }
 }

@@ -174,7 +174,7 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
                     vcList.add(vcListMap);
                 }
                 // リスト数ぶんの格納が終わったらオブジェクトクラスにList<HashMap>でset
-                mChannelList.setClList(vcList);
+                mChannelList.setChannelList(vcList);
             }
         } catch (JSONException e) {
             throw new RuntimeException(e);

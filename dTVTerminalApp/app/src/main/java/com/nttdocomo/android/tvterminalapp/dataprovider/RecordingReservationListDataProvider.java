@@ -43,7 +43,7 @@ public class RecordingReservationListDataProvider implements
     // レスポンス突合後リストマップ
     private SparseArray<List<RecordingReservationContentInfo>> mBuffMatchListMap = null;
     // チャンネル一覧
-    private List<Map<String, String>> mTvScheduleList = null;
+    private List<HashMap<String, String>> mTvScheduleList = null;
     // 録画予約情報受信時刻
     public String mReservationTime = null;
 
@@ -159,7 +159,7 @@ public class RecordingReservationListDataProvider implements
         DTVTLogger.start();
         if (channelLists != null && channelLists.size() > 0) {
             ChannelList list = channelLists.get(0);
-            mTvScheduleList = list.getClList();
+            mTvScheduleList = list.getChannelList();
             // 録画予約一覧取得との同期
             if (mStbResponse != null && mDRemoteResponse != null) {
                 buttRecordingReservationListData();
