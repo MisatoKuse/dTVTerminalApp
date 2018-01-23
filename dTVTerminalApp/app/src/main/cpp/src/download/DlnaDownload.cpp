@@ -180,12 +180,14 @@ namespace dtvt {
 
     void DlnaDownload::notify(int msg, std::string content) {
         JNIEnv *env = NULL;
+        bool isAttached=false;
         int status = mEvent.mJavaVM->GetEnv((void **) &env, JNI_VERSION_1_6);
         if (status < 0) {
             status = mEvent.mJavaVM->AttachCurrentThread(&env, NULL);
             if (status < 0 || NULL == env) {
                 return;
             }
+            isAttached=true;
         }
 
         jclass listActivityClazz = env->GetObjectClass(mEvent.mJObject);
@@ -199,6 +201,9 @@ namespace dtvt {
         env->CallVoidMethod(mEvent.mJObject, method, msg, jstr);
         env->DeleteLocalRef(jstr);
         env->DeleteLocalRef(listActivityClazz);
+        if(isAttached){
+            mEvent.mJavaVM->DetachCurrentThread();
+        }
     }
 
     bool DlnaDownload::isStarted(){
