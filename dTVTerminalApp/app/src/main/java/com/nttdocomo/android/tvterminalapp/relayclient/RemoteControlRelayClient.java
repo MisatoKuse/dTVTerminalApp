@@ -132,6 +132,38 @@ public class RemoteControlRelayClient {
     }
 
     /**
+     * サービス・カテゴリー分類.
+     */
+    public enum SERVICE_CATEGORY_TYPES {
+        // 初期値
+        UNKNOWN,
+        // 放送
+        DTV_CHANNEL_CATEGORY_BROADCAST,
+        // VOD（見逃し）
+        DTV_CHANNEL_CATEGORY_MISSED,
+        // VOD（関連番組）
+        DTV_CHANNEL_CATEGORY_RELATION,
+        // 地デジ
+        H4D_CATEGORY_TERRESTRIAL_DIGITAL,
+        // BS
+        H4D_CATEGORY_SATELLITE_BS,
+        // H4D IPTV
+        H4D_CATEGORY_IPTV,
+        // H4D dTVチャンネル 放送
+        H4D_CATEGORY_DTV_CHANNEL_BROADCAST,
+        // H4D dTVチャンネル VOD（見逃し）
+        H4D_CATEGORY_DTV_CHANNEL_MISSED,
+        // H4D dTVチャンネル VOD（関連番組）
+        H4D_CATEGORY_DTV_CHANNEL_RELATION,
+        // ひかりTV 録画
+        H4D_CATEGORY_RECORDED_CONTENTS,
+        // H4D ひかりTV VOD
+        H4D_CATEGORY_HIKARI_TV_VOD,
+        // dTV SVOD
+        H4D_CATEGORY_DTV_SVOD
+    }
+
+    /**
      * リクエストコマンド種別.
      */
     public enum STB_REQUEST_COMMAND_TYPES {
@@ -164,10 +196,15 @@ public class RemoteControlRelayClient {
     private static final String RELAY_COMMAND_REQUEST_COMMAND = "REQUEST_COMMAND";
     private static final String RELAY_COMMAND_USER_ID = "USER_ID";
     private static final String RELAY_COMMAND_CONTENTS_ID = "CONTENTS_ID";
+    private static final String RELAY_COMMAND_SERVICE_CATEGORY_TYPE = "SERVICE_CATEGORY_TYPE";
     private static final String RELAY_RESULT = "RESULT";
     private static final String RELAY_RESULT_OK = "OK";
     private static final String RELAY_RESULT_ERROR = "ERROR";
-    //    private static final String RELAY_RESULT_MESSAGE = "MESSAGE";
+    // dTVチャンネル・カテゴリー分類に対応するカテゴリー・シンボル名
+    private static final String STB_APPLICATION_DTVCHANNEL_CATEGORY_BROADCAST = "DTVCHANNEL_CATEGORY_BROADCAST";
+    private static final String STB_APPLICATION_DTVCHANNEL_CATEGORY_MISSED = "DTVCHANNEL_CATEGORY_MISSED";
+    private static final String STB_APPLICATION_DTVCHANNEL_CATEGORY_RELATION = "DTVCHANNEL_CATEGORY_RELATION";
+
     // 中継アプリクライアントが送信するキーコードのメッセージ定数
     private static final String RELAY_KEYEVENT = "KEYEVENT";
     private static final String RELAY_KEYEVENT_ACTION = "ACTION";
@@ -198,6 +235,15 @@ public class RemoteControlRelayClient {
             put(STB_APPLICATION_TYPES.DTVCHANNEL, STB_APPLICATION_DTVCHANNEL);  // dTVチャンネル
             put(STB_APPLICATION_TYPES.HIKARITV, STB_APPLICATION_HIKARITV);    // ひかりTV
             put(STB_APPLICATION_TYPES.DAZN, STB_APPLICATION_DAZN);    // ダ・ゾーン
+        }
+    };
+
+    // dTVチャンネル・カテゴリー分類に対応するカテゴリー・シンボル名
+    private static final Map<SERVICE_CATEGORY_TYPES, String> mServiceCategorySymbolMap = new HashMap<SERVICE_CATEGORY_TYPES, String>() {
+        {
+            put(SERVICE_CATEGORY_TYPES.DTV_CHANNEL_CATEGORY_BROADCAST, STB_APPLICATION_DTVCHANNEL_CATEGORY_BROADCAST);    // dTVチャンネル・放送
+            put(SERVICE_CATEGORY_TYPES.DTV_CHANNEL_CATEGORY_MISSED, STB_APPLICATION_DTVCHANNEL_CATEGORY_MISSED);    // dTVチャンネル・VOD（見逃し）
+            put(SERVICE_CATEGORY_TYPES.DTV_CHANNEL_CATEGORY_RELATION, STB_APPLICATION_DTVCHANNEL_CATEGORY_RELATION);  // dTVチャンネル・VOD（関連番組）
         }
     };
 
@@ -529,6 +575,38 @@ public class RemoteControlRelayClient {
     }
 
     /**
+     * アプリ起動要求を受信してタイトル詳細表示のリクエストをSTBへ送信する.
+     * ・dTVチャンネル・カテゴリー分類に対応
+     * ・ひかりTV・カテゴリー分類に対応
+     *
+     * @param applicationType
+     * @param contentsId      コンテンツID
+     * @param serviceCategoryType  カテゴリー分類
+     * @return
+     */
+    public boolean startApplicationRequest(STB_APPLICATION_TYPES applicationType, String contentsId, SERVICE_CATEGORY_TYPES serviceCategoryType, Context context) {
+        String applicationId = getApplicationId(applicationType);
+        String requestParam;
+
+        //ユーザID取得
+        String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(context);
+
+        if (applicationId != null && contentsId != null) {
+            requestParam = setTitleDetailRequest(applicationId, contentsId, serviceCategoryType, userId);
+            if (requestParam != null) {
+                // アプリ起動要求を受信してインテントをSTBへ送信する
+                sendStartApplicationRequest(requestParam);
+                return true;
+            } else {
+                ((BaseActivity) context).setRemoteProgressVisible(View.GONE);
+            }
+        } else {
+            ((BaseActivity) context).setRemoteProgressVisible(View.GONE);
+        }
+        return false;
+    }
+
+    /**
      * dアカチェック要求を受信してdアカチェックリクエストをSTBへ送信する.
      *
      * @param context
@@ -600,6 +678,20 @@ public class RemoteControlRelayClient {
             applicationId = mStbApplicationSymbolMap.get(applicationType);
         }
         return applicationId;
+    }
+
+    /**
+     * dTVチャンネル・カテゴリー分類に対応するカテゴリー・シンボル名.
+     *
+     * @param serviceCategoryType
+     * @return  dTVチャンネル・カテゴリー分類に対応するカテゴリー・シンボル名
+     */
+    private String getServiceCategorySymbol(SERVICE_CATEGORY_TYPES serviceCategoryType) {
+        String serviceCategorySymbol = "";
+        if (mServiceCategorySymbolMap.containsKey(serviceCategoryType)) {
+            serviceCategorySymbol = mServiceCategorySymbolMap.get(serviceCategoryType);
+        }
+        return serviceCategorySymbol;
     }
 
     /**
@@ -750,8 +842,8 @@ public class RemoteControlRelayClient {
      * アプリ起動要求のメッセージ（JSON形式）を作成する.
      * タイトル詳細表示のリクエスト
      *
-     * @param applicationId
-     * @param contentsId
+     * @param applicationId  アプリケーションID
+     * @param contentsId      コンテンツID
      * @return
      */
     private String setTitleDetailRequest(String applicationId, String contentsId, String userId) {
@@ -760,6 +852,34 @@ public class RemoteControlRelayClient {
         try {
             requestJson.put(RELAY_COMMAND, RELAY_COMMAND_TITLE_DETAIL);
             requestJson.put(RELAY_COMMAND_APPLICATION_ID, applicationId);
+            requestJson.put(RELAY_COMMAND_CONTENTS_ID, contentsId);
+            requestJson.put(RELAY_COMMAND_USER_ID, toHashValue(userId));
+            request = requestJson.toString();
+        } catch (JSONException e) {
+            DTVTLogger.debug(e);
+        }
+        return request;
+    }
+
+    /**
+     * アプリ起動要求のメッセージ（JSON形式）を作成する.
+     * タイトル詳細表示のリクエスト
+     * ・dTVチャンネル・カテゴリー分類に対応
+     * ・ひかりTV・カテゴリー分類に対応
+     *
+     * @param applicationId  アプリケーションID
+     * @param contentsId      コンテンツID
+     * @param serviceCategoryType  カテゴリー分類
+     * @return
+     */
+    private String setTitleDetailRequest(String applicationId, String contentsId, SERVICE_CATEGORY_TYPES serviceCategoryType, String userId) {
+        JSONObject requestJson = new JSONObject();
+        String request = null;
+
+        try {
+            requestJson.put(RELAY_COMMAND, RELAY_COMMAND_TITLE_DETAIL);
+            requestJson.put(RELAY_COMMAND_APPLICATION_ID, applicationId);
+            requestJson.put(RELAY_COMMAND_SERVICE_CATEGORY_TYPE, getServiceCategorySymbol(serviceCategoryType));
             requestJson.put(RELAY_COMMAND_CONTENTS_ID, contentsId);
             requestJson.put(RELAY_COMMAND_USER_ID, toHashValue(userId));
             request = requestJson.toString();
