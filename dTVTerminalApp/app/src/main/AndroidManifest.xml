@@ -83,7 +83,7 @@
         <activity
             android:name=".activity.launch.TutorialActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.launch.ParingHelpActivity"
+        <activity android:name=".activity.launch.PairingHelpActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.launch.STBSelectErrorActivity"
             android:screenOrientation="portrait"

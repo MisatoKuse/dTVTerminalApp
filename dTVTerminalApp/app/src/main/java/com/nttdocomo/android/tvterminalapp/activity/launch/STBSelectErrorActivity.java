@@ -67,7 +67,7 @@ public class STBSelectErrorActivity extends BaseActivity {
         if (v.equals(mParingAgain)) {
             finish();
         } else if (v.equals(mParingHelp)) {
-            startActivity(ParingHelpActivity.class, null);
+            startActivity(PairingHelpActivity.class, null);
         } else if (v.equals(mErrorCheckBox)) {
             mIsNextTimeHide = mErrorCheckBox.isChecked();
         } else if (v.equals(mWithoutParing)) {
