@@ -16,52 +16,73 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * クリップキーリストData Access Object.
+ */
 public class ClipKeyListDao {
 
-    // SQLiteDatabase
-    private SQLiteDatabase db;
-    public static final String META_DISP_TYPE_TV_PROGRAM = "tv_program";
-    public static final String META_DTV_FLAG_FALSE = "0";
-    public static final String META_DTV_FLAG_TRUE = "1";
-
+    /**
+     * SQLデータベースクラス.
+     */
+    private final SQLiteDatabase db;
 
     /**
-     * コンテンツの種類
+     * SQLデータベースクラス.
+     */
+    public static final String META_DISPLAY_TYPE_TV_PROGRAM = "tv_program";
+    /**
+     * dtvフラグ値(FALSE=DTVコンテンツではない).
+     */
+    public static final String META_DTV_FLAG_FALSE = "0";
+    /**
+     * dtvフラグ値(TRUE=DTVコンテンツ).
+     */
+    public static final String META_DTV_FLAG_TRUE = "1";
+
+    /**
+     * コンテンツの種類.それぞれでキーになる情報が異なる.
      */
     public enum CONTENT_TYPE {
+        /** EPGコンテンツ. */
         TV,
+        /** VODコンテンツ. */
         VOD,
+        /** DTVコンテンツ. */
         DTV
     }
 
     /**
-     * テーブルの種類
+     * テーブルの種類.それぞれWebAPIコールして別々に取得している.
      */
     public enum TABLE_TYPE {
+        /** EPGコンテンツ. */
         TV,
-        VOD,
+        /** VODコンテンツ. */
+        VOD
     }
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
-     * @param db
+     * @param db  SQLデータベースクラス
      */
-    public ClipKeyListDao(SQLiteDatabase db) {
+    public ClipKeyListDao(final SQLiteDatabase db) {
         this.db = db;
     }
 
     /**
-     * 配列で指定した列データをすべて取得
+     * 配列で指定した列データをすべて取得.
      *
      * @param strings 列パラメータ
+     * @param type テーブルの種類(TV or VOD)
+     * @param selection WHERE句
+     * @param args ?パラメータに埋め込む値
      * @return list クリップキー一覧
      */
-    public List<Map<String, String>> findById(String[] strings, TABLE_TYPE type, String selection, String[] args) {
+    public List<Map<String, String>> findById(final String[] strings, final TABLE_TYPE type, final String selection, final String[] args) {
         DTVTLogger.start();
         List<Map<String, String>> list = new ArrayList<>();
-        Cursor cursor = null;
+        Cursor cursor;
         try {
             cursor = db.query(
                     getTableName(type),
@@ -82,8 +103,8 @@ public class ClipKeyListDao {
         //データを一行ずつ格納する
         while (isEof) {
             HashMap<String, String> map = new HashMap<>();
-            for (int i = 0; i < strings.length; i++) {
-                map.put(strings[i], cursor.getString(cursor.getColumnIndex(strings[i])));
+            for (String string : strings) {
+                map.put(string, cursor.getString(cursor.getColumnIndex(string)));
             }
             list.add(map);
 
@@ -96,39 +117,52 @@ public class ClipKeyListDao {
     }
 
     /**
-     * データの登録
-     *
-     * @param type
-     * @param values
+     * データの登録.
+     * @param type 格納する値
+     * @param values 格納する値
+     * @return SQLiteDatabaseクラスの戻り値(正常終了した場合はROWID,失敗した場合,マイナス1)
      */
-    public long insert(TABLE_TYPE type, ContentValues values) {
+    public long insert(final TABLE_TYPE type, final ContentValues values) {
         DTVTLogger.debug("Insert Data");
         return db.insert(getTableName(type), null, values);
     }
 
+    /**
+     * データの更新.
+     * @return 常に0.
+     */
+    @SuppressWarnings({"unused", "SameReturnValue"})
     public int update() {
-        //基本的にデータの更新はしない予定
+        //基本的にデータの更新はしない(取得したデータで全て置き換え)
         return 0;
     }
 
     /**
-     * データの削除(type指定)
+     * データの削除(type指定).
+     * @param type テーブルの種類(TV or VOD)
+     * @return SQLiteDatabaseクラスの戻り値(削除されたレコード数)
      */
-    public int delete(TABLE_TYPE type) {
+    public int delete(final TABLE_TYPE type) {
         DTVTLogger.debug("Delete Data : " + type);
         return db.delete(getTableName(type), null, null);
     }
 
     /**
-     * データの削除
+     * データの削除.
      */
+    @SuppressWarnings("unused")
     public void delete() {
         DTVTLogger.debug("Delete All Data");
         delete(TABLE_TYPE.TV);
         delete(TABLE_TYPE.VOD);
     }
 
-    private String getTableName(TABLE_TYPE type) {
+    /**
+     * テーブル名取得(type指定).
+     * @param type テーブルの種類(TV or VOD)
+     * @return SQLiteDatabaseクラスの戻り値(削除されたレコード数)
+     */
+    private String getTableName(final TABLE_TYPE type) {
         String tableName = null;
         switch (type) {
             case TV:
@@ -147,6 +181,7 @@ public class ClipKeyListDao {
      * @param tableType テーブル種別(TV/VOD)
      * @param query クエリ
      * @param columns   対象列名
+     * @return SQLiteDatabaseクラスの戻り値(削除されたレコード数)
      */
     public int deleteRowData(final TABLE_TYPE tableType, final String query, final String[] columns) {
         DTVTLogger.debug("Delete Row : " + tableType);
