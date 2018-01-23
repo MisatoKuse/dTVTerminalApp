@@ -595,7 +595,6 @@ namespace dtvt {
         if(isAttached){
             mEvent.mJavaVM->DetachCurrentThread();
         }
-        //mEvent.mJavaVM->DetachCurrentThread();
     }
 
     bool setJavaObjectField(JNIEnv *env, jclass cls, const char* const  fieldName, const char* const classPath, string& value, jobject obj){

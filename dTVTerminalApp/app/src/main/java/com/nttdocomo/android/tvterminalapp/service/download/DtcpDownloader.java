@@ -8,10 +8,10 @@ package com.nttdocomo.android.tvterminalapp.service.download;
 import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDlListener;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDlStatus;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDownloadRet;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDownload;
+import com.nttdocomo.android.tvterminalapp.jni.download.DlnaDlListener;
+import com.nttdocomo.android.tvterminalapp.jni.download.DlnaDlStatus;
+import com.nttdocomo.android.tvterminalapp.jni.download.DlnaDownloadRet;
+import com.nttdocomo.android.tvterminalapp.jni.download.DlnaProvDownload;
 
 import java.io.File;
 

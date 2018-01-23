@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<drag_configuration>
+  <dras_host_name>diras.dixim.net</dras_host_name>
+  <drag_auth_port>1200</drag_auth_port>
+  <device_access_port>12200</device_access_port>
+  <drag_cert_path>[CONFDIR]/dirag/</drag_cert_path>
+  <drag_device_info_list_path>[CONFDIR]/dirag/device_info_list.xml</drag_device_info_list_path>
+  <drag_dms_uuid>[CONFDIR]/dirag/dms_uuid</drag_dms_uuid>
+  <drag_device_type>urn:schemas-upnp-org:device:DragCP:1</drag_device_type>
+  <drag_device_conf_path>[CONFDIR]/dirag/device_conf.xml</drag_device_conf_path>
+  <drag_http_server_port>12205</drag_http_server_port>
+  <sip_proxy>sip:sip01.diras.dixim.net:55060;lr</sip_proxy>
+  <sip_registrar>sip:diras.dixim.net</sip_registrar>
+  <stun_server>stun.diras.dixim.net:53478</stun_server>
+  <turn_server>turn.diras.dixim.net:43478</turn_server>
+  <turn_realm>sip02.diras.dixim.net</turn_realm>
+  <turn_user>turnuser</turn_user>
+  <turn_pass>turnuser</turn_pass>
+  <rada_conf_path>[CONFDIR]/dirag/rada</rada_conf_path>
+  <alg_dms_port>55247</alg_dms_port>
+  <nat.use_igd_flags>0</nat.use_igd_flags>
+  <nat.use_turn_flags>44</nat.use_turn_flags>
+  <!-- v2 extention -->
+  <v2.dras_host_name>sip02.diras.dixim.net</v2.dras_host_name>
+  <v2.sip_proxy>sip:sip02.diras.dixim.net:55060;lr</v2.sip_proxy>
+  <v2.sip_registrar>sip:sip02.diras.dixim.net</v2.sip_registrar>
+  <v2.stun_server>stun.diras.dixim.net:53478</v2.stun_server>
+  <v2.turn_server></v2.turn_server>
+  <v2.ntp_server>ntp.nict.jp</v2.ntp_server>
+</drag_configuration>

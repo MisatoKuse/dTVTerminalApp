@@ -2,13 +2,14 @@
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-package com.nttdocomo.android.tvterminalapp.jni;
+package com.nttdocomo.android.tvterminalapp.jni.download;
 
 import android.content.Context;
 import android.os.Handler;
 
 import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
 import com.nttdocomo.android.tvterminalapp.jni.activation.NewEnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.service.download.DtcpDownloadParam;
 

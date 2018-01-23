@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+    <specVersion>
+        <major>1</major>
+        <minor>0</minor>
+    </specVersion>
+    <actionList>
+        <action>
+            <name>GetSystemInfo</name>
+            <argumentList>
+                <argument>
+                    <name>ID</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_UUID</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>SystemInfo</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>SystemInfo</relatedStateVariable>
+                </argument>
+            </argumentList>
+            </action>
+        <action>
+            <name>EditFilter</name>
+            <argumentList>
+                <argument>
+                <name>Filter</name>
+                <direction>in</direction>
+                <relatedStateVariable>A_ARG_TYPE_FilterList</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+    </actionList>
+    <serviceStateTable>
+        <stateVariable sendEvents="no">
+            <name>SystemInfo</name>
+            <dataType>string</dataType>
+        </stateVariable>
+        <stateVariable sendEvents="yes">
+            <name>SystemInfoUpdateID</name>
+            <dataType>ui4</dataType>
+        </stateVariable>
+        <stateVariable sendEvents="no">
+            <name>A_ARG_TYPE_FilterList</name>
+            <dataType>string</dataType>
+        </stateVariable>
+        <stateVariable sendEvents="no">
+            <name>A_ARG_TYPE_UUID</name>
+            <dataType>string</dataType>
+        </stateVariable>
+    </serviceStateTable>
+</scpd>

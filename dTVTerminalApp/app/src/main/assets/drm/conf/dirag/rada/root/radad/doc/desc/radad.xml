@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root xmlns="urn:schemas-upnp-org:device-1-0" xmlns:dixim="urn:schemas-digion-com:device-1-0">
+    <specVersion>
+        <major>1</major>
+        <minor>0</minor>
+    </specVersion>
+    <device>
+        <UDN></UDN>
+        <deviceType>urn:schemas-upnp-org:device:RADiscoveryAgent:2</deviceType>
+        <friendlyName>DiXiM RA Discovery Agent [[[HOST_NAME]]]</friendlyName>
+        <manufacturer>DigiOn, Inc.</manufacturer>
+        <manufacturerURL>http://www.digion.com/</manufacturerURL>
+        <modelName>DiXiM RA Discovery Agent</modelName>
+        <modelURL>http://www.digion.com/dixim/</modelURL>
+        <serviceList>
+            <service>
+                <serviceType>urn:schemas-upnp-org:service:RADASync:2</serviceType>
+                <serviceId>urn:upnp-org:serviceId:RADASync</serviceId>
+                <SCPDURL>doc/desc/radas.xml</SCPDURL>
+                <controlURL>control/RADASync</controlURL>
+                <eventSubURL>event/RADASync</eventSubURL>
+                <dixim:X_descPath>[CONFDIR]/dirag/rada/root/radad/doc/desc/radas.xml</dixim:X_descPath>
+            </service>
+            <dixim:X_service>
+                <dixim:X_serviceType>urn:schemas-digion-com:service:document:1</dixim:X_serviceType>
+                <dixim:X_serviceId>urn:digion-com:serviceId:document</dixim:X_serviceId>
+                <dixim:X_url>doc/</dixim:X_url>
+                <dixim:X_paramList>
+                    <dixim:X_param>
+                        <dixim:X_name>doc_path</dixim:X_name>
+                        <dixim:X_value>[CONFDIR]/dirag/rada/root/radad/doc/</dixim:X_value>
+                    </dixim:X_param>
+                    <dixim:X_param>
+                        <dixim:X_name>mimetype_path</dixim:X_name>
+                        <dixim:X_value>mimetype/</dixim:X_value>
+                    </dixim:X_param>
+                </dixim:X_paramList>
+            </dixim:X_service>
+        </serviceList>
+    </device>
+</root>

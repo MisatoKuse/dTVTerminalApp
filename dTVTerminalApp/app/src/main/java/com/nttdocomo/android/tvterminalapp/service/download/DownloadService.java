@@ -15,7 +15,7 @@ import android.support.v7.app.NotificationCompat;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDownload;
+import com.nttdocomo.android.tvterminalapp.jni.download.DlnaProvDownload;
 
 import java.util.ArrayList;
 import java.util.List;
