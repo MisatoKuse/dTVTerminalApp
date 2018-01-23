@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<root xmlns="urn:schemas-upnp-org:device-1-0" xmlns:dixim="urn:schemas-digion-com:device-1-0">
+    <specVersion>
+        <major>1</major>
+        <minor>0</minor>
+    </specVersion>
+    <device>
+        <UDN></UDN>
+        <deviceType>urn:schemas-upnp-org:device:DragCP:1</deviceType>
+        <friendlyName>[[HOST_NAME]] [DiRAG CP LR]</friendlyName>
+        <manufacturer>DigiOn, Inc.</manufacturer>
+        <manufacturerURL>http://www.digion.com/</manufacturerURL>
+        <modelName>DiRAG CP LR</modelName>
+        <modelURL>http://www.digion.com/dixim/</modelURL>
+        <presentationURL>none/</presentationURL>
+        <serviceList>
+            <dixim:X_service>
+                <dixim:X_serviceType>urn:schemas-digion-com:service:document:1</dixim:X_serviceType>
+                <dixim:X_serviceId>urn:digion-com:serviceId:SimpleDocumentService</dixim:X_serviceId>
+                <dixim:X_url>none/</dixim:X_url>
+            </dixim:X_service>
+            <dixim:X_service>
+                <dixim:X_serviceType>urn:schemas-digion-com:service:document:1</dixim:X_serviceType>
+                <dixim:X_serviceId>urn:digion-com:serviceId:document</dixim:X_serviceId>
+                <dixim:X_url>doc/</dixim:X_url>
+                <dixim:X_paramList>
+                    <dixim:X_param>
+                        <dixim:X_name>doc_path</dixim:X_name>
+                        <dixim:X_value>root/bd/doc/</dixim:X_value>
+                    </dixim:X_param>
+                    <dixim:X_param>
+                        <dixim:X_name>mimetype_path</dixim:X_name>
+                        <dixim:X_value>mimetype/</dixim:X_value>
+                    </dixim:X_param>
+                </dixim:X_paramList>
+            </dixim:X_service>
+        </serviceList>
+    </device>
+</root>
