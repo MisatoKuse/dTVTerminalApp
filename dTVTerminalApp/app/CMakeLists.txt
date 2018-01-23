@@ -257,8 +257,6 @@ add_library(
      ${CMAKE_SOURCE_DIR}/src/main/cpp/src/download/DlnaDownload.cpp
      ${CMAKE_SOURCE_DIR}/src/main/cpp/src/download/DlnaJniCastDl.cpp
      ${CMAKE_SOURCE_DIR}/src/main/cpp/src/android_log_handler.c
-     #${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/DlnaRemote.cpp
-     #${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/DlnaJniCastRm.cpp
      )
 
 # 目標ライブラリをリンク
@@ -338,6 +336,14 @@ set_target_properties(libdixim_dtcp_private_data_io_drm
   PROPERTIES IMPORTED_LOCATION
   ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/drm/libdixim_dtcp_private_data_io.a)
 
+#add_library(
+#     dtvtlibdrm # dynamic lib name
+#     SHARED  # share
+#     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/DlnaRemote.cpp
+#     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/DlnaJniCastRm.cpp
+#     )
+
+# ライブラリを使う
 add_library(
      dtvtlibdrm # dynamic lib name
      SHARED  # share
