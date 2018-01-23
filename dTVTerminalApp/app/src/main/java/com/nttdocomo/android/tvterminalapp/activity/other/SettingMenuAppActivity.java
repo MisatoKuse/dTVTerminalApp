@@ -4,9 +4,9 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.other;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -20,24 +20,25 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 public class SettingMenuAppActivity extends BaseActivity {
 
     /**
-     * グローバルメニューから起動しているかどうか.
+     * WebView.
      */
-    private Boolean mIsMenuLaunch = false;
+    WebView mAppWebView = null;
 
     /**
-     * TODO 仮のURL
+     * TODO 仮のURL.
      */
     private final static String SETTING_MENU_APP_URL = "https://www.nttdocomo.co.jp/";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.setting_menu_item_main_view);
 
-        WebView appWebView = (WebView) findViewById(R.id.setting_menu_main_webview);
-        appWebView.setWebViewClient(new WebViewClient());
-        appWebView.setBackgroundColor(Color.TRANSPARENT);
-        appWebView.loadUrl(SETTING_MENU_APP_URL);
+        mAppWebView = findViewById(R.id.setting_menu_main_webview);
+        mAppWebView.setWebViewClient(new WebViewClient());
+        mAppWebView.getSettings().setJavaScriptEnabled(true);
+        mAppWebView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
+        mAppWebView.loadUrl(SETTING_MENU_APP_URL);
 
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
@@ -50,17 +51,12 @@ public class SettingMenuAppActivity extends BaseActivity {
     }
 
     @Override
-    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
-        DTVTLogger.start();
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_BACK:
-                if (mIsMenuLaunch) {
-                    //メニューから起動の場合はアプリ終了ダイアログを表示
-                    showTips();
-                    return false;
-                }
-            default:
-                break;
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            if(mAppWebView.canGoBack() ) {
+                mAppWebView.goBack();
+                return false;
+            }
         }
         return super.onKeyDown(keyCode, event);
     }

@@ -15,10 +15,11 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 public class SettingMenuLicenseActivity extends BaseActivity {
+
     /**
-     * グローバルメニューから起動しているかどうか.
+     * WebView.
      */
-    private Boolean mIsMenuLaunch = false;
+    WebView mLicenseWebView = null;
 
     /**
      * TODO 仮のHTMLファイル
@@ -29,10 +30,11 @@ public class SettingMenuLicenseActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.setting_menu_item_main_view);
-        WebView licenseWebView = (WebView) findViewById(R.id.setting_menu_main_webview);
-        licenseWebView.setWebViewClient(new WebViewClient());
-        licenseWebView.setBackgroundColor(Color.TRANSPARENT);
-        licenseWebView.loadUrl(SETTING_MENU_LICENSE_URL);
+
+        mLicenseWebView = findViewById(R.id.setting_menu_main_webview);
+        mLicenseWebView.setWebViewClient(new WebViewClient());
+        mLicenseWebView.setBackgroundColor(Color.TRANSPARENT);
+        mLicenseWebView.loadUrl(SETTING_MENU_LICENSE_URL);
 
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
@@ -45,17 +47,12 @@ public class SettingMenuLicenseActivity extends BaseActivity {
     }
 
     @Override
-    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
-        DTVTLogger.start();
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_BACK:
-                if (mIsMenuLaunch) {
-                    //メニューから起動の場合はアプリ終了ダイアログを表示
-                    showTips();
-                    return false;
-                }
-            default:
-                break;
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            if(mLicenseWebView.canGoBack() ) {
+                mLicenseWebView.goBack();
+                return false;
+            }
         }
         return super.onKeyDown(keyCode, event);
     }

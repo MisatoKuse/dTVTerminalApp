@@ -15,10 +15,11 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 public class SettingMenuTermsOfServiceActivity extends BaseActivity {
+
     /**
-     * グローバルメニューから起動しているかどうか.
+     * WebView.
      */
-    private Boolean mIsMenuLaunch = false;
+    WebView mTermsOfServiceWebView = null;
 
     /**
      * TODO のHTMLファイル
@@ -30,10 +31,10 @@ public class SettingMenuTermsOfServiceActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.setting_menu_item_main_view);
 
-        WebView termsOfServiceWebView = (WebView) findViewById(R.id.setting_menu_main_webview);
-        termsOfServiceWebView.setWebViewClient(new WebViewClient());
-        termsOfServiceWebView.setBackgroundColor(Color.TRANSPARENT);
-        termsOfServiceWebView.loadUrl(SETTING_MENU_TERMS_OF_SERVICE_HTML);
+        mTermsOfServiceWebView = findViewById(R.id.setting_menu_main_webview);
+        mTermsOfServiceWebView.setWebViewClient(new WebViewClient());
+        mTermsOfServiceWebView.setBackgroundColor(Color.TRANSPARENT);
+        mTermsOfServiceWebView.loadUrl(SETTING_MENU_TERMS_OF_SERVICE_HTML);
 
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
@@ -46,17 +47,12 @@ public class SettingMenuTermsOfServiceActivity extends BaseActivity {
     }
 
     @Override
-    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
-        DTVTLogger.start();
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_BACK:
-                if (mIsMenuLaunch) {
-                    //メニューから起動の場合はアプリ終了ダイアログを表示
-                    showTips();
-                    return false;
-                }
-            default:
-                break;
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            if(mTermsOfServiceWebView.canGoBack() ) {
+                mTermsOfServiceWebView.goBack();
+                return false;
+            }
         }
         return super.onKeyDown(keyCode, event);
     }

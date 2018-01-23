@@ -4,9 +4,9 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.other;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -15,10 +15,11 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 public class SettingMenuPrivacyPolicyActivity extends BaseActivity {
+
     /**
-     * グローバルメニューから起動しているかどうか.
+     * WebView.
      */
-    private Boolean mIsMenuLaunch = false;
+    WebView mPrivacyPolicyWebView = null;
 
     /**
      * TODO 仮のURL
@@ -30,10 +31,11 @@ public class SettingMenuPrivacyPolicyActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.setting_menu_item_main_view);
 
-        WebView privacyPolicyWebView = (WebView) findViewById(R.id.setting_menu_main_webview);
-        privacyPolicyWebView.setWebViewClient(new WebViewClient());
-        privacyPolicyWebView.setBackgroundColor(Color.TRANSPARENT);
-        privacyPolicyWebView.loadUrl(SETTING_MENU_PRIVACY_POLICY_URL);
+        mPrivacyPolicyWebView = findViewById(R.id.setting_menu_main_webview);
+        mPrivacyPolicyWebView.setWebViewClient(new WebViewClient());
+        mPrivacyPolicyWebView.getSettings().setJavaScriptEnabled(true);
+        mPrivacyPolicyWebView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
+        mPrivacyPolicyWebView.loadUrl(SETTING_MENU_PRIVACY_POLICY_URL);
 
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
@@ -46,17 +48,12 @@ public class SettingMenuPrivacyPolicyActivity extends BaseActivity {
     }
 
     @Override
-    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
-        DTVTLogger.start();
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_BACK:
-                if (mIsMenuLaunch) {
-                    //メニューから起動の場合はアプリ終了ダイアログを表示
-                    showTips();
-                    return false;
-                }
-            default:
-                break;
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            if(mPrivacyPolicyWebView.canGoBack() ) {
+                mPrivacyPolicyWebView.goBack();
+                return false;
+            }
         }
         return super.onKeyDown(keyCode, event);
     }
