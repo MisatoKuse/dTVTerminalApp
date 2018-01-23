@@ -2534,7 +2534,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         //購入済みCH一覧取得からの戻り
         DTVTLogger.start();
         ChannelList channelList = response.getChannelListData();
-        List<HashMap<String, String>> chList = channelList.getClList();
+        List<HashMap<String, String>> chList = channelList.getChannelList();
 
         if (checkChServiceIdListSame(chList)) {
             //購入CHと対象CHのservice_idが一致

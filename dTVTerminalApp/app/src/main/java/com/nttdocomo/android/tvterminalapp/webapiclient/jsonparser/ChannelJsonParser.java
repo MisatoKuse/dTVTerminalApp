@@ -30,11 +30,11 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
     // オブジェクトクラスの定義
     private ChannelList mChannelList;
 
-    public static final String[] pagerPara = {JsonContents.META_RESPONSE_PAGER_LIMIT,
+    public static final String[] PAGER_PARAMETERS = {JsonContents.META_RESPONSE_PAGER_LIMIT,
             JsonContents.META_RESPONSE_OFFSET, JsonContents.META_RESPONSE_COUNT,
             JsonContents.META_RESPONSE_TOTAL};
 
-    public static final String[] listPara = {JsonContents.META_RESPONSE_CRID,
+    public static final String[] CONTENT_META_PARAMETERS = {JsonContents.META_RESPONSE_CRID,
             JsonContents.META_RESPONSE_SERVICE_ID, JsonContents.META_RESPONSE_CHNO,
             JsonContents.META_RESPONSE_TITLE, JsonContents.META_RESPONSE_TITLERUBY,
             JsonContents.META_RESPONSE_DISP_TYPE, JsonContents.META_RESPONSE_SERVICE,
@@ -50,7 +50,7 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
             JsonContents.META_RESPONSE_PRICE, JsonContents.META_RESPONSE_QRANGE,
             JsonContents.META_RESPONSE_QUNIT, JsonContents.META_RESPONSE_PU_START_DATE,
             JsonContents.META_RESPONSE_PU_END_DATE, JsonContents.META_RESPONSE_CHPACK};
-    public static final String[] chpackList = {JsonContents.META_RESPONSE_CRID,
+    public static final String[] CHANNEL_META_PARAMETERS = {JsonContents.META_RESPONSE_CRID,
             JsonContents.META_RESPONSE_TITLE, JsonContents.META_RESPONSE_DISP_TYPE,
             JsonContents.META_RESPONSE_PUID, JsonContents.META_RESPONSE_SUB_PUID,
             JsonContents.META_RESPONSE_PRICE, JsonContents.META_RESPONSE_QRANGE,
@@ -103,15 +103,15 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
             if (!jsonObj.isNull(JsonContents.META_RESPONSE_PAGER)) {
                 JSONObject pager = jsonObj.getJSONObject(JsonContents.META_RESPONSE_PAGER);
 
-                for (int i = 0; i < pagerPara.length; i++) {
-                    if (!pager.isNull(pagerPara[i])) {
-                        String para = pager.getString(pagerPara[i]);
-                        map.put(pagerPara[i], para);
+                for (int i = 0; i < PAGER_PARAMETERS.length; i++) {
+                    if (!pager.isNull(PAGER_PARAMETERS[i])) {
+                        String para = pager.getString(PAGER_PARAMETERS[i]);
+                        map.put(PAGER_PARAMETERS[i], para);
                     }
                 }
             }
 
-            mChannelList.setClMap(map);
+            mChannelList.setResponseInfoMap(map);
 
         } catch (JSONException e) {
             throw new RuntimeException(e);
@@ -164,24 +164,24 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
                     // i番目のJSONArrayをJSONObjectに変換する
                     JSONObject jsonObject = jsonArr.getJSONObject(i);
 
-                    for (int j = 0; j < listPara.length; j++) {
-                        if (!jsonObject.isNull(listPara[j])) {
-                            if (listPara[j].equals(JsonContents.META_RESPONSE_GENRE_ARRAY)) {
-                                JSONArray para = jsonObject.getJSONArray(listPara[j]);
-                                vcListMap.put(listPara[j], para.toString());
-                            } else if (listPara[j].equals(JsonContents.META_RESPONSE_CHPACK)) {
-                                JSONObject para = jsonObject.getJSONObject(listPara[j]);
-                                for (int c = 0; c < chpackList.length; c++) {
-                                    if (!jsonObject.isNull(chpackList[c])) {
-                                        String value = para.getString(chpackList[c]);
+                    for (int j = 0; j < CONTENT_META_PARAMETERS.length; j++) {
+                        if (!jsonObject.isNull(CONTENT_META_PARAMETERS[j])) {
+                            if (CONTENT_META_PARAMETERS[j].equals(JsonContents.META_RESPONSE_GENRE_ARRAY)) {
+                                JSONArray para = jsonObject.getJSONArray(CONTENT_META_PARAMETERS[j]);
+                                vcListMap.put(CONTENT_META_PARAMETERS[j], para.toString());
+                            } else if (CONTENT_META_PARAMETERS[j].equals(JsonContents.META_RESPONSE_CHPACK)) {
+                                JSONObject para = jsonObject.getJSONObject(CONTENT_META_PARAMETERS[j]);
+                                for (int c = 0; c < CHANNEL_META_PARAMETERS.length; c++) {
+                                    if (!jsonObject.isNull(CHANNEL_META_PARAMETERS[c])) {
+                                        String value = para.getString(CHANNEL_META_PARAMETERS[c]);
                                         //書き込み用項目名の作成
                                         StringBuilder stringBuffer = new StringBuilder();
-                                        stringBuffer.append(listPara[j]);
+                                        stringBuffer.append(CONTENT_META_PARAMETERS[j]);
                                         stringBuffer.append(JsonContents.UNDER_LINE);
-                                        stringBuffer.append(chpackList[c]);
+                                        stringBuffer.append(CHANNEL_META_PARAMETERS[c]);
 
                                         //日付項目チェック
-                                        if (DBUtils.isDateItem(chpackList[c])) {
+                                        if (DBUtils.isDateItem(CHANNEL_META_PARAMETERS[c])) {
                                             //日付なので変換して格納する
                                             String dateBuffer = DateUtils.formatEpochToString(
                                                     StringUtil.changeString2Long(value));
@@ -192,14 +192,14 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
                                         }
                                     }
                                 }
-                            } else if (DBUtils.isDateItem(listPara[j])) {
+                            } else if (DBUtils.isDateItem(CONTENT_META_PARAMETERS[j])) {
                                 // DATE_PARAに含まれるのは日付なので、エポック秒となる。変換して格納する
                                 String dateBuffer = DateUtils.formatEpochToString(
-                                        StringUtil.changeString2Long(jsonObject.getString(listPara[j])));
-                                vcListMap.put(listPara[j], dateBuffer);
+                                        StringUtil.changeString2Long(jsonObject.getString(CONTENT_META_PARAMETERS[j])));
+                                vcListMap.put(CONTENT_META_PARAMETERS[j], dateBuffer);
                             } else {
-                                String para = jsonObject.getString(listPara[j]);
-                                vcListMap.put(listPara[j], para);
+                                String para = jsonObject.getString(CONTENT_META_PARAMETERS[j]);
+                                vcListMap.put(CONTENT_META_PARAMETERS[j], para);
                             }
                         }
                     }
@@ -207,7 +207,7 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
                     vcList.add(vcListMap);
                 }
                 // リスト数ぶんの格納が終わったらオブジェクトクラスにList<HashMap>でset
-                mChannelList.setClList(vcList);
+                mChannelList.setChannelList(vcList);
             }
         } catch (JSONException e) {
             throw new RuntimeException(e);
