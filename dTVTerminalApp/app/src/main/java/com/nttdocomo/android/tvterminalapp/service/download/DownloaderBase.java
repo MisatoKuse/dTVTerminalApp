@@ -335,25 +335,23 @@ public abstract class DownloaderBase {
         if(null == context){
             return null;
         }
-        File[] files =  ContextCompat.getExternalFilesDirs(context, null);
-        if(files != null){
-            if(files.length > 0){
-                for(int i = files.length-1; i >= 0; i--){
-                    File file = files[i];
-                    if(file != null){
-                        String dmp=getDmpFolderName(context);
-                        if(null==dmp || dmp.isEmpty()){
-                            downLoadPath="";
+
+        String dmp=getDmpFolderName(context);
+        if(null==dmp || dmp.isEmpty()){
+            downLoadPath = NewEnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP);
+        } else {
+            File[] files = ContextCompat.getExternalFilesDirs(context, null);
+            if (files != null) {
+                if (files.length > 0) {
+                    for (int i = files.length - 1; i >= 0; i--) {
+                        File file = files[i];
+                        if (file != null) {
+                            downLoadPath = file.getAbsolutePath() + File.separator + dmp;
                             break;
                         }
-                        downLoadPath = file.getAbsolutePath() + File.separator + dmp;
-                        break;
                     }
                 }
             }
-        }
-        if(TextUtils.isEmpty(downLoadPath)){
-            downLoadPath = NewEnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP);
         }
         return downLoadPath;
     }

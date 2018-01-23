@@ -5,18 +5,15 @@
 package com.nttdocomo.android.tvterminalapp.jni;
 
 import android.content.Context;
-import android.os.Handler;
 import android.text.TextUtils;
 
-import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.jni.activation.NewEnvironmentUtil;
-import com.nttdocomo.android.tvterminalapp.service.download.DtcpDownloadParam;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,6 +29,8 @@ public class DlnaInterfaceRI {
 //    private DlnaDlListener mDlnaDlListener;
 //    private Context mContext;
     private long mNativeDlna = 0;
+    private static final int sBufSize=1024;
+    private static final String sWhatToReplace="[CONFDIR]";
 
     /*
      * 機能：libをロードする
@@ -45,60 +44,120 @@ public class DlnaInterfaceRI {
      * @param context context
      * @return dir
      */
-    private static String getConfPathDir(Context context) {
-        return context.getFilesDir().getAbsolutePath();
+    public static String getSrcConPathDir(Context context) {
+        //return "file:///android_asset/drm/conf";
+        return "drm";
     }
+
+    public static final String getDestConfPathDir(Context context){
+        if(null==context){
+            return null;
+        }
+        return context.getFilesDir().getAbsolutePath() + File.separator + sConFileDirName;
+    }
+
+
 
     /**
      * copy conf files to app
      * @param context context
      * @param assetsConfPath assetsConfPath
-     * @param oldPath oldPath
-     * @param whatReplace whatReplace
-     * @param replace replace
+     * @param destPath destPath
      * @param forceUpdate 「true」の場合、毎回assetsからコピー
      * @return conf path:    Conf path is not null, error return null
      */
-    public static String copyConfFiles(Context context, String assetsConfPath, String oldPath, String whatReplace, String replace, boolean forceUpdate){
-        String newPath = getConfPathDir(context);
+    public static boolean copyConfFiles(Context context, String assetsConfPath, String destPath, boolean forceUpdate){
+        //String newPath = getConfPathDir(context);
 
-//        if (TextUtils.isEmpty(assetDir) || TextUtils.isEmpty(targetDir)) {
-//            return;
-//        }
-//        String separator = File.separator;
-//        try {
-//            // 获取assets目录assetDir下一级所有文件以及文件夹
-//            String[] fileNames = context.getResources().getAssets().list(assetDir);
-//            // 如果是文件夹(目录),则继续递归遍历
-//            if (fileNames.length > 0) {
-//                File targetFile = new File(targetDir);
-//                if (!targetFile.exists() && !targetFile.mkdirs()) {
-//                    return;
-//                }
+        if (TextUtils.isEmpty(assetsConfPath) || TextUtils.isEmpty(destPath)) {
+            return false;
+        }
+        String separator = File.separator;
+        boolean r=false;
+        String[] fileNames=null;
+        try {
+            fileNames = context.getResources().getAssets().list(assetsConfPath);
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+        }
+        if (fileNames.length > 0) {
+            File file = new File(destPath);
+            if(!file.exists()) {
+                if (!file.mkdirs()) {
+                    return false;
+                }
+            }
+            for (String fileName : fileNames) {
+                copyConfFiles(context, assetsConfPath + File.separator + fileName, destPath+ File.separator + fileName, forceUpdate);
+            }
+////                File targetFile = new File(destPath);
+////                if (!targetFile.exists() && !targetFile.mkdirs()) {
+////                    return false;
+////                }
 //                for (String fileName : fileNames) {
-//                    copyAssets(context, assetDir + separator + fileName, targetDir + separator + fileName);
+//                    String nextSrcFileName=assetsConfPath + separator + fileName;
+//                    String nextDestFileName=destPath + separator + fileName;
+//                    File src=new File(fileName);
+//                    File targetFile = new File(nextDestFileName);
+//                    if(src.isDirectory()){
+//                        r=targetFile.mkdirs();
+//                        if(!r){
+//                            return false;
+//                        }
+//                    } else {
+//                        if(targetFile.exists() && !forceUpdate && targetFile.length()>0){
+//                            return true;
+//                        }
+//                        r = copyConfFiles(context, nextSrcFileName, nextDestFileName, forceUpdate);
+//                        if(!r){
+//                            return false;
+//                        }
+//                    }
 //                }
-//            } else { // 文件,则执行拷贝
-//                copy(context, assetDir, targetDir);
-//            }
-//        } catch (Exception e) {
-//            DTVTLogger.debug(e);;
-//        }
+        } else {
+            String fileName=getFileName(assetsConfPath);
+            String nextDestFileName=destPath + separator + fileName;
+            r=copyConfFile(context, assetsConfPath, nextDestFileName);
+        }
 
-        return newPath;
+
+        return r;
     }
+
+    private static String getFileName(String path) {
+        if(null==path){
+            return path;
+        }
+        int p=path.lastIndexOf(File.separator);
+        if(p<0){
+            return path;
+        }
+        return path.substring(p, path.length());
+    }
+
+//    private static boolean isAssetsDir(Context context, String path){
+//        if(null==context){
+//            return false;
+//        }
+//        String[] fileNames = context.getResources().getAssets().list(path);
+//    }
+
+    private static final String sConFileDirName="drm";
 
     /**
      * Copy one file
      * @param context context
      * @param oldPath oldPath
      * @param newPath newPath
-     * @param whatReplace whatReplace
-     * @param replace replace
      * @return  true: ok    false: ng
      */
-    private static boolean copyConfFiles(Context context, String oldPath, String newPath, String whatReplace, String replace){
+    private static boolean copyConfFile(Context context, String oldPath, String newPath){
         if (TextUtils.isEmpty(oldPath) || TextUtils.isEmpty(newPath)) {
+            return false;
+        }
+        boolean ret=true;
+        String conDir= getDestConfPathDir(context);
+        if(null==conDir){
             return false;
         }
         File dest = new File(newPath);
@@ -110,64 +169,95 @@ public class DlnaInterfaceRI {
         OutputStream out = null;
         try {
             in = new BufferedInputStream(context.getAssets().open(oldPath));
+            filterSpecial(in, sWhatToReplace, conDir);
             out = new BufferedOutputStream(new FileOutputStream(dest));
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[sBufSize];
             int length = 0;
             while ((length = in.read(buffer)) != -1) {
                 out.write(buffer, 0, length);
             }
         } catch (Exception e) {
-            DTVTLogger.debug(e);;
+            DTVTLogger.debug(e);
+            ret=false;
         } finally {
             try {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    DTVTLogger.debug(e);;
-                }
+                out.close();
                 in.close();
             } catch (IOException e) {
-                DTVTLogger.debug(e);;
+                DTVTLogger.debug(e);
+                ret=false;
             }
         }
-        return true;
+        return ret;
     }
 
-    public static void copy(Context context, String zPath, String targetPath) {
-        if (TextUtils.isEmpty(zPath) || TextUtils.isEmpty(targetPath)) {
-            return;
-        }
-        final int BUFFER_SIZE= 1024;
-        File dest = new File(targetPath);
-        boolean r=dest.getParentFile().mkdirs();
-        if(!r){
-            return;
-        }
-        InputStream in = null;
-        OutputStream out = null;
+    private static void filterSpecial(InputStream is, final String whatToReplace, final String replace){
+        String temp = null;
         try {
-            in = new BufferedInputStream(context.getAssets().open(zPath));
-            out = new BufferedOutputStream(new FileOutputStream(dest));
-            byte[] buffer = new byte[BUFFER_SIZE];
-            int length = 0;
-            while ((length = in.read(buffer)) != -1) {
-                out.write(buffer, 0, length);
-            }
+            temp = InputStreamToString(is, "UTF-8");
+            temp = temp.replace(whatToReplace, replace);
         } catch (Exception e) {
-            DTVTLogger.debug(e);;
-        } finally {
-            try {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    DTVTLogger.debug(e);;
-                }
-                in.close();
-            } catch (IOException e) {
-                DTVTLogger.debug(e);;
-            }
+            e.printStackTrace();
+        }
+
+        try {
+            is = StringToInputStream(temp);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
+
+    private static InputStream StringToInputStream(String in) throws Exception {
+        ByteArrayInputStream is = new ByteArrayInputStream(in.getBytes("UTF-8"));
+        return is;
+    }
+
+    private static String InputStreamToString(InputStream in, String encoding) throws Exception {
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        byte[] data = new byte[sBufSize];
+        int count = -1;
+        while ((count = in.read(data, 0, sBufSize)) != -1){
+            outStream.write(data, 0, count);
+        }
+        data = null;
+        return new String(outStream.toByteArray(), "UTF-8");
+    }
+
+//    public static void copy(Context context, String zPath, String targetPath) {
+//        if (TextUtils.isEmpty(zPath) || TextUtils.isEmpty(targetPath)) {
+//            return;
+//        }
+//        final int BUFFER_SIZE= 1024;
+//        File dest = new File(targetPath);
+//        boolean r=dest.getParentFile().mkdirs();
+//        if(!r){
+//            return;
+//        }
+//        InputStream in = null;
+//        OutputStream out = null;
+//        try {
+//            in = new BufferedInputStream(context.getAssets().open(zPath));
+//            out = new BufferedOutputStream(new FileOutputStream(dest));
+//            byte[] buffer = new byte[BUFFER_SIZE];
+//            int length = 0;
+//            while ((length = in.read(buffer)) != -1) {
+//                out.write(buffer, 0, length);
+//            }
+//        } catch (Exception e) {
+//            DTVTLogger.debug(e);;
+//        } finally {
+//            try {
+//                try {
+//                    out.close();
+//                } catch (IOException e) {
+//                    DTVTLogger.debug(e);;
+//                }
+//                in.close();
+//            } catch (IOException e) {
+//                DTVTLogger.debug(e);;
+//            }
+//        }
+//    }
 
     /**
      * 機能：デフォールト構造

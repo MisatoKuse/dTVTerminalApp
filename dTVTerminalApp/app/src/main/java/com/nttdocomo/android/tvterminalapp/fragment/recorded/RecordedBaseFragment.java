@@ -363,9 +363,16 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
 
     @Override
     public void onCancel() {
-        showMessage("ダウンロードはキャンセルしました。");
         if(!mIsJustCanceled){
             mIsJustCanceled=true;
+        }
+        if(activity != null){
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showMessage("ダウンロードはキャンセルしました。");
+                }
+            });
         }
     }
 
@@ -419,7 +426,13 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 }
                 DlData dlData = setDlData(index);
                 if(dlData != null){
-                    mDlDataProvider.setDlData(dlData);
+                    try {
+                        mDlDataProvider.setDlData(dlData);
+                    } catch (Exception e){
+                        DTVTLogger.debug(e);
+                        showMessage("DB insert Fail");
+                        return;
+                    }
                     que.add(dlData);
                     queIndex.add(index);
                     setDownloadStatus(index, 0);
@@ -624,6 +637,14 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                                 mDlDataProvider.cancelDownLoadStatus(path.toString());
                                 que.remove(i);
                                 queIndex.remove(i);
+                                if(queIndex.size() > 0){
+                                    try {
+                                        mDlDataProvider.setDlParam(downloadParam);
+                                        mDlDataProvider.start();
+                                    } catch (Exception e){
+                                        e.printStackTrace();
+                                    }
+                                }
                                 break;
                             }
                         }

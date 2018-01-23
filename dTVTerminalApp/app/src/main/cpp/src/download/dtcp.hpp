@@ -68,9 +68,16 @@ namespace dixim {
                     void* mac_address_method_id;
                 } dixim_hwif_private_data_io;
 
+                void clearAttachStatus(JNIEnv *env, JavaVM *vm, bool isAttached){
+                    if(env && vm && isAttached){
+                        vm->DetachCurrentThread();
+                    }
+                }
+
                 du_bool start(JavaVM *vm, jobject instance, dtvt::DlnaDownload *myDlnaClass) {
                     DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start enter");
                     JNIEnv *env = NULL;
+                    bool isAttached=false;
                     int status = vm->GetEnv((void **) &env, JNI_VERSION_1_6);
                     if (status < 0) {
                         status = vm->AttachCurrentThread(&env, NULL);
@@ -78,6 +85,7 @@ namespace dixim {
                             DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start failed, status < 0 || NULL == env");
                             return false;
                         }
+                        isAttached=true;
                     }
 
                     jobject objTmp = env->NewGlobalRef(instance);
@@ -86,6 +94,7 @@ namespace dixim {
                                                      "()Ljava/lang/String;");
                     if (env->ExceptionCheck()) {
                         DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start failed, env->ExceptionCheck");
+                        clearAttachStatus(env, vm, isAttached);
                         return false;
                     }
 
@@ -93,6 +102,7 @@ namespace dixim {
                                                                      mid);
                     if (env->ExceptionCheck()) {
                         DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start failed, jstring strObj");
+                        clearAttachStatus(env, vm, isAttached);
                         return false;
                     }
 
@@ -111,6 +121,7 @@ namespace dixim {
 
                     if (running) {
                         DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start, running");
+                        clearAttachStatus(env, vm, isAttached);
                         return 1;
                     }
 
@@ -161,6 +172,7 @@ namespace dixim {
                     ddtcp_shutdown(d);
                     error:
                     last_error_code = ret;
+                    clearAttachStatus(env, vm, isAttached);
                     du_log_dv(LOG_CATEGORY, DU_UCHAR_CONST("!!! start"));
                     DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start exit false");
                     return 0;

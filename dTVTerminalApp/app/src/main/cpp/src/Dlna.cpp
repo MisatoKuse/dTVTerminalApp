@@ -196,6 +196,7 @@ namespace dtvt {
     }
 
     void Dlna::stop() {
+        bool isAttached=false;
         if (DLNA_STATE_STARTED != mDLNA_STATE) {
             return;
         }
@@ -209,6 +210,7 @@ namespace dtvt {
                 if (status < 0) {
                     env = NULL;
                 }
+                isAttached=true;
             }
 
             if (env) {
@@ -224,6 +226,9 @@ namespace dtvt {
         mEvent.mJClassDlna = NULL;
 
         mDLNA_STATE = DLNA_STATE_STOP;
+        if(isAttached){
+            mEvent.mJavaVM->DetachCurrentThread();
+        }
     }
 
     bool Dlna::enableFunction() {
@@ -567,11 +572,13 @@ namespace dtvt {
     void Dlna::notify(int msg, std::string content) {
         JNIEnv *env = NULL;
         int status = mEvent.mJavaVM->GetEnv((void **) &env, JNI_VERSION_1_6);
+        bool isAttached=false;
         if (status < 0) {
             status = mEvent.mJavaVM->AttachCurrentThread(&env, NULL);
             if (status < 0 || NULL == env) {
                 return;
             }
+            isAttached=true;
         }
 
         jclass listActivityClazz = env->GetObjectClass(mEvent.mJObject);
@@ -585,6 +592,9 @@ namespace dtvt {
         env->CallVoidMethod(mEvent.mJObject, method, msg, jstr);
         env->DeleteLocalRef(jstr);
         env->DeleteLocalRef(listActivityClazz);
+        if(isAttached){
+            mEvent.mJavaVM->DetachCurrentThread();
+        }
         //mEvent.mJavaVM->DetachCurrentThread();
     }
 
@@ -985,6 +995,7 @@ namespace dtvt {
         jmethodID listCostruct = NULL;
         jobject listObj = NULL;
         jclass listCls = NULL;
+        bool isAttached=false;
 
         int status = mEvent.mJavaVM->GetEnv((void **) &env, JNI_VERSION_1_6);
         if (status < 0) {
@@ -992,6 +1003,7 @@ namespace dtvt {
             if (status < 0 || NULL == env) {
                 return;
             }
+            isAttached=true;
         }
 
         listActivityClazz = env->GetObjectClass(mEvent.mJObject);
@@ -1106,6 +1118,11 @@ namespace dtvt {
             if(listCls){
                 env->DeleteLocalRef(listCls);
                 listCls=NULL;
+            }
+            if(env){
+                if(isAttached){
+                    mEvent.mJavaVM->DetachCurrentThread();
+                }
             }
     }
 

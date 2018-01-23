@@ -5,7 +5,11 @@
 package com.nttdocomo.android.tvterminalapp.activity.common;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -13,17 +17,54 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.utils.ColorUtils;
 
 import java.util.List;
 
+/**
+ * GlobalMenuListのアダプタ.
+ */
 public class MenuListAdapter extends BaseAdapter {
 
+    /**
+     * コンテキスト.
+     */
     private Context mContext = null;
+    /**
+     * リストに表示するデータ.
+     */
     private List mData = null;
+    /**
+     * リストに表示する件数データ.
+     */
     private List mDataCounts = null;
 
-    public MenuListAdapter(Context context, List data, List dataCounts) {
+    /**
+     * テキストサイズ.
+     */
+    private static final int TEXT_SIZE = 12;
+    /**
+     * DAZN用テキストサイズ.
+     */
+    private static final int DAZN_TEXT_SIZE = 10;
+    /**
+     * 右矢印(>)アイコンサイズ.
+     */
+    private static final int RIGHT_ARROW_ICON_SIZE = 60;
+    /**
+     * テレビアイコンサイズ.
+     */
+    private static final int TV_ICON_SIZE = 40;
+
+    /**
+     * コンストラクタ.
+     *
+     * @param context コンテキスト
+     * @param data リストに表示するデータ
+     * @param dataCounts リストに表示する件数データ
+     */
+    public MenuListAdapter(final Context context, final List data, final List dataCounts) {
         this.mContext = context;
         this.mData = data;
         this.mDataCounts = dataCounts;
@@ -35,19 +76,19 @@ public class MenuListAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int i) {
+    public Object getItem(final int i) {
         return mData.get(i);
     }
 
     @Override
-    public long getItemId(int i) {
+    public long getItemId(final int i) {
         return i;
     }
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        View itemProgramVIew = null;
-        ProgramViewHolder holder = null;
+        View itemProgramVIew;
+        ProgramViewHolder holder;
         if (view == null) {
             holder = new ProgramViewHolder();
             itemProgramVIew = View.inflate(mContext, R.layout.nav_item_lv_menu_program, null);
@@ -78,12 +119,12 @@ public class MenuListAdapter extends BaseAdapter {
     }
 
     /**
-     * TitleNameにより、TextView設定を変更する
+     * TitleNameにより、TextView設定を変更する.
      *
      * @param title    タイトル
      * @param textView タイトルView
      */
-    private void setTextView(String title, TextView textView) {
+    private void setTextView(final String title, final TextView textView) {
         ColorUtils colorUtils = new ColorUtils(mContext);
         int intCustomTitleLeftMargin = mContext.getResources().getDimensionPixelSize(
                 R.dimen.global_menu_list_item_sub_title_left_margin);
@@ -101,6 +142,7 @@ public class MenuListAdapter extends BaseAdapter {
                 //テレビアプリを起動するの設定
                 colorUtils.setTextViewColor(textView, R.color.stb_start_title);
                 textView.setTypeface(Typeface.DEFAULT);
+                textView.setTextSize(TEXT_SIZE);
                 marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_home))
                     || title.equals(mContext.getString(R.string.nav_menu_item_recommend_program_video))
@@ -110,6 +152,7 @@ public class MenuListAdapter extends BaseAdapter {
                 //通常アイテムの設定
                 colorUtils.setTextViewColor(textView, R.color.white_text);
                 textView.setTypeface(Typeface.DEFAULT);
+                textView.setTextSize(TEXT_SIZE);
                 marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_hikari_tv))
                     || title.equals(mContext.getString(R.string.nav_menu_item_dtv_channel))
@@ -120,11 +163,13 @@ public class MenuListAdapter extends BaseAdapter {
                 //STB(DAZN)カスタマイズ
                 colorUtils.setTextViewColor(textView, R.color.white_text);
                 textView.setTypeface(Typeface.DEFAULT);
+                textView.setTextSize(DAZN_TEXT_SIZE);
                 marginLayoutParams.setMargins(intDAZNLeftMargin, 0, 0, 0);
             } else {
                 //その他サブアイテムのカスタマイズ
                 colorUtils.setTextViewColor(textView, R.color.white_text);
                 textView.setTypeface(Typeface.DEFAULT);
+                textView.setTextSize(TEXT_SIZE);
                 marginLayoutParams.setMargins(intCustomTitleLeftMargin, 0, 0, 0);
             }
             textView.setLayoutParams(marginLayoutParams);
@@ -132,12 +177,12 @@ public class MenuListAdapter extends BaseAdapter {
     }
 
     /**
-     * ImageViewの設定
+     * ImageViewの設定.
      *
      * @param title     タイトル
      * @param imageView アイコンView
      */
-    private void setImageView(String title, ImageView imageView) {
+    private void setImageView(final String title, final ImageView imageView) {
         if (title != null) {
             if (title.equals(mContext.getString(R.string.nav_menu_item_hikari_tv_none_action))) {
                 //ひかりTVメインの設定
@@ -152,7 +197,12 @@ public class MenuListAdapter extends BaseAdapter {
                     || title.equals(mContext.getString(R.string.nav_menu_item_setting))) {
                 //通常アイテムの設定
                 imageView.setVisibility(View.VISIBLE);
-                imageView.setBackgroundResource(R.drawable.menu_forward);
+                ViewGroup.LayoutParams lp = imageView.getLayoutParams();
+                lp.height = RIGHT_ARROW_ICON_SIZE;
+                lp.width = RIGHT_ARROW_ICON_SIZE;
+                ((ViewGroup.MarginLayoutParams) lp).setMargins(0, 0, 8, 0);
+                imageView.setLayoutParams(lp);
+                imageView.setBackgroundResource(R.mipmap.menu_forward);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_hikari_tv))
                     || title.equals(mContext.getString(R.string.nav_menu_item_dtv_channel))
                     || title.equals(mContext.getString(R.string.nav_menu_item_dtv))
@@ -160,23 +210,33 @@ public class MenuListAdapter extends BaseAdapter {
                     || title.equals(mContext.getString(R.string.nav_menu_item_dazn))) {
                 //STBコンテンツItemカスタマイズ
                 imageView.setVisibility(View.VISIBLE);
-                imageView.setBackgroundResource(R.mipmap.ic_stb_status_icon_white);
+                ViewGroup.LayoutParams lp = imageView.getLayoutParams();
+                lp.height = TV_ICON_SIZE;
+                lp.width = TV_ICON_SIZE;
+                ((ViewGroup.MarginLayoutParams) lp).setMargins(0, 0, 18, 0);
+                imageView.setLayoutParams(lp);
+                imageView.setBackgroundResource(R.mipmap.ic_stb_tv);
             } else {
                 //その他サブアイテムのカスタマイズ
                 imageView.setVisibility(View.VISIBLE);
-                imageView.setBackgroundResource(R.drawable.menu_forward);
+                ViewGroup.LayoutParams lp = imageView.getLayoutParams();
+                lp.height = RIGHT_ARROW_ICON_SIZE;
+                lp.width = RIGHT_ARROW_ICON_SIZE;
+                ((ViewGroup.MarginLayoutParams) lp).setMargins(0, 0, 8, 0);
+                imageView.setLayoutParams(lp);
+                imageView.setBackgroundResource(R.mipmap.menu_forward);
             }
         }
     }
 
     /**
-     * 各サービス名アイコン
+     * 各サービス名アイコン.
      * ImageViewの設定
      *
      * @param title     タイトル
      * @param imageView アイコンView
      */
-    private void setTitleNameImageView(String title, ImageView imageView) {
+    private void setTitleNameImageView(final String title, final ImageView imageView) {
         if (title != null) {
             ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
             ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) layoutParams;
@@ -186,27 +246,51 @@ public class MenuListAdapter extends BaseAdapter {
                 int intHikariSettingIconLeftMargin = mContext.getResources().getDimensionPixelSize(
                         R.dimen.global_menu_list_item_default_title_left_margin);
                 imageView.setVisibility(View.VISIBLE);
-                imageView.setBackgroundResource(R.drawable.ic_menu_service_name_hikari);
+                Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.ic_menu_service_name_hikari);
+                Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, false);
+                drawable = new BitmapDrawable(mContext.getResources(), resizedBitmap);
+                imageView.setBackground(drawable);
                 marginLayoutParams.setMargins(intHikariSettingIconLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_hikari_tv))) {
                 imageView.setVisibility(View.VISIBLE);
-                imageView.setBackgroundResource(R.drawable.ic_menu_service_name_hikari);
+                Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.ic_menu_service_name_hikari);
+                Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, false);
+                drawable = new BitmapDrawable(mContext.getResources(), resizedBitmap);
+                imageView.setBackground(drawable);
                 marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_dtv_channel))) {
                 imageView.setVisibility(View.VISIBLE);
-                imageView.setBackgroundResource(R.drawable.ic_menu_service_name_d_tv_channel);
+                Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.ic_menu_service_name_d_tv_channel);
+                Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, false);
+                drawable = new BitmapDrawable(mContext.getResources(), resizedBitmap);
+                imageView.setBackground(drawable);
                 marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_dtv))) {
                 imageView.setVisibility(View.VISIBLE);
-                imageView.setBackgroundResource(R.drawable.ic_menu_service_name_d_tv);
+                Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.ic_menu_service_name_d_tv);
+                Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, false);
+                drawable = new BitmapDrawable(mContext.getResources(), resizedBitmap);
+                imageView.setBackground(drawable);
                 marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_d_animation))) {
                 imageView.setVisibility(View.VISIBLE);
-                imageView.setBackgroundResource(R.drawable.ic_menu_service_name_d_anime);
+                Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.ic_menu_service_name_d_anime);
+                Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, false);
+                drawable = new BitmapDrawable(mContext.getResources(), resizedBitmap);
+                imageView.setBackground(drawable);
                 marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_dtv_channel))) {
                 imageView.setVisibility(View.VISIBLE);
-                imageView.setBackgroundResource(R.drawable.ic_menu_service_name_d_tv_channel);
+                Drawable drawable = ContextCompat.getDrawable(mContext, R.drawable.ic_menu_service_name_d_tv_channel);
+                Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, false);
+                drawable = new BitmapDrawable(mContext.getResources(), resizedBitmap);
+                imageView.setBackground(drawable);
                 marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else {
                 //その他サブアイテムのカスタマイズ
@@ -216,12 +300,12 @@ public class MenuListAdapter extends BaseAdapter {
     }
 
     /**
-     * DAZNアイコン設定
+     * DAZNアイコン設定.
      *
      * @param title     タイトル
      * @param imageView DAZNアイコン
      */
-    private void setDAZNIcon(String title, ImageView imageView) {
+    private void setDAZNIcon(final String title, final ImageView imageView) {
         if (title.equals(mContext.getString(R.string.nav_menu_item_dazn))) {
             //DAZNアイコン表示
             imageView.setVisibility(View.VISIBLE);
@@ -231,11 +315,41 @@ public class MenuListAdapter extends BaseAdapter {
         }
     }
 
+    /**
+     * ViewHolder.
+     */
     static class ProgramViewHolder {
+        /**
+         * 項目名.
+         */
         TextView tv_title;
+        /**
+         * 件数.
+         */
         TextView tv_count;
+        /**
+         * 右端に表示するアイコン.
+         */
         ImageView tv_arrow;
+        /**
+         * daznアイコン.
+         */
         ImageView dazn_icon;
+        /**
+         * アプリアイコン.
+         */
         ImageView tv_title_icon;
+    }
+
+    /**
+     * dip -> px 変換.
+     *
+     * @param dip dip
+     * @return px
+     */
+    private int dip2px(final int dip) {
+        float density = mContext.getResources().getDisplayMetrics().density;
+        DTVTLogger.debug("density: " + density);
+        return (int) (dip * density + 0.5f);
     }
 }

@@ -21,6 +21,7 @@
     <color name="header_background_color_red">#cc0033</color>
     <color name="header_background_color_black">#000000</color>
     <!--Global Menu-->
+    <color name="global_menu_popup_window_background_color">#ffffff</color>
     <color name="hikari_tv_and_dtv_channel_title">#00FFFF</color>
     <color name="dtv_title">#FF0000</color>
     <color name="d_animation_title">#FF8800</color>
