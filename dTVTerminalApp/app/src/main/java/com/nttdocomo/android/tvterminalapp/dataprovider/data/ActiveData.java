@@ -3,13 +3,10 @@
  */
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
-import java.io.Serializable;
-
 /**
  * 購入情報.
  */
-public class ActiveData implements Serializable {
-    private static final long serialVersionUID = -4091200326941004981L;
+public class ActiveData {
 
     /**
      * ライセンスID.
@@ -41,7 +38,7 @@ public class ActiveData implements Serializable {
      * ライセンスID設定.
      * @param licenseId  ライセンスID
      */
-    public void setLicenseId(String licenseId) {
+    public void setLicenseId(final String licenseId) {
         this.licenseId = licenseId;
     }
 
@@ -57,7 +54,7 @@ public class ActiveData implements Serializable {
      * 有効期限設定.
      * @param validEndDate  有効期限
      */
-    public void setValidEndDate(long validEndDate) {
+    public void setValidEndDate(final long validEndDate) {
         this.validEndDate = validEndDate;
     }
 
