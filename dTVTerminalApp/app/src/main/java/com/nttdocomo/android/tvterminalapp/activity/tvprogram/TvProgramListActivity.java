@@ -141,6 +141,8 @@ public class TvProgramListActivity extends BaseActivity
         mTimeLine = findViewById(R.id.tv_program_list_main_layout_time_line);
         mNowImage = findViewById(R.id.tv_program_list_main_layout_time_line_now);
 
+        mChannelRecyclerView.bringToFront();
+        mTagImageView.bringToFront();
         mTagImageView.setOnClickListener(this);
         titleTextView.setOnClickListener(this);
         mTimeScrollView.setScrollView(programScrollView);
@@ -726,12 +728,23 @@ public class TvProgramListActivity extends BaseActivity
         int curSec = Integer.parseInt(curTime.substring(4, 6));
         float channelRvHeight = (float) mChannelRecyclerView.getHeight();
         float timeLinePosition = 0;
-        if (START_TIME <= curClock && curClock < STANDARD_TIME) {
-            timeLinePosition = (dip2px(ONE_HOUR_UNIT) + 0.5f) * MinSec2Hour(curMin, curSec) + channelRvHeight;
-        } else {
-            if (0 <= curClock && curClock <= 3) {//底から完全に見える"1時間単位"をマーナイスする
-                timeLinePosition = (dip2px(ONE_HOUR_UNIT) + 0.5f) * MinSec2Hour(curMin, curSec)
-                        + channelRvHeight+(mTimeScrollView.getHeight()-(START_TIME-curClock)*dip2px(ONE_HOUR_UNIT));
+        if(mTimeScrollView.getHeight() /dip2px(ONE_HOUR_UNIT) >= 3){//タブレット(将来さらにチェック)
+            if (START_TIME <= curClock && curClock < STANDARD_TIME) {
+                timeLinePosition = (dip2px(ONE_HOUR_UNIT) + 0.5f) * MinSec2Hour(curMin, curSec) + channelRvHeight;
+            } else {
+                if (0 <= curClock && curClock <= 3) {//底から完全に見える"1時間単位"をマーナイスする
+                    timeLinePosition = (dip2px(ONE_HOUR_UNIT) + 0.5f) * MinSec2Hour(curMin, curSec)
+                            + channelRvHeight+(mTimeScrollView.getHeight()-(START_TIME-curClock)*dip2px(ONE_HOUR_UNIT));
+                }
+            }
+        }else {
+            if (START_TIME <= curClock && curClock < STANDARD_TIME || curClock == 0 || curClock == 1) {
+                timeLinePosition = (dip2px(ONE_HOUR_UNIT) + 0.5f) * MinSec2Hour(curMin, curSec) + channelRvHeight;
+            } else {
+                if (2 <= curClock && curClock <= 3) {//底から完全に見える"1時間単位"をマーナイスする
+                    timeLinePosition = (dip2px(ONE_HOUR_UNIT) + 0.5f) * MinSec2Hour(curMin, curSec)
+                            + channelRvHeight+(mTimeScrollView.getHeight()-(START_TIME-curClock)*dip2px(ONE_HOUR_UNIT));
+                }
             }
         }
         mTimeLine.setY(timeLinePosition - mNowImage.getHeight() / 2);
