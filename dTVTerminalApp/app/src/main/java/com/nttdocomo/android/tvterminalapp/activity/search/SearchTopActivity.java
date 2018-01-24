@@ -1,11 +1,6 @@
-/*
- * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
- */
-
 package com.nttdocomo.android.tvterminalapp.activity.search;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -13,35 +8,31 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
+import android.support.v7.widget.SearchView;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.support.v7.widget.SearchView;
 import android.widget.AbsListView;
-import android.widget.HorizontalScrollView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.SearchDataProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchResultError;
+import com.nttdocomo.android.tvterminalapp.fragment.search.FragmentFactory;
+import com.nttdocomo.android.tvterminalapp.fragment.search.SearchBaseFragment;
+import com.nttdocomo.android.tvterminalapp.fragment.search.SearchBaseFragmentScrollListener;
 import com.nttdocomo.android.tvterminalapp.model.ResultType;
+import com.nttdocomo.android.tvterminalapp.model.TabItemLayout;
+import com.nttdocomo.android.tvterminalapp.model.search.SearchNarrowCondition;
+import com.nttdocomo.android.tvterminalapp.model.search.SearchSortKind;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchDubbedType;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchFilterTypeMappable;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchGenreType;
-import com.nttdocomo.android.tvterminalapp.model.search.SearchNarrowCondition;
-import com.nttdocomo.android.tvterminalapp.model.search.SearchSortKind;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchResultError;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.TotalSearchContentInfo;
-import com.nttdocomo.android.tvterminalapp.fragment.search.FragmentFactory;
-import com.nttdocomo.android.tvterminalapp.fragment.search.SearchBaseFragment;
-import com.nttdocomo.android.tvterminalapp.fragment.search.SearchBaseFragmentScrollListener;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -49,7 +40,7 @@ import java.util.TimerTask;
 
 public class SearchTopActivity extends BaseActivity
         implements SearchDataProvider.SearchDataProviderListener,
-        View.OnClickListener, SearchBaseFragmentScrollListener {
+        View.OnClickListener, SearchBaseFragmentScrollListener, TabItemLayout.OnClickTabTextListener {
 
     private int mSearchTotalCount = 0;
     private int mPageNumber = 0;
@@ -61,8 +52,7 @@ public class SearchTopActivity extends BaseActivity
 
     public final static String sSearchCountDefault = "検索結果:0件";
 
-    private LinearLayout mLinearLayout = null;
-    private HorizontalScrollView mTabScrollView = null;
+    private TabItemLayout mTabLayout = null;
     private ViewPager mSearchViewPager = null;
     private SearchView mSearchView = null;
     private Boolean mIsMenuLaunch = false;
@@ -221,6 +211,7 @@ public class SearchTopActivity extends BaseActivity
                                 //検索文字が1文字以上から0文字になった場合、Tabを非表示にする
                                 mSearchViewPager = null;
                                 findViewById(R.id.fl_search_result).setVisibility(View.GONE);
+                                mTabLayout.setVisibility(View.GONE);
                                 clearAllFragment();
                             }
                             //setSearchData(s);
@@ -336,8 +327,8 @@ public class SearchTopActivity extends BaseActivity
         findViewById(R.id.fl_search_result).setVisibility(View.VISIBLE);
 
         mSearchViewPager = findViewById(R.id.vp_search_result);
-        mTabScrollView = findViewById(R.id.hs_tab_strip_scroll);
         initTabVIew();
+        mTabLayout.setVisibility(View.VISIBLE);
 
         mSearchViewPager.setAdapter(new MainAdapter(getSupportFragmentManager(), this));
         mSearchViewPager.addOnPageChangeListener(new ViewPager
@@ -345,7 +336,7 @@ public class SearchTopActivity extends BaseActivity
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                setTab(position);
+                mTabLayout.setTab(position);
 
                 clearAllFragment();
                 setPagingStatus(false);
@@ -362,66 +353,18 @@ public class SearchTopActivity extends BaseActivity
     }
 
     /**
-     * tabに関連Viewの初期化
+     * tab関連Viewの初期化
      */
     private void initTabVIew() {
-        mTabScrollView.removeAllViews();
-        mLinearLayout = new LinearLayout(this);
-        LinearLayout.LayoutParams layoutParams
-                = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT
-                , LinearLayout.LayoutParams.WRAP_CONTENT);
-        mLinearLayout.setLayoutParams(layoutParams);
-        mLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
-        mLinearLayout.setBackgroundColor(Color.BLACK);
-        mLinearLayout.setGravity(Gravity.CENTER);
-        mTabScrollView.addView(mLinearLayout);
-
-        for (int i = 0; i < mTabNames.length; i++) {
-            TextView tabTextView = new TextView(this);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT);
-            if (i != 0) {
-                params.setMargins(30, 0, 0, 0);
-            }
-            tabTextView.setLayoutParams(params);
-            tabTextView.setText(mTabNames[i]);
-            tabTextView.setTextSize(15);
-            tabTextView.setBackgroundColor(Color.BLACK);
-            tabTextView.setTextColor(Color.WHITE);
-            tabTextView.setGravity(Gravity.CENTER_VERTICAL);
-            tabTextView.setTag(i);
-            if (i == 0) {
-                tabTextView.setBackgroundResource(R.drawable.indicating);
-            }
-            tabTextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (null != mSearchViewPager) {
-                        int position = (int) view.getTag();
-                        mSearchViewPager.setCurrentItem(position);
-                        setTab(position);
-                    }
-                }
-            });
-            mLinearLayout.addView(tabTextView);
-        }
+        mTabLayout = findViewById(R.id.til_tab_layout_search);
+        mTabLayout.setTabClickListener(this);
+        mTabLayout.initTabVIew(mTabNames);
     }
 
-    /**
-     * インジケーター設置
-     * @param position
-     */
-    public void setTab(int position) {
-        if (mLinearLayout != null) {
-            for (int i = 0; i < mTabNames.length; i++) {
-                TextView textView = (TextView) mLinearLayout.getChildAt(i);
-                if (position == i) {
-                    textView.setBackgroundResource(R.drawable.indicating);
-                } else {
-                    textView.setBackgroundResource(R.drawable.indicating_no);
-                }
-            }
+    @Override
+    public void onClickTab(int position) {
+        if (null != mSearchViewPager) {
+            mSearchViewPager.setCurrentItem(position);
         }
     }
 
@@ -453,7 +396,6 @@ public class SearchTopActivity extends BaseActivity
                 //}
             }
         }
-
         baseFragment.setResultTextVisibility(true);
         if (0 < mSearchTotalCount) {
 
@@ -523,6 +465,7 @@ public class SearchTopActivity extends BaseActivity
      */
     private class MainAdapter extends FragmentStatePagerAdapter {
         private SearchTopActivity mSearchTopActivity = null;
+
         MainAdapter(FragmentManager fm, SearchTopActivity top) {
             super(fm);
             mSearchTopActivity = top;
@@ -559,6 +502,7 @@ public class SearchTopActivity extends BaseActivity
 
     /**
      * 検索結果件数を表示する文字列を返す
+     *
      * @return 検索結果件数の文字列
      */
     private String getResultString() {
