@@ -9,11 +9,13 @@ import android.content.Context;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.datamanager.WatchListenVideoDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WatchListenVideoList;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WatchListenVideoWebClient;
 
 import java.util.ArrayList;
@@ -26,12 +28,18 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     private Context mContext = null;
     private WatchListenVideoList mWatchListenVideoList = null;
 
+    /**
+     * デフォルトのページ取得位置.
+     */
+    public static final int DEFAULT_PAGE_OFFSET = 1;
+
     @Override
     public void onWatchListenVideoJsonParsed(List<WatchListenVideoList> watchListenVideoList) {
         if (watchListenVideoList != null && watchListenVideoList.size() > 0) {
             WatchListenVideoList list = watchListenVideoList.get(0);
             if (!mRequiredClipKeyList
                     || mResponseEndFlag) {
+                setStructDB(watchListenVideoList);
                 sendWatchListenVideoListData(list.getVcList());
             } else {
                 mWatchListenVideoList = list;
@@ -80,7 +88,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     }
 
     /**
-     * Activityからのデータ取得要求受付
+     * Activityからのデータ取得要求受付.
      */
     public void getWatchListenVideoData(int pagerOffset) {
         mWatchListenVideoList = null;
@@ -98,6 +106,34 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
 
         webClient.getWatchListenVideoApi(ageReq, upperPageLimit,
                 lowerPageLimit, pagerOffset, pagerDirection, this);
+    }
+
+    /**
+     * Homeからのデータ取得要求受付.
+     *
+     * @param pagerOffset 取得位置
+     */
+    public void requestWatchListenVideoData(final int pagerOffset) {
+        DateUtils dateUtils = new DateUtils(mContext);
+        String lastDate = dateUtils.getLastDate(DateUtils.WATCHING_VIDEO_LIST_LAST_INSERT);
+
+        // クリップキー一覧を取得
+        if (mRequiredClipKeyList) {
+            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+        }
+
+        //視聴中ビデオ一覧のDB保存履歴と、有効期間を確認
+        if (lastDate == null || lastDate.length() < 1 || dateUtils.isBeforeLimitDate(lastDate)) {
+            WatchListenVideoWebClient webClient = new WatchListenVideoWebClient(mContext);
+            //TODO：仮設定値
+            int ageReq = 1;
+            int upperPageLimit = 1;
+            int lowerPageLimit = 1;
+            String pagerDirection = "";
+
+            webClient.getWatchListenVideoApi(ageReq, upperPageLimit,
+                    lowerPageLimit, pagerOffset, pagerDirection, this);
+        }
     }
 
     /**
@@ -167,5 +203,17 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
         }
 
         mApiDataProviderCallback.watchListenVideoListCallback(rankingContentsDataList);
+    }
+
+    /**
+     * 視聴中ビデオ一覧データをDBに格納する.
+     *
+     * @param watchListenVideoList 視聴中ビデオ一覧用データ
+     */
+    public void setStructDB(final List<WatchListenVideoList> watchListenVideoList) {
+        DateUtils dateUtils = new DateUtils(mContext);
+        dateUtils.addLastDate(DateUtils.WATCHING_VIDEO_LIST_LAST_INSERT);
+        WatchListenVideoDataManager dataManager = new WatchListenVideoDataManager(mContext);
+        dataManager.insertWatchListenVideoInsertList(watchListenVideoList);
     }
 }

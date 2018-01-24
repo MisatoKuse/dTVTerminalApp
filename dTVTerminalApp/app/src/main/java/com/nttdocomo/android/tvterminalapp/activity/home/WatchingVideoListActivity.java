@@ -83,7 +83,7 @@ public class WatchingVideoListActivity extends BaseActivity implements
 
         initView();
         mWatchListenVideoListDataProvider = new WatchListenVideoListDataProvider(this);
-        mWatchListenVideoListDataProvider.getWatchListenVideoData(1);
+        mWatchListenVideoListDataProvider.getWatchListenVideoData(WatchListenVideoListDataProvider.DEFAULT_PAGE_OFFSET);
 
         //スクロールの上下方向検知用のリスナーを設定
         mListView.setOnTouchListener(this);

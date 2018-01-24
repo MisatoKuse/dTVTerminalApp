@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.activity.home.ClipListActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RentalListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.WatchingVideoListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
@@ -161,6 +162,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         if (context instanceof WeeklyTvRankingActivity
                 || context instanceof DailyTvRankingActivity
                 || context instanceof VideoRankingActivity
+                || context instanceof HomeActivity
                 || context instanceof ClipListActivity
                 || context instanceof RentalListActivity
                 || context instanceof WatchingVideoListActivity

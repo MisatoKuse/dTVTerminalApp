@@ -39,7 +39,7 @@ import java.util.Map;
 /**
  * ホーム画面用データプロバイダ.
  */
-public class HomeDataProvider implements
+public class HomeDataProvider extends ClipKeyListDataProvider implements
         TvClipWebClient.TvClipJsonParserCallback,
         VodClipWebClient.VodClipJsonParserCallback,
         TvScheduleWebClient.TvScheduleJsonParserCallback,
@@ -168,6 +168,7 @@ public class HomeDataProvider implements
      * @param mContext
      */
     public HomeDataProvider(final Context mContext) {
+        super(mContext);
         this.mContext = mContext;
         this.mApiDataProviderCallback = (ApiDataProviderCallback) mContext;
     }
@@ -242,7 +243,7 @@ public class HomeDataProvider implements
 
                 //視聴中ビデオ一覧
                 WatchListenVideoListDataProvider watchListenVideoListDataProvider = new WatchListenVideoListDataProvider(mContext);
-                watchListenVideoListDataProvider.getWatchListenVideoData(1);
+                watchListenVideoListDataProvider.requestWatchListenVideoData(WatchListenVideoListDataProvider.DEFAULT_PAGE_OFFSET);
 
                 //購入済チャンネル一覧(レンタルCh)
                 RentalChListWebClient rentalChListWebClient = new RentalChListWebClient(mContext);

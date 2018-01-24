@@ -57,11 +57,6 @@ public class DBConstants {
     public static final String DATABASE_NAME = "db_data";
 
     /**
-     * DBVersion.
-     */
-    public static final int DATABASE_VERSION = 1;
-
-    /**
      * Jsonのキー名が数字から始まってる時の対策用定数.
      */
     public static final String FOUR_K_FLG = "4kflg";
@@ -1104,4 +1099,68 @@ public class DBConstants {
     };
     public static final String CREATE_TABLE_VOD_CLIP_KEY_LIST_SQL = StringUtil.getConnectString(
             CREATE_TABLE_VOD_CLIP_KEY_LIST_SQL_NAMES);
+
+    //視聴中ビデオ一覧テーブル名
+    public static final String WATCH_LISTEN_VIDEO_TABLE_NAME = "watch_listen_video_table_name";
+
+    //視聴中ビデオ一覧テーブル用 column
+    public static final String CREATE_TABLE_WATCH_LISTEN_VIDEO_SQL = StringUtil.getConnectStrings(
+            CREATE_TABLE_TEXT,
+            WATCH_LISTEN_VIDEO_TABLE_NAME,
+            OPEN_BRACKETS_TEXT,
+            ID_COLUMN,
+            CREATE_TABLE_PRIMARY_TEXT,
+            JsonContents.META_RESPONSE_CRID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_SERVICE_ID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CHNO, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_TITLE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_TITLERUBY, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_DISP_TYPE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_SERVICE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CH_TYPE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_AVAIL_START_DATE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_AVAIL_END_DATE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_DEFAULT_THUMB, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_THUMB_640, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_THUMB_448, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_DEMONG, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_DTV_TYPE, TEXT_WITH_COMMA_TEXT,
+            UNDER_BAR_FOUR_K_FLG, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_AVAIL_STATUS, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_DELIVERY, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_R_VALUE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_ADULT, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_NG_FUNC, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_GENRE_ARRAY, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_SYNOP, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CHSVOD, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_PUID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_SUB_PUID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_PRICE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_QRANGE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_QUNIT, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_PU_START_DATE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_PU_END_DATE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE,
+            JsonContents.META_RESPONSE_CRID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE,
+            JsonContents.META_RESPONSE_TITLE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE,
+            JsonContents.META_RESPONSE_DISP_TYPE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE,
+            JsonContents.META_RESPONSE_PUID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE,
+            JsonContents.META_RESPONSE_SUB_PUID, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE,
+            JsonContents.META_RESPONSE_PRICE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE,
+            JsonContents.META_RESPONSE_QRANGE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE,
+            JsonContents.META_RESPONSE_QUNIT, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE,
+            JsonContents.META_RESPONSE_PU_START_DATE, TEXT_WITH_COMMA_TEXT,
+            JsonContents.META_RESPONSE_CHPACK, JsonContents.UNDER_LINE,
+            JsonContents.META_RESPONSE_PU_END_DATE, TEXT_WITH_COMMA_TEXT,
+            DATE_TYPE, TEXT_WITH_COMMA_TEXT, UPDATE_DATE, TEXT_WITHOUT_COMMA_TEXT,
+            CLOSE_BRACKETS_TEXT);
 }
