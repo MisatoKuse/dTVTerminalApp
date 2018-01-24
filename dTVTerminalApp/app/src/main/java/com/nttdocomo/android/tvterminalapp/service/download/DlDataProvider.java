@@ -447,12 +447,12 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                     File files[] = file.listFiles();
                     for(File file1:files){
                         if(!file1.delete()){
-                            DTVTLogger.debug("delete cacel file fail ");
+                            DTVTLogger.debug("delete cacel file fail path:" + path);
                         }
                     }
                     if(file.exists()){
                         if(!file.delete()) {
-                            DTVTLogger.debug("delete cacel directory fail ");
+                            DTVTLogger.debug("delete cacel directory fail path:" + path);
                         }
                     }
                 }

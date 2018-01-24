@@ -262,7 +262,7 @@ public abstract class DownloaderBase {
      */
     protected void onFail(DownloadListener.DLError error) {
         if(null!=mDownloadListener && null!=mDownloadParam){
-            final String savePath= mDownloadParam.getSavePath();
+            final String savePath= mDownloadParam.getSavePath() + File.separator + mDownloadParam.getSaveFileName();
             mDownloadListener.onFail(error, savePath);
         }
     }

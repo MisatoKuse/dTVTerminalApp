@@ -243,6 +243,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
 
     @Override
     public void onFail(final DLError error, final String savePath) {
+        DTVTLogger.debug("download fail savePath:"+savePath);
         mHandler.post(
                 new Runnable(){
                     @Override
@@ -603,7 +604,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 DTVTLogger.end();
                 return;
             }
-            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
             DTVTLogger.end();
         } catch (Exception e){
             DTVTLogger.debug(e);
@@ -641,7 +642,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                                 mDlDataProvider.cancelDownLoadStatus(path.toString());
                                 que.remove(i);
                                 queIndex.remove(i);
-                                if(queIndex.size() > 0){
+                                if(queIndex.size() > 0 && (int) view.getTag() == queIndex.get(0)){
                                     try {
                                         mDlDataProvider.setDlParam(downloadParam);
                                         mDlDataProvider.start();
