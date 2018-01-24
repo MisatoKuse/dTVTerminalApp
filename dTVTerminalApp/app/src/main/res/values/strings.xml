@@ -10,7 +10,7 @@
     <string name="close_key">×</string>
     <string name="list_transition">></string>
     <string name="contents_hyphen">-</string>
-    <string name="contents_more">more</string>
+    <string name="contents_more">すべてを見る</string>
     <string name="positive_response">はい</string>
     <string name="negative_response">いいえ</string>
     <string name="custom_dialog_ok">OK</string>
