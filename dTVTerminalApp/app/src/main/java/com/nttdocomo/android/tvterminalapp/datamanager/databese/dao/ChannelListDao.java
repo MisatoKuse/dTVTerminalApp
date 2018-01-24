@@ -130,7 +130,6 @@ public class ChannelListDao {
 
     /**
      * データの更新.
-     *
      * @return 常に0.
      */
     @SuppressWarnings("SameReturnValue")
