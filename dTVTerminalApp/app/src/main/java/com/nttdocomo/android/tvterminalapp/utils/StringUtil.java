@@ -8,6 +8,7 @@ import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
+import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser;
@@ -280,8 +281,6 @@ public class StringUtil {
      */
     public static int getUserAgeInfo(final List<Map<String, String>> userInfoList) {
         final int INT_LIST_HEAD = 0;
-        final String USE_H4D_AGE_REQ = "001";
-        final String USE_DCH_AGE_REQ = "002";
         String age = null;
 
         //ユーザ情報がないときはPG12制限値を返却
@@ -301,13 +300,13 @@ public class StringUtil {
         //contractStatusがないときはPG12制限値を設定
         int intAge = DEFAULT_USER_AGE_REQ;
         if (contractStatus != null) {
-            if (contractStatus.equals(USE_H4D_AGE_REQ)) {
+            if (contractStatus.equals(UserInfoDataProvider.CONTRACT_STATUS_DTV)) {
                 //H4Dの制限情報がないときはDCH側を使用
                 age = infoMap.get(UserInfoJsonParser.USER_INFO_LIST_H4D_AGE_REQ);
                 if (age == null || age.length() < 1) {
                     age = infoMap.get(UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ);
                 }
-            } else if (contractStatus.equals(USE_DCH_AGE_REQ)) {
+            } else if (contractStatus.equals(UserInfoDataProvider.CONTRACT_STATUS_H4D)) {
                 //DCHの制限情報がないときはH4D DCH側を使用
                 age = infoMap.get(UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ);
             }

@@ -24,6 +24,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.DailyRankWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalChListWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvClipWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvScheduleWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
@@ -210,15 +211,46 @@ public class HomeDataProvider implements
             if (VideoRankList != null && VideoRankList.size() > 0) {
                 sendVideoRankListData(VideoRankList);
             }
-            //クリップ[テレビ]
-            List<Map<String, String>> tvClipList = getTvClipListData();
-            if (tvClipList != null && tvClipList.size() > 0) {
-                sendTvClipListData(tvClipList);
-            }
-            //クリップ[ビデオ]
-            List<Map<String, String>> vodClipList = getVodClipListData();
-            if (vodClipList != null && vodClipList.size() > 0) {
-                sendVodClipListData(vodClipList);
+            //データ取得のみ(リクエスト～DB保存までの処理を新設するか検討中)
+            //ジャンルID(ビデオ一覧)一覧取得
+            VideoGenreProvider videoGenreProvider = new VideoGenreProvider(mContext);
+            videoGenreProvider.getGenreListDataRequest();
+
+            //ロールID一覧取得
+            DtvContentsDetailDataProvider detailDataProvider = new DtvContentsDetailDataProvider(mContext);
+            detailDataProvider.getRoleListData();
+
+            //チャンネルリスト取得
+            ChannelDataProvider channelDataProvider = new ChannelDataProvider(mContext);
+            channelDataProvider.requestChannelList(1, 1, "", 1);
+
+            UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
+            if (userInfoDataProvider.isH4dUser()) {
+                //H4dユーザに必要なデータ取得開始
+                //クリップキー一覧(今日のテレビランキングにまとめられてるので省略するか検討中)
+                //TVクリップ一覧
+                List<Map<String, String>> tvClipList = getTvClipListData();
+                if (tvClipList != null && tvClipList.size() > 0) {
+                    sendTvClipListData(tvClipList);
+                }
+
+                //VODクリップ一覧
+                List<Map<String, String>> vodClipList = getVodClipListData();
+                if (vodClipList != null && vodClipList.size() > 0) {
+                    sendVodClipListData(vodClipList);
+                }
+
+                //視聴中ビデオ一覧
+                WatchListenVideoListDataProvider watchListenVideoListDataProvider = new WatchListenVideoListDataProvider(mContext);
+                watchListenVideoListDataProvider.getWatchListenVideoData(1);
+
+                //購入済チャンネル一覧(レンタルCh)
+                RentalChListWebClient rentalChListWebClient = new RentalChListWebClient(mContext);
+                rentalChListWebClient.getRentalChListApi((RentalChListWebClient.RentalChListJsonParserCallback) mContext);
+
+                //購入済VOD一覧(レンタルVod)
+                RentalDataProvider rentalDataProvider = new RentalDataProvider(mContext);
+                rentalDataProvider.getRentalData(true);
             }
             return null;
         }
