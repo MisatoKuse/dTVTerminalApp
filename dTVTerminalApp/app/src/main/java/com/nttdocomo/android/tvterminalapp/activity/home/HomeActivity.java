@@ -36,18 +36,39 @@ import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.dataprovider.DtvContentsDetailDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.HomeDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.RentalDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.VideoGenreProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.WatchListenVideoListDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetMetaData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChListResponse;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationResultResponse;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
+import com.nttdocomo.android.tvterminalapp.model.program.Channel;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalChListWebClient;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * ホーム画面表示.
  */
 public class HomeActivity extends BaseActivity implements View.OnClickListener,
+        VideoGenreProvider.apiGenreListDataProviderCallback,
+        VideoGenreProvider.GenreListMapCallback,
+        DtvContentsDetailDataProvider.ApiDataProviderCallback,
+        WatchListenVideoListDataProvider.WatchListenVideoListProviderCallback,
+        RentalChListWebClient.RentalChListJsonParserCallback,
+        RentalDataProvider.ApiDataProviderCallback,
         HomeDataProvider.ApiDataProviderCallback, UserInfoDataProvider.UserDataProviderCallback {
 
     /**
@@ -586,5 +607,60 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             //UserInfo取得済み
             requestHomeData();
         }
+    }
+
+    @Override
+    public void onRentalChListJsonParsed(PurchasedChListResponse RentalChListResponse) {
+        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+    }
+
+    @Override
+    public void rentalListCallback(List<ContentsData> list) {
+        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+    }
+
+    @Override
+    public void watchListenVideoListCallback(List<ContentsData> clipContentInfo) {
+        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+    }
+
+    @Override
+    public void genreListCallback(List<GenreCountGetMetaData> listData) {
+        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+    }
+
+    @Override
+    public void genreListMapCallback(Map<String, VideoGenreList> map, List<String> firstGenreIdList) {
+        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+    }
+
+    @Override
+    public void onContentsDetailInfoCallback(ArrayList<VodMetaFullData> contentsDetailInfo, boolean clipStatus) {
+        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+    }
+
+    @Override
+    public void onRoleListCallback(ArrayList<RoleListMetaData> roleListInfo) {
+        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+    }
+
+    @Override
+    public void channelListCallback(ArrayList<Channel> channels) {
+        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+    }
+
+    @Override
+    public void recordingReservationResult(RemoteRecordingReservationResultResponse response) {
+        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+    }
+
+    @Override
+    public void onRentalVodListCallback(PurchasedVodListResponse response) {
+        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+    }
+
+    @Override
+    public void onRentalChListCallback(PurchasedChListResponse response) {
+        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 }
