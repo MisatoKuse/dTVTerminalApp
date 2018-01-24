@@ -34,8 +34,8 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
 import com.nttdocomo.android.tvterminalapp.model.program.Channel;
 import com.nttdocomo.android.tvterminalapp.model.program.ChannelItemClickListener;
 import com.nttdocomo.android.tvterminalapp.model.program.ChannelsInfo;
-import com.nttdocomo.android.tvterminalapp.model.program.ProgramRecyclerView;
-import com.nttdocomo.android.tvterminalapp.model.program.ProgramScrollView;
+import com.nttdocomo.android.tvterminalapp.view.ProgramRecyclerView;
+import com.nttdocomo.android.tvterminalapp.view.ProgramScrollView;
 import com.nttdocomo.android.tvterminalapp.model.program.Schedule;
 
 import java.io.Serializable;

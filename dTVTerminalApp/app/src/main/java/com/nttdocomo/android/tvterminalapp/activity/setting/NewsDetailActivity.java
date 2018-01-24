@@ -2,7 +2,7 @@
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-package com.nttdocomo.android.tvterminalapp.activity.other;
+package com.nttdocomo.android.tvterminalapp.activity.setting;
 
 import android.os.Bundle;
 import android.view.View;

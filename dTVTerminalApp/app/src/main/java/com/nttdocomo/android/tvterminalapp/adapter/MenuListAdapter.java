@@ -2,7 +2,7 @@
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-package com.nttdocomo.android.tvterminalapp.activity.common;
+package com.nttdocomo.android.tvterminalapp.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.utils.ColorUtils;
 

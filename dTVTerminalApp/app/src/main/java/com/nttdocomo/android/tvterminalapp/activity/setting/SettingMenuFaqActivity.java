@@ -2,45 +2,48 @@
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-package com.nttdocomo.android.tvterminalapp.activity.other;
+package com.nttdocomo.android.tvterminalapp.activity.setting;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
-public class SettingMenuTermsOfServiceActivity extends BaseActivity {
+/**
+ * FAQ画面.
+ */
+public class SettingMenuFaqActivity extends BaseActivity {
 
     /**
      * WebView.
      */
-    WebView mTermsOfServiceWebView = null;
+    WebView mFaqWebView = null;
 
     /**
-     * TODO のHTMLファイル
+     * TODO 仮のURL
      */
-    private final static String SETTING_MENU_TERMS_OF_SERVICE_HTML = "file:///android_asset/terms_of_service.html";
+    private final static String SETTING_MENU_FAQ_URL = "https://www.nttdocomo.co.jp/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.setting_menu_item_main_view);
 
-        mTermsOfServiceWebView = findViewById(R.id.setting_menu_main_webview);
-        mTermsOfServiceWebView.setWebViewClient(new WebViewClient());
-        mTermsOfServiceWebView.setBackgroundColor(Color.TRANSPARENT);
-        mTermsOfServiceWebView.loadUrl(SETTING_MENU_TERMS_OF_SERVICE_HTML);
+        mFaqWebView = findViewById(R.id.setting_menu_main_webview);
+        mFaqWebView.setWebViewClient(new WebViewClient());
+        mFaqWebView.getSettings().setJavaScriptEnabled(true);
+        mFaqWebView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
+        mFaqWebView.loadUrl(SETTING_MENU_FAQ_URL);
 
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
 
         //Headerの設定
-        setTitleText(getString(R.string.main_setting_menu_title_terms_of_service));
+        setTitleText(getString(R.string.main_setting_menu_title_faq_list));
         enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
@@ -49,8 +52,8 @@ public class SettingMenuTermsOfServiceActivity extends BaseActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode == KeyEvent.KEYCODE_BACK){
-            if(mTermsOfServiceWebView.canGoBack() ) {
-                mTermsOfServiceWebView.goBack();
+            if(mFaqWebView.canGoBack() ) {
+                mFaqWebView.goBack();
                 return false;
             }
         }
