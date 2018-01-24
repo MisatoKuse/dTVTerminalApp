@@ -11,11 +11,12 @@
     <color name="menuList">#000000</color>
     <color name="menuListProgramTitle">#FFFFFF</color>
     <color name="white_text">#FFFFFF</color>
+    <color name="black_text">#000000</color>
     <color name="gray_text">#7f7f7f</color>
     <color name="disable_tab_background">#111111</color>
     <color name="list_item_background">#000000</color>
     <color name="thumbnail_background">#888888</color>
-    <color name="content_time_text">#AAAAAA</color>
+    <color name="content_time_text">#cccccc</color>
     <color name="result_line">#222222</color>
     <color name="custom_toast_background">#000000</color>
     <color name="header_background_color_red">#cc0033</color>
