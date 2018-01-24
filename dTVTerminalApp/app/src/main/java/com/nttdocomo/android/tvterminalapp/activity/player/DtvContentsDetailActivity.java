@@ -1378,7 +1378,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
         LinearLayout parentLayout = findViewById(R.id.dtv_contents_detail_main_layout_ll);
         LinearLayout scrollLayout = findViewById(R.id.contents_detail_scroll_layout);
         scrollLayout.removeViewAt(0);
-        parentLayout.addView(mThumbnailRelativeLayout, 1);
+        parentLayout.addView(mThumbnailRelativeLayout, 0);
         setThumbnailInvisible();
     }
 
