@@ -942,7 +942,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      */
     @Override
     public void onError(final String msg) {
-
+        DTVTLogger.debug("BaseActivity.onError, dlna err message: " + msg);
     }
 
     /**
