@@ -290,10 +290,10 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     protected void changeGlobalMenuIcon(final boolean isMenu) {
         if (null != mMenuImageViewForBase) {
             if (isMenu) {
-                mMenuImageViewForBase.setImageResource(R.mipmap.ic_menu_white_24dp);
+                mMenuImageViewForBase.setImageResource(R.mipmap.header_material_icon_menu);
                 mMenuImageViewForBase.setTag(HEADER_ICON_MENU);
             } else {
-                mMenuImageViewForBase.setImageResource(R.mipmap.ic_clear_white_24dp);
+                mMenuImageViewForBase.setImageResource(R.mipmap.header_material_icon_close);
                 mMenuImageViewForBase.setTag(HEADER_ICON_CLOSE);
             }
         }
@@ -312,14 +312,14 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                     try {
                         synchronized (this) {
                             if (isOn) {
-                                mStbStatusIcon.setImageResource(R.mipmap.ic_stb_status_icon_white);
+                                mStbStatusIcon.setImageResource(R.mipmap.header_material_icon_tv);
                                 //ペアリングアイコンがOFF→ON(点灯)になった際にdアカチェックを行う
                                 if (!mIsStbStatusOn) {
                                     checkDAccountOnRestart();
                                 }
 
                             } else {
-                                mStbStatusIcon.setImageResource(R.mipmap.ic_stb_status_icon_gray);
+                                mStbStatusIcon.setImageResource(R.mipmap.header_material_icon_tv_active);
                             }
                             mIsStbStatusOn = isOn;
                         }
