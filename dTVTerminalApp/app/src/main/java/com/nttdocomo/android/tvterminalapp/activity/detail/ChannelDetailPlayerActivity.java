@@ -2,7 +2,7 @@
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-package com.nttdocomo.android.tvterminalapp.activity.player;
+package com.nttdocomo.android.tvterminalapp.activity.detail;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,7 +27,7 @@ public class ChannelDetailPlayerActivity extends BaseActivity {
      * @param view
      */
     public void selectChannelButton(View view) {
-        Intent intent = new Intent(this, DtvContentsDetailActivity.class);
+        Intent intent = new Intent(this, ContentDetailActivity.class);
         intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
         startActivity(intent);
     }
@@ -56,7 +56,7 @@ public class ChannelDetailPlayerActivity extends BaseActivity {
      * @param view
      */
     public void tvProgramButton(View view) {
-        Intent intent = new Intent(this, DtvContentsDetailActivity.class);
+        Intent intent = new Intent(this, ContentDetailActivity.class);
         intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
         startActivity(intent);
     }

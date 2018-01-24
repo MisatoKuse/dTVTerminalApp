@@ -26,7 +26,7 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
@@ -85,7 +85,7 @@ public class DtvContentsDetailFragment extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         //コンテンツ詳細表示に必要なデータを取得する
-        mOtherContentsDetailData = getArguments().getParcelable(DtvContentsDetailActivity.RECOMMEND_INFO_BUNDLE_KEY);
+        mOtherContentsDetailData = getArguments().getParcelable(ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY);
         return initView(container);
     }
 
@@ -179,7 +179,7 @@ public class DtvContentsDetailFragment extends Fragment {
                     ((BaseActivity) mActivity).sendClipRequest(data, clipButton);
                 } else {
                     //未契約時は契約導線を表示するためActivityに通知
-                    ((DtvContentsDetailActivity) mActivity).leadingContract();
+                    ((ContentDetailActivity) mActivity).leadingContract();
                 }
             }
         });

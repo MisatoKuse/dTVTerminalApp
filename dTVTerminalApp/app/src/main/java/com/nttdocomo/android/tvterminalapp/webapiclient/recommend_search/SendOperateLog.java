@@ -7,7 +7,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecommendDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
@@ -59,7 +59,7 @@ public class SendOperateLog extends WebApiBase {
         mUrl.append("&cid=");
         mUrl.append(mDetailData.getContentId());
         mUrl.append("&operateKind=");
-        if (DtvContentsDetailActivity.RECOMMEND_INFO_BUNDLE_KEY.equals(mDetailData.getRecommendFlg())){
+        if (ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY.equals(mDetailData.getRecommendFlg())){
             mUrl.append("412");
         } else {
             mUrl.append("411");

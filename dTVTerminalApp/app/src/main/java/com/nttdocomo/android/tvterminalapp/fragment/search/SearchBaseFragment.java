@@ -17,7 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.SearchResultBaseAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
@@ -146,9 +146,9 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         if (mLoadMoreView.equals(view)) {
             return;
         }
-        Intent intent = new Intent(mActivity, DtvContentsDetailActivity.class);
+        Intent intent = new Intent(mActivity, ContentDetailActivity.class);
         intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
-        intent.putExtra(DtvContentsDetailActivity.RECOMMEND_INFO_BUNDLE_KEY,
+        intent.putExtra(ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY,
                 getOtherContentsDetailData(info));
         startActivity(intent);
     }
