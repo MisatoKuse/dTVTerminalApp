@@ -225,4 +225,13 @@
     <dimen name="application_info_application_value_margin_top">4dp</dimen>
     <dimen name="application_info_application_provider_margin_top">20dp</dimen>
     <dimen name="application_info_application_version_margin_top">20dp</dimen>
+
+    <!--マイ番組表設定-->
+    <dimen name="edit_my_channel_list_item_no_width">56dp</dimen>
+    <dimen name="edit_my_channel_list_item_no_height">46dp</dimen>
+    <dimen name="edit_my_channel_list_item_no_tv_width">25dp</dimen>
+    <dimen name="edit_my_channel_list_item_add_btn_width">30dp</dimen>
+    <dimen name="edit_my_channel_list_item_add_btn_margin_right">10dp</dimen>
+    <dimen name="edit_my_channel_list_item_text_size">14dp</dimen>
+
 </resources>
