@@ -587,6 +587,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                     case COMMAND_UNKNOWN:
                         switch (resultcode) {
                             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
+                                showErrorDialog(getResources().getString(R.string.main_setting_connect_error_message));
                                 //ペアリングアイコンをOFFにする
                                 setStbStatus(false);
                                 break;
@@ -1005,6 +1006,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      */
     protected void requestStartApplication(final RemoteControlRelayClient.STB_APPLICATION_TYPES type, final String contentsId) {
         remoteControllerView.sendStartApplicationRequest(type, contentsId);
+    }
+
+    protected void requestStartApplication(final RemoteControlRelayClient.STB_APPLICATION_TYPES type, final String contentsId,
+                                           final RemoteControlRelayClient.SERVICE_CATEGORY_TYPES serviceCategoryType) {
+        remoteControllerView.sendStartApplicationRequest(type, contentsId, serviceCategoryType);
     }
 
     /**
