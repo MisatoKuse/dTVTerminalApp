@@ -209,6 +209,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 setClipMargin(clipMargin,view);
                 break;
             case TYPE_VIDEO_RANK:
+            case TYPE_VIDEO_CONTENT_LIST:
                 textMargin =  TITLE_MARGINTOP21;
                 setTextMargin(textMargin,holder,view);
                 layoutParamsClip.addRule(RelativeLayout.ALIGN_PARENT_END,R.id.parent_relative_layout);
@@ -547,12 +548,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_clip.setVisibility(View.GONE);
                 break;
             case TYPE_VIDEO_RANK: // ビデオランキング
+            case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
                 holder.tv_time.setVisibility(View.GONE);
                 holder.tv_clip.setVisibility(View.GONE);
                 holder.tv_rank.setVisibility(View.GONE);
                 break;
             case TYPE_RENTAL_RANK: // レンタル一覧
-            case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
                 holder.tv_rank.setVisibility(View.GONE);
                 holder.tv_clip.setVisibility(View.GONE);
                 break;
