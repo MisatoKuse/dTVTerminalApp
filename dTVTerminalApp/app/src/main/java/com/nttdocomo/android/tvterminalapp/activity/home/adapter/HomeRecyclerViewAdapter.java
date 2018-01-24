@@ -164,7 +164,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             }
         } else {
             //URLがない場合はサムネイル取得失敗の画像を表示
-            viewHolder.mImage.setImageResource(R.mipmap.thumbnail_error);
+            viewHolder.mImage.setImageResource(R.mipmap.error_scroll);
         }
         viewHolder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override

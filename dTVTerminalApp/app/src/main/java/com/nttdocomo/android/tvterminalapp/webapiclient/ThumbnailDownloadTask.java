@@ -129,7 +129,7 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
             } else {
                 // 画像取得失敗のケース
                 if (imageView.getTag() != null && imageUrl.equals(imageView.getTag())) {
-                    imageView.setImageResource(R.mipmap.thumbnail_error);
+                    imageView.setImageResource(R.mipmap.error_scroll);
                     DTVTLogger.debug("download fail..... url=" + imageUrl);
                 }
             }

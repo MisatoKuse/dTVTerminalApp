@@ -61,7 +61,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     /**
      * GlobalMenu横幅.
      */
-    private static final int GLOBAL_MENU_WIDTH = 530;
+    private static final int GLOBAL_MENU_WIDTH = 265;
 
     /**
      * 機能.
@@ -106,7 +106,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
 
     private void initPopupWindow() {
         View popupWindowView = mActivity.getLayoutInflater().inflate(R.layout.nav_pop, null);
-        mPopupWindow = new PopupWindow(popupWindowView, GLOBAL_MENU_WIDTH,
+        mPopupWindow = new PopupWindow(popupWindowView, mActivity.dip2px(GLOBAL_MENU_WIDTH),
                 LinearLayout.LayoutParams.MATCH_PARENT, true);
         mPopupWindow.setAnimationStyle(R.style.AnimationRightFade);
         ColorDrawable dw = new ColorDrawable(ContextCompat.getColor(
