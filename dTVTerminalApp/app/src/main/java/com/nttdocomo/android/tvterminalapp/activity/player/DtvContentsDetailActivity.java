@@ -116,7 +116,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
 
     private String[] mTabNames = null;
     private String[] mDate = {"日", "月", "火", "水", "木", "金", "土"};
-    private String[] mDisPlayTypes = {"video_program", "series", "wizard", "video_package", "subscription_package", "series_svod"};
+    private String[] mDispTypes = {"video_program", "series", "wizard", "video_package", "subscription_package", "series_svod"};
     private boolean mIsPlayer = false;
     private boolean mIsControllerVisible = false;
     private Intent mIntent = null;
@@ -150,12 +150,28 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     private static final String TITTLE_START_TYPE = "dmktvideosc:///openTitle?titleId=";
     private String errorMessage;
     /*DTV起動*/
+
     /*dアニメストア起動*/
     private static final String DANIMESTORE_PACKAGE_NAME = "com.nttdocomo.android.danimeapp";
     private static final String DANIMESTORE_GOOGLEPLAY_DOWNLOAD_URL = "https://play.google.com/store/apps/details?id=com.nttdocomo.android.danimeapp";
     private static final String DANIMESTORE_START_URL = "danimestore://openWebView?url=[URL]";
     private static final int DANIMESTORE_VERSION_STANDARD = 132;
     /*dアニメストア起動*/
+
+    /*dTVチャンネル起動*/
+    private static final String METARESPONSE_DISP_TYPE_TV_PROGRAM = "tv_program";
+    private static final String DTV_CHANNEL_TV_SERVICE1 = "1";
+    private static final String DTV_CHANNEL_CATEGORY_BROADCAST = "01";
+    private static final String DTV_CHANNEL_CATEGORY_MISSED = "02";
+    private static final String DTV_CHANNEL_CATEGORY_RELATION = "03";
+    /*dTVチャンネル起動*/
+
+    /*ひかりTV起動*/
+    private static final String H4D_CATEGORY_DTV_CHANNEL_BROADCAST="04";
+    private static final String H4D_CATEGORY_DTV_CHANNEL_MISSED="05";
+    private static final String H4D_CATEGORY_DTV_CHANNEL_RELATION="06";
+    /*ひかりTV起動*/
+
     /* player start */
     private static final long HIDE_IN_3_SECOND = 3 * 1000;
     private static final int REFRESH_VIDEO_VIEW = 0;
@@ -1066,11 +1082,19 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                 // 他サービス(dtv/dtvチャンネル/dアニメ)フラグを立てる
                 mIsOtherService = true;
                 if (serviceId == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID
-                        || serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID) {
+                        || serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID
+                        || serviceId == OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID) {
                     // リモコンUIのリスナーを設定
                     createRemoteControllerView(true);
                     mIsControllerVisible = true;
                     setStartRemoteControllerUIListener(this);
+                }else if (serviceId == OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID){
+                    if (METARESPONSE_DISP_TYPE_TV_PROGRAM.equals(mDetailFullData.getDisp_type())
+                            && DTV_CHANNEL_TV_SERVICE1.equals(mDetailFullData.getmTv_service())){
+                        createRemoteControllerView(true);
+                        mIsControllerVisible = true;
+                        setStartRemoteControllerUIListener(this);
+                    }
                 }
             }
         }
@@ -1509,9 +1533,9 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                 setThrumnailText(getResources().getString(R.string.dtv_content_service_start_text));
             } else {
                 if (mDetailData.getServiceId() == OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID) {
-                    String mDisPlayType = mDetailFullData.getDisp_type();
-                    for (int i = 0; i < mDisPlayTypes.length; i++) {
-                        if (mDisPlayTypes[i].equals(mDisPlayType)) {
+                    String mDispType = mDetailFullData.getDisp_type();
+                    for (int i = 0; i < mDispTypes.length; i++) {
+                        if (mDispTypes[i].equals(mDispType)) {
                             //ひかりTV中にDTVの場合
                             if (METARESPONSE1.equals(mDetailFullData.getDtv())) {
                                 setThrumnailText(getResources().getString(R.string.dtv_content_service_start_text));
@@ -1749,16 +1773,19 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                     });
                     startAppDialog.showDialog();
                     break;
-                } else if (METARESPONSE1.equals(mDetailFullData.getDtv())) {
-                    String dtvType = mDetailFullData.getDtvType();
-                    if (dtvType != null && dtvType.equals(METARESPONSE1)) {
-                        startApp(WORK_START_TYPE + mDetailFullData.getTitle_id());
-                    } else if (dtvType != null && dtvType.equals(METARESPONSE2)) {
-                        startApp(SUPER_SPEED_START_TYPE + mDetailFullData.getTitle_id());
-                    } else {
-                        startApp(TITTLE_START_TYPE + mDetailFullData.getTitle_id());
+                } else if (mDetailData != null && mDetailData.getServiceId() == OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID) {
+                    if (METARESPONSE1.equals(mDetailFullData.getDtv())) {
+                        String dtvType = mDetailFullData.getDtvType();
+                        if (dtvType != null && dtvType.equals(METARESPONSE1)) {
+                            startApp(WORK_START_TYPE + mDetailFullData.getTitle_id());
+                        } else if (dtvType != null && dtvType.equals(METARESPONSE2)) {
+                            startApp(SUPER_SPEED_START_TYPE + mDetailFullData.getTitle_id());
+                        } else {
+                            startApp(TITTLE_START_TYPE + mDetailFullData.getTitle_id());
+                        }
                     }
                 }
+                break;
             default:
                 super.onClick(v);
         }
@@ -1833,9 +1860,60 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                             RemoteControlRelayClient.STB_APPLICATION_TYPES.DANIMESTORE, mDetailData.getContentId());
                     break;
                 case DTV_CHANNEL_CONTENTS_SERVICE_ID: // dチャンネル
-                    requestStartApplication(
-                            RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL, mDetailData.getContentId());
+                    if (!isFromHeader) {
+                        setRemoteProgressVisible(View.VISIBLE);
+                    }
+                    switch (mDetailData.getCategoryId()) {
+                        //dTVチャンネルの放送
+                        case DTV_CHANNEL_CATEGORY_BROADCAST:
+                            requestStartApplication(
+                                    RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL, mDetailData.getContentId(),
+                                    RemoteControlRelayClient.SERVICE_CATEGORY_TYPES.DTV_CHANNEL_CATEGORY_BROADCAST);
+                            break;
+                        //dTVチャンネルのVOD(見逃し)
+                        case DTV_CHANNEL_CATEGORY_MISSED:
+                            requestStartApplication(
+                                    RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL, mDetailData.getContentId(),
+                                    RemoteControlRelayClient.SERVICE_CATEGORY_TYPES.DTV_CHANNEL_CATEGORY_MISSED);
+                            break;
+                        //dTVチャンネルのVOD(見逃し)
+                        case DTV_CHANNEL_CATEGORY_RELATION:
+                            requestStartApplication(
+                                    RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL, mDetailData.getContentId(),
+                                    RemoteControlRelayClient.SERVICE_CATEGORY_TYPES.DTV_CHANNEL_CATEGORY_RELATION);
+                            break;
+                        default:
+                            break;
+                    }
                     break;
+                case OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID://ひかりTV
+                    if (!isFromHeader) {
+                        setRemoteProgressVisible(View.VISIBLE);
+                    }
+                    if (mDetailFullData.getEpisode_id() != null) {
+                        switch (mDetailData.getCategoryId()) {
+                            //ひかりTV内dTVチャンネル放送
+                            case H4D_CATEGORY_DTV_CHANNEL_BROADCAST:
+                                requestStartApplication(RemoteControlRelayClient.STB_APPLICATION_TYPES.HIKARITV,
+                                        mDetailData.getContentId(),
+                                        RemoteControlRelayClient.SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_CHANNEL_BROADCAST);
+                                break;
+                            //ひかりTV内dTVチャンネルVOD見逃し
+                            case H4D_CATEGORY_DTV_CHANNEL_MISSED:
+                                requestStartApplication(RemoteControlRelayClient.STB_APPLICATION_TYPES.HIKARITV,
+                                        mDetailData.getContentId(),
+                                        RemoteControlRelayClient.SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_CHANNEL_MISSED);
+                                break;
+                            //ひかりTV内dTVチャンネルVOD見逃し
+                            case H4D_CATEGORY_DTV_CHANNEL_RELATION:
+                                requestStartApplication(RemoteControlRelayClient.STB_APPLICATION_TYPES.HIKARITV,
+                                        mDetailData.getContentId(),
+                                        RemoteControlRelayClient.SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_CHANNEL_RELATION);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
                 default:
                     break;
             }
