@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="#666666"
-    android:layout_marginTop="5dp"
-    android:layout_marginLeft="5dp">
+    android:layout_width="@dimen/home_contents_thumbnail_width"
+    android:layout_height="@dimen/home_contents_thumbnail_height"
+    android:background="@color/home_main_background_color">
     <ImageView
         android:id="@+id/home_main_recyclerview_item_iv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="@dimen/home_contents_thumbnail_width"
+        android:layout_height="@dimen/home_contents_thumbnail_height"
+        android:layout_centerHorizontal="true"
         android:adjustViewBounds="true"
-        android:scaleType="fitCenter"/>
+        android:scaleType="fitCenter"
+        android:paddingStart="@dimen/home_contents_thumbnail_left_padding"
+        android:paddingEnd="@dimen/home_contents_thumbnail_right_padding"
+        android:background="@color/home_item_contents_background_color"/>
+    <!-- TODO 後ほどNewアイコン画像に差し替えるため、一旦このまま -->
     <TextView
         android:id="@+id/home_main_recyclerview_item_iv_new"
         android:layout_marginLeft="4dp"
@@ -28,38 +31,43 @@
         android:background="#FF0000"
         android:textColor="#FFFFFF"
         android:text="NEW"/>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@mipmap/overlay_gradation" />
     <LinearLayout
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="@dimen/home_contents_thumbnail_text_bottom_margin"
+        android:layout_marginStart="@dimen/home_contents_thumbnail_title_left_margin"
+        android:layout_marginEnd="@dimen/home_contents_thumbnail_title_right_margin"
+        android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:orientation="vertical">
         <TextView
             android:id="@+id/home_main_recyclerview_item_tv_content"
-            android:layout_marginRight="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/home_contents_thumbnail_title_bottom_margin"
             android:maxLines="1"
             android:ellipsize="end"
             android:textStyle="bold"
-            android:textSize="15dp"
-            android:textColor="#FFFFFF"
-            android:shadowColor="#222222"
+            android:textSize="@dimen/home_contents_thumbnail_text_size"
+            android:textColor="@color/home_item_contents_text_color"
+            android:shadowColor="@color/home_item_contents_text_shadow_color"
             android:shadowDx="2"
             android:shadowDy="2"
-            android:shadowRadius="2"/>
+            android:shadowRadius="2" />
         <TextView
             android:id="@+id/home_main_recyclerview_item_tv_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="13dp"
-            android:textColor="#FFFFFF"
-            android:shadowColor="#222222"
+            android:textSize="@dimen/home_contents_thumbnail_text_size"
+            android:textColor="@color/home_item_contents_text_color"
+            android:shadowColor="@color/home_item_contents_text_shadow_color"
             android:shadowDx="2"
             android:shadowDy="2"
-            android:shadowRadius="2"/>
+            android:shadowRadius="2" />
     </LinearLayout>
 </RelativeLayout>
