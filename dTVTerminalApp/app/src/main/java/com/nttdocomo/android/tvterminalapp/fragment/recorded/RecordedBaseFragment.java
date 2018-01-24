@@ -596,14 +596,18 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
      * @param msg
      */
     private void showMessage(String msg) {
-        DTVTLogger.start();
-        Context context=getActivity();
-        if(null == context){
+        try{
+            DTVTLogger.start();
+            Context context=getActivity();
+            if(null == context){
+                DTVTLogger.end();
+                return;
+            }
+            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
             DTVTLogger.end();
-            return;
+        } catch (Exception e){
+            DTVTLogger.debug(e);
         }
-        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
-        DTVTLogger.end();
     }
 
     /**
