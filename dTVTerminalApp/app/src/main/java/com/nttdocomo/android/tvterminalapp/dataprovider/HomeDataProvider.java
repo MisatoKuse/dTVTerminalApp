@@ -211,14 +211,14 @@ public class HomeDataProvider implements
             if (VideoRankList != null && VideoRankList.size() > 0) {
                 sendVideoRankListData(VideoRankList);
             }
-            //データ取得のみ(リクエスト～DB保存までの処理を新設するか検討中)
+            //データ取得のみ(API取得～DB保存までの処理を新設するか検討中)
             //ジャンルID(ビデオ一覧)一覧取得
             VideoGenreProvider videoGenreProvider = new VideoGenreProvider(mContext);
             videoGenreProvider.getGenreListDataRequest();
 
             //ロールID一覧取得
-            DtvContentsDetailDataProvider detailDataProvider = new DtvContentsDetailDataProvider(mContext);
-            detailDataProvider.getRoleListData();
+            RoleListDataProvider roleListDataProvider = new RoleListDataProvider(mContext);
+            roleListDataProvider.requestRoleListData();
 
             //チャンネルリスト取得
             ChannelDataProvider channelDataProvider = new ChannelDataProvider(mContext);
