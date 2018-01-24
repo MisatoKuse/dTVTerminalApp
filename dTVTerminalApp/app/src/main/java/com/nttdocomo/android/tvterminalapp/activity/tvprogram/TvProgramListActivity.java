@@ -23,7 +23,7 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.ChannelDetailPlayerActivity;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ChannelDetailPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ProgramChannelAdapter;
 import com.nttdocomo.android.tvterminalapp.adapter.TvProgramListAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;

@@ -24,7 +24,7 @@ import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
@@ -330,7 +330,7 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
      * @param view
      */
     public void contentsDetailButton(View view) {
-        Intent intent = new Intent(this, DtvContentsDetailActivity.class);
+        Intent intent = new Intent(this, ContentDetailActivity.class);
         intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
         startActivity(intent);
     }

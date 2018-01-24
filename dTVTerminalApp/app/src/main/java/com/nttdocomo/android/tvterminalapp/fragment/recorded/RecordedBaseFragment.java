@@ -21,11 +21,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
@@ -161,7 +160,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 showMessage("ダウンロード中のため、再生できません");
             } else {
                 if(activity != null){
-                    Intent intent = new Intent(mActivity, DtvContentsDetailActivity.class);
+                    Intent intent = new Intent(mActivity, ContentDetailActivity.class);
                     intent.putExtra(DTVTConstants.SOURCE_SCREEN, activity.getComponentName().getClassName());
                     intent.putExtra(RecordedListActivity.RECORD_LIST_KEY, mContentsList.get(i));
                     startActivity(intent);

@@ -20,7 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.Scroller;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.model.remotecontroller.RemoteControllerSendKeyAction;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
@@ -76,7 +76,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     public RemoteControllerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mContext = context;
-        if (context instanceof DtvContentsDetailActivity) {
+        if (context instanceof ContentDetailActivity) {
             mHeaderHeight = 50;
         } else {
             mHeaderHeight = 0;

@@ -16,7 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.RecommendListBaseAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
@@ -144,9 +144,9 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         ContentsData info = mData.get(i);
-        Intent intent = new Intent(mActivity, DtvContentsDetailActivity.class);
+        Intent intent = new Intent(mActivity, ContentDetailActivity.class);
         intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
-        intent.putExtra(DtvContentsDetailActivity.RECOMMEND_INFO_BUNDLE_KEY,
+        intent.putExtra(ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY,
                 getOtherContentsDetailData(info));
         startActivity(intent);
     }
@@ -175,7 +175,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
         detailData.setGroupId(info.getGroupId());
         detailData.setRecommendMethodId(info.getRecommendMethodId());
         detailData.setCategoryId(info.getCategoryId());
-        detailData.setRecommendFlg(DtvContentsDetailActivity.RECOMMEND_INFO_BUNDLE_KEY);
+        detailData.setRecommendFlg(ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY);
 
         return detailData;
     }

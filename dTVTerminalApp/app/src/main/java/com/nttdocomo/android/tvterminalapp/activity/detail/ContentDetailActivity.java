@@ -2,7 +2,7 @@
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-package com.nttdocomo.android.tvterminalapp.activity.player;
+package com.nttdocomo.android.tvterminalapp.activity.detail;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -96,7 +96,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public class DtvContentsDetailActivity extends BaseActivity implements DtvContentsDetailDataProvider.ApiDataProviderCallback,
+public class ContentDetailActivity extends BaseActivity implements DtvContentsDetailDataProvider.ApiDataProviderCallback,
         View.OnClickListener, MediaPlayerController.OnStateChangeListener, MediaPlayerController.OnFormatChangeListener,
         MediaPlayerController.OnPlayerEventListener, MediaPlayerController.OnErrorListener, MediaPlayerController.OnCaptionDataListener,
         RemoteControllerView.OnStartRemoteControllerUIListener, DtvContentsDetailFragment.RecordingReservationIconListener {
@@ -454,10 +454,10 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             return;
         }
         Intent intent = new Intent();
-        intent.setClassName(DtvContentsDetailActivity.this.getPackageName(),
+        intent.setClassName(ContentDetailActivity.this.getPackageName(),
                 ActivationClientDefinition.activationActivity);
         intent.putExtra(ActivationClientDefinition.EXTRA_DEVICE_KEY,
-                EnvironmentUtil.getPrivateDataHome(DtvContentsDetailActivity.this,
+                EnvironmentUtil.getPrivateDataHome(ContentDetailActivity.this,
                         EnvironmentUtil.ACTIVATE_DATA_HOME.PLAYER));
         startActivityForResult(intent, ACTIVATION_REQUEST_CODE);
         ++mActivationTimes;
@@ -1719,7 +1719,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                         public void onOKCallback(boolean isOK) {
                             int localVersionCode = getVersionCode(DTV_PACKAGE_NAME);
                             //端末にDTVアプリはすでに存在した場合
-                            if (isAppInstalled(DtvContentsDetailActivity.this, DTV_PACKAGE_NAME)) {
+                            if (isAppInstalled(ContentDetailActivity.this, DTV_PACKAGE_NAME)) {
                                 //バージョンチェック
                                 if (localVersionCode < DTV_VERSION_STANDARD) {
                                     errorMessage = getResources().getString(R.string.dtv_content_service_update_dialog);
@@ -1756,7 +1756,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
                         public void onOKCallback(boolean isOK) {
                             int localVersionCode = getVersionCode(DANIMESTORE_PACKAGE_NAME);
                             //端末にdアニメストアアプリはすでに存在した場合
-                            if (isAppInstalled(DtvContentsDetailActivity.this, DANIMESTORE_PACKAGE_NAME)) {
+                            if (isAppInstalled(ContentDetailActivity.this, DANIMESTORE_PACKAGE_NAME)) {
                                 //バージョンチェック
                                 if (localVersionCode < DANIMESTORE_VERSION_STANDARD) {
                                     errorMessage = getResources().getString(R.string.d_anime_store_content_service_update_dialog);

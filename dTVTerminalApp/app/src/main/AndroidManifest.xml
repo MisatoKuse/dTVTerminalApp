@@ -127,16 +127,11 @@
 
 
         <!-- ====================================== Player グループ Begin ====================================== -->
-        <activity android:name=".activity.player.ChannelDetailPlayerActivity" />
-        <activity android:name=".activity.player.RecordedVideoPlayerActivity" />
+        <activity android:name=".activity.detail.ChannelDetailPlayerActivity" />
         <activity
-            android:name=".activity.player.DtvContentsDetailActivity"
+            android:name=".activity.detail.ContentDetailActivity"
             android:configChanges="keyboardHidden|keyboard|orientation|screenSize"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.player.VideoPlayerActivity" />
-        <activity
-            android:name=".activity.player.RecommendPlayerActivity"
-            android:launchMode="singleTop" />
         <activity
             android:name="com.digion.dixim.android.activation.ActivationActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"

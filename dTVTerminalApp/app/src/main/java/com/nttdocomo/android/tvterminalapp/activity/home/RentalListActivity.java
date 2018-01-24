@@ -16,7 +16,7 @@ import android.widget.ListView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
@@ -176,7 +176,7 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
         if (mLoadMoreView.equals(view)) {
             return;
         }
-        Intent intent = new Intent(this, DtvContentsDetailActivity.class);
+        Intent intent = new Intent(this, ContentDetailActivity.class);
         intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
         startActivity(intent);
     }

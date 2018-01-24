@@ -28,18 +28,14 @@ import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplayEventListener;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuItem;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuItemParam;
-import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.DAccountReSettingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity;
-import com.nttdocomo.android.tvterminalapp.activity.launch.STBConnectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.DownLoadListDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
@@ -1032,8 +1028,8 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                 case R.id.header_stb_status_icon:
                     if (getStbStatus()) {
                         DTVTLogger.debug("Start RemoteControl");
-                        if (v.getContext() instanceof DtvContentsDetailActivity) {
-                            if (((DtvContentsDetailActivity) v.getContext()).getControllerVisible()) {
+                        if (v.getContext() instanceof ContentDetailActivity) {
+                            if (((ContentDetailActivity) v.getContext()).getControllerVisible()) {
                                 // コンテンツ詳細画面でコントローラのヘッダーを表示する場合
                                 createRemoteControllerView(true);
                             } else {

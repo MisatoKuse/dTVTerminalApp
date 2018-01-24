@@ -17,10 +17,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
-import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 
 import java.util.List;
@@ -169,7 +168,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         viewHolder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext, DtvContentsDetailActivity.class);
+                Intent intent = new Intent(mContext, ContentDetailActivity.class);
                 ComponentName componentName = mContext.getComponentName();
                 intent.putExtra(DTVTConstants.SOURCE_SCREEN, componentName.getClassName());
                 mContext.startActivity(intent);

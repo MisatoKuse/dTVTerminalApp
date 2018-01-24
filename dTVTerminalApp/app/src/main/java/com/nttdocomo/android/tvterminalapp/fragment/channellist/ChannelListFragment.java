@@ -17,7 +17,7 @@ import android.widget.ListView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ChannelListAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
@@ -254,7 +254,7 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
             return;
         }
         if (null != mActivity) {
-            Intent intent = new Intent(mActivity, DtvContentsDetailActivity.class);
+            Intent intent = new Intent(mActivity, ContentDetailActivity.class);
             intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
             intent.putExtra(RecordedListActivity.RECORD_LIST_KEY, datas);
             startActivity(intent);

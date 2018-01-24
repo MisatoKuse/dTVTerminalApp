@@ -10,7 +10,7 @@ import android.widget.RelativeLayout;
 
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 
 public class VideoPurchListActivity extends BaseActivity {
 
@@ -27,7 +27,7 @@ public class VideoPurchListActivity extends BaseActivity {
         relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(DtvContentsDetailActivity.class, null);
+                startActivity(ContentDetailActivity.class, null);
             }
         });
     }
