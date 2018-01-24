@@ -642,6 +642,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
 
                 //コンテキストがあればSSL証明書失効チェックを行う
                 if (mContext != null) {
+                    DTVTLogger.debug(mSourceUrl);
                     //SSL証明書失効チェックライブラリの初期化を行う
                     OcspUtil.init(mContext);
 

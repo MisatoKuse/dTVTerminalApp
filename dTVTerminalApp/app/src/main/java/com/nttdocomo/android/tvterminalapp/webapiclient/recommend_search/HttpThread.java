@@ -146,6 +146,8 @@ public class HttpThread extends Thread {
 
             //コンテキストがあればSSL証明書失効チェックを行う
             if (mContext != null) {
+                DTVTLogger.debug(mUrl);
+
                 //SSL証明書失効チェックライブラリの初期化を行う
                 OcspUtil.init(mContext);
 
