@@ -6,17 +6,23 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:descendantFocusability="blocksDescendants">
+    android:id="@+id/parent_relative_layout"
+    android:layout_marginEnd="@dimen/watch_listen_thumbnail_margin_top_bottom"
+    >
 
     <RelativeLayout
         android:id="@+id/item_common_result_thumbnail_rl"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:descendantFocusability="blocksDescendants">
 
         <ImageView
             android:id="@+id/item_common_result_thumbnail_iv"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="@dimen/watch_listen_thumbnail_high"
+            android:layout_height="@dimen/watch_listen_thumbnail_width"
+            android:layout_marginStart="@dimen/watch_listen_thumbnail_margin_left"
+            android:layout_marginTop="@dimen/watch_listen_thumbnail_margin_top_bottom"
+            android:layout_marginBottom="@dimen/watch_listen_thumbnail_margin_top_bottom"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:adjustViewBounds="true"
@@ -26,11 +32,11 @@
 
         <TextView
             android:id="@+id/item_common_result_rank_num"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/recorded_rank_num_margin_start"
-            android:layout_marginTop="@dimen/list_item_common_result_rank_num_top_margin"
-            android:background="@drawable/rank_shape_corner"
+            android:layout_width="@dimen/watch_listen_rank_num_width"
+            android:layout_height="@dimen/watch_listen_rank_num_high"
+            android:layout_marginStart="@dimen/watch_listen_rank_num_margin_start"
+            android:layout_marginTop="@dimen/watch_listen_rank_num_margin_top"
+            android:background="@drawable/label_ranking_other"
             android:gravity="center"
             android:paddingStart="@dimen/recorded_rank_num_left_padding"
             android:paddingEnd="@dimen/list_item_common_result_rank_num_right_padding"
@@ -42,15 +48,16 @@
         android:id="@+id/item_common_result_show_status_area"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true">
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true">
 
         <ImageView
             android:id="@+id/item_common_result_clip_tv"
             android:layout_width="@dimen/clip_button_size"
             android:layout_height="@dimen/clip_button_size"
-            android:layout_marginEnd="@dimen/recorded_clip_tv_margin_end"
             android:clickable="true"
+            android:layout_marginStart="@dimen/watch_listen_rating_margin_top"
+            android:layout_marginEnd="@dimen/watch_listen_text_size"
             android:background="@color/list_item_background" />
 
         <TextView
@@ -68,14 +75,11 @@
         android:id="@+id/item_common_result_contents"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="@dimen/list_item_result_contents_margin_end"
-        android:layout_marginStart="@dimen/list_item_result_contents_margin_start"
+        android:layout_marginTop="@dimen/watch_listen_linear_layout_margin_top"
+        android:layout_marginStart="@dimen/watch_listen_thumbnail_margin_left"
         android:layout_toEndOf="@id/item_common_result_thumbnail_rl"
         android:layout_toStartOf="@id/item_common_result_show_status_area"
-        android:orientation="vertical"
-        android:paddingBottom="@dimen/list_item_result_contents_bottom_padding"
-        android:paddingTop="@dimen/list_item_result_contents_top_padding">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/item_common_result_channel_name"
@@ -109,7 +113,7 @@
                 android:maxLines="1"
                 android:text="@string/contents_hyphen"
                 android:textColor="@color/content_time_text"
-                android:textSize="@dimen/list_item_time_text_size"
+                android:textSize="@dimen/list_item_recording_reservation_status_text_size"
                 android:visibility="gone" />
 
             <TextView
@@ -129,14 +133,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
+            android:gravity="center|start"
+            android:paddingTop="@dimen/watch_listen_result_content_text_padding_top"
             android:maxLines="2"
             android:textColor="@color/white_text"
-            android:textSize="@dimen/list_item_title_text_size" />
+            android:textSize="@dimen/watch_listen_result_content_title" />
 
         <LinearLayout
             android:id="@+id/item_common_result_content_rating"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/watch_listen_result_content_rating_margin_top"
             android:orientation="horizontal">
 
             <RatingBar
@@ -161,8 +168,9 @@
         android:id="@+id/item_common_result_line"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/watch_listen_thumbnail_margin_left"
         android:layout_alignParentBottom="true"
-        android:background="#222222" />
+        android:background="@color/ranking_list_background" />
     <TextView
         android:id="@+id/item_common_result_device_name"
         android:layout_width="match_parent"

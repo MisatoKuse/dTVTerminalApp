@@ -56,13 +56,24 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     //サムネイル高さ サムネイル幅さ2分の1
     private final static int THUMBNAIL_HEIGHT = 2;
     //サムネイルmarginleft
-    private final static int THUMBNAIL_MARGINLEFT = 15;
+    private final static int THUMBNAIL_MARGINLEFT = 16;
     //サムネイルmargintop
-    private final static int THUMBNAIL_MARGINTOP = 10;
+    private final static int THUMBNAIL_MARGINEND = 10;
     //サムネイルmarginright
-    private final static int THUMBNAIL_MARGINRIGHT = 8;
+    private final static int THUMBNAIL_MARGINRIGHT = 16;
     //サムネイルmarginbottom
     private final static int THUMBNAIL_MARGINBOTTOM = 10;
+    //status　margintop
+    private final static int STATUS_MARGINTOP17 = 17;
+    private final static int STATUS_MARGINTOP12 = 12;
+
+    //番組タイトル margintop
+    private final static int TITLE_MARGINTOP21 = 21;
+
+    //クリップアイコンmargintop
+    private final static int CLIP_MARGINTOP35 = 35;
+    //時刻テキストサイズ
+    private final static int TIME_TEXT_SIZE = 12;
     //margin0
     private final static int THUMBNAIL_MARGIN0 = 0;
     //ライン高さ
@@ -81,6 +92,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     public final static int DOWNLOAD_STATUS_LOADING = 1;
 
     public final static int DOWNLOAD_STATUS_COMPLETED = 2;
+    //アイテムposition
+    public final static int CONTENT_POSITION_ONE = 0;
+    public final static int CONTENT_POSITION_TWO = 1;
+    public final static int CONTENT_POSITION_THREE = 2;
 
     private DownloadCallback mDownloadCallback;
 
@@ -147,9 +162,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             holder = new ViewHolder();
             view = setViewPattern(parent);
             holder = setListItemPattern(holder, view);
-
-            //ディスプレイ基づいて、画像の長さと幅さを設定
-            setView(holder);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
@@ -184,7 +196,80 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             setDownloadStatus(holder,listContentInfo, position);
         }
 
+        RelativeLayout.LayoutParams layoutParamsClip = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        int textMargin;
+        int clipMargin;
+        switch (mType) {
+            case TYPE_DAILY_RANK:
+            case TYPE_WEEKLY_RANK:
+                textMargin  = STATUS_MARGINTOP17;
+                clipMargin = CLIP_MARGINTOP35;
+                setTextMargin(textMargin,holder,view);
+                setClipMargin(clipMargin,view);
+                break;
+            case TYPE_VIDEO_RANK:
+                textMargin =  TITLE_MARGINTOP21;
+                setTextMargin(textMargin,holder,view);
+                layoutParamsClip.addRule(RelativeLayout.ALIGN_PARENT_END,R.id.parent_relative_layout);
+                layoutParamsClip.addRule(RelativeLayout.CENTER_VERTICAL);
+                view.findViewById(R.id.item_common_result_show_status_area).setLayoutParams(layoutParamsClip);
+                break;
+            case TYPE_RENTAL_RANK:
+                textMargin = STATUS_MARGINTOP12;
+                setTextMargin(textMargin,holder,view);
+                layoutParamsClip.addRule(RelativeLayout.ALIGN_PARENT_END,R.id.parent_relative_layout);
+                layoutParamsClip.addRule(RelativeLayout.CENTER_VERTICAL);
+                view.findViewById(R.id.item_common_result_show_status_area).setLayoutParams(layoutParamsClip);
+                break;
+            default:
+                break;
+        }
+        holder.tv_rank.setBackgroundResource(R.drawable.label_ranking_other);
+        if(holder.tv_rank.getVisibility() == View.VISIBLE){
+            if(position == CONTENT_POSITION_ONE)
+                holder.tv_rank.setBackgroundResource(R.drawable.label_ranking_1);
+            holder.tv_rank.setTextColor(ContextCompat.getColor(mContext, R.color.black_text));
+            if(position == CONTENT_POSITION_TWO){
+                holder.tv_rank.setBackgroundResource(R.drawable.label_ranking_2);
+            }
+            if(position == CONTENT_POSITION_THREE){
+                holder.tv_rank.setBackgroundResource(R.drawable.label_ranking_3);
+            }
+            if(position >= CONTENT_POSITION_TWO){
+                holder.tv_rank.setTextColor(ContextCompat.getColor(mContext, R.color.white_text));
+            }
+        }
         return view;
+    }
+    private void setClipMargin(int clipMargin, View view) {
+        DisplayMetrics DisplayMetrics = mContext.getResources().getDisplayMetrics();
+        float density = DisplayMetrics.density;
+
+        RelativeLayout.LayoutParams layoutParamsClip = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        layoutParamsClip.setMargins(THUMBNAIL_MARGIN0 * (int) density,  clipMargin *(int) density,
+                THUMBNAIL_MARGIN0 * (int) density,THUMBNAIL_MARGIN0 * (int) density);
+        layoutParamsClip.addRule(RelativeLayout.ALIGN_PARENT_END,R.id.parent_relative_layout);
+        view.findViewById(R.id.item_common_result_show_status_area).setLayoutParams(layoutParamsClip);
+    }
+    private void setTextMargin(int textMargin, ViewHolder holder,View view) {
+        DisplayMetrics DisplayMetrics = mContext.getResources().getDisplayMetrics();
+        float density = DisplayMetrics.density;
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+        layoutParams.setMargins(THUMBNAIL_MARGIN0 * (int) density, textMargin * (int) density,
+                THUMBNAIL_MARGIN0 * (int) density, THUMBNAIL_MARGIN0 * (int) density);
+        layoutParams.setMarginStart(THUMBNAIL_MARGINLEFT * (int) density);
+        layoutParams.addRule(RelativeLayout.START_OF, R.id.item_common_result_show_status_area);
+        layoutParams.addRule(RelativeLayout.END_OF, R.id.item_common_result_thumbnail_rl);
+        if (holder.tv_clip.getVisibility() == View.GONE) {
+            layoutParams.setMarginEnd(THUMBNAIL_MARGINEND * (int) density);
+        } else {
+            layoutParams.setMarginEnd(THUMBNAIL_MARGIN0 * (int) density);
+        }
+        view.findViewById(R.id.item_common_result_contents).setLayoutParams(layoutParams);
+        holder.tv_time.setTextSize(TIME_TEXT_SIZE);
     }
 
     /**
@@ -379,22 +464,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         }
     }
 
-    /**
-     * ビューの設定
-     */
-    private void setView(ViewHolder holder) {
-        DTVTLogger.start();
-        DisplayMetrics DisplayMetrics = mContext.getResources().getDisplayMetrics();
-        float density = DisplayMetrics.density;
-        float mWidth = (float) DisplayMetrics.widthPixels / THUMBNAIL_WIDTH;
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int) mWidth, (int) mWidth / THUMBNAIL_HEIGHT);
-        layoutParams.setMargins((int) density * THUMBNAIL_MARGINLEFT, (int) density * THUMBNAIL_MARGINTOP, (int) density * THUMBNAIL_MARGINRIGHT, (int) density * THUMBNAIL_MARGINBOTTOM);
-        holder.rl_thumbnail.setLayoutParams(layoutParams);
-        layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, (int) density * LINE_HEIGHT);
-        layoutParams.setMargins((int) density * THUMBNAIL_MARGINLEFT, THUMBNAIL_MARGIN0, THUMBNAIL_MARGIN0, THUMBNAIL_MARGIN0);
-        holder.tv_line.setLayoutParams(layoutParams);
-    }
-
     private View setViewPattern(ViewGroup parent) {
         DTVTLogger.start();
         // TODO 録画予約一覧以外のパターンも共通項目以外を抽出し、修正する
@@ -480,6 +549,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_VIDEO_RANK: // ビデオランキング
                 holder.tv_time.setVisibility(View.GONE);
                 holder.tv_clip.setVisibility(View.GONE);
+                holder.tv_rank.setVisibility(View.GONE);
                 break;
             case TYPE_RENTAL_RANK: // レンタル一覧
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
@@ -620,7 +690,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     }
 
     public interface DownloadCallback {
-         public void downloadClick(View v);
+        public void downloadClick(View v);
     }
 
     @Override
