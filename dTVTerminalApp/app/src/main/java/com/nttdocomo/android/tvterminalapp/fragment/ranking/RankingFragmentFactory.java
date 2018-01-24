@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.fragment.ranking;
 
+import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +20,7 @@ public class RankingFragmentFactory {
      * @param lis
      * @return
      */
-    public RankingBaseFragment createFragment(int mode, int position, RankingFragmentScrollListener lis) {
+    public RankingBaseFragment createFragment(ContentsAdapter.ActivityTypeItem mode, int position, RankingFragmentScrollListener lis) {
         RankingBaseFragment fragment = null;
         fragment = mFragments.get(position);
         if (fragment == null) {

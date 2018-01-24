@@ -187,12 +187,7 @@
     <string name="video_ranking_title">ビデオランキング</string>
     <string name="common_ranking_enter">\n</string>
     <string name="contents_header">　></string>
-    <string-array name="ranking_tab_names">
-        <item>総合</item>
-        <item>海外映画</item>
-        <item>国内映画</item>
-        <item>海外TV番組・ドラマ</item>
-    </string-array>
+    <string name="common_ranking_tab_all">総合</string>
 
     <string name="tv_icon_description">テレビアイコン</string>
     <string name="menu_icon_description">メニューアイコン</string>

@@ -7,7 +7,11 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
+import com.nttdocomo.android.tvterminalapp.activity.ranking.WeeklyTvRankingActivity;
+import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.dataprovider.callback.VideoRankingApiDataProviderCallback;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListMetaData;
@@ -27,16 +31,24 @@ public class VideoGenreProvider implements
 
     private apiGenreListDataProviderCallback mApiGenreListDataProviderCallback = null;
 
-    private static final String VIDEO_GENRE_KEY_PLALA = "PLALA";
+    private static final String VIDEO_GENRE_KEY_IPTV = "IPTV";
     private static final String VIDEO_GENRE_KEY_NOD = "NOD";
     private static final String VIDEO_GENRE_KEY_ARIB = "ARIB";
     private Context mContext = null;
 
     private GenreListMapCallback genreListMapCallback;
 
+    private RankGenreListCallback mRankGenreListCallback;
+
+    private ContentsAdapter.ActivityTypeItem type;
+
     @Override
     public void onGenreListJsonParsed(GenreListResponse genreListResponse) {
-        getGenreList(genreListResponse);
+        if(mRankGenreListCallback != null){
+            setRankGenreListData(genreListResponse);
+        } else {
+            getGenreList(genreListResponse);
+        }
     }
 
     @Override
@@ -64,12 +76,25 @@ public class VideoGenreProvider implements
     }
 
     /**
+     * ジャンルリストデータを返却するためのコールバック
+     */
+    public interface RankGenreListCallback {
+        void onRankGenreListCallback(ArrayList<GenreListMetaData> genreMetaDataList);
+    }
+
+    /**
      * ジャンル一覧
      * コンストラクタ
      */
     public VideoGenreProvider(Context context) {
         this.mApiGenreListDataProviderCallback = (apiGenreListDataProviderCallback) context;
         genreListMapCallback = (GenreListMapCallback) context;
+        mContext = context;
+    }
+
+    public VideoGenreProvider(Context context, RankGenreListCallback mRankGenreListCallback, ContentsAdapter.ActivityTypeItem type) {
+        this.type = type;
+        this.mRankGenreListCallback = mRankGenreListCallback;
         mContext = context;
     }
 
@@ -111,6 +136,54 @@ public class VideoGenreProvider implements
     }
 
     /**
+     * ジャンル一覧データをリストに形成する
+     *
+     * @param genreListResponse ジャンル一覧APIからのレスポンス
+     */
+    private void setRankGenreListData(GenreListResponse genreListResponse){
+        try {
+            Map<String, ArrayList<GenreListMetaData>> listMap = genreListResponse.getTypeList();
+            if(listMap == null){
+                DTVTLogger.error("response is null");
+                mRankGenreListCallback.onRankGenreListCallback(null);
+            } else {
+                if(mContext != null){
+                    ArrayList<GenreListMetaData> genreMetaDataList = new ArrayList<>();
+                    GenreListMetaData genreAll = new GenreListMetaData();
+                    genreAll.setTitle(mContext.getResources().getString(R.string.common_ranking_tab_all));
+                    genreAll.setId("");
+                    genreMetaDataList.add(genreAll);
+                    if (ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK.equals(type)) {
+                        //IPTVコンテンツデータをすべて取得
+                        if (listMap.get(VIDEO_GENRE_KEY_IPTV) != null) {
+                            genreMetaDataList.addAll(listMap.get(VIDEO_GENRE_KEY_IPTV));
+                        } else {
+                            DTVTLogger.error("IPTV is not found");
+                        }
+                    } else if (ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK.equals(type)) {
+                        //ARIBコンテンツデータをすべて取得
+                        if (listMap.get(VIDEO_GENRE_KEY_ARIB) != null) {
+                            genreMetaDataList.addAll(listMap.get(VIDEO_GENRE_KEY_ARIB));
+                        } else {
+                            DTVTLogger.error("ARIB is not found");
+                        }
+                    } else {
+                        DTVTLogger.error("activity is not found");
+                    }
+                    mRankGenreListCallback.onRankGenreListCallback(genreMetaDataList);
+                } else {
+                    DTVTLogger.error("context is null");
+                    mRankGenreListCallback.onRankGenreListCallback(null);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            DTVTLogger.error("response genreListData error");
+        }
+    }
+
+    /**
      * ジャンル一覧データをMapに形成する
      *
      * @param genreListResponse ジャンル一覧APIからのレスポンス
@@ -123,13 +196,13 @@ public class VideoGenreProvider implements
         } catch (Exception e) {
             DTVTLogger.error("response is null");
         }
-        //PLALAコンテンツデータをすべて取得
-        if (listMap.get(VIDEO_GENRE_KEY_PLALA) != null) {
+        //IPTVコンテンツデータをすべて取得
+        if (listMap.get(VIDEO_GENRE_KEY_IPTV) != null) {
             GenreListMetaData genreAll = new GenreListMetaData();
             genreAll.setTitle(mContext.getResources().getString(R.string.video_list_genre_all));
             genreAll.setId(GenreListMetaData.VIDEO_LIST_GENRE_ID_ALL_CONTENTS);
             genreMetaDataList.add(genreAll);
-            genreMetaDataList.addAll(listMap.get(VIDEO_GENRE_KEY_PLALA));
+            genreMetaDataList.addAll(listMap.get(VIDEO_GENRE_KEY_IPTV));
         }
 
         //NODコンテンツデータをすべて取得

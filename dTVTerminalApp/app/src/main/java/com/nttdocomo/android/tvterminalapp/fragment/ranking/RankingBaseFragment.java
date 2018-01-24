@@ -40,7 +40,7 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
     private RankingFragmentScrollListener mRankingBaseFragmentScrollListener = null;
 
     private View mLoadMoreView;
-    private int mRankingMode = 0;
+    private ContentsAdapter.ActivityTypeItem mRankingMode;
 
     //スクロール位置の記録
     private int mFirstVisibleItem = 0;
@@ -110,22 +110,17 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
      * 各ランキングページを判定
      */
     public void initRankingView() {
-        switch (mRankingMode) {
-            case RankingConstants.RANKING_MODE_NO_OF_WEEKLY: // 週間
-                initWeeklyContentListView();
-                break;
-            case RankingConstants.RANKING_MODE_NO_OF_VIDEO: // ビデオ
-                initVideoContentListView();
-                break;
-            default:
-                break;
+        if (ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK.equals(mRankingMode)) {// 週間
+            initWeeklyContentListView();
+        } else if(ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK.equals(mRankingMode)){// ビデオ
+            initVideoContentListView();
         }
     }
 
     /**
      * 各ランキングページを切り替え
      */
-    public void switchRankingMode(int rankingMode) {
+    public void switchRankingMode(ContentsAdapter.ActivityTypeItem rankingMode) {
         mRankingMode = rankingMode;
         mContentsAdapter = null;
         if (mRankingListView != null) {

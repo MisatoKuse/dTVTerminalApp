@@ -70,7 +70,7 @@ public class DailyTvRankingActivity extends BaseActivity implements
 
         initView();
         mRankingTopDataProvider = new RankingTopDataProvider(this);
-        mRankingTopDataProvider.getRankingTopData();
+        mRankingTopDataProvider.getDailyRankList();
     }
 
     /**
