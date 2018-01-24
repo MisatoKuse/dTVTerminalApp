@@ -96,6 +96,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+/**
+ * コンテンツ詳細画面 Activity.
+ * 視聴・録画再生も含めて全てのコンテンツはこのActivityで表示を行う.
+ * クラス名のRename禁止(dCHアプリを起動するコンポーネントは、dCHアプリ側でホワイトリスト化するとのこと)
+ */
 public class ContentDetailActivity extends BaseActivity implements DtvContentsDetailDataProvider.ApiDataProviderCallback,
         View.OnClickListener, MediaPlayerController.OnStateChangeListener, MediaPlayerController.OnFormatChangeListener,
         MediaPlayerController.OnPlayerEventListener, MediaPlayerController.OnErrorListener, MediaPlayerController.OnCaptionDataListener,
