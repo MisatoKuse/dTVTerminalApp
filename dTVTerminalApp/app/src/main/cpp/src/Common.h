@@ -131,7 +131,8 @@ namespace dtvt {
     const char * const DlnaHikariChListItem_Field_mVideoType       ="mVideoType";
 
     //java string path
-    const char * const Dlna_Java_String_Path = "java/lang/String";    //"Ljava/lang/String;";
+    //const char * const Dlna_Java_String_Path = "java/lang/String";  error on android 8.x
+    const char * const Dlna_Java_String_Path = "Ljava/lang/String;";
 
     //xml item key from DlnaRecVideoItem.java、「DlnaRecVideoXmlParser、DlnaTerChXmlParser、DlnaBsDigitalXmlParser」に共用される
     const int Xml_Item_Id=1;

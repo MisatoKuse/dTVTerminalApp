@@ -71,6 +71,12 @@ public class DlnaInterfaceDl {
 //            DTVTLogger.debug("dtcp before copy db_post, ---------------->"+file.getName());
 //        }
 
+        if(!homeDtcpPathDir.exists()){
+            if(!homeDtcpPathDir.mkdirs()){
+                return DlnaDownloadRet.DownloadRet_CopyKeyFileFailed;
+            }
+        }
+
         String homeParent= getParentDir(homeDtcpPath);
         int ret= NewEnvironmentUtil.copyDeviceKeyFromOtherCMWork(mContext, homeParent, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP);
         if(1!=ret && 3!=ret){
