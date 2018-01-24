@@ -9,9 +9,12 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ScrollView;
 
+import com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActivity;
+
 public class ProgramScrollView extends ScrollView {
 
     private View mView;
+    private TvProgramListActivity onScrollOffsetListener;
 
     public ProgramScrollView(Context context) {
         super(context);
@@ -27,9 +30,27 @@ public class ProgramScrollView extends ScrollView {
         if (mView != null) {
             mView.scrollTo(l, t);
         }
+        if(onScrollOffsetListener != null){
+            onScrollOffsetListener.onScrollOffset(t);
+        }
     }
 
     public void setScrollView(View view) {
         mView = view;
+    }
+
+    /**
+     * スクロール時、リスナー設置
+     * @param onScrollOffsetListener
+     */
+    public void setOnScrollOffsetListener(TvProgramListActivity onScrollOffsetListener) {
+        this.onScrollOffsetListener = onScrollOffsetListener;
+    }
+
+    /**
+     * スクロールされた距離リスナー
+     */
+    public interface OnScrollOffsetListener {
+        void onScrollOffset(int offset);
     }
 }

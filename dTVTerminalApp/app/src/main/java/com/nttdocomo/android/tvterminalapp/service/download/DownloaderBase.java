@@ -6,6 +6,8 @@ package com.nttdocomo.android.tvterminalapp.service.download;
 
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 
 import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -259,8 +261,9 @@ public abstract class DownloaderBase {
      * Sub Classでダウンロード成功したとき、この関数をコール
      */
     protected void onFail(DownloadListener.DLError error) {
-        if(null!=mDownloadListener){
-            mDownloadListener.onFail(error);
+        if(null!=mDownloadListener && null!=mDownloadParam){
+            final String savePath= mDownloadParam.getSavePath();
+            mDownloadListener.onFail(error, savePath);
         }
     }
 
@@ -328,18 +331,42 @@ public abstract class DownloaderBase {
      * @return
      */
     public static String getDownloadPath(Context context){
+        String downLoadPath = null;
+        if(null == context){
+            return null;
+        }
+
+        String dmp=getDmpFolderName(context);
+        if(null==dmp || dmp.isEmpty()){
+            downLoadPath = NewEnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP);
+        } else {
+            File[] files = ContextCompat.getExternalFilesDirs(context, null);
+            if (files != null) {
+                if (files.length > 0) {
+                    for (int i = files.length - 1; i >= 0; i--) {
+                        File file = files[i];
+                        if (file != null) {
+                            downLoadPath = file.getAbsolutePath() + File.separator + dmp;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return downLoadPath;
+    }
+
+    public static String getDmpFolderName(final Context context){
         if(null==context){
             return null;
         }
-        Boolean isInternal= SharedPreferencesUtils.getSharedPreferencesStoragePath(context);
-        String internalPaht= NewEnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP); //内部ストレージ
-        if(isInternal){
-            return internalPaht;
+        String ret=EnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP);
+        String sp= File.separator;
+        int i= ret.lastIndexOf(sp);
+        int l=ret.length();
+        if(0>i || i>=l){
+            return "";
         }
-        String ret= DownloaderBase.getExtSDCardPath();
-        if(null==ret){
-            ret=internalPaht;
-        }
-        return ret;
+        return ret.substring(i+1, l);
     }
 }

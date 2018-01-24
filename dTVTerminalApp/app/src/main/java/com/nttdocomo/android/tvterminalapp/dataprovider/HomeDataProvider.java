@@ -24,6 +24,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.DailyRankWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalChListWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvClipWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvScheduleWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
@@ -118,12 +119,12 @@ public class HomeDataProvider implements
          */
         void dailyRankListCallback(List<ContentsData> dailyList);
 
-        /**
-         * ユーザ情報用コールバック.
-         *
-         * @param userList
-         */
-        void userInfoCallback(List<Map<String, String>> userList);
+//        /**
+//         * ユーザ情報用コールバック.
+//         *
+//         * @param userList
+//         */
+//        void userInfoCallback(List<Map<String, String>> userList);
 
         /**
          * クリップ[テレビ]リスト用コールバック.
@@ -210,15 +211,46 @@ public class HomeDataProvider implements
             if (VideoRankList != null && VideoRankList.size() > 0) {
                 sendVideoRankListData(VideoRankList);
             }
-            //クリップ[テレビ]
-            List<Map<String, String>> tvClipList = getTvClipListData();
-            if (tvClipList != null && tvClipList.size() > 0) {
-                sendTvClipListData(tvClipList);
-            }
-            //クリップ[ビデオ]
-            List<Map<String, String>> vodClipList = getVodClipListData();
-            if (vodClipList != null && vodClipList.size() > 0) {
-                sendVodClipListData(vodClipList);
+            //データ取得のみ(API取得～DB保存までの処理を新設するか検討中)
+            //ジャンルID(ビデオ一覧)一覧取得
+            VideoGenreProvider videoGenreProvider = new VideoGenreProvider(mContext);
+            videoGenreProvider.getGenreListDataRequest();
+
+            //ロールID一覧取得
+            RoleListDataProvider roleListDataProvider = new RoleListDataProvider(mContext);
+            roleListDataProvider.requestRoleListData();
+
+            //チャンネルリスト取得
+            ChannelDataProvider channelDataProvider = new ChannelDataProvider(mContext);
+            channelDataProvider.requestChannelList(1, 1, "", 1);
+
+            UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
+            if (userInfoDataProvider.isH4dUser()) {
+                //H4dユーザに必要なデータ取得開始
+                //クリップキー一覧(今日のテレビランキングにまとめられてるので省略するか検討中)
+                //TVクリップ一覧
+                List<Map<String, String>> tvClipList = getTvClipListData();
+                if (tvClipList != null && tvClipList.size() > 0) {
+                    sendTvClipListData(tvClipList);
+                }
+
+                //VODクリップ一覧
+                List<Map<String, String>> vodClipList = getVodClipListData();
+                if (vodClipList != null && vodClipList.size() > 0) {
+                    sendVodClipListData(vodClipList);
+                }
+
+                //視聴中ビデオ一覧
+                WatchListenVideoListDataProvider watchListenVideoListDataProvider = new WatchListenVideoListDataProvider(mContext);
+                watchListenVideoListDataProvider.getWatchListenVideoData(1);
+
+                //購入済チャンネル一覧(レンタルCh)
+                RentalChListWebClient rentalChListWebClient = new RentalChListWebClient(mContext);
+                rentalChListWebClient.getRentalChListApi((RentalChListWebClient.RentalChListJsonParserCallback) mContext);
+
+                //購入済VOD一覧(レンタルVod)
+                RentalDataProvider rentalDataProvider = new RentalDataProvider(mContext);
+                rentalDataProvider.getRentalData(true);
             }
             return null;
         }
@@ -293,7 +325,8 @@ public class HomeDataProvider implements
      * @param list
      */
     public void sendUserInfoListData(final List<Map<String, String>> list) {
-        mApiDataProviderCallback.userInfoCallback(list);
+        //検討中(メソッド毎消去)
+//        mApiDataProviderCallback.userInfoCallback(list);
     }
 
 
@@ -349,7 +382,7 @@ public class HomeDataProvider implements
             list = homeDataManager.selectTvScheduleListHomeData();
         } else {
             //通信クラスにデータ取得要求を出す
-            TvScheduleWebClient webClient = new TvScheduleWebClient();
+            TvScheduleWebClient webClient = new TvScheduleWebClient(mContext);
             int[] ageReq = {1};
             String[] upperPageLimit = {WebApiBasePlala.DATE_NOW};
             String lowerPageLimit = "";
@@ -416,7 +449,7 @@ public class HomeDataProvider implements
             list = homeDataManager.selectTvClipHomeData();
         } else {
             //通信クラスにデータ取得要求を出す
-            TvClipWebClient webClient = new TvClipWebClient();
+            TvClipWebClient webClient = new TvClipWebClient(mContext);
             int ageReq = 1;
             int upperPageLimit = 1;
             int lowerPageLimit = 1;
@@ -445,7 +478,7 @@ public class HomeDataProvider implements
             list = homeDataManager.selectVodClipHomeData();
         } else {
             //通信クラスにデータ取得要求を出す
-            VodClipWebClient webClient = new VodClipWebClient();
+            VodClipWebClient webClient = new VodClipWebClient(mContext);
             int ageReq = 1;
             int upperPageLimit = 1;
             int lowerPageLimit = 1;
@@ -474,7 +507,7 @@ public class HomeDataProvider implements
             list = homeDataManager.selectDailyRankListHomeData();
         } else {
             //通信クラスにデータ取得要求を出す
-            DailyRankWebClient webClient = new DailyRankWebClient();
+            DailyRankWebClient webClient = new DailyRankWebClient(mContext);
             int ageReq = 1;
             int upperPageLimit = 1;
             String lowerPageLimit = "";
@@ -502,7 +535,7 @@ public class HomeDataProvider implements
             list = rankingTopDataManager.selectVideoRankListData();
         } else {
             //通信クラスにデータ取得要求を出す
-            ContentsListPerGenreWebClient webClient = new ContentsListPerGenreWebClient();
+            ContentsListPerGenreWebClient webClient = new ContentsListPerGenreWebClient(mContext);
             int limit = 1;
             int offset = 1;
             String filter = "";

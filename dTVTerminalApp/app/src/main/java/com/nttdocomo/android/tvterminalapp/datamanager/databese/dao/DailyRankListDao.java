@@ -13,33 +13,39 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DAILYRANK_LIST_TABLE_NAME;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 
+/**
+ * 今日のテレビランキングData Access Object.
+ */
 public class DailyRankListDao {
-    // SQLiteDatabase
+
+    /**
+     * SQLデータベースクラス.
+     */
     private final SQLiteDatabase db;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
-     * @param db データベース
+     * @param db SQLデータベースクラス
      */
-    public DailyRankListDao(SQLiteDatabase db) {
+    public DailyRankListDao(final SQLiteDatabase db) {
         this.db = db;
     }
 
     /**
-     * 配列で指定した列データをすべて取得
+     * 配列で指定した列データをすべて取得.
      *
-     * @param strings 欲しい列データの名前
-     * @return 列データ結果
+     * @param strings 取得したいテーブル名の配列
+     * @return 今日のテレビランキング情報
      */
-    public List<Map<String, String>> findById(String[] strings) {
+    public List<Map<String, String>> findById(final String[] strings) {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
 
         Cursor cursor = db.query(
-                DAILYRANK_LIST_TABLE_NAME,
+                DBConstants.DAILYRANK_LIST_TABLE_NAME,
                 strings,
                 null,
                 null,
@@ -67,26 +73,31 @@ public class DailyRankListDao {
     }
 
     /**
-     * データの登録
+     * データの登録.
      *
      * @param values 格納するデータ
      * @return 挿入データID
      */
-    public long insert(ContentValues values) {
-        return db.insert(DAILYRANK_LIST_TABLE_NAME, null, values);
+    public long insert(final ContentValues values) {
+        return db.insert(DBConstants.DAILYRANK_LIST_TABLE_NAME, null, values);
     }
 
+    /**
+     * データの更新.
+     * @return 常に0.
+     */
+    @SuppressWarnings({"SameReturnValue", "unused"})
     public int update() {
-        //基本的にデータの更新はしない予定
+        //基本的にデータの更新はしない(取得したデータで全て置き換え)
         return 0;
     }
 
     /**
-     * データの削除
+     * データの削除.
      *
      * @return deleteの第2パラメータがヌルなのでゼロとなる
      */
     public int delete() {
-        return db.delete(DAILYRANK_LIST_TABLE_NAME, null, null);
+        return db.delete(DBConstants.DAILYRANK_LIST_TABLE_NAME, null, null);
     }
 }

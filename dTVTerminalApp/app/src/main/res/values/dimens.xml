@@ -4,43 +4,57 @@
 
 <resources>
 
-    <!--Launch-->
-    <dimen name="launch_relative_layout_high_size">100dp</dimen>
-    <dimen name="launch_text_layout_high_size">40dp</dimen>
-    <dimen name="launch_image_bottom_margin">10dp</dimen>
+    <dimen name="launch_relative_layout_high_size">116dp</dimen>
+    <dimen name="launch_text_layout_high_size">44dp</dimen>
+    <dimen name="launch_image_bottom_margin">16dp</dimen>
     <dimen name="launch_paring_result_bottom_margin">10dp</dimen>
-    <dimen name="launch_text_size">13dp</dimen>
-    <dimen name="launch_text_bottom_margin">4dp</dimen>
+    <dimen name="launch_text_size">14dp</dimen>
+    <dimen name="launch_text_bottom_margin">6dp</dimen>
     <dimen name="launch_exclamation_mark_margin">48dp</dimen>
-    <dimen name="launch_stb_list_start_margin">10dp</dimen>
-    <dimen name="launch_stb_checkbox_bottom_margin">10dp</dimen>
+    <dimen name="launch_stb_list_start_margin">16dp</dimen>
+    <dimen name="launch_stb_checkbox_bottom_margin">27dp</dimen>
     <dimen name="launch_stb_checkbox_top_margin">6dp</dimen>
-    <dimen name="launch_stb_paring_result_layout">65dp</dimen>
-    <dimen name="launch_text_left_padding">30dp</dimen>
-    <dimen name="launch_text_right_padding">10dp</dimen>
+    <dimen name="launch_stb_paring_result_layout">48dp</dimen>
+    <dimen name="launch_text_left_padding">24dp</dimen>
+    <dimen name="launch_text_right_padding">0dp</dimen>
     <dimen name="launch_text_end_padding">0dp</dimen>
     <dimen name="launch_device_list_layout_high">0dp</dimen>
     <dimen name="launch_device_search_error_help">1dp</dimen>
     <dimen name="launch_device_search_error_help_text">15dp</dimen>
+    <dimen name="launch_stb_checkbox_start_margin">19dp</dimen>
+    <dimen name="launch_stb_checkbox_right_margin">11dp</dimen>
+    <dimen name="launch_stb_device_font_size">16dp</dimen>
+    <dimen name="launch_stb_checkbox_high">18dp</dimen>
+    <dimen name="launch_stb_margin_top">32dp</dimen>
+    <dimen name="launch_stb_progress_bar_padding">15dp</dimen>
+    <dimen name="launch_stb_start_up_icon1_high">36dp</dimen>
+    <dimen name="launch_stb_start_up_icon1_width">70dp</dimen>
+    <dimen name="launch_stb_start_up_icon3_width">162dp</dimen>
+    <dimen name="launch_stb_start_up_icon2_high">44dp</dimen>
+    <dimen name="launch_stb_start_up_icon2_width">163dp</dimen>
     <dimen name="clip_toast_margin">10dp</dimen>
-    <dimen name="clip_button_size">32dp</dimen>
-    <dimen name="clip_common_margin">15dp</dimen>
+    <dimen name="clip_button_size">30dp</dimen>
+    <dimen name="clip_common_margin">8dp</dimen>
+    <dimen name="clip_common_margin_left">8dp</dimen>
+    <dimen name="clip_common_margin_right">10dp</dimen>
 
     <!--Global Menu-->
-    <dimen name="global_menu_list_item_bottom_margin">15dp</dimen>
-    <dimen name="global_menu_list_item_top_margin">15dp</dimen>
-    <dimen name="global_menu_list_item_default_title_left_margin">16dp</dimen>
-    <dimen name="global_menu_list_item_sub_title_left_margin">40dp</dimen>
-    <dimen name="global_menu_list_item_dazn_title_left_margin">10dp</dimen>
-    <dimen name="global_menu_list_item_arrow_right_margin">20dp</dimen>
-    <dimen name="global_menu_list_item_count_right_margin">25dp</dimen>
-    <dimen name="global_menu_list_item_title_icon_left_margin">32dp</dimen>
+    <dimen name="global_menu_list_height">44sp</dimen>
+    <dimen name="global_menu_list_right_arrow_icon_size">30dp</dimen>
+    <dimen name="global_menu_list_item_default_title_left_margin">16sp</dimen>
+    <dimen name="global_menu_list_item_sub_title_left_margin">32sp</dimen>
+    <dimen name="global_menu_list_item_dazn_title_left_margin">8sp</dimen>
+    <dimen name="global_menu_list_item_count_right_margin">6sp</dimen>
+    <dimen name="global_menu_list_item_title_icon_left_margin">32sp</dimen>
 
     <!--Common-->
-    <dimen name="main_header_title_text_size">17sp</dimen>
-    <dimen name="main_header_back_icon_size">50dp</dimen>
+    <dimen name="main_header_height">44dp</dimen>
+    <dimen name="main_header_title_text_size">15dp</dimen>
+    <dimen name="main_header_icon_size">44dp</dimen>
+    <dimen name="main_header_back_icon_left_margin">8dp</dimen>
+    <dimen name="main_header_title_left_margin">97dp</dimen>
     <dimen name="main_header_menu_padding_vertical">12dp</dimen>
-    <dimen name="main_header_menu_padding_end">15dp</dimen>
+    <dimen name="main_header_menu_padding_end">8dp</dimen>
     <dimen name="header_title_text_size">16dp</dimen>
     <dimen name="list_item_title_text_size">14sp</dimen>
     <dimen name="list_item_time_text_size">12sp</dimen>
@@ -58,6 +72,41 @@
     <dimen name="list_item_sort_button_layout_height">40dp</dimen>
     <dimen name="list_item_sort_button_bottom_margin">25dp</dimen>
     <dimen name="list_item_sort_button_right_margin">25dp</dimen>
+
+    <!--Home画面-->
+    <dimen name="home_no_contract_info_height">68dp</dimen>
+    <dimen name="home_no_contract_text_width">231dp</dimen>
+    <dimen name="home_no_contract_text_height">36dp</dimen>
+    <dimen name="home_no_contract_text_left_margin">16dp</dimen>
+    <dimen name="home_no_contract_text_top_margin">16dp</dimen>
+    <dimen name="home_no_contract_text_bottom_margin">16dp</dimen>
+    <dimen name="home_no_contract_text_size">12sp</dimen>
+    <dimen name="home_contract_button_width">96dp</dimen>
+    <dimen name="home_contract_button_height">32dp</dimen>
+    <dimen name="home_contract_button_left_margin">16dp</dimen>
+    <dimen name="home_contract_button_right_margin">16dp</dimen>
+    <dimen name="home_contract_button_top_margin">18dp</dimen>
+    <dimen name="home_contract_button_bottom_margin">18dp</dimen>
+    <dimen name="home_contract_button_padding_left">24px</dimen>
+    <dimen name="home_contract_button_padding_right">24px</dimen>
+    <dimen name="home_contents_item_name_top_margin">23dp</dimen>
+    <dimen name="home_contents_item_name_bottom_margin">16dp</dimen>
+    <dimen name="home_contents_left_margin">16dp</dimen>
+    <dimen name="home_contents_right_margin">10dp</dimen>
+    <dimen name="home_contents_item_name_text_size">16sp</dimen>
+    <dimen name="home_contents_item_num_right_margin">4dp</dimen>
+    <dimen name="home_contents_item_num_text_size">14sp</dimen>
+    <dimen name="home_contents_item_right_arrow_size">24dp</dimen>
+    <dimen name="home_contents_see_all_text_size">12sp</dimen>
+    <dimen name="home_contents_thumbnail_width">243dp</dimen>
+    <dimen name="home_contents_thumbnail_height">147dp</dimen>
+    <dimen name="home_contents_thumbnail_left_padding">0dp</dimen>
+    <dimen name="home_contents_thumbnail_right_padding">8dp</dimen>
+    <dimen name="home_contents_thumbnail_title_left_margin">16dp</dimen>
+    <dimen name="home_contents_thumbnail_title_right_margin">16dp</dimen>
+    <dimen name="home_contents_thumbnail_text_bottom_margin">10dp</dimen>
+    <dimen name="home_contents_thumbnail_text_size">18sp</dimen>
+    <dimen name="home_contents_thumbnail_title_bottom_margin">4dp</dimen>
 
     <!--Custom Dialog-->
     <dimen name="custom_dialog_padding">5dp</dimen>
@@ -87,6 +136,16 @@
     <dimen name="contents_detail_16dp">16dp</dimen>
     <dimen name="contents_detail_icon_size">36dp</dimen>
     <dimen name="contents_detail_icon_margin">8dp</dimen>
+
+    <!-- WatchingVideoActivity -->
+    <dimen name ="watch_listen_video_divider_high">1dp</dimen>
+    <dimen name="watch_listen_thumbnail_high">127dp</dimen>
+    <dimen name="watch_listen_thumbnail_width">71dp</dimen>
+    <dimen name="watch_listen_thumbnail_margin_top_bottom">10dp</dimen>
+    <dimen name="watch_listen_thumbnail_margin_left">16dp</dimen>
+    <dimen name="watch_listen_rating_margin_top">8dp</dimen>
+    <dimen name= "watch_listen_text_size">10dp</dimen>
+    <dimen name="watch_listen_text_margin_left">2dp</dimen>
 
     <!--ビデオ一覧-->
     <dimen name="video_contents_genre_button_margin_end">15dp</dimen>
@@ -147,16 +206,43 @@
     <dimen name="remote_controller_header_view_high">50dp</dimen>
 
     <!--設定画面-->
-    <dimen name="main_setting_text_start_margin">10dp</dimen>
-    <dimen name="main_setting_view_margin">0dp</dimen>
-    <dimen name="main_setting_text_end_margin">0dp</dimen>
-    <dimen name="main_setting_list_height">60dp</dimen>
+    <dimen name="main_setting_text_start_margin">16dp</dimen>
+    <dimen name="main_setting_view_margin">4dp</dimen>
+    <dimen name="main_setting_text_end_margin">6dp</dimen>
+    <dimen name="main_setting_list_height">44dp</dimen>
     <dimen name="main_setting_list_divider_height">1dp</dimen>
-    <dimen name="main_setting_list_detail_item_textsize">20sp</dimen>
-    <dimen name="main_setting_list_status_textsize">14sp</dimen>
+    <dimen name="main_setting_list_item_textsize">16sp</dimen>
+    <dimen name="main_setting_list_status_textsize">11sp</dimen>
     <dimen name="main_setting_list_checkbox_length">32dp</dimen>
     <dimen name="main_setting_checkbox_margin">10dp</dimen>
     <dimen name="main_setting_quality_list_separate">1dp</dimen>
+
+    <!--縮小番組表-->
+    <dimen name="tv_program_list_time_scrollview_width">44dp</dimen>
+    <dimen name="tv_program_list_time_line_width">48dp</dimen>
+    <dimen name="tv_program_list_time_line_height">25dp</dimen>
+
+    <!--アプリケーション情報-->
+    <dimen name="application_info_image_width">138dp</dimen>
+    <dimen name="application_info_image_height">138dp</dimen>
+    <dimen name="application_info_application_name_height">20dp</dimen>
+    <dimen name="application_info_application_title_text_size">16dp</dimen>
+    <dimen name="application_info_application_name_value_text_size">20dp</dimen>
+    <dimen name="application_info_application_provider_height">20dp</dimen>
+    <dimen name="application_info_application_icon_margin_top">69.5dp</dimen>
+    <dimen name="application_info_application_title_margin_top">36dp</dimen>
+    <dimen name="application_info_application_value_margin_top">4dp</dimen>
+    <dimen name="application_info_application_provider_margin_top">20dp</dimen>
+    <dimen name="application_info_application_version_margin_top">20dp</dimen>
+
+    <!--マイ番組表設定-->
+    <dimen name="edit_my_channel_list_item_no_width">56dp</dimen>
+    <dimen name="edit_my_channel_list_item_no_height">46dp</dimen>
+    <dimen name="edit_my_channel_list_item_no_tv_width">25dp</dimen>
+    <dimen name="edit_my_channel_list_item_add_btn_width">30dp</dimen>
+    <dimen name="edit_my_channel_list_item_add_btn_margin_right">10dp</dimen>
+    <dimen name="edit_my_channel_list_item_text_size">14dp</dimen>
+
 
     <!-- 検索画面 -->
     <dimen name="search_form_height">40dp</dimen>

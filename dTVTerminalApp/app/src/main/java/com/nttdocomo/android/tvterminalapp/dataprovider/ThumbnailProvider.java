@@ -29,14 +29,20 @@ public class ThumbnailProvider {
 	//URLリスト
 	public List<String> listURL = new ArrayList<>();
 
+	//コンテキスト
+	private Context mContext;
+
 	/**
-	 * コンストラクタ
+	 * コンストラクタ.
 	 *
-	 * @param context
+	 * @param context コンテキスト
 	 */
 	public ThumbnailProvider(Context context) {
 		mThumbnailCacheManager = new ThumbnailCacheManager(context);
 		mThumbnailCacheManager.initMemCache();
+
+		//コンテキストの退避
+		mContext = context;
 	}
 
 	/**
@@ -73,7 +79,7 @@ public class ThumbnailProvider {
             //queue処理を追加
             if (MAXQUEUECOUNT > currentQueueCount) {
                 ++currentQueueCount;
-                new ThumbnailDownloadTask(imageView, this).execute(imageUrl);
+                new ThumbnailDownloadTask(imageView, this, mContext).execute(imageUrl);
             } else {
                 listImageView.add(imageView);
                 listURL.add(imageUrl);
@@ -90,7 +96,7 @@ public class ThumbnailProvider {
 		if (MAXQUEUECOUNT > currentQueueCount) {
 			if (listImageView.size() > 0){
 				++currentQueueCount;
-				new ThumbnailDownloadTask(listImageView.get(0), this).execute(listURL.get(0));
+				new ThumbnailDownloadTask(listImageView.get(0), this, mContext).execute(listURL.get(0));
 				listImageView.remove(0);
 				listURL.remove(0);
 			}

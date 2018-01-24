@@ -251,9 +251,19 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     @Override
-    public void onFail(final DLError error) {
-        if (null != mDlDataProviderListener) {
-            mDlDataProviderListener.onFail(error);
+    public void onFail(final DLError error, final String savePath) {
+        if (null != mDlDataProviderListener && DownloadService.BINDSTATUS == DownloadService.BINDED) {
+            mDlDataProviderListener.onFail(error, savePath);
+        } else if(DownloadService.BINDSTATUS == DownloadService.BACKGROUD){
+            DownloadService ds = getDownloadService();
+            if (null != ds) {
+                Intent intent = new Intent();
+                intent.setAction(DownloadService.DONWLOAD_FAIL);
+                intent.putExtra(DownloadService.DONWLOAD_PATH, savePath);
+                ds.sendBroadcast(intent);
+            }
+        } else {
+            setNextDownLoad();
         }
     }
 
@@ -278,27 +288,33 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                 intent.setAction(DownloadService.DONWLOAD_SUCCESS);
                 intent.putExtra(DownloadService.DONWLOAD_PATH, fullPath);
                 ds.sendBroadcast(intent);
+            } else {
+                DTVTLogger.debug("ダウンロードサービス取得失敗しました。");
             }
         } else {
-            if (DownloadService.dlDataQue != null && DownloadService.dlDataQue.size() > 0) {
-                DownloadService.dlDataQue.remove(0);
-                DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok");
-                if(0 == DownloadService.dlDataQue.size()){
-                    isRegistered = false;
-                    stopService();
-                    return;
-                }
-                try {
-                    Thread.sleep(300);
-                    DTVTLogger.debug(">>>>>>>>>>>>>>>>>> new dl");
-                    setDlParam(getDownLoadParam());
-                    start();
-                } catch (Exception e){
-                    e.printStackTrace();
-                }
-            } else {
+            setNextDownLoad();
+        }
+    }
+
+    private void setNextDownLoad(){
+        if (DownloadService.dlDataQue != null && DownloadService.dlDataQue.size() > 0) {
+            DownloadService.dlDataQue.remove(0);
+            DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok");
+            if(0 == DownloadService.dlDataQue.size()){
+                isRegistered = false;
                 stopService();
+                return;
             }
+            try {
+                Thread.sleep(300);
+                DTVTLogger.debug(">>>>>>>>>>>>>>>>>> new dl");
+                setDlParam(getDownLoadParam());
+                start();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        } else {
+            stopService();
         }
     }
 
@@ -330,6 +346,8 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     public void onCancel() {
         if (null != mDlDataProviderListener) {
             mDlDataProviderListener.onCancel();
+        } else {
+            DTVTLogger.debug("ダウンロードはキャンセルしました。 ");
         }
     }
 
@@ -376,7 +394,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                 case DOWNLOAD_TOTALSIZE_SELECT:
                     if (null != mDlDataProviderListener) {
                         if (resultSet != null && resultSet.size() > 5) {
-                            mDlDataProviderListener.onFail(DLError.DLError_Other);
+                            mDlDataProviderListener.onFail(DLError.DLError_Other, "");
                         }
                     }
                     break;
@@ -426,8 +444,16 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                 //ディスクからコンテンツを削除する
                 File file = new File(path);
                 if(file.exists()){
-                    if(!file.delete()) {
-                        DTVTLogger.debug("delete cacel file fail ");
+                    File files[] = file.listFiles();
+                    for(File file1:files){
+                        if(!file1.delete()){
+                            DTVTLogger.debug("delete cacel file fail ");
+                        }
+                    }
+                    if(file.exists()){
+                        if(!file.delete()) {
+                            DTVTLogger.debug("delete cacel directory fail ");
+                        }
                     }
                 }
             }
@@ -489,9 +515,13 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
     }
 
-    public void setDlData(DlData dlData) {
-        this.dlData = dlData;
-        dbOperationByThread(DOWNLOAD_INSERT);
+    public void setDlData(DlData dlData) throws Exception{
+        try {
+            this.dlData = dlData;
+            dbOperationByThread(DOWNLOAD_INSERT);
+        } catch (Exception e) {
+            throw new Exception("DlDataProvider.DlDataProvider, DB insert Fail ");
+        }
     }
 
     private void updateDownloadStatusToDb(){

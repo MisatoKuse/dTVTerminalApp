@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import android.content.Context;
+
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ContentsDetailGetResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ContentsDetailJsonParser;
@@ -33,6 +35,15 @@ public class ContentsDetailGetWebClient
     private ContentsDetailJsonParserCallback mContentsDetailJsonParserCallback;
 
     /**
+     * コンテキストを継承元のコンストラクタに送る
+     *
+     * @param context コンテキスト
+     */
+    public ContentsDetailGetWebClient(Context context) {
+        super(context);
+    }
+
+    /**
      * 通信成功時のコールバック
      *
      * @param returnCode 戻り値構造体
@@ -47,10 +58,12 @@ public class ContentsDetailGetWebClient
     }
 
     /**
-     * 通信失敗時のコールバック
+     * 通信失敗時のコールバック.
+     *
+     * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError() {
+    public void onError(ReturnCode returnCode) {
         //エラーが発生したのでヌルを返す
         if (mContentsDetailJsonParserCallback != null) {
             mContentsDetailJsonParserCallback.onContentsDetailJsonParsed(null);

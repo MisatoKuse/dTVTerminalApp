@@ -1,53 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="@dimen/global_menu_list_height">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/global_menu_list_item_bottom_margin"
-        android:layout_marginTop="@dimen/global_menu_list_item_top_margin">
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/global_menu_list_height"
+        android:gravity="center_vertical"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/global_menu_list_item_title_icon_left_margin"
+        android:textStyle="bold"
+        android:textColor="@color/menuListProgramTitle" />
 
-        <ImageView
-            android:id="@+id/dazn_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="@dimen/global_menu_list_item_title_icon_left_margin"
-            android:background="@drawable/ic_menu_service_icon_dazn" />
+    <ImageView
+        android:id="@+id/tv_title_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_centerVertical="true" />
 
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/dazn_icon"
-            android:textColor="@color/menuListProgramTitle" />
+    <ImageView
+        android:id="@+id/iv_arrow"
+        android:layout_width="@dimen/global_menu_list_right_arrow_icon_size"
+        android:layout_height="@dimen/global_menu_list_right_arrow_icon_size"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true" />
 
-        <ImageView
-            android:id="@+id/tv_title_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:layout_centerVertical="true" />
+    <TextView
+        android:id="@+id/tv_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/global_menu_list_item_count_right_margin"
+        android:textColor="@color/menuListProgramTitle"
+        android:layout_toStartOf="@id/iv_arrow" />
 
-        <ImageView
-            android:id="@+id/iv_arrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/global_menu_list_item_arrow_right_margin" />
-
-        <TextView
-            android:id="@+id/tv_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/global_menu_list_item_count_right_margin"
-            android:textColor="@color/menuListProgramTitle"
-            android:layout_toLeftOf="@id/iv_arrow" />
-    </RelativeLayout>
 </RelativeLayout>

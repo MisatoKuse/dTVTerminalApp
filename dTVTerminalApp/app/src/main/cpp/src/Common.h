@@ -58,13 +58,13 @@ namespace dtvt {
         DLNA_MSG_ID_INVALID = 0xffffffff,
     } DLNA_MSG_ID;
 
-    typedef enum {
-        DOWNLOADER_STATUS_UNKNOWN,
-        DOWNLOADER_STATUS_MOVING,
-        DOWNLOADER_STATUS_COMPLETED,
-        DOWNLOADER_STATUS_CANCELLED,
-        DOWNLOADER_STATUS_ERROR_OCCURED
-    } DownloaderStatus;
+//    typedef enum {
+//        DOWNLOADER_STATUS_UNKNOWN,
+//        DOWNLOADER_STATUS_MOVING,
+//        DOWNLOADER_STATUS_COMPLETED,
+//        DOWNLOADER_STATUS_CANCELLED,
+//        DOWNLOADER_STATUS_ERROR_OCCURED
+//    } DownloaderStatus;
 
 
     //const du_uchar* BDC_FILTER = ...      --> can not compile, so do it as below
@@ -131,7 +131,8 @@ namespace dtvt {
     const char * const DlnaHikariChListItem_Field_mVideoType       ="mVideoType";
 
     //java string path
-    const char * const Dlna_Java_String_Path = "java/lang/String";    //"Ljava/lang/String;";
+    //const char * const Dlna_Java_String_Path = "java/lang/String";  error on android 8.x
+    const char * const Dlna_Java_String_Path = "Ljava/lang/String;";
 
     //xml item key from DlnaRecVideoItem.java、「DlnaRecVideoXmlParser、DlnaTerChXmlParser、DlnaBsDigitalXmlParser」に共用される
     const int Xml_Item_Id=1;

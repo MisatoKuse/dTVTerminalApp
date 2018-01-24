@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import android.content.Context;
+
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListResponse;
@@ -28,6 +30,15 @@ public class GenreListWebClient
     private GenreListJsonParserCallback
             mGenreListJsonParserCallback;
 
+    /**
+     * コンテキストを継承元のコンストラクタに送る
+     *
+     * @param context コンテキスト
+     */
+    public GenreListWebClient(Context context) {
+        super(context);
+    }
+
     @Override
     public void onAnswer(ReturnCode returnCode) {
         if (mGenreListJsonParserCallback != null) {
@@ -38,8 +49,13 @@ public class GenreListWebClient
         }
     }
 
+    /**
+     * 通信失敗時のコールバック.
+     *
+     * @param returnCode 戻り値構造体
+     */
     @Override
-    public void onError() {
+    public void onError(ReturnCode returnCode) {
         if (mGenreListJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
             mGenreListJsonParserCallback

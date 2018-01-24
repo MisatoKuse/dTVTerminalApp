@@ -186,7 +186,7 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
                     break;
                 }//キャシューないなら通信のほうに進む
             case R.layout.my_channel_edit_main_layout://通信してデータ取得
-                MyChannelWebClient myChannelList = new MyChannelWebClient();
+                MyChannelWebClient myChannelList = new MyChannelWebClient(mContext);
                 myChannelList.getMyChanelListApi(this);
                 break;
             default:
@@ -198,7 +198,7 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
      * My番組表登録
      */
     public void getMyChannelRegisterStatus(String service_id, String title, String r_value, String adult_type, int index) {
-        MyChannelRegisterWebClient myChannelRegisterStatus = new MyChannelRegisterWebClient();
+        MyChannelRegisterWebClient myChannelRegisterStatus = new MyChannelRegisterWebClient(mContext);
         boolean result = myChannelRegisterStatus.getMyChanelRegisterApi(service_id, title, r_value, adult_type, index, this);
         if(!result){
             mApiDataProviderCallback.onMyChannelRegisterCallback("パラメータ不正");
@@ -209,7 +209,7 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
      * My番組表解除
      */
     public void getMyChannelDeleteStatus(String service_id) {
-        MyChannelDeleteWebClient myChannelDeleteStatus = new MyChannelDeleteWebClient();
+        MyChannelDeleteWebClient myChannelDeleteStatus = new MyChannelDeleteWebClient(mContext);
         boolean result = myChannelDeleteStatus.getMyChanelDeleteApi(service_id, this);
         if(!result){
             mApiDataProviderCallback.onMyChannelDeleteCallback("パラメータ不正");

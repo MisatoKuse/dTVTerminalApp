@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root xmlns="urn:schemas-digion-com:device_conf-1-0">
+    <max_age>1800</max_age>
+    <plugin>plugin/service/</plugin>
+    <desc_list>
+        <desc>
+            <location>/drag_cp/</location>
+            <path>[CONFDIR]/dirag/drag_cp.xml</path>
+        </desc>
+    </desc_list>
+</root>

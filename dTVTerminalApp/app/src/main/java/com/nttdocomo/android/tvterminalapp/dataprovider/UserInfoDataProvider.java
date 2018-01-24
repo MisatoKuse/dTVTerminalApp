@@ -16,6 +16,7 @@ import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.UserInfoWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser;
 
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,10 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
 
     //前回の日時
     private long beforeDate = 0;
+
+    public static final String CONTRACT_STATUS_NONE = "none";
+    public static final String CONTRACT_STATUS_DTV = "001";
+    public static final String CONTRACT_STATUS_H4D = "002";
 
     @Override
     public void onUserInfoJsonParsed(List<UserInfoList> userInfoLists) {
@@ -124,8 +129,8 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
         }
 
         //新たなデータを取得する
-        UserInfoWebClient userInfoWebClient = new UserInfoWebClient();
-        userInfoWebClient.getUserInfoApi(mContext, this);
+        UserInfoWebClient userInfoWebClient = new UserInfoWebClient(mContext);
+        userInfoWebClient.getUserInfoApi(this);
 
         DTVTLogger.end();
     }
@@ -253,5 +258,27 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
         }
 
         return userAgeReq;
+    }
+
+    /**
+     * 取得したユーザが h4dユーザかを返却.
+     * h4dユーザ = "contract_status"の値が "002：ひかりTVfordocomo契約中".
+     *
+     * @return h4dユーザフラグ
+     */
+    public boolean isH4dUser() {
+        UserInfoDataManager userInfoDataManager = new UserInfoDataManager(mContext);
+        List<Map<String, String>> list = userInfoDataManager.selectUserAgeInfo();
+        //loggedin_account が0番目 h4d_contracted_account が1番目に来ることを想定
+        final int LOGGEDIN_ACCOUNT = 0;
+
+        boolean isH4dUser = false;
+        if (list != null && list.size() > 0) {
+            String contractStatus = list.get(LOGGEDIN_ACCOUNT).get(UserInfoJsonParser.USER_INFO_LIST_CONTRACT_STATUS);
+            if (contractStatus.equals(CONTRACT_STATUS_H4D)) {
+                isH4dUser = true;
+            }
+        }
+        return isH4dUser;
     }
 }

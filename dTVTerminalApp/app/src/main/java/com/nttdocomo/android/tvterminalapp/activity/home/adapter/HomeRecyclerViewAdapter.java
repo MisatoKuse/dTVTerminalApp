@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.home.adapter;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
@@ -13,34 +14,64 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 
 import java.util.List;
 
+/**
+ * Home画面に表示するコンテンツリストのアダプタ.
+ */
 public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerViewAdapter.ViewHolder> {
+    /**
+     * Inflater.
+     */
     private LayoutInflater mInflater;
+    /**
+     * ホーム画面に表示するコンテンツデータのリスト.
+     */
     private List<ContentsData> mContentList;
+    /**
+     * コンテキスト.
+     */
     private Activity mContext;
-    //サムネイル取得プロバイダー
+    /**
+     * サムネイル取得プロバイダー.
+     */
     private ThumbnailProvider thumbnailProvider;
-    //もっと見るフッター
+    /**
+     * もっと見るフッター.
+     */
     private View mFooterView;
-    //最大表示件数
+    /**
+     * 最大表示件数.
+     */
     private static final int MAX_COUNT = 10;
-    //ヘッダー
+    /**
+     * ヘッダー.
+     */
     private static final int TYPE_HEADER = 0;
-    //フッター
+    /**
+     * フッター.
+     */
     private static final int TYPE_FOOTER = 1;
-    //普通
+    /**
+     * コンテンツ.
+     */
     private static final int TYPE_NORMAL = 2;
 
+    /**
+     * コンストラクタ.
+     *
+     * @param context コンテキスト
+     * @param contentsDataList 表示するコンテンツリスト
+     */
     public HomeRecyclerViewAdapter(Activity context, List<ContentsData> contentsDataList) {
         mInflater = LayoutInflater.from(context);
         this.mContentList = contentsDataList;
@@ -48,6 +79,11 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         thumbnailProvider = new ThumbnailProvider(context);
     }
 
+    /**
+     * 「すべてを見る」のViewをセット.
+     *
+     * @param footerView 「すべてを見る」View
+     */
     public void setFooterView(View footerView) {
         mFooterView = footerView;
         notifyItemInserted(getItemCount() - 1);
@@ -63,7 +99,6 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         }
         return TYPE_NORMAL;
     }
-
 
     @Override
     public int getItemCount() {
@@ -86,15 +121,6 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         View view = mInflater.inflate(R.layout.home_main_layout_recyclerview_item, viewGroup, false);
         ViewHolder viewHolder = new ViewHolder(view);
         viewHolder.mImage = view.findViewById(R.id.home_main_recyclerview_item_iv);
-        //コンテンツキャッシュを幅さ、長さ初期化
-        float widthPixels = mContext.getResources().getDisplayMetrics().widthPixels / 3 * 2;
-        float heightPixels = widthPixels / 1.8f;
-        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                (int) widthPixels,
-                (int) heightPixels);
-        view.setLayoutParams(lp);
-        viewHolder.mImage.setMaxWidth((int) widthPixels);
-        viewHolder.mImage.setMaxHeight((int) heightPixels);
         viewHolder.mContent = view.findViewById(R.id.home_main_recyclerview_item_tv_content);
         viewHolder.mTime = view.findViewById(R.id.home_main_recyclerview_item_tv_time);
         viewHolder.mNew = view.findViewById(R.id.home_main_recyclerview_item_iv_new);
@@ -107,14 +133,15 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         if (getItemViewType(i) == TYPE_FOOTER) {
             return;
         }
-        String date = mContentList.get(i).getTime();
-        String title = mContentList.get(i).getTitle();
+        ContentsData contentsData = mContentList.get(i);
+        String date = contentsData.getTime();
+        String title = contentsData.getTitle();
         if (TextUtils.isEmpty(title)) {
-            title = mContentList.get(i).getTitle();
+            title = contentsData.getTitle();
         }
-        String thumbnail = mContentList.get(i).getThumURL();
+        String thumbnail = contentsData.getThumURL();
         if (TextUtils.isEmpty(thumbnail)) {
-            thumbnail = mContentList.get(i).getThumURL();
+            thumbnail = contentsData.getThumURL();
         }
         if (!TextUtils.isEmpty(title)) {
             viewHolder.mContent.setVisibility(View.VISIBLE);
@@ -128,7 +155,6 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         } else {
             viewHolder.mTime.setVisibility(View.GONE);
         }
-        viewHolder.mImage.setImageResource(R.drawable.test_image);
         //URLによって、サムネイル取得
         if (!TextUtils.isEmpty(thumbnail)) {
             viewHolder.mImage.setTag(thumbnail);
@@ -136,28 +162,58 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             if (bitmap != null) {
                 viewHolder.mImage.setImageBitmap(bitmap);
             }
+        } else {
+            //URLがない場合はサムネイル取得失敗の画像を表示
+            viewHolder.mImage.setImageResource(R.mipmap.error_scroll);
         }
         viewHolder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, DtvContentsDetailActivity.class);
-                intent.putExtra(DTVTConstants.SOURCE_SCREEN, mContext.getComponentName().getClassName());
+                ComponentName componentName = mContext.getComponentName();
+                intent.putExtra(DTVTConstants.SOURCE_SCREEN, componentName.getClassName());
                 mContext.startActivity(intent);
             }
         });
     }
 
+    @Override
+    public void onViewRecycled(ViewHolder viewHolder) {
+        super.onViewRecycled(viewHolder);
+        if (viewHolder.mImage != null) {
+            //サムネイルの取得が遅い時、前のViewが残っている事がある現象の対処
+            viewHolder.mImage.setImageResource(android.R.color.transparent);
+        }
+    }
+
     /**
-     * コンテンツビューを初期化
+     * コンテンツビューを初期化.
      */
     public class ViewHolder extends RecyclerView.ViewHolder {
+        /**
+         * 各コンテンツを表示するViewHolder.
+         *
+         * @param itemView コンテンツView
+         */
         public ViewHolder(View itemView) {
             super(itemView);
         }
-
+        /**
+         * サムネイル.
+         */
         ImageView mImage;
+        /**
+         * コンテンツタイトル.
+         */
         TextView mContent;
+        /**
+         * コンテンツ日時.
+         */
         TextView mTime;
+        /**
+         * Newアイコン.
+         * TODO: TextViewからNewアイコンの画像に置き換わる予定
+         */
         TextView mNew;
     }
 }

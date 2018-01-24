@@ -18,7 +18,7 @@
     <color name="content_time_text">#AAAAAA</color>
     <color name="result_line">#222222</color>
     <color name="custom_toast_background">#000000</color>
-    <color name="header_background_color_red">#ff0000</color>
+    <color name="header_background_color_red">#cc0033</color>
     <color name="header_background_color_black">#000000</color>
     <color name="common_tab_background_color">#222222</color>
     <color name="common_tab_select_text_color">#999999</color>
@@ -26,7 +26,20 @@
     <color name="common_tab_indicating_no_color">#666666</color>
     <color name="common_tab_indicating_color">#FFFFFF</color>
 
+    <!--Home画面-->
+    <color name="home_main_background_color">#1d1d1d</color>
+    <color name="home_no_contract_info_background_color">#ffffff</color>
+    <color name="home_no_contract_info_text_color">#0f0f0f</color>
+    <color name="home_contract_button_background_color">#fd0003</color>
+    <color name="home_contract_button_text_color">#ffffff</color>
+    <color name="home_item_name_text_color">#ffffff</color>
+    <color name="home_item_see_all_text_color">#ffffff</color>
+    <color name="home_item_contents_num_text_color">#c9c9c9</color>
+    <color name="home_item_contents_background_color">#121212</color>
+    <color name="home_item_contents_text_color">#ffffff</color>
+    <color name="home_item_contents_text_shadow_color">#222222</color>
     <!--Global Menu-->
+    <color name="global_menu_popup_window_background_color">#ffffff</color>
     <color name="hikari_tv_and_dtv_channel_title">#00FFFF</color>
     <color name="dtv_title">#FF0000</color>
     <color name="d_animation_title">#FF8800</color>
@@ -72,7 +85,9 @@
     <!--//STB選択-->
     <drawable name="color_white">#ffffff</drawable>
     <drawable name="color_black">#000000</drawable>
-    <drawable name="color_gray">#555555</drawable>
+    <drawable name="color_gray">#4a4a4a</drawable>
+    <color name ="stb_select_black_color">#000000</color>
+    <color name ="stb_select_white_color">#ffffff</color>
 
     <!--//リモコン画面-->
     <drawable name="color_blue">#0099ff</drawable>
@@ -84,13 +99,20 @@
     <!--//設定画面-->
     <color name="setting_text_color_white">#ffffff</color>
     <color name="setting_list_background_color">#1c1c1c</color>
-    <color name="setting_list_divider_color">#666666</color>
+    <color name="setting_list_divider_color">#333333</color>
     <color name="setting_category_color_white">#cccccc</color>
     <color name="setting_background_color_black">#000000</color>
     <color name="setting_background_color_white">#ffffff</color>
 
     <!--//マイ番組表設定-->
-    <color name="item_num_black">#000000</color>
+    <color name="item_num_black">#111111</color>
     <color name="item_num_register_bg_black">#FFFFFF</color>
     <color name="item_num_unregister_bg_black">#333333</color>
+
+    <!--//縮小番組表-->
+    <color name="tv_program_list_time_line_now">#fd0003</color>
+
+    <!--//アプリケーション情報-->
+    <color name="application_info_application_title">#808080</color>
+    <color name="application_info_application_title_value">#ffffff</color>
 </resources>

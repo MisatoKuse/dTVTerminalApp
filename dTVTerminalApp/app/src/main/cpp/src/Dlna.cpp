@@ -196,6 +196,7 @@ namespace dtvt {
     }
 
     void Dlna::stop() {
+        bool isAttached=false;
         if (DLNA_STATE_STARTED != mDLNA_STATE) {
             return;
         }
@@ -209,6 +210,7 @@ namespace dtvt {
                 if (status < 0) {
                     env = NULL;
                 }
+                isAttached=true;
             }
 
             if (env) {
@@ -224,6 +226,9 @@ namespace dtvt {
         mEvent.mJClassDlna = NULL;
 
         mDLNA_STATE = DLNA_STATE_STOP;
+        if(isAttached){
+            mEvent.mJavaVM->DetachCurrentThread();
+        }
     }
 
     bool Dlna::enableFunction() {
@@ -567,11 +572,13 @@ namespace dtvt {
     void Dlna::notify(int msg, std::string content) {
         JNIEnv *env = NULL;
         int status = mEvent.mJavaVM->GetEnv((void **) &env, JNI_VERSION_1_6);
+        bool isAttached=false;
         if (status < 0) {
             status = mEvent.mJavaVM->AttachCurrentThread(&env, NULL);
             if (status < 0 || NULL == env) {
                 return;
             }
+            isAttached=true;
         }
 
         jclass listActivityClazz = env->GetObjectClass(mEvent.mJObject);
@@ -585,7 +592,9 @@ namespace dtvt {
         env->CallVoidMethod(mEvent.mJObject, method, msg, jstr);
         env->DeleteLocalRef(jstr);
         env->DeleteLocalRef(listActivityClazz);
-        //mEvent.mJavaVM->DetachCurrentThread();
+        if(isAttached){
+            mEvent.mJavaVM->DetachCurrentThread();
+        }
     }
 
     bool setJavaObjectField(JNIEnv *env, jclass cls, const char* const  fieldName, const char* const classPath, string& value, jobject obj){
@@ -985,6 +994,8 @@ namespace dtvt {
         jmethodID listCostruct = NULL;
         jobject listObj = NULL;
         jclass listCls = NULL;
+        bool isAttached=false;
+        jthrowable excp = 0;
 
         int status = mEvent.mJavaVM->GetEnv((void **) &env, JNI_VERSION_1_6);
         if (status < 0) {
@@ -992,85 +1003,86 @@ namespace dtvt {
             if (status < 0 || NULL == env) {
                 return;
             }
+            isAttached=true;
         }
 
         listActivityClazz = env->GetObjectClass(mEvent.mJObject);
         method = env->GetMethodID(listActivityClazz, "notifyObjFromNative", "(ILjava/util/ArrayList;)V");
-        IfNullGoTo(method, error_or_return);
+        IfNullGoTo(method, error);
 
         listCls = env->FindClass("java/util/ArrayList");
-        IfNullGoTo(listCls, error_or_return);
+        IfNullGoTo(listCls, error);
 
         listCostruct = env->GetMethodID(listCls , "<init>","()V");
-        IfNullGoTo(listCostruct, error_or_return);
+        IfNullGoTo(listCostruct, error);
 
         listObj = env->NewObject(listCls , listCostruct);
-        IfNullGoTo(listObj, error_or_return);
+        IfNullGoTo(listObj, error);
 
         listAddId  = env->GetMethodID(listCls,"add","(Ljava/lang/Object;)Z");
-        IfNullGoTo(listAddId, error_or_return);
+        IfNullGoTo(listAddId, error);
 
         switch (msg){
             case DLNA_MSG_ID_DEV_DISP_JOIN:
                 itemCostruct = env->GetMethodID(mEvent.mJClassDmsItem, "<init>", "()V");
-                IfNullGoTo(itemCostruct, error_or_return);
+                IfNullGoTo(itemCostruct, error);
                 itemObj = env->NewObject(mEvent.mJClassDmsItem , itemCostruct);
-                IfNullGoTo(itemObj, error_or_return);
+                IfNullGoTo(itemObj, error);
                 if(0==vecContents.size() || NULL==itemObj){
-                    goto error_or_return;
+                    goto error;
                 }
                 datas= *vecContents.begin();
                 if(!addDmsInfo(env, mEvent.mJClassDmsItem, itemCostruct, datas, itemObj)){
-                    goto error_or_return;
+                    goto error;
                 }
                 env->CallBooleanMethod(listObj , listAddId , itemObj);
                 break;
             case DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST:
                 itemCostruct = env->GetMethodID(mEvent.mJClassRecVideoItem, "<init>", "()V");
-                IfNullGoTo(itemCostruct, error_or_return);
+                IfNullGoTo(itemCostruct, error);
                 if(0==vecContents.size() ){
-                    goto error_or_return;
+                    goto error;
                 }
                 if(!addListItems(DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST, env, mEvent.mJClassRecVideoItem,
                                  itemCostruct, vecContents, listObj, listAddId,
                                  mEvent.mJClassRecVideoItem, itemCostruct) ){
-                    goto error_or_return;
+                    goto error;
                 }
                 break;
             case DLNA_MSG_ID_BS_CHANNEL_LIST:
                 itemCostruct = env->GetMethodID(mEvent.mJClassBsChListItem, "<init>", "()V");
-                IfNullGoTo(itemCostruct, error_or_return);
+                IfNullGoTo(itemCostruct, error);
                 if(0==vecContents.size() ){
-                    goto error_or_return;
+                    goto error;
                 }
                 if(!addListItems(DLNA_MSG_ID_BS_CHANNEL_LIST, env, mEvent.mJClassBsChListItem,
                                  itemCostruct, vecContents, listObj, listAddId,
                                  mEvent.mJClassBsChListItem, itemCostruct) ){
-                    goto error_or_return;
+                    goto error;
                 }
                 break;
             case DLNA_MSG_ID_TER_CHANNEL_LIST:
                 itemCostruct = env->GetMethodID(mEvent.mJClassTerChListItem, "<init>", "()V");
-                IfNullGoTo(itemCostruct, error_or_return);
+                IfNullGoTo(itemCostruct, error);
                 if(0==vecContents.size() ){
-                    goto error_or_return;
+                    goto error;
                 }
                 if(!addListItems(DLNA_MSG_ID_TER_CHANNEL_LIST, env, mEvent.mJClassTerChListItem,
                                  itemCostruct, vecContents, listObj, listAddId,
                                  mEvent.mJClassTerChListItem, itemCostruct) ){
-                    goto error_or_return;
+                    goto error;
                 }
                 break;
             case DLNA_MSG_ID_HIKARI_CHANNEL_LIST:
                 itemCostruct = env->GetMethodID(mEvent.mJClassHikariChListItem, "<init>", "()V");
-                IfNullGoTo(itemCostruct, error_or_return);
+                IfNullGoTo(itemCostruct, error);
                 if(0==vecContents.size() ){
-                    goto error_or_return;
+                    goto error;
                 }
                 if(!addListItems(DLNA_MSG_ID_HIKARI_CHANNEL_LIST, env, mEvent.mJClassHikariChListItem,
                                  itemCostruct, vecContents, listObj, listAddId,
                                  mEvent.mJClassHikariChListItem, itemCostruct) ){
-                    goto error_or_return;
+                    goto error;
                 }
                 break;
             case DLNA_MSG_ID_DEV_DISP_LEAVE:
@@ -1084,8 +1096,15 @@ namespace dtvt {
 
         //env->CallVoidMethod(mEvent.mJObject, method, msg, listObj);
 
-        error_or_return:
+        //error_or_return:
             if(env && method && listObj){
+                excp = env->ExceptionOccurred();
+                if(excp){
+                    env->ExceptionDescribe();
+                    env->ExceptionClear();
+                    excp=0;
+                    goto error;
+                }
                 env->CallVoidMethod(mEvent.mJObject, method, msg, listObj);
             }
             if(!env){
@@ -1106,6 +1125,46 @@ namespace dtvt {
             if(listCls){
                 env->DeleteLocalRef(listCls);
                 listCls=NULL;
+            }
+            if(env){
+                if(isAttached){
+                    mEvent.mJavaVM->DetachCurrentThread();
+                }
+            }
+            return;
+        error:
+            if(env && method && listObj){
+                excp = env->ExceptionOccurred();
+                if(excp){
+                    env->ExceptionDescribe();
+                    env->ExceptionClear();
+                    excp=0;
+                }
+                env->CallVoidMethod(mEvent.mJObject, method, msg, NULL);
+            }
+            if(!env){
+                return;
+            }
+            if(itemObj){
+                env->DeleteLocalRef(itemObj);
+                itemObj=NULL;
+            }
+            if(listObj){
+                env->DeleteLocalRef(listObj);
+                listObj=NULL;
+            }
+            if(listActivityClazz){
+                env->DeleteLocalRef(listActivityClazz);
+                listActivityClazz=NULL;
+            }
+            if(listCls){
+                env->DeleteLocalRef(listCls);
+                listCls=NULL;
+            }
+            if(env){
+                if(isAttached){
+                    mEvent.mJavaVM->DetachCurrentThread();
+                }
             }
     }
 

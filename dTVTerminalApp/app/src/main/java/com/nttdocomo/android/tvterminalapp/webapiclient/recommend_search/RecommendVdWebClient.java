@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
+import android.content.Context;
+
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendVdList;
@@ -23,12 +25,18 @@ public class RecommendVdWebClient extends WebApiBase implements WebApiCallback {
 
     private RecommendVideoCallback mRecommendVideoCallback;
 
+    //SSLチェック用コンテキスト
+    private Context mContext;
+
     public interface RecommendVideoCallback {
         void RecommendVideoCallback(RecommendVdList mRecommendVdList);
     }
 
-    public RecommendVdWebClient(RecommendVideoCallback mRecommendVideoCallback) {
+    public RecommendVdWebClient(RecommendVideoCallback mRecommendVideoCallback, Context context) {
         this.mRecommendVideoCallback = mRecommendVideoCallback;
+
+        //コンテキストの退避
+        mContext = context;
     }
 
     public void getRecommendVideoApi() {
@@ -58,7 +66,7 @@ public class RecommendVdWebClient extends WebApiBase implements WebApiCallback {
 
         //サーバーへおすすめ情報取得を依頼する
         getReccomendInfo(UrlConstants.WebApiUrl.RECOMMEND_LIST_GET_URL + sendUrlAdder,
-                queryItems, this);
+                queryItems, this, mContext);
     }
 
     @Override

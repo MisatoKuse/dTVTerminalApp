@@ -117,7 +117,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
         PurchasedVodListResponse response = new PurchasedVodListResponse();
 
         //通信クラスにデータ取得要求を出す
-        RentalVodListWebClient webClient = new RentalVodListWebClient();
+        RentalVodListWebClient webClient = new RentalVodListWebClient(mContext);
         webClient.getRentalVodListApi(this);
         //TODO: Display用ダミーデータ(消去予定)ここから
 //        ArrayList<VodMetaFullData> list = new ArrayList<>();

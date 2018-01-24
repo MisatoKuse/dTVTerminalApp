@@ -129,10 +129,10 @@ set_target_properties(libdixim_dtcp_sink
   PROPERTIES IMPORTED_LOCATION
   ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/libdixim_dtcp_sink.a)
 
-add_library(libdixim_dtcp_util STATIC IMPORTED)
-set_target_properties(libdixim_dtcp_util
-  PROPERTIES IMPORTED_LOCATION
-  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/libdixim_dtcp_util.a)
+#add_library(libdixim_dtcp_util STATIC IMPORTED)
+#set_target_properties(libdixim_dtcp_util
+#  PROPERTIES IMPORTED_LOCATION
+#  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/libdixim_dtcp_util.a)
 
 add_library(libdixim_dtcp_private_data_io STATIC IMPORTED)
 set_target_properties(libdixim_dtcp_private_data_io
@@ -273,7 +273,7 @@ target_link_libraries(
     libonig
     libuchardet
     libdixim_dtcp_bridge
-    libdixim_dtcp_util_ttl_no_check
+    #libdixim_dtcp_util_ttl_no_check
     libnmcc_db
     libts2tts
     libcheck_wlan_wep
@@ -293,7 +293,8 @@ target_link_libraries(
     libdixim_dtcp_crypto_sha
     libtomcrypt
     libtommath
-    libdixim_dtcp_util
+    #libdixim_dtcp_util
+    libdixim_dtcp_util_ttl_no_check
     libsecure_io
     libchunked_file
     libdixim_av
@@ -303,3 +304,62 @@ target_link_libraries(
     libxml2
     ${log-lib}
     )
+
+#===================== drm begin =====================#
+add_library(libactc_drm STATIC IMPORTED)
+set_target_properties(libactc_drm
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/drm/libactc.a)
+
+add_library(libdixim_hwif_drm STATIC IMPORTED)
+set_target_properties(libdixim_hwif_drm
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/drm/libdixim_hwif.a)
+
+add_library(libactc_is_done_drm STATIC IMPORTED)
+set_target_properties(libactc_is_done_drm
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/drm/libactc_is_done.a)
+
+add_library(libchunked_file_drm STATIC IMPORTED)
+set_target_properties(libchunked_file_drm
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/libchunked_file.a)
+
+add_library(libsecure_io_drm STATIC IMPORTED)
+set_target_properties(libsecure_io_drm
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/drm/libsecure_io.a)
+
+add_library(libdixim_dtcp_private_data_io_drm STATIC IMPORTED)
+set_target_properties(libdixim_dtcp_private_data_io_drm
+  PROPERTIES IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/drm/libdixim_dtcp_private_data_io.a)
+
+#add_library(
+#     dtvtlibdrm # dynamic lib name
+#     SHARED  # share
+#     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/DlnaRemote.cpp
+#     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/DlnaJniCastRm.cpp
+#     )
+
+# ライブラリを使う
+add_library(
+     dtvtlibdrm # dynamic lib name
+     SHARED  # share
+     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/DlnaRemote.cpp
+     ${CMAKE_SOURCE_DIR}/src/main/cpp/src/remote/DlnaJniCastRm.cpp
+     )
+
+target_link_libraries(
+    dtvtlibdrm
+    libactc_drm
+    libactc_is_done_drm
+    libdixim_hwif_drm
+    libcipher_file
+    libchunked_file_drm
+    libsecure_io_drm
+    libmedia_mpeg
+    ${log-lib}
+    )
+#====================== drm end ======================#

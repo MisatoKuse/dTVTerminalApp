@@ -1317,6 +1317,11 @@
 
         temp_path_ = du_uchar_array_get(&temp_path);
 
+        //QA Dox-13対応 begin
+        #define CHUNKED_FILE_CHUNK_SIZE (1024 * 1024 * 1024)
+        cipher_file_enable_chunk_file(CHUNKED_FILE_CHUNK_SIZE);
+        //QA Dox-13対応 end
+
         //extern du_bool cipher_file_open_truncate(cipher_file* cf, const du_uchar* fn);
         if (!cipher_file_open_truncate(&cf, temp_path_,
                                        cipher_file_context_global_get_instance())) {

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root xmlns="urn:schemas-upnp-org:device-1-0" xmlns:dixim="urn:schemas-digion-com:device-1-0">
+    <specVersion>
+        <major>1</major>
+        <minor>0</minor>
+    </specVersion>
+    <device>
+        <UDN></UDN>
+        <deviceType>urn:schemas-upnp-org:device:RAServer:2</deviceType>
+        <friendlyName>DiXiM RA Server [[[HOST_NAME]]]</friendlyName>
+        <manufacturer>DigiOn, Inc.</manufacturer>
+            <manufacturerURL>http://www.digion.com/</manufacturerURL>
+            <modelName>DiXiM RA Discovery Agent</modelName>
+            <modelURL>http://www.digion.com/dixim/</modelURL>
+        <serviceList>
+            <service>
+                <serviceType>urn:schemas-upnp-org:service:RATAConfig:1</serviceType>
+                <serviceId>urn:upnp-org:serviceId:RATAConfig</serviceId>
+                <SCPDURL>doc/desc/ratac.xml</SCPDURL>
+                <controlURL>control/RATAConfig</controlURL>
+                <eventSubURL>event/RATAConfig</eventSubURL>
+                <dixim:X_descPath>[CONFDIR]/dirag/rada/root/rasd/doc/desc/ratac.xml</dixim:X_descPath>
+            </service>
+            <service>
+                <serviceType>urn:schemas-upnp-org:service:RADAConfig:2</serviceType>
+                <serviceId>urn:upnp-org:serviceId:RADAConfig</serviceId>
+                <SCPDURL>doc/desc/radac.xml</SCPDURL>
+                <controlURL>control/RADAConfig</controlURL>
+                <eventSubURL>event/RADAConfig</eventSubURL>
+                <dixim:X_descPath>[CONFDIR]/dirag/rada/root/rasd/doc/desc/radac.xml</dixim:X_descPath>
+            </service>
+            <service>
+                <serviceType>urn:schemas-upnp-org:service:InboundConnectionConfig:1</serviceType>
+                <serviceId>urn:upnp-org:serviceId:InboundConnectionConfig</serviceId>
+                <SCPDURL>doc/desc/icc.xml</SCPDURL>
+                <controlURL>control/InboundConnectionConfig</controlURL>
+                <eventSubURL>event/InboundConnectionConfig</eventSubURL>
+                <dixim:X_descPath>[CONFDIR]/dirag/rada/root/rasd/doc/desc/icc.xml</dixim:X_descPath>
+            </service>
+            <dixim:X_service>
+                <dixim:X_serviceType>urn:schemas-digion-com:service:document:1</dixim:X_serviceType>
+                <dixim:X_serviceId>urn:digion-com:serviceId:document</dixim:X_serviceId>
+                <dixim:X_url>doc/</dixim:X_url>
+                <dixim:X_paramList>
+                    <dixim:X_param>
+                        <dixim:X_name>doc_path</dixim:X_name>
+                        <dixim:X_value>[CONFDIR]/dirag/rada/root/rasd/doc/</dixim:X_value>
+                    </dixim:X_param>
+                    <dixim:X_param>
+                        <dixim:X_name>mimetype_path</dixim:X_name>
+                        <dixim:X_value>mimetype/</dixim:X_value>
+                    </dixim:X_param>
+                </dixim:X_paramList>
+            </dixim:X_service>
+        </serviceList>
+    </device>
+</root>

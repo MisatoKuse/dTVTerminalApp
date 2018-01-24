@@ -6,7 +6,6 @@ package com.nttdocomo.android.tvterminalapp.activity.launch;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -18,8 +17,8 @@ import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 public class DAccountSettingActivity extends BaseActivity implements View.OnClickListener {
 
-    private Button mDAccountDownloadDAccountSettingActivity=null;
-    private Button mDLoginNoUseDAccountSettingActivity=null;
+    private TextView mDAccountDownLoad;
+    private TextView mDNoLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,29 +34,21 @@ public class DAccountSettingActivity extends BaseActivity implements View.OnClic
     }
 
     private void setContents() {
-        TextView title=(TextView)findViewById(R.id.titleDAccountSettingActivity);
-        title.setText(getScreenTitle());
+        setTitleText(getString(R.string.str_app_title));
 
-        mDAccountDownloadDAccountSettingActivity=(Button)findViewById(R.id.dAccountDownloadDAccountSettingActivity);
-        mDAccountDownloadDAccountSettingActivity.setOnClickListener(this);
+        mDAccountDownLoad=(TextView)findViewById(R.id.d_account_app_download);
+        mDAccountDownLoad.setOnClickListener(this);
 
-        mDLoginNoUseDAccountSettingActivity=(Button)findViewById(R.id.dLoginNoUseDAccountSettingActivity);
-        mDLoginNoUseDAccountSettingActivity.setOnClickListener(this);
+        mDNoLogin=(TextView)findViewById(R.id.use_without_login_in);
+        mDNoLogin.setOnClickListener(this);
     }
-
-    @Override
-    public String getScreenTitle() {
-        return getString(R.string.str_d_account_setting_title);
-    }
-
     @Override
     public void onClick(View v) {
-        if(v.equals(mDLoginNoUseDAccountSettingActivity)) {
+        if(v.equals(mDNoLogin)) {
             mDLoginNoUseButton();
-        } else if(v.equals(mDAccountDownloadDAccountSettingActivity)) {
+        } else if(v.equals(mDAccountDownLoad)) {
             onDAccountDownloadButton();
         }
-
     }
 
     private void onDAccountDownloadButton() {

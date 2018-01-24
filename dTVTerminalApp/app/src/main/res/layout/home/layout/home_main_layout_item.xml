@@ -2,45 +2,51 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#222222"
+    android:background="@color/home_main_background_color"
     android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/home_main_item_type_rl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:layout_marginTop="5dp">
+        android:layout_marginStart="@dimen/home_contents_left_margin"
+        android:layout_marginEnd="@dimen/home_contents_right_margin"
+        android:layout_marginTop="@dimen/home_contents_item_name_top_margin"
+        android:layout_marginBottom="@dimen/home_contents_item_name_bottom_margin">
 
         <TextView
             android:id="@+id/home_main_item_type_tx"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:textSize="13dp"
-            android:textColor="#FFFFFF"
+            android:textSize="@dimen/home_contents_item_name_text_size"
+            android:textColor="@color/home_item_name_text_color"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/home_main_item_type_tx_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_toStartOf="@+id/home_main_item_right_arrow"
             android:layout_centerVertical="true"
-            android:textColor="#FFFFFF" />
+            android:layout_marginEnd="@dimen/home_contents_item_num_right_margin"
+            android:textSize="@dimen/home_contents_item_num_text_size"
+            android:textColor="@color/home_item_contents_num_text_color" />
+
+        <ImageView
+            android:id="@+id/home_main_item_right_arrow"
+            android:layout_width="@dimen/home_contents_item_right_arrow_size"
+            android:layout_height="@dimen/home_contents_item_right_arrow_size"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/icon_normal_arrow_next_prev" />
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/home_main_item_recyclerview"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:divider="#ffff0000"
-        android:dividerHeight="10dp"
-        android:fadingEdge="none"
-        android:fadingEdgeLength="0dp"
+        android:layout_height="@dimen/home_contents_thumbnail_height"
+        android:layout_marginStart="@dimen/home_contents_left_margin"
         android:overScrollMode="never" />
 </LinearLayout>

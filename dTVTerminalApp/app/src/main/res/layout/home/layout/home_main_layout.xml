@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#222222"
+    android:background="@color/home_main_background_color"
     android:orientation="vertical">
 
     <ScrollView
@@ -13,38 +13,47 @@
             android:id="@+id/home_main_layout_linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/home_main_layout_kyrl"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#FFFFFF"
+                android:layout_height="@dimen/home_no_contract_info_height"
+                android:background="@color/home_no_contract_info_background_color"
                 android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
-                    android:layout_weight="3"
+                    android:layout_height="@dimen/home_no_contract_text_height"
+                    android:layout_marginTop="@dimen/home_no_contract_text_top_margin"
+                    android:layout_marginBottom="@dimen/home_no_contract_text_bottom_margin"
+                    android:layout_marginStart="@dimen/home_no_contract_text_left_margin"
+                    android:layout_gravity="start|center_vertical"
                     android:ellipsize="end"
                     android:maxLines="2"
-                    android:text="ご利用中のdアカウントでひかりTV for docomoの契約がありません。"
-                    android:textColor="#000000" />
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="@string/home_no_contract_info_text"
+                    android:textColor="@color/home_no_contract_info_text_color"
+                    android:textSize="@dimen/home_no_contract_text_size"/>
 
                 <TextView
                     android:id="@+id/home_main_layout_kytv"
-                    android:layout_width="0dp"
-                    android:layout_height="35dp"
+                    android:layout_width="@dimen/home_contract_button_width"
+                    android:layout_height="32dp"
+                    android:layout_marginTop="@dimen/home_contract_button_top_margin"
+                    android:layout_marginBottom="@dimen/home_contract_button_bottom_margin"
+                    android:layout_marginStart="@dimen/home_contract_button_left_margin"
+                    android:layout_marginEnd="@dimen/home_contract_button_right_margin"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginRight="15dp"
-                    android:layout_weight="1"
-                    android:background="#FF0000"
+                    android:paddingStart="@dimen/home_contract_button_padding_left"
+                    android:paddingEnd="@dimen/home_contract_button_padding_right"
+                    android:background="@color/home_contract_button_background_color"
                     android:gravity="center"
-                    android:text="契約する"
-                    android:textColor="#FFFFFF" />
+                    android:text="@string/home_contract_button_text"
+                    android:textColor="@color/home_contract_button_text_color"
+                    android:textSize="@dimen/home_no_contract_text_size"/>
             </LinearLayout>
 
             <ImageView

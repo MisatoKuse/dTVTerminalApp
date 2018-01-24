@@ -1,51 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="40dp">
+    android:layout_height="@dimen/main_header_height" >
 
     <ImageView
         android:id="@+id/header_layout_back"
-        android:layout_width="@dimen/main_header_back_icon_size"
+        android:layout_width="@dimen/main_header_icon_size"
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/main_header_back_icon_left_margin"
         android:onClick="contentsDetailBackKey"
         android:visibility="visible"
-        android:src="@mipmap/ic_keyboard_arrow_left_white_24dp" />
+        android:src="@mipmap/header_material_icon_arrow_left" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:paddingTop="@dimen/main_header_menu_padding_vertical"
-        android:paddingBottom="@dimen/main_header_menu_padding_vertical"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="@dimen/main_header_menu_padding_end"
         android:orientation="horizontal">
         <ImageView
             android:id="@+id/header_stb_status_icon"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/main_header_icon_size"
             android:layout_height="match_parent"
             android:contentDescription="@null"
-            android:src="@mipmap/ic_stb_status_icon_white"
+            android:src="@mipmap/header_material_icon_tv"
             android:visibility="invisible" />
         <ImageView
             android:id="@+id/header_layout_menu"
-            android:layout_marginStart="15dp"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/main_header_icon_size"
             android:layout_height="match_parent"
             android:contentDescription="@null"
-            android:src="@mipmap/ic_menu_white_24dp"
+            android:src="@mipmap/header_material_icon_menu"
             android:visibility="invisible" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/header_layout_text"
+        style="@style/autoscroll"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:maxEms="10"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:maxEms="9"
         android:ellipsize="end"
         android:maxLines="1"
+        android:gravity="center"
+        android:scrollHorizontally="true"
         android:textColor="#FFFFFF"
         android:textSize="@dimen/main_header_title_text_size"
         android:textStyle="bold" />

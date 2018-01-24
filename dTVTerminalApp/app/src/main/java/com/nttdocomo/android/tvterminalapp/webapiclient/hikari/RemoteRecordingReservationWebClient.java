@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import android.content.Context;
+
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
@@ -34,6 +36,15 @@ public class RemoteRecordingReservationWebClient
     private RemoteRecordingReservationJsonParserCallback
             mRemoteRecordingReservationJsonParserCallback;
 
+    /**
+     * コンテキストを継承元のコンストラクタに送る
+     *
+     * @param context コンテキスト
+     */
+    public RemoteRecordingReservationWebClient(Context context) {
+        super(context);
+    }
+
     @Override
     public void onAnswer(ReturnCode returnCode) {
         DTVTLogger.debug("Client onAnswer");
@@ -45,8 +56,13 @@ public class RemoteRecordingReservationWebClient
         }
     }
 
+    /**
+     * 通信失敗時のコールバック.
+     *
+     * @param returnCode 戻り値構造体
+     */
     @Override
-    public void onError() {
+    public void onError(ReturnCode returnCode) {
         DTVTLogger.debug("Client onError");
         if (mRemoteRecordingReservationJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す

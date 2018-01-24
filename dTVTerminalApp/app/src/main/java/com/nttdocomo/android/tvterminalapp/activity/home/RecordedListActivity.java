@@ -41,11 +41,12 @@ import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragmen
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDownload;
+
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvRecVideo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoListener;
+import com.nttdocomo.android.tvterminalapp.jni.download.DlnaProvDownload;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadService;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloaderBase;
@@ -384,11 +385,16 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                         String path = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_SAVE_URL);
                         String itemId = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
                         String title = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_TITLE);
+                        String url = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_URL);
+                        String duration = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_DURATION);
+                        String totalSize = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_SIZE);
+                        String resolution = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_RESOLUTION);
+                        String upnpIcon = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_UPNP_ICON);
+                        String bitrate = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_BITRATE);
+                        String videoType = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_TYPE);
+
                         String fullPath = path + File.separator + itemId;
                         File file = new File(fullPath);
-                        if(file.isDirectory()){
-                            continue;
-                        }
                         if(file.exists()){
                             ContentsData contentsData = new ContentsData();
                             contentsData.setTitle(title);
@@ -397,6 +403,15 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                             list.add(contentsData);
                             RecordedContentsDetailData detailData = new RecordedContentsDetailData();
                             detailData.setItemId(itemId);
+                            detailData.setUpnpIcon(upnpIcon);
+                            detailData.setSize(totalSize);
+                            detailData.setResUrl(url);
+                            detailData.setResolution(resolution);
+                            detailData.setBitrate(bitrate);
+                            detailData.setDuration(duration);
+                            detailData.setTitle(title);
+                            detailData.setVideoType(videoType);
+//                            detailData.setClearTextSize(totalSize);
                             baseFragment.mContentsList.add(detailData);
                         }
                     }
@@ -634,6 +649,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         IntentFilter filter = new IntentFilter();
         filter.addAction(DownloadService.DONWLOAD_UPDATE);
         filter.addAction(DownloadService.DONWLOAD_SUCCESS);
+        filter.addAction(DownloadService.DONWLOAD_FAIL);
         registerReceiver(downloadReceiver, filter);
     }
 
@@ -649,6 +665,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
                 String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_PATH);
                 baseFragment.setDownladSuccessByBg(fullPath);
+            } else if (DownloadService.DONWLOAD_FAIL.equals(intent.getAction())) {
+                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_PATH);
+                baseFragment.setDownladFailByBg(fullPath);
             }
         }
     };

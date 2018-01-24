@@ -66,7 +66,7 @@ import java.util.List;
 public class BaseActivity extends FragmentActivity implements MenuDisplayEventListener,
         DlnaDevListListener, View.OnClickListener, RemoteControllerView.OnStartRemoteControllerUIListener,
         ClipRegistWebClient.ClipRegistJsonParserCallback, ClipDeleteWebClient.ClipDeleteJsonParserCallback,
-        DaccountControl.DaccountControlCallBack, UserInfoDataProvider.UserDataProviderCallback {
+        DaccountControl.DaccountControlCallBack {
 
     private LinearLayout mBaseLinearLayout = null;
     private RelativeLayout mHeaderLayout = null;
@@ -194,10 +194,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         DTVTLogger.start();
         mBaseLinearLayout = findViewById(R.id.base_ll);
         mHeaderLayout = findViewById(R.id.base_title);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                getHeightDensity() / 15);
-        mHeaderLayout.setLayoutParams(lp);
         titleTextView = findViewById(R.id.header_layout_text);
         DTVTLogger.end();
         mHeaderBackIcon = findViewById(R.id.header_layout_back);
@@ -230,7 +226,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             if (isOn) {
                 mHeaderBackIcon.setVisibility(View.VISIBLE);
             } else {
-                mHeaderBackIcon.setVisibility(View.GONE);
+                mHeaderBackIcon.setVisibility(View.INVISIBLE);
             }
         }
     }
@@ -250,7 +246,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             if (isOn) {
                 mStbStatusIcon.setVisibility(View.VISIBLE);
             } else {
-                mStbStatusIcon.setVisibility(View.GONE);
+                mStbStatusIcon.setVisibility(View.INVISIBLE);
             }
         }
     }
@@ -265,7 +261,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             if (isOn) {
                 mStbStatusIcon.setVisibility(View.VISIBLE);
             } else {
-                mStbStatusIcon.setVisibility(View.GONE);
+                mStbStatusIcon.setVisibility(View.INVISIBLE);
             }
         }
     }
@@ -281,7 +277,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                 mMenuImageViewForBase.setVisibility(View.VISIBLE);
                 mMenuImageViewForBase.setOnClickListener(this);
             } else {
-                mMenuImageViewForBase.setVisibility(View.GONE);
+                mMenuImageViewForBase.setVisibility(View.INVISIBLE);
             }
         }
     }
@@ -294,10 +290,10 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     protected void changeGlobalMenuIcon(final boolean isMenu) {
         if (null != mMenuImageViewForBase) {
             if (isMenu) {
-                mMenuImageViewForBase.setImageResource(R.mipmap.ic_menu_white_24dp);
+                mMenuImageViewForBase.setImageResource(R.mipmap.header_material_icon_menu);
                 mMenuImageViewForBase.setTag(HEADER_ICON_MENU);
             } else {
-                mMenuImageViewForBase.setImageResource(R.mipmap.ic_clear_white_24dp);
+                mMenuImageViewForBase.setImageResource(R.mipmap.header_material_icon_close);
                 mMenuImageViewForBase.setTag(HEADER_ICON_CLOSE);
             }
         }
@@ -316,14 +312,14 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                     try {
                         synchronized (this) {
                             if (isOn) {
-                                mStbStatusIcon.setImageResource(R.mipmap.ic_stb_status_icon_white);
+                                mStbStatusIcon.setImageResource(R.mipmap.header_material_icon_tv);
                                 //ペアリングアイコンがOFF→ON(点灯)になった際にdアカチェックを行う
                                 if (!mIsStbStatusOn) {
                                     checkDAccountOnRestart();
                                 }
 
                             } else {
-                                mStbStatusIcon.setImageResource(R.mipmap.ic_stb_status_icon_gray);
+                                mStbStatusIcon.setImageResource(R.mipmap.header_material_icon_tv_active);
                             }
                             mIsStbStatusOn = isOn;
                         }
@@ -418,8 +414,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         setDaccountControl();
 
         //ユーザー情報の変更検知
-        UserInfoDataProvider dataProvider = new UserInfoDataProvider(getApplicationContext(), this);
-        dataProvider.getUserInfo();
+        //検討中
+//        UserInfoDataProvider dataProvider = new UserInfoDataProvider(getApplicationContext(), this);
+//        dataProvider.getUserInfo();
 
         DTVTLogger.end();
     }
@@ -590,6 +587,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                     case COMMAND_UNKNOWN:
                         switch (resultcode) {
                             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
+                                showErrorDialog(getResources().getString(R.string.main_setting_connect_error_message));
                                 //ペアリングアイコンをOFFにする
                                 setStbStatus(false);
                                 break;
@@ -644,7 +642,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_APPLICATION_ID_NOTEXIST:
             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_APPLICATION_START_FAILED:
             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_INTERNAL_ERROR:
-                message = getResources().getString(R.string.main_setting_connect_error_message);
+                message = getResources().getString(R.string.main_setting_stb_application_launch_fail);
                 showErrorDialog(message);
                 break;
             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_VERSION_CODE_INCOMPATIBLE:
@@ -682,7 +680,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                 break;
             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
             default:
-                message = getResources().getString(R.string.main_setting_connect_error_message);
+                message = getResources().getString(R.string.main_setting_stb_application_launch_fail);
                 showErrorDialog(message);
                 break;
         }
@@ -944,7 +942,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      */
     @Override
     public void onError(final String msg) {
-
+        DTVTLogger.debug("BaseActivity.onError, dlna err message: " + msg);
     }
 
     /**
@@ -1008,6 +1006,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      */
     protected void requestStartApplication(final RemoteControlRelayClient.STB_APPLICATION_TYPES type, final String contentsId) {
         remoteControllerView.sendStartApplicationRequest(type, contentsId);
+    }
+
+    protected void requestStartApplication(final RemoteControlRelayClient.STB_APPLICATION_TYPES type, final String contentsId,
+                                           final RemoteControlRelayClient.SERVICE_CATEGORY_TYPES serviceCategoryType) {
+        remoteControllerView.sendStartApplicationRequest(type, contentsId, serviceCategoryType);
     }
 
     /**
@@ -1116,11 +1119,13 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
             //クリップ状態によりクリップ登録/削除実行
             if (data.isClipStatus()) {
-                ClipDeleteWebClient deleteWebClient = new ClipDeleteWebClient();
+                ClipDeleteWebClient deleteWebClient =
+                        new ClipDeleteWebClient(getApplicationContext());
                 isParamCheck = deleteWebClient.getClipDeleteApi(data.getType(), data.getCrid(),
                         data.getTitle(), this);
             } else {
-                ClipRegistWebClient registWebClient = new ClipRegistWebClient();
+                ClipRegistWebClient registWebClient =
+                        new ClipRegistWebClient(getApplicationContext());
                 isParamCheck = registWebClient.getClipRegistApi(data.getType(), data.getCrid(),
                         data.getServiceId(), data.getEventId(), data.getTitleId(), data.getTitle(),
                         data.getRValue(), data.getLinearStartDate(), data.getLinearEndDate(),
@@ -1201,8 +1206,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
         if (mDaccountControl == null) {
             //処理には失敗したが、動作の続行ができないので、ここで終わらせる。ただ、このコールバックを受けている以上、ヌルになることありえないはず
-            Toast.makeText(getApplicationContext(),
-                    R.string.d_account_regist_error, Toast.LENGTH_LONG).show();
+            CustomDialog errorDialog = new CustomDialog(BaseActivity.this, CustomDialog.DialogType.ERROR);
+            errorDialog.setContent(getString(R.string.d_account_regist_error));
+            errorDialog.showDialog();
             DTVTLogger.end("null end");
             return;
         }
@@ -1243,7 +1249,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             return;
         }
         CustomDialog applicationFinishDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-        applicationFinishDialog.setTitle(getString(R.string.app_finish_dialog_title));
         applicationFinishDialog.setContent(getString(R.string.app_finish_dialog_message));
         applicationFinishDialog.setCancelable(false);
         applicationFinishDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
@@ -1259,21 +1264,21 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         });
         applicationFinishDialog.showDialog();
     }
-
-    @Override
-    public void userInfoListCallback(boolean isChange, List<UserInfoList> list) {
-        //年齢情報に変化があったのでホーム画面に飛ぶ。ただし、初回実行時はチュートリアル等のスキップを防ぐために、必ずfalseになる
-        if (isChange) {
-            //以前の情報と異なっているので、メッセージの表示後にホーム画面に遷移
-            restartMessageDialog(getString(R.string.h4d_agreement_change));
-
-            //持ち出しコンテンツをすべて削除する
-            DownLoadListDataManager downLoadListDataManager =
-                    new DownLoadListDataManager(getApplicationContext());
-            downLoadListDataManager.deleteDownloadAllContents();
-
-        }
-    }
+//検討中
+//    @Override
+//    public void userInfoListCallback(boolean isChange, List<UserInfoList> list) {
+//        //年齢情報に変化があったのでホーム画面に飛ぶ。ただし、初回実行時はチュートリアル等のスキップを防ぐために、必ずfalseになる
+//        if (isChange) {
+//            //以前の情報と異なっているので、メッセージの表示後にホーム画面に遷移
+//            restartMessageDialog(getString(R.string.h4d_agreement_change));
+//
+//            //持ち出しコンテンツをすべて削除する
+//            DownLoadListDataManager downLoadListDataManager =
+//                    new DownLoadListDataManager(getApplicationContext());
+//            downLoadListDataManager.deleteDownloadAllContents();
+//
+//        }
+//    }
 
     /**
      * 機能: リモコンが表示されているか確認し、開いている場合は閉じる.

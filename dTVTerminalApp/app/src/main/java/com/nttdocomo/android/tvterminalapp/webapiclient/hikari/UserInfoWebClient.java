@@ -30,14 +30,28 @@ public class UserInfoWebClient
     //コールバックのインスタンス
     private UserInfoJsonParserCallback mUserInfoJsonParserCallback;
 
+    /**
+     * コンテキストを継承元のコンストラクタに送る
+     *
+     * @param context コンテキスト
+     */
+    public UserInfoWebClient(Context context) {
+        super(context);
+    }
+
     @Override
     public void onAnswer(ReturnCode returnCode) {
         //JSONをパースして、データを返す
         new UserInfoJsonParser(mUserInfoJsonParserCallback).execute(returnCode.bodyData);
     }
 
+    /**
+     * 通信失敗時のコールバック.
+     *
+     * @param returnCode 戻り値構造体
+     */
     @Override
-    public void onError() {
+    public void onError(ReturnCode returnCode) {
         if (mUserInfoJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
             mUserInfoJsonParserCallback.onUserInfoJsonParsed(null);
@@ -50,10 +64,9 @@ public class UserInfoWebClient
      * @param userInfoJsonParserCallback コールバック
      * @return パラメータエラー等が発生した場合はfalse
      */
-    public boolean getUserInfoApi(Context context,
-                                  UserInfoJsonParserCallback userInfoJsonParserCallback) {
+    public boolean getUserInfoApi(UserInfoJsonParserCallback userInfoJsonParserCallback) {
         //パラメーターのチェック
-        if (!checkNormalParameter(context, userInfoJsonParserCallback)) {
+        if (!checkNormalParameter(userInfoJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、falseで帰る
             return false;
         }
@@ -62,7 +75,7 @@ public class UserInfoWebClient
         mUserInfoJsonParserCallback = userInfoJsonParserCallback;
 
         //契約情報取得をワンタイムトークン付きで呼び出す
-        openUrlAddOtt(context, UrlConstants.WebApiUrl.USER_INFO_WEB_CLIENT, "",
+        openUrlAddOtt(UrlConstants.WebApiUrl.USER_INFO_WEB_CLIENT, "",
                 this, null);
 
         //今のところ失敗していないので、trueを返す
@@ -72,17 +85,10 @@ public class UserInfoWebClient
     /**
      * 指定されたパラメータがおかしいかどうかのチェック
      *
-     * @param context                    コンテキスト
      * @param userInfoJsonParserCallback コールバック
      * @return おかしい値があるならばfalse
      */
-    private boolean checkNormalParameter(Context context,
-                                         UserInfoJsonParserCallback userInfoJsonParserCallback) {
-
-        //コンテキストが指定されていないならばfalse
-        if (context == null) {
-            return false;
-        }
+    private boolean checkNormalParameter(UserInfoJsonParserCallback userInfoJsonParserCallback) {
 
         //コールバックが指定されていないならばfalse
         if (userInfoJsonParserCallback == null) {

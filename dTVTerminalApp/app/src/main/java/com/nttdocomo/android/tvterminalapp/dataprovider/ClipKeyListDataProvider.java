@@ -120,7 +120,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         DTVTLogger.start();
         mResponseEndFlag = false;
         request.setIsForce(isCachingClipKeyListRecord(request.getType()));
-        ClipKeyListWebClient client = new ClipKeyListWebClient();
+        ClipKeyListWebClient client = new ClipKeyListWebClient(mContext);
         // リクエストによってコールバックを変える
         if (ClipKeyListRequest.CLIP_KEY_LIST_REQUEST_TYPE_TV.equals(request.getType())) {
             client.getClipKeyListApi(request, this, null);
@@ -205,24 +205,24 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      */
     protected ClipKeyListDao.CONTENT_TYPE searchContentsType(String dispType, String contentType, String dTv) {
         // TODO DREM-767 QA回答により別BLにて判定処理を修正
-        if (ClipKeyListDao.META_DISP_TYPE_TV_PROGRAM.equals(dispType)
+        if (ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
                 && contentType.isEmpty()) {
             return ClipKeyListDao.CONTENT_TYPE.TV;
         }
-        if (!ClipKeyListDao.META_DISP_TYPE_TV_PROGRAM.equals(dispType)
+        if (!ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
                 && ClipKeyListDao.META_DTV_FLAG_TRUE.equals(dTv)) {
             return ClipKeyListDao.CONTENT_TYPE.VOD;
         }
-        if (ClipKeyListDao.META_DISP_TYPE_TV_PROGRAM.equals(dispType)
+        if (ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
                 && !contentType.isEmpty()
                 && ClipKeyListDao.META_DTV_FLAG_TRUE.equals(dTv)) {
             return ClipKeyListDao.CONTENT_TYPE.VOD;
         }
-        if (!ClipKeyListDao.META_DISP_TYPE_TV_PROGRAM.equals(dispType)
+        if (!ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
                 && ClipKeyListDao.META_DTV_FLAG_FALSE.equals(dTv)) {
             return ClipKeyListDao.CONTENT_TYPE.DTV;
         }
-        if (ClipKeyListDao.META_DISP_TYPE_TV_PROGRAM.equals(dispType)
+        if (ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
                 && !contentType.isEmpty()
                 && ClipKeyListDao.META_DTV_FLAG_FALSE.equals(dTv)) {
             return ClipKeyListDao.CONTENT_TYPE.DTV;
@@ -238,7 +238,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      * @return
      */
     protected ClipKeyListDao.TABLE_TYPE decisionTableType(String dispType, String contentType) {
-        if (ClipKeyListDao.META_DISP_TYPE_TV_PROGRAM.equals(dispType)
+        if (ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
                 && contentType.length() < 1) {
             return ClipKeyListDao.TABLE_TYPE.TV;
         }

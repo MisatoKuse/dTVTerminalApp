@@ -82,7 +82,7 @@ public class HomeDataManager {
 
     /**
      * ホーム画面用CH一覧データを返却する
-     *
+     * TODO:NOW ON AIRでチャンネル名表示するために必要.ただしHOME画面に特化した物は不要.削除する事
      * @return list
      */
     public List<Map<String, String>> selectChannelListHomeData() {

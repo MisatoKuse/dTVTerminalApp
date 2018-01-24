@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import android.content.Context;
 import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -20,6 +21,15 @@ import org.json.JSONObject;
 public class ClipKeyListWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback, JsonParserThread.JsonParser {
     private ClipKeyListRequest mRequest = null;
+
+    /**
+     * コンテキストを継承元のコンストラクタに送る
+     *
+     * @param context コンテキスト
+     */
+    public ClipKeyListWebClient(Context context) {
+        super(context);
+    }
 
     @Override
     public void onParserFinished(Object parsedData) {
@@ -84,15 +94,17 @@ public class ClipKeyListWebClient
             thread.start();
         } catch (Exception e) {
             DTVTLogger.debug(e);
-            onError();
+            onError(returnCode);
         }
     }
 
     /**
-     * 通信失敗時のコールバック
+     * 通信失敗時のコールバック.
+     *
+     * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError() {
+    public void onError(ReturnCode returnCode) {
         //エラーが発生したのでレスポンスデータにnullを設定してを返す
         if (null != mTvClipKeyListJsonParserCallback) {
             mTvClipKeyListJsonParserCallback.onTvClipKeyListJsonParsed(null);

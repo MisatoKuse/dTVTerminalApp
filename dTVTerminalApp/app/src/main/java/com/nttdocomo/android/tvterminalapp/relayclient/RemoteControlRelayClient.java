@@ -34,143 +34,80 @@ public class RemoteControlRelayClient {
     // TODO: STBがDMSとして動作しないためDMS機能が実装されるまで固定IPを使用する
     private String ｍRemoteHost = "192.168.11.23";
 
+    private static final String KEYCODE_DPAD_UP = "KEYCODE_DPAD_UP";
+    private static final String KEYCODE_DPAD_DOWN = "KEYCODE_DPAD_DOWN";
+    private static final String KEYCODE_DPAD_LEFT = "KEYCODE_DPAD_LEFT";
+    private static final String KEYCODE_DPAD_RIGHT = "KEYCODE_DPAD_RIGHT";
+    private static final String KEYCODE_HOME = "KEYCODE_HOME";
+    private static final String KEYCODE_1 = "KEYCODE_1";
+    private static final String KEYCODE_2 = "KEYCODE_2";
+    private static final String KEYCODE_3 = "KEYCODE_3";
+    private static final String KEYCODE_4 = "KEYCODE_4";
+    private static final String KEYCODE_5 = "KEYCODE_5";
+    private static final String KEYCODE_6 = "KEYCODE_6";
+    private static final String KEYCODE_7 = "KEYCODE_7";
+    private static final String KEYCODE_8 = "KEYCODE_8";
+    private static final String KEYCODE_9 = "KEYCODE_9";
+    private static final String KEYCODE_0 = "KEYCODE_0";
+    private static final String KEYCODE_11 = "KEYCODE_11";
+    private static final String KEYCODE_12 = "KEYCODE_12";
+    private static final String KEYCODE_TV_TERRESTRIAL_DIGITAL = "KEYCODE_TV_TERRESTRIAL_DIGITAL";
+    private static final String KEYCODE_TV_SATELLITE_BS = "KEYCODE_TV_SATELLITE_BS";
+    private static final String KEYCODE_TV = "KEYCODE_TV";
+    private static final String KEYCODE_GUIDE = "KEYCODE_GUIDE";
+    private static final String KEYCODE_DPAD_CENTER = "KEYCODE_DPAD_CENTER";
+    private static final String KEYCODE_BACK = "KEYCODE_BACK";
+    private static final String KEYCODE_MEDIA_PLAY_PAUSE = "KEYCODE_MEDIA_PLAY_PAUSE";
+    private static final String KEYCODE_MEDIA_SKIP_BACKWARD = "KEYCODE_MEDIA_SKIP_BACKWARD";
+    private static final String KEYCODE_MEDIA_REWIND = "KEYCODE_MEDIA_REWIND";
+    private static final String KEYCODE_MEDIA_FAST_FORWARD = "KEYCODE_MEDIA_FAST_FORWARD";
+    private static final String KEYCODE_MEDIA_SKIP_FORWARD = "KEYCODE_MEDIA_SKIP_FORWARD";
+    private static final String KEYCODE_CHANNEL_UP = "KEYCODE_CHANNEL_UP";
+    private static final String KEYCODE_CHANNEL_DOWN = "KEYCODE_CHANNEL_DOWN";
+    private static final String KEYCODE_INFO = "KEYCODE_INFO";
+    private static final String KEYCODE_TV_DATA_SERVICE = "KEYCODE_TV_DATA_SERVICE";
+    private static final String KEYCODE_POWER = "KEYCODE_POWER";
+    private static final String KEYCODE_REC_LIST = "KEYCODE_REC_LIST";
+
     // 受信キーコード名に対応する STBキーコード
     private static final Map<Integer, String> keyCodeNameMap = new HashMap<Integer, String>() {
         {
-            put(R.id.remote_controller_bt_up, "KEYCODE_DPAD_UP");
-        }         // カーソル (上下左右)
-
-        {
-            put(R.id.remote_controller_bt_down, "KEYCODE_DPAD_DOWN");
+            put(R.id.remote_controller_bt_up, KEYCODE_DPAD_UP); // カーソル (上下左右)
+            put(R.id.remote_controller_bt_down, KEYCODE_DPAD_DOWN);
+            put(R.id.remote_controller_bt_left, KEYCODE_DPAD_LEFT);
+            put(R.id.remote_controller_bt_right, KEYCODE_DPAD_RIGHT);
+            put(R.id.remote_controller_bt_toHome, KEYCODE_HOME); // ホーム
+            // チャンネル (1～12) ※ チャンネル (10)は KEYCODE_0となる
+            put(R.id.remote_controller_bt_one, KEYCODE_1);
+            put(R.id.remote_controller_bt_two, KEYCODE_2);
+            put(R.id.remote_controller_bt_three, KEYCODE_3);
+            put(R.id.remote_controller_bt_four, KEYCODE_4);
+            put(R.id.remote_controller_bt_five, KEYCODE_5);
+            put(R.id.remote_controller_bt_six, KEYCODE_6);
+            put(R.id.remote_controller_bt_seven, KEYCODE_7);
+            put(R.id.remote_controller_bt_eight, KEYCODE_8);
+            put(R.id.remote_controller_bt_nine, KEYCODE_9);
+            put(R.id.remote_controller_bt_ten, KEYCODE_0); // ※ チャンネル (10)は (0)
+            put(R.id.remote_controller_bt_eleven, KEYCODE_11);
+            put(R.id.remote_controller_bt_twelve, KEYCODE_12);
+            put(R.id.remote_controller_bt_degital, KEYCODE_TV_TERRESTRIAL_DIGITAL); // 地デジ
+            put(R.id.remote_controller_bt_bs, KEYCODE_TV_SATELLITE_BS); // BS
+            put(R.id.remote_controller_bt_iptv, KEYCODE_TV); // IPTV
+            put(R.id.remote_controller_bt_tv_program, KEYCODE_GUIDE); // 番組表
+            put(R.id.remote_controller_bt_decide, KEYCODE_DPAD_CENTER); // 決定
+            put(R.id.remote_controller_bt_back, KEYCODE_BACK); // 戻る
+            put(R.id.remote_controller_iv_playOrStop, KEYCODE_MEDIA_PLAY_PAUSE); // 再生/停止
+            put(R.id.remote_controller_iv_blue, KEYCODE_MEDIA_SKIP_BACKWARD); // カラー (青)/10秒戻し
+            put(R.id.remote_controller_iv_red, KEYCODE_MEDIA_REWIND); // カラー (赤)/巻き戻し
+            put(R.id.remote_controller_iv_green, KEYCODE_MEDIA_FAST_FORWARD); // カラー (緑)/早送り
+            put(R.id.remote_controller_iv_yellow, KEYCODE_MEDIA_SKIP_FORWARD); // カラー (黄)/30秒送り
+            put(R.id.remote_controller_bt_channel_plus, KEYCODE_CHANNEL_UP); // チャンネル (上下)
+            put(R.id.remote_controller_bt_channel_minus, KEYCODE_CHANNEL_DOWN);
+            put(R.id.remote_controller_bt_notice, KEYCODE_INFO); // お知らせ
+            put(R.id.remote_controller_bt_ddata, KEYCODE_TV_DATA_SERVICE); // dデータ
+            put(R.id.remote_controller_iv_power, KEYCODE_POWER); // 電源
+            put(R.id.remote_controller_bt_record_list, KEYCODE_REC_LIST); // 録画リスト
         }
-
-        {
-            put(R.id.remote_controller_bt_left, "KEYCODE_DPAD_LEFT");
-        }
-
-        {
-            put(R.id.remote_controller_bt_right, "KEYCODE_DPAD_RIGHT");
-        }
-
-        {
-            put(R.id.remote_controller_bt_toHome, "KEYCODE_HOME");
-        }       // ホーム
-
-        {
-            put(R.id.remote_controller_bt_ten, "KEYCODE_0");
-        }    // チャンネル (1～12) ※ チャンネル (10)は仕様書より KEYCODE_0となる
-
-        {
-            put(R.id.remote_controller_bt_one, "KEYCODE_1");
-        }
-
-        {
-            put(R.id.remote_controller_bt_two, "KEYCODE_2");
-        }
-
-        {
-            put(R.id.remote_controller_bt_three, "KEYCODE_3");
-        }
-
-        {
-            put(R.id.remote_controller_bt_four, "KEYCODE_4");
-        }
-
-        {
-            put(R.id.remote_controller_bt_five, "KEYCODE_5");
-        }
-
-        {
-            put(R.id.remote_controller_bt_six, "KEYCODE_6");
-        }
-
-        {
-            put(R.id.remote_controller_bt_seven, "KEYCODE_7");
-        }
-
-        {
-            put(R.id.remote_controller_bt_eight, "KEYCODE_8");
-        }
-
-        {
-            put(R.id.remote_controller_bt_nine, "KEYCODE_9");
-        }
-
-        {
-            put(R.id.remote_controller_bt_eleven, "KEYCODE_11");
-        }
-
-        {
-            put(R.id.remote_controller_bt_twelve, "KEYCODE_12");
-        }
-
-        {
-            put(R.id.remote_controller_bt_degital, "KEYCODE_TV_TERRESTRIAL_DIGITAL");
-        }  // 地デジ
-
-        {
-            put(R.id.remote_controller_bt_bs, "KEYCODE_TV_SATELLITE_BS");
-        }  // BS
-
-        {
-            put(R.id.remote_controller_bt_iptv, "KEYCODE_TV");
-        } // IPTV
-
-        {
-            put(R.id.remote_controller_bt_tv_program, "KEYCODE_GUIDE");
-        }  // 番組表
-
-        {
-            put(R.id.remote_controller_bt_decide, "KEYCODE_DPAD_CENTER");
-        }  // 決定
-
-        {
-            put(R.id.remote_controller_bt_back, "KEYCODE_BACK");
-        }  // 戻る
-
-        {
-            put(R.id.remote_controller_iv_playOrStop, "KEYCODE_MEDIA_PLAY_PAUSE");
-        } // 再生/停止
-
-        {
-            put(R.id.remote_controller_iv_blue, "KEYCODE_MEDIA_SKIP_BACKWARD");
-        }  // カラー (青)/10秒戻し
-
-        {
-            put(R.id.remote_controller_iv_red, "KEYCODE_MEDIA_REWIND");
-        }  // カラー (赤)/巻き戻し
-
-        {
-            put(R.id.remote_controller_iv_green, "KEYCODE_MEDIA_FAST_FORWARD");
-        }  // カラー (緑)/早送り
-
-        {
-            put(R.id.remote_controller_iv_yellow, "KEYCODE_MEDIA_SKIP_FORWARD");
-        }  // カラー (黄)/30秒送り
-
-        {
-            put(R.id.remote_controller_bt_channel_plus, "KEYCODE_CHANNEL_UP");
-        }  // チャンネル (上下)
-
-        {
-            put(R.id.remote_controller_bt_channel_minus, "KEYCODE_CHANNEL_DOWN");
-        }
-
-        {
-            put(R.id.remote_controller_bt_notice, "KEYCODE_INFO");
-        }  // お知らせ
-
-        {
-            put(R.id.remote_controller_bt_ddata, "KEYCODE_TV_DATA_SERVICE");
-        }  // dデータ
-
-        {
-            put(R.id.remote_controller_iv_power, "KEYCODE_POWER");
-        }  // 電源(KEYCODE_STB_POWERの可能性あり)
-
-        {
-            put(R.id.remote_controller_bt_record_list, "KEYCODE_REC_LIST");
-        }  // 録画リスト // 録画リスト
     };
 
     // シングルトン
@@ -192,6 +129,38 @@ public class RemoteControlRelayClient {
         HIKARITV,
         // ダ・ゾーン
         DAZN
+    }
+
+    /**
+     * サービス・カテゴリー分類.
+     */
+    public enum SERVICE_CATEGORY_TYPES {
+        // 初期値
+        UNKNOWN,
+        // 放送
+        DTV_CHANNEL_CATEGORY_BROADCAST,
+        // VOD（見逃し）
+        DTV_CHANNEL_CATEGORY_MISSED,
+        // VOD（関連番組）
+        DTV_CHANNEL_CATEGORY_RELATION,
+        // 地デジ
+        H4D_CATEGORY_TERRESTRIAL_DIGITAL,
+        // BS
+        H4D_CATEGORY_SATELLITE_BS,
+        // H4D IPTV
+        H4D_CATEGORY_IPTV,
+        // H4D dTVチャンネル 放送
+        H4D_CATEGORY_DTV_CHANNEL_BROADCAST,
+        // H4D dTVチャンネル VOD（見逃し）
+        H4D_CATEGORY_DTV_CHANNEL_MISSED,
+        // H4D dTVチャンネル VOD（関連番組）
+        H4D_CATEGORY_DTV_CHANNEL_RELATION,
+        // ひかりTV 録画
+        H4D_CATEGORY_RECORDED_CONTENTS,
+        // H4D ひかりTV VOD
+        H4D_CATEGORY_HIKARI_TV_VOD,
+        // dTV SVOD
+        H4D_CATEGORY_DTV_SVOD
     }
 
     /**
@@ -221,15 +190,21 @@ public class RemoteControlRelayClient {
     private static final String RELAY_COMMAND_TITLE_DETAIL = "TITLE_DETAIL";
     private static final String RELAY_COMMAND_IS_USER_ACCOUNT_EXIST = "IS_USER_ACCOUNT_EXIST";
     private static final String RELAY_COMMAND_START_APPLICATION = "START_APPLICATION";
+    private static final String RELAY_COMMAND_KEYEVENT_KEYCODE_POWER = "KEYEVENT_KEYCODE_POWER";
     private static final String RELAY_COMMAND_UNKNOWN = "COMMAND_UNKNOWN";
     private static final String RELAY_COMMAND_APPLICATION_ID = "APP_ID";
     private static final String RELAY_COMMAND_REQUEST_COMMAND = "REQUEST_COMMAND";
     private static final String RELAY_COMMAND_USER_ID = "USER_ID";
     private static final String RELAY_COMMAND_CONTENTS_ID = "CONTENTS_ID";
+    private static final String RELAY_COMMAND_SERVICE_CATEGORY_TYPE = "SERVICE_CATEGORY_TYPE";
     private static final String RELAY_RESULT = "RESULT";
     private static final String RELAY_RESULT_OK = "OK";
     private static final String RELAY_RESULT_ERROR = "ERROR";
-    //    private static final String RELAY_RESULT_MESSAGE = "MESSAGE";
+    // dTVチャンネル・カテゴリー分類に対応するカテゴリー・シンボル名
+    private static final String STB_APPLICATION_DTVCHANNEL_CATEGORY_BROADCAST = "DTVCHANNEL_CATEGORY_BROADCAST";
+    private static final String STB_APPLICATION_DTVCHANNEL_CATEGORY_MISSED = "DTVCHANNEL_CATEGORY_MISSED";
+    private static final String STB_APPLICATION_DTVCHANNEL_CATEGORY_RELATION = "DTVCHANNEL_CATEGORY_RELATION";
+
     // 中継アプリクライアントが送信するキーコードのメッセージ定数
     private static final String RELAY_KEYEVENT = "KEYEVENT";
     private static final String RELAY_KEYEVENT_ACTION = "ACTION";
@@ -260,6 +235,15 @@ public class RemoteControlRelayClient {
             put(STB_APPLICATION_TYPES.DTVCHANNEL, STB_APPLICATION_DTVCHANNEL);  // dTVチャンネル
             put(STB_APPLICATION_TYPES.HIKARITV, STB_APPLICATION_HIKARITV);    // ひかりTV
             put(STB_APPLICATION_TYPES.DAZN, STB_APPLICATION_DAZN);    // ダ・ゾーン
+        }
+    };
+
+    // dTVチャンネル・カテゴリー分類に対応するカテゴリー・シンボル名
+    private static final Map<SERVICE_CATEGORY_TYPES, String> mServiceCategorySymbolMap = new HashMap<SERVICE_CATEGORY_TYPES, String>() {
+        {
+            put(SERVICE_CATEGORY_TYPES.DTV_CHANNEL_CATEGORY_BROADCAST, STB_APPLICATION_DTVCHANNEL_CATEGORY_BROADCAST);    // dTVチャンネル・放送
+            put(SERVICE_CATEGORY_TYPES.DTV_CHANNEL_CATEGORY_MISSED, STB_APPLICATION_DTVCHANNEL_CATEGORY_MISSED);    // dTVチャンネル・VOD（見逃し）
+            put(SERVICE_CATEGORY_TYPES.DTV_CHANNEL_CATEGORY_RELATION, STB_APPLICATION_DTVCHANNEL_CATEGORY_RELATION);  // dTVチャンネル・VOD（関連番組）
         }
     };
 
@@ -359,13 +343,44 @@ public class RemoteControlRelayClient {
     }
 
     /**
+     * STB電源ON/OFF要求をSTBへ送信する.
+     *
+     * @return true 電源キーの場合
+     */
+    private boolean switchStbPowerRequest(String keycode, int action, boolean canceled, Context context) {
+        String requestParam;
+
+        // 電源キーをフックする
+        if (KEYCODE_POWER.equals(keycode)) {
+            DTVTLogger.debug(String.format("KEYCODE_POWER, action:%d canceled:%s", action, canceled));
+            if (KeyEvent.ACTION_UP == action && !canceled) {
+                //ユーザID取得
+                String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(context);
+                if (userId != null && !userId.isEmpty()) {
+                    requestParam = setSwitchStbPowerRequest(userId);
+                    if (requestParam != null) {
+                        DTVTLogger.debug(String.format("KEYCODE_POWER, action:%d canceled:%s send", action, canceled));
+                        // STB電源ON/OFF要求をSTBへ送信する
+                        sendStartApplicationRequest(requestParam);
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * キーコードをSTBへ送信する.
      *
      * @param keycodeRid
      */
-    public void sendKeycode(int keycodeRid, int action, boolean canceled) {
+    public void sendKeycode(int keycodeRid, int action, boolean canceled, Context context) {
         String keycode = convertKeycode(keycodeRid);
         if (keycode != null && mKeyeventActionMap.containsKey(action)) {
+            if (switchStbPowerRequest(keycode, action, canceled, context)) {
+                return;
+            }
             // キーコード送信スレッドを開始
             new Thread(new KeycodeRerayTask(keycode, action, canceled)).start();
         }
@@ -560,6 +575,38 @@ public class RemoteControlRelayClient {
     }
 
     /**
+     * アプリ起動要求を受信してタイトル詳細表示のリクエストをSTBへ送信する.
+     * ・dTVチャンネル・カテゴリー分類に対応
+     * ・ひかりTV・カテゴリー分類に対応
+     *
+     * @param applicationType
+     * @param contentsId      コンテンツID
+     * @param serviceCategoryType  カテゴリー分類
+     * @return
+     */
+    public boolean startApplicationRequest(STB_APPLICATION_TYPES applicationType, String contentsId, SERVICE_CATEGORY_TYPES serviceCategoryType, Context context) {
+        String applicationId = getApplicationId(applicationType);
+        String requestParam;
+
+        //ユーザID取得
+        String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(context);
+
+        if (applicationId != null && contentsId != null) {
+            requestParam = setTitleDetailRequest(applicationId, contentsId, serviceCategoryType, userId);
+            if (requestParam != null) {
+                // アプリ起動要求を受信してインテントをSTBへ送信する
+                sendStartApplicationRequest(requestParam);
+                return true;
+            } else {
+                ((BaseActivity) context).setRemoteProgressVisible(View.GONE);
+            }
+        } else {
+            ((BaseActivity) context).setRemoteProgressVisible(View.GONE);
+        }
+        return false;
+    }
+
+    /**
      * dアカチェック要求を受信してdアカチェックリクエストをSTBへ送信する.
      *
      * @param context
@@ -571,7 +618,7 @@ public class RemoteControlRelayClient {
 
         //ユーザID取得
         String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(context);
-        if (userId != null && !userId.equals("")) {
+        if (userId != null && !userId.isEmpty()) {
             requestParam = setAccountCheckRequest(userId);
             if (requestParam != null) {
                 // dアカチェック要求を受信してdアカチェックリクエストをSTBへ送信する
@@ -579,6 +626,25 @@ public class RemoteControlRelayClient {
             }
         }
         DTVTLogger.end();
+    }
+
+    /**
+     * 電源ON/OFF要求のメッセージ（JSON形式）を作成する.
+     *
+     * @param userId
+     * @return request JSON形式
+     */
+    private String setSwitchStbPowerRequest(String userId) {
+        JSONObject requestJson = new JSONObject();
+        String request = null;
+        try {
+            requestJson.put(RELAY_COMMAND, RELAY_COMMAND_KEYEVENT_KEYCODE_POWER);
+            requestJson.put(RELAY_COMMAND_USER_ID, toHashValue(userId));
+            request = requestJson.toString();
+        } catch (JSONException e) {
+            DTVTLogger.debug(e);
+        }
+        return request;
     }
 
     /**
@@ -615,6 +681,20 @@ public class RemoteControlRelayClient {
     }
 
     /**
+     * dTVチャンネル・カテゴリー分類に対応するカテゴリー・シンボル名.
+     *
+     * @param serviceCategoryType
+     * @return  dTVチャンネル・カテゴリー分類に対応するカテゴリー・シンボル名
+     */
+    private String getServiceCategorySymbol(SERVICE_CATEGORY_TYPES serviceCategoryType) {
+        String serviceCategorySymbol = "";
+        if (mServiceCategorySymbolMap.containsKey(serviceCategoryType)) {
+            serviceCategorySymbol = mServiceCategorySymbolMap.get(serviceCategoryType);
+        }
+        return serviceCategorySymbol;
+    }
+
+    /**
      * アプリ起動要求をSTBへ送信するスレッド.
      */
     private class StartApplicationRequestTask implements Runnable {
@@ -645,7 +725,7 @@ public class RemoteControlRelayClient {
                     }
                     stbConnection.disconnect();
                 } else {
-                    DTVTLogger.debug("STBとの接続に失敗しました。");
+                    DTVTLogger.debug("failed to connect to the STB");
                     response.setResult(ResponseMessage.RELAY_RESULT_ERROR);
                     response.setResultCode(ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE);
                     response.setRequestCommandTypes(STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
@@ -762,8 +842,8 @@ public class RemoteControlRelayClient {
      * アプリ起動要求のメッセージ（JSON形式）を作成する.
      * タイトル詳細表示のリクエスト
      *
-     * @param applicationId
-     * @param contentsId
+     * @param applicationId  アプリケーションID
+     * @param contentsId      コンテンツID
      * @return
      */
     private String setTitleDetailRequest(String applicationId, String contentsId, String userId) {
@@ -772,6 +852,34 @@ public class RemoteControlRelayClient {
         try {
             requestJson.put(RELAY_COMMAND, RELAY_COMMAND_TITLE_DETAIL);
             requestJson.put(RELAY_COMMAND_APPLICATION_ID, applicationId);
+            requestJson.put(RELAY_COMMAND_CONTENTS_ID, contentsId);
+            requestJson.put(RELAY_COMMAND_USER_ID, toHashValue(userId));
+            request = requestJson.toString();
+        } catch (JSONException e) {
+            DTVTLogger.debug(e);
+        }
+        return request;
+    }
+
+    /**
+     * アプリ起動要求のメッセージ（JSON形式）を作成する.
+     * タイトル詳細表示のリクエスト
+     * ・dTVチャンネル・カテゴリー分類に対応
+     * ・ひかりTV・カテゴリー分類に対応
+     *
+     * @param applicationId  アプリケーションID
+     * @param contentsId      コンテンツID
+     * @param serviceCategoryType  カテゴリー分類
+     * @return
+     */
+    private String setTitleDetailRequest(String applicationId, String contentsId, SERVICE_CATEGORY_TYPES serviceCategoryType, String userId) {
+        JSONObject requestJson = new JSONObject();
+        String request = null;
+
+        try {
+            requestJson.put(RELAY_COMMAND, RELAY_COMMAND_TITLE_DETAIL);
+            requestJson.put(RELAY_COMMAND_APPLICATION_ID, applicationId);
+            requestJson.put(RELAY_COMMAND_SERVICE_CATEGORY_TYPE, getServiceCategorySymbol(serviceCategoryType));
             requestJson.put(RELAY_COMMAND_CONTENTS_ID, contentsId);
             requestJson.put(RELAY_COMMAND_USER_ID, toHashValue(userId));
             request = requestJson.toString();

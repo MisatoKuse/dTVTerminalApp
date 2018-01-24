@@ -63,6 +63,25 @@
                 android:fadingEdgeLength="0dp"
                 android:overScrollMode="never" />
         </com.nttdocomo.android.tvterminalapp.model.program.ProgramScrollView>
+
+	    <RelativeLayout
+		    android:id="@+id/tv_program_list_main_layout_time_line"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@id/tv_program_list_main_layout_channel_rv">
+		    <View
+			    android:layout_width="match_parent"
+			    android:layout_height="1dp"
+			    android:layout_centerInParent="true"
+			    android:background="@color/tv_program_list_time_line_now"/>
+		    <ImageView
+			    android:id="@+id/tv_program_list_main_layout_time_line_now"
+			    android:layout_width="@dimen/tv_program_list_time_line_width"
+			    android:layout_height="@dimen/tv_program_list_time_line_height"
+			    android:layout_centerVertical="true"
+			    android:layout_marginStart="@dimen/tv_program_list_time_scrollview_width"
+			    android:background="@mipmap/timeline_now"/>
+	    </RelativeLayout>
     </RelativeLayout>
 
     <TextView

@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
@@ -35,6 +36,15 @@ public class MyChannelRegisterWebClient
     //コールバックのインスタンス
     private MyChannelRegisterJsonParserCallback myChannelRegisterJsonParserCallback;
 
+    /**
+     * コンテキストを継承元のコンストラクタに送る
+     *
+     * @param context コンテキスト
+     */
+    public MyChannelRegisterWebClient(Context context) {
+        super(context);
+    }
+
     @Override
     public void onAnswer(ReturnCode returnCode) {
         if (myChannelRegisterJsonParserCallback != null) {
@@ -44,8 +54,13 @@ public class MyChannelRegisterWebClient
         }
     }
 
+    /**
+     * 通信失敗時のコールバック.
+     *
+     * @param returnCode 戻り値構造体
+     */
     @Override
-    public void onError() {
+    public void onError(ReturnCode returnCode) {
         if (myChannelRegisterJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
             myChannelRegisterJsonParserCallback.onMyChannelRegisterJsonParsed(null);

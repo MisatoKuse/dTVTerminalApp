@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/setting_background_color_black">
+
+	<RelativeLayout
+		android:id="@+id/application_info_main_layout_icon"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_centerHorizontal="true"
+		android:layout_marginTop="@dimen/application_info_application_icon_margin_top">
+
+		<ImageView
+			android:id="@+id/application_info_main_layout_icon_content"
+			android:layout_width="@dimen/application_info_image_width"
+			android:layout_height="@dimen/application_info_image_height"
+			android:layout_centerInParent="true"
+			android:scaleType="fitXY"/>
+
+		<View
+			android:layout_width="@dimen/application_info_image_width"
+			android:layout_height="@dimen/application_info_image_height"
+			android:layout_centerHorizontal="true"
+			android:background="@drawable/app_info_icon_bg"/>
+	</RelativeLayout>
+
+	<TextView
+		android:id="@+id/application_info_main_layout_name"
+		android:layout_width="wrap_content"
+		android:layout_height="@dimen/application_info_application_name_height"
+		android:layout_below="@id/application_info_main_layout_icon"
+		android:layout_centerHorizontal="true"
+		android:layout_marginTop="@dimen/application_info_application_title_margin_top"
+		android:text="@string/application_info_application_name"
+		android:textColor="@color/application_info_application_title"
+		android:textSize="@dimen/application_info_application_title_text_size"/>
+
+	<TextView
+		android:id="@+id/application_info_main_layout_name_value"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/application_info_main_layout_name"
+		android:layout_centerHorizontal="true"
+		android:layout_marginTop="@dimen/application_info_application_value_margin_top"
+		android:textColor="@color/application_info_application_title_value"
+		android:textSize="@dimen/application_info_application_name_value_text_size"/>
+
+	<TextView
+		android:id="@+id/application_info_main_layout_provider"
+		android:layout_width="wrap_content"
+		android:layout_height="@dimen/application_info_application_provider_height"
+		android:layout_below="@id/application_info_main_layout_name_value"
+		android:layout_centerHorizontal="true"
+		android:layout_marginTop="@dimen/application_info_application_provider_margin_top"
+		android:text="@string/application_info_application_provider"
+		android:textColor="@color/application_info_application_title"
+		android:textSize="@dimen/application_info_application_title_text_size"/>
+
+	<TextView
+		android:id="@+id/application_info_main_layout_name_provider_value"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/application_info_main_layout_provider"
+		android:layout_centerHorizontal="true"
+		android:layout_marginTop="@dimen/application_info_application_value_margin_top"
+		android:text="@string/application_info_application_provider_value"
+		android:textColor="@color/application_info_application_title_value"
+		android:textSize="@dimen/application_info_application_name_value_text_size"/>
+
+	<TextView
+		android:id="@+id/application_info_main_layout_version"
+		android:layout_width="wrap_content"
+		android:layout_height="@dimen/application_info_application_provider_height"
+		android:layout_below="@id/application_info_main_layout_name_provider_value"
+		android:layout_centerHorizontal="true"
+		android:layout_marginTop="@dimen/application_info_application_version_margin_top"
+		android:text="@string/application_info_application_version"
+		android:textColor="@color/application_info_application_title"
+		android:textSize="@dimen/application_info_application_title_text_size"/>
+
+	<TextView
+		android:id="@+id/application_info_main_layout_version_value"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/application_info_main_layout_version"
+		android:layout_centerHorizontal="true"
+		android:layout_marginTop="@dimen/application_info_application_value_margin_top"
+		android:textColor="@color/application_info_application_title_value"
+		android:textSize="@dimen/application_info_application_name_value_text_size"/>
+
+</RelativeLayout>

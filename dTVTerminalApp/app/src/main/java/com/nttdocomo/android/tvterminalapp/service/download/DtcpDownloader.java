@@ -8,10 +8,10 @@ package com.nttdocomo.android.tvterminalapp.service.download;
 import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDlListener;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDlStatus;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaDownloadRet;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDownload;
+import com.nttdocomo.android.tvterminalapp.jni.download.DlnaDlListener;
+import com.nttdocomo.android.tvterminalapp.jni.download.DlnaDlStatus;
+import com.nttdocomo.android.tvterminalapp.jni.download.DlnaDownloadRet;
+import com.nttdocomo.android.tvterminalapp.jni.download.DlnaProvDownload;
 
 import java.io.File;
 
@@ -56,13 +56,33 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
             return;
         }
 
-        boolean ret=mDlnaProvDownload.startListen(this, context, param.getSavePath());
-        if(!ret){
-            onFail(DownloadListener.DLError.DLError_DmsError);
+        DlnaDownloadRet res=mDlnaProvDownload.startListen(this, context, param.getSavePath());
+        if(DlnaDownloadRet.DownloadRet_Succeed!=res){
+            errors(res);
             return;
         }
 
-        DlnaDownloadRet res= mDlnaProvDownload.download(param);
+        res= mDlnaProvDownload.download(param);
+        errors(res);
+//        switch (res){
+//            case DownloadRet_CopyKeyFileFailed:
+//                onFail(DownloadListener.DLError.DLError_CopyKeyFileFailed);
+//                break;
+//            case DownloadRet_ParamError:
+//                onFail(DownloadListener.DLError.DLError_ParamError);
+//                break;
+//            case DownloadRet_Unactivated:
+//                onFail(DownloadListener.DLError.DLError_Unactivated);
+//                break;
+//            case DownloadRet_OtherError:
+//                onFail(DownloadListener.DLError.DLError_Other);
+//                break;
+//            case DownloadRet_Succeed:
+//                break;
+//        }
+    }
+
+    private void errors(DlnaDownloadRet res){
         switch (res){
             case DownloadRet_CopyKeyFileFailed:
                 onFail(DownloadListener.DLError.DLError_CopyKeyFileFailed);

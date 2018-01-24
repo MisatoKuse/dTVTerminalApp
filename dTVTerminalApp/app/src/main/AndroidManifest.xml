@@ -18,14 +18,15 @@
     <!-- ID設定状態取得 I/Fを利用する場合に記載が必要. -->
     <uses-permission android:name="com.nttdocomo.android.idmanager.permission.GET_ID_STATE"/>
 
-
     <application
+        xmlns:tools="http://schemas.android.com/tools"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:resizeableActivity="false" tools:targetApi="24">
 
         <!-- ====================================== Home グループ Begin ====================================== -->
         <activity
@@ -77,9 +78,6 @@
             android:name=".activity.launch.STBConnectActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.launch.STBParingInvitationActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".activity.launch.STBSelectActivity"
             android:screenOrientation="portrait"
             android:theme="@style/STBTheme"/>
@@ -108,7 +106,22 @@
             android:name=".activity.other.SettingImageQualityActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.other.SettingDownloadPathActivity"
+            android:name=".activity.other.ApplicationInfoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.other.SettingMenuAppActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.other.SettingMenuFaqActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.other.SettingMenuLicenseActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.other.SettingMenuPrivacyPolicyActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.other.SettingMenuTermsOfServiceActivity"
             android:screenOrientation="portrait" />
         <!-- ======================================  Other グループ End ====================================== -->
 

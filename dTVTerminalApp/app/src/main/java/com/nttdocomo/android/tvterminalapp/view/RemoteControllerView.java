@@ -444,6 +444,18 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         DTVTLogger.end();
     }
 
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し
+     */
+    public void sendStartApplicationRequest(
+            RemoteControlRelayClient.STB_APPLICATION_TYPES type,
+            String contentsId,
+            RemoteControlRelayClient.SERVICE_CATEGORY_TYPES serviceCategoryType) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationRequest(type, contentsId, serviceCategoryType, mContext);
+        DTVTLogger.end();
+    }
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         DTVTLogger.start();

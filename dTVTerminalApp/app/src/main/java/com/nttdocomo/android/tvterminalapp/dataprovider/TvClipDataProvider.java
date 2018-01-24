@@ -205,7 +205,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
 
 //        if (!fromDb) {
         //通信クラスにデータ取得要求を出す
-        TvClipWebClient webClient = new TvClipWebClient();
+        TvClipWebClient webClient = new TvClipWebClient(mContext);
         int ageReq = 1;
         int upperPageLimit = 1;
         int lowerPageLimit = 1;

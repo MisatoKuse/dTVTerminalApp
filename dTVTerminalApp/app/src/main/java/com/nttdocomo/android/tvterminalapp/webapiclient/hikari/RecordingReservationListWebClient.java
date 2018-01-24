@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import android.content.Context;
+
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationListResponse;
@@ -36,6 +38,15 @@ public class RecordingReservationListWebClient
     private RecordingReservationListJsonParserCallback
             mRecordingReservationListJsonParserCallback;
 
+    /**
+     * コンテキストを継承元のコンストラクタに送る
+     *
+     * @param context コンテキスト
+     */
+    public RecordingReservationListWebClient(Context context) {
+        super(context);
+    }
+
     @Override
     public void onAnswer(ReturnCode returnCode) {
         if (mRecordingReservationListJsonParserCallback != null) {
@@ -46,8 +57,13 @@ public class RecordingReservationListWebClient
         }
     }
 
+    /**
+     * 通信失敗時のコールバック.
+     *
+     * @param returnCode 戻り値構造体
+     */
     @Override
-    public void onError() {
+    public void onError(ReturnCode returnCode) {
         if (mRecordingReservationListJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
             mRecordingReservationListJsonParserCallback

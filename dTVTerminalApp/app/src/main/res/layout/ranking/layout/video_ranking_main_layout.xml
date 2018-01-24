@@ -14,9 +14,15 @@
         android:foregroundGravity="center_horizontal"
         android:scrollbars="none" />
 
+    <ProgressBar
+        android:id="@+id/video_ranking_progress"
+        style="?android:attr/progressBarStyle"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
     <android.support.v4.view.ViewPager
         android:id="@+id/vp_video_ranking_result"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/video_ranking_tab_strip_scroll" />
+        android:layout_height="match_parent" />
 </LinearLayout>

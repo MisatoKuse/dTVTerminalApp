@@ -10,30 +10,9 @@ import java.util.List;
 
 public interface VideoRankingApiDataProviderCallback {
     /**
-     * 取得条件"総合"用コールバック
+     * ジャンル系のコールバック
      *
-     * @param videoRankList
+     * @param videoRankList アダプターで使うデータ
      */
-    void videoRankSynthesisCallback(List<ContentsData> videoRankList);
-
-    /**
-     * 取得条件"海外映画"用コールバック
-     *
-     * @param videoRankList
-     */
-    void videoRankOverseasMovieCallback(List<ContentsData> videoRankList);
-
-    /**
-     * 取得条件"国内映画"用コールバック
-     *
-     * @param videoRankList
-     */
-    void videoRankDomesticMovieCallback(List<ContentsData> videoRankList);
-
-    /**
-     * 取得条件"海外TV番組・ドラマ"用コールバック
-     *
-     * @param videoRankList
-     */
-    void videoRankOverseasChannelCallback(List<ContentsData> videoRankList);
+    void onVideoRankListCallback(List<ContentsData> videoRankList);
 }

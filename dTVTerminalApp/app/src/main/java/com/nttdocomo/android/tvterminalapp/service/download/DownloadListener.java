@@ -48,8 +48,9 @@ interface DownloadListener {
     /**
      * ダウンロードエラー発生の時、コールされる
      * @param error　error
+     * @param savePath savePath, savePathは提供できない場合、""に設定
      */
-    void onFail(DLError error);
+    void onFail(DLError error, final String savePath);
 
     /**
      * ダウンロード完了の時、コールされる

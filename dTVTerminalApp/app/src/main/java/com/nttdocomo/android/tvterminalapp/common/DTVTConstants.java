@@ -22,6 +22,45 @@ public class DTVTConstants {
     public static final String SOURCE_SCREEN = "source_screen";
     //==================================== 定数定義 End ===================================
 
+    /**
+     * 通信時エラー情報（WebAPI及びデータプロバイダー等で使用）
+     */
+    public enum ERROR_TYPE {
+        /**
+         * 通信成功
+         */
+        SUCCESS,
+
+        /**
+         * HTTPエラー
+         */
+        HTTP_ERROR,
+
+        /**
+         * その他通信エラー
+         */
+        COMMUNICATION_ERROR,
+        /**
+         * 証明書の問題等、SSLのエラー
+         */
+        SSL_ERROR,
+
+        /**
+         * データなし
+         */
+        NO_DATA,
+
+        /**
+         * レスポンス解析エラー
+         */
+        ANALYSIS_ERROR,
+
+        /**
+         * その他エラー
+         */
+        OTHER_ERROR,
+    }
+
 }
 
 

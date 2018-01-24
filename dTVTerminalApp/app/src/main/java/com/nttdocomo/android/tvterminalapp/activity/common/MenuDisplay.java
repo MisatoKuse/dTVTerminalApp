@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.activity.common;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -51,16 +52,19 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     private View mAccountName = null;
 
     private PopupWindow mPopupWindow = null;
-    private MenuListAdapter mMenuListAdapter = null;
     private ListView mGlobalMenuListView = null;
     private List mMenuItemTitles = null;
     private List mMenuItemCount = null;
 
     // TODO:メニュー表示種別
     public static final int INT_NONE_COUNT_STATUS = -1;
+    /**
+     * GlobalMenu横幅.
+     */
+    private static final int GLOBAL_MENU_WIDTH = 265;
 
     /**
-     * 機能
+     * 機能.
      * Singletonのため、privateにする
      */
     private MenuDisplay() {
@@ -102,11 +106,11 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
 
     private void initPopupWindow() {
         View popupWindowView = mActivity.getLayoutInflater().inflate(R.layout.nav_pop, null);
-        mPopupWindow = new PopupWindow(popupWindowView
-                , LinearLayout.LayoutParams.WRAP_CONTENT
-                , LinearLayout.LayoutParams.MATCH_PARENT, true);
+        mPopupWindow = new PopupWindow(popupWindowView, mActivity.dip2px(GLOBAL_MENU_WIDTH),
+                LinearLayout.LayoutParams.MATCH_PARENT, true);
         mPopupWindow.setAnimationStyle(R.style.AnimationRightFade);
-        ColorDrawable dw = new ColorDrawable(0xffffffff);
+        ColorDrawable dw = new ColorDrawable(ContextCompat.getColor(
+                mActivity, R.color.global_menu_popup_window_background_color));
         mPopupWindow.setBackgroundDrawable(dw);
         mPopupWindow.showAtLocation(mActivity.getLayoutInflater()
                 .inflate(R.layout.home_main_layout, null), Gravity.END, 0, 0);
@@ -173,7 +177,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                 if (null != mMenuDisplayEventListener) {
                     //「おすすめ番組・ビデオ」画面も、他の画面と同様に同一画面表示中の起動抑止を追加
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.RECOMMEND_PRO_VIDEO);
-                    if(!(mActivity instanceof RecommendActivity)) {
+                    if (!(mActivity instanceof RecommendActivity)) {
                         intent.setClass(mActivity, RecommendActivity.class);
                         intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
                         mActivity.startActivity(intent);
@@ -329,7 +333,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
 //        addFooterView(mGlobalMenuListView); //アカウント名アイテム追加
         initMenuListData();
 
-        mMenuListAdapter = new MenuListAdapter(mActivity, mMenuItemTitles, mMenuItemCount);
+        MenuListAdapter mMenuListAdapter = new MenuListAdapter(mActivity, mMenuItemTitles, mMenuItemCount);
         mGlobalMenuListView.setAdapter(mMenuListAdapter);
 
         mGlobalMenuListView.setOnItemClickListener(this);
@@ -436,7 +440,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     }
 
     /**
-     * ホームからチャンネルリストまでは共通のためここにまとめる
+     * ホームからチャンネルリストまでは共通のためここにまとめる.
      */
     private void setHeaderMenuItem() {
         //ホーム
@@ -465,7 +469,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     }
 
     /**
-     * 契約済みの録画番組～録画予約までは共通のためここにまとめる
+     * 契約済みの録画番組～録画予約までは共通のためここにまとめる.
      */
     private void setSighedMiddleMenuItem() {
         //録画番組
@@ -502,7 +506,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     }
 
     /**
-     * 未契約ログイン、未ログインの共通部分を統一
+     * 未契約ログイン、未ログインの共通部分を統一.
      */
     private void setUnsignedAndLogoffMiddleMenuItem() {
         //ランキング
@@ -515,7 +519,7 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
     }
 
     /**
-     * お知らせ、設定は共通のため、このメソッドに統一
+     * お知らせ、設定は共通のため、このメソッドに統一.
      */
     private void setFooterMenuItem() {
         //お知らせ

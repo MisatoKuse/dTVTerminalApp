@@ -116,7 +116,7 @@ public class RentalListInsertDataManager {
         DBHelper rentalListDBHelper = new DBHelper(mContext);
         SQLiteDatabase db = rentalListDBHelper.getWritableDatabase();
         RentalListDao rentalListDao = new RentalListDao(db);
-        List<HashMap<String, String>> clList = rentalChList.getChannelListData().getClList();
+        List<HashMap<String, String>> clList = rentalChList.getChannelListData().getChannelList();
         ArrayList<ActiveData> activeDataList = rentalChList.getChActiveData();
 
         //DB保存前に前回取得したデータは全消去する

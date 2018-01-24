@@ -15,7 +15,7 @@ import android.support.v7.app.NotificationCompat;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDownload;
+import com.nttdocomo.android.tvterminalapp.jni.download.DlnaProvDownload;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +33,7 @@ public class DownloadService extends Service implements DownloadListener {
 
     public static final String DONWLOAD_UPDATE = "update";
     public static final String DONWLOAD_SUCCESS = "success";
+    public static final String DONWLOAD_FAIL = "fail";
     public static final String DONWLOAD_PATH = "path";
 
     public void setDownloadServiceListener(DownloadServiceListener dlServiceListener){
@@ -262,9 +263,9 @@ public class DownloadService extends Service implements DownloadListener {
      * @param error　error
      */
     @Override
-    public void onFail(DLError error) {
+    public void onFail(DLError error, final String savePath) {
         if(null!=mDownloadServiceListener){
-            mDownloadServiceListener.onFail(error);
+            mDownloadServiceListener.onFail(error, savePath);
         }
     }
 

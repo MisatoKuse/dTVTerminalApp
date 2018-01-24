@@ -458,6 +458,9 @@ public class DlnaInterface {
      */
     private void onDeviceJoin(ArrayList<Object> content) {
         if (null == content || 0 == content.size()) {
+            if(null!=mDlnaDevListListener ){
+                mDlnaDevListListener.onError(sErrorMsgDMS);
+            }
             return;
         }
 

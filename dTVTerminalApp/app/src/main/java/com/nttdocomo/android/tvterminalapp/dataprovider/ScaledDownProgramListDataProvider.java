@@ -237,7 +237,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         ArrayList<Channel> channels = null;
         if (channelLists != null) {
             mChannelList = channelLists.get(0);
-            List<HashMap<String, String>> channelList = mChannelList.getClList();
+            List<HashMap<String, String>> channelList = mChannelList.getChannelList();
             if (channelList != null) {
                 channels = new ArrayList<>();
                 setChannelData(channels, channelList);
@@ -515,7 +515,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             }
         } else {
             dateUtils.addLastProgramDate(DateUtils.CHANNEL_LAST_UPDATE);
-            ChannelWebClient mChannelList = new ChannelWebClient();
+            ChannelWebClient mChannelList = new ChannelWebClient(mContext);
             mChannelList.getChannelApi(limit, offset, filter, DISPLAY_TYPE[type], this);
         }
     }
@@ -569,7 +569,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 j++;
             }
             dateUtils.addLastProgramDate(DateUtils.TVSCHEDULE_LAST_UPDATE);
-            TvScheduleWebClient mChannelProgramList = new TvScheduleWebClient();
+            TvScheduleWebClient mChannelProgramList = new TvScheduleWebClient(mContext);
             mChannelProgramList.getTvScheduleApi(chList, dateList, filter, this);
         }
     }

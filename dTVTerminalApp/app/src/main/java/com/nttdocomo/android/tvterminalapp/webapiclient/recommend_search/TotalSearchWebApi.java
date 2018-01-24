@@ -5,6 +5,8 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
 
+import android.content.Context;
+
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.webapiclient.WebApiBase;
@@ -23,6 +25,19 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
     String chargeFilterString = "";
     String otherFilterString = "";
 
+
+    //SSLチェック用コンテキスト
+    private Context mContext;
+
+    /**
+     * コンストラクタ.
+     *
+     * @param context コンテキスト
+     */
+    public TotalSearchWebApi(Context context) {
+        //コンテキストの退避
+        mContext = context;
+    }
     public void setDelegate(TotalSearchWebApiDelegate de){
         synchronized (this) {
             delegate = de;
@@ -67,7 +82,7 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
             queryItems.put(SearchRequestKey.kFilterViewableAge, filterViewableAge);
         }
 
-        get(UrlConstants.WebApiUrl.totalSearchUrl, queryItems, this);
+        get(UrlConstants.WebApiUrl.totalSearchUrl, queryItems, this, mContext);
     }
 
     // MARK : - private method

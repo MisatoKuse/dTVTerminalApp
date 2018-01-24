@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
@@ -38,6 +39,15 @@ public class ContentsListPerGenreWebClient
             mContentsListPerGenreJsonParserCallback;
 
     /**
+     * コンテキストを継承元のコンストラクタに送る
+     *
+     * @param context コンテキスト
+     */
+    public ContentsListPerGenreWebClient(Context context) {
+        super(context);
+    }
+
+    /**
      * 通信成功時のコールバック
      *
      * @param returnCode 戻り値構造体
@@ -53,10 +63,12 @@ public class ContentsListPerGenreWebClient
     }
 
     /**
-     * 通信失敗時のコールバック
+     * 通信失敗時のコールバック.
+     *
+     * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError() {
+    public void onError(ReturnCode returnCode) {
         //エラーが発生したのでヌルを返す
         mContentsListPerGenreJsonParserCallback.onContentsListPerGenreJsonParsed(null);
     }

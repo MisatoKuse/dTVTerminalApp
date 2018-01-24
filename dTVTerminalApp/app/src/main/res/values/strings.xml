@@ -13,7 +13,7 @@
     <string name="contents_more">more</string>
     <string name="positive_response">はい</string>
     <string name="negative_response">いいえ</string>
-    <string name="custom_dialog_ok">確定</string>
+    <string name="custom_dialog_ok">OK</string>
     <string name="custom_dialog_cancel">キャンセル</string>
     <string name="clip_regist_result_message">をクリップしました</string>
     <string name="clip_regist_error_message">のクリップに失敗しました</string>
@@ -21,24 +21,25 @@
     <string name="clip_delete_error_message">のクリップ削除に失敗しました</string>
     <string name="epg_contents_message">番組</string>
     <string name="vod_contents_message">ビデオ</string>
-    <string name="app_finish_dialog_title">アプリ終了</string>
-    <string name="app_finish_dialog_message">アプリ終了してよろしいでしょうか</string>
+    <string name="app_finish_dialog_message">アプリを終了しますか？</string>
     <string name="message_three_asterisk">＊＊＊</string>
     <string name="parental_pg_12">PG12</string>
     <string name="parental_r_15">R15</string>
     <string name="parental_r_18">R18</string>
     <string name="parental_r_20">R20</string>
+    <string name="common_text_close">閉じる</string>
+    <string name="common_text_retry">リトライ</string>
 
     <!-- Launch -->
-    <string name="str_app_title">dリモート</string>
+    <string name="str_app_title">ドコモテレビターミナル</string>
     <string name="str_launch_title">起動画面</string>
     <string name="str_tutorial_title">チュートリアル画面</string>
     <string name="str_get_info_title">情報取得中</string>
     <string name="str_stb_select_title">STB選択</string>
     <string name="str_stb_select_result_text">ペアリング可能なデバイスが\n見つかりました。</string>
-    <string name="str_stb_next_not_display_text">\t次回以降表示しない</string>
+    <string name="str_stb_next_not_display_text">次回以降表示しない</string>
     <string name="str_stb_connect_title">STB接続</string>
-    <string name="str_stb_connect_success_text">STBとペアリングしました</string>
+    <string name="str_stb_connect_success_text">ドコモテレビターミナルとペアリングしました。</string>
     <string name="str_stb_pair_invitation_title">STBペアリング勧誘</string>
     <string name="str_stb_no_pair_use_text">ペアリングしないでアプリを利用する</string>
     <string name="str_stb_no_login_use_text">ログインしないでアプリを利用する</string>
@@ -49,22 +50,23 @@
     <string name="str_d_account_resetting_title">dアカウント再設定</string>
     <string name="str_d_account_setting_help_title">dアカウント設定ヘルプ</string>
     <string name="str_d_account_reg_confirmation_title">dアカウント登録確認</string>
-    <string name="str_d_account_app_not_install">STBとペアリングするには\ndアカウントでのログインが必要です</string>
+    <string name="str_d_account_application_download">dアカウントアプリをダウンロードする</string>
+    <string name="str_d_account_app_not_install">ドコモテレビターミナルとペアリングするには\ndアカウントでのログインが必要です</string>
     <string name="str_d_account_app_download">dアカウントアプリをダウンロードする</string>
     <string name="str_stb_select_result_text_failed">ペアリング可能なデバイスが\n見つかりませんでした。</string>
     <string name="str_stb_select_result_text_search">ペアリング可能なデバイスを\n探しています。</string>
-    <string name="str_stb_search_failed_help">STBとペアリングするには</string>
+    <string name="str_stb_search_failed_help">ドコモテレビターミナルとペアリングするには</string>
     <string name="str_stb_search_failed_paring_again">再度ペアリングを実行する</string>
     <string name="str_stb_search_failed_help_text">docomoSTBヘルプ</string>
     <string name="str_stb_select_error">STB選択エラー</string>
     <string name="str_stb_paring_help">ペアリングヘルプ</string>
-    <string name="str_stb_not_registration_account_message">STBにdアカウントが登録されていません。</string>
+    <string name="str_stb_not_registration_account_message">ドコモテレビターミナルに\ndアカウントが登録されていません。</string>
     <string name="str_stb_login_other_account">別のdアカウントでログインする</string>
-    <string name="str_stb_d_account_registration_help">STBにdアカウントを登録するには</string>
+    <string name="str_stb_d_account_registration_help">ドコモテレビターミナルにdアカウントを登録するには</string>
     <string name="str_stb_input_activation_code">アクティベーションコードを入力する</string>
     <string name="str_stb_again_pairing">再度ペアリングを実行する</string>
 
-    <string name="str_stb_pairing">ペアリング中</string>
+    <string name="str_stb_pairing">ドコモテレビターミナルとペアリング中です。</string>
     <string name="str_stb_stb_error">STBの処理に失敗しました</string>
     <string name="str_stb_tv_terminal_error">ドコモTVターミナルとの接続に失敗しました</string>
 
@@ -104,6 +106,7 @@
     <string name="home_header_title">ホーム</string>
     <string name="now_on_air_list">NOW ON AIR</string>
     <string name="recommend_list_title">おすすめ番組・ビデオ</string>
+    <string name="home_now_on_air_channel_list">チャンネルリスト</string>
     <string-array name="recommend_list_tab_names">
         <item>テレビ</item>
         <item>ビデオ</item>
@@ -115,7 +118,13 @@
     <string name="recording_reservation_list_error_toast">録画予約一覧取得失敗</string>
     <string name="recording_reservation_status_accepting">受付中</string>
     <string name="recording_reservation_status_accept_failure">受付失敗</string>
-    <string name="recording_reservation_list_update_time">[取得時刻]</string>
+    <string name="recording_reservation_list_update_time">現在</string>
+    <string name="activity_start_network_error_message">ネットワークに接続できませんでした。\nネットワーク状態を確認してください。</string>
+    <string name="get_user_info_error_message">ひかりTV for docomoの契約情報取得に失敗しました。</string>
+    <string name="get_contents_data_error_message">情報の取得に失敗したため、一部のコンテンツのみ表示します。\nしばらく時間が経ってから再度お試しください。</string>
+    <string name="home_no_contract_info_text">ご利用中のdアカウントでひかりTV for docomoの契約がありません。</string>
+    <string name="home_contract_button_text">契約する</string>
+    <string name="home_contents_list_see_all">すべてを見る</string>
 
     <!-- クリップ一覧 -->
     <string name="str_clip_activity_title">クリップ</string>
@@ -135,7 +144,7 @@
     </string-array>
 
     <!-- WatchingVideoActivity -->
-    <string name="str_watching_video_activity_title">視聴中ビデオ一覧</string>
+    <string name="str_watching_video_activity_title">視聴中ビデオ</string>
 
     <!-- TvProgram -->
     <string-array name="tv_program_list_tab_names">
@@ -178,12 +187,7 @@
     <string name="video_ranking_title">ビデオランキング</string>
     <string name="common_ranking_enter">\n</string>
     <string name="contents_header">　></string>
-    <string-array name="ranking_tab_names">
-        <item>総合</item>
-        <item>海外映画</item>
-        <item>国内映画</item>
-        <item>海外TV番組・ドラマ</item>
-    </string-array>
+    <string name="common_ranking_tab_all">総合</string>
 
     <string name="tv_icon_description">テレビアイコン</string>
     <string name="menu_icon_description">メニューアイコン</string>
@@ -229,7 +233,7 @@
 
     <!-- 検索画面 Begin -->
     <string name="search_load_finish">load finished</string>
-    <string name="search_loading">loading...</string>
+    <string name="search_loading">loading&#8230;</string>
     <!--  検索画面 End  -->
 
     <!-- レンタル -->
@@ -313,35 +317,36 @@
     <string name="main_setting_image_quality_middle">高画質</string>
     <string name="main_setting_image_quality_high">最高画質</string>
     <string name="main_setting_quality_setting_header">外出先視聴時の画質設定</string>
+    <string name="main_setting_application_info_header">アプリケーション情報</string>
     <string name="main_setting_quality_status">status</string>
+    <string name="main_setting_stb_application_launch_fail">ドコモテレビターミナルのアプリの起動に失敗しました</string>
     <string name="main_setting_dtv_uninstall_message">ドコモテレビターミナルのdTVアプリはインストールされてない</string>
-    <string name="main_setting_dtv_update_message">ドコモテレビターミナルのdTVアプリのアップデートが必要です。</string>
-    <string name="main_setting_d_anime_store_uninstall_message">ドコモテレビターミナルのdアニメストアアプリはインストールされてない</string>
-    <string name="main_setting_d_anime_store_update_message">ドコモテレビターミナルのdアニメストアアプリのアップデートが必要です。</string>
-    <string name="main_setting_dtv_channel_uninstall_message">ドコモテレビターミナルのdTVチャンネルアプリはインストールされてない</string>
-    <string name="main_setting_dtv_channel_update_message">ドコモテレビターミナルのdTVチャンネルアプリのアップデートが必要です。</string>
-    <string name="main_setting_hikari_tv_uninstall_message">ドコモテレビターミナルのひかりTVはインストールされてない</string>
-    <string name="main_setting_hikari_tv_update_message">ドコモテレビターミナルのひかりTVアプリのアップデートが必要です。</string>
-    <string name="main_setting_dazn_uninstall_message">ドコモテレビターミナルのDAZNアプリはインストールされてない</string>
-    <string name="main_setting_dazn_update_message">ドコモテレビターミナルのDAZNアプリのアップデートが必要です。</string>
+    <string name="main_setting_dtv_update_message">ドコモテレビターミナルのdTVのバージョンアップが必要です。</string>
+    <string name="main_setting_d_anime_store_uninstall_message">ドコモテレビターミナルのdアニメストアの起動に失敗しました</string>
+    <string name="main_setting_d_anime_store_update_message">ドコモテレビターミナルのdアニメストアのバージョンアップが必要です。</string>
+    <string name="main_setting_dtv_channel_uninstall_message">ドコモテレビターミナルのdTVチャンネルの起動に失敗しました</string>
+    <string name="main_setting_dtv_channel_update_message">ドコモテレビターミナルのdTVチャンネルのバージョンアップが必要です。</string>
+    <string name="main_setting_hikari_tv_uninstall_message">ドコモテレビターミナルのひかりTVの起動に失敗しました</string>
+    <string name="main_setting_hikari_tv_update_message">ドコモテレビターミナルのひかりTVのバージョンアップが必要です。</string>
+    <string name="main_setting_dazn_uninstall_message">ドコモテレビターミナルのダ・ゾーンの起動に失敗しました</string>
+    <string name="main_setting_dazn_update_message">ドコモテレビターミナルのダ・ゾーンのバージョンアップが必要です。</string>
     <string name="main_setting_connect_error_message">STBとの接続に失敗しました。</string>
+    <string name="main_setting_menu_title_faq_list">FAQ一覧</string>
+    <string name="main_setting_menu_title_faq">FAQ</string>
+    <string name="main_setting_menu_title_license">ライセンス情報</string>
+    <string name="main_setting_menu_title_privacy_policy">プライバシーポリシー</string>
+    <string name="main_setting_menu_title_app">APP</string>
+    <string name="main_setting_menu_title_terms_of_service">利用規約</string>
     <string-array name="main_setting_items">
         <item>dアカウント設定</item>
-        <item>dアカウント設定</item>
-        <item>機器設定</item>
         <item>ペアリング設定</item>
-        <item>番組表設定</item>
         <item>マイ番組表設定</item>
-        <item>ダウンロード設定</item>
-        <item>ダウンロード先</item>
         <item>外出先視聴時の画質設定</item>
-        <item>外出先視聴時の画質設定</item>
-        <item>FAQ</item>
         <item>FAQ</item>
         <item>アプリケーション情報</item>
-        <item>バージョン情報</item>
         <item>ライセンス情報</item>
         <item>プライバシーポリシー</item>
+        <item>APP</item>
         <item>利用規約</item>
     </string-array>
 
@@ -355,8 +360,8 @@
     <string name="my_channel_list_setting_dialog_content_unregister">本当削除しますか?</string>
 
     <!-- dアカウント登録 -->
-    <string name="d_account_regist_error">dアカウントの処理に失敗しました。</string>
-    <string name="d_account_chamge_message">dアカウントが変更されました。初期画面に戻ります。</string>
+    <string name="d_account_regist_error">dアカウントの処理に失敗しました</string>
+    <string name="d_account_chamge_message">dアカウントが変更されたため、トップ画面に戻ります。</string>
 
     <!-- お知らせ -->
     <string name="information_title">お知らせ</string>
@@ -368,4 +373,9 @@
     <!-- H4d契約情報取得 -->
     <string name="h4d_agreement_change">契約状態が変更されたため、トップ画面に戻ります。</string>
 
+    <!-- アプリケーション情報 -->
+    <string name="application_info_application_name">アプリケーション名</string>
+    <string name="application_info_application_provider">提供者</string>
+    <string name="application_info_application_version">バージョン</string>
+    <string name="application_info_application_provider_value">株式会社NTTドコモ</string>
 </resources>

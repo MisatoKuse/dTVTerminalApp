@@ -10,7 +10,7 @@
 #include <jni.h>
 
 #include "../Common.h"
-//#include "dtcp.hpp"
+#include "CommonDl.h"
 
 #ifdef __cplusplus
 extern "C" {

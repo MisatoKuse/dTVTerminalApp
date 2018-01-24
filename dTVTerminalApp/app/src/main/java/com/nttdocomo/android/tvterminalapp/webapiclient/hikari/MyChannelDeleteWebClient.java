@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
@@ -33,6 +34,15 @@ public class MyChannelDeleteWebClient
     //コールバックのインスタンス
     private MyChannelDeleteJsonParserCallback myChannelDeleteJsonParserCallback;
 
+    /**
+     * コンテキストを継承元のコンストラクタに送る
+     *
+     * @param context コンテキスト
+     */
+    public MyChannelDeleteWebClient(Context context) {
+        super(context);
+    }
+
     @Override
     public void onAnswer(ReturnCode returnCode) {
         if (myChannelDeleteJsonParserCallback != null) {
@@ -42,8 +52,13 @@ public class MyChannelDeleteWebClient
         }
     }
 
+    /**
+     * 通信失敗時のコールバック.
+     *
+     * @param returnCode 戻り値構造体
+     */
     @Override
-    public void onError() {
+    public void onError(ReturnCode returnCode) {
         if (myChannelDeleteJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
             myChannelDeleteJsonParserCallback.onMyChannelDeleteJsonParsed(null);

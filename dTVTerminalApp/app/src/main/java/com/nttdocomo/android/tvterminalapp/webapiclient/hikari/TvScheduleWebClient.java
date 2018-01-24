@@ -4,6 +4,8 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
+import android.content.Context;
+
 import com.nttdocomo.android.tvterminalapp.common.JsonContents;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
@@ -17,6 +19,15 @@ import java.util.List;
 
 public class TvScheduleWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
+
+    /**
+     * コンテキストを継承元のコンストラクタに送る
+     *
+     * @param context コンテキスト
+     */
+    public TvScheduleWebClient(Context context) {
+        super(context);
+    }
 
     /**
      * コールバック
@@ -45,10 +56,12 @@ public class TvScheduleWebClient
     }
 
     /**
-     * 通信失敗時のコールバック
+     * 通信失敗時のコールバック.
+     *
+     * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError() {
+    public void onError(ReturnCode returnCode) {
         //エラーが発生したのでヌルを返す
         mTvScheduleJsonParserCallback.onTvScheduleJsonParsed(null);
     }

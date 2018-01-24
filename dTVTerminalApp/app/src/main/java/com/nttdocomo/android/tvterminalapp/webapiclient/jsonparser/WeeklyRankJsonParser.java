@@ -33,7 +33,7 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
      **/
     Bundle mExtraData = null;
 
-    // **FindBugs** Bad practice FindBugは、"pagerPara"と"listPara"はpublicを外せと言うが、対外的なパラメータなので、対応は行わない。
+    // **FindBugs** Bad practice FindBugは、"PAGER_PARAMETERS"と"CONTENT_META_PARAMETERS"はpublicを外せと言うが、対外的なパラメータなので、対応は行わない。
     public static final String[] PAGER_PARA = {JsonContents.META_RESPONSE_PAGER_LIMIT,
             JsonContents.META_RESPONSE_OFFSET, JsonContents.META_RESPONSE_COUNT,
             JsonContents.META_RESPONSE_TOTAL};
