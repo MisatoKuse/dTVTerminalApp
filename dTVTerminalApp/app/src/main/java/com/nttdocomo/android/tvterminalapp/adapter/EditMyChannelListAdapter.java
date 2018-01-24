@@ -77,7 +77,7 @@ public class EditMyChannelListAdapter extends BaseAdapter implements View.OnClic
         if(!TextUtils.isEmpty(channel.getServiceId())){//登録
             noTv.setTextColor(mContext.getResources().getColor(R.color.item_num_black));
             noTv.setBackgroundResource(R.color.item_num_register_bg_black);
-            editBt.setBackgroundResource(R.mipmap.remove_my_ch_btn);
+            editBt.setBackgroundResource(R.mipmap.icon_circle_normal_minus);
         }else {//解除
             noTv.setTextColor(mContext.getResources().getColor(R.color.white_text));
             noTv.setBackgroundResource(R.color.item_num_unregister_bg_black);
