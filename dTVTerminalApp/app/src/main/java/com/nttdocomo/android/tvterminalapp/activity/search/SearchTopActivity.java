@@ -28,7 +28,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.SearchDataProvider;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchResultError;
 import com.nttdocomo.android.tvterminalapp.struct.ResultType;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
@@ -38,7 +38,7 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchG
 import com.nttdocomo.android.tvterminalapp.struct.SearchNarrowCondition;
 import com.nttdocomo.android.tvterminalapp.struct.SearchSortKind;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.TotalSearchContentInfo;
-import com.nttdocomo.android.tvterminalapp.fragment.search.FragmentFactory;
+import com.nttdocomo.android.tvterminalapp.fragment.search.SearchFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.fragment.search.SearchBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.search.SearchBaseFragmentScrollListener;
 
@@ -70,7 +70,7 @@ public class SearchTopActivity extends BaseActivity
     SearchNarrowCondition mSearchNarrowCondition = null;
     SearchSortKind mSearchSortKind = new SearchSortKind("SearchSortKindNone");
 
-    private FragmentFactory mFragmentFactory = null;
+    private SearchFragmentFactory mFragmentFactory = null;
 
     //テレビ
     private static final int PAGE_NO_OF_SERVICE_TELEVISION = 0;
@@ -111,7 +111,7 @@ public class SearchTopActivity extends BaseActivity
         mTabNames = getResources().getStringArray(R.array.tab_names);
         setSearchNarrowCondition();
 
-        mFragmentFactory = new FragmentFactory();
+        mFragmentFactory = new SearchFragmentFactory();
         mSearchDataProvider = new SearchDataProvider();
     }
 
@@ -569,7 +569,7 @@ public class SearchTopActivity extends BaseActivity
                 getString(R.string.keyword_search_result),
                 Integer.toString(mSearchTotalCount),
                 getString(R.string.keyword_search_result_num)};
-        return StringUtil.getConnectString(strings);
+        return StringUtils.getConnectString(strings);
     }
 
     @Override

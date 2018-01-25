@@ -33,7 +33,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.util.List;
 
@@ -214,7 +214,7 @@ public class DtvContentsDetailFragment extends Fragment {
     private void setDetailData() {
         headerText.setText(mOtherContentsDetailData.getTitle());
         //画面表示
-        StringUtil util = new StringUtil(getContext());
+        StringUtils util = new StringUtils(getContext());
         String strServiceName = util.getContentsServiceName(mOtherContentsDetailData.getServiceId());
         String contentsDetailInfo;
         txtServiceName.setText(strServiceName);
@@ -460,7 +460,7 @@ public class DtvContentsDetailFragment extends Fragment {
         String date = DateUtils.formatEpochToString(endDate);
 
         if (txtChannelDate != null) {
-            String untilDate = StringUtil.getConnectStrings(date, getString(R.string.contents_detail_until_date));
+            String untilDate = StringUtils.getConnectStrings(date, getString(R.string.contents_detail_until_date));
             txtChannelDate.setText(untilDate);
         }
     }

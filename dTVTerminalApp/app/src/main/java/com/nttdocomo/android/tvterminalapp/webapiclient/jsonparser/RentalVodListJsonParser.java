@@ -11,7 +11,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
 
 import android.os.AsyncTask;
 
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalVodListWebClient;
 
 import org.json.JSONArray;
@@ -157,7 +157,7 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
                             JsonConstants.META_RESPONSE_LICENSE_ID));
                     }
                     if (!listData.isNull(JsonConstants.META_RESPONSE_VAILD_END_DATE)) {
-                        activeData.setValidEndDate(StringUtil.changeString2Long(listData.getLong(
+                        activeData.setValidEndDate(StringUtils.changeString2Long(listData.getLong(
                                 JsonConstants.META_RESPONSE_VAILD_END_DATE)));
                     }
 

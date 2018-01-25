@@ -74,7 +74,7 @@ public class StringUtilTest {
             userInfoMapList.add(userInfoMap);
 
             //その他
-            assertEquals(StringUtil.getUserAgeInfo(userInfoMapList), Integer.parseInt(answer[i]));
+            assertEquals(StringUtils.getUserAgeInfo(userInfoMapList), Integer.parseInt(answer[i]));
         }
     }
 
@@ -82,28 +82,28 @@ public class StringUtilTest {
     public void convertRValueToAgeReq() throws Exception {
 
         //null 期待値：0
-        assertEquals(StringUtil.convertRValueToAgeReq(mContext, null), StringUtil.DEFAULT_R_VALUE);
+        assertEquals(StringUtils.convertRValueToAgeReq(mContext, null), StringUtils.DEFAULT_R_VALUE);
 
         //blank 期待値：0
-        assertEquals(StringUtil.convertRValueToAgeReq(mContext, ""), StringUtil.DEFAULT_R_VALUE);
+        assertEquals(StringUtils.convertRValueToAgeReq(mContext, ""), StringUtils.DEFAULT_R_VALUE);
 
         //文字 期待値：0
-        assertEquals(StringUtil.convertRValueToAgeReq(mContext, "あ"), StringUtil.DEFAULT_R_VALUE);
+        assertEquals(StringUtils.convertRValueToAgeReq(mContext, "あ"), StringUtils.DEFAULT_R_VALUE);
 
         //PG12 期待値：9
-        assertEquals(StringUtil.convertRValueToAgeReq(mContext,
-                mContext.getString(R.string.parental_pg_12)), StringUtil.USER_AGE_REQ_PG12);
+        assertEquals(StringUtils.convertRValueToAgeReq(mContext,
+                mContext.getString(R.string.parental_pg_12)), StringUtils.USER_AGE_REQ_PG12);
 
         //R15 期待値：12
-        assertEquals(StringUtil.convertRValueToAgeReq(mContext,
-                mContext.getString(R.string.parental_r_15)), StringUtil.USER_AGE_REQ_R15);
+        assertEquals(StringUtils.convertRValueToAgeReq(mContext,
+                mContext.getString(R.string.parental_r_15)), StringUtils.USER_AGE_REQ_R15);
 
         //R18 期待値：15
-        assertEquals(StringUtil.convertRValueToAgeReq(mContext,
-                mContext.getString(R.string.parental_r_18)), StringUtil.USER_AGE_REQ_R18);
+        assertEquals(StringUtils.convertRValueToAgeReq(mContext,
+                mContext.getString(R.string.parental_r_18)), StringUtils.USER_AGE_REQ_R18);
 
         //R20 期待値：17
-        assertEquals(StringUtil.convertRValueToAgeReq(mContext,
-                mContext.getString(R.string.parental_r_20)), StringUtil.USER_AGE_REQ_R20);
+        assertEquals(StringUtils.convertRValueToAgeReq(mContext,
+                mContext.getString(R.string.parental_r_20)), StringUtils.USER_AGE_REQ_R20);
     }
 }

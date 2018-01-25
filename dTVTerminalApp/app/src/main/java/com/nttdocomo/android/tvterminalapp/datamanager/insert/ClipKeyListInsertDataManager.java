@@ -14,7 +14,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListD
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -112,7 +112,7 @@ public class ClipKeyListInsertDataManager {
         SQLiteDatabase db = ClipKeyListDBHelper.getWritableDatabase();
         ClipKeyListDao clipKeyListDao = new ClipKeyListDao(db);
 
-        String query = StringUtil.getConnectStrings(JsonConstants.META_RESPONSE_CRID, "=? OR",
+        String query = StringUtils.getConnectStrings(JsonConstants.META_RESPONSE_CRID, "=? OR",
                 JsonConstants.META_RESPONSE_SERVICE_ID, "=? AND",
                 JsonConstants.META_RESPONSE_EVENT_ID, "=? AND",
                 JsonConstants.META_RESPONSE_TYPE, "=h4d_iptv OR",

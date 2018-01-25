@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,7 +91,7 @@ public class ChannelListDao {
                 DBConstants.DATE_TYPE,
                 "=? "
         };
-        String selection = StringUtil.getConnectString(selectionStrings);
+        String selection = StringUtils.getConnectString(selectionStrings);
         Cursor cursor = db.query(
                 DBConstants.CHANNEL_LIST_TABLE_NAME,
                 strings,
@@ -148,7 +148,7 @@ public class ChannelListDao {
                 DBConstants.DATE_TYPE,
                 "=?"
         };
-        String selection = StringUtil.getConnectString(selectionStrings);
+        String selection = StringUtils.getConnectString(selectionStrings);
         return db.delete(DBConstants.CHANNEL_LIST_TABLE_NAME, selection, new String[]{"home"});
     }
 
@@ -164,7 +164,7 @@ public class ChannelListDao {
                 DBConstants.DATE_TYPE,
                 "=?"
         };
-        String selection = StringUtil.getConnectString(selectionStrings);
+        String selection = StringUtils.getConnectString(selectionStrings);
         return db.delete(DBConstants.CHANNEL_LIST_TABLE_NAME, selection, new String[]{type, "program"});
     }
 }

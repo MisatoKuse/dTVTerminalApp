@@ -27,9 +27,9 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
-import com.nttdocomo.android.tvterminalapp.struct.Channel;
-import com.nttdocomo.android.tvterminalapp.struct.Schedule;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
+import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -74,7 +74,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     private static final String CUR_TIME_FORMAT = "yyyy-MM-ddHH:mm:ss";
     private List<ItemViewHolder> mItemViews = new ArrayList<>();
     //番組データ
-    private List<Channel> mProgramList = null;
+    private List<ChannelInfo> mProgramList = null;
     //サムネイルとエピソードタイトルを含むスペース
     private int mThumbEpiSpace;
     //エピソードタイトルを含むスペース
@@ -89,7 +89,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * @param mContext     コンテクスト
      * @param mProgramList 番組表リスト
      */
-    public TvProgramListAdapter(final Activity mContext, final ArrayList<Channel> mProgramList) {
+    public TvProgramListAdapter(final Activity mContext, final ArrayList<ChannelInfo> mProgramList) {
         this.mProgramList = mProgramList;
         this.mContext = (TvProgramListActivity) mContext;
         mScreenWidth = mContext.getResources().getDisplayMetrics().widthPixels;
@@ -99,12 +99,12 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         mThumbnailProvider = new ThumbnailProvider(mContext);
         getCurTime();
         for (int i = 0; i < mProgramList.size(); i++) {
-            Channel itemChannel = mProgramList.get(i);
+            ChannelInfo itemChannel = mProgramList.get(i);
             boolean isLast = false;
             if (itemChannel != null && itemChannel.getSchedules() != null) {
-                ArrayList<Schedule> itemSchedules = itemChannel.getSchedules();
+                ArrayList<ScheduleInfo> itemSchedules = itemChannel.getSchedules();
                 for (int j = 0; j < itemSchedules.size(); j++) {
-                    Schedule itemSchedule = itemSchedules.get(j);
+                    ScheduleInfo itemSchedule = itemSchedules.get(j);
                     if (j == itemSchedules.size() - 1) {
                         isLast = true;
                     }
@@ -172,7 +172,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
          *
          * @param schedule 番組情報
          */
-        ItemViewHolder(final Schedule schedule) {
+        ItemViewHolder(final ScheduleInfo schedule) {
             mView = LayoutInflater.from(mContext).inflate(R.layout.tv_program_item_panel, null, false);
             mStartM = mView.findViewById(R.id.tv_program_item_panel_clip_tv);
             mContent = mView.findViewById(R.id.tv_program_item_panel_content_des_tv);
@@ -226,13 +226,13 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Channel itemChannel = mProgramList.get(position);
+        ChannelInfo itemChannel = mProgramList.get(position);
 
         if (holder.layout != null) {
             holder.layout.removeAllViews();
         }
         if (itemChannel != null && itemChannel.getSchedules() != null) {
-            ArrayList<Schedule> itemSchedule = itemChannel.getSchedules();
+            ArrayList<ScheduleInfo> itemSchedule = itemChannel.getSchedules();
             boolean isLast = false;
             for (int i = 0; i < itemSchedule.size(); i++) {
                 ItemViewHolder itemViewHolder = getUnused();
@@ -274,10 +274,10 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      * @param itemSchedule   番組情報
      * @param isLast         末尾フラグ
      */
-    private void setView(final ItemViewHolder itemViewHolder, final Schedule itemSchedule, final boolean isLast) {
+    private void setView(final ItemViewHolder itemViewHolder, final ScheduleInfo itemSchedule, final boolean isLast) {
 
         //年齢制限フラグ
-        boolean isParental = setParental(StringUtil.convertRValueToAgeReq(mContext, itemSchedule.getRValue()));
+        boolean isParental = setParental(StringUtils.convertRValueToAgeReq(mContext, itemSchedule.getRValue()));
 
         String startTime = itemSchedule.getStartTime();
         String endTime = itemSchedule.getEndTime();
@@ -325,7 +325,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
 
         String title;
         if (isParental) {
-            title = StringUtil.returnAsterisk(mContext);
+            title = StringUtils.returnAsterisk(mContext);
         } else {
             title = itemSchedule.getTitle();
             itemViewHolder.mView.setOnClickListener(new View.OnClickListener() {

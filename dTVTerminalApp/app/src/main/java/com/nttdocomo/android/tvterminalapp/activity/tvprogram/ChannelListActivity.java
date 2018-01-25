@@ -42,8 +42,8 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListListener;
-import com.nttdocomo.android.tvterminalapp.struct.Channel;
-import com.nttdocomo.android.tvterminalapp.struct.ChannelsInfo;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 import java.util.ArrayList;
@@ -783,13 +783,13 @@ public class ChannelListActivity extends BaseActivity implements
      * @param channelsInfo 画面に渡すチャンネル番組情報
      */
     @Override
-    public void channelInfoCallback(ChannelsInfo channelsInfo) {
+    public void channelInfoCallback(ChannelInfoList channelsInfo) {
         DTVTLogger.start();
         if (null == channelsInfo) {
             DTVTLogger.end();
             return;
         }
-        ArrayList<Channel> channels = channelsInfo.getChannels();
+        ArrayList<ChannelInfo> channels = channelsInfo.getChannels();
         if (0 == channels.size()) {
             return;
         }
@@ -802,7 +802,7 @@ public class ChannelListActivity extends BaseActivity implements
      * @param channels 　画面に渡すチャンネル情報
      */
     @Override
-    public void channelListCallback(ArrayList<Channel> channels) {
+    public void channelListCallback(ArrayList<ChannelInfo> channels) {
         DTVTLogger.start();
         if (null == channels) {
             DTVTLogger.end();
@@ -828,7 +828,7 @@ public class ChannelListActivity extends BaseActivity implements
             return;
         }
         ArrayList<Object> tmp = new ArrayList();
-        for (Channel ch : channels) {
+        for (ChannelInfo ch : channels) {
             tmp.add(ch);
         }
         paging(fragment, tmp);

@@ -73,10 +73,10 @@ import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailFrag
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.struct.RecordingReservationContentsDetailInfo;
 import com.nttdocomo.android.tvterminalapp.struct.MediaVideoInfo;
-import com.nttdocomo.android.tvterminalapp.struct.Channel;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.ContentsDetailViewPager;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
@@ -234,7 +234,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     /**
      * 対象コンテンツのチャンネルデータ.
      */
-    private Channel mChannel = null;
+    private ChannelInfo mChannel = null;
     /**
      * 視聴可能期限.
      */
@@ -1616,13 +1616,13 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     }
 
     @Override
-    public void channelListCallback(ArrayList<Channel> channels) {
+    public void channelListCallback(ArrayList<ChannelInfo> channels) {
         if (channels != null) {
             //チャンネル情報取得して、更新する
             if (!TextUtils.isEmpty(mDetailFullData.getmService_id())) {
                 DtvContentsDetailFragment detailFragment = getDetailFragment();
                 for (int i = 0; i < channels.size(); i++) {
-                    Channel channel = channels.get(i);
+                    ChannelInfo channel = channels.get(i);
                     if (mDetailFullData.getmService_id().equals(channel.getServiceId())) {
                         mChannel = channel;
                         String channelName = channel.getTitle();
@@ -1662,7 +1662,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             try {
                 Calendar calendar = Calendar.getInstance(Locale.JAPAN);
                 calendar.setTime(sdf.parse(startBuilder.toString()));
-                StringUtil util = new StringUtil(this);
+                StringUtils util = new StringUtils(this);
                 String[] strings = {String.valueOf(calendar.get(Calendar.MONTH)), "/",
                         String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)), " (",
                         mDate[calendar.get(Calendar.DAY_OF_WEEK) - 1], ") ",
@@ -2002,7 +2002,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         UserInfoInsertDataManager dataManager = new UserInfoInsertDataManager(this);
         if (dataManager != null) {
             dataManager.readUserInfoInsertList();
-            mAge = StringUtil.getUserAgeInfoWrapper(dataManager.getmUserData());
+            mAge = StringUtils.getUserAgeInfoWrapper(dataManager.getmUserData());
         }
     }
 
@@ -2276,7 +2276,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         //DBに保存されているUserInfoから契約情報を確認する
         UserInfoInsertDataManager dataManager = new UserInfoInsertDataManager(this);
         dataManager.readUserInfoInsertList();
-        String contractInfo = StringUtil.getUserContractInfo(dataManager.getmUserData());
+        String contractInfo = StringUtils.getUserContractInfo(dataManager.getmUserData());
         DTVTLogger.debug("contractInfo: " + contractInfo);
 
         if (contractInfo == null || contractInfo.isEmpty() || CONTRACT_STATUS_NONE.equals(contractInfo)) {

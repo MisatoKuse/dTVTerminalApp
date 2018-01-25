@@ -31,7 +31,7 @@ import android.widget.Toast;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
-import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
@@ -51,7 +51,7 @@ import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadService;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloaderBase;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.io.File;
 import java.text.ParseException;
@@ -610,7 +610,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 try {
                     Calendar calendar = Calendar.getInstance(Locale.JAPAN);
                     calendar.setTime(sdf.parse(time));
-                    StringUtil util = new StringUtil(this);
+                    StringUtils util = new StringUtils(this);
                     String[] strings = {String.valueOf(calendar.get(Calendar.MONTH)), "/",
                             String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)), " (",
                             mDate[calendar.get(Calendar.DAY_OF_WEEK) - 1], ") ",

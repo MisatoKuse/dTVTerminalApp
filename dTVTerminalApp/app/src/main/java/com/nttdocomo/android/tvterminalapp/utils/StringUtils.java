@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * 文字列加工に関する処理を記載する.
  */
-public class StringUtil {
+public class StringUtils {
 
     private static String type;
     private final Context mContext;
@@ -47,7 +47,7 @@ public class StringUtil {
     //カンマ
     private static final String COMMA_SEPARATOR = ",";
 
-    public StringUtil(final Context context) {
+    public StringUtils(final Context context) {
         mContext = context;
     }
 

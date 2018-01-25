@@ -5,7 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.datamanager.databese;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser;
 
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_AGREEMENT;
@@ -79,7 +79,7 @@ public class DBConstants {
     /**
      * チャンネルリストDB作成SQL文.
      */
-    public static final String CREATE_TABLE_CHANNEL_SQL = StringUtil.getConnectStrings(
+    public static final String CREATE_TABLE_CHANNEL_SQL = StringUtils.getConnectStrings(
             CREATE_TABLE_TEXT, CHANNEL_LIST_TABLE_NAME, OPEN_BRACKETS_TEXT,
             ID_COLUMN, CREATE_TABLE_PRIMARY_TEXT,
             JsonConstants.META_RESPONSE_CRID, TEXT_WITH_COMMA_TEXT,
@@ -144,7 +144,7 @@ public class DBConstants {
     /**
      * デイリーランキングテーブル作成用SQL文.
      */
-    public static final String CREATE_TABLE_DAILY_RANK_SQL = StringUtil.getConnectStrings(
+    public static final String CREATE_TABLE_DAILY_RANK_SQL = StringUtils.getConnectStrings(
             CREATE_TABLE_TEXT, DAILYRANK_LIST_TABLE_NAME, OPEN_BRACKETS_TEXT,
             ID_COLUMN, CREATE_TABLE_PRIMARY_TEXT,
             JsonConstants.META_RESPONSE_CRID, TEXT_WITH_COMMA_TEXT,
@@ -229,7 +229,7 @@ public class DBConstants {
     /**
      * TV番組表テーブル作成SQL文.
      */
-    public static final String CREATE_TABLE_TV_SCHEDULE_SQL = StringUtil.getConnectStrings(
+    public static final String CREATE_TABLE_TV_SCHEDULE_SQL = StringUtils.getConnectStrings(
             CREATE_TABLE_TEXT, TV_SCHEDULE_LIST_TABLE_NAME, OPEN_BRACKETS_TEXT,
             ID_COLUMN, CREATE_TABLE_PRIMARY_TEXT,
             JsonConstants.META_RESPONSE_CRID, TEXT_WITH_COMMA_TEXT,
@@ -309,7 +309,7 @@ public class DBConstants {
 
     //Homeキャッシュデータ格納用テーブル
     public static final String USER_INFO_LIST_TABLE_NAME = "user_info_list";
-    public static final String CREATE_TABLE_USER_INFO_SQL = StringUtil.getConnectStrings(
+    public static final String CREATE_TABLE_USER_INFO_SQL = StringUtils.getConnectStrings(
             "create table ", USER_INFO_LIST_TABLE_NAME, " (",
             ID_COLUMN, " integer primary key autoincrement, ",
             UserInfoJsonParser.USER_INFO_LIST_LOGGEDIN_ACCOUNT, " text, ",
@@ -328,7 +328,7 @@ public class DBConstants {
     /**
      * クリップリスト表示テーブル作成SQL.
      */
-    public static final String CREATE_TABLE_VODCLIP_LIST_SQL = StringUtil.getConnectStrings(
+    public static final String CREATE_TABLE_VODCLIP_LIST_SQL = StringUtils.getConnectStrings(
             CREATE_TABLE_TEXT, VODCLIP_LIST_TABLE_NAME, OPEN_BRACKETS_TEXT,
             ID_COLUMN, CREATE_TABLE_PRIMARY_TEXT,
             JsonConstants.META_RESPONSE_CRID, TEXT_WITH_COMMA_TEXT,
@@ -412,7 +412,7 @@ public class DBConstants {
     /**
      * 週間ランキングリストテーブル作成SQL文.
      */
-    public static final String CREATE_TABLE_WEEKLYRANK_SQL = StringUtil.getConnectStrings(
+    public static final String CREATE_TABLE_WEEKLYRANK_SQL = StringUtils.getConnectStrings(
             CREATE_TABLE_TEXT, WEEKLYRANK_LIST_TABLE_NAME, OPEN_BRACKETS_TEXT,
             ID_COLUMN, CREATE_TABLE_PRIMARY_TEXT,
             JsonConstants.META_RESPONSE_CRID, TEXT_WITH_COMMA_TEXT,
@@ -551,7 +551,7 @@ public class DBConstants {
     /**
      * ビデオランキングテーブル作成SQL文.
      */
-    public static final String CREATE_TABLE_RANKING_VIDEO_SQL = StringUtil.getConnectStrings(
+    public static final String CREATE_TABLE_RANKING_VIDEO_SQL = StringUtils.getConnectStrings(
             CREATE_TABLE_TEXT, RANKING_VIDEO_LIST_TABLE_NAME, OPEN_BRACKETS_TEXT,
             ID_COLUMN, CREATE_TABLE_PRIMARY_TEXT,
             JsonConstants.META_RESPONSE_CRID, TEXT_WITH_COMMA_TEXT,
@@ -718,7 +718,7 @@ public class DBConstants {
     /**
      * TVクリップ一覧テーブル作成SQL.
      */
-    public static final String CREATE_TABLE_TVCLIP_LIST_SQL = StringUtil.getConnectStrings(
+    public static final String CREATE_TABLE_TVCLIP_LIST_SQL = StringUtils.getConnectStrings(
             CREATE_TABLE_TEXT, TVCLIP_LIST_TABLE_NAME, OPEN_BRACKETS_TEXT,
             ID_COLUMN, CREATE_TABLE_PRIMARY_TEXT,
             JsonConstants.META_RESPONSE_CRID, TEXT_WITH_COMMA_TEXT,
@@ -855,7 +855,7 @@ public class DBConstants {
     /**
      * レンタル一覧テーブル作成SQL文.
      */
-    public static final String CREATE_TABLE_RENTAL_LIST_SQL = StringUtil.getConnectStrings(
+    public static final String CREATE_TABLE_RENTAL_LIST_SQL = StringUtils.getConnectStrings(
             CREATE_TABLE_TEXT, RENTAL_LIST_TABLE_NAME, OPEN_BRACKETS_TEXT,
             ID_COLUMN, CREATE_TABLE_PRIMARY_TEXT,
             JsonConstants.META_RESPONSE_CRID, TEXT_WITH_COMMA_TEXT,
@@ -942,7 +942,7 @@ public class DBConstants {
     /**
      * レンタルのactive_list一覧テーブル作成SQL文.
      */
-    public static final String CREATE_TABLE_RENTAL_ACTIVE_LIST_SQL = StringUtil.getConnectStrings(
+    public static final String CREATE_TABLE_RENTAL_ACTIVE_LIST_SQL = StringUtils.getConnectStrings(
             CREATE_TABLE_TEXT, RENTAL_ACTIVE_LIST_TABLE_NAME, OPEN_BRACKETS_TEXT,
             ID_COLUMN, CREATE_TABLE_PRIMARY_TEXT,
             JsonConstants.META_RESPONSE_ACTIVE_LIST, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_LICENSE_ID, TEXT_WITH_COMMA_TEXT,
@@ -957,7 +957,7 @@ public class DBConstants {
     /**
      * レンタル一覧テーブル作成SQL文.
      */
-    public static final String CREATE_TABLE_RENTAL_CHANNEL_LIST_SQL = StringUtil.getConnectStrings(
+    public static final String CREATE_TABLE_RENTAL_CHANNEL_LIST_SQL = StringUtils.getConnectStrings(
             CREATE_TABLE_TEXT, RENTAL_CHANNEL_LIST_TABLE_NAME, OPEN_BRACKETS_TEXT,
             ID_COLUMN, CREATE_TABLE_PRIMARY_TEXT,
             JsonConstants.META_RESPONSE_CRID, TEXT_WITH_COMMA_TEXT,
@@ -1022,7 +1022,7 @@ public class DBConstants {
     /**
      * 購入済みCHのactive_list一覧テーブル作成SQL文.
      */
-    public static final String CREATE_TABLE_RENTAL_CHANNEL_ACTIVE_LIST_SQL = StringUtil.getConnectStrings(
+    public static final String CREATE_TABLE_RENTAL_CHANNEL_ACTIVE_LIST_SQL = StringUtils.getConnectStrings(
             CREATE_TABLE_TEXT, RENTAL_CHANNEL_ACTIVE_LIST_TABLE_NAME, OPEN_BRACKETS_TEXT,
             ID_COLUMN, CREATE_TABLE_PRIMARY_TEXT,
             JsonConstants.META_RESPONSE_ACTIVE_LIST, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_LICENSE_ID, TEXT_WITH_COMMA_TEXT,
@@ -1037,7 +1037,7 @@ public class DBConstants {
     /**
      * ロールリストテーブル.
      */
-    public static final String CREATE_TABLE_ROLE_LIST_SQL = StringUtil.getConnectStrings(
+    public static final String CREATE_TABLE_ROLE_LIST_SQL = StringUtils.getConnectStrings(
             CREATE_TABLE_TEXT,
             ROLE_LIST_TABLE_NAME,
             OPEN_BRACKETS_TEXT,
@@ -1046,7 +1046,7 @@ public class DBConstants {
             JsonConstants.META_RESPONSE_CONTENTS_ID, TEXT_WITH_COMMA_TEXT,
             JsonConstants.META_RESPONSE_CONTENTS_NAME, TEXT_WITHOUT_COMMA_TEXT,
             CLOSE_BRACKETS_TEXT);
-    public static final String CREATE_TABLE_DOWNLOAD_LIST_SQL = StringUtil.getConnectString(
+    public static final String CREATE_TABLE_DOWNLOAD_LIST_SQL = StringUtils.getConnectString(
             CREATE_TABLE_DOWNLOAD_LIST_SQL_NAMES);
 
     //My番組表キャッシュデータ格納用テーブル
@@ -1078,7 +1078,7 @@ public class DBConstants {
             JsonConstants.META_RESPONSE_TITLE_ID, TEXT_WITHOUT_COMMA_TEXT,
             CLOSE_BRACKETS_TEXT
     };
-    public static final String CREATE_TABLE_TV_CLIP_KEY_LIST_SQL = StringUtil.getConnectString(
+    public static final String CREATE_TABLE_TV_CLIP_KEY_LIST_SQL = StringUtils.getConnectString(
             CREATE_TABLE_TV_CLIP_KEY_LIST_SQL_NAMES);
 
     // クリップキー一覧 キャッシュデータ格納用テーブル
@@ -1097,14 +1097,14 @@ public class DBConstants {
             JsonConstants.META_RESPONSE_TITLE_ID, TEXT_WITHOUT_COMMA_TEXT,
             CLOSE_BRACKETS_TEXT
     };
-    public static final String CREATE_TABLE_VOD_CLIP_KEY_LIST_SQL = StringUtil.getConnectString(
+    public static final String CREATE_TABLE_VOD_CLIP_KEY_LIST_SQL = StringUtils.getConnectString(
             CREATE_TABLE_VOD_CLIP_KEY_LIST_SQL_NAMES);
 
     //視聴中ビデオ一覧テーブル名
     public static final String WATCH_LISTEN_VIDEO_TABLE_NAME = "watch_listen_video_table_name";
 
     //視聴中ビデオ一覧テーブル用 column
-    public static final String CREATE_TABLE_WATCH_LISTEN_VIDEO_SQL = StringUtil.getConnectStrings(
+    public static final String CREATE_TABLE_WATCH_LISTEN_VIDEO_SQL = StringUtils.getConnectStrings(
             CREATE_TABLE_TEXT,
             WATCH_LISTEN_VIDEO_TABLE_NAME,
             OPEN_BRACKETS_TEXT,

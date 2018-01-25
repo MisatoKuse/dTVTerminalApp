@@ -482,6 +482,6 @@ public class SharedPreferencesUtils {
                 USER_AGE_REQ_SHARED_KEY, Context.MODE_PRIVATE);
 
         //保存した年齢情報がない場合はPG12を返却
-        return data.getInt(USER_AGE_REQ_SHARED_KEY, StringUtil.USER_AGE_REQ_PG12);
+        return data.getInt(USER_AGE_REQ_SHARED_KEY, StringUtils.USER_AGE_REQ_PG12);
     }
 }

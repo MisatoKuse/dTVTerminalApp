@@ -10,10 +10,10 @@ import java.util.ArrayList;
  * チャンネルクラス.
  * 　　機能： チャンネルクラスである
  */
-public class Channel {
+public class ChannelInfo {
 
     //Scheduleの配列を保存
-    private ArrayList<Schedule> schedules = null;
+    private ArrayList<ScheduleInfo> schedules = null;
     //チャンネルのタイトル
     private String title;
     //チャンネルのチャンネルID
@@ -213,14 +213,14 @@ public class Channel {
      * チャンネル番組を取得.
      * @return schedules　チャンネル番組
      */
-    public ArrayList<Schedule> getSchedules() {
+    public ArrayList<ScheduleInfo> getSchedules() {
         return schedules;
     }
     /**
      * チャンネル番組を設定.
      * @param schedules チャンネル
      */
-    public void setSchedules(final ArrayList<Schedule> schedules) {
+    public void setSchedules(final ArrayList<ScheduleInfo> schedules) {
         this.schedules = schedules;
     }
 
@@ -229,7 +229,7 @@ public class Channel {
      * @param ch2 比較対象チャンネル
      * @return true:同じ false:違う
      */
-    public boolean equalTo(final Channel ch2) {
+    public boolean equalTo(final ChannelInfo ch2) {
         if (null == ch2 || null == this.title || null == ch2.title) {
             return false;
         }

@@ -17,7 +17,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListItem;
-import com.nttdocomo.android.tvterminalapp.struct.Channel;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -145,14 +145,14 @@ public class ChannelListAdapter extends BaseAdapter {
                     }
                     break;
                 case CH_LIST_DATA_TYPE_HIKARI:
-                    Channel ch= (Channel)mData.get(position);;
+                    ChannelInfo ch= (ChannelInfo)mData.get(position);;
                     if (null != ch) {
                         chName = ch.getTitle();
                         thumbnail = ch.getThumbnail();
                     }
                     break;
                 case CH_LIST_DATA_TYPE_DTV:
-                    Channel ch2= (Channel)mData.get(position);;
+                    ChannelInfo ch2= (ChannelInfo)mData.get(position);;
                     if (null != ch2) {
                         chName = ch2.getTitle();
                         thumbnail = ch2.getThumbnail();

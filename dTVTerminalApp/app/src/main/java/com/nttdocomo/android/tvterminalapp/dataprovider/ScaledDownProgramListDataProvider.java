@@ -18,9 +18,9 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
-import com.nttdocomo.android.tvterminalapp.struct.Channel;
-import com.nttdocomo.android.tvterminalapp.struct.ChannelsInfo;
-import com.nttdocomo.android.tvterminalapp.struct.Schedule;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
+import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
@@ -88,9 +88,9 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         if (isSuccessful) {
             switch (operationId) {
                 case CHANNEL_SELECT:
-                    ArrayList<Channel> channels = new ArrayList<>();
+                    ArrayList<ChannelInfo> channels = new ArrayList<>();
                     for (int i = 0; i < resultSet.size(); i++) {
-                        ArrayList<Schedule> mScheduleList;
+                        ArrayList<ScheduleInfo> mScheduleList;
                         Map<String, String> hashMap = resultSet.get(i);
                         String chNo = hashMap.get(JsonConstants.META_RESPONSE_CHNO);
                         String title = hashMap.get(JsonConstants.META_RESPONSE_TITLE);
@@ -102,7 +102,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                         String dtv = hashMap.get(JsonConstants.META_RESPONSE_DTV);
                         String dtvType = hashMap.get(JsonConstants.META_RESPONSE_DTV_TYPE);
 
-                        Schedule mSchedule = new Schedule();
+                        ScheduleInfo mSchedule = new ScheduleInfo();
                         String startDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE);
                         String endDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE);
                         mSchedule.setStartTime(startDate);
@@ -117,7 +117,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                         mSchedule.setClipRequestData(setClipData((HashMap<String, String>) hashMap));
 
                         if (!TextUtils.isEmpty(chNo)) {
-                            Channel channel = new Channel();
+                            ChannelInfo channel = new ChannelInfo();
                             channel.setChNo(Integer.parseInt(chNo));
                             channel.setTitle(title);
                             channel.setThumbnail(thumb);
@@ -133,13 +133,13 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                     }
                     break;
                 case SCHEDULE_SELECT:
-                    ChannelsInfo channelsInfo = null;
+                    ChannelInfoList channelsInfo = null;
                     if (resultSet != null && resultSet.size() > 0) {
-                        channelsInfo = new ChannelsInfo();
-                        ArrayList<Schedule> mScheduleList;
+                        channelsInfo = new ChannelInfoList();
+                        ArrayList<ScheduleInfo> mScheduleList;
                         for (int i = 0; i < resultSet.size(); i++) {//CH毎番組データ取得して、整形する
                             Map<String, String> hashMap = resultSet.get(i);
-                            Schedule mSchedule = new Schedule();
+                            ScheduleInfo mSchedule = new ScheduleInfo();
                             String startDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE);
                             String endDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE);
                             String thumb = hashMap.get(JsonConstants.META_RESPONSE_THUMB_448);
@@ -171,13 +171,13 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                                     hashMap.get(JsonConstants.META_RESPONSE_TITLE_ID)));
 
                             if (!TextUtils.isEmpty(chNo)) {//CH毎番組データ取得して、整形する
-                                ArrayList<Channel> oldChannelList = channelsInfo.getChannels();
+                                ArrayList<ChannelInfo> oldChannelList = channelsInfo.getChannels();
                                 boolean isExist = false;
                                 if (oldChannelList.size() > 0) {//番組ID存在するのをチェックする
                                     for (int j = 0; j < oldChannelList.size(); j++) {
-                                        Channel oldChannel = oldChannelList.get(j);
+                                        ChannelInfo oldChannel = oldChannelList.get(j);
                                         if (oldChannel.getChNo() == Integer.valueOf(chNo)) {//番組ID存在する場合
-                                            ArrayList<Schedule> oldSchedule = oldChannel.getSchedules();
+                                            ArrayList<ScheduleInfo> oldSchedule = oldChannel.getSchedules();
                                             oldSchedule.add(mSchedule);
                                             isExist = true;
                                             break;
@@ -187,7 +187,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                                 if (!isExist) {//番組ID存在しない場合
                                     mScheduleList = new ArrayList<>();
                                     mScheduleList.add(mSchedule);
-                                    Channel channel = new Channel();
+                                    ChannelInfo channel = new ChannelInfo();
                                     channel.setChNo(Integer.valueOf(chNo));
                                     channel.setTitle(title);
                                     channel.setSchedules(mScheduleList);
@@ -234,7 +234,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
 
     @Override
     public void onChannelJsonParsed(List<ChannelList> channelLists) {
-        ArrayList<Channel> channels = null;
+        ArrayList<ChannelInfo> channels = null;
         if (channelLists != null) {
             mChannelList = channelLists.get(0);
             List<HashMap<String, String>> channelList = mChannelList.getChannelList();
@@ -304,12 +304,12 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     /**
      * 番組表用に番組のメタデータを整形
      */
-    private ChannelsInfo setProgramListContentData() {
-        ChannelsInfo channelsInfo = null;
+    private ChannelInfoList setProgramListContentData() {
+        ChannelInfoList channelsInfo = null;
         List<HashMap<String, String>> mChannelProgramList = mTvScheduleList.geTvsList();
         if (mChannelProgramList != null) {
-            channelsInfo = new ChannelsInfo();
-            ArrayList<Schedule> mScheduleList;
+            channelsInfo = new ChannelInfoList();
+            ArrayList<ScheduleInfo> mScheduleList;
             StringBuilder baseStartDate = new StringBuilder();
             baseStartDate.append(mProgramSelectDate);
             baseStartDate.append("04:00:00");
@@ -331,7 +331,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             selectEndDate = gc.getTime();
             for (int i = 0; i < mChannelProgramList.size(); i++) {//CH毎番組データ取得して、整形する
                 HashMap<String, String> hashMap = mChannelProgramList.get(i);
-                Schedule schedule = new Schedule();
+                ScheduleInfo schedule = new ScheduleInfo();
                 String startDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE);
                 StringBuilder startBuilder = new StringBuilder();
                 startBuilder.append(startDate.substring(0, 10));
@@ -375,13 +375,13 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                         hashMap.get(JsonConstants.META_RESPONSE_TITLE_ID)));
 
                 if (!TextUtils.isEmpty(chNo)) {//CH毎番組データ取得して、整形する
-                    ArrayList<Channel> oldChannelList = channelsInfo.getChannels();
+                    ArrayList<ChannelInfo> oldChannelList = channelsInfo.getChannels();
                     boolean isExist = false;
                     if (oldChannelList.size() > 0) {//番組ID存在するのをチェックする
                         for (int j = 0; j < oldChannelList.size(); j++) {
-                            Channel oldChannel = oldChannelList.get(j);
+                            ChannelInfo oldChannel = oldChannelList.get(j);
                             if (oldChannel.getChNo() == Integer.valueOf(chNo)) {//番組ID存在する場合
-                                ArrayList<Schedule> oldSchedule = oldChannel.getSchedules();
+                                ArrayList<ScheduleInfo> oldSchedule = oldChannel.getSchedules();
                                 oldSchedule.add(schedule);
                                 isExist = true;
                                 break;
@@ -391,7 +391,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                     if (!isExist) {//番組ID存在しない場合
                         mScheduleList = new ArrayList<>();
                         mScheduleList.add(schedule);
-                        Channel channel = new Channel();
+                        ChannelInfo channel = new ChannelInfo();
                         channel.setChNo(Integer.parseInt(chNo));
                         channel.setTitle(title);
                         channel.setSchedules(mScheduleList);
@@ -443,7 +443,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     /**
      * チャンネルデータの整形
      */
-    private void setChannelData(ArrayList<Channel> channels, List<HashMap<String, String>> channelList) {
+    private void setChannelData(ArrayList<ChannelInfo> channels, List<HashMap<String, String>> channelList) {
         for (int i = 0; i < channelList.size(); i++) {
             HashMap<String, String> hashMap = channelList.get(i);
             String chNo = hashMap.get(JsonConstants.META_RESPONSE_CHNO);
@@ -458,7 +458,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             String chPackSubPuId = hashMap.get(JsonConstants.META_RESPONSE_CHPACK
                     + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_SUB_PUID);
             if (!TextUtils.isEmpty(chNo)) {
-                Channel channel = new Channel();
+                ChannelInfo channel = new ChannelInfo();
                 channel.setTitle(title);
                 channel.setChNo(Integer.parseInt(chNo));
                 channel.setThumbnail(thumbnail);
@@ -482,14 +482,14 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
          *
          * @param channelsInfo 画面に渡すチャンネル番組情報
          */
-        void channelInfoCallback(ChannelsInfo channelsInfo);
+        void channelInfoCallback(ChannelInfoList channelsInfo);
 
         /**
          * チャンネルリストを戻す
          *
          * @param channels 　画面に渡すチャンネル情報
          */
-        void channelListCallback(ArrayList<Channel> channels);
+        void channelListCallback(ArrayList<ChannelInfo> channels);
     }
 
     /**

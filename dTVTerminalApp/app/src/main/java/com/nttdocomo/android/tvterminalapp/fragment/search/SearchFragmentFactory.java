@@ -7,11 +7,11 @@ package com.nttdocomo.android.tvterminalapp.fragment.search;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FragmentFactory {
+public class SearchFragmentFactory {
 
     private Map<Integer, SearchBaseFragment> mFragments = new HashMap<Integer, SearchBaseFragment>();
 
-    public FragmentFactory(){
+    public SearchFragmentFactory(){
 
     }
 

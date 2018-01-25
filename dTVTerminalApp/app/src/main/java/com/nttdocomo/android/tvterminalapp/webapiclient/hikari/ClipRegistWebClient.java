@@ -10,7 +10,7 @@ import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ClipRegistJsonParser;
 
 import org.json.JSONException;
@@ -248,10 +248,10 @@ public class ClipRegistWebClient
         try {
 
             //リクエストパラメータ(Json)作成
-            if (StringUtil.isHikariContents(type)) {
+            if (StringUtils.isHikariContents(type)) {
                 //ひかりコンテンツ(dCh含む)
                 jsonObject.put(JsonConstants.META_RESPONSE_CRID, crid);
-            } else if (StringUtil.isHikariInDtvContents(type)) {
+            } else if (StringUtils.isHikariInDtvContents(type)) {
                 //ひかり内dTVコンテンツ(VODメタのdTVフラグが1)
                 jsonObject.put(JsonConstants.META_RESPONSE_CRID, crid);
                 jsonObject.put(JsonConstants.META_RESPONSE_TITLE_ID, titleId);

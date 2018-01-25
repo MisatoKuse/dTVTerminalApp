@@ -23,7 +23,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListItem;
-import com.nttdocomo.android.tvterminalapp.struct.Channel;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -195,9 +195,9 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
                 break;
             case CH_LIST_DATA_TYPE_HIKARI:
             case CH_LIST_DATA_TYPE_DTV:
-                Channel ch2= (Channel)item;
+                ChannelInfo ch2= (ChannelInfo)item;
                 for(Object obj: mData){
-                    Channel ch1= (Channel)obj;
+                    ChannelInfo ch1= (ChannelInfo)obj;
                     ret= ch1.equalTo(ch2);
                     if(ret){
                         break;

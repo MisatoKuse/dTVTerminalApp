@@ -30,7 +30,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.struct.RecordingReservationContentsDetailInfo;
-import com.nttdocomo.android.tvterminalapp.struct.Channel;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsDetailGetWebClient;
@@ -224,7 +224,7 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
 
     @Override
     public void onChannelJsonParsed(final List<ChannelList> channelLists) {
-        ArrayList<Channel> channels = null;
+        ArrayList<ChannelInfo> channels = null;
         if (channelLists != null) {
             mChannelList = channelLists.get(0);
             List<HashMap<String, String>> channelList = mChannelList.getChannelList();
@@ -250,7 +250,7 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
         if (isSuccessful) {
             switch (operationId) {
                 case CHANNEL_SELECT:
-                    ArrayList<Channel> channels = new ArrayList<>();
+                    ArrayList<ChannelInfo> channels = new ArrayList<>();
                     for (int i = 0; i < resultSet.size(); i++) {
                         Map<String, String> hashMap = resultSet.get(i);
                         String chNo = hashMap.get(JsonConstants.META_RESPONSE_CHNO);
@@ -267,7 +267,7 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                                 + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_SUB_PUID);
 
                         if (!TextUtils.isEmpty(chNo)) {
-                            Channel channel = new Channel();
+                            ChannelInfo channel = new ChannelInfo();
                             channel.setChNo(Integer.parseInt(chNo));
                             channel.setTitle(title);
                             channel.setServiceId(serviceId);
@@ -415,7 +415,7 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
      * @param channels チャンネル一覧
      * @param channelList パースされたチャンネル情報
      */
-    private void setChannelData(final ArrayList<Channel> channels, final List<HashMap<String, String>> channelList) {
+    private void setChannelData(final ArrayList<ChannelInfo> channels, final List<HashMap<String, String>> channelList) {
         for (int i = 0; i < channelList.size(); i++) {
             HashMap<String, String> hashMap = channelList.get(i);
             String chNo = hashMap.get(JsonConstants.META_RESPONSE_CHNO);
@@ -431,7 +431,7 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
             String chPackSubPuId = hashMap.get(JsonConstants.META_RESPONSE_CHPACK
                     + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_SUB_PUID);
             if (!TextUtils.isEmpty(chNo)) {
-                Channel channel = new Channel();
+                ChannelInfo channel = new ChannelInfo();
                 channel.setTitle(title);
                 channel.setChNo(Integer.parseInt(chNo));
                 channel.setServiceId(serviceId);
@@ -470,7 +470,7 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
          *
          * @param channels 　画面に渡すチャンネル情報
          */
-        void channelListCallback(ArrayList<Channel> channels);
+        void channelListCallback(ArrayList<ChannelInfo> channels);
 
         /**
          * リモート録画予約実行結果を返す.

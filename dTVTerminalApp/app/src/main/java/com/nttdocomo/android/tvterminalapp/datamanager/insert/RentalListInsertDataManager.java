@@ -18,7 +18,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChListResp
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,7 +82,7 @@ public class RentalListInsertDataManager {
 
             for (String item:vodMetaFullData.getRootPara()) {
                 //データがString型だけではなくなったので、変換を行ってから蓄積する
-                String valName = StringUtil.changeObject2String(vodMetaFullData.getMember(item));
+                String valName = StringUtils.changeObject2String(vodMetaFullData.getMember(item));
                 values.put(DBUtils.fourKFlgConversion(item), valName);
             }
             rentalListDao.insert(values);
@@ -94,12 +94,12 @@ public class RentalListInsertDataManager {
 
             String keyName = JsonConstants.META_RESPONSE_ACTIVE_LIST + JsonConstants.UNDER_LINE
                     + JsonConstants.META_RESPONSE_LICENSE_ID;
-            String valName = StringUtil.changeObject2String(activeData.getLicenseId());
+            String valName = StringUtils.changeObject2String(activeData.getLicenseId());
             activeValues.put(DBUtils.fourKFlgConversion(keyName), valName);
 
             String keyName2 = JsonConstants.META_RESPONSE_ACTIVE_LIST + JsonConstants.UNDER_LINE
                     + JsonConstants.META_RESPONSE_VAILD_END_DATE;
-            String valName2 = StringUtil.changeObject2String(activeData.getValidEndDate());
+            String valName2 = StringUtils.changeObject2String(activeData.getValidEndDate());
             activeValues.put(DBUtils.fourKFlgConversion(keyName2), valName2);
 
             rentalListDao.insertActiveList(activeValues);
@@ -151,12 +151,12 @@ public class RentalListInsertDataManager {
 
             String keyName = JsonConstants.META_RESPONSE_ACTIVE_LIST + JsonConstants.UNDER_LINE
                     + JsonConstants.META_RESPONSE_LICENSE_ID;
-            String valName = StringUtil.changeObject2String(activeData.getLicenseId());
+            String valName = StringUtils.changeObject2String(activeData.getLicenseId());
             activeValues.put(DBUtils.fourKFlgConversion(keyName), valName);
 
             String keyName2 = JsonConstants.META_RESPONSE_ACTIVE_LIST + JsonConstants.UNDER_LINE
                     + JsonConstants.META_RESPONSE_VAILD_END_DATE;
-            String valName2 = StringUtil.changeObject2String(activeData.getValidEndDate());
+            String valName2 = StringUtils.changeObject2String(activeData.getValidEndDate());
             activeValues.put(DBUtils.fourKFlgConversion(keyName2), valName2);
 
             rentalListDao.insertChActiveList(activeValues);

@@ -13,7 +13,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChListResponse;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalChListWebClient;
 
 import org.json.JSONArray;
@@ -150,7 +150,7 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
                                             if (DBUtils.isDateItem(JsonConstants.CHPACK_PARA[c])) {
                                                 //日付なので変換して格納する
                                                 String dateBuffer = DateUtils.formatEpochToString(
-                                                        StringUtil.changeString2Long(value));
+                                                        StringUtils.changeString2Long(value));
                                                 vcListMap.put(stringBuffer.toString(), dateBuffer);
                                             } else {
                                                 //日付ではないのでそのまま格納する
@@ -162,7 +162,7 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
                             } else if (DBUtils.isDateItem(JsonConstants.METADATA_LIST_PARA[j])) {
                                 // DATE_PARAに含まれるのは日付なので、エポック秒となる。変換して格納する
                                 String dateBuffer = DateUtils.formatEpochToString(
-                                        StringUtil.changeString2Long(jsonObject.getString(JsonConstants.METADATA_LIST_PARA[j])));
+                                        StringUtils.changeString2Long(jsonObject.getString(JsonConstants.METADATA_LIST_PARA[j])));
                                 vcListMap.put(JsonConstants.METADATA_LIST_PARA[j], dateBuffer);
                             } else {
                                 String para = jsonObject.getString(JsonConstants.METADATA_LIST_PARA[j]);
@@ -211,7 +211,7 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
                             JsonConstants.META_RESPONSE_LICENSE_ID));
                     }
                     if (!listData.isNull(JsonConstants.META_RESPONSE_VAILD_END_DATE)) {
-                        activeData.setValidEndDate(StringUtil.changeString2Long(listData.getLong(
+                        activeData.setValidEndDate(StringUtils.changeString2Long(listData.getLong(
                                 JsonConstants.META_RESPONSE_VAILD_END_DATE)));
                     }
 

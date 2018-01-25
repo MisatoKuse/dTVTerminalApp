@@ -12,7 +12,7 @@ import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
 
 import org.json.JSONArray;
@@ -171,7 +171,7 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
                                 if (DBUtils.isDateItem(puinfBuffer)) {
                                     //日付なので変換して格納する
                                     String dateBuffer = DateUtils.formatEpochToString(
-                                            StringUtil.changeString2Long(puinfObj.getString(
+                                            StringUtils.changeString2Long(puinfObj.getString(
                                                     puinfBuffer)));
                                     vrListMap.put(stringBuffer.toString(), dateBuffer);
                                 } else {
@@ -183,7 +183,7 @@ public class VideoRankJsonParser extends AsyncTask<Object, Object, Object> {
                         } else if (DBUtils.isDateItem(listBuffer)) {
                             // DATE_PARAに含まれるのは日付なので、エポック秒となる。変換して格納する
                             String dateBuffer = DateUtils.formatEpochToString(
-                                    StringUtil.changeString2Long(jsonObject.getString(listBuffer)));
+                                    StringUtils.changeString2Long(jsonObject.getString(listBuffer)));
                             vrListMap.put(listBuffer, dateBuffer);
                         } else {
                             String para = jsonObject.getString(listBuffer);

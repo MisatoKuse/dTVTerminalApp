@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -24,71 +24,71 @@ public class DBHelper extends SQLiteOpenHelper {
     /**
      * 「channel_list」テーブルの削除用SQL.
      */
-    private static final String DROP_CHANNEL_TABLE_SQL = StringUtil.getConnectStrings(
+    private static final String DROP_CHANNEL_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.CHANNEL_LIST_TABLE_NAME);
-    private static final String DROP_DAILYRANK_TABLE_SQL = StringUtil.getConnectStrings(
+    private static final String DROP_DAILYRANK_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.DAILYRANK_LIST_TABLE_NAME);
-    private static final String DROP_RECOMMEND_CHANNEL_TABLE_SQL = StringUtil.getConnectStrings(
+    private static final String DROP_RECOMMEND_CHANNEL_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.RECOMMEND_CHANNEL_LIST_TABLE_NAME);
-    private static final String DROP_RECOMMEND_VIDEO_TABLE_SQL = StringUtil.getConnectStrings(
+    private static final String DROP_RECOMMEND_VIDEO_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.RECOMMEND_VIDEO_LIST_TABLE_NAME);
-    private static final String DROP_TV_SCHEDULE_TABLE_SQL = StringUtil.getConnectStrings(
+    private static final String DROP_TV_SCHEDULE_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.TV_SCHEDULE_LIST_TABLE_NAME);
-    private static final String USER_INFO_TABLE_SQL = StringUtil.getConnectStrings(
+    private static final String USER_INFO_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.USER_INFO_LIST_TABLE_NAME);
-    private static final String DROP_VODCLIP_TABLE_SQL = StringUtil.getConnectStrings(
+    private static final String DROP_VODCLIP_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.VODCLIP_LIST_TABLE_NAME);
-    private static final String DROP_WEEKLYRANK_TABLE_SQL = StringUtil.getConnectStrings(
+    private static final String DROP_WEEKLYRANK_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.WEEKLYRANK_LIST_TABLE_NAME);
-    private static final String DROP_VIDEORANK_TABLE_SQL = StringUtil.getConnectStrings(
+    private static final String DROP_VIDEORANK_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.RANKING_VIDEO_LIST_TABLE_NAME);
-    private static final String DROP_RECOMMEND_DCHANNEL_TABLE_SQL = StringUtil.getConnectStrings(
+    private static final String DROP_RECOMMEND_DCHANNEL_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.RECOMMEND_LIST_DCHANNEL_TABLE_NAME);
-    private static final String DROP_RECOMMEND_DTV_TABLE_SQL = StringUtil.getConnectStrings(
+    private static final String DROP_RECOMMEND_DTV_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.RECOMMEND_LIST_DTV_TABLE_NAME);
-    private static final String DROP_ROLE_LIST_TABLE_SQL = StringUtil.getConnectStrings(
+    private static final String DROP_ROLE_LIST_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.ROLE_LIST_TABLE_NAME);
-    private static final String DROP_DOWNLOAD_LIST_TABLE_SQL = StringUtil.getConnectStrings(
+    private static final String DROP_DOWNLOAD_LIST_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.DOWNLOAD_LIST_TABLE_NAME);
-    private static final String DROP_RECOMMEND_DANIME_TABLE_SQL = StringUtil.getConnectStrings(
+    private static final String DROP_RECOMMEND_DANIME_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.RECOMMEND_LIST_DANIME_TABLE_NAME);
     /**
      * 「tv clip list」テーブルの削除用SQL.
      */
-    private static final String DROP_TVCLIP_TABLE_SQL = StringUtil.getConnectStrings(
+    private static final String DROP_TVCLIP_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.TVCLIP_LIST_TABLE_NAME);
     /**
      * 「レンタル一覧」テーブルの削除用SQL.
      */
-    private static final String DROP_RENTAL_TABLE_SQL = StringUtil.getConnectStrings(
+    private static final String DROP_RENTAL_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.RENTAL_LIST_TABLE_NAME);
     /**
      * 「レンタル一覧」のactive_listテーブルの削除用SQL.
      */
-    private static final String DROP_RENTAL_ACTIVE_LIST_SQL = StringUtil.getConnectStrings(
+    private static final String DROP_RENTAL_ACTIVE_LIST_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.RENTAL_ACTIVE_LIST_TABLE_NAME);
     /**
      * 「購入済みCH一覧」テーブルの削除用SQL.
      */
-    private static final String DROP_RENTAL_CHANNEL_TABLE_SQL = StringUtil.getConnectStrings(
+    private static final String DROP_RENTAL_CHANNEL_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.RENTAL_CHANNEL_LIST_TABLE_NAME);
     /**
      * 「購入済みCH一覧」のactive_listテーブルの削除用SQL.
      */
-    private static final String DROP_RENTAL_CHANNEL_ACTIVE_LIST_SQL = StringUtil.getConnectStrings(
+    private static final String DROP_RENTAL_CHANNEL_ACTIVE_LIST_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.RENTAL_CHANNEL_ACTIVE_LIST_TABLE_NAME);
     /**
      * クリップキー一覧 テーブル削除用SQL.
      */
-    private static final String DROP_TV_CLIP_KEY_LIST_TABLE_SQL = StringUtil.getConnectStrings(
+    private static final String DROP_TV_CLIP_KEY_LIST_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.TV_CLIP_KEY_LIST_TABLE_NAME);
-    private static final String DROP_VOD_CLIP_KEY_LIST_TABLE_SQL = StringUtil.getConnectStrings(
+    private static final String DROP_VOD_CLIP_KEY_LIST_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.VOD_CLIP_KEY_LIST_TABLE_NAME);
 
     /**
      * 視聴中ビデオ一覧 テーブル削除用.
      */
-    private static final String DROP_WATCH_LISTEN_VIDEO_LIST_TABLE_SQL = StringUtil.getConnectStrings(
+    private static final String DROP_WATCH_LISTEN_VIDEO_LIST_TABLE_SQL = StringUtils.getConnectStrings(
             DROP_TABLE_IF_EXISTS, DBConstants.WATCH_LISTEN_VIDEO_TABLE_NAME);
 
     /**

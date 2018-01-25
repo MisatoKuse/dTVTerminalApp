@@ -9,7 +9,7 @@ import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -109,7 +109,7 @@ public class VodClipJsonParser {
                                 if (DBUtils.isDateItem(puinfBuffer)) {
                                     //日付なので変換して格納する
                                     String dateBuffer = DateUtils.formatEpochToString(
-                                            StringUtil.changeString2Long(puinfObj.getString(
+                                            StringUtils.changeString2Long(puinfObj.getString(
                                                     puinfBuffer)));
                                     vcListMap.put(stringBuffer.toString(), dateBuffer);
                                 } else {
@@ -121,7 +121,7 @@ public class VodClipJsonParser {
                         } else if (DBUtils.isDateItem(listBuffer)) {
                             // DATE_PARAに含まれるのは日付なので、エポック秒となる。変換して格納する
                             String dateBuffer = DateUtils.formatEpochToString(
-                                    StringUtil.changeString2Long(jsonObject.getString(listBuffer)));
+                                    StringUtils.changeString2Long(jsonObject.getString(listBuffer)));
                             vcListMap.put(listBuffer, dateBuffer);
                         } else {
                             String para = jsonObject.getString(listBuffer);

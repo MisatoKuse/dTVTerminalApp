@@ -45,7 +45,7 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountControl;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipDeleteWebClient;
@@ -1144,7 +1144,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         //クリップ対象がない場合には、トーストのメッセージに不整合が生じるため、表示しない
         if (mClipTarget != null && mClipTarget.length() > 0) {
             String[] strings = {mClipTarget, getString(msgId)};
-            Toast.makeText(this, StringUtil.getConnectString(strings), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, StringUtils.getConnectString(strings), Toast.LENGTH_SHORT).show();
         }
         //クリップ処理終了メッセージ後にフラグを実行中から終了に変更
         mClipRunTime = false;

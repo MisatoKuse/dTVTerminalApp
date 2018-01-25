@@ -24,13 +24,13 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.util.List;
 
@@ -598,7 +598,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         if (holder.tv_clip != null) {
             String clipType = listContentInfo.getRequestData().getType();
             //ひかりコンテンツ判定
-            if (StringUtil.isHikariContents(clipType) || StringUtil.isHikariInDtvContents(clipType)) {
+            if (StringUtils.isHikariContents(clipType) || StringUtils.isHikariInDtvContents(clipType)) {
                 //TODO:録画予約一覧等、クリップボタンを表示しない画面はここで外す
                 if (!mType.equals(TYPE_RECORDING_RESERVATION_LIST) && !mType.equals(TYPE_STB_SELECT_LIST)) {
                     //クリップ状態が1以外の時は、非活性クリップボタンを表示

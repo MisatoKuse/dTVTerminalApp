@@ -19,7 +19,7 @@ import java.util.Locale;
  * 番組クラス
  * 　　機能： 番組の属性を纏めるクラスである
  */
-public class Schedule {
+public class ScheduleInfo {
 
     //タイトル
     private String title;

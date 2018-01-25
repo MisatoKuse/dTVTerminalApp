@@ -11,15 +11,15 @@ import java.util.ArrayList;
  * 複数チャンネルクラス
  * 　　機能： 複数チャンネルを管理するクラスである
  */
-public class ChannelsInfo {
+public class ChannelInfoList {
 
     //チャンネルの配列
-    private ArrayList<Channel> mChannels=null;
+    private ArrayList<ChannelInfo> mChannels=null;
 
     /**
      * クラス構造
      */
-    public ChannelsInfo(){
+    public ChannelInfoList(){
         mChannels=new ArrayList<>();
     }
 
@@ -27,7 +27,7 @@ public class ChannelsInfo {
      * チャンネルの配列を取得
      * @return mChannels
      */
-    public ArrayList<Channel> getChannels() {
+    public ArrayList<ChannelInfo> getChannels() {
         return mChannels;
     }
 
@@ -35,7 +35,7 @@ public class ChannelsInfo {
      * チャンネルを追加
      * @param ch チャンネル
      */
-    public void addChannel(Channel ch){
+    public void addChannel(ChannelInfo ch){
         mChannels.add(ch);
     }
 }

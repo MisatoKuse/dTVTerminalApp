@@ -11,7 +11,7 @@ import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 
 import org.json.JSONArray;
@@ -184,7 +184,7 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
                                         if (DBUtils.isDateItem(CHANNEL_META_PARAMETERS[c])) {
                                             //日付なので変換して格納する
                                             String dateBuffer = DateUtils.formatEpochToString(
-                                                    StringUtil.changeString2Long(value));
+                                                    StringUtils.changeString2Long(value));
                                             vcListMap.put(stringBuffer.toString(), dateBuffer);
                                         } else {
                                             //日付ではないのでそのまま格納する
@@ -195,7 +195,7 @@ public class ChannelJsonParser extends AsyncTask<Object, Object, Object> {
                             } else if (DBUtils.isDateItem(CONTENT_META_PARAMETERS[j])) {
                                 // DATE_PARAに含まれるのは日付なので、エポック秒となる。変換して格納する
                                 String dateBuffer = DateUtils.formatEpochToString(
-                                        StringUtil.changeString2Long(jsonObject.getString(CONTENT_META_PARAMETERS[j])));
+                                        StringUtils.changeString2Long(jsonObject.getString(CONTENT_META_PARAMETERS[j])));
                                 vcListMap.put(CONTENT_META_PARAMETERS[j], dateBuffer);
                             } else {
                                 String para = jsonObject.getString(CONTENT_META_PARAMETERS[j]);
