@@ -137,6 +137,7 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
                 onStopIt();
                 break;
             case DOWNLOADER_STATUS_CANCELLED:
+                onCancel();
                 onStopIt();
                 break;
             case DOWNLOADER_STATUS_UNKNOWN:

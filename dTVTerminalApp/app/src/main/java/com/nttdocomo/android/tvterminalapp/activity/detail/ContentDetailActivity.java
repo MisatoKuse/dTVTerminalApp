@@ -54,7 +54,6 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
-import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
@@ -72,14 +71,15 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailFragmentFactory;
-import com.nttdocomo.android.tvterminalapp.struct.RecordingReservationContentsDetailInfo;
-import com.nttdocomo.android.tvterminalapp.struct.MediaVideoInfo;
-import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
+import com.nttdocomo.android.tvterminalapp.struct.MediaVideoInfo;
+import com.nttdocomo.android.tvterminalapp.struct.RecordingReservationContentsDetailInfo;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.ContentsDetailViewPager;
+import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SendOperateLog;
 
@@ -279,6 +279,8 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      * サムネイルにかけるシャドウのアルファ値.
      */
     private static final float THUMBNAIL_SHADOW_ALPHA = 0.5f;
+
+    private boolean mIsLocalPlaying=false;
 
     private Runnable mHideCtrlViewThread = new Runnable() {
 
@@ -794,8 +796,8 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             type2 = type;
         }
 
-        boolean isDownloaded = (ContentsAdapter.DOWNLOAD_STATUS_COMPLETED == datas.getDownLoadStatus());
-        if (!isDownloaded) {
+        mIsLocalPlaying = ( ContentsAdapter.DOWNLOAD_STATUS_COMPLETED == datas.getDownLoadStatus() );
+        if (!mIsLocalPlaying) {
             mCurrentMediaInfo = new MediaVideoInfo(
                     uri,           //uri
                     type2,         //"application/x-dtcp1", "video/mp4", RESOURCE_MIMETYPE
@@ -1990,7 +1992,11 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 showMessage("バッファー開始");
                 break;
             case MediaPlayerDefinitions.PE_START_RENDERING:
-                showMessage("再生開始");
+                if(mIsLocalPlaying){
+                    showMessage("ローカル再生開始");
+                } else {
+                    showMessage("再生開始");
+                }
                 break;
             case MediaPlayerDefinitions.PE_FIRST_FRAME_RENDERED:
                 //showMessage("PE_FIRST_FRAME_RENDERED");

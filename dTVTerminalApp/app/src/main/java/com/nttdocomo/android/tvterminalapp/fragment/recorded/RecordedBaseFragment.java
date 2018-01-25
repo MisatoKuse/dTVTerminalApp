@@ -63,7 +63,6 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     private Handler mHandler = new Handler();
     private final int mPercentToUpdateUi = 1;
     private Activity activity;
-    private boolean mIsJustCanceled=false;
 
     @Override
     public Context getContext() {
@@ -206,13 +205,13 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             mDlDataProvider.setDlParam(downloadParam);
             mDlDataProvider.start();
         } catch (Exception e){
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
     }
 
     @Override
     public void dlDataProviderUnavailable() {
-
+		//todo
     }
     @Override
     public void onProgress(int receivedBytes, int percent) {
@@ -261,12 +260,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                                 showMessage("ストレージ容量不足なので、ダウンロードは出来ませんでした");
                                 break;
                             case DLError_Download:
-                                if(mIsJustCanceled){
-                                    mIsJustCanceled=false;
-                                    return;
-                                } else {
-                                    showMessage("ダウンロードエラーは発生しました");
-                                }
+                                showMessage("ダウンロードエラーは発生しました");
                                 break;
                             case DLError_ParamError:
                                 showMessage("ダウンロードパーラメータエラーは発生しました");
@@ -293,14 +287,26 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     }
 
     @Override
-    public void onSuccess(String fullPath) {
-        final String fullPath2=fullPath;
+    public void onSuccess(final String fullPath) {
         if(activity != null){
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     DTVTLogger.debug("HandlerThread:"+Thread.currentThread().getId());
-                    setSuccessStatus(fullPath2);
+                    setSuccessStatus(fullPath);
+                }
+            });
+        }
+    }
+
+	@Override
+    public void onCancel(final String fullPath) {
+        if(activity != null){
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showMessage("ダウンロードはキャンセルしました。");
+                    setCancelStatus(fullPath);
                 }
             });
         }
@@ -319,7 +325,20 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         }
         setNextDownLoad();
     }
-
+	
+	private void setCancelStatus(String fullPath){
+        if(queIndex.size() > 0){
+            View view = mRecordedListview.getChildAt(queIndex.get(0)-mRecordedListview.getFirstVisiblePosition());
+            if (view != null) {
+                view.findViewById(R.id.item_common_result_clip_tv).setBackgroundResource(R.mipmap.icon_circle_normal_download);
+                //setDownloadStatusClear(view.findViewById(R.id.item_common_result_clip_tv));
+            }
+            mContentsData.get(queIndex.get(0)).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_ALLOW);
+            mContentsData.get(queIndex.get(0)).setDownloadStatus("");
+            setContentListStatusContent(queIndex.get(0), ContentsAdapter.DOWNLOAD_STATUS_ALLOW, fullPath);
+        }
+        setNextDownLoad();
+    }
     private void setNextDownLoad(){
         if(que.size() > 0){
             que.remove(0);
@@ -361,20 +380,6 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         mContentsList.get(index).setDlFileFullPath(path);
     }
 
-    @Override
-    public void onCancel() {
-        if(!mIsJustCanceled){
-            mIsJustCanceled=true;
-        }
-        if(activity != null){
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    showMessage("ダウンロードはキャンセルしました。");
-                }
-            });
-        }
-    }
 
     @Override
     public void onLowStorageSpace() {
@@ -450,6 +455,9 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     }
 
     private DlData setDlData(int index){
+		if(null==mContentsList || index>=mContentsList.size()){
+            return null;
+        }
         DlData dlData = new DlData();
         RecordedContentsDetailData itemData = mContentsList.get(index);
         dlData.setItemId(DownloaderBase.getFileNameById(itemData.getItemId()));
@@ -626,32 +634,55 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             public void onOKCallback(boolean isOK) {
                 if (isOK) {
                     if (!completed){
-                        for (int i = 0; i < queIndex.size(); i++) {
-                            if ((int) view.getTag() == queIndex.get(0)) {
+                        if(null!=mDlDataProvider && null!=queIndex && 0<queIndex.size()){
+                            int num=(int) view.getTag();
+                            boolean isCurDl= queIndex.get(0)== num;
+                            if (isCurDl) {
                                 mDlDataProvider.cancel();
-                                if (queIndex.size() > 1) {
-                                    prepareDownLoad(queIndex.get(1));
-                                }
                             }
-                            if ((int) view.getTag() == queIndex.get(i)) {
-                                StringBuilder path=new StringBuilder();
-                                path.append(que.get(i).getSaveFile());
-                                path.append(File.separator);
-                                path.append(que.get(i).getItemId());
+                            String path=getCurrentDlFullPath(num);
+                            if(null!=path){
                                 mDlDataProvider.cancelDownLoadStatus(path.toString());
-                                que.remove(i);
-                                queIndex.remove(i);
-                                if(queIndex.size() > 0 && (int) view.getTag() == queIndex.get(0)){
-                                    try {
-                                        mDlDataProvider.setDlParam(downloadParam);
-                                        mDlDataProvider.start();
-                                    } catch (Exception e){
-                                        e.printStackTrace();
+                            } else {
+                                //todo error
+                            }
+                            if (!isCurDl) {
+                                for (int i = 0; i < queIndex.size(); i++) {
+                                    if(num==queIndex.get(i)){
+                                        que.remove(i);
+                                        queIndex.remove(i);
+                                        break;
                                     }
                                 }
-                                break;
                             }
                         }
+
+//                        for (int i = 0; i < queIndex.size(); i++) {
+//                            if ((int) view.getTag() == queIndex.get(0)) {
+//                                mDlDataProvider.cancel();
+//                                if (queIndex.size() > 1) {
+//                                    prepareDownLoad(queIndex.get(1));
+//                                }
+//                            }
+//                            if ((int) view.getTag() == queIndex.get(i)) {
+//                                StringBuilder path=new StringBuilder();
+//                                path.append(que.get(i).getSaveFile());
+//                                path.append(File.separator);
+//                                path.append(que.get(i).getItemId());
+//                                mDlDataProvider.cancelDownLoadStatus(path.toString());
+//                                que.remove(i);
+//                                queIndex.remove(i);
+//                                if(queIndex.size() > 0 && (int) view.getTag() == queIndex.get(0)){
+//                                    try {
+//                                        mDlDataProvider.setDlParam(downloadParam);
+//                                        mDlDataProvider.start();
+//                                    } catch (Exception e){
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//                                break;
+//                            }
+//                        }
                     } else {
                         int index = (int)view.getTag();
                         RecordedContentsDetailData itemData = mContentsList.get(index);
@@ -688,6 +719,16 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         customDialog.showDialog();
     }
 
+	private String getCurrentDlFullPath(int idx){
+        if(null==que || idx>=que.size()){
+            return null;
+        }
+        StringBuilder path=new StringBuilder();
+        path.append(que.get(idx).getSaveFile());
+        path.append(File.separator);
+        path.append(que.get(idx).getItemId());
+        return path.toString();
+    }
     /**
      * false ダウンロードステータスをクリア
      */

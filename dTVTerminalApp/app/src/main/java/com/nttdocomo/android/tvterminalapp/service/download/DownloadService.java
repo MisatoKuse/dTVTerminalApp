@@ -6,7 +6,6 @@ package com.nttdocomo.android.tvterminalapp.service.download;
 
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -14,7 +13,6 @@ import android.os.IBinder;
 import android.support.v7.app.NotificationCompat;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.jni.download.DlnaProvDownload;
 
 import java.util.ArrayList;
@@ -154,12 +152,12 @@ public class DownloadService extends Service implements DownloadListener {
     }
 
     private Notification getNotification(String title, int progress) {
-        Intent intent = new Intent(this, RecordedListActivity.class);
-        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
+//        Intent intent = new Intent(this, RecordedListActivity.class);
+//        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setSmallIcon(R.mipmap.ic_launcher);
         builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
-        builder.setContentIntent(pi);
+//        builder.setContentIntent(pi);
         builder.setContentTitle(title);
         builder.setPriority(NotificationCompat.PRIORITY_HIGH);
         if (progress > 0) {
@@ -284,9 +282,9 @@ public class DownloadService extends Service implements DownloadListener {
      * コールバック
      */
     @Override
-    public void onCancel() {
+    public void onCancel(final String filePath) {
         if(null!=mDownloadServiceListener){
-            mDownloadServiceListener.onCancel();
+            mDownloadServiceListener.onCancel(filePath);
         }
     }
 

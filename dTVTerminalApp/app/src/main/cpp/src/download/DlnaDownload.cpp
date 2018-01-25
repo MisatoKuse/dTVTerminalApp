@@ -18,8 +18,17 @@ namespace dtvt {
 
     //global var
     extern bool gIsGlobalDtcpInited;
+    static bool sIsJustCanceled=false;
 
-    //local function b
+    //============================ local function b //============================//
+    static pthread_mutex_t gMutexIsJustCanceled;
+
+    static void setIsJustCanceled(bool yn){
+        pthread_mutex_lock(&gMutexIsJustCanceled);
+        sIsJustCanceled=yn;
+        pthread_mutex_unlock(&gMutexIsJustCanceled);
+    }
+
     string intToString(int n)  {
         stringstream ss;
         string str;
@@ -35,7 +44,7 @@ namespace dtvt {
         ss>>str;
         return str;
     }
-    //local function e
+    //============================ local function e //============================//
 
     DlnaDownload::DlnaDownload(): mDtcp(NULL), mDirToSave("") {
         mEvent.mJavaVM=NULL;
@@ -165,7 +174,19 @@ namespace dtvt {
         }
         DlnaDownload *thiz = (DlnaDownload *) arg;
         std::string content= intToString(status);
-        thiz->notify(DLNA_MSG_ID_DL_STATUS, content);
+
+        pthread_mutex_lock(&gMutexIsJustCanceled);
+        if(DOWNLOADER_STATUS_ERROR_OCCURED==status){
+            if(sIsJustCanceled){
+                sIsJustCanceled=false;
+            } else {
+                thiz->notify(DLNA_MSG_ID_DL_STATUS, content);
+            }
+        } else {
+            thiz->notify(DLNA_MSG_ID_DL_STATUS, content);
+        }
+        pthread_mutex_unlock(&gMutexIsJustCanceled);
+
     }
 
     void DlnaDownload::downloaderProgressHandler(du_uint64 sent_size, du_uint64 total_size, void* arg){
@@ -334,6 +355,7 @@ namespace dtvt {
 //    }
 
     void DlnaDownload::dtcpDownloadCancel(){
+        setIsJustCanceled(true);
         downloader_cancel();
     }
 

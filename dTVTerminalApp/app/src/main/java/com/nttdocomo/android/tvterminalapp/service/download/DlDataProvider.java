@@ -343,11 +343,31 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     @Override
-    public void onCancel() {
-        if (null != mDlDataProviderListener) {
-            mDlDataProviderListener.onCancel();
+    public void onCancel(final String filePath) {
+//        if(!TextUtils.isEmpty(filePath)){
+//            if(filePath.contains(File.separator)){
+//                String paths[] = filePath.split(File.separator);
+//                itemId = filePath.split(File.separator)[paths.length - 1];
+//                if(!TextUtils.isEmpty(itemId)){
+//                    updateDownloadStatusToDb();
+//                }
+//            }
+//        }
+        if (null != mDlDataProviderListener && DownloadService.BINDSTATUS == DownloadService.BINDED) {
+            DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok");
+            mDlDataProviderListener.onCancel(filePath);
+        } else if(DownloadService.BINDSTATUS == DownloadService.BACKGROUD){
+            DownloadService ds = getDownloadService();
+            if (null != ds) {
+                Intent intent = new Intent();
+                intent.setAction(DownloadService.DONWLOAD_FAIL);
+                intent.putExtra(DownloadService.DONWLOAD_PATH, filePath);
+                ds.sendBroadcast(intent);
+            } else {
+                DTVTLogger.debug("ダウンロードはキャンセルしました。");
+            }
         } else {
-            DTVTLogger.debug("ダウンロードはキャンセルしました。 ");
+            setNextDownLoad();
         }
     }
 
