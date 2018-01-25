@@ -56,12 +56,13 @@ interface DownloadListener {
      * ダウンロード完了の時、コールされる
      * @param fullPath　fullPath
      */
-    void onSuccess(String fullPath);
+    void onSuccess(final String fullPath);
 
     /**
      * ダウンロードキャンセルの時、コールされる
+     * @param fullPath　fullPath
      */
-    void onCancel();
+    void onCancel(final String fullPath);
 
     /**
      * ダウンロード容量不足の場合、コールされる
