@@ -7,7 +7,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChListResponse;
@@ -94,9 +94,9 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
     private void sendStatus(final JSONObject jsonObj) {
         try {
             // statusの値を取得しセットする
-            if (!jsonObj.isNull(JsonContents.META_RESPONSE_STATUS)) {
+            if (!jsonObj.isNull(JsonConstants.META_RESPONSE_STATUS)) {
                 String status = jsonObj.getString(
-                        JsonContents.META_RESPONSE_STATUS);
+                        JsonConstants.META_RESPONSE_STATUS);
                 mPurchasedChListResponse.setStatus(status);
             }
         } catch (JSONException e) {
@@ -112,11 +112,11 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
     private void sendVcList(final JSONObject jsonObj) {
         ChannelList mChannelList = new ChannelList();
         try {
-            if (!jsonObj.isNull(JsonContents.META_RESPONSE_METADATE_LIST)) {
+            if (!jsonObj.isNull(JsonConstants.META_RESPONSE_METADATE_LIST)) {
                 // コンテンツリストのList<HashMap>を用意
                 List<HashMap<String, String>> vcList = new ArrayList<>();
                 // コンテンツリストをJSONArrayにパースする
-                JSONArray jsonArr = jsonObj.getJSONArray(JsonContents.META_RESPONSE_METADATE_LIST);
+                JSONArray jsonArr = jsonObj.getJSONArray(JsonConstants.META_RESPONSE_METADATE_LIST);
                 if (jsonArr.length() == 0) {
                     return;
                 }
@@ -128,26 +128,26 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
                     // i番目のJSONArrayをJSONObjectに変換する
                     JSONObject jsonObject = jsonArr.getJSONObject(i);
 
-                    for (int j = 0; j < JsonContents.METADATA_LIST_PARA.length; j++) {
-                        if (!jsonObject.isNull(JsonContents.METADATA_LIST_PARA[j])) {
-                            if (JsonContents.METADATA_LIST_PARA[j].equals(JsonContents.META_RESPONSE_GENRE_ARRAY)) {
-                                JSONArray para = jsonObject.getJSONArray(JsonContents.METADATA_LIST_PARA[j]);
-                                vcListMap.put(JsonContents.METADATA_LIST_PARA[j], para.toString());
-                            } else if (JsonContents.METADATA_LIST_PARA[j].equals(JsonContents.META_RESPONSE_CHPACK)) {
-                                JSONArray jsonArrayCHPACK = jsonObject.getJSONArray(JsonContents.METADATA_LIST_PARA[j]);
+                    for (int j = 0; j < JsonConstants.METADATA_LIST_PARA.length; j++) {
+                        if (!jsonObject.isNull(JsonConstants.METADATA_LIST_PARA[j])) {
+                            if (JsonConstants.METADATA_LIST_PARA[j].equals(JsonConstants.META_RESPONSE_GENRE_ARRAY)) {
+                                JSONArray para = jsonObject.getJSONArray(JsonConstants.METADATA_LIST_PARA[j]);
+                                vcListMap.put(JsonConstants.METADATA_LIST_PARA[j], para.toString());
+                            } else if (JsonConstants.METADATA_LIST_PARA[j].equals(JsonConstants.META_RESPONSE_CHPACK)) {
+                                JSONArray jsonArrayCHPACK = jsonObject.getJSONArray(JsonConstants.METADATA_LIST_PARA[j]);
                                 for (int k = 0; k < jsonArrayCHPACK.length(); k++) {
                                     JSONObject jsonObjectChPack = jsonArrayCHPACK.getJSONObject(k);
-                                    for (int c = 0; c < JsonContents.CHPACK_PARA.length; c++) {
-                                        if (!jsonObjectChPack.isNull(JsonContents.CHPACK_PARA[c])) {
-                                            String value = jsonObjectChPack.getString(JsonContents.CHPACK_PARA[c]);
+                                    for (int c = 0; c < JsonConstants.CHPACK_PARA.length; c++) {
+                                        if (!jsonObjectChPack.isNull(JsonConstants.CHPACK_PARA[c])) {
+                                            String value = jsonObjectChPack.getString(JsonConstants.CHPACK_PARA[c]);
                                             //書き込み用項目名の作成
                                             StringBuilder stringBuffer = new StringBuilder();
-                                            stringBuffer.append(JsonContents.METADATA_LIST_PARA[j]);
-                                            stringBuffer.append(JsonContents.UNDER_LINE);
-                                            stringBuffer.append(JsonContents.CHPACK_PARA[c]);
+                                            stringBuffer.append(JsonConstants.METADATA_LIST_PARA[j]);
+                                            stringBuffer.append(JsonConstants.UNDER_LINE);
+                                            stringBuffer.append(JsonConstants.CHPACK_PARA[c]);
 
                                             //日付項目チェック
-                                            if (DBUtils.isDateItem(JsonContents.CHPACK_PARA[c])) {
+                                            if (DBUtils.isDateItem(JsonConstants.CHPACK_PARA[c])) {
                                                 //日付なので変換して格納する
                                                 String dateBuffer = DateUtils.formatEpochToString(
                                                         StringUtil.changeString2Long(value));
@@ -159,14 +159,14 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
                                         }
                                     }
                                 }
-                            } else if (DBUtils.isDateItem(JsonContents.METADATA_LIST_PARA[j])) {
+                            } else if (DBUtils.isDateItem(JsonConstants.METADATA_LIST_PARA[j])) {
                                 // DATE_PARAに含まれるのは日付なので、エポック秒となる。変換して格納する
                                 String dateBuffer = DateUtils.formatEpochToString(
-                                        StringUtil.changeString2Long(jsonObject.getString(JsonContents.METADATA_LIST_PARA[j])));
-                                vcListMap.put(JsonContents.METADATA_LIST_PARA[j], dateBuffer);
+                                        StringUtil.changeString2Long(jsonObject.getString(JsonConstants.METADATA_LIST_PARA[j])));
+                                vcListMap.put(JsonConstants.METADATA_LIST_PARA[j], dateBuffer);
                             } else {
-                                String para = jsonObject.getString(JsonContents.METADATA_LIST_PARA[j]);
-                                vcListMap.put(JsonContents.METADATA_LIST_PARA[j], para);
+                                String para = jsonObject.getString(JsonConstants.METADATA_LIST_PARA[j]);
+                                vcListMap.put(JsonConstants.METADATA_LIST_PARA[j], para);
                             }
                         }
                     }
@@ -192,10 +192,10 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
     private void sendActiveListResponse(final JSONObject jsonObj) {
         try {
             ArrayList<ActiveData> vodActiveDataList = new ArrayList<>();
-            if (!jsonObj.isNull(JsonContents.META_RESPONSE_ACTIVE_LIST)) {
+            if (!jsonObj.isNull(JsonConstants.META_RESPONSE_ACTIVE_LIST)) {
                 // 購入済みVOD一覧をJSONArrayにパースする
                 JSONArray lists = jsonObj.getJSONArray(
-                        JsonContents.META_RESPONSE_ACTIVE_LIST);
+                        JsonConstants.META_RESPONSE_ACTIVE_LIST);
                 if (lists.length() == 0) {
                     return;
                 }
@@ -206,13 +206,13 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
                     ActiveData activeData = new ActiveData();
 
                     //データを取得する
-                    if (!listData.isNull(JsonContents.META_RESPONSE_LICENSE_ID)) {
+                    if (!listData.isNull(JsonConstants.META_RESPONSE_LICENSE_ID)) {
                     activeData.setLicenseId(listData.getString(
-                            JsonContents.META_RESPONSE_LICENSE_ID));
+                            JsonConstants.META_RESPONSE_LICENSE_ID));
                     }
-                    if (!listData.isNull(JsonContents.META_RESPONSE_VAILD_END_DATE)) {
+                    if (!listData.isNull(JsonConstants.META_RESPONSE_VAILD_END_DATE)) {
                         activeData.setValidEndDate(StringUtil.changeString2Long(listData.getLong(
-                                JsonContents.META_RESPONSE_VAILD_END_DATE)));
+                                JsonConstants.META_RESPONSE_VAILD_END_DATE)));
                     }
 
                     vodActiveDataList.add(activeData);

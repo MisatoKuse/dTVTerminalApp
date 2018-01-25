@@ -5,8 +5,6 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
 
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
-
 import org.json.JSONObject;
 
 import java.util.ArrayList;

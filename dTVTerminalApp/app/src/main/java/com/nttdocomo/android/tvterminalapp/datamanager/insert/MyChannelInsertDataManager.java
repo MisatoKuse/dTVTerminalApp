@@ -8,7 +8,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.MyChannelListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
@@ -66,9 +66,9 @@ public class MyChannelInsertDataManager {
         SQLiteDatabase database = DataBaseManager.getInstance().openDatabase();
         MyChannelListDao myChannelListDao = new MyChannelListDao(database);
         //My番組表に必要な列を列挙する
-        String[] columns = {JsonContents.META_RESPONSE_SERVICE_ID, JsonContents.META_RESPONSE_TITLE,
-                JsonContents.META_RESPONSE_R_VALUE, JsonContents.META_RESPONSE_ADULT_TYPE,
-                JsonContents.META_RESPONSE_INDEX};
+        String[] columns = {JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_TITLE,
+                JsonConstants.META_RESPONSE_R_VALUE, JsonConstants.META_RESPONSE_ADULT_TYPE,
+                JsonConstants.META_RESPONSE_INDEX};
         //My番組表画面用データ取得
         List<Map<String, String>> list = myChannelListDao.findById(columns);
         DataBaseManager.getInstance().closeDatabase();

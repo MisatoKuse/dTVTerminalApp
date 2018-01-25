@@ -27,7 +27,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
-import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
+import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
@@ -35,8 +35,6 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -397,25 +395,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private void onDAccountSameNoButton() {
         startActivity(DAccountReSettingActivity.class, null);
-    }
-
-    // TODO dアカウント取得画面実装時に削除
-
-    /**
-     * STBに同じdアカウントが登録されている
-     */
-    private void onDAccountSameYesButton() {
-        startActivity(STBConnectActivity.class, null);
-    }
-
-    // TODO dアカウント取得画面実装時に削除
-
-    /**
-     * 端末内にdアカウントアプリがあるか --> ない
-     * dアカウントアプリ誘導画面へ
-     */
-    private void onDAccountAppliNoButton() {
-        startActivity(DAccountSettingActivity.class, null);
     }
 
     private void onUseWithoutPairingButton() {

@@ -7,7 +7,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelDeleteResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.MyChannelDeleteJsonParser;
@@ -110,7 +110,7 @@ public class MyChannelDeleteWebClient
         String answerText;
         try {
             //サービスIDの作成
-            jsonObject.put(JsonContents.META_RESPONSE_SERVICE_ID, serviceId);
+            jsonObject.put(JsonConstants.META_RESPONSE_SERVICE_ID, serviceId);
 
             answerText = jsonObject.toString();
 

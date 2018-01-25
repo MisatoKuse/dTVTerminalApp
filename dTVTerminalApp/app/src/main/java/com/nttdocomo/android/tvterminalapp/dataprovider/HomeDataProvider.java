@@ -10,7 +10,7 @@ import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DailyRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.TvScheduleInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.VideoRankInsertDataManager;
@@ -345,9 +345,9 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
 
         for (int i = 0; i < mapList.size(); i++) {
             rankingContentInfo = new ContentsData();
-            rankingContentInfo.setTime(mapList.get(i).get(JsonContents.META_RESPONSE_DISPLAY_START_DATE));
-            rankingContentInfo.setTitle(mapList.get(i).get(JsonContents.META_RESPONSE_TITLE));
-            rankingContentInfo.setThumURL(mapList.get(i).get(JsonContents.META_RESPONSE_THUMB_448));
+            rankingContentInfo.setTime(mapList.get(i).get(JsonConstants.META_RESPONSE_DISPLAY_START_DATE));
+            rankingContentInfo.setTitle(mapList.get(i).get(JsonConstants.META_RESPONSE_TITLE));
+            rankingContentInfo.setThumURL(mapList.get(i).get(JsonConstants.META_RESPONSE_THUMB_448));
             String thumbUrl = rankingContentInfo.getThumURL();
             String title = rankingContentInfo.getTitle();
             if (title == null || title.length() < 1) {

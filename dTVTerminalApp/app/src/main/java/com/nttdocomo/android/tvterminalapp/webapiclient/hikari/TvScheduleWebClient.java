@@ -6,7 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
 
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TvScheduleJsonParser;
@@ -168,7 +168,7 @@ public class TvScheduleWebClient
                 channelArray.put(singleChannel);
             }
 
-            jsonObject.put(JsonContents.META_RESPONSE_CH_LIST, channelArray);
+            jsonObject.put(JsonConstants.META_RESPONSE_CH_LIST, channelArray);
 
             //日付配列の作成
             JSONArray dateArray = new JSONArray();
@@ -176,10 +176,10 @@ public class TvScheduleWebClient
                 dateArray.put(singleDate);
             }
 
-            jsonObject.put(JsonContents.META_RESPONSE_DATE_LIST, dateArray);
+            jsonObject.put(JsonConstants.META_RESPONSE_DATE_LIST, dateArray);
 
             //その他
-            jsonObject.put(JsonContents.META_RESPONSE_FILTER, filter);
+            jsonObject.put(JsonConstants.META_RESPONSE_FILTER, filter);
 
             answerText = jsonObject.toString();
 

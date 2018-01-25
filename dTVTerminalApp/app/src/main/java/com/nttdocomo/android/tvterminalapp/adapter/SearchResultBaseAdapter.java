@@ -19,7 +19,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
-import com.nttdocomo.android.tvterminalapp.model.search.SearchServiceType;
+import com.nttdocomo.android.tvterminalapp.common.SearchServiceType;
 
 import java.util.List;
 

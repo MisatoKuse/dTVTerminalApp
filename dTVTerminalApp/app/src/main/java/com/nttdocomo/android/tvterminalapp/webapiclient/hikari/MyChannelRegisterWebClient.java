@@ -7,7 +7,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelRegisterResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.MyChannelRegisterJsonParser;
@@ -118,11 +118,11 @@ public class MyChannelRegisterWebClient
         String answerText;
         try {
             //サービスIDの作成
-            jsonObject.put(JsonContents.META_RESPONSE_SERVICE_ID, serviceId);
-            jsonObject.put(JsonContents.META_RESPONSE_TITLE, title);
-            jsonObject.put(JsonContents.META_RESPONSE_R_VALUE, rValue);
-            jsonObject.put(JsonContents.META_RESPONSE_ADULT, adultType);
-            jsonObject.put(JsonContents.META_RESPONSE_INDEX, index);
+            jsonObject.put(JsonConstants.META_RESPONSE_SERVICE_ID, serviceId);
+            jsonObject.put(JsonConstants.META_RESPONSE_TITLE, title);
+            jsonObject.put(JsonConstants.META_RESPONSE_R_VALUE, rValue);
+            jsonObject.put(JsonConstants.META_RESPONSE_ADULT, adultType);
+            jsonObject.put(JsonConstants.META_RESPONSE_INDEX, index);
 
             answerText = jsonObject.toString();
 

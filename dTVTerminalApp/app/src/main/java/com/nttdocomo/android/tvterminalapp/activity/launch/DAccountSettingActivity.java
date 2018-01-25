@@ -36,10 +36,10 @@ public class DAccountSettingActivity extends BaseActivity implements View.OnClic
     private void setContents() {
         setTitleText(getString(R.string.str_app_title));
 
-        mDAccountDownLoad=(TextView)findViewById(R.id.d_account_app_download);
+        mDAccountDownLoad = (TextView)findViewById(R.id.d_account_app_download);
         mDAccountDownLoad.setOnClickListener(this);
 
-        mDNoLogin=(TextView)findViewById(R.id.use_without_login_in);
+        mDNoLogin = (TextView)findViewById(R.id.use_without_login_in);
         mDNoLogin.setOnClickListener(this);
     }
     @Override

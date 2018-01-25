@@ -7,8 +7,7 @@ package com.nttdocomo.android.tvterminalapp.utils;
 import android.content.Context;
 import android.database.DatabaseUtils;
 
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 
 import org.json.JSONArray;
@@ -27,18 +26,18 @@ public class DBUtils {
 
     //日付用パラメータの識別用
     private static final String[] DATE_PARA = {
-            JsonContents.META_RESPONSE_DISPLAY_START_DATE,
-            JsonContents.META_RESPONSE_DISPLAY_END_DATE,
-            JsonContents.META_RESPONSE_AVAIL_START_DATE,
-            JsonContents.META_RESPONSE_AVAIL_END_DATE,
-            JsonContents.META_RESPONSE_PUBLISH_START_DATE,
-            JsonContents.META_RESPONSE_PUBLISH_END_DATE,
-            JsonContents.META_RESPONSE_NEWA_START_DATE,
-            JsonContents.META_RESPONSE_NEWA_END_DATE,
-            JsonContents.META_RESPONSE_PU_START_DATE,
-            JsonContents.META_RESPONSE_PU_END_DATE,
-            JsonContents.META_RESPONSE_VOD_START_DATE,
-            JsonContents.META_RESPONSE_VOD_END_DATE,
+            JsonConstants.META_RESPONSE_DISPLAY_START_DATE,
+            JsonConstants.META_RESPONSE_DISPLAY_END_DATE,
+            JsonConstants.META_RESPONSE_AVAIL_START_DATE,
+            JsonConstants.META_RESPONSE_AVAIL_END_DATE,
+            JsonConstants.META_RESPONSE_PUBLISH_START_DATE,
+            JsonConstants.META_RESPONSE_PUBLISH_END_DATE,
+            JsonConstants.META_RESPONSE_NEWA_START_DATE,
+            JsonConstants.META_RESPONSE_NEWA_END_DATE,
+            JsonConstants.META_RESPONSE_PU_START_DATE,
+            JsonConstants.META_RESPONSE_PU_END_DATE,
+            JsonConstants.META_RESPONSE_VOD_START_DATE,
+            JsonConstants.META_RESPONSE_VOD_END_DATE,
     };
 
     /**

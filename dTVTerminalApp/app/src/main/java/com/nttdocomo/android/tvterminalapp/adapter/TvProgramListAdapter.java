@@ -27,8 +27,8 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
-import com.nttdocomo.android.tvterminalapp.model.program.Channel;
-import com.nttdocomo.android.tvterminalapp.model.program.Schedule;
+import com.nttdocomo.android.tvterminalapp.struct.Channel;
+import com.nttdocomo.android.tvterminalapp.struct.Schedule;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
 
 import java.text.SimpleDateFormat;

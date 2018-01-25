@@ -9,7 +9,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.TvScheduleInsertDataManager;
@@ -18,9 +18,9 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
-import com.nttdocomo.android.tvterminalapp.model.program.Channel;
-import com.nttdocomo.android.tvterminalapp.model.program.ChannelsInfo;
-import com.nttdocomo.android.tvterminalapp.model.program.Schedule;
+import com.nttdocomo.android.tvterminalapp.struct.Channel;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelsInfo;
+import com.nttdocomo.android.tvterminalapp.struct.Schedule;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
@@ -92,25 +92,25 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                     for (int i = 0; i < resultSet.size(); i++) {
                         ArrayList<Schedule> mScheduleList;
                         Map<String, String> hashMap = resultSet.get(i);
-                        String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
-                        String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
-                        String thumb = hashMap.get(JsonContents.META_RESPONSE_DEFAULT_THUMB);
-                        String serviceId = hashMap.get(JsonContents.META_RESPONSE_SERVICE_ID);
-                        String rValue = hashMap.get(JsonContents.META_RESPONSE_R_VALUE);
-                        String dispType = hashMap.get(JsonContents.META_RESPONSE_DISP_TYPE);
-                        String searchOk = hashMap.get(JsonContents.META_RESPONSE_SEARCH_OK);
-                        String dtv = hashMap.get(JsonContents.META_RESPONSE_DTV);
-                        String dtvType = hashMap.get(JsonContents.META_RESPONSE_DTV_TYPE);
+                        String chNo = hashMap.get(JsonConstants.META_RESPONSE_CHNO);
+                        String title = hashMap.get(JsonConstants.META_RESPONSE_TITLE);
+                        String thumb = hashMap.get(JsonConstants.META_RESPONSE_DEFAULT_THUMB);
+                        String serviceId = hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID);
+                        String rValue = hashMap.get(JsonConstants.META_RESPONSE_R_VALUE);
+                        String dispType = hashMap.get(JsonConstants.META_RESPONSE_DISP_TYPE);
+                        String searchOk = hashMap.get(JsonConstants.META_RESPONSE_SEARCH_OK);
+                        String dtv = hashMap.get(JsonConstants.META_RESPONSE_DTV);
+                        String dtvType = hashMap.get(JsonConstants.META_RESPONSE_DTV_TYPE);
 
                         Schedule mSchedule = new Schedule();
-                        String startDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_START_DATE);
-                        String endDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
+                        String startDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE);
+                        String endDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE);
                         mSchedule.setStartTime(startDate);
                         mSchedule.setEndTime(endDate);
                         mSchedule.setImageUrl(thumb);
                         mSchedule.setTitle(title);
                         mSchedule.setChNo(chNo);
-                        mSchedule.setContentType(hashMap.get(JsonContents.META_RESPONSE_CONTENT_TYPE));
+                        mSchedule.setContentType(hashMap.get(JsonConstants.META_RESPONSE_CONTENT_TYPE));
                         mSchedule.setDtv(dtv);
                         mSchedule.setDispType(dispType);
                         mSchedule.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
@@ -140,18 +140,18 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                         for (int i = 0; i < resultSet.size(); i++) {//CH毎番組データ取得して、整形する
                             Map<String, String> hashMap = resultSet.get(i);
                             Schedule mSchedule = new Schedule();
-                            String startDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_START_DATE);
-                            String endDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
-                            String thumb = hashMap.get(JsonContents.META_RESPONSE_THUMB_448);
-                            String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
-                            String detail = hashMap.get(JsonContents.META_RESPONSE_EPITITLE);
-                            String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
-                            String rValue = hashMap.get(JsonContents.META_RESPONSE_R_VALUE);
-                            String dispType = hashMap.get(JsonContents.META_RESPONSE_DISP_TYPE);
-                            String contentType = hashMap.get(JsonContents.META_RESPONSE_CONTENT_TYPE);
-                            String searchOk = hashMap.get(JsonContents.META_RESPONSE_SEARCH_OK);
-                            String dtv = hashMap.get(JsonContents.META_RESPONSE_DTV);
-                            String dtvType = hashMap.get(JsonContents.META_RESPONSE_DTV_TYPE);
+                            String startDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE);
+                            String endDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE);
+                            String thumb = hashMap.get(JsonConstants.META_RESPONSE_THUMB_448);
+                            String title = hashMap.get(JsonConstants.META_RESPONSE_TITLE);
+                            String detail = hashMap.get(JsonConstants.META_RESPONSE_EPITITLE);
+                            String chNo = hashMap.get(JsonConstants.META_RESPONSE_CHNO);
+                            String rValue = hashMap.get(JsonConstants.META_RESPONSE_R_VALUE);
+                            String dispType = hashMap.get(JsonConstants.META_RESPONSE_DISP_TYPE);
+                            String contentType = hashMap.get(JsonConstants.META_RESPONSE_CONTENT_TYPE);
+                            String searchOk = hashMap.get(JsonConstants.META_RESPONSE_SEARCH_OK);
+                            String dtv = hashMap.get(JsonConstants.META_RESPONSE_DTV);
+                            String dtvType = hashMap.get(JsonConstants.META_RESPONSE_DTV_TYPE);
                             mSchedule.setStartTime(startDate);
                             mSchedule.setEndTime(endDate);
                             mSchedule.setImageUrl(thumb);
@@ -159,16 +159,16 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                             mSchedule.setDetail(detail);
                             mSchedule.setChNo(chNo);
                             mSchedule.setRValue(rValue);
-                            mSchedule.setContentType(hashMap.get(JsonContents.META_RESPONSE_CONTENT_TYPE));
+                            mSchedule.setContentType(hashMap.get(JsonConstants.META_RESPONSE_CONTENT_TYPE));
                             mSchedule.setDtv(dtv);
                             mSchedule.setDispType(dispType);
                             mSchedule.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
                             mSchedule.setClipRequestData(setClipData((HashMap<String, String>) hashMap));
                             mSchedule.setClipStatus(getClipStatus(dispType, contentType, dtv,
-                                    hashMap.get(JsonContents.META_RESPONSE_CRID),
-                                    hashMap.get(JsonContents.META_RESPONSE_SERVICE_ID),
-                                    hashMap.get(JsonContents.META_RESPONSE_EVENT_ID),
-                                    hashMap.get(JsonContents.META_RESPONSE_TITLE_ID)));
+                                    hashMap.get(JsonConstants.META_RESPONSE_CRID),
+                                    hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID),
+                                    hashMap.get(JsonConstants.META_RESPONSE_EVENT_ID),
+                                    hashMap.get(JsonConstants.META_RESPONSE_TITLE_ID)));
 
                             if (!TextUtils.isEmpty(chNo)) {//CH毎番組データ取得して、整形する
                                 ArrayList<Channel> oldChannelList = channelsInfo.getChannels();
@@ -332,7 +332,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             for (int i = 0; i < mChannelProgramList.size(); i++) {//CH毎番組データ取得して、整形する
                 HashMap<String, String> hashMap = mChannelProgramList.get(i);
                 Schedule schedule = new Schedule();
-                String startDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_START_DATE);
+                String startDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE);
                 StringBuilder startBuilder = new StringBuilder();
                 startBuilder.append(startDate.substring(0, 10));
                 startBuilder.append(startDate.substring(11, 19));
@@ -344,17 +344,17 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 }
                 //TODO 番組表表示させるため、コメントアウトします
                     /*if(day.compareTo(selectStartDate) !=-1 && day.compareTo(selectEndDate)!=1){*/
-                String endDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
-                String thumb = hashMap.get(JsonContents.META_RESPONSE_THUMB_448);
-                String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
-                String detail = hashMap.get(JsonContents.META_RESPONSE_EPITITLE);
-                String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
-                String rValue = hashMap.get(JsonContents.META_RESPONSE_R_VALUE);
-                String dispType = hashMap.get(JsonContents.META_RESPONSE_DISP_TYPE);
-                String searchOk = hashMap.get(JsonContents.META_RESPONSE_SEARCH_OK);
-                String dtv = hashMap.get(JsonContents.META_RESPONSE_DTV);
-                String dtvType = hashMap.get(JsonContents.META_RESPONSE_DTV_TYPE);
-                String contentType = hashMap.get(JsonContents.META_RESPONSE_CONTENT_TYPE);
+                String endDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE);
+                String thumb = hashMap.get(JsonConstants.META_RESPONSE_THUMB_448);
+                String title = hashMap.get(JsonConstants.META_RESPONSE_TITLE);
+                String detail = hashMap.get(JsonConstants.META_RESPONSE_EPITITLE);
+                String chNo = hashMap.get(JsonConstants.META_RESPONSE_CHNO);
+                String rValue = hashMap.get(JsonConstants.META_RESPONSE_R_VALUE);
+                String dispType = hashMap.get(JsonConstants.META_RESPONSE_DISP_TYPE);
+                String searchOk = hashMap.get(JsonConstants.META_RESPONSE_SEARCH_OK);
+                String dtv = hashMap.get(JsonConstants.META_RESPONSE_DTV);
+                String dtvType = hashMap.get(JsonConstants.META_RESPONSE_DTV_TYPE);
+                String contentType = hashMap.get(JsonConstants.META_RESPONSE_CONTENT_TYPE);
                 schedule.setStartTime(startDate);
                 schedule.setEndTime(endDate);
                 schedule.setImageUrl(thumb);
@@ -369,10 +369,10 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 schedule.setClipRequestData(setClipData(hashMap));
 
                 schedule.setClipStatus(getClipStatus(dispType, contentType, dtv,
-                        hashMap.get(JsonContents.META_RESPONSE_CRID),
-                        hashMap.get(JsonContents.META_RESPONSE_SERVICE_ID),
-                        hashMap.get(JsonContents.META_RESPONSE_EVENT_ID),
-                        hashMap.get(JsonContents.META_RESPONSE_TITLE_ID)));
+                        hashMap.get(JsonConstants.META_RESPONSE_CRID),
+                        hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID),
+                        hashMap.get(JsonConstants.META_RESPONSE_EVENT_ID),
+                        hashMap.get(JsonConstants.META_RESPONSE_TITLE_ID)));
 
                 if (!TextUtils.isEmpty(chNo)) {//CH毎番組データ取得して、整形する
                     ArrayList<Channel> oldChannelList = channelsInfo.getChannels();
@@ -419,21 +419,21 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
      * @return Clipリクエストに必要なデータ
      */
     private static ClipRequestData setClipData(HashMap<String, String> hashMap){
-        String dispType = hashMap.get(JsonContents.META_RESPONSE_DISP_TYPE);
-        String contentsType = hashMap.get(JsonContents.META_RESPONSE_CONTENT_TYPE);
+        String dispType = hashMap.get(JsonConstants.META_RESPONSE_DISP_TYPE);
+        String contentsType = hashMap.get(JsonConstants.META_RESPONSE_CONTENT_TYPE);
         ClipRequestData requestData = new ClipRequestData();
-        requestData.setCrid(hashMap.get(JsonContents.META_RESPONSE_CRID));
-        requestData.setServiceId(hashMap.get(JsonContents.META_RESPONSE_SERVICE_ID));
-        requestData.setEventId(hashMap.get(JsonContents.META_RESPONSE_EVENT_ID));
-        requestData.setTitleId(hashMap.get(JsonContents.META_RESPONSE_TITLE_ID));
-        requestData.setTitle(hashMap.get(JsonContents.META_RESPONSE_TITLE));
-        requestData.setRValue(hashMap.get(JsonContents.META_RESPONSE_R_VALUE));
-        requestData.setLinearStartDate(String.valueOf(hashMap.get(JsonContents.META_RESPONSE_AVAIL_START_DATE)));
-        requestData.setLinearEndDate(String.valueOf(hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE)));
-        requestData.setSearchOk(hashMap.get(JsonContents.META_RESPONSE_SEARCH_OK));
+        requestData.setCrid(hashMap.get(JsonConstants.META_RESPONSE_CRID));
+        requestData.setServiceId(hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID));
+        requestData.setEventId(hashMap.get(JsonConstants.META_RESPONSE_EVENT_ID));
+        requestData.setTitleId(hashMap.get(JsonConstants.META_RESPONSE_TITLE_ID));
+        requestData.setTitle(hashMap.get(JsonConstants.META_RESPONSE_TITLE));
+        requestData.setRValue(hashMap.get(JsonConstants.META_RESPONSE_R_VALUE));
+        requestData.setLinearStartDate(String.valueOf(hashMap.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE)));
+        requestData.setLinearEndDate(String.valueOf(hashMap.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
+        requestData.setSearchOk(hashMap.get(JsonConstants.META_RESPONSE_SEARCH_OK));
         requestData.setIsNotify(dispType, contentsType,
-                String.valueOf(hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE)),
-                hashMap.get(JsonContents.META_RESPONSE_TV_SERVICE), hashMap.get(JsonContents.META_RESPONSE_DTV));
+                String.valueOf(hashMap.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)),
+                hashMap.get(JsonConstants.META_RESPONSE_TV_SERVICE), hashMap.get(JsonConstants.META_RESPONSE_DTV));
         requestData.setDispType(dispType);
         requestData.setContentType(contentsType);
 //        requestData.setTableType(decisionTableType(contentsType, contentsType));
@@ -446,17 +446,17 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     private void setChannelData(ArrayList<Channel> channels, List<HashMap<String, String>> channelList) {
         for (int i = 0; i < channelList.size(); i++) {
             HashMap<String, String> hashMap = channelList.get(i);
-            String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
-            String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
-            String thumbnail = hashMap.get(JsonContents.META_RESPONSE_DEFAULT_THUMB);
-            String serviceId = hashMap.get(JsonContents.META_RESPONSE_SERVICE_ID);
-            String chType = hashMap.get(JsonContents.META_RESPONSE_CH_TYPE);
-            String puId = hashMap.get(JsonContents.META_RESPONSE_PUID);
-            String subPuId = hashMap.get(JsonContents.META_RESPONSE_SUB_PUID);
-            String chPackPuId = hashMap.get(JsonContents.META_RESPONSE_CHPACK
-                    + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID);
-            String chPackSubPuId = hashMap.get(JsonContents.META_RESPONSE_CHPACK
-                    + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_SUB_PUID);
+            String chNo = hashMap.get(JsonConstants.META_RESPONSE_CHNO);
+            String title = hashMap.get(JsonConstants.META_RESPONSE_TITLE);
+            String thumbnail = hashMap.get(JsonConstants.META_RESPONSE_DEFAULT_THUMB);
+            String serviceId = hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID);
+            String chType = hashMap.get(JsonConstants.META_RESPONSE_CH_TYPE);
+            String puId = hashMap.get(JsonConstants.META_RESPONSE_PUID);
+            String subPuId = hashMap.get(JsonConstants.META_RESPONSE_SUB_PUID);
+            String chPackPuId = hashMap.get(JsonConstants.META_RESPONSE_CHPACK
+                    + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_PUID);
+            String chPackSubPuId = hashMap.get(JsonConstants.META_RESPONSE_CHPACK
+                    + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_SUB_PUID);
             if (!TextUtils.isEmpty(chNo)) {
                 Channel channel = new Channel();
                 channel.setTitle(title);

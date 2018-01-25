@@ -43,9 +43,9 @@ public class DAccountAppliActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-        if(v.equals(mLoginDAccountAppliAcivity)){
+        if (v.equals(mLoginDAccountAppliAcivity)) {
             //mIsLoginOk=true;
-            if(mInfo.equals(mLoginDAccountAppliAcivity.getText())){
+            if (mInfo.equals(mLoginDAccountAppliAcivity.getText())) {
                 DAccountRegConfirmationActivity.dAccountLogin();
                 startActivity(DAccountRegConfirmationActivity.class, null);
                 return;

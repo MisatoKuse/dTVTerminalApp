@@ -23,7 +23,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListItem;
-import com.nttdocomo.android.tvterminalapp.model.program.Channel;
+import com.nttdocomo.android.tvterminalapp.struct.Channel;
 
 import java.util.ArrayList;
 import java.util.List;

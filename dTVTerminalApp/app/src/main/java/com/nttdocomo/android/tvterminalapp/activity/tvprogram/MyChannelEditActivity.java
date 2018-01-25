@@ -15,7 +15,7 @@ import android.view.View;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.EditMyChannelListAdapter;
-import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
+import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.MyChannelDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
@@ -23,16 +23,16 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
 import com.nttdocomo.android.tvterminalapp.fragment.channellist.EditChannelListBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.channellist.EditChannelListFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.channellist.EditMyChannelListFragment;
-import com.nttdocomo.android.tvterminalapp.model.program.Channel;
-import com.nttdocomo.android.tvterminalapp.model.program.ChannelsInfo;
+import com.nttdocomo.android.tvterminalapp.struct.Channel;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelsInfo;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.nttdocomo.android.tvterminalapp.adapter.EditMyChannelListAdapter.SERVICE_ID_MY_CHANNEL_LIST;
-import static com.nttdocomo.android.tvterminalapp.common.CustomDialog.DialogType.ERROR;
-import static com.nttdocomo.android.tvterminalapp.common.JsonContents.META_RESPONSE_STATUS_OK;
+import static com.nttdocomo.android.tvterminalapp.view.CustomDialog.DialogType.ERROR;
+import static com.nttdocomo.android.tvterminalapp.common.JsonConstants.META_RESPONSE_STATUS_OK;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala.MY_CHANNEL_MAX_INDEX;
 
 public class MyChannelEditActivity extends BaseActivity implements View.OnClickListener,

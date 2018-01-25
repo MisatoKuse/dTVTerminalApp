@@ -27,7 +27,7 @@ import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
-import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
+import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
@@ -46,7 +46,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.nttdocomo.android.tvterminalapp.common.CustomDialog.DialogType.CONFIRM;
+import static com.nttdocomo.android.tvterminalapp.view.CustomDialog.DialogType.CONFIRM;
 
 public class RecordedBaseFragment extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener,
         ContentsAdapter.DownloadCallback, DlDataProviderListener {

@@ -8,7 +8,7 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
@@ -188,8 +188,8 @@ public class ClipKeyListWebClient
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
-            jsonObject.put(JsonContents.META_RESPONSE_TYPE, requestParam.getType());
-            jsonObject.put(JsonContents.META_RESPONSE_IS_FORCE, requestParam.getIsForce());
+            jsonObject.put(JsonConstants.META_RESPONSE_TYPE, requestParam.getType());
+            jsonObject.put(JsonConstants.META_RESPONSE_IS_FORCE, requestParam.getIsForce());
 
             answerText = jsonObject.toString();
 

@@ -5,7 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
 import org.json.JSONException;
@@ -28,16 +28,16 @@ public class RecordingReservationMetaData implements Serializable {
     private String mTitle = null;
     private int mParentalAgeAttributeOfProgram = 0;
 
-    public static final String[] mPagerPara = {JsonContents.META_RESPONSE_PAGER_LIMIT,
-            JsonContents.META_RESPONSE_OFFSET, JsonContents.META_RESPONSE_COUNT,
-            JsonContents.META_RESPONSE_TOTAL};
+    public static final String[] mPagerPara = {JsonConstants.META_RESPONSE_PAGER_LIMIT,
+            JsonConstants.META_RESPONSE_OFFSET, JsonConstants.META_RESPONSE_COUNT,
+            JsonConstants.META_RESPONSE_TOTAL};
 
-    public static final String[] mReservationListPara = {JsonContents.META_RESPONSE_PRIORITY,
-            JsonContents.META_RESPONSE_PLATFORM_TYPE, JsonContents.META_RESPONSE_DAY_OF_THE_WEEK,
-            JsonContents.META_RESPONSE_ADULT_ATTRIBUTE_OF_CHANNEL, JsonContents.META_RESPONSE_SERVICE_ID,
-            JsonContents.META_RESPONSE_START_SCHEDULE_TIME, JsonContents.META_RESPONSE_END_SCHEDULE_TIME,
-            JsonContents.META_RESPONSE_EVENT_ID, JsonContents.META_RESPONSE_TITLE,
-            JsonContents.META_RESPONSE_PARENTAL_AGE_ATTRIBUTE_OF_PROGRAM};
+    public static final String[] mReservationListPara = {JsonConstants.META_RESPONSE_PRIORITY,
+            JsonConstants.META_RESPONSE_PLATFORM_TYPE, JsonConstants.META_RESPONSE_DAY_OF_THE_WEEK,
+            JsonConstants.META_RESPONSE_ADULT_ATTRIBUTE_OF_CHANNEL, JsonConstants.META_RESPONSE_SERVICE_ID,
+            JsonConstants.META_RESPONSE_START_SCHEDULE_TIME, JsonConstants.META_RESPONSE_END_SCHEDULE_TIME,
+            JsonConstants.META_RESPONSE_EVENT_ID, JsonConstants.META_RESPONSE_TITLE,
+            JsonConstants.META_RESPONSE_PARENTAL_AGE_ATTRIBUTE_OF_PROGRAM};
 
     /**
      * キーとキーの値をメンバーにセットする
@@ -50,34 +50,34 @@ public class RecordingReservationMetaData implements Serializable {
             return;
         } else {
             switch (key) {
-                case JsonContents.META_RESPONSE_PRIORITY:
+                case JsonConstants.META_RESPONSE_PRIORITY:
                     mPriority = DBUtils.getNumeric(data);        //priority
                     break;
-                case JsonContents.META_RESPONSE_PLATFORM_TYPE:
+                case JsonConstants.META_RESPONSE_PLATFORM_TYPE:
                     mPlatformType = (String) data;        //platform_type
                     break;
-                case JsonContents.META_RESPONSE_DAY_OF_THE_WEEK:
+                case JsonConstants.META_RESPONSE_DAY_OF_THE_WEEK:
                     mDayOfTheWeek = (String) data;        //day_of_the_week
                     break;
-                case JsonContents.META_RESPONSE_ADULT_ATTRIBUTE_OF_CHANNEL:
+                case JsonConstants.META_RESPONSE_ADULT_ATTRIBUTE_OF_CHANNEL:
                     mAdultAttributeOfChannel = (String) data;//adult_attribute_of_channel
                     break;
-                case JsonContents.META_RESPONSE_SERVICE_ID:
+                case JsonConstants.META_RESPONSE_SERVICE_ID:
                     mServiceId = (String) data;           //service_id
                     break;
-                case JsonContents.META_RESPONSE_START_SCHEDULE_TIME:
+                case JsonConstants.META_RESPONSE_START_SCHEDULE_TIME:
                     mStartScheduleTime = DBUtils.getLong(data);  //start_schedule_time
                     break;
-                case JsonContents.META_RESPONSE_END_SCHEDULE_TIME:
+                case JsonConstants.META_RESPONSE_END_SCHEDULE_TIME:
                     mEndScheduleTime = DBUtils.getLong(data);     //end_schedule_time
                     break;
-                case JsonContents.META_RESPONSE_EVENT_ID:
+                case JsonConstants.META_RESPONSE_EVENT_ID:
                     mEventId = (String) data;             //event_id
                     break;
-                case JsonContents.META_RESPONSE_TITLE:
+                case JsonConstants.META_RESPONSE_TITLE:
                     mTitle = (String) data;               //title
                     break;
-                case JsonContents.META_RESPONSE_PARENTAL_AGE_ATTRIBUTE_OF_PROGRAM:
+                case JsonConstants.META_RESPONSE_PARENTAL_AGE_ATTRIBUTE_OF_PROGRAM:
                     mParentalAgeAttributeOfProgram = DBUtils.getNumeric(data); //parental_age_attribute_of_program
                     break;
                 default:
@@ -95,25 +95,25 @@ public class RecordingReservationMetaData implements Serializable {
             return "";
         } else {
             switch (key) {
-                case JsonContents.META_RESPONSE_PRIORITY:
+                case JsonConstants.META_RESPONSE_PRIORITY:
                     return mPriority;            //priority
-                case JsonContents.META_RESPONSE_PLATFORM_TYPE:
+                case JsonConstants.META_RESPONSE_PLATFORM_TYPE:
                     return mPlatformType;        //platform_type
-                case JsonContents.META_RESPONSE_DAY_OF_THE_WEEK:
+                case JsonConstants.META_RESPONSE_DAY_OF_THE_WEEK:
                     return mDayOfTheWeek;        //day_of_the_week
-                case JsonContents.META_RESPONSE_ADULT_ATTRIBUTE_OF_CHANNEL:
+                case JsonConstants.META_RESPONSE_ADULT_ATTRIBUTE_OF_CHANNEL:
                     return mAdultAttributeOfChannel;//adult_attribute_of_channel
-                case JsonContents.META_RESPONSE_SERVICE_ID:
+                case JsonConstants.META_RESPONSE_SERVICE_ID:
                     return mServiceId;           //service_id
-                case JsonContents.META_RESPONSE_START_SCHEDULE_TIME:
+                case JsonConstants.META_RESPONSE_START_SCHEDULE_TIME:
                     return mStartScheduleTime;   //start_schedule_time
-                case JsonContents.META_RESPONSE_END_SCHEDULE_TIME:
+                case JsonConstants.META_RESPONSE_END_SCHEDULE_TIME:
                     return mEndScheduleTime;     //end_schedule_time
-                case JsonContents.META_RESPONSE_EVENT_ID:
+                case JsonConstants.META_RESPONSE_EVENT_ID:
                     return mEventId;             //event_id
-                case JsonContents.META_RESPONSE_TITLE:
+                case JsonConstants.META_RESPONSE_TITLE:
                     return mTitle;               //title
-                case JsonContents.META_RESPONSE_PARENTAL_AGE_ATTRIBUTE_OF_PROGRAM:
+                case JsonConstants.META_RESPONSE_PARENTAL_AGE_ATTRIBUTE_OF_PROGRAM:
                     return mParentalAgeAttributeOfProgram; //parental_age_attribute_of_program
                 default:
                     return "";

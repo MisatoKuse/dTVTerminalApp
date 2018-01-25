@@ -14,7 +14,7 @@ import android.widget.RelativeLayout;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.adapter.ChannelListAdapter;
-import com.nttdocomo.android.tvterminalapp.model.program.Channel;
+import com.nttdocomo.android.tvterminalapp.struct.Channel;
 
 import java.util.ArrayList;
 

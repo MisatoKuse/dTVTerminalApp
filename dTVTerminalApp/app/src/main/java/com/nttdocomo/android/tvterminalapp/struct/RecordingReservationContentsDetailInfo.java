@@ -2,7 +2,7 @@
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-package com.nttdocomo.android.tvterminalapp.model.detail;
+package com.nttdocomo.android.tvterminalapp.struct;
 
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 

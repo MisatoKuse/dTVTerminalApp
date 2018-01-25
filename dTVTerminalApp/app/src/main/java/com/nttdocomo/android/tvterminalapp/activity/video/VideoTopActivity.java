@@ -22,7 +22,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.VideoGenreProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
-import com.nttdocomo.android.tvterminalapp.model.videogenrelist.VideoGenreListDataInfo;
+import com.nttdocomo.android.tvterminalapp.struct.VideoGenreListDataInfo;
 
 import java.util.ArrayList;
 import java.util.List;

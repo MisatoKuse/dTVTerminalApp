@@ -31,12 +31,12 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.MyChannelDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
-import com.nttdocomo.android.tvterminalapp.model.program.Channel;
-import com.nttdocomo.android.tvterminalapp.model.program.ChannelItemClickListener;
-import com.nttdocomo.android.tvterminalapp.model.program.ChannelsInfo;
+import com.nttdocomo.android.tvterminalapp.struct.Channel;
+import com.nttdocomo.android.tvterminalapp.view.ChannelItemClickListener;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelsInfo;
 import com.nttdocomo.android.tvterminalapp.view.ProgramRecyclerView;
 import com.nttdocomo.android.tvterminalapp.view.ProgramScrollView;
-import com.nttdocomo.android.tvterminalapp.model.program.Schedule;
+import com.nttdocomo.android.tvterminalapp.struct.Schedule;
 
 import java.io.Serializable;
 import java.text.ParseException;

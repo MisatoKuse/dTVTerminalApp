@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RentalListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
@@ -92,13 +92,13 @@ public class RentalListInsertDataManager {
             ActiveData activeData = activeDataList.get(i);
             ContentValues activeValues = new ContentValues();
 
-            String keyName = JsonContents.META_RESPONSE_ACTIVE_LIST + JsonContents.UNDER_LINE
-                    + JsonContents.META_RESPONSE_LICENSE_ID;
+            String keyName = JsonConstants.META_RESPONSE_ACTIVE_LIST + JsonConstants.UNDER_LINE
+                    + JsonConstants.META_RESPONSE_LICENSE_ID;
             String valName = StringUtil.changeObject2String(activeData.getLicenseId());
             activeValues.put(DBUtils.fourKFlgConversion(keyName), valName);
 
-            String keyName2 = JsonContents.META_RESPONSE_ACTIVE_LIST + JsonContents.UNDER_LINE
-                    + JsonContents.META_RESPONSE_VAILD_END_DATE;
+            String keyName2 = JsonConstants.META_RESPONSE_ACTIVE_LIST + JsonConstants.UNDER_LINE
+                    + JsonConstants.META_RESPONSE_VAILD_END_DATE;
             String valName2 = StringUtil.changeObject2String(activeData.getValidEndDate());
             activeValues.put(DBUtils.fourKFlgConversion(keyName2), valName2);
 
@@ -136,7 +136,7 @@ public class RentalListInsertDataManager {
                 Map.Entry entry = (Map.Entry) entries.next();
                 String keyName = (String) entry.getKey();
                 String valName = (String) entry.getValue();
-                if (JsonContents.META_RESPONSE_AVAIL_START_DATE.equals(keyName)) {
+                if (JsonConstants.META_RESPONSE_AVAIL_START_DATE.equals(keyName)) {
                     values.put(UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
                 }
                 chValues.put(DBUtils.fourKFlgConversion(keyName), valName);
@@ -149,13 +149,13 @@ public class RentalListInsertDataManager {
             ActiveData activeData = activeDataList.get(i);
             ContentValues activeValues = new ContentValues();
 
-            String keyName = JsonContents.META_RESPONSE_ACTIVE_LIST + JsonContents.UNDER_LINE
-                    + JsonContents.META_RESPONSE_LICENSE_ID;
+            String keyName = JsonConstants.META_RESPONSE_ACTIVE_LIST + JsonConstants.UNDER_LINE
+                    + JsonConstants.META_RESPONSE_LICENSE_ID;
             String valName = StringUtil.changeObject2String(activeData.getLicenseId());
             activeValues.put(DBUtils.fourKFlgConversion(keyName), valName);
 
-            String keyName2 = JsonContents.META_RESPONSE_ACTIVE_LIST + JsonContents.UNDER_LINE
-                    + JsonContents.META_RESPONSE_VAILD_END_DATE;
+            String keyName2 = JsonConstants.META_RESPONSE_ACTIVE_LIST + JsonConstants.UNDER_LINE
+                    + JsonConstants.META_RESPONSE_VAILD_END_DATE;
             String valName2 = StringUtil.changeObject2String(activeData.getValidEndDate());
             activeValues.put(DBUtils.fourKFlgConversion(keyName2), valName2);
 

@@ -5,7 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 
 import org.json.JSONArray;
@@ -21,9 +21,9 @@ public class ClipKeyListJsonParser {
     // オブジェクトクラスの定義
     private ClipKeyListResponse mClipKeyListResponse;
 
-    public static final String[] LIST_PARAM = {JsonContents.META_RESPONSE_CRID,
-            JsonContents.META_RESPONSE_SERVICE_ID, JsonContents.META_RESPONSE_EVENT_ID,
-            JsonContents.META_RESPONSE_TYPE, JsonContents.META_RESPONSE_TITLE_ID};
+    public static final String[] LIST_PARAM = {JsonConstants.META_RESPONSE_CRID,
+            JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_EVENT_ID,
+            JsonConstants.META_RESPONSE_TYPE, JsonConstants.META_RESPONSE_TITLE_ID};
 
     public ClipKeyListResponse clipKeyListSender(String jsonStr) {
         mClipKeyListResponse = new ClipKeyListResponse();
@@ -32,8 +32,8 @@ public class ClipKeyListJsonParser {
             JSONObject jsonObj = new JSONObject(jsonStr);
             // **FindBugs** Bad practice FindBugはこのヌルチェックが無用と警告するが、将来的にcatch (Exception e)は消すはずなので残す
             sendStatus(jsonObj);
-            if (!jsonObj.isNull(JsonContents.META_RESPONSE_LIST)) {
-                JSONArray arrayList = jsonObj.getJSONArray(JsonContents.META_RESPONSE_LIST);
+            if (!jsonObj.isNull(JsonConstants.META_RESPONSE_LIST)) {
+                JSONArray arrayList = jsonObj.getJSONArray(JsonConstants.META_RESPONSE_LIST);
                 sendVcList(arrayList);
             }
             return mClipKeyListResponse;
@@ -49,12 +49,12 @@ public class ClipKeyListJsonParser {
     public void sendStatus(JSONObject jsonObj) {
         try {
             // statusの値を取得し、Mapに格納
-            if (!jsonObj.isNull(JsonContents.META_RESPONSE_STATUS)) {
-                String status = jsonObj.getString(JsonContents.META_RESPONSE_STATUS);
+            if (!jsonObj.isNull(JsonConstants.META_RESPONSE_STATUS)) {
+                String status = jsonObj.getString(JsonConstants.META_RESPONSE_STATUS);
                 mClipKeyListResponse.setStatus(status);
             }
-            if (!jsonObj.isNull(JsonContents.META_RESPONSE_IS_UPDATE)) {
-                boolean isUpdate = jsonObj.getBoolean(JsonContents.META_RESPONSE_IS_UPDATE);
+            if (!jsonObj.isNull(JsonConstants.META_RESPONSE_IS_UPDATE)) {
+                boolean isUpdate = jsonObj.getBoolean(JsonConstants.META_RESPONSE_IS_UPDATE);
                 mClipKeyListResponse.setIsUpdate(isUpdate);
             }
         } catch (JSONException e) {

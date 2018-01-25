@@ -7,7 +7,7 @@ package com.nttdocomo.android.tvterminalapp.datamanager.select;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ChannelListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.DailyRankListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RecommendChannelListDao;
@@ -43,8 +43,8 @@ public class HomeDataManager {
      */
     public List<Map<String, String>> selectTvClipHomeData() {
         //ホーム画面に必要な列を列挙する
-        String[] columns = {JsonContents.META_RESPONSE_THUMB_448,
-                JsonContents.META_RESPONSE_TITLE, JsonContents.META_RESPONSE_DISP_TYPE};
+        String[] columns = {JsonConstants.META_RESPONSE_THUMB_448,
+                JsonConstants.META_RESPONSE_TITLE, JsonConstants.META_RESPONSE_DISP_TYPE};
 
         //Daoクラス使用準備
         DBHelper tvClipListDBHelper = new DBHelper(mContext);
@@ -65,8 +65,8 @@ public class HomeDataManager {
      */
     public List<Map<String, String>> selectVodClipHomeData() {
         //ホーム画面に必要な列を列挙する
-        String[] columns = {JsonContents.META_RESPONSE_THUMB_448,
-                JsonContents.META_RESPONSE_TITLE, JsonContents.META_RESPONSE_DISP_TYPE};
+        String[] columns = {JsonConstants.META_RESPONSE_THUMB_448,
+                JsonConstants.META_RESPONSE_TITLE, JsonConstants.META_RESPONSE_DISP_TYPE};
 
         //Daoクラス使用準備
         DBHelper vodClipListDBHelper = new DBHelper(mContext);
@@ -87,9 +87,9 @@ public class HomeDataManager {
      */
     public List<Map<String, String>> selectChannelListHomeData() {
         //ホーム画面に必要な列を列挙する
-        String[] columns = {JsonContents.META_RESPONSE_CHNO, JsonContents.META_RESPONSE_DEFAULT_THUMB,
-                JsonContents.META_RESPONSE_TITLE, JsonContents.META_RESPONSE_AVAIL_START_DATE,
-                JsonContents.META_RESPONSE_AVAIL_END_DATE, JsonContents.META_RESPONSE_DISP_TYPE};
+        String[] columns = {JsonConstants.META_RESPONSE_CHNO, JsonConstants.META_RESPONSE_DEFAULT_THUMB,
+                JsonConstants.META_RESPONSE_TITLE, JsonConstants.META_RESPONSE_AVAIL_START_DATE,
+                JsonConstants.META_RESPONSE_AVAIL_END_DATE, JsonConstants.META_RESPONSE_DISP_TYPE};
 
         //Daoクラス使用準備
         DBHelper channelListDBHelper = new DBHelper(mContext);
@@ -152,15 +152,15 @@ public class HomeDataManager {
      */
     public List<Map<String, String>> selectDailyRankListHomeData() {
         //ホーム画面に必要な列を列挙する
-        String[] columns = {JsonContents.META_RESPONSE_THUMB_448, JsonContents.META_RESPONSE_TITLE,
-                JsonContents.META_RESPONSE_DISPLAY_START_DATE, JsonContents.META_RESPONSE_DISP_TYPE,
-                JsonContents.META_RESPONSE_SEARCH_OK, JsonContents.META_RESPONSE_CRID,
-                JsonContents.META_RESPONSE_SERVICE_ID, JsonContents.META_RESPONSE_EVENT_ID,
-                JsonContents.META_RESPONSE_TITLE_ID, JsonContents.META_RESPONSE_R_VALUE,
-                JsonContents.META_RESPONSE_AVAIL_START_DATE, JsonContents.META_RESPONSE_AVAIL_END_DATE,
-                JsonContents.META_RESPONSE_DISP_TYPE, JsonContents.META_RESPONSE_CONTENT_TYPE,
-                JsonContents.META_RESPONSE_DTV, JsonContents.META_RESPONSE_TV_SERVICE,
-                JsonContents.META_RESPONSE_DTV_TYPE};
+        String[] columns = {JsonConstants.META_RESPONSE_THUMB_448, JsonConstants.META_RESPONSE_TITLE,
+                JsonConstants.META_RESPONSE_DISPLAY_START_DATE, JsonConstants.META_RESPONSE_DISP_TYPE,
+                JsonConstants.META_RESPONSE_SEARCH_OK, JsonConstants.META_RESPONSE_CRID,
+                JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_EVENT_ID,
+                JsonConstants.META_RESPONSE_TITLE_ID, JsonConstants.META_RESPONSE_R_VALUE,
+                JsonConstants.META_RESPONSE_AVAIL_START_DATE, JsonConstants.META_RESPONSE_AVAIL_END_DATE,
+                JsonConstants.META_RESPONSE_DISP_TYPE, JsonConstants.META_RESPONSE_CONTENT_TYPE,
+                JsonConstants.META_RESPONSE_DTV, JsonConstants.META_RESPONSE_TV_SERVICE,
+                JsonConstants.META_RESPONSE_DTV_TYPE};
 
         //Daoクラス使用準備
         DBHelper dailyRankListDBHelper = new DBHelper(mContext);
@@ -181,8 +181,8 @@ public class HomeDataManager {
      */
     public List<Map<String, String>> selectTvScheduleListHomeData() {
         //ホーム画面に必要な列を列挙する
-        String[] columns = {JsonContents.META_RESPONSE_THUMB_448, JsonContents.META_RESPONSE_TITLE,
-                JsonContents.META_RESPONSE_AVAIL_START_DATE, JsonContents.META_RESPONSE_AVAIL_END_DATE};
+        String[] columns = {JsonConstants.META_RESPONSE_THUMB_448, JsonConstants.META_RESPONSE_TITLE,
+                JsonConstants.META_RESPONSE_AVAIL_START_DATE, JsonConstants.META_RESPONSE_AVAIL_END_DATE};
 
         //Daoクラス使用準備
         DBHelper tvScheduleListDBHelper = new DBHelper(mContext);
@@ -203,15 +203,15 @@ public class HomeDataManager {
      */
     public List<Map<String, String>> selectWeeklyRankListHomeData() {
         //ホーム画面に必要な列を列挙する
-        String[] columns = {JsonContents.META_RESPONSE_THUMB_448, JsonContents.META_RESPONSE_TITLE,
-                JsonContents.META_RESPONSE_AVAIL_START_DATE, JsonContents.META_RESPONSE_DISP_TYPE,
-                JsonContents.META_RESPONSE_SEARCH_OK, JsonContents.META_RESPONSE_CRID,
-                JsonContents.META_RESPONSE_SERVICE_ID, JsonContents.META_RESPONSE_EVENT_ID,
-                JsonContents.META_RESPONSE_TITLE_ID, JsonContents.META_RESPONSE_R_VALUE,
-                JsonContents.META_RESPONSE_AVAIL_START_DATE, JsonContents.META_RESPONSE_AVAIL_END_DATE,
-                JsonContents.META_RESPONSE_DISP_TYPE, JsonContents.META_RESPONSE_CONTENT_TYPE,
-                JsonContents.META_RESPONSE_DTV, JsonContents.META_RESPONSE_DTV_TYPE,
-                JsonContents.META_RESPONSE_TV_SERVICE};
+        String[] columns = {JsonConstants.META_RESPONSE_THUMB_448, JsonConstants.META_RESPONSE_TITLE,
+                JsonConstants.META_RESPONSE_AVAIL_START_DATE, JsonConstants.META_RESPONSE_DISP_TYPE,
+                JsonConstants.META_RESPONSE_SEARCH_OK, JsonConstants.META_RESPONSE_CRID,
+                JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_EVENT_ID,
+                JsonConstants.META_RESPONSE_TITLE_ID, JsonConstants.META_RESPONSE_R_VALUE,
+                JsonConstants.META_RESPONSE_AVAIL_START_DATE, JsonConstants.META_RESPONSE_AVAIL_END_DATE,
+                JsonConstants.META_RESPONSE_DISP_TYPE, JsonConstants.META_RESPONSE_CONTENT_TYPE,
+                JsonConstants.META_RESPONSE_DTV, JsonConstants.META_RESPONSE_DTV_TYPE,
+                JsonConstants.META_RESPONSE_TV_SERVICE};
 
         //Daoクラス使用準備
         DBHelper weeklyRankListDBHelper = new DBHelper(mContext);
@@ -232,7 +232,7 @@ public class HomeDataManager {
      */
     public List<Map<String, String>> selectRoleListData() {
         //ホーム画面に必要な列を列挙する
-        String[] columns = {JsonContents.META_RESPONSE_CONTENTS_ID, JsonContents.META_RESPONSE_CONTENTS_NAME};
+        String[] columns = {JsonConstants.META_RESPONSE_CONTENTS_ID, JsonConstants.META_RESPONSE_CONTENTS_NAME};
 
         //Daoクラス使用準備
         DBHelper roleListDBHelper = new DBHelper(mContext);

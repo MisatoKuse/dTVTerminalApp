@@ -16,8 +16,8 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActivity;
-import com.nttdocomo.android.tvterminalapp.model.program.Channel;
-import com.nttdocomo.android.tvterminalapp.model.program.ChannelItemClickListener;
+import com.nttdocomo.android.tvterminalapp.struct.Channel;
+import com.nttdocomo.android.tvterminalapp.view.ChannelItemClickListener;
 
 import java.util.ArrayList;
 

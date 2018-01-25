@@ -8,7 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WeeklyRankList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WeeklyRankWebClient;
 
@@ -34,9 +34,9 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
     Bundle mExtraData = null;
 
     // **FindBugs** Bad practice FindBugは、"PAGER_PARAMETERS"と"CONTENT_META_PARAMETERS"はpublicを外せと言うが、対外的なパラメータなので、対応は行わない。
-    public static final String[] PAGER_PARA = {JsonContents.META_RESPONSE_PAGER_LIMIT,
-            JsonContents.META_RESPONSE_OFFSET, JsonContents.META_RESPONSE_COUNT,
-            JsonContents.META_RESPONSE_TOTAL};
+    public static final String[] PAGER_PARA = {JsonConstants.META_RESPONSE_PAGER_LIMIT,
+            JsonConstants.META_RESPONSE_OFFSET, JsonConstants.META_RESPONSE_COUNT,
+            JsonConstants.META_RESPONSE_TOTAL};
 
     /**
      * コンストラクタ
@@ -92,8 +92,8 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
             JSONObject jsonObj = new JSONObject(jsonStr);
             // **FindBugs** Bad practice FindBugはこのヌルチェックが無用と警告するが、将来的にcatch (Exception e)は消すはずなので残す
             sendStatus(jsonObj);
-            if (!jsonObj.isNull(JsonContents.META_RESPONSE_LIST)) {
-                JSONArray arrayList = jsonObj.getJSONArray(JsonContents.META_RESPONSE_LIST);
+            if (!jsonObj.isNull(JsonConstants.META_RESPONSE_LIST)) {
+                JSONArray arrayList = jsonObj.getJSONArray(JsonConstants.META_RESPONSE_LIST);
                 sendWrList(arrayList);
             }
             List<WeeklyRankList> wrList = Arrays.asList(mWeeklyRankList);
@@ -116,13 +116,13 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
         try {
             // statusの値を取得し、Mapに格納
             HashMap<String, String> map = new HashMap<>();
-            if (!jsonObj.isNull(JsonContents.META_RESPONSE_STATUS)) {
-                String status = jsonObj.getString(JsonContents.META_RESPONSE_STATUS);
-                map.put(JsonContents.META_RESPONSE_STATUS, status);
+            if (!jsonObj.isNull(JsonConstants.META_RESPONSE_STATUS)) {
+                String status = jsonObj.getString(JsonConstants.META_RESPONSE_STATUS);
+                map.put(JsonConstants.META_RESPONSE_STATUS, status);
             }
 
-            if (!jsonObj.isNull(JsonContents.META_RESPONSE_PAGER)) {
-                JSONObject pager = jsonObj.getJSONObject(JsonContents.META_RESPONSE_PAGER);
+            if (!jsonObj.isNull(JsonConstants.META_RESPONSE_PAGER)) {
+                JSONObject pager = jsonObj.getJSONObject(JsonConstants.META_RESPONSE_PAGER);
 
                 for (String pagerBuffer : PAGER_PARA) {
                     if (!pager.isNull(pagerBuffer)) {
@@ -153,13 +153,13 @@ public class WeeklyRankJsonParser extends AsyncTask<Object, Object, Object> {
             for (int i = 0; i < arrayList.length(); i++) {
                 HashMap<String, String> wrListMap = new HashMap<>();
                 JSONObject jsonObject = arrayList.getJSONObject(i);
-                for (String listBuffer : JsonContents.LIST_PARA) {
+                for (String listBuffer : JsonConstants.LIST_PARA) {
                     if (!jsonObject.isNull(listBuffer)) {
-                        if (listBuffer.equals(JsonContents.META_RESPONSE_PUINF)) {
+                        if (listBuffer.equals(JsonConstants.META_RESPONSE_PUINF)) {
                             JSONObject puinfObj = jsonObject.getJSONObject(listBuffer);
-                            for (String puinfBuffer : JsonContents.PUINF_PARA) {
+                            for (String puinfBuffer : JsonConstants.PUINF_PARA) {
                                 String para = puinfObj.getString(puinfBuffer);
-                                wrListMap.put(JsonContents.META_RESPONSE_PUINF + JsonContents.UNDER_LINE + puinfBuffer, para);
+                                wrListMap.put(JsonConstants.META_RESPONSE_PUINF + JsonConstants.UNDER_LINE + puinfBuffer, para);
                             }
                         } else {
                             String para = jsonObject.getString(listBuffer);

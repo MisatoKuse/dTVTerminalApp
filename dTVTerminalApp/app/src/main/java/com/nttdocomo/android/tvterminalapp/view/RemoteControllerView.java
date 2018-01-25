@@ -22,7 +22,6 @@ import android.widget.Scroller;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.model.remotecontroller.RemoteControllerSendKeyAction;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 
 import java.util.ArrayList;

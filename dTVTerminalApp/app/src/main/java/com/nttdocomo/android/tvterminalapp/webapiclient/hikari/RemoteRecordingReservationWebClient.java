@@ -7,10 +7,10 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationResultResponse;
-import com.nttdocomo.android.tvterminalapp.model.detail.RecordingReservationContentsDetailInfo;
+import com.nttdocomo.android.tvterminalapp.struct.RecordingReservationContentsDetailInfo;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.RemoteRecordingReservationJsonParser;
 
 import org.json.JSONException;
@@ -171,16 +171,16 @@ public class RemoteRecordingReservationWebClient
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
-            jsonObject.put(JsonContents.META_RESPONSE_PLATFORM_TYPE, contentsDetailInfo.getPlatformType());
-            jsonObject.put(JsonContents.META_RESPONSE_SERVICE_ID, contentsDetailInfo.getServiceId());
+            jsonObject.put(JsonConstants.META_RESPONSE_PLATFORM_TYPE, contentsDetailInfo.getPlatformType());
+            jsonObject.put(JsonConstants.META_RESPONSE_SERVICE_ID, contentsDetailInfo.getServiceId());
             if (contentsDetailInfo.getEventId() != null) {
-                jsonObject.put(JsonContents.META_RESPONSE_EVENT_ID, contentsDetailInfo.getEventId());
+                jsonObject.put(JsonConstants.META_RESPONSE_EVENT_ID, contentsDetailInfo.getEventId());
             }
-            jsonObject.put(JsonContents.META_RESPONSE_TITLE, contentsDetailInfo.getTitle());
-            jsonObject.put(JsonContents.META_RESPONSE_START_TIME, contentsDetailInfo.getStartTime());
-            jsonObject.put(JsonContents.META_RESPONSE_DURATION, contentsDetailInfo.getDuration());
-            jsonObject.put(JsonContents.META_RESPONSE_LOOP_TYPE_NUM, contentsDetailInfo.getLoopTypeNum());
-            jsonObject.put(JsonContents.META_RESPONSE_R_VALUE, contentsDetailInfo.getRValue());
+            jsonObject.put(JsonConstants.META_RESPONSE_TITLE, contentsDetailInfo.getTitle());
+            jsonObject.put(JsonConstants.META_RESPONSE_START_TIME, contentsDetailInfo.getStartTime());
+            jsonObject.put(JsonConstants.META_RESPONSE_DURATION, contentsDetailInfo.getDuration());
+            jsonObject.put(JsonConstants.META_RESPONSE_LOOP_TYPE_NUM, contentsDetailInfo.getLoopTypeNum());
+            jsonObject.put(JsonConstants.META_RESPONSE_R_VALUE, contentsDetailInfo.getRValue());
 
             answerText = jsonObject.toString();
         } catch (JSONException e) {

@@ -42,8 +42,8 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListListener;
-import com.nttdocomo.android.tvterminalapp.model.program.Channel;
-import com.nttdocomo.android.tvterminalapp.model.program.ChannelsInfo;
+import com.nttdocomo.android.tvterminalapp.struct.Channel;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelsInfo;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 import java.util.ArrayList;

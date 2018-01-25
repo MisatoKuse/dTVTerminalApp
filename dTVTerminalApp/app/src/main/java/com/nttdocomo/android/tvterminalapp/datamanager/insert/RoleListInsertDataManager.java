@@ -8,7 +8,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RoleListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
@@ -46,8 +46,8 @@ public class RoleListInsertDataManager {
         for (int i = 0; i < roleList.size(); i++) {
             RoleListMetaData roleData = roleList.get(i);
             ContentValues values = new ContentValues();
-            values.put(JsonContents.META_RESPONSE_CONTENTS_ID, roleData.getId());
-            values.put(JsonContents.META_RESPONSE_CONTENTS_NAME, roleData.getName());
+            values.put(JsonConstants.META_RESPONSE_CONTENTS_ID, roleData.getId());
+            values.put(JsonConstants.META_RESPONSE_CONTENTS_NAME, roleData.getName());
             roleListDao.insert(values);
         }
         DataBaseManager.getInstance().closeDatabase();

@@ -2,7 +2,7 @@
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-package com.nttdocomo.android.tvterminalapp.model.search;
+package com.nttdocomo.android.tvterminalapp.struct;
 
 
 public class SearchContentInfo {

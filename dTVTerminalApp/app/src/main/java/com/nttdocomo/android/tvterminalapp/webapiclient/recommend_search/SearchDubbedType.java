@@ -5,7 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
 
-import com.nttdocomo.android.tvterminalapp.model.search.SearchNarrowCondition;
+import com.nttdocomo.android.tvterminalapp.struct.SearchNarrowCondition;
 
 public class SearchDubbedType extends SearchFilterTypeMappable {
 

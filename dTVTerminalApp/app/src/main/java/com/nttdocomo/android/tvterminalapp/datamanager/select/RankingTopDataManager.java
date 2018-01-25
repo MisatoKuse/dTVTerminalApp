@@ -7,7 +7,7 @@ package com.nttdocomo.android.tvterminalapp.datamanager.select;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VideoRankListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 
@@ -33,15 +33,15 @@ public class RankingTopDataManager {
      */
     public List<Map<String, String>> selectVideoRankListData() {
         //ホーム画面に必要な列を列挙する
-        String[] columns = {JsonContents.META_RESPONSE_THUMB_448, JsonContents.META_RESPONSE_TITLE,
-                JsonContents.META_RESPONSE_DISPLAY_START_DATE, JsonContents.META_RESPONSE_DISP_TYPE,
-                JsonContents.META_RESPONSE_RATING, JsonContents.META_RESPONSE_CONTENT_TYPE,
-                JsonContents.META_RESPONSE_SEARCH_OK, JsonContents.META_RESPONSE_CRID,
-                JsonContents.META_RESPONSE_SERVICE_ID, JsonContents.META_RESPONSE_EVENT_ID,
-                JsonContents.META_RESPONSE_TITLE_ID, JsonContents.META_RESPONSE_R_VALUE,
-                JsonContents.META_RESPONSE_AVAIL_START_DATE, JsonContents.META_RESPONSE_AVAIL_END_DATE,
-                JsonContents.META_RESPONSE_DTV, JsonContents.META_RESPONSE_TV_SERVICE,
-                JsonContents.META_RESPONSE_DTV_TYPE};
+        String[] columns = {JsonConstants.META_RESPONSE_THUMB_448, JsonConstants.META_RESPONSE_TITLE,
+                JsonConstants.META_RESPONSE_DISPLAY_START_DATE, JsonConstants.META_RESPONSE_DISP_TYPE,
+                JsonConstants.META_RESPONSE_RATING, JsonConstants.META_RESPONSE_CONTENT_TYPE,
+                JsonConstants.META_RESPONSE_SEARCH_OK, JsonConstants.META_RESPONSE_CRID,
+                JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_EVENT_ID,
+                JsonConstants.META_RESPONSE_TITLE_ID, JsonConstants.META_RESPONSE_R_VALUE,
+                JsonConstants.META_RESPONSE_AVAIL_START_DATE, JsonConstants.META_RESPONSE_AVAIL_END_DATE,
+                JsonConstants.META_RESPONSE_DTV, JsonConstants.META_RESPONSE_TV_SERVICE,
+                JsonConstants.META_RESPONSE_DTV_TYPE};
 
         //Daoクラス使用準備
         DBHelper videoRankListDBHelper = new DBHelper(mContext);

@@ -9,7 +9,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
@@ -29,8 +29,8 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingRese
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
-import com.nttdocomo.android.tvterminalapp.model.detail.RecordingReservationContentsDetailInfo;
-import com.nttdocomo.android.tvterminalapp.model.program.Channel;
+import com.nttdocomo.android.tvterminalapp.struct.RecordingReservationContentsDetailInfo;
+import com.nttdocomo.android.tvterminalapp.struct.Channel;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsDetailGetWebClient;
@@ -253,18 +253,18 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                     ArrayList<Channel> channels = new ArrayList<>();
                     for (int i = 0; i < resultSet.size(); i++) {
                         Map<String, String> hashMap = resultSet.get(i);
-                        String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
-                        String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
-                        String serviceId = hashMap.get(JsonContents.META_RESPONSE_SERVICE_ID);
-                        String startDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_START_DATE);
-                        String endDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
-                        String chType = hashMap.get(JsonContents.META_RESPONSE_CH_TYPE);
-                        String puId = hashMap.get(JsonContents.META_RESPONSE_PUID);
-                        String subPuId = hashMap.get(JsonContents.META_RESPONSE_SUB_PUID);
-                        String chPackPuId = hashMap.get(JsonContents.META_RESPONSE_CHPACK
-                                + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID);
-                        String chPackSubPuId = hashMap.get(JsonContents.META_RESPONSE_CHPACK
-                                + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_SUB_PUID);
+                        String chNo = hashMap.get(JsonConstants.META_RESPONSE_CHNO);
+                        String title = hashMap.get(JsonConstants.META_RESPONSE_TITLE);
+                        String serviceId = hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID);
+                        String startDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE);
+                        String endDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE);
+                        String chType = hashMap.get(JsonConstants.META_RESPONSE_CH_TYPE);
+                        String puId = hashMap.get(JsonConstants.META_RESPONSE_PUID);
+                        String subPuId = hashMap.get(JsonConstants.META_RESPONSE_SUB_PUID);
+                        String chPackPuId = hashMap.get(JsonConstants.META_RESPONSE_CHPACK
+                                + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_PUID);
+                        String chPackSubPuId = hashMap.get(JsonConstants.META_RESPONSE_CHPACK
+                                + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_SUB_PUID);
 
                         if (!TextUtils.isEmpty(chNo)) {
                             Channel channel = new Channel();
@@ -289,8 +289,8 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                     ArrayList<RoleListMetaData> roleListData = new ArrayList<>();
                     for (int i = 0; i < resultSet.size(); i++) {
                         Map<String, String> hashMap = resultSet.get(i);
-                        String id = hashMap.get(JsonContents.META_RESPONSE_CONTENTS_ID);
-                        String name = hashMap.get(JsonContents.META_RESPONSE_CONTENTS_NAME);
+                        String id = hashMap.get(JsonConstants.META_RESPONSE_CONTENTS_ID);
+                        String name = hashMap.get(JsonConstants.META_RESPONSE_CONTENTS_NAME);
                         RoleListMetaData roleData = new RoleListMetaData();
                         roleData.setId(id);
                         roleData.setName(name);
@@ -305,10 +305,10 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                     ArrayList<ActiveData> activeDatas = new ArrayList<>();
                     for (int i = 0; i < mPurchasedVodActiveList.size(); i++) {
                         Map<String, String> hashMap = mPurchasedVodActiveList.get(i);
-                        String active_list_license_id = hashMap.get(JsonContents.META_RESPONSE_ACTIVE_LIST
-                                + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_LICENSE_ID);
-                        String active_list_valid_end_date = hashMap.get(JsonContents.META_RESPONSE_ACTIVE_LIST
-                                + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_VAILD_END_DATE);
+                        String active_list_license_id = hashMap.get(JsonConstants.META_RESPONSE_ACTIVE_LIST
+                                + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_LICENSE_ID);
+                        String active_list_valid_end_date = hashMap.get(JsonConstants.META_RESPONSE_ACTIVE_LIST
+                                + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_VAILD_END_DATE);
                         ActiveData activeDate = new ActiveData();
                         activeDate.setLicenseId(active_list_license_id);
                         activeDate.setValidEndDate(Long.parseLong(active_list_valid_end_date));
@@ -327,7 +327,7 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                     for (int i = 0; i < resultSet.size(); i++) {
                         Map<String, String> hashMap = resultSet.get(i);
                         HashMap<String, String> vcListMap = new HashMap<>();
-                        for (String para : JsonContents.METADATA_LIST_PARA) {
+                        for (String para : JsonConstants.METADATA_LIST_PARA) {
                             vcListMap.put(para, hashMap.get(para));
                         }
                         list.add(vcListMap);
@@ -339,10 +339,10 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                     for (int i = 0; i < mPurchasedChActiveList.size(); i++) {
                         Map<String, String> hashMap = mPurchasedChActiveList.get(i);
 
-                        String active_list_license_id = hashMap.get(JsonContents.META_RESPONSE_ACTIVE_LIST
-                                + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_LICENSE_ID);
-                        String active_list_valid_end_date = hashMap.get(JsonContents.META_RESPONSE_ACTIVE_LIST
-                                + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_VAILD_END_DATE);
+                        String active_list_license_id = hashMap.get(JsonConstants.META_RESPONSE_ACTIVE_LIST
+                                + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_LICENSE_ID);
+                        String active_list_valid_end_date = hashMap.get(JsonConstants.META_RESPONSE_ACTIVE_LIST
+                                + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_VAILD_END_DATE);
                         ActiveData activeDate = new ActiveData();
                         activeDate.setLicenseId(active_list_license_id);
                         activeDate.setValidEndDate(Long.parseLong(active_list_valid_end_date));
@@ -418,18 +418,18 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
     private void setChannelData(final ArrayList<Channel> channels, final List<HashMap<String, String>> channelList) {
         for (int i = 0; i < channelList.size(); i++) {
             HashMap<String, String> hashMap = channelList.get(i);
-            String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
-            String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
-            String serviceId = hashMap.get(JsonContents.META_RESPONSE_SERVICE_ID);
-            String startDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_START_DATE);
-            String endDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
-            String chType = hashMap.get(JsonContents.META_RESPONSE_CH_TYPE);
-            String puId = hashMap.get(JsonContents.META_RESPONSE_PUID);
-            String subPuId = hashMap.get(JsonContents.META_RESPONSE_SUB_PUID);
-            String chPackPuId = hashMap.get(JsonContents.META_RESPONSE_CHPACK
-                    + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID);
-            String chPackSubPuId = hashMap.get(JsonContents.META_RESPONSE_CHPACK
-                    + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_SUB_PUID);
+            String chNo = hashMap.get(JsonConstants.META_RESPONSE_CHNO);
+            String title = hashMap.get(JsonConstants.META_RESPONSE_TITLE);
+            String serviceId = hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID);
+            String startDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE);
+            String endDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE);
+            String chType = hashMap.get(JsonConstants.META_RESPONSE_CH_TYPE);
+            String puId = hashMap.get(JsonConstants.META_RESPONSE_PUID);
+            String subPuId = hashMap.get(JsonConstants.META_RESPONSE_SUB_PUID);
+            String chPackPuId = hashMap.get(JsonConstants.META_RESPONSE_CHPACK
+                    + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_PUID);
+            String chPackSubPuId = hashMap.get(JsonConstants.META_RESPONSE_CHPACK
+                    + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_SUB_PUID);
             if (!TextUtils.isEmpty(chNo)) {
                 Channel channel = new Channel();
                 channel.setTitle(title);

@@ -8,7 +8,7 @@ import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
@@ -114,17 +114,17 @@ public class VideoContentProvider  extends  ClipKeyListDataProvider implements
             contentsData = new ContentsData();
 
             Map<String, String> map = videoContentMapList.get(i);
-            String title = map.get(JsonContents.META_RESPONSE_TITLE);
-            String searchOk = map.get(JsonContents.META_RESPONSE_SEARCH_OK);
-            String linearEndDate = map.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
-            String dispType = map.get(JsonContents.META_RESPONSE_DISP_TYPE);
-            String dtv = map.get(JsonContents.META_RESPONSE_DTV);
-            String dtvType = map.get(JsonContents.META_RESPONSE_DTV_TYPE);
+            String title = map.get(JsonConstants.META_RESPONSE_TITLE);
+            String searchOk = map.get(JsonConstants.META_RESPONSE_SEARCH_OK);
+            String linearEndDate = map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE);
+            String dispType = map.get(JsonConstants.META_RESPONSE_DISP_TYPE);
+            String dtv = map.get(JsonConstants.META_RESPONSE_DTV);
+            String dtvType = map.get(JsonConstants.META_RESPONSE_DTV_TYPE);
 
-            contentsData.setThumURL(map.get(JsonContents.META_RESPONSE_THUMB_448));
-            contentsData.setTitle(map.get(JsonContents.META_RESPONSE_TITLE));
-            contentsData.setRatStar(map.get(JsonContents.META_RESPONSE_RATING));
-            contentsData.setContentsType(map.get(JsonContents.META_RESPONSE_CONTENT_TYPE));
+            contentsData.setThumURL(map.get(JsonConstants.META_RESPONSE_THUMB_448));
+            contentsData.setTitle(map.get(JsonConstants.META_RESPONSE_TITLE));
+            contentsData.setRatStar(map.get(JsonConstants.META_RESPONSE_RATING));
+            contentsData.setContentsType(map.get(JsonConstants.META_RESPONSE_CONTENT_TYPE));
             contentsData.setDtv(dtv);
             contentsData.setDtvType(dtvType);
             contentsData.setDispType(dispType);
@@ -132,20 +132,20 @@ public class VideoContentProvider  extends  ClipKeyListDataProvider implements
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
 
-            requestData.setCrid(map.get(JsonContents.META_RESPONSE_CRID));
-            requestData.setServiceId(map.get(JsonContents.META_RESPONSE_SERVICE_ID));
-            requestData.setEventId(map.get(JsonContents.META_RESPONSE_EVENT_ID));
-            requestData.setTitleId(map.get(JsonContents.META_RESPONSE_TITLE_ID));
+            requestData.setCrid(map.get(JsonConstants.META_RESPONSE_CRID));
+            requestData.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
+            requestData.setEventId(map.get(JsonConstants.META_RESPONSE_EVENT_ID));
+            requestData.setTitleId(map.get(JsonConstants.META_RESPONSE_TITLE_ID));
             requestData.setTitle(title);
-            requestData.setRValue(map.get(JsonContents.META_RESPONSE_R_VALUE));
-            requestData.setLinearStartDate(map.get(JsonContents.META_RESPONSE_AVAIL_START_DATE));
+            requestData.setRValue(map.get(JsonConstants.META_RESPONSE_R_VALUE));
+            requestData.setLinearStartDate(map.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE));
             requestData.setLinearEndDate(linearEndDate);
             requestData.setSearchOk(searchOk);
 
             //視聴通知判定生成
-            String contentsType = map.get(JsonContents.META_RESPONSE_CONTENT_TYPE);
-            String tvService = map.get(JsonContents.META_RESPONSE_TV_SERVICE);
-            String dTv = map.get(JsonContents.META_RESPONSE_DTV);
+            String contentsType = map.get(JsonConstants.META_RESPONSE_CONTENT_TYPE);
+            String tvService = map.get(JsonConstants.META_RESPONSE_TV_SERVICE);
+            String dTv = map.get(JsonConstants.META_RESPONSE_DTV);
             requestData.setIsNotify(dispType, contentsType, linearEndDate, tvService, dTv);
             requestData.setDispType(dispType);
             requestData.setContentType(contentsType);

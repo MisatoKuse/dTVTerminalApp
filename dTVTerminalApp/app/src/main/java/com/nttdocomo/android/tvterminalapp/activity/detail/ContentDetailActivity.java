@@ -53,10 +53,10 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
-import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
+import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.UserInfoInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.DtvContentsDetailDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
@@ -71,9 +71,9 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailFragmentFactory;
-import com.nttdocomo.android.tvterminalapp.model.detail.RecordingReservationContentsDetailInfo;
-import com.nttdocomo.android.tvterminalapp.model.player.MediaVideoInfo;
-import com.nttdocomo.android.tvterminalapp.model.program.Channel;
+import com.nttdocomo.android.tvterminalapp.struct.RecordingReservationContentsDetailInfo;
+import com.nttdocomo.android.tvterminalapp.struct.MediaVideoInfo;
+import com.nttdocomo.android.tvterminalapp.struct.Channel;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
@@ -2674,7 +2674,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
 
         //CHのservice_id一覧を取得
         for (HashMap<String, String> hashMap : chList) {
-            String serviceId = hashMap.get(JsonContents.META_RESPONSE_SERVICE_ID);
+            String serviceId = hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID);
             if (serviceId != null && !serviceId.isEmpty()) {
                 chServiceIds.add(serviceId);
             }

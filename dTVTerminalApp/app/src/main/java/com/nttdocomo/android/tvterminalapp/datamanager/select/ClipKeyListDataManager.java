@@ -8,7 +8,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 
@@ -40,11 +40,11 @@ public class ClipKeyListDataManager {
     public List<Map<String, String>> selectClipKeyListData(ClipKeyListDao.TABLE_TYPE type, String selection, String[] args) {
         DTVTLogger.start();
         //必要な列を列挙する
-        String[] columns = {JsonContents.META_RESPONSE_CRID,
-                JsonContents.META_RESPONSE_SERVICE_ID,
-                JsonContents.META_RESPONSE_EVENT_ID,
-                JsonContents.META_RESPONSE_TYPE,
-                JsonContents.META_RESPONSE_TITLE_ID};
+        String[] columns = {JsonConstants.META_RESPONSE_CRID,
+                JsonConstants.META_RESPONSE_SERVICE_ID,
+                JsonConstants.META_RESPONSE_EVENT_ID,
+                JsonConstants.META_RESPONSE_TYPE,
+                JsonConstants.META_RESPONSE_TITLE_ID};
 
         //Daoクラス使用準備
         DBHelper dBHelper = new DBHelper(mContext);
@@ -71,19 +71,19 @@ public class ClipKeyListDataManager {
 
         switch (contentType) {
             case VOD:
-                strBuilder.append(JsonContents.META_RESPONSE_CRID)
+                strBuilder.append(JsonConstants.META_RESPONSE_CRID)
                         .append(" = ? ");
                 break;
             case TV:
-                strBuilder.append(JsonContents.META_RESPONSE_SERVICE_ID)
+                strBuilder.append(JsonConstants.META_RESPONSE_SERVICE_ID)
                         .append(" = ? AND ")
-                        .append(JsonContents.META_RESPONSE_EVENT_ID)
+                        .append(JsonConstants.META_RESPONSE_EVENT_ID)
                         .append(" = ? AND ")
-                        .append(JsonContents.META_RESPONSE_TYPE)
+                        .append(JsonConstants.META_RESPONSE_TYPE)
                         .append(" = ? ");
                 break;
             case DTV:
-                strBuilder.append(JsonContents.META_RESPONSE_TITLE_ID)
+                strBuilder.append(JsonConstants.META_RESPONSE_TITLE_ID)
                         .append(" = ? ");
                 break;
         }

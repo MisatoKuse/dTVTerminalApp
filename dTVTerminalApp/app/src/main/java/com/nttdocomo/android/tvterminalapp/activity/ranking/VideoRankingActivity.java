@@ -29,7 +29,7 @@ import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VideoGenreProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.callback.VideoRankingApiDataProviderCallback;
@@ -311,11 +311,11 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
             rankingContentInfo = new ContentsData();
             rankingContentInfo.setRank(String.valueOf(i + 1));
             rankingContentInfo.setThumURL(videoRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_THUMB_448));
+                    .get(JsonConstants.META_RESPONSE_THUMB_448));
             rankingContentInfo.setTitle(videoRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_TITLE));
+                    .get(JsonConstants.META_RESPONSE_TITLE));
             rankingContentInfo.setRatStar(videoRankMapList.get(i)
-                    .get(JsonContents.META_RESPONSE_RATING));
+                    .get(JsonConstants.META_RESPONSE_RATING));
 
             rankingContentsDataList.add(rankingContentInfo);
             DTVTLogger.info("RankingContentInfo " + rankingContentInfo.getRank());
