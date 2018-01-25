@@ -279,7 +279,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
             }
         }
         if (null != mDlDataProviderListener && DownloadService.BINDSTATUS == DownloadService.BINDED) {
-            DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok");
+            DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok 2");
             mDlDataProviderListener.onSuccess(fullPath);
         } else if(DownloadService.BINDSTATUS == DownloadService.BACKGROUD){
             DownloadService ds = getDownloadService();
@@ -299,7 +299,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     private void setNextDownLoad(){
         if (DownloadService.dlDataQue != null && DownloadService.dlDataQue.size() > 0) {
             DownloadService.dlDataQue.remove(0);
-            DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok");
+            DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok 3");
             if(0 == DownloadService.dlDataQue.size()){
                 isRegistered = false;
                 stopService();
@@ -354,7 +354,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
 //            }
 //        }
         if (null != mDlDataProviderListener && DownloadService.BINDSTATUS == DownloadService.BINDED) {
-            DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok");
+            DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok 1");
             mDlDataProviderListener.onCancel(filePath);
         } else if(DownloadService.BINDSTATUS == DownloadService.BACKGROUD){
             DownloadService ds = getDownloadService();
