@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.detail;
 
 import android.app.AlertDialog;
+import android.app.Presentation;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -34,6 +35,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -50,6 +52,7 @@ import com.digion.dixim.android.secureplayer.SecureVideoView;
 import com.digion.dixim.android.secureplayer.SecuredMediaPlayerController;
 import com.digion.dixim.android.secureplayer.helper.CaptionDrawCommands;
 import com.digion.dixim.android.util.EnvironmentUtil;
+import com.digion.dixim.android.util.ExternalDisplayHelper;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
@@ -280,6 +283,10 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      */
     private static final float THUMBNAIL_SHADOW_ALPHA = 0.5f;
 
+    //外部出力制御
+    private ExternalDisplayHelper mExternalDisplayHelper;
+    private boolean mExternalDisplayFlg = false;
+
     private Runnable mHideCtrlViewThread = new Runnable() {
 
         /**
@@ -288,7 +295,10 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         @Override
         public void run() {
             DTVTLogger.start();
-            hideCtrlView(View.INVISIBLE);
+            //外部出力制御の場合実行しない
+            if (!mExternalDisplayFlg) {
+                hideCtrlView(View.INVISIBLE);
+            }
             DTVTLogger.end();
         }
     };
@@ -337,6 +347,9 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             mIsControllerVisible = true;
             setStartRemoteControllerUIListener(this);
             initPlayer();
+            //外部出力および画面キャプチャ制御
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
+            mExternalDisplayHelper = createExternalDisplayHelper();
         }
 
         //ヘッダーの設定
@@ -1728,7 +1741,14 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 } else {
                     playPause();
                 }
-                hideCtrlViewAfterOperate();
+                if(!mExternalDisplayFlg){
+                    hideCtrlViewAfterOperate();
+                } else {
+                    //外部出力制御の場合
+                    initPlayerView();
+                    setPlayerEvent();
+                    mExternalDisplayFlg = false;
+                }
                 break;
             case R.id.tv_player_ctrl_now_on_air_full_screen_iv:
                 if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
@@ -2029,6 +2049,8 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         if (mAge < mediaPlayerController.getParentalRating()) {
             showDialogToConfirmClose();
         }
+        //外部出力制御
+        mExternalDisplayHelper.onResume();
         DTVTLogger.end();
     }
 
@@ -2111,6 +2133,8 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     @Override
     protected void onPause() {
         super.onPause();
+        //外部出力制御
+        mExternalDisplayHelper.onPause();
         finishPlayer();
         if (null != mToast) {
             mToast.cancel();
@@ -2856,5 +2880,72 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         if (mThumbnail != null) {
             mThumbnail.setAlpha(alpha);
         }
+    }
+
+    private static ExternalDisplayHelper.OnDisplayEventListener DISPLAY_EVENT_LISTENER = new ExternalDisplayHelper.OnDisplayEventListener() {
+        @Override
+        public void onResumeDefaultDisplay() {
+
+        }
+        @Override
+        public void onSuspendDefaultDisplay() {
+
+        }
+        @Override
+        public void onSuspendExternalDisplay() {
+
+        }
+        @Override
+        public void onResumeExternalDisplay() {
+
+        }
+    };
+
+    private ExternalDisplayHelper createExternalDisplayHelper() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            return ExternalDisplayHelper.create(this, DISPLAY_EVENT_LISTENER,
+                    createPresentationEventListener());
+        }
+        return ExternalDisplayHelper
+                .createForCompat(this, DISPLAY_EVENT_LISTENER);
+    }
+
+    private ExternalDisplayHelper.OnPresentationEventListener createPresentationEventListener() {
+
+        return new ExternalDisplayHelper.OnPresentationEventListener() {
+
+            @Override
+            public Presentation onCreatePresentation(Display presentationDisplay) {
+                if (!mExternalDisplayFlg) {
+                    mExternalDisplayFlg = true;
+                    showErrorDialog(getResources().getString(R.string.contents_detail_external_display_dialog_msg));
+                    mRecordCtrlView.setOnTouchListener(null);
+                    hideCtrlView(View.INVISIBLE);
+                    playPause();
+                    mVideoPlayPause.setVisibility(View.VISIBLE);
+                }
+                return null;
+            }
+
+            @Override
+            public void onDismissPresentation(Presentation presentation) {
+
+            }
+
+        };
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        //外部出力制御
+        mExternalDisplayHelper.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        //外部出力制御
+        mExternalDisplayHelper = null;
+        super.onDestroy();
     }
 }

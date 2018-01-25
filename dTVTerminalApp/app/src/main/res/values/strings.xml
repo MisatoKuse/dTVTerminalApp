@@ -303,6 +303,7 @@
     <string name="contents_detail_contract_button_vod">ドコモテレビターミナルで購入する</string>
     <string name="contents_detail_contract_text_ch">このチャンネルをご覧になるにはドコモテレビターミナル側での契約が必要です。</string>
     <string name="contents_detail_contract_button_ch">ドコモテレビターミナルで契約する</string>
+    <string name="contents_detail_external_display_dialog_msg">外部出力が検知されたため再生を停止します。</string>
 
     <!-- チャンネルリストタイトル -->
     <string name="channel_list_activity_title">チャンネルリスト</string>
