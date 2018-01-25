@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import com.nttdocomo.android.tvterminalapp.datamanager.WatchListenVideoDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RoleListInsertDataManager;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListResponse;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
@@ -34,9 +35,11 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WatchListenVideoList;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.DailyRankWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.GenreListWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalChListWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalVodListWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RoleListWebClient;
@@ -45,6 +48,7 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvScheduleWebClie
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WatchListenVideoWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
+import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.GenreListJsonParser;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser;
 
@@ -66,6 +70,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         RentalChListWebClient.RentalChListJsonParserCallback,
         ChannelWebClient.ChannelJsonParserCallback,
         RoleListWebClient.RoleListJsonParserCallback,
+        GenreListWebClient.GenreListJsonParserCallback,
         RecommendDataProvider.RecommendApiDataProviderCallback {
 
     private Context mContext = null;
@@ -169,6 +174,21 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             setStructDB(roleListResponse);
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
+        }
+    }
+
+    @Override
+    public void onGenreListJsonParsed(GenreListResponse genreListResponse) {
+        if (genreListResponse != null) {
+            //取得した情報を保存する
+            DateUtils dateUtils = new DateUtils(mContext);
+            String lastDate = dateUtils.getLastDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
+            if (TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate)) {
+                dateUtils.addLastDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
+                dateUtils.addLastProgramDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
+                SharedPreferencesUtils.setSharedPreferencesVideoGenreData(mContext,
+                        StringUtils.toGenreListResponseBase64(genreListResponse));
+            }
         }
     }
 
@@ -279,10 +299,9 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             if (VideoRankList != null && VideoRankList.size() > 0) {
                 sendVideoRankListData(VideoRankList);
             }
-            //データ取得のみ(API取得～DB保存までの処理を新設するか検討中)
+            //TODO:生データ保存のみ(DB保存までの処理を新設するか検討中)
             //ジャンルID(ビデオ一覧)一覧取得
-            VideoGenreProvider videoGenreProvider = new VideoGenreProvider(mContext);
-            videoGenreProvider.getGenreListDataRequest();
+            getGenreListDataRequest();
 
             //ロールID一覧取得
             getRoleListData();
@@ -692,6 +711,19 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     }
 
     /**
+     * ジャンル一覧取得.
+     */
+    private void getGenreListDataRequest() {
+        DateUtils dateUtils = new DateUtils(mContext);
+        String lastDate = dateUtils.getLastDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
+        if (TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate)) {
+            //データの有効期限切れなら通信で取得
+            GenreListWebClient webClient = new GenreListWebClient(mContext);
+            webClient.getGenreListApi(this);
+        }
+    }
+
+    /**
      * 番組一覧データをDBに格納する.
      *
      * @param tvScheduleList 番組一覧データ
@@ -733,7 +765,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     /**
      * チャンネルリストデータをDBに格納する.
      *
-     * @param channelList 視聴中ビデオ一覧用データ
+     * @param channelList チャンネルリストデータ
      */
     private void setStructDB(final ChannelList channelList) {
         DateUtils dateUtils = new DateUtils(mContext);

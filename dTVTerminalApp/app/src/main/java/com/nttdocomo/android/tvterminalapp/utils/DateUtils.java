@@ -101,6 +101,11 @@ public class DateUtils {
     public static final String MY_CHANNEL_LIST_LAST_INSERT = "MyChannelListLastInsert";
 
     /**
+     * ビデオジャンル一覧データ.
+     */
+    public static final String VIDEO_GENRE_LIST_LAST_INSERT = "video_genre_list_last_insert";
+
+    /**
      * 曜日の固定値.
      */
     public static final int DAY_OF_WEEK_SUNDAY = 1;

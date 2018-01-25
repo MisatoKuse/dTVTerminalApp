@@ -5,16 +5,23 @@
 package com.nttdocomo.android.tvterminalapp.utils;
 
 import android.content.Context;
+import android.util.Base64;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser;
 
 import org.json.JSONArray;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -164,7 +171,7 @@ public class StringUtils {
      */
     public static int changeString2Int(final Object data) {
         //既に数値かどうかを判定
-        if(data instanceof Integer) {
+        if (data instanceof Integer) {
             //整数なのでそのまま返す
             return (Integer) data;
         }
@@ -433,5 +440,85 @@ public class StringUtils {
         }
         result = builder.toString();
         return result;
+    }
+
+    /**
+     * ビデオジャンルレスポンスをSharedPreferences保存するためにエンコードする.
+     *
+     * @param genreListResponse ビデオジャンル一覧
+     * @return エンコードデータ
+     */
+    public static String toGenreListResponseBase64(final GenreListResponse genreListResponse) {
+
+        ByteArrayOutputStream byteArrayOutputStream = null;
+        ObjectOutputStream objectOutputStream = null;
+
+        try {
+            byteArrayOutputStream = new ByteArrayOutputStream();
+            objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+            objectOutputStream.writeObject(genreListResponse);
+
+            byte[] bytes = byteArrayOutputStream.toByteArray();
+            byte[] base64 = Base64.encode(bytes, Base64.NO_WRAP);
+
+            return new String(base64);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (objectOutputStream != null) {
+                    objectOutputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (byteArrayOutputStream != null) {
+                    byteArrayOutputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * SharedPreferencesにエンコード保存したビデオジャンルレスポンスをデコードする.
+     *
+     * @param base64 エンコードデータ
+     * @return デコードデータ
+     */
+    public static GenreListResponse toGenreListResponse(final String base64) {
+
+        ByteArrayInputStream byteArrayInputStream = null;
+        ObjectInputStream objectInputStream = null;
+
+        byte[] bytes = Base64.decode(base64.getBytes(), Base64.NO_WRAP);
+
+        try {
+            byteArrayInputStream = new ByteArrayInputStream(bytes);
+            objectInputStream = new ObjectInputStream(byteArrayInputStream);
+            return (GenreListResponse) objectInputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (objectInputStream != null) {
+                    objectInputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (byteArrayInputStream != null) {
+                    byteArrayInputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 }
