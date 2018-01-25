@@ -536,6 +536,28 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         return resultList;
     }
 
+    private void setDownLoadQue(RecordedBaseFragment baseFrgament, ArrayList<DlnaRecVideoItem>  dlnaRecVideoItems, List<Map<String, String>> resultList){
+        if(resultList != null){
+            for(int k = 0; k < resultList.size(); k++){
+                Map<String, String> hashMap = resultList.get(k);
+                String itemId = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
+                for(int t = 0; t < dlnaRecVideoItems.size(); t++){
+                    String allItemId = dlnaRecVideoItems.get(t).mItemId;
+                    if(!TextUtils.isEmpty(allItemId) && !allItemId.startsWith(DownloaderBase.sDlPrefix)){
+                        allItemId = DownloaderBase.getFileNameById(dlnaRecVideoItems.get(t).mItemId);
+                    }
+                    if(itemId.equals(allItemId)){
+                        String downloadStatus = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
+                        if(TextUtils.isEmpty(downloadStatus)){
+                            baseFrgament.queIndex.add(t);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private void setVideoBrows(ArrayList<DlnaRecVideoItem>  dlnaRecVideoItems) {
         final RecordedBaseFragment baseFrgament = getCurrentRecordedBaseFragment(0);
         baseFrgament.mContentsList = new ArrayList<>();
@@ -543,7 +565,11 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         setTakeOutContentsToAll(dlnaRecVideoItems, resultList);
         List<ContentsData> listData = baseFrgament.getContentsData();
         listData.clear();
+        if(baseFrgament.queIndex == null){
+            baseFrgament.queIndex = new ArrayList<>();
+        }
         baseFrgament.queIndex.clear();
+        setDownLoadQue(baseFrgament, dlnaRecVideoItems, resultList);
         for (int i = 0; i < dlnaRecVideoItems.size(); i++) {
             DlnaRecVideoItem itemData = dlnaRecVideoItems.get(i);
             RecordedContentsDetailData detailData = new RecordedContentsDetailData();
@@ -575,7 +601,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                                 detailData.setDlFileFullPath(fullPath);
                             } else {
                                 detailData.setDownLoadStatus(ContentsAdapter.DOWNLOAD_STATUS_LOADING);
-                                baseFrgament.queIndex.add(i);
                             }
                         }
                     }
