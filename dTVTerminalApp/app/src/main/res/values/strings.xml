@@ -118,7 +118,8 @@
     <string name="recording_reservation_list_error_toast">録画予約一覧取得失敗</string>
     <string name="recording_reservation_status_accepting">受付中</string>
     <string name="recording_reservation_status_accept_failure">受付失敗</string>
-    <string name="recording_reservation_list_update_time">現在</string>
+    <!-- 「現在」だけ縦書きにする為に改行を挿入 -->
+    <string name="recording_reservation_list_update_time">現\n在</string>
     <string name="activity_start_network_error_message">ネットワークに接続できませんでした。\nネットワーク状態を確認してください。</string>
     <string name="get_user_info_error_message">ひかりTV for docomoの契約情報取得に失敗しました。</string>
     <string name="get_contents_data_error_message">情報の取得に失敗したため、一部のコンテンツのみ表示します。\nしばらく時間が経ってから再度お試しください。</string>

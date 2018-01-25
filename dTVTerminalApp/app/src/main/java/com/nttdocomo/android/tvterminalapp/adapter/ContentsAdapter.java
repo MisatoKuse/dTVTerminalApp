@@ -24,11 +24,11 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
@@ -80,6 +80,9 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     private final static int LINE_HEIGHT = 1;
     //コピー残り回数
     private final static int ALLOWED_USE = 0;
+
+    //受付アイコンマージン
+    private final static int RECEPTION_MARGINTOP30 = 30;
 
     // クリップ登録済み判定用
     private final static String ACTIVE_CLIP_DISPLAY = "1";
@@ -193,7 +196,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 }
             });
         } else {
-            setDownloadStatus(holder,listContentInfo, position);
+            setDownloadStatus(holder, listContentInfo, position);
         }
 
         RelativeLayout.LayoutParams layoutParamsClip = new RelativeLayout.LayoutParams(
@@ -203,58 +206,73 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         switch (mType) {
             case TYPE_DAILY_RANK:
             case TYPE_WEEKLY_RANK:
-                textMargin  = STATUS_MARGINTOP17;
+                textMargin = STATUS_MARGINTOP17;
                 clipMargin = CLIP_MARGINTOP35;
-                setTextMargin(textMargin,holder,view);
-                setClipMargin(clipMargin,view);
+                setTextMargin(textMargin, holder, view);
+                setClipMargin(clipMargin, view);
                 break;
             case TYPE_VIDEO_RANK:
             case TYPE_VIDEO_CONTENT_LIST:
-                textMargin =  TITLE_MARGINTOP21;
-                setTextMargin(textMargin,holder,view);
-                layoutParamsClip.addRule(RelativeLayout.ALIGN_PARENT_END,R.id.parent_relative_layout);
+                textMargin = TITLE_MARGINTOP21;
+                setTextMargin(textMargin, holder, view);
+                layoutParamsClip.addRule(RelativeLayout.ALIGN_PARENT_END, R.id.parent_relative_layout);
                 layoutParamsClip.addRule(RelativeLayout.CENTER_VERTICAL);
                 view.findViewById(R.id.item_common_result_show_status_area).setLayoutParams(layoutParamsClip);
                 break;
             case TYPE_RENTAL_RANK:
                 textMargin = STATUS_MARGINTOP12;
-                setTextMargin(textMargin,holder,view);
-                layoutParamsClip.addRule(RelativeLayout.ALIGN_PARENT_END,R.id.parent_relative_layout);
+                setTextMargin(textMargin, holder, view);
+                layoutParamsClip.addRule(RelativeLayout.ALIGN_PARENT_END, R.id.parent_relative_layout);
                 layoutParamsClip.addRule(RelativeLayout.CENTER_VERTICAL);
                 view.findViewById(R.id.item_common_result_show_status_area).setLayoutParams(layoutParamsClip);
                 break;
+            case TYPE_RECORDING_RESERVATION_LIST:
+                //録画予約一覧用余白設定
+                textMargin = STATUS_MARGINTOP17;
+                setTextAllMargin(THUMBNAIL_MARGINLEFT, textMargin, THUMBNAIL_MARGINBOTTOM,
+                        textMargin, holder, view);
+                clipMargin = RECEPTION_MARGINTOP30;
+                setClipMargin(clipMargin, view);
+                break;
+
+            //ENUMの値をswitch分岐すると、全ての値を書かないとアナライザーがエラーを出すので、caseを追加
+            case TYPE_RECORDED_LIST:
+            case TYPE_STB_SELECT_LIST:
             default:
                 break;
         }
         holder.tv_rank.setBackgroundResource(R.drawable.label_ranking_other);
-        if(holder.tv_rank.getVisibility() == View.VISIBLE){
-            if(position == CONTENT_POSITION_ONE)
+        if (holder.tv_rank.getVisibility() == View.VISIBLE) {
+            if (position == CONTENT_POSITION_ONE) {
                 holder.tv_rank.setBackgroundResource(R.drawable.label_ranking_1);
+            }
             holder.tv_rank.setTextColor(ContextCompat.getColor(mContext, R.color.black_text));
-            if(position == CONTENT_POSITION_TWO){
+            if (position == CONTENT_POSITION_TWO) {
                 holder.tv_rank.setBackgroundResource(R.drawable.label_ranking_2);
             }
-            if(position == CONTENT_POSITION_THREE){
+            if (position == CONTENT_POSITION_THREE) {
                 holder.tv_rank.setBackgroundResource(R.drawable.label_ranking_3);
             }
-            if(position >= CONTENT_POSITION_TWO){
+            if (position >= CONTENT_POSITION_TWO) {
                 holder.tv_rank.setTextColor(ContextCompat.getColor(mContext, R.color.white_text));
             }
         }
         return view;
     }
+
     private void setClipMargin(int clipMargin, View view) {
         DisplayMetrics DisplayMetrics = mContext.getResources().getDisplayMetrics();
         float density = DisplayMetrics.density;
 
         RelativeLayout.LayoutParams layoutParamsClip = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        layoutParamsClip.setMargins(THUMBNAIL_MARGIN0 * (int) density,  clipMargin *(int) density,
-                THUMBNAIL_MARGIN0 * (int) density,THUMBNAIL_MARGIN0 * (int) density);
-        layoutParamsClip.addRule(RelativeLayout.ALIGN_PARENT_END,R.id.parent_relative_layout);
+        layoutParamsClip.setMargins(THUMBNAIL_MARGIN0 * (int) density, clipMargin * (int) density,
+                THUMBNAIL_MARGIN0 * (int) density, THUMBNAIL_MARGIN0 * (int) density);
+        layoutParamsClip.addRule(RelativeLayout.ALIGN_PARENT_END, R.id.parent_relative_layout);
         view.findViewById(R.id.item_common_result_show_status_area).setLayoutParams(layoutParamsClip);
     }
-    private void setTextMargin(int textMargin, ViewHolder holder,View view) {
+
+    private void setTextMargin(int textMargin, ViewHolder holder, View view) {
         DisplayMetrics DisplayMetrics = mContext.getResources().getDisplayMetrics();
         float density = DisplayMetrics.density;
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
@@ -274,10 +292,48 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     }
 
     /**
+     * 4方向のマージンをセットする
+     *
+     * @param leftMargin   左マージン
+     * @param topMargin    上マージン
+     * @param rightMargin  右マージン
+     * @param bottomMargin 下マージン
+     * @param holder       ビューの集合体
+     * @param view         マージンを指定するビュー
+     */
+    private void setTextAllMargin(int leftMargin, int topMargin,
+                                  int rightMargin, int bottomMargin, ViewHolder holder, View view) {
+        //解像度の倍率を取得する
+        DisplayMetrics DisplayMetrics = mContext.getResources().getDisplayMetrics();
+        float density = DisplayMetrics.density;
+
+        //レイアウト情報を取得
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT);
+
+        //マージンの数値を算出して格納する
+        layoutParams.setMargins(leftMargin * (int) density, topMargin * (int) density,
+                rightMargin * (int) density, bottomMargin * (int) density);
+
+        //表示開始位置をステータスエリアに合わせる
+        layoutParams.addRule(RelativeLayout.START_OF, R.id.item_common_result_show_status_area);
+
+        //表示終了位置をアイコンに合わせる
+        layoutParams.addRule(RelativeLayout.END_OF, R.id.item_common_result_thumbnail_rl);
+
+        //レイアウトをビューに設定する
+        view.findViewById(R.id.item_common_result_contents).setLayoutParams(layoutParams);
+
+        //時間表示のフォントサイズを指定する
+        holder.tv_time.setTextSize(TIME_TEXT_SIZE);
+    }
+
+    /**
      * 各コンテンツデータを設定
      *
-     * @param holder
-     * @param listContentInfo
+     * @param holder          ビューの集合
+     * @param listContentInfo 行データー
      */
     private void setContentsData(ViewHolder holder, ContentsData listContentInfo) {
         DTVTLogger.start();
@@ -446,7 +502,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             }
         }
 
-        if(!ActivityTypeItem.TYPE_RECORDED_LIST.equals(mType)){
+        if (!ActivityTypeItem.TYPE_RECORDED_LIST.equals(mType)) {
             setClipButton(holder, listContentInfo);
         }
 
@@ -592,7 +648,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * クリップ表示処理
      *
      * @param holder          クリップアイコン
-     * @param listContentInfo
+     * @param listContentInfo 行データー
      */
     private void setClipButton(ViewHolder holder, ContentsData listContentInfo) {
         if (holder.tv_clip != null) {
@@ -646,7 +702,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             } else {
                 holder.tv_recorded_ch_name.setText(listContentInfo.getRecordedChannelName());
                 holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.content_time_text));
-                if (TextUtils.isEmpty(listContentInfo.getRecordedChannelName())){
+                if (TextUtils.isEmpty(listContentInfo.getRecordedChannelName())) {
                     holder.tv_recorded_hyphen.setVisibility(View.GONE);
                     holder.tv_recorded_ch_name.setVisibility(View.GONE);
                 }

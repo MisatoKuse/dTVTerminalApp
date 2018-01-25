@@ -13,13 +13,28 @@
             android:id="@+id/reservation_update_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="@dimen/contents_detail_15dp"
             android:gravity="right"
             android:textSize="@dimen/list_item_time_text_size"
             android:textColor="@color/content_time_text"/>
     </RelativeLayout>
+
+    <!-- ListViewのheaderDividersEnabledが機能しないので、前側の線はこちらで用意する。
+         色の調整用に透過率を操作しているが、dimens等に小数を設定するとエラーになるので即値としている  -->
+    <View
+        android:id="@+id/header_divider"
+        android:layout_height="@dimen/video_contents_divider_divider_height"
+        android:layout_width="wrap_content"
+        android:background="@drawable/video_list_item_divider"
+        android:alpha="0.83"
+        android:layout_marginTop="@dimen/top_divider_margin_top"
+        />
+
     <ListView
         android:id="@+id/record_reservation_list_view"
+        android:divider="@drawable/list_item_divider"
+        android:footerDividersEnabled="true"
+        android:dividerHeight="@dimen/video_contents_divider_divider_height"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </ListView>
