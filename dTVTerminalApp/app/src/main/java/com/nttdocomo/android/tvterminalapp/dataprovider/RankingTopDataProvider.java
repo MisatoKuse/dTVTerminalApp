@@ -530,7 +530,8 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             String filter = "";
             int ageReq = 1;
             String type = "";
-            String sort = "";
+            //TODO：暫定的に人気順でソートする
+            String sort = JsonConstants.GENRE_PER_CONTENTS_SORT_PLAY_COUNT_DESC;
 
             //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
             webClient.getContentsListPerGenreApi(limit, offset,

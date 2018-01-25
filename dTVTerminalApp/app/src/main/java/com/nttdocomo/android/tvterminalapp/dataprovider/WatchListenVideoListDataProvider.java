@@ -39,7 +39,6 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
             WatchListenVideoList list = watchListenVideoList.get(0);
             if (!mRequiredClipKeyList
                     || mResponseEndFlag) {
-                setStructDB(watchListenVideoList);
                 sendWatchListenVideoListData(list.getVcList());
             } else {
                 mWatchListenVideoList = list;
@@ -203,17 +202,5 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
         }
 
         mApiDataProviderCallback.watchListenVideoListCallback(rankingContentsDataList);
-    }
-
-    /**
-     * 視聴中ビデオ一覧データをDBに格納する.
-     *
-     * @param watchListenVideoList 視聴中ビデオ一覧用データ
-     */
-    public void setStructDB(final List<WatchListenVideoList> watchListenVideoList) {
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(DateUtils.WATCHING_VIDEO_LIST_LAST_INSERT);
-        WatchListenVideoDataManager dataManager = new WatchListenVideoDataManager(mContext);
-        dataManager.insertWatchListenVideoInsertList(watchListenVideoList);
     }
 }

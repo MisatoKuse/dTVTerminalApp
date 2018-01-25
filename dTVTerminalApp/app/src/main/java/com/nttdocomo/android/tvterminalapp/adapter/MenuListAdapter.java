@@ -19,7 +19,6 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.utils.ColorUtils;
 
 import java.util.List;
 
@@ -132,7 +131,6 @@ public class MenuListAdapter extends BaseAdapter {
      * @param textView タイトルView
      */
     private void setTextView(final String title, final TextView textView) {
-        ColorUtils colorUtils = new ColorUtils(mContext);
         int intCustomTitleLeftMargin = mContext.getResources().getDimensionPixelSize(
                 R.dimen.global_menu_list_item_sub_title_left_margin);
         int intTitleLeftMargin = mContext.getResources().getDimensionPixelSize(
@@ -144,10 +142,10 @@ public class MenuListAdapter extends BaseAdapter {
         if (title != null) {
             if (title.equals(mContext.getString(R.string.nav_menu_item_hikari_tv_none_action))) {
                 //ひかりTVメインの設定
-                colorUtils.setTextViewColor(textView, R.color.list_item_background);
+                textView.setTextColor(ContextCompat.getColor(mContext, R.color.list_item_background));
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_premium_tv_app_start_common))) {
                 //テレビアプリを起動するの設定
-                colorUtils.setTextViewColor(textView, R.color.stb_start_title);
+                textView.setTextColor(ContextCompat.getColor(mContext, R.color.stb_start_title));
                 textView.setTypeface(Typeface.DEFAULT);
                 textView.setTextSize(TEXT_SIZE);
                 marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
@@ -157,7 +155,7 @@ public class MenuListAdapter extends BaseAdapter {
                     || title.equals(mContext.getString(R.string.nav_menu_item_notice))
                     || title.equals(mContext.getString(R.string.nav_menu_item_setting))) {
                 //通常アイテムの設定
-                colorUtils.setTextViewColor(textView, R.color.white_text);
+                textView.setTextColor(ContextCompat.getColor(mContext, R.color.white_text));
                 textView.setTypeface(Typeface.DEFAULT);
                 textView.setTextSize(TEXT_SIZE);
                 marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
@@ -166,10 +164,10 @@ public class MenuListAdapter extends BaseAdapter {
                     || title.equals(mContext.getString(R.string.nav_menu_item_dtv))
                     || title.equals(mContext.getString(R.string.nav_menu_item_d_animation))
                     || title.equals(mContext.getString(R.string.nav_menu_item_dazn))) {
-                colorUtils.setTextViewColor(textView, R.color.list_item_background);
+                textView.setTextColor(ContextCompat.getColor(mContext, R.color.list_item_background));
             } else {
                 //その他サブアイテムのカスタマイズ
-                colorUtils.setTextViewColor(textView, R.color.white_text);
+                textView.setTextColor(ContextCompat.getColor(mContext, R.color.white_text));
                 textView.setTypeface(Typeface.DEFAULT);
                 textView.setTextSize(TEXT_SIZE);
                 marginLayoutParams.setMargins(intCustomTitleLeftMargin, 0, 0, 0);

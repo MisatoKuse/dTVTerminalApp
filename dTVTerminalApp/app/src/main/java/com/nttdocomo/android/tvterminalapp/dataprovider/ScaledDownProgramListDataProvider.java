@@ -59,7 +59,6 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     private static final int CHANNEL_SELECT = 3;//チャンネル検索
     private static final int SCHEDULE_SELECT = 4;//番組検索
 
-    private static final String DISPLAY_TYPE[] = {"", "hikaritv", "dch"};
     private static final String DATE_FORMAT = "yyyyMMdd";
     private static final String SELECT_TIME_FORMAT = "yyyy-MM-ddHH:mm:ss";
 
@@ -212,19 +211,19 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         switch (mOperationId) {
             case CHANNEL_UPDATE://サーバーから取得したチャンネルデータをDBに保存する
                 ChannelInsertDataManager channelInsertDataManager = new ChannelInsertDataManager(mContext);
-                channelInsertDataManager.insertChannelInsertList(mChannelList, DISPLAY_TYPE[mChannelDisplayType]);
+                channelInsertDataManager.insertChannelInsertList(mChannelList, JsonConstants.DISPLAY_TYPE[mChannelDisplayType]);
                 break;
             case SCHEDULE_UPDATE://サーバーから取得した番組データをDBに保存する
                 TvScheduleInsertDataManager scheduleInsertDataManager = new TvScheduleInsertDataManager(mContext);
-                scheduleInsertDataManager.insertTvScheduleInsertList(mTvScheduleList, DISPLAY_TYPE[mProgramDisplayType]);
+                scheduleInsertDataManager.insertTvScheduleInsertList(mTvScheduleList, JsonConstants.DISPLAY_TYPE[mProgramDisplayType]);
                 break;
             case CHANNEL_SELECT://DBからチャンネルデータを取得して、画面に返却する
                 ProgramDataManager channelDataManager = new ProgramDataManager(mContext);
-                resultSet = channelDataManager.selectChannelListProgramData(DISPLAY_TYPE[mChannelDisplayType]);
+                resultSet = channelDataManager.selectChannelListProgramData(JsonConstants.DISPLAY_TYPE[mChannelDisplayType]);
                 break;
             case SCHEDULE_SELECT://DBから番組データを取得して、画面に返却する
                 ProgramDataManager scheduleDataManager = new ProgramDataManager(mContext);
-                resultSet = scheduleDataManager.selectTvScheduleListProgramData(DISPLAY_TYPE[mProgramDisplayType], mProgramSelectDate);
+                resultSet = scheduleDataManager.selectTvScheduleListProgramData(JsonConstants.DISPLAY_TYPE[mProgramDisplayType], mProgramSelectDate);
                 break;
             default:
                 break;
@@ -516,7 +515,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
         } else {
             dateUtils.addLastProgramDate(DateUtils.CHANNEL_LAST_UPDATE);
             ChannelWebClient mChannelList = new ChannelWebClient(mContext);
-            mChannelList.getChannelApi(limit, offset, filter, DISPLAY_TYPE[type], this);
+            mChannelList.getChannelApi(limit, offset, filter, JsonConstants.DISPLAY_TYPE[type], this);
         }
     }
 

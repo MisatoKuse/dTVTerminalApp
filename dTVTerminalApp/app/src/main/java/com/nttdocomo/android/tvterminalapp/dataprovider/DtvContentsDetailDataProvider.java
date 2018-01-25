@@ -121,10 +121,6 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
      * 購入済みチャンネルリスト取得.
      */
     private static final int RENTAL_CHANNEL_SELECT = 8;
-    /**
-     * ディスプレイタイプ.
-     */
-    private static final String[] DISPLAY_TYPE = {"", "hikaritv", "dch"};
 
     private ArrayList<VodMetaFullData> mVodMetaFullDataList = null;
 
@@ -374,11 +370,11 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                 break;
             case CHANNEL_UPDATE: //サーバーから取得したチャンネルデータをDBに保存する
                 ChannelInsertDataManager channelInsertDataManager = new ChannelInsertDataManager(mContext);
-                channelInsertDataManager.insertChannelInsertList(mChannelList, DISPLAY_TYPE[mChannelDisplayType]);
+                channelInsertDataManager.insertChannelInsertList(mChannelList, JsonConstants.DISPLAY_TYPE[mChannelDisplayType]);
                 break;
             case CHANNEL_SELECT: //DBからチャンネルデータを取得して、画面に返却する
                 ProgramDataManager channelDataManager = new ProgramDataManager(mContext);
-                resultSet = channelDataManager.selectChannelListProgramData(DISPLAY_TYPE[mChannelDisplayType]);
+                resultSet = channelDataManager.selectChannelListProgramData(JsonConstants.DISPLAY_TYPE[mChannelDisplayType]);
                 break;
             case RENTAL_VOD_UPDATE: //サーバーから取得した購入済みVODデータをDBに保存する
                 RentalListInsertDataManager rentalListInsertDataManager = new RentalListInsertDataManager(mContext);
@@ -616,7 +612,7 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
         } else {
             dateUtils.addLastProgramDate(DateUtils.CHANNEL_LAST_UPDATE);
             ChannelWebClient mChannelList = new ChannelWebClient(mContext);
-            mChannelList.getChannelApi(limit, offset, filter, DISPLAY_TYPE[type], this);
+            mChannelList.getChannelApi(limit, offset, filter, JsonConstants.DISPLAY_TYPE[type], this);
         }
     }
 

@@ -38,14 +38,14 @@ public class WatchListenVideoDataManager {
      *
      * @param watchListenVideoList 視聴中ビデオ一覧情報
      */
-    public void insertWatchListenVideoInsertList(final List<WatchListenVideoList> watchListenVideoList) {
+    public void insertWatchListenVideoInsertList(final WatchListenVideoList watchListenVideoList) {
 
         //各種オブジェクト作成
         DBHelper watchListenVideoDBHelper = new DBHelper(mContext);
         SQLiteDatabase db = watchListenVideoDBHelper.getWritableDatabase();
         WatchListenVideoListDao watchListenVideoListDao = new WatchListenVideoListDao(db);
 
-        List<HashMap<String, String>> hashMaps = watchListenVideoList.get(0).getVcList();
+        List<HashMap<String, String>> hashMaps = watchListenVideoList.getVcList();
 
         //DB保存前に前回取得したデータは全消去する
         watchListenVideoListDao.delete();

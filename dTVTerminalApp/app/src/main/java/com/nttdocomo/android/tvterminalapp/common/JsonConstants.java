@@ -377,4 +377,33 @@ public class JsonConstants {
     public static final String META_RESPONSE_IS_UPDATE = "is_update";
     // 初回取得（必ずリストがほしい場合 true）
     public static final String META_RESPONSE_IS_FORCE = "is_force";
+
+    /**
+     * チャンネル一覧取得タイプ.
+     */
+    public static final String DISPLAY_TYPE[] = {"", "hikaritv", "dch"};
+
+    /**
+     * ジャンル毎コンテンツ一覧(ビデオランキング)ソートタイプ.
+     * titleruby_asc：タイトルルビ昇順
+     */
+    public static final String GENRE_PER_CONTENTS_SORT_TITLERUBY_ASC = "titleruby_asc";
+
+    /**
+     * ジャンル毎コンテンツ一覧(ビデオランキング)ソートタイプ.
+     * avail_s_asc：配信開始日昇順
+     */
+    public static final String GENRE_PER_CONTENTS_SORT_AVAIL_S_ASC = "avail_s_asc";
+
+    /**
+     * ジャンル毎コンテンツ一覧(ビデオランキング)ソートタイプ.
+     * avail_e_desc：配信終了日降順
+     */
+    public static final String GENRE_PER_CONTENTS_SORT_AVAIL_E_DESC = "avail_e_desc";
+
+    /**
+     * ジャンル毎コンテンツ一覧(ビデオランキング)ソートタイプ.
+     * play_count_desc：人気順（前日の視聴回数数降順）
+     */
+    public static final String GENRE_PER_CONTENTS_SORT_PLAY_COUNT_DESC = "play_count_desc";
 }
