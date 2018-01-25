@@ -50,10 +50,9 @@
                 android:id="@+id/function_menu_reload"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/launch_text_layout_high_size"
-                android:layout_marginTop="@dimen/launch_function_menu_reload_margin_end"
+                android:layout_marginEnd="@dimen/launch_function_menu_reload_margin_end"
+                android:layout_marginTop="@dimen/launch_function_menu_arrow_margin_top"
                 android:background="@drawable/icon_webview_function_menu_reload_active" />
-
         </LinearLayout>
     </RelativeLayout>
 </RelativeLayout>
