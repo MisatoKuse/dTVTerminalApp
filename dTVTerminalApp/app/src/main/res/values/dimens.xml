@@ -131,6 +131,7 @@
     <dimen name="contents_detail_8dp">8dp</dimen>
     <dimen name="contents_detail_10dp">10dp</dimen>
     <dimen name="contents_detail_16dp">16dp</dimen>
+    <dimen name="contents_detail_15dp">15dp</dimen>
     <dimen name="contents_detail_icon_size">36dp</dimen>
     <dimen name="contents_detail_icon_margin">8dp</dimen>
     <dimen name="contents_detail_contract_leading_text_width">180dp</dimen>
@@ -188,6 +189,7 @@
     <dimen name="recording_reservation_list_status_margin_end">8dp</dimen>
     <dimen name="list_item_channel_name_text_size">14dp</dimen>
     <dimen name="list_item_recording_reservation_status_text_size">12dp</dimen>
+    <dimen name="top_divider_margin_top">3dp</dimen>
 
     <!--録画番組-->
     <dimen name="recorded_contents_dividerHeight">1dp</dimen>
