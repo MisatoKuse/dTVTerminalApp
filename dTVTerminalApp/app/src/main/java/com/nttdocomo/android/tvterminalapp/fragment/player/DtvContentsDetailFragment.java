@@ -259,10 +259,11 @@ public class DtvContentsDetailFragment extends Fragment {
             RelativeLayout.LayoutParams imageParams = new RelativeLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     (int) getResources().getDimension(R.dimen.contents_detail_tabs_height));
-            ImageView imageView = new ImageView(getContext());
-            imageView.setImageResource(R.mipmap.ic_chevron_right_white_24dp);
-            imageParams.addRule(RelativeLayout.ALIGN_PARENT_END);
-            imageView.setLayoutParams(imageParams);
+            // TODO: スタッフ詳細画面への遷移が行われるようになった場合にアイコンが復活する可能性があるのでコメント化
+            //ImageView imageView = new ImageView(getContext());
+            //imageView.setImageResource(R.mipmap.ic_chevron_right_white_24dp);
+            //imageParams.addRule(RelativeLayout.ALIGN_PARENT_END);
+            //imageView.setLayoutParams(imageParams);
             contentParams.addRule(RelativeLayout.ALIGN_PARENT_START);
             tabTextView.setLayoutParams(contentParams);
             tabTextView.setText(staffList.get(i));
@@ -277,7 +278,8 @@ public class DtvContentsDetailFragment extends Fragment {
                 }
             });
             itemLayout.addView(tabTextView);
-            itemLayout.addView(imageView);
+            //TODO: ">"アイコンの追加はひとまず中止
+            //itemLayout.addView(imageView);
             staffLayout.addView(itemLayout);
         }
     }
