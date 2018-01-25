@@ -58,9 +58,6 @@
             android:name=".activity.launch.DAccountReSettingActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.launch.DAccountSettingActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".activity.launch.DAccountSettingHelpActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -188,10 +185,6 @@
             android:name=".activity.video.VideoTopActivity"
             android:screenOrientation="portrait" />
         <!-- ======================================  Video グループ End ====================================== -->
-
-        <activity android:name=".activity.temp.DAccountAppliActivity" />
-        <activity android:name=".activity.temp.GoogleStoreActivity" />
-        <activity android:name=".activity.launch.DAccountRegConfirmationActivity" />
 
         <!-- dアカウントの状況変化を受け取るレシーバー -->
         <receiver
