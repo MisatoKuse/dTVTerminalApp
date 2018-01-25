@@ -11,7 +11,7 @@
     <ScrollView
         android:id="@+id/contents_detail_scroll_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1">
 
         <LinearLayout
@@ -41,9 +41,9 @@
                         android:id="@+id/tv_player_main_layout_video_ctrl_player_title"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="80dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginEnd="24dp"
+                        android:layout_marginStart="@dimen/contents_detail_player_title_text_start_margin"
+                        android:layout_marginEnd="@dimen/contents_detail_player_title_text_end_margin"
+                        android:layout_marginTop="@dimen/contents_detail_player_title_text_top_margin"
                         android:text=""
                         android:maxLines="2"
                         android:ellipsize="end"
@@ -51,10 +51,10 @@
 
                     <ImageView
                         android:id="@+id/tv_player_main_layout_video_ctrl_player_logo"
-                        android:layout_width="48dp"
-                        android:layout_height="27dp"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="26dp"
+                        android:layout_width="@dimen/contents_detail_player_logo_width"
+                        android:layout_height="@dimen/contents_detail_player_logo_height"
+                        android:layout_marginStart="@dimen/contents_detail_player_logo_start_margin"
+                        android:layout_marginTop="@dimen/contents_detail_player_logo_top_margin"
                         android:background="@android:color/transparent"/>
                 </RelativeLayout>
 
@@ -75,8 +75,8 @@
                     <!--中央ボタン画像-->
                     <ImageView
                         android:id="@+id/dtv_contents_view_button"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
+                        android:layout_width="@dimen/contents_detail_watch_dtv_image_width"
+                        android:layout_height="@dimen/contents_detail_watch_dtv_image_height"
                         android:layout_gravity="center_horizontal"
                         android:contentDescription="@string/contents_info_thumbnail_button"
                         android:src="@mipmap/ic_play_arrow_white_24dp" />
@@ -90,6 +90,32 @@
                         android:layout_gravity="center_horizontal"
                         android:textSize="@dimen/contents_detail_16dp"
                         android:visibility="gone" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/contract_leading_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+                    <TextView
+                        android:id="@+id/contract_leading_text"
+                        android:layout_width="@dimen/contents_detail_contract_leading_text_width"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/contents_detial_contract_leading_text_bottom_margin"
+                        android:gravity="center"
+                        android:textColor="@color/contents_contract_leading_text_color"
+                        android:textSize="@dimen/contents_detial_contract_leading_text_size" />
+                    <Button
+                        android:id="@+id/contract_leading_button"
+                        android:layout_width="@dimen/contents_detail_contract_leading_button_width"
+                        android:layout_height="@dimen/contents_detail_contract_leading_button_height"
+                        android:layout_gravity="center_horizontal"
+                        android:onClick="contractButtonClick"
+                        android:textColor="@color/contents_contract_leading_button_text_color"
+                        android:textSize="@dimen/contents_detail_contract_leading_button_text_size"
+                        android:background="@drawable/shape_round_corner_5dp"/>
                 </LinearLayout>
             </RelativeLayout>
 

@@ -299,6 +299,10 @@
     <string name="recording_reservation_confirm_dialog_msg">この番組を録画予約します。\n宜しいでしょうか？</string>
     <string name="recording_reservation_confirm_dialog_confirm">録画予約する</string>
     <string name="recording_reservation_confirm_dialog_cancel">録画予約しない</string>
+    <string name="contents_detail_contract_text_vod">ご覧になるには購入が必要です。ドコモテレビターミナル側で購入してください。</string>
+    <string name="contents_detail_contract_button_vod">ドコモテレビターミナルで購入する</string>
+    <string name="contents_detail_contract_text_ch">このチャンネルをご覧になるにはドコモテレビターミナル側での契約が必要です。</string>
+    <string name="contents_detail_contract_button_ch">ドコモテレビターミナルで契約する</string>
 
     <!-- チャンネルリストタイトル -->
     <string name="channel_list_activity_title">チャンネルリスト</string>

@@ -73,6 +73,9 @@
 
     <!--コンテンツ詳細-->
     <color name="contents_header_background">#000000</color>
+    <color name="contents_contract_leading_text_color">#ffffff</color>
+    <color name="contents_contract_leading_button_color">#eb3015</color>
+    <color name="contents_contract_leading_button_text_color">#ffffff</color>
     <!--録画番組一覧-->
     <color name="recorded_background">#000000</color>
     <color name="recorded_contents_background">#222222</color>
