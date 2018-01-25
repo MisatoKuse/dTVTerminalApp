@@ -35,6 +35,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -57,6 +58,7 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
+import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
@@ -110,8 +112,24 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         MediaPlayerController.OnPlayerEventListener, MediaPlayerController.OnErrorListener, MediaPlayerController.OnCaptionDataListener,
         RemoteControllerView.OnStartRemoteControllerUIListener, DtvContentsDetailFragment.RecordingReservationIconListener {
 
-    private static final int SCREEN_RATIO_WIDTH = 16;
-    private static final int SCREEN_RATIO_HEIGHT = 9;
+    /**
+     * アスペクト比(16:9)の16.
+     */
+    private static final int SCREEN_RATIO_WIDTH_16 = 16;
+    /**
+     * アスペクト比(16:9)の9.
+     */
+    private static final int SCREEN_RATIO_HEIGHT_9 = 9;
+    /**
+     * アスペクト比(4:3)の4.
+     */
+    private static final int SCREEN_RATIO_WIDTH_4 = 4;
+    /**
+     * アスペクト比(4:3)の3.
+     */
+    private static final int SCREEN_RATIO_HEIGHT_3 = 3;
+
+
     //先頭のメタデータを取得用
     private static final int FIRST_VOD_META_DATA = 0;
 
@@ -337,10 +355,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     private void initView() {
         mIntent = getIntent();
         mThumbnailRelativeLayout = findViewById(R.id.dtv_contents_detail_layout);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                getWidthDensity(),
-                (getWidthDensity() * SCREEN_RATIO_HEIGHT / SCREEN_RATIO_WIDTH));
-        mThumbnailRelativeLayout.setLayoutParams(layoutParams);
         Object object = mIntent.getParcelableExtra(RecordedListActivity.RECORD_LIST_KEY);
         if (object instanceof RecordedContentsDetailData) {
             mIsPlayer = true;
@@ -539,6 +553,22 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         synchronized (this) {
             if (mCanPlay) {
                 playButton();
+                int ratio = mPlayerController.getVideoAspectRatio();
+                if (ratio == SecureVideoView.RATIO_16x9) {
+                    //アスペクト比 16:9 のコンテンツ
+                    ViewGroup.LayoutParams lp = mThumbnailRelativeLayout.getLayoutParams();
+                    lp.width = getScreenWidth();
+                    lp.height = getScreenWidth() * SCREEN_RATIO_HEIGHT_9 / SCREEN_RATIO_WIDTH_16;
+                    mThumbnailRelativeLayout.setLayoutParams(lp);
+                    mSecureVideoPlayer.setAspectRatio(SecureVideoView.RATIO_16x9);
+                } else {
+                    //アスペクト比 4:3 のコンテンツ
+                    ViewGroup.LayoutParams lp = mThumbnailRelativeLayout.getLayoutParams();
+                    lp.width = getScreenWidth();
+                    lp.height = getScreenWidth() * SCREEN_RATIO_HEIGHT_3 / SCREEN_RATIO_WIDTH_4;
+                    mThumbnailRelativeLayout.setLayoutParams(lp);
+                    mSecureVideoPlayer.setAspectRatio(SecureVideoView.RATIO_4x3);
+                }
                 mPlayerController.start();
             }
         }
@@ -1101,7 +1131,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         }
         if (!TextUtils.isEmpty(url)) {
             ThumbnailProvider mThumbnailProvider = new ThumbnailProvider(this);
-            mThumbnail.setImageResource(R.drawable.test_image);
             mThumbnail.setTag(url);
             Bitmap bitmap = mThumbnailProvider.getThumbnailImage(mThumbnail, url);
             if (bitmap != null) {
@@ -1260,7 +1289,14 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         } else {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
             mScreenWidth = getWidthDensity();
-            playerParams.height = (getWidthDensity() * SCREEN_RATIO_HEIGHT / SCREEN_RATIO_WIDTH);
+            if (mPlayerController != null) {
+                int ratio = mPlayerController.getVideoAspectRatio();
+                if (ratio == SecureVideoView.RATIO_4x3) {
+                    playerParams.height = (getWidthDensity() * SCREEN_RATIO_HEIGHT_3 / SCREEN_RATIO_WIDTH_4);
+                } else {
+                    playerParams.height = (getWidthDensity() * SCREEN_RATIO_HEIGHT_9 / SCREEN_RATIO_WIDTH_16);
+                }
+            }
             setTitleVisibility(true);
             setPlayerProgressView(false);
             setRemoteControllerViewVisibility(View.VISIBLE);
@@ -1758,7 +1794,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                     initPlayerView();
                     setPlayerEvent();
                 } else {
-                    Toast.makeText(this, "フルスクリーンに変更されています", Toast.LENGTH_SHORT).show();
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                     initPlayerView();
                     setPlayerEvent();
@@ -2017,6 +2052,9 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 } else {
                     showMessage("再生開始");
                 }
+                ViewGroup.LayoutParams lp = mThumbnailRelativeLayout.getLayoutParams();
+                lp.height = mSecureVideoPlayer.getHeight();
+                mThumbnailRelativeLayout.setLayoutParams(lp);
                 break;
             case MediaPlayerDefinitions.PE_FIRST_FRAME_RENDERED:
                 //showMessage("PE_FIRST_FRAME_RENDERED");

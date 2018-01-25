@@ -35,7 +35,8 @@
                     <com.digion.dixim.android.secureplayer.SecureVideoView
                         android:id="@+id/dtv_contents_detail_main_layout_player_view"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true" />
 
                     <TextView
                         android:id="@+id/tv_player_main_layout_video_ctrl_player_title"
@@ -103,10 +104,10 @@
                         android:id="@+id/contract_leading_text"
                         android:layout_width="@dimen/contents_detail_contract_leading_text_width"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/contents_detial_contract_leading_text_bottom_margin"
+                        android:layout_marginBottom="@dimen/contents_detail_contract_leading_text_bottom_margin"
                         android:gravity="center"
                         android:textColor="@color/contents_contract_leading_text_color"
-                        android:textSize="@dimen/contents_detial_contract_leading_text_size" />
+                        android:textSize="@dimen/contents_detail_contract_leading_text_size" />
                     <Button
                         android:id="@+id/contract_leading_button"
                         android:layout_width="@dimen/contents_detail_contract_leading_button_width"
