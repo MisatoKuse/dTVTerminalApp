@@ -6,12 +6,16 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.datamanager.WatchListenVideoDataManager;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendListDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RoleListInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListResponse;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListResponse;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
@@ -48,7 +52,6 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvScheduleWebClie
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WatchListenVideoWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
-import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.GenreListJsonParser;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser;
 
@@ -71,6 +74,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         ChannelWebClient.ChannelJsonParserCallback,
         RoleListWebClient.RoleListJsonParserCallback,
         GenreListWebClient.GenreListJsonParserCallback,
+        DbThread.DbOperation,
         RecommendDataProvider.RecommendApiDataProviderCallback {
 
     private Context mContext = null;
@@ -79,6 +83,27 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
 
     //Home画面ではチャンネルリストを使用しないため"全て"を]設定する
     private static final int DEFAULT_CHANNEL_DISPLAY_TYPE = 0;
+
+    private static final int ROLE_ID_LIST = 0;
+    private static final int CHANNEL_LIST = 1;
+    private static final int TV_SCHEDULE_LIST = 2;
+    private static final int DAILY_RANK_LIST = 3;
+    private static final int VIDEO_RANK_LIST = 4;
+    private static final int TV_CLIP_LIST = 5;
+    private static final int VOD_CLIP_LIST = 6;
+    private static final int WATCH_LISTEN_VIDEO_LIST = 7;
+    private static final int RENTAL_CH_LIST = 8;
+    private static final int RENTAL_VOD_LIST = 9;
+    private PurchasedChListResponse mPurchasedChListResponse = null;
+    private ArrayList<RoleListMetaData> mRoleListMetaDataList = null;
+    private PurchasedVodListResponse mPurchasedVodListResponse = null;
+    private WatchListenVideoList mWatchListenVideoList = null;
+    private VodClipList mVodClipList = null;
+    private TvClipList mTvClipList = null;
+    private ChannelList mChannelList = null;
+    private VideoRankList mVideoRankList = null;
+    private DailyRankList mDailyRankList = null;
+    private TvScheduleList mTvScheduleList = null;
 
     @Override
     public void onTvClipJsonParsed(List<TvClipList> tvClipLists) {
@@ -729,11 +754,16 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param tvScheduleList 番組一覧データ
      */
     private void setStructDB(final TvScheduleList tvScheduleList) {
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(DateUtils.TV_SCHEDULE_LAST_INSERT);
-        TvScheduleInsertDataManager dataManager = new TvScheduleInsertDataManager(mContext);
-        dataManager.insertTvScheduleInsertList(tvScheduleList);
-        sendTvScheduleListData(tvScheduleList.geTvsList());
+        mTvScheduleList = tvScheduleList;
+        sendTvScheduleListData(mTvScheduleList.geTvsList());
+        //DB保存
+        Handler handler = new Handler();
+        try {
+            DbThread t = new DbThread(handler, this, TV_SCHEDULE_LIST);
+            t.start();
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+        }
     }
 
     /**
@@ -742,11 +772,16 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param dailyRankList デイリーランキングデータ
      */
     private void setStructDB(final DailyRankList dailyRankList) {
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(DateUtils.DAILY_RANK_LAST_INSERT);
-        DailyRankInsertDataManager dataManager = new DailyRankInsertDataManager(mContext);
-        dataManager.insertDailyRankInsertList(dailyRankList);
-        sendDailyRankListData(dailyRankList.getDrList());
+        mDailyRankList = dailyRankList;
+        sendDailyRankListData(mDailyRankList.getDrList());
+        //DB保存
+        Handler handler = new Handler();
+        try {
+            DbThread t = new DbThread(handler, this, DAILY_RANK_LIST);
+            t.start();
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+        }
     }
 
     /**
@@ -755,11 +790,16 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param videoRankList ビデオランキングデータ
      */
     private void setStructDB(final VideoRankList videoRankList) {
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(DateUtils.VIDEO_RANK_LAST_INSERT);
-        VideoRankInsertDataManager dataManager = new VideoRankInsertDataManager(mContext);
-        dataManager.insertVideoRankInsertList(videoRankList);
-        sendVideoRankListData(videoRankList.getVrList());
+        mVideoRankList = videoRankList;
+        sendVideoRankListData(mVideoRankList.getVrList());
+        //DB保存
+        Handler handler = new Handler();
+        try {
+            DbThread t = new DbThread(handler, this, VIDEO_RANK_LIST);
+            t.start();
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+        }
     }
 
     /**
@@ -768,11 +808,15 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param channelList チャンネルリストデータ
      */
     private void setStructDB(final ChannelList channelList) {
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(DateUtils.CHANNEL_LAST_UPDATE);
-
-        ChannelInsertDataManager dataManager = new ChannelInsertDataManager(mContext);
-        dataManager.insertChannelInsertList(channelList, JsonConstants.DISPLAY_TYPE[DEFAULT_CHANNEL_DISPLAY_TYPE]);
+        mChannelList = channelList;
+        //DB保存
+        Handler handler = new Handler();
+        try {
+            DbThread t = new DbThread(handler, this, CHANNEL_LIST);
+            t.start();
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+        }
     }
 
     /**
@@ -781,12 +825,17 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param tvClipList クリップ[テレビ]一覧データ
      */
     private void setStructDB(TvClipList tvClipList) {
+        mTvClipList = tvClipList;
         //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
-//        DateUtils dateUtils = new DateUtils(mContext);
-//        dateUtils.addLastDate(DateUtils.TV_LAST_INSERT);
-//        TvClipInsertDataManager dataManager = new TvClipInsertDataManager(mContext);
-//        dataManager.insertTvClipInsertList(tvClipList);
-        sendTvClipListData(tvClipList.getVcList());
+        sendTvClipListData(mTvClipList.getVcList());
+        //DB保存
+//        Handler handler = new Handler();
+//        try {
+//            DbThread t = new DbThread(handler, this, TV_CLIP_LIST);
+//            t.start();
+//        } catch (Exception e) {
+//            DTVTLogger.debug(e);
+//        }
     }
 
     /**
@@ -796,11 +845,16 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      */
     private void setStructDB(final VodClipList vodClipList) {
         //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
-//        DateUtils dateUtils = new DateUtils(mContext);
-//        dateUtils.addLastDate(DateUtils.VOD_LAST_INSERT);
-//        VodClipInsertDataManager dataManager = new VodClipInsertDataManager(mContext);
-//        dataManager.insertVodClipInsertList(vodClipList);
-        sendVodClipListData(vodClipList.getVcList());
+        mVodClipList = vodClipList;
+        sendVodClipListData(mVodClipList.getVcList());
+        //DB保存
+//        Handler handler = new Handler();
+//        try {
+//            DbThread t = new DbThread(handler, this, VOD_CLIP_LIST);
+//            t.start();
+//        } catch (Exception e) {
+//            DTVTLogger.debug(e);
+//        }
     }
 
     /**
@@ -809,10 +863,15 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param watchListenVideoList 視聴中ビデオ一覧用データ
      */
     private void setStructDB(final WatchListenVideoList watchListenVideoList) {
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(DateUtils.WATCHING_VIDEO_LIST_LAST_INSERT);
-        WatchListenVideoDataManager dataManager = new WatchListenVideoDataManager(mContext);
-        dataManager.insertWatchListenVideoInsertList(watchListenVideoList);
+        mWatchListenVideoList = watchListenVideoList;
+        //DB保存
+        Handler handler = new Handler();
+        try {
+            DbThread t = new DbThread(handler, this, WATCH_LISTEN_VIDEO_LIST);
+            t.start();
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+        }
     }
 
     /**
@@ -821,10 +880,15 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param purchasedVodListResponse 視聴中ビデオ一覧用データ
      */
     private void setStructDB(final PurchasedVodListResponse purchasedVodListResponse) {
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(DateUtils.VIDEO_RANK_LAST_INSERT);
-        RentalListInsertDataManager dataManager = new RentalListInsertDataManager(mContext);
-        dataManager.insertRentalListInsertList(purchasedVodListResponse);
+        mPurchasedVodListResponse = purchasedVodListResponse;
+        //DB保存
+        Handler handler = new Handler();
+        try {
+            DbThread t = new DbThread(handler, this, RENTAL_VOD_LIST);
+            t.start();
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+        }
     }
 
     /**
@@ -833,18 +897,15 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param purchasedChListResponse 視聴中ビデオ一覧用データ
      */
     private void setStructDB(final PurchasedChListResponse purchasedChListResponse) {
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(DateUtils.RENTAL_CHANNEL_LAST_UPDATE);
-        RentalListInsertDataManager rentalChListInsertDataManager = new RentalListInsertDataManager(mContext);
-        rentalChListInsertDataManager.insertChRentalListInsertList(purchasedChListResponse);
-        //DB保存をThread化するためのサンプルとしてコピー　※後でまとめてThread化する
-//            Handler handler = new Handler(); //チャンネル情報更新
-//            try {
-//                DbThread t = new DbThread(handler, this, CHANNEL_SELECT);
-//                t.start();
-//            } catch (Exception e) {
-//                DTVTLogger.debug(e);
-//            }
+        mPurchasedChListResponse = purchasedChListResponse;
+        //DB保存
+        Handler handler = new Handler();
+        try {
+            DbThread t = new DbThread(handler, this, RENTAL_CH_LIST);
+            t.start();
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+        }
     }
 
     /**
@@ -853,11 +914,15 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param roleListResponse ロールリスト
      */
     private void setStructDB(final RoleListResponse roleListResponse) {
-        DateUtils dateUtils = new DateUtils(mContext);
-        dateUtils.addLastDate(DateUtils.ROLELIST_LAST_UPDATE);
-        ArrayList<RoleListMetaData> list = roleListResponse.getRoleList();
-        RoleListInsertDataManager dataManager = new RoleListInsertDataManager(mContext);
-        dataManager.insertRoleList(list);
+        mRoleListMetaDataList = roleListResponse.getRoleList();
+        //DB保存
+        Handler handler = new Handler();
+        try {
+            DbThread t = new DbThread(handler, this, ROLE_ID_LIST);
+            t.start();
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+        }
     }
 
     /**
@@ -918,5 +983,66 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     @Override
     public void RecommendNGCallback() {
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+    }
+
+    @Override
+    public List<Map<String, String>> dbOperation(int operationId) throws Exception {
+        DateUtils dateUtils = new DateUtils(mContext);
+
+        switch (operationId) {
+            case ROLE_ID_LIST:
+                dateUtils.addLastDate(DateUtils.ROLELIST_LAST_UPDATE);
+                RoleListInsertDataManager roleListInsertDataManager = new RoleListInsertDataManager(mContext);
+                roleListInsertDataManager.insertRoleList(mRoleListMetaDataList);
+                break;
+            case CHANNEL_LIST:
+                dateUtils.addLastDate(DateUtils.CHANNEL_LAST_UPDATE);
+                ChannelInsertDataManager channelInsertDataManager = new ChannelInsertDataManager(mContext);
+                channelInsertDataManager.insertChannelInsertList(mChannelList, JsonConstants.DISPLAY_TYPE[DEFAULT_CHANNEL_DISPLAY_TYPE]);
+                break;
+            case TV_SCHEDULE_LIST:
+                dateUtils.addLastDate(DateUtils.TV_SCHEDULE_LAST_INSERT);
+                TvScheduleInsertDataManager tvScheduleInsertDataManager = new TvScheduleInsertDataManager(mContext);
+                tvScheduleInsertDataManager.insertTvScheduleInsertList(mTvScheduleList);
+                break;
+            case DAILY_RANK_LIST:
+                dateUtils.addLastDate(DateUtils.DAILY_RANK_LAST_INSERT);
+                DailyRankInsertDataManager dailyRankInsertDataManager = new DailyRankInsertDataManager(mContext);
+                dailyRankInsertDataManager.insertDailyRankInsertList(mDailyRankList);
+                break;
+            case VIDEO_RANK_LIST:
+                dateUtils.addLastDate(DateUtils.VIDEO_RANK_LAST_INSERT);
+                VideoRankInsertDataManager videoRankInsertDataManager = new VideoRankInsertDataManager(mContext);
+                videoRankInsertDataManager.insertVideoRankInsertList(mVideoRankList);
+                break;
+            case TV_CLIP_LIST:
+//                dateUtils.addLastDate(DateUtils.TV_LAST_INSERT);
+//                TvClipInsertDataManager tvClipInsertDataManager = new TvClipInsertDataManager(mContext);
+//                tvClipInsertDataManager.insertTvClipInsertList(tvClipList);
+                break;
+            case VOD_CLIP_LIST:
+//                dateUtils.addLastDate(DateUtils.VOD_LAST_INSERT);
+//                VodClipInsertDataManager vodClipInsertDataManager = new VodClipInsertDataManager(mContext);
+//                vodClipInsertDataManager.insertVodClipInsertList(mVodClipList);
+                break;
+            case WATCH_LISTEN_VIDEO_LIST:
+                dateUtils.addLastDate(DateUtils.WATCHING_VIDEO_LIST_LAST_INSERT);
+                WatchListenVideoDataManager watchListenVideoDataManager = new WatchListenVideoDataManager(mContext);
+                watchListenVideoDataManager.insertWatchListenVideoInsertList(mWatchListenVideoList);
+                break;
+            case RENTAL_CH_LIST:
+                dateUtils.addLastDate(DateUtils.RENTAL_CHANNEL_LAST_UPDATE);
+                RentalListInsertDataManager rentalChListInsertDataManager = new RentalListInsertDataManager(mContext);
+                rentalChListInsertDataManager.insertChRentalListInsertList(mPurchasedChListResponse);
+                break;
+            case RENTAL_VOD_LIST:
+                dateUtils.addLastDate(DateUtils.VIDEO_RANK_LAST_INSERT);
+                RentalListInsertDataManager rentalListInsertDataManager = new RentalListInsertDataManager(mContext);
+                rentalListInsertDataManager.insertRentalListInsertList(mPurchasedVodListResponse);
+                break;
+            default:
+                break;
+        }
+        return null;
     }
 }
