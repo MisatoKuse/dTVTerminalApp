@@ -60,7 +60,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     private DownloadParam downloadParam;
     public List<DlData> que = new ArrayList<>();
     public List<Integer> queIndex = new ArrayList<>();
-    private Handler mHandler = new Handler();
+    private Handler mHandler;
     private final int mPercentToUpdateUi = 1;
     private Activity activity;
 
@@ -75,6 +75,11 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     public View onCreateView(LayoutInflater inflater
             , ViewGroup container, Bundle savedInstanceState) {
         DTVTLogger.start();
+        try{
+            mHandler=new Handler();
+        } catch (Exception e){
+            DTVTLogger.debug(e);
+        }
         initData();
         return initView();
     }
@@ -168,21 +173,21 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         }
     }
 
-    private static final int DOWNLAD_PROGRESS = 1;
+//    private static final int DOWNLAD_PROGRESS = 1;
 
-    private Handler downLoadStatusHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what){
-                case DOWNLAD_PROGRESS:
-                    if(queIndex.size() > 0){
-                        int percent = (int) msg.obj;
-                        setDownloadStatus(queIndex.get(0), percent);
-                    }
-                    break;
-            }
-        }
-    };
+//    private Handler downLoadStatusHandler = new Handler() {
+//        @Override
+//        public void handleMessage(Message msg) {
+//            switch (msg.what){
+//                case DOWNLAD_PROGRESS:
+//                    if(queIndex.size() > 0){
+//                        int percent = (int) msg.obj;
+//                        setDownloadStatus(queIndex.get(0), percent);
+//                    }
+//                    break;
+//            }
+//        }
+//    };
 
     @Override
     public void onStart(int totalFileByteSize) {
@@ -242,6 +247,9 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     @Override
     public void onFail(final DLError error, final String savePath) {
         DTVTLogger.debug("download fail savePath:"+savePath);
+        if(null==mHandler){
+            return;
+        }
         mHandler.post(
                 new Runnable(){
                     @Override
