@@ -635,20 +635,25 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 if (isOK) {
                     if (!completed){
                         if(null!=mDlDataProvider && null!=queIndex && 0<queIndex.size()){
-                            int num=(int) view.getTag();
-                            boolean isCurDl= queIndex.get(0)== num;
+                            int num = (int) view.getTag();
+                            boolean isCurDl= queIndex.get(0) == num;
                             if (isCurDl) {
                                 mDlDataProvider.cancel();
-                            }
-                            String path=getCurrentDlFullPath(num);
-                            if(null!=path){
-                                mDlDataProvider.cancelDownLoadStatus(path.toString());
+                                String path = getCurrentDlFullPath(0);
+                                if(null != path){
+                                    mDlDataProvider.cancelDownLoadStatus(path);
+                                } else {
+                                    //todo error
+                                }
                             } else {
-                                //todo error
-                            }
-                            if (!isCurDl) {
                                 for (int i = 0; i < queIndex.size(); i++) {
-                                    if(num==queIndex.get(i)){
+                                    if(num == queIndex.get(i)){
+                                        String path = getCurrentDlFullPath(i);
+                                        if(null != path){
+                                            mDlDataProvider.cancelDownLoadStatus(path);
+                                        } else {
+                                            //todo error
+                                        }
                                         que.remove(i);
                                         queIndex.remove(i);
                                         break;
