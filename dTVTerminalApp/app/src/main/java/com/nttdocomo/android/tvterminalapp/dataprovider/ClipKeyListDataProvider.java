@@ -58,7 +58,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         } else {
             // DBから取得
             DTVTLogger.debug("ClipKeyListResponse Select DB");
-            getClipKeyListDbData(ClipKeyListDao.TABLE_TYPE.TV, clipKeyListResponse);
+            getClipKeyListDbData(ClipKeyListDao.TABLE_TYPE.TV);
             mResponseEndFlag = true;
         }
         DTVTLogger.end();
@@ -74,7 +74,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         } else {
             // DBから取得
             DTVTLogger.debug("ClipKeyListResponse Select DB");
-            getClipKeyListDbData(ClipKeyListDao.TABLE_TYPE.VOD, clipKeyListResponse);
+            getClipKeyListDbData(ClipKeyListDao.TABLE_TYPE.VOD);
             mResponseEndFlag = true;
         }
         DTVTLogger.end();
@@ -110,6 +110,8 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     /**
      * データ取得要求受付
      * コンテンツを指定する場合は呼び出す前にrequestに設定しておくこと.
+     *
+     * @param request リクエストパラメータ
      */
     public void getClipKeyList(final ClipKeyListRequest request) {
         DTVTLogger.start();
@@ -128,13 +130,12 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     /**
      * DB内のClipKeyListを抽出する.
      *
-     * @param type     テーブル種別
-     * @param response ClipKeyListレスポンスデータ
+     * @param type テーブル種別
      * @return ListView表示用データ
      */
-    private ClipKeyListResponse getClipKeyListDbData(
-            final ClipKeyListDao.TABLE_TYPE type, final ClipKeyListResponse response) {
+    private ClipKeyListResponse getClipKeyListDbData(final ClipKeyListDao.TABLE_TYPE type) {
         DTVTLogger.start();
+        ClipKeyListResponse response = new ClipKeyListResponse();
         ClipKeyListDataManager dataManager = new ClipKeyListDataManager(mContext);
         response.setCkList(dataManager.selectListData(type));
         DTVTLogger.end();
@@ -290,7 +291,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     /**
      * DB内に該当するTitleIdのレコードが存在するかを判定.
      *
-     * @param type tableType
+     * @param type    tableType
      * @param titleId titleId
      * @return ListView表示用データ
      */
@@ -368,13 +369,13 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     /**
      * DBから取得したキー値を元にクリップ状態を判定する.
      *
-     * @param dispType dispType
+     * @param dispType     dispType
      * @param contentsType contentsType
-     * @param dTv dTvフラグ
-     * @param crid crid
-     * @param serviceId serviceId
-     * @param eventId eventId
-     * @param titleId titleId
+     * @param dTv          dTvフラグ
+     * @param crid         crid
+     * @param serviceId    serviceId
+     * @param eventId      eventId
+     * @param titleId      titleId
      * @return クリップ状態
      */
     protected boolean getClipStatus(final String dispType, final String contentsType, final String dTv,

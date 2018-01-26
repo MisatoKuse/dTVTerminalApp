@@ -4,7 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -152,10 +151,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     /**
      * 汎用エラーダイアログ.
      *
-     * @param message エラーメッセージ
+     * @param message       エラーメッセージ
      * @param confirmTextId OKボタンに表示する文字のリソース
      */
     private void errorDialog(final String message, final int confirmTextId) {
+        //重複表示防止
         if (!mIsCloseDialog) {
             CustomDialog failedRecordingReservationDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
             failedRecordingReservationDialog.setContent(message);
@@ -164,6 +164,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             failedRecordingReservationDialog.setCancelable(false);
             failedRecordingReservationDialog.showDialog();
             mIsCloseDialog = true;
+
             failedRecordingReservationDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                 @Override
                 public void onOKCallback(boolean isOK) {
@@ -172,6 +173,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                     mIsCloseDialog = false;
                 }
             });
+
             failedRecordingReservationDialog.setDialogDismissCallback(new CustomDialog.DialogDismissCallback() {
                 @Override
                 public void onDialogDismissCallback() {
@@ -205,7 +207,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
         //アプリ起動時のデータ取得はonCreateで実施済みのためonResumeでは行わない
         if (mIsOnCreateFinish) {
-            requestHomeData();
+            //ネットワークチェック
+            if (NetWorkUtils.isOnline(this)) {
+                requestHomeData();
+            } else {
+                initData();
+                String message = getResources().getString(R.string.activity_start_network_error_message);
+                errorDialog(message, R.string.custom_dialog_ok);
+            }
         }
         mIsOnCreateFinish = true;
     }
@@ -459,6 +468,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         if (channelList != null && channelList.size() > 0) {
             Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_CHANNEL, channelList);
             mHandler.sendMessage(msg);
+        } else {
+            showGetDataFailedDialog();
         }
     }
 
@@ -467,6 +478,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         if (dailyRankList != null && dailyRankList.size() > 0) {
             Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_TODAY, dailyRankList);
             mHandler.sendMessage(msg);
+        } else {
+            showGetDataFailedDialog();
         }
     }
 
@@ -475,6 +488,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         if (tvClipList != null && tvClipList.size() > 0) {
             Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_TV_CLIP, tvClipList);
             mHandler.sendMessage(msg);
+        } else {
+            showGetDataFailedDialog();
         }
     }
 
@@ -483,6 +498,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         if (vodClipList != null && vodClipList.size() > 0) {
             Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_VOD_CLIP, vodClipList);
             mHandler.sendMessage(msg);
+        } else {
+            showGetDataFailedDialog();
         }
     }
 
@@ -492,17 +509,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_VIDEO, videoRankList);
             mHandler.sendMessage(msg);
         } else {
-
-            //仮実装
-            //データ取得失敗ダイアログ
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    initData();
-                    String message = getResources().getString(R.string.get_contents_data_error_message);
-                    errorDialog(message, R.string.custom_dialog_ok);
-                }
-            });
+            showGetDataFailedDialog();
         }
     }
 
@@ -511,6 +518,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         if (redChList != null && redChList.size() > 0) {
             Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_RECOMMEND_PROGRAM, redChList);
             mHandler.sendMessage(msg);
+        } else {
+            showGetDataFailedDialog();
         }
     }
 
@@ -519,32 +528,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         if (redVdList != null && redVdList.size() > 0) {
             Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_RECOMMEND_VOD, redVdList);
             mHandler.sendMessage(msg);
+        } else {
+            showGetDataFailedDialog();
         }
     }
-
-    //検討中
-//    @Override
-//    public void userInfoCallback(List<Map<String, String>> userList) {
-//        if (!DBUtils.isCachingRecord(this, DBConstants.USER_INFO_LIST_TABLE_NAME)) {
-//            //UserInfoテーブルにデータがないため初回取得と判定
-//            if (userList == null || userList.size() < 1) {
-//                // 初回起動時または1度もH4d契約情報取得に成功していない状態で、
-//                // H4d契約情報取得に失敗した場合は「ひかりTV for docomoの契約情報取得に失敗しました。」
-//                // エラーダイアログ、「閉じる」「リトライ」ボタンを表示すること。
-//                //契約情報取得失敗
-//                getUserInfoErrorDialog();
-//            } else {
-//                //契約情報取得成功
-//                initView();
-//                requestHomeData();
-//            }
-//        } else {
-//            //UserInfo取得済み
-//            if(false){
-//                //情報取得失敗
-//            }
-//        }
-//    }
 
     /**
      * ユーザ情報取得処理.
@@ -573,6 +560,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 requestHomeData();
             }
         });
+
         failedRecordingReservationDialog.setApiCancelCallback(new CustomDialog.ApiCancelCallback() {
             @Override
             public void onCancelCallback() {
@@ -592,6 +580,20 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         });
     }
 
+    /**
+     * データ取得失敗ダイアログ.
+     */
+    private void showGetDataFailedDialog() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                initData();
+                String message = getResources().getString(R.string.get_contents_data_error_message);
+                errorDialog(message, R.string.custom_dialog_ok);
+            }
+        });
+    }
+
     @Override
     public void userInfoListCallback(boolean isDataChange, List<UserInfoList> userList) {
         if (!DBUtils.isCachingRecord(this, DBConstants.USER_INFO_LIST_TABLE_NAME)) {
@@ -606,6 +608,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             } else {
                 //契約情報取得成功
                 initView();
+                requestHomeData();
             }
         } else {
             //UserInfo取得済み
