@@ -139,7 +139,7 @@
     <dimen name="contents_detail_15dp">15dp</dimen>
     <dimen name="contents_detail_icon_size">36dp</dimen>
     <dimen name="contents_detail_icon_margin">8dp</dimen>
-    <dimen name="contents_detail_contract_leading_text_width">180dp</dimen>
+    <dimen name="contents_detail_contract_leading_text_width">310dp</dimen>
     <dimen name="contents_detail_contract_leading_text_height">36dp</dimen>
     <dimen name="contents_detail_contract_leading_text_bottom_margin">23dp</dimen>
     <dimen name="contents_detail_contract_leading_text_size">16dp</dimen>
