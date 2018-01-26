@@ -35,7 +35,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -84,7 +83,6 @@ import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.ContentsDetailViewPager;
-import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SendOperateLog;
 
@@ -219,12 +217,10 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     private TextView mVideoCurTime = null;
     private TextView mVideoTotalTime = null;
     private TextView mTvTitle = null;
-    private TextView mVideoRewind10 = null;
-    private TextView mVideoFast30 = null;
+    private ImageView mVideoRewind10 = null;
+    private ImageView mVideoFast30 = null;
     private ImageView mTvLogo = null;
     private ImageView mVideoFullScreen = null;
-    private ImageView mVideoRewind = null;
-    private ImageView mVideoFast = null;
 
     private Handler mCtrlHandler = new Handler(Looper.getMainLooper());
     private GestureDetector mGestureDetector = null;
@@ -238,6 +234,23 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     private CustomDialog mRecordingReservationCustomtDialog = null;
     private static final int RECORDING_RESERVATION_DIALOG_INDEX_0 = 0; // 予約録画する
     private static final int RECORDING_RESERVATION_DIALOG_INDEX_1 = 1; // キャンセル
+    /**
+     * プレイヤー横画面時のシークバーの下マージン.
+     */
+    private static final int SEEKBAR_BOTTOM_MARGIN = 4;
+    /**
+     * プレイヤー横画面時のコントロールバーの下マージン.
+     */
+    private static final int MEDIA_CONTROL_BAR_UNDER_MARGIN = 32;
+    /**
+     * プレイヤー横画面時のシークバーの時間の左右マージン.
+     */
+    private static final int SEEKBAR_TIME_LATERAL_MARGIN = 18;
+    /**
+     * プレイヤー横画面時のフルスクリーンボタンの右マージン.
+     */
+    private static final int FULL_SCREEN_BUTTON_RIGHT_MARGIN = 16;
+
     // 他サービスフラグ
     private boolean mIsOtherService = false;
     //年齢
@@ -301,7 +314,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      */
     private static final float THUMBNAIL_SHADOW_ALPHA = 0.5f;
 
-    private boolean mIsLocalPlaying=false;
+    private boolean mIsLocalPlaying = false;
 
     //外部出力制御
     private ExternalDisplayHelper mExternalDisplayHelper;
@@ -553,22 +566,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         synchronized (this) {
             if (mCanPlay) {
                 playButton();
-                int ratio = mPlayerController.getVideoAspectRatio();
-                if (ratio == SecureVideoView.RATIO_16x9) {
-                    //アスペクト比 16:9 のコンテンツ
-                    ViewGroup.LayoutParams lp = mThumbnailRelativeLayout.getLayoutParams();
-                    lp.width = getScreenWidth();
-                    lp.height = getScreenWidth() * SCREEN_RATIO_HEIGHT_9 / SCREEN_RATIO_WIDTH_16;
-                    mThumbnailRelativeLayout.setLayoutParams(lp);
-                    mSecureVideoPlayer.setAspectRatio(SecureVideoView.RATIO_16x9);
-                } else {
-                    //アスペクト比 4:3 のコンテンツ
-                    ViewGroup.LayoutParams lp = mThumbnailRelativeLayout.getLayoutParams();
-                    lp.width = getScreenWidth();
-                    lp.height = getScreenWidth() * SCREEN_RATIO_HEIGHT_3 / SCREEN_RATIO_WIDTH_4;
-                    mThumbnailRelativeLayout.setLayoutParams(lp);
-                    mSecureVideoPlayer.setAspectRatio(SecureVideoView.RATIO_4x3);
-                }
                 mPlayerController.start();
             }
         }
@@ -626,9 +623,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                     } else {
                         mVideoPlayPause.setVisibility(View.VISIBLE);
                         mVideoRewind10.setVisibility(View.VISIBLE);
-                        mVideoRewind.setVisibility(View.VISIBLE);
                         mVideoFast30.setVisibility(View.VISIBLE);
-                        mVideoFast.setVisibility(View.VISIBLE);
                         mVideoCtrlBar.setVisibility(View.VISIBLE);
                         if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
                             mTvTitle.setVisibility(View.VISIBLE);
@@ -654,9 +649,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         DTVTLogger.start();
         mVideoPlayPause.setVisibility(invisible);
         mVideoRewind10.setVisibility(invisible);
-        mVideoRewind.setVisibility(invisible);
         mVideoFast30.setVisibility(invisible);
-        mVideoFast.setVisibility(invisible);
         mVideoCtrlBar.setVisibility(invisible);
         mTvTitle.setVisibility(invisible);
         mTvLogo.setVisibility(invisible);
@@ -839,7 +832,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             type2 = type;
         }
 
-        mIsLocalPlaying = ( ContentsAdapter.DOWNLOAD_STATUS_COMPLETED == datas.getDownLoadStatus() );
+        mIsLocalPlaying = (ContentsAdapter.DOWNLOAD_STATUS_COMPLETED == datas.getDownLoadStatus());
         if (!mIsLocalPlaying) {
             mCurrentMediaInfo = new MediaVideoInfo(
                     uri,           //uri
@@ -1217,9 +1210,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         mVideoPlayPause = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_player_pause_fl);
         mVideoCtrlRootView = mRecordCtrlView.findViewById(R.id.tv_player_main_layout_video_ctrl_player_video_root);
         mVideoRewind10 = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_10_tv);
-        mVideoRewind = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_rewind_iv);
         mVideoFast30 = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_30_tv);
-        mVideoFast = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_fast_iv);
         mVideoCtrlBar = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_video_record_control_bar_iv);
         mVideoCurTime = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_cur_time_tv);
         mVideoFullScreen = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_now_on_air_full_screen_iv);
@@ -1282,8 +1273,16 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
             setTitleVisibility(false);
             playerParams.height = getScreenHeight();
-            playerParams.width = getScreenWidth();
-            mScreenWidth = getScreenWidth();
+            if (mPlayerController != null) {
+                int ratio = mPlayerController.getVideoAspectRatio();
+                if (ratio == SecureVideoView.RATIO_4x3) {
+                    playerParams.width = (getHeightDensity() * SCREEN_RATIO_WIDTH_4 / SCREEN_RATIO_HEIGHT_3);
+                    playerParams.gravity = Gravity.CENTER_HORIZONTAL;
+                } else {
+                    playerParams.width = getScreenWidth();
+                }
+            }
+            mScreenWidth = playerParams.width;
             setPlayerProgressView(true);
             setRemoteControllerViewVisibility(View.GONE);
         } else {
@@ -1308,45 +1307,55 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     /**
      * プレイヤーの場合スクロールできない.
      *
-     * 端末の縦横判定
+     * @param isLandscape 端末の縦横判定
      */
     private void setPlayerProgressView(boolean isLandscape) {
         RelativeLayout progressLayout = mRecordCtrlView.findViewById(R.id.tv_player_ctrl_progress_ll);
         if (isLandscape) {
+            //端末横向き
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            layoutParams.setMargins((int) getDensity() * 10, 0, (int) getDensity() * 10, 0);
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            layoutParams.setMargins(0, 0, 0, (int) getDensity() * MEDIA_CONTROL_BAR_UNDER_MARGIN);
             progressLayout.setLayoutParams(layoutParams);
+
             layoutParams = new RelativeLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_START);
-            layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            layoutParams.setMargins((int) getDensity() * SEEKBAR_TIME_LATERAL_MARGIN, 0, 0, 0);
             mVideoCurTime.setLayoutParams(layoutParams);
+
             layoutParams = new RelativeLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
-            layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            layoutParams.setMargins(0, 0, (int) getDensity() * FULL_SCREEN_BUTTON_RIGHT_MARGIN, 0);
             mVideoFullScreen.setLayoutParams(layoutParams);
+
             layoutParams = new RelativeLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             layoutParams.addRule(RelativeLayout.START_OF, R.id.tv_player_ctrl_now_on_air_full_screen_iv);
-            layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
-            layoutParams.setMargins(0, 0, (int) getDensity() * 10, 0);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            layoutParams.setMargins(0, 0, (int) getDensity() * SEEKBAR_TIME_LATERAL_MARGIN, 0);
             mVideoTotalTime.setLayoutParams(layoutParams);
+
             mVideoCtrlBar.removeView(mVideoCurTime);
             mVideoCtrlBar.removeView(mVideoFullScreen);
             mVideoCtrlBar.removeView(mVideoTotalTime);
+
             layoutParams = new RelativeLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             layoutParams.addRule(RelativeLayout.END_OF, R.id.tv_player_ctrl_now_on_air_cur_time_tv);
             layoutParams.addRule(RelativeLayout.START_OF, R.id.tv_player_ctrl_now_on_air_total_time_tv);
-            layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
-            layoutParams.setMargins((int) getDensity() * 10, 0, (int) getDensity() * 10, 0);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            layoutParams.setMargins(0, 0, 0, (int) getDensity() * SEEKBAR_BOTTOM_MARGIN);
             mVideoSeekBar.setLayoutParams(layoutParams);
+
             progressLayout.addView(mVideoCurTime);
             progressLayout.addView(mVideoFullScreen, 2);
             progressLayout.addView(mVideoTotalTime, 3);
         } else {
+            //端末縦向き
             if (progressLayout.getChildCount() > 1) {
                 progressLayout.removeViewAt(0);
                 progressLayout.removeViewAt(1);
@@ -1410,7 +1419,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     /**
      * set seek bar listener.
      *
-     * @param seekBar
+     * @param seekBar シークバー
      */
     private void setSeekBarListener(SeekBar seekBar) {
         DTVTLogger.start();
@@ -1779,7 +1788,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 } else {
                     playPause();
                 }
-                if(!mExternalDisplayFlg){
+                if (!mExternalDisplayFlg) {
                     hideCtrlViewAfterOperate();
                 } else {
                     //外部出力制御の場合
@@ -2047,14 +2056,11 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 showMessage("バッファー開始");
                 break;
             case MediaPlayerDefinitions.PE_START_RENDERING:
-                if(mIsLocalPlaying){
+                if (mIsLocalPlaying) {
                     showMessage("ローカル再生開始");
                 } else {
                     showMessage("再生開始");
                 }
-                ViewGroup.LayoutParams lp = mThumbnailRelativeLayout.getLayoutParams();
-                lp.height = mSecureVideoPlayer.getHeight();
-                mThumbnailRelativeLayout.setLayoutParams(lp);
                 break;
             case MediaPlayerDefinitions.PE_FIRST_FRAME_RENDERED:
                 //showMessage("PE_FIRST_FRAME_RENDERED");

@@ -4,6 +4,11 @@
   -->
 
 <resources>
+    <!-- Basic Color -->
+    <color name="basic_text_color_white">#ffffff</color>
+    <color name="basic_text_color_black">#000000</color>
+    <color name="basic_text_color_red">#ff0000</color>
+
     <!--Common-->
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#FF0000</color>
@@ -26,12 +31,12 @@
     <color name="home_no_contract_info_background_color">#ffffff</color>
     <color name="home_no_contract_info_text_color">#0f0f0f</color>
     <color name="home_contract_button_background_color">#fd0003</color>
-    <color name="home_contract_button_text_color">#ffffff</color>
-    <color name="home_item_name_text_color">#ffffff</color>
-    <color name="home_item_see_all_text_color">#ffffff</color>
+    <color name="home_contract_button_text_color">@color/basic_text_color_white</color>
+    <color name="home_item_name_text_color">@color/basic_text_color_white</color>
+    <color name="home_item_see_all_text_color">@color/basic_text_color_white</color>
     <color name="home_item_contents_num_text_color">#c9c9c9</color>
     <color name="home_item_contents_background_color">#121212</color>
-    <color name="home_item_contents_text_color">#ffffff</color>
+    <color name="home_item_contents_text_color">@color/basic_text_color_white</color>
     <color name="home_item_contents_text_shadow_color">#222222</color>
     <!--Global Menu-->
     <color name="global_menu_popup_window_background_color">#ffffff</color>
@@ -73,9 +78,17 @@
 
     <!--コンテンツ詳細-->
     <color name="contents_header_background">#000000</color>
-    <color name="contents_contract_leading_text_color">#ffffff</color>
+    <color name="contents_contract_leading_text_color">@color/basic_text_color_white</color>
     <color name="contents_contract_leading_button_color">#eb3015</color>
-    <color name="contents_contract_leading_button_text_color">#ffffff</color>
+    <color name="contents_contract_leading_button_text_color">@color/basic_text_color_white</color>
+    <color name="contents_player_background_color">#00000000</color>
+    <color name="contents_player_now_on_air_color">#ff0000</color>
+    <color name="contents_player_now_on_air_text_color">@color/basic_text_color_white</color>
+    <color name="contents_player_now_on_air_cur_text_backgroud_color">#00000000</color>
+    <color name="contents_player_now_on_air_total_text_backgroud_color">#00000000</color>
+    <color name="contents_logo_background_default_color">#00000000</color>
+    <color name="contents_player_landscape_title_text_color">@color/basic_text_color_white</color>
+    <color name="contents_player_media_controller_time_text">#ffffff</color>
     <!--録画番組一覧-->
     <color name="recorded_background">#000000</color>
     <color name="recorded_contents_background">#222222</color>
@@ -95,7 +108,7 @@
     <color name="list_view_divider">#222222</color>
 
     <!--//設定画面-->
-    <color name="setting_text_color_white">#ffffff</color>
+    <color name="setting_text_color_white">@color/basic_text_color_white</color>
     <color name="setting_list_background_color">#1c1c1c</color>
     <color name="setting_list_divider_color">#333333</color>
     <color name="setting_category_color_white">#cccccc</color>

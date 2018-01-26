@@ -45,10 +45,11 @@
                         android:layout_marginStart="@dimen/contents_detail_player_title_text_start_margin"
                         android:layout_marginEnd="@dimen/contents_detail_player_title_text_end_margin"
                         android:layout_marginTop="@dimen/contents_detail_player_title_text_top_margin"
-                        android:text=""
                         android:maxLines="2"
                         android:ellipsize="end"
-                        android:textColor="@android:color/white"/>
+                        android:textStyle="bold"
+                        android:textColor="@color/contents_player_landscape_title_text_color"
+                        android:textSize="@dimen/contents_detail_player_media_controller_text_size" />
 
                     <ImageView
                         android:id="@+id/tv_player_main_layout_video_ctrl_player_logo"
@@ -56,7 +57,7 @@
                         android:layout_height="@dimen/contents_detail_player_logo_height"
                         android:layout_marginStart="@dimen/contents_detail_player_logo_start_margin"
                         android:layout_marginTop="@dimen/contents_detail_player_logo_top_margin"
-                        android:background="@android:color/transparent"/>
+                        android:background="@color/contents_logo_background_default_color"/>
                 </RelativeLayout>
 
                 <ImageView
