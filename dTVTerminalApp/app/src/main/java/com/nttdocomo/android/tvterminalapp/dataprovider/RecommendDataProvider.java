@@ -11,6 +11,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendListDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
+import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendRequestData;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendWebClient;
@@ -22,6 +23,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * レコメンド用データプロバイダ
+ */
 public class RecommendDataProvider implements RecommendWebClient.RecommendCallback {
 
     private Context mContext = null;
@@ -170,7 +174,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      *
      * @param mContext コンテキスト
      */
-    public RecommendDataProvider(Context mContext) {
+    public RecommendDataProvider(final Context mContext) {
         this.mContext = mContext;
         this.mApiDataProviderCallback = (RecommendApiDataProviderCallback) mContext;
     }
@@ -181,8 +185,8 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * @param context                          コンテキスト
      * @param recommendApiDataProviderCallback コールバック
      */
-    public RecommendDataProvider(Context context,
-                                 RecommendApiDataProviderCallback recommendApiDataProviderCallback) {
+    RecommendDataProvider(final Context context,
+                          final RecommendApiDataProviderCallback recommendApiDataProviderCallback) {
         mContext = context;
         mApiDataProviderCallback = recommendApiDataProviderCallback;
     }
@@ -194,14 +198,21 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * @param requestPageNo タブNo
      * @param startIndex    取得開始位置
      * @param maxResult     最大取得件数
-     * @return
+     * @return レコメンドデータ
      */
-    private List<ContentsData> getRecommendListDataCache(
-            String cacheDateKey, int requestPageNo, int startIndex, int maxResult) {
+    List<ContentsData> getRecommendListDataCache(
+            final String cacheDateKey, final int requestPageNo, final int startIndex, final int maxResult) {
+
+        List<ContentsData> resultList = new ArrayList<>();
+
+        //データ存在チェック
+        if (!DBUtils.isCachingRecord(mContext, DBUtils.getRecommendTableName(requestPageNo))) {
+            return resultList;
+        }
+
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(cacheDateKey);
 
-        List<ContentsData> resultList = new ArrayList<>();
         //Vodクリップ一覧のDB保存履歴と、有効期間を確認
         if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
             //データをDBから取得する
@@ -215,14 +226,15 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
 
     /**
      * Activityからのデータ取得要求受付.
-     * @param requestPageNo 使用するタブ番号
-     * @param startIndex 読み込み初期位置
-     * @param maxResult 読み込み最大件数
+     *
+     * @param requestPageNo  使用するタブ番号
+     * @param startIndex     読み込み初期位置
+     * @param maxResult      読み込み最大件数
      * @param hasReturnValue DBにデータがある場合それをすぐ使用するならばtrue。データは常にコールバック経由ならばfalse
      * @return hasReturnValueがtrueでDBにデータがあるならばそれを返す。それ以外はヌルとなる
      */
-    public List<ContentsData> startGetRecommendData(int requestPageNo, int startIndex,
-                                      int maxResult,boolean hasReturnValue) {
+    public List<ContentsData> startGetRecommendData(final int requestPageNo, final int startIndex,
+                                                    final int maxResult, final boolean hasReturnValue) {
         DTVTLogger.debug("requestPageNo:" + requestPageNo);
         // RequestDataのインスタンス生成
         RecommendRequestData requestData = new RecommendRequestData();
@@ -230,39 +242,39 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         List<ContentsData> resultList = null;
         switch (requestPageNo) {
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV: //テレビ
-                resultList = getRecommendListDataCache
-                        (DateUtils.RECOMMEND_CH_LAST_INSERT, requestPageNo, startIndex, maxResult);
+                resultList = getRecommendListDataCache(
+                        DateUtils.RECOMMEND_CH_LAST_INSERT, requestPageNo, startIndex, maxResult);
                 if (resultList.size() < maxResult) { // キャッシュ内のデータ数が20件未満の場合
                     requestData.serviceCategoryId = getTerebiRequestSCIdStr();
                 } else {
                     //戻り値を使用する指定が無い場合は、コールバックに値を渡す
-                    if(!hasReturnValue) {
+                    if (!hasReturnValue) {
                         mApiDataProviderCallback.RecommendChannelCallback(resultList);
                     }
                     return resultList;
                 }
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO: //ビデオ
-                resultList = getRecommendListDataCache
-                        (DateUtils.RECOMMEND_VD_LAST_INSERT, requestPageNo, startIndex, maxResult);
+                resultList = getRecommendListDataCache(
+                        DateUtils.RECOMMEND_VD_LAST_INSERT, requestPageNo, startIndex, maxResult);
                 if (resultList.size() < maxResult) { // キャッシュ内のデータ数が20件未満の場合
                     requestData.serviceCategoryId = getVideoRequestSCIdStr();
                 } else {
                     //戻り値を使用する指定が無い場合は、コールバックに値を渡す
-                    if(!hasReturnValue) {
+                    if (!hasReturnValue) {
                         mApiDataProviderCallback.RecommendVideoCallback(resultList);
                     }
                     return resultList;
                 }
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL: //dTVチャンネル
-                resultList = getRecommendListDataCache
-                        (DateUtils.RECOMMEND_DCHANNEL_LAST_INSERT, requestPageNo, startIndex, maxResult);
+                resultList = getRecommendListDataCache(
+                        DateUtils.RECOMMEND_DCHANNEL_LAST_INSERT, requestPageNo, startIndex, maxResult);
                 if (resultList.size() < maxResult) { // キャッシュ内のデータ数が20件未満の場合
                     requestData.serviceCategoryId = getDCHRequestSCIdStr();
                 } else {
                     //戻り値を使用する指定が無い場合は、コールバックに値を渡す
-                    if(!hasReturnValue) {
+                    if (!hasReturnValue) {
                         mApiDataProviderCallback.RecommendDChannelCallback(resultList);
                     }
                     return resultList;
@@ -270,26 +282,26 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
 
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV: //dTV
-                resultList = getRecommendListDataCache
-                        (DateUtils.RECOMMEND_DTV_LAST_INSERT, requestPageNo, startIndex, maxResult);
+                resultList = getRecommendListDataCache(
+                        DateUtils.RECOMMEND_DTV_LAST_INSERT, requestPageNo, startIndex, maxResult);
                 if (resultList.size() < maxResult) { // キャッシュ内のデータ数が20件未満の場合
                     requestData.serviceCategoryId = getDTVRequestSCIdStr();
                 } else {
                     //戻り値を使用する指定が無い場合は、コールバックに値を渡す
-                    if(!hasReturnValue) {
+                    if (!hasReturnValue) {
                         mApiDataProviderCallback.RecommendDTVCallback(resultList);
                     }
                     return resultList;
                 }
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME: //dアニメ
-                resultList = getRecommendListDataCache
-                        (DateUtils.RECOMMEND_DANIME_LAST_INSERT, requestPageNo, startIndex, maxResult);
+                resultList = getRecommendListDataCache(
+                        DateUtils.RECOMMEND_DANIME_LAST_INSERT, requestPageNo, startIndex, maxResult);
                 if (resultList.size() < maxResult) { // キャッシュ内のデータ数が20件未満の場合
                     requestData.serviceCategoryId = getDAnimeRequestSCIdStr();
                 } else {
                     //戻り値を使用する指定が無い場合は、コールバックに値を渡す
-                    if(!hasReturnValue) {
+                    if (!hasReturnValue) {
                         mApiDataProviderCallback.RecommendDAnimeCallback(resultList);
                     }
                     return resultList;
@@ -313,7 +325,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      *
      * @param recChList おすすめ番組データ
      */
-    public void sendRecommendChListData(RecommendChList recChList) {
+    private void sendRecommendChListData(final RecommendChList recChList) {
         List<Map<String, String>> recList = recChList.getmRcList();
         List<ContentsData> recommendContentInfoList = new ArrayList<>();
 
@@ -357,12 +369,12 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     }
 
     /**
-     * 1行分のコンテンツデータを作成(メソッドの行数が多すぎる警告の回避用)
+     * 1行分のコンテンツデータを作成(メソッドの行数が多すぎる警告の回避用).
      *
      * @param map データの作成元
      * @return 作成したデータ
      */
-    private ContentsData setContentsData(Map<String, String> map) {
+    private ContentsData setContentsData(final Map<String, String> map) {
         ContentsData contentsData = new ContentsData();
 
         contentsData.setContentsId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CONTENTSID));
@@ -388,7 +400,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      * @param map サーバレスポンスデータ
      * @return クリップ用リクエストデータ
      */
-    private ClipRequestData setClipResponse(Map<String, String> map) {
+    private ClipRequestData setClipResponse(final Map<String, String> map) {
         ClipRequestData requestData = new ClipRequestData();
         String title = map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE);
 
@@ -411,9 +423,11 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     /**
      * おすすめ番組をDBに保存する.
      *
-     * @param recommendChList
+     * @param recommendChList レコメンド(TV)データ
+     * @param cacheDateKey    データ更新日付
+     * @param tagPageNo       ページ番号
      */
-    public void setStructDB(RecommendChList recommendChList, String cacheDateKey, int tagPageNo) {
+    private void setStructDB(final RecommendChList recommendChList, final String cacheDateKey, final int tagPageNo) {
 
         DateUtils dateUtils = new DateUtils(mContext);
         dateUtils.addLastDate(cacheDateKey);
@@ -424,7 +438,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     /**
      * おすすめテレビの取得対象サービスID:カテゴリーID文字列生成.
      *
-     * @return
+     * @return 取得対象サービスID:カテゴリーID文字列
      */
     private String getTerebiRequestSCIdStr() {
         StringBuilder stringBuilder = new StringBuilder();
@@ -439,7 +453,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     /**
      * おすすめビデオの取得対象サービスID:カテゴリーID文字列生成.
      *
-     * @return
+     * @return 取得対象サービスID:カテゴリーID文字列
      */
     private String getVideoRequestSCIdStr() {
         StringBuilder stringBuilder = new StringBuilder();
@@ -454,7 +468,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     /**
      * おすすめdチャンネルの取得対象サービスID:カテゴリーID文字列生成.
      *
-     * @return
+     * @return 取得対象サービスID:カテゴリーID文字列
      */
     private String getDCHRequestSCIdStr() {
         StringBuilder stringBuilder = new StringBuilder();
@@ -469,7 +483,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     /**
      * おすすめdTVの取得対象サービスID:カテゴリーID文字列生成.
      *
-     * @return
+     * @return 取得対象サービスID:カテゴリーID文字列
      */
     private String getDTVRequestSCIdStr() {
         StringBuilder stringBuilder = new StringBuilder();
@@ -483,7 +497,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     /**
      * おすすめdアニメの取得対象サービスID:カテゴリーID文字列生成.
      *
-     * @return
+     * @return 取得対象サービスID:カテゴリーID文字列
      */
     private String getDAnimeRequestSCIdStr() {
         StringBuilder stringBuilder = new StringBuilder();
