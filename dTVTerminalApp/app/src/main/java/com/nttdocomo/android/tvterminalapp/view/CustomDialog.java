@@ -25,28 +25,29 @@ import java.util.List;
 /**
  * カスタムダイアログ.
  */
-public class CustomDialog implements DialogInterface.OnClickListener, AdapterView.OnItemClickListener {
+public class CustomDialog implements DialogInterface.OnClickListener, AdapterView.OnItemClickListener,
+        DialogInterface.OnDismissListener {
 
     /**
      * コンテキスト.
      */
-    private Context mContext;
+    private Context mContext = null;
     /**
      * ダイアログ.
      */
-    private AlertDialog dialog;
+    private AlertDialog dialog = null;
     /**
      * ダイアログ種別.
      */
-    private DialogType dialogType;
+    private DialogType dialogType = null;
     /**
      * タイトル.
      */
-    private String title;
+    private String title = null;
     /**
      * 本文.
      */
-    private String content;
+    private String content = null;
     /**
      * リスト表示時のリスト.
      */
@@ -54,7 +55,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     /**
      * OK押下時のコールバック.
      */
-    private ApiOKCallback apiOKCallback;
+    private ApiOKCallback apiOKCallback = null;
     /**
      * Cancel押下時のコールバック.
      */
@@ -62,11 +63,15 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     /**
      * リスト押下時のコールバック.
      */
-    private ApiSelectCallback apiSelectCallback;
+    private ApiSelectCallback apiSelectCallback = null;
     /**
      * リストアイテム押下時のコールバック.
      */
-    private ApiItemSelectCallback apiItemSelectCallback;
+    private ApiItemSelectCallback apiItemSelectCallback = null;
+    /**
+     * ボタンタップ以外でダイアログが閉じた時のコールバック.
+     */
+    private DialogDismissCallback mDialogDismissCallback = null;
     /**
      * OKボタンに表示する文字列.
      */
@@ -102,6 +107,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     public interface ApiOKCallback {
         /**
          * OKボタン押下のコールバック.
+         *
          * @param isOK true
          */
         void onOKCallback(boolean isOK);
@@ -123,6 +129,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     public interface ApiSelectCallback {
         /**
          * リスト選択時のコールバック.
+         *
          * @param position 押下されたリストアイテム
          */
         void onSelectCallback(int position);
@@ -134,10 +141,21 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     public interface ApiItemSelectCallback {
         /**
          * リストアイテムが選択時のコールバック.
-         * @param dialog ダイアログ
+         *
+         * @param dialog   ダイアログ
          * @param position 押下されたリストアイテム
          */
         void onItemSelectCallback(AlertDialog dialog, int position);
+    }
+
+    /**
+     * ボタンタップ以外でダイアログが閉じた時のコールバック.
+     */
+    public interface DialogDismissCallback {
+        /**
+         * ボタンタップ以外でダイアログが閉じた場合時のコールバック.
+         */
+        void onDialogDismissCallback();
     }
 
     /**
@@ -145,7 +163,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      *
      * @param apiOKCallback OKボタン押下のコールバック
      */
-    public void setOkCallBack(ApiOKCallback apiOKCallback) {
+    public void setOkCallBack(final ApiOKCallback apiOKCallback) {
         this.apiOKCallback = apiOKCallback;
     }
 
@@ -154,7 +172,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      *
      * @param apiCancelCallback Cancelボタン押下を返却するためのコールバック
      */
-    public void setApiCancelCallback(ApiCancelCallback apiCancelCallback) {
+    public void setApiCancelCallback(final ApiCancelCallback apiCancelCallback) {
         this.mApiCancelCallback = apiCancelCallback;
     }
 
@@ -163,7 +181,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      *
      * @param apiSelectCallback リスト選択時のコールバック
      */
-    public void setSelectCallBack(ApiSelectCallback apiSelectCallback) {
+    public void setSelectCallBack(final ApiSelectCallback apiSelectCallback) {
         this.apiSelectCallback = apiSelectCallback;
     }
 
@@ -172,14 +190,23 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      *
      * @param callback リストアイテムが選択時のコールバック
      */
-    public void setItemSelectCallback(ApiItemSelectCallback callback) {
+    public void setItemSelectCallback(final ApiItemSelectCallback callback) {
         this.apiItemSelectCallback = callback;
+    }
+
+    /**
+     * ボタンタップ以外でダイアログが閉じた時のコールバック.
+     *
+     * @param callback ボタンタップ以外でダイアログが閉じた時のコールバック
+     */
+    public void setDialogDismissCallback(DialogDismissCallback callback) {
+        this.mDialogDismissCallback = callback;
     }
 
     /**
      * コンストラクタ.
      *
-     * @param context コンテキスト
+     * @param context    コンテキスト
      * @param dialogType ダイアログタイプ
      */
     public CustomDialog(Context context, DialogType dialogType) {
@@ -242,9 +269,10 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
 
     /**
      * ダイアログビューの初期化.
+     *
      * @param dialogBuilder スクリーン
      */
-    private void initView(AlertDialog.Builder dialogBuilder) {
+    private void initView(final AlertDialog.Builder dialogBuilder) {
         if (TextUtils.isEmpty(confirmText)) {
             confirmText = mContext.getString(R.string.custom_dialog_ok);
         }
@@ -360,16 +388,17 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      *
      * @param resId リソースID
      */
-    public void setConfirmText(int resId) {
+    public void setConfirmText(final int resId) {
         Resources resources = mContext.getResources();
         confirmText = resources.getString(resId);
     }
 
     /**
      * DialogType.CONFIRMのcancelテキストを変更.
+     *
      * @param resId リソースID
      */
-    public void setCancelText(int resId) {
+    public void setCancelText(final int resId) {
         Resources resources = mContext.getResources();
         cancelText = resources.getString(resId);
     }
@@ -379,7 +408,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      *
      * @param cancelable キャンセル可否設定
      */
-    public void setCancelable(boolean cancelable) {
+    public void setCancelable(final boolean cancelable) {
         this.cancelable = cancelable;
     }
 
@@ -388,7 +417,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      *
      * @param visibility 表示/非表示設定
      */
-    public void setConfirmVisibility(int visibility) {
+    public void setConfirmVisibility(final int visibility) {
         confirmVisibility = visibility;
     }
 
@@ -397,7 +426,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      *
      * @param visibility 表示/非表示設定
      */
-    public void setCancelVisibility(int visibility) {
+    public void setCancelVisibility(final int visibility) {
         cancelVisibility = visibility;
     }
 
@@ -421,5 +450,11 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
         if (cancelText != null) {
             cancelText = text;
         }
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialogInterface) {
+        //ボタンタップ以外でダイアログが閉じた場合
+        mDialogDismissCallback.onDialogDismissCallback();
     }
 }

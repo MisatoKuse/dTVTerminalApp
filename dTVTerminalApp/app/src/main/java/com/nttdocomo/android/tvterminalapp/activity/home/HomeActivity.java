@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -15,7 +16,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +24,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -75,6 +76,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * 表示するコンテンツを内包するLinearLayout.
      */
     private LinearLayout mLinearLayout = null;
+    /**
+     * 表示するコンテンツを内包するLinearLayout.
+     */
+    private RelativeLayout mRelativeLayout = null;
     /**
      * エラーダイアログが表示されているかのフラグ.
      */
@@ -135,6 +140,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         enableGlobalMenuIcon(true);
         mIsOnCreateFinish = false;
         if (!NetWorkUtils.isOnline(this)) {
+            initData();
             String message = getResources().getString(R.string.activity_start_network_error_message);
             errorDialog(message, R.string.custom_dialog_ok);
         } else {
@@ -161,6 +167,15 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             failedRecordingReservationDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                 @Override
                 public void onOKCallback(boolean isOK) {
+                    //OKボタン押下
+                    initView();
+                    mIsCloseDialog = false;
+                }
+            });
+            failedRecordingReservationDialog.setDialogDismissCallback(new CustomDialog.DialogDismissCallback() {
+                @Override
+                public void onDialogDismissCallback() {
+                    //ボタンタップ以外でダイアログが閉じた場合
                     initView();
                     mIsCloseDialog = false;
                 }
@@ -174,11 +189,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private void initData() {
         //プログレスダイアログを表示する
         mLinearLayout = findViewById(R.id.home_main_layout_linearLayout);
-        mLinearLayout.setVisibility(View.VISIBLE);
+        mLinearLayout.setVisibility(View.GONE);
+        mRelativeLayout = findViewById(R.id.home_main_layout_progress_bar_Layout);
+        mRelativeLayout.setVisibility(View.VISIBLE);
         ProgressBar progressBar = new ProgressBar(HomeActivity.this, null, android.R.attr.progressBarStyle);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.gravity = Gravity.CENTER_VERTICAL;
-        mLinearLayout.addView(progressBar, params);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        mRelativeLayout.addView(progressBar, params);
     }
 
     @Override
@@ -257,19 +275,18 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
 
+        //プログレスバー用レイアウトを非表示にする
+        mRelativeLayout = findViewById(R.id.home_main_layout_progress_bar_Layout);
+        mRelativeLayout.setVisibility(View.GONE);
+
         mLinearLayout = findViewById(R.id.home_main_layout_linearLayout);
         mLinearLayout.setVisibility(View.VISIBLE);
         TextView agreementTextView = findViewById(R.id.home_main_layout_kytv);
         LinearLayout agreementRl = findViewById(R.id.home_main_layout_kyrl);
         ImageView prImageView = findViewById(R.id.home_main_layout_pr);
-        agreementTextView.setVisibility(View.VISIBLE);
-        agreementRl.setVisibility(View.VISIBLE);
-        prImageView.setVisibility(View.VISIBLE);
         agreementTextView.setOnClickListener(this);
         prImageView.setOnClickListener(this);
 
-        //TODO:暫定的にサンプル画像を設定する
-        prImageView.setBackgroundResource(R.mipmap.home_pr);
         //縦横比を維持したまま幅100%に拡大縮小
         Drawable drawable = ContextCompat.getDrawable(getApplicationContext(), R.mipmap.home_pr);
         int drawableWidth = drawable.getIntrinsicWidth();
@@ -287,29 +304,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         for (int i = HOME_CONTENTS_LIST_START_INDEX; i < HOME_CONTENTS_LIST_COUNT + HOME_CONTENTS_LIST_START_INDEX; i++) {
             View view = LayoutInflater.from(this).inflate(R.layout.home_main_layout_item, null, false);
             view.setTag(i);
-            view.setVisibility(View.GONE);
-            mLinearLayout.addView(view);
-        }
-    }
-
-    /**
-     * Viewを非表示にする.
-     */
-    private void clearView() {
-        mLinearLayout = findViewById(R.id.home_main_layout_linearLayout);
-        mLinearLayout.setVisibility(View.VISIBLE);
-        ImageView menuImageView = findViewById(R.id.header_layout_menu);
-        TextView agreementTextView = findViewById(R.id.home_main_layout_kytv);
-        LinearLayout agreementRl = findViewById(R.id.home_main_layout_kyrl);
-        ImageView prImageView = findViewById(R.id.home_main_layout_pr);
-        menuImageView.setVisibility(View.GONE);
-        agreementTextView.setVisibility(View.GONE);
-        agreementRl.setVisibility(View.GONE);
-        prImageView.setVisibility(View.GONE);
-
-        //各コンテンツのビューを作成する
-        for (int i = HOME_CONTENTS_LIST_START_INDEX; i < HOME_CONTENTS_LIST_COUNT + HOME_CONTENTS_LIST_START_INDEX; i++) {
-            View view = LayoutInflater.from(this).inflate(R.layout.home_main_layout_item, null, false);
             view.setVisibility(View.GONE);
             mLinearLayout.addView(view);
         }
@@ -504,6 +498,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    initData();
                     String message = getResources().getString(R.string.get_contents_data_error_message);
                     errorDialog(message, R.string.custom_dialog_ok);
                 }
@@ -582,7 +577,15 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             @Override
             public void onCancelCallback() {
                 //リトライ
-                clearView();
+                initData();
+                getUserInfo();
+            }
+        });
+
+        failedRecordingReservationDialog.setDialogDismissCallback(new CustomDialog.DialogDismissCallback() {
+            @Override
+            public void onDialogDismissCallback() {
+                //ボタンタップ以外でダイアログが閉じた場合はリトライと想定
                 initData();
                 getUserInfo();
             }
@@ -598,6 +601,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 // H4d契約情報取得に失敗した場合は「ひかりTV for docomoの契約情報取得に失敗しました。」
                 // エラーダイアログ、「閉じる」「リトライ」ボタンを表示すること。
                 //契約情報取得失敗
+                initData();
                 getUserInfoErrorDialog();
             } else {
                 //契約情報取得成功
