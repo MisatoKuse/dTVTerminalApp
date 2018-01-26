@@ -159,6 +159,12 @@ public class RemoteControlRelayClient {
         H4D_CATEGORY_RECORDED_CONTENTS,
         // H4D ひかりTV VOD
         H4D_CATEGORY_HIKARI_TV_VOD,
+        H4D_CATEGORY_HIKARI_TV_VOD_VIDEO_PROGRAM,
+        H4D_CATEGORY_HIKARI_TV_VOD_VIDEO_PACKAGE,
+        H4D_CATEGORY_HIKARI_TV_VOD_VIDEO_SERIES,
+        H4D_CATEGORY_HIKARI_TV_VOD_WIZARD,
+        H4D_CATEGORY_HIKARI_TV_VOD_SUBSCRIPTION_PACKAGE,
+        H4D_CATEGORY_HIKARI_TV_VOD_SERIES_SVOD,
         // dTV SVOD
         H4D_CATEGORY_DTV_SVOD
     }
@@ -197,6 +203,9 @@ public class RemoteControlRelayClient {
     private static final String RELAY_COMMAND_USER_ID = "USER_ID";
     private static final String RELAY_COMMAND_CONTENTS_ID = "CONTENTS_ID";
     private static final String RELAY_COMMAND_SERVICE_CATEGORY_TYPE = "SERVICE_CATEGORY_TYPE";
+    private static final String RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY = "APPLICATION_VERSION_COMPATIBILITY";
+    private static final String RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY_DTVT_APPLICATION = "dTVT_APPLICATION";
+    private static final String RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY_STB_RELAY_SERVICE = "STB_RELAY_SERVICE";
     private static final String RELAY_RESULT = "RESULT";
     private static final String RELAY_RESULT_OK = "OK";
     private static final String RELAY_RESULT_ERROR = "ERROR";
@@ -204,7 +213,10 @@ public class RemoteControlRelayClient {
     private static final String STB_APPLICATION_DTVCHANNEL_CATEGORY_BROADCAST = "DTVCHANNEL_CATEGORY_BROADCAST";
     private static final String STB_APPLICATION_DTVCHANNEL_CATEGORY_MISSED = "DTVCHANNEL_CATEGORY_MISSED";
     private static final String STB_APPLICATION_DTVCHANNEL_CATEGORY_RELATION = "DTVCHANNEL_CATEGORY_RELATION";
-
+    // dTVTアプリバージョンコード（Android, iOSで共通）
+    private static final int DTVT_APPLICATION_VERSION_CODE = 1;
+    // STBのバージョンコード β版、プレリリース版... と 1つずつ上がる
+    private static final int STB_RELAY_SERVICE_VERSION_CODE = 3;
     // 中継アプリクライアントが送信するキーコードのメッセージ定数
     private static final String RELAY_KEYEVENT = "KEYEVENT";
     private static final String RELAY_KEYEVENT_ACTION = "ACTION";
@@ -584,7 +596,8 @@ public class RemoteControlRelayClient {
      * @param serviceCategoryType  カテゴリー分類
      * @return
      */
-    public boolean startApplicationRequest(STB_APPLICATION_TYPES applicationType, String contentsId, SERVICE_CATEGORY_TYPES serviceCategoryType, Context context) {
+    public boolean startApplicationRequest(STB_APPLICATION_TYPES applicationType, String contentsId,
+                                           SERVICE_CATEGORY_TYPES serviceCategoryType, Context context) {
         String applicationId = getApplicationId(applicationType);
         String requestParam;
 
@@ -629,6 +642,23 @@ public class RemoteControlRelayClient {
     }
 
     /**
+     * アプリバージョンコードチェックのメッセージ（JSON）を作成する.
+     *
+     * @return アプリバージョンコードチェックのメッセージ（JSON）
+     */
+    private JSONObject getApplicationVersionCompatibilityRequest() {
+        JSONObject applicationVersionCompatibility = new JSONObject();
+
+        try {
+            applicationVersionCompatibility.put(RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY_DTVT_APPLICATION, DTVT_APPLICATION_VERSION_CODE);
+            applicationVersionCompatibility.put(RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY_STB_RELAY_SERVICE, STB_RELAY_SERVICE_VERSION_CODE);
+        } catch (JSONException e) {
+            DTVTLogger.debug(e);
+        }
+        return applicationVersionCompatibility;
+    }
+
+    /**
      * 電源ON/OFF要求のメッセージ（JSON形式）を作成する.
      *
      * @param userId
@@ -639,6 +669,7 @@ public class RemoteControlRelayClient {
         String request = null;
         try {
             requestJson.put(RELAY_COMMAND, RELAY_COMMAND_KEYEVENT_KEYCODE_POWER);
+            requestJson.put(RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY, getApplicationVersionCompatibilityRequest());
             requestJson.put(RELAY_COMMAND_USER_ID, toHashValue(userId));
             request = requestJson.toString();
         } catch (JSONException e) {
@@ -658,6 +689,7 @@ public class RemoteControlRelayClient {
         String request = null;
         try {
             requestJson.put(RELAY_COMMAND, RELAY_COMMAND_IS_USER_ACCOUNT_EXIST);
+            requestJson.put(RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY, getApplicationVersionCompatibilityRequest());
             requestJson.put(RELAY_COMMAND_USER_ID, toHashValue(userId));
             request = requestJson.toString();
         } catch (JSONException e) {
@@ -830,6 +862,7 @@ public class RemoteControlRelayClient {
         try {
             requestJson.put(RELAY_COMMAND, RELAY_COMMAND_START_APPLICATION);
             requestJson.put(RELAY_COMMAND_APPLICATION_ID, applicationId);
+            requestJson.put(RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY, getApplicationVersionCompatibilityRequest());
             requestJson.put(RELAY_COMMAND_USER_ID, toHashValue(userId));
             request = requestJson.toString();
         } catch (JSONException e) {
@@ -841,10 +874,12 @@ public class RemoteControlRelayClient {
     /**
      * アプリ起動要求のメッセージ（JSON形式）を作成する.
      * タイトル詳細表示のリクエスト
+     * ・dTV に対応
+     * ・dアニメストア に対応
      *
      * @param applicationId  アプリケーションID
      * @param contentsId      コンテンツID
-     * @return
+     * @return アプリ起動要求メッセージ（JSON形式）
      */
     private String setTitleDetailRequest(String applicationId, String contentsId, String userId) {
         JSONObject requestJson = new JSONObject();
@@ -853,6 +888,7 @@ public class RemoteControlRelayClient {
             requestJson.put(RELAY_COMMAND, RELAY_COMMAND_TITLE_DETAIL);
             requestJson.put(RELAY_COMMAND_APPLICATION_ID, applicationId);
             requestJson.put(RELAY_COMMAND_CONTENTS_ID, contentsId);
+            requestJson.put(RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY, getApplicationVersionCompatibilityRequest());
             requestJson.put(RELAY_COMMAND_USER_ID, toHashValue(userId));
             request = requestJson.toString();
         } catch (JSONException e) {
@@ -870,9 +906,10 @@ public class RemoteControlRelayClient {
      * @param applicationId  アプリケーションID
      * @param contentsId      コンテンツID
      * @param serviceCategoryType  カテゴリー分類
-     * @return
+     * @return アプリ起動要求メッセージ（JSON形式）
      */
-    private String setTitleDetailRequest(String applicationId, String contentsId, SERVICE_CATEGORY_TYPES serviceCategoryType, String userId) {
+    private String setTitleDetailRequest(String applicationId, String contentsId,
+                                         SERVICE_CATEGORY_TYPES serviceCategoryType, String userId) {
         JSONObject requestJson = new JSONObject();
         String request = null;
 
@@ -881,6 +918,7 @@ public class RemoteControlRelayClient {
             requestJson.put(RELAY_COMMAND_APPLICATION_ID, applicationId);
             requestJson.put(RELAY_COMMAND_SERVICE_CATEGORY_TYPE, getServiceCategorySymbol(serviceCategoryType));
             requestJson.put(RELAY_COMMAND_CONTENTS_ID, contentsId);
+            requestJson.put(RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY, getApplicationVersionCompatibilityRequest());
             requestJson.put(RELAY_COMMAND_USER_ID, toHashValue(userId));
             request = requestJson.toString();
         } catch (JSONException e) {
