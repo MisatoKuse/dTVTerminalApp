@@ -94,14 +94,19 @@ namespace dixim {
                                                      "()Ljava/lang/String;");
                     if (env->ExceptionCheck()) {
                         DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start failed, env->ExceptionCheck");
+                        env->DeleteGlobalRef(instance);
+                        env->DeleteLocalRef(clazz);
+
                         clearAttachStatus(env, vm, isAttached);
                         return false;
                     }
 
-                    jstring strObj = (jstring) env->CallObjectMethod(objTmp,
-                                                                     mid);
+                    jstring strObj = (jstring) env->CallObjectMethod(objTmp, mid);
                     if (env->ExceptionCheck()) {
                         DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start failed, jstring strObj");
+                        env->DeleteGlobalRef(instance);
+                        env->DeleteLocalRef(clazz);
+                        env->DeleteLocalRef(strObj);
                         clearAttachStatus(env, vm, isAttached);
                         return false;
                     }
@@ -110,7 +115,6 @@ namespace dixim {
                     dixim_hwif_private_data_io hwif;
                     hwif.private_data_home = (void *) private_data_home.c_str();
                     hwif.vm = vm;
-                    //hwif.obj=(void*)myDlnaClass;
                     hwif.obj = objTmp;
                     hwif.mac_address_method_id = mid;
                     private_data = &hwif;
@@ -121,6 +125,9 @@ namespace dixim {
 
                     if (running) {
                         DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start, running");
+                        env->DeleteGlobalRef(instance);
+                        env->DeleteLocalRef(clazz);
+                        env->DeleteLocalRef(strObj);
                         clearAttachStatus(env, vm, isAttached);
                         return 1;
                     }
@@ -132,6 +139,9 @@ namespace dixim {
                         du_log_ev(LOG_CATEGORY,
                                   DU_UCHAR_CONST("Failed to set additional param: ret=%x."), ret);
                         DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start failed, ddtcp_set_additional_param");
+                        env->DeleteGlobalRef(instance);
+                        env->DeleteLocalRef(clazz);
+                        env->DeleteLocalRef(strObj);
                         goto error;
                     }
 
@@ -139,6 +149,9 @@ namespace dixim {
                     if (DDTCP_FAILED(ret)) {
                         du_log_ev(LOG_CATEGORY, DU_UCHAR_CONST("Failed to startup: ret=%x."), ret);
                         DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start failed, ddtcp_startup");
+                        env->DeleteGlobalRef(instance);
+                        env->DeleteLocalRef(clazz);
+                        env->DeleteLocalRef(strObj);
                         goto error;
                     }
 
@@ -147,6 +160,9 @@ namespace dixim {
                         du_log_ev(LOG_CATEGORY,
                                   DU_UCHAR_CONST("Failed to source listen ake: ret=%x."), ret);
                         DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start failed, ddtcp_source_listen_ake");
+                        env->DeleteGlobalRef(instance);
+                        env->DeleteLocalRef(clazz);
+                        env->DeleteLocalRef(strObj);
                         goto error2;
                     }
 
@@ -154,11 +170,19 @@ namespace dixim {
                     ret = ddtcp_source_listen_ra_ake(d, du_ip_str_any4(), ake_ra_port, 0, 0, 0, 0, &listen_ra);
         if (DDTCP_FAILED(ret)) {
             du_log_ev(LOG_CATEGORY, DU_UCHAR_CONST("Failed to source listen ra ake: ret=%x."), ret);
+            env->DeleteGlobalRef(instance);
+            env->DeleteLocalRef(clazz);
+            env->DeleteLocalRef(strObj);
             goto error3;
         }
 #endif
 
                     running = 1;
+
+                    //env->DeleteGlobalRef(instance);
+                    env->DeleteLocalRef(clazz);
+                    env->DeleteLocalRef(strObj);
+
                     du_log_dv(LOG_CATEGORY, DU_UCHAR_CONST("--- start"));
                     DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>dtcp.hpp dtcp.start exit true");
                     return 1;

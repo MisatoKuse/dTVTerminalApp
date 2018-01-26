@@ -306,7 +306,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                 return;
             }
             try {
-                Thread.sleep(300);
+                Thread.sleep(1000*2);
                 DTVTLogger.debug(">>>>>>>>>>>>>>>>>> new dl");
                 setDlParam(getDownLoadParam());
                 start();
@@ -372,10 +372,25 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     @Override
-    public void onLowStorageSpace() {
-        if (null != mDlDataProviderListener) {
-            mDlDataProviderListener.onLowStorageSpace();
+    public void onLowStorageSpace(final String fullPath) {
+        if (null != mDlDataProviderListener && DownloadService.BINDSTATUS == DownloadService.BINDED) {
+            DTVTLogger.debug(">>>>>>>>>>>>>>>>>> onLowStorageSpace ok 1");
+            mDlDataProviderListener.onLowStorageSpace(fullPath);
+        } else if(DownloadService.BINDSTATUS == DownloadService.BACKGROUD){
+            DownloadService ds = getDownloadService();
+            if (null != ds) {
+                Intent intent = new Intent();
+                intent.setAction(DownloadService.DONWLOAD_LowStorageSpace);
+                intent.putExtra(DownloadService.DONWLOAD_PATH, fullPath);
+                ds.sendBroadcast(intent);
+            } else {
+                DTVTLogger.debug("容量は足りないので、ダウンロードできませんでした。");
+            }
+        } else {
+            //mDlDataProviderListener.onCancel(fullPath);
+            setNextDownLoad();
         }
+
     }
 
     private static final int DOWNLOAD_STATUS_SELECT = 1;
@@ -545,10 +560,13 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     private void updateDownloadStatusToDb(){
+        DTVTLogger.start();
         if(mActivity != null){
+            DTVTLogger.debug("writing db");
             DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(mActivity);
             downLoadListDataManager.updateDownloadByItemId(itemId);
         }
+        DTVTLogger.end();
     }
 
     public void setQue(List<DlData> dlData) {

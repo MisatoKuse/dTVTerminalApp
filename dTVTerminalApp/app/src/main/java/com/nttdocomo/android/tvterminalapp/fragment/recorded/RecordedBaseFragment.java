@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
@@ -21,13 +20,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
-import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
@@ -40,7 +38,9 @@ import com.nttdocomo.android.tvterminalapp.service.download.DownloadParam;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadService;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloaderBase;
 import com.nttdocomo.android.tvterminalapp.service.download.DtcpDownloadParam;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -391,8 +391,16 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
 
 
     @Override
-    public void onLowStorageSpace() {
-
+    public void onLowStorageSpace(final String fullPath) {
+        if(activity != null){
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showMessage("容量は足りないので、ダウンロードできませんでした。");
+                    setCancelStatus(fullPath);
+                }
+            });
+        }
     }
 
     @Override
@@ -621,7 +629,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 DTVTLogger.end();
                 return;
             }
-//            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
             DTVTLogger.end();
         } catch (Exception e){
             DTVTLogger.debug(e);

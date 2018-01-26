@@ -95,10 +95,16 @@ public abstract class DownloaderBase {
             mIsCanceled=false;
         }
         mTotalBytes = calculateTotalBytes();
+        if(isStorageSpaceLow()){
+            setLowStorageSpace();
+            return;
+        }
         if(null!=mDownloadListener){
             mDownloadListener.onStart(mTotalBytes);
         }
-        mDownLoadThread = new DownLoadThread();
+        if(null==mDownLoadThread){
+            mDownLoadThread = new DownLoadThread();
+        }
         mDownLoadThread.start();
     }
 
@@ -263,7 +269,12 @@ public abstract class DownloaderBase {
             mIsPause=true;
         }
         if(null!=mDownloadListener){
-            mDownloadListener.onLowStorageSpace();
+            if(null!=mDownloadParam){
+                String path=getFullFilePath();
+                if(null!=path){
+                    mDownloadListener.onLowStorageSpace(path);
+                }
+            }
         }
     }
 
@@ -272,6 +283,7 @@ public abstract class DownloaderBase {
      * @return MB
      */
     long getInnerStorageSafeSpace(){
+        //return 200;
         return 200;
     }
 

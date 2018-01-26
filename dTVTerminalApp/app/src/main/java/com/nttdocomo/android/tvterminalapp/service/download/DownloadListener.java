@@ -67,5 +67,5 @@ interface DownloadListener {
     /**
      * ダウンロード容量不足の場合、コールされる
      */
-    void onLowStorageSpace();
+    void onLowStorageSpace(final String fullPath);
 }

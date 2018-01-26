@@ -84,7 +84,7 @@ namespace dtvt {
     private:
         bool startDlEnv(JNIEnv *env, jobject obj, std::string& dirToSave);
 
-        void notify(int msg, std::string content);
+        void notify(int msg, std::string& content);
         bool isStarted();
 
     private:

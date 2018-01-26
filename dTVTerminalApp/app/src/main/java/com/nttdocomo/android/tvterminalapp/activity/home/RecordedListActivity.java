@@ -32,7 +32,6 @@ import android.widget.Toast;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
@@ -42,7 +41,6 @@ import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragmen
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
-
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvRecVideo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoItem;
@@ -51,6 +49,7 @@ import com.nttdocomo.android.tvterminalapp.jni.download.DlnaProvDownload;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadService;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloaderBase;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
@@ -692,6 +691,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
                 String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_PATH);
                 baseFragment.setDownladFailByBg(fullPath);
+            } else if (DownloadService.DONWLOAD_LowStorageSpace.equals(intent.getAction())) {
+                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_PATH);
+                baseFragment.onLowStorageSpace(fullPath);
             }
         }
     };

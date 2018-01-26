@@ -33,6 +33,8 @@ public class DownloadService extends Service implements DownloadListener {
     public static final String DONWLOAD_SUCCESS = "success";
     public static final String DONWLOAD_FAIL = "fail";
     public static final String DONWLOAD_PATH = "path";
+    public static final String DONWLOAD_LowStorageSpace = "lowStorageSpace";
+
 
     public void setDownloadServiceListener(DownloadServiceListener dlServiceListener){
         mDownloadServiceListener=dlServiceListener;
@@ -292,9 +294,9 @@ public class DownloadService extends Service implements DownloadListener {
      * コールバック
      */
     @Override
-    public void onLowStorageSpace() {
+    public void onLowStorageSpace(final String fullPath) {
         if(null!=mDownloadServiceListener){
-            mDownloadServiceListener.onLowStorageSpace();
+            mDownloadServiceListener.onLowStorageSpace(fullPath);
         }
     }
 
