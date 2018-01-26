@@ -18,6 +18,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -29,7 +30,6 @@ import android.widget.Toast;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
-import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
@@ -48,8 +48,9 @@ import com.nttdocomo.android.tvterminalapp.model.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadService;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloaderBase;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.io.File;
 import java.text.ParseException;
@@ -239,7 +240,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.keyword_search_text));
         searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.keyword_search_hint));
         searchAutoComplete.setHint(R.string.keyword_search_hint);
-        searchAutoComplete.setTextSize(TEXT_SIZE);
+        searchAutoComplete.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE);
     }
 
     /**
@@ -506,6 +507,28 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         return resultList;
     }
 
+    private void setDownLoadQue(RecordedBaseFragment baseFrgament, ArrayList<DlnaRecVideoItem>  dlnaRecVideoItems, List<Map<String, String>> resultList){
+        if(resultList != null){
+            for(int k = 0; k < resultList.size(); k++){
+                Map<String, String> hashMap = resultList.get(k);
+                String itemId = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_ITEM_ID);
+                for(int t = 0; t < dlnaRecVideoItems.size(); t++){
+                    String allItemId = dlnaRecVideoItems.get(t).mItemId;
+                    if(!TextUtils.isEmpty(allItemId) && !allItemId.startsWith(DownloaderBase.sDlPrefix)){
+                        allItemId = DownloaderBase.getFileNameById(dlnaRecVideoItems.get(t).mItemId);
+                    }
+                    if(itemId.equals(allItemId)){
+                        String downloadStatus = hashMap.get(DBConstants.DOWNLOAD_LIST_COLUM_DOWNLOAD_STATUS);
+                        if(TextUtils.isEmpty(downloadStatus)){
+                            baseFrgament.queIndex.add(t);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private void setVideoBrows(ArrayList<DlnaRecVideoItem>  dlnaRecVideoItems) {
         final RecordedBaseFragment baseFrgament = getCurrentRecordedBaseFragment(0);
         baseFrgament.mContentsList = new ArrayList<>();
@@ -513,7 +536,11 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         setTakeOutContentsToAll(dlnaRecVideoItems, resultList);
         List<ContentsData> listData = baseFrgament.getContentsData();
         listData.clear();
+        if(baseFrgament.queIndex == null){
+            baseFrgament.queIndex = new ArrayList<>();
+        }
         baseFrgament.queIndex.clear();
+        setDownLoadQue(baseFrgament, dlnaRecVideoItems, resultList);
         for (int i = 0; i < dlnaRecVideoItems.size(); i++) {
             DlnaRecVideoItem itemData = dlnaRecVideoItems.get(i);
             RecordedContentsDetailData detailData = new RecordedContentsDetailData();
@@ -545,7 +572,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                                 detailData.setDlFileFullPath(fullPath);
                             } else {
                                 detailData.setDownLoadStatus(ContentsAdapter.DOWNLOAD_STATUS_LOADING);
-                                baseFrgament.queIndex.add(i);
                             }
                         }
                     }
@@ -580,7 +606,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 try {
                     Calendar calendar = Calendar.getInstance(Locale.JAPAN);
                     calendar.setTime(sdf.parse(time));
-                    StringUtil util = new StringUtil(this);
+                    StringUtils util = new StringUtils(this);
                     String[] strings = {String.valueOf(calendar.get(Calendar.MONTH)), "/",
                             String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)), " (",
                             mDate[calendar.get(Calendar.DAY_OF_WEEK) - 1], ") ",
@@ -639,6 +665,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
                 String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_PATH);
                 baseFragment.setDownladFailByBg(fullPath);
+            } else if (DownloadService.DONWLOAD_LowStorageSpace.equals(intent.getAction())) {
+                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_PATH);
+                baseFragment.onLowStorageSpace(fullPath);
             }
         }
     };

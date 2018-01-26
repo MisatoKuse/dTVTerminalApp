@@ -26,8 +26,8 @@ import com.nttdocomo.android.tvterminalapp.activity.home.RecordReservationListAc
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RentalListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.WatchingVideoListActivity;
-import com.nttdocomo.android.tvterminalapp.activity.other.NewsActivity;
-import com.nttdocomo.android.tvterminalapp.activity.other.SettingActivity;
+import com.nttdocomo.android.tvterminalapp.activity.setting.NewsActivity;
+import com.nttdocomo.android.tvterminalapp.activity.setting.SettingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.RankingTopActivity;
 import com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
@@ -37,6 +37,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
+import com.nttdocomo.android.tvterminalapp.adapter.MenuListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

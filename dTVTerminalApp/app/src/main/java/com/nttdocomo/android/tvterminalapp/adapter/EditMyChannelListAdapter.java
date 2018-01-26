@@ -15,13 +15,13 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.MyChannelEditActivity;
-import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
+import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.dataprovider.HikariTvChDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
 
 import java.util.ArrayList;
 
-import static com.nttdocomo.android.tvterminalapp.common.CustomDialog.DialogType.CONFIRM;
+import static com.nttdocomo.android.tvterminalapp.view.CustomDialog.DialogType.CONFIRM;
 
 public class EditMyChannelListAdapter extends BaseAdapter implements View.OnClickListener {
 

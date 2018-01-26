@@ -7,7 +7,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationMetaData;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RecordingReservationListWebClient;
@@ -91,24 +91,24 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
     public void sendStatus(JSONObject jsonObj) {
         try {
             // statusの値を取得しセットする
-            if (!jsonObj.isNull(JsonContents.META_RESPONSE_STATUS)) {
-                String status = jsonObj.getString(JsonContents.META_RESPONSE_STATUS);
+            if (!jsonObj.isNull(JsonConstants.META_RESPONSE_STATUS)) {
+                String status = jsonObj.getString(JsonConstants.META_RESPONSE_STATUS);
                 if (mRecordingReservationListResponse != null) {
                     mRecordingReservationListResponse.setStatus(status);
                 }
             }
 
             // 録画予約情報受信時刻を取得しセットする
-            if (!jsonObj.isNull(JsonContents.META_RESPONSE_RESERVATION)) {
-                String reservation = jsonObj.getString(JsonContents.META_RESPONSE_RESERVATION);
+            if (!jsonObj.isNull(JsonConstants.META_RESPONSE_RESERVATION)) {
+                String reservation = jsonObj.getString(JsonConstants.META_RESPONSE_RESERVATION);
                 if (mRecordingReservationListResponse != null) {
                     mRecordingReservationListResponse.setReservation(reservation);
                 }
             }
 
             //pagerの値を取得しセットする
-            if (!jsonObj.isNull(JsonContents.META_RESPONSE_PAGER)) {
-                JSONObject pager = jsonObj.getJSONObject(JsonContents.META_RESPONSE_PAGER);
+            if (!jsonObj.isNull(JsonConstants.META_RESPONSE_PAGER)) {
+                JSONObject pager = jsonObj.getJSONObject(JsonConstants.META_RESPONSE_PAGER);
                 mRecordingReservationListResponse.setPager(pager);
             }
 
@@ -129,10 +129,10 @@ public class RecordingReservationListJsonParser extends AsyncTask<Object, Object
         try {
             ArrayList<RecordingReservationMetaData> recordingReservationMetaDataList =
                     new ArrayList<RecordingReservationMetaData>();
-            if (!jsonObj.isNull(JsonContents.META_RESPONSE_RESERVATION_LIST)) {
+            if (!jsonObj.isNull(JsonConstants.META_RESPONSE_RESERVATION_LIST)) {
                 // 録画予約一覧をJSONArrayにパースする
                 JSONArray lists = jsonObj.getJSONArray(
-                        JsonContents.META_RESPONSE_RESERVATION_LIST);
+                        JsonConstants.META_RESPONSE_RESERVATION_LIST);
                 if (lists.length() == 0) {
                     return;
                 }

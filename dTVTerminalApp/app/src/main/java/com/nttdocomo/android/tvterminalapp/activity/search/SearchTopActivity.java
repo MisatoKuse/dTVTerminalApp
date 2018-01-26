@@ -28,12 +28,20 @@ import com.nttdocomo.android.tvterminalapp.model.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.model.search.SearchNarrowCondition;
 import com.nttdocomo.android.tvterminalapp.model.search.SearchSortKind;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchResultError;
+import com.nttdocomo.android.tvterminalapp.struct.ResultType;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchDubbedType;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchFilterTypeMappable;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchGenreType;
+import com.nttdocomo.android.tvterminalapp.struct.SearchNarrowCondition;
+import com.nttdocomo.android.tvterminalapp.struct.SearchSortKind;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchResultError;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.TotalSearchContentInfo;
+import com.nttdocomo.android.tvterminalapp.fragment.search.SearchFragmentFactory;
+import com.nttdocomo.android.tvterminalapp.fragment.search.SearchBaseFragment;
+import com.nttdocomo.android.tvterminalapp.fragment.search.SearchBaseFragmentScrollListener;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -62,7 +70,7 @@ public class SearchTopActivity extends BaseActivity
     SearchNarrowCondition mSearchNarrowCondition = null;
     SearchSortKind mSearchSortKind = new SearchSortKind("SearchSortKindNone");
 
-    private FragmentFactory mFragmentFactory = null;
+    private SearchFragmentFactory mFragmentFactory = null;
 
     //テレビ
     private static final int PAGE_NO_OF_SERVICE_TELEVISION = 0;
@@ -103,7 +111,7 @@ public class SearchTopActivity extends BaseActivity
         mTabNames = getResources().getStringArray(R.array.tab_names);
         setSearchNarrowCondition();
 
-        mFragmentFactory = new FragmentFactory();
+        mFragmentFactory = new SearchFragmentFactory();
         mSearchDataProvider = new SearchDataProvider();
     }
 
@@ -479,7 +487,6 @@ public class SearchTopActivity extends BaseActivity
      */
     private class MainAdapter extends FragmentStatePagerAdapter {
         private SearchTopActivity mSearchTopActivity = null;
-
         MainAdapter(FragmentManager fm, SearchTopActivity top) {
             super(fm);
             mSearchTopActivity = top;
@@ -528,7 +535,7 @@ public class SearchTopActivity extends BaseActivity
                 getString(R.string.keyword_search_result),
                 Integer.toString(mSearchTotalCount),
                 getString(R.string.keyword_search_result_num)};
-        return StringUtil.getConnectString(strings);
+        return StringUtils.getConnectString(strings);
     }
 
     @Override

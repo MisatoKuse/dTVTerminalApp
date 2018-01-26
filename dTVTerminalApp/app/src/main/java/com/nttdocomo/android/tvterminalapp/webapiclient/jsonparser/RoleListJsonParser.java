@@ -8,7 +8,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RoleListWebClient;
@@ -93,11 +93,11 @@ public class RoleListJsonParser extends AsyncTask<Object, Object, Object> {
             for (int i = 0; i < jsonArray.length(); i++) {
                 RoleListMetaData roleMetaData = new RoleListMetaData();
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                if (!jsonObject.isNull(JsonContents.META_RESPONSE_CONTENTS_ID)) {
-                    id = jsonObject.getString(JsonContents.META_RESPONSE_CONTENTS_ID);
+                if (!jsonObject.isNull(JsonConstants.META_RESPONSE_CONTENTS_ID)) {
+                    id = jsonObject.getString(JsonConstants.META_RESPONSE_CONTENTS_ID);
                 }
-                if (!jsonObject.isNull(JsonContents.META_RESPONSE_CONTENTS_NAME)) {
-                    name = jsonObject.getString(JsonContents.META_RESPONSE_CONTENTS_NAME);
+                if (!jsonObject.isNull(JsonConstants.META_RESPONSE_CONTENTS_NAME)) {
+                    name = jsonObject.getString(JsonConstants.META_RESPONSE_CONTENTS_NAME);
                 }
                 roleMetaData.setId(id);
                 roleMetaData.setName(name);

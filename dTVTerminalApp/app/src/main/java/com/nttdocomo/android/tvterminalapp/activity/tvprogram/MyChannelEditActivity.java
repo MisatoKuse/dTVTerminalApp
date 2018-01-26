@@ -15,7 +15,7 @@ import android.view.View;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.EditMyChannelListAdapter;
-import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
+import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.MyChannelDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
@@ -23,16 +23,16 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
 import com.nttdocomo.android.tvterminalapp.fragment.channellist.EditChannelListBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.channellist.EditChannelListFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.channellist.EditMyChannelListFragment;
-import com.nttdocomo.android.tvterminalapp.model.program.Channel;
-import com.nttdocomo.android.tvterminalapp.model.program.ChannelsInfo;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.nttdocomo.android.tvterminalapp.adapter.EditMyChannelListAdapter.SERVICE_ID_MY_CHANNEL_LIST;
-import static com.nttdocomo.android.tvterminalapp.common.CustomDialog.DialogType.ERROR;
-import static com.nttdocomo.android.tvterminalapp.common.JsonContents.META_RESPONSE_STATUS_OK;
+import static com.nttdocomo.android.tvterminalapp.view.CustomDialog.DialogType.ERROR;
+import static com.nttdocomo.android.tvterminalapp.common.JsonConstants.META_RESPONSE_STATUS_OK;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala.MY_CHANNEL_MAX_INDEX;
 
 public class MyChannelEditActivity extends BaseActivity implements View.OnClickListener,
@@ -192,7 +192,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     }
 
     @Override
-    public void channelInfoCallback(ChannelsInfo channelsInfo) {
+    public void channelInfoCallback(ChannelInfoList channelsInfo) {
 
     }
 
@@ -201,10 +201,10 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
      * @param channels 　画面に渡すチャンネル情報
      */
     @Override
-    public void channelListCallback(ArrayList<Channel> channels) {
+    public void channelListCallback(ArrayList<ChannelInfo> channels) {
         if (channels != null) {
             mEditChannelListFragment.mData.clear();
-            ArrayList<Channel> rmChannels = new ArrayList<>();
+            ArrayList<ChannelInfo> rmChannels = new ArrayList<>();
             for (String mServiceId : mServiceIds) {
                 for (int j = 0; j < channels.size(); j++) {
                     if (mServiceId != null) {
@@ -240,7 +240,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
      * @param channel
      */
     @Override
-    public void onTapChannelListItem(int position, Channel channel) {
+    public void onTapChannelListItem(int position, ChannelInfo channel) {
         DTVTLogger.start();
         //MYチャンネル登録実行
         executeMyChannelListRegister(position,channel);
@@ -252,7 +252,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
      * @param position
      * @param channel
      */
-    private void executeMyChannelListRegister(int position, Channel channel) {
+    private void executeMyChannelListRegister(int position, ChannelInfo channel) {
         MyChannelDataProvider myChDataProvider = new MyChannelDataProvider(this);
         myChDataProvider.getMyChannelRegisterStatus(channel.getServiceId()
                 ,channel.getTitle(), WebApiBasePlala.MY_CHANNEL_R_VALUE_G

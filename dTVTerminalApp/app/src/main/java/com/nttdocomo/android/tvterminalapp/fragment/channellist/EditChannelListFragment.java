@@ -14,7 +14,7 @@ import android.widget.RelativeLayout;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.adapter.ChannelListAdapter;
-import com.nttdocomo.android.tvterminalapp.model.program.Channel;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 
 import java.util.ArrayList;
 
@@ -23,7 +23,7 @@ import static com.nttdocomo.android.tvterminalapp.adapter.ChannelListAdapter.ChL
 public class EditChannelListFragment extends EditChannelListBaseFragment implements AdapterView.OnItemClickListener {
 
     private static final int GO_FOR_MY_EDIT_CHANNEL_LIST = 0;
-    public ArrayList<Channel> mData;
+    public ArrayList<ChannelInfo> mData;
     public ListView mEditChannelListView;
     private ChannelListAdapter mChannelListAdapter;
 
@@ -49,7 +49,7 @@ public class EditChannelListFragment extends EditChannelListBaseFragment impleme
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        Channel channel = mData.get(position);
+        ChannelInfo channel = mData.get(position);
         mContext.onTapChannelListItem(position,channel);
         mContext.mViewPager.setCurrentItem(GO_FOR_MY_EDIT_CHANNEL_LIST);
     }
@@ -76,6 +76,6 @@ public class EditChannelListFragment extends EditChannelListBaseFragment impleme
      * "チャンネルリスト画面"からactivityにアイテム情報を送るインターフェース
      */
     public interface ChannelListItemImpl {
-        void onTapChannelListItem(int position, Channel channel);
+        void onTapChannelListItem(int position, ChannelInfo channel);
     }
 }

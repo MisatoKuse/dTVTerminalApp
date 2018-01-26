@@ -17,9 +17,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
-import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
@@ -218,7 +218,7 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
         if(mLoadMoreView.equals(view) || mActivity == null) {
             return;
         }
-        Intent intent = new Intent(mActivity, DtvContentsDetailActivity.class);
+        Intent intent = new Intent(mActivity, ContentDetailActivity.class);
         intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
         startActivity(intent);
     }

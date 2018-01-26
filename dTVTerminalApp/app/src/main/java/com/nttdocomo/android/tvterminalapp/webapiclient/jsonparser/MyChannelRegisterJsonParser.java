@@ -8,7 +8,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelRegisterResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.MyChannelRegisterWebClient;
 
@@ -82,8 +82,8 @@ public class MyChannelRegisterJsonParser extends AsyncTask<Object, Object, Objec
     private void sendStatus(JSONObject jsonObj) {
         try {
             // statusの値を取得しセットする
-            if (!jsonObj.isNull(JsonContents.META_RESPONSE_STATUS)) {
-                String status = jsonObj.getString(JsonContents.META_RESPONSE_STATUS);
+            if (!jsonObj.isNull(JsonConstants.META_RESPONSE_STATUS)) {
+                String status = jsonObj.getString(JsonConstants.META_RESPONSE_STATUS);
                 if (myChannelRegisterResponse != null) {
                     myChannelRegisterResponse.setStatus(status);
                 }

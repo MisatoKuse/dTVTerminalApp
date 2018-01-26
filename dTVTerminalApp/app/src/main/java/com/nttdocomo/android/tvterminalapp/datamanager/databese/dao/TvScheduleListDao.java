@@ -8,7 +8,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,7 +78,7 @@ public class TvScheduleListDao {
         List<Map<String, String>> list = new ArrayList<>();
         //TODO DB日付検索条件除く、将来は対応必要
         /*StringBuilder selection = new StringBuilder();
-        selection.append(JsonContents.META_RESPONSE_DISP_TYPE);
+        selection.append(JsonConstants.META_RESPONSE_DISP_TYPE);
         selection.append("=? AND ");
         selection.append(UPDATE_DATE);
         selection.append("=? AND ");
@@ -143,7 +143,7 @@ public class TvScheduleListDao {
      */
     public int deleteByType(String type) {
         StringBuilder deleteSelection = new StringBuilder();
-        deleteSelection.append(JsonContents.META_RESPONSE_DISP_TYPE);
+        deleteSelection.append(JsonConstants.META_RESPONSE_DISP_TYPE);
         deleteSelection.append("=? AND ");
         deleteSelection.append(DATE_TYPE);
         deleteSelection.append("=?");

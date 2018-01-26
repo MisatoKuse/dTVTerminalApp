@@ -26,14 +26,14 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.util.List;
 
@@ -85,7 +85,7 @@ public class DtvContentsDetailFragment extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         //コンテンツ詳細表示に必要なデータを取得する
-        mOtherContentsDetailData = getArguments().getParcelable(DtvContentsDetailActivity.RECOMMEND_INFO_BUNDLE_KEY);
+        mOtherContentsDetailData = getArguments().getParcelable(ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY);
         return initView(container);
     }
 
@@ -179,7 +179,7 @@ public class DtvContentsDetailFragment extends Fragment {
                     ((BaseActivity) mActivity).sendClipRequest(data, clipButton);
                 } else {
                     //未契約時は契約導線を表示するためActivityに通知
-                    ((DtvContentsDetailActivity) mActivity).leadingContract();
+                    ((ContentDetailActivity) mActivity).leadingContract();
                 }
             }
         });
@@ -214,7 +214,7 @@ public class DtvContentsDetailFragment extends Fragment {
     private void setDetailData() {
         headerText.setText(mOtherContentsDetailData.getTitle());
         //画面表示
-        StringUtil util = new StringUtil(getContext());
+        StringUtils util = new StringUtils(getContext());
         String strServiceName = util.getContentsServiceName(mOtherContentsDetailData.getServiceId());
         String contentsDetailInfo;
         txtServiceName.setText(strServiceName);
@@ -259,10 +259,11 @@ public class DtvContentsDetailFragment extends Fragment {
             RelativeLayout.LayoutParams imageParams = new RelativeLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     (int) getResources().getDimension(R.dimen.contents_detail_tabs_height));
-            ImageView imageView = new ImageView(getContext());
-            imageView.setImageResource(R.mipmap.ic_chevron_right_white_24dp);
-            imageParams.addRule(RelativeLayout.ALIGN_PARENT_END);
-            imageView.setLayoutParams(imageParams);
+            // TODO: スタッフ詳細画面への遷移が行われるようになった場合にアイコンが復活する可能性があるのでコメント化
+            //ImageView imageView = new ImageView(getContext());
+            //imageView.setImageResource(R.mipmap.ic_chevron_right_white_24dp);
+            //imageParams.addRule(RelativeLayout.ALIGN_PARENT_END);
+            //imageView.setLayoutParams(imageParams);
             contentParams.addRule(RelativeLayout.ALIGN_PARENT_START);
             tabTextView.setLayoutParams(contentParams);
             tabTextView.setText(staffList.get(i));
@@ -277,7 +278,8 @@ public class DtvContentsDetailFragment extends Fragment {
                 }
             });
             itemLayout.addView(tabTextView);
-            itemLayout.addView(imageView);
+            //TODO: ">"アイコンの追加はひとまず中止
+            //itemLayout.addView(imageView);
             staffLayout.addView(itemLayout);
         }
     }
@@ -460,7 +462,7 @@ public class DtvContentsDetailFragment extends Fragment {
         String date = DateUtils.formatEpochToString(endDate);
 
         if (txtChannelDate != null) {
-            String untilDate = StringUtil.getConnectStrings(date, getString(R.string.contents_detail_until_date));
+            String untilDate = StringUtils.getConnectStrings(date, getString(R.string.contents_detail_until_date));
             txtChannelDate.setText(untilDate);
         }
     }

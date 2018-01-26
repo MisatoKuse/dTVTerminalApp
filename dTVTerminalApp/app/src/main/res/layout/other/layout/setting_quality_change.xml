@@ -39,7 +39,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/main_setting_quality_list_separate"
-        android:background="@color/setting_background_color_white" />
+        android:background="@color/setting_list_divider_color" />
 
     <RelativeLayout
         android:id="@+id/main_setting_relativelayout_quality_middle"
@@ -71,7 +71,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/main_setting_quality_list_separate"
-        android:background="@color/setting_background_color_white" />
+        android:background="@color/setting_list_divider_color" />
 
     <RelativeLayout
         android:id="@+id/main_setting_relativelayout_quality_low"
@@ -103,6 +103,6 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/main_setting_quality_list_separate"
-        android:background="@color/setting_background_color_white" />
+        android:background="@color/setting_list_divider_color" />
 
 </LinearLayout>

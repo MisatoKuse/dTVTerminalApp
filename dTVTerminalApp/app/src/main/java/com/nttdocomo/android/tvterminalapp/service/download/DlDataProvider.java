@@ -279,7 +279,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
             }
         }
         if (null != mDlDataProviderListener && DownloadService.BINDSTATUS == DownloadService.BINDED) {
-            DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok");
+            DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok 2");
             mDlDataProviderListener.onSuccess(fullPath);
         } else if(DownloadService.BINDSTATUS == DownloadService.BACKGROUD){
             DownloadService ds = getDownloadService();
@@ -299,14 +299,14 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     private void setNextDownLoad(){
         if (DownloadService.dlDataQue != null && DownloadService.dlDataQue.size() > 0) {
             DownloadService.dlDataQue.remove(0);
-            DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok");
+            DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok 3");
             if(0 == DownloadService.dlDataQue.size()){
                 isRegistered = false;
                 stopService();
                 return;
             }
             try {
-                Thread.sleep(300);
+                Thread.sleep(1000*2);
                 DTVTLogger.debug(">>>>>>>>>>>>>>>>>> new dl");
                 setDlParam(getDownLoadParam());
                 start();
@@ -330,7 +330,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
             DtcpDownloadParam dtcpDownloadParam = (DtcpDownloadParam) downloadParam;
             dtcpDownloadParam.setContext(context);
             dtcpDownloadParam.setSavePath(item.getSaveFile());
-            dtcpDownloadParam.setSaveFileName(item.getTitle());
+            dtcpDownloadParam.setSaveFileName(item.getItemId());
             dtcpDownloadParam.setDtcp1host(item.getHost());
             dtcpDownloadParam.setDtcp1port(Integer.parseInt(item.getPort()));
             dtcpDownloadParam.setUrl(item.getUrl());
@@ -343,19 +343,54 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     @Override
-    public void onCancel() {
-        if (null != mDlDataProviderListener) {
-            mDlDataProviderListener.onCancel();
+    public void onCancel(final String filePath) {
+//        if(!TextUtils.isEmpty(filePath)){
+//            if(filePath.contains(File.separator)){
+//                String paths[] = filePath.split(File.separator);
+//                itemId = filePath.split(File.separator)[paths.length - 1];
+//                if(!TextUtils.isEmpty(itemId)){
+//                    updateDownloadStatusToDb();
+//                }
+//            }
+//        }
+        if (null != mDlDataProviderListener && DownloadService.BINDSTATUS == DownloadService.BINDED) {
+            DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok 1");
+            mDlDataProviderListener.onCancel(filePath);
+        } else if(DownloadService.BINDSTATUS == DownloadService.BACKGROUD){
+            DownloadService ds = getDownloadService();
+            if (null != ds) {
+                Intent intent = new Intent();
+                intent.setAction(DownloadService.DONWLOAD_FAIL);
+                intent.putExtra(DownloadService.DONWLOAD_PATH, filePath);
+                ds.sendBroadcast(intent);
+            } else {
+                DTVTLogger.debug("ダウンロードはキャンセルしました。");
+            }
         } else {
-            DTVTLogger.debug("ダウンロードはキャンセルしました。 ");
+            setNextDownLoad();
         }
     }
 
     @Override
-    public void onLowStorageSpace() {
-        if (null != mDlDataProviderListener) {
-            mDlDataProviderListener.onLowStorageSpace();
+    public void onLowStorageSpace(final String fullPath) {
+        if (null != mDlDataProviderListener && DownloadService.BINDSTATUS == DownloadService.BINDED) {
+            DTVTLogger.debug(">>>>>>>>>>>>>>>>>> onLowStorageSpace ok 1");
+            mDlDataProviderListener.onLowStorageSpace(fullPath);
+        } else if(DownloadService.BINDSTATUS == DownloadService.BACKGROUD){
+            DownloadService ds = getDownloadService();
+            if (null != ds) {
+                Intent intent = new Intent();
+                intent.setAction(DownloadService.DONWLOAD_LowStorageSpace);
+                intent.putExtra(DownloadService.DONWLOAD_PATH, fullPath);
+                ds.sendBroadcast(intent);
+            } else {
+                DTVTLogger.debug("容量は足りないので、ダウンロードできませんでした。");
+            }
+        } else {
+            //mDlDataProviderListener.onCancel(fullPath);
+            setNextDownLoad();
         }
+
     }
 
     private static final int DOWNLOAD_STATUS_SELECT = 1;
@@ -447,12 +482,12 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                     File files[] = file.listFiles();
                     for(File file1:files){
                         if(!file1.delete()){
-                            DTVTLogger.debug("delete cacel file fail ");
+                            DTVTLogger.debug("delete cacel file fail path:" + path);
                         }
                     }
                     if(file.exists()){
                         if(!file.delete()) {
-                            DTVTLogger.debug("delete cacel directory fail ");
+                            DTVTLogger.debug("delete cacel directory fail path:" + path);
                         }
                     }
                 }
@@ -525,10 +560,13 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     private void updateDownloadStatusToDb(){
+        DTVTLogger.start();
         if(mActivity != null){
+            DTVTLogger.debug("writing db");
             DownLoadListDataManager downLoadListDataManager = new DownLoadListDataManager(mActivity);
             downLoadListDataManager.updateDownloadByItemId(itemId);
         }
+        DTVTLogger.end();
     }
 
     public void setQue(List<DlData> dlData) {

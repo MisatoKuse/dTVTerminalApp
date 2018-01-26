@@ -9,8 +9,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,12 +86,12 @@ public class ChannelListDao {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
         String[] selectionStrings = {
-                JsonContents.META_RESPONSE_DISP_TYPE,
+                JsonConstants.META_RESPONSE_DISP_TYPE,
                 "=? AND ",
                 DBConstants.DATE_TYPE,
                 "=? "
         };
-        String selection = StringUtil.getConnectString(selectionStrings);
+        String selection = StringUtils.getConnectString(selectionStrings);
         Cursor cursor = db.query(
                 DBConstants.CHANNEL_LIST_TABLE_NAME,
                 strings,
@@ -148,7 +148,7 @@ public class ChannelListDao {
                 DBConstants.DATE_TYPE,
                 "=?"
         };
-        String selection = StringUtil.getConnectString(selectionStrings);
+        String selection = StringUtils.getConnectString(selectionStrings);
         return db.delete(DBConstants.CHANNEL_LIST_TABLE_NAME, selection, new String[]{"home"});
     }
 
@@ -159,12 +159,12 @@ public class ChannelListDao {
      */
     public int deleteByType(final String type) {
         String[] selectionStrings = {
-                JsonContents.META_RESPONSE_DISP_TYPE,
+                JsonConstants.META_RESPONSE_DISP_TYPE,
                 "=? AND ",
                 DBConstants.DATE_TYPE,
                 "=?"
         };
-        String selection = StringUtil.getConnectString(selectionStrings);
+        String selection = StringUtils.getConnectString(selectionStrings);
         return db.delete(DBConstants.CHANNEL_LIST_TABLE_NAME, selection, new String[]{type, "program"});
     }
 }

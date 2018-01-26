@@ -8,7 +8,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationResultResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RemoteRecordingReservationWebClient;
 
@@ -86,13 +86,13 @@ public class RemoteRecordingReservationJsonParser extends AsyncTask<Object, Obje
             String status = null;
             String errorNo = null;
             // statusの値を取得
-            if (!jsonObj.isNull(JsonContents.META_RESPONSE_STATUS)) {
-                status = jsonObj.getString(JsonContents.META_RESPONSE_STATUS);
+            if (!jsonObj.isNull(JsonConstants.META_RESPONSE_STATUS)) {
+                status = jsonObj.getString(JsonConstants.META_RESPONSE_STATUS);
 
             }
             //errornoの値を取得
-            if (!jsonObj.isNull(JsonContents.META_RESPONSE_NG_ERROR_NO)) {
-                errorNo = jsonObj.getString(JsonContents.META_RESPONSE_NG_ERROR_NO);
+            if (!jsonObj.isNull(JsonConstants.META_RESPONSE_NG_ERROR_NO)) {
+                errorNo = jsonObj.getString(JsonConstants.META_RESPONSE_NG_ERROR_NO);
             }
             // レスポンスデータに格納（errornoはnullの場合もある）
             mRemoteRecordingReservationResultResponse

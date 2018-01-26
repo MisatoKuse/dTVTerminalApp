@@ -7,11 +7,11 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvScheduleWebClient;
 
 import org.json.JSONArray;
@@ -66,8 +66,8 @@ public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object> {
             if (jsonObj != null) {
                 sendStatus(jsonObj);
 
-                if (!jsonObj.isNull(JsonContents.META_RESPONSE_LIST)) {
-                    JSONArray arrayList = jsonObj.getJSONArray(JsonContents.META_RESPONSE_LIST);
+                if (!jsonObj.isNull(JsonConstants.META_RESPONSE_LIST)) {
+                    JSONArray arrayList = jsonObj.getJSONArray(JsonConstants.META_RESPONSE_LIST);
                     sendTsList(arrayList);
                 }
                 List<TvScheduleList> tvScheduleList = Arrays.asList(mTvScheduleList);
@@ -90,9 +90,9 @@ public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object> {
         try {
             // statusの値を取得し、Mapに格納
             HashMap<String, String> map = new HashMap<>();
-            if (!jsonObj.isNull(JsonContents.META_RESPONSE_STATUS)) {
-                String status = jsonObj.getString(JsonContents.META_RESPONSE_STATUS);
-                map.put(JsonContents.META_RESPONSE_STATUS, status);
+            if (!jsonObj.isNull(JsonConstants.META_RESPONSE_STATUS)) {
+                String status = jsonObj.getString(JsonConstants.META_RESPONSE_STATUS);
+                map.put(JsonConstants.META_RESPONSE_STATUS, status);
             }
             mTvScheduleList.setTvsMap(map);
         } catch (JSONException e) {
@@ -113,22 +113,22 @@ public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object> {
             for (int i = 0; i < arrayList.length(); i++) {
                 HashMap<String, String> tsListMap = new HashMap<>();
                 JSONObject jsonObject = arrayList.getJSONObject(i);
-                for (String listBuffer : JsonContents.LIST_PARA) {
+                for (String listBuffer : JsonConstants.LIST_PARA) {
                     if (!jsonObject.isNull(listBuffer)) {
-                        if (listBuffer.equals(JsonContents.META_RESPONSE_PUINF)) {
+                        if (listBuffer.equals(JsonConstants.META_RESPONSE_PUINF)) {
                             JSONObject puinfObj = jsonObject.getJSONObject(listBuffer);
-                            for (String puinfBuffer : JsonContents.PUINF_PARA) {
+                            for (String puinfBuffer : JsonConstants.PUINF_PARA) {
                                 //書き込み用項目名の作成
                                 StringBuilder stringBuffer = new StringBuilder();
-                                stringBuffer.append(JsonContents.META_RESPONSE_PUINF);
-                                stringBuffer.append(JsonContents.UNDER_LINE);
+                                stringBuffer.append(JsonConstants.META_RESPONSE_PUINF);
+                                stringBuffer.append(JsonConstants.UNDER_LINE);
                                 stringBuffer.append(puinfBuffer);
 
                                 //日付項目チェック
                                 if (DBUtils.isDateItem(puinfBuffer)) {
                                     //日付なので変換して格納する
                                     String dateBuffer = DateUtils.formatEpochToString(
-                                            StringUtil.changeString2Long(puinfObj.getString(
+                                            StringUtils.changeString2Long(puinfObj.getString(
                                                     puinfBuffer)));
                                     tsListMap.put(stringBuffer.toString(), dateBuffer);
                                 } else {
@@ -140,7 +140,7 @@ public class TvScheduleJsonParser extends AsyncTask<Object, Object, Object> {
                         } else if (DBUtils.isDateItem(listBuffer)) {
                             // DATE_PARAに含まれるのは日付なので、エポック秒となる。変換して格納する
                             String dateBuffer = DateUtils.formatEpochToString(
-                                    StringUtil.changeString2Long(jsonObject.getString(listBuffer)));
+                                    StringUtils.changeString2Long(jsonObject.getString(listBuffer)));
                             tsListMap.put(listBuffer, dateBuffer);
                         } else {
                             String para = jsonObject.getString(listBuffer);

@@ -21,7 +21,7 @@ import android.widget.Toast;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
-import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
@@ -40,6 +40,10 @@ public class RecordReservationListActivity extends BaseActivity
     private ListView mListView = null;
     private List mContentsList = null;
     private View mLoadMoreView = null;
+
+    //先頭の区切り線
+    private View mHeaderDivider = null;
+
     private boolean mIsCommunicating = false;
     private Boolean mIsMenuLaunch = false;
     private final int NUM_PER_PAGE = 20;
@@ -80,7 +84,12 @@ public class RecordReservationListActivity extends BaseActivity
         mListView.setAdapter(mContentsAdapter);
         mLoadMoreView = LayoutInflater.from(this).inflate(R.layout.search_load_more, null);
         //テレビアイコンをタップされたらリモコンを起動する
-        findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
+        findViewById(R.id.header_stb_status_icon).setOnClickListener(
+                mRemoteControllerOnClickListener);
+
+        //先頭の区切り線を取得
+        mHeaderDivider = findViewById(R.id.header_divider);
+
         DTVTLogger.end();
     }
 
@@ -91,6 +100,7 @@ public class RecordReservationListActivity extends BaseActivity
         if (null != mProvider.mReservationTime) {
             TextView textView = findViewById(R.id.reservation_update_time);
             StringBuilder strBuilder = new StringBuilder();
+            //「現在」の部分だけ縦書きに仕様変更されたが、javaではなく元の文字列の「現」と「在」の間に改行を入れて対応した。
             strBuilder.append(mProvider.mReservationTime)
                     .append(getString(R.string.recording_reservation_list_update_time));
             textView.setText(strBuilder.toString());
@@ -101,6 +111,19 @@ public class RecordReservationListActivity extends BaseActivity
     @Override
     public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount,
                          int totalItemCount) {
+        //先頭の区切り線の表示の有無の切り替え
+        if(mHeaderDivider != null && absListView != null &&
+                absListView.getChildAt(0) != null) {
+            //スクロール位置の判定
+            if (absListView.getChildAt(0).getTop() == 0) {
+                //先頭なので、線を表示する
+                mHeaderDivider.setVisibility(View.VISIBLE);
+            } else {
+                //先頭以外なので、線は消す
+                mHeaderDivider.setVisibility(View.INVISIBLE);
+            }
+        }
+
         synchronized (this) {
             if (firstVisibleItem + visibleItemCount == totalItemCount
                     && 0 != totalItemCount
@@ -142,7 +165,7 @@ public class RecordReservationListActivity extends BaseActivity
     /**
      * 再読み込み時のダイアログ表示処理
      *
-     * @param bool
+     * @param bool フッター付加フラグ
      */
     private void displayMoreData(boolean bool) {
         if (null != mListView && null != mLoadMoreView) {
@@ -165,7 +188,7 @@ public class RecordReservationListActivity extends BaseActivity
     /**
      * 再読み込み実施フラグ設定
      *
-     * @param bool
+     * @param bool 再読み込み実施フラグ
      */
     private void setCommunicatingStatus(boolean bool) {
         synchronized (this) {
@@ -191,7 +214,7 @@ public class RecordReservationListActivity extends BaseActivity
     /**
      * ページング数取得
      *
-     * @return
+     * @return ページング数
      */
     private int getCurrentNumber() {
         if (null == mContentsList) {

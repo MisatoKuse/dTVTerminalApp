@@ -22,7 +22,7 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.ChannelDetailPlayerActivity;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ChannelDetailPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ProgramChannelAdapter;
 import com.nttdocomo.android.tvterminalapp.adapter.TvProgramListAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
@@ -30,6 +30,12 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.MyChannelDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
+import com.nttdocomo.android.tvterminalapp.view.ChannelItemClickListener;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
+import com.nttdocomo.android.tvterminalapp.view.ProgramRecyclerView;
+import com.nttdocomo.android.tvterminalapp.view.ProgramScrollView;
+import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.model.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.model.program.Channel;
 import com.nttdocomo.android.tvterminalapp.model.program.ChannelItemClickListener;
@@ -89,11 +95,11 @@ public class TvProgramListActivity extends BaseActivity
     private int mTabIndex = 0;
     private TvProgramListAdapter mTvProgramListAdapter = null;
     private ProgramChannelAdapter mProgramChannelAdapter = null;
-    private ArrayList<Channel> mChannelInfo = new ArrayList<>();
-    private ArrayList<Channel> mChannels = new ArrayList<>();
+    private ArrayList<ChannelInfo> mChannelInfo = new ArrayList<>();
+    private ArrayList<ChannelInfo> mChannels = new ArrayList<>();
     private boolean mIsFromBackFlag = false;
-    private ArrayList<Channel> hikariChannels;
-    private ArrayList<Channel> mappedMyChannelList;
+    private ArrayList<ChannelInfo> hikariChannels;
+    private ArrayList<ChannelInfo> mappedMyChannelList;
     private ArrayList<MyChannelMetaData> myChannelDataList;
     private RelativeLayout mTimeLine;
     private ImageView mNowImage;
@@ -415,7 +421,7 @@ public class TvProgramListActivity extends BaseActivity
      * 機能
      * 番組表を設定
      */
-    private void setChannelContentsView(ArrayList<Channel> channels) {
+    private void setChannelContentsView(ArrayList<ChannelInfo> channels) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mChannelRecyclerView.setLayoutManager(linearLayoutManager);
@@ -465,7 +471,7 @@ public class TvProgramListActivity extends BaseActivity
      * 機能
      * 番組表情報を設定
      */
-    private void setProgramRecyclerView(ArrayList<Channel> channelInfo) {
+    private void setProgramRecyclerView(ArrayList<ChannelInfo> channelInfo) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mProgramRecyclerView.setLayoutManager(linearLayoutManager);
@@ -535,15 +541,15 @@ public class TvProgramListActivity extends BaseActivity
     }
 
     @Override
-    public void channelInfoCallback(ChannelsInfo channelsInfo) {
+    public void channelInfoCallback(ChannelInfoList channelsInfo) {
         if (channelsInfo != null && channelsInfo.getChannels() != null) {
-            ArrayList<Channel> channels = channelsInfo.getChannels();
+            ArrayList<ChannelInfo> channels = channelsInfo.getChannels();
             sort(channels);
             mChannelInfo = channels;
             if(mTabIndex !=0 ){
                 setProgramRecyclerView(mChannelInfo);
             }else {//マイ番組表
-                ArrayList<Channel> myChannels = new ArrayList<>();
+                ArrayList<ChannelInfo> myChannels = new ArrayList<>();
                 for(int i = 0; i< mappedMyChannelList.size(); i++){
                     for (int j=0;j<mChannelInfo.size();j++){
                         if(mappedMyChannelList.get(i).getChNo() == mChannelInfo.get(j).getChNo()){//チャンネル番号でマッピング
@@ -557,7 +563,7 @@ public class TvProgramListActivity extends BaseActivity
     }
 
     @Override
-    public void channelListCallback(ArrayList<Channel> channels) {
+    public void channelListCallback(ArrayList<ChannelInfo> channels) {
         if (channels != null) {
             if(mTabIndex == INDEX_TAB_MY_CHANNEL){//MY番組表
                 this.hikariChannels = channels;
@@ -616,8 +622,8 @@ public class TvProgramListActivity extends BaseActivity
      * チャンネルリストからマッピングデータを抽出する
      * @return
      */
-    private ArrayList<Channel> executeMapping() {
-        ArrayList<Channel> myChannels = new ArrayList<>();
+    private ArrayList<ChannelInfo> executeMapping() {
+        ArrayList<ChannelInfo> myChannels = new ArrayList<>();
         if(myChannelDataList != null){
             for(int i = 0; i< myChannelDataList.size(); i++){
                 for(int j=0;j<hikariChannels.size();j++){
@@ -640,8 +646,8 @@ public class TvProgramListActivity extends BaseActivity
     /**
      * ソートを行う
      */
-    private void sort(ArrayList<Channel> channels) {
-        for (Channel channel : channels) {
+    private void sort(ArrayList<ChannelInfo> channels) {
+        for (ChannelInfo channel : channels) {
             Collections.sort(channel.getSchedules(), new CalendarComparator());
         }
     }
@@ -731,11 +737,11 @@ public class TvProgramListActivity extends BaseActivity
     /**
      * ソート処理
      */
-    private class CalendarComparator implements Comparator<Schedule>, Serializable {
+    private class CalendarComparator implements Comparator<ScheduleInfo>, Serializable {
         private static final long serialVersionUID = -1L;
 
         @Override
-        public int compare(Schedule s1, Schedule s2) {
+        public int compare(ScheduleInfo s1, ScheduleInfo s2) {
             StringBuilder time1 = new StringBuilder();
             time1.append(s1.getStartTime().substring(0, 10));
             time1.append(s1.getStartTime().substring(11, 19));

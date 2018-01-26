@@ -8,7 +8,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.GenreCountGetWebClient;
@@ -93,8 +93,8 @@ public class GenreCountGetJsonParser extends AsyncTask<Object, Object, Object> {
     public void sendStatus(JSONObject jsonObj) {
         try {
             // statusの値を取得しセットする
-            if (!jsonObj.isNull(JsonContents.META_RESPONSE_STATUS)) {
-                String status = jsonObj.getString(JsonContents.META_RESPONSE_STATUS);
+            if (!jsonObj.isNull(JsonConstants.META_RESPONSE_STATUS)) {
+                String status = jsonObj.getString(JsonConstants.META_RESPONSE_STATUS);
                 if (mGenreCountGetResponse != null) {
                     mGenreCountGetResponse.setStatus(status);
                 }
@@ -116,9 +116,9 @@ public class GenreCountGetJsonParser extends AsyncTask<Object, Object, Object> {
         try {
             ArrayList<GenreCountGetMetaData> genreCountGetMetaDataList =
                     new ArrayList<GenreCountGetMetaData>();
-            if (!jsonObj.isNull(JsonContents.META_RESPONSE_LIST)) {
+            if (!jsonObj.isNull(JsonConstants.META_RESPONSE_LIST)) {
                 // ジャンル毎コンテンツ数取得一覧をJSONArrayにパースする
-                JSONArray lists = jsonObj.getJSONArray(JsonContents.META_RESPONSE_LIST);
+                JSONArray lists = jsonObj.getJSONArray(JsonConstants.META_RESPONSE_LIST);
                 if (lists.length() == 0) {
                     return;
                 }

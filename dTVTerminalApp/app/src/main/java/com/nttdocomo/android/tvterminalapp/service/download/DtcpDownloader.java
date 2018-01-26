@@ -103,8 +103,30 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
 
     @Override
     protected boolean isStorageSpaceLow() {
-        //todo to finish
-        return false;
+        DownloadParam param=  getDownloadParam();
+        if(null==param){
+            return true;
+        }
+        try{
+            DtcpDownloadParam dp = (DtcpDownloadParam) param;
+            String path=dp.getSavePath();
+            if(null==path || path.isEmpty()){
+                return true;
+            }
+            File f=new File(path);
+            if(!f.exists()){
+                if(!f.mkdirs()){
+                    return true;
+                }
+            }
+            long usableSpace= f.getUsableSpace();
+            long safeSpace= getInnerStorageSafeSpace();
+            int dlSize=dp.getCleartextSize() * 1024 * 1024; //MB-->Byte
+            return (usableSpace - dlSize) < safeSpace;
+        } catch (Exception e){
+            DTVTLogger.debug(e);
+        }
+        return true;
     }
 
     @Override
@@ -116,10 +138,10 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
 
     @Override
     public void dlProgress(int sizeFinished) {
-        if(isStorageSpaceLow()){
-            setLowStorageSpace();
-            return;
-        }
+//        if(isStorageSpaceLow()){
+//            setLowStorageSpace();
+//            return;
+//        }
         int diff= sizeFinished - mFinishedBytes;
         onProgress(diff);
         mFinishedBytes = sizeFinished;
@@ -137,6 +159,7 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
                 onStopIt();
                 break;
             case DOWNLOADER_STATUS_CANCELLED:
+                onCancel();
                 onStopIt();
                 break;
             case DOWNLOADER_STATUS_UNKNOWN:

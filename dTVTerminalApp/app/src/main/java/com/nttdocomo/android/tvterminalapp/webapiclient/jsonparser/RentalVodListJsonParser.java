@@ -5,13 +5,13 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
 
 import android.os.AsyncTask;
 
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalVodListWebClient;
 
 import org.json.JSONArray;
@@ -72,14 +72,16 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
                     sendStatus(jsonObj);
                     sendPurchasedVodListResponse(jsonObj);
                     sendActiveListResponse(jsonObj);
-
-                    return mPurchasedVodListResponse;
                 }
             }
         } catch (JSONException e) {
+            mPurchasedVodListResponse.setStatus(JsonConstants.META_RESPONSE_STATUS_NG);
+            DTVTLogger.debug(e);
+        } catch (RuntimeException e) {
+            mPurchasedVodListResponse.setStatus(JsonConstants.META_RESPONSE_STATUS_NG);
             DTVTLogger.debug(e);
         }
-        return null;
+        return mPurchasedVodListResponse;
     }
 
     /**
@@ -90,9 +92,9 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
     public void sendStatus(JSONObject jsonObj) {
         try {
             // statusの値を取得しセットする
-            if (!jsonObj.isNull(JsonContents.META_RESPONSE_STATUS)) {
+            if (!jsonObj.isNull(JsonConstants.META_RESPONSE_STATUS)) {
                 String status = jsonObj.getString(
-                        JsonContents.META_RESPONSE_STATUS);
+                        JsonConstants.META_RESPONSE_STATUS);
                 mPurchasedVodListResponse.setStatus(status);
             }
         } catch (JSONException e) {
@@ -108,10 +110,10 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
     public void sendPurchasedVodListResponse(JSONObject jsonObj) {
         try {
             ArrayList<VodMetaFullData> vodMetaFullDataList = new ArrayList<VodMetaFullData>();
-            if (!jsonObj.isNull(JsonContents.META_RESPONSE_METADATE_LIST)) {
+            if (!jsonObj.isNull(JsonConstants.META_RESPONSE_METADATE_LIST)) {
                 // 購入済みVOD一覧をJSONArrayにパースする
                 JSONArray lists = jsonObj.getJSONArray(
-                        JsonContents.META_RESPONSE_METADATE_LIST);
+                        JsonConstants.META_RESPONSE_METADATE_LIST);
                 if (lists.length() == 0) {
                     return;
                 }
@@ -138,10 +140,10 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
         try {
             ArrayList<ActiveData> vodActiveDataList =
                     new ArrayList<ActiveData>();
-            if (!jsonObj.isNull(JsonContents.META_RESPONSE_ACTIVE_LIST)) {
+            if (!jsonObj.isNull(JsonConstants.META_RESPONSE_ACTIVE_LIST)) {
                 // 購入済みVOD一覧をJSONArrayにパースする
                 JSONArray lists = jsonObj.getJSONArray(
-                        JsonContents.META_RESPONSE_ACTIVE_LIST);
+                        JsonConstants.META_RESPONSE_ACTIVE_LIST);
                 if (lists.length() == 0) {
                     return;
                 }
@@ -152,13 +154,13 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
                     ActiveData activeData = new ActiveData();
 
                     //データを取得する
-                    if (!listData.isNull(JsonContents.META_RESPONSE_LICENSE_ID)) {
+                    if (!listData.isNull(JsonConstants.META_RESPONSE_LICENSE_ID)) {
                     activeData.setLicenseId(listData.getString(
-                            JsonContents.META_RESPONSE_LICENSE_ID));
+                            JsonConstants.META_RESPONSE_LICENSE_ID));
                     }
-                    if (!listData.isNull(JsonContents.META_RESPONSE_VAILD_END_DATE)) {
-                        activeData.setValidEndDate(StringUtil.changeString2Long(listData.getLong(
-                                JsonContents.META_RESPONSE_VAILD_END_DATE)));
+                    if (!listData.isNull(JsonConstants.META_RESPONSE_VAILD_END_DATE)) {
+                        activeData.setValidEndDate(StringUtils.changeString2Long(listData.getLong(
+                                JsonConstants.META_RESPONSE_VAILD_END_DATE)));
                     }
 
                     vodActiveDataList.add(activeData);

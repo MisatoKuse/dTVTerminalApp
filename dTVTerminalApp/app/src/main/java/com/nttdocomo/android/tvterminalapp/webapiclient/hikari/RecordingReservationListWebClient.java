@@ -6,7 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
 
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationListResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.RecordingReservationListJsonParser;
@@ -151,17 +151,17 @@ public class RecordingReservationListWebClient
 
             //offsetが1以上ならばJSONに書き込む・ゼロの場合は全件指定なので、出力しないことで全件になる
             if (limit >= LOWER_LIMIT) {
-                pager.put(JsonContents.META_RESPONSE_LIST, limit);
+                pager.put(JsonConstants.META_RESPONSE_LIST, limit);
             }
 
             //limitが1以上ならばJSONに書き込む・ゼロの場合は全件指定なので、出力しないことで全件になる
             if (offset >= LOWER_LIMIT) {
-                pager.put(JsonContents.META_RESPONSE_OFFSET, offset);
+                pager.put(JsonConstants.META_RESPONSE_OFFSET, offset);
             }
 
             //ページャーに値が格納されていれば、出力する
-            if (pager.has(JsonContents.META_RESPONSE_LIST) || pager.has(JsonContents.META_RESPONSE_OFFSET)) {
-                jsonObject.put(JsonContents.META_RESPONSE_PAGER, pager);
+            if (pager.has(JsonConstants.META_RESPONSE_LIST) || pager.has(JsonConstants.META_RESPONSE_OFFSET)) {
+                jsonObject.put(JsonConstants.META_RESPONSE_PAGER, pager);
                 answerText = jsonObject.toString();
             } else {
                 answerText = "";

@@ -6,11 +6,11 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
 
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ClipRegistJsonParser;
 
 import org.json.JSONException;
@@ -248,25 +248,25 @@ public class ClipRegistWebClient
         try {
 
             //リクエストパラメータ(Json)作成
-            if (StringUtil.isHikariContents(type)) {
+            if (StringUtils.isHikariContents(type)) {
                 //ひかりコンテンツ(dCh含む)
-                jsonObject.put(JsonContents.META_RESPONSE_CRID, crid);
-            } else if (StringUtil.isHikariInDtvContents(type)) {
+                jsonObject.put(JsonConstants.META_RESPONSE_CRID, crid);
+            } else if (StringUtils.isHikariInDtvContents(type)) {
                 //ひかり内dTVコンテンツ(VODメタのdTVフラグが1)
-                jsonObject.put(JsonContents.META_RESPONSE_CRID, crid);
-                jsonObject.put(JsonContents.META_RESPONSE_TITLE_ID, titleId);
+                jsonObject.put(JsonConstants.META_RESPONSE_CRID, crid);
+                jsonObject.put(JsonConstants.META_RESPONSE_TITLE_ID, titleId);
             } else {
                 //その他
-                jsonObject.put(JsonContents.META_RESPONSE_TYPE, type);
-                jsonObject.put(JsonContents.META_RESPONSE_CRID, crid);
-                jsonObject.put(JsonContents.META_RESPONSE_SERVICE_ID, serviceId);
-                jsonObject.put(JsonContents.META_RESPONSE_EVENT_ID, eventId);
-                jsonObject.put(JsonContents.META_RESPONSE_TITLE_ID, titleId);
-                jsonObject.put(JsonContents.META_RESPONSE_TITLE, title);
-                jsonObject.put(JsonContents.META_RESPONSE_R_VALUE, r_value);
-                jsonObject.put(JsonContents.META_RESPONSE_LINEAR_START_DATE, linearStartDate);
-                jsonObject.put(JsonContents.META_RESPONSE_LINEAR_END_DATE, linearEndDate);
-                jsonObject.put(JsonContents.META_RESPONSE_IS_NOTIFY, isNotify);
+                jsonObject.put(JsonConstants.META_RESPONSE_TYPE, type);
+                jsonObject.put(JsonConstants.META_RESPONSE_CRID, crid);
+                jsonObject.put(JsonConstants.META_RESPONSE_SERVICE_ID, serviceId);
+                jsonObject.put(JsonConstants.META_RESPONSE_EVENT_ID, eventId);
+                jsonObject.put(JsonConstants.META_RESPONSE_TITLE_ID, titleId);
+                jsonObject.put(JsonConstants.META_RESPONSE_TITLE, title);
+                jsonObject.put(JsonConstants.META_RESPONSE_R_VALUE, r_value);
+                jsonObject.put(JsonConstants.META_RESPONSE_LINEAR_START_DATE, linearStartDate);
+                jsonObject.put(JsonConstants.META_RESPONSE_LINEAR_END_DATE, linearEndDate);
+                jsonObject.put(JsonConstants.META_RESPONSE_IS_NOTIFY, isNotify);
             }
             answerText = jsonObject.toString();
 

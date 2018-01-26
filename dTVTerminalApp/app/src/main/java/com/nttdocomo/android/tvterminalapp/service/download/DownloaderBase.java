@@ -7,12 +7,10 @@ package com.nttdocomo.android.tvterminalapp.service.download;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
-import android.text.TextUtils;
 
 import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.jni.activation.NewEnvironmentUtil;
-import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -97,10 +95,16 @@ public abstract class DownloaderBase {
             mIsCanceled=false;
         }
         mTotalBytes = calculateTotalBytes();
+        if(isStorageSpaceLow()){
+            setLowStorageSpace();
+            return;
+        }
         if(null!=mDownloadListener){
             mDownloadListener.onStart(mTotalBytes);
         }
-        mDownLoadThread = new DownLoadThread();
+        if(null==mDownLoadThread){
+            mDownLoadThread = new DownLoadThread();
+        }
         mDownLoadThread.start();
     }
 
@@ -120,11 +124,8 @@ public abstract class DownloaderBase {
      */
     protected void onSuccess() {
         if(null!=mDownloadListener){
-            StringBuilder path=new StringBuilder();
-            path.append(mDownloadParam.getSavePath());
-            path.append(File.separator);
-            path.append(mDownloadParam.getSaveFileName());
-            mDownloadListener.onSuccess(path.toString());
+            String path=getFullFilePath();
+            mDownloadListener.onSuccess(path);
         }
     }
 
@@ -227,10 +228,33 @@ public abstract class DownloaderBase {
 //        }catch (Exception e){
 //            DTVTLogger.debug("DownloaderBase.cancel, cause=" + e.getCause());
 //        }
-        if(null!=mDownloadListener){
-            mDownloadListener.onCancel();
-        }
+//        String path=getFullFilePath();
+//        if(null!=mDownloadListener){
+//            if(null==path){
+//                mDownloadListener.onFail(DownloadListener.DLError.DLError_ParamError, null);
+//            } else {
+//                mDownloadListener.onCancel(path);
+//            }
+//
+//        }
     }
+
+    private String getFullFilePath() {
+        if (null != mDownloadParam) {
+            StringBuilder sb=new StringBuilder();
+            String path=mDownloadParam.getSavePath();
+            String name=mDownloadParam.getSaveFileName();
+            if(null==path || null==name){
+                return null;
+            }
+            sb.append(path);
+            sb.append(File.separator);
+            sb.append(name);
+            return sb.toString();
+        }
+        return null;
+    }
+
 
     /**
      * Sub Classでダウンロード成功したとき、この関数をコール
@@ -245,7 +269,12 @@ public abstract class DownloaderBase {
             mIsPause=true;
         }
         if(null!=mDownloadListener){
-            mDownloadListener.onLowStorageSpace();
+            if(null!=mDownloadParam){
+                String path=getFullFilePath();
+                if(null!=path){
+                    mDownloadListener.onLowStorageSpace(path);
+                }
+            }
         }
     }
 
@@ -254,6 +283,7 @@ public abstract class DownloaderBase {
      * @return MB
      */
     long getInnerStorageSafeSpace(){
+        //return 200;
         return 200;
     }
 
@@ -262,8 +292,18 @@ public abstract class DownloaderBase {
      */
     protected void onFail(DownloadListener.DLError error) {
         if(null!=mDownloadListener && null!=mDownloadParam){
-            final String savePath= mDownloadParam.getSavePath();
+            final String savePath= mDownloadParam.getSavePath() + File.separator + mDownloadParam.getSaveFileName();
             mDownloadListener.onFail(error, savePath);
+        }
+    }
+
+    /**
+     *
+     */
+    protected void onCancel(){
+        if(null!=mDownloadListener && null!=mDownloadParam){
+            final String savePath= mDownloadParam.getSavePath() + File.separator + mDownloadParam.getSaveFileName();
+            mDownloadListener.onCancel(savePath);
         }
     }
 
@@ -360,7 +400,7 @@ public abstract class DownloaderBase {
         if(null==context){
             return null;
         }
-        String ret=EnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP);
+        String ret= EnvironmentUtil.getPrivateDataHome(context, EnvironmentUtil.ACTIVATE_DATA_HOME.DMP);
         String sp= File.separator;
         int i= ret.lastIndexOf(sp);
         int l=ret.length();

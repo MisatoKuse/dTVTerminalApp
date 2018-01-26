@@ -9,7 +9,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.MyChannelInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelDeleteResponse;
@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.CHANNEL_LAST_UPDATE;
 import static com.nttdocomo.android.tvterminalapp.utils.DateUtils.MY_CHANNEL_LIST_LAST_INSERT;
 
 
@@ -98,11 +97,11 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
                     ArrayList<MyChannelMetaData> channels = new ArrayList<>();
                     for (int i = 0; i < resultSet.size(); i++) {
                         Map<String, String> hashMap = resultSet.get(i);
-                        String serviceId = hashMap.get(JsonContents.META_RESPONSE_SERVICE_ID);
-                        String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
-                        String rValue = hashMap.get(JsonContents.META_RESPONSE_R_VALUE);
-                        String adultType = hashMap.get(JsonContents.META_RESPONSE_ADULT_TYPE);
-                        String index = hashMap.get(JsonContents.META_RESPONSE_INDEX);
+                        String serviceId = hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID);
+                        String title = hashMap.get(JsonConstants.META_RESPONSE_TITLE);
+                        String rValue = hashMap.get(JsonConstants.META_RESPONSE_R_VALUE);
+                        String adultType = hashMap.get(JsonConstants.META_RESPONSE_ADULT_TYPE);
+                        String index = hashMap.get(JsonConstants.META_RESPONSE_INDEX);
                         if (!TextUtils.isEmpty(serviceId)) {
                             MyChannelMetaData channel = new MyChannelMetaData();
                             channel.setServiceId(serviceId);

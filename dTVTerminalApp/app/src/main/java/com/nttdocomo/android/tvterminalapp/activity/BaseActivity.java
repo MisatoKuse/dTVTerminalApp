@@ -28,18 +28,16 @@ import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplayEventListener;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuItem;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuItemParam;
-import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.DAccountReSettingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity;
-import com.nttdocomo.android.tvterminalapp.activity.launch.STBConnectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
-import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectErrorActivity;
+import com.nttdocomo.android.tvterminalapp.activity.setting.SettingActivity;
+import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.DownLoadListDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
@@ -49,7 +47,7 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountControl;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipDeleteWebClient;
@@ -635,6 +633,8 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                         message = getResources().getString(R.string.main_setting_dazn_uninstall_message);
                         showErrorDialog(message);
                         break;
+                    //ENUMをSwitchで使用する場合、未使用項目も記載しなければアナライザーがエラー扱いにしてしまうのでUNKNOWNを追加した、
+                    case UNKNOWN:
                     default:
                         break;
                 }
@@ -667,6 +667,8 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                         message = getResources().getString(R.string.main_setting_dazn_update_message);
                         showErrorDialog(message);
                         break;
+                    //ENUMをSwitchで使用する場合、未使用項目も記載しなければアナライザーがエラー扱いにしてしまうのでUNKNOWNを追加した、
+                    case UNKNOWN:
                     default:
                         break;
                 }
@@ -1032,8 +1034,8 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                 case R.id.header_stb_status_icon:
                     if (getStbStatus()) {
                         DTVTLogger.debug("Start RemoteControl");
-                        if (v.getContext() instanceof DtvContentsDetailActivity) {
-                            if (((DtvContentsDetailActivity) v.getContext()).getControllerVisible()) {
+                        if (v.getContext() instanceof ContentDetailActivity) {
+                            if (((ContentDetailActivity) v.getContext()).getControllerVisible()) {
                                 // コンテンツ詳細画面でコントローラのヘッダーを表示する場合
                                 createRemoteControllerView(true);
                             } else {
@@ -1148,7 +1150,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         //クリップ対象がない場合には、トーストのメッセージに不整合が生じるため、表示しない
         if (mClipTarget != null && mClipTarget.length() > 0) {
             String[] strings = {mClipTarget, getString(msgId)};
-            Toast.makeText(this, StringUtil.getConnectString(strings), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, StringUtils.getConnectString(strings), Toast.LENGTH_SHORT).show();
         }
         //クリップ処理終了メッセージ後にフラグを実行中から終了に変更
         mClipRunTime = false;
@@ -1327,5 +1329,34 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     public void setRemoteProgressVisible(int visible){
         findViewById(R.id.base_progress_rl).setVisibility(visible);
+    }
+
+    /**
+     * アニメーション付きスタートアクティビティ
+     *
+     * @param intent アクティビティ呼び出し情報
+     */
+    @Override
+    public void startActivity(Intent intent) {
+        //普通にアクティビティを起動する
+        super.startActivity(intent);
+
+        //飛び先画面として指定されていた名前を取得する
+        String callName = "";
+        if (intent != null && intent.getComponent() != null) {
+            callName = intent.getComponent().toShortString();
+        }
+
+        //飛び先がSTB選択の関連画面ならば、アニメは付加せず帰る
+        if (callName.contains(STBSelectActivity.class.getSimpleName()) ||
+                callName.contains(STBSelectErrorActivity.class.getSimpleName())) {
+            //ただし、設定画面から呼ばれた場合はアニメーションは行うので帰らない
+            if(!(this instanceof SettingActivity)) {
+                return;
+            }
+        }
+
+        //アニメーションを付加する
+        overridePendingTransition(R.anim.in_righttoleft, R.anim.out_lefttoright);
     }
 }

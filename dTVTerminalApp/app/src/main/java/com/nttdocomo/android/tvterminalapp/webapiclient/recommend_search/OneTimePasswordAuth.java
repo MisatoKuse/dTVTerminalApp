@@ -7,7 +7,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.WebApiBase;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOTT;
 
@@ -151,7 +151,7 @@ class OneTimePasswordAuth extends WebApiBase implements WebApiCallback,
         queryItems.put(DESTINATION_URL_NAME, encodedUrl);
 
         //ワンタイムパスワードの指定(2個目のパラメータなので、&を付加)
-        queryItems.put(StringUtil.getConnectStrings("&", AUTH_OTP_NAME), oneTimePassword);
+        queryItems.put(StringUtils.getConnectStrings("&", AUTH_OTP_NAME), oneTimePassword);
 
         //TODO: iOS版での返答次第で必要になるかもしれない各パラメータ
         //サービス識別番号

@@ -4,7 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.dataprovider.data;
 
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ public class UserInfoList {
      */
     public UserInfoList() {
         //ステータスはOKで初期化
-        mStatus = JsonContents.META_RESPONSE_STATUS_OK;
+        mStatus = JsonConstants.META_RESPONSE_STATUS_OK;
         mLoggedinAccount = null;
         mH4dContractedAccount = null;
     }

@@ -10,7 +10,7 @@
     <string name="close_key">×</string>
     <string name="list_transition">></string>
     <string name="contents_hyphen">-</string>
-    <string name="contents_more">more</string>
+    <string name="contents_more">すべてを見る</string>
     <string name="positive_response">はい</string>
     <string name="negative_response">いいえ</string>
     <string name="custom_dialog_ok">OK</string>
@@ -110,15 +110,16 @@
     <string-array name="recommend_list_tab_names">
         <item>テレビ</item>
         <item>ビデオ</item>
-        <item>dTVチャンネル</item>
         <item>dTV</item>
+        <item>dTVチャンネル</item>
         <item>dアニメ</item>
     </string-array>
     <string name="recording_reservation_list_title">録画予約</string>
     <string name="recording_reservation_list_error_toast">録画予約一覧取得失敗</string>
     <string name="recording_reservation_status_accepting">受付中</string>
     <string name="recording_reservation_status_accept_failure">受付失敗</string>
-    <string name="recording_reservation_list_update_time">現在</string>
+    <!-- 「現在」だけ縦書きにする為に改行を挿入 -->
+    <string name="recording_reservation_list_update_time">現\n在</string>
     <string name="activity_start_network_error_message">ネットワークに接続できませんでした。\nネットワーク状態を確認してください。</string>
     <string name="get_user_info_error_message">ひかりTV for docomoの契約情報取得に失敗しました。</string>
     <string name="get_contents_data_error_message">情報の取得に失敗したため、一部のコンテンツのみ表示します。\nしばらく時間が経ってから再度お試しください。</string>
@@ -160,6 +161,13 @@
         <item>持ち出し</item>
     </string-array>
     <string name="tv_program_change_mode">&lt; &gt;</string>
+    <string name="record_download_status">ダウンロード中</string>
+    <string name="record_download_percent_mark">%</string>
+    <string name="record_download_error_message">取得に失敗しました</string>
+    <string name="record_download_delete_title">削除してもよろしいでしょうか？</string>
+    <string name="record_download_cancel_title">ダウンロードを取りやめますか？</string>
+    <string name="record_download_cancel_confirm">取りやめる</string>
+    <string name="record_download_notification">録画番組をダウンロード中</string>
     <!-- Video -->
     <string name="video_content_top_title">ビデオ</string>
     <string name="video_content_all_title">すべて</string>
@@ -299,6 +307,11 @@
     <string name="recording_reservation_confirm_dialog_msg">この番組を録画予約します。\n宜しいでしょうか？</string>
     <string name="recording_reservation_confirm_dialog_confirm">録画予約する</string>
     <string name="recording_reservation_confirm_dialog_cancel">録画予約しない</string>
+    <string name="contents_detail_contract_text_vod">ご覧になるには購入が必要です。ドコモテレビターミナル側で購入してください。</string>
+    <string name="contents_detail_contract_button_vod">ドコモテレビターミナルで購入する</string>
+    <string name="contents_detail_contract_text_ch">このチャンネルをご覧になるにはドコモテレビターミナル側での契約が必要です。</string>
+    <string name="contents_detail_contract_button_ch">ドコモテレビターミナルで契約する</string>
+    <string name="contents_detail_external_display_dialog_msg">外部出力が検知されたため再生を停止します。</string>
 
     <!-- チャンネルリストタイトル -->
     <string name="channel_list_activity_title">チャンネルリスト</string>

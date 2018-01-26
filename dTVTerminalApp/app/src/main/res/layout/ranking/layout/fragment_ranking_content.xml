@@ -7,19 +7,18 @@
 
 	<TextView
 		android:layout_width="match_parent"
-		android:layout_height="1dp"
-		android:layout_marginTop="5dp"
-		android:layout_marginLeft="16dp"
-		android:layout_marginRight="16dp"
+		android:layout_height="@dimen/channel_list_divider_height"
+		android:layout_marginLeft="@dimen/channel_list_thumbnail_margin_end"
+		android:layout_marginRight="@dimen/channel_list_thumbnail_margin_end"
 		android:background="@color/ranking_list_border"/>
 
 	<ListView
 		android:id="@+id/lv_ranking_list"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:layout_marginTop="5dp"
+		android:listSelector="@drawable/channel_list_item_selector"
 		android:divider="@drawable/list_item_divider"
-		android:dividerHeight="1dp">
+		android:dividerHeight="@dimen/channel_list_divider_height">
 	</ListView>
 
 </RelativeLayout>

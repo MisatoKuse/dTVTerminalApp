@@ -14,7 +14,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.UserInfoList
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser;
 
 import java.util.ArrayList;
@@ -137,13 +137,13 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
         ContentValues values = new ContentValues();
         values.put(DBUtils.fourKFlgConversion(
                 UserInfoJsonParser.USER_INFO_LIST_CONTRACT_STATUS),
-                StringUtil.getConnectStrings(header, statusBuffer.toString()));
+                StringUtils.getConnectStrings(header, statusBuffer.toString()));
         values.put(DBUtils.fourKFlgConversion(
                 UserInfoJsonParser.USER_INFO_LIST_DCH_AGE_REQ),
-                StringUtil.getConnectStrings(header, dchAgeBuffer.toString()));
+                StringUtils.getConnectStrings(header, dchAgeBuffer.toString()));
         values.put(DBUtils.fourKFlgConversion(
                 UserInfoJsonParser.USER_INFO_LIST_H4D_AGE_REQ),
-                StringUtil.getConnectStrings(header, h4dAgeBuffer.toString()));
+                StringUtils.getConnectStrings(header, h4dAgeBuffer.toString()));
         userInfoListDao.insert(values);
     }
 

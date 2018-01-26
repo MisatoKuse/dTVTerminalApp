@@ -58,9 +58,6 @@
             android:name=".activity.launch.DAccountReSettingActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.launch.DAccountSettingActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".activity.launch.DAccountSettingHelpActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -84,7 +81,7 @@
         <activity
             android:name=".activity.launch.TutorialActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.launch.ParingHelpActivity"
+        <activity android:name=".activity.launch.PairingHelpActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.launch.STBSelectErrorActivity"
             android:screenOrientation="portrait"
@@ -94,49 +91,44 @@
 
         <!-- ====================================== Other グループ Begin ====================================== -->
         <activity
-            android:name=".activity.other.NewsActivity"
+            android:name=".activity.setting.NewsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.other.NewsDetailActivity"
+            android:name=".activity.setting.NewsDetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.other.SettingActivity"
+            android:name=".activity.setting.SettingActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.other.SettingImageQualityActivity"
+            android:name=".activity.setting.SettingImageQualityActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.other.ApplicationInfoActivity"
+            android:name=".activity.setting.ApplicationInfoActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.other.SettingMenuAppActivity"
+            android:name=".activity.setting.SettingMenuAppActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.other.SettingMenuFaqActivity"
+            android:name=".activity.setting.SettingMenuFaqActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.other.SettingMenuLicenseActivity"
+            android:name=".activity.setting.SettingMenuLicenseActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.other.SettingMenuPrivacyPolicyActivity"
+            android:name=".activity.setting.SettingMenuPrivacyPolicyActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.other.SettingMenuTermsOfServiceActivity"
+            android:name=".activity.setting.SettingMenuTermsOfServiceActivity"
             android:screenOrientation="portrait" />
         <!-- ======================================  Other グループ End ====================================== -->
 
 
         <!-- ====================================== Player グループ Begin ====================================== -->
-        <activity android:name=".activity.player.ChannelDetailPlayerActivity" />
-        <activity android:name=".activity.player.RecordedVideoPlayerActivity" />
+        <activity android:name=".activity.detail.ChannelDetailPlayerActivity" />
         <activity
-            android:name=".activity.player.DtvContentsDetailActivity"
+            android:name=".activity.detail.ContentDetailActivity"
             android:configChanges="keyboardHidden|keyboard|orientation|screenSize"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.player.VideoPlayerActivity" />
-        <activity
-            android:name=".activity.player.RecommendPlayerActivity"
-            android:launchMode="singleTop" />
         <activity
             android:name="com.digion.dixim.android.activation.ActivationActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -193,10 +185,6 @@
             android:name=".activity.video.VideoTopActivity"
             android:screenOrientation="portrait" />
         <!-- ======================================  Video グループ End ====================================== -->
-
-        <activity android:name=".activity.temp.DAccountAppliActivity" />
-        <activity android:name=".activity.temp.GoogleStoreActivity" />
-        <activity android:name=".activity.launch.DAccountRegConfirmationActivity" />
 
         <!-- dアカウントの状況変化を受け取るレシーバー -->
         <receiver

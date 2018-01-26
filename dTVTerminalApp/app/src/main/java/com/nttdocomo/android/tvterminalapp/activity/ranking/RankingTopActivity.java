@@ -12,31 +12,46 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.common.SpaceItemDecoration;
-import com.nttdocomo.android.tvterminalapp.activity.home.adapter.HomeRecyclerViewAdapter;
-import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewAdapter;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RankingTopDataProvider;
 
 import java.util.List;
 
+/**
+ * ランキングトップ画面.
+ */
 public class RankingTopActivity extends BaseActivity implements RankingTopDataProvider.ApiDataProviderCallback {
 
+    /**
+     * ランキングトップ画面の主View.
+     */
     private LinearLayout mLinearLayout;
+    /**
+     * グローバルメニューからの起動かを判定するフラグ.
+     */
     private Boolean mIsMenuLaunch = false;
-    //コンテンツ一覧数
+    /**
+     * コンテンツ一覧数.
+     */
     private final static int CONTENT_LIST_COUNT = 3;
-    //UIの上下表示順(今日のテレビランキング)
+    /**
+     * UIの上下表示順(今日のテレビランキング).
+     */
     private final static int TODAY_SORT = 0;
-    //UIの上下表示順(週刊のテレビランキング)
+    /**
+     * UIの上下表示順(週刊のテレビランキング).
+     */
     private final static int WEEK_SORT = 1;
-    //UIの上下表示順(ビデオランキング)
+    /**
+     * UIの上下表示順(ビデオランキング).
+     */
     private final static int VIDEO_SORT = 2;
 
     @Override
@@ -61,22 +76,16 @@ public class RankingTopActivity extends BaseActivity implements RankingTopDataPr
     }
 
     /**
-     * 機能
+     * 機能.
      * ビューの初期化処理
      */
     private void initView() {
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         mLinearLayout = findViewById(R.id.ranking_top_main_layout_linearLayout);
-        int height = getHeightDensity();
         //各ランキングリストのUIをあらかじめ用意する
         for (int i = 0; i < CONTENT_LIST_COUNT; i++) {
             View view = LayoutInflater.from(this).inflate(R.layout.home_main_layout_item, null, false);
-            RelativeLayout relativeLayout = view.findViewById(R.id.home_main_item_type_rl);
-            LinearLayout.LayoutParams relIp = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    height / 15);
-            relativeLayout.setLayoutParams(relIp);
             view.setTag(i);
             view.setVisibility(View.GONE);
             mLinearLayout.addView(view);
@@ -84,7 +93,7 @@ public class RankingTopActivity extends BaseActivity implements RankingTopDataPr
     }
 
     /**
-     * 機能
+     * 機能.
      * コンテンツ一覧ビューを設定
      */
     private void setRecyclerView(List<ContentsData> contentsDataList, final int tag) {
@@ -101,11 +110,9 @@ public class RankingTopActivity extends BaseActivity implements RankingTopDataPr
             }
         });
         RecyclerView mRecyclerView = view.findViewById(R.id.home_main_item_recyclerview);
-        int spacingInPixels = (int) getDensity() * 5;
-        mRecyclerView.addItemDecoration(new SpaceItemDecoration(spacingInPixels));
         //コンテンツタイプを設定
         typeTextView.setText(typeContentName);
-        countTextView.setText(contentsDataList.size() + getString(R.string.contents_header));
+        countTextView.setText(String.valueOf(contentsDataList.size()));
         //リサイクルビューデータ設定
         setRecyclerViewData(mRecyclerView, contentsDataList, tag);
     }
@@ -135,8 +142,10 @@ public class RankingTopActivity extends BaseActivity implements RankingTopDataPr
     }
 
     /**
-     * 機能
+     * 機能.
      * 遷移先を設定
+     *
+     * @param index リスト番号
      */
     private void startTo(int index) {
         switch (index) {
@@ -158,8 +167,10 @@ public class RankingTopActivity extends BaseActivity implements RankingTopDataPr
     }
 
     /**
-     * 機能
+     * 機能.
      * コンテンツ一覧タイトル取得
+     *
+     * @param tag リスト番号
      */
     private String getContentTypeName(int tag) {
         String typeName = "";

@@ -16,14 +16,14 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ChannelListAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListItem;
-import com.nttdocomo.android.tvterminalapp.model.program.Channel;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,9 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
 
     public interface ChannelListFragmentListener {
         void onScroll(ChannelListFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount);
+
         void onScrollStateChanged(ChannelListFragment fragment, AbsListView absListView, int scrollState);
+
         void setUserVisibleHint(boolean isVisibleToUser, ChannelListFragment fragment);
     }
 
@@ -48,11 +50,11 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         mData = new ArrayList();
     }
 
-    public void setChListDataType(ChannelListAdapter.ChListDataType type){
+    public void setChListDataType(final ChannelListAdapter.ChListDataType type) {
         mChListDataType = type;
     }
 
-    public ChannelListAdapter.ChListDataType getChListDataType(){
+    public ChannelListAdapter.ChListDataType getChListDataType() {
         return mChListDataType;
     }
 
@@ -62,8 +64,8 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (mData == null){
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+        if (mData == null) {
             mData = new ArrayList();
         }
         mRootView = View.inflate(getActivity(), R.layout.channel_list_content, null);
@@ -75,22 +77,22 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
     }
 
     @Override
-    public void onAttach(Context context) {
-        mActivity=context;
+    public void onAttach(final Context context) {
+        mActivity = context;
         super.onAttach(context);
     }
 
     @Override
     public void onDetach() {
-        mActivity=null;
+        mActivity = null;
         super.onDetach();
     }
 
-    public void setScrollListener(ChannelListFragmentListener lis){
-        mScrollListener =lis;
+    public void setScrollListener(final ChannelListFragmentListener lis) {
+        mScrollListener = lis;
     }
 
-    public ChannelListAdapter getAdapter(){
+    public ChannelListAdapter getAdapter() {
         return mChannelListAdapter;
     }
 
@@ -104,8 +106,8 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         mListview.setAdapter(mChannelListAdapter);
     }
 
-    public void noticeRefresh(){
-        if(null!=mChannelListAdapter){
+    public void noticeRefresh() {
+        if (null != mChannelListAdapter) {
             mChannelListAdapter.setChListDataType(mChListDataType);
             mChannelListAdapter.notifyDataSetChanged();
         }
@@ -113,9 +115,9 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
 
     private View mLoadMoreView;
 
-    public void displayMoreData(boolean b) {
-        if(null!= mListview){
-            if(b){
+    public void displayMoreData(final boolean b) {
+        if (null != mListview) {
+            if (b) {
                 mListview.addFooterView(mLoadMoreView);
             } else {
                 mListview.removeFooterView(mLoadMoreView);
@@ -123,83 +125,59 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         }
     }
 
-    public void addData(Object item) {
-        if(mData == null){
+    public void addData(final Object item) {
+        if (mData == null) {
             mData = new ArrayList();
         }
         mData.add(item);
     }
 
-    public void clearDatas(){
-        if(null!=mData){
+    public void clearDatas() {
+        if (null != mData) {
             mData.clear();
         }
     }
 
-    public int getDataCount(){
-        if(null==mData){
+    public int getDataCount() {
+        if (null == mData) {
             return 0;
         }
         return mData.size();
     }
 
-    public boolean hasData(Object item){
-        if(null==item || null==mData || 0==mData.size()){
+    public boolean hasData(final Object item) {
+        if (null == item || null == mData || 0 == mData.size()) {
             return false;
         }
-        boolean ret=false;
-        switch (mChListDataType){
+        boolean ret = false;
+        switch (mChListDataType) {
             case CH_LIST_DATA_TYPE_BS:
-                //本番ソース begin
-                DlnaBsChListItem bs2=(DlnaBsChListItem)item;
-                for(Object obj: mData){
-                    DlnaBsChListItem bs1= (DlnaBsChListItem)obj;
-                    ret= bs1.equalTo(bs2);
-                    if(ret){
+                DlnaBsChListItem bs2 = (DlnaBsChListItem) item;
+                for (Object obj : mData) {
+                    DlnaBsChListItem bs1 = (DlnaBsChListItem) obj;
+                    ret = bs1.equalTo(bs2);
+                    if (ret) {
                         break;
                     }
                 }
-                //本番ソース end
-                //テストソース begin
-//                DlnaRecVideoItem bs2=(DlnaRecVideoItem)item;
-//                for(Object obj: mData){
-//                    DlnaRecVideoItem bs1= (DlnaRecVideoItem)obj;
-//                    ret= bs1.equalTo(bs2);
-//                    if(ret){
-//                        break;
-//                    }
-//                }
-                //テストソース end
                 break;
             case CH_LIST_DATA_TYPE_TER:
-                //本番ソース begin
-                DlnaTerChListItem ter2=(DlnaTerChListItem)item;
-                for(Object obj: mData){
-                    DlnaTerChListItem ter1= (DlnaTerChListItem)obj;
-                    ret= ter1.equalTo(ter2);
-                    if(ret){
+                DlnaTerChListItem ter2 = (DlnaTerChListItem) item;
+                for (Object obj : mData) {
+                    DlnaTerChListItem ter1 = (DlnaTerChListItem) obj;
+                    ret = ter1.equalTo(ter2);
+                    if (ret) {
                         break;
                     }
                 }
-                //本番ソース end
-                //テストソース begin
-//                DlnaRecVideoItem ter2=(DlnaRecVideoItem)item;
-//                for(Object obj: mData){
-//                    DlnaRecVideoItem bs1= (DlnaRecVideoItem)obj;
-//                    ret= bs1.equalTo(ter2);
-//                    if(ret){
-//                        break;
-//                    }
-//                }
-                //テストソース end
                 break;
             case CH_LIST_DATA_TYPE_HIKARI:
             case CH_LIST_DATA_TYPE_DTV:
-                Channel ch2= (Channel)item;
-                for(Object obj: mData){
-                    Channel ch1= (Channel)obj;
-                    ret= ch1.equalTo(ch2);
-                    if(ret){
+                ChannelInfo ch2 = (ChannelInfo) item;
+                for (Object obj : mData) {
+                    ChannelInfo ch1 = (ChannelInfo) obj;
+                    ret = ch1.equalTo(ch2);
+                    if (ret) {
                         break;
                     }
                 }
@@ -207,37 +185,36 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
             case CH_LIST_DATA_TYPE_INVALID:
                 return true;    //データを追加しない
         }
-
         return ret;
     }
 
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        if(null!= mScrollListener){
+    public void setUserVisibleHint(final boolean isVisibleToUser) {
+        if (null != mScrollListener) {
             mScrollListener.setUserVisibleHint(isVisibleToUser, this);
         }
     }
 
     @Override
-    public void onScrollStateChanged(AbsListView absListView, int scrollState) {
-        if(null!= mScrollListener){
+    public void onScrollStateChanged(final AbsListView absListView, final int scrollState) {
+        if (null != mScrollListener) {
             mScrollListener.onScrollStateChanged(this, absListView, scrollState);
         }
     }
 
     @Override
-    public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if(null!= mScrollListener){
+    public void onScroll(final AbsListView absListView, final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
+        if (null != mScrollListener) {
             mScrollListener.onScroll(this, absListView, firstVisibleItem, visibleItemCount, totalItemCount);
         }
     }
 
     @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        if(null==mData || i<0){
+    public void onItemClick(final AdapterView<?> adapterView, View view, final int i, final long l) {
+        if (null == mData || i < 0) {
             return;
         }
-        if(mLoadMoreView == view){
+        if (mLoadMoreView == view) {
             return;
         }
         switch (mChListDataType) {
@@ -249,27 +226,26 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
             case CH_LIST_DATA_TYPE_INVALID:
                 break;
         }
-        RecordedContentsDetailData datas= getParcleData(i);
-        if(null==datas){
+        RecordedContentsDetailData datas = getParcleData(i);
+        if (null == datas) {
             return;
         }
         if (null != mActivity) {
-            Intent intent = new Intent(mActivity, DtvContentsDetailActivity.class);
+            Intent intent = new Intent(mActivity, ContentDetailActivity.class);
             intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
             intent.putExtra(RecordedListActivity.RECORD_LIST_KEY, datas);
             startActivity(intent);
         }
     }
 
-    private RecordedContentsDetailData getParcleData(int i){
+    private RecordedContentsDetailData getParcleData(final int i) {
         RecordedContentsDetailData ret = new RecordedContentsDetailData();
         switch (mChListDataType) {
             case CH_LIST_DATA_TYPE_HIKARI:
             case CH_LIST_DATA_TYPE_DTV:
                 return null;
             case CH_LIST_DATA_TYPE_BS:
-                //本番ソース begin
-                DlnaBsChListItem bsI = (DlnaBsChListItem)mData.get(i);
+                DlnaBsChListItem bsI = (DlnaBsChListItem) mData.get(i);
                 ret.setUpnpIcon(null);
                 ret.setSize(bsI.mSize);
                 ret.setResUrl(bsI.mResUrl);
@@ -279,23 +255,9 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
                 ret.setTitle(bsI.mTitle);
                 ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabBs);
                 ret.setVideoType(bsI.mVideoType);
-                //本番ソース end
-                //test begin
-//                DlnaRecVideoItem video = (DlnaRecVideoItem)mData.get(i);
-//                ret.setUpnpIcon(null);
-//                ret.setSize(video.mSize);
-//                ret.setResUrl(video.mResUrl);
-//                ret.setResolution(video.mResolution);
-//                ret.setBitrate(video.mBitrate);
-//                ret.setDuration(video.mDuration);
-//                ret.setTitle(video.mTitle);
-//                ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabBs);
-//                ret.setVideoType(video.mVideoType);
-                //test end
                 break;
             case CH_LIST_DATA_TYPE_TER:
-                //本番ソース begin
-                DlnaTerChListItem bsT = (DlnaTerChListItem)mData.get(i);
+                DlnaTerChListItem bsT = (DlnaTerChListItem) mData.get(i);
                 ret.setUpnpIcon(null);
                 ret.setSize(bsT.mSize);
                 ret.setResUrl(bsT.mResUrl);
@@ -305,22 +267,9 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
                 ret.setTitle(bsT.mTitle);
                 ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabTer);
                 ret.setVideoType(bsT.mVideoType);
-                //本番ソース end
-                //test begin
-//                DlnaRecVideoItem video2 = (DlnaRecVideoItem)mData.get(i);
-//                ret.setUpnpIcon(null);
-//                ret.setSize(video2.mSize);
-//                ret.setResUrl(video2.mResUrl);
-//                ret.setResolution(video2.mResolution);
-//                ret.setBitrate(video2.mBitrate);
-//                ret.setDuration(video2.mDuration);
-//                ret.setTitle(video2.mTitle);
-//                ret.setDetailParamFromWhere(RecordedContentsDetailData.DetailParamFromWhere.DetailParamFromWhere_ChList_TabTer);
-//                ret.setVideoType(video2.mVideoType);
-                //test end
                 break;
             case CH_LIST_DATA_TYPE_INVALID:
-               return null;
+                return null;
         }
         return ret;
     }

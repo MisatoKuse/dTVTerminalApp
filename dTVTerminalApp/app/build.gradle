@@ -30,6 +30,10 @@ android {
             v2SigningEnabled false
         }
     }
+    dexOptions {
+        javaMaxHeapSize "2g"
+        dexInProcess true
+    }
     buildTypes {
         // 未署名、debug・Log OFF
         unsigned_off {

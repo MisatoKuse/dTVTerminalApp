@@ -6,9 +6,9 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 
-import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
@@ -20,7 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * クリップ(TV)用データプロバイダ.
+ */
 public class TvClipDataProvider extends ClipKeyListDataProvider implements TvClipWebClient.TvClipJsonParserCallback {
     private Context mContext;
     private TvClipList mClipList = null;
@@ -37,7 +39,12 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
                 mClipList = list;
             }
         } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
+            //TODO:Sprint10でDB使用を一時停止
+            //WEBAPIを取得できなかった時はDBのデータを使用
+//            List<Map<String, String>> tvClipList = new ArrayList<>();
+//            HomeDataManager homeDataManager = new HomeDataManager(mContext);
+//            tvClipList = homeDataManager.selectTvClipHomeData();
+//            sendTvClipListData(tvClipList);
             if (null != apiDataProviderCallback) {
                 apiDataProviderCallback.tvClipListCallback(null);
             }
@@ -49,7 +56,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
         DTVTLogger.start();
         super.onTvClipKeyListJsonParsed(clipKeyListResponse);
         // コールバック判定
-        if(mClipList != null) {
+        if (mClipList != null) {
             sendTvClipListData(mClipList.getVcList());
         }
         DTVTLogger.end();
@@ -88,7 +95,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
     public void getClipData(final int pagerOffset) {
         mClipList = null;
         // クリップキー一覧を取得
-        if(mRequiredClipKeyList) {
+        if (mRequiredClipKeyList) {
             getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.TV));
         }
         //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
@@ -102,6 +109,8 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
 
     /**
      * TvクリップリストをActivityに送る.
+     *
+     * @param list Tvクリップリスト
      */
     private void sendTvClipListData(final List<Map<String, String>> list) {
         apiDataProviderCallback.tvClipListCallback(setClipContentData(list));
@@ -122,43 +131,43 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
             contentInfo = new ContentsData();
 
             Map<String, String> map = clipMapList.get(i);
-            String title = map.get(JsonContents.META_RESPONSE_TITLE);
-            String searchOk = map.get(JsonContents.META_RESPONSE_SEARCH_OK);
-            String linearEndDate = map.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
-            String dispType = map.get(JsonContents.META_RESPONSE_DISP_TYPE);
-            String dtv = map.get(JsonContents.META_RESPONSE_DTV);
-            String dtvType = map.get(JsonContents.META_RESPONSE_DTV_TYPE);
+            String title = map.get(JsonConstants.META_RESPONSE_TITLE);
+            String searchOk = map.get(JsonConstants.META_RESPONSE_SEARCH_OK);
+            String linearEndDate = map.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE);
+            String dispType = map.get(JsonConstants.META_RESPONSE_DISP_TYPE);
+            String dtv = map.get(JsonConstants.META_RESPONSE_DTV);
+            String dtvType = map.get(JsonConstants.META_RESPONSE_DTV_TYPE);
 
             contentInfo.setRank(String.valueOf(i + 1));
-            contentInfo.setThumURL(map.get(JsonContents.META_RESPONSE_THUMB_448));
+            contentInfo.setThumURL(map.get(JsonConstants.META_RESPONSE_THUMB_448));
             contentInfo.setTitle(title);
-            contentInfo.setTime(map.get(JsonContents.META_RESPONSE_DISPLAY_START_DATE));
+            contentInfo.setTime(map.get(JsonConstants.META_RESPONSE_DISPLAY_START_DATE));
             contentInfo.setSearchOk(searchOk);
-            contentInfo.setRatStar(map.get(JsonContents.META_RESPONSE_RATING));
-            contentInfo.setContentsType(map.get(JsonContents.META_RESPONSE_CONTENT_TYPE));
+            contentInfo.setRatStar(map.get(JsonConstants.META_RESPONSE_RATING));
+            contentInfo.setContentsType(map.get(JsonConstants.META_RESPONSE_CONTENT_TYPE));
             contentInfo.setDtv(dtv);
             contentInfo.setDtvType(dtvType);
             contentInfo.setDispType(dispType);
-            contentInfo.setServiceId(map.get(JsonContents.META_RESPONSE_SERVICE_ID));
-            contentInfo.setEventId(map.get(JsonContents.META_RESPONSE_EVENT_ID));
+            contentInfo.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
+            contentInfo.setEventId(map.get(JsonConstants.META_RESPONSE_EVENT_ID));
             contentInfo.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
 
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
-            requestData.setCrid(map.get(JsonContents.META_RESPONSE_CRID));
-            requestData.setServiceId(map.get(JsonContents.META_RESPONSE_SERVICE_ID));
-            requestData.setEventId(map.get(JsonContents.META_RESPONSE_EVENT_ID));
-            requestData.setTitleId(map.get(JsonContents.META_RESPONSE_TITLE_ID));
+            requestData.setCrid(map.get(JsonConstants.META_RESPONSE_CRID));
+            requestData.setServiceId(map.get(JsonConstants.META_RESPONSE_SERVICE_ID));
+            requestData.setEventId(map.get(JsonConstants.META_RESPONSE_EVENT_ID));
+            requestData.setTitleId(map.get(JsonConstants.META_RESPONSE_TITLE_ID));
             requestData.setTitle(title);
-            requestData.setRValue(map.get(JsonContents.META_RESPONSE_R_VALUE));
-            requestData.setLinearStartDate(map.get(JsonContents.META_RESPONSE_AVAIL_START_DATE));
+            requestData.setRValue(map.get(JsonConstants.META_RESPONSE_R_VALUE));
+            requestData.setLinearStartDate(map.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE));
             requestData.setLinearEndDate(linearEndDate);
             requestData.setSearchOk(searchOk);
 
             //視聴通知判定生成
-            String contentsType = map.get(JsonContents.META_RESPONSE_CONTENT_TYPE);
-            String tvService = map.get(JsonContents.META_RESPONSE_TV_SERVICE);
-            String dTv = map.get(JsonContents.META_RESPONSE_DTV);
+            String contentsType = map.get(JsonConstants.META_RESPONSE_CONTENT_TYPE);
+            String tvService = map.get(JsonConstants.META_RESPONSE_TV_SERVICE);
+            String dTv = map.get(JsonConstants.META_RESPONSE_DTV);
             requestData.setIsNotify(dispType, contentsType, linearEndDate, tvService, dTv);
             requestData.setDispType(dispType);
             requestData.setContentType(contentsType);
@@ -168,7 +177,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
             contentsDataList.add(contentInfo);
             DTVTLogger.info("RankingContentInfo " + contentInfo.getRank());
 
-            if(mRequiredClipKeyList) {
+            if (mRequiredClipKeyList) {
                 // クリップ状態をコンテンツリストに格納
                 contentInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv,
                         contentInfo.getCrid(), contentInfo.getServiceId(),
@@ -218,7 +227,9 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
     }
 
     /**
-     * Vodクリップ一覧データをDBに格納する
+     * TVクリップ一覧データをDBに格納する.
+     *
+     * @param tvClipList TVクリップ一覧データ
      */
     private void setStructDB(final TvClipList tvClipList) {
         //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった

@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
@@ -24,11 +23,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
-import com.nttdocomo.android.tvterminalapp.common.ContentsData;
-import com.nttdocomo.android.tvterminalapp.common.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
@@ -41,13 +38,15 @@ import com.nttdocomo.android.tvterminalapp.service.download.DownloadParam;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadService;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloaderBase;
 import com.nttdocomo.android.tvterminalapp.service.download.DtcpDownloadParam;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.nttdocomo.android.tvterminalapp.common.CustomDialog.DialogType.CONFIRM;
+import static com.nttdocomo.android.tvterminalapp.view.CustomDialog.DialogType.CONFIRM;
 
 public class RecordedBaseFragment extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener,
         ContentsAdapter.DownloadCallback, DlDataProviderListener {
@@ -61,10 +60,10 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     private DownloadParam downloadParam;
     public List<DlData> que = new ArrayList<>();
     public List<Integer> queIndex = new ArrayList<>();
-    private Handler mHandler = new Handler();
+    private Handler mHandler;
     private final int mPercentToUpdateUi = 1;
     private Activity activity;
-    private boolean mIsJustCanceled=false;
+    private String mProgress;
 
     @Override
     public Context getContext() {
@@ -77,6 +76,11 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     public View onCreateView(LayoutInflater inflater
             , ViewGroup container, Bundle savedInstanceState) {
         DTVTLogger.start();
+        try{
+            mHandler=new Handler();
+        } catch (Exception e){
+            DTVTLogger.debug(e);
+        }
         initData();
         return initView();
     }
@@ -161,7 +165,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 showMessage("ダウンロード中のため、再生できません");
             } else {
                 if(activity != null){
-                    Intent intent = new Intent(mActivity, DtvContentsDetailActivity.class);
+                    Intent intent = new Intent(mActivity, ContentDetailActivity.class);
                     intent.putExtra(DTVTConstants.SOURCE_SCREEN, activity.getComponentName().getClassName());
                     intent.putExtra(RecordedListActivity.RECORD_LIST_KEY, mContentsList.get(i));
                     startActivity(intent);
@@ -170,21 +174,21 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         }
     }
 
-    private static final int DOWNLAD_PROGRESS = 1;
+//    private static final int DOWNLAD_PROGRESS = 1;
 
-    private Handler downLoadStatusHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what){
-                case DOWNLAD_PROGRESS:
-                    if(queIndex.size() > 0){
-                        int percent = (int) msg.obj;
-                        setDownloadStatus(queIndex.get(0), percent);
-                    }
-                    break;
-            }
-        }
-    };
+//    private Handler downLoadStatusHandler = new Handler() {
+//        @Override
+//        public void handleMessage(Message msg) {
+//            switch (msg.what){
+//                case DOWNLAD_PROGRESS:
+//                    if(queIndex.size() > 0){
+//                        int percent = (int) msg.obj;
+//                        setDownloadStatus(queIndex.get(0), percent);
+//                    }
+//                    break;
+//            }
+//        }
+//    };
 
     @Override
     public void onStart(int totalFileByteSize) {
@@ -207,13 +211,13 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             mDlDataProvider.setDlParam(downloadParam);
             mDlDataProvider.start();
         } catch (Exception e){
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
     }
 
     @Override
     public void dlDataProviderUnavailable() {
-
+		//todo
     }
     @Override
     public void onProgress(int receivedBytes, int percent) {
@@ -243,6 +247,10 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
 
     @Override
     public void onFail(final DLError error, final String savePath) {
+        DTVTLogger.debug("download fail savePath:"+savePath);
+        if(null==mHandler){
+            return;
+        }
         mHandler.post(
                 new Runnable(){
                     @Override
@@ -261,12 +269,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                                 showMessage("ストレージ容量不足なので、ダウンロードは出来ませんでした");
                                 break;
                             case DLError_Download:
-                                if(mIsJustCanceled){
-                                    mIsJustCanceled=false;
-                                    return;
-                                } else {
-                                    showMessage("ダウンロードエラーは発生しました");
-                                }
+                                showMessage("ダウンロードエラーは発生しました");
                                 break;
                             case DLError_ParamError:
                                 showMessage("ダウンロードパーラメータエラーは発生しました");
@@ -293,14 +296,26 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     }
 
     @Override
-    public void onSuccess(String fullPath) {
-        final String fullPath2=fullPath;
+    public void onSuccess(final String fullPath) {
         if(activity != null){
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     DTVTLogger.debug("HandlerThread:"+Thread.currentThread().getId());
-                    setSuccessStatus(fullPath2);
+                    setSuccessStatus(fullPath);
+                }
+            });
+        }
+    }
+
+	@Override
+    public void onCancel(final String fullPath) {
+        if(activity != null){
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showMessage("ダウンロードはキャンセルしました。");
+                    setCancelStatus(fullPath);
                 }
             });
         }
@@ -319,7 +334,20 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         }
         setNextDownLoad();
     }
-
+	
+	private void setCancelStatus(String fullPath){
+        if(queIndex.size() > 0){
+            View view = mRecordedListview.getChildAt(queIndex.get(0)-mRecordedListview.getFirstVisiblePosition());
+            if (view != null) {
+                view.findViewById(R.id.item_common_result_clip_tv).setBackgroundResource(R.mipmap.icon_circle_normal_download);
+                //setDownloadStatusClear(view.findViewById(R.id.item_common_result_clip_tv));
+            }
+            mContentsData.get(queIndex.get(0)).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_ALLOW);
+            mContentsData.get(queIndex.get(0)).setDownloadStatus("");
+            setContentListStatusContent(queIndex.get(0), ContentsAdapter.DOWNLOAD_STATUS_ALLOW, fullPath);
+        }
+        setNextDownLoad();
+    }
     private void setNextDownLoad(){
         if(que.size() > 0){
             que.remove(0);
@@ -361,24 +389,18 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         mContentsList.get(index).setDlFileFullPath(path);
     }
 
+
     @Override
-    public void onCancel() {
-        if(!mIsJustCanceled){
-            mIsJustCanceled=true;
-        }
+    public void onLowStorageSpace(final String fullPath) {
         if(activity != null){
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    showMessage("ダウンロードはキャンセルしました。");
+                    showMessage("容量は足りないので、ダウンロードできませんでした。");
+                    setCancelStatus(fullPath);
                 }
             });
         }
-    }
-
-    @Override
-    public void onLowStorageSpace() {
-
     }
 
     @Override
@@ -400,13 +422,14 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 mContentsData.get(index).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_LOADING);
                 break;
             case ContentsAdapter.DOWNLOAD_STATUS_LOADING :
+                mProgress = getResources().getString(R.string.record_download_status) + progress + getResources().getString(R.string.record_download_percent_mark);
                 if (textView != null) {
                     view.findViewById(R.id.item_common_result_recorded_content_hyphen).setVisibility(View.VISIBLE);
                     textView.setVisibility(View.VISIBLE);
                     textView.setTextColor(ContextCompat.getColor(mActivity, R.color.d_animation_title));
-                    textView.setText("ダウンロード中 " + progress + "%");
+                    textView.setText(mProgress);
                 }
-                mContentsData.get(index).setDownloadStatus("ダウンロード中 " + progress + "%");
+                mContentsData.get(index).setDownloadStatus(mProgress);
                 break;
             default:
                 break;
@@ -450,6 +473,9 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     }
 
     private DlData setDlData(int index){
+		if(null==mContentsList || index>=mContentsList.size()){
+            return null;
+        }
         DlData dlData = new DlData();
         RecordedContentsDetailData itemData = mContentsList.get(index);
         dlData.setItemId(DownloaderBase.getFileNameById(itemData.getItemId()));
@@ -596,14 +622,18 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
      * @param msg
      */
     private void showMessage(String msg) {
-        DTVTLogger.start();
-        Context context=getActivity();
-        if(null == context){
+        try{
+            DTVTLogger.start();
+            Context context=getActivity();
+            if(null == context){
+                DTVTLogger.end();
+                return;
+            }
+            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
             DTVTLogger.end();
-            return;
+        } catch (Exception e){
+            DTVTLogger.debug(e);
         }
-        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
-        DTVTLogger.end();
     }
 
     /**
@@ -613,41 +643,70 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     private void showDialogToConfirmUnDownload(final boolean completed, final View view) {
         CustomDialog customDialog = new CustomDialog(getContext(), CONFIRM);
         if (completed){
-            customDialog.setTitle("コンテンツを削除しますか？");
+            customDialog.setTitle(getResources().getString(R.string.record_download_delete_title));
         } else {
-            customDialog.setTitle("ダウンロードを取りやめますか？");
+            customDialog.setTitle(getResources().getString(R.string.record_download_cancel_title));
+            customDialog.setConfirmText(R.string.record_download_cancel_confirm);
         }
         customDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(boolean isOK) {
                 if (isOK) {
                     if (!completed){
-                        for (int i = 0; i < queIndex.size(); i++) {
-                            if ((int) view.getTag() == queIndex.get(0)) {
+                        if(null!=mDlDataProvider && null!=queIndex && 0<queIndex.size()){
+                            int num = (int) view.getTag();
+                            boolean isCurDl= queIndex.get(0) == num;
+                            if (isCurDl) {
                                 mDlDataProvider.cancel();
-                                if (queIndex.size() > 1) {
-                                    prepareDownLoad(queIndex.get(1));
+                                String path = getCurrentDlFullPath(0);
+                                if(null != path){
+                                    mDlDataProvider.cancelDownLoadStatus(path);
+                                } else {
+                                    //todo error
                                 }
-                            }
-                            if ((int) view.getTag() == queIndex.get(i)) {
-                                StringBuilder path=new StringBuilder();
-                                path.append(que.get(i).getSaveFile());
-                                path.append(File.separator);
-                                path.append(que.get(i).getItemId());
-                                mDlDataProvider.cancelDownLoadStatus(path.toString());
-                                que.remove(i);
-                                queIndex.remove(i);
-                                if(queIndex.size() > 0){
-                                    try {
-                                        mDlDataProvider.setDlParam(downloadParam);
-                                        mDlDataProvider.start();
-                                    } catch (Exception e){
-                                        e.printStackTrace();
+                            } else {
+                                for (int i = 0; i < queIndex.size(); i++) {
+                                    if(num == queIndex.get(i)){
+                                        String path = getCurrentDlFullPath(i);
+                                        if(null != path){
+                                            mDlDataProvider.cancelDownLoadStatus(path);
+                                        } else {
+                                            //todo error
+                                        }
+                                        que.remove(i);
+                                        queIndex.remove(i);
+                                        break;
                                     }
                                 }
-                                break;
                             }
                         }
+
+//                        for (int i = 0; i < queIndex.size(); i++) {
+//                            if ((int) view.getTag() == queIndex.get(0)) {
+//                                mDlDataProvider.cancel();
+//                                if (queIndex.size() > 1) {
+//                                    prepareDownLoad(queIndex.get(1));
+//                                }
+//                            }
+//                            if ((int) view.getTag() == queIndex.get(i)) {
+//                                StringBuilder path=new StringBuilder();
+//                                path.append(que.get(i).getSaveFile());
+//                                path.append(File.separator);
+//                                path.append(que.get(i).getItemId());
+//                                mDlDataProvider.cancelDownLoadStatus(path.toString());
+//                                que.remove(i);
+//                                queIndex.remove(i);
+//                                if(queIndex.size() > 0 && (int) view.getTag() == queIndex.get(0)){
+//                                    try {
+//                                        mDlDataProvider.setDlParam(downloadParam);
+//                                        mDlDataProvider.start();
+//                                    } catch (Exception e){
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//                                break;
+//                            }
+//                        }
                     } else {
                         int index = (int)view.getTag();
                         RecordedContentsDetailData itemData = mContentsList.get(index);
@@ -684,6 +743,16 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         customDialog.showDialog();
     }
 
+	private String getCurrentDlFullPath(int idx){
+        if(null==que || idx>=que.size()){
+            return null;
+        }
+        StringBuilder path=new StringBuilder();
+        path.append(que.get(idx).getSaveFile());
+        path.append(File.separator);
+        path.append(que.get(idx).getItemId());
+        return path.toString();
+    }
     /**
      * false ダウンロードステータスをクリア
      */

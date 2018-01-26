@@ -7,17 +7,17 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 
-import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
-import com.nttdocomo.android.tvterminalapp.model.ResultType;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.struct.ResultType;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
-import com.nttdocomo.android.tvterminalapp.model.search.SearchContentInfo;
-import com.nttdocomo.android.tvterminalapp.model.search.SearchNarrowCondition;
-import com.nttdocomo.android.tvterminalapp.model.search.SearchServiceType;
-import com.nttdocomo.android.tvterminalapp.model.search.SearchSortKind;
+import com.nttdocomo.android.tvterminalapp.struct.SearchContentInfo;
+import com.nttdocomo.android.tvterminalapp.struct.SearchNarrowCondition;
+import com.nttdocomo.android.tvterminalapp.common.SearchServiceType;
+import com.nttdocomo.android.tvterminalapp.struct.SearchSortKind;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.TotalSearchContentInfo;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.TotalSearchErrorData;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.TotalSearchRequestData;
@@ -121,8 +121,8 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
             DTVTLogger.debug(e);
         }
 
-        request.serviceId = StringUtil.setCommaSeparator(getCurrentSearchServiceTypeArray(pageIndex));
-        request.categoryId = StringUtil.setCommaSeparator(getCurrentSearchCategoryTypeArray(pageIndex));
+        request.serviceId = StringUtils.setCommaSeparator(getCurrentSearchServiceTypeArray(pageIndex));
+        request.categoryId = StringUtils.setCommaSeparator(getCurrentSearchCategoryTypeArray(pageIndex));
         request.sortKind = sortKind.searchWebSortType().ordinal();
         request.filterTypeList = condition.searchFilterList();
         request.maxResult = SearchConstants.Search.requestMaxResultCount;

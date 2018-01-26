@@ -11,7 +11,10 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.widget.AbsListView;
 import android.widget.LinearLayout;
@@ -19,13 +22,13 @@ import android.widget.RelativeLayout;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.common.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecommendDataProvider;
 import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendBaseFragmentScrollListener;
 import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendFragmentFactory;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.model.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 
@@ -46,9 +49,14 @@ public class RecommendActivity extends BaseActivity implements
     private RecommendDataProvider mRecommendDataProvider = null;
 
     private static final int LOAD_PAGE_DELAY_TIME = 500;
+    private static final int SCREEN_TIME_WIDTH_PERCENT = 9;
+    private static final int MARGIN_ZERO = 0;
+    private static final int MARGIN_LEFT_TAB = 5;
+
+    private final static int TEXT_SIZE = 15;
 
     // レコメンドコンテンツ最大件数（システム制約）
-    private int maxShowListSize = 100;
+    private final int MAX_SHOW_LIST_SIZE = 100;
     // 表示中レコメンドコンテンツ件数(staticにしないと前回の値が維持され、データの更新に失敗する場合がある)
     private static int sShowListSize = 0;
     // 表示中の最後の行を保持(staticにしないと前回の値が維持され、データの更新に失敗する場合がある)
@@ -335,7 +343,7 @@ public class RecommendActivity extends BaseActivity implements
         DTVTLogger.debug("onScroll.first:" + firstVisibleItem +
                 " .visible:" + visibleItemCount + " .total:" + totalItemCount +
                 " dataSize:" + fragment.mData.size());
-        if (maxShowListSize > fragment.mData.size() && // システム制約最大値 100件
+        if (MAX_SHOW_LIST_SIZE > fragment.mData.size() && // システム制約最大値 100件
                 fragment.mData.size() != 0 && // 取得結果0件以外
                 firstVisibleItem + visibleItemCount >= pageMax) { // 表示中の最下まで行ったかの判定
             sCntPageing += 1;

@@ -7,10 +7,13 @@ package com.nttdocomo.android.tvterminalapp.datamanager.select;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RentalListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -39,15 +42,22 @@ public class RentalListDataManager {
      * @return クリップデータリスト
      */
     public List<Map<String, String>> selectRentalListData() {
+
+        //データ存在チェック
+        List<Map<String, String>> list = new ArrayList<>();
+        if (!DBUtils.isCachingRecord(mContext, DBConstants.RENTAL_LIST_TABLE_NAME)) {
+            return list;
+        }
+
         //ホーム画面に必要な列を列挙する
-        String[] columns = {JsonContents.META_RESPONSE_THUMB_448, JsonContents.META_RESPONSE_TITLE,
-                JsonContents.META_RESPONSE_PUBLISH_END_DATE, JsonContents.META_RESPONSE_DISP_TYPE,
-                JsonContents.META_RESPONSE_SEARCH_OK, JsonContents.META_RESPONSE_CRID,
-                JsonContents.META_RESPONSE_SERVICE_ID, JsonContents.META_RESPONSE_EVENT_ID,
-                JsonContents.META_RESPONSE_TITLE_ID, JsonContents.META_RESPONSE_R_VALUE,
-                JsonContents.META_RESPONSE_AVAIL_START_DATE, JsonContents.META_RESPONSE_AVAIL_END_DATE,
-                JsonContents.META_RESPONSE_DTV, JsonContents.META_RESPONSE_TV_SERVICE,
-                JsonContents.META_RESPONSE_CONTENT_TYPE, JsonContents.META_RESPONSE_DTV_TYPE
+        String[] columns = {JsonConstants.META_RESPONSE_THUMB_448, JsonConstants.META_RESPONSE_TITLE,
+                JsonConstants.META_RESPONSE_PUBLISH_END_DATE, JsonConstants.META_RESPONSE_DISP_TYPE,
+                JsonConstants.META_RESPONSE_SEARCH_OK, JsonConstants.META_RESPONSE_CRID,
+                JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_EVENT_ID,
+                JsonConstants.META_RESPONSE_TITLE_ID, JsonConstants.META_RESPONSE_R_VALUE,
+                JsonConstants.META_RESPONSE_AVAIL_START_DATE, JsonConstants.META_RESPONSE_AVAIL_END_DATE,
+                JsonConstants.META_RESPONSE_DTV, JsonConstants.META_RESPONSE_TV_SERVICE,
+                JsonConstants.META_RESPONSE_CONTENT_TYPE, JsonConstants.META_RESPONSE_DTV_TYPE
         };
 
         //Daoクラス使用準備
@@ -56,7 +66,7 @@ public class RentalListDataManager {
         RentalListDao rentalListDao = new RentalListDao(db);
 
         //ホーム画面用データ取得
-        List<Map<String, String>> list = rentalListDao.findById(columns);
+        list = rentalListDao.findById(columns);
         db.close();
         homeDBHelper.close();
         return list;
@@ -69,8 +79,8 @@ public class RentalListDataManager {
      */
     public List<Map<String, String>> selectRentalActiveListData() {
         //必要な列を列挙する
-        String[] activeColumns = {JsonContents.META_RESPONSE_ACTIVE_LIST + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_LICENSE_ID,
-                JsonContents.META_RESPONSE_ACTIVE_LIST + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_VAILD_END_DATE
+        String[] activeColumns = {JsonConstants.META_RESPONSE_ACTIVE_LIST + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_LICENSE_ID,
+                JsonConstants.META_RESPONSE_ACTIVE_LIST + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_VAILD_END_DATE
         };
 
         //Daoクラス使用準備
@@ -92,10 +102,10 @@ public class RentalListDataManager {
      */
     public List<Map<String, String>> selectRentalChListData() {
         //必要な列を列挙する
-        String[] columns = {JsonContents.META_RESPONSE_CHNO, JsonContents.META_RESPONSE_DEFAULT_THUMB, JsonContents.META_RESPONSE_TITLE,
-                JsonContents.META_RESPONSE_AVAIL_START_DATE, JsonContents.META_RESPONSE_AVAIL_END_DATE,
-                JsonContents.META_RESPONSE_DISP_TYPE, JsonContents.META_RESPONSE_SERVICE_ID,
-                JsonContents.META_RESPONSE_CH_TYPE, JsonContents.META_RESPONSE_PUID, JsonContents.META_RESPONSE_SUB_PUID
+        String[] columns = {JsonConstants.META_RESPONSE_CHNO, JsonConstants.META_RESPONSE_DEFAULT_THUMB, JsonConstants.META_RESPONSE_TITLE,
+                JsonConstants.META_RESPONSE_AVAIL_START_DATE, JsonConstants.META_RESPONSE_AVAIL_END_DATE,
+                JsonConstants.META_RESPONSE_DISP_TYPE, JsonConstants.META_RESPONSE_SERVICE_ID,
+                JsonConstants.META_RESPONSE_CH_TYPE, JsonConstants.META_RESPONSE_PUID, JsonConstants.META_RESPONSE_SUB_PUID
         };
 
         //Daoクラス使用準備
@@ -117,8 +127,8 @@ public class RentalListDataManager {
      */
     public List<Map<String, String>> selectRentalChActiveListData() {
         //必要な列を列挙する
-        String[] activeColumns = {JsonContents.META_RESPONSE_ACTIVE_LIST + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_LICENSE_ID,
-                JsonContents.META_RESPONSE_ACTIVE_LIST + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_VAILD_END_DATE
+        String[] activeColumns = {JsonConstants.META_RESPONSE_ACTIVE_LIST + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_LICENSE_ID,
+                JsonConstants.META_RESPONSE_ACTIVE_LIST + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_VAILD_END_DATE
         };
 
         //Daoクラス使用準備

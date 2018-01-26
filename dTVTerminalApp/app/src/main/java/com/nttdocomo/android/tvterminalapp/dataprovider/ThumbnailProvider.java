@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.datamanager.ThumbnailCacheManager;
 import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 
 import java.util.ArrayList;

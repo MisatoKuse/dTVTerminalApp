@@ -8,9 +8,10 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.activity.home.ClipListActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RentalListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.WatchingVideoListActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.WeeklyTvRankingActivity;
@@ -32,7 +33,9 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipKeyListWebCli
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * クリップキー取得管理
+ */
 public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyListJsonParserCallback,
         ClipKeyListWebClient.VodClipKeyListJsonParserCallback, DbThread.DbOperation {
     private Context mContext;
@@ -48,19 +51,15 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     @Override
     public void onTvClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
-        if (clipKeyListResponse != null) {
-            if (clipKeyListResponse.getIsUpdate()) {
-                DTVTLogger.debug("ClipKeyListResponse Insert DB");
-                setStructDB(ClipKeyListDao.TABLE_TYPE.TV, clipKeyListResponse);
-                mResponseEndFlag = true;
-            } else {
-                // DBから取得
-                DTVTLogger.debug("ClipKeyListResponse Select DB");
-                getClipKeyListDbData(ClipKeyListDao.TABLE_TYPE.TV, clipKeyListResponse);
-                mResponseEndFlag = true;
-            }
+        if (clipKeyListResponse != null && clipKeyListResponse.getIsUpdate()) {
+            DTVTLogger.debug("ClipKeyListResponse Insert DB");
+            setStructDB(ClipKeyListDao.TABLE_TYPE.TV, clipKeyListResponse);
+            mResponseEndFlag = true;
         } else {
-            // TODO パラメータエラー時の処理を記載
+            // DBから取得
+            DTVTLogger.debug("ClipKeyListResponse Select DB");
+            getClipKeyListDbData(ClipKeyListDao.TABLE_TYPE.TV, clipKeyListResponse);
+            mResponseEndFlag = true;
         }
         DTVTLogger.end();
     }
@@ -68,30 +67,26 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     @Override
     public void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
-        if (clipKeyListResponse != null) {
-            if (clipKeyListResponse.getIsUpdate()) {
-                DTVTLogger.debug("ClipKeyListResponse Insert DB");
-                setStructDB(ClipKeyListDao.TABLE_TYPE.VOD, clipKeyListResponse);
-                mResponseEndFlag = true;
-            } else {
-                // DBから取得
-                DTVTLogger.debug("ClipKeyListResponse Select DB");
-                getClipKeyListDbData(ClipKeyListDao.TABLE_TYPE.VOD, clipKeyListResponse);
-                mResponseEndFlag = true;
-            }
+        if (clipKeyListResponse != null && clipKeyListResponse.getIsUpdate()) {
+            DTVTLogger.debug("ClipKeyListResponse Insert DB");
+            setStructDB(ClipKeyListDao.TABLE_TYPE.VOD, clipKeyListResponse);
+            mResponseEndFlag = true;
         } else {
-            // TODO パラメータエラー時の処理を記載
+            // DBから取得
+            DTVTLogger.debug("ClipKeyListResponse Select DB");
+            getClipKeyListDbData(ClipKeyListDao.TABLE_TYPE.VOD, clipKeyListResponse);
+            mResponseEndFlag = true;
         }
         DTVTLogger.end();
     }
 
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
-     * @param context
+     * @param context コンテキスト
      */
-    public ClipKeyListDataProvider(Context context) {
+    public ClipKeyListDataProvider(final Context context) {
         this.mContext = context;
         if (checkInstance(context)) {
             mRequiredClipKeyList = true;
@@ -101,7 +96,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     }
 
     /**
-     * データ取得要求受付(tv|vod)
+     * データ取得要求受付(tv|vod).
      */
     public void getClipKeyList() {
         DTVTLogger.start();
@@ -114,9 +109,9 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
 
     /**
      * データ取得要求受付
-     * コンテンツを指定する場合は呼び出す前にrequestに設定しておくこと
+     * コンテンツを指定する場合は呼び出す前にrequestに設定しておくこと.
      */
-    public void getClipKeyList(ClipKeyListRequest request) {
+    public void getClipKeyList(final ClipKeyListRequest request) {
         DTVTLogger.start();
         mResponseEndFlag = false;
         request.setIsForce(isCachingClipKeyListRecord(request.getType()));
@@ -131,12 +126,14 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     }
 
     /**
-     * DB内のClipKeyListを抽出する
+     * DB内のClipKeyListを抽出する.
      *
+     * @param type     テーブル種別
      * @param response ClipKeyListレスポンスデータ
      * @return ListView表示用データ
      */
-    private ClipKeyListResponse getClipKeyListDbData(ClipKeyListDao.TABLE_TYPE type, ClipKeyListResponse response) {
+    private ClipKeyListResponse getClipKeyListDbData(
+            final ClipKeyListDao.TABLE_TYPE type, final ClipKeyListResponse response) {
         DTVTLogger.start();
         ClipKeyListDataManager dataManager = new ClipKeyListDataManager(mContext);
         response.setCkList(dataManager.selectListData(type));
@@ -145,9 +142,12 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     }
 
     /**
-     * クリップキー一覧データをDBに格納する
+     * クリップキー一覧データをDBに格納する.
+     *
+     * @param type     テーブル種別
+     * @param response ClipKeyListレスポンスデータ
      */
-    private void setStructDB(ClipKeyListDao.TABLE_TYPE type, ClipKeyListResponse response) {
+    private void setStructDB(final ClipKeyListDao.TABLE_TYPE type, final ClipKeyListResponse response) {
         DTVTLogger.start();
         ClipKeyListInsertDataManager dataManager = new ClipKeyListInsertDataManager(mContext);
         dataManager.insertClipKeyListInsert(type, response);
@@ -155,16 +155,20 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     }
 
     /**
-     * クリップキー一覧取得を実行するActivityかを判定
+     * クリップキー一覧取得を実行するActivityかを判定.
+     *
+     * @param context コンテキスト
+     * @return Activityフラグ
      */
-    private boolean checkInstance(Context context) {
+    private boolean checkInstance(final Context context) {
         if (context instanceof WeeklyTvRankingActivity
                 || context instanceof DailyTvRankingActivity
                 || context instanceof VideoRankingActivity
+                || context instanceof HomeActivity
                 || context instanceof ClipListActivity
                 || context instanceof RentalListActivity
                 || context instanceof WatchingVideoListActivity
-                || context instanceof DtvContentsDetailActivity
+                || context instanceof ContentDetailActivity
                 || context instanceof TvProgramListActivity
                 || context instanceof VideoContentListActivity
                 || context instanceof VideoPurchListActivity) {
@@ -176,12 +180,12 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     }
 
     /**
-     * クリップキー一覧キャッシュ中判定
+     * クリップキー一覧キャッシュ中判定.
      *
-     * @param type
-     * @return
+     * @param type クリップコンテンツ種別
+     * @return DB保存フラグ
      */
-    private boolean isCachingClipKeyListRecord(String type) {
+    private boolean isCachingClipKeyListRecord(final String type) {
         DTVTLogger.start();
         String tableName = null;
         // キャッシュを確認するDBのテーブル名を取得
@@ -196,14 +200,15 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     }
 
     /**
-     * コンテンツタイプ判定 TV or VOD or dTV
+     * コンテンツタイプ判定 TV or VOD or dTV.
      *
-     * @param dispType
-     * @param contentType
-     * @param dTv
-     * @return
+     * @param dispType    dispType
+     * @param contentType contentType
+     * @param dTv         dTvフラグ
+     * @return コンテンツタイプ
      */
-    protected ClipKeyListDao.CONTENT_TYPE searchContentsType(String dispType, String contentType, String dTv) {
+    protected ClipKeyListDao.CONTENT_TYPE searchContentsType(
+            final String dispType, final String contentType, final String dTv) {
         // TODO DREM-767 QA回答により別BLにて判定処理を修正
         if (ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
                 && contentType.isEmpty()) {
@@ -231,13 +236,14 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     }
 
     /**
-     * 使用テーブル判定 TV or VOD
+     * 使用テーブル判定 TV or VOD.
      *
-     * @param dispType
-     * @param contentType
-     * @return
+     * @param dispType    dispType
+     * @param contentType contentType
+     * @return テーブル種別
      */
-    protected ClipKeyListDao.TABLE_TYPE decisionTableType(String dispType, String contentType) {
+    protected ClipKeyListDao.TABLE_TYPE decisionTableType(
+            final String dispType, final String contentType) {
         if (ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
                 && contentType.length() < 1) {
             return ClipKeyListDao.TABLE_TYPE.TV;
@@ -246,13 +252,14 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     }
 
     /**
-     * DB内に該当するCridのレコードが存在するかを判定
+     * DB内に該当するCridのレコードが存在するかを判定.
      *
-     * @param type
-     * @param crid
+     * @param type tテーブル種別
+     * @param crid crid
      * @return ListView表示用データ
      */
-    protected boolean findDbVodClipKeyData(ClipKeyListDao.TABLE_TYPE type, String crid) {
+    protected boolean findDbVodClipKeyData(
+            final ClipKeyListDao.TABLE_TYPE type, final String crid) {
         DTVTLogger.start();
         ClipKeyListDataManager dataManager = new ClipKeyListDataManager(mContext);
         List<Map<String, String>> clipKeyList = dataManager.selectClipKeyDbVodData(type, crid);
@@ -261,16 +268,17 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     }
 
     /**
-     * DB内に該当するServiceId,EventId,ContentsTypeのレコードが存在するかを判定
+     * DB内に該当するServiceId,EventId,ContentsTypeのレコードが存在するかを判定.
      *
-     * @param tableType
-     * @param serviceId
-     * @param eventId
-     * @param type
+     * @param tableType tableType
+     * @param serviceId serviceId
+     * @param eventId   eventId
+     * @param type      type
      * @return ListView表示用データ
      */
-    protected boolean findDbTvClipKeyData(ClipKeyListDao.TABLE_TYPE tableType,
-                                          String serviceId, String eventId, String type) {
+    protected boolean findDbTvClipKeyData(
+            final ClipKeyListDao.TABLE_TYPE tableType, final String serviceId,
+            final String eventId, final String type) {
         DTVTLogger.start();
         ClipKeyListDataManager dataManager = new ClipKeyListDataManager(mContext);
         List<Map<String, String>> clipKeyList = dataManager.selectClipKeyDbTvData(tableType, serviceId, eventId, type);
@@ -280,13 +288,13 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     }
 
     /**
-     * DB内に該当するTitleIdのレコードが存在するかを判定
+     * DB内に該当するTitleIdのレコードが存在するかを判定.
      *
-     * @param type
-     * @param titleId
+     * @param type tableType
+     * @param titleId titleId
      * @return ListView表示用データ
      */
-    protected boolean findDbDtvClipKeyData(ClipKeyListDao.TABLE_TYPE type, String titleId) {
+    protected boolean findDbDtvClipKeyData(final ClipKeyListDao.TABLE_TYPE type, final String titleId) {
         DTVTLogger.start();
         ClipKeyListDataManager dataManager = new ClipKeyListDataManager(mContext);
         List<Map<String, String>> clipKeyList = dataManager.selectClipKeyDbDtvData(type, titleId);
@@ -294,7 +302,12 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         return clipKeyList != null && clipKeyList.size() > 0;
     }
 
-    public void clipResultDelete(ClipRequestData data) {
+    /**
+     * クリップ削除.
+     *
+     * @param data リクエストデータ
+     */
+    public void clipResultDelete(final ClipRequestData data) {
         mClipRequestData = data;
         //DB操作
         Handler handler = new Handler(); //チャンネル情報更新
@@ -306,7 +319,12 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         }
     }
 
-    public void clipResultInsert(ClipRequestData data) {
+    /**
+     * クリップ追加.
+     *
+     * @param data リクエストデータ
+     */
+    public void clipResultInsert(final ClipRequestData data) {
         mClipRequestData = data;
         //DB操作
         Handler handler = new Handler(); //チャンネル情報更新
@@ -348,34 +366,38 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     }
 
     /**
-     * DBから取得したキー値を元にクリップ状態を判定する
+     * DBから取得したキー値を元にクリップ状態を判定する.
      *
-     * @param dispType
-     * @param contentsType
-     * @param dTv
-     * @param crid
-     * @param serviceId
-     * @param eventId
-     * @param titleId
-     * @return
+     * @param dispType dispType
+     * @param contentsType contentsType
+     * @param dTv dTvフラグ
+     * @param crid crid
+     * @param serviceId serviceId
+     * @param eventId eventId
+     * @param titleId titleId
+     * @return クリップ状態
      */
-    protected boolean getClipStatus(String dispType, String contentsType, String dTv,
-                                    String crid, String serviceId, String eventId, String titleId) {
+    protected boolean getClipStatus(final String dispType, final String contentsType, final String dTv,
+                                    final String crid, final String serviceId, final String eventId, final String titleId) {
         DTVTLogger.start();
         boolean clipStatus = false;
         ClipKeyListDao.CONTENT_TYPE contentType = searchContentsType(dispType, contentsType, dTv);
         ClipKeyListDao.TABLE_TYPE tableType = decisionTableType(dispType, contentsType);
-        switch (contentType) {
-            case TV:
-                clipStatus = findDbTvClipKeyData(tableType,
-                        serviceId, eventId, CLIP_KEY_LIST_TYPE_OTHER_CHANNEL);
-                break;
-            case VOD:
-                clipStatus = findDbVodClipKeyData(tableType, crid);
-                break;
-            case DTV:
-                clipStatus = findDbDtvClipKeyData(tableType, titleId);
-                break;
+        if (contentType != null) {
+            switch (contentType) {
+                case TV:
+                    clipStatus = findDbTvClipKeyData(tableType,
+                            serviceId, eventId, CLIP_KEY_LIST_TYPE_OTHER_CHANNEL);
+                    break;
+                case VOD:
+                    clipStatus = findDbVodClipKeyData(tableType, crid);
+                    break;
+                case DTV:
+                    clipStatus = findDbDtvClipKeyData(tableType, titleId);
+                    break;
+            }
+        } else {
+            DTVTLogger.debug("contentType is null");
         }
         DTVTLogger.end();
         return clipStatus;

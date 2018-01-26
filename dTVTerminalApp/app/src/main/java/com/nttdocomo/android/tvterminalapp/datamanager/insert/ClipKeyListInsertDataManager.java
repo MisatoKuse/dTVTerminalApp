@@ -9,12 +9,12 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -88,10 +88,10 @@ public class ClipKeyListInsertDataManager {
 
         //コンテンツデータ作成
         ContentValues values = new ContentValues();
-        values.put(JsonContents.META_RESPONSE_SERVICE_ID, serviceId);
-        values.put(JsonContents.META_RESPONSE_EVENT_ID, eventId);
-        values.put(JsonContents.META_RESPONSE_TYPE, type);
-        values.put(JsonContents.META_RESPONSE_TITLE_ID, titleId);
+        values.put(JsonConstants.META_RESPONSE_SERVICE_ID, serviceId);
+        values.put(JsonConstants.META_RESPONSE_EVENT_ID, eventId);
+        values.put(JsonConstants.META_RESPONSE_TYPE, type);
+        values.put(JsonConstants.META_RESPONSE_TITLE_ID, titleId);
         clipKeyListDao.insert(tableType, values);
         DTVTLogger.end();
     }
@@ -112,11 +112,11 @@ public class ClipKeyListInsertDataManager {
         SQLiteDatabase db = ClipKeyListDBHelper.getWritableDatabase();
         ClipKeyListDao clipKeyListDao = new ClipKeyListDao(db);
 
-        String query = StringUtil.getConnectStrings(JsonContents.META_RESPONSE_CRID, "=? OR",
-                JsonContents.META_RESPONSE_SERVICE_ID, "=? AND",
-                JsonContents.META_RESPONSE_EVENT_ID, "=? AND",
-                JsonContents.META_RESPONSE_TYPE, "=h4d_iptv OR",
-                JsonContents.META_RESPONSE_TITLE_ID, "=?");
+        String query = StringUtils.getConnectStrings(JsonConstants.META_RESPONSE_CRID, "=? OR",
+                JsonConstants.META_RESPONSE_SERVICE_ID, "=? AND",
+                JsonConstants.META_RESPONSE_EVENT_ID, "=? AND",
+                JsonConstants.META_RESPONSE_TYPE, "=h4d_iptv OR",
+                JsonConstants.META_RESPONSE_TITLE_ID, "=?");
 
         String[] columns = {serviceId, eventId, titleId};
         clipKeyListDao.deleteRowData(tableType, query, columns);

@@ -28,7 +28,7 @@
             android:padding="10dp"
             android:scaleType="fitCenter" />
 
-        <com.nttdocomo.android.tvterminalapp.model.program.ProgramScrollView
+        <com.nttdocomo.android.tvterminalapp.view.ProgramScrollView
             android:id="@+id/tv_program_list_main_layout_time_sl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
             android:layout_toEndOf="@id/tv_program_list_main_layout_curtime_iv"
             android:scrollbars="none" />
 
-        <com.nttdocomo.android.tvterminalapp.model.program.ProgramScrollView
+        <com.nttdocomo.android.tvterminalapp.view.ProgramScrollView
             android:id="@+id/tv_program_list_main_layout_channeldetail_sl"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -50,7 +50,7 @@
             android:layout_toEndOf="@id/tv_program_list_main_layout_time_sl"
             android:scrollbars="none">
 
-            <com.nttdocomo.android.tvterminalapp.model.program.ProgramRecyclerView
+            <com.nttdocomo.android.tvterminalapp.view.ProgramRecyclerView
                 android:id="@+id/tv_program_list_main_layout_channeldetail_rv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
                 android:fadingEdge="none"
                 android:fadingEdgeLength="0dp"
                 android:overScrollMode="never" />
-        </com.nttdocomo.android.tvterminalapp.model.program.ProgramScrollView>
+        </com.nttdocomo.android.tvterminalapp.view.ProgramScrollView>
 
 	    <RelativeLayout
 		    android:id="@+id/tv_program_list_main_layout_time_line"

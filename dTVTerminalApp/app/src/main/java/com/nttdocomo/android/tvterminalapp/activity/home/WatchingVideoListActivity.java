@@ -18,9 +18,9 @@ import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.player.DtvContentsDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.WatchListenVideoBaseAdapter;
-import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.WatchListenVideoListDataProvider;
@@ -83,7 +83,7 @@ public class WatchingVideoListActivity extends BaseActivity implements
 
         initView();
         mWatchListenVideoListDataProvider = new WatchListenVideoListDataProvider(this);
-        mWatchListenVideoListDataProvider.getWatchListenVideoData(1);
+        mWatchListenVideoListDataProvider.getWatchListenVideoData(WatchListenVideoListDataProvider.DEFAULT_PAGE_OFFSET);
 
         //スクロールの上下方向検知用のリスナーを設定
         mListView.setOnTouchListener(this);
@@ -199,7 +199,7 @@ public class WatchingVideoListActivity extends BaseActivity implements
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        Intent intent = new Intent(this, DtvContentsDetailActivity.class);
+        Intent intent = new Intent(this, ContentDetailActivity.class);
         intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
         startActivity(intent);
     }

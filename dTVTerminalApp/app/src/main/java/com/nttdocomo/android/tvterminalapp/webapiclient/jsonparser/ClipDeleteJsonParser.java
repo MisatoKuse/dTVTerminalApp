@@ -7,7 +7,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser;
 import android.os.AsyncTask;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipDeleteWebClient;
 
 import org.json.JSONException;
@@ -32,8 +32,8 @@ public class ClipDeleteJsonParser extends AsyncTask<Object, Object, String> {
         try {
             JSONObject jsonObj = new JSONObject(jsonStr);
             if (jsonObj != null) {
-                if (!jsonObj.isNull(JsonContents.META_RESPONSE_STATUS)) {
-                    status = jsonObj.getString(JsonContents.META_RESPONSE_STATUS);
+                if (!jsonObj.isNull(JsonConstants.META_RESPONSE_STATUS)) {
+                    status = jsonObj.getString(JsonConstants.META_RESPONSE_STATUS);
                 }
                 return status;
             }

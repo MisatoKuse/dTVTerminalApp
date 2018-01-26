@@ -10,56 +10,105 @@ import android.content.SharedPreferences;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 
+/**
+ * ユーザ情報やペアリング情報等の保存/取得を管理するクラス.
+ */
 public class SharedPreferencesUtils {
 
-    /**  SharedPreferences ペアリング情報保存キー 親キー */
+    /**
+     * SharedPreferences ペアリング情報保存キー 親キー.
+     */
     private static final String SHARED_KEY_PAIRING_INFOMATION = "pairing_info";
-    /**  STB選択画面"次回以降表示しない" 選択保存キー */
+    /**
+     * STB選択画面"次回以降表示しない" 選択保存キー.
+     */
     private static final String SHARED_KEY_STB_SELECT_UNNECESSARY_NEXT_TIME = "unnecessary_next_time";
-    /**  STB接続画面 接続成功 保存キー */
+    /**
+     * STB接続画面 接続成功 保存キー.
+     */
     private static final String SHARED_KEY_STB_CONNECT_SUCCESS = "connect_success";
-    /**  ペアリング勧誘画面表示済み判定情報 保存キー */
+    /**
+     * ペアリング勧誘画面表示済み判定情報 保存キー.
+     */
     private static final String SHARED_KEY_IS_DISPLAYED_PARING_INVITATION = "is_displayed_paring_invitation";
-    /**  ホーム画面ペアリング済み判定 保存キー */
+    /**
+     * ホーム画面ペアリング済み判定 保存キー.
+     */
     private static final String SHARED_KEY_DECISION_PARING_SETTLED = "decision_paring_settled";
     // 接続済み STB情報 保存キー
-    /**  STB情報 親キー */
+    /**
+     * STB情報 親キー.
+     */
     private static final String SHARED_KEY_SELECTED_STB_DATA_INFOMATION = "stb_data_info";
-    /**  UDN */
+    /**
+     * UDN.
+     */
     private static final String SHARED_KEY_SELECTED_STB_DATA_INFOMATION_UDN = "selected_stb_udn";
-    /**  コントロールURL */
+    /**
+     * コントロールURL.
+     */
     private static final String SHARED_KEY_SELECTED_STB_DATA_INFOMATION_CONTROL_URL = "selected_stb_control_url";
-    /**  HTTP */
+    /**
+     * HTTP.
+     */
     private static final String SHARED_KEY_SELECTED_STB_DATA_INFOMATION_HTTP = "selected_stb_http";
-    /**  Friendly名 */
+    /**
+     * Friendly名.
+     */
     private static final String SHARED_KEY_SELECTED_STB_DATA_INFOMATION_FRIENDLY_NAME = "selected_stb_friendly_name";
-    /**  IPv6アドレス */
+    /**
+     * IPv6アドレス.
+     */
     private static final String SHARED_KEY_SELECTED_STB_DATA_INFOMATION_IPADDRESS = "selected_stb_ipaddress";
-    /**  getString 初期値 */
+    /**
+     * getString 初期値.
+     */
     private static final String SHARED_GET_STRING_DEFAULT = "";
-    /**  画面情報保存 親キー */
+    /**
+     * 画面情報保存 親キー.
+     */
     private static final String SHARED_KEY_SCREEN_INFORMATION = "screen_information";
-    /**  LaunchActivity チュートリアル表示済み判定 保存キー */
+    /**
+     * LaunchActivity チュートリアル表示済み判定 保存キー.
+     */
     private static final String SHARED_KEY_IS_DISPLAYED_TUTORIAL = "is_displayed_tutorial";
-    /**  SettingActivity 画質設定の設定値 */
+    /**
+     * SettingActivity 画質設定の設定値.
+     */
     private static final String SHARED_KEY_IMAGE_QUALITY = "image_quality";
-    /**  持ち出しコンテンツダウンロード先 ture:内部 false:外部 */
+    /**
+     * 持ち出しコンテンツダウンロード先 ture:内部 false:外部.
+     */
     private static final String SHARED_KEY_STORAGE_PATH = "storage_path";
-    /** 最後に取得したdアカウントのID */
+    /**
+     * 最後に取得したdアカウントのID.
+     */
     private static final String LAST_D_ACCOUNT_ID = "BEFORE_D_ACCOUNT_ID";
-    /** 最後に取得したワンタイムパスワード */
+    /**
+     * 最後に取得したワンタイムパスワード.
+     */
     private static final String LAST_ONE_TIME_PASSWORD = "LAST_ONE_TIME_PASSWORD";
-    /** アプリ再起動フラグ */
+    /**
+     * アプリ再起動フラグ.
+     */
     private static final String RESTART_FLAG = "RESTART_FLAG";
-    /** ユーザ年齢情報キー */
+    /**
+     * ユーザ年齢情報キー.
+     */
     private static final String USER_AGE_REQ_SHARED_KEY = "USER_AGE_REQ_SHARED_KEY";
-    /** ユーザー情報取得日時 */
+    /**
+     * ユーザー情報取得日時.
+     */
     private static final String LAST_USER_INFO_DATE = "LAST_USER_INFO_DATE";
+    /**
+     * ビデオジャンル一覧データ.
+     */
+    private static final String VIDEO_GENRE_LIST_DATA = "video_genre_list_data";
 
     /**
      * 独自の削除メソッドがある接続済みSTB情報以外の、dアカウントユーザー切り替え時の削除対象
      * 新しい物を追加した場合は、基本的にこの配列に名前を追加してください。
-     * (チュートリアル表示済み判定以外は全て消すことになった。アプリ再起動フラグは自動で消えるので対象外)
+     * (チュートリアル表示済み判定以外は全て消すことになった。アプリ再起動フラグは自動で消えるので対象外).
      */
     private final static String[] DELETE_PREFERENCES_NAME = {
             // SharedPreferences ペアリング情報保存キー 親キー
@@ -86,12 +135,12 @@ public class SharedPreferencesUtils {
 
 
     /**
-     * STB選択画面"次回以降表示しない" 状態を保存
+     * STB選択画面"次回以降表示しない" 状態を保存.
      *
      * @param context             コンテキスト
      * @param selectedUnnecessary true:チェック済み false:チェックなし
      */
-    public static void setSharedPreferencesStbSelect(Context context, boolean selectedUnnecessary) {
+    public static void setSharedPreferencesStbSelect(final Context context, final boolean selectedUnnecessary) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
@@ -102,12 +151,12 @@ public class SharedPreferencesUtils {
     }
 
     /**
-     * STB接続完了状態を保存
+     * STB接続完了状態を保存.
      *
      * @param context           コンテキスト
      * @param stbConnectSuccess true:接続完了済み false:接続未完了
      */
-    public static void setSharedPreferencesStbConnect(Context context, boolean stbConnectSuccess) {
+    public static void setSharedPreferencesStbConnect(final Context context, final boolean stbConnectSuccess) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
@@ -118,12 +167,12 @@ public class SharedPreferencesUtils {
     }
 
     /**
-     * ペアリング勧誘画面表示済み判定情報を保存
+     * ペアリング勧誘画面表示済み判定情報を保存.
      *
      * @param context     コンテキスト
      * @param isDisplayed true:表示済み false:未表示
      */
-    public static void setSharedPreferencesIsDisplayedParingInvitation(Context context, boolean isDisplayed) {
+    public static void setSharedPreferencesIsDisplayedParingInvitation(final Context context, final boolean isDisplayed) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
@@ -134,11 +183,12 @@ public class SharedPreferencesUtils {
     }
 
     /**
-     * 接続済みSTBの情報を保存
+     * 接続済みSTBの情報を保存.
      *
      * @param context コンテキスト
+     * @param item    STB情報
      */
-    public static void setSharedPreferencesStbInfo(Context context, DlnaDmsItem item) {
+    public static void setSharedPreferencesStbInfo(final Context context, final DlnaDmsItem item) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_SELECTED_STB_DATA_INFOMATION, Context.MODE_PRIVATE);
@@ -153,12 +203,12 @@ public class SharedPreferencesUtils {
     }
 
     /**
-     * STB選択画面"次回以降表示しない" 状態を取得
+     * STB選択画面"次回以降表示しない" 状態を取得.
      *
      * @param context コンテキスト
      * @return true:表示なし false:表示
      */
-    public static boolean getSharedPreferencesStbSelect(Context context) {
+    public static boolean getSharedPreferencesStbSelect(final Context context) {
         DTVTLogger.debug("getSharedPreferencesStbSelect");
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
@@ -168,12 +218,12 @@ public class SharedPreferencesUtils {
     }
 
     /**
-     * STB接続完了状態を取得
+     * STB接続完了状態を取得.
      *
      * @param context コンテキスト
      * @return true:完了済み false:未完了
      */
-    public static boolean getSharedPreferencesStbConnect(Context context) {
+    public static boolean getSharedPreferencesStbConnect(final Context context) {
         DTVTLogger.debug("getSharedPreferencesStbConnect");
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
@@ -182,12 +232,12 @@ public class SharedPreferencesUtils {
     }
 
     /**
-     * ペアリング勧誘画面表示済み判定情報を取得
+     * ペアリング勧誘画面表示済み判定情報を取得.
      *
      * @param context コンテキスト
      * @return true:表示済み false:未表示
      */
-    public static boolean getSharedPreferencesIsDisplayedParingInvitation(Context context) {
+    public static boolean getSharedPreferencesIsDisplayedParingInvitation(final Context context) {
         DTVTLogger.debug("getSharedPreferencesParingInvitationIsDisplayed");
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
@@ -196,11 +246,12 @@ public class SharedPreferencesUtils {
     }
 
     /**
-     * ペアリング状態を保存(Home画面用)
+     * ペアリング状態を保存(Home画面用).
      *
+     * @param context      コンテキスト
      * @param paringStatus ペアリング状態
      */
-    public static void setSharedPreferencesDecisionParingSettled(Context context, boolean paringStatus) {
+    public static void setSharedPreferencesDecisionParingSettled(final Context context, final boolean paringStatus) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
@@ -211,9 +262,12 @@ public class SharedPreferencesUtils {
     }
 
     /**
-     * ペアリング状態を取得(Home画面用)
+     * ペアリング状態を取得(Home画面用).
+     *
+     * @param context コンテキスト
+     * @return ペアリング状態
      */
-    public static boolean getSharedPreferencesDecisionParingSettled(Context context) {
+    public static boolean getSharedPreferencesDecisionParingSettled(final Context context) {
         DTVTLogger.debug("getSharedPreferencesDecisionParingSettled");
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_PAIRING_INFOMATION, Context.MODE_PRIVATE);
@@ -222,9 +276,12 @@ public class SharedPreferencesUtils {
     }
 
     /**
-     * 接続済みSTB情報を取得
+     * 接続済みSTB情報を取得.
+     *
+     * @param context コンテキスト
+     * @return STB情報
      */
-    public static DlnaDmsItem getSharedPreferencesStbInfo(Context context) {
+    public static DlnaDmsItem getSharedPreferencesStbInfo(final Context context) {
         DTVTLogger.debug("getSharedPreferencesStbInfo");
         DlnaDmsItem item = new DlnaDmsItem();
         SharedPreferences data = context.getSharedPreferences(
@@ -240,12 +297,12 @@ public class SharedPreferencesUtils {
     }
 
     /**
-     * チュートリアル画面表示済み情報を設定
+     * チュートリアル画面表示済み情報を設定.
      *
      * @param context     コンテキスト
      * @param isDisplayed true:表示済み false:未表示
      */
-    public static void setSharedPreferencesIsDisplayedTutorial(Context context, boolean isDisplayed) {
+    public static void setSharedPreferencesIsDisplayedTutorial(final Context context, final boolean isDisplayed) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_SCREEN_INFORMATION, Context.MODE_PRIVATE);
@@ -256,9 +313,12 @@ public class SharedPreferencesUtils {
     }
 
     /**
-     * チュートリアル画面表示済み情報を取得
+     * チュートリアル画面表示済み情報を取得.
+     *
+     * @param context コンテキスト
+     * @return チュートリアル表示済みフラグ
      */
-    public static boolean getSharedPreferencesIsDisplayedTutorial(Context context) {
+    public static boolean getSharedPreferencesIsDisplayedTutorial(final Context context) {
         DTVTLogger.debug("getSharedPreferencesIsDisplayedTutorial");
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_SCREEN_INFORMATION, Context.MODE_PRIVATE);
@@ -267,9 +327,11 @@ public class SharedPreferencesUtils {
     }
 
     /**
-     * SharedPreferences内の接続済みSTBのデータをクリア
+     * SharedPreferences内の接続済みSTBのデータをクリア.
+     *
+     * @param context コンテキスト
      */
-    public static void resetSharedPreferencesStbInfo(Context context) {
+    public static void resetSharedPreferencesStbInfo(final Context context) {
         DTVTLogger.debug("resetSharedPreferencesStbInfo");
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_SELECTED_STB_DATA_INFOMATION, Context.MODE_PRIVATE);
@@ -277,12 +339,12 @@ public class SharedPreferencesUtils {
     }
 
     /**
-     * 設定画面の"外出先視聴時の画質設定"の設定値を保存
+     * 設定画面の"外出先視聴時の画質設定"の設定値を保存.
      *
      * @param context コンテキスト
      * @param quality 画質の設定値
      */
-    public static void setSharedPreferencesImageQuality(Context context, String quality) {
+    public static void setSharedPreferencesImageQuality(final Context context, final String quality) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_IMAGE_QUALITY, Context.MODE_PRIVATE);
@@ -293,9 +355,12 @@ public class SharedPreferencesUtils {
     }
 
     /**
-     * 設定画面の"外出先視聴時の画質設定"の設定値を取得
+     * 設定画面の"外出先視聴時の画質設定"の設定値を取得.
+     *
+     * @param context コンテキスト
+     * @return "外出先視聴時の画質設定"の設定値
      */
-    public static String getSharedPreferencesImageQuality(Context context) {
+    public static String getSharedPreferencesImageQuality(final Context context) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_IMAGE_QUALITY, Context.MODE_PRIVATE);
@@ -304,12 +369,12 @@ public class SharedPreferencesUtils {
     }
 
     /**
-     * 持ち出しコンテンツのダウンロード先を保存
+     * 持ち出しコンテンツのダウンロード先を保存.
      *
      * @param context コンテキスト
-     * @param path ダウンロード先 true:内部 false:外部
+     * @param path    ダウンロード先 true:内部 false:外部
      */
-    public static void setSharedPreferencesStoragePath(Context context, Boolean path) {
+    public static void setSharedPreferencesStoragePath(final Context context, final Boolean path) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_STORAGE_PATH, Context.MODE_PRIVATE);
@@ -320,9 +385,12 @@ public class SharedPreferencesUtils {
     }
 
     /**
-     * 持ち出しコンテンツのダウンロード先を取得
+     * 持ち出しコンテンツのダウンロード先を取得.
+     *
+     * @param context コンテキスト
+     * @return 持ち出しコンテンツのダウンロード先
      */
-    public static Boolean getSharedPreferencesStoragePath(Context context) {
+    public static Boolean getSharedPreferencesStoragePath(final Context context) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 SHARED_KEY_STORAGE_PATH, Context.MODE_PRIVATE);
@@ -331,12 +399,12 @@ public class SharedPreferencesUtils {
     }
 
     /**
-     * 取得したdアカウントを保存
+     * 取得したdアカウントを保存.
      *
      * @param context コンテキスト
-     * @param id 保存するdアカウントID
+     * @param id      保存するdアカウントID
      */
-    public static void setSharedPreferencesDaccountId(Context context, String id) {
+    public static void setSharedPreferencesDaccountId(final Context context, final String id) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 LAST_D_ACCOUNT_ID, Context.MODE_PRIVATE);
@@ -347,23 +415,26 @@ public class SharedPreferencesUtils {
     }
 
     /**
-     * 最後に保存したdアカウントを取得
+     * 最後に保存したdアカウントを取得.
+     *
+     * @param context コンテキスト
+     * @return dアカウント
      */
-    public static String getSharedPreferencesDaccountId(Context context) {
+    public static String getSharedPreferencesDaccountId(final Context context) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 LAST_D_ACCOUNT_ID, Context.MODE_PRIVATE);
 
-        return data.getString(LAST_D_ACCOUNT_ID,"");
+        return data.getString(LAST_D_ACCOUNT_ID, "");
     }
 
     /**
-     * 取得したワンタイムパスワードを保存
+     * 取得したワンタイムパスワードを保存.
      *
      * @param context コンテキスト
-     * @param pass 保存するワンタイムパスワード
+     * @param pass    保存するワンタイムパスワード
      */
-    public static void setSharedPreferencesOneTimePass(Context context, String pass) {
+    public static void setSharedPreferencesOneTimePass(final Context context, final String pass) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 LAST_ONE_TIME_PASSWORD, Context.MODE_PRIVATE);
@@ -374,23 +445,26 @@ public class SharedPreferencesUtils {
     }
 
     /**
-     * 最後に保存したワンタイムパスワードを取得
+     * 最後に保存したワンタイムパスワードを取得.
+     *
+     * @param context コンテキスト
+     * @return ワンタイムパスワード
      */
-    public static String getSharedPreferencesOneTimePass(Context context) {
+    public static String getSharedPreferencesOneTimePass(final Context context) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 LAST_ONE_TIME_PASSWORD, Context.MODE_PRIVATE);
 
-        return data.getString(LAST_ONE_TIME_PASSWORD,"");
+        return data.getString(LAST_ONE_TIME_PASSWORD, "");
     }
 
     /**
-     * ユーザー情報の最終取得日時を保存
+     * ユーザー情報の最終取得日時を保存.
      *
      * @param context コンテキスト
      * @param getTime 取得日時
      */
-    public static void setSharedPreferencesUserInfoDate(Context context, long getTime) {
+    public static void setSharedPreferencesUserInfoDate(final Context context, final long getTime) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 LAST_USER_INFO_DATE, Context.MODE_PRIVATE);
@@ -401,41 +475,43 @@ public class SharedPreferencesUtils {
     }
 
     /**
-     * ユーザー情報の最終取得日時を取得
+     * ユーザー情報の最終取得日時を取得.
      *
      * @param context コンテキスト
      * @return 最終取得日時
      */
-    public static long getSharedPreferencesUserInfoDate(Context context) {
+    public static long getSharedPreferencesUserInfoDate(final Context context) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 LAST_USER_INFO_DATE, Context.MODE_PRIVATE);
 
         //最終取得日時を返す。存在していなければ、最小値を返す
-        return data.getLong(LAST_USER_INFO_DATE,Long.MIN_VALUE);
+        return data.getLong(LAST_USER_INFO_DATE, Long.MIN_VALUE);
     }
 
     /**
-     * 一部の設定値以外のプリファレンスを削除する
+     * 一部の設定値以外のプリファレンスを削除する.
+     *
+     * @param context コンテキスト
      */
-    public static void clearAlmostSharedPreferences(Context context) {
+    public static void clearAlmostSharedPreferences(final Context context) {
         //接続済みSTB情報には削除処理があるので使用する
         resetSharedPreferencesStbInfo(context);
 
         //他の情報の削除を行う
-        for(String deleteKey : DELETE_PREFERENCES_NAME) {
-            SharedPreferences deleteData = context.getSharedPreferences(deleteKey,Context.MODE_PRIVATE);
+        for (String deleteKey : DELETE_PREFERENCES_NAME) {
+            SharedPreferences deleteData = context.getSharedPreferences(deleteKey, Context.MODE_PRIVATE);
             deleteData.edit().clear().apply();
         }
     }
 
     /**
-     * 再起動フラグを設定
+     * 再起動フラグを設定.
      *
-     * @param context コンテキスト
+     * @param context     コンテキスト
      * @param restartFlag 再起動フラグの設定値
      */
-    public static void setSharedPreferencesRestartFlag(Context context, boolean restartFlag) {
+    public static void setSharedPreferencesRestartFlag(final Context context, final boolean restartFlag) {
         DTVTLogger.start("set restart flag = " + restartFlag);
         SharedPreferences data = context.getSharedPreferences(
                 RESTART_FLAG, Context.MODE_PRIVATE);
@@ -446,24 +522,27 @@ public class SharedPreferencesUtils {
     }
 
     /**
-     * 再起動フラグを取得
+     * 再起動フラグを取得.
+     *
+     * @param context コンテキスト
+     * @return 再起動フラグ
      */
-    public static boolean getSharedPreferencesRestartFlag(Context context) {
+    public static boolean getSharedPreferencesRestartFlag(final Context context) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 RESTART_FLAG, Context.MODE_PRIVATE);
 
         //デフォルト値はfalseで取得して返す
-        return data.getBoolean(RESTART_FLAG,false);
+        return data.getBoolean(RESTART_FLAG, false);
     }
 
     /**
-     * 取得したユーザ視聴制限情報を保存
+     * 取得したユーザ視聴制限情報を保存.
      *
      * @param context コンテキスト
-     * @param age 保存するユーザ年齢制限情報
+     * @param age     保存するユーザ年齢制限情報
      */
-    public static void setSharedPreferencesAgeReq(Context context, int age) {
+    public static void setSharedPreferencesAgeReq(final Context context, final int age) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 USER_AGE_REQ_SHARED_KEY, Context.MODE_PRIVATE);
@@ -474,14 +553,50 @@ public class SharedPreferencesUtils {
     }
 
     /**
-     * 最後に保存した年齢情報を取得
+     * 最後に保存した年齢情報を取得.
+     *
+     * @param context コンテキスト
+     * @return 年齢情報
      */
-    public static int getSharedPreferencesAgeReq(Context context) {
+    public static int getSharedPreferencesAgeReq(final Context context) {
         DTVTLogger.start();
         SharedPreferences data = context.getSharedPreferences(
                 USER_AGE_REQ_SHARED_KEY, Context.MODE_PRIVATE);
 
         //保存した年齢情報がない場合はPG12を返却
-        return data.getInt(USER_AGE_REQ_SHARED_KEY, StringUtil.USER_AGE_REQ_PG12);
+        return data.getInt(USER_AGE_REQ_SHARED_KEY, StringUtils.USER_AGE_REQ_PG12);
+    }
+
+    /**
+     * ビデオジャンル一覧データ保存.
+     *
+     * @param context   コンテキスト
+     * @param genreData ジャンルデータ
+     */
+    public static void setSharedPreferencesVideoGenreData(final Context context, final String genreData) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                VIDEO_GENRE_LIST_DATA, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putString(VIDEO_GENRE_LIST_DATA, genreData);
+        editor.apply();
+        DateUtils dateUtils = new DateUtils(context);
+        dateUtils.addLastDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
+        DTVTLogger.end();
+    }
+
+    /**
+     * ビデオジャンル一覧データ取得.
+     *
+     * @param context コンテキスト
+     * @return ジャンルデータ
+     */
+    public static String getSharedPreferencesVideoGenreData(final Context context) {
+        DTVTLogger.start();
+        SharedPreferences data = context.getSharedPreferences(
+                VIDEO_GENRE_LIST_DATA, Context.MODE_PRIVATE);
+
+        //保存したビデオジャンルが無いときはnullを返却
+        return data.getString(VIDEO_GENRE_LIST_DATA, null);
     }
 }

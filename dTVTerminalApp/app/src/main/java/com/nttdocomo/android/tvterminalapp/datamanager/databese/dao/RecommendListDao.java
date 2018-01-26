@@ -8,6 +8,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class RecommendListDao {
     public List<Map<String, String>> findById(String[] strings, int tagPageNo, String limitData) {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
-        String tableName = getTableName(tagPageNo);
+        String tableName = DBUtils.getRecommendTableName(tagPageNo);
 
         Cursor cursor = db.query(
                 tableName,
@@ -81,7 +82,7 @@ public class RecommendListDao {
      * @return
      */
     public long insert(ContentValues values, int tagPageNo) {
-        String tableName = getTableName(tagPageNo);
+        String tableName = DBUtils.getRecommendTableName(tagPageNo);
         return db.insert(tableName, "", values);
     }
 
@@ -96,37 +97,7 @@ public class RecommendListDao {
      * @return
      */
     public int delete(int tagPageNo) {
-        String tableName = getTableName(tagPageNo);
+        String tableName = DBUtils.getRecommendTableName(tagPageNo);
         return db.delete(tableName, null, null);
-    }
-
-    /**
-     * 操作するテーブル名を取得
-     *
-     * @param tagPageNo タグ名
-     * @return tableName
-     */
-    private String getTableName(int tagPageNo) {
-        String tableName = null;
-        switch (tagPageNo) {
-            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV:
-                tableName = RECOMMEND_CHANNEL_LIST_TABLE_NAME;
-                break;
-            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO:
-                tableName = RECOMMEND_VIDEO_LIST_TABLE_NAME;
-                break;
-            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL:
-                tableName = RECOMMEND_LIST_DCHANNEL_TABLE_NAME;
-                break;
-            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV:
-                tableName = RECOMMEND_LIST_DTV_TABLE_NAME;
-                break;
-            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME:
-                tableName = RECOMMEND_LIST_DANIME_TABLE_NAME;
-                break;
-            default:
-                break;
-        }
-        return tableName;
     }
 }

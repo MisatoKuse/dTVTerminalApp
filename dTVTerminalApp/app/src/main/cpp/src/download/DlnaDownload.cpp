@@ -18,8 +18,17 @@ namespace dtvt {
 
     //global var
     extern bool gIsGlobalDtcpInited;
+    static bool sIsJustCanceled=false;
 
-    //local function b
+    //============================ local function b //============================//
+    static pthread_mutex_t gMutexIsJustCanceled;
+
+    static void setIsJustCanceled(bool yn){
+        pthread_mutex_lock(&gMutexIsJustCanceled);
+        sIsJustCanceled=yn;
+        pthread_mutex_unlock(&gMutexIsJustCanceled);
+    }
+
     string intToString(int n)  {
         stringstream ss;
         string str;
@@ -35,7 +44,7 @@ namespace dtvt {
         ss>>str;
         return str;
     }
-    //local function e
+    //============================ local function e //============================//
 
     DlnaDownload::DlnaDownload(): mDtcp(NULL), mDirToSave("") {
         mEvent.mJavaVM=NULL;
@@ -165,7 +174,19 @@ namespace dtvt {
         }
         DlnaDownload *thiz = (DlnaDownload *) arg;
         std::string content= intToString(status);
-        thiz->notify(DLNA_MSG_ID_DL_STATUS, content);
+
+        pthread_mutex_lock(&gMutexIsJustCanceled);
+        if(DOWNLOADER_STATUS_ERROR_OCCURED==status){
+            if(sIsJustCanceled){
+                sIsJustCanceled=false;
+            } else {
+                thiz->notify(DLNA_MSG_ID_DL_STATUS, content);
+            }
+        } else {
+            thiz->notify(DLNA_MSG_ID_DL_STATUS, content);
+        }
+        pthread_mutex_unlock(&gMutexIsJustCanceled);
+
     }
 
     void DlnaDownload::downloaderProgressHandler(du_uint64 sent_size, du_uint64 total_size, void* arg){
@@ -178,7 +199,7 @@ namespace dtvt {
     }
 
 
-    void DlnaDownload::notify(int msg, std::string content) {
+    void DlnaDownload::notify(int msg, std::string& content) {
         JNIEnv *env = NULL;
         bool isAttached=false;
         int status = mEvent.mJavaVM->GetEnv((void **) &env, JNI_VERSION_1_6);
@@ -191,9 +212,19 @@ namespace dtvt {
         }
 
         jclass listActivityClazz = env->GetObjectClass(mEvent.mJObject);
+        if(NULL==listActivityClazz){
+            if(isAttached){
+                mEvent.mJavaVM->DetachCurrentThread();
+            }
+            return;
+        }
         jmethodID method = env->GetMethodID(listActivityClazz, "notifyFromNative",
                                             "(ILjava/lang/String;)V");
         if (NULL == method) {
+            env->DeleteLocalRef(listActivityClazz);
+            if(isAttached){
+                mEvent.mJavaVM->DetachCurrentThread();
+            }
             return;
         }
 
@@ -255,85 +286,8 @@ namespace dtvt {
             downloaderStatusHandler(DOWNLOADER_STATUS_ERROR_OCCURED, 0, this);
     }
 
-//下記のソースはAppはForegroundの場合は実行正常であるが、Appは閉じると、Serviceで二番めのdlは失敗なので、一時コメントアウトし、別の方法を検討することになる。まず、下記保留
-//    void DlnaDownload::dtcpDownload(JNIEnv *env, jobject instance, std::string dirToSave, std::string fileNameToSave, std::string dtcp1host_, int dtcp1port_, std::string url_, int cleartextSize, const char *xml){
-//        const du_uchar* dtcp1host = DU_UCHAR_CONST(dtcp1host_.c_str());
-//        du_uint16 dtcp1port = dtcp1port_;
-//        const du_uchar* url = DU_UCHAR_CONST(url_.c_str());
-//        du_bool move = 1;
-//        bool retTmp=true;
-//        string fileToDownload= dirToSave + "/" + fileNameToSave;
-//        const du_uchar* dixim_file = DU_UCHAR_CONST(fileToDownload.c_str());
-//        du_uint64 cleartext_size = cleartextSize;
-//        du_str_array* request_header = 0;
-//        const du_uchar* private_data_home_path = DU_UCHAR_CONST(dirToSave.c_str());
-//        du_uchar* xmlStrDu=NULL;
-//
-//        if (!cipher_file_context_global_create(secure_io_global_get_instance(), private_data_home_path)) {
-//            goto error2;
-//        }
-//        DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaDownload.cpp DlnaDownload::dtcpDownload, secure_io_global_get_instance");
-//        DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaDownload.cpp DlnaDownload::dtcpDownload, cipher_file_context_global_create");
-//
-//        xmlStrDu= (du_uchar *) xml;
-//        if(!xmlStrDu){
-//            goto error2;
-//        }
-//
-//        {
-//            dixim::dmsp::dtcp::dtcp d;
-//            d.private_data_home = (const char*)private_data_home_path;
-//            d.ake_port = 53211;
-//            JavaVM *vm=NULL;
-//
-//            env->GetJavaVM(&vm);
-//            if(NULL==vm){
-//                goto error2;
-//            }
-//            //if (!d.start(mEvent.mJavaVM, instance, this)) {
-//            if (!d.start(vm, instance, this)) {
-//                DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaDownload.cpp DlnaDownload::dtcpDownload, d.start failed");
-//                goto error3;
-//            }
-//            if (!downloader_download(
-//                    d.d,
-//                    dtcp1host,
-//                    dtcp1port,
-//                    url,
-//                    move,
-//                    (downloader_status_handler) downloaderStatusHandler,
-//                    (downloader_progress_handler)downloaderProgressHandler,
-//                    this, //handler arg
-//                    dixim_file,
-//                    xmlStrDu,
-//                    cleartext_size,
-//                    request_header)) {
-//                goto error3;
-//            }
-//            d.stop(); //original
-//        }
-//
-//
-//
-//        cipher_file_context_global_free();
-//        secure_io_global_free();
-//        DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaDownload.cpp DlnaDownload::dtcpDownload, cipher_file_context_global_free when ok");
-//        DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaDownload.cpp DlnaDownload::dtcpDownload, secure_io_global_free when ok");
-//        du_log_dv(0, DU_UCHAR_CONST("OK"));
-//
-//        return;
-//
-//        error3:
-//            cipher_file_context_global_free();
-//            DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaDownload.cpp DlnaDownload::dtcpDownload, cipher_file_context_global_free when error");
-//        error2:
-//            secure_io_global_free();
-//            DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaDownload.cpp DlnaDownload::dtcpDownload, secure_io_global_free when error");
-//            du_log_wv(0, DU_UCHAR_CONST("ERROR"));
-//            downloaderStatusHandler(DOWNLOADER_STATUS_ERROR_OCCURED, 0, this);
-//    }
-
     void DlnaDownload::dtcpDownloadCancel(){
+        setIsJustCanceled(true);
         downloader_cancel();
     }
 

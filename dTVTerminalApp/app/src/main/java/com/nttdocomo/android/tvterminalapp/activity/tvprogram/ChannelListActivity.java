@@ -10,7 +10,10 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -39,6 +42,8 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListListener;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.model.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.model.program.Channel;
 import com.nttdocomo.android.tvterminalapp.model.program.ChannelsInfo;
@@ -50,9 +55,6 @@ public class ChannelListActivity extends BaseActivity implements
         View.OnClickListener, ChannelListFragment.ChannelListFragmentListener,
         DlnaRecVideoListener, DlnaTerChListListener, DlnaBsChListListener,
         ScaledDownProgramListDataProvider.ApiDataProviderCallback, TabItemLayout.OnClickTabTextListener {
-
-    private static final int SCREEN_TIME_WIDTH_PERCENT = 9;
-    private static final float TAB_TEXT_SIZE = 14.0f;
 
     private String[] mTabNames = null;
     private int screenWidth = 0;
@@ -229,17 +231,6 @@ public class ChannelListActivity extends BaseActivity implements
                     onError("Get BS channel list datas failed");
                 }
             }
-            //本番ソース end
-            //仮ソース begin
-//            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
-//            if (mDlnaProvRecVideo.start(dlnaDmsItem, getActivity())) {
-//                boolean ret=mDlnaProvRecVideo.browseRecVideoDms();
-//                if(!ret){
-//                    onError("Get recoreded video datas failed");
-//                }
-//            }
-//            testType=ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS;   //test
-            //仮ソース end
             DTVTLogger.end();
         }
     };
@@ -270,14 +261,6 @@ public class ChannelListActivity extends BaseActivity implements
                     onError("Get Ter channel list datas failed");
                 }
             }
-            //本番ソース end
-            //仮ソース begin
-//            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
-//            if (mDlnaProvRecVideo.start(dlnaDmsItem, getActivity())) {
-//                mDlnaProvRecVideo.browseRecVideoDms();
-//            }
-//            testType=ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER;   //test
-            //仮ソース end
             DTVTLogger.end();
         }
     };
@@ -311,12 +294,6 @@ public class ChannelListActivity extends BaseActivity implements
         @Override
         public void run() {
             DTVTLogger.start();
-//            //test b
-//            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
-//            if (mDlnaProvRecVideo.start(dlnaDmsItem, getActivity())) {
-//                mDlnaProvRecVideo.browseRecVideoDms();
-//            }
-//            testType=ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI;   //test
             mHikariTvChDataProvider.getChannelList(1, mPagingOffset, "");
             DTVTLogger.end();
         }
@@ -329,11 +306,6 @@ public class ChannelListActivity extends BaseActivity implements
         @Override
         public void run() {
             DTVTLogger.start();
-//            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
-//            if (mDlnaProvRecVideo.start(dlnaDmsItem, getActivity())) {
-//                mDlnaProvRecVideo.browseRecVideoDms();
-//            }
-//            testType=ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_DTV;   //test
             mDTvChDataProvider.getChannelList(1, mPagingOffset, "");
             DTVTLogger.end();
         }
@@ -344,9 +316,7 @@ public class ChannelListActivity extends BaseActivity implements
      */
     private void getDtvData() {
         DTVTLogger.start();
-        //test b
         displayMore(true, CHANNEL_LIST_TAB_DTV, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_DTV);
-        //test e
         mHandle.postDelayed(mRunableDtv, CHANNEL_LIST_TAB_DELAY_TIME);
         DTVTLogger.end();
     }
@@ -587,12 +557,7 @@ public class ChannelListActivity extends BaseActivity implements
         } else if (testType == ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_DTV) {
             pos = 3;
         }
-        //test e
-        final ChannelListFragment fragment = mFactory.createFragment(pos, this, testType); //test
-//        for(int i=0;i<curInfo.size();++i){
-////            fragment.addData(curInfo.get(i));   //本番
-//            fragment.addData(curInfo2.get(i));      //test
-//        }
+        final ChannelListFragment fragment = mFactory.createFragment(pos, this, testType);
         ArrayList<Object> tmp = new ArrayList();
         for (int i = 0; i < curInfo2.size(); ++i) {
             tmp.add(curInfo2.get(i));
@@ -601,7 +566,6 @@ public class ChannelListActivity extends BaseActivity implements
         updateUi(fragment);
         DTVTLogger.end();
     }
-    //仮データ関数 end
 
     /**
      * UI更新
@@ -731,13 +695,13 @@ public class ChannelListActivity extends BaseActivity implements
      * @param channelsInfo 画面に渡すチャンネル番組情報
      */
     @Override
-    public void channelInfoCallback(ChannelsInfo channelsInfo) {
+    public void channelInfoCallback(ChannelInfoList channelsInfo) {
         DTVTLogger.start();
         if (null == channelsInfo) {
             DTVTLogger.end();
             return;
         }
-        ArrayList<Channel> channels = channelsInfo.getChannels();
+        ArrayList<ChannelInfo> channels = channelsInfo.getChannels();
         if (0 == channels.size()) {
             return;
         }
@@ -750,7 +714,7 @@ public class ChannelListActivity extends BaseActivity implements
      * @param channels 　画面に渡すチャンネル情報
      */
     @Override
-    public void channelListCallback(ArrayList<Channel> channels) {
+    public void channelListCallback(ArrayList<ChannelInfo> channels) {
         DTVTLogger.start();
         if (null == channels) {
             DTVTLogger.end();
@@ -776,7 +740,7 @@ public class ChannelListActivity extends BaseActivity implements
             return;
         }
         ArrayList<Object> tmp = new ArrayList();
-        for (Channel ch : channels) {
+        for (ChannelInfo ch : channels) {
             tmp.add(ch);
         }
         paging(fragment, tmp);

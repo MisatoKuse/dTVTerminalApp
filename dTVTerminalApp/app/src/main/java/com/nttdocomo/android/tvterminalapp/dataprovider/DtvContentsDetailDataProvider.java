@@ -9,7 +9,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
@@ -29,8 +29,8 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingRese
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
-import com.nttdocomo.android.tvterminalapp.model.detail.RecordingReservationContentsDetailInfo;
-import com.nttdocomo.android.tvterminalapp.model.program.Channel;
+import com.nttdocomo.android.tvterminalapp.struct.RecordingReservationContentsDetailInfo;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsDetailGetWebClient;
@@ -121,10 +121,6 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
      * 購入済みチャンネルリスト取得.
      */
     private static final int RENTAL_CHANNEL_SELECT = 8;
-    /**
-     * ディスプレイタイプ.
-     */
-    private static final String[] DISPLAY_TYPE = {"", "hikaritv", "dch"};
 
     private ArrayList<VodMetaFullData> mVodMetaFullDataList = null;
 
@@ -149,9 +145,13 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                             detailListInfo, getContentsDetailClipStatus(detailListInfo.get(0)));
                 } else {
                     mVodMetaFullDataList = detailListInfo;
-                    requestGetClipKeyList(detailListInfo.get(0));
+                    if (detailListInfo.size() > 0) {
+                        requestGetClipKeyList(detailListInfo.get(0));
+                    }
                 }
             }
+        } else {
+            //TODO:WEBAPIを取得できなかった時の処理を記載予定
         }
     }
 
@@ -180,6 +180,8 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
             } catch (Exception e) {
                 DTVTLogger.debug(e);
             }
+        } else {
+            //TODO:WEBAPIを取得できなかった時の処理を記載予定
         }
         if (mPurchasedVodListResponse != null) {
             mApiDataProviderCallback.onRentalVodListCallback(mPurchasedVodListResponse);
@@ -197,6 +199,8 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
             } catch (Exception e) {
                 DTVTLogger.debug(e);
             }
+        } else {
+            //TODO:WEBAPIを取得できなかった時の処理を記載予定
         }
         if (mPurchasedChListResponse != null) {
             mApiDataProviderCallback.onRentalChListCallback(purchasedChListResponse);
@@ -219,12 +223,14 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
             if (mRoleListInfo != null) {
                 mApiDataProviderCallback.onRoleListCallback(mRoleListInfo);
             }
+        } else {
+            //TODO:WEBAPIを取得できなかった時の処理を記載予定
         }
     }
 
     @Override
     public void onChannelJsonParsed(final List<ChannelList> channelLists) {
-        ArrayList<Channel> channels = null;
+        ArrayList<ChannelInfo> channels = null;
         if (channelLists != null) {
             mChannelList = channelLists.get(0);
             List<HashMap<String, String>> channelList = mChannelList.getChannelList();
@@ -239,6 +245,8 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                     DTVTLogger.debug(e);
                 }
             }
+        } else {
+            //TODO:WEBAPIを取得できなかった時の処理を記載予定
         }
         if (null != mApiDataProviderCallback) {
             mApiDataProviderCallback.channelListCallback(channels);
@@ -250,24 +258,24 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
         if (isSuccessful) {
             switch (operationId) {
                 case CHANNEL_SELECT:
-                    ArrayList<Channel> channels = new ArrayList<>();
+                    ArrayList<ChannelInfo> channels = new ArrayList<>();
                     for (int i = 0; i < resultSet.size(); i++) {
                         Map<String, String> hashMap = resultSet.get(i);
-                        String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
-                        String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
-                        String serviceId = hashMap.get(JsonContents.META_RESPONSE_SERVICE_ID);
-                        String startDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_START_DATE);
-                        String endDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
-                        String chType = hashMap.get(JsonContents.META_RESPONSE_CH_TYPE);
-                        String puId = hashMap.get(JsonContents.META_RESPONSE_PUID);
-                        String subPuId = hashMap.get(JsonContents.META_RESPONSE_SUB_PUID);
-                        String chPackPuId = hashMap.get(JsonContents.META_RESPONSE_CHPACK
-                                + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID);
-                        String chPackSubPuId = hashMap.get(JsonContents.META_RESPONSE_CHPACK
-                                + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_SUB_PUID);
+                        String chNo = hashMap.get(JsonConstants.META_RESPONSE_CHNO);
+                        String title = hashMap.get(JsonConstants.META_RESPONSE_TITLE);
+                        String serviceId = hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID);
+                        String startDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE);
+                        String endDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE);
+                        String chType = hashMap.get(JsonConstants.META_RESPONSE_CH_TYPE);
+                        String puId = hashMap.get(JsonConstants.META_RESPONSE_PUID);
+                        String subPuId = hashMap.get(JsonConstants.META_RESPONSE_SUB_PUID);
+                        String chPackPuId = hashMap.get(JsonConstants.META_RESPONSE_CHPACK
+                                + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_PUID);
+                        String chPackSubPuId = hashMap.get(JsonConstants.META_RESPONSE_CHPACK
+                                + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_SUB_PUID);
 
                         if (!TextUtils.isEmpty(chNo)) {
-                            Channel channel = new Channel();
+                            ChannelInfo channel = new ChannelInfo();
                             channel.setChNo(Integer.parseInt(chNo));
                             channel.setTitle(title);
                             channel.setServiceId(serviceId);
@@ -289,8 +297,8 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                     ArrayList<RoleListMetaData> roleListData = new ArrayList<>();
                     for (int i = 0; i < resultSet.size(); i++) {
                         Map<String, String> hashMap = resultSet.get(i);
-                        String id = hashMap.get(JsonContents.META_RESPONSE_CONTENTS_ID);
-                        String name = hashMap.get(JsonContents.META_RESPONSE_CONTENTS_NAME);
+                        String id = hashMap.get(JsonConstants.META_RESPONSE_CONTENTS_ID);
+                        String name = hashMap.get(JsonConstants.META_RESPONSE_CONTENTS_NAME);
                         RoleListMetaData roleData = new RoleListMetaData();
                         roleData.setId(id);
                         roleData.setName(name);
@@ -305,10 +313,10 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                     ArrayList<ActiveData> activeDatas = new ArrayList<>();
                     for (int i = 0; i < mPurchasedVodActiveList.size(); i++) {
                         Map<String, String> hashMap = mPurchasedVodActiveList.get(i);
-                        String active_list_license_id = hashMap.get(JsonContents.META_RESPONSE_ACTIVE_LIST
-                                + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_LICENSE_ID);
-                        String active_list_valid_end_date = hashMap.get(JsonContents.META_RESPONSE_ACTIVE_LIST
-                                + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_VAILD_END_DATE);
+                        String active_list_license_id = hashMap.get(JsonConstants.META_RESPONSE_ACTIVE_LIST
+                                + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_LICENSE_ID);
+                        String active_list_valid_end_date = hashMap.get(JsonConstants.META_RESPONSE_ACTIVE_LIST
+                                + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_VAILD_END_DATE);
                         ActiveData activeDate = new ActiveData();
                         activeDate.setLicenseId(active_list_license_id);
                         activeDate.setValidEndDate(Long.parseLong(active_list_valid_end_date));
@@ -327,7 +335,7 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                     for (int i = 0; i < resultSet.size(); i++) {
                         Map<String, String> hashMap = resultSet.get(i);
                         HashMap<String, String> vcListMap = new HashMap<>();
-                        for (String para : JsonContents.METADATA_LIST_PARA) {
+                        for (String para : JsonConstants.METADATA_LIST_PARA) {
                             vcListMap.put(para, hashMap.get(para));
                         }
                         list.add(vcListMap);
@@ -339,10 +347,10 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                     for (int i = 0; i < mPurchasedChActiveList.size(); i++) {
                         Map<String, String> hashMap = mPurchasedChActiveList.get(i);
 
-                        String active_list_license_id = hashMap.get(JsonContents.META_RESPONSE_ACTIVE_LIST
-                                + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_LICENSE_ID);
-                        String active_list_valid_end_date = hashMap.get(JsonContents.META_RESPONSE_ACTIVE_LIST
-                                + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_VAILD_END_DATE);
+                        String active_list_license_id = hashMap.get(JsonConstants.META_RESPONSE_ACTIVE_LIST
+                                + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_LICENSE_ID);
+                        String active_list_valid_end_date = hashMap.get(JsonConstants.META_RESPONSE_ACTIVE_LIST
+                                + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_VAILD_END_DATE);
                         ActiveData activeDate = new ActiveData();
                         activeDate.setLicenseId(active_list_license_id);
                         activeDate.setValidEndDate(Long.parseLong(active_list_valid_end_date));
@@ -374,11 +382,11 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                 break;
             case CHANNEL_UPDATE: //サーバーから取得したチャンネルデータをDBに保存する
                 ChannelInsertDataManager channelInsertDataManager = new ChannelInsertDataManager(mContext);
-                channelInsertDataManager.insertChannelInsertList(mChannelList, DISPLAY_TYPE[mChannelDisplayType]);
+                channelInsertDataManager.insertChannelInsertList(mChannelList, JsonConstants.DISPLAY_TYPE[mChannelDisplayType]);
                 break;
             case CHANNEL_SELECT: //DBからチャンネルデータを取得して、画面に返却する
                 ProgramDataManager channelDataManager = new ProgramDataManager(mContext);
-                resultSet = channelDataManager.selectChannelListProgramData(DISPLAY_TYPE[mChannelDisplayType]);
+                resultSet = channelDataManager.selectChannelListProgramData(JsonConstants.DISPLAY_TYPE[mChannelDisplayType]);
                 break;
             case RENTAL_VOD_UPDATE: //サーバーから取得した購入済みVODデータをDBに保存する
                 RentalListInsertDataManager rentalListInsertDataManager = new RentalListInsertDataManager(mContext);
@@ -415,23 +423,23 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
      * @param channels チャンネル一覧
      * @param channelList パースされたチャンネル情報
      */
-    private void setChannelData(final ArrayList<Channel> channels, final List<HashMap<String, String>> channelList) {
+    private void setChannelData(final ArrayList<ChannelInfo> channels, final List<HashMap<String, String>> channelList) {
         for (int i = 0; i < channelList.size(); i++) {
             HashMap<String, String> hashMap = channelList.get(i);
-            String chNo = hashMap.get(JsonContents.META_RESPONSE_CHNO);
-            String title = hashMap.get(JsonContents.META_RESPONSE_TITLE);
-            String serviceId = hashMap.get(JsonContents.META_RESPONSE_SERVICE_ID);
-            String startDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_START_DATE);
-            String endDate = hashMap.get(JsonContents.META_RESPONSE_AVAIL_END_DATE);
-            String chType = hashMap.get(JsonContents.META_RESPONSE_CH_TYPE);
-            String puId = hashMap.get(JsonContents.META_RESPONSE_PUID);
-            String subPuId = hashMap.get(JsonContents.META_RESPONSE_SUB_PUID);
-            String chPackPuId = hashMap.get(JsonContents.META_RESPONSE_CHPACK
-                    + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_PUID);
-            String chPackSubPuId = hashMap.get(JsonContents.META_RESPONSE_CHPACK
-                    + JsonContents.UNDER_LINE + JsonContents.META_RESPONSE_SUB_PUID);
+            String chNo = hashMap.get(JsonConstants.META_RESPONSE_CHNO);
+            String title = hashMap.get(JsonConstants.META_RESPONSE_TITLE);
+            String serviceId = hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID);
+            String startDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE);
+            String endDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE);
+            String chType = hashMap.get(JsonConstants.META_RESPONSE_CH_TYPE);
+            String puId = hashMap.get(JsonConstants.META_RESPONSE_PUID);
+            String subPuId = hashMap.get(JsonConstants.META_RESPONSE_SUB_PUID);
+            String chPackPuId = hashMap.get(JsonConstants.META_RESPONSE_CHPACK
+                    + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_PUID);
+            String chPackSubPuId = hashMap.get(JsonConstants.META_RESPONSE_CHPACK
+                    + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_SUB_PUID);
             if (!TextUtils.isEmpty(chNo)) {
-                Channel channel = new Channel();
+                ChannelInfo channel = new ChannelInfo();
                 channel.setTitle(title);
                 channel.setChNo(Integer.parseInt(chNo));
                 channel.setServiceId(serviceId);
@@ -470,7 +478,7 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
          *
          * @param channels 　画面に渡すチャンネル情報
          */
-        void channelListCallback(ArrayList<Channel> channels);
+        void channelListCallback(ArrayList<ChannelInfo> channels);
 
         /**
          * リモート録画予約実行結果を返す.
@@ -616,7 +624,7 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
         } else {
             dateUtils.addLastProgramDate(DateUtils.CHANNEL_LAST_UPDATE);
             ChannelWebClient mChannelList = new ChannelWebClient(mContext);
-            mChannelList.getChannelApi(limit, offset, filter, DISPLAY_TYPE[type], this);
+            mChannelList.getChannelApi(limit, offset, filter, JsonConstants.DISPLAY_TYPE[type], this);
         }
     }
 
@@ -632,9 +640,12 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
     }
 
     /**
-     * コンテンツ詳細情報のメタデータを元にクリップ状態を取得
+     * コンテンツ詳細情報のメタデータを元にクリップ状態を取得.
+     *
+     * @param metaFullData クリップ状態
+     * @return コンテンツ詳細データ
      */
-    private boolean getContentsDetailClipStatus(VodMetaFullData metaFullData) {
+    private boolean getContentsDetailClipStatus(final VodMetaFullData metaFullData) {
         return getClipStatus(metaFullData.getDisp_type(),
                 metaFullData.getmContent_type(),
                 metaFullData.getDtv(),
@@ -645,9 +656,11 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
     }
 
     /**
-     * コンテンツ詳細情報を元にクリップキー一覧の取得を要求
+     * コンテンツ詳細情報を元にクリップキー一覧の取得を要求.
+     *
+     * @param metaFullData コンテンツ詳細データ
      */
-    private void requestGetClipKeyList(VodMetaFullData metaFullData) {
+    private void requestGetClipKeyList(final VodMetaFullData metaFullData) {
         ClipKeyListDao.TABLE_TYPE tableType = decisionTableType(metaFullData.getDisp_type(),metaFullData.getmContent_type());
         switch (tableType) {
             case TV:

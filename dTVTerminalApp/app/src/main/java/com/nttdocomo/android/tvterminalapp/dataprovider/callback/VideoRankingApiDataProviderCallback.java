@@ -4,7 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.dataprovider.callback;
 
-import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 
 import java.util.List;
 

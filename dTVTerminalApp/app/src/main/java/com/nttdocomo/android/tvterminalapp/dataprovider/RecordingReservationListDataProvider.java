@@ -7,9 +7,9 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 import android.content.Context;
 import android.util.SparseArray;
 
-import com.nttdocomo.android.tvterminalapp.common.ContentsData;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.common.JsonContents;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationMetaData;
@@ -675,9 +675,9 @@ public class RecordingReservationListDataProvider implements
         DTVTLogger.start("serviceId = " + serviceId + " TvScheduleList.size = " + mTvScheduleList.size());
         String channelName = null;
         for (Map<String, String> map : mTvScheduleList) {
-            if (map != null && serviceId.equals(map.get(JsonContents.META_RESPONSE_SERVICE_ID))) {
-                channelName = map.get(JsonContents.META_RESPONSE_TITLE);
-                DTVTLogger.debug("channel = " + map.get(JsonContents.META_RESPONSE_TITLE));
+            if (map != null && serviceId.equals(map.get(JsonConstants.META_RESPONSE_SERVICE_ID))) {
+                channelName = map.get(JsonConstants.META_RESPONSE_TITLE);
+                DTVTLogger.debug("channel = " + map.get(JsonConstants.META_RESPONSE_TITLE));
                 break;
             }
         }
