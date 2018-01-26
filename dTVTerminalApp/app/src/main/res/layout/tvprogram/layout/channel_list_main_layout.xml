@@ -4,27 +4,17 @@
                 android:layout_height="match_parent"
                 android:background="#000000">
 
-	<HorizontalScrollView
-		android:id="@+id/channel_list_main_layout_channel_titles_hs"
+	<RelativeLayout
+		android:id="@+id/rl_channel_list_tab"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_alignParentTop="true"
-		android:fillViewport="true"
-		android:foregroundGravity="center_horizontal"
-		android:scrollbars="none">
-
-		<LinearLayout
-			android:id="@+id/channel_list_main_layout_channel_titles_ll"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="@drawable/rectangele_all"
-			android:orientation="horizontal"/>
-	</HorizontalScrollView>
+		android:layout_height="@dimen/tab_layout_area_channel_list_height"
+		android:background="@color/channel_list_tab_background_color"
+		android:visibility="visible" />
 
 	<android.support.v4.view.ViewPager
 		android:id="@+id/channel_list_main_layout_channel_body_vp"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:layout_below="@id/channel_list_main_layout_channel_titles_hs"/>
+		android:layout_below="@id/rl_channel_list_tab"/>
 
 </RelativeLayout>

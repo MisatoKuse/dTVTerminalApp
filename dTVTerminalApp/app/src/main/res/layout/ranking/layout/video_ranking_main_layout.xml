@@ -5,14 +5,12 @@
     style="@style/default_layout_style"
     android:orientation="vertical">
 
-    <HorizontalScrollView
-        android:id="@+id/video_ranking_tab_strip_scroll"
+    <RelativeLayout
+        android:id="@+id/rl_video_ranking_tab"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@android:color/background_dark"
-        android:fillViewport="true"
-        android:foregroundGravity="center_horizontal"
-        android:scrollbars="none" />
+        android:layout_height="@dimen/tab_layout_area_height"
+        android:background="@color/common_tab_background_color"
+        android:visibility="visible" />
 
     <ProgressBar
         android:id="@+id/video_ranking_progress"

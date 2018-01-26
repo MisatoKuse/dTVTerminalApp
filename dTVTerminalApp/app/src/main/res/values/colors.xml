@@ -20,6 +20,9 @@
     <color name="custom_toast_background">#000000</color>
     <color name="header_background_color_red">#cc0033</color>
     <color name="header_background_color_black">#000000</color>
+    <color name="dtv_contents_detail_tab_background_color">#000000</color>
+    <color name="program_list_tab_background_color">#000000</color>
+    <color name="channel_list_tab_background_color">#1D1D1D</color>
     <color name="common_tab_background_color">#222222</color>
     <color name="common_tab_select_text_color">#999999</color>
     <color name="common_tab_unselect_text_color">#FFFFFF</color>

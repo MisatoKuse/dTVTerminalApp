@@ -9,28 +9,19 @@
     android:background="#000000">
 
     <RelativeLayout
-        android:id="@+id/recommend_list_view"
+        android:id="@+id/rl_recommend_tab"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/tab_layout_area_height"
+        android:background="@color/common_tab_background_color"
+        android:visibility="visible" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp_recommend_list_items"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible">
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true" />
 
-        <HorizontalScrollView
-            android:id="@+id/recommend_tab_strip_scroll"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="10dp"
-            android:fillViewport="true"
-            android:foregroundGravity="center_horizontal"
-            android:scrollbars="none"/>
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/vp_recommend_list_items"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/recommend_tab_strip_scroll"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"/>
-    </RelativeLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"

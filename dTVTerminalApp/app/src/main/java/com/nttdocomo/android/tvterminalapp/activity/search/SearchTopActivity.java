@@ -13,6 +13,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.RelativeLayout;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -211,7 +212,8 @@ public class SearchTopActivity extends BaseActivity
                                 //検索文字が1文字以上から0文字になった場合、Tabを非表示にする
                                 mSearchViewPager = null;
                                 findViewById(R.id.fl_search_result).setVisibility(View.GONE);
-                                mTabLayout.setVisibility(View.GONE);
+                                // tabViewの非表示
+                                findViewById(R.id.rl_search_tab).setVisibility(View.GONE);
                                 clearAllFragment();
                             }
                             //setSearchData(s);
@@ -327,8 +329,9 @@ public class SearchTopActivity extends BaseActivity
         findViewById(R.id.fl_search_result).setVisibility(View.VISIBLE);
 
         mSearchViewPager = findViewById(R.id.vp_search_result);
-        initTabVIew();
-        mTabLayout.setVisibility(View.VISIBLE);
+        initTabView();
+        // tabを表示
+        findViewById(R.id.rl_search_tab).setVisibility(View.VISIBLE);
 
         mSearchViewPager.setAdapter(new MainAdapter(getSupportFragmentManager(), this));
         mSearchViewPager.addOnPageChangeListener(new ViewPager
@@ -355,17 +358,28 @@ public class SearchTopActivity extends BaseActivity
     /**
      * tab関連Viewの初期化
      */
-    private void initTabVIew() {
-        mTabLayout = findViewById(R.id.til_tab_layout_search);
-        mTabLayout.setTabClickListener(this);
-        mTabLayout.initTabVIew(mTabNames);
+    private void initTabView() {
+        DTVTLogger.start();
+        if (mTabLayout == null) {
+            mTabLayout = new TabItemLayout(this);
+            mTabLayout.setTabClickListener(this);
+            mTabLayout.initTabView(mTabNames, TabItemLayout.ActivityType.SEARCH_ACTIVITY);
+            RelativeLayout tabRelativeLayout = findViewById(R.id.rl_search_tab);
+            tabRelativeLayout.addView(mTabLayout);
+        } else {
+            mTabLayout.resetTabView(mTabNames);
+        }
+        DTVTLogger.end();
     }
 
     @Override
     public void onClickTab(int position) {
+        DTVTLogger.start("position = " + position);
         if (null != mSearchViewPager) {
+            DTVTLogger.debug("viewpager not null");
             mSearchViewPager.setCurrentItem(position);
         }
+        DTVTLogger.end();
     }
 
     private SearchBaseFragment getCurrentSearchBaseFragment() {

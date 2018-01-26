@@ -5,63 +5,50 @@
 package com.nttdocomo.android.tvterminalapp.model;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.SearchView;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AbsListView;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.dataprovider.SearchDataProvider;
-import com.nttdocomo.android.tvterminalapp.fragment.search.FragmentFactory;
-import com.nttdocomo.android.tvterminalapp.fragment.search.SearchBaseFragment;
-import com.nttdocomo.android.tvterminalapp.fragment.search.SearchBaseFragmentScrollListener;
-import com.nttdocomo.android.tvterminalapp.model.search.SearchNarrowCondition;
-import com.nttdocomo.android.tvterminalapp.model.search.SearchSortKind;
-import com.nttdocomo.android.tvterminalapp.utils.StringUtil;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchDubbedType;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchFilterTypeMappable;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchGenreType;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchResultError;
-import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.TotalSearchContentInfo;
 
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.zip.Inflater;
-
-public class TabItemLayout extends RelativeLayout {
+public class TabItemLayout extends HorizontalScrollView {
 
     private Context mContext = null;
-    private int mPageNumber = 0;
     private OnClickTabTextListener mOnClickTabTextListener = null;
     private String[] mTabNames = null;
     private LinearLayout mLinearLayout = null;
-    private HorizontalScrollView mTabScrollView = null;
+    private ActivityType mActivityType = null;
+    // tabのTextViewのパラメータ値
+    private LinearLayout.LayoutParams mTabTextViewLayoutParams = null;
+    // tabの最後のViewのパラメータ値
+    private LinearLayout.LayoutParams mTabTextViewLastDataLayoutParams = null;
+    private float mTabTextSize = 0;
+    private float mTabWidth = 0;
+
+    public enum ActivityType {
+        SEARCH_ACTIVITY,
+        CLIP_LIST_ACTIVITY,
+        RECORDED_LIST_ACTIVITY,
+        VIDEO_RANKING_ACTIVITY,
+        WEEKLY_RANKING_ACTIVITY,
+        RECOMMEND_LIST_ACTIVITY,
+        CHANNEL_LIST_ACTIVITY,
+        PROGRAM_LIST_ACTIVITY,
+        DTV_CONTENTS_DETAIL_ACTIVITY,
+    }
 
     /**
      * コンストラクタ
+     *
      * @param context
      */
     public TabItemLayout(Context context) {
@@ -75,9 +62,6 @@ public class TabItemLayout extends RelativeLayout {
     public TabItemLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mContext = context;
-        LayoutInflater.from(mContext).inflate(R.layout.tab_item_layout, this, true);
-        mTabScrollView = this.findViewById(R.id.tab_show_layout_scroll_area);
-        mLinearLayout = findViewById(R.id.tab_show_layout_text_area);
     }
 
     /**
@@ -89,6 +73,7 @@ public class TabItemLayout extends RelativeLayout {
 
     /**
      * タブ押下時のリスナーを設定
+     *
      * @param listener
      */
     public void setTabClickListener(OnClickTabTextListener listener) {
@@ -96,82 +81,99 @@ public class TabItemLayout extends RelativeLayout {
     }
 
     /**
-     * tabに関連Viewの初期化
+     * tabの初期設定
+     *
+     * @param tabNames
      */
-    public void initTabVIew(String[] tabNames) {
+    public void initTabView(String[] tabNames, ActivityType type) {
+        setActivityType(type);
+        addTabInnerView();
+        getParameters();
+        resetTabView(tabNames);
+    }
+
+    /**
+     * tabのパラメータを取得
+     */
+    private void getParameters() {
+        mTabTextViewLayoutParams = getTabTextViewParameter(false);
+        mTabTextViewLastDataLayoutParams = getTabTextViewParameter(true);
+        mTabTextSize = getTextSizeParam();
+    }
+
+    /**
+     * タブの横幅を取得するためのリスナー
+     */
+    ViewTreeObserver.OnGlobalLayoutListener mViewTreeListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            mTabWidth = mLinearLayout.getWidth();
+            if (mTabWidth < mContext.getResources().getDisplayMetrics().widthPixels) {
+                DTVTLogger.debug("tablayout add space");
+                // indicatorを右端まで表示するために残余白をViewで埋める
+                RelativeLayout layout = new RelativeLayout(mContext);
+                int width = (int) (mContext.getResources().getDisplayMetrics().widthPixels - mTabWidth);
+                layout.setLayoutParams(new LinearLayout.LayoutParams(width, ViewGroup.LayoutParams.MATCH_PARENT));
+                layout.setBackgroundResource(0);
+                mLinearLayout.addView(layout);
+            }
+            mLinearLayout.getViewTreeObserver().removeOnGlobalLayoutListener(mViewTreeListener);
+            DTVTLogger.debug("TabLayout Width = " + mLinearLayout.getWidth());
+        }
+    };
+
+    /**
+     * tabに関連するViewの初期化
+     */
+    public void resetTabView(String[] tabNames) {
         DTVTLogger.start("tabNames.length = " + tabNames.length);
         mLinearLayout.removeAllViews();
+        mTabWidth = 0;
+        mLinearLayout.getViewTreeObserver().addOnGlobalLayoutListener(mViewTreeListener);
+
         mTabNames = tabNames;
-        float density = mContext.getResources().getDisplayMetrics().density;
 
         for (int i = 0; i < mTabNames.length; i++) {
             TextView tabTextView = new TextView(mContext);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT);
-            // タブのマージン
-            if(i != mTabNames.length - 1) {
-                params.setMargins(
-                        mContext.getResources().getDimensionPixelSize(R.dimen.list_tab_margin_left),
-                        mContext.getResources().getDimensionPixelSize(R.dimen.list_tab_margin_top),
-                        mContext.getResources().getDimensionPixelSize(R.dimen.list_tab_margin_right),
-                        mContext.getResources().getDimensionPixelSize(R.dimen.list_tab_margin_bottom));
+            // タブ毎にパラメータを設定
+            // 最後のデータかを判定
+            if (i != mTabNames.length - 1) {
+                tabTextView.setLayoutParams(mTabTextViewLayoutParams);
             } else {
-                params.setMargins(
-                        mContext.getResources().getDimensionPixelSize(R.dimen.list_tab_margin_left),
-                        mContext.getResources().getDimensionPixelSize(R.dimen.list_tab_margin_top),
-                        mContext.getResources().getDimensionPixelSize(R.dimen.list_tab_margin_right_last),
-                        mContext.getResources().getDimensionPixelSize(R.dimen.list_tab_margin_bottom));
+                tabTextView.setLayoutParams(mTabTextViewLastDataLayoutParams);
             }
-            tabTextView.setLayoutParams(params);
             tabTextView.setText(mTabNames[i]);
-            tabTextView.setTextSize(((mContext.getResources().getDimension(R.dimen.list_tab_text_size) / density)));
-            if(i == 0) {
-                tabTextView.setTextColor(ContextCompat.getColor(mContext, R.color.common_tab_select_text_color));
-            } else {
-                tabTextView.setTextColor(ContextCompat.getColor(mContext, R.color.common_tab_unselect_text_color));
-            }
-            tabTextView.setGravity(Gravity.TOP|Gravity.CENTER);
-            tabTextView.setPadding(
-                    mContext.getResources().getDimensionPixelSize(R.dimen.list_tab_padding_left),
-                    mContext.getResources().getDimensionPixelSize(R.dimen.list_tab_padding_right),
-                    mContext.getResources().getDimensionPixelSize(R.dimen.list_tab_padding_top),
-                    mContext.getResources().getDimensionPixelSize(R.dimen.list_tab_padding_bottom));
-//
+            tabTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, mTabTextSize);
+
+            tabTextView.setGravity(Gravity.TOP | Gravity.CENTER);
             tabTextView.setTag(i);
             if (i == 0) {
-                tabTextView.setBackgroundResource(R.drawable.indicating);
+                tabTextView.setTextColor(ContextCompat.getColor(mContext, R.color.common_tab_select_text_color));
+                tabTextView.setBackgroundResource(setBackgroundResourceIndicating(true));
             } else {
+                tabTextView.setTextColor(ContextCompat.getColor(mContext, R.color.common_tab_unselect_text_color));
                 tabTextView.setBackgroundResource(0);
             }
             tabTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     int position = (int) view.getTag();
-                    mPageNumber = position;
                     setTab(position);
-                    if(mOnClickTabTextListener != null) {
+                    if (mOnClickTabTextListener != null) {
                         mOnClickTabTextListener.onClickTab(position);
                     }
                 }
             });
-            mLinearLayout.setBackgroundResource(R.drawable.indicating_no);
             mLinearLayout.addView(tabTextView);
         }
+        mLinearLayout.setBackgroundResource(setBackgroundResourceIndicating(false));
+
         DTVTLogger.end();
     }
 
     /**
-     * タブ名を取得
-     * @return
-     */
-    public String getSelecteTabName() {
-        TextView textView = (TextView)mLinearLayout.getChildAt(mPageNumber);
-        return textView.getText().toString();
-    }
-
-    /**
      * インジケーター設置
+     *
      * @param position
      */
     public void setTab(int position) {
@@ -181,7 +183,7 @@ public class TabItemLayout extends RelativeLayout {
                 TextView textView = (TextView) mLinearLayout.getChildAt(i);
                 if (position == i) {
                     scrollOffsetCheck(textView);
-                    textView.setBackgroundResource(R.drawable.indicating);
+                    textView.setBackgroundResource(setBackgroundResourceIndicating(true));
                     textView.setTextColor(ContextCompat.getColor(mContext, R.color.common_tab_select_text_color));
                 } else {
                     textView.setTextColor(ContextCompat.getColor(mContext, R.color.common_tab_unselect_text_color));
@@ -194,17 +196,170 @@ public class TabItemLayout extends RelativeLayout {
 
     /**
      * 選択したタブを画面サイズに合わせて中央寄せに持ってくる
+     *
      * @param textView
      */
-    private void scrollOffsetCheck(TextView textView){
+    private void scrollOffsetCheck(TextView textView) {
+        int widthDensity = (int) mContext.getResources().getDisplayMetrics().widthPixels;
         int left = textView.getLeft();
         int width = textView.getMeasuredWidth();
-        int toX = left + width / 2 - (int)(mContext.getResources().getDisplayMetrics().density) / 2;
-        mTabScrollView.smoothScrollTo(toX, 0);
+        int toX = left + width / 2 - widthDensity / 2;
+        this.smoothScrollTo(toX, 0);
     }
 
-    @Override
-    public void setVisibility(int visibility) {
-        findViewById(R.id.tab_show_layout_area).setVisibility(visibility);
+    public void setActivityType(ActivityType activityType) {
+        mActivityType = activityType;
+    }
+
+    /**
+     * 画面毎のTabのTextViewのレイアウトパラメータを設定する
+     *
+     * @param lastData True:最後のView false:その他
+     */
+    public LinearLayout.LayoutParams getTabTextViewParameter(boolean lastData) {
+        LinearLayout.LayoutParams params = null;
+        params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        if (!lastData) {
+            params.setMargins(
+                    mContext.getResources().getDimensionPixelSize(R.dimen.search_tab_margin_left),
+                    mContext.getResources().getDimensionPixelSize(R.dimen.search_tab_margin_top),
+                    mContext.getResources().getDimensionPixelSize(R.dimen.search_tab_margin_right),
+                    mContext.getResources().getDimensionPixelSize(R.dimen.search_tab_margin_bottom));
+        } else {
+            params.setMargins(
+                    mContext.getResources().getDimensionPixelSize(R.dimen.search_tab_margin_left),
+                    mContext.getResources().getDimensionPixelSize(R.dimen.search_tab_margin_top),
+                    mContext.getResources().getDimensionPixelSize(R.dimen.search_tab_margin_right_last),
+                    mContext.getResources().getDimensionPixelSize(R.dimen.search_tab_margin_bottom));
+        }
+        return params;
+    }
+
+    /**
+     * テキストサイズを取得
+     *
+     * @return
+     */
+    private float getTextSizeParam() {
+        float density = mContext.getResources().getDisplayMetrics().density;
+        float reternTextSize = 0;
+        switch (mActivityType) {
+            case SEARCH_ACTIVITY:
+            case CLIP_LIST_ACTIVITY:
+            case VIDEO_RANKING_ACTIVITY:
+            case WEEKLY_RANKING_ACTIVITY:
+            case RECOMMEND_LIST_ACTIVITY:
+            case RECORDED_LIST_ACTIVITY:
+            case DTV_CONTENTS_DETAIL_ACTIVITY:
+                reternTextSize = mContext.getResources().getDimension(R.dimen.tab_text_size_15dp) / density;
+                break;
+            case CHANNEL_LIST_ACTIVITY:
+            case PROGRAM_LIST_ACTIVITY:
+                reternTextSize = mContext.getResources().getDimension(R.dimen.tab_text_size_14dp) / density;
+                break;
+            default:
+                break;
+        }
+
+        return reternTextSize;
+    }
+
+    /**
+     * タブ領域のパラメータを設定
+     */
+    private void addTabInnerView() {
+        int density = (int) mContext.getResources().getDisplayMetrics().density;
+        mLinearLayout = new LinearLayout(mContext);
+        LinearLayout.LayoutParams layoutParams = null;
+        switch (mActivityType) {
+            case SEARCH_ACTIVITY:
+            case VIDEO_RANKING_ACTIVITY:
+            case WEEKLY_RANKING_ACTIVITY:
+            case RECOMMEND_LIST_ACTIVITY:
+                layoutParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        (int) getResources().getDimension(R.dimen.tab_layout_area_height));
+                mLinearLayout.setPadding(
+                        mContext.getResources().getDimensionPixelSize(R.dimen.tab_layout_padding_zero),
+                        mContext.getResources().getDimensionPixelSize(R.dimen.search_tab_scroll_area_padding_top),
+                        mContext.getResources().getDimensionPixelSize(R.dimen.tab_layout_padding_zero),
+                        mContext.getResources().getDimensionPixelSize(R.dimen.tab_layout_padding_zero));
+                break;
+            case CLIP_LIST_ACTIVITY:
+            case DTV_CONTENTS_DETAIL_ACTIVITY:
+            case RECORDED_LIST_ACTIVITY:
+                layoutParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        (int) getResources().getDimension(R.dimen.tab_layout_area_height));
+                mLinearLayout.setPadding(
+                        mContext.getResources().getDimensionPixelSize(R.dimen.tab_layout_padding_zero),
+                        mContext.getResources().getDimensionPixelSize(R.dimen.tab_scroll_area_padding_top),
+                        mContext.getResources().getDimensionPixelSize(R.dimen.tab_layout_padding_zero),
+                        mContext.getResources().getDimensionPixelSize(R.dimen.tab_layout_padding_zero));
+                break;
+            case CHANNEL_LIST_ACTIVITY:
+                layoutParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        (int) getResources().getDimension(R.dimen.tab_layout_area_channel_list_height));
+                mLinearLayout.setPadding(
+                        mContext.getResources().getDimensionPixelSize(R.dimen.tab_layout_padding_zero),
+                        mContext.getResources().getDimensionPixelSize(R.dimen.tab_scroll_area_padding_top),
+                        mContext.getResources().getDimensionPixelSize(R.dimen.tab_layout_padding_zero),
+                        mContext.getResources().getDimensionPixelSize(R.dimen.tab_layout_padding_zero));
+                break;
+            case PROGRAM_LIST_ACTIVITY:
+                layoutParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        (int) getResources().getDimension(R.dimen.tab_layout_area_program_list_height));
+                mLinearLayout.setPadding(
+                        mContext.getResources().getDimensionPixelSize(R.dimen.tab_layout_padding_zero),
+                        mContext.getResources().getDimensionPixelSize(R.dimen.search_tab_scroll_area_padding_top),
+                        mContext.getResources().getDimensionPixelSize(R.dimen.tab_layout_padding_zero),
+                        mContext.getResources().getDimensionPixelSize(R.dimen.tab_layout_padding_zero));
+
+                break;
+            default:
+                // nop
+                break;
+        }
+        ;
+        mLinearLayout.setLayoutParams(layoutParams);
+        mLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+        mLinearLayout.setGravity(Gravity.CENTER);
+        this.addView(mLinearLayout);
+    }
+
+    /**
+     * 設定するインジケータの取得
+     */
+    private int setBackgroundResourceIndicating(boolean isFocus) {
+        int resId = 0;
+        switch (mActivityType) {
+            case CHANNEL_LIST_ACTIVITY:
+                if (isFocus) {
+                    resId = R.drawable.indicating_channel_list;
+                } else {
+                    resId = R.drawable.indicating_no_channel_list;
+                }
+                break;
+            case DTV_CONTENTS_DETAIL_ACTIVITY:
+            case PROGRAM_LIST_ACTIVITY:
+                if (isFocus) {
+                    resId = R.drawable.indicating_background_brack;
+                } else {
+                    resId = R.drawable.indicating_no_background_brack;
+                }
+                break;
+            default:
+                if (isFocus) {
+                    resId = R.drawable.indicating_common;
+                } else {
+                    resId = R.drawable.indicating_no_common;
+                }
+                break;
+        }
+        return resId;
     }
 }

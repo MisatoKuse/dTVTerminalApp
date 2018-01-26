@@ -11,7 +11,6 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
@@ -27,7 +26,6 @@ import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.Display;
 import android.view.GestureDetector;
-import android.view.Gravity;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -71,6 +69,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailFragmentFactory;
+import com.nttdocomo.android.tvterminalapp.model.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.model.detail.RecordingReservationContentsDetailInfo;
 import com.nttdocomo.android.tvterminalapp.model.player.MediaVideoInfo;
 import com.nttdocomo.android.tvterminalapp.model.program.Channel;
@@ -99,7 +98,8 @@ import java.util.regex.Pattern;
 public class DtvContentsDetailActivity extends BaseActivity implements DtvContentsDetailDataProvider.ApiDataProviderCallback,
         View.OnClickListener, MediaPlayerController.OnStateChangeListener, MediaPlayerController.OnFormatChangeListener,
         MediaPlayerController.OnPlayerEventListener, MediaPlayerController.OnErrorListener, MediaPlayerController.OnCaptionDataListener,
-        RemoteControllerView.OnStartRemoteControllerUIListener, DtvContentsDetailFragment.RecordingReservationIconListener {
+        RemoteControllerView.OnStartRemoteControllerUIListener, DtvContentsDetailFragment.RecordingReservationIconListener,
+        TabItemLayout.OnClickTabTextListener {
 
     private static final int SCREEN_RATIO_WIDTH = 16;
     private static final int SCREEN_RATIO_HEIGHT = 9;
@@ -107,7 +107,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
     private static final int FIRST_VOD_META_DATA = 0;
 
     /* コンテンツ詳細 start */
-    private LinearLayout mTabLinearLayout = null;
+    private TabItemLayout mTabLayout = null;
     private ContentsDetailViewPager mViewPager = null;
     private OtherContentsDetailData mDetailData = null;
     private VodMetaFullData mDetailFullData = null;
@@ -1116,7 +1116,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
             public void onPageSelected(int position) {
                 // スクロールによるタブ切り替え
                 super.onPageSelected(position);
-                setTab(position);
+                mTabLayout.setTab(position);
             }
         });
         setIntentDetailData();
@@ -1358,7 +1358,6 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
      */
     private void initContentsView() {
         //サムネイル取得
-        mTabLinearLayout = findViewById(R.id.dtv_contents_detail_main_layout_tab);
         mThumbnail = findViewById(R.id.dtv_contents_detail_main_layout_thumbnail);
         mThumbnailBtn = findViewById(R.id.dtv_contents_detail_main_layout_thumbnail_btn);
         mThumbnailBtn.setOnClickListener(this);
@@ -1386,7 +1385,7 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
      * サムネイル画像の非表示.
      */
     private void setThumbnailInvisible() {
-        mTabLinearLayout.setVisibility(View.GONE);
+        findViewById(R.id.rl_dtv_contents_detail_tab).setVisibility(View.GONE);
         mThumbnail.setVisibility(View.GONE);
         mThumbnailBtn.setVisibility(View.GONE);
     }
@@ -1395,55 +1394,27 @@ public class DtvContentsDetailActivity extends BaseActivity implements DtvConten
      * tabのレイアウトを設定.
      */
     private void initTab() {
-        for (int i = 0; mTabNames.length > i; i++) {
-            TextView tabTextView = new TextView(this);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT);
-            params.setMargins((int) getResources().getDimension(R.dimen.contents_tab_side_margin),
-                    CONTENTS_DETAIL_TAB_OTHER_MARGIN, CONTENTS_DETAIL_TAB_OTHER_MARGIN, CONTENTS_DETAIL_TAB_OTHER_MARGIN);
-            tabTextView.setLayoutParams(params);
-            tabTextView.setText(mTabNames[i]);
-            tabTextView.setTextSize(CONTENTS_DETAIL_TAB_TEXT_SIZE);
-            tabTextView.setGravity(Gravity.CENTER_VERTICAL);
-            tabTextView.setTag(i);
-            if (i == 0) {
-                tabTextView.setBackgroundResource(R.drawable.rectangele);
-                tabTextView.setTextColor(Color.GRAY);
-            } else {
-                tabTextView.setTextColor(Color.WHITE);
-            }
-            tabTextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // タップによるタブ切り替え
-                    int position = (int) view.getTag();
-                    mViewPager.setCurrentItem(position);
-                    setTab(position);
-                }
-            });
-            mTabLinearLayout.addView(tabTextView);
+        DTVTLogger.start();
+        if (mTabLayout == null) {
+            mTabLayout = new TabItemLayout(this);
+            mTabLayout.setTabClickListener(this);
+            mTabLayout.initTabView(mTabNames, TabItemLayout.ActivityType.DTV_CONTENTS_DETAIL_ACTIVITY);
+            RelativeLayout tabRelativeLayout = findViewById(R.id.rl_dtv_contents_detail_tab);
+            tabRelativeLayout.addView(mTabLayout);
+        } else {
+            mTabLayout.resetTabView(mTabNames);
         }
+        DTVTLogger.end();
     }
 
-    /**
-     * インジケータ設置.
-     *
-     * @param position タブポジション
-     */
-    private void setTab(int position) {
-        if (mTabLinearLayout != null) {
-            for (int i = 0; i < mTabNames.length; i++) {
-                TextView mTextView = (TextView) mTabLinearLayout.getChildAt(i);
-                if (position == i) {
-                    mTextView.setBackgroundResource(R.drawable.rectangele);
-                    mTextView.setTextColor(Color.GRAY);
-                } else {
-                    mTextView.setBackgroundResource(0);
-                    mTextView.setTextColor(Color.WHITE);
-                }
-            }
+    @Override
+    public void onClickTab(int position) {
+        DTVTLogger.start("position = " + position);
+        if (null != mViewPager) {
+            DTVTLogger.debug("viewpager not null");
+            mViewPager.setCurrentItem(position);
         }
+        DTVTLogger.end();
     }
 
     /**

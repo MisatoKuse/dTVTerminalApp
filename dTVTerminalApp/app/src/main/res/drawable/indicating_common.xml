@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item>
+        <shape>
+            <solid android:color="@color/common_tab_indicating_color" />
+        </shape>
+    </item>
+    <!-- 本体バックグラウンド色値 -->
+    <item android:bottom="@dimen/tab_indicator_size">
+        <shape>
+            <solid android:color="@color/common_tab_background_color" />
+        </shape>
+    </item>
+
+</layer-list>

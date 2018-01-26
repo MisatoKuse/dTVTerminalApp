@@ -15,7 +15,6 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.DatePicker;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -31,6 +30,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.MyChannelDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
+import com.nttdocomo.android.tvterminalapp.model.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.model.program.Channel;
 import com.nttdocomo.android.tvterminalapp.model.program.ChannelItemClickListener;
 import com.nttdocomo.android.tvterminalapp.model.program.ChannelsInfo;
@@ -54,7 +54,8 @@ public class TvProgramListActivity extends BaseActivity
         View.OnClickListener,
         ScaledDownProgramListDataProvider.ApiDataProviderCallback,
         ProgramScrollView.OnScrollOffsetListener,
-        MyChannelDataProvider.ApiDataProviderCallback{
+        MyChannelDataProvider.ApiDataProviderCallback,
+        TabItemLayout.OnClickTabTextListener {
 
     private static final int INDEX_TAB_HIKARI = 1;
     private static final int INDEX_TAB_MY_CHANNEL = 0;
@@ -64,7 +65,7 @@ public class TvProgramListActivity extends BaseActivity
     private int mScreenWidth = 0;
     private ProgramScrollView mTimeScrollView = null;
     private RecyclerView mChannelRecyclerView = null;
-    private HorizontalScrollView mTabScrollView = null;
+    private TabItemLayout mTabLayout = null;
     private LinearLayout mTabLinearLayout = null;
     private ImageView mTagImageView = null;
     private RelativeLayout changeModeLayout;
@@ -134,7 +135,6 @@ public class TvProgramListActivity extends BaseActivity
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         mTimeScrollView = findViewById(R.id.tv_program_list_main_layout_time_sl);
         mChannelRecyclerView = findViewById(R.id.tv_program_list_main_layout_channel_rv);
-        mTabScrollView = findViewById(R.id.tv_program_list_main_layout_tab_hs);
         mProgramRecyclerView = findViewById(R.id.tv_program_list_main_layout_channeldetail_rv);
         final ProgramScrollView programScrollView = findViewById(R.id.tv_program_list_main_layout_channeldetail_sl);
         mTagImageView = findViewById(R.id.tv_program_list_main_layout_curtime_iv);
@@ -288,49 +288,27 @@ public class TvProgramListActivity extends BaseActivity
      * タブの設定
      */
     private void setTabView() {
+        DTVTLogger.start();
         mProgramTabNames = getResources().getStringArray(R.array.tv_program_list_tab_names);
-        mTabScrollView.removeAllViews();
-        mTabLinearLayout = new LinearLayout(this);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                mScreenWidth / SCREEN_TIME_WIDTH_PERCENT + (int) getDensity() * 5);
-        mTabLinearLayout.setLayoutParams(layoutParams);
-        mTabLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
-        mTabLinearLayout.setGravity(Gravity.CENTER);
-        mTabLinearLayout.setBackgroundColor(Color.BLACK);
-        mTabLinearLayout.setBackgroundResource(R.drawable.rectangele_all);
-        mTabScrollView.addView(mTabLinearLayout);
-        for (int i = 0; i < mProgramTabNames.length; i++) {
-            TextView tabTextView = new TextView(this);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT);
-            if (i != 0) {
-                params.setMargins((int) getDensity() * 15, 0, 0, 0);
-            }
-            tabTextView.setLayoutParams(params);
-            tabTextView.setText(mProgramTabNames[i]);
-            tabTextView.setBackgroundColor(Color.BLACK);
-            tabTextView.setTextColor(Color.WHITE);
-            tabTextView.setGravity(Gravity.CENTER_VERTICAL);
-            tabTextView.setTag(i);
-            tabTextView.setBackgroundResource(0);
-            tabTextView.setTextColor(Color.WHITE);
-            if (i == 0) {
-                tabTextView.setBackgroundResource(R.drawable.rectangele);
-                tabTextView.setTextColor(Color.GRAY);
-            }
-            tabTextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mTabIndex = (int) view.getTag();
-                    setTab(mTabIndex);
-                    clearData();
-                    getChannelData();
-                }
-            });
-            mTabLinearLayout.addView(tabTextView);
+        if (mTabLayout == null) {
+            mTabLayout = new TabItemLayout(this);
+            mTabLayout.setTabClickListener(this);
+            mTabLayout.initTabView(mProgramTabNames, TabItemLayout.ActivityType.PROGRAM_LIST_ACTIVITY);
+            RelativeLayout tabRelativeLayout = findViewById(R.id.rl_tv_program_list_tab);
+            tabRelativeLayout.addView(mTabLayout);
+        } else {
+            mTabLayout.resetTabView(mProgramTabNames);
         }
+        DTVTLogger.end();
+    }
+
+    @Override
+    public void onClickTab(int position) {
+        DTVTLogger.start("position = " + position);
+        mTabIndex = position;
+        clearData();
+        getChannelData();
+        DTVTLogger.end();
     }
 
     /**
