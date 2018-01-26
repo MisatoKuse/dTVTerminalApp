@@ -148,6 +148,8 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                     requestGetClipKeyList(detailListInfo.get(0));
                 }
             }
+        } else {
+            //TODO:WEBAPIを取得できなかった時の処理を記載予定
         }
     }
 
@@ -176,6 +178,8 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
             } catch (Exception e) {
                 DTVTLogger.debug(e);
             }
+        } else {
+            //TODO:WEBAPIを取得できなかった時の処理を記載予定
         }
         if (mPurchasedVodListResponse != null) {
             mApiDataProviderCallback.onRentalVodListCallback(mPurchasedVodListResponse);
@@ -193,6 +197,8 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
             } catch (Exception e) {
                 DTVTLogger.debug(e);
             }
+        } else {
+            //TODO:WEBAPIを取得できなかった時の処理を記載予定
         }
         if (mPurchasedChListResponse != null) {
             mApiDataProviderCallback.onRentalChListCallback(purchasedChListResponse);
@@ -215,6 +221,8 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
             if (mRoleListInfo != null) {
                 mApiDataProviderCallback.onRoleListCallback(mRoleListInfo);
             }
+        } else {
+            //TODO:WEBAPIを取得できなかった時の処理を記載予定
         }
     }
 
@@ -235,6 +243,8 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                     DTVTLogger.debug(e);
                 }
             }
+        } else {
+            //TODO:WEBAPIを取得できなかった時の処理を記載予定
         }
         if (null != mApiDataProviderCallback) {
             mApiDataProviderCallback.channelListCallback(channels);
@@ -628,9 +638,12 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
     }
 
     /**
-     * コンテンツ詳細情報のメタデータを元にクリップ状態を取得
+     * コンテンツ詳細情報のメタデータを元にクリップ状態を取得.
+     *
+     * @param metaFullData クリップ状態
+     * @return コンテンツ詳細データ
      */
-    private boolean getContentsDetailClipStatus(VodMetaFullData metaFullData) {
+    private boolean getContentsDetailClipStatus(final VodMetaFullData metaFullData) {
         return getClipStatus(metaFullData.getDisp_type(),
                 metaFullData.getmContent_type(),
                 metaFullData.getDtv(),
@@ -641,9 +654,11 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
     }
 
     /**
-     * コンテンツ詳細情報を元にクリップキー一覧の取得を要求
+     * コンテンツ詳細情報を元にクリップキー一覧の取得を要求.
+     *
+     * @param metaFullData コンテンツ詳細データ
      */
-    private void requestGetClipKeyList(VodMetaFullData metaFullData) {
+    private void requestGetClipKeyList(final VodMetaFullData metaFullData) {
         ClipKeyListDao.TABLE_TYPE tableType = decisionTableType(metaFullData.getDisp_type(),metaFullData.getmContent_type());
         switch (tableType) {
             case TV:

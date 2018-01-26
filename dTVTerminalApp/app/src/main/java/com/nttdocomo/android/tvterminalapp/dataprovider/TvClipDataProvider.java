@@ -20,7 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * クリップ(TV)用データプロバイダ.
+ */
 public class TvClipDataProvider extends ClipKeyListDataProvider implements TvClipWebClient.TvClipJsonParserCallback {
     private Context mContext;
     private TvClipList mClipList = null;
@@ -37,7 +39,12 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
                 mClipList = list;
             }
         } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
+            //TODO:Sprint10でDB使用を一時停止
+            //WEBAPIを取得できなかった時はDBのデータを使用
+//            List<Map<String, String>> tvClipList = new ArrayList<>();
+//            HomeDataManager homeDataManager = new HomeDataManager(mContext);
+//            tvClipList = homeDataManager.selectTvClipHomeData();
+//            sendTvClipListData(tvClipList);
             if (null != apiDataProviderCallback) {
                 apiDataProviderCallback.tvClipListCallback(null);
             }
@@ -49,7 +56,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
         DTVTLogger.start();
         super.onTvClipKeyListJsonParsed(clipKeyListResponse);
         // コールバック判定
-        if(mClipList != null) {
+        if (mClipList != null) {
             sendTvClipListData(mClipList.getVcList());
         }
         DTVTLogger.end();
@@ -88,7 +95,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
     public void getClipData(final int pagerOffset) {
         mClipList = null;
         // クリップキー一覧を取得
-        if(mRequiredClipKeyList) {
+        if (mRequiredClipKeyList) {
             getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.TV));
         }
         //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
@@ -102,6 +109,8 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
 
     /**
      * TvクリップリストをActivityに送る.
+     *
+     * @param list Tvクリップリスト
      */
     private void sendTvClipListData(final List<Map<String, String>> list) {
         apiDataProviderCallback.tvClipListCallback(setClipContentData(list));
@@ -168,7 +177,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
             contentsDataList.add(contentInfo);
             DTVTLogger.info("RankingContentInfo " + contentInfo.getRank());
 
-            if(mRequiredClipKeyList) {
+            if (mRequiredClipKeyList) {
                 // クリップ状態をコンテンツリストに格納
                 contentInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv,
                         contentInfo.getCrid(), contentInfo.getServiceId(),
@@ -218,7 +227,9 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
     }
 
     /**
-     * Vodクリップ一覧データをDBに格納する
+     * TVクリップ一覧データをDBに格納する.
+     *
+     * @param tvClipList TVクリップ一覧データ
      */
     private void setStructDB(final TvClipList tvClipList) {
         //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
