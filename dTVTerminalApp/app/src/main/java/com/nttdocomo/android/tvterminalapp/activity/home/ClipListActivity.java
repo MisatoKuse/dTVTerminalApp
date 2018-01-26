@@ -21,14 +21,14 @@ import android.widget.Toast;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ClipMainAdapter;
+import com.nttdocomo.android.tvterminalapp.fragment.cliplist.ClipListBaseFragment;
+import com.nttdocomo.android.tvterminalapp.fragment.cliplist.ClipListBaseFragmentScrollListener;
+import com.nttdocomo.android.tvterminalapp.fragment.cliplist.ClipListFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.TvClipDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VodClipDataProvider;
-import com.nttdocomo.android.tvterminalapp.fragment.ClipList.ClipListBaseFragment;
-import com.nttdocomo.android.tvterminalapp.fragment.ClipList.ClipListBaseFragmentScrollListener;
-import com.nttdocomo.android.tvterminalapp.fragment.ClipList.ClipListFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.model.TabItemLayout;
 
 import java.util.List;
