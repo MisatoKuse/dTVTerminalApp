@@ -102,13 +102,6 @@ public class ContentsData {
     // クリップ未/済
     private boolean mClipStatus = false;
 
-    public String getDeviceName() {
-        return mDeviceName;
-    }
-
-    public void setDeviceName(String deviceName) {
-        this.mDeviceName = deviceName;
-    }
 
     public String getRank() {
         return mRank;

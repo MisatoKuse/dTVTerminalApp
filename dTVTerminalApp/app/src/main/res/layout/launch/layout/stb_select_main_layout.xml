@@ -37,15 +37,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/stb_select_status_text"
+        android:layout_marginBottom="@dimen/launch_stb_name_margin_bottom"
         >
 
         <TextView
             android:id="@+id/stb_select_status_selected_text"
             android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/launch_stb_margin_top"
             android:layout_height="@dimen/launch_text_layout_high_size"
             android:layout_marginRight="@dimen/launch_stb_list_start_margin"
             android:layout_marginLeft="@dimen/launch_stb_list_start_margin"
-            android:layout_marginBottom="@dimen/launch_text_bottom_margin"
             android:paddingStart="@dimen/launch_text_left_padding"
             android:paddingEnd="@dimen/launch_text_right_padding"
             android:maxLines="1"
@@ -60,6 +61,7 @@
             android:layout_height="wrap_content"
             android:paddingStart="@dimen/launch_text_end_padding"
             android:paddingEnd="@dimen/launch_text_left_padding"
+            android:layout_marginTop="@dimen/launch_stb_margin_top"
             android:src="@drawable/remote_paring_device_check_mark"
             android:layout_alignBottom="@+id/stb_select_status_selected_text"
             android:layout_alignParentTop="true"

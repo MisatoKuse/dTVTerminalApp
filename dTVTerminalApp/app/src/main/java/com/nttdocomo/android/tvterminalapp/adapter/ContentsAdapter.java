@@ -36,7 +36,6 @@ import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import java.util.List;
 
 import static com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter.ActivityTypeItem.TYPE_RECORDING_RESERVATION_LIST;
-import static com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter.ActivityTypeItem.TYPE_STB_SELECT_LIST;
 
 public class ContentsAdapter extends BaseAdapter implements OnClickListener {
 
@@ -115,7 +114,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         TYPE_RECORDING_RESERVATION_LIST, // 録画予約一覧
         TYPE_VIDEO_CONTENT_LIST, // ビデオコンテンツ一覧
         TYPE_RECORDED_LIST, // 録画番組一覧
-        TYPE_STB_SELECT_LIST // STB選択デバイスリスト
     }
 
     /**
@@ -238,7 +236,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
 
             //ENUMの値をswitch分岐すると、全ての値を書かないとアナライザーがエラーを出すので、caseを追加
             case TYPE_RECORDED_LIST:
-            case TYPE_STB_SELECT_LIST:
             default:
                 break;
         }
@@ -346,16 +343,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         setRecodingReservationStatusData(holder, listContentInfo);
         setChannelName(holder, listContentInfo);
         setRedordedDownloadIcon(holder, listContentInfo);
-        setDeviceName(holder, listContentInfo);
-    }
-
-    /**
-     * データ設定（STBデバイス名）
-     */
-    private void setDeviceName(ViewHolder holder, ContentsData listContentInfo) {
-        if (holder.stb_device_name != null) {
-            holder.stb_device_name.setText(listContentInfo.getDeviceName());
-        }
     }
 
     /**
@@ -392,8 +379,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
                 case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
                 case TYPE_RECORDED_LIST: // 録画番組一覧
-                case TYPE_STB_SELECT_LIST: //STBデバイス名一覧
-                    holder.tv_time.setText(listContentInfo.getTime());
                     break;
                 default:
                     break;
@@ -478,7 +463,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     private void setRedordedDownloadIcon(ViewHolder holder, ContentsData listContentInfo) {
         DTVTLogger.start();
         //TODO:録画予約一覧等、クリップボタンを表示しない画面はここで外す
-        if (!mType.equals(TYPE_RECORDING_RESERVATION_LIST) && !mType.equals(TYPE_STB_SELECT_LIST)) {
+        if (!mType.equals(TYPE_RECORDING_RESERVATION_LIST) ) {
             BaseActivity baseActivity = new BaseActivity();
             if (holder.tv_clip != null) {
                 //Boolean contentsFlag = baseActivity.getDownloadContentsFalag();
@@ -535,8 +520,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
             case TYPE_RECORDED_LIST: // 録画番組一覧
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
-            case TYPE_STB_SELECT_LIST: //STBデバイス名一覧
-                view = mInflater.inflate(R.layout.item_common_result, parent, false);
             default:
                 break;
         }
@@ -585,10 +568,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_recorded_hyphen = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
                 holder.tv_recorded_ch_name = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
                 break;
-            case TYPE_STB_SELECT_LIST:  //STBデバイス名一覧
-                holder.stb_device_name = view.findViewById(R.id.item_common_result_device_name);
-                view.findViewById(R.id.item_common_result_sort_button).setVisibility(View.GONE);
-                break;
             default:
                 break;
         }
@@ -628,19 +607,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.iv_thumbnail.setVisibility(View.GONE);
                 holder.rb_rating.setVisibility(View.GONE);
                 break;
-            case TYPE_STB_SELECT_LIST: //STBデバイス名一覧
-                holder.ll_rating.setVisibility(View.GONE);
-                holder.tv_clip.setVisibility(View.GONE);
-                holder.rl_thumbnail.setVisibility(View.GONE);
-                holder.iv_thumbnail.setVisibility(View.GONE);
-                holder.rb_rating.setVisibility(View.GONE);
-                holder.tv_rating_num.setVisibility(View.GONE);
-                holder.tv_rank.setVisibility(View.GONE);
-                holder.tv_time.setVisibility(View.GONE);
-                holder.tv_title.setVisibility(View.GONE);
-                holder.tv_line.setVisibility(View.GONE);
-                holder.stb_device_name.setVisibility(View.VISIBLE);
-                break;
             default:
                 break;
         }
@@ -658,7 +624,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             //ひかりコンテンツ判定
             if (StringUtils.isHikariContents(clipType) || StringUtils.isHikariInDtvContents(clipType)) {
                 //TODO:録画予約一覧等、クリップボタンを表示しない画面はここで外す
-                if (!mType.equals(TYPE_RECORDING_RESERVATION_LIST) && !mType.equals(TYPE_STB_SELECT_LIST)) {
+                if (!mType.equals(TYPE_RECORDING_RESERVATION_LIST) ) {
                     //クリップ状態が1以外の時は、非活性クリップボタンを表示
                     if (listContentInfo.isClipExec()) {
                         if (listContentInfo.isClipStatus()) {
@@ -744,8 +710,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         TextView tv_recorded_hyphen;
         // 録画番組用チャンネル名
         TextView tv_recorded_ch_name;
-        // STBデバイス名
-        TextView stb_device_name = null;
     }
 
     public interface DownloadCallback {

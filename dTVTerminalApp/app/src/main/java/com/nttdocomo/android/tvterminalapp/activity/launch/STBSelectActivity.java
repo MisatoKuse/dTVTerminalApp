@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.res.ResourcesCompat;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
@@ -20,13 +21,13 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
-import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
@@ -37,6 +38,7 @@ import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -45,20 +47,16 @@ import java.util.TimerTask;
 public class STBSelectActivity extends BaseActivity implements View.OnClickListener,
         AdapterView.OnItemClickListener, DlnaDevListListener {
 
-    private List<ContentsData> mContentsList;
     private List<DlnaDmsItem> mDlnaDmsItemList;
-    private ContentsAdapter mContentsAdapter;
     private ProgressBar mLoadMoreView = null;
     private DlnaProvDevList mDlnaProvDevList = null;
     private StbInfoCallBackTimer mCallbackTimer = null;
-    private DlnaDMSInfo mDlnaDMSInfo = null;
-    private DlnaDmsItem mDlnaDmsItem = null;
-
+    private List<HashMap<String, String>> mContentsList = new ArrayList<>();
     private int mStartMode = 0;
     private int mSelectDevice;
     private boolean mIsNextTimeHide = false;
     private boolean mIsAppDL = false;
-
+    private SimpleAdapter DeviceAdapter;
     private ImageView mCheckMark;
     private ImageView mPairingImage;
     private CheckBox mCheckBoxSTBSelectActivity = null;
@@ -75,6 +73,8 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private static final String D_ACCOUNT_APP_ACTIVITY_NAME=".activity.DocomoIdTopActivity";
     //DアカウントアプリURI
     private static final String D_ACCOUNT_APP_URI = "market://details?id=com.nttdocomo.android.idmanager";
+    private static final int MARGIN0 = 0;
+    private static final String DEVICE_NAME_KEY = "DEVICE_NAME_KEY";
 
     private enum TimerStatus {
         TIMER_STATUS_DEFAULT,// 初期状態
@@ -109,13 +109,13 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private void initView() {
         DTVTLogger.start();
+        mDeviceListView = findViewById(R.id.stb_device_name_list);
         mParingDevice = findViewById(R.id.stb_select_status_selected_text);
         mCheckMark = findViewById(R.id.stb_device_check_mark);
         mPairingImage = findViewById(R.id.paring_search_image);
-        mDeviceListView = findViewById(R.id.stb_device_name_list);
-        mContentsAdapter = new ContentsAdapter(this, mContentsList,
-                ContentsAdapter.ActivityTypeItem.TYPE_STB_SELECT_LIST);
-        mDeviceListView.setAdapter(mContentsAdapter);
+        DeviceAdapter = new SimpleAdapter(this, mContentsList, R.layout.device_name_layout,
+                        new String[]{DEVICE_NAME_KEY}, new int[]{R.id.item_search_result_device_name});
+        mDeviceListView.setAdapter(DeviceAdapter);
         mDeviceListView.setOnItemClickListener(this);
         mDeviceListView.setVisibility(View.VISIBLE);
         mLoadMoreView = findViewById(R.id.stb_device_progress);
@@ -172,6 +172,12 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 updateDeviceList(info);
                 mParingDevice.setText(dlnaDmsItem.mFriendlyName);
                 if (!mParingDevice.getText().toString().isEmpty()) {
+                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                            RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+                    layoutParams.setMargins(dip2px(MARGIN0),
+                    dip2px(MARGIN0),  dip2px(MARGIN0),  dip2px(MARGIN0));
+                    layoutParams.addRule(RelativeLayout.BELOW, R.id.stb_device_selected);
+                    findViewById(R.id.stb_device_name_list).setLayoutParams(layoutParams);
                     mParingDevice.setVisibility(View.VISIBLE);
                     mCheckMark.setVisibility(View.VISIBLE);
                     mParingDevice.setTextColor(Color.BLACK);
@@ -219,11 +225,11 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         mCheckBoxSTBSelectActivity.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
                     @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                        if(mCheckBoxSTBSelectActivity.isChecked()){
+                    public void onCheckedChanged(final CompoundButton compoundButton, final  boolean b) {
+                        if(mCheckBoxSTBSelectActivity.isChecked()) {
                             mCheckBoxSTBSelectActivity.setBackgroundResource(R.drawable.
                                     ic_check_box_outline_blank_white_24dp);
-                        }else{
+                        } else {
                             mCheckBoxSTBSelectActivity.setBackgroundResource(R.drawable.
                                     ic_check_box_white_24dp);
                         }
@@ -376,11 +382,11 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 }
             });
             dAccountInstallDialog.showDialog();
-        }else if(v.getId() ==R.id.launch_select_check_box_text){
-            if(!mCheckBoxSTBSelectActivity.isChecked()){
+        } else if (v.getId() == R.id.launch_select_check_box_text) {
+            if (!mCheckBoxSTBSelectActivity.isChecked()){
                 mCheckBoxSTBSelectActivity.setChecked(true);
-            }else{
-                if(mCheckBoxSTBSelectActivity.isChecked()){
+            } else {
+                if (mCheckBoxSTBSelectActivity.isChecked()){
                     mCheckBoxSTBSelectActivity.setChecked(false);
                 }
             }
@@ -495,16 +501,15 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 
     /**
      * デバイスリスト情報を更新する
+     * @param info
      */
-    private void updateDeviceList(DlnaDMSInfo info) {
+    private void updateDeviceList(final DlnaDMSInfo info) {
         DTVTLogger.start();
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
 
         mContentsList.clear();
         mDlnaDmsItemList.clear();
         for (int i = 0; i < info.size(); i++) {
-            ContentsData data = new ContentsData();
-            data.setDeviceName(info.get(i).mFriendlyName);
 
             DTVTLogger.debug("ContentsList.size = " + info.get(i).mFriendlyName);
             DTVTLogger.debug("DlnaDMSInfo.mIPAddress = " + info.get(i).mIPAddress);
@@ -515,12 +520,13 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 }
             }
             if (!flag) {
-                mContentsList.add(data);
+                HashMap<String, String> hashMap = new HashMap<>();
+                hashMap.put(DEVICE_NAME_KEY, info.get(i).mFriendlyName);
+                mContentsList.add(hashMap);
                 mDlnaDmsItemList.add(info.get(i));
             }
 
         }
-        mDlnaDMSInfo = info;
         DTVTLogger.debug("ContentsList.size = " + mContentsList.size());
         runOnUiThread(new Runnable() {
             @Override
@@ -531,7 +537,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 }
                 // 0件の場合タイムアウトを設定する
                 if (mContentsList.size() <= 0) {
-                    mContentsAdapter.notifyDataSetChanged();
+                    DeviceAdapter.notifyDataSetChanged();
                     displayMoreData(true);
                     startCallbackTimer();
                     DTVTLogger.debug("ContentsList.size <= 0 ");
@@ -539,8 +545,8 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                     displayMoreData(false);
                     stopCallbackTimer();
                     showResultCompleteView();
-                    if (null != mContentsAdapter) {
-                        mContentsAdapter.notifyDataSetChanged();
+                    if (null != DeviceAdapter) {
+                        DeviceAdapter.notifyDataSetChanged();
                     }
                     DTVTLogger.debug("TimerTaskNotExecuted");
                 } else { // 既にタイムアウトとなっていた場合
@@ -554,10 +560,9 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 
     /**
      * 再読み込み時のダイアログ表示処理
-     *
      * @param b
      */
-    private void displayMoreData(boolean b) {
+    private void displayMoreData(final boolean b) {
         DTVTLogger.start("displayMoreData:" + b);
         if (b) {
             mLoadMoreView.setVisibility(View.VISIBLE);

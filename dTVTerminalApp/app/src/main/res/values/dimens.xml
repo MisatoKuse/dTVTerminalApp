@@ -26,6 +26,7 @@
     <dimen name="launch_stb_device_font_size">16dp</dimen>
     <dimen name="launch_stb_checkbox_high">18dp</dimen>
     <dimen name="launch_stb_margin_top">32dp</dimen>
+    <dimen name="launch_stb_name_margin_bottom">1.5dp</dimen>
     <dimen name="launch_stb_progress_bar_padding">15dp</dimen>
     <dimen name="launch_stb_start_up_icon1_high">36dp</dimen>
     <dimen name="launch_stb_start_up_icon1_width">70dp</dimen>
