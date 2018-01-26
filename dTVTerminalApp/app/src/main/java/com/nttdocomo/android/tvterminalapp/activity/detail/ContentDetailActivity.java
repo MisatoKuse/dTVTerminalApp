@@ -2178,7 +2178,9 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     protected void onPause() {
         super.onPause();
         //外部出力制御
-        mExternalDisplayHelper.onPause();
+        if (mExternalDisplayHelper != null) {
+            mExternalDisplayHelper.onPause();
+        }
         finishPlayer();
         if (null != mToast) {
             mToast.cancel();
@@ -2983,7 +2985,9 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     protected void onStop() {
         super.onStop();
         //外部出力制御
-        mExternalDisplayHelper.onStop();
+        if (mExternalDisplayHelper != null) {
+            mExternalDisplayHelper.onStop();
+        }
     }
 
     @Override
