@@ -161,6 +161,13 @@
         <item>持ち出し</item>
     </string-array>
     <string name="tv_program_change_mode">&lt; &gt;</string>
+    <string name="record_download_status">ダウンロード中</string>
+    <string name="record_download_percent_mark">%</string>
+    <string name="record_download_error_message">取得に失敗しました</string>
+    <string name="record_download_delete_title">削除してもよろしいでしょうか？</string>
+    <string name="record_download_cancel_title">ダウンロードを取りやめますか？</string>
+    <string name="record_download_cancel_confirm">取りやめる</string>
+    <string name="record_download_notification">録画番組をダウンロード中</string>
     <!-- Video -->
     <string name="video_content_top_title">ビデオ</string>
     <string name="video_content_all_title">すべて</string>

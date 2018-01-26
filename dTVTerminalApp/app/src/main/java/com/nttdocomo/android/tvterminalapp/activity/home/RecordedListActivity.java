@@ -18,6 +18,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -242,7 +243,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.keyword_search_text));
         searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.keyword_search_hint));
         searchAutoComplete.setHint(R.string.keyword_search_hint);
-        searchAutoComplete.setTextSize(TEXT_SIZE);
+        searchAutoComplete.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE);
     }
 
     /**
@@ -307,13 +308,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.MATCH_PARENT);
-            if (i != 0) {
-                params.setMargins((int) getDensity() * MARGIN_LEFT_NOT_INDEX, MARGIN_ZERO, MARGIN_ZERO, MARGIN_ZERO);
-            } else {
-                params.setMargins((int) getResources().getDimension(R.dimen.recorded_searchview_left_margin), MARGIN_ZERO, MARGIN_ZERO, MARGIN_ZERO);
-            }
+            params.setMargins((int) getResources().getDimension(R.dimen.contents_detail_16dp), MARGIN_ZERO, MARGIN_ZERO, MARGIN_ZERO);
             tabTextView.setLayoutParams(params);
             tabTextView.setText(mTabNames[i]);
+            tabTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE);
             tabTextView.setTag(i);
             tabTextView.setBackgroundResource(0);
             tabTextView.setTextColor(ContextCompat.getColor(this, R.color.white_text));
