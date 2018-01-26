@@ -6,13 +6,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/stb_select_black_color">
+    android:background="@color/watch_listen_background_color"
+    android:id="@+id/watch_listen_list_linear_layout"
+    >
 
     <ListView
         android:id="@+id/video_watching_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:divider="@drawable/list_item_divider"
+        android:listSelector="@drawable/channel_list_item_selector"
         android:dividerHeight="@dimen/watch_listen_video_divider_high">
     </ListView>
 

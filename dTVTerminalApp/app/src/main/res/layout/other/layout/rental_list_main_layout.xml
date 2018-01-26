@@ -6,15 +6,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000">
-
+    android:background="@color/rental_background_color">
 
     <ListView
         android:id="@+id/rental_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:divider="@drawable/list_item_divider"
-        android:dividerHeight="1dp">
+        android:dividerHeight="@dimen/channel_list_divider_height">
     </ListView>
 
 </LinearLayout>

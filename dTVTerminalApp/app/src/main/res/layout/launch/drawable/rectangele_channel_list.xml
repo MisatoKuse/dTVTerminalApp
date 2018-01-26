@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item>
+        <shape>
+            <solid android:color="@color/channel_list_border_color" />
+        </shape>
+    </item>
+    <item android:bottom="@dimen/channel_list_divider_height">
+        <shape>
+            <solid android:color="@color/channel_list_background_color" />
+        </shape>
+    </item>
+</layer-list>

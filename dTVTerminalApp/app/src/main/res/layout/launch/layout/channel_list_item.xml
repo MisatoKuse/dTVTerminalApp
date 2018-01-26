@@ -3,45 +3,38 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/background_dark">
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:background="@color/channel_list_background_color">
 
-	<LinearLayout
-		android:id="@+id/channel_list_item_thumb_ll"
-		android:layout_width="48dp"
-		android:layout_height="45dp"
-		android:paddingBottom="9dp"
-		android:paddingTop="9dp">
-
-		<ImageView
-			android:id="@+id/channel_list_item_thumb_iv"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:scaleType="fitCenter"
-			android:visibility="gone"/>
-	</LinearLayout>
+	<ImageView
+		android:id="@+id/channel_list_item_thumb_iv"
+		android:layout_width="@dimen/channel_list_thumbnail_width"
+		android:layout_height="@dimen/channel_list_thumbnail_height"
+		android:layout_marginEnd="@dimen/channel_list_thumbnail_margin_end"
+		android:layout_marginStart="@dimen/channel_list_thumbnail_margin_start_top"
+		android:layout_marginTop="@dimen/channel_list_thumbnail_margin_start_top"
+		android:visibility="gone" />
 
 	<TextView
 		android:id="@+id/channel_list_item_title_tv"
 		android:layout_width="match_parent"
-		android:layout_height="45dp"
+		android:layout_height="@dimen/channel_list_text_height"
 		android:layout_centerVertical="true"
-		android:layout_marginStart="5dp"
-		android:layout_toEndOf="@id/channel_list_item_thumb_ll"
+		android:layout_marginEnd="@dimen/channel_list_text_margin_end"
+		android:layout_toEndOf="@id/channel_list_item_thumb_iv"
 		android:ellipsize="end"
 		android:gravity="center_vertical"
 		android:maxLines="1"
-		android:paddingStart="10dp"
-		android:textColor="@android:color/white"
-		android:textSize="15dp"/>
+		android:textColor="@color/white_text"
+		android:textSize="@dimen/channel_list_text_size" />
 
 	<TextView
 		android:id="@+id/channel_list_item_line"
 		android:layout_width="match_parent"
-		android:layout_height="1dp"
+		android:layout_height="@dimen/channel_list_divider_height"
 		android:layout_alignParentBottom="true"
 		android:layout_alignStart="@id/channel_list_item_title_tv"
-		android:background="@color/list_view_divider"/>
+		android:background="@color/list_view_divider" />
 
 </RelativeLayout>

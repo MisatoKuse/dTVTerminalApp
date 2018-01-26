@@ -70,6 +70,8 @@
     <!-- ビデオ一覧 -->
     <color name="video_list_text">#FFFFFF</color>
     <color name="video_list_line">#424242</color>
+    <!-- レンタル一覧 -->
+    <color name="rental_background_color">#1d1d1d</color>
 
     <!--CustomDialog-->
     <color name="custom_dialog_backgroud_color">#eeeeee</color>
@@ -99,13 +101,18 @@
     <drawable name="color_gray">#4a4a4a</drawable>
     <color name ="stb_select_black_color">#000000</color>
     <color name ="stb_select_white_color">#ffffff</color>
+    <color name="stb_select_background_color">#1d1d1d</color>
 
     <!--//リモコン画面-->
     <drawable name="color_blue">#0099ff</drawable>
     <drawable name="color_little_gray">#E5E5E5</drawable>
-
+    <!--//視聴中ビデオ-->
+    <color name="watch_listen_background_color">#1d1d1d</color>
     <!--//チャンネルリスト-->
-    <color name="list_view_divider">#222222</color>
+    <color name="list_view_divider">#333333</color>
+    <color name="channel_list_background_color">#1d1d1d</color>
+    <color name="channel_list_border_color">#666666</color>
+    <color name="channel_list_name_select_color">#999999</color>
 
     <!--//設定画面-->
     <color name="setting_text_color_white">@color/basic_text_color_white</color>

@@ -193,6 +193,16 @@
     <dimen name="watch_listen_result_content_text_padding_top">2dp</dimen>
     <dimen name="watch_listen_result_content_rating_margin_top">4dp</dimen>
 
+    <!-- チャンネル一覧 -->
+    <dimen name="channel_list_thumbnail_width">48dp</dimen>
+    <dimen name="channel_list_thumbnail_height">27dp</dimen>
+    <dimen name="channel_list_thumbnail_margin_end">16dp</dimen>
+    <dimen name="channel_list_thumbnail_margin_start_top">10dp</dimen>
+    <dimen name="channel_list_text_height">46dp</dimen>
+    <dimen name="channel_list_text_margin_end">16dp</dimen>
+    <dimen name="channel_list_text_size">18dp</dimen>
+    <dimen name="channel_list_divider_height">1dp</dimen>
+
     <!--ビデオ一覧-->
     <dimen name="video_contents_genre_button_margin_end">15dp</dimen>
     <dimen name="video_contents_genre_count_margin_end">15dp</dimen>

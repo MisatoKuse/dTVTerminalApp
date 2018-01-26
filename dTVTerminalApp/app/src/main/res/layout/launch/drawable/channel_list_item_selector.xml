@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_pressed="false" android:drawable="@color/watch_listen_background_color"/>
+    <item android:state_pressed="true" android:drawable="@drawable/color_black"/>
+
+</selector>

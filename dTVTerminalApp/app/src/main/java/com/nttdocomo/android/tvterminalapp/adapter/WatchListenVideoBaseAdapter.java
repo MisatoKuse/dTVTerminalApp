@@ -29,7 +29,7 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter
     private List<ContentsData> mData = null;
     private ThumbnailProvider mThumbnailProvider = null;
 
-    public WatchListenVideoBaseAdapter(Context context, List data, int id) {
+    public WatchListenVideoBaseAdapter(final Context context, final List data, final int id) {
         this.mContext = context;
         this.mData = data;
         mThumbnailProvider = new ThumbnailProvider(mContext);
@@ -41,17 +41,17 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter
     }
 
     @Override
-    public Object getItem(int i) {
+    public Object getItem(final  int i) {
         return mData.get(i);
     }
 
     @Override
-    public long getItemId(int i) {
+    public long getItemId(final  int i) {
         return i;
     }
 
     @Override
-    public View getView(int position, View view, ViewGroup parent) {
+    public View getView(final int position, View view, final ViewGroup parent) {
         final ContentsData contentsData =  mData.get(position);
         ViewHolder holder;
         if (null == view) {
@@ -90,13 +90,15 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter
         }
 
         if (null != holder.wl_thumbnail) {
-            holder.wl_thumbnail.setBackgroundResource(R.mipmap.loading);
             String thumbUrl = contentsData.getThumURL();
             holder.wl_thumbnail.setTag(thumbUrl);
             if ( 0 < thumbUrl.length()) {
                 Bitmap bp = mThumbnailProvider.getThumbnailImage(holder.wl_thumbnail, thumbUrl);
                 if (null != bp) {
                     holder.wl_thumbnail.setImageBitmap(bp);
+                } else {
+                    //URLがない場合はサムネイル取得失敗の画像を表示
+                    holder.wl_thumbnail.setImageResource(R.drawable.error_list);
                 }
             }
         }
@@ -122,18 +124,23 @@ public class WatchListenVideoBaseAdapter extends BaseAdapter
     }
 
     @Override
-    public void onScrollStateChanged(AbsListView absListView, int i) {
+    public void onScrollStateChanged(final AbsListView absListView, final int i) {
     }
 
     @Override
-    public void onScroll(AbsListView absListView, int i, int i1, int i2) {
+    public void onScroll(final  AbsListView absListView, final int i, final int i1, final  int i2) {
     }
 
     static class ViewHolder {
+        //サムネイル
         ImageView wl_thumbnail;
+        //タイトル
         TextView wl_title;
+        //評価値
         TextView wl_rating_count;
+        //クリップ
         ImageView wl_clip;
+        //評価
         RatingBar wl_video_rating;
     }
 }
