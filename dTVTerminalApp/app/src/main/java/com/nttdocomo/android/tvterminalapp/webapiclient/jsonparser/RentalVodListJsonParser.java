@@ -72,14 +72,16 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
                     sendStatus(jsonObj);
                     sendPurchasedVodListResponse(jsonObj);
                     sendActiveListResponse(jsonObj);
-
-                    return mPurchasedVodListResponse;
                 }
             }
         } catch (JSONException e) {
+            mPurchasedVodListResponse.setStatus(JsonConstants.META_RESPONSE_STATUS_NG);
+            DTVTLogger.debug(e);
+        } catch (RuntimeException e) {
+            mPurchasedVodListResponse.setStatus(JsonConstants.META_RESPONSE_STATUS_NG);
             DTVTLogger.debug(e);
         }
-        return null;
+        return mPurchasedVodListResponse;
     }
 
     /**

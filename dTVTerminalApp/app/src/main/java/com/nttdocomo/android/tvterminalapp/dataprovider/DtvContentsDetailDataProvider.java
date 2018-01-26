@@ -145,7 +145,9 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                             detailListInfo, getContentsDetailClipStatus(detailListInfo.get(0)));
                 } else {
                     mVodMetaFullDataList = detailListInfo;
-                    requestGetClipKeyList(detailListInfo.get(0));
+                    if (detailListInfo.size() > 0) {
+                        requestGetClipKeyList(detailListInfo.get(0));
+                    }
                 }
             }
         } else {

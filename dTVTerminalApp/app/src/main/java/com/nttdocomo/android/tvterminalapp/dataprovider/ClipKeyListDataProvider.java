@@ -383,17 +383,21 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         boolean clipStatus = false;
         ClipKeyListDao.CONTENT_TYPE contentType = searchContentsType(dispType, contentsType, dTv);
         ClipKeyListDao.TABLE_TYPE tableType = decisionTableType(dispType, contentsType);
-        switch (contentType) {
-            case TV:
-                clipStatus = findDbTvClipKeyData(tableType,
-                        serviceId, eventId, CLIP_KEY_LIST_TYPE_OTHER_CHANNEL);
-                break;
-            case VOD:
-                clipStatus = findDbVodClipKeyData(tableType, crid);
-                break;
-            case DTV:
-                clipStatus = findDbDtvClipKeyData(tableType, titleId);
-                break;
+        if (contentType != null) {
+            switch (contentType) {
+                case TV:
+                    clipStatus = findDbTvClipKeyData(tableType,
+                            serviceId, eventId, CLIP_KEY_LIST_TYPE_OTHER_CHANNEL);
+                    break;
+                case VOD:
+                    clipStatus = findDbVodClipKeyData(tableType, crid);
+                    break;
+                case DTV:
+                    clipStatus = findDbDtvClipKeyData(tableType, titleId);
+                    break;
+            }
+        } else {
+            DTVTLogger.debug("contentType is null");
         }
         DTVTLogger.end();
         return clipStatus;

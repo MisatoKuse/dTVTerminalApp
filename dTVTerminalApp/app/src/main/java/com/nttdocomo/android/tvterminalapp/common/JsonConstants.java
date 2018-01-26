@@ -186,6 +186,8 @@ public class JsonConstants {
     public static final String META_RESPONSE_STATUS = "status";
     // OK
     public static final String META_RESPONSE_STATUS_OK = "OK";
+    // NG
+    public static final String META_RESPONSE_STATUS_NG = "NG";
     // コンテンツ配列
     public static final String META_RESPONSE_LIST = "list";
     // ページャ
