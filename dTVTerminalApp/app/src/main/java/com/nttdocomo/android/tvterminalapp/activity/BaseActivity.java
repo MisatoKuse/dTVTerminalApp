@@ -32,6 +32,8 @@ import com.nttdocomo.android.tvterminalapp.activity.launch.DAccountReSettingActi
 import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectErrorActivity;
+import com.nttdocomo.android.tvterminalapp.activity.setting.SettingActivity;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
@@ -631,6 +633,8 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                         message = getResources().getString(R.string.main_setting_dazn_uninstall_message);
                         showErrorDialog(message);
                         break;
+                    //ENUMをSwitchで使用する場合、未使用項目も記載しなければアナライザーがエラー扱いにしてしまうのでUNKNOWNを追加した、
+                    case UNKNOWN:
                     default:
                         break;
                 }
@@ -663,6 +667,8 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                         message = getResources().getString(R.string.main_setting_dazn_update_message);
                         showErrorDialog(message);
                         break;
+                    //ENUMをSwitchで使用する場合、未使用項目も記載しなければアナライザーがエラー扱いにしてしまうのでUNKNOWNを追加した、
+                    case UNKNOWN:
                     default:
                         break;
                 }
@@ -1323,5 +1329,34 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
     public void setRemoteProgressVisible(int visible){
         findViewById(R.id.base_progress_rl).setVisibility(visible);
+    }
+
+    /**
+     * アニメーション付きスタートアクティビティ
+     *
+     * @param intent アクティビティ呼び出し情報
+     */
+    @Override
+    public void startActivity(Intent intent) {
+        //普通にアクティビティを起動する
+        super.startActivity(intent);
+
+        //飛び先画面として指定されていた名前を取得する
+        String callName = "";
+        if (intent != null && intent.getComponent() != null) {
+            callName = intent.getComponent().toShortString();
+        }
+
+        //飛び先がSTB選択の関連画面ならば、アニメは付加せず帰る
+        if (callName.contains(STBSelectActivity.class.getSimpleName()) ||
+                callName.contains(STBSelectErrorActivity.class.getSimpleName())) {
+            //ただし、設定画面から呼ばれた場合はアニメーションは行うので帰らない
+            if(!(this instanceof SettingActivity)) {
+                return;
+            }
+        }
+
+        //アニメーションを付加する
+        overridePendingTransition(R.anim.in_righttoleft, R.anim.out_lefttoright);
     }
 }
