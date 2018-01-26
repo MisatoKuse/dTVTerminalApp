@@ -6,13 +6,14 @@ package com.nttdocomo.android.tvterminalapp.activity.home;
 
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -23,13 +24,13 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecommendDataProvider;
 import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendBaseFragmentScrollListener;
 import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendFragmentFactory;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 
 import java.util.List;
@@ -49,9 +50,14 @@ public class RecommendActivity extends BaseActivity implements
     private RecommendDataProvider mRecommendDataProvider = null;
 
     private static final int LOAD_PAGE_DELAY_TIME = 500;
+    private static final int SCREEN_TIME_WIDTH_PERCENT = 9;
+    private static final int MARGIN_ZERO = 0;
+    private static final int MARGIN_LEFT_TAB = 5;
+
+    private final static int TEXT_SIZE = 15;
 
     // レコメンドコンテンツ最大件数（システム制約）
-    private int maxShowListSize = 100;
+    private final int MAX_SHOW_LIST_SIZE = 100;
     // 表示中レコメンドコンテンツ件数(staticにしないと前回の値が維持され、データの更新に失敗する場合がある)
     private static int sShowListSize = 0;
     // 表示中の最後の行を保持(staticにしないと前回の値が維持され、データの更新に失敗する場合がある)
@@ -187,14 +193,17 @@ public class RecommendActivity extends BaseActivity implements
      * tabの関連Viewを初期化
      */
     private void initTabVIew() {
+        DTVTLogger.start();
+        int screenWidth = getWidthDensity();
         mTabScrollView.removeAllViews();
         mLinearLayout = new LinearLayout(this);
         LinearLayout.LayoutParams layoutParams
-                = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT
-                , LinearLayout.LayoutParams.WRAP_CONTENT);
+                = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                screenWidth / SCREEN_TIME_WIDTH_PERCENT +
+                        (int) getDensity() * MARGIN_LEFT_TAB);
         mLinearLayout.setLayoutParams(layoutParams);
+        mLinearLayout.setBackgroundResource(R.drawable.rectangele_all);
         mLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
-        mLinearLayout.setBackgroundColor(Color.BLACK);
         mLinearLayout.setGravity(Gravity.CENTER);
         mTabScrollView.addView(mLinearLayout);
 
@@ -205,17 +214,25 @@ public class RecommendActivity extends BaseActivity implements
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.MATCH_PARENT);
             if (i != 0) {
-                params.setMargins(30, 0, 0, 0);
+                params.setMargins((int)
+                                getResources().getDimension(R.dimen.contents_detail_16dp),
+                        MARGIN_ZERO, MARGIN_ZERO, MARGIN_ZERO);
             }
+
             tabTextView.setLayoutParams(params);
             tabTextView.setText(mTabNames[i]);
-            tabTextView.setTextSize(15);
-            tabTextView.setBackgroundColor(Color.BLACK);
-            tabTextView.setTextColor(Color.WHITE);
+            tabTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE);
+            tabTextView.setBackgroundColor(ContextCompat.getColor(this, R.color.black_text));
+            tabTextView.setTextColor(ContextCompat.getColor(this, R.color.white_text));
             tabTextView.setGravity(Gravity.CENTER_VERTICAL);
             tabTextView.setTag(i);
             if (i == 0) {
-                tabTextView.setBackgroundResource(R.drawable.indicating);
+                //デフォルト選択タブは、線を白くして文字を灰色にする
+                tabTextView.setBackgroundResource(R.drawable.rectangele);
+                tabTextView.setTextColor(ContextCompat.getColor(this, R.color.gray_text));
+            } else {
+                //デフォルト選択タブ以外は線を透明にして表示されなくする
+                tabTextView.setBackgroundResource(0);
             }
             // tabタップ時の処理
             tabTextView.setOnClickListener(new View.OnClickListener() {
@@ -234,6 +251,7 @@ public class RecommendActivity extends BaseActivity implements
             });
             mLinearLayout.addView(tabTextView);
         }
+        DTVTLogger.end();
     }
 
     /**
@@ -246,9 +264,13 @@ public class RecommendActivity extends BaseActivity implements
             for (int i = 0; i < mTabNames.length; i++) {
                 TextView textView = (TextView) mLinearLayout.getChildAt(i);
                 if (position == i) {
-                    textView.setBackgroundResource(R.drawable.indicating);
+                    textView.setBackgroundResource(R.drawable.rectangele);
+                    //選択タブは文字を灰色にする
+                    textView.setTextColor(ContextCompat.getColor(this, R.color.gray_text));
                 } else {
-                    textView.setBackgroundResource(R.drawable.indicating_no);
+                    textView.setBackgroundResource(0);
+                    //選択タブ以外は文字を白くする
+                    textView.setTextColor(ContextCompat.getColor(this, R.color.white_text));
                 }
             }
         }
@@ -383,7 +405,7 @@ public class RecommendActivity extends BaseActivity implements
         DTVTLogger.debug("onScroll.first:" + firstVisibleItem +
                 " .visible:" + visibleItemCount + " .total:" + totalItemCount +
                 " dataSize:" + fragment.mData.size());
-        if (maxShowListSize > fragment.mData.size() && // システム制約最大値 100件
+        if (MAX_SHOW_LIST_SIZE > fragment.mData.size() && // システム制約最大値 100件
                 fragment.mData.size() != 0 && // 取得結果0件以外
                 firstVisibleItem + visibleItemCount >= pageMax) { // 表示中の最下まで行ったかの判定
             sCntPageing += 1;
