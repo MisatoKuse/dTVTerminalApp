@@ -8,16 +8,15 @@ import android.content.Context;
 import android.database.DatabaseUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 
 import org.json.JSONArray;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.FOUR_K_FLG;
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.UNDER_BAR_FOUR_K_FLG;
 
 public class DBUtils {
     private final static String NUMERICAL_DECISION = "^[0-9]*$";
@@ -48,8 +47,8 @@ public class DBUtils {
      */
     public static String fourKFlgConversion(String string) {
         String s = string;
-        if (string.equals(FOUR_K_FLG)) {
-            s = UNDER_BAR_FOUR_K_FLG;
+        if (string.equals(DBConstants.FOUR_K_FLG)) {
+            s = DBConstants.UNDER_BAR_FOUR_K_FLG;
         }
         return s;
     }
@@ -209,5 +208,35 @@ public class DBUtils {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 操作するレコメンドテーブル名を取得.
+     *
+     * @param tagPageNo タグ名
+     * @return tableName
+     */
+    public static String getRecommendTableName(final int tagPageNo) {
+        String tableName = null;
+        switch (tagPageNo) {
+            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV:
+                tableName = DBConstants.RECOMMEND_CHANNEL_LIST_TABLE_NAME;
+                break;
+            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO:
+                tableName = DBConstants.RECOMMEND_VIDEO_LIST_TABLE_NAME;
+                break;
+            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL:
+                tableName = DBConstants.RECOMMEND_LIST_DCHANNEL_TABLE_NAME;
+                break;
+            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV:
+                tableName = DBConstants.RECOMMEND_LIST_DTV_TABLE_NAME;
+                break;
+            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME:
+                tableName = DBConstants.RECOMMEND_LIST_DANIME_TABLE_NAME;
+                break;
+            default:
+                break;
+        }
+        return tableName;
     }
 }

@@ -12,10 +12,8 @@ import android.text.TextUtils;
 import com.nttdocomo.android.tvterminalapp.datamanager.WatchListenVideoDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.RecommendListDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RoleListInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListResponse;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListResponse;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
@@ -111,7 +109,12 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             TvClipList list = tvClipLists.get(0);
             setStructDB(list);
         } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
+            //TODO:Sprint10でDB使用を一時停止
+            //WEBAPIを取得できなかった時はDBのデータを使用
+//            List<Map<String, String>> tvClipList = new ArrayList<>();
+//            HomeDataManager homeDataManager = new HomeDataManager(mContext);
+//            tvClipList = homeDataManager.selectTvClipHomeData();
+//            sendTvClipListData(tvClipList);
         }
     }
 
@@ -121,7 +124,12 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             VodClipList list = vodClipLists.get(0);
             setStructDB(list);
         } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
+            //TODO:Sprint10でDB使用を一時停止
+            //WEBAPIを取得できなかった時はDBのデータを使用
+//            List<Map<String, String>> vodClipList = new ArrayList<>();
+//            HomeDataManager homeDataManager = new HomeDataManager(mContext);
+//            vodClipList = homeDataManager.selectVodClipHomeData();
+//            sendVodClipListData(vodClipList);
         }
     }
 
@@ -131,7 +139,11 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             TvScheduleList list = tvScheduleList.get(0);
             setStructDB(list);
         } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
+            //WEBAPIを取得できなかった時はDBのデータを使用
+            List<Map<String, String>> scheduleList = new ArrayList<>();
+            HomeDataManager homeDataManager = new HomeDataManager(mContext);
+            scheduleList = homeDataManager.selectTvScheduleListHomeData();
+            sendTvScheduleListData(scheduleList);
         }
     }
 
@@ -141,7 +153,11 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             DailyRankList list = dailyRankLists.get(0);
             setStructDB(list);
         } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
+            //WEBAPIを取得できなかった時はDBのデータを使用
+            List<Map<String, String>> dailyRankList = new ArrayList<>();
+            HomeDataManager homeDataManager = new HomeDataManager(mContext);
+            dailyRankList = homeDataManager.selectDailyRankListHomeData();
+            sendDailyRankListData(dailyRankList);
         }
     }
 
@@ -151,7 +167,11 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             VideoRankList list = contentsListPerGenre.get(0);
             setStructDB(list);
         } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
+            //WEBAPIを取得できなかった時はDBのデータを使用
+            List<Map<String, String>> videoRankList = new ArrayList<>();
+            RankingTopDataManager rankingTopDataManager = new RankingTopDataManager(mContext);
+            videoRankList = rankingTopDataManager.selectVideoRankListData();
+            sendVideoRankListData(videoRankList);
         }
     }
 
@@ -160,8 +180,9 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if (watchListenVideoList != null && watchListenVideoList.size() > 0) {
             WatchListenVideoList list = watchListenVideoList.get(0);
             setStructDB(list);
+            //TODO:取得したデータをHome画面で使用する場合はここに記載
         } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
+            //TODO:WEBAPIを取得できなかった時の処理を記載予定(不要な場合は削除)
         }
     }
 
@@ -169,8 +190,9 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     public void onRentalVodListJsonParsed(PurchasedVodListResponse RentalVodListResponse) {
         if (RentalVodListResponse != null) {
             setStructDB(RentalVodListResponse);
+            //TODO:取得したデータをHome画面で使用する場合はここに記載
         } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
+            //TODO:WEBAPIを取得できなかった時の処理を記載予定(不要な場合は削除)
         }
     }
 
@@ -178,8 +200,9 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     public void onRentalChListJsonParsed(PurchasedChListResponse RentalChListResponse) {
         if (RentalChListResponse != null) {
             setStructDB(RentalChListResponse);
+            //TODO:取得したデータをHome画面で使用する場合はここに記載
         } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
+            //TODO:WEBAPIを取得できなかった時の処理を記載予定(不要な場合は削除)
         }
     }
 
@@ -188,8 +211,9 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if (channelLists != null && channelLists.size() > 0) {
             ChannelList list = channelLists.get(0);
             setStructDB(list);
+            //TODO:取得したデータをHome画面で使用する場合はここに記載
         } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
+            //TODO:WEBAPIを取得できなかった時の処理を記載予定(不要な場合は削除)
         }
     }
 
@@ -197,8 +221,9 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     public void onRoleListJsonParsed(RoleListResponse roleListResponse) {
         if (roleListResponse != null) {
             setStructDB(roleListResponse);
+            //TODO:取得したデータをHome画面で使用する場合はここに記載
         } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
+            //TODO:WEBAPIを取得できなかった時の処理を記載予定(不要な場合は削除)
         }
     }
 
@@ -538,11 +563,12 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         String lastDate = dateUtils.getLastDate(DateUtils.TV_LAST_INSERT);
         List<Map<String, String>> list = new ArrayList<>();
         //クリップ[テレビ]一覧のDB保存履歴と、有効期間を確認
-        if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
+//        if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
+            //TODO:Sprint10でDB使用を一時停止
             //データをDBから取得する
-            HomeDataManager homeDataManager = new HomeDataManager(mContext);
-            list = homeDataManager.selectTvClipHomeData();
-        } else {
+//            HomeDataManager homeDataManager = new HomeDataManager(mContext);
+//            list = homeDataManager.selectTvClipHomeData();
+//        } else {
             //通信クラスにデータ取得要求を出す
             TvClipWebClient webClient = new TvClipWebClient(mContext);
             int ageReq = 1;
@@ -553,7 +579,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
 
             webClient.getTvClipApi(ageReq, upperPageLimit,
                     lowerPageLimit, pagerOffset, pagerDirection, this);
-        }
+//        }
         return list;
     }
 
@@ -567,11 +593,12 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         String lastDate = dateUtils.getLastDate(DateUtils.VOD_LAST_INSERT);
         List<Map<String, String>> list = new ArrayList<>();
         //クリップ[ビデオ]一覧のDB保存履歴と、有効期間を確認
-        if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
+//        if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
+            //TODO:Sprint10でDB使用を一時停止
             //データをDBから取得する
-            HomeDataManager homeDataManager = new HomeDataManager(mContext);
-            list = homeDataManager.selectVodClipHomeData();
-        } else {
+//            HomeDataManager homeDataManager = new HomeDataManager(mContext);
+//            list = homeDataManager.selectVodClipHomeData();
+//        } else {
             //通信クラスにデータ取得要求を出す
             VodClipWebClient webClient = new VodClipWebClient(mContext);
             int ageReq = 1;
@@ -582,7 +609,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
 
             webClient.getVodClipApi(ageReq, upperPageLimit,
                     lowerPageLimit, pagerOffset, pagerDirection, this);
-        }
+//        }
         return list;
     }
 
@@ -725,7 +752,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     /**
      * ロールリスト取得.
      */
-    public void getRoleListData() {
+    private void getRoleListData() {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.ROLELIST_LAST_UPDATE);
         if (TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate)) {
@@ -932,8 +959,19 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      */
     @Override
     public void RecommendChannelCallback(List<ContentsData> recommendContentInfoList) {
-        //送られてきたデータをアクティビティに渡す
-        sendRecommendChListData(recommendContentInfoList);
+        if (recommendContentInfoList != null && recommendContentInfoList.size() > 0) {
+            //送られてきたデータをアクティビティに渡す
+            sendRecommendChListData(recommendContentInfoList);
+        } else {
+            //WEBAPIを取得できなかった時はDBのデータを使用
+            List<ContentsData> recommendChannelInfoList;
+            RecommendDataProvider recommendDataProvider = new RecommendDataProvider(mContext);
+            recommendChannelInfoList = recommendDataProvider.getRecommendListDataCache(
+                    DateUtils.RECOMMEND_CH_LAST_INSERT, RecommendDataProvider.TV_NO,
+                    SearchConstants.RecommendList.FIRST_POSITION,
+                    SearchConstants.RecommendList.RECOMMEND_PRELOAD_COUNT);
+            sendRecommendChListData(recommendChannelInfoList);
+        }
     }
 
     /**
@@ -943,8 +981,20 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      */
     @Override
     public void RecommendVideoCallback(List<ContentsData> recommendContentInfoList) {
-        //送られてきたデータをアクティビティに渡す
-        sendRecommendVdListData(recommendContentInfoList);
+        if (recommendContentInfoList != null && recommendContentInfoList.size() > 0) {
+            //送られてきたデータをアクティビティに渡す
+            sendRecommendVdListData(recommendContentInfoList);
+        } else {
+            //WEBAPIを取得できなかった時はDBのデータを使用
+            List<ContentsData> recommendVodInfoList;
+            HomeDataManager homeDataManager = new HomeDataManager(mContext);
+            RecommendDataProvider recommendDataProvider = new RecommendDataProvider(mContext);
+            recommendVodInfoList = recommendDataProvider.getRecommendListDataCache(
+                    DateUtils.RECOMMEND_VD_LAST_INSERT, RecommendDataProvider.VIDEO_NO,
+                    SearchConstants.RecommendList.FIRST_POSITION,
+                    SearchConstants.RecommendList.RECOMMEND_PRELOAD_COUNT);
+            sendRecommendVdListData(recommendVodInfoList);
+        }
     }
 
     /**
