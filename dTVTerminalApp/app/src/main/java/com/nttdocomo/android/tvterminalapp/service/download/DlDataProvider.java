@@ -330,7 +330,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
             DtcpDownloadParam dtcpDownloadParam = (DtcpDownloadParam) downloadParam;
             dtcpDownloadParam.setContext(context);
             dtcpDownloadParam.setSavePath(item.getSaveFile());
-            dtcpDownloadParam.setSaveFileName(item.getTitle());
+            dtcpDownloadParam.setSaveFileName(item.getItemId());
             dtcpDownloadParam.setDtcp1host(item.getHost());
             dtcpDownloadParam.setDtcp1port(Integer.parseInt(item.getPort()));
             dtcpDownloadParam.setUrl(item.getUrl());
