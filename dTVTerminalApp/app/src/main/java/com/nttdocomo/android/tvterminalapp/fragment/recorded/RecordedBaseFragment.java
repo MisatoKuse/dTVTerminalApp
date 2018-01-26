@@ -63,6 +63,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     private Handler mHandler;
     private final int mPercentToUpdateUi = 1;
     private Activity activity;
+    private String mProgress;
 
     @Override
     public Context getContext() {
@@ -413,13 +414,14 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 mContentsData.get(index).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_LOADING);
                 break;
             case ContentsAdapter.DOWNLOAD_STATUS_LOADING :
+                mProgress = getResources().getString(R.string.record_download_status) + progress + getResources().getString(R.string.record_download_percent_mark);
                 if (textView != null) {
                     view.findViewById(R.id.item_common_result_recorded_content_hyphen).setVisibility(View.VISIBLE);
                     textView.setVisibility(View.VISIBLE);
                     textView.setTextColor(ContextCompat.getColor(mActivity, R.color.d_animation_title));
-                    textView.setText("ダウンロード中 " + progress + "%");
+                    textView.setText(mProgress);
                 }
-                mContentsData.get(index).setDownloadStatus("ダウンロード中 " + progress + "%");
+                mContentsData.get(index).setDownloadStatus(mProgress);
                 break;
             default:
                 break;
@@ -633,9 +635,10 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     private void showDialogToConfirmUnDownload(final boolean completed, final View view) {
         CustomDialog customDialog = new CustomDialog(getContext(), CONFIRM);
         if (completed){
-            customDialog.setTitle("コンテンツを削除しますか？");
+            customDialog.setTitle(getResources().getString(R.string.record_download_delete_title));
         } else {
-            customDialog.setTitle("ダウンロードを取りやめますか？");
+            customDialog.setTitle(getResources().getString(R.string.record_download_cancel_title));
+            customDialog.setConfirmText(R.string.record_download_cancel_confirm);
         }
         customDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
