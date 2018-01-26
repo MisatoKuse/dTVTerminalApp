@@ -7,6 +7,9 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowDisablePreview">true</item>
+
+        <!-- テーマにトランジションアニメを定義 -->
+        <item name="android:windowAnimationStyle">@style/GeneralAnimation</item>
     </style>
 
     <style name="AnimationRightFade">
@@ -105,4 +108,13 @@
         <item name="android:textSize">@dimen/recording_reservation_dialog_item_text_size</item>
     </style>
     -->
+
+    <!-- 標準アクティビティトランジション指定 -->
+    <style name="GeneralAnimation" parent="android:Animation.Activity">
+        <!-- 既存のグローバルメニュー表示アニメーションを流用 -->
+        <item name="android:activityOpenEnterAnimation">@anim/in_righttoleft</item>
+        <item name="android:activityOpenExitAnimation">@anim/out_lefttoright</item>
+        <item name="android:activityCloseExitAnimation">@anim/out_lefttoright</item>
+        <item name="android:activityCloseEnterAnimation">@anim/in_righttoleft</item>
+    </style>
 </resources>
