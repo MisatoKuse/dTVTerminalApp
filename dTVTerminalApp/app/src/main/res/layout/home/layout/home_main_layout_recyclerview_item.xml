@@ -3,71 +3,81 @@
     android:layout_width="@dimen/home_contents_thumbnail_width"
     android:layout_height="@dimen/home_contents_thumbnail_height"
     android:background="@color/home_main_background_color">
+
     <ImageView
         android:id="@+id/home_main_recyclerview_item_iv"
         android:layout_width="@dimen/home_contents_thumbnail_width"
         android:layout_height="@dimen/home_contents_thumbnail_height"
         android:layout_centerHorizontal="true"
         android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
-        android:paddingStart="@dimen/home_contents_thumbnail_left_padding"
+        android:background="@color/home_item_contents_background_color"
         android:paddingEnd="@dimen/home_contents_thumbnail_right_padding"
-        android:background="@color/home_item_contents_background_color"/>
-    <!-- TODO 後ほどNewアイコン画像に差し替えるため、一旦このまま -->
-    <TextView
+        android:paddingStart="@dimen/home_contents_thumbnail_left_padding"
+        android:scaleType="fitCenter" />
+
+    <RelativeLayout
         android:id="@+id/home_main_recyclerview_item_iv_new"
-        android:layout_marginLeft="4dp"
-        android:layout_marginTop="4dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="12dp"
-        android:textStyle="bold"
-        android:paddingTop="2dp"
-        android:paddingBottom="2dp"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:background="#FF0000"
-        android:textColor="#FFFFFF"
-        android:text="NEW"/>
+        android:layout_width="@dimen/home_contents_thumbnail_new_label_width"
+        android:layout_height="@dimen/home_contents_thumbnail_new_label_height"
+        android:layout_marginLeft="@dimen/home_contents_thumbnail_new_label_margin_left"
+        android:layout_marginTop="@dimen/home_contents_thumbnail_new_label_margin_top">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_new_label_background" />
+
+        <TextView
+            android:layout_width="@dimen/home_contents_thumbnail_new_label_text_width"
+            android:layout_height="@dimen/home_contents_thumbnail_new_label_text_height"
+            android:layout_centerInParent="true"
+            android:text="@string/new_icon_text"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/home_contents_thumbnail_new_label_text_size"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY"
         android:src="@mipmap/overlay_gradation" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/home_contents_thumbnail_text_bottom_margin"
-        android:layout_marginStart="@dimen/home_contents_thumbnail_title_left_margin"
-        android:layout_marginEnd="@dimen/home_contents_thumbnail_title_right_margin"
-        android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="@dimen/home_contents_thumbnail_text_bottom_margin"
+        android:layout_marginEnd="@dimen/home_contents_thumbnail_title_right_margin"
+        android:layout_marginStart="@dimen/home_contents_thumbnail_title_left_margin"
         android:orientation="vertical">
+
         <TextView
             android:id="@+id/home_main_recyclerview_item_tv_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/home_contents_thumbnail_title_bottom_margin"
-            android:maxLines="1"
             android:ellipsize="end"
-            android:textStyle="bold"
-            android:textSize="@dimen/home_contents_thumbnail_text_size"
-            android:textColor="@color/home_item_contents_text_color"
+            android:maxLines="1"
             android:shadowColor="@color/home_item_contents_text_shadow_color"
             android:shadowDx="2"
             android:shadowDy="2"
-            android:shadowRadius="2" />
+            android:shadowRadius="2"
+            android:textColor="@color/home_item_contents_text_color"
+            android:textSize="@dimen/home_contents_thumbnail_text_size"
+            android:textStyle="bold" />
+
         <TextView
             android:id="@+id/home_main_recyclerview_item_tv_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/home_contents_thumbnail_text_size"
-            android:textColor="@color/home_item_contents_text_color"
             android:shadowColor="@color/home_item_contents_text_shadow_color"
             android:shadowDx="2"
             android:shadowDy="2"
-            android:shadowRadius="2" />
+            android:shadowRadius="2"
+            android:textColor="@color/home_item_contents_text_color"
+            android:textSize="@dimen/home_contents_thumbnail_text_size" />
     </LinearLayout>
 </RelativeLayout>

@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -21,6 +22,7 @@ import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 
 import java.util.List;
 
@@ -43,7 +45,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     /**
      * サムネイル取得プロバイダー.
      */
-    private ThumbnailProvider thumbnailProvider;
+    private ThumbnailProvider mThumbnailProvider;
     /**
      * もっと見るフッター.
      */
@@ -71,11 +73,11 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      * @param context コンテキスト
      * @param contentsDataList 表示するコンテンツリスト
      */
-    public HomeRecyclerViewAdapter(Activity context, List<ContentsData> contentsDataList) {
+    public HomeRecyclerViewAdapter(final Activity context, final List<ContentsData> contentsDataList) {
         mInflater = LayoutInflater.from(context);
         this.mContentList = contentsDataList;
         this.mContext = context;
-        thumbnailProvider = new ThumbnailProvider(context);
+        mThumbnailProvider = new ThumbnailProvider(context);
     }
 
     /**
@@ -83,13 +85,13 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      *
      * @param footerView 「すべてを見る」View
      */
-    public void setFooterView(View footerView) {
+    public void setFooterView(final View footerView) {
         mFooterView = footerView;
         notifyItemInserted(getItemCount() - 1);
     }
 
     @Override
-    public int getItemViewType(int position) {
+    public int getItemViewType(final int position) {
         if (position == 0) {
             return TYPE_HEADER;
         }
@@ -113,7 +115,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    public ViewHolder onCreateViewHolder(final ViewGroup viewGroup, final int viewType) {
         if (mFooterView != null && viewType == TYPE_FOOTER) {
             return new ViewHolder(mFooterView);
         }
@@ -123,7 +125,6 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         viewHolder.mContent = view.findViewById(R.id.home_main_recyclerview_item_tv_content);
         viewHolder.mTime = view.findViewById(R.id.home_main_recyclerview_item_tv_time);
         viewHolder.mNew = view.findViewById(R.id.home_main_recyclerview_item_iv_new);
-        viewHolder.mNew.setVisibility(View.GONE);
         return viewHolder;
     }
 
@@ -135,6 +136,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         ContentsData contentsData = mContentList.get(i);
         String date = contentsData.getTime();
         String title = contentsData.getTitle();
+        String startTime = contentsData.getLinearStartDate();
+        Boolean newFlag = newContentsCheck(startTime);
+
         if (TextUtils.isEmpty(title)) {
             title = contentsData.getTitle();
         }
@@ -148,6 +152,17 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         } else {
             viewHolder.mContent.setVisibility(View.GONE);
         }
+
+        if (!TextUtils.isEmpty(startTime)) {
+            if (newFlag) {
+                viewHolder.mNew.setVisibility(View.VISIBLE);
+            } else {
+                viewHolder.mNew.setVisibility(View.GONE);
+            }
+        } else {
+            viewHolder.mNew.setVisibility(View.GONE);
+        }
+
         if (!TextUtils.isEmpty(date)) {
             viewHolder.mTime.setVisibility(View.VISIBLE);
             viewHolder.mTime.setText(date);
@@ -157,7 +172,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         //URLによって、サムネイル取得
         if (!TextUtils.isEmpty(thumbnail)) {
             viewHolder.mImage.setTag(thumbnail);
-            Bitmap bitmap = thumbnailProvider.getThumbnailImage(viewHolder.mImage, thumbnail);
+            Bitmap bitmap = mThumbnailProvider.getThumbnailImage(viewHolder.mImage, thumbnail);
             if (bitmap != null) {
                 viewHolder.mImage.setImageBitmap(bitmap);
             }
@@ -167,7 +182,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         }
         viewHolder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
                 Intent intent = new Intent(mContext, ContentDetailActivity.class);
                 ComponentName componentName = mContext.getComponentName();
                 intent.putExtra(DTVTConstants.SOURCE_SCREEN, componentName.getClassName());
@@ -177,12 +192,31 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     }
 
     @Override
-    public void onViewRecycled(ViewHolder viewHolder) {
+    public void onViewRecycled(final ViewHolder viewHolder) {
         super.onViewRecycled(viewHolder);
         if (viewHolder.mImage != null) {
             //サムネイルの取得が遅い時、前のViewが残っている事がある現象の対処
             viewHolder.mImage.setImageResource(android.R.color.transparent);
         }
+    }
+
+    /**
+     *  開始時間と現在時刻の比較.
+     * 配信開始から1週間以内のコンテンツを判定する
+     * @param startDate 配信開始 "yyyy/MM/dd HH:mm:ss"
+     * @return 配信開始から1週間以内かどうか
+     */
+    private boolean newContentsCheck(final String startDate) {
+        // 現在時刻
+        long nowTimeEpoch = DateUtils.getNowTimeFormatEpoch();
+        long startTime = DateUtils.getEpochTime(startDate);
+        // 現在時刻 - 開始日時
+        long differenceTime = nowTimeEpoch - startTime;
+        if (differenceTime <= DateUtils.EPOCH_TIME_ONE_WEEK) {
+            // 一週間未満の差であればtrue
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -194,7 +228,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
          *
          * @param itemView コンテンツView
          */
-        public ViewHolder(View itemView) {
+        public ViewHolder(final View itemView) {
             super(itemView);
         }
         /**
@@ -211,8 +245,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         TextView mTime;
         /**
          * Newアイコン.
-         * TODO: TextViewからNewアイコンの画像に置き換わる予定
          */
-        TextView mNew;
+        RelativeLayout mNew;
     }
 }
