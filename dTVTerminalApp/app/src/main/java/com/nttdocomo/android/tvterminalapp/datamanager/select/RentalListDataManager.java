@@ -8,9 +8,12 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RentalListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +42,13 @@ public class RentalListDataManager {
      * @return クリップデータリスト
      */
     public List<Map<String, String>> selectRentalListData() {
+
+        //データ存在チェック
+        List<Map<String, String>> list = new ArrayList<>();
+        if (!DBUtils.isCachingRecord(mContext, DBConstants.RENTAL_LIST_TABLE_NAME)) {
+            return list;
+        }
+
         //ホーム画面に必要な列を列挙する
         String[] columns = {JsonConstants.META_RESPONSE_THUMB_448, JsonConstants.META_RESPONSE_TITLE,
                 JsonConstants.META_RESPONSE_PUBLISH_END_DATE, JsonConstants.META_RESPONSE_DISP_TYPE,
@@ -56,7 +66,7 @@ public class RentalListDataManager {
         RentalListDao rentalListDao = new RentalListDao(db);
 
         //ホーム画面用データ取得
-        List<Map<String, String>> list = rentalListDao.findById(columns);
+        list = rentalListDao.findById(columns);
         db.close();
         homeDBHelper.close();
         return list;

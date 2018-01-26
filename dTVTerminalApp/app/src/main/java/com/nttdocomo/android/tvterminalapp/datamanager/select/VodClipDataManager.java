@@ -8,9 +8,12 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VodClipListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +36,13 @@ public class VodClipDataManager {
      * @return クリップ一覧画面用クリップデータ
      */
     public List<Map<String, String>> selectVodClipData() {
+
+        //データ存在チェック
+        List<Map<String, String>> list = new ArrayList<>();
+        if (!DBUtils.isCachingRecord(mContext, DBConstants.VODCLIP_LIST_TABLE_NAME)) {
+            return list;
+        }
+
         //ホーム画面に必要な列を列挙する
         //String[] columns = {VODCLIP_LIST_THUMB, VODCLIP_LIST_TITLE,
         //        VODCLIP_LIST_DISPLAY_START_DATE, VODCLIP_LIST_DISP_TYPE};
@@ -52,7 +62,7 @@ public class VodClipDataManager {
         VodClipListDao vodClipListDao = new VodClipListDao(db);
 
         //ホーム画面用データ取得
-        List<Map<String, String>> list = vodClipListDao.findById(columns);
+        list = vodClipListDao.findById(columns);
         db.close();
         homeDBHelper.close();
         return list;

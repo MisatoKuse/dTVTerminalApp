@@ -9,6 +9,7 @@ import android.database.DatabaseUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 
@@ -235,6 +236,25 @@ public class DBUtils {
                 tableName = DBConstants.RECOMMEND_LIST_DANIME_TABLE_NAME;
                 break;
             default:
+                break;
+        }
+        return tableName;
+    }
+
+    /**
+     * テーブル名取得(type指定).
+     *
+     * @param type テーブルの種類(TV or VOD)
+     * @return SQLiteDatabaseクラスの戻り値(削除されたレコード数)
+     */
+    public static String getClipKeyTableName(final ClipKeyListDao.TABLE_TYPE type) {
+        String tableName = null;
+        switch (type) {
+            case TV:
+                tableName = DBConstants.TV_CLIP_KEY_LIST_TABLE_NAME;
+                break;
+            case VOD:
+                tableName = DBConstants.VOD_CLIP_KEY_LIST_TABLE_NAME;
                 break;
         }
         return tableName;

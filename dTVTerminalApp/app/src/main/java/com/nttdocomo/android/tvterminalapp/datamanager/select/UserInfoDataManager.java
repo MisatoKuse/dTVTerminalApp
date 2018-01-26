@@ -7,10 +7,13 @@ package com.nttdocomo.android.tvterminalapp.datamanager.select;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.UserInfoListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +37,12 @@ public class UserInfoDataManager {
      */
     public List<Map<String, String>> selectUserAgeInfo() {
 
+        //データ存在チェック
+        List<Map<String, String>> list = new ArrayList<>();
+        if (!DBUtils.isCachingRecord(mContext, DBConstants.USER_INFO_LIST_TABLE_NAME)) {
+            return list;
+        }
+
         //ユーザ情報取得に必要な列を列挙する
         String[] columns = {UserInfoJsonParser.USER_INFO_LIST_LOGGEDIN_ACCOUNT,
                 UserInfoJsonParser.USER_INFO_LIST_LOGGEDIN_ACCOUNT,
@@ -47,7 +56,7 @@ public class UserInfoDataManager {
         UserInfoListDao userInfoListDao = new UserInfoListDao(db);
 
         //ホーム画面用データ取得
-        List<Map<String, String>> list = userInfoListDao.findById(columns);
+        list = userInfoListDao.findById(columns);
         db.close();
         homeDBHelper.close();
 

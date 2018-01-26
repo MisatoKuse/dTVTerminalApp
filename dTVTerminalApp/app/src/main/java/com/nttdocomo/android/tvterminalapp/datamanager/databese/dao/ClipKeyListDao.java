@@ -9,7 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,7 +85,7 @@ public class ClipKeyListDao {
         Cursor cursor;
         try {
             cursor = db.query(
-                    getTableName(type),
+                    DBUtils.getClipKeyTableName(type),
                     strings,
                     selection,
                     args,
@@ -124,7 +124,7 @@ public class ClipKeyListDao {
      */
     public long insert(final TABLE_TYPE type, final ContentValues values) {
         DTVTLogger.debug("Insert Data");
-        return db.insert(getTableName(type), null, values);
+        return db.insert(DBUtils.getClipKeyTableName(type), null, values);
     }
 
     /**
@@ -144,7 +144,7 @@ public class ClipKeyListDao {
      */
     public int delete(final TABLE_TYPE type) {
         DTVTLogger.debug("Delete Data : " + type);
-        return db.delete(getTableName(type), null, null);
+        return db.delete(DBUtils.getClipKeyTableName(type), null, null);
     }
 
     /**
@@ -158,24 +158,6 @@ public class ClipKeyListDao {
     }
 
     /**
-     * テーブル名取得(type指定).
-     * @param type テーブルの種類(TV or VOD)
-     * @return SQLiteDatabaseクラスの戻り値(削除されたレコード数)
-     */
-    private String getTableName(final TABLE_TYPE type) {
-        String tableName = null;
-        switch (type) {
-            case TV:
-                tableName = DBConstants.TV_CLIP_KEY_LIST_TABLE_NAME;
-                break;
-            case VOD:
-                tableName = DBConstants.VOD_CLIP_KEY_LIST_TABLE_NAME;
-                break;
-        }
-        return tableName;
-    }
-
-    /**
      * 条件に一致する行を削除する.
      *
      * @param tableType テーブル種別(TV/VOD)
@@ -185,6 +167,6 @@ public class ClipKeyListDao {
      */
     public int deleteRowData(final TABLE_TYPE tableType, final String query, final String[] columns) {
         DTVTLogger.debug("Delete Row : " + tableType);
-        return db.delete(getTableName(tableType), query, columns);
+        return db.delete(DBUtils.getClipKeyTableName(tableType), query, columns);
     }
 }

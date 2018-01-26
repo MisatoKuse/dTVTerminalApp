@@ -9,7 +9,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.text.TextUtils;
 
-import com.nttdocomo.android.tvterminalapp.datamanager.WatchListenVideoDataManager;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.WatchListenVideoDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RoleListInsertDataManager;
