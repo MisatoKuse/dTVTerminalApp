@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Home画面用DBManager.
+ * Home画面用DBManager
  */
 public class HomeDataManager {
 
@@ -57,10 +57,7 @@ public class HomeDataManager {
 
         //ホーム画面に必要な列を列挙する
         String[] columns = {JsonConstants.META_RESPONSE_THUMB_448,
-                JsonConstants.META_RESPONSE_AVAIL_START_DATE,
-                JsonConstants.META_RESPONSE_AVAIL_END_DATE,
-                JsonConstants.META_RESPONSE_TITLE,
-                JsonConstants.META_RESPONSE_DISP_TYPE};
+                JsonConstants.META_RESPONSE_TITLE, JsonConstants.META_RESPONSE_DISP_TYPE};
 
         //Daoクラス使用準備
         DBHelper tvClipListDBHelper = new DBHelper(mContext);
@@ -89,10 +86,7 @@ public class HomeDataManager {
 
         //ホーム画面に必要な列を列挙する
         String[] columns = {JsonConstants.META_RESPONSE_THUMB_448,
-                JsonConstants.META_RESPONSE_AVAIL_START_DATE,
-                JsonConstants.META_RESPONSE_AVAIL_END_DATE,
-                JsonConstants.META_RESPONSE_TITLE,
-                JsonConstants.META_RESPONSE_DISP_TYPE};
+                JsonConstants.META_RESPONSE_TITLE, JsonConstants.META_RESPONSE_DISP_TYPE};
 
         //Daoクラス使用準備
         DBHelper vodClipListDBHelper = new DBHelper(mContext);
@@ -151,9 +145,7 @@ public class HomeDataManager {
         }
 
         //ホーム画面に必要な列を列挙する
-        String[] columns = {RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_TITLE,
-                RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_STARTVIEWING,
-                RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CTPICURL1};
+        String[] columns = {RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_TITLE, RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CTPICURL1};
 
         //Daoクラス使用準備
         DBHelper recommendChListDBHelper = new DBHelper(mContext);
@@ -181,9 +173,7 @@ public class HomeDataManager {
         }
 
         //ホーム画面に必要な列を列挙する
-        String[] columns = {RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_TITLE,
-                RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_STARTVIEWING,
-                RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CTPICURL1};
+        String[] columns = {RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_TITLE, RecommendVideoXmlParser.RECOMMENDVIDEO_LIST_CTPICURL1};
 
         //Daoクラス使用準備
         DBHelper recommendVdListDBHelper = new DBHelper(mContext);
@@ -216,6 +206,7 @@ public class HomeDataManager {
                 JsonConstants.META_RESPONSE_SEARCH_OK, JsonConstants.META_RESPONSE_CRID,
                 JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_EVENT_ID,
                 JsonConstants.META_RESPONSE_TITLE_ID, JsonConstants.META_RESPONSE_R_VALUE,
+                JsonConstants.META_RESPONSE_AVAIL_START_DATE, JsonConstants.META_RESPONSE_AVAIL_END_DATE,
                 JsonConstants.META_RESPONSE_DISP_TYPE, JsonConstants.META_RESPONSE_CONTENT_TYPE,
                 JsonConstants.META_RESPONSE_DTV, JsonConstants.META_RESPONSE_TV_SERVICE,
                 JsonConstants.META_RESPONSE_DTV_TYPE};
@@ -280,6 +271,7 @@ public class HomeDataManager {
                 JsonConstants.META_RESPONSE_SEARCH_OK, JsonConstants.META_RESPONSE_CRID,
                 JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_EVENT_ID,
                 JsonConstants.META_RESPONSE_TITLE_ID, JsonConstants.META_RESPONSE_R_VALUE,
+                JsonConstants.META_RESPONSE_AVAIL_START_DATE, JsonConstants.META_RESPONSE_AVAIL_END_DATE,
                 JsonConstants.META_RESPONSE_DISP_TYPE, JsonConstants.META_RESPONSE_CONTENT_TYPE,
                 JsonConstants.META_RESPONSE_DTV, JsonConstants.META_RESPONSE_DTV_TYPE,
                 JsonConstants.META_RESPONSE_TV_SERVICE};

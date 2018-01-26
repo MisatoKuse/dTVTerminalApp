@@ -16,154 +16,88 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-/**
- * 日時関連の共通処理を記載する.
- */
 public class DateUtils {
 
-    /**
-     * Context.
-     */
     private Context mContext = null;
 
-    /**
-     * VodClipList取得日付キー.
-     */
+    //VodClipList取得日付キー
     public static final String VOD_LAST_INSERT = "VodLastInsert";
 
-    /**
-     * TV_LAST_INSERT.
-     */
+    //TV_LAST_INSERT
     public static final String TV_LAST_INSERT = "TvLastInsert";
 
-    /**
-     * DailyRankList取得日付キー.
-     */
+    //DailyRankList取得日付キー
     public static final String DAILY_RANK_LAST_INSERT = "DailyRankLastInsert";
 
-    /**
-     * ChannelList取得日付キー.
-     */
+    //ChannelList取得日付キー
     public static final String CHANNEL_LAST_INSERT = "ChannelLastInsert";
 
-    /**
-     * おすすめ番組取得日付キー.
-     */
+    //おすすめ番組取得日付キー
     public static final String RECOMMEND_CH_LAST_INSERT = "RecommendChLastInsert";
 
-    /**
-     * おすすめビデオ取得日付キー.
-     */
+    //おすすめビデオ取得日付キー
     public static final String RECOMMEND_VD_LAST_INSERT = "RecommendVdLastInsert";
 
-    /**
-     * TvScheduleList取得日付キー.
-     */
+    //TvScheduleList取得日付キー
     public static final String TV_SCHEDULE_LAST_INSERT = "TvScheduleLastInsert";
 
-    /**
-     * UserInfo取得日付キー.
-     */
+    //UserInfo取得日付キー
     public static final String USER_INFO_LAST_INSERT = "UserInfoLastInsert";
 
-    /**
-     * WeeklyRank取得日付キー.
-     */
+    //WeeklyRank取得日付キー
     public static final String WEEKLY_RANK_LAST_INSERT = "WeeklyRankLastInsert";
 
-    /**
-     * VideoRank取得日付キー.
-     */
+    //VideoRank取得日付キー
     public static final String VIDEO_RANK_LAST_INSERT = "VideoRankLastInsert";
 
-    /**
-     * おすすめdTV取得日付キー.
-     */
+    //おすすめdTV取得日付キー
     public static final String RECOMMEND_DTV_LAST_INSERT = "RecommendDTVLastInsert";
 
-    /**
-     * おすすめdTV取得日付キー.
-     */
+    //おすすめdTV取得日付キー
     public static final String RECOMMEND_DCHANNEL_LAST_INSERT = "RecommendDCHLastInsert";
 
-    /**
-     * おすすめdTV取得日付キー.
-     */
+    //おすすめdTV取得日付キー
     public static final String RECOMMEND_DANIME_LAST_INSERT = "RecommendDAnimeLastInsert";
 
-    /**
-     * 視聴中ビデオ一覧日付キー.
-     */
+    //視聴中ビデオ一覧日付キー
     public static final String WATCHING_VIDEO_LIST_LAST_INSERT = "WatchingVideoListLastInsert";
 
-    /**
-     * 購入済みVOD取得日付キー.
-     */
+    //購入済みVOD取得日付キー
     public static final String RENTAL_VOD_LAST_UPDATE = "RentalVodLastUpdate";
 
-    /**
-     * 購入済みチャンネル取得日付キー.
-     */
+    //購入済みチャンネル取得日付キー
     public static final String RENTAL_CHANNEL_LAST_UPDATE = "RentalChannelLastUpdate";
 
-    /**
-     * チャンネル取得日付キー.
-     */
+    //チャンネル取得日付キー
     public static final String CHANNEL_LAST_UPDATE = "ChannelLastUpdate";
 
-    /**
-     * ロールリスト取得日付キー.
-     */
+    //ロールリスト取得日付キー
     public static final String ROLELIST_LAST_UPDATE = "RoleListLastUpdate";
 
-    /**
-     * 番組表取得日付キー.
-     */
+    //番組表取得日付キー
     public static final String TVSCHEDULE_LAST_UPDATE = "TvScheduleLastUpdate";
 
-    /**
-     * レンタル一覧取得日付キー.
-     */
+    //レンタル一覧取得日付キー
     public static final String RENTAL_LIST_LAST_INSERT = "RentalListLastInsert";
 
-    /**
-     * SharedPreferences用データ.
-     */
+    //SharedPreferences用データ
     private static final String DATA_SAVE = "DataSave";
 
-    /**
-     * 日付フォーマット.
-     */
+    //日付フォーマット
     private static final String DATE_PATTERN = "yyyy/MM/dd HH:mm:ss";
-
-    /**
-     * 日付フォーマット.
-     */
     private static final String DATE_PATTERN_RECORDING_RESERVATION = "M/d (E) HH:mm";
 
-    /**
-     * 日付フォーマット.
-     */
+    //日付フォーマット
     private static final String DATE_YYYY_MM_DD = "yyyy/MM/dd";
-
-    /**
-     * 日付フォーマット.
-     */
     private static final String DATE_YYYY_MM_DD_HH_MM_SS = "yyyyMMddHHmmss";
 
-    /**
-     * DB保存期限.
-     */
+    //DB保存期限
     private static final int LIMIT_HOUR = 1;
 
-    /**
-     * 曜日配列.
-     */
+    // 曜日配列
     private static final String[] STRING_DAY_OF_WEEK = {null, "日", "月", "火", "水", "木", "金", "土"};
 
-    /**
-     * マイ番組表取得日付キー.
-     */
+    //マイ番組表取得日付キー
     public static final String MY_CHANNEL_LIST_LAST_INSERT = "MyChannelListLastInsert";
 
     /**
@@ -172,64 +106,38 @@ public class DateUtils {
     public static final String VIDEO_GENRE_LIST_LAST_INSERT = "video_genre_list_last_insert";
 
     /**
-     * 日曜日の固定値.
+     * 曜日の固定値.
      */
     public static final int DAY_OF_WEEK_SUNDAY = 1;
-    /**
-     * 月曜日の固定値.
-     */
     public static final int DAY_OF_WEEK_MONDAY = 2;
-    /**
-     * 火曜日の固定値.
-     */
     public static final int DAY_OF_WEEK_TUESDAY = 3;
-    /**
-     * 水曜日の固定値.
-     */
     public static final int DAY_OF_WEEK_WEDNESDAY = 4;
-    /**
-     * 木曜日の固定値.
-     */
     public static final int DAY_OF_WEEK_THURSDAY = 5;
-    /**
-     * 金曜日の固定値.
-     */
     public static final int DAY_OF_WEEK_FRIDAY = 6;
-    /**
-     * 土曜日の固定値.
-     */
     public static final int DAY_OF_WEEK_SATURDAY = 7;
 
     /**
      * 1日のエポック秒.
      */
     public static final long EPOCH_TIME_ONE_DAY = 86400;
-
-    /**
-     * 1時間のエポック秒.
-     */
     public static final long EPOCH_TIME_ONE_HOUR = 3600;
-
-    /**
-     * 1週間のエポック秒.
-     */
-    public static final long EPOCH_TIME_ONE_WEEK = EPOCH_TIME_ONE_DAY * 7;
 
     /**
      * コンテキスト.
      *
-     * @param mContext Context
+     * @param mContext
      */
-    public DateUtils(final Context mContext) {
+    public DateUtils(Context mContext) {
         this.mContext = mContext;
     }
 
     /**
      * 現在日時に1日加算した後に永続化.
      *
-     * @param key 取得日付キー
+     * @param key
      */
-    public void addLastDate(final String key) {
+    public void addLastDate(
+            String key) {
 
         // TODO:DBには取得日時を格納しておき、現在時刻よりもデータが未来の場合,キャッシュ切れと判断すべき
         // TODO:UTCタイムスタンプで良い.無駄に複雑化させているだけ.
@@ -247,7 +155,7 @@ public class DateUtils {
      * @param key   name
      * @param value value
      */
-    private void saveDataToSharePre(final String key, final String value) {
+    private void saveDataToSharePre(String key, String value) {
         //データ永続化
         SharedPreferences data = mContext.getSharedPreferences(DATA_SAVE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = data.edit();
@@ -258,9 +166,10 @@ public class DateUtils {
     /**
      * 現在日時に1日加算した後に永続化.
      *
-     * @param key 取得日付キー
+     * @param key
      */
-    public void addLastProgramDate(final String key) {
+    public void addLastProgramDate(
+            String key) {
 
         // TODO:DBには取得日時を格納しておき、現在時刻よりもデータが未来の場合,キャッシュ切れと判断すべき
         // TODO:文字列でなくUTCのタイムスタンプでよい.無駄に複雑にしている.
@@ -276,7 +185,7 @@ public class DateUtils {
      * @param key ファイル名(KEY)
      * @return date 前回取得した時刻を返却
      */
-    public String getLastDate(final String key) {
+    public String getLastDate(String key) {
         SharedPreferences data = mContext.getSharedPreferences(DATA_SAVE, Context.MODE_PRIVATE);
         return data.getString(key, "");
     }
@@ -284,10 +193,10 @@ public class DateUtils {
     /**
      * 日付が期限内か判定.
      *
-     * @param str 日付
-     * @return 期限内かの判定値
+     * @param str
+     * @return
      */
-    public boolean isBeforeLimitDate(final String str) {
+    public boolean isBeforeLimitDate(String str) {
         // TODO:DBには取得日時を格納しておき、現在時刻よりもデータが未来の場合,キャッシュ切れと判断すべき
         // TODO:文字列でなくUTCのタイムスタンプでよい.無駄に複雑にしている.
         if (str == null) {
@@ -318,7 +227,7 @@ public class DateUtils {
      * @param lastStr 前回取得できた日付
      * @return 現在日付と前回の比較の判定
      */
-    public boolean isBeforeProgramLimitDate(final String lastStr) {
+    public boolean isBeforeProgramLimitDate(String lastStr) {
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_YYYY_MM_DD, Locale.JAPAN);
         //日付の比較
         Calendar calendar = Calendar.getInstance();
@@ -340,27 +249,22 @@ public class DateUtils {
 
     /**
      * エポック秒を YYYY/MM/DD かつString値に変換.
-     * @param epochTime エポック秒の日時
-     * @return 変換した"YYYY/MM/DD"のString値
      */
-    public static String formatEpochToString(final long epochTime) {
+    public static String formatEpochToString(long epochTime) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_PATTERN);
         return dateFormat.format(new Date(epochTime * 1000));
     }
 
     /**
      * エポック秒を yyyyMMddHHmmss かつString値に変換.
-     * @param epochTime エポック秒の日時
-     * @return 変換後の"yyyyMMddHHmmss"のString値
      */
-    public static String formatEpochToStringOpeLog(final long epochTime) {
+    public static String formatEpochToStringOpeLog(long epochTime) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_YYYY_MM_DD_HH_MM_SS);
         return dateFormat.format(new Date(epochTime * 1000));
     }
 
     /**
      * 現在日時エポック秒を取得.
-     * @return 現在日時のエポック秒
      */
     public static long getNowTimeFormatEpoch() {
         Calendar nowTime = Calendar.getInstance();
@@ -369,7 +273,6 @@ public class DateUtils {
 
     /**
      * 現在日の0時00分00秒をエポック秒で取得.
-     * @return エポック秒に変換した現在日の0時00分00秒
      */
     public static long getTodayStartTimeFormatEpoch() {
         Calendar nowTime = Calendar.getInstance();
@@ -395,20 +298,23 @@ public class DateUtils {
 
     /**
      * 指定日（エポック秒：秒単位）から曜日を取得.
-     * @param epochTime 指定日（エポック秒：秒単位）
+     *
+     * @param epochTime
      * @return 日:1 ～ 土:7
      */
-    public static int getDayOfWeek(final long epochTime) {
+    public static int getDayOfWeek(long epochTime) {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(epochTime * 1000);
         return cal.get(Calendar.DAY_OF_WEEK);
     }
+
     /**
      * 月曜日までの日数を取得.
-     * @param dayOfWeek 日時(int型)
-     * @return 月曜日までの日数
+     *
+     * @param dayOfWeek
+     * @return
      */
-    public static int getNumberOfDaysUntilMonday(final int dayOfWeek) {
+    public static int getNumberOfDaysUntilMonday(int dayOfWeek) {
         if (DateUtils.DAY_OF_WEEK_MONDAY < dayOfWeek) {
             return (DateUtils.DAY_OF_WEEK_MONDAY + 7) - dayOfWeek;
         } else {
@@ -418,10 +324,11 @@ public class DateUtils {
 
     /**
      * 日曜日までの日数を取得.
-     * @param dayOfWeek 日時(int型)
-     * @return 日曜日までの日数
+     *
+     * @param dayOfWeek
+     * @return
      */
-    public static int getNumberOfDaysUntilSunday(final int dayOfWeek) {
+    public static int getNumberOfDaysUntilSunday(int dayOfWeek) {
         if (DateUtils.DAY_OF_WEEK_SUNDAY < dayOfWeek) {
             return (DateUtils.DAY_OF_WEEK_SUNDAY + 7) - dayOfWeek;
         } else {
@@ -431,10 +338,8 @@ public class DateUtils {
 
     /**
      * 引数の日付(エポック秒)を M/d (DAY_OF_WEEK) hh:mm のString型に変換(録画予約一覧ListItem用).
-     * @param time 引数の日付(エポック秒)
-     * @return 変換後の日付
      */
-    public static String getRecordShowListItem(final long time) {
+    public static String getRecordShowListItem(long time) {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(time * 1000);
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN_RECORDING_RESERVATION);
@@ -446,20 +351,16 @@ public class DateUtils {
 
     /**
      * 引数の曜日（int型）をStringに変換する.
-     * @param dayOfWeek 引数の曜日（int型）
-     * @return Stringに変換した引数の曜日
      */
-    public static String getStringDayOfWeek(final int dayOfWeek) {
+    public static String getStringDayOfWeek(int dayOfWeek) {
         return STRING_DAY_OF_WEEK[dayOfWeek];
     }
 
     /**
      * 録画予約開始時間の算出.
      * 引数日時（エポック秒）の0時00分00秒からの時間を算出
-     * @param startTime 録画予約開始時間
-     * @return 算出後の日時
      */
-    public static long getCalculationRecordingReservationStartTime(final long startTime) {
+    public static long getCalculationRecordingReservationStartTime(long startTime) {
         return startTime % EPOCH_TIME_ONE_DAY;
     }
 
@@ -468,7 +369,7 @@ public class DateUtils {
      *
      * @param context コンテキスト
      */
-    public static void clearDataSave(final Context context) {
+    public static void clearDataSave(Context context) {
         SharedPreferences data = context.getSharedPreferences(DATA_SAVE, Context.MODE_PRIVATE);
         data.edit().clear().apply();
     }
@@ -476,16 +377,16 @@ public class DateUtils {
     /**
      * エポック秒に変換する.
      *
-     * @param strDate "yyyy/MM/dd HH:mm:ss"形式の日時
-     * @return エポック秒に変換後の値
+     * @param strDate
+     * @return
      */
-    public static long getEpochTime(final String strDate) {
+    public static long getEpochTime(String strDate) {
         long epochTime = 0;
         if (null != strDate) {
+            // TODO:非推奨API利用.要修正.
+            Date lm = new Date(strDate);
             try {
-                SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN);
-                Date formatDate = sdf.parse(strDate);
-                epochTime = (formatDate.getTime()) / 1000;
+                epochTime = lm.getTime();
             } catch (Exception e) {
                 DTVTLogger.error("response is null");
             }
