@@ -40,7 +40,12 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
                 mClipList = list;
             }
         } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
+            //TODO:Sprint10でDB使用を一時停止
+            //WEBAPIを取得できなかった時はDBのデータを使用
+//            List<Map<String, String>> vodClipList = new ArrayList<>();
+//            HomeDataManager homeDataManager = new HomeDataManager(mContext);
+//            vodClipList = homeDataManager.selectVodClipHomeData();
+//            sendVodClipListData(vodClipList);
             if (null != apiDataProviderCallback) {
                 apiDataProviderCallback.vodClipListCallback(null);
             }
@@ -52,7 +57,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
         DTVTLogger.start();
         super.onVodClipKeyListJsonParsed(clipKeyListResponse);
         // コールバック判定
-        if(mClipList != null) {
+        if (mClipList != null) {
             sendVodClipListData(mClipList.getVcList());
         }
         DTVTLogger.end();
@@ -91,7 +96,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
     public void getClipData(final int pagerOffset) {
         mClipList = null;
         // クリップキー一覧を取得
-        if(mRequiredClipKeyList) {
+        if (mRequiredClipKeyList) {
             getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
         }
         //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
@@ -107,7 +112,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
      *
      * @param list Vodクリップリスト
      */
-    public void sendVodClipListData(final List<Map<String, String>> list) {
+    private void sendVodClipListData(final List<Map<String, String>> list) {
         //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
         apiDataProviderCallback.vodClipListCallback(setVodClipContentData(list));
     }
@@ -165,7 +170,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
             requestData.setIsNotify(dispType, contentsType, linearEndDate, tvService, dTv);
             clipContentInfo.setRequestData(requestData);
 
-            if(mRequiredClipKeyList) {
+            if (mRequiredClipKeyList) {
                 // クリップ状態をコンテンツリストに格納
                 clipContentInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv,
                         clipContentInfo.getCrid(), clipContentInfo.getServiceId(),
@@ -220,9 +225,9 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
     /**
      * Vodクリップ一覧データをDBに格納する.
      *
-     * @param vodClipList
+     * @param vodClipList Vodクリップ一覧データ
      */
-    private void setStructDB(VodClipList vodClipList) {
+    private void setStructDB(final VodClipList vodClipList) {
         //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
 //        DateUtils dateUtils = new DateUtils(mContext);
 //        dateUtils.addLastDate(VOD_LAST_INSERT);
