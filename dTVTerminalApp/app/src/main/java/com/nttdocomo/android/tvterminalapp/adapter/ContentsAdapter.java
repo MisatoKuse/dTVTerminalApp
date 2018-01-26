@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -65,7 +66,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     private final static int THUMBNAIL_MARGINBOTTOM = 10;
     //status　margintop
     private final static int STATUS_MARGINTOP17 = 17;
-    private final static int STATUS_MARGINTOP12 = 12;
+    private final static int STATUS_MARGINTOP10 = 10;
 
     //番組タイトル margintop
     private final static int TITLE_MARGINTOP21 = 21;
@@ -220,7 +221,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 view.findViewById(R.id.item_common_result_show_status_area).setLayoutParams(layoutParamsClip);
                 break;
             case TYPE_RENTAL_RANK:
-                textMargin = STATUS_MARGINTOP12;
+                textMargin = STATUS_MARGINTOP10;
                 setTextMargin(textMargin, holder, view);
                 layoutParamsClip.addRule(RelativeLayout.ALIGN_PARENT_END, R.id.parent_relative_layout);
                 layoutParamsClip.addRule(RelativeLayout.CENTER_VERTICAL);
@@ -288,7 +289,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             layoutParams.setMarginEnd(THUMBNAIL_MARGIN0 * (int) density);
         }
         view.findViewById(R.id.item_common_result_contents).setLayoutParams(layoutParams);
-        holder.tv_time.setTextSize(TIME_TEXT_SIZE);
+        holder.tv_time.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TIME_TEXT_SIZE);
     }
 
     /**
@@ -326,7 +327,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         view.findViewById(R.id.item_common_result_contents).setLayoutParams(layoutParams);
 
         //時間表示のフォントサイズを指定する
-        holder.tv_time.setTextSize(TIME_TEXT_SIZE);
+        holder.tv_time.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TIME_TEXT_SIZE);
     }
 
     /**
@@ -423,7 +424,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.iv_thumbnail.setImageBitmap(thumbnailImage);
             }
         } else {
-            holder.rl_thumbnail.setVisibility(View.GONE);
+            //URLがない場合はサムネイル取得失敗の画像を表示
+            holder.iv_thumbnail.setBackgroundResource(R.drawable.error_list);
         }
     }
 
