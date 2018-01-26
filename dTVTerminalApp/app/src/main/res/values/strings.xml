@@ -110,8 +110,8 @@
     <string-array name="recommend_list_tab_names">
         <item>テレビ</item>
         <item>ビデオ</item>
-        <item>dTVチャンネル</item>
         <item>dTV</item>
+        <item>dTVチャンネル</item>
         <item>dアニメ</item>
     </string-array>
     <string name="recording_reservation_list_title">録画予約</string>

@@ -226,11 +226,11 @@ public class DBUtils {
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO:
                 tableName = DBConstants.RECOMMEND_VIDEO_LIST_TABLE_NAME;
                 break;
-            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL:
-                tableName = DBConstants.RECOMMEND_LIST_DCHANNEL_TABLE_NAME;
-                break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV:
                 tableName = DBConstants.RECOMMEND_LIST_DTV_TABLE_NAME;
+                break;
+            case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL:
+                tableName = DBConstants.RECOMMEND_LIST_DCHANNEL_TABLE_NAME;
                 break;
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME:
                 tableName = DBConstants.RECOMMEND_LIST_DANIME_TABLE_NAME;
