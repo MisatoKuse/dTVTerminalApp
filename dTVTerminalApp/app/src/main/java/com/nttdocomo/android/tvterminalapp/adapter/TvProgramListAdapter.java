@@ -61,8 +61,6 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     private TvProgramListActivity mContext = null;
     //ディスプレイ幅さ
     private int mScreenWidth = 0;
-    //ディスプレイ高さ
-    private int mScreenHeight = 0;
     //サムネイル取得プロバイダー
     private ThumbnailProvider mThumbnailProvider = null;
     //現在時刻
@@ -93,7 +91,6 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         this.mProgramList = mProgramList;
         this.mContext = (TvProgramListActivity) mContext;
         mScreenWidth = mContext.getResources().getDisplayMetrics().widthPixels;
-        mScreenHeight = mContext.getResources().getDisplayMetrics().heightPixels;
         UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
         mAgeReq = userInfoDataProvider.getUserAge();
         mThumbnailProvider = new ThumbnailProvider(mContext);
@@ -245,7 +242,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 }
                 itemViewHolder.setUsing();
                 holder.layout.addView(itemViewHolder.mView);
-                itemViewHolder.mThumbnail.setImageResource(R.drawable.test_image);
+                itemViewHolder.mThumbnail.setImageResource(R.mipmap.error_ch_mini);
                 //URLによって、サムネイル取得
                 String thumbnailURL = itemSchedule.get(i).getImageUrl();
                 if (!TextUtils.isEmpty(thumbnailURL)) {
