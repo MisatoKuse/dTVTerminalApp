@@ -1,59 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/background_dark">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentEnd="true"
+    android:layout_marginStart="@dimen/item_clip_list_dtelevi_layout_margin">
 
-	<RelativeLayout
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:layout_marginBottom="10dp"
-		android:layout_marginLeft="16dp"
-		android:layout_marginTop="10dp">
+    <ImageView
+        android:id="@+id/item_clip_list_dtelevi_iv_clip_thumbnail"
+        android:layout_width="@dimen/item_clip_list_dtelevi_thrumnail_imageview_width"
+        android:layout_height="@dimen/item_clip_list_dtelevi_thrumnail_imageview_height"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:background="@mipmap/loading" />
 
-		<ImageView
-			android:id="@+id/iv_clip_thumbnail"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_centerVertical="true"
-			android:background="@mipmap/loading"/>
+    <ImageView
+        android:id="@+id/item_clip_list_dtelevi_iv_tv_clip"
+        android:layout_width="@dimen/item_clip_list_dtelevi_imageview_width"
+        android:layout_height="@dimen/item_clip_list_dtelevi_imageview_height"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/item_clip_list_dtelevi_imageview_margin_right"
+        android:background="@color/item_clip_list_dtelevi_imageview_background" />
 
-		<Button
-			android:id="@+id/bt_tv_clip"
-			android:layout_width="25dp"
-			android:layout_height="25dp"
-			android:layout_alignParentRight="true"
-			android:layout_centerVertical="true"
-			android:layout_marginRight="10dp"
-			android:background="@android:color/white"/>
+    <TextView
+        android:id="@+id/item_clip_list_dtelevi_tv_des"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/item_clip_list_dtelevi_textview_margin_left"
+        android:layout_marginEnd="@dimen/item_clip_list_dtelevi_textview_margin_right"
+        android:layout_toStartOf="@id/item_clip_list_dtelevi_iv_tv_clip"
+        android:layout_toEndOf="@id/item_clip_list_dtelevi_iv_clip_thumbnail"
+        android:textColor="@color/item_clip_list_dtelevi_textview_background" />
 
-		<TextView
-			android:id="@+id/tv_des"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_centerVertical="true"
-			android:layout_marginLeft="10dp"
-			android:layout_marginRight="10dp"
-			android:layout_toLeftOf="@id/bt_tv_clip"
-			android:layout_toRightOf="@id/iv_clip_thumbnail"
-			android:text="プリズン・ブレイク シーズン1第1話 マイケル"
-			android:textColor="@android:color/white"
-			/>
-		<TextView
-			android:id="@+id/tv_time_des"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_centerVertical="true"
-			android:layout_marginLeft="10dp"
-			android:layout_marginRight="10dp"
-			android:layout_toLeftOf="@id/bt_tv_clip"
-			android:layout_toRightOf="@id/iv_clip_thumbnail"
-			android:layout_above="@+id/tv_des"
-			android:text="8/8(火)21:00"
-			android:textColor="@android:color/white"
-			/>
+    <TextView
+        android:id="@+id/item_clip_list_dtelevi_tv_time_des"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/item_clip_list_dtelevi_tv_des"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/item_clip_list_dtelevi_textview_margin_left"
+        android:layout_marginEnd="@dimen/item_clip_list_dtelevi_textview_margin_right"
+        android:layout_toStartOf="@id/item_clip_list_dtelevi_iv_tv_clip"
+        android:layout_toEndOf="@id/item_clip_list_dtelevi_iv_clip_thumbnail"
+        android:textColor="@color/item_clip_list_dtelevi_textview_background" />
 
-
-	</RelativeLayout>
 
 </RelativeLayout>
+
