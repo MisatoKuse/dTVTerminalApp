@@ -54,6 +54,7 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchC
 import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -218,7 +219,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             setStructDB(list);
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
-            List<Map<String, String>> scheduleList = new ArrayList<>();
+            List<Map<String, String>> scheduleList;
             HomeDataManager homeDataManager = new HomeDataManager(mContext);
             scheduleList = homeDataManager.selectTvScheduleListHomeData();
             sendTvScheduleListData(scheduleList);
@@ -232,7 +233,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             setStructDB(list);
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
-            List<Map<String, String>> dailyRankList = new ArrayList<>();
+            List<Map<String, String>> dailyRankList;
             HomeDataManager homeDataManager = new HomeDataManager(mContext);
             dailyRankList = homeDataManager.selectDailyRankListHomeData();
             sendDailyRankListData(dailyRankList);
@@ -246,7 +247,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             setStructDB(list);
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
-            List<Map<String, String>> videoRankList = new ArrayList<>();
+            List<Map<String, String>> videoRankList;
             RankingTopDataManager rankingTopDataManager = new RankingTopDataManager(mContext);
             videoRankList = rankingTopDataManager.selectVideoRankListData();
             sendVideoRankListData(videoRankList);
@@ -289,9 +290,11 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if (channelLists != null && channelLists.size() > 0) {
             ChannelList list = channelLists.get(0);
             setStructDB(list);
-            //TODO:取得したデータをHome画面で使用する場合はここに記載
         } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定(不要な場合は削除)
+            //WEBAPIを取得できなかった時はDBのデータを使用
+            HomeDataManager homeDataManager = new HomeDataManager(mContext);
+            List<Map<String, String>> channelList = homeDataManager.selectChannelListHomeData();
+            sendChannelListData(channelList);
         }
     }
 
@@ -372,6 +375,13 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
          * @param recVdList おすすめビデオリスト
          */
         void recommendVideoCallback(List<ContentsData> recVdList);
+
+        /**
+         * NOW ON AIR用チャンネル一覧コールバック.
+         *
+         * @param channelList チャンネル一覧
+         */
+        void channelListCallback(ChannelList channelList);
     }
 
     /**
@@ -443,13 +453,13 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 //クリップキー一覧(今日のテレビランキングにまとめられてるので省略するか検討中)
                 //TVクリップ一覧
                 List<Map<String, String>> tvClipList = getTvClipListData();
-                if (tvClipList != null && tvClipList.size() > 0) {
+                if (tvClipList.size() > 0) {
                     sendTvClipListData(tvClipList);
                 }
 
                 //VODクリップ一覧
                 List<Map<String, String>> vodClipList = getVodClipListData();
-                if (vodClipList != null && vodClipList.size() > 0) {
+                if (vodClipList.size() > 0) {
                     sendVodClipListData(vodClipList);
                 }
 
@@ -530,6 +540,15 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     }
 
     /**
+     * チャンネル一覧をHomeActivtyに送る.
+     *
+     * @param list チャンネル一覧
+     */
+    private void sendChannelListData(final List<Map<String, String>> list) {
+        mApiDataProviderCallback.channelListCallback(setHomeChannelData(list));
+    }
+
+    /**
      * 取得したリストマップをContentsDataクラスへ入れる.
      * @param mapList コンテンツリストデータ
      * @param rankFlag ランキングのコンテンツか否か
@@ -549,6 +568,9 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             contentInfo.setTime(mapList.get(i).get(JsonConstants.META_RESPONSE_DISPLAY_START_DATE));
             contentInfo.setTitle(mapList.get(i).get(JsonConstants.META_RESPONSE_TITLE));
             contentInfo.setThumURL(mapList.get(i).get(JsonConstants.META_RESPONSE_THUMB_448));
+            contentInfo.setLinearStartDate(mapList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_START_DATE));
+            contentInfo.setLinearEndDate(mapList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_END_DATE));
+            contentInfo.setServiceId(mapList.get(i).get(JsonConstants.META_RESPONSE_SERVICE_ID));
             String thumbUrl = contentInfo.getThumURL();
             String title = contentInfo.getTitle();
             if (title == null || title.length() < 1) {
@@ -563,6 +585,24 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         }
 
         return contentsDataList;
+    }
+
+    /**
+     * 取得したリストマップをChannelListクラスへ入れる.
+     *
+     * @param list チャンネル一覧データ
+     * @return ChannelListデータ
+     */
+    private ChannelList setHomeChannelData(final List<Map<String, String>> list) {
+        HashMap<String, String> hashMap = new HashMap<>();
+        List<HashMap<String, String>> hashMapList = new ArrayList<>();
+        for (Map<String, String> map : list) {
+            hashMap.putAll(map);
+            hashMapList.add(hashMap);
+        }
+        ChannelList channelList = new ChannelList();
+        channelList.setChannelList(hashMapList);
+        return channelList;
     }
 
     /**
@@ -765,7 +805,13 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     public void getChannelList(final int limit, final int offset, final String filter, final int type) {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.CHANNEL_LAST_UPDATE);
-        if (TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate)) {
+        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate)) {
+            //データをDBから取得する
+            HomeDataManager homeDataManager = new HomeDataManager(mContext);
+            List<Map<String, String>> channelList = homeDataManager.selectChannelListHomeData();
+            sendChannelListData(channelList);
+        } else {
+            //通信クラスにデータ取得要求を出す
             dateUtils.addLastProgramDate(DateUtils.CHANNEL_LAST_UPDATE);
             ChannelWebClient mChannelList = new ChannelWebClient(mContext);
             mChannelList.getChannelApi(limit, offset, filter, JsonConstants.DISPLAY_TYPE[type], (ChannelWebClient.ChannelJsonParserCallback) this);
@@ -916,6 +962,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      */
     private void setStructDB(final ChannelList channelList) {
         mChannelList = channelList;
+        mApiDataProviderCallback.channelListCallback(channelList);
         //DB保存
         Handler handler = new Handler();
         try {

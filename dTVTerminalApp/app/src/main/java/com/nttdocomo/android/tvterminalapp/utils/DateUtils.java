@@ -501,7 +501,34 @@ public class DateUtils {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            epochTime = gmt.getTime();
+            if (gmt != null) {
+                epochTime = gmt.getTime();
+            }
+        }
+        return epochTime;
+    }
+
+    /**
+     * エポック秒に変換する(yyyyMMddHHmmss).
+     *
+     * @param strDate yyyyMMddHHmmss形式のString
+     * @return エポック秒
+     */
+    public static long getEpochTimeLink(final String strDate) {
+        long epochTime = 0;
+        if (null != strDate) {
+            SimpleDateFormat formatter = new SimpleDateFormat(DATE_YYYY_MM_DD_HH_MM_SS);
+            //APIレスポンスの値がJSTとのこと
+            formatter.setTimeZone(TimeZone.getTimeZone("JST"));
+            Date gmt = null;
+            try {
+                gmt = formatter.parse(strDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            if (gmt != null) {
+                epochTime = gmt.getTime();
+            }
         }
         return epochTime;
     }

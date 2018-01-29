@@ -13,6 +13,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
@@ -26,6 +27,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -1105,8 +1107,9 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      *
      * @param content 表示内容
      */
-    private void setThrumnailText(String content) {
+    private void setThrumnailText(final String content) {
         mThumbnailBtn.setVisibility(View.VISIBLE);
+        setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
         TextView startAppIcon = findViewById(R.id.view_contents_button_text);
         startAppIcon.setVisibility(View.VISIBLE);
         startAppIcon.setText(content);
@@ -1127,7 +1130,17 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             mThumbnail.setTag(url);
             Bitmap bitmap = mThumbnailProvider.getThumbnailImage(mThumbnail, url);
             if (bitmap != null) {
-                mThumbnail.setImageBitmap(bitmap);
+                //縦横比を維持したまま幅100%に拡大縮小
+                DisplayMetrics displaymetrics = new DisplayMetrics();
+                WindowManager wm = getWindowManager();
+                Display display = wm.getDefaultDisplay();
+                display.getMetrics(displaymetrics);
+                float ratio = ((float) displaymetrics.widthPixels / (float) bitmap.getWidth());
+                Matrix matrix = new Matrix();
+                matrix.postScale(ratio, ratio);
+                Bitmap resizeBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
+                        bitmap.getHeight(), matrix, true);
+                mThumbnail.setImageBitmap(resizeBitmap);
             }
         }
     }
@@ -2934,6 +2947,9 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         }
     }
 
+    /**
+     * 外部出力制御リスナー.
+     */
     private static ExternalDisplayHelper.OnDisplayEventListener DISPLAY_EVENT_LISTENER = new ExternalDisplayHelper.OnDisplayEventListener() {
         @Override
         public void onResumeDefaultDisplay() {
@@ -2953,6 +2969,11 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         }
     };
 
+    /**
+     * 外部出力Helperの作成.
+     *
+     * @return 外部出力Helper
+     */
     private ExternalDisplayHelper createExternalDisplayHelper() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             return ExternalDisplayHelper.create(this, DISPLAY_EVENT_LISTENER,
@@ -2962,6 +2983,11 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 .createForCompat(this, DISPLAY_EVENT_LISTENER);
     }
 
+    /**
+     * 外部出力イベントリスナー
+     *
+     * @return イベントリスナー
+     */
     private ExternalDisplayHelper.OnPresentationEventListener createPresentationEventListener() {
 
         return new ExternalDisplayHelper.OnPresentationEventListener() {
