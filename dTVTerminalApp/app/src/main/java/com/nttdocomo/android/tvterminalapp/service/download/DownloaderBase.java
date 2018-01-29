@@ -28,7 +28,6 @@ public abstract class DownloaderBase {
     private boolean mIsPause;
     private boolean mIsCanceled;
     private DownloadListener mDownloadListener;
-    private DownLoadThread mDownLoadThread;
     private int mNotifiedBytes;
     public static final String sDlPrefix = "d_";
 
@@ -85,7 +84,6 @@ public abstract class DownloaderBase {
      */
     protected abstract int calculateTotalBytes();
 
-
     /**
      * ダウンロード開始
      */
@@ -102,10 +100,16 @@ public abstract class DownloaderBase {
         if(null!=mDownloadListener){
             mDownloadListener.onStart(mTotalBytes);
         }
-        if(null==mDownLoadThread){
-            mDownLoadThread = new DownLoadThread();
+        newDl();
+    }
+
+    private void newDl(){
+        try {
+            DownLoadThread dt = new DownLoadThread();
+            dt.start();
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
         }
-        mDownLoadThread.start();
     }
 
     /**
@@ -130,25 +134,6 @@ public abstract class DownloaderBase {
     }
 
     protected void onProgress(int everyTimeBytes){
-//        if(mTotalBytes > 0){
-//            float res = ((float)(everyTimeBytes + mNotifiedBytes)) / ((float)mTotalBytes);
-//            int p = mDownloadParam.getPercentToNotity();
-//            float pp = p * 0.01f;
-//            mDownloadedBytes += everyTimeBytes;
-//            if(mDownloadedBytes==mTotalBytes){
-//                mDownloadListener.onProgress(mTotalBytes, 100);
-//                mNotifiedBytes=0;
-//            }
-//            if (res >= pp) {
-//                float f1 = ((float) mDownloadedBytes);
-//                float f2 = ((float) mTotalBytes);
-//                int ff = (int) ((f1 / f2) * 100);
-//                mDownloadListener.onProgress(mDownloadedBytes, ff);
-//                mNotifiedBytes=0;
-//            } else {
-//                mNotifiedBytes += everyTimeBytes;
-//            }
-//        }
         mDownloadedBytes+=everyTimeBytes;
         if(null!=mDownloadListener && null != mDownloadParam){
             int total = mDownloadParam.getTotalSizeToDl();
@@ -187,7 +172,9 @@ public abstract class DownloaderBase {
 //                cancelImpl();
 //                return;
 //            }
+            //DTVTLogger.start();
             download();
+            //DTVTLogger.end();
         }
     }
 
@@ -202,7 +189,7 @@ public abstract class DownloaderBase {
         if(null!=mDownloadListener){
             mDownloadListener.onResume();
         }
-        mDownLoadThread.start();
+        newDl();
     }
 
     /**
@@ -238,20 +225,6 @@ public abstract class DownloaderBase {
             mIsCanceled=true;
             cancelImpl();
         }
-//        try{
-//            mDownLoadThread.join();
-//        }catch (Exception e){
-//            DTVTLogger.debug("DownloaderBase.cancel, cause=" + e.getCause());
-//        }
-//        String path=getFullFilePath();
-//        if(null!=mDownloadListener){
-//            if(null==path){
-//                mDownloadListener.onFail(DownloadListener.DLError.DLError_ParamError, null);
-//            } else {
-//                mDownloadListener.onCancel(path);
-//            }
-//
-//        }
     }
 
     private String getFullFilePath() {
@@ -366,13 +339,6 @@ public abstract class DownloaderBase {
         }
         return result.get(0);
     }
-
-//    /**
-//     * 機能：
-//     *      １．Download Uiがなくなる場合、必ずこれをコールする
-//     *      ２．Download Uiがない場合、Serviceは閉じる時、必ずこれをコールする
-//     */
-//    public abstract void finishDl();
 
     /**
      * 機能：
