@@ -4,13 +4,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#222222"
+    android:background="@color/tv_program_item_panel_bg"
     android:baselineAligned="false"
-    android:orientation="horizontal"
-    android:paddingBottom="15dp"
-    android:paddingLeft="7dp"
-    android:paddingRight="8dp"
-    android:paddingTop="12dp">
+    android:orientation="horizontal">
 
     <RelativeLayout
         android:id="@+id/tv_program_item_panel_clip_rv"
@@ -23,10 +19,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="12dp"
-            android:layout_marginLeft="8dp"
-            android:textSize="13dp"
-            android:textColor="@android:color/white" />
+            android:layout_marginTop="@dimen/panel_start_time_margin_top"
+            android:layout_marginStart="@dimen/panel_start_time_margin_left"
+            android:textSize="@dimen/panel_start_time_margin_text_size"
+            android:textColor="@color/tv_program_list_panel_start_time_text_color" />
 
         <ImageView
             android:id="@+id/tv_program_item_panel_clip_iv"
@@ -34,9 +30,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_program_item_panel_clip_tv"
             android:layout_centerHorizontal="true"
-            android:layout_marginLeft="7dp"
-            android:layout_marginRight="7dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="@dimen/panel_clip_margin_left"
+            android:layout_marginEnd="@dimen/panel_clip_margin_right"
+            android:layout_marginTop="@dimen/panel_clip_margin_top"
             android:contentDescription="@null"
             android:clickable="true"
             android:scaleType="fitCenter"
@@ -53,19 +49,18 @@
             android:id="@+id/tv_program_item_panel_content_des_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:textSize="13dp"
+            android:layout_marginTop="@dimen/panel_content_des_margin_top"
             android:textStyle="bold"
             android:ellipsize="end"
-            android:textColor="@android:color/white"/>
+            android:textColor="@color/tv_program_list_content_text_color"/>
 
         <ImageView
             android:id="@+id/tv_program_item_panel_content_thumbnail_iv"
-            android:layout_width="122dp"
-            android:layout_height="69dp"
+            android:layout_width="@dimen/panel_content_thumbnail_width"
+            android:layout_height="@dimen/panel_content_thumbnail_height"
             android:layout_below="@id/tv_program_item_panel_content_des_tv"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/panel_content_thumbnail_margin_top"
             android:scaleType="fitXY"
             android:contentDescription="@null" />
 
@@ -74,9 +69,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:textSize="11dp"
             android:layout_below="@id/tv_program_item_panel_content_thumbnail_iv"
-            android:layout_marginTop="4dp"
-            android:textColor="@android:color/white" />
+            android:layout_marginTop="@dimen/panel_content_detail_margin_top"
+            android:textColor="@color/tv_program_list_content_detail_text_color" />
     </RelativeLayout>
 </LinearLayout>

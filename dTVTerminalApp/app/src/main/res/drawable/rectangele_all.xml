@@ -5,12 +5,12 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
     <item>
         <shape>
-            <solid android:color="#777777" />
+            <solid android:color="@color/tv_program_list_ch_tab_bottom_line" />
         </shape>
     </item>
-    <item android:bottom="1dp">
+    <item android:bottom="@dimen/tv_program_list_tab_under_line">
         <shape>
-            <solid android:color="#111111" />
+            <solid android:color="@color/tv_program_list_ch_tab_bg" />
         </shape>
     </item>
  </layer-list>

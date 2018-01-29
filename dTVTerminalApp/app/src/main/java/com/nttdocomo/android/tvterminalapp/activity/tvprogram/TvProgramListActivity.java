@@ -8,8 +8,10 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -58,6 +60,7 @@ public class TvProgramListActivity extends BaseActivity
 
     private static final int INDEX_TAB_HIKARI = 1;
     private static final int INDEX_TAB_MY_CHANNEL = 0;
+    private static final float TAB_TITLE_SIZE = 14;
     private ProgramRecyclerView mProgramRecyclerView = null;
     private Boolean mIsMenuLaunch = false;
     private int mScreenHeight = 0;
@@ -67,11 +70,9 @@ public class TvProgramListActivity extends BaseActivity
     private HorizontalScrollView mTabScrollView = null;
     private LinearLayout mTabLinearLayout = null;
     private ImageView mTagImageView = null;
-    private RelativeLayout changeModeLayout;
     private static final int START_TIME = 4;
     private static final int STANDARD_TIME = 24;
     private static final int SCREEN_TIME_WIDTH_PERCENT = 9;
-    private static final int SCREEN_TIME_HEIGHT_PERCENT = 3;
     private static final int TIME_LINE_WIDTH = 44;
     private static final int ONE_HOUR_UNIT = 180;
     private static final String DATE_FORMAT = "yyyy年MM月dd日 (E)";
@@ -316,9 +317,10 @@ public class TvProgramListActivity extends BaseActivity
             tabTextView.setTag(i);
             tabTextView.setBackgroundResource(0);
             tabTextView.setTextColor(Color.WHITE);
+            tabTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP,TAB_TITLE_SIZE);
             if (i == 0) {
                 tabTextView.setBackgroundResource(R.drawable.rectangele);
-                tabTextView.setTextColor(Color.GRAY);
+                tabTextView.setTextColor(ContextCompat.getColor(this, R.color.tv_program_list_tab_checked_text));
             }
             tabTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -345,10 +347,10 @@ public class TvProgramListActivity extends BaseActivity
                 TextView mTextView = (TextView) mTabLinearLayout.getChildAt(i);
                 if (position == i) {
                     mTextView.setBackgroundResource(R.drawable.rectangele);
-                    mTextView.setTextColor(Color.GRAY);
+                    mTextView.setTextColor(ContextCompat.getColor(this, R.color.tv_program_list_tab_checked_text));
                 } else {
                     mTextView.setBackgroundResource(0);
-                    mTextView.setTextColor(Color.WHITE);
+                    mTextView.setTextColor(ContextCompat.getColor(this, R.color.tv_program_list_tab_unchecked_text));
                 }
             }
         }
@@ -390,7 +392,7 @@ public class TvProgramListActivity extends BaseActivity
                 dip2px(TIME_LINE_WIDTH),
                 dip2px(TIME_LINE_WIDTH));
         mTagImageView.setLayoutParams(layoutParams);
-        mTagImageView.setImageResource(R.mipmap.ic_event_note_white_24dp);
+        mTagImageView.setImageResource(R.drawable.tv_program_list_cur_time_btn_selector);
     }
 
     /**
@@ -550,7 +552,7 @@ public class TvProgramListActivity extends BaseActivity
      * @param curSec
      * @return
      */
-    private float MinSec2Hour(int curMin, int curSec) {
+    private float minSec2Hour(int curMin, int curSec) {
         int sec = curMin * 60;
         float hour = ((float) sec + curSec) / 3600;
         return hour;
@@ -626,10 +628,12 @@ public class TvProgramListActivity extends BaseActivity
         if(isShowFlag){
             findViewById(R.id.tv_program_list_main_layout_time_sl).setVisibility(View.INVISIBLE);
             findViewById(R.id.tv_program_list_main_layout_curtime_iv).setVisibility(View.INVISIBLE);
+            findViewById(R.id.tv_program_list_main_layout_time_line).setVisibility(View.INVISIBLE);
             findViewById(R.id.tv_program_list_main_layout_tip_tv).setVisibility(View.VISIBLE);
         }else {
             findViewById(R.id.tv_program_list_main_layout_time_sl).setVisibility(View.VISIBLE);
             findViewById(R.id.tv_program_list_main_layout_curtime_iv).setVisibility(View.VISIBLE);
+            findViewById(R.id.tv_program_list_main_layout_time_line).setVisibility(View.VISIBLE);
             findViewById(R.id.tv_program_list_main_layout_tip_tv).setVisibility(View.INVISIBLE);
         }
     }
@@ -707,14 +711,14 @@ public class TvProgramListActivity extends BaseActivity
         float timeLinePosition = 0;
         if (START_TIME <= curClock && curClock < STANDARD_TIME) {
             timeLinePosition = (curClock - START_TIME) * dip2px(ONE_HOUR_UNIT) + (
-                    dip2px(ONE_HOUR_UNIT) + 0.5f) * MinSec2Hour(curMin, curSec) + channelRvHeight;
+                    dip2px(ONE_HOUR_UNIT) + 0.5f) * minSec2Hour(curMin, curSec) + channelRvHeight;
         } else {
             if (0 <= curClock && curClock <= 3) {
                 timeLinePosition = (STANDARD_TIME - START_TIME + curClock) * dip2px(ONE_HOUR_UNIT) + (
-                        dip2px(ONE_HOUR_UNIT) + 0.5f) * MinSec2Hour(curMin, curSec) + channelRvHeight;
+                        dip2px(ONE_HOUR_UNIT) + 0.5f) * minSec2Hour(curMin, curSec) + channelRvHeight;
             }
         }
-        mTimeLine.setY(timeLinePosition - mNowImage.getHeight() / 2 - offset);
+        mTimeLine.setY(timeLinePosition - (float) mNowImage.getHeight() / 2 - offset);
     }
 
     /**
@@ -730,30 +734,30 @@ public class TvProgramListActivity extends BaseActivity
         float timeLinePosition = 0;
         if(mTimeScrollView.getHeight() /dip2px(ONE_HOUR_UNIT) >= 3){//タブレット(将来さらにチェック)
             if (START_TIME <= curClock && curClock < STANDARD_TIME) {
-                timeLinePosition = (dip2px(ONE_HOUR_UNIT) + 0.5f) * MinSec2Hour(curMin, curSec) + channelRvHeight;
+                timeLinePosition = (dip2px(ONE_HOUR_UNIT) + 0.5f) * minSec2Hour(curMin, curSec) + channelRvHeight;
             } else {
                 if (0 <= curClock && curClock <= 3) {//底から完全に見える"1時間単位"をマーナイスする
-                    timeLinePosition = (dip2px(ONE_HOUR_UNIT) + 0.5f) * MinSec2Hour(curMin, curSec)
+                    timeLinePosition = (dip2px(ONE_HOUR_UNIT) + 0.5f) * minSec2Hour(curMin, curSec)
                             + channelRvHeight+(mTimeScrollView.getHeight()-(START_TIME-curClock)*dip2px(ONE_HOUR_UNIT));
                 }
             }
         }else {
             if (START_TIME <= curClock && curClock < STANDARD_TIME || curClock == 0 || curClock == 1) {
-                timeLinePosition = (dip2px(ONE_HOUR_UNIT) + 0.5f) * MinSec2Hour(curMin, curSec) + channelRvHeight;
+                timeLinePosition = (dip2px(ONE_HOUR_UNIT) + 0.5f) * minSec2Hour(curMin, curSec) + channelRvHeight;
             } else {
                 if (2 <= curClock && curClock <= 3) {//底から完全に見える"1時間単位"をマーナイスする
-                    timeLinePosition = (dip2px(ONE_HOUR_UNIT) + 0.5f) * MinSec2Hour(curMin, curSec)
+                    timeLinePosition = (dip2px(ONE_HOUR_UNIT) + 0.5f) * minSec2Hour(curMin, curSec)
                             + channelRvHeight+(mTimeScrollView.getHeight()-(START_TIME-curClock)*dip2px(ONE_HOUR_UNIT));
                 }
             }
         }
-        mTimeLine.setY(timeLinePosition - mNowImage.getHeight() / 2);
+        mTimeLine.setY(timeLinePosition - (float) mNowImage.getHeight() / 2);
     }
 
     /**
      * ソート処理
      */
-    private class CalendarComparator implements Comparator<ScheduleInfo>, Serializable {
+    private static class CalendarComparator implements Comparator<ScheduleInfo>, Serializable {
         private static final long serialVersionUID = -1L;
 
         @Override

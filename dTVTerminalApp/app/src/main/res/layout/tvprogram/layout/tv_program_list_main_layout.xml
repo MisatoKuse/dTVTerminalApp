@@ -4,7 +4,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000">
+    android:background="@color/tv_program_list_root_view_bg">
 
     <HorizontalScrollView
         android:id="@+id/tv_program_list_main_layout_tab_hs"
@@ -25,9 +25,9 @@
             android:id="@+id/tv_program_list_main_layout_curtime_iv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#222222"
+            android:background="@color/tv_program_list_cur_time_btn_bg"
             android:contentDescription="@null"
-            android:padding="10dp"
+            android:padding="@dimen/tv_program_list_cur_time_padding"
             android:scaleType="fitCenter" />
 
         <com.nttdocomo.android.tvterminalapp.view.ProgramScrollView
@@ -56,9 +56,6 @@
                 android:id="@+id/tv_program_list_main_layout_channeldetail_rv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#000000"
-                android:divider="#ffff0000"
-                android:dividerHeight="10dp"
                 android:fadingEdge="none"
                 android:fadingEdgeLength="0dp"
                 android:overScrollMode="never" />
@@ -71,7 +68,7 @@
 		    android:layout_below="@id/tv_program_list_main_layout_channel_rv">
 		    <View
 			    android:layout_width="match_parent"
-			    android:layout_height="1dp"
+			    android:layout_height="@dimen/tv_program_list_cur_time_height"
 			    android:layout_centerInParent="true"
 			    android:background="@color/tv_program_list_time_line_now"/>
 		    <ImageView
@@ -88,7 +85,7 @@
         android:id="@+id/tv_program_list_main_layout_tip_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/white"
+        android:textColor="@color/white_text"
         android:layout_centerInParent="true"
         android:text="@string/tv_program_tip"
         android:visibility="gone"/>

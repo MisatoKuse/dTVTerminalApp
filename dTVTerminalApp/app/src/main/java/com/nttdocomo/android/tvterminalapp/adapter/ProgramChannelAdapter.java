@@ -10,7 +10,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -53,7 +52,6 @@ public class ProgramChannelAdapter extends
         layoutParams.gravity = Gravity.CENTER;
         view.setLayoutParams(layoutParams);
         ViewHolder viewHolder = new ViewHolder(view, channelItemClickListener);
-        viewHolder.channelIcon = view.findViewById(R.id.tv_program_channel_list_item_layout_icon);
         viewHolder.channelText = view.findViewById(R.id.tv_program_channel_list_item_layout_content);
         return viewHolder;
     }
@@ -87,7 +85,6 @@ public class ProgramChannelAdapter extends
             }
         }
 
-        ImageView channelIcon;
         TextView channelText;
     }
 

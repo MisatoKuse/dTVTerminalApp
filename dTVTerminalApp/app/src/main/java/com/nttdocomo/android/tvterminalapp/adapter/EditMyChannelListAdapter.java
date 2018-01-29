@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.adapter;
 
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -75,12 +76,12 @@ public class EditMyChannelListAdapter extends BaseAdapter implements View.OnClic
         titleTv.setText(channel.getTitle());
         noTv.setText(channel.getIndex());
         if(!TextUtils.isEmpty(channel.getServiceId())){//登録
-            noTv.setTextColor(mContext.getResources().getColor(R.color.item_num_black));
-            noTv.setBackgroundResource(R.color.item_num_register_bg_black);
+            noTv.setTextColor(ContextCompat.getColor(mContext, R.color.item_num_black));
+            noTv.setBackgroundResource(R.mipmap.channel_num_active);
             editBt.setBackgroundResource(R.mipmap.icon_circle_normal_minus);
         }else {//解除
-            noTv.setTextColor(mContext.getResources().getColor(R.color.white_text));
-            noTv.setBackgroundResource(R.color.item_num_unregister_bg_black);
+            noTv.setTextColor(ContextCompat.getColor(mContext, R.color.white_text));
+            noTv.setBackgroundResource(R.mipmap.channel_num_normal);
             editBt.setBackgroundResource(R.drawable.my_ch_btn_selector);
         }
         return inflate;
