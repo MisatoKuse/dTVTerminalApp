@@ -1001,7 +1001,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * 中継アプリのdアプリ起動リクエスト処理を実行.
+     * STBのサービスアプリ起動リクエスト処理を実行.
+     * ・dTV
+     * ・dアニメストア
      *
      * @param type       アプリのタイプ
      * @param contentsId コンテンツID
@@ -1010,9 +1012,19 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         remoteControllerView.sendStartApplicationRequest(type, contentsId);
     }
 
-    protected void requestStartApplication(final RemoteControlRelayClient.STB_APPLICATION_TYPES type, final String contentsId,
-                                           final RemoteControlRelayClient.SERVICE_CATEGORY_TYPES serviceCategoryType) {
-        remoteControllerView.sendStartApplicationRequest(type, contentsId, serviceCategoryType);
+    /**
+     * STBのサービスアプリ起動リクエスト処理を実行.
+     * ・dTVチャンネル
+     *
+     * @param type
+     * @param crid
+     * @param chno
+     * @param serviceCategoryType
+     */
+    protected void requestStartApplicationDtvChannel(final RemoteControlRelayClient.STB_APPLICATION_TYPES type,
+                                                        final RemoteControlRelayClient.SERVICE_CATEGORY_TYPES serviceCategoryType,
+                                                        final String crid, final String chno) {
+        remoteControllerView.sendStartApplicationDtvChannelRequest(type, serviceCategoryType, crid, chno);
     }
 
     /**
