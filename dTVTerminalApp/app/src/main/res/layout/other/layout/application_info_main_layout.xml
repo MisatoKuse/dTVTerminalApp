@@ -8,26 +8,12 @@
                 android:layout_height="match_parent"
                 android:background="@color/setting_background_color_black">
 
-	<RelativeLayout
+	<ImageView
 		android:id="@+id/application_info_main_layout_icon"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+		android:layout_width="@dimen/application_info_image_width"
+		android:layout_height="@dimen/application_info_image_height"
 		android:layout_centerHorizontal="true"
-		android:layout_marginTop="@dimen/application_info_application_icon_margin_top">
-
-		<ImageView
-			android:id="@+id/application_info_main_layout_icon_content"
-			android:layout_width="@dimen/application_info_image_width"
-			android:layout_height="@dimen/application_info_image_height"
-			android:layout_centerInParent="true"
-			android:scaleType="fitXY"/>
-
-		<View
-			android:layout_width="@dimen/application_info_image_width"
-			android:layout_height="@dimen/application_info_image_height"
-			android:layout_centerHorizontal="true"
-			android:background="@drawable/app_info_icon_bg"/>
-	</RelativeLayout>
+		android:layout_marginTop="@dimen/application_info_application_icon_margin_top"/>
 
 	<TextView
 		android:id="@+id/application_info_main_layout_name"
