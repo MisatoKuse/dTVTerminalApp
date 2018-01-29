@@ -115,6 +115,13 @@
     <color name="channel_list_border_color">#666666</color>
     <color name="channel_list_name_select_color">#999999</color>
 
+    <!--クリップ一覧-->
+    <color name="item_clip_list_dtelevi_background">#000000</color>
+    <color name="item_clip_list_dtelevi_imageview_background">#ffffff</color>
+    <color name="item_clip_list_dtelevi_textview_background">#ffffff</color>
+    <color name="item_clip_list_dvideo_background">#000000</color>
+    <color name="item_clip_list_dvideo_textview_textcolor">#ffffff</color>
+
     <!--//設定画面-->
     <color name="setting_text_color_white">@color/basic_text_color_white</color>
     <color name="setting_list_background_color">#1c1c1c</color>

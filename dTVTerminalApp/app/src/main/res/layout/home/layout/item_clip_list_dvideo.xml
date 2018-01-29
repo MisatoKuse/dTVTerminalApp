@@ -1,84 +1,75 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
   -->
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants">
+
+    <ImageView
+        android:id="@+id/iv_clip_video_thumbnail"
+        android:layout_width="@dimen/item_clip_list_dtelevi_thrumnail_imageview_width"
+        android:layout_height="@dimen/item_clip_list_dtelevi_thrumnail_imageview_height"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="@dimen/item_clip_list_dvideo_imageview_margin"
+        android:layout_marginStart="@dimen/item_clip_list_dvideo_imageview_marginstart"
+        android:layout_marginTop="@dimen/item_clip_list_dvideo_imageview_margin"
+        android:background="@mipmap/loading" />
+
+    <ImageView
+        android:id="@+id/bt_video_clip"
+        android:layout_width="@dimen/clip_button_size"
+        android:layout_height="@dimen/clip_button_size"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="@dimen/clip_common_margin"
+        android:layout_marginEnd="@dimen/item_clip_list_dvideo_imageview_margin"
+        android:clickable="true"
+        android:src="@mipmap/icon_circle_opacity_clip" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="10dp"
-        android:descendantFocusability="blocksDescendants">
+        android:layout_alignBottom="@id/iv_clip_video_thumbnail"
+        android:layout_alignTop="@id/iv_clip_video_thumbnail"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/item_clip_list_dvideo_layout_marginstart"
+        android:layout_toStartOf="@id/bt_video_clip"
+        android:layout_toEndOf="@id/iv_clip_video_thumbnail"
+        android:gravity="center_vertical">
 
-        <ImageView
-            android:id="@+id/iv_clip_video_thumbnail"
-            android:layout_width="120dp"
-            android:layout_height="80dp"
-            android:layout_centerVertical="true"
-            android:background="@mipmap/loading"/>
-
-        <ImageView
-            android:id="@+id/bt_video_clip"
-            android:layout_width="@dimen/clip_button_size"
-            android:layout_height="@dimen/clip_button_size"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:clickable="true"
-            android:src="@mipmap/icon_circle_opacity_clip"
-            android:layout_margin="@dimen/clip_common_margin"/>
-
-        <RelativeLayout
+        <TextView
+            android:id="@+id/tv_clip_des"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/iv_clip_video_thumbnail"
-            android:layout_alignTop="@id/iv_clip_video_thumbnail"
-            android:layout_centerVertical="true"
-            android:gravity="center_vertical"
-            android:layout_marginLeft="12dp"
-            android:layout_toLeftOf="@id/bt_video_clip"
-            android:layout_toRightOf="@id/iv_clip_video_thumbnail"
-            >
+            android:layout_marginBottom="@dimen/item_clip_list_dvideo_textview_marginbottom"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@color/item_clip_list_dvideo_textview_textcolor" />
 
-            <RatingBar
-                android:id="@+id/rb_clip_video_rating"
-                style="@style/roomRatingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:numStars="5"
-                android:paddingBottom="5dp"
-                android:rating="3.5"/>
+        <RatingBar
+            android:id="@+id/rb_clip_video_rating"
+            style="@style/roomRatingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_clip_des"
+            android:layout_marginTop="@dimen/item_clip_list_dvideo_rating_bar_margin"
+            android:foregroundGravity="center"
+            android:paddingBottom="@dimen/item_clip_list_dvideo_rating_bar_padding_boom" />
 
-            <TextView
-                android:id="@+id/rb_clip_video_rating_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@id/rb_clip_video_rating"
-                android:layout_alignParentBottom="true"
-                android:layout_alignTop="@id/rb_clip_video_rating"
-                android:layout_toRightOf="@id/rb_clip_video_rating"
-                android:text="3.5"
-                android:textColor="@android:color/white"
-                android:textSize="10dp"/>
-
-            <TextView
-                android:id="@+id/tv_clip_des"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@id/rb_clip_video_rating"
-                android:layout_marginBottom="8dp"
-                android:ellipsize="end"
-                android:maxLines="2"
-                android:textColor="@android:color/white"
-                android:text="プリズン・ブレイクシーズン1第1話マイケルブレイクシーズン1第1話"/>
-        </RelativeLayout>
-
+        <TextView
+            android:id="@+id/rb_clip_video_rating_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/rb_clip_video_rating"
+            android:layout_alignParentBottom="true"
+            android:layout_alignTop="@id/rb_clip_video_rating"
+            android:layout_marginStart="@dimen/item_clip_list_dvideo_text_marginstart"
+            android:layout_toEndOf="@id/rb_clip_video_rating"
+            android:textColor="@color/item_clip_list_dvideo_textview_textcolor"
+            android:textSize="@dimen/item_clip_list_dvideo_text_size" />
 
     </RelativeLayout>
+
 
 </RelativeLayout>

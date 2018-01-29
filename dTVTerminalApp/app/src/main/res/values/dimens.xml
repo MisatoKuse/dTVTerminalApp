@@ -210,6 +210,31 @@
     <dimen name="channel_list_text_size">18dp</dimen>
     <dimen name="channel_list_divider_height">1dp</dimen>
 
+    <!-- クリップ一覧-->
+    <dimen name="item_clip_list_dtelevi_layout_margin">16dp</dimen>
+    <dimen name="item_clip_list_dtelevi_thrumnail_imageview_width">127dp</dimen>
+    <dimen name="item_clip_list_dtelevi_thrumnail_imageview_height">71dp</dimen>
+    <dimen name="item_clip_list_dtelevi_imageview_width">30dp</dimen>
+    <dimen name="item_clip_list_dtelevi_imageview_height">30dp</dimen>
+    <dimen name="item_clip_list_dtelevi_imageview_margin_right">10dp</dimen>
+    <dimen name="item_clip_list_dtelevi_textview_margin_right">10dp</dimen>
+    <dimen name="item_clip_list_dtelevi_textview_margin_left">10dp</dimen>
+    <dimen name="item_clip_list_dvideo_thrumnail_margintop">12dp</dimen>
+    <dimen name="item_clip_list_dvideo_layout_margin">16dp</dimen>
+    <dimen name="item_clip_list_dvideo_layout_margin_right">16dp</dimen>
+    <dimen name="item_clip_list_dvideo_imageview_width">16dp</dimen>
+    <dimen name="item_clip_list_dvideo_thrumnail_imageview_width">127dp</dimen>
+    <dimen name="item_clip_list_dvideo_thrumnail_imageview_height">71dp</dimen>
+    <dimen name="item_clip_list_dvideo_layout_marginstart">16dp</dimen>
+    <dimen name="item_clip_list_dvideo_text_size">10dp</dimen>
+    <dimen name="item_clip_list_dvideo_padding_boom">5dp</dimen>
+    <dimen name="item_clip_list_dvideo_rating_bar_padding_boom">5dp</dimen>
+    <dimen name="item_clip_list_dvideo_rating_bar_margin">8dp</dimen>
+    <dimen name="item_clip_list_dvideo_textview_marginbottom">8dp</dimen>
+    <dimen name="item_clip_list_dvideo_imageview_marginstart">16dp</dimen>
+    <dimen name="item_clip_list_dvideo_imageview_margin">10dp</dimen>
+    <dimen name="item_clip_list_dvideo_text_marginstart">2dp</dimen>
+
     <!--ビデオ一覧-->
     <dimen name="video_contents_genre_button_margin_end">15dp</dimen>
     <dimen name="video_contents_genre_count_margin_end">15dp</dimen>

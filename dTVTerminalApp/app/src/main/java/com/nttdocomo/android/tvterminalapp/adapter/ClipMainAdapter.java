@@ -27,20 +27,21 @@ public class ClipMainAdapter extends BaseAdapter {
 
     public enum Mode {
         CLIP_LIST_MODE_TV,
-        CLIP_LIST_MODE_VIDEO;
+        CLIP_LIST_MODE_VIDEO
     }
 
     private Mode mMode = Mode.CLIP_LIST_MODE_TV;
 
     private Context mContext = null;
     private List<ContentsData> mData = null;
-    private int layoutid;
+    private int layoutId;
     private ThumbnailProvider mThumbnailProvider;
+    private static final int STAR_NUMBER = 5;
 
     public ClipMainAdapter(Context context, List data, int id, ThumbnailProvider thumbnailProvider) {
         this.mContext = context;
         this.mData = data;
-        this.layoutid = id;
+        this.layoutId = id;
         this.mThumbnailProvider = thumbnailProvider;
     }
 
@@ -65,11 +66,11 @@ public class ClipMainAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int position, View convertView, final ViewGroup parent) {
-        View view = null;
-        ViewHolder holder = null;
+        View view;
+        ViewHolder holder;
         if (convertView == null) {
             holder = new ViewHolder();
-            view = View.inflate(mContext, layoutid, null);
+            view = View.inflate(mContext, layoutId, null);
             holder.iv_clip_video_thumbnail = view.findViewById(R.id.iv_clip_video_thumbnail);
             holder.tv_clip_des = view.findViewById(R.id.tv_clip_des);
             holder.rb_clip_video_rating = view.findViewById(R.id.rb_clip_video_rating);
@@ -157,7 +158,7 @@ public class ClipMainAdapter extends BaseAdapter {
                 }
 
                 if (null != holder.rb_clip_video_rating) {
-                    holder.rb_clip_video_rating.setNumStars(5);
+                    holder.rb_clip_video_rating.setNumStars(STAR_NUMBER);
                     String rateValue = clipContentInfoItem.getRatStar();
                     if (null != rateValue) {
                         try {
