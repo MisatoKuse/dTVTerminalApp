@@ -85,8 +85,10 @@ public class DlnaInterfaceDl {
         }
 
         File[] allFile=homeDtcpPathDir.listFiles();
-        for(File file:allFile){
-            DTVTLogger.debug("dtcp after copy db_post, ---------------->"+ file.getName());
+        if(null != allFile) {
+            for (File file : allFile) {
+                DTVTLogger.debug("dtcp after copy db_post, ---------------->" + file.getName());
+            }
         }
 
         long id=Thread.currentThread().getId();
@@ -171,9 +173,9 @@ public class DlnaInterfaceDl {
      * @param content size downloaded
      */
     private void dlProgress(String content) {
-        DTVTLogger.start();
+        //DTVTLogger.start();
         if(null==mDlnaDlListener){
-            DTVTLogger.end();
+            //DTVTLogger.end();
             return;
         }
         String size=content;
@@ -182,11 +184,11 @@ public class DlnaInterfaceDl {
             sizeI=Integer.parseInt(size);
         }catch (Exception e){
             DTVTLogger.debug(e.getMessage());
-            DTVTLogger.end();
+            //DTVTLogger.end();
             return;
         }
         mDlnaDlListener.dlProgress(sizeI);
-        DTVTLogger.end();
+        //DTVTLogger.end();
     }
 
     /**

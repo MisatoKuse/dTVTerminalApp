@@ -12,12 +12,7 @@ import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.jni.activation.NewEnvironmentUtil;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class DownloaderBase {
 
@@ -25,10 +20,10 @@ public abstract class DownloaderBase {
     private int mDownloadedBytes;
     private int mTotalBytes;
     private DownloadListener.DLError mError;
-    private boolean mIsPause;
-    private boolean mIsCanceled;
+//    private boolean mIsPause;
+//    private boolean mIsCanceled;
     private DownloadListener mDownloadListener;
-    private int mNotifiedBytes;
+//    private int mNotifiedBytes;
     public static final String sDlPrefix = "d_";
 
     protected void setDownloadedBytes(int bytesDone){
@@ -73,9 +68,8 @@ public abstract class DownloaderBase {
         mDownloadedBytes=0;
         mTotalBytes=0;
         mError= DownloadListener.DLError.DLError_NoError;
-        mIsPause=false;
-        mIsCanceled=false;
-        mNotifiedBytes=0;
+//        mIsPause=false;
+//        mIsCanceled=false;
     }
 
     /**
@@ -88,10 +82,10 @@ public abstract class DownloaderBase {
      * ダウンロード開始
      */
     public void start(){
-        synchronized (this) {
-            mIsPause=false;
-            mIsCanceled=false;
-        }
+//        synchronized (this) {
+//            mIsPause=false;
+//            mIsCanceled=false;
+//        }
         mTotalBytes = calculateTotalBytes();
         if(isStorageSpaceLow()){
             setLowStorageSpace();
@@ -155,10 +149,10 @@ public abstract class DownloaderBase {
      * ダウンロード一時停止
      */
     void pause(){
-        synchronized (this) {
-            mIsPause=true;
-            mIsCanceled=false;
-        }
+//        synchronized (this) {
+//            mIsPause=true;
+//            mIsCanceled=false;
+//        }
         if(null==mDownloadListener){
             return;
         }
@@ -182,10 +176,10 @@ public abstract class DownloaderBase {
      * ダウンロード再開
      */
     void resume(){
-        synchronized (this) {
-            mIsPause=false;
-            mIsCanceled=false;
-        }
+//        synchronized (this) {
+//            mIsPause=false;
+//            mIsCanceled=false;
+//        }
         if(null!=mDownloadListener){
             mDownloadListener.onResume();
         }
@@ -206,7 +200,7 @@ public abstract class DownloaderBase {
         if(0==mTotalBytes){
             return 0.0f;
         }
-        return mDownloadedBytes/mTotalBytes;
+        return ((float)mDownloadedBytes)/((float)mTotalBytes);
     }
 
     /**
@@ -221,8 +215,8 @@ public abstract class DownloaderBase {
      */
     void cancel(){
         synchronized (this) {
-            mIsPause=false;
-            mIsCanceled=true;
+//            mIsPause=false;
+//            mIsCanceled=true;
             cancelImpl();
         }
     }
@@ -253,9 +247,9 @@ public abstract class DownloaderBase {
      * ダウンロード容量不足
      */
     void setLowStorageSpace(){
-        synchronized (this) {
-            mIsPause=true;
-        }
+//        synchronized (this) {
+//            mIsPause=true;
+//        }
         if(null!=mDownloadListener){
             if(null!=mDownloadParam){
                 String path=getFullFilePath();
@@ -271,7 +265,6 @@ public abstract class DownloaderBase {
      * @return MB
      */
     long getInnerStorageSafeSpace(){
-        //return 200;
         return 200;
     }
 
@@ -304,40 +297,6 @@ public abstract class DownloaderBase {
         String ret=id;
         ret=ret.replaceAll("[^a-z^A-Z^0-9]", "_");
         return sDlPrefix + (new StringBuilder(ret)).toString();
-    }
-
-    /**
-     * 機能：一番目外部SDカードパスを戻す
-     * @return
-     */
-    public static String getExtSDCardPath() {
-        List<String> result = new ArrayList<String>();
-        try {
-            Runtime rt = Runtime.getRuntime();
-            Process proc = rt.exec("mount");
-            InputStream is = proc.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (line.contains("extSdCard")) {
-                    String [] arr = line.split(" ");
-                    String path = arr[1];
-                    File file = new File(path);
-                    if (file.isDirectory()) {
-                        result.add(path);
-                    }
-                }
-            }
-            isr.close();
-        } catch (Exception e) {
-            DTVTLogger.debug(e);
-            return null;
-        }
-        if(0==result.size()){
-            return null;
-        }
-        return result.get(0);
     }
 
     /**

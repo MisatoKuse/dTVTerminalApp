@@ -217,7 +217,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
 
     @Override
     public void dlDataProviderUnavailable() {
-		//todo
+        //todo
     }
     @Override
     public void onProgress(int receivedBytes, int percent) {
@@ -308,7 +308,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         }
     }
 
-	@Override
+    @Override
     public void onCancel(final String fullPath) {
         if(activity != null){
             activity.runOnUiThread(new Runnable() {
@@ -334,8 +334,8 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         }
         setNextDownLoad();
     }
-	
-	private void setCancelStatus(String fullPath){
+
+    private void setCancelStatus(String fullPath){
         if(queIndex.size() > 0){
             View view = mRecordedListview.getChildAt(queIndex.get(0)-mRecordedListview.getFirstVisiblePosition());
             if (view != null) {
@@ -366,12 +366,12 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             }
         } else {
             if(mDlDataProvider != null){
-                if(DownloadService.BINDSTATUS == DownloadService.BINDED){
+                if(DownloadService.getBindStatus() == DownloadService.BINDED){
                     mActivity.unbindService(mDlDataProvider);
                 }
-                mDlDataProvider.isRegistered = false;
+                mDlDataProvider.setIsRegistered(false);
                 mDlDataProvider.stopService();
-                DownloadService.BINDSTATUS = DownloadService.UNBINED;
+                DownloadService.setBindStatus(DownloadService.UNBINED);
             }
         }
     }
@@ -473,7 +473,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     }
 
     private DlData setDlData(int index){
-		if(null==mContentsList || index>=mContentsList.size()){
+        if(null==mContentsList || index>=mContentsList.size()){
             return null;
         }
         DlData dlData = new DlData();
@@ -576,7 +576,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 return false;
             }
         }
-        if(DownloadService.BINDSTATUS == DownloadService.UNBINED){
+        if(DownloadService.getBindStatus() == DownloadService.UNBINED){
             mDlDataProvider.beginProvider();
         } else {
 //            mDlDataProvider.rebind();
@@ -586,9 +586,9 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
 
     public void bindServiceFromBackgroud(boolean serviceIsRun){
         if(serviceIsRun){
-            DownloadService.BINDSTATUS = DownloadService.BACKGROUD;
+            DownloadService.setBindStatus(DownloadService.BACKGROUD);
         } else {
-            DownloadService.BINDSTATUS = DownloadService.UNBINED;
+            DownloadService.setBindStatus(DownloadService.UNBINED);
         }
         if(queIndex != null && queIndex.size() > 0){
             que.clear();
@@ -607,7 +607,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     }
 
     public void setDownladSuccessByBg(String fullPath){
-         setSuccessStatus(fullPath);
+        setSuccessStatus(fullPath);
     }
 
     public void setDownladFailByBg(String fullPath){
@@ -743,7 +743,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         customDialog.showDialog();
     }
 
-	private String getCurrentDlFullPath(int idx){
+    private String getCurrentDlFullPath(int idx){
         if(null==que || idx>=que.size()){
             return null;
         }
@@ -776,7 +776,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     public void onDestroy() {
         super.onDestroy();
         if(mDlDataProvider != null){
-            if(mDlDataProvider.isRegistered){
+            if(mDlDataProvider.getIsRegistered()){
                 mActivity.unbindService(mDlDataProvider);
             }
             mDlDataProvider.setQue(que);

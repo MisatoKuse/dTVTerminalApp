@@ -158,7 +158,7 @@ namespace dtvt {
     //#define IfGoTo(var, where) { if ( !(var) ) { goto  where; } }
     #define IfNullReturn(var) { if (NULL == (var) ) { return; } }
     #define IfNullReturnFalse(var) { if (NULL == (var) ) { return false; } }
-    #define DelIfNotNull(obj) {  if(NULL!=(obj)) { delete obj; obj = NULL; }  }
+    #define DelIfNotNull(obj) {  if(NULL != (obj) ) { delete obj; obj = NULL; }  }
     #define DelIfNotNullArray(obj) {  if(NULL!=(obj)) { delete[] obj; obj = NULL; }  }
 
     //開発段階にて、本番のDMSはないので、仮DMSを使っていますが、違うDMSを定義し、どのDMSを選択できるよう

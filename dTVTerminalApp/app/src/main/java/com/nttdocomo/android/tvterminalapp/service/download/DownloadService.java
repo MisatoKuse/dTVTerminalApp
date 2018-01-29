@@ -5,7 +5,6 @@
 package com.nttdocomo.android.tvterminalapp.service.download;
 
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -23,8 +22,8 @@ public class DownloadService extends Service implements DownloadListener {
     private DownloaderBase mDownloaderBase;
     private String mData;
     private static final int DOWNLOAD_SERVICE_ID = 1;
-    public static List<DlData> dlDataQue = new ArrayList<>();
-    public static int BINDSTATUS = 1;
+    private static List<DlData> sDlDataQue = new ArrayList<>();
+    private static int BINDSTATUS = 1;
     public static final int UNBINED = 1;
     public static final int BINDED = 2;
     public static final int BACKGROUD = 3;
@@ -36,8 +35,36 @@ public class DownloadService extends Service implements DownloadListener {
     public static final String DONWLOAD_LowStorageSpace = "lowStorageSpace";
 
 
+    public static void setDlDataQue(List<DlData> dlDataQue){
+        sDlDataQue = dlDataQue;
+    }
+
+    public static void setDlDataQueClear(){
+        if(null != sDlDataQue){
+            sDlDataQue.clear();
+        }
+    }
+
+    public static void setDlDataQueRemove0(){
+        if(null != sDlDataQue){
+            sDlDataQue.remove(0);
+        }
+    }
+
+    public static  List<DlData> getDlDataQue(){
+        return sDlDataQue;
+    }
+    
     public void setDownloadServiceListener(DownloadServiceListener dlServiceListener){
         mDownloadServiceListener=dlServiceListener;
+    }
+
+    public static void setBindStatus(int status){
+        BINDSTATUS = status;
+    }
+
+    public static int getBindStatus(){
+        return BINDSTATUS;
     }
 
     /**
@@ -149,9 +176,9 @@ public class DownloadService extends Service implements DownloadListener {
         startForeground(DOWNLOAD_SERVICE_ID ,getNotification(getResources().getString(R.string.record_download_notification), 0));
     }
 
-    private void notifyProgress(String message, int progress){
-        getNotificationManager().notify(1, getNotification(message, progress));
-    }
+//    private void notifyProgress(String message, int progress){
+//        getNotificationManager().notify(1, getNotification(message, progress));
+//    }
 
     private Notification getNotification(String title, int progress) {
 //        Intent intent = new Intent(this, RecordedListActivity.class);
@@ -169,9 +196,9 @@ public class DownloadService extends Service implements DownloadListener {
         return builder.build();
     }
 
-    private NotificationManager getNotificationManager() {
-        return (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-    }
+//    private NotificationManager getNotificationManager() {
+//        return (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//    }
 
     public void stopService(){
         stopForeground(true);
@@ -311,18 +338,6 @@ public class DownloadService extends Service implements DownloadListener {
             return DownloadService.this;
         }
     }
-
-//    /**
-//     * 機能：
-//     *      １．Download Uiがなくなる場合、必ずこれをコールする
-//     *      ２．Download Uiがない場合、Serviceは閉じる時、必ずこれをコールする
-//     */
-//    public void finishDl() {
-//        if (null == mDownloaderBase) {
-//            return;
-//        }
-//        mDownloaderBase.finishDl();
-//    }
 
     /**
      * 機能：
