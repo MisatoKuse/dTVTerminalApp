@@ -52,10 +52,7 @@ public class ApplicationInfoActivity extends BaseActivity {
         mPackageName = getPackageName();
         mPackageManager = getPackageManager();
         //アプリケーションアイコン設置
-        Drawable appIcon = getAppIcon();
-        if (appIcon != null) {
-            mAppIcon.setImageDrawable(appIcon);
-        }
+        mAppIcon.setBackgroundResource(R.mipmap.icd_info_tvterminal_128);
         //アプリケーション名設置
         String appName = getAppName();
         if (!TextUtils.isEmpty(appName)) {
@@ -72,24 +69,9 @@ public class ApplicationInfoActivity extends BaseActivity {
      * コンポネント初期化
      */
     private void initView() {
-        mAppIcon = findViewById(R.id.application_info_main_layout_icon_content);
+        mAppIcon = findViewById(R.id.application_info_main_layout_icon);
         mAppName = findViewById(R.id.application_info_main_layout_name_value);
         mAppVersion = findViewById(R.id.application_info_main_layout_version_value);
-    }
-
-    /**
-     * アプリケーションアイコンを取得する
-     *
-     * @return Drawable
-     */
-    public Drawable getAppIcon() {
-        try {
-            ApplicationInfo info = mPackageManager.getApplicationInfo(mPackageName, 0);
-            return info.loadIcon(mPackageManager);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     /**

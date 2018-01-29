@@ -300,13 +300,13 @@
     <dimen name="panel_content_detail_margin_top">4dp</dimen>
 
     <!--アプリケーション情報-->
-    <dimen name="application_info_image_width">138dp</dimen>
-    <dimen name="application_info_image_height">138dp</dimen>
+    <dimen name="application_info_image_width">128dp</dimen>
+    <dimen name="application_info_image_height">128dp</dimen>
     <dimen name="application_info_application_name_height">20dp</dimen>
     <dimen name="application_info_application_title_text_size">16dp</dimen>
     <dimen name="application_info_application_name_value_text_size">20dp</dimen>
     <dimen name="application_info_application_provider_height">20dp</dimen>
-    <dimen name="application_info_application_icon_margin_top">69.5dp</dimen>
+    <dimen name="application_info_application_icon_margin_top">96dp</dimen>
     <dimen name="application_info_application_title_margin_top">36dp</dimen>
     <dimen name="application_info_application_value_margin_top">4dp</dimen>
     <dimen name="application_info_application_provider_margin_top">20dp</dimen>
