@@ -202,6 +202,8 @@ public class RemoteControlRelayClient {
     private static final String RELAY_COMMAND_REQUEST_COMMAND = "REQUEST_COMMAND";
     private static final String RELAY_COMMAND_USER_ID = "USER_ID";
     private static final String RELAY_COMMAND_CONTENTS_ID = "CONTENTS_ID";
+    private static final String RELAY_COMMAND_CHNO = "CHNO";
+    private static final String RELAY_COMMAND_CRID = "CRID";
     private static final String RELAY_COMMAND_SERVICE_CATEGORY_TYPE = "SERVICE_CATEGORY_TYPE";
     private static final String RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY = "APPLICATION_VERSION_COMPATIBILITY";
     private static final String RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY_DTVT_APPLICATION = "dTVT_APPLICATION";
@@ -559,6 +561,8 @@ public class RemoteControlRelayClient {
 
     /**
      * アプリ起動要求を受信してタイトル詳細表示のリクエストをSTBへ送信する.
+     *　・dTV
+     *　・dアニメストア
      *
      * @param applicationType
      * @param contentsId      コンテンツID
@@ -589,23 +593,25 @@ public class RemoteControlRelayClient {
     /**
      * アプリ起動要求を受信してタイトル詳細表示のリクエストをSTBへ送信する.
      * ・dTVチャンネル・カテゴリー分類に対応
-     * ・ひかりTV・カテゴリー分類に対応
      *
      * @param applicationType
-     * @param contentsId      コンテンツID
      * @param serviceCategoryType  カテゴリー分類
+     * @param crid
+     * @param chno チャンネル番号
+     * @param context
      * @return
      */
-    public boolean startApplicationRequest(STB_APPLICATION_TYPES applicationType, String contentsId,
-                                           SERVICE_CATEGORY_TYPES serviceCategoryType, Context context) {
+    public boolean startApplicationDtvChannelRequest(final STB_APPLICATION_TYPES applicationType,
+                                                     final SERVICE_CATEGORY_TYPES serviceCategoryType,
+                                                    final String crid, final String chno, Context context) {
         String applicationId = getApplicationId(applicationType);
         String requestParam;
 
         //ユーザID取得
         String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(context);
 
-        if (applicationId != null && contentsId != null) {
-            requestParam = setTitleDetailRequest(applicationId, contentsId, serviceCategoryType, userId);
+        if (applicationId != null && crid != null && chno != null) {
+            requestParam = setTitleDetailDtvChannelRequest(applicationId, serviceCategoryType, crid, chno, userId);
             if (requestParam != null) {
                 // アプリ起動要求を受信してインテントをSTBへ送信する
                 sendStartApplicationRequest(requestParam);
@@ -901,15 +907,17 @@ public class RemoteControlRelayClient {
      * アプリ起動要求のメッセージ（JSON形式）を作成する.
      * タイトル詳細表示のリクエスト
      * ・dTVチャンネル・カテゴリー分類に対応
-     * ・ひかりTV・カテゴリー分類に対応
      *
      * @param applicationId  アプリケーションID
-     * @param contentsId      コンテンツID
      * @param serviceCategoryType  カテゴリー分類
+     * @param crid
+     * @param chno
      * @return アプリ起動要求メッセージ（JSON形式）
      */
-    private String setTitleDetailRequest(String applicationId, String contentsId,
-                                         SERVICE_CATEGORY_TYPES serviceCategoryType, String userId) {
+    private String setTitleDetailDtvChannelRequest(String applicationId,
+                                                    SERVICE_CATEGORY_TYPES serviceCategoryType,
+                                                    String crid, String chno, String userId) {
+
         JSONObject requestJson = new JSONObject();
         String request = null;
 
@@ -917,7 +925,8 @@ public class RemoteControlRelayClient {
             requestJson.put(RELAY_COMMAND, RELAY_COMMAND_TITLE_DETAIL);
             requestJson.put(RELAY_COMMAND_APPLICATION_ID, applicationId);
             requestJson.put(RELAY_COMMAND_SERVICE_CATEGORY_TYPE, getServiceCategorySymbol(serviceCategoryType));
-            requestJson.put(RELAY_COMMAND_CONTENTS_ID, contentsId);
+            requestJson.put(RELAY_COMMAND_CRID, crid);
+            requestJson.put(RELAY_COMMAND_CHNO, chno);
             requestJson.put(RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY, getApplicationVersionCompatibilityRequest());
             requestJson.put(RELAY_COMMAND_USER_ID, toHashValue(userId));
             request = requestJson.toString();

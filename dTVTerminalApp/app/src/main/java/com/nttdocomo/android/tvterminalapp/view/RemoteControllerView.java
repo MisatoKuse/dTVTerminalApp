@@ -447,12 +447,12 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     /**
      * 中継アプリ起動リクエスト処理を呼び出し
      */
-    public void sendStartApplicationRequest(
+    public void sendStartApplicationDtvChannelRequest(
             RemoteControlRelayClient.STB_APPLICATION_TYPES type,
-            String contentsId,
-            RemoteControlRelayClient.SERVICE_CATEGORY_TYPES serviceCategoryType) {
+            RemoteControlRelayClient.SERVICE_CATEGORY_TYPES serviceCategoryType,
+            String crid, String chno) {
         DTVTLogger.start();
-        remoteControllerSendKeyAction.getRelayClient().startApplicationRequest(type, contentsId, serviceCategoryType, mContext);
+        remoteControllerSendKeyAction.getRelayClient().startApplicationDtvChannelRequest(type, serviceCategoryType, crid, chno, mContext);
         DTVTLogger.end();
     }
     @Override

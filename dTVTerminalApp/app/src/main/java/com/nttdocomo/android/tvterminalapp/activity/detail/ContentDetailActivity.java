@@ -1974,21 +1974,24 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                     switch (mDetailData.getCategoryId()) {
                         //dTVチャンネルの放送
                         case DTV_CHANNEL_CATEGORY_BROADCAST:
-                            requestStartApplication(
-                                    RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL, mDetailData.getContentId(),
-                                    RemoteControlRelayClient.SERVICE_CATEGORY_TYPES.DTV_CHANNEL_CATEGORY_BROADCAST);
+                            requestStartApplicationDtvChannel(
+                                    RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL,
+                                    RemoteControlRelayClient.SERVICE_CATEGORY_TYPES.DTV_CHANNEL_CATEGORY_BROADCAST,
+                                    "", mDetailData.getChannelId());
                             break;
                         //dTVチャンネルのVOD(見逃し)
                         case DTV_CHANNEL_CATEGORY_MISSED:
-                            requestStartApplication(
-                                    RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL, mDetailData.getContentId(),
-                                    RemoteControlRelayClient.SERVICE_CATEGORY_TYPES.DTV_CHANNEL_CATEGORY_MISSED);
+                            requestStartApplicationDtvChannel(
+                                    RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL,
+                                    RemoteControlRelayClient.SERVICE_CATEGORY_TYPES.DTV_CHANNEL_CATEGORY_MISSED,
+                                    mDetailData.getContentId(), "");
                             break;
                         //dTVチャンネルのVOD(見逃し)
                         case DTV_CHANNEL_CATEGORY_RELATION:
-                            requestStartApplication(
-                                    RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL, mDetailData.getContentId(),
-                                    RemoteControlRelayClient.SERVICE_CATEGORY_TYPES.DTV_CHANNEL_CATEGORY_RELATION);
+                            requestStartApplicationDtvChannel(
+                                    RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL,
+                                    RemoteControlRelayClient.SERVICE_CATEGORY_TYPES.DTV_CHANNEL_CATEGORY_RELATION,
+                                    mDetailData.getContentId(), "");
                             break;
                         default:
                             break;
@@ -1999,6 +2002,8 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                         setRemoteProgressVisible(View.VISIBLE);
                     }
                     if (mDetailFullData.getEpisode_id() != null) {
+/*
+// TODO:中継アプリクライアント修正中のためコメントアウトしました。 2018-01-29
                         switch (mDetailData.getCategoryId()) {
                             //ひかりTV内dTVチャンネル放送
                             case H4D_CATEGORY_DTV_CHANNEL_BROADCAST:
@@ -2021,6 +2026,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                             default:
                                 break;
                         }
+*/
                     }
                 default:
                     break;
