@@ -75,36 +75,114 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         DbThread.DbOperation,
         RecommendDataProvider.RecommendApiDataProviderCallback {
 
+    /**
+     * Context.
+     */
     private Context mContext = null;
 
+    /**
+     * Home画面用データを返却するためのコールバック.
+     */
     private ApiDataProviderCallback mApiDataProviderCallback = null;
 
-    //Home画面ではチャンネルリストを使用しないため"全て"を]設定する
+    /**
+     * Home画面ではチャンネルリストを使用しないため"全て"を]設定する.
+     */
     private static final int DEFAULT_CHANNEL_DISPLAY_TYPE = 0;
 
+    /**
+     * ロールリストID.
+     */
     private static final int ROLE_ID_LIST = 0;
+    /**
+     * チャンネルリストID.
+     */
     private static final int CHANNEL_LIST = 1;
+    /**
+     * 番組一覧ID.
+     */
     private static final int TV_SCHEDULE_LIST = 2;
+    /**
+     * 今日のテレビランキングリストID.
+     */
     private static final int DAILY_RANK_LIST = 3;
+    /**
+     * ビデオランキングリストID.
+     */
     private static final int VIDEO_RANK_LIST = 4;
+    /**
+     * クリップ(テレビ)リストID.
+     */
     private static final int TV_CLIP_LIST = 5;
+    /**
+     * クリップ(ビデオ)リストID.
+     */
     private static final int VOD_CLIP_LIST = 6;
+    /**
+     * 視聴中ビデオ一覧ID.
+     */
     private static final int WATCH_LISTEN_VIDEO_LIST = 7;
+    /**
+     * 購入済みCh一覧ID.
+     */
     private static final int RENTAL_CH_LIST = 8;
+    /**
+     * 購入済みVod一覧ID.
+     */
     private static final int RENTAL_VOD_LIST = 9;
+
+    /**
+     * 購入済みCh一覧取得クラス.
+     */
     private PurchasedChListResponse mPurchasedChListResponse = null;
+
+    /**
+     * ロールリスト.
+     */
     private ArrayList<RoleListMetaData> mRoleListMetaDataList = null;
+
+    /**
+     * 購入済みVOD一覧取得クラス.
+     */
     private PurchasedVodListResponse mPurchasedVodListResponse = null;
+
+    /**
+     * 視聴中ビデオListクラス.
+     */
     private WatchListenVideoList mWatchListenVideoList = null;
+
+    /**
+     * クリップ(ビデオ)Listクラス.
+     */
     private VodClipList mVodClipList = null;
+
+    /**
+     * クリップ(テレビ)Listクラス.
+     */
     private TvClipList mTvClipList = null;
+
+    /**
+     * チャンネルリストListクラス.
+     */
     private ChannelList mChannelList = null;
+
+    /**
+     *ビデオリスト Listクラス.
+     */
     private VideoRankList mVideoRankList = null;
+
+    /**
+     * 今日テレビランキングListクラス.
+     */
     private DailyRankList mDailyRankList = null;
+
+    /**
+     * 番組Listクラス.
+     */
     private TvScheduleList mTvScheduleList = null;
 
     @Override
-    public void onTvClipJsonParsed(List<TvClipList> tvClipLists) {
+    public void onTvClipJsonParsed(final List<TvClipList> tvClipLists) {
         if (tvClipLists != null && tvClipLists.size() > 0) {
             TvClipList list = tvClipLists.get(0);
             setStructDB(list);
@@ -119,7 +197,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onVodClipJsonParsed(List<VodClipList> vodClipLists) {
+    public void onVodClipJsonParsed(final List<VodClipList> vodClipLists) {
         if (vodClipLists != null && vodClipLists.size() > 0) {
             VodClipList list = vodClipLists.get(0);
             setStructDB(list);
@@ -134,7 +212,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onTvScheduleJsonParsed(List<TvScheduleList> tvScheduleList) {
+    public void onTvScheduleJsonParsed(final List<TvScheduleList> tvScheduleList) {
         if (tvScheduleList != null && tvScheduleList.size() > 0) {
             TvScheduleList list = tvScheduleList.get(0);
             setStructDB(list);
@@ -148,7 +226,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onDailyRankJsonParsed(List<DailyRankList> dailyRankLists) {
+    public void onDailyRankJsonParsed(final List<DailyRankList> dailyRankLists) {
         if (dailyRankLists != null && dailyRankLists.size() > 0) {
             DailyRankList list = dailyRankLists.get(0);
             setStructDB(list);
@@ -162,7 +240,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onContentsListPerGenreJsonParsed(List<VideoRankList> contentsListPerGenre) {
+    public void onContentsListPerGenreJsonParsed(final List<VideoRankList> contentsListPerGenre) {
         if (contentsListPerGenre != null && contentsListPerGenre.size() > 0) {
             VideoRankList list = contentsListPerGenre.get(0);
             setStructDB(list);
@@ -176,7 +254,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onWatchListenVideoJsonParsed(List<WatchListenVideoList> watchListenVideoList) {
+    public void onWatchListenVideoJsonParsed(final List<WatchListenVideoList> watchListenVideoList) {
         if (watchListenVideoList != null && watchListenVideoList.size() > 0) {
             WatchListenVideoList list = watchListenVideoList.get(0);
             setStructDB(list);
@@ -187,7 +265,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onRentalVodListJsonParsed(PurchasedVodListResponse RentalVodListResponse) {
+    public void onRentalVodListJsonParsed(final PurchasedVodListResponse RentalVodListResponse) {
         if (RentalVodListResponse != null) {
             setStructDB(RentalVodListResponse);
             //TODO:取得したデータをHome画面で使用する場合はここに記載
@@ -197,7 +275,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onRentalChListJsonParsed(PurchasedChListResponse RentalChListResponse) {
+    public void onRentalChListJsonParsed(final PurchasedChListResponse RentalChListResponse) {
         if (RentalChListResponse != null) {
             setStructDB(RentalChListResponse);
             //TODO:取得したデータをHome画面で使用する場合はここに記載
@@ -207,7 +285,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onChannelJsonParsed(List<ChannelList> channelLists) {
+    public void onChannelJsonParsed(final List<ChannelList> channelLists) {
         if (channelLists != null && channelLists.size() > 0) {
             ChannelList list = channelLists.get(0);
             setStructDB(list);
@@ -218,7 +296,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onRoleListJsonParsed(RoleListResponse roleListResponse) {
+    public void onRoleListJsonParsed(final RoleListResponse roleListResponse) {
         if (roleListResponse != null) {
             setStructDB(roleListResponse);
             //TODO:取得したデータをHome画面で使用する場合はここに記載
@@ -228,7 +306,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onGenreListJsonParsed(GenreListResponse genreListResponse) {
+    public void onGenreListJsonParsed(final GenreListResponse genreListResponse) {
         if (genreListResponse != null) {
             //取得した情報を保存する
             DateUtils dateUtils = new DateUtils(mContext);
@@ -320,7 +398,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      */
     private AsyncTask<Void, Void, Void> homeDataDownloadTask = new AsyncTask<Void, Void, Void>() {
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Void doInBackground(final Void... voids) {
             //NOW ON AIR
             List<Map<String, String>> tvScheduleListData = getTvScheduleListData();
             if (tvScheduleListData != null && tvScheduleListData.size() > 0) {
@@ -394,7 +472,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param list 番組リスト
      */
     private void sendTvScheduleListData(final List<Map<String, String>> list) {
-        mApiDataProviderCallback.tvScheduleListCallback(setHomeContentData(list));
+        mApiDataProviderCallback.tvScheduleListCallback(setHomeContentData(list, false));
     }
 
     /**
@@ -421,7 +499,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param list デイリーランクリスト
      */
     private void sendDailyRankListData(final List<Map<String, String>> list) {
-        mApiDataProviderCallback.dailyRankListCallback(setHomeContentData(list));
+        mApiDataProviderCallback.dailyRankListCallback(setHomeContentData(list, true));
     }
 
     /**
@@ -430,7 +508,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param list ビデオランキング
      */
     private void sendVideoRankListData(final List<Map<String, String>> list) {
-        mApiDataProviderCallback.videoRankCallback(setHomeContentData(list));
+        mApiDataProviderCallback.videoRankCallback(setHomeContentData(list, true));
     }
 
     /**
@@ -439,7 +517,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param list クリップ[テレビ]リスト
      */
     private void sendTvClipListData(final List<Map<String, String>> list) {
-        mApiDataProviderCallback.tvClipListCallback(setHomeContentData(list));
+        mApiDataProviderCallback.tvClipListCallback(setHomeContentData(list, false));
     }
 
     /**
@@ -448,41 +526,43 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param list クリップ[ビデオ]リスト
      */
     private void sendVodClipListData(final List<Map<String, String>> list) {
-        mApiDataProviderCallback.vodClipListCallback(setHomeContentData(list));
+        mApiDataProviderCallback.vodClipListCallback(setHomeContentData(list, false));
     }
 
     /**
      * 取得したリストマップをContentsDataクラスへ入れる.
-     *
      * @param mapList コンテンツリストデータ
+     * @param rankFlag ランキングのコンテンツか否か
      * @return dataList ListView表示用データ
      */
     private List<ContentsData> setHomeContentData(
-            final List<Map<String, String>> mapList) {
-        List<ContentsData> rankingContentsDataList = new ArrayList<>();
+            final List<Map<String, String>> mapList, final boolean rankFlag) {
+        List<ContentsData> contentsDataList = new ArrayList<>();
 
-        ContentsData rankingContentInfo;
+        ContentsData contentInfo;
 
         for (int i = 0; i < mapList.size(); i++) {
-            rankingContentInfo = new ContentsData();
-            rankingContentInfo.setTime(mapList.get(i).get(JsonConstants.META_RESPONSE_DISPLAY_START_DATE));
-            rankingContentInfo.setTitle(mapList.get(i).get(JsonConstants.META_RESPONSE_TITLE));
-            rankingContentInfo.setThumURL(mapList.get(i).get(JsonConstants.META_RESPONSE_THUMB_448));
-            String thumbUrl = rankingContentInfo.getThumURL();
-            String title = rankingContentInfo.getTitle();
+            contentInfo = new ContentsData();
+            if (rankFlag) {
+                contentInfo.setRank(String.valueOf(i + 1));
+            }
+            contentInfo.setTime(mapList.get(i).get(JsonConstants.META_RESPONSE_DISPLAY_START_DATE));
+            contentInfo.setTitle(mapList.get(i).get(JsonConstants.META_RESPONSE_TITLE));
+            contentInfo.setThumURL(mapList.get(i).get(JsonConstants.META_RESPONSE_THUMB_448));
+            String thumbUrl = contentInfo.getThumURL();
+            String title = contentInfo.getTitle();
             if (title == null || title.length() < 1) {
-                rankingContentInfo.setTitle(mapList.get(i).get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE));
+                contentInfo.setTitle(mapList.get(i).get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE));
             }
             if (thumbUrl == null || thumbUrl.length() < 1) {
                 //レコメンドからのデータはキーが違うため再取得する
-                rankingContentInfo.setThumURL(mapList.get(i).get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1));
+                contentInfo.setThumURL(mapList.get(i).get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1));
             }
 
-            rankingContentsDataList.add(rankingContentInfo);
-            DTVTLogger.info("RankingContentInfo " + rankingContentInfo.getRank());
+            contentsDataList.add(contentInfo);
         }
 
-        return rankingContentsDataList;
+        return contentsDataList;
     }
 
     /**
@@ -564,21 +644,21 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         List<Map<String, String>> list = new ArrayList<>();
         //クリップ[テレビ]一覧のDB保存履歴と、有効期間を確認
 //        if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
-            //TODO:Sprint10でDB使用を一時停止
-            //データをDBから取得する
+        //TODO:Sprint10でDB使用を一時停止
+        //データをDBから取得する
 //            HomeDataManager homeDataManager = new HomeDataManager(mContext);
 //            list = homeDataManager.selectTvClipHomeData();
 //        } else {
-            //通信クラスにデータ取得要求を出す
-            TvClipWebClient webClient = new TvClipWebClient(mContext);
-            int ageReq = 1;
-            int upperPageLimit = 1;
-            int lowerPageLimit = 1;
-            int pagerOffset = 1;
-            String pagerDirection = "";
+        //通信クラスにデータ取得要求を出す
+        TvClipWebClient webClient = new TvClipWebClient(mContext);
+        int ageReq = 1;
+        int upperPageLimit = 1;
+        int lowerPageLimit = 1;
+        int pagerOffset = 1;
+        String pagerDirection = "";
 
-            webClient.getTvClipApi(ageReq, upperPageLimit,
-                    lowerPageLimit, pagerOffset, pagerDirection, this);
+        webClient.getTvClipApi(ageReq, upperPageLimit,
+                lowerPageLimit, pagerOffset, pagerDirection, this);
 //        }
         return list;
     }
@@ -594,21 +674,21 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         List<Map<String, String>> list = new ArrayList<>();
         //クリップ[ビデオ]一覧のDB保存履歴と、有効期間を確認
 //        if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
-            //TODO:Sprint10でDB使用を一時停止
-            //データをDBから取得する
+        //TODO:Sprint10でDB使用を一時停止
+        //データをDBから取得する
 //            HomeDataManager homeDataManager = new HomeDataManager(mContext);
 //            list = homeDataManager.selectVodClipHomeData();
 //        } else {
-            //通信クラスにデータ取得要求を出す
-            VodClipWebClient webClient = new VodClipWebClient(mContext);
-            int ageReq = 1;
-            int upperPageLimit = 1;
-            int lowerPageLimit = 1;
-            int pagerOffset = 1;
-            String pagerDirection = "";
+        //通信クラスにデータ取得要求を出す
+        VodClipWebClient webClient = new VodClipWebClient(mContext);
+        int ageReq = 1;
+        int upperPageLimit = 1;
+        int lowerPageLimit = 1;
+        int pagerOffset = 1;
+        String pagerDirection = "";
 
-            webClient.getVodClipApi(ageReq, upperPageLimit,
-                    lowerPageLimit, pagerOffset, pagerDirection, this);
+        webClient.getVodClipApi(ageReq, upperPageLimit,
+                lowerPageLimit, pagerOffset, pagerDirection, this);
 //        }
         return list;
     }
@@ -847,11 +927,11 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     }
 
     /**
-     * クリップ[テレビ]一覧データをDBに格納する
+     * クリップ[テレビ]一覧データをDBに格納する.
      *
      * @param tvClipList クリップ[テレビ]一覧データ
      */
-    private void setStructDB(TvClipList tvClipList) {
+    private void setStructDB(final TvClipList tvClipList) {
         mTvClipList = tvClipList;
         //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
         sendTvClipListData(mTvClipList.getVcList());
@@ -958,7 +1038,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param recommendContentInfoList テレビレコメンド情報
      */
     @Override
-    public void RecommendChannelCallback(List<ContentsData> recommendContentInfoList) {
+    public void RecommendChannelCallback(final List<ContentsData> recommendContentInfoList) {
         if (recommendContentInfoList != null && recommendContentInfoList.size() > 0) {
             //送られてきたデータをアクティビティに渡す
             sendRecommendChListData(recommendContentInfoList);
@@ -980,7 +1060,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param recommendContentInfoList ビデオレコメンド情報
      */
     @Override
-    public void RecommendVideoCallback(List<ContentsData> recommendContentInfoList) {
+    public void RecommendVideoCallback(final List<ContentsData> recommendContentInfoList) {
         if (recommendContentInfoList != null && recommendContentInfoList.size() > 0) {
             //送られてきたデータをアクティビティに渡す
             sendRecommendVdListData(recommendContentInfoList);
@@ -1003,7 +1083,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param recommendContentInfoList DTVレコメンド情報
      */
     @Override
-    public void RecommendDTVCallback(List<ContentsData> recommendContentInfoList) {
+    public void RecommendDTVCallback(final List<ContentsData> recommendContentInfoList) {
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 
@@ -1013,7 +1093,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param recommendContentInfoList dアニメレコメンド情報
      */
     @Override
-    public void RecommendDAnimeCallback(List<ContentsData> recommendContentInfoList) {
+    public void RecommendDAnimeCallback(final List<ContentsData> recommendContentInfoList) {
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 
@@ -1023,7 +1103,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param recommendContentInfoList Dチャンネルのレコメンド情報
      */
     @Override
-    public void RecommendDChannelCallback(List<ContentsData> recommendContentInfoList) {
+    public void RecommendDChannelCallback(final List<ContentsData> recommendContentInfoList) {
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 
@@ -1036,9 +1116,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public List<Map<String, String>> dbOperation(int operationId) throws Exception {
+    public List<Map<String, String>> dbOperation(final int operationId) throws Exception {
         DateUtils dateUtils = new DateUtils(mContext);
-
         switch (operationId) {
             case ROLE_ID_LIST:
                 dateUtils.addLastDate(DateUtils.ROLELIST_LAST_UPDATE);

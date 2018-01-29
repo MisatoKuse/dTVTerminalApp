@@ -8,13 +8,13 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -66,6 +66,19 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      * コンテンツ.
      */
     private static final int TYPE_NORMAL = 2;
+
+    /**
+     * ランキング 1位.
+     */
+    private final static String RANKING_NUMBER_ONE = "1";
+    /**
+     * ランキング 2位.
+     */
+    private final static String RANKING_NUMBER_TWO = "2";
+    /**
+     * ランキング 3位.
+     */
+    private final static String RANKING_NUMBER_THREE = "3";
 
     /**
      * コンストラクタ.
@@ -125,6 +138,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         viewHolder.mContent = view.findViewById(R.id.home_main_recyclerview_item_tv_content);
         viewHolder.mTime = view.findViewById(R.id.home_main_recyclerview_item_tv_time);
         viewHolder.mNew = view.findViewById(R.id.home_main_recyclerview_item_iv_new);
+        viewHolder.mRankNum = view.findViewById(R.id.home_main_recyclerview_item_iv_rank_num);
         return viewHolder;
     }
 
@@ -136,6 +150,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         ContentsData contentsData = mContentList.get(i);
         String date = contentsData.getTime();
         String title = contentsData.getTitle();
+        String rankNum = contentsData.getRank();
         String startTime = contentsData.getLinearStartDate();
         Boolean newFlag = newContentsCheck(startTime);
 
@@ -161,6 +176,28 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             }
         } else {
             viewHolder.mNew.setVisibility(View.GONE);
+        }
+
+        if (!TextUtils.isEmpty(rankNum)) {
+            viewHolder.mRankNum.setVisibility(View.VISIBLE);
+            switch (rankNum) {
+                case RANKING_NUMBER_ONE:
+                    viewHolder.mRankNum.setBackgroundResource(R.drawable.label_ranking_1);
+                    viewHolder.mRankNum.setTextColor(ContextCompat.getColor(mContext, R.color.black_text));
+                    break;
+                case RANKING_NUMBER_TWO:
+                    viewHolder.mRankNum.setBackgroundResource(R.drawable.label_ranking_2);
+                    break;
+                case RANKING_NUMBER_THREE:
+                    viewHolder.mRankNum.setBackgroundResource(R.drawable.label_ranking_3);
+                    break;
+                default:
+                    viewHolder.mRankNum.setBackgroundResource(R.drawable.label_ranking_other);
+                    break;
+            }
+            viewHolder.mRankNum.setText(rankNum);
+        } else {
+            viewHolder.mRankNum.setVisibility(View.GONE);
         }
 
         if (!TextUtils.isEmpty(date)) {
@@ -247,5 +284,10 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
          * Newアイコン.
          */
         ImageView mNew;
+        /**
+         * 順位アイコン.
+         * ※ランキングコンテンツonly
+         */
+        TextView mRankNum;
     }
 }

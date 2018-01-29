@@ -46,7 +46,7 @@ public class RankingTopActivity extends BaseActivity implements RankingTopDataPr
      */
     private final static int TODAY_SORT = 0;
     /**
-     * UIの上下表示順(週刊のテレビランキング).
+     * UIの上下表示順(週間のテレビランキング).
      */
     private final static int WEEK_SORT = 1;
     /**
@@ -55,7 +55,7 @@ public class RankingTopActivity extends BaseActivity implements RankingTopDataPr
     private final static int VIDEO_SORT = 2;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ranking_top_main_layout);
 
@@ -95,8 +95,10 @@ public class RankingTopActivity extends BaseActivity implements RankingTopDataPr
     /**
      * 機能.
      * コンテンツ一覧ビューを設定
+     * @param contentsDataList コンテンツ一覧
+     * @param tag ランキング種別
      */
-    private void setRecyclerView(List<ContentsData> contentsDataList, final int tag) {
+    private void setRecyclerView(final List<ContentsData> contentsDataList, final int tag) {
         String typeContentName = getContentTypeName(tag);
         View view = mLinearLayout.getChildAt(tag);
         view.setVisibility(View.VISIBLE);
@@ -105,35 +107,38 @@ public class RankingTopActivity extends BaseActivity implements RankingTopDataPr
         //各一覧を遷移すること
         countTextView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
                 startTo(tag);
             }
         });
-        RecyclerView mRecyclerView = view.findViewById(R.id.home_main_item_recyclerview);
+        RecyclerView recyclerView = view.findViewById(R.id.home_main_item_recyclerview);
         //コンテンツタイプを設定
         typeTextView.setText(typeContentName);
         countTextView.setText(String.valueOf(contentsDataList.size()));
         //リサイクルビューデータ設定
-        setRecyclerViewData(mRecyclerView, contentsDataList, tag);
+        setRecyclerViewData(recyclerView, contentsDataList, tag);
     }
 
     /**
-     * 機能
+     * 機能.
      * コンテンツ一覧データを設定
+     * @param recyclerView リサイクルビュー
+     * @param contentsDataList コンテンツ一覧
+     * @param index ランキング種別
      */
-    private void setRecyclerViewData(RecyclerView mRecyclerView, List<ContentsData> contentsDataList, final int index) {
+    private void setRecyclerViewData(final RecyclerView recyclerView, final List<ContentsData> contentsDataList, final int index) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        mRecyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setLayoutManager(linearLayoutManager);
         HomeRecyclerViewAdapter mHorizontalViewAdapter = new HomeRecyclerViewAdapter(this, contentsDataList);
-        mRecyclerView.setAdapter(mHorizontalViewAdapter);
-        View footer = LayoutInflater.from(this).inflate(R.layout.home_main_layout_recyclerview_footer, mRecyclerView, false);
+        recyclerView.setAdapter(mHorizontalViewAdapter);
+        View footer = LayoutInflater.from(this).inflate(R.layout.home_main_layout_recyclerview_footer, recyclerView, false);
         TextView mTextView = footer.findViewById(R.id.home_main_layout_recyclerview_footer);
         mTextView.setText(getString(R.string.contents_more));
         //もっと見るの遷移先を設定
         mTextView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
                 startTo(index);
             }
         });
@@ -147,14 +152,14 @@ public class RankingTopActivity extends BaseActivity implements RankingTopDataPr
      *
      * @param index リスト番号
      */
-    private void startTo(int index) {
+    private void startTo(final int index) {
         switch (index) {
             case 0:
                 //今日のテレビランキングへ遷移
                 startActivity(DailyTvRankingActivity.class, null);
                 break;
             case 1:
-                //週刊テレビランキングへ遷移
+                //週間テレビランキングへ遷移
                 startActivity(WeeklyTvRankingActivity.class, null);
                 break;
             case 2:
@@ -169,10 +174,10 @@ public class RankingTopActivity extends BaseActivity implements RankingTopDataPr
     /**
      * 機能.
      * コンテンツ一覧タイトル取得
-     *
-     * @param tag リスト番号
+     * @param tag 機能.
+     * @return コンテンツ一覧タイトル
      */
-    private String getContentTypeName(int tag) {
+    private String getContentTypeName(final int tag) {
         String typeName = "";
         switch (tag) {
             case 0:
@@ -191,28 +196,28 @@ public class RankingTopActivity extends BaseActivity implements RankingTopDataPr
     }
 
     @Override
-    public void dailyRankListCallback(List<ContentsData> contentsDataList) {
+    public void dailyRankListCallback(final List<ContentsData> contentsDataList) {
         if (contentsDataList != null && contentsDataList.size() > 0) {
             setRecyclerView(contentsDataList, TODAY_SORT);
         }
     }
 
     @Override
-    public void weeklyRankCallback(List<ContentsData> contentsDataList) {
+    public void weeklyRankCallback(final List<ContentsData> contentsDataList) {
         if (contentsDataList != null && contentsDataList.size() > 0) {
             setRecyclerView(contentsDataList, WEEK_SORT);
         }
     }
 
     @Override
-    public void videoRankCallback(List<ContentsData> contentsDataList) {
+    public void videoRankCallback(final List<ContentsData> contentsDataList) {
         if (contentsDataList != null && contentsDataList.size() > 0) {
             setRecyclerView(contentsDataList, VIDEO_SORT);
         }
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         DTVTLogger.start();
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
