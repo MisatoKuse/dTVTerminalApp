@@ -5,23 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:paddingEnd="@dimen/contents_tab_top_margin"
     android:paddingStart="@dimen/contents_tab_side_margin">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingEnd="@dimen/contents_tab_side_margin">
+        android:paddingEnd="@dimen/contents_tab_side_margin"
+        android:paddingStart="@dimen/contents_tab_top_margin">
 
-        <TextView
+        <ImageView
             android:id="@+id/dtv_contents_detail_fragment_service_provider"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/contents_provider_shape_corner_blue"
-            android:paddingLeft="@dimen/contents_service_name_side_margin"
-            android:paddingRight="@dimen/contents_service_name_side_margin"
-            android:textColor="@color/white_text" />
+            android:layout_marginTop="@dimen/contents_tab_side_margin"
+            android:contentDescription="@null" />
 
         <TextView
             android:id="@+id/dtv_contents_detail_fragment_contents_title"
@@ -29,121 +28,97 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/contents_text_vertical_margin"
             android:textColor="@color/white_text"
-            android:textSize="@dimen/header_title_text_size" />
+            android:textSize="@dimen/header_title_text_size"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/dtv_contents_detail_fragment_contents_sub_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white_text"
+            android:textSize="@dimen/contents_detail_14dp" />
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/contents_detail_14dp">
 
             <LinearLayout
                 android:id="@+id/dtv_content_detial_fragment_detail_area"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/contents_detail_8dp"
+                android:layout_centerVertical="true"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/dtv_contents_detail_fragment_channel_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/darker_gray" />
+                    android:textColor="@color/contents_detail_schedule_detail_schedule_info"
+                    android:textSize="@dimen/contents_detail_14dp" />
 
                 <TextView
                     android:id="@+id/dtv_contents_detail_fragment_channel_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/darker_gray" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/contents_detail_5dp"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:id="@+id/dtv_contents_detail_fragment_caption"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/contents_provider_shape_corner_dark_gray"
-                        android:paddingEnd="@dimen/contents_detail_5dp"
-                        android:paddingStart="@dimen/contents_detail_5dp"
-                        android:text="字幕"
-                        android:textColor="@android:color/white" />
-
-                    <TextView
-                        android:id="@+id/dtv_contents_detail_fragment_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/contents_detail_5dp"
-                        android:layout_toRightOf="@id/dtv_contents_detail_fragment_caption"
-                        android:background="@drawable/contents_provider_shape_corner_dark_gray"
-                        android:paddingEnd="@dimen/contents_detail_8dp"
-                        android:paddingStart="@dimen/contents_detail_8dp"
-                        android:text="5.1"
-                        android:textColor="@android:color/white" />
-
-                    <TextView
-                        android:id="@+id/dtv_contents_detail_fragment_age"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/contents_detail_5dp"
-                        android:layout_toRightOf="@id/dtv_contents_detail_fragment_text"
-                        android:background="@drawable/contents_provider_shape_corner"
-                        android:paddingEnd="@dimen/contents_detail_2dp"
-                        android:paddingStart="@dimen/contents_detail_2dp"
-                        android:text="PG 12"
-                        android:textColor="@android:color/white" />
-                </RelativeLayout>
+                    android:textColor="@color/contents_detail_schedule_detail_schedule_info"
+                    android:textSize="@dimen/contents_detail_14dp" />
             </LinearLayout>
 
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/contents_detail_5dp"
-                android:layout_toEndOf="@id/dtv_content_detial_fragment_detail_area"
+                android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true">
 
                 <ImageButton
                     android:id="@+id/dtv_contents_detail_fragment_rec_iv"
                     android:layout_width="@dimen/contents_detail_icon_size"
                     android:layout_height="@dimen/contents_detail_icon_size"
-                    android:scaleType="fitXY"
-                    android:background="@android:color/black"
-                    android:layout_marginRight="@dimen/contents_detail_icon_margin"
+                    android:layout_marginEnd="@dimen/contents_detail_icon_margin"
                     android:layout_toStartOf="@+id/contents_detail_clip_button"
+                    android:background="@android:color/black"
+                    android:scaleType="fitXY"
                     android:src="@drawable/recording_reservation_rec_icon_selector"
-                    android:visibility="invisible"/>
+                    android:visibility="invisible" />
 
                 <ImageView
                     android:id="@+id/contents_detail_clip_button"
                     android:layout_width="@dimen/contents_detail_icon_size"
                     android:layout_height="@dimen/contents_detail_icon_size"
-                    android:scaleType="fitXY"
                     android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="@dimen/contents_detail_8dp"
                     android:clickable="true"
                     android:gravity="center_vertical"
+                    android:scaleType="fitXY"
                     android:src="@mipmap/icon_circle_opacity_clip" />
-
             </RelativeLayout>
         </RelativeLayout>
 
+        <LinearLayout
+            android:id="@+id/dtv_contents_detail_fragment_label_status_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/contents_detail_8dp"
+            android:orientation="horizontal" />
+
         <TextView
             android:id="@+id/dtv_contents_detail_fragment_detail_info"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/contents_text_info_margin"
             android:ellipsize="end"
+            android:lineSpacingExtra="@dimen/contents_detail_5dp"
             android:maxLines="4"
-            android:textColor="@color/white_text"
-            android:textStyle="bold" />
+            android:textColor="@color/white_text" />
 
         <TextView
             android:id="@+id/dtv_contents_detail_fragment_all_info"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/contents_text_info_margin"
-            android:textColor="@color/white_text"
-            android:textStyle="bold" />
+            android:lineSpacingExtra="@dimen/contents_detail_5dp"
+            android:textColor="@color/white_text" />
 
         <TextView
             android:id="@+id/dtv_contents_detail_fragment_more_button"
@@ -153,30 +128,31 @@
             android:gravity="end"
             android:text="@string/contents_info_more_text"
             android:textColor="@color/white_text" />
-    </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/dtv_contents_detail_fragment_staff"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/dtv_contents_detail_fragment_staff_content"
+        <LinearLayout
+            android:id="@+id/dtv_contents_detail_fragment_staff"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/contents_detail_8dp"
-            android:text="@string/contents_detail_tv_staff"
-            android:textColor="@color/white_text"
-            android:textSize="@dimen/contents_detail_16dp" />
+            android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/dtv_contents_detail_fragment_staff_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/contents_detail_staff_margin"
+                android:text="@string/contents_detail_tv_staff"
+                android:textColor="@color/white_text"
+                android:textSize="@dimen/contents_detail_15dp"
+                android:textStyle="bold" />
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/dtv_contents_detail_fragment_recommend"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/dtv_contents_detail_fragment_recommend_content"
@@ -185,7 +161,7 @@
             android:layout_marginTop="@dimen/contents_detail_16dp"
             android:text="@string/contents_detail_tv_staff_recommend"
             android:textColor="@color/white_text"
-            android:textSize="@dimen/contents_detail_16dp" />
+            android:textSize="@dimen/contents_detail_15dp" />
 
         <ScrollView
             android:layout_width="match_parent"
@@ -197,7 +173,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/contents_detail_10dp"
-                android:orientation="vertical"></LinearLayout>
+                android:orientation="vertical" />
         </ScrollView>
     </LinearLayout>
 

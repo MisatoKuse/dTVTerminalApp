@@ -64,16 +64,16 @@ public class StringUtils {
      * @param id サービスID
      * @return サービス名
      */
-    public String getContentsServiceName(final int id) {
+    public int getContentsServiceName(final int id) {
         switch (id) {
             case ContentDetailActivity.DTV_CONTENTS_SERVICE_ID:
-                return mContext.getString(R.string.dtv_contents_service_name);
+                return R.mipmap.label_service_dtv;
             case ContentDetailActivity.DTV_CHANNEL_CONTENTS_SERVICE_ID:
-                return mContext.getString(R.string.dtv_channel_contents_service_name);
+                return R.mipmap.label_service_dch;
             case ContentDetailActivity.D_ANIMATION_CONTENTS_SERVICE_ID:
-                return mContext.getString(R.string.d_animation_contents_service_name);
+                return R.mipmap.label_service_danime;
         }
-        return mContext.getString(R.string.hikari_tv_contents_service_name);
+        return R.mipmap.label_service_hikari;
     }
 
     /**

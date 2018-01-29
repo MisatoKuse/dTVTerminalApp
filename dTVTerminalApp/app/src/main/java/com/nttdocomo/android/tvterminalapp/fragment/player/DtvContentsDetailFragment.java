@@ -14,6 +14,7 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.text.Layout;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +36,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
+import java.io.File;
 import java.util.List;
 
 
@@ -49,7 +51,8 @@ public class DtvContentsDetailFragment extends Fragment {
     private TextView mTxtTitleAllDetail = null;
     private TextView mTxtMoreText = null;
     private TextView headerText = null;
-    private TextView txtServiceName = null;
+    private TextView subHeaderText = null;
+    private ImageView imgServiceName = null;
     private TextView txtChannelName = null;
     private TextView txtChannelDate = null;
     private TextView txtChannelLabel = null;
@@ -101,9 +104,10 @@ public class DtvContentsDetailFragment extends Fragment {
             view = LayoutInflater.from(getContext()).inflate(R.layout.dtv_contents_detail_fragment, container, false);
         }
         //サービス/提供元
-        txtServiceName = view.findViewById(R.id.dtv_contents_detail_fragment_service_provider);
+        imgServiceName = view.findViewById(R.id.dtv_contents_detail_fragment_service_provider);
         //ヘッダー
         headerText = view.findViewById(R.id.dtv_contents_detail_fragment_contents_title);
+        subHeaderText = view.findViewById(R.id.dtv_contents_detail_fragment_contents_sub_title);
         txtChannelName = view.findViewById(R.id.dtv_contents_detail_fragment_channel_name);
         txtChannelDate = view.findViewById(R.id.dtv_contents_detail_fragment_channel_date);
 
@@ -117,7 +121,6 @@ public class DtvContentsDetailFragment extends Fragment {
         staffLayout = view.findViewById(R.id.dtv_contents_detail_fragment_staff);
         //おすすめ作品情報
         recommendLayout = view.findViewById(R.id.dtv_contents_detail_fragment_recommend_item);
-        view.findViewById(R.id.dtv_contents_detail_fragment_recommend).setVisibility(View.GONE);
         mTxtMoreText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -213,22 +216,23 @@ public class DtvContentsDetailFragment extends Fragment {
      */
     private void setDetailData() {
         headerText.setText(mOtherContentsDetailData.getTitle());
+        subHeaderText.setText("サブタイトル");//TODO 画面効果表示のため、一時表示
         //画面表示
         StringUtils util = new StringUtils(getContext());
-        String strServiceName = util.getContentsServiceName(mOtherContentsDetailData.getServiceId());
+        int serviceName = util.getContentsServiceName(mOtherContentsDetailData.getServiceId());
         String contentsDetailInfo;
-        txtServiceName.setText(strServiceName);
+        imgServiceName.setImageResource(serviceName);
+        setLabelStatus();
         contentsDetailInfo = selectDetail();
-        boolean isFlag = false;
         if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelName())) {
             txtChannelName.setText(mOtherContentsDetailData.getChannelName());
         } else {
-            isFlag = true;
+            txtChannelName.setText("FOX HD");//TODO 画面効果表示のため、一時表示
         }
         if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelDate())) {
             txtChannelDate.setText(mOtherContentsDetailData.getChannelDate());
         } else {
-            isFlag = true;
+            txtChannelDate.setText("7/6 （水）19:00 - 20:00");//TODO 画面効果表示のため、一時表示
         }
         if (mOtherContentsDetailData.getStaffList() != null) {
             setStaff();
@@ -240,6 +244,29 @@ public class DtvContentsDetailFragment extends Fragment {
             mTxtTitleAllDetail.setText(contentsDetailInfo);
         }
         setClipButton(mClipButton);
+        /*setRecommendLayout();*///TODO おすすめ作品、一時コメントアウト
+    }
+
+    private void setLabelStatus(){
+        LinearLayout labelStatus = view.findViewById(R.id.dtv_contents_detail_fragment_label_status_ll);
+        labelStatus.removeAllViews();
+        int status[] = {R.mipmap.label_status_new, R.mipmap.label_status_multilingual,
+                R.mipmap.label_status_4k, R.mipmap.label_status_voice, R.mipmap.label_status_sound};
+        for(int i = 0; i < status.length; i++){
+            LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            if(i != 0){
+                imageParams.setMargins((int)getResources().getDimension(R.dimen.contents_detail_8dp),
+                        (int)getResources().getDimension(R.dimen.contents_tab_top_margin),
+                        (int)getResources().getDimension(R.dimen.contents_tab_top_margin),
+                        (int)getResources().getDimension(R.dimen.contents_tab_top_margin));
+            }
+            ImageView imageView = new ImageView(getContext());
+            imageView.setImageResource(status[i]);
+            imageView.setLayoutParams(imageParams);
+            labelStatus.addView(imageView);
+        }
     }
 
     /**
@@ -250,11 +277,11 @@ public class DtvContentsDetailFragment extends Fragment {
         staffLayout.setVisibility(View.VISIBLE);
         for (int i = 0; i < staffList.size(); i++) {
             RelativeLayout itemLayout = new RelativeLayout(getContext());
-            itemLayout.setBackgroundResource(R.drawable.rectangele_contents_detail);
+            /*itemLayout.setBackgroundResource(R.drawable.rectangele_contents_detail);*/
             TextView tabTextView = new TextView(getContext());
             RelativeLayout.LayoutParams contentParams = new RelativeLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
-                    (int) getResources().getDimension(R.dimen.contents_detail_tabs_height));
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
             contentParams.addRule(RelativeLayout.ALIGN_PARENT_START);
             RelativeLayout.LayoutParams imageParams = new RelativeLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -265,12 +292,20 @@ public class DtvContentsDetailFragment extends Fragment {
             //imageParams.addRule(RelativeLayout.ALIGN_PARENT_END);
             //imageView.setLayoutParams(imageParams);
             contentParams.addRule(RelativeLayout.ALIGN_PARENT_START);
-            tabTextView.setLayoutParams(contentParams);
-            tabTextView.setText(staffList.get(i));
+            String text = staffList.get(i);
             tabTextView.setGravity(Gravity.CENTER_VERTICAL);
             itemLayout.setTag(i);
-            tabTextView.getPaint().setFakeBoldText(true);
-            tabTextView.setTextColor(Color.GRAY);
+            tabTextView.setTextColor(Color.parseColor("#FFFFFF"));
+            tabTextView.setLineSpacing(getResources().getDimension(R.dimen.contents_detail_5dp), 1);
+            contentParams.setMargins(0,(int)getResources().getDimension(R.dimen.contents_detail_16dp),0,0);
+            if(text.contains(File.separator)){
+                tabTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
+                tabTextView.setText(text.substring(0, text.length() - 1));
+            } else {
+                tabTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+                tabTextView.setText(text);
+            }
+            tabTextView.setLayoutParams(contentParams);
             itemLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -284,6 +319,9 @@ public class DtvContentsDetailFragment extends Fragment {
         }
     }
 
+    /**
+     * スタッフ情報を表示する.TODO 関連作品実装
+     */
     private void setRecommendLayout() {
         recommendLayout.removeAllViews();
         ThumbnailProvider mThumbnailProvider = new ThumbnailProvider(getContext());
@@ -324,7 +362,6 @@ public class DtvContentsDetailFragment extends Fragment {
             public boolean onPreDraw() {
                 final int DETAIL_INFO_TEXT_MAX_LINE = 4;
                 Layout layout = mTxtTitleAllDetail.getLayout();
-
                 if (layout != null) {
                     //コンテンツ情報の文字数が省略されているときは、省略文とmoreを表示する
                     int intTextViewCount = layout.getLineCount();
