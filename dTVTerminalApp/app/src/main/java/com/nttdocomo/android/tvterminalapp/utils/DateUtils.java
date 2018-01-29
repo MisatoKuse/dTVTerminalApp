@@ -15,6 +15,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class DateUtils {
 
@@ -123,21 +124,20 @@ public class DateUtils {
     public static final long EPOCH_TIME_ONE_HOUR = 3600;
 
     /**
-     * コンテキスト.
+     * コンストラクタ.
      *
-     * @param mContext
+     * @param context コンテキスト
      */
-    public DateUtils(Context mContext) {
+    public DateUtils(final Context context) {
         this.mContext = mContext;
     }
 
     /**
      * 現在日時に1日加算した後に永続化.
      *
-     * @param key
+     * @param key Preferencesキー
      */
-    public void addLastDate(
-            String key) {
+    public void addLastDate(final String key) {
 
         // TODO:DBには取得日時を格納しておき、現在時刻よりもデータが未来の場合,キャッシュ切れと判断すべき
         // TODO:UTCタイムスタンプで良い.無駄に複雑化させているだけ.
@@ -155,7 +155,7 @@ public class DateUtils {
      * @param key   name
      * @param value value
      */
-    private void saveDataToSharePre(String key, String value) {
+    private void saveDataToSharePre(final String key, final String value) {
         //データ永続化
         SharedPreferences data = mContext.getSharedPreferences(DATA_SAVE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = data.edit();
@@ -166,10 +166,9 @@ public class DateUtils {
     /**
      * 現在日時に1日加算した後に永続化.
      *
-     * @param key
+     * @param key Preferencesキー
      */
-    public void addLastProgramDate(
-            String key) {
+    public void addLastProgramDate(final String key) {
 
         // TODO:DBには取得日時を格納しておき、現在時刻よりもデータが未来の場合,キャッシュ切れと判断すべき
         // TODO:文字列でなくUTCのタイムスタンプでよい.無駄に複雑にしている.
@@ -185,7 +184,7 @@ public class DateUtils {
      * @param key ファイル名(KEY)
      * @return date 前回取得した時刻を返却
      */
-    public String getLastDate(String key) {
+    public String getLastDate(final String key) {
         SharedPreferences data = mContext.getSharedPreferences(DATA_SAVE, Context.MODE_PRIVATE);
         return data.getString(key, "");
     }
@@ -193,10 +192,10 @@ public class DateUtils {
     /**
      * 日付が期限内か判定.
      *
-     * @param str
-     * @return
+     * @param str チェック日付
+     * @return 日付チェック結果
      */
-    public boolean isBeforeLimitDate(String str) {
+    public boolean isBeforeLimitDate(final String str) {
         // TODO:DBには取得日時を格納しておき、現在時刻よりもデータが未来の場合,キャッシュ切れと判断すべき
         // TODO:文字列でなくUTCのタイムスタンプでよい.無駄に複雑にしている.
         if (str == null) {
@@ -227,7 +226,7 @@ public class DateUtils {
      * @param lastStr 前回取得できた日付
      * @return 現在日付と前回の比較の判定
      */
-    public boolean isBeforeProgramLimitDate(String lastStr) {
+    public boolean isBeforeProgramLimitDate(final String lastStr) {
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_YYYY_MM_DD, Locale.JAPAN);
         //日付の比較
         Calendar calendar = Calendar.getInstance();
@@ -249,16 +248,22 @@ public class DateUtils {
 
     /**
      * エポック秒を YYYY/MM/DD かつString値に変換.
+     *
+     * @param epochTime エポック秒
+     * @return YYYY/MM/DD日付
      */
-    public static String formatEpochToString(long epochTime) {
+    public static String formatEpochToString(final long epochTime) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_PATTERN);
         return dateFormat.format(new Date(epochTime * 1000));
     }
 
     /**
      * エポック秒を yyyyMMddHHmmss かつString値に変換.
+     *
+     * @param epochTime エポック秒
+     * @return YYYY/MM/DD日付
      */
-    public static String formatEpochToStringOpeLog(long epochTime) {
+    public static String formatEpochToStringOpeLog(final long epochTime) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_YYYY_MM_DD_HH_MM_SS);
         return dateFormat.format(new Date(epochTime * 1000));
     }
@@ -299,10 +304,10 @@ public class DateUtils {
     /**
      * 指定日（エポック秒：秒単位）から曜日を取得.
      *
-     * @param epochTime
+     * @param epochTime エポック秒
      * @return 日:1 ～ 土:7
      */
-    public static int getDayOfWeek(long epochTime) {
+    public static int getDayOfWeek(final long epochTime) {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(epochTime * 1000);
         return cal.get(Calendar.DAY_OF_WEEK);
@@ -311,10 +316,10 @@ public class DateUtils {
     /**
      * 月曜日までの日数を取得.
      *
-     * @param dayOfWeek
-     * @return
+     * @param dayOfWeek 日付
+     * @return 月曜までの日数
      */
-    public static int getNumberOfDaysUntilMonday(int dayOfWeek) {
+    public static int getNumberOfDaysUntilMonday(final int dayOfWeek) {
         if (DateUtils.DAY_OF_WEEK_MONDAY < dayOfWeek) {
             return (DateUtils.DAY_OF_WEEK_MONDAY + 7) - dayOfWeek;
         } else {
@@ -325,10 +330,10 @@ public class DateUtils {
     /**
      * 日曜日までの日数を取得.
      *
-     * @param dayOfWeek
-     * @return
+     * @param dayOfWeek 日付
+     * @return 日曜までの日数
      */
-    public static int getNumberOfDaysUntilSunday(int dayOfWeek) {
+    public static int getNumberOfDaysUntilSunday(final int dayOfWeek) {
         if (DateUtils.DAY_OF_WEEK_SUNDAY < dayOfWeek) {
             return (DateUtils.DAY_OF_WEEK_SUNDAY + 7) - dayOfWeek;
         } else {
@@ -338,8 +343,11 @@ public class DateUtils {
 
     /**
      * 引数の日付(エポック秒)を M/d (DAY_OF_WEEK) hh:mm のString型に変換(録画予約一覧ListItem用).
+     *
+     * @param time 日付(エポック秒)
+     * @return 変換日付
      */
-    public static String getRecordShowListItem(long time) {
+    public static String getRecordShowListItem(final long time) {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(time * 1000);
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN_RECORDING_RESERVATION);
@@ -351,16 +359,22 @@ public class DateUtils {
 
     /**
      * 引数の曜日（int型）をStringに変換する.
+     *
+     * @param dayOfWeek 曜日(int型)
+     * @return 曜日
      */
-    public static String getStringDayOfWeek(int dayOfWeek) {
+    public static String getStringDayOfWeek(final int dayOfWeek) {
         return STRING_DAY_OF_WEEK[dayOfWeek];
     }
 
     /**
      * 録画予約開始時間の算出.
      * 引数日時（エポック秒）の0時00分00秒からの時間を算出
+     *
+     * @param startTime 日時(エポック秒)
+     * @return 録画予約開始時間
      */
-    public static long getCalculationRecordingReservationStartTime(long startTime) {
+    public static long getCalculationRecordingReservationStartTime(final long startTime) {
         return startTime % EPOCH_TIME_ONE_DAY;
     }
 
@@ -369,7 +383,7 @@ public class DateUtils {
      *
      * @param context コンテキスト
      */
-    public static void clearDataSave(Context context) {
+    public static void clearDataSave(final Context context) {
         SharedPreferences data = context.getSharedPreferences(DATA_SAVE, Context.MODE_PRIVATE);
         data.edit().clear().apply();
     }
@@ -377,19 +391,22 @@ public class DateUtils {
     /**
      * エポック秒に変換する.
      *
-     * @param strDate
-     * @return
+     * @param strDate 現在日付
+     * @return エポック秒
      */
-    public static long getEpochTime(String strDate) {
+    public static long getEpochTime(final String strDate) {
         long epochTime = 0;
         if (null != strDate) {
-            // TODO:非推奨API利用.要修正.
-            Date lm = new Date(strDate);
+            SimpleDateFormat formatter = new SimpleDateFormat(DATE_PATTERN);
+            //APIレスポンスの値がJSTとのこと
+            formatter.setTimeZone(TimeZone.getTimeZone("JST"));
+            Date gmt = null;
             try {
-                epochTime = lm.getTime();
-            } catch (Exception e) {
-                DTVTLogger.error("response is null");
+                gmt = formatter.parse(strDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
+            epochTime = gmt.getTime();
         }
         return epochTime;
     }

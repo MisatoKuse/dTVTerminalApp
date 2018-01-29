@@ -101,6 +101,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      */
     private int cancelVisibility = View.VISIBLE;
 
+    private boolean mIsButtonTap = false;
     /**
      * OKボタン押下を返却するためのコールバック.
      */
@@ -199,7 +200,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      *
      * @param callback ボタンタップ以外でダイアログが閉じた時のコールバック
      */
-    public void setDialogDismissCallback(DialogDismissCallback callback) {
+    public void setDialogDismissCallback(final DialogDismissCallback callback) {
         this.mDialogDismissCallback = callback;
     }
 
@@ -264,6 +265,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
      */
     public void showDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mContext);
+        dialogBuilder.setOnDismissListener(this);
         initView(dialogBuilder);
     }
 
@@ -343,12 +345,14 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
             case AlertDialog.BUTTON_POSITIVE:
                 dismissDialog();
                 if (apiOKCallback != null) {
+                    mIsButtonTap = true;
                     apiOKCallback.onOKCallback(true);
                 }
                 break;
             case AlertDialog.BUTTON_NEGATIVE:
                 dismissDialog();
                 if (mApiCancelCallback != null) {
+                    mIsButtonTap = true;
                     mApiCancelCallback.onCancelCallback();
                 }
                 break;
@@ -454,7 +458,11 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
 
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
-        //ボタンタップ以外でダイアログが閉じた場合
-        mDialogDismissCallback.onDialogDismissCallback();
+        //ボタンタップ時は動作させない
+        if (mDialogDismissCallback != null && !mIsButtonTap) {
+            //ボタンタップ以外でダイアログが閉じた場合
+            mDialogDismissCallback.onDialogDismissCallback();
+        }
+        mIsButtonTap = false;
     }
 }
