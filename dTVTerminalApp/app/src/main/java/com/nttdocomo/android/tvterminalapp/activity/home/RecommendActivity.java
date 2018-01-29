@@ -313,7 +313,7 @@ public class RecommendActivity extends BaseActivity implements
             DTVTLogger.debug("baseFragment.mData.size = " + baseFragment.mData.size());
 
             // フラグメントの更新
-            baseFragment.notifyDataSetChanged();
+            baseFragment.notifyDataSetChanged(sRecommendViewPager.getCurrentItem());
             //ゼロ以下ならばゼロにする
             if (sSearchLastItem < 0) {
                 DTVTLogger.debug("sSearchLastItem = " + sSearchLastItem);

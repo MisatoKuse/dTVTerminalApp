@@ -363,6 +363,7 @@ public class DateUtils {
 
     /**
      * 現在日時エポック秒を取得.
+     *
      * @return 現在日時のエポック秒
      */
     public static long getNowTimeFormatEpoch() {
@@ -372,6 +373,7 @@ public class DateUtils {
 
     /**
      * 現在日の0時00分00秒をエポック秒で取得.
+     *
      * @return エポック秒に変換した現在日の0時00分00秒
      */
     public static long getTodayStartTimeFormatEpoch() {
@@ -542,5 +544,31 @@ public class DateUtils {
     public static long getSecondEpochTime(final String strDate) {
         long epochTime = (getEpochTimeLink(strDate)) / 1000;
         return epochTime;
+    }
+
+    /**
+     * 現在時刻が指定したエポック秒の範囲内に収まっているかどうかを調べる.
+     *
+     * @param startTime 検査開始日時
+     * @param endTime   検査終了日時
+     * @return 開始と終了の間の時間に現在の日時が収まってればtrue
+     */
+    public static boolean isBetweenNowTime(long startTime, long endTime) {
+        if (startTime > 0 && endTime == 0) {
+            //開始時間が正常に取れていて、終了時間は取れていない場合は、暫定値として1時間をセットする
+            endTime = startTime + DateUtils.EPOCH_TIME_ONE_HOUR;
+        }
+
+        //今の時間を取得する
+        long nowTime = getNowTimeFormatEpoch();
+
+        //現在の日時が開始と終了の範囲内に収まっているか確認
+        if (startTime <= nowTime && endTime >= nowTime) {
+            //収まっているのでtrue
+            return true;
+        }
+
+        //収まっていないのでfalse
+        return false;
     }
 }

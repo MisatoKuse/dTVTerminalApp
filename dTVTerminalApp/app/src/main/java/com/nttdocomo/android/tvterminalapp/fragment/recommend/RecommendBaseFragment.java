@@ -87,9 +87,10 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     /**
      * データの更新
      */
-    public void notifyDataSetChanged() {
+    public void notifyDataSetChanged(int tabPosition) {
         if (null != mRecommendListBaseAdapter) {
             mRecommendListBaseAdapter.notifyDataSetChanged();
+            mRecommendListBaseAdapter.setSelectedTab(tabPosition);
         }
     }
 
