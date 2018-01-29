@@ -16,7 +16,7 @@
             android:id="@+id/paring_connecting_image"
             android:layout_width="@dimen/launch_stb_start_up_icon3_width"
             android:layout_height="@dimen/launch_stb_start_up_icon2_high"
-            android:src="@mipmap/paring_connecting_icon"
+            android:src="@mipmap/startup_icon_03"
             android:baselineAlignBottom="true"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"

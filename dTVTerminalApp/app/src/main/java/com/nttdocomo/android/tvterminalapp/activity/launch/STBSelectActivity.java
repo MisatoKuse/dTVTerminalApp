@@ -13,7 +13,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.res.ResourcesCompat;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
@@ -251,7 +250,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             TextView statusTextView = findViewById(R.id.stb_select_status_text);
             TextView downloadTextView = findViewById(R.id.downloadDAccountApplication);
 
-            mPairingImage.setImageResource(R.mipmap.paring_search_icon);
+            mPairingImage.setImageResource(R.mipmap.startup_icon_01);
             statusTextView.setText(R.string.str_stb_select_result_text_search);
             downloadTextView.setVisibility(View.GONE);
             mCheckBoxSTBSelectActivity.setVisibility(View.VISIBLE);
@@ -752,7 +751,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         TextView downloadTextView = findViewById(R.id.downloadDAccountApplication);
 
         mIsAppDL = true;
-        mPairingImage.setImageResource(R.mipmap.stb_select_error_device_icon);
+        mPairingImage.setImageResource(R.mipmap.startup_icon_04);
         statusTextView.setText(R.string.str_d_account_app_not_install);
         downloadTextView.setVisibility(View.VISIBLE);
         downloadTextView.setOnClickListener(this);

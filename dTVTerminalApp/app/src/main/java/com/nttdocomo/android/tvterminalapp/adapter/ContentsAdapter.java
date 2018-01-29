@@ -463,7 +463,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     private void setRedordedDownloadIcon(ViewHolder holder, ContentsData listContentInfo) {
         DTVTLogger.start();
         //TODO:録画予約一覧等、クリップボタンを表示しない画面はここで外す
-        if (!mType.equals(TYPE_RECORDING_RESERVATION_LIST) ) {
+        if (!mType.equals(TYPE_RECORDING_RESERVATION_LIST)) {
             BaseActivity baseActivity = new BaseActivity();
             if (holder.tv_clip != null) {
                 //Boolean contentsFlag = baseActivity.getDownloadContentsFalag();
@@ -520,6 +520,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
             case TYPE_RECORDED_LIST: // 録画番組一覧
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
+                view = mInflater.inflate(R.layout.item_common_result, parent, false);
             default:
                 break;
         }
@@ -624,7 +625,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             //ひかりコンテンツ判定
             if (StringUtils.isHikariContents(clipType) || StringUtils.isHikariInDtvContents(clipType)) {
                 //TODO:録画予約一覧等、クリップボタンを表示しない画面はここで外す
-                if (!mType.equals(TYPE_RECORDING_RESERVATION_LIST) ) {
+                if (!mType.equals(TYPE_RECORDING_RESERVATION_LIST)) {
                     //クリップ状態が1以外の時は、非活性クリップボタンを表示
                     if (listContentInfo.isClipExec()) {
                         if (listContentInfo.isClipStatus()) {

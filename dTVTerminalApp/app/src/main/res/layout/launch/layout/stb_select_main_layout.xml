@@ -12,7 +12,7 @@
             android:id="@+id/paring_search_image"
             android:layout_width="@dimen/launch_stb_start_up_icon1_width"
             android:layout_height="@dimen/launch_stb_start_up_icon1_high"
-            android:src="@mipmap/paring_search_icon"
+            android:src="@mipmap/startup_icon_01"
             android:baselineAlignBottom="true"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
