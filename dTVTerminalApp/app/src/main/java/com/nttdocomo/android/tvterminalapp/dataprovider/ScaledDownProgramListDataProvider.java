@@ -587,12 +587,12 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
             for (int i = startPosition; i < 8; i++) {
                 Calendar calendar = Calendar.getInstance();
                 calendar.add(Calendar.DAY_OF_MONTH, i);
-                dateList[j] = sdf.format(calendar.getTime());
+                list[j] = sdf.format(calendar.getTime());
                 j++;
             }
             dateUtils.addLastProgramDate(DateUtils.TVSCHEDULE_LAST_UPDATE);
             TvScheduleWebClient mChannelProgramList = new TvScheduleWebClient(mContext);
-            mChannelProgramList.getTvScheduleApi(chList, dateList, filter, this);
+            mChannelProgramList.getTvScheduleApi(chList, list, filter, this);
         }
     }
 }
