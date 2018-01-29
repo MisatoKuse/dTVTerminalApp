@@ -36,6 +36,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WatchListenVideoList;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
@@ -550,6 +551,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
 
     /**
      * 取得したリストマップをContentsDataクラスへ入れる.
+     *
      * @param mapList コンテンツリストデータ
      * @param rankFlag ランキングのコンテンツか否か
      * @return dataList ListView表示用データ
@@ -616,7 +618,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
 
         List<Map<String, String>> list = new ArrayList<>();
         //NO ON AIR一覧のDB保存履歴と、有効期間を確認
-        if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
+        if ((lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate))
+                || !NetWorkUtils.isOnline(mContext)) {
             //データをDBから取得する
             //TODO データがDBに無い場合や壊れていた場合の処理が必要
             HomeDataManager homeDataManager = new HomeDataManager(mContext);
@@ -683,7 +686,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         String lastDate = dateUtils.getLastDate(DateUtils.TV_LAST_INSERT);
         List<Map<String, String>> list = new ArrayList<>();
         //クリップ[テレビ]一覧のDB保存履歴と、有効期間を確認
-//        if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
+//        if ((lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate))
+//                || !NetWorkUtils.isOnline(mContext)) {
         //TODO:Sprint10でDB使用を一時停止
         //データをDBから取得する
 //            HomeDataManager homeDataManager = new HomeDataManager(mContext);
@@ -713,7 +717,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         String lastDate = dateUtils.getLastDate(DateUtils.VOD_LAST_INSERT);
         List<Map<String, String>> list = new ArrayList<>();
         //クリップ[ビデオ]一覧のDB保存履歴と、有効期間を確認
-//        if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
+//        if ((lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate))) {
+//                || !NetWorkUtils.isOnline(mContext)) {
         //TODO:Sprint10でDB使用を一時停止
         //データをDBから取得する
 //            HomeDataManager homeDataManager = new HomeDataManager(mContext);
@@ -743,7 +748,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         String lastDate = dateUtils.getLastDate(DateUtils.DAILY_RANK_LAST_INSERT);
         List<Map<String, String>> list = new ArrayList<>();
         //今日のテレビランキング一覧のDB保存履歴と、有効期間を確認
-        if (lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate)) {
+        if ((lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate))
+                || !NetWorkUtils.isOnline(mContext)) {
             //データをDBから取得する
             HomeDataManager homeDataManager = new HomeDataManager(mContext);
             list = homeDataManager.selectDailyRankListHomeData();
@@ -781,7 +787,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         String lastDate = dateUtils.getLastDate(DateUtils.VIDEO_RANK_LAST_INSERT);
         List<Map<String, String>> list = new ArrayList<>();
         //Vodクリップ一覧のDB保存履歴と、有効期間を確認
-        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeLimitDate(lastDate)) {
+        if ((!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeLimitDate(lastDate))
+                || !NetWorkUtils.isOnline(mContext)) {
             //データをDBから取得する
             RankingTopDataManager rankingTopDataManager = new RankingTopDataManager(mContext);
             list = rankingTopDataManager.selectVideoRankListData();
@@ -805,7 +812,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     public void getChannelList(final int limit, final int offset, final String filter, final int type) {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.CHANNEL_LAST_UPDATE);
-        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate)) {
+        if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate))
+                && NetWorkUtils.isOnline(mContext)) {
             //データをDBから取得する
             HomeDataManager homeDataManager = new HomeDataManager(mContext);
             List<Map<String, String>> channelList = homeDataManager.selectChannelListHomeData();
@@ -833,7 +841,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         }
 
         //視聴中ビデオ一覧のDB保存履歴と、有効期間を確認
-        if (lastDate == null || lastDate.length() < 1 || dateUtils.isBeforeLimitDate(lastDate)) {
+        if ((lastDate == null || lastDate.length() < 1 || dateUtils.isBeforeLimitDate(lastDate))
+                && NetWorkUtils.isOnline(mContext)) {
             WatchListenVideoWebClient webClient = new WatchListenVideoWebClient(mContext);
             //TODO：仮設定値
             int ageReq = 1;
@@ -856,11 +865,13 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if (mRequiredClipKeyList) {
             getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
         }
-        if (lastDate == null || lastDate.length() < 1 || dateUtils.isBeforeLimitDate(lastDate)) {
+        if ((lastDate == null || lastDate.length() < 1 || dateUtils.isBeforeLimitDate(lastDate))
+                && NetWorkUtils.isOnline(mContext)) {
             //レンタル一覧取得
             RentalVodListWebClient webClient = new RentalVodListWebClient(mContext);
             webClient.getRentalVodListApi(this);
         }
+        //TODO:Homeでこのデータを使用する場合はオフライン時等にキャッシュ取得等の対応が必要
     }
 
     /**
@@ -869,10 +880,12 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     private void getChListData() {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.RENTAL_CHANNEL_LAST_UPDATE);
-        if (TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate)) {
+        if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate))
+                && NetWorkUtils.isOnline(mContext)) {
             RentalChListWebClient rentalChListWebClient = new RentalChListWebClient(mContext);
             rentalChListWebClient.getRentalChListApi((RentalChListWebClient.RentalChListJsonParserCallback) this);
         }
+        //TODO:Homeでこのデータを使用する場合はオフライン時等にキャッシュ取得等の対応が必要
     }
 
     /**
@@ -881,11 +894,13 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     private void getRoleListData() {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.ROLELIST_LAST_UPDATE);
-        if (TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate)) {
+        if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate))
+                && NetWorkUtils.isOnline(mContext)) {
             dateUtils.addLastProgramDate(DateUtils.ROLELIST_LAST_UPDATE);
             RoleListWebClient roleListWebClient = new RoleListWebClient(mContext);
             roleListWebClient.getRoleListApi((RoleListWebClient.RoleListJsonParserCallback) this);
         }
+        //TODO:Homeでこのデータを使用する場合はオフライン時等にキャッシュ取得等の対応が必要
     }
 
     /**
@@ -894,11 +909,13 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     private void getGenreListDataRequest() {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
-        if (TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate)) {
+        if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate))
+                && NetWorkUtils.isOnline(mContext)) {
             //データの有効期限切れなら通信で取得
             GenreListWebClient webClient = new GenreListWebClient(mContext);
             webClient.getGenreListApi(this);
         }
+        //TODO:Homeでこのデータを使用する場合はオフライン時等にキャッシュ取得等の対応が必要
     }
 
     /**

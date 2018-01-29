@@ -151,14 +151,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         mIsOnCreateFinish = false;
-        if (!NetWorkUtils.isOnline(this)) {
-            initData();
-            String message = getResources().getString(R.string.activity_start_network_error_message);
-            errorDialog(message, R.string.custom_dialog_ok);
-        } else {
-            getUserInfo();
-            initView();
-        }
+        initData();
+        initView();
+        getUserInfo();
     }
 
     /**
@@ -182,7 +177,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 @Override
                 public void onOKCallback(final boolean isOK) {
                     //OKボタン押下
-                    initView();
+                    showMainLayout();
                     mIsCloseDialog = false;
                 }
             });
@@ -191,7 +186,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 @Override
                 public void onDialogDismissCallback() {
                     //ボタンタップ以外でダイアログが閉じた場合
-                    initView();
+                    showMainLayout();
                     mIsCloseDialog = false;
                 }
             });
@@ -210,24 +205,29 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         ProgressBar progressBar = new ProgressBar(HomeActivity.this, null, android.R.attr.progressBarStyle);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT);
         mRelativeLayout.addView(progressBar, params);
+    }
+
+    /**
+     * コンテンツ表示用レイアウトを表示する.
+     */
+    private void showMainLayout() {
+        mLinearLayout = findViewById(R.id.home_main_layout_linearLayout);
+        mLinearLayout.setVisibility(View.VISIBLE);
+        mRelativeLayout = findViewById(R.id.home_main_layout_progress_bar_Layout);
+        mRelativeLayout.setVisibility(View.GONE);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
+        //起動時はプログレスダイアログを表示
+        initData();
         //アプリ起動時のデータ取得はonCreateで実施済みのためonResumeでは行わない
         if (mIsOnCreateFinish) {
-            //ネットワークチェック
-            if (NetWorkUtils.isOnline(this)) {
-                requestHomeData();
-            } else {
-                initData();
-                String message = getResources().getString(R.string.activity_start_network_error_message);
-                errorDialog(message, R.string.custom_dialog_ok);
-            }
+            requestHomeData();
         }
         mIsOnCreateFinish = true;
     }
@@ -236,7 +236,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * ホーム画面用データ取得開始.
      */
     private void requestHomeData() {
+        networkCheck();
         //Home画面用データを取得
+        showMainLayout();
         HomeDataProvider homeDataProvider = new HomeDataProvider(this);
         homeDataProvider.getHomeData();
     }
@@ -297,12 +299,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
 
-        //プログレスバー用レイアウトを非表示にする
-        mRelativeLayout = findViewById(R.id.home_main_layout_progress_bar_Layout);
-        mRelativeLayout.setVisibility(View.GONE);
-
+        //レイアウトを非表示にする
         mLinearLayout = findViewById(R.id.home_main_layout_linearLayout);
-        mLinearLayout.setVisibility(View.VISIBLE);
+        mLinearLayout.setVisibility(View.GONE);
         TextView agreementTextView = findViewById(R.id.home_main_layout_kytv);
         LinearLayout agreementRl = findViewById(R.id.home_main_layout_kyrl);
         ImageView prImageView = findViewById(R.id.home_main_layout_pr);
@@ -594,13 +593,15 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * ユーザ情報取得処理.
      */
     private void getUserInfo() {
+        //ユーザ情報取得はオフラインを想定していないため引数は false 固定
+        networkCheck();
         //ユーザー情報の変更検知
         UserInfoDataProvider dataProvider = new UserInfoDataProvider(this, this);
         dataProvider.getUserInfo();
     }
 
     /**
-     * ネットワーク接続エラーダイアログ.
+     * 契約情報取得失敗ダイアログ.
      */
     private void getUserInfoErrorDialog() {
         CustomDialog failedRecordingReservationDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
@@ -613,7 +614,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             @Override
             public void onOKCallback(final boolean isOK) {
                 //ユーザ情報なし(未契約表示)
-                initView();
                 requestHomeData();
             }
         });
@@ -651,6 +651,17 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         });
     }
 
+    /**
+     * network状態確認.
+     */
+    private void networkCheck() {
+        if (!NetWorkUtils.isOnline(this)) {
+            initData();
+            String message = getResources().getString(R.string.activity_start_network_error_message);
+            errorDialog(message, R.string.custom_dialog_ok);
+        }
+    }
+
     @Override
     public void userInfoListCallback(final boolean isDataChange, final List<UserInfoList> userList) {
         if (!DBUtils.isCachingRecord(this, DBConstants.USER_INFO_LIST_TABLE_NAME)) {
@@ -664,7 +675,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 getUserInfoErrorDialog();
             } else {
                 //契約情報取得成功
-                initView();
                 requestHomeData();
             }
         } else {
