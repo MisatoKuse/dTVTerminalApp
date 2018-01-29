@@ -157,8 +157,8 @@ public class DownloadService extends Service implements DownloadListener {
 //        Intent intent = new Intent(this, RecordedListActivity.class);
 //        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        builder.setSmallIcon(R.mipmap.ic_launcher);
-        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
+        builder.setSmallIcon(R.mipmap.icd_app_tvterminal);
+        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.icd_app_tvterminal));
 //        builder.setContentIntent(pi);
         builder.setContentTitle(title);
         builder.setPriority(NotificationCompat.PRIORITY_HIGH);
