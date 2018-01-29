@@ -407,7 +407,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
         //TODO: STBのIPアドレスはSTBにDMS機能が搭載された暁にはペアリング時に保存した値を用いるようにする.
         mRemoteControlRelayClient = RemoteControlRelayClient.getInstance();
-        mRemoteControlRelayClient.setDebugRemoteIp("192.168.11.7");
+        mRemoteControlRelayClient.setDebugRemoteIp("192.168.11.51");
         //dアカウントの検知処理を追加する
         setDaccountControl();
 
