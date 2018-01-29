@@ -8,198 +8,176 @@ package com.nttdocomo.android.tvterminalapp.common;
 public class UrlConstants {
 
     public class WebApiUrl {
-        //検索画面
-        public static final String totalSearchUrl =
-                "https://sea.dtv.dmkt-sp.jp/irengine/search/index.do";
+        /**
+         * 検索サーバAPIのURL.
+         */
+        public static final String TOTAL_SEARCH_URL = BaseUrlConstants.TOTAL_SEARCH_URL;
 
         /**
-         * レコメンド情報取得APIのURL
+         * レコメンド情報取得APIのURL.
          */
-        public static final String RECOMMEND_LIST_GET_URL =
-                "https://ve.m.service.smt.docomo.ne.jp/srermd/recommend/index.do";
+        public static final String RECOMMEND_LIST_GET_URL = BaseUrlConstants.RECOMMEND_LIST_GET_URL;
 
         /**
-         * ワンタイムパスワードでレコメンドサーバーを認証するURL
+         * ワンタイムパスワードでレコメンドサーバーを認証するURL.
          */
-        public static final String ONE_TIME_PASSWORD_AUTH_URL =
-                "https://ve.m.cfg.smt.docomo.ne.jp/auth/cgi/aplpwdauth";
+        public static final String ONE_TIME_PASSWORD_AUTH_URL = BaseUrlConstants.ONE_TIME_PASSWORD_AUTH_URL;
         //"https://ve.m.service.smt.docomo.ne.jp/auth/cgi/aplpwdauth";
 
         /**
-         * ぷららサーバーAPIアクセス用のベースURL
-         */
-        //TODO: 本物のぷららサーバーが提供されるまでは、テストサーバーのアドレスを指定する
-        private static final String PLALA_BASE_URL = "http://192.168.2.3/";
-
-        // 商用
-//        private static final String PLALA_BASE_URL = "https://if.hikaritv-docomo.jp/";
-        // ステージング
-//        private static final String PLALA_BASE_URL = "https://zif.hikaritv-docomo.jp/";
-        // ラボ
-//        private static final String PLALA_BASE_URL = "https://tif.hikaritv-docomo.jp/";
-
-        // ログ以外は文字列を+演算子で連結するのは禁止だが、ここはstaticなので+で連結せざるを得ない。
-        /**
-         * APIアクセスプロキシパス・現在のところPLALA_AUTHを使用する物は無いが、将来の為に残しておく
-         */
-        private static final String PLALA_C_CLIENT = PLALA_BASE_URL + "dtt_stub_mix/c_client/";
-        private static final String PLALA_AUTH = PLALA_BASE_URL + "dtt_stub_mix/auth/";
-        private static final String PLALA_CLIENT = PLALA_BASE_URL + "dtt_stub_mix/client/";
-
-        /**
-         * VODクリップ一覧の呼び出し先
+         * VODクリップ一覧の呼び出し先.
          * （定義名に最初と最後のスラッシュは無用なので注意）
          */
         public static final String VOD_CLIP_LIST =
-                PLALA_CLIENT + "user/clip/vod";
+                BaseUrlConstants.PLALA_CLIENT + "user/clip/vod";
 
         /**
-         * 視聴中ビデオ一覧
+         * 視聴中ビデオ一覧.
          */
         public static final String WATCH_LISTEN_VIDEO_LIST =
-                PLALA_CLIENT + "user/resume/list";
+                BaseUrlConstants.PLALA_CLIENT + "user/resume/list";
 
         /**
-         * TVクリップ一覧の呼び出し先
+         * TVクリップ一覧の呼び出し先.
          */
         public static final String TV_CLIP_LIST =
-                PLALA_CLIENT + "user/clip/epg";
+                BaseUrlConstants.PLALA_CLIENT + "user/clip/epg";
 
         /**
-         * チャンネル一覧の呼び出し先
+         * チャンネル一覧の呼び出し先.
          */
         public static final String CHANNEL_LIST =
-                PLALA_CLIENT + "meta/channel";
+                BaseUrlConstants.PLALA_CLIENT + "meta/channel";
 
         /**
-         * チャンネル毎番組一覧の呼び出し先
+         * チャンネル毎番組一覧の呼び出し先.
          */
         public static final String TV_SCHEDULE_LIST =
-                PLALA_CLIENT + "meta/channelprogram";
+                BaseUrlConstants.PLALA_CLIENT + "meta/channelprogram";
 
         /**
-         * 日毎ランク一覧の呼び出し先
+         * 日毎ランク一覧の呼び出し先.
          */
         public static final String DAILY_RANK_LIST =
-                PLALA_CLIENT + "meta/dailyranking";
+                BaseUrlConstants.PLALA_CLIENT + "meta/dailyranking";
 
         /**
-         * 週毎ランク一覧の呼び出し先
+         * 週毎ランク一覧の呼び出し先.
          */
         public static final String WEEKLY_RANK_LIST =
-                PLALA_CLIENT + "meta/weeklyranking";
+                BaseUrlConstants.PLALA_CLIENT + "meta/weeklyranking";
 
         /**
-         * ジャンル毎コンテンツ数
+         * ジャンル毎コンテンツ数.
          */
         public static final String CONTENTS_NUMBER_PER_GENRE_WEB_CLIENT =
-                PLALA_CLIENT + "meta/genrecontents/count";
+                BaseUrlConstants.PLALA_CLIENT + "meta/genrecontents/count";
 
         /**
-         * ジャンル毎コンテンツ一覧
+         * ジャンル毎コンテンツ一覧.
          */
         public static final String CONTENTS_LIST_PER_GENRE_WEB_CLIENT =
-                PLALA_CLIENT + "meta/genrecontents";
+                BaseUrlConstants.PLALA_CLIENT + "meta/genrecontents";
 
         /**
-         * 購入済みチャンネル一覧取得
+         * 購入済みチャンネル一覧取得.
          */
         public static final String RENTAL_CH_LIST_WEB_CLIENT =
-                PLALA_CLIENT + "user/activelist/ch";
+                BaseUrlConstants.PLALA_CLIENT + "user/activelist/ch";
 
         /**
-         * 購入済みVOD一覧取得(レンタルビデオ用)
+         * 購入済みVOD一覧取得(レンタルビデオ用).
          */
         public static final String RENTAL_VOD_LIST_WEB_CLIENT =
-                PLALA_CLIENT + "user/activelist/vod";
+                BaseUrlConstants.PLALA_CLIENT + "user/activelist/vod";
 
         /**
-         * リモート録画予約一覧
+         * リモート録画予約一覧.
          */
         public static final String REMOTE_RECORDING_RESERVATION_LIST_WEB_CLIENT =
-                PLALA_C_CLIENT + "user/reservation/remote";
+                BaseUrlConstants.PLALA_C_CLIENT + "user/reservation/remote";
 
         /**
-         * マイチャンネル一覧取得
+         * マイチャンネル一覧取得.
          */
         public static final String MY_CHANNEL_LIST_WEB_CLIENT =
-                PLALA_C_CLIENT + "user/mychannel";
+                BaseUrlConstants.PLALA_C_CLIENT + "user/mychannel";
 
         /**
-         * マイチャンネル登録
+         * マイチャンネル登録.
          */
         public static final String MY_CHANNEL_SET_WEB_CLIENT =
-                PLALA_C_CLIENT + "user/mychannel/register";
+                BaseUrlConstants.PLALA_C_CLIENT + "user/mychannel/register";
 
         /**
-         * マイチャンネル解除
+         * マイチャンネル解除.
          */
         public static final String MY_CHANNEL_RELEASE_WEB_CLIENT =
-                PLALA_C_CLIENT + "user/mychannel/delete";
+                BaseUrlConstants.PLALA_C_CLIENT + "user/mychannel/delete";
 
         /**
-         * 録画予約一覧
+         * 録画予約一覧.
          */
         public static final String RECORDING_RESERVATION_LIST_WEB_CLIENT =
-                PLALA_CLIENT + "user/reservation/stb";
+                BaseUrlConstants.PLALA_CLIENT + "user/reservation/stb";
 
         /**
-         * ジャンル一覧リストファイル：こちらはAPIではなく、ファイルの直接読み込みとのこと。
+         * ジャンル一覧リストファイル：こちらはAPIではなく、ファイルの直接読み込みとのこと.
          * APIではないので、例外としてURL全体を指定する
          * TODO: 当然後ほど変更する事となる。
          */
         public static final String GENRE_LIST_FILE =
-                PLALA_BASE_URL + "genreList_sample_1445.json";
+                BaseUrlConstants.PLALA_BASE_URL + "genreList_sample_1445.json";
 
         /**
-         * ロール一覧リストファイル：こちらはAPIではなく、ファイルの直接読み込みとのこと。
+         * ロール一覧リストファイル：こちらはAPIではなく、ファイルの直接読み込みとのこと.
          * APIではないので、例外としてURL全体を指定する
          * TODO: 当然後ほど変更する事となる。
          */
         public static final String ROLE_LIST_FILE =
-                PLALA_BASE_URL + "roleList_sample.json";
+                BaseUrlConstants.PLALA_BASE_URL + "roleList_sample.json";
 
         /**
-         * ジャンル毎コンテンツ数取得
+         * ジャンル毎コンテンツ数取得.
          */
         public static final String GENRE_COUNT_GET_WEB_CLIENT =
-                PLALA_CLIENT + "meta/genrecontents/count";
+                BaseUrlConstants.PLALA_CLIENT + "meta/genrecontents/count";
 
         /**
-         * コンテンツ詳細取得
+         * コンテンツ詳細取得.
          */
         public static final String CONTENTS_DETAIL_GET_WEB_CLIENT =
                 //PLALA_CLIENT + "meta/contentsdetail";
-                PLALA_CLIENT + "meta/contentsdetail";
+                BaseUrlConstants.PLALA_CLIENT + "meta/contentsdetail";
 
         /**
-         * クリップ登録
+         * クリップ登録.
          */
         public static final String CLIP_REGISTER_GET_WEB_CLIENT =
-                PLALA_CLIENT + "user/clip/register";
+                BaseUrlConstants.PLALA_CLIENT + "user/clip/register";
 
         /**
-         * クリップ削除
+         * クリップ削除.
          */
         public static final String CLIP_DELETE_GET_WEB_CLIENT =
-                PLALA_CLIENT + "user/clip/delete";
+                BaseUrlConstants.PLALA_CLIENT + "user/clip/delete";
 
         /**
-         * リモート録画予約登録
+         * リモート録画予約登録.
          */
         public static final String REMOTE_RECORDING_RESERVATION_CLIENT =
-                PLALA_CLIENT + "user/reservation/remote/register";
+                BaseUrlConstants.PLALA_CLIENT + "user/reservation/remote/register";
 
         /**
-         * ユーザ情報取得
+         * ユーザ情報取得.
          */
         public static final String USER_INFO_WEB_CLIENT =
-                PLALA_AUTH + "user/info";
+                BaseUrlConstants.PLALA_AUTH + "user/info";
 
         /**
-         * クリップキー一覧の呼び出し先
+         * クリップキー一覧の呼び出し先.
          */
         public static final String CLIP_KEY_LIST_WEB_CLIENT =
-                PLALA_CLIENT + "user/clip/key";
+                BaseUrlConstants.PLALA_CLIENT + "user/clip/key";
     }
 }
