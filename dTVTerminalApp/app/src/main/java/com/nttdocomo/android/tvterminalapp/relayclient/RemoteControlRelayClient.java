@@ -200,6 +200,11 @@ public class RemoteControlRelayClient {
     private static final String RELAY_RESULT = "RESULT";
     private static final String RELAY_RESULT_OK = "OK";
     private static final String RELAY_RESULT_ERROR = "ERROR";
+    private static final String RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY = "APPLICATION_VERSION_COMPATIBILITY";
+    private static final String RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY_DTVT_APPLICATION = "dTVT_APPLICATION";
+    private static final String RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY_STB_RELAY_SERVICE = "STB_RELAY_SERVICE";
+    private static final int DTVT_APPLICATION_VERSION_CODE = 1;
+    private static final int STB_RELAY_SERVICE_VERSION_CODE = 3;
     // dTVチャンネル・カテゴリー分類に対応するカテゴリー・シンボル名
     private static final String STB_APPLICATION_DTVCHANNEL_CATEGORY_BROADCAST = "DTVCHANNEL_CATEGORY_BROADCAST";
     private static final String STB_APPLICATION_DTVCHANNEL_CATEGORY_MISSED = "DTVCHANNEL_CATEGORY_MISSED";
@@ -639,6 +644,10 @@ public class RemoteControlRelayClient {
         String request = null;
         try {
             requestJson.put(RELAY_COMMAND, RELAY_COMMAND_KEYEVENT_KEYCODE_POWER);
+            JSONObject versionJson = new JSONObject();
+            versionJson.put(RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY_DTVT_APPLICATION, DTVT_APPLICATION_VERSION_CODE);
+            versionJson.put(RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY_STB_RELAY_SERVICE, STB_RELAY_SERVICE_VERSION_CODE);
+            requestJson.put(RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY, versionJson);
             requestJson.put(RELAY_COMMAND_USER_ID, toHashValue(userId));
             request = requestJson.toString();
         } catch (JSONException e) {
@@ -658,6 +667,10 @@ public class RemoteControlRelayClient {
         String request = null;
         try {
             requestJson.put(RELAY_COMMAND, RELAY_COMMAND_IS_USER_ACCOUNT_EXIST);
+            JSONObject versionJson = new JSONObject();
+            versionJson.put(RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY_DTVT_APPLICATION, DTVT_APPLICATION_VERSION_CODE);
+            versionJson.put(RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY_STB_RELAY_SERVICE, STB_RELAY_SERVICE_VERSION_CODE);
+            requestJson.put(RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY, versionJson);
             requestJson.put(RELAY_COMMAND_USER_ID, toHashValue(userId));
             request = requestJson.toString();
         } catch (JSONException e) {
@@ -830,6 +843,10 @@ public class RemoteControlRelayClient {
         try {
             requestJson.put(RELAY_COMMAND, RELAY_COMMAND_START_APPLICATION);
             requestJson.put(RELAY_COMMAND_APPLICATION_ID, applicationId);
+            JSONObject versionJson = new JSONObject();
+            versionJson.put(RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY_DTVT_APPLICATION, DTVT_APPLICATION_VERSION_CODE);
+            versionJson.put(RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY_STB_RELAY_SERVICE, STB_RELAY_SERVICE_VERSION_CODE);
+            requestJson.put(RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY, versionJson);
             requestJson.put(RELAY_COMMAND_USER_ID, toHashValue(userId));
             request = requestJson.toString();
         } catch (JSONException e) {
@@ -853,6 +870,10 @@ public class RemoteControlRelayClient {
             requestJson.put(RELAY_COMMAND, RELAY_COMMAND_TITLE_DETAIL);
             requestJson.put(RELAY_COMMAND_APPLICATION_ID, applicationId);
             requestJson.put(RELAY_COMMAND_CONTENTS_ID, contentsId);
+            JSONObject versionJson = new JSONObject();
+            versionJson.put(RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY_DTVT_APPLICATION, DTVT_APPLICATION_VERSION_CODE);
+            versionJson.put(RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY_STB_RELAY_SERVICE, STB_RELAY_SERVICE_VERSION_CODE);
+            requestJson.put(RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY, versionJson);
             requestJson.put(RELAY_COMMAND_USER_ID, toHashValue(userId));
             request = requestJson.toString();
         } catch (JSONException e) {
@@ -881,6 +902,10 @@ public class RemoteControlRelayClient {
             requestJson.put(RELAY_COMMAND_APPLICATION_ID, applicationId);
             requestJson.put(RELAY_COMMAND_SERVICE_CATEGORY_TYPE, getServiceCategorySymbol(serviceCategoryType));
             requestJson.put(RELAY_COMMAND_CONTENTS_ID, contentsId);
+            JSONObject versionJson = new JSONObject();
+            versionJson.put(RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY_DTVT_APPLICATION, DTVT_APPLICATION_VERSION_CODE);
+            versionJson.put(RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY_STB_RELAY_SERVICE, STB_RELAY_SERVICE_VERSION_CODE);
+            requestJson.put(RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY, versionJson);
             requestJson.put(RELAY_COMMAND_USER_ID, toHashValue(userId));
             request = requestJson.toString();
         } catch (JSONException e) {
