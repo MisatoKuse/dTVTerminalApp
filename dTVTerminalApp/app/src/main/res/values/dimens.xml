@@ -79,6 +79,7 @@
     <dimen name="list_item_sort_button_layout_height">40dp</dimen>
     <dimen name="list_item_sort_button_bottom_margin">25dp</dimen>
     <dimen name="list_item_sort_button_right_margin">25dp</dimen>
+    <dimen name="list_divider_height">1dp</dimen>
 
     <!--Home画面-->
     <dimen name="home_no_contract_info_height">68dp</dimen>

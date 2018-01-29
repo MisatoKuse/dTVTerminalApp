@@ -12,9 +12,9 @@
 		android:id="@+id/lv_recommend_list"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:layout_marginTop="5dp"
+		android:layout_marginTop="@dimen/list_item_time_start_margin"
 		android:divider="@drawable/list_item_divider"
-		android:dividerHeight="1dp">
+		android:dividerHeight="@dimen/list_divider_height">
 	</ListView>
 
 	<!-- 201804対応 並べ替え/絞り込みボタン
