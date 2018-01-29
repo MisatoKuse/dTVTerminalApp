@@ -130,24 +130,39 @@ public abstract class DownloaderBase {
     }
 
     protected void onProgress(int everyTimeBytes){
-        if(mTotalBytes > 0){
-            float res = ((float)(everyTimeBytes + mNotifiedBytes)) / ((float)mTotalBytes);
-            int p = mDownloadParam.getPercentToNotity();
-            float pp = p * 0.01f;
-            mDownloadedBytes += everyTimeBytes;
-            if(mDownloadedBytes==mTotalBytes){
-                mDownloadListener.onProgress(mTotalBytes, 100);
-                mNotifiedBytes=0;
+//        if(mTotalBytes > 0){
+//            float res = ((float)(everyTimeBytes + mNotifiedBytes)) / ((float)mTotalBytes);
+//            int p = mDownloadParam.getPercentToNotity();
+//            float pp = p * 0.01f;
+//            mDownloadedBytes += everyTimeBytes;
+//            if(mDownloadedBytes==mTotalBytes){
+//                mDownloadListener.onProgress(mTotalBytes, 100);
+//                mNotifiedBytes=0;
+//            }
+//            if (res >= pp) {
+//                float f1 = ((float) mDownloadedBytes);
+//                float f2 = ((float) mTotalBytes);
+//                int ff = (int) ((f1 / f2) * 100);
+//                mDownloadListener.onProgress(mDownloadedBytes, ff);
+//                mNotifiedBytes=0;
+//            } else {
+//                mNotifiedBytes += everyTimeBytes;
+//            }
+//        }
+        mDownloadedBytes+=everyTimeBytes;
+        if(null!=mDownloadListener && null != mDownloadParam){
+            int total = mDownloadParam.getTotalSizeToDl();
+            if(0==total){
+                return;
             }
-            if (res >= pp) {
-                float f1 = ((float) mDownloadedBytes);
-                float f2 = ((float) mTotalBytes);
-                int ff = (int) ((f1 / f2) * 100);
-                mDownloadListener.onProgress(mDownloadedBytes, ff);
-                mNotifiedBytes=0;
-            } else {
-                mNotifiedBytes += everyTimeBytes;
+            int ff = (int)( ( (float)mDownloadedBytes)/((float) total) * 100 );
+            if(100<ff){
+                ff = 100;
             }
+            if(ff<0){
+                ff=0;
+            }
+            mDownloadListener.onProgress(mDownloadedBytes, ff);
         }
     }
 

@@ -48,7 +48,7 @@ namespace dtvt {
          * @param obj
          * @return true: 成功 false: 失敗
          */
-        bool start(JNIEnv *env, jobject obj, std::string dirToSave);
+        bool start(JNIEnv *env, jobject obj, std::string dirToSave, int percentToNotify);
 
         /**
          * 機能：DlnaDownloadをストプ
@@ -81,16 +81,20 @@ namespace dtvt {
          */
         static void downloaderProgressHandler(du_uint64 sent_size, du_uint64 total_size, void* arg);
 
+        inline const int getPercentToNotify(){ return mPercentToNotify; }
+
     private:
         bool startDlEnv(JNIEnv *env, jobject obj, std::string& dirToSave);
 
-        void notify(int msg, std::string& content);
+        void notify(int msg, std::string content);
         bool isStarted();
 
     private:
         Event mEvent;
         void* mDtcp;
         std::string mDirToSave;
+        int mPercentToNotify;
+        //int mDownloadedBytes;
     };
 
 } //namespace dtvt

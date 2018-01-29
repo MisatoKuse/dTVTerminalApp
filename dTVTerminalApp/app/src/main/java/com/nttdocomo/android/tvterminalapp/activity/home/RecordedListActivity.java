@@ -35,6 +35,7 @@ import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.DownLoadListDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragmentScrollListener;
@@ -105,6 +106,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DTVTLogger.start();
+        //test beging
+//        DownLoadListDataManager ddd = new DownLoadListDataManager(this);
+//        ddd.deleteDownloadAllContents();
+        //test end
         setContentView(R.layout.record_list_main_layout);
         setTitleText(getString(R.string.nav_menu_item_recorder_program));
         Intent intent = getIntent();

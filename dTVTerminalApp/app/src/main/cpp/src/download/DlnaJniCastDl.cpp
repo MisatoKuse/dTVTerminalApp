@@ -34,7 +34,7 @@ namespace dtvt {
      * 機能：dlを開始
      */
     extern "C" jboolean JNICALL
-    Java_com_nttdocomo_android_tvterminalapp_jni_download_DlnaInterfaceDl_nativeStartDlna(JNIEnv *env, jobject obj, jlong thiz, jstring dirToSave_) {
+    Java_com_nttdocomo_android_tvterminalapp_jni_download_DlnaInterfaceDl_nativeStartDlna(JNIEnv *env, jobject obj, jlong thiz, jstring dirToSave_, jint percentToNotify) {
         unsigned char ret = 0;
         if (NULL == thiz) {
             DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_download_DlnaInterfaceDl_nativeStartDlna exit, 0==thiz");
@@ -55,7 +55,7 @@ namespace dtvt {
             return (jboolean)ret;
         }
 
-        bool ret2 = dlnaDownloadPtr->start(env, obj, dirToSave);
+        bool ret2 = dlnaDownloadPtr->start(env, obj, dirToSave, percentToNotify);
         ret = (true == ret2 ? 1 : 0);
 
         env->ReleaseStringUTFChars(dirToSave_, (const char *) dirToSave);

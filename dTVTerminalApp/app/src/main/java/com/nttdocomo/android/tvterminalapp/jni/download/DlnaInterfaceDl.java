@@ -40,7 +40,7 @@ public class DlnaInterfaceDl {
      *
      * @return boolean
      */
-    public DlnaDownloadRet startDtcpDl(String pathToSave){
+    public DlnaDownloadRet startDtcpDl(String pathToSave, int percentToNotify){
         if (0 == mNativeDlna) {
             mNativeDlna = nativeCreateDlnaDownloadObject();
         }
@@ -92,7 +92,7 @@ public class DlnaInterfaceDl {
         long id=Thread.currentThread().getId();
         DTVTLogger.debug("HandlerThread:"+id);
 
-        boolean r= nativeStartDlna(mNativeDlna, pathToSave);
+        boolean r= nativeStartDlna(mNativeDlna, pathToSave, percentToNotify);
         if(!r){
             return DlnaDownloadRet.DownloadRet_OtherError;
         }
@@ -274,7 +274,7 @@ public class DlnaInterfaceDl {
      * 機能：jni関数
      * @return 操作結果
      */
-    private native boolean nativeStartDlna(long prt, String pathToSave);
+    private native boolean nativeStartDlna(long prt, String pathToSave, int percentToNotify);
 
     /**
      * 機能：jni関数

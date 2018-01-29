@@ -46,7 +46,7 @@ namespace dtvt {
     }
     //============================ local function e //============================//
 
-    DlnaDownload::DlnaDownload(): mDtcp(NULL), mDirToSave("") {
+    DlnaDownload::DlnaDownload(): mDtcp(NULL), mDirToSave(""), mPercentToNotify(1) {
         mEvent.mJavaVM=NULL;
         mEvent.mJObject=NULL;
     }
@@ -55,7 +55,7 @@ namespace dtvt {
         stop();
     }
 
-    bool DlnaDownload::start(JNIEnv *env, jobject obj, std::string dirToSave) {
+    bool DlnaDownload::start(JNIEnv *env, jobject obj, std::string dirToSave, int percentToNotify) {
         if(mDtcp){
            return true;
         }
@@ -66,6 +66,17 @@ namespace dtvt {
         if (NULL == env || NULL == obj) {
             DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaDownload.cpp DlnaDownload::start exit false");
             return false;
+        }
+
+        mPercentToNotify = percentToNotify;
+        if(mPercentToNotify<0){
+            mPercentToNotify= -mPercentToNotify;
+        }
+        if(mPercentToNotify>99){
+            mPercentToNotify=1;
+        }
+        if(0==mPercentToNotify){
+            mPercentToNotify=1;
         }
 
         //init mEvent
@@ -186,7 +197,6 @@ namespace dtvt {
             thiz->notify(DLNA_MSG_ID_DL_STATUS, content);
         }
         pthread_mutex_unlock(&gMutexIsJustCanceled);
-
     }
 
     void DlnaDownload::downloaderProgressHandler(du_uint64 sent_size, du_uint64 total_size, void* arg){
@@ -194,12 +204,41 @@ namespace dtvt {
             return;
         }
         DlnaDownload *thiz = (DlnaDownload *) arg;
-        std::string content= longToString(sent_size);
-        thiz->notify(DLNA_MSG_ID_DL_PROGRESS, content);
+
+        static int lastNotifiedBytes = 0;
+        long diff= sent_size - lastNotifiedBytes;
+        int percent = thiz->getPercentToNotify();
+
+        float res = ((float)(diff)) / ((float)total_size);
+        float pp = percent * 0.01f;
+
+        //if(thiz->mDownloadedBytes>=total_size){
+        if(sent_size >= total_size){
+            std::string content= longToString(total_size);
+            thiz->notify(DLNA_MSG_ID_DL_PROGRESS, content);
+            lastNotifiedBytes=0;
+            //thiz->mDownloadedBytes=0;
+            return;
+        }
+        //thiz->mDownloadedBytes += diff;
+        if (res >= pp) {
+            float f1 = ((float) sent_size);
+            float f2 = ((float) total_size);
+            int ff = (int) ((f1 / f2) * 100);
+            DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaDownload.cpp %d%%", ff);
+            //std::string content= longToString(thiz->mDownloadedBytes);
+            std::string content= longToString(diff);
+            thiz->notify(DLNA_MSG_ID_DL_PROGRESS, content);
+            lastNotifiedBytes = sent_size;
+        }
+        //
+
+//        std::string content= longToString(sent_size);
+//        thiz->notify(DLNA_MSG_ID_DL_PROGRESS, content);
     }
 
 
-    void DlnaDownload::notify(int msg, std::string& content) {
+    void DlnaDownload::notify(int msg, std::string content) {
         JNIEnv *env = NULL;
         bool isAttached=false;
         int status = mEvent.mJavaVM->GetEnv((void **) &env, JNI_VERSION_1_6);

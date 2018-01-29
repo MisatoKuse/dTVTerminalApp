@@ -9,7 +9,7 @@ import android.content.Context;
 /**
  * このクラスから継承して、DownloaderBaseおよびSubClass用パラメータクラウスである
  */
-public class DownloadParam {
+public abstract class DownloadParam {
     private Context mContext;
     private String mSavePath;
     private String mSaveFileName;
@@ -82,4 +82,10 @@ public class DownloadParam {
         }
         return true;
     }
+
+    /**
+     * Sub classesで実現し、DLサイズを戻す
+     * @return dl size
+     */
+    public abstract int getTotalSizeToDl();
 }

@@ -73,4 +73,13 @@ public class DtcpDownloadParam extends DownloadParam {
     public void setXmlToDl(String xmlToDl){
         mXmlToDl=xmlToDl;
     }
+
+    /**
+     * DLサイズを戻す
+     * @return dl size
+     */
+    @Override
+    public int getTotalSizeToDl(){
+        return getCleartextSize();
+    }
 }

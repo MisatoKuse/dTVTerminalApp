@@ -18,7 +18,7 @@ import java.io.File;
 public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
 
     private DlnaProvDownload mDlnaProvDownload;
-    private int mFinishedBytes;
+    //private int mFinishedBytes;
 
     public DtcpDownloader(DownloadParam param, DownloadListener downloadListener)throws Exception{
         super(param, downloadListener);
@@ -43,7 +43,7 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
     protected void download() {
         DTVTLogger.debug("dtcp download begin, files");
         printDlPathFiles();
-        mFinishedBytes=0;
+        //mFinishedBytes=0;
         DtcpDownloadParam param= (DtcpDownloadParam) getDownloadParam();
         if(!param.isParamValid()){
             onFail(DownloadListener.DLError.DLError_ParamError);
@@ -56,7 +56,7 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
             return;
         }
 
-        DlnaDownloadRet res=mDlnaProvDownload.startListen(this, context, param.getSavePath());
+        DlnaDownloadRet res=mDlnaProvDownload.startListen(this, context, param.getSavePath(), param.getPercentToNotity());
         if(DlnaDownloadRet.DownloadRet_Succeed!=res){
             errors(res);
             return;
@@ -142,9 +142,10 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
 //            setLowStorageSpace();
 //            return;
 //        }
-        int diff= sizeFinished - mFinishedBytes;
-        onProgress(diff);
-        mFinishedBytes = sizeFinished;
+//        int diff= sizeFinished - mFinishedBytes;
+//        onProgress(diff);
+        //mFinishedBytes = sizeFinished;
+        onProgress(sizeFinished);
     }
 
     @Override
@@ -190,7 +191,7 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
     }
 
     private void onStopIt(){
-        mFinishedBytes=0;
+        //mFinishedBytes=0;
         DTVTLogger.debug("dtcp download end, files");
         printDlPathFiles();
     }

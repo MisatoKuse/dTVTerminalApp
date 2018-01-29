@@ -30,7 +30,7 @@ public class DlnaProvDownload {
      * @param lis listener
      * @return 成功true
      */
-    public DlnaDownloadRet startListen(DlnaDlListener lis, Context context, String savePath){
+    public DlnaDownloadRet startListen(DlnaDlListener lis, Context context, String savePath, int percentToNotify){
         DTVTLogger.start();
         if(null==mDlnaInterfaceDl) {
             DTVTLogger.end();
@@ -38,7 +38,7 @@ public class DlnaProvDownload {
         }
         mDlnaInterfaceDl.setDlnaDlListener(lis, context);
         DTVTLogger.end();
-        return mDlnaInterfaceDl.startDtcpDl(savePath);
+        return mDlnaInterfaceDl.startDtcpDl(savePath, percentToNotify);
     }
 
     /**
