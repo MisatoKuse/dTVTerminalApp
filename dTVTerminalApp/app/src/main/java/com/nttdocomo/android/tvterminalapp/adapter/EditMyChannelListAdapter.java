@@ -111,14 +111,16 @@ public class EditMyChannelListAdapter extends BaseAdapter implements View.OnClic
      */
     private void showDialogToConfirmUnRegistration(final Bundle bundle) {
         CustomDialog customDialog = new CustomDialog(mContext, CONFIRM);
-        customDialog.setTitle(mContext.getResources().getString(R.string.my_channel_list_setting_dialog_title_unregister));
         customDialog.setContent(mContext.getResources().getString(R.string.my_channel_list_setting_dialog_content_unregister));
+        customDialog.setConfirmText(R.string.positive_response);
+        customDialog.setCancelText(R.string.negative_response);
         customDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(boolean isOK) {
                 if (isOK) {
                     if (mDataTransferImpl != null) {
-                        mDataTransferImpl.sendDataToRefreshUi(bundle, mData);//Ui用データを送る
+                        //Ui用データを送る
+                        mDataTransferImpl.sendDataToRefreshUi(bundle, mData);
                     }
                 }
             }

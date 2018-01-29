@@ -51,10 +51,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     private ArrayList<EditChannelListBaseFragment> mFragmentList = new ArrayList<>();
     private static final int EDIT_CHANNEL_LIST_COUNT = MY_CHANNEL_MAX_INDEX;
     private String[] mServiceIds;
-    private int mEditPosition;
     public MyChannelDataProvider mMyChannelDataProvider;
-    private Bundle mUnregisterBundle;
-    private ArrayList<MyChannelMetaData> mUnregisterData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,7 +164,6 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
      */
     private void showFailedDialog(String content) {
         CustomDialog customDialog = new CustomDialog(this, ERROR);
-        customDialog.setTitle(getResources().getString(R.string.my_channel_list_setting_failed_dialog_title));
         customDialog.setContent(content);
         customDialog.showDialog();
     }
@@ -228,7 +224,6 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
      */
     @Override
     public void onTapEditListItem(int position, MyChannelMetaData channel) {
-        this.mEditPosition = position;
         DTVTLogger.start();
         DTVTLogger.end();
     }
@@ -267,8 +262,6 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     @Override
     public void sendDataToRefreshUi(Bundle bundle, ArrayList<MyChannelMetaData> data) {
         if(bundle != null && data != null){
-            this.mUnregisterBundle = bundle;
-            this.mUnregisterData = data;
             //解除通信
             mMyChannelDataProvider.getMyChannelDeleteStatus(bundle.getString(SERVICE_ID_MY_CHANNEL_LIST));
         }
@@ -277,7 +270,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
     /**
      * マイチャンネル編集 アダプター
      */
-    private class EditChannelListPageAdapter extends FragmentStatePagerAdapter {
+    private static class EditChannelListPageAdapter extends FragmentStatePagerAdapter {
         private List fragmentList;
 
         public EditChannelListPageAdapter(FragmentManager fm, List fragmentList) {
