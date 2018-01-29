@@ -325,7 +325,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         } else {
             viewHolder.mRankNum.setVisibility(View.GONE);
         }
-        
+
         //URLによって、サムネイル取得
         if (!TextUtils.isEmpty(thumbnail)) {
             viewHolder.mImage.setTag(thumbnail);
@@ -517,7 +517,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     private boolean newContentsCheck(final String startDate) {
         // 現在時刻
         long nowTimeEpoch = DateUtils.getNowTimeFormatEpoch();
-        long startTime = DateUtils.getEpochTime(startDate);
+        long startTime = DateUtils.getSecondEpochTime(startDate);
         // 現在時刻 - 開始日時
         long differenceTime = nowTimeEpoch - startTime;
         if (differenceTime <= DateUtils.EPOCH_TIME_ONE_WEEK) {

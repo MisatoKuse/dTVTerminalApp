@@ -532,4 +532,15 @@ public class DateUtils {
         }
         return epochTime;
     }
+
+    /**
+     * エポック秒に変換する.
+     *
+     * @param strDate "yyyy/MM/dd HH:mm:ss"形式の日時
+     * @return エポック秒　ミリ秒→秒単位に変換後の値
+     */
+    public static long getSecondEpochTime(final String strDate) {
+        long epochTime = (getEpochTimeLink(strDate)) / 1000;
+        return epochTime;
+    }
 }
