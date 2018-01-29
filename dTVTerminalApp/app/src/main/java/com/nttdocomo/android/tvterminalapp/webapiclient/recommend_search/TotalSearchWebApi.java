@@ -82,7 +82,7 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
             queryItems.put(SearchRequestKey.kFilterViewableAge, filterViewableAge);
         }
 
-        get(UrlConstants.WebApiUrl.totalSearchUrl, queryItems, this, mContext);
+        get(UrlConstants.WebApiUrl.TOTAL_SEARCH_URL, queryItems, this, mContext);
     }
 
     // MARK : - private method

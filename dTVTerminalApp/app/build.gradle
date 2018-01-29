@@ -1,26 +1,41 @@
 apply plugin: 'com.android.application'
 
 android {
+    //リリース作業時には★印の更新値を確認する事！
+
     compileSdkVersion 26
     buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "com.nttdocomo.android.tvterminalapp"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 3
-        versionName "90.20.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        versionCode 3            //★バージョンコード. リリース毎に更新する事
+        versionName "90.20."    //★メジャーバージョン.マイナーバージョン. リリース毎に更新する事
 
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
                 cppFlags ""
-                abiFilters  "armeabi" //, "armeabi-v7a"
+                abiFilters "armeabi" //, "armeabi-v7a"
             }
         }
         ndk {
             abiFilters 'armeabi' //'armeabi-v7a'
         }
     }
+
+    // 対象デバイスのリビジョン数値(下5桁目)
+    // スマートフォンは"0", 今後タブレット対応によりアプリ派生する場合はタブレットは"1"となる
+    // 中継アプリは"2"
+    def revison_device_num = "0"
+
+    // OSverを表すVersionNameのリビジョン数値(下3桁目) "2"固定
+    def revison_osver_num = "2"
+
+    // ★マイナーリリース毎にインクリメントするVersionNameのリビジョン数値(下2桁)
+    // ※バージョンが上がったら0リセットすること
+    def revison_end_num = "00"
+
     signingConfigs {
         dcmeval {
             storeFile file('keys/dcmEval20150128.keystore')
@@ -30,18 +45,23 @@ android {
             v2SigningEnabled false
         }
     }
+
     dexOptions {
         javaMaxHeapSize "2g"
         dexInProcess true
     }
+
+    // versionNameSuffix(VersionNameリビジョン値)はbuilTypeおよびFlavorを加味し変える必要があるが、
+    // 両方を参照して値変更する事がbuildValiantの仕組み上困難なので、ビルドバリエーション毎にBuildTypeを用意したうえで
+    // 不要なFlavorとBuildTypeの組み合わせを後述のvariantFilterを使って無効化する.
     buildTypes {
-        // 未署名、debug・Log OFF
+        // 商用向き、未署名、debug・Log OFF
         unsigned_off {
             debuggable false
             jniDebuggable false
             minifyEnabled true
+            versionNameSuffix revison_device_num + "0" + revison_osver_num + revison_end_num
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            versionNameSuffix '0200'
             externalNativeBuild {
                 cmake {
                     cppFlags.add("-DENABLE_LOG_INFO")
@@ -51,12 +71,12 @@ android {
                 }
             }
         }
-        // 未署名、debug・Log ON
+        // 商用向き、未署名、debug・Log ON
         unsigned_on {
             debuggable true
             jniDebuggable true
             minifyEnabled false
-            versionNameSuffix '1200'
+            versionNameSuffix revison_device_num + "1" + revison_osver_num + revison_end_num
             externalNativeBuild {
                 cmake {
                     cppFlags.add("-DENABLE_LOG_DEBUG")
@@ -68,14 +88,14 @@ android {
                 }
             }
         }
-        // 開発署名付、debug・Log OFF
+        // 商用向き、開発署名付、debug・Log OFF
         signed_off {
             debuggable false
             jniDebuggable false
             minifyEnabled true
+            versionNameSuffix revison_device_num + "2" + revison_osver_num + revison_end_num
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.dcmeval
-            versionNameSuffix '2200'
             externalNativeBuild {
                 cmake {
                     cppFlags.add("-DENABLE_LOG_INFO")
@@ -85,13 +105,13 @@ android {
                 }
             }
         }
-        // 開発署名付、debug・Log ON
+        // 商用向き、開発署名付、debug・Log ON
         signed_on {
             debuggable true
             jniDebuggable true
             minifyEnabled false
+            versionNameSuffix revison_device_num + "3" + revison_osver_num + revison_end_num
             signingConfig signingConfigs.dcmeval
-            versionNameSuffix '3200'
             externalNativeBuild {
                 cmake {
                     cppFlags.add("-DENABLE_LOG_DEBUG")
@@ -103,13 +123,13 @@ android {
                 }
             }
         }
-        // 検証サーバ向き、未署名、debug・Log OFF
-        _test_unsigned_off {
+        // 検証向き、未署名、debug・Log OFF
+        _unsigned_off {
             debuggable false
             jniDebuggable false
             minifyEnabled true
+            versionNameSuffix revison_device_num + "4" + revison_osver_num + revison_end_num
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            versionNameSuffix '4200'
             externalNativeBuild {
                 cmake {
                     cppFlags.add("-DENABLE_LOG_INFO")
@@ -119,12 +139,12 @@ android {
                 }
             }
         }
-        // 検証サーバ向き、未署名、debug・Log O
-        _test_unsigned_on {
+        // 検証向き、未署名、debug・Log ON
+        _unsigned_on {
             debuggable true
             jniDebuggable true
             minifyEnabled false
-            versionNameSuffix '5200'
+            versionNameSuffix revison_device_num + "5" + revison_osver_num + revison_end_num
             externalNativeBuild {
                 cmake {
                     cppFlags.add("-DENABLE_LOG_DEBUG")
@@ -136,14 +156,14 @@ android {
                 }
             }
         }
-        // 検証サーバ向き、開発署名付、debug・Log OFF
-        _test_signed_off {
+        // 検証向き、開発署名付、debug・Log OFF
+        _signed_off {
             debuggable false
             jniDebuggable false
             minifyEnabled true
+            versionNameSuffix revison_device_num + "6" + revison_osver_num + revison_end_num
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.dcmeval
-            versionNameSuffix '6200'
             externalNativeBuild {
                 cmake {
                     cppFlags.add("-DENABLE_LOG_INFO")
@@ -153,13 +173,13 @@ android {
                 }
             }
         }
-        // 検証サーバ向き、開発署名付、debug・Log ON
-        _test_signed_on {
+        // 検証向き、開発署名付、debug・Log ON
+        _signed_on {
             debuggable true
             jniDebuggable true
             minifyEnabled false
+            versionNameSuffix revison_device_num + "7" + revison_osver_num + revison_end_num
             signingConfig signingConfigs.dcmeval
-            versionNameSuffix '7200'
             externalNativeBuild {
                 cmake {
                     cppFlags.add("-DENABLE_LOG_DEBUG")
@@ -171,6 +191,7 @@ android {
                 }
             }
         }
+
     }
 
     sourceSets {
@@ -198,6 +219,76 @@ android {
             path 'CMakeLists.txt'
         }
     }
+
+    // Flavorを接続先環境によって分ける
+    productFlavors {
+        // 商用
+        _com_ {
+        }
+        // 検証
+        _test_ {
+        }
+        // ローカルサーバ
+        local_ {
+        }
+    }
+
+    // 出力apkファイル名をバリエーション毎に設定
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            if (output.outputFile != null && output.outputFile.name.endsWith('.apk')) {
+                def newName = "TVTerminal_local_signed_on.apk"
+                if (variant.flavorName == "_com_") {
+                    if (variant.buildType.name == "unsigned_off") {
+                        newName = "TVTerminal.apk"
+                    } else if (variant.buildType.name == "unsigned_on") {
+                        newName = "TVTerminal_unsigned_on.apk"
+                    } else if (variant.buildType.name == "signed_off") {
+                        newName = "TVTerminal_signed.apk"
+                    } else if (variant.buildType.name == "signed_on") {
+                        newName = "TVTerminal_signed_on.apk"
+                    }
+                } else if (variant.flavorName == "_test_"){
+                    if (variant.buildType.name == "_unsigned_off") {
+                        newName = "TVTerminal_test_unsigned.apk"
+                    } else if (variant.buildType.name == "_unsigned_on") {
+                        newName = "TVTerminal_test_unsigned_on.apk"
+                    } else if (variant.buildType.name == "_signed_off") {
+                        newName = "TVTerminal_test_signed.apk"
+                    } else if (variant.buildType.name == "_signed_on") {
+                        newName = "TVTerminal_test_signed_on.apk"
+                    }
+                }
+                output.outputFile = new File(output.outputFile.parent, newName)
+            }
+        }
+    }
+
+    // 不要なValiantを無効化
+    variantFilter { variant ->
+        def fnames = variant.flavors*.name
+        def bname = buildType.name
+        // デフォルトのBuildTypeは無効化(混乱するため独自バリエーションのみに絞る)
+        if (bname == "debug" || bname == "release" || bname == "test") {
+            setIgnore(true)
+        }
+        // 商用向きの不要な組み合わせを無効化.
+        if (fnames.contains("_com_")) {
+            if(bname == "_unsigned_off" || bname == "_unsigned_on" || bname == "_signed_off" || bname == "_signed_on") {
+                setIgnore(true)
+            }
+        }
+        // 検証向きの不要な組み合わせを無効化.
+        if (fnames.contains("_test_")) {
+            if(bname == "unsigned_off" || bname == "unsigned_on" || bname == "signed_off" || bname == "signed_on") {
+                setIgnore(true)
+            }
+        }
+        // ローカルサーバ向きは署名付きデバッグ版のみに絞る
+        if (fnames.contains("local_") && bname != "signed_on") {
+            setIgnore(true)
+        }
+    }
 }
 
 repositories { flatDir { dirs 'libs' } }
@@ -212,19 +303,18 @@ dependencies {
     compile 'com.android.support:support-v4:26.1.0'
     compile 'com.android.support:design:26.1.0'
     testCompile 'junit:junit:4.12'
-
-//    //DiXiM SecurePlayer SDK Release Version
-//    compile(name: 'dixim-android-activation-lib', ext: 'aar')
-//    compile(name: 'dixim-android-player-lib', ext: 'aar')
-//    compile(name: 'dixim-android-player-secure-nativecodec', ext: 'aar')
-//    compile(name: 'dixim-android-player-secure-openmaxal', ext: 'aar')
-//    compile(name: 'dixim-android-util2', ext: 'aar')
     //DiXiM SecurePlayer SDK Debug Version
     compile(name: 'dixim-android-activation-lib-debug', ext: 'aar')
     compile(name: 'dixim-android-player-lib-debug', ext: 'aar')
     compile(name: 'dixim-android-player-secure-nativecodec-debug', ext: 'aar')
     compile(name: 'dixim-android-player-secure-openmaxal-debug', ext: 'aar')
     compile(name: 'dixim-android-util2-debug', ext: 'aar')
+    //DiXiM SecurePlayer SDK Release Version
+    //        compile(name: 'dixim-android-activation-lib', ext: 'aar')
+    //        compile(name: 'dixim-android-player-lib', ext: 'aar')
+    //        compile(name: 'dixim-android-player-secure-nativecodec', ext: 'aar')
+    //        compile(name: 'dixim-android-player-secure-openmaxal', ext: 'aar')
+    //        compile(name: 'dixim-android-util2', ext: 'aar')
     //SSLチェックライブラリ
     compile files('libs/ocsplib2.0.jar')
 }
