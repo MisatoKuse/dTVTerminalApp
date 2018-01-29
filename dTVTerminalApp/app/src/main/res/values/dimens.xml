@@ -120,6 +120,9 @@
     <dimen name="home_contents_thumbnail_new_label_height">18dp</dimen>
     <dimen name="home_contents_thumbnail_new_label_margin_left">4dp</dimen>
     <dimen name="home_contents_thumbnail_new_label_margin_top">4dp</dimen>
+    <dimen name="home_contents_thumbnail_rank_num_label_width">24dp</dimen>
+    <dimen name="home_contents_thumbnail_rank_num_label_height">18dp</dimen>
+    <dimen name="home_contents_thumbnail_rank_num_text_size">11dp</dimen>
 
     <!--コンテンツ詳細-->
     <dimen name="contents_header_close_button_size">24sp</dimen>
