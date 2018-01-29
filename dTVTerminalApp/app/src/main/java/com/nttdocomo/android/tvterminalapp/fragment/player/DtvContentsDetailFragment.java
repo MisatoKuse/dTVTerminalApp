@@ -6,10 +6,10 @@ package com.nttdocomo.android.tvterminalapp.fragment.player;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.text.Layout;
 import android.text.TextUtils;
@@ -297,7 +297,7 @@ public class DtvContentsDetailFragment extends Fragment {
             String text = staffList.get(i);
             tabTextView.setGravity(Gravity.CENTER_VERTICAL);
             itemLayout.setTag(i);
-            tabTextView.setTextColor(Color.parseColor(getString(R.string.contents_detail_tv_staff_text_color)));
+            tabTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.contents_detail_schedule_detail_sub_title));
             tabTextView.setLineSpacing(getResources().getDimension(R.dimen.contents_detail_5dp), 1);
             contentParams.setMargins(0, (int)getResources().getDimension(R.dimen.contents_detail_16dp), 0, 0);
             if(text.contains(File.separator)){
