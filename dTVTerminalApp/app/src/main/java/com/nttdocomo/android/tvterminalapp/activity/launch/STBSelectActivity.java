@@ -426,11 +426,9 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 
         showPairingeView();
 
-        checkDAccountApp();
-
         //選択されたSTB番号を保持
         mSelectDevice = i;
-
+        checkDAccountApp();
 //        //dカウント登録状態チェック
 //        checkDAccountLogin();
     }
