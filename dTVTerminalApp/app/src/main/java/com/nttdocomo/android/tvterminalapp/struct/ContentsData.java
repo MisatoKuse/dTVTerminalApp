@@ -231,8 +231,8 @@ public class ContentsData {
         return mLinearStartDate;
     }
 
-    public void setLinearStartDate(String mLinearStartDate) {
-        this.mLinearStartDate = mLinearStartDate;
+    public void setLinearStartDate(String linearStartDate) {
+        this.mLinearStartDate = linearStartDate;
     }
 
     public String getLinearEndDate() {

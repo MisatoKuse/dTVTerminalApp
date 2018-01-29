@@ -15,90 +15,155 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
-import java.util.TimeZone;
 
+/**
+ * 日時関連の共通処理を記載する.
+ */
 public class DateUtils {
 
+    /**
+     * Context.
+     */
     private Context mContext = null;
 
-    //VodClipList取得日付キー
+    /**
+     * VodClipList取得日付キー.
+     */
     public static final String VOD_LAST_INSERT = "VodLastInsert";
 
-    //TV_LAST_INSERT
+    /**
+     * TV_LAST_INSERT.
+     */
     public static final String TV_LAST_INSERT = "TvLastInsert";
 
-    //DailyRankList取得日付キー
+    /**
+     * DailyRankList取得日付キー.
+     */
     public static final String DAILY_RANK_LAST_INSERT = "DailyRankLastInsert";
 
-    //ChannelList取得日付キー
+    /**
+     * ChannelList取得日付キー.
+     */
     public static final String CHANNEL_LAST_INSERT = "ChannelLastInsert";
 
-    //おすすめ番組取得日付キー
+    /**
+     * おすすめ番組取得日付キー.
+     */
     public static final String RECOMMEND_CH_LAST_INSERT = "RecommendChLastInsert";
 
-    //おすすめビデオ取得日付キー
+    /**
+     * おすすめビデオ取得日付キー.
+     */
     public static final String RECOMMEND_VD_LAST_INSERT = "RecommendVdLastInsert";
 
-    //TvScheduleList取得日付キー
+    /**
+     * TvScheduleList取得日付キー.
+     */
     public static final String TV_SCHEDULE_LAST_INSERT = "TvScheduleLastInsert";
 
-    //UserInfo取得日付キー
+    /**
+     * UserInfo取得日付キー.
+     */
     public static final String USER_INFO_LAST_INSERT = "UserInfoLastInsert";
 
-    //WeeklyRank取得日付キー
+    /**
+     * WeeklyRank取得日付キー.
+     */
     public static final String WEEKLY_RANK_LAST_INSERT = "WeeklyRankLastInsert";
 
-    //VideoRank取得日付キー
+    /**
+     * VideoRank取得日付キー.
+     */
     public static final String VIDEO_RANK_LAST_INSERT = "VideoRankLastInsert";
 
-    //おすすめdTV取得日付キー
+    /**
+     * おすすめdTV取得日付キー.
+     */
     public static final String RECOMMEND_DTV_LAST_INSERT = "RecommendDTVLastInsert";
 
-    //おすすめdTV取得日付キー
+    /**
+     * おすすめdTV取得日付キー.
+     */
     public static final String RECOMMEND_DCHANNEL_LAST_INSERT = "RecommendDCHLastInsert";
 
-    //おすすめdTV取得日付キー
+    /**
+     * おすすめdTV取得日付キー.
+     */
     public static final String RECOMMEND_DANIME_LAST_INSERT = "RecommendDAnimeLastInsert";
 
-    //視聴中ビデオ一覧日付キー
+    /**
+     * 視聴中ビデオ一覧日付キー.
+     */
     public static final String WATCHING_VIDEO_LIST_LAST_INSERT = "WatchingVideoListLastInsert";
 
-    //購入済みVOD取得日付キー
+    /**
+     * 購入済みVOD取得日付キー.
+     */
     public static final String RENTAL_VOD_LAST_UPDATE = "RentalVodLastUpdate";
 
-    //購入済みチャンネル取得日付キー
+    /**
+     * 購入済みチャンネル取得日付キー.
+     */
     public static final String RENTAL_CHANNEL_LAST_UPDATE = "RentalChannelLastUpdate";
 
-    //チャンネル取得日付キー
+    /**
+     * チャンネル取得日付キー.
+     */
     public static final String CHANNEL_LAST_UPDATE = "ChannelLastUpdate";
 
-    //ロールリスト取得日付キー
+    /**
+     * ロールリスト取得日付キー.
+     */
     public static final String ROLELIST_LAST_UPDATE = "RoleListLastUpdate";
 
-    //番組表取得日付キー
+    /**
+     * 番組表取得日付キー.
+     */
     public static final String TVSCHEDULE_LAST_UPDATE = "TvScheduleLastUpdate";
 
-    //レンタル一覧取得日付キー
+    /**
+     * レンタル一覧取得日付キー.
+     */
     public static final String RENTAL_LIST_LAST_INSERT = "RentalListLastInsert";
 
-    //SharedPreferences用データ
+    /**
+     * SharedPreferences用データ.
+     */
     private static final String DATA_SAVE = "DataSave";
 
-    //日付フォーマット
+    /**
+     * 日付フォーマット.
+     */
     private static final String DATE_PATTERN = "yyyy/MM/dd HH:mm:ss";
+
+    /**
+     * 日付フォーマット.
+     */
     private static final String DATE_PATTERN_RECORDING_RESERVATION = "M/d (E) HH:mm";
 
-    //日付フォーマット
+    /**
+     * 日付フォーマット.
+     */
     private static final String DATE_YYYY_MM_DD = "yyyy/MM/dd";
+
+    /**
+     * 日付フォーマット.
+     */
     private static final String DATE_YYYY_MM_DD_HH_MM_SS = "yyyyMMddHHmmss";
 
-    //DB保存期限
+    /**
+     * DB保存期限.
+     */
     private static final int LIMIT_HOUR = 1;
 
-    // 曜日配列
+    /**
+     * 曜日配列.
+     */
     private static final String[] STRING_DAY_OF_WEEK = {null, "日", "月", "火", "水", "木", "金", "土"};
 
-    //マイ番組表取得日付キー
+    /**
+     * マイ番組表取得日付キー.
+     */
     public static final String MY_CHANNEL_LIST_LAST_INSERT = "MyChannelListLastInsert";
 
     /**
@@ -107,21 +172,48 @@ public class DateUtils {
     public static final String VIDEO_GENRE_LIST_LAST_INSERT = "video_genre_list_last_insert";
 
     /**
-     * 曜日の固定値.
+     * 日曜日の固定値.
      */
     public static final int DAY_OF_WEEK_SUNDAY = 1;
+    /**
+     * 月曜日の固定値.
+     */
     public static final int DAY_OF_WEEK_MONDAY = 2;
+    /**
+     * 火曜日の固定値.
+     */
     public static final int DAY_OF_WEEK_TUESDAY = 3;
+    /**
+     * 水曜日の固定値.
+     */
     public static final int DAY_OF_WEEK_WEDNESDAY = 4;
+    /**
+     * 木曜日の固定値.
+     */
     public static final int DAY_OF_WEEK_THURSDAY = 5;
+    /**
+     * 金曜日の固定値.
+     */
     public static final int DAY_OF_WEEK_FRIDAY = 6;
+    /**
+     * 土曜日の固定値.
+     */
     public static final int DAY_OF_WEEK_SATURDAY = 7;
 
     /**
      * 1日のエポック秒.
      */
     public static final long EPOCH_TIME_ONE_DAY = 86400;
+
+    /**
+     * 1時間のエポック秒.
+     */
     public static final long EPOCH_TIME_ONE_HOUR = 3600;
+
+    /**
+     * 1週間のエポック秒.
+     */
+    public static final long EPOCH_TIME_ONE_WEEK = EPOCH_TIME_ONE_DAY * 7;
 
     /**
      * コンストラクタ.
@@ -270,6 +362,7 @@ public class DateUtils {
 
     /**
      * 現在日時エポック秒を取得.
+     * @return 現在日時のエポック秒
      */
     public static long getNowTimeFormatEpoch() {
         Calendar nowTime = Calendar.getInstance();
@@ -278,6 +371,7 @@ public class DateUtils {
 
     /**
      * 現在日の0時00分00秒をエポック秒で取得.
+     * @return エポック秒に変換した現在日の0時00分00秒
      */
     public static long getTodayStartTimeFormatEpoch() {
         Calendar nowTime = Calendar.getInstance();
