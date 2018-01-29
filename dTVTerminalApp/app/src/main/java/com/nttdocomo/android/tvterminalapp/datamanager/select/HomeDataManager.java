@@ -31,6 +31,9 @@ import java.util.Map;
  */
 public class HomeDataManager {
 
+    /**
+     * コンテキスト.
+     */
     private Context mContext;
 
     /**
@@ -123,7 +126,8 @@ public class HomeDataManager {
         //ホーム画面に必要な列を列挙する
         String[] columns = {JsonConstants.META_RESPONSE_CHNO, JsonConstants.META_RESPONSE_DEFAULT_THUMB,
                 JsonConstants.META_RESPONSE_TITLE, JsonConstants.META_RESPONSE_AVAIL_START_DATE,
-                JsonConstants.META_RESPONSE_AVAIL_END_DATE, JsonConstants.META_RESPONSE_DISP_TYPE};
+                JsonConstants.META_RESPONSE_AVAIL_END_DATE, JsonConstants.META_RESPONSE_DISP_TYPE,
+                JsonConstants.META_RESPONSE_SERVICE_ID};
 
         //Daoクラス使用準備
         DBHelper channelListDBHelper = new DBHelper(mContext);
@@ -216,6 +220,7 @@ public class HomeDataManager {
                 JsonConstants.META_RESPONSE_SEARCH_OK, JsonConstants.META_RESPONSE_CRID,
                 JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_EVENT_ID,
                 JsonConstants.META_RESPONSE_TITLE_ID, JsonConstants.META_RESPONSE_R_VALUE,
+                JsonConstants.META_RESPONSE_AVAIL_START_DATE, JsonConstants.META_RESPONSE_AVAIL_END_DATE,
                 JsonConstants.META_RESPONSE_DISP_TYPE, JsonConstants.META_RESPONSE_CONTENT_TYPE,
                 JsonConstants.META_RESPONSE_DTV, JsonConstants.META_RESPONSE_TV_SERVICE,
                 JsonConstants.META_RESPONSE_DTV_TYPE};
@@ -280,6 +285,7 @@ public class HomeDataManager {
                 JsonConstants.META_RESPONSE_SEARCH_OK, JsonConstants.META_RESPONSE_CRID,
                 JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_EVENT_ID,
                 JsonConstants.META_RESPONSE_TITLE_ID, JsonConstants.META_RESPONSE_R_VALUE,
+                JsonConstants.META_RESPONSE_AVAIL_START_DATE, JsonConstants.META_RESPONSE_AVAIL_END_DATE,
                 JsonConstants.META_RESPONSE_DISP_TYPE, JsonConstants.META_RESPONSE_CONTENT_TYPE,
                 JsonConstants.META_RESPONSE_DTV, JsonConstants.META_RESPONSE_DTV_TYPE,
                 JsonConstants.META_RESPONSE_TV_SERVICE};

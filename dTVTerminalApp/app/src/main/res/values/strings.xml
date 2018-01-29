@@ -127,6 +127,13 @@
     <string name="home_no_contract_info_text">ご利用中のdアカウントでひかりTV for docomoの契約がありません。</string>
     <string name="home_contract_button_text">契約する</string>
     <string name="home_contents_list_see_all">すべてを見る</string>
+    <string name="home_contents_pipe">" | "</string>
+    <string name="home_contents_hyphen">" - "</string>
+    <string name="home_contents_colon">:</string>
+    <string name="home_contents_slash">/</string>
+    <string name="home_contents_front_bracket">（</string>
+    <string name="home_contents_back_bracket">）</string>
+
 
     <!-- クリップ一覧 -->
     <string name="str_clip_activity_title">クリップ</string>
