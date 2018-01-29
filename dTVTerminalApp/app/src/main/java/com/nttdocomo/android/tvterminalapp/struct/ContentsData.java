@@ -5,7 +5,6 @@
 package com.nttdocomo.android.tvterminalapp.struct;
 
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
@@ -75,8 +74,6 @@ public class ContentsData {
     // クリップリクエストデータ
     private ClipRequestData mRequestData = new ClipRequestData();
 
-    //デバイス名
-    private String mDeviceName = null;
 
     //ダウンロードフラグ
     private int mDownloadFlg = 0;

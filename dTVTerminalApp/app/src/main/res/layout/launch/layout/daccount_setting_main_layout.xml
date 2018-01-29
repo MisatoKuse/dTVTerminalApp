@@ -17,7 +17,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="@dimen/launch_image_bottom_margin"
             android:baselineAlignBottom="true"
-            android:src="@mipmap/stb_select_error_device_icon" />
+            android:src="@mipmap/startup_icon_04" />
 
     </RelativeLayout>
 

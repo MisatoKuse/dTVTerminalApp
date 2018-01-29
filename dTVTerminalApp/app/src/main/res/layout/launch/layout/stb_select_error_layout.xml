@@ -21,7 +21,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="@dimen/launch_image_bottom_margin"
             android:baselineAlignBottom="true"
-            android:src="@mipmap/stb_select_error_device_icon" />
+            android:src="@mipmap/startup_icon_02" />
 
     </RelativeLayout>
     <TextView
@@ -41,6 +41,7 @@
         android:layout_height="@dimen/launch_text_layout_high_size"
         android:layout_marginLeft="@dimen/launch_stb_list_start_margin"
         android:layout_marginRight="@dimen/launch_stb_list_start_margin"
+        android:layout_marginTop="@dimen/launch_stb_account_error_margin_top"
         android:background="@color/stb_select_white_color"
         android:gravity="center"
         android:text="@string/str_stb_search_failed_help"
