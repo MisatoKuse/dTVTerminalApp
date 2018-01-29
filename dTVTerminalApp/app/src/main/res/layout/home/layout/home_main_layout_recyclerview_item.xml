@@ -15,27 +15,14 @@
         android:paddingStart="@dimen/home_contents_thumbnail_left_padding"
         android:scaleType="fitCenter" />
 
-    <RelativeLayout
+
+    <ImageView
         android:id="@+id/home_main_recyclerview_item_iv_new"
         android:layout_width="@dimen/home_contents_thumbnail_new_label_width"
         android:layout_height="@dimen/home_contents_thumbnail_new_label_height"
         android:layout_marginLeft="@dimen/home_contents_thumbnail_new_label_margin_left"
-        android:layout_marginTop="@dimen/home_contents_thumbnail_new_label_margin_top">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/icon_new_label_background" />
-
-        <TextView
-            android:layout_width="@dimen/home_contents_thumbnail_new_label_text_width"
-            android:layout_height="@dimen/home_contents_thumbnail_new_label_text_height"
-            android:layout_centerInParent="true"
-            android:text="@string/new_icon_text"
-            android:textColor="#FFFFFF"
-            android:textSize="@dimen/home_contents_thumbnail_new_label_text_size"
-            android:textStyle="bold" />
-    </RelativeLayout>
+        android:layout_marginTop="@dimen/home_contents_thumbnail_new_label_margin_top"
+        android:src="@drawable/label_status_new" />
 
 
     <ImageView
