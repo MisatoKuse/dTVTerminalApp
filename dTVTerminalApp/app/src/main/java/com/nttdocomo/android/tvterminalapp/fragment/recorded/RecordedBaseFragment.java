@@ -417,7 +417,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         switch (mContentsData.get(index).getDownloadFlg()){
             case ContentsAdapter.DOWNLOAD_STATUS_ALLOW :
                 if (textView != null) {
-                    view.findViewById(R.id.item_common_result_clip_tv).setBackgroundResource(R.mipmap.icon_circle_active_pause);
+                    view.findViewById(R.id.item_common_result_clip_tv).setBackgroundResource(R.mipmap.icon_circle_active_cancel);
                 }
                 mContentsData.get(index).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_LOADING);
                 break;
@@ -426,7 +426,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 if (textView != null) {
                     view.findViewById(R.id.item_common_result_recorded_content_hyphen).setVisibility(View.VISIBLE);
                     textView.setVisibility(View.VISIBLE);
-                    textView.setTextColor(ContextCompat.getColor(mActivity, R.color.d_animation_title));
+                    textView.setTextColor(ContextCompat.getColor(mActivity, R.color.record_download_status_color));
                     textView.setText(mProgress);
                 }
                 mContentsData.get(index).setDownloadStatus(mProgress);
@@ -629,7 +629,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 DTVTLogger.end();
                 return;
             }
-            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, getResources().getString(R.string.record_download_error_message), Toast.LENGTH_SHORT).show();
             DTVTLogger.end();
         } catch (Exception e){
             DTVTLogger.debug(e);

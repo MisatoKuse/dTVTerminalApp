@@ -653,7 +653,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                     holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_normal_download);
                     break;
                 case DOWNLOAD_STATUS_LOADING:
-                    holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_active_pause);
+                    holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_active_cancel);
                     break;
                 case DOWNLOAD_STATUS_COMPLETED:
                     holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_normal_download_check);
@@ -667,7 +667,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
                 holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
                 holder.tv_recorded_ch_name.setText(listContentInfo.getDownloadStatus());
-                holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.d_animation_title));
+                holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.record_download_status_color));
             } else {
                 holder.tv_recorded_ch_name.setText(listContentInfo.getRecordedChannelName());
                 holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.content_time_text));

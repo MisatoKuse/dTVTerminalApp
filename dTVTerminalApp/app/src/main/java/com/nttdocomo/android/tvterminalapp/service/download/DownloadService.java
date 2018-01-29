@@ -146,7 +146,7 @@ public class DownloadService extends Service implements DownloadListener {
     }
 
     public void startService(){
-        startForeground(DOWNLOAD_SERVICE_ID ,getNotification("Downloading...", 0));
+        startForeground(DOWNLOAD_SERVICE_ID ,getNotification(getResources().getString(R.string.record_download_notification), 0));
     }
 
     private void notifyProgress(String message, int progress){

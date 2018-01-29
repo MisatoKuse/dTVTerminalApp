@@ -94,6 +94,7 @@
     <!--録画番組一覧-->
     <color name="recorded_background">#000000</color>
     <color name="recorded_contents_background">#222222</color>
+    <color name="record_download_status_color">#ffbb4e</color>
 
     <!--//STB選択-->
     <drawable name="color_white">#ffffff</drawable>
