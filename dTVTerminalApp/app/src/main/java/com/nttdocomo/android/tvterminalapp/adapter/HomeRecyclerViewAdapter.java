@@ -246,6 +246,6 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         /**
          * Newアイコン.
          */
-        RelativeLayout mNew;
+        ImageView mNew;
     }
 }
