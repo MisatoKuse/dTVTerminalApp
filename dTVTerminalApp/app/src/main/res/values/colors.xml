@@ -91,6 +91,8 @@
     <color name="contents_logo_background_default_color">#00000000</color>
     <color name="contents_player_landscape_title_text_color">@color/basic_text_color_white</color>
     <color name="contents_player_media_controller_time_text">#ffffff</color>
+    <color name="contents_detail_schedule_detail_sub_title">#ffffff</color>
+    <color name="contents_detail_schedule_detail_schedule_info">#cccccc</color>
     <!--録画番組一覧-->
     <color name="recorded_background">#000000</color>
     <color name="recorded_contents_background">#222222</color>

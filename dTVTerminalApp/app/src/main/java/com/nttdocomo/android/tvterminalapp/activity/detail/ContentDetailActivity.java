@@ -1688,13 +1688,13 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                             if (!ids.toString().contains(creditId + ",")) {
                                 ids.append(creditId);
                                 ids.append(",");
-                                staffList.add(roleListMetaData.getName());
+                                staffList.add(roleListMetaData.getName() + File.separator);
                                 staffList.add(creditName);
                             } else {
                                 String[] oldData = ids.toString().split(",");
                                 for (int k = 0; k < oldData.length; k++) {
                                     if (creditId.equals(oldData[k])) {
-                                        staffList.set(k * 2 + 1, staffList.get(k * 2 + 1) + "," + creditName);
+                                        staffList.set(k * 2 + 1, staffList.get(k * 2 + 1) + "、" + creditName);
                                     }
                                 }
                             }

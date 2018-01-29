@@ -251,10 +251,6 @@
     <!--コンテンツ詳細-->
     <string name="contents_info_text">作品情報</string>
     <string name="contents_info_more_text">more</string>
-    <string name="dtv_contents_service_name">dTV</string>
-    <string name="d_animation_contents_service_name">dアニメ</string>
-    <string name="dtv_channel_contents_service_name">dTVチャンネル</string>
-    <string name="hikari_tv_contents_service_name">ひかりTV</string>
     <string name="contents_viewing_text">で視聴する</string>
     <string name="contents_info_thumbnail_text">コンテンツ詳細のサムネイル画像</string>
     <string name="contents_info_thumbnail_button">コンテンツ詳細のサムネイル画像上のボタン</string>
