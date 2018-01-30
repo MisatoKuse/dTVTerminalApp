@@ -4,7 +4,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/stb_select_black_color">
+    android:background="@color/stb_select_background_color">
 
     <RelativeLayout
         android:id="@+id/stb_icon_relative_layout"
@@ -25,6 +25,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/launch_stb_paring_result_layout"
         android:layout_alignParentStart="true"
+        android:layout_marginTop="@dimen/launch_stb_text_margin_top"
+        android:lineSpacingMultiplier="1.5"
         android:layout_below="@+id/stb_icon_relative_layout"
         android:gravity="center"
         android:text="@string/str_stb_not_registration_account_message"

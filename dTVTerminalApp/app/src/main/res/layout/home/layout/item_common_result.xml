@@ -7,14 +7,13 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:id="@+id/parent_relative_layout"
-    android:layout_marginEnd="@dimen/watch_listen_thumbnail_margin_top_bottom"
-    >
+    android:descendantFocusability="blocksDescendants"
+    android:layout_marginEnd="@dimen/watch_listen_thumbnail_margin_top_bottom">
 
     <RelativeLayout
         android:id="@+id/item_common_result_thumbnail_rl"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:descendantFocusability="blocksDescendants">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/item_common_result_thumbnail_iv"
@@ -38,8 +37,6 @@
             android:layout_marginTop="@dimen/watch_listen_rank_num_margin_top"
             android:background="@drawable/label_ranking_other"
             android:gravity="center"
-            android:paddingStart="@dimen/recorded_rank_num_left_padding"
-            android:paddingEnd="@dimen/list_item_common_result_rank_num_right_padding"
             android:textColor="@color/white_text"
             android:textSize="@dimen/list_item_rank_num_text_size" />
     </RelativeLayout>
@@ -160,7 +157,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="@dimen/list_item_rank_num_start_margin"
                 android:textColor="@color/white_text"
-                android:textSize="@dimen/list_item_rating_num_text_size" />
+                android:textSize="@dimen/watch_listen_text_size" />
         </LinearLayout>
     </LinearLayout>
 
@@ -181,10 +178,10 @@
 
         <ImageView
             android:id="@+id/item_common_result_sort_button"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginBottom="25dp"
-            android:layout_marginEnd="25dp"
+            android:layout_width="@dimen/video_contents_list_sort_diameter"
+            android:layout_height="@dimen/video_contents_list_sort_diameter"
+            android:layout_marginBottom="@dimen/video_contents_list_sort_margin"
+            android:layout_marginEnd="@dimen/video_contents_list_sort_margin"
             android:contentDescription="@null"
             android:scaleType="center" />
     </LinearLayout>

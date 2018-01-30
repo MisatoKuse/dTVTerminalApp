@@ -30,6 +30,7 @@
     <dimen name="launch_stb_progress_bar_padding">15dp</dimen>
     <dimen name="launch_stb_start_up_icon1_high">36dp</dimen>
     <dimen name="launch_stb_start_up_icon1_width">70dp</dimen>
+    <dimen name="launch_stb_text_margin_top">6dp</dimen>
     <dimen name="launch_stb_start_up_icon3_width">162dp</dimen>
     <dimen name="launch_stb_start_up_icon2_high">44dp</dimen>
     <dimen name="launch_stb_start_up_icon2_width">163dp</dimen>
@@ -255,6 +256,8 @@
     <dimen name="video_contents_divider_inset_left">15sp</dimen>
     <dimen name="video_contents_divider_inset_right">0sp</dimen>
     <dimen name="video_contents_divider_divider_height">1dp</dimen>
+    <dimen name="video_contents_list_sort_diameter">56dp</dimen>
+    <dimen name="video_contents_list_sort_margin">16dp</dimen>
 
     <!--録画予約一覧-->
     <dimen name="recording_reservation_list_status_width">60dp</dimen>

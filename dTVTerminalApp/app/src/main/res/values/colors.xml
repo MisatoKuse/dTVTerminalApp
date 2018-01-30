@@ -55,7 +55,7 @@
     <color name="stb_start_title">#888888</color>
     <!-- キーワード検索 -->
     <color name="keyword_search_background">#EEEEEE</color>
-    <color name="keyword_search_hint">#888888</color>
+    <color name="keyword_search_hint">#666666</color>
     <color name="keyword_search_text">#888888</color>
     <color name="keyword_search_result_background">#222222</color>
     <color name="keyword_search_header_background">#000000</color>
@@ -148,8 +148,8 @@
     <color name="setting_background_color_white">#ffffff</color>
 
     <!--//マイ番組表設定-->
-    <color name="item_num_black">#111111</color>
-    <color name="my_channel_edit_main_root_bg">#000000</color>
+    <color name="item_num_black">#1d1d1d</color>
+    <color name="my_channel_edit_main_root_bg">#1d1d1d</color>
 
     <!--//縮小番組表-->
     <color name="tv_program_list_time_line_now">#fd0003</color>

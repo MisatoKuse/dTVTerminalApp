@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:divider="@drawable/list_item_divider"
+        android:listSelector="@drawable/channel_list_item_selector"
         android:dividerHeight="@dimen/channel_list_divider_height">
     </ListView>
 
