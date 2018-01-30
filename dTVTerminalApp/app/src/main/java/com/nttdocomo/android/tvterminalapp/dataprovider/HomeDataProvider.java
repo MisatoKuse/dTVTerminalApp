@@ -831,8 +831,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     public void getChannelList(final int limit, final int offset, final String filter, final int type) {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.CHANNEL_LAST_UPDATE);
-        if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate))
-                && NetWorkUtils.isOnline(mContext)) {
+        if ((!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate))
+                || !NetWorkUtils.isOnline(mContext)) {
             //データをDBから取得する
             HomeDataManager homeDataManager = new HomeDataManager(mContext);
             List<Map<String, String>> channelList = homeDataManager.selectChannelListHomeData();
