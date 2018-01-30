@@ -218,9 +218,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private void showMainLayout() {
         mLinearLayout = findViewById(R.id.home_main_layout_linearLayout);
-        mLinearLayout.setVisibility(View.VISIBLE);
+        if (mLinearLayout.getVisibility() != View.VISIBLE) {
+            mLinearLayout.setVisibility(View.VISIBLE);
+        }
         mRelativeLayout = findViewById(R.id.home_main_layout_progress_bar_Layout);
-        mRelativeLayout.setVisibility(View.GONE);
+        if (mRelativeLayout.getVisibility() != View.GONE) {
+            mRelativeLayout.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -512,6 +516,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(final Message msg) {
+            showMainLayout();
             if (msg.what == HOME_CONTENTS_CHANNEL_LIST) {
                 setChannelData((ChannelList) msg.obj);
             } else {
@@ -614,7 +619,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * ユーザ情報取得処理.
      */
     private void getUserInfo() {
-        //ユーザ情報取得はオフラインを想定していないため引数は false 固定
         networkCheck();
         //ユーザー情報の変更検知
         UserInfoDataProvider dataProvider = new UserInfoDataProvider(this, this);
@@ -651,9 +655,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         failedRecordingReservationDialog.setDialogDismissCallback(new CustomDialog.DialogDismissCallback() {
             @Override
             public void onDialogDismissCallback() {
-                //ボタンタップ以外でダイアログが閉じた場合はリトライと想定
-                initData();
-                getUserInfo();
+                //ボタンタップ以外でダイアログが閉じた場合は閉じる選択と想定
+                //ユーザ情報なし(未契約表示)
+                requestHomeData();
             }
         });
     }
