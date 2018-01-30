@@ -10,6 +10,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -43,11 +44,7 @@ public class MenuListAdapter extends BaseAdapter {
     /**
      * テキストサイズ.
      */
-    private static final int TEXT_SIZE = 12;
-    /**
-     * DAZN用テキストサイズ.
-     */
-    private static final int DAZN_TEXT_SIZE = 10;
+    private static final int TEXT_SIZE = 14;
     /**
      * 右矢印(>)アイコンサイズ.
      */
@@ -135,8 +132,6 @@ public class MenuListAdapter extends BaseAdapter {
                 R.dimen.global_menu_list_item_sub_title_left_margin);
         int intTitleLeftMargin = mContext.getResources().getDimensionPixelSize(
                 R.dimen.global_menu_list_item_default_title_left_margin);
-        int intDAZNLeftMargin = mContext.getResources().getDimensionPixelSize(
-                R.dimen.global_menu_list_item_dazn_title_left_margin);
         ViewGroup.LayoutParams layoutParams = textView.getLayoutParams();
         ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) layoutParams;
         if (title != null) {
@@ -147,7 +142,7 @@ public class MenuListAdapter extends BaseAdapter {
                 //テレビアプリを起動するの設定
                 textView.setTextColor(ContextCompat.getColor(mContext, R.color.stb_start_title));
                 textView.setTypeface(Typeface.DEFAULT);
-                textView.setTextSize(TEXT_SIZE);
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE);
                 marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_home))
                     || title.equals(mContext.getString(R.string.nav_menu_item_recommend_program_video))
@@ -157,7 +152,7 @@ public class MenuListAdapter extends BaseAdapter {
                 //通常アイテムの設定
                 textView.setTextColor(ContextCompat.getColor(mContext, R.color.white_text));
                 textView.setTypeface(Typeface.DEFAULT);
-                textView.setTextSize(TEXT_SIZE);
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE);
                 marginLayoutParams.setMargins(intTitleLeftMargin, 0, 0, 0);
             } else if (title.equals(mContext.getString(R.string.nav_menu_item_hikari_tv))
                     || title.equals(mContext.getString(R.string.nav_menu_item_dtv_channel))
@@ -169,7 +164,7 @@ public class MenuListAdapter extends BaseAdapter {
                 //その他サブアイテムのカスタマイズ
                 textView.setTextColor(ContextCompat.getColor(mContext, R.color.white_text));
                 textView.setTypeface(Typeface.DEFAULT);
-                textView.setTextSize(TEXT_SIZE);
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE);
                 marginLayoutParams.setMargins(intCustomTitleLeftMargin, 0, 0, 0);
             }
             textView.setLayoutParams(marginLayoutParams);

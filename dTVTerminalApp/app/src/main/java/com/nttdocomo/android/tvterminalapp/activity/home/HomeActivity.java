@@ -150,7 +150,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         super.onCreate(savedInstanceState);
         // TODO Bundle内の"state"ではなくSharedPreferencesからペアリング状態を取得する
         setContentView(R.layout.home_main_layout);
-        setTitleText(getString(R.string.home_header_title));
+        setTitleText(getString(R.string.str_app_title));
         enableHeaderBackIcon(false);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);

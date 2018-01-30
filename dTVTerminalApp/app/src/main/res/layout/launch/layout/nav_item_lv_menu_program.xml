@@ -10,7 +10,6 @@
         android:gravity="center_vertical"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        android:layout_marginStart="@dimen/global_menu_list_item_title_icon_left_margin"
         android:textStyle="bold"
         android:textColor="@color/menuListProgramTitle" />
 
