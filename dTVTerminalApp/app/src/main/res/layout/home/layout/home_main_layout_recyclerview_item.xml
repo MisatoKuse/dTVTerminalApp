@@ -47,7 +47,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/home_contents_thumbnail_text_bottom_margin"
+        android:layout_marginEnd="@dimen/home_contents_thumbnail_title_right_margin"
+        android:layout_marginStart="@dimen/home_contents_thumbnail_title_left_margin"
         android:orientation="vertical">
 
         <TextView
@@ -57,23 +59,15 @@
             android:layout_marginBottom="@dimen/home_contents_thumbnail_title_bottom_margin"
             android:ellipsize="end"
             android:maxLines="1"
-            android:shadowColor="@color/home_item_contents_text_shadow_color"
-            android:shadowDx="2"
-            android:shadowDy="2"
-            android:shadowRadius="2"
             android:textColor="@color/home_item_contents_text_color"
-            android:textSize="@dimen/home_contents_thumbnail_text_size"
+            android:textSize="@dimen/home_contents_thumbnail_title_text_size"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/home_main_recyclerview_item_tv_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:shadowColor="@color/home_item_contents_text_shadow_color"
-            android:shadowDx="2"
-            android:shadowDy="2"
-            android:shadowRadius="2"
             android:textColor="@color/home_item_contents_text_color"
-            android:textSize="@dimen/home_contents_thumbnail_text_size" />
+            android:textSize="@dimen/home_contents_thumbnail_state_text_size" />
     </LinearLayout>
 </RelativeLayout>

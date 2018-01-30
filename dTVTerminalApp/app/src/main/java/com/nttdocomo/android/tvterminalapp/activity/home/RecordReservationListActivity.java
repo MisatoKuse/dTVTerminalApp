@@ -7,24 +7,23 @@ package com.nttdocomo.android.tvterminalapp.activity.home;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +32,6 @@ public class RecordReservationListActivity extends BaseActivity
         implements AdapterView.OnItemClickListener, AbsListView.OnScrollListener,
         RecordingReservationListDataProvider.ApiDataProviderCallback {
 
-    private RelativeLayout mRelativeLayout = null;
-    private ImageView mMenuImageView = null;
     private RecordingReservationListDataProvider mProvider = null;
     private ContentsAdapter mContentsAdapter = null;
     private ListView mListView = null;
@@ -97,12 +94,10 @@ public class RecordReservationListActivity extends BaseActivity
      * リストの更新時間を取得
      */
     private void setUpdateTime() {
-        if (null != mProvider.mReservationTime) {
+        if (!TextUtils.isEmpty(mProvider.mReservationTime)) {
             TextView textView = findViewById(R.id.reservation_update_time);
             StringBuilder strBuilder = new StringBuilder();
-            //「現在」の部分だけ縦書きに仕様変更されたが、javaではなく元の文字列の「現」と「在」の間に改行を入れて対応した。
-            strBuilder.append(mProvider.mReservationTime)
-                    .append(getString(R.string.recording_reservation_list_update_time));
+            strBuilder.append(mProvider.mReservationTime).append(getString(R.string.recording_reservation_list_update_time));
             textView.setText(strBuilder.toString());
         }
     }

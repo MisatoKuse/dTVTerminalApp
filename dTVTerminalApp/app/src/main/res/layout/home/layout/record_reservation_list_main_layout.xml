@@ -1,22 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#000000">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/record_reservation_list_root_bg"
+              android:orientation="vertical">
+
     <RelativeLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/contents_detail_16dp"
-        android:layout_marginEnd="@dimen/contents_detail_16dp"
-        android:orientation="horizontal">
+        android:layout_marginEnd="@dimen/recording_reservation_16dp"
+        android:layout_marginStart="@dimen/recording_reservation_16dp">
+
         <TextView
             android:id="@+id/reservation_update_time"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/contents_detail_15dp"
-            android:gravity="right"
-            android:textSize="@dimen/list_item_time_text_size"
-            android:textColor="@color/content_time_text"/>
+            android:layout_height="@dimen/recording_reservation_14dp"
+            android:layout_marginBottom="@dimen/recording_reservation_16dp"
+            android:layout_marginTop="@dimen/recording_reservation_16dp"
+            android:gravity="end"
+            android:textColor="@color/content_time_text"
+            android:textSize="@dimen/list_item_time_text_size"/>
     </RelativeLayout>
 
     <!-- ListViewのheaderDividersEnabledが機能しないので、前側の線はこちらで用意する。
