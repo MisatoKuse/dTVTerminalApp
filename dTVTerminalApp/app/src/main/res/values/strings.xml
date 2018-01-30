@@ -6,8 +6,6 @@
 
     <!-- Common -->
     <string name="app_name">ドコモテレビターミナルアプリ</string>
-    <string name="back_key">く</string>
-    <string name="close_key">×</string>
     <string name="list_transition">></string>
     <string name="contents_hyphen">-</string>
     <string name="contents_more">すべてを見る</string>
@@ -27,7 +25,6 @@
     <string name="parental_r_15">R15</string>
     <string name="parental_r_18">R18</string>
     <string name="parental_r_20">R20</string>
-    <string name="new_icon_text">NEW</string>
     <string name="common_text_close">閉じる</string>
     <string name="common_text_retry">リトライ</string>
 
@@ -36,31 +33,20 @@
     <string name="str_launch_title">起動画面</string>
     <string name="str_tutorial_title">チュートリアル画面</string>
     <string name="str_get_info_title">情報取得中</string>
-    <string name="str_stb_select_title">STB選択</string>
     <string name="str_stb_select_result_text">ペアリング可能なデバイスが\n見つかりました。</string>
     <string name="str_stb_next_not_display_text">次回以降表示しない</string>
-    <string name="str_stb_connect_title">STB接続</string>
     <string name="str_stb_connect_success_text">ドコモテレビターミナルとペアリングしました。</string>
-    <string name="str_stb_pair_invitation_title">STBペアリング勧誘</string>
     <string name="str_stb_no_pair_use_text">ペアリングしないでアプリを利用する</string>
     <string name="str_stb_no_login_use_text">ログインしないでアプリを利用する</string>
     <string name="str_stb_paring_cancel_text">ペアリング解除する</string>
     <string name="str_stb_paring_setting_title">ペアリング設定</string>
-    <string name="str_stb_pair_invitation_text">dリモートアプリは、STBとのペアリングによって\nご利用いただけます。</string>
-    <string name="str_d_account_setting_title">dアカウントアプリ誘導</string>
     <string name="str_d_account_resetting_title">dアカウント再設定</string>
-    <string name="str_d_account_setting_help_title">dアカウント設定ヘルプ</string>
-    <string name="str_d_account_reg_confirmation_title">dアカウント登録確認</string>
-    <string name="str_d_account_application_download">dアカウントアプリをダウンロードする</string>
     <string name="str_d_account_app_not_install">ドコモテレビターミナルとペアリングするには\ndアカウントでのログインが必要です</string>
     <string name="str_d_account_app_download">dアカウントアプリをダウンロードする</string>
     <string name="str_stb_select_result_text_failed">ペアリング可能なデバイスが\n見つかりませんでした。</string>
     <string name="str_stb_select_result_text_search">ペアリング可能なデバイスを\n探しています。</string>
     <string name="str_stb_search_failed_help">ドコモテレビターミナルとペアリングするには</string>
     <string name="str_stb_search_failed_paring_again">再度ペアリングを実行する</string>
-    <string name="str_stb_search_failed_help_text">docomoSTBヘルプ</string>
-    <string name="str_stb_select_error">STB選択エラー</string>
-    <string name="str_stb_paring_help">ペアリングヘルプ</string>
     <string name="str_stb_not_registration_account_message">ドコモテレビターミナルに\ndアカウントが登録されていません。</string>
     <string name="str_stb_login_other_account">別のdアカウントでログインする</string>
     <string name="str_stb_d_account_registration_help">ドコモテレビターミナルにdアカウントを登録するには</string>
@@ -69,43 +55,12 @@
 
     <string name="str_stb_pairing">ドコモテレビターミナルとペアリング中です。</string>
     <string name="str_stb_stb_error">STBの処理に失敗しました</string>
-    <string name="str_stb_tv_terminal_error">ドコモTVターミナルとの接続に失敗しました</string>
 
     <!-- リモコン-->
-    <string name="remote_controller_viewpager_record_list_button">録画リスト</string>
-    <string name="remote_controller_viewpager_program_list_button">番組表</string>
-    <string name="remote_controller_viewpager_decide_button">決定</string>
-    <string name="remote_controller_viewpager_up_button">∧</string>
-    <string name="remote_controller_viewpager_down_button">∨</string>
-    <string name="remote_controller_viewpager_left_button">＜</string>
-    <string name="remote_controller_viewpager_right_button">＞</string>
-    <string name="remote_controller_viewpager_back_button">戻る</string>
-    <string name="remote_controller_viewpager_home_button">ホーム</string>
-    <string name="remote_controller_viewpager_digital_button">地でじ</string>
-    <string name="remote_controller_viewpager_bs_button">BS</string>
-    <string name="remote_controller_viewpager_ip_tv_button">IPTV</string>
-    <string name="remote_controller_viewpager_one_button">1</string>
-    <string name="remote_controller_viewpager_two_button">2</string>
-    <string name="remote_controller_viewpager_three_button">3</string>
-    <string name="remote_controller_viewpager_four_button">4</string>
-    <string name="remote_controller_viewpager_five_button">5</string>
-    <string name="remote_controller_viewpager_six_button">6</string>
-    <string name="remote_controller_viewpager_seven_button">7</string>
-    <string name="remote_controller_viewpager_eight_button">8</string>
-    <string name="remote_controller_viewpager_nine_button">9</string>
-    <string name="remote_controller_viewpager_ten_button">10</string>
-    <string name="remote_controller_viewpager_eleven_button">11</string>
-    <string name="remote_controller_viewpager_twelve_button">12</string>
-    <string name="remote_controller_viewpager_channel_plus_button">∧</string>
-    <string name="remote_controller_viewpager_channel_minus_button">∨</string>
-    <string name="remote_controller_viewpager_channel_text">チャンネル</string>
-    <string name="remote_controller_viewpager_notice_button">お知らせ</string>
-    <string name="remote_controller_viewpager_d_date_button">d データ</string>
     <string name="remote_controller_viewpager_watch_by_tv">テレビで視聴する</string>
 
     <!-- Home -->
     <string name="home_header_title">ホーム</string>
-    <string name="now_on_air_list">NOW ON AIR</string>
     <string name="recommend_list_title">おすすめ番組・ビデオ</string>
     <string name="home_now_on_air_channel_list">チャンネルリスト</string>
     <string-array name="recommend_list_tab_names">
@@ -133,7 +88,9 @@
     <string name="home_contents_slash">/</string>
     <string name="home_contents_front_bracket">（</string>
     <string name="home_contents_back_bracket">）</string>
-
+    <string name="home_label_recommend_program">おすすめ番組</string>
+    <string name="home_label_recommend_video">おすすめビデオ</string>
+    <string name="home_label_now_on_air">NOW ON AIR</string>
 
     <!-- クリップ一覧 -->
     <string name="str_clip_activity_title">クリップ</string>
@@ -168,7 +125,6 @@
         <item>すべて</item>
         <item>持ち出し</item>
     </string-array>
-    <string name="tv_program_change_mode">&lt; &gt;</string>
     <string name="record_download_status">ダウンロード中</string>
     <string name="record_download_percent_mark">%</string>
     <string name="record_download_error_message">取得に失敗しました</string>
@@ -176,10 +132,12 @@
     <string name="record_download_cancel_title">ダウンロードを取りやめますか？</string>
     <string name="record_download_cancel_confirm">取りやめる</string>
     <string name="record_download_notification">録画番組をダウンロード中</string>
-    <!-- Video -->
+
+    <!-- ビデオ一覧 -->
     <string name="video_content_top_title">ビデオ</string>
-    <string name="video_content_all_title">すべて</string>
     <string name="video_content_sub_genre_title">全ての作品</string>
+    <string name="video_list_genre_all">すべて</string>
+    <string name="video_list_genre_nod">NHKオンデマンド</string>
 
     <!-- Search -->
     <string name="keyword_search_title">キーワード検索</string>
@@ -202,24 +160,12 @@
     <string name="weekly_tv_ranking_title">週間テレビランキング</string>
     <string name="video_ranking_title">ビデオランキング</string>
     <string name="common_ranking_enter">\n</string>
-    <string name="contents_header">　></string>
     <string name="common_ranking_tab_all">総合</string>
 
-    <string name="tv_icon_description">テレビアイコン</string>
-    <string name="menu_icon_description">メニューアイコン</string>
-
-    <!-- Home -->
-    <string name="home_label_recommend_program">おすすめ番組</string>
-    <string name="home_label_recommend_video">おすすめビデオ</string>
-    <string name="home_label_now_on_air">NOW ON AIR</string>
-
-    <!-- Other -->
-
     <!-- Player -->
-    <string name="remote_control_start">テレビで視聴する</string>
     <string name="now_on_air">NOW ON AIR</string>
 
-    <!-- MenuDisplay Begin -->
+    <!-- MenuDisplay -->
     <string name="nav_menu_item_home">ホーム</string>
     <string name="nav_menu_item_program_list">番組表</string>
     <string name="nav_menu_item_channel_list">チャンネルリスト</string>
@@ -245,31 +191,19 @@
     <string name="nav_menu_item_dazn">ダ・ゾーン</string>
     <string name="nav_menu_item_premium_video">プレミアムビデオ</string>
     <string name="nav_menu_item_premium_tv_app_start_common">テレビアプリを起動する</string>
-    <!-- MenuDisplay End -->
 
-    <!-- 検索画面 Begin -->
-    <string name="search_load_finish">load finished</string>
+    <!-- 検索画面 -->
     <string name="search_loading">loading&#8230;</string>
-    <!--  検索画面 End  -->
 
     <!-- レンタル -->
     <string name="rental_title">レンタル</string>
 
     <!--コンテンツ詳細-->
-    <string name="contents_info_text">作品情報</string>
     <string name="contents_info_more_text">more</string>
-    <string name="contents_viewing_text">で視聴する</string>
     <string name="contents_info_thumbnail_text">コンテンツ詳細のサムネイル画像</string>
     <string name="contents_info_thumbnail_button">コンテンツ詳細のサムネイル画像上のボタン</string>
-    <string name="contents_detail_plane_button">コンテンツ詳細</string>
-    <string name="contents_detail_recommend_button">コンテンツ詳細(おすすめ作品)</string>
-    <string name="contents_detail_channel_button">チャンネル</string>
-    <string name="contents_detail_record_reserve_button">録画予約する</string>
-    <string name="contents_detail_tv_view_button">テレビで視聴する</string>
-    <string name="contents_detail_tv_now_on_air">NOW ON AIR</string>
     <string name="contents_detail_tv_staff">キャスト・スタッフ</string>
     <string name="contents_detail_tv_staff_recommend">おすすめ作品</string>
-    <string name="contents_detail_tv_label">|</string>
     <string name="contents_detail_until_date">　まで</string>
     <string name="contents_detail_contract_text">このコンテンツをご覧になるには契約が必要です</string>
     <string name="dtv_content_service_start_text">dTVで視聴</string>
@@ -285,21 +219,9 @@
         <item>番組詳細</item>
         <item>チャンネル</item>
     </string-array>
-    <string-array name="other_contents_detail_staff_item">
-        <item>エミリー・デシャンネル</item>
-        <item>エピッド・ボレアナズ</item>
-        <item>ミカエラ・コンリン</item>
-    </string-array>
-    <string name="recordiong_reservation_menu_dialog_title">録画予約しますか？</string>
-    <string-array name="recording_reservation_menu_dialog_item">
-        <item>録画予約する</item>
-        <item>キャンセル</item>
-    </string-array>
     <string name="recording_reservation_complete_dialog_title">録画予約完了</string>
     <string name="recording_reservation_complete_dialog_msg">録画予約依頼を受け付けました。</string>
     <string name="recording_reservation_complete_dialog_ok">OK</string>
-    <string name="recording_reservation_complete_dialog_confirm">表示する</string>
-    <string name="recording_reservation_complete_dialog_cancel">表示しない</string>
     <string name="recording_reservation_failed_dialog_msg">録画予約失敗しました。</string>
     <string name="recording_reservation_failed_dialog_confirm">OK</string>
     <string name="recording_reservation_failed_dialog_token">トークン不一致</string>
@@ -324,12 +246,6 @@
     <string name="main_setting_d_account_message">dアカウントアプリがインストールされていません。\nインストールしますか？</string>
     <string name="main_setting_paring">ペアリング済み</string>
     <string name="main_setting_not_paring">未ペアリング</string>
-    <string name="main_setting_list_version_info">バージョン情報</string>
-    <string name="main_setting_storage_setting_header">ダウンロード先設定</string>
-    <string name="main_setting_storage_status">storage</string>
-    <string name="main_setting_device_storage">本体ストレージ</string>
-    <string name="main_setting_outside_storage">SDカード</string>
-    <string name="main_setting_no_permission">SDカードへのアクセスが許可されていませんので、ダウンロード先は本体ストレージのままとなります。</string>
     <string name="main_setting_image_quality_low">標準画質</string>
     <string name="main_setting_image_quality_middle">高画質</string>
     <string name="main_setting_image_quality_high">最高画質</string>
@@ -349,7 +265,6 @@
     <string name="main_setting_dazn_update_message">ドコモテレビターミナルのダ・ゾーンのバージョンアップが必要です。</string>
     <string name="main_setting_connect_error_message">STBとの接続に失敗しました。</string>
     <string name="main_setting_menu_title_faq_list">FAQ一覧</string>
-    <string name="main_setting_menu_title_faq">FAQ</string>
     <string name="main_setting_menu_title_license">ライセンス情報</string>
     <string name="main_setting_menu_title_privacy_policy">プライバシーポリシー</string>
     <string name="main_setting_menu_title_app">APP</string>
@@ -380,10 +295,6 @@
 
     <!-- お知らせ -->
     <string name="information_title">お知らせ</string>
-
-    <!-- ビデオ一覧 -->
-    <string name="video_list_genre_all">すべて</string>
-    <string name="video_list_genre_nod">NHKオンデマンド</string>
 
     <!-- H4d契約情報取得 -->
     <string name="h4d_agreement_change">契約状態が変更されたため、トップ画面に戻ります。</string>
