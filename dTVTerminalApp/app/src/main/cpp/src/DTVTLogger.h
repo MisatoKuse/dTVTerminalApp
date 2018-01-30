@@ -9,7 +9,6 @@
 #define DTVTLOGGER_TAG "[dTVT]"
 
 // DEBUGレベルログマクロ(リリース版では Gradleで DEBUGログは無効化される)
-#define ENABLE_LOG_DEBUG    //todo リリース版だったら、undefineにする
 #ifdef ENABLE_LOG_DEBUG
 #define DTVT_LOG_DBG(...) (__android_log_print(ANDROID_LOG_DEBUG, DTVTLOGGER_TAG, __VA_ARGS__))
 #define DTVT_LOG_DBG_VERBOSE(fmt, ...) (__android_log_print(ANDROID_LOG_DEBUG, DTVTLOGGER_TAG, \
