@@ -259,13 +259,16 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     public void onWatchListenVideoJsonParsed(final List<WatchListenVideoList> watchListenVideoList) {
         if (watchListenVideoList != null && watchListenVideoList.size() > 0) {
             WatchListenVideoList list = watchListenVideoList.get(0);
-            setStructDB(list);
+            if (!mRequiredClipKeyList
+                    || mResponseEndFlag) {
+                sendWatchingVideoListData(list.getVcList());
+            } else {
+                mWatchListenVideoList = list;
+            }
         } else {
-            //WEBAPIを取得できなかった時はDBのデータを使用
-            List<Map<String, String>> list;
-            HomeDataManager homeDataManager = new HomeDataManager(mContext);
-            list = homeDataManager.selectWatchingVideoHomeData();
-            sendWatchingVideoListData(list);
+            if (null != mApiDataProviderCallback) {
+                mApiDataProviderCallback.watchingVideoCallback(null);
+            }
         }
     }
 
@@ -538,7 +541,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param list 視聴中ビデオ
      */
     private void sendWatchingVideoListData(final List<Map<String, String>> list) {
-        mApiDataProviderCallback.watchingVideoCallback(setHomeContentData(list, true));
+        mApiDataProviderCallback.watchingVideoCallback(setHomeContentData(list, false));
     }
 
     /**

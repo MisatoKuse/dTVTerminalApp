@@ -67,14 +67,14 @@ public class HomeDataManager {
                 JsonConstants.META_RESPONSE_DISP_TYPE};
 
         //Daoクラス使用準備
-        DBHelper dBHelper = new DBHelper(mContext);
-        SQLiteDatabase db = dBHelper.getWritableDatabase();
+        DBHelper watchingVideodBHelper = new DBHelper(mContext);
+        SQLiteDatabase db = watchingVideodBHelper.getWritableDatabase();
         WatchListenVideoListDao watchListenVideoListDao = new WatchListenVideoListDao(db);
 
         //ホーム画面用データ取得
         list = watchListenVideoListDao.findById(columns);
         db.close();
-        dBHelper.close();
+        watchingVideodBHelper.close();
         return list;
     }
 
