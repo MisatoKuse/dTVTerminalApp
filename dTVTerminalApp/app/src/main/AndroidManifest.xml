@@ -69,9 +69,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.launch.CheckStatusActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".activity.launch.STBConnectActivity"
             android:screenOrientation="portrait" />
         <activity

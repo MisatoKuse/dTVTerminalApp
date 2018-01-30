@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaBsChListListener;
@@ -25,17 +27,31 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListListener;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 
+/**
+ * アプリ起動時に最初に呼び出されるActivity.
+ */
 public class LaunchActivity extends BaseActivity implements View.OnClickListener,
         DlnaRecVideoListener, DlnaTerChListListener, DlnaBsChListListener {
 
+    /**
+     * 初回起動判定Flag.
+     */
     private static boolean mIsFirstRun = true;
-
-    private Button firstLanchLanchYesActivity = null;
-    private Button firstLanchLanchNoActivity = null;
+    /**
+     * test用ボタン.
+     */
+    private Button mFirstLaunchLaunchYesActivity = null;
+    /**
+     * test用ボタン.
+     */
+    private Button mFirstLaunchLaunchNoActivity = null;
+    /**
+     * 録画ビデオ一覧問い合わせ用.
+     */
     private DlnaProvRecVideo mDlnaProvRecVideo = null;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         DlnaProvTerChList dlnaProvTerChList;
@@ -74,17 +90,17 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     }
 
     /**
-     * 画面設定を行う
+     * 画面設定を行う.
      */
     private void setContents() {
         TextView title = findViewById(R.id.titleLanchActivity);
         title.setText(getScreenTitle());
 
-        firstLanchLanchYesActivity = findViewById(R.id.firstLanchLanchYesActivity);
-        firstLanchLanchYesActivity.setOnClickListener(this);
+        mFirstLaunchLaunchYesActivity = findViewById(R.id.firstLanchLanchYesActivity);
+        mFirstLaunchLaunchYesActivity.setOnClickListener(this);
 
-        firstLanchLanchNoActivity = findViewById(R.id.firstLanchLanchNoActivity);
-        firstLanchLanchNoActivity.setOnClickListener(this);
+        mFirstLaunchLaunchNoActivity = findViewById(R.id.firstLanchLanchNoActivity);
+        mFirstLaunchLaunchNoActivity.setOnClickListener(this);
         // TODO チュートリアル実装時にコメントアウトを外す
 //        if(SharedPreferencesUtils.getSharedPreferencesIsDisplayedTutorial(this)) {
 //            doScreenTransition();
@@ -94,7 +110,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     }
 
     /**
-     * 機能： Dlnaを開始
+     * 機能： Dlnaを開始.
      *
      * @return true: 成功　　false: 失敗
      */
@@ -112,7 +128,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onResume() {
         if (!mIsFirstRun) {
-            firstLanchLanchYesActivity.setVisibility(View.GONE);
+            mFirstLaunchLaunchYesActivity.setVisibility(View.GONE);
         }
         super.onResume();
     }
@@ -140,25 +156,25 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
     // TODO チュートリアル画面作成時に削除
     @Override
-    public void onClick(View v) {
-        if (v.equals(firstLanchLanchYesActivity)) {
+    public void onClick(final View v) {
+        if (v.equals(mFirstLaunchLaunchYesActivity)) {
             onFirstLaunchYesButton();
-        } else if (v.equals(firstLanchLanchNoActivity)) {
+        } else if (v.equals(mFirstLaunchLaunchNoActivity)) {
             doScreenTransition();
         }
     }
 
     /**
-     * 初回起動判定
+     * 初回起動判定.
      *
-     * @return
+     * @return 初回起動かどうか
      */
     public static boolean isFirstRun() {
         return mIsFirstRun;
     }
 
     /**
-     * 初回起動判定値設定
+     * 初回起動判定値設定.
      */
     public static void setNotFirstRun() {
         LaunchActivity.mIsFirstRun = false;
@@ -166,7 +182,7 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
 
     /**
-     * チュートリアル画面へ遷移
+     * チュートリアル画面へ遷移.
      */
     // TODO チュートリアル画面作成時に削除
     private void onFirstLaunchYesButton() {
@@ -174,26 +190,43 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     }
 
     /**
-     * 次画面遷移
+     * 次画面遷移.
      */
     private void doScreenTransition() {
         DTVTLogger.start();
-        startActivity(CheckStatusActivity.class, null);
+        if (SharedPreferencesUtils.getSharedPreferencesStbConnect(this)) {
+            // ペアリング済み HOME画面遷移
+            SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(this, true);
+            startActivity(HomeActivity.class, null);
+            DTVTLogger.debug("ParingOK Start HomeActivity");
+        } else if (SharedPreferencesUtils.getSharedPreferencesStbSelect(this)) {
+            // 次回から表示しないをチェック済み
+            // 未ペアリング HOME画面遷移
+            SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(this, false);
+            startActivity(HomeActivity.class, null);
+            DTVTLogger.debug("ParingNG Start HomeActivity");
+        } else {
+            // STB選択画面へ遷移
+            Intent intent = new Intent(getApplicationContext(), STBSelectActivity.class);
+            intent.putExtra(STBSelectActivity.FROM_WHERE, STBSelectActivity.STBSelectFromMode.STBSelectFromMode_Launch.ordinal());
+            startActivity(intent);
+            DTVTLogger.debug("Start STBSelectActivity");
+        }
         DTVTLogger.end();
     }
 
     @Override
-    public void onVideoBrows(DlnaRecVideoInfo curInfo) {
+    public void onVideoBrows(final DlnaRecVideoInfo curInfo) {
 
     }
 
     @Override
-    public void onListUpdate(DlnaTerChListInfo curInfo) {
+    public void onListUpdate(final DlnaTerChListInfo curInfo) {
 
     }
 
     @Override
-    public void onListUpdate(DlnaBsChListInfo curInfo) {
+    public void onListUpdate(final DlnaBsChListInfo curInfo) {
 
     }
 
