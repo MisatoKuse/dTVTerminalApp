@@ -542,7 +542,7 @@ public class DateUtils {
      * @return エポック秒　ミリ秒→秒単位に変換後の値
      */
     public static long getSecondEpochTime(final String strDate) {
-        long epochTime = (getEpochTimeLink(strDate)) / 1000;
+        long epochTime = (getEpochTime(strDate)) / 1000;
         return epochTime;
     }
 
