@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -27,45 +26,89 @@ import com.nttdocomo.android.tvterminalapp.common.SearchServiceType;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
-import java.util.Date;
 import java.util.List;
 
+/**
+ * おすすめ番組・ビデオ用アダプタ.
+ */
 public class RecommendListBaseAdapter extends BaseAdapter {
 
+    /**
+     * コンテキスト.
+     */
     private Context mContext = null;
+    /**
+     * 表示するコンテンツデータのリスト.
+     */
     private List<ContentsData> mData = null;
-    //private int layoutid;
+    /**
+     * サムネイル取得用プロパイダ.
+     */
     private ThumbnailProvider mThumbnailProvider = null;
 
-    //選択タブ名・仕様変更に自動対応するため敢えて文字列
+    /**
+     * 選択タブ名・仕様変更に自動対応するため敢えて文字列.
+     */
     private int mSelectedTab = 0;
 
-    //選択タブ番号
-    private final int TV_TAB = 0;
-    private final int VIDEO_TAB = 1;
-    private final int DTV_TAB = 2;
-    private final int DTV_CHANNEL_TAB = 3;
-    private final int DANIME_TAB = 4;
+    /**
+     * TVタブ.
+     */
+    private final static int TV_TAB = 0;
+    /**
+     * ビデオタブ.
+     */
+    private final static int VIDEO_TAB = 1;
+    /**
+     * DTVタブ.
+     */
+    private final static int DTV_TAB = 2;
+    /**
+     * DTVチャンネルタブ.
+     */
+    private final static int DTV_CHANNEL_TAB = 3;
+    /**
+     * Dアニメタブ.
+     */
+    private final static int DANIME_TAB = 4;
 
-    //最大表示行数2行
-    private final int MAX_2LINE = 2;
+    /**
+     * 最大表示行数2行.
+     */
+    private final static int MAX_2LINE = 2;
 
-    //最大表示行数1行
-    private final int MAX_1LINE = 1;
+    /**
+     * 最大表示行数1行.
+     */
+    private final static int MAX_1LINE = 1;
 
-    //日付用固定値
-    private final String DATE_SEPARATOR = " - ";
-    //改行
-    private final String RETURN_TEXT = "\n";
+    /**
+     * 日付用固定値.
+     */
+    private final static String DATE_SEPARATOR = " - ";
+    /**
+     * 改行.
+     */
+    private final static String RETURN_TEXT = "\n";
 
-    public void setSelectedTab(int selectedTab) {
+    /**
+     * 選択タブを設定する.
+     *
+     * @param selectedTab 選択するタブ
+     */
+    public void setSelectedTab(final int selectedTab) {
         mSelectedTab = selectedTab;
     }
 
-    public RecommendListBaseAdapter(Context context, List data, int id) {
+    /**
+     * コンストラクタ.
+     *
+     * @param context コンテキスト
+     * @param data コンテンツデータ
+     */
+    public RecommendListBaseAdapter(final Context context, final List<ContentsData> data) {
         this.mContext = context;
         this.mData = data;
-        //this.layoutid = id;
         mThumbnailProvider = new ThumbnailProvider(mContext);
 
         //選択タブ初期化
@@ -78,18 +121,18 @@ public class RecommendListBaseAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int i) {
+    public Object getItem(final int i) {
         return mData.get(i);
     }
 
     @Override
-    public long getItemId(int i) {
+    public long getItemId(final int i) {
         return i;
     }
 
 
     @Override
-    public View getView(int position, View view, ViewGroup parent) {
+    public View getView(final int position, View view, final ViewGroup parent) {
         final ContentsData recommendContentInfo =  mData.get(position);
         ViewHolder holder;
         if (null == view) {
@@ -109,8 +152,8 @@ public class RecommendListBaseAdapter extends BaseAdapter {
         visibleControl(holder, recommendContentInfo);
 
         if (null != holder.tv_title) {
-            String titleText = "";
-            if(mSelectedTab == VIDEO_TAB) {
+            String titleText;
+            if (mSelectedTab == VIDEO_TAB) {
                 //ビデオタブなので、文字表示を常に2行以上にすることで、レーティングの星の位置を固定する
                 titleText = StringUtils.getConnectStrings(recommendContentInfo.getTitle(),
                         RETURN_TEXT);
@@ -129,9 +172,9 @@ public class RecommendListBaseAdapter extends BaseAdapter {
         if (searchOk != null && searchOk.length() > 1) {
             //TODO:クリップボタン状態変更
         }
-        holder.iv_thumbnail.setImageResource(R.drawable.test_image);
+        //サムネイル取得までは画像の表示を行わないため透明画像をセットしておく
+        holder.iv_thumbnail.setImageResource(R.drawable.transparent);
         if (null != holder.iv_thumbnail) {
-
             String thumbUrl = recommendContentInfo.getThumURL();
             holder.iv_thumbnail.setTag(thumbUrl);
             Bitmap bp = mThumbnailProvider.getThumbnailImage(holder.iv_thumbnail, thumbUrl);
@@ -149,7 +192,7 @@ public class RecommendListBaseAdapter extends BaseAdapter {
      * @param view 元の行ビュー
      * @return 取得後の各ビューを含んだ構造体
      */
-    private ViewHolder getViewItem(View view) {
+    private ViewHolder getViewItem(final View view) {
         ViewHolder holder = new ViewHolder();
         //既存のビューの取得処理
         holder.iv_thumbnail = view.findViewById(R.id.recommend_iv_thumbnail);
@@ -160,10 +203,10 @@ public class RecommendListBaseAdapter extends BaseAdapter {
         //追加になった日付行のビューの取得
         holder.tvDateLine = view.findViewById(R.id.recommend_time_and_now_on_air);
         holder.tvDate = view.findViewById(R.id.recommend_time);
-        holder.tvNowonAir = view.findViewById(R.id.recommend_now_on_air);
+        holder.tvNowOnAir = view.findViewById(R.id.recommend_now_on_air);
         holder.tvRatingBar = view.findViewById(R.id.recommend_rating_star);
-        holder.tvVideoMarging = view.findViewById(R.id.recommend_tv_video_margin);
-        holder.otherMargine = view.findViewById(R.id.recommend_dtv_danime_margin);
+        holder.tvVideoMargin = view.findViewById(R.id.recommend_tv_video_margin);
+        holder.otherMargin = view.findViewById(R.id.recommend_dtv_danime_margin);
         return holder;
     }
 
@@ -173,7 +216,7 @@ public class RecommendListBaseAdapter extends BaseAdapter {
      * @param holder ビューの構造体
      * @param recommendContentInfo 1行分のデータ
      */
-    private void visibleControl(ViewHolder holder,final ContentsData recommendContentInfo) {
+    private void visibleControl(final ViewHolder holder, final ContentsData recommendContentInfo) {
         final ImageView clipButton = holder.iv_clip;
 
         //ひかりコンテンツのみクリップボタンを表示する
@@ -185,7 +228,7 @@ public class RecommendListBaseAdapter extends BaseAdapter {
 
             holder.iv_clip.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
+                public void onClick(final View view) {
                     //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、画像比較でクリップ済/未を判定する
                     Bitmap clipButtonBitmap = ((BitmapDrawable) clipButton.getBackground()).getBitmap();
                     Bitmap activeClipBitmap = ((BitmapDrawable) ResourcesCompat.getDrawable(mContext.getResources(),
@@ -212,12 +255,12 @@ public class RecommendListBaseAdapter extends BaseAdapter {
         holder.tvRatingBar.setVisibility(View.GONE);
 
         //タブ毎の表示切替
-        switch(mSelectedTab) {
+        switch (mSelectedTab) {
             case TV_TAB:
                 //テレビタブ
                 //TVタブなので、日付行を表示する
                 holder.tvDateLine.setVisibility(View.VISIBLE);
-                holder.tvVideoMarging.setVisibility(View.VISIBLE);
+                holder.tvVideoMargin.setVisibility(View.VISIBLE);
 
                 //開始・終了日付の取得
                 long startDate = DateUtils.getEpochTimeLink(recommendContentInfo.getStartViewing());
@@ -231,25 +274,25 @@ public class RecommendListBaseAdapter extends BaseAdapter {
                 holder.tvDate.setText(answerText);
 
                 //現在時刻が開始と終了の間ならば、"Now On Air"と表示する
-                if(DateUtils.isBetweenNowTime(startDate,endDate)) {
+                if (DateUtils.isBetweenNowTime(startDate, endDate)) {
                     //収まっていたので、Now On Airを表示
-                    holder.tvNowonAir.setText(R.string.now_on_air);
+                    holder.tvNowOnAir.setText(R.string.now_on_air);
                     //文字をNow On Airの色にする
-                    holder.tvNowonAir.setTextColor(
-                            ContextCompat.getColor(mContext,R.color.recommend_list_now_on_air));
+                    holder.tvNowOnAir.setTextColor(
+                            ContextCompat.getColor(mContext, R.color.recommend_list_now_on_air));
                 } else {
                     //チャンネル名取得
                     String channelName = getChannelName(recommendContentInfo);
 
                     //チャンネル名を表示
-                    holder.tvNowonAir.setText(channelName);
+                    holder.tvNowOnAir.setText(channelName);
                     //文字を灰色にする
-                    holder.tvNowonAir.setTextColor(
-                            ContextCompat.getColor(mContext,R.color.gray_text));
+                    holder.tvNowOnAir.setTextColor(
+                            ContextCompat.getColor(mContext, R.color.gray_text));
                 }
                 break;
             case VIDEO_TAB:
-                holder.tvVideoMarging.setVisibility(View.VISIBLE);
+                holder.tvVideoMargin.setVisibility(View.VISIBLE);
 
                 //ビデオタブでは、レーティングの星を表示する
                 holder.tvRatingBar.setVisibility(View.VISIBLE);
@@ -259,7 +302,7 @@ public class RecommendListBaseAdapter extends BaseAdapter {
             case DTV_TAB:
             case DTV_CHANNEL_TAB:
             case DANIME_TAB:
-                holder.otherMargine.setVisibility(View.VISIBLE);
+                holder.otherMargin.setVisibility(View.VISIBLE);
                 break;
             default:
         }
@@ -275,7 +318,7 @@ public class RecommendListBaseAdapter extends BaseAdapter {
     private String getChannelName(final ContentsData recommendContentInfo) {
         String channelName = recommendContentInfo.getChannelName();
 
-        if(channelName != null && !channelName.isEmpty()) {
+        if (channelName != null && !channelName.isEmpty()) {
             //チャンネル名が存在していれば使用する
             return channelName;
         }
@@ -286,24 +329,51 @@ public class RecommendListBaseAdapter extends BaseAdapter {
         return "ダミー";
     }
 
+    /**
+     * ViewHolder.
+     */
     static class ViewHolder {
+        /**
+         * サムネイル.
+         */
         ImageView iv_thumbnail;
+        /**
+         * タイトル.
+         */
         TextView tv_title;
+        /**
+         * description.
+         */
         TextView tv_des;
+        /**
+         * クリップボタン.
+         */
         ImageView iv_clip;
 
-        //テレビの放送日付行全体
+        /**
+         * テレビの放送日付行全体.
+         */
         LinearLayout tvDateLine;
-        //テレビの放送日付
+        /**
+         * テレビの放送日付.
+         */
         TextView tvDate;
-        //現在放送中表示
-        TextView tvNowonAir;
-        //レーティングの星
+        /**
+         * 現在放送中表示.
+         */
+        TextView tvNowOnAir;
+        /**
+         * レーティングの星.
+         */
         RatingBar tvRatingBar;
-        //テレビ・ビデオタブ用のマージン
-        View tvVideoMarging;
-        //その他タブ用マージン
-        View otherMargine;
+        /**
+         * テレビ・ビデオタブ用のマージン.
+         */
+        View tvVideoMargin;
+        /**
+         * その他タブ用マージン.
+         */
+        View otherMargin;
     }
 }
 

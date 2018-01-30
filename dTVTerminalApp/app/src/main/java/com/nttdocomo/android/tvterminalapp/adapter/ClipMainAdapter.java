@@ -23,29 +23,72 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 
 import java.util.List;
 
+/**
+ * クリップ一覧リスト用アダプタ.
+ */
 public class ClipMainAdapter extends BaseAdapter {
 
+    /**
+     * モード.
+     */
     public enum Mode {
+        /**
+         * TVタブ.
+         */
         CLIP_LIST_MODE_TV,
+        /**
+         * ビデオタブ.
+         */
         CLIP_LIST_MODE_VIDEO
     }
 
+    /**
+     * 表示するモード.
+     */
     private Mode mMode = Mode.CLIP_LIST_MODE_TV;
-
+    /**
+     * コンテキスト.
+     */
     private Context mContext = null;
+    /**
+     * 表示するコンテンツデータリスト.
+     */
     private List<ContentsData> mData = null;
+    /**
+     * 表示するレイアウトのリソースID.
+     */
     private int layoutId;
+    /**
+     * サムネイル取得用プロパイダ.
+     */
     private ThumbnailProvider mThumbnailProvider;
+    /**
+     * レーティングの星の数.
+     */
     private static final int STAR_NUMBER = 5;
 
-    public ClipMainAdapter(Context context, List data, int id, ThumbnailProvider thumbnailProvider) {
+    /**
+     * コンストラクタ.
+     *
+     * @param context コンテキスト
+     * @param data コンテンツデータ
+     * @param id レイアウトID
+     * @param thumbnailProvider サムネイルプロパイダ
+     */
+    public ClipMainAdapter(final Context context, final List<ContentsData> data, final int id,
+                           final ThumbnailProvider thumbnailProvider) {
         this.mContext = context;
         this.mData = data;
         this.layoutId = id;
         this.mThumbnailProvider = thumbnailProvider;
     }
 
-    public void setMode(Mode mode) {
+    /**
+     * 表示するモードを指定する.
+     *
+     * @param mode モード
+     */
+    public void setMode(final Mode mode) {
         mMode = mode;
     }
 
@@ -55,12 +98,12 @@ public class ClipMainAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int i) {
+    public Object getItem(final int i) {
         return mData.get(i);
     }
 
     @Override
-    public long getItemId(int i) {
+    public long getItemId(final int i) {
         return i;
     }
 
@@ -79,7 +122,7 @@ public class ClipMainAdapter extends BaseAdapter {
             final ImageView clipButton = holder.bt_video_clip;
             holder.bt_video_clip.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
+                public void onClick(final View view) {
                     //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、画像比較でクリップ済/未を判定する
                     Bitmap clipButtonBitmap = ((BitmapDrawable) clipButton.getBackground()).getBitmap();
                     Bitmap activeClipBitmap = ((BitmapDrawable) ResourcesCompat.getDrawable(mContext.getResources(),
@@ -114,6 +157,9 @@ public class ClipMainAdapter extends BaseAdapter {
                         Bitmap bp = mThumbnailProvider.getThumbnailImage(holder.iv_clip_video_thumbnail, thumbUrl);
                         if (null != bp) {
                             holder.iv_clip_video_thumbnail.setImageBitmap(bp);
+                        } else {
+                            //サムネイル取得失敗時はエラー画像を表示する
+                            holder.iv_clip_video_thumbnail.setImageResource(R.mipmap.error_movie);
                         }
                     }
                 }
@@ -153,6 +199,9 @@ public class ClipMainAdapter extends BaseAdapter {
                         Bitmap bp = mThumbnailProvider.getThumbnailImage(holder.iv_clip_video_thumbnail, thumbUrl);
                         if (null != bp) {
                             holder.iv_clip_video_thumbnail.setImageBitmap(bp);
+                        } else {
+                            //サムネイル取得失敗時はエラー画像を表示する
+                            holder.iv_clip_video_thumbnail.setImageResource(R.mipmap.error_movie);
                         }
                     }
                 }
@@ -191,15 +240,38 @@ public class ClipMainAdapter extends BaseAdapter {
         return convertView;
     }
 
+    /**
+     * 表示しているモードを取得する.
+     *
+     * @return モード
+     */
     public Mode getMode() {
         return mMode;
     }
 
+    /**
+     * ViewHolder.
+     */
     class ViewHolder {
+        /**
+         * サムネイル.
+         */
         ImageView iv_clip_video_thumbnail;
+        /**
+         * タイトル.
+         */
         TextView tv_clip_des;
+        /**
+         * レーティング数.
+         */
         TextView rb_clip_video_rating_count;
+        /**
+         * レーティング.
+         */
         RatingBar rb_clip_video_rating;
+        /**
+         * クリップボタン.
+         */
         ImageView bt_video_clip;
     }
 }
