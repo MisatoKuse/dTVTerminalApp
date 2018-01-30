@@ -13,6 +13,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendRequestData;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.RecommendWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
@@ -244,7 +245,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV: //テレビ
                 resultList = getRecommendListDataCache(
                         DateUtils.RECOMMEND_CH_LAST_INSERT, requestPageNo, startIndex, maxResult);
-                if (resultList.size() < maxResult) { // キャッシュ内のデータ数が20件未満の場合
+                if (resultList.size() < maxResult && NetWorkUtils.isOnline(mContext)) { // キャッシュ内のデータ数が20件未満の場合
                     requestData.serviceCategoryId = getTerebiRequestSCIdStr();
                 } else {
                     //戻り値を使用する指定が無い場合は、コールバックに値を渡す
@@ -257,7 +258,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO: //ビデオ
                 resultList = getRecommendListDataCache(
                         DateUtils.RECOMMEND_VD_LAST_INSERT, requestPageNo, startIndex, maxResult);
-                if (resultList.size() < maxResult) { // キャッシュ内のデータ数が20件未満の場合
+                if (resultList.size() < maxResult && NetWorkUtils.isOnline(mContext)) { // キャッシュ内のデータ数が20件未満の場合
                     requestData.serviceCategoryId = getVideoRequestSCIdStr();
                 } else {
                     //戻り値を使用する指定が無い場合は、コールバックに値を渡す
@@ -270,7 +271,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL: //dTVチャンネル
                 resultList = getRecommendListDataCache(
                         DateUtils.RECOMMEND_DCHANNEL_LAST_INSERT, requestPageNo, startIndex, maxResult);
-                if (resultList.size() < maxResult) { // キャッシュ内のデータ数が20件未満の場合
+                if (resultList.size() < maxResult && NetWorkUtils.isOnline(mContext)) { // キャッシュ内のデータ数が20件未満の場合
                     requestData.serviceCategoryId = getDCHRequestSCIdStr();
                 } else {
                     //戻り値を使用する指定が無い場合は、コールバックに値を渡す
@@ -284,7 +285,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV: //dTV
                 resultList = getRecommendListDataCache(
                         DateUtils.RECOMMEND_DTV_LAST_INSERT, requestPageNo, startIndex, maxResult);
-                if (resultList.size() < maxResult) { // キャッシュ内のデータ数が20件未満の場合
+                if (resultList.size() < maxResult && NetWorkUtils.isOnline(mContext)) { // キャッシュ内のデータ数が20件未満の場合
                     requestData.serviceCategoryId = getDTVRequestSCIdStr();
                 } else {
                     //戻り値を使用する指定が無い場合は、コールバックに値を渡す
@@ -297,7 +298,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
             case SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME: //dアニメ
                 resultList = getRecommendListDataCache(
                         DateUtils.RECOMMEND_DANIME_LAST_INSERT, requestPageNo, startIndex, maxResult);
-                if (resultList.size() < maxResult) { // キャッシュ内のデータ数が20件未満の場合
+                if (resultList.size() < maxResult && NetWorkUtils.isOnline(mContext)) { // キャッシュ内のデータ数が20件未満の場合
                     requestData.serviceCategoryId = getDAnimeRequestSCIdStr();
                 } else {
                     //戻り値を使用する指定が無い場合は、コールバックに値を渡す
