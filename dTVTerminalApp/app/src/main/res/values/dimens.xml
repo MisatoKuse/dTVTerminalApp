@@ -310,6 +310,7 @@
 
     <!--リモコン-->
     <dimen name="remote_controller_header_view_high">50dp</dimen>
+    <dimen name="remote_index_margin">6dp</dimen>
 
     <!--設定画面-->
     <dimen name="main_setting_text_start_margin">16dp</dimen>

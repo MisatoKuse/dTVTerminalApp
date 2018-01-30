@@ -9,12 +9,15 @@ import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -27,6 +30,7 @@ public class RemoteControllerSendKeyAction {
     private RepeatStateManagement mRepeatStateManagement = null;
     private RemoteControllerChannelViewHolder mChannelViewHolder = null;
     private RemoteControllerPlayerViewHolder mPlayerViewHolder = null;
+    private View mView;
 
     private final int SEND_KEYCODE_PARAM_ACTION_UP = 1;
     private final int SEND_KEYCODE_PARAM_ACTION_DOWN = 0;
@@ -44,6 +48,7 @@ public class RemoteControllerSendKeyAction {
     }
 
     public void initRemoteControllerPlayerView(View view) {
+        mView = view;
         mPlayerViewHolder = setPlayerViewHolder(new RemoteControllerPlayerViewHolder(), view);
     }
 
@@ -112,41 +117,41 @@ public class RemoteControllerSendKeyAction {
         ImageView remote_controller_bt_record_list = null;
         ImageView remote_controller_bt_tvprogram = null;
         ImageView remote_controller_bt_decide = null;
-        Button remote_controller_bt_up = null;
-        Button remote_controller_bt_left = null;
-        Button remote_controller_bt_down = null;
-        Button remote_controller_bt_right = null;
+        ImageView remote_controller_bt_up = null;
+        ImageView remote_controller_bt_left = null;
+        ImageView remote_controller_bt_down = null;
+        ImageView remote_controller_bt_right = null;
         ImageView remote_controller_bt_back = null;
         ImageView remote_controller_bt_toHome = null;
-        ImageView remote_controller_iv_playOrStop = null;
-        ImageView remote_controller_iv_blue = null;
-        ImageView remote_controller_iv_red = null;
-        ImageView remote_controller_iv_green = null;
-        ImageView remote_controller_iv_yellow = null;
+        Button remote_controller_iv_playOrStop = null;
+        Button remote_controller_iv_blue = null;
+        Button remote_controller_iv_red = null;
+        Button remote_controller_iv_green = null;
+        Button remote_controller_iv_yellow = null;
     }
 
     // チャンネル操作UI
     private static class RemoteControllerChannelViewHolder {
         ImageView remote_controller_iv_power = null;
-        ImageView remote_controller_bt_degital = null;
-        ImageView remote_controller_bt_bs = null;
-        ImageView remote_controller_bt_iptv = null;
-        ImageView remote_controller_bt_two = null;
-        ImageView remote_controller_bt_one = null;
-        ImageView remote_controller_bt_three = null;
-        ImageView remote_controller_bt_four = null;
-        ImageView remote_controller_bt_five = null;
-        ImageView remote_controller_bt_six = null;
-        ImageView remote_controller_bt_seven = null;
-        ImageView remote_controller_bt_eight = null;
-        ImageView remote_controller_bt_nine = null;
-        ImageView remote_controller_bt_ten = null;
-        ImageView remote_controller_bt_eleven = null;
-        ImageView remote_controller_bt_twelve = null;
+        Button remote_controller_bt_degital = null;
+        Button remote_controller_bt_bs = null;
+        Button remote_controller_bt_iptv = null;
+        Button remote_controller_bt_two = null;
+        Button remote_controller_bt_one = null;
+        Button remote_controller_bt_three = null;
+        Button remote_controller_bt_four = null;
+        Button remote_controller_bt_five = null;
+        Button remote_controller_bt_six = null;
+        Button remote_controller_bt_seven = null;
+        Button remote_controller_bt_eight = null;
+        Button remote_controller_bt_nine = null;
+        Button remote_controller_bt_ten = null;
+        Button remote_controller_bt_eleven = null;
+        Button remote_controller_bt_twelve = null;
         Button remote_controller_bt_channel_plus = null;
         Button remote_controller_bt_channel_minus = null;
-        ImageView remote_controller_bt_notice = null;
-        ImageView remote_controller_bt_ddata = null;
+        Button remote_controller_bt_notice = null;
+        Button remote_controller_bt_ddata = null;
     }
 
     /**
@@ -216,6 +221,7 @@ public class RemoteControllerSendKeyAction {
             DTVTLogger.start();
             switch (event.getAction()) {
                 case MotionEvent.ACTION_UP:
+                    setTouchSelector(v.getId(), false);
                     DTVTLogger.debug("MotionEvemt ACTION_UP");
                     if (mRepeatStateManagement.mStatus == RepeatTaskStatus.REPEAT_STATUS_EXECUTION) {
                         // リピート実行中の場合
@@ -233,6 +239,7 @@ public class RemoteControllerSendKeyAction {
                     }
                     break;
                 case MotionEvent.ACTION_DOWN:
+                    setTouchSelector(v.getId(), true);
                     sendKeyCode(v.getId(),SEND_KEYCODE_PARAM_ACTION_DOWN,false, mContext);
                     DTVTLogger.debug("MotionEvemt ACTION_DOWN");
                     if (mRepeatStateManagement == null) {
@@ -246,6 +253,7 @@ public class RemoteControllerSendKeyAction {
                     }
                     break;
                 case MotionEvent.ACTION_CANCEL:
+                    setTouchSelector(v.getId(), false);
                     sendKeyCode(v.getId(),SEND_KEYCODE_PARAM_ACTION_UP,true, mContext);
                     DTVTLogger.debug("MotionEvemt ACTION_CANCEL");
                     if (null != mRepeatStateManagement) {
@@ -271,6 +279,115 @@ public class RemoteControllerSendKeyAction {
             return true;
         }
     };
+
+    // selector画像名に対応する STBキーコード
+    private static final Map<Integer, int[]> keyDownUpSelector = new HashMap<Integer, int[]>() {
+        {
+            put(R.id.remote_controller_bt_up,
+                    new int[]{R.mipmap.remote_player_main_btn_arrow_top, R.mipmap.remote_tap_player_main_btn_arrow_top}); // カーソル (上下左右)
+            put(R.id.remote_controller_bt_down,
+                    new int[]{R.mipmap.remote_player_main_btn_arrow_bottom, R.mipmap.remote_tap_player_main_btn_arrow_bottom});
+            put(R.id.remote_controller_bt_left,
+                    new int[]{R.mipmap.remote_player_main_btn_arrow_left, R.mipmap.remote_tap_player_main_btn_arrow_left});
+            put(R.id.remote_controller_bt_right,
+                    new int[]{R.mipmap.remote_player_main_btn_arrow_right, R.mipmap.remote_tap_player_main_btn_arrow_right});
+            put(R.id.remote_controller_bt_toHome,
+                    new int[]{R.mipmap.remote_player_sub_btn_home, R.mipmap.remote_tap_player_sub_btn_home}); // ホーム
+            // チャンネル (1～12) ※ チャンネル (10)は KEYCODE_0となる
+            put(R.id.remote_controller_bt_one,
+                    new int[]{R.mipmap.remote_ch_btn_ch_01, R.mipmap.remote_tap_ch_btn_ch_01});
+            put(R.id.remote_controller_bt_two,
+                    new int[]{R.mipmap.remote_ch_btn_ch_02, R.mipmap.remote_tap_ch_btn_ch_02});
+            put(R.id.remote_controller_bt_three,
+                    new int[]{R.mipmap.remote_ch_btn_ch_03, R.mipmap.remote_tap_ch_btn_ch_03});
+            put(R.id.remote_controller_bt_four,
+                    new int[]{R.mipmap.remote_ch_btn_ch_04, R.mipmap.remote_tap_ch_btn_ch_04});
+            put(R.id.remote_controller_bt_five,
+                    new int[]{R.mipmap.remote_ch_btn_ch_05, R.mipmap.remote_tap_ch_btn_ch_05});
+            put(R.id.remote_controller_bt_six,
+                    new int[]{R.mipmap.remote_ch_btn_ch_06, R.mipmap.remote_tap_ch_btn_ch_06});
+            put(R.id.remote_controller_bt_seven,
+                    new int[]{R.mipmap.remote_ch_btn_ch_07, R.mipmap.remote_tap_ch_btn_ch_07});
+            put(R.id.remote_controller_bt_eight,
+                    new int[]{R.mipmap.remote_ch_btn_ch_08, R.mipmap.remote_tap_ch_btn_ch_08});
+            put(R.id.remote_controller_bt_nine,
+                    new int[]{R.mipmap.remote_ch_btn_ch_09, R.mipmap.remote_tap_ch_btn_ch_09});
+            put(R.id.remote_controller_bt_ten,
+                    new int[]{R.mipmap.remote_ch_btn_ch_10, R.mipmap.remote_tap_ch_btn_ch_10}); // ※ チャンネル (10)は (0)
+            put(R.id.remote_controller_bt_eleven,
+                    new int[]{R.mipmap.remote_ch_btn_ch_11, R.mipmap.remote_tap_ch_btn_ch_11});
+            put(R.id.remote_controller_bt_twelve,
+                    new int[]{R.mipmap.remote_ch_btn_ch_12, R.mipmap.remote_tap_ch_btn_ch_12});
+            put(R.id.remote_controller_bt_degital,
+                    new int[]{R.mipmap.remote_ch_btn_terrestrialdigital, R.mipmap.remote_tap_ch_btn_terrestrialdigital}); // 地デジ
+            put(R.id.remote_controller_bt_bs,
+                    new int[]{R.mipmap.remote_ch_btn_bs, R.mipmap.remote_tap_ch_btn_bs}); // BS
+            put(R.id.remote_controller_bt_iptv,
+                    new int[]{R.mipmap.remote_ch_btn_iptv, R.mipmap.remote_tap_ch_btn_iptv}); // IPTV
+            put(R.id.remote_controller_bt_tv_program,
+                    new int[]{R.mipmap.remote_player_sub_btn_tv_schedule, R.mipmap.remote_tap_player_sub_btn_tv_schedule}); // 番組表
+            put(R.id.remote_controller_bt_decide,
+                    new int[]{R.mipmap.remote_player_main_btn_decision, R.mipmap.remote_tap_player_main_btn_decision});  // 決定
+            put(R.id.remote_controller_bt_back,
+                    new int[]{R.mipmap.remote_player_sub_btn_back, R.mipmap.remote_tap_player_sub_btn_back});  // 戻る
+            put(R.id.remote_controller_iv_playOrStop,
+                    new int[]{R.mipmap.remote_player_sub_btn_play_stop, R.mipmap.remote_tap_player_sub_btn_play_stop});  // 再生/停止
+            put(R.id.remote_controller_iv_blue,
+                    new int[]{R.mipmap.remote_player_color_btn_blue_btn, R.mipmap.remote_tap_player_color_btn_blue_btn}); // カラー (青)/10秒戻し
+            put(R.id.remote_controller_iv_red,
+                    new int[]{R.mipmap.remote_player_color_btn_red_btn, R.mipmap.remote_tap_player_color_btn_red_btn}); // カラー (赤)/巻き戻し
+            put(R.id.remote_controller_iv_green,
+                    new int[]{R.mipmap.remote_player_color_btn_green_btn, R.mipmap.remote_tap_player_color_btn_green_btn});// カラー (緑)/早送り
+            put(R.id.remote_controller_iv_yellow,
+                    new int[]{R.mipmap.remote_player_color_btn_yellow_btn, R.mipmap.remote_tap_player_color_btn_yellow_btn}); // カラー (黄)/30秒送り
+            put(R.id.remote_controller_bt_channel_plus,
+                    new int[]{R.mipmap.remote_ch_btn_ch_vertical, R.mipmap.remote_tap_ch_btn_ch_vertical_top}); // チャンネル (上下)
+            put(R.id.remote_controller_bt_channel_minus,
+                    new int[]{R.mipmap.remote_ch_btn_ch_vertical, R.mipmap.remote_tap_ch_btn_ch_vertical_bottom});
+            put(R.id.remote_controller_bt_notice,
+                    new int[]{R.mipmap.remote_ch_btn_info, R.mipmap.remote_tap_ch_btn_info});  // お知らせ
+            put(R.id.remote_controller_bt_ddata,
+                    new int[]{R.mipmap.remote_ch_btn_d_data, R.mipmap.remote_tap_ch_btn_d_data}); // dデータ
+            put(R.id.remote_controller_bt_record_list,
+                    new int[]{R.mipmap.remote_player_sub_btn_recordinglist, R.mipmap.remote_tap_player_sub_btn_recordinglist}); // 録画リスト
+        }
+    };
+
+    private void setTouchSelector(int viewId, boolean isDown){
+        int selectorPics[] = null;
+        if (keyDownUpSelector.containsKey(viewId)) {
+            selectorPics = keyDownUpSelector.get(viewId);
+        }
+        if(selectorPics != null && selectorPics.length > 1){
+            if(mView.findViewById(viewId) instanceof Button){
+                Button button = mView.findViewById(viewId);
+                if(isDown){
+                    if(R.id.remote_controller_bt_channel_plus == viewId
+                            || R.id.remote_controller_bt_channel_minus == viewId){
+                        ImageView imageView = mView.findViewById(R.id.remote_controller_tv_channel);
+                        imageView.setImageResource(selectorPics[1]);
+                    }else{
+                        button.setBackgroundResource(selectorPics[1]);
+                    }
+                } else {
+                    if(R.id.remote_controller_bt_channel_plus == viewId
+                            || R.id.remote_controller_bt_channel_minus == viewId){
+                        ImageView imageView = mView.findViewById(R.id.remote_controller_tv_channel);
+                        imageView.setImageResource(selectorPics[0]);
+                    }else{
+                        button.setBackgroundResource(selectorPics[0]);
+                    }
+                }
+            } else if(mView.findViewById(viewId) instanceof ImageView){
+                ImageView imageView = mView.findViewById(viewId);
+                if(isDown){
+                    imageView.setImageResource(selectorPics[1]);
+                } else {
+                    imageView.setImageResource(selectorPics[0]);
+                }
+            }
+        }
+    }
 
     /**
      * キーコードを送信する

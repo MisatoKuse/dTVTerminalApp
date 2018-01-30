@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/remote_viewpager_bottom_corner">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:weightSum="569">
+        android:weightSum="561">
 
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="53" />
@@ -18,11 +17,11 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="283"
+            android:layout_weight="282"
             android:orientation="horizontal"
             android:weightSum="359">
 
-            <LinearLayout
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="38" />
@@ -31,16 +30,17 @@
                 android:id="@+id/remote_controller_out_round_style"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="283"
-                android:src="@mipmap/remote_controller_arrow" />
+                android:layout_weight="282"
+                android:contentDescription="@null"
+                android:src="@mipmap/remote_player_main_btn_background" />
 
-            <LinearLayout
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="38" />
+                android:layout_weight="39" />
         </LinearLayout>
 
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="233" />
@@ -49,162 +49,170 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:weightSum="569"
+        android:weightSum="561"
         android:orientation="vertical">
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="134"
-            android:weightSum="359">
-        </LinearLayout>
+            android:weightSum="359"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="122"
-            android:orientation="horizontal">
-            <LinearLayout
+            android:orientation="horizontal"
+            android:weightSum="359">
+            <TextView
                 android:layout_width="0dp"
-                android:layout_weight="119"
+                android:layout_weight="38"
+                android:layout_height="match_parent"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="80"
                 android:layout_height="match_parent"/>
             <ImageView
                 android:id="@+id/remote_controller_bt_decide"
                 android:layout_width="0dp"
-                android:layout_weight="122"
+                android:layout_weight="120"
                 android:layout_height="match_parent"
-                android:src="@mipmap/remote_controller_decision"/>
-            <LinearLayout
+                android:contentDescription="@null"
+                android:src="@mipmap/remote_player_main_btn_decision"/>
+            <TextView
                 android:layout_width="0dp"
-                android:layout_weight="119"
+                android:layout_weight="80"
+                android:layout_height="match_parent"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="39"
                 android:layout_height="match_parent"/>
 
         </LinearLayout>
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="313">
 
-        </LinearLayout>
+        </TextView>
 
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:weightSum="569"
+        android:weightSum="561"
         android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="53"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="67"></LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="39"
+            android:layout_weight="80"
             android:orientation="horizontal">
-            <LinearLayout
+            <TextView
                 android:layout_width="0dp"
-                android:layout_weight="167"
+                android:layout_weight="107"
                 android:layout_height="match_parent"/>
-            <Button
+            <ImageView
                 android:id="@+id/remote_controller_bt_up"
                 android:layout_width="0dp"
-                android:layout_weight="72"
+                android:layout_weight="144"
                 android:layout_height="match_parent"
-                android:background="#00000000"/>
-            <LinearLayout
+                android:contentDescription="@null"
+                android:src="@mipmap/remote_player_main_btn_arrow_top"/>
+            <TextView
                 android:layout_width="0dp"
-                android:layout_weight="168"
-                android:layout_height="match_parent"></LinearLayout>
+                android:layout_weight="108"
+                android:layout_height="match_parent"/>
 
         </LinearLayout>
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="463"></LinearLayout>
-
-
+            android:layout_weight="428"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:weightSum="569"
+        android:weightSum="561"
         android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="133"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="159"></LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="72"
-            android:orientation="horizontal">
-            <LinearLayout
+            android:layout_weight="144"
+            android:orientation="horizontal"
+            android:weightSum="359">
+            <TextView
                 android:layout_width="0dp"
-                android:layout_weight="52"
+                android:layout_weight="38"
                 android:layout_height="match_parent"/>
-            <Button
+            <ImageView
                 android:id="@+id/remote_controller_bt_left"
                 android:layout_width="0dp"
-                android:layout_weight="52"
+                android:layout_weight="80"
+                android:contentDescription="@null"
                 android:layout_height="match_parent"
-                android:background="#00000000"/>
-            <LinearLayout
+                android:src="@mipmap/remote_player_main_btn_arrow_left"/>
+            <TextView
                 android:layout_width="0dp"
-                android:layout_weight="150"
+                android:layout_weight="120"
                 android:layout_height="match_parent"/>
-            <Button
+            <ImageView
                 android:id="@+id/remote_controller_bt_right"
                 android:layout_width="0dp"
-                android:layout_weight="52"
+                android:layout_weight="80"
                 android:layout_height="match_parent"
-                android:background="#00000000"/>
-            <LinearLayout
+                android:contentDescription="@null"
+                android:src="@mipmap/remote_player_main_btn_arrow_right"/>
+            <TextView
                 android:layout_width="0dp"
-                android:layout_weight="53"
-                android:layout_height="match_parent"></LinearLayout>
-
+                android:layout_weight="39"
+                android:layout_height="match_parent"/>
         </LinearLayout>
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="338"></LinearLayout>
-
-
+            android:layout_weight="302"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:weightSum="569"
+        android:weightSum="561"
         android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="255"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="283"></LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="39"
+            android:layout_weight="80"
             android:orientation="horizontal">
-            <LinearLayout
+            <TextView
                 android:layout_width="0dp"
-                android:layout_weight="167"
+                android:layout_weight="107"
                 android:layout_height="match_parent"/>
-            <Button
+            <ImageView
                 android:id="@+id/remote_controller_bt_down"
                 android:layout_width="0dp"
-                android:layout_weight="72"
+                android:layout_weight="144"
                 android:layout_height="match_parent"
-                android:background="#00000000"/>
-            <LinearLayout
+                android:contentDescription="@null"
+                android:src="@mipmap/remote_player_main_btn_arrow_bottom"/>
+            <TextView
                 android:layout_width="0dp"
-                android:layout_weight="168"
-                android:layout_height="match_parent"></LinearLayout>
+                android:layout_weight="108"
+                android:layout_height="match_parent"/>
 
         </LinearLayout>
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="247"></LinearLayout>
-
+            android:layout_weight="226"/>
 
     </LinearLayout>
 
@@ -212,13 +220,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:weightSum="569">
+        android:weightSum="561">
 
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="317"
-            android:weightSum="359" />
+            android:layout_weight="317" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -227,7 +234,7 @@
             android:orientation="horizontal"
             android:weightSum="359">
 
-            <LinearLayout
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="24" />
@@ -237,9 +244,10 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="72"
-                android:src="@mipmap/remote_controller_back" />
+                android:contentDescription="@null"
+                android:src="@mipmap/remote_player_sub_btn_back"/>
 
-            <LinearLayout
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="167" />
@@ -249,19 +257,20 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="72"
-                android:src="@mipmap/remote_controller_home" />
+                android:contentDescription="@null"
+                android:src="@mipmap/remote_player_sub_btn_home" />
 
-            <LinearLayout
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="24" />
 
         </LinearLayout>
 
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="180" />
+            android:layout_weight="172" />
 
     </LinearLayout>
 
@@ -269,9 +278,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:weightSum="569">
+        android:weightSum="561">
 
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="376"
@@ -284,26 +293,26 @@
             android:orientation="horizontal"
             android:weightSum="359">
 
-            <LinearLayout
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="131" />
 
-            <ImageView
+            <Button
                 android:id="@+id/remote_controller_iv_playOrStop"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="96"
-                android:src="@mipmap/remote_controller_play_stop_btn" />
+                android:background="@mipmap/remote_player_sub_btn_play_stop" />
 
-            <LinearLayout
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="132" />
 
         </LinearLayout>
 
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="161" />
@@ -313,9 +322,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:weightSum="569">
+        android:weightSum="561">
 
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="441"
@@ -326,61 +335,61 @@
             android:layout_height="0dp"
             android:layout_weight="48">
 
-            <LinearLayout
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="24" />
 
-            <ImageView
+            <Button
                 android:id="@+id/remote_controller_iv_blue"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="64"
-                android:src="@mipmap/remote_controller_blue" />
+                android:background="@mipmap/remote_player_color_btn_blue_btn"/>
 
-            <LinearLayout
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="12" />
 
-            <ImageView
+            <Button
                 android:id="@+id/remote_controller_iv_red"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="64"
-                android:src="@mipmap/remote_controller_red" />
+                android:background="@mipmap/remote_player_color_btn_red_btn"/>
 
-            <LinearLayout
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="12" />
 
-            <ImageView
+            <Button
                 android:id="@+id/remote_controller_iv_green"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="64"
-                android:src="@mipmap/remote_controller_green" />
+                android:background="@mipmap/remote_player_color_btn_green_btn" />
 
-            <LinearLayout
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="12" />
 
-            <ImageView
+            <Button
                 android:id="@+id/remote_controller_iv_yellow"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="64"
-                android:src="@mipmap/remote_controller_yellow" />
+                android:background="@mipmap/remote_player_color_btn_yellow_btn" />
 
-            <LinearLayout
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="24"></LinearLayout>
+                android:layout_weight="24"/>
         </LinearLayout>
 
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="80" />
@@ -391,9 +400,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:weightSum="569">
+        android:weightSum="561">
 
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="496" />
@@ -403,7 +412,7 @@
             android:layout_height="0dp"
             android:layout_weight="17">
 
-            <LinearLayout
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="49" />
@@ -412,9 +421,10 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="14"
-                android:src="@mipmap/remote_controller_fill_blue" />
+                android:contentDescription="@null"
+                android:src="@mipmap/remote_player_color_btn_blue_text" />
 
-            <LinearLayout
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="68" />
@@ -423,9 +433,10 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="14"
-                android:src="@mipmap/remote_controller_fill_red" />
+                android:contentDescription="@null"
+                android:src="@mipmap/remote_player_color_btn_red_text" />
 
-            <LinearLayout
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="68" />
@@ -434,9 +445,10 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="14"
-                android:src="@mipmap/remote_controller_fill_green" />
+                android:contentDescription="@null"
+                android:src="@mipmap/remote_player_color_btn_green_text" />
 
-            <LinearLayout
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="68" />
@@ -445,9 +457,10 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="14"
-                android:src="@mipmap/remote_controller_fill_yellow" />
+                android:contentDescription="@null"
+                android:src="@mipmap/remote_player_color_btn_yellow_text" />
 
-            <LinearLayout
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="49" />
@@ -455,7 +468,7 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="56" />
@@ -466,7 +479,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:weightSum="569">
+        android:weightSum="561">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -477,7 +490,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:weightSum="569">
+                android:weightSum="561">
 
                 <LinearLayout
                     android:id="@+id/remote_controller_rl"
@@ -487,7 +500,7 @@
                     android:orientation="horizontal"
                     android:weightSum="359">
 
-                    <LinearLayout
+                    <TextView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="24" />
@@ -497,9 +510,10 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="72"
-                        android:src="@mipmap/remote_controller_record_list" />
+                        android:contentDescription="@null"
+                        android:src="@mipmap/remote_player_sub_btn_recordinglist" />
 
-                    <LinearLayout
+                    <TextView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="167" />
@@ -509,49 +523,21 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="72"
-                        android:src="@mipmap/remote_controller_program_list" />
+                        android:contentDescription="@null"
+                        android:src="@mipmap/remote_player_sub_btn_tv_schedule" />
 
-                    <LinearLayout
+                    <TextView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="24" />
                 </LinearLayout>
 
-                <LinearLayout
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="497" />
             </LinearLayout>
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="8"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="169" />
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="20"
-                android:src="@mipmap/remote_controller_paging" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="168" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="16"></LinearLayout>
 
     </LinearLayout>
 
