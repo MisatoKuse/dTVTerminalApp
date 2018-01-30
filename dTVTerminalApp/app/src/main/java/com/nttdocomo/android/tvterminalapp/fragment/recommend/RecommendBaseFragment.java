@@ -78,7 +78,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
 
         //SearchResultBaseAdapter searchResultBaseAdapter
         mRecommendListBaseAdapter =
-                new RecommendListBaseAdapter(getContext(), mData, R.layout.item_recommend_list);
+                new RecommendListBaseAdapter(getContext(), mData);
         mRecommendListview.setAdapter(mRecommendListBaseAdapter);
 
         return mRecommendFragmentView;
