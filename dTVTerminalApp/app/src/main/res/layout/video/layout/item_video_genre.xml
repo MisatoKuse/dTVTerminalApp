@@ -9,14 +9,14 @@
     <TextView
         android:id="@+id/genre_title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/video_contents_list_height"
         android:layout_centerVertical="true"
         android:layout_marginStart="@dimen/video_contents_genre_title_margin_start"
-        android:layout_marginTop="@dimen/video_contents_genre_title_margin_top"
+        android:gravity="center_vertical"
         android:ellipsize="end"
         android:textStyle="bold"
         android:textSize="@dimen/video_contents_genre_text_size"
-        android:textColor="@color/video_list_text" />
+        android:textColor="@color/video_list_text_color" />
 
     <TextView
         android:id="@+id/content_count"
@@ -24,26 +24,17 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginEnd="@dimen/video_contents_genre_count_margin_end"
-        android:layout_toLeftOf="@+id/genre_button"
+        android:layout_toStartOf="@+id/genre_button"
         android:textSize="@dimen/video_contents_genre_num_size"
-        android:textColor="@color/video_list_text" />
+        android:textColor="@color/video_list_text_color" />
 
-    <TextView
+    <ImageView
         android:id="@+id/genre_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/video_contents_list_right_arrow_size"
+        android:layout_height="@dimen/video_contents_list_right_arrow_size"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="@dimen/video_contents_genre_button_margin_end"
-        android:text="@string/list_transition"
-        android:textSize="@dimen/video_contents_genre_num_size"
-        android:textColor="@color/video_list_text" />
-
-    <TextView
-        android:id="@+id/item_common_result_line"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:textColor="@color/video_list_text" />
+        android:src="@mipmap/icon_gray_arrow_right" />
 
 </RelativeLayout>

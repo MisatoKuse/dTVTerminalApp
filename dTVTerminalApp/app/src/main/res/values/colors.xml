@@ -69,7 +69,7 @@
     <color name="recording_reservation_status_background_white">#FFFFFF</color>
     <color name="recording_reservation_status_background_black">#000000</color>
     <!-- ビデオ一覧 -->
-    <color name="video_list_text">#FFFFFF</color>
+    <color name="video_list_text_color">@color/basic_text_color_white</color>
     <color name="video_list_line">#424242</color>
     <!-- レンタル一覧 -->
     <color name="rental_background_color">#1d1d1d</color>
