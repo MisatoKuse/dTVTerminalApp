@@ -17,6 +17,7 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.RoleListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvClipListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.TvScheduleListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.VodClipListDao;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WatchListenVideoListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.WeeklyRankListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
@@ -43,6 +44,38 @@ public class HomeDataManager {
      */
     public HomeDataManager(final Context context) {
         this.mContext = context;
+    }
+
+    /**
+     * ホーム画面用視聴中ビデオデータを返却する.
+     *
+     * @return list
+     */
+    public List<Map<String, String>> selectWatchingVideoHomeData() {
+
+        List<Map<String, String>> list = new ArrayList<>();
+        //データ存在チェック
+        if (!DBUtils.isCachingRecord(mContext, DBConstants.WATCH_LISTEN_VIDEO_TABLE_NAME)) {
+            return list;
+        }
+
+        //ホーム画面に必要な列を列挙する
+        String[] columns = {JsonConstants.META_RESPONSE_THUMB_448,
+                JsonConstants.META_RESPONSE_AVAIL_START_DATE,
+                JsonConstants.META_RESPONSE_AVAIL_END_DATE,
+                JsonConstants.META_RESPONSE_TITLE,
+                JsonConstants.META_RESPONSE_DISP_TYPE};
+
+        //Daoクラス使用準備
+        DBHelper dBHelper = new DBHelper(mContext);
+        SQLiteDatabase db = dBHelper.getWritableDatabase();
+        WatchListenVideoListDao watchListenVideoListDao = new WatchListenVideoListDao(db);
+
+        //ホーム画面用データ取得
+        list = watchListenVideoListDao.findById(columns);
+        db.close();
+        dBHelper.close();
+        return list;
     }
 
     /**

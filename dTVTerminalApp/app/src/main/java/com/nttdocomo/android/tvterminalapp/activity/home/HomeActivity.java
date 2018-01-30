@@ -99,7 +99,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     /**
      * コンテンツ一覧数.
      */
-    private final static int HOME_CONTENTS_LIST_COUNT = 7;
+    private final static int HOME_CONTENTS_LIST_COUNT = 8;
     /**
      * ヘッダのmargin.
      */
@@ -125,13 +125,17 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private final static int HOME_CONTENTS_SORT_VIDEO = HOME_CONTENTS_LIST_START_INDEX + 4;
     /**
+     * UIの上下表示順(視聴中ビデオ).
+     */
+    private final static int HOME_CONTENTS_SORT_WATCHING_VIDEO = HOME_CONTENTS_LIST_START_INDEX + 5;
+    /**
      * UIの上下表示順(クリップ[テレビ]).
      */
-    private final static int HOME_CONTENTS_SORT_TV_CLIP = HOME_CONTENTS_LIST_START_INDEX + 5;
+    private final static int HOME_CONTENTS_SORT_TV_CLIP = HOME_CONTENTS_LIST_START_INDEX + 6;
     /**
      * UIの上下表示順(クリップ[ビデオ]).
      */
-    private final static int HOME_CONTENTS_SORT_VOD_CLIP = HOME_CONTENTS_LIST_START_INDEX + 6;
+    private final static int HOME_CONTENTS_SORT_VOD_CLIP = HOME_CONTENTS_LIST_START_INDEX + 7;
     /**
      * Handler用の識別値(チャンネル一覧).
      */
@@ -352,7 +356,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 startTo(tag);
             }
         });
-        RecyclerView mRecyclerView = view.findViewById(R.id.home_main_item_recyclerview);
+        RecyclerView recyclerView = view.findViewById(R.id.home_main_item_recyclerview);
         //コンテンツタイプを設定（NOW ON AIR）
         typeTextView.setText(typeContentName);
         //コンテンツカウントを設定（20）
@@ -362,7 +366,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             countTextView.setText(resultCount);
         }
         //リサイクルビューデータ設定
-        setRecyclerViewData(mRecyclerView, contentsDataList, tag);
+        setRecyclerViewData(recyclerView, contentsDataList, tag);
     }
 
     /**
@@ -375,8 +379,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         if (channelList != null) {
             if (view != null) {
                 //既にNow On Air行が描画されている場合はアダプタにチャンネルデータを渡して再描画する.
-                RecyclerView mRecyclerView = view.findViewById(R.id.home_main_item_recyclerview);
-                HomeRecyclerViewAdapter adapter = (HomeRecyclerViewAdapter) mRecyclerView.getAdapter();
+                RecyclerView recyclerView = view.findViewById(R.id.home_main_item_recyclerview);
+                HomeRecyclerViewAdapter adapter = (HomeRecyclerViewAdapter) recyclerView.getAdapter();
                 if (adapter != null) {
                     adapter.setCHannnelList(channelList);
                     adapter.notifyDataSetChanged();
@@ -416,6 +420,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             case HOME_CONTENTS_SORT_VIDEO:
                 typeName = getResources().getString(R.string.video_ranking_title);
                 break;
+            case HOME_CONTENTS_SORT_WATCHING_VIDEO:
+                typeName = getResources().getString(R.string.nav_menu_item_watch_listen_video);
+                break;
             case HOME_CONTENTS_SORT_TV_CLIP:
                 typeName = getResources().getString(R.string.nav_menu_item_tv_clip);
                 break;
@@ -432,31 +439,31 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * 機能
      * コンテンツ一覧データを設定.
      *
-     * @param mRecyclerView    リサイクルビュー
+     * @param recyclerView    リサイクルビュー
      * @param contentsDataList コンテンツ情報
      * @param index            遷移先
      */
-    private void setRecyclerViewData(final RecyclerView mRecyclerView, final List<ContentsData> contentsDataList, final int index) {
+    private void setRecyclerViewData(final RecyclerView recyclerView, final List<ContentsData> contentsDataList, final int index) {
         DTVTLogger.start();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        mRecyclerView.setLayoutManager(linearLayoutManager);
-        HomeRecyclerViewAdapter mHorizontalViewAdapter = new HomeRecyclerViewAdapter(this, contentsDataList, index + HOME_CONTENTS_DISTINCTION_ADAPTER);
-        mRecyclerView.setAdapter(mHorizontalViewAdapter);
-        View footer = LayoutInflater.from(this).inflate(R.layout.home_main_layout_recyclerview_footer, mRecyclerView, false);
-        TextView mTextView = footer.findViewById(R.id.home_main_layout_recyclerview_footer);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        HomeRecyclerViewAdapter horizontalViewAdapter = new HomeRecyclerViewAdapter(this, contentsDataList, index + HOME_CONTENTS_DISTINCTION_ADAPTER);
+        recyclerView.setAdapter(horizontalViewAdapter);
+        View footer = LayoutInflater.from(this).inflate(R.layout.home_main_layout_recyclerview_footer, recyclerView, false);
+        TextView textView = footer.findViewById(R.id.home_main_layout_recyclerview_footer);
         //もっと見るの遷移先を設定
-        mTextView.setOnClickListener(new View.OnClickListener() {
+        textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
                 startTo(index);
             }
         });
         //リサイクルビューデータの設定
-        mHorizontalViewAdapter.setFooterView(footer);
+        horizontalViewAdapter.setFooterView(footer);
         if (index == HOME_CONTENTS_SORT_CHANNEL && mChannelList != null) {
             //Now On Airのデータセット時に、チャンネルデータが既にある場合にはアダプタに渡す.
-            mHorizontalViewAdapter.setCHannnelList(mChannelList);
+            horizontalViewAdapter.setCHannnelList(mChannelList);
         }
     }
 
@@ -484,6 +491,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             case HOME_CONTENTS_SORT_VIDEO:
                 //ビデオランキングへ遷移
                 startActivity(VideoRankingActivity.class, null);
+                break;
+            case HOME_CONTENTS_SORT_WATCHING_VIDEO:
+                //視聴中ビデオへ遷移
+                startActivity(WatchingVideoListActivity.class, null);
                 break;
             case HOME_CONTENTS_SORT_TV_CLIP:
             case HOME_CONTENTS_SORT_VOD_CLIP:
@@ -553,6 +564,16 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     public void videoRankCallback(final List<ContentsData> videoRankList) {
         if (videoRankList != null && videoRankList.size() > 0) {
             Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_VIDEO, videoRankList);
+            mHandler.sendMessage(msg);
+        } else {
+            showGetDataFailedDialog();
+        }
+    }
+
+    @Override
+    public void watchingVideoCallback(List<ContentsData> watchingVideoList) {
+        if (watchingVideoList != null && watchingVideoList.size() > 0) {
+            Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_WATCHING_VIDEO, watchingVideoList);
             mHandler.sendMessage(msg);
         } else {
             showGetDataFailedDialog();

@@ -169,7 +169,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     private ChannelList mChannelList = null;
 
     /**
-     *ビデオリスト Listクラス.
+     * ビデオリスト Listクラス.
      */
     private VideoRankList mVideoRankList = null;
 
@@ -260,9 +260,12 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if (watchListenVideoList != null && watchListenVideoList.size() > 0) {
             WatchListenVideoList list = watchListenVideoList.get(0);
             setStructDB(list);
-            //TODO:取得したデータをHome画面で使用する場合はここに記載
         } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定(不要な場合は削除)
+            //WEBAPIを取得できなかった時はDBのデータを使用
+            List<Map<String, String>> list;
+            HomeDataManager homeDataManager = new HomeDataManager(mContext);
+            list = homeDataManager.selectWatchingVideoHomeData();
+            sendWatchingVideoListData(list);
         }
     }
 
@@ -362,6 +365,13 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
          * @param videoRankList ビデオランクリスト
          */
         void videoRankCallback(List<ContentsData> videoRankList);
+
+        /**
+         * 視聴中ビデオ用コールバック.
+         *
+         * @param watchingVideoList 視聴中ビデオリスト
+         */
+        void watchingVideoCallback(List<ContentsData> watchingVideoList);
 
         /**
          * おすすめ番組用コールバック.
@@ -523,6 +533,15 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     }
 
     /**
+     * 視聴中ビデオをHomeActivityに送る.
+     *
+     * @param list 視聴中ビデオ
+     */
+    private void sendWatchingVideoListData(final List<Map<String, String>> list) {
+        mApiDataProviderCallback.watchingVideoCallback(setHomeContentData(list, true));
+    }
+
+    /**
      * クリップ[テレビ]リストをHomeActivityに送る.
      *
      * @param list クリップ[テレビ]リスト
@@ -552,7 +571,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     /**
      * 取得したリストマップをContentsDataクラスへ入れる.
      *
-     * @param mapList コンテンツリストデータ
+     * @param mapList  コンテンツリストデータ
      * @param rankFlag ランキングのコンテンツか否か
      * @return dataList ListView表示用データ
      */
@@ -647,10 +666,10 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 mContext.getApplicationContext(), this);
 
         //レコメンドデータプロバイダーからおすすめ番組情報を取得する・DBに既に入っていた場合はその値を使用するので、trueを指定する
-        List<ContentsData> recommendTvData
-                = recommendDataProvider.startGetRecommendData(RecommendDataProvider.TV_NO,
-                SearchConstants.RecommendList.FIRST_POSITION,
-                SearchConstants.RecommendList.RECOMMEND_PRELOAD_COUNT, true);
+        List<ContentsData> recommendTvData =
+                recommendDataProvider.startGetRecommendData(RecommendDataProvider.TV_NO,
+                        SearchConstants.RecommendList.FIRST_POSITION,
+                        SearchConstants.RecommendList.RECOMMEND_PRELOAD_COUNT, true);
 
         //取得したデータを渡す
         return recommendTvData;
@@ -667,10 +686,10 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 mContext.getApplicationContext(), this);
 
         //レコメンドデータプロバイダーからおすすめビデオ情報を取得する・DBに既に入っていた場合はその値を使用するので、trueを指定する
-        List<ContentsData> recommendVideoData
-                = recommendDataProvider.startGetRecommendData(RecommendDataProvider.VIDEO_NO,
-                SearchConstants.RecommendList.FIRST_POSITION,
-                SearchConstants.RecommendList.RECOMMEND_PRELOAD_COUNT, true);
+        List<ContentsData> recommendVideoData =
+                recommendDataProvider.startGetRecommendData(RecommendDataProvider.VIDEO_NO,
+                        SearchConstants.RecommendList.FIRST_POSITION,
+                        SearchConstants.RecommendList.RECOMMEND_PRELOAD_COUNT, true);
 
         //取得したデータを渡す
         return recommendVideoData;
