@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.fragment.player;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -249,25 +250,30 @@ public class DtvContentsDetailFragment extends Fragment {
         /*setRecommendLayout();*///TODO おすすめ作品、一時コメントアウト
     }
 
-    private void setLabelStatus(){
+    private void setLabelStatus() {
         LinearLayout labelStatus = mView.findViewById(R.id.dtv_contents_detail_fragment_label_status_ll);
         labelStatus.removeAllViews();
-        int status[] = {R.mipmap.label_status_new, R.mipmap.label_status_multilingual,
+        int[] status = {R.mipmap.label_status_new, R.mipmap.label_status_multilingual,
                 R.mipmap.label_status_4k, R.mipmap.label_status_voice, R.mipmap.label_status_sound};
-        for(int i = 0; i < status.length; i++){
+        for (int i = 0; i < status.length; i++) {
             LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
-            if(i != 0){
-                imageParams.setMargins((int)getResources().getDimension(R.dimen.contents_detail_8dp),
-                        (int)getResources().getDimension(R.dimen.contents_tab_top_margin),
-                        (int)getResources().getDimension(R.dimen.contents_tab_top_margin),
-                        (int)getResources().getDimension(R.dimen.contents_tab_top_margin));
+            if (i != 0) {
+                if (isAdded()) {
+                    imageParams.setMargins((int) getResources().getDimension(R.dimen.contents_detail_8dp),
+                            (int) getResources().getDimension(R.dimen.contents_tab_top_margin),
+                            (int) getResources().getDimension(R.dimen.contents_tab_top_margin),
+                            (int) getResources().getDimension(R.dimen.contents_tab_top_margin));
+                }
             }
-            ImageView imageView = new ImageView(getContext());
-            imageView.setImageResource(status[i]);
-            imageView.setLayoutParams(imageParams);
-            labelStatus.addView(imageView);
+            Context context = getContext();
+            if (context != null) {
+                ImageView imageView = new ImageView(context);
+                imageView.setImageResource(status[i]);
+                imageView.setLayoutParams(imageParams);
+                labelStatus.addView(imageView);
+            }
         }
     }
 
@@ -278,46 +284,49 @@ public class DtvContentsDetailFragment extends Fragment {
         List<String> staffList = mOtherContentsDetailData.getStaffList();
         mStaffLayout.setVisibility(View.VISIBLE);
         for (int i = 0; i < staffList.size(); i++) {
-            RelativeLayout itemLayout = new RelativeLayout(getContext());
+            Context context = getContext();
+            if (context != null) {
+                RelativeLayout itemLayout = new RelativeLayout(context);
             /*itemLayout.setBackgroundResource(R.drawable.rectangele_contents_detail);*/
-            TextView tabTextView = new TextView(getContext());
-            RelativeLayout.LayoutParams contentParams = new RelativeLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
-            contentParams.addRule(RelativeLayout.ALIGN_PARENT_START);
-            RelativeLayout.LayoutParams imageParams = new RelativeLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    (int) getResources().getDimension(R.dimen.contents_detail_tabs_height));
-            // TODO: スタッフ詳細画面への遷移が行われるようになった場合にアイコンが復活する可能性があるのでコメント化
-            //ImageView imageView = new ImageView(getContext());
-            //imageView.setImageResource(R.mipmap.ic_chevron_right_white_24dp);
-            //imageParams.addRule(RelativeLayout.ALIGN_PARENT_END);
-            //imageView.setLayoutParams(imageParams);
-            contentParams.addRule(RelativeLayout.ALIGN_PARENT_START);
-            String text = staffList.get(i);
-            tabTextView.setGravity(Gravity.CENTER_VERTICAL);
-            itemLayout.setTag(i);
-            tabTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.contents_detail_schedule_detail_sub_title));
-            tabTextView.setLineSpacing(getResources().getDimension(R.dimen.contents_detail_5dp), 1);
-            contentParams.setMargins(0, (int)getResources().getDimension(R.dimen.contents_detail_16dp), 0, 0);
-            if(text.contains(File.separator)){
-                tabTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_12);
-                tabTextView.setText(text.substring(0, text.length() - 1));
-            } else {
-                tabTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_14);
-                tabTextView.setText(text);
-            }
-            tabTextView.setLayoutParams(contentParams);
-            itemLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // TODO スタッフ詳細画面へ遷移　今回はやらない
+                TextView tabTextView = new TextView(context);
+                RelativeLayout.LayoutParams contentParams = new RelativeLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                contentParams.addRule(RelativeLayout.ALIGN_PARENT_START);
+                RelativeLayout.LayoutParams imageParams = new RelativeLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        (int) getResources().getDimension(R.dimen.contents_detail_tabs_height));
+                // TODO: スタッフ詳細画面への遷移が行われるようになった場合にアイコンが復活する可能性があるのでコメント化
+                //ImageView imageView = new ImageView(context);
+                //imageView.setImageResource(R.mipmap.ic_chevron_right_white_24dp);
+                //imageParams.addRule(RelativeLayout.ALIGN_PARENT_END);
+                //imageView.setLayoutParams(imageParams);
+                contentParams.addRule(RelativeLayout.ALIGN_PARENT_START);
+                String text = staffList.get(i);
+                tabTextView.setGravity(Gravity.CENTER_VERTICAL);
+                itemLayout.setTag(i);
+                tabTextView.setTextColor(ContextCompat.getColor(context, R.color.contents_detail_schedule_detail_sub_title));
+                tabTextView.setLineSpacing(getResources().getDimension(R.dimen.contents_detail_5dp), 1);
+                contentParams.setMargins(0, (int) getResources().getDimension(R.dimen.contents_detail_16dp), 0, 0);
+                if (text.contains(File.separator)) {
+                    tabTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_12);
+                    tabTextView.setText(text.substring(0, text.length() - 1));
+                } else {
+                    tabTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_14);
+                    tabTextView.setText(text);
                 }
-            });
-            itemLayout.addView(tabTextView);
-            //TODO: ">"アイコンの追加はひとまず中止
-            //itemLayout.addView(imageView);
-            mStaffLayout.addView(itemLayout);
+                tabTextView.setLayoutParams(contentParams);
+                itemLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // TODO スタッフ詳細画面へ遷移　今回はやらない
+                    }
+                });
+                itemLayout.addView(tabTextView);
+                //TODO: ">"アイコンの追加はひとまず中止
+                //itemLayout.addView(imageView);
+                mStaffLayout.addView(itemLayout);
+            }
         }
     }
 
