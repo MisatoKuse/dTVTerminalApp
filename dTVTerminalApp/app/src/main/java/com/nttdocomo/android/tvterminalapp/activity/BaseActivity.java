@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -96,6 +97,12 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      * stb status icon状態.
      */
     private boolean mIsStbStatusOn = false;
+    /**
+     * GooglePlayのドコテレアプリページ
+     * 現在
+     */
+    private static final String DTVTERMINAL_GOOGLEPLAY_DOWNLOAD_URL =
+            "https://www.nttdocomo.co.jp/product/docomo_select/tt01/index.html";
 
     /**
      * タイムアウト時間.
@@ -558,10 +565,12 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                 switch (requestCommand) {
                     case START_APPLICATION:
                     case TITLE_DETAIL:
-                        menuRemoteController();
+//                        menuRemoteController();
                         break;
                     case IS_USER_ACCOUNT_EXIST:
                     case COMMAND_UNKNOWN:
+                    case KEYEVENT_KEYCODE_POWER:
+                        break;
                     default:
                         break;
                 }
@@ -599,6 +608,27 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                                 break;
                         }
                         break;
+                    case KEYEVENT_KEYCODE_POWER:
+                    String message;
+                    switch(resultcode){
+                        case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE:
+                            CustomDialog dTVTUpDateDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+                            dTVTUpDateDialog.setTitle(getResources().getString(R.string.stb_application_version_update));
+                            dTVTUpDateDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                                @Override
+                                public void onOKCallback(boolean isOK) {
+                                    toGooglePlay(DTVTERMINAL_GOOGLEPLAY_DOWNLOAD_URL);
+                                }
+                            });
+                            break;
+                        case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE:
+                            message = getResources().getString(R.string.stb_application_version_update);
+                            showErrorDialog(message);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
                     case COMMAND_UNKNOWN:
                         switch (resultcode) {
                             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
@@ -626,7 +656,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      * @param appId      アプリID
      */
     protected void startApplicationErrorHander(final int resultCode, final RemoteControlRelayClient.STB_APPLICATION_TYPES appId) {
-        String message = "OK";
+        String message;
         switch (resultCode) {
             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_APPLICATION_NOT_INSTALL:
                 switch (appId) {
@@ -703,6 +733,16 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                 showErrorDialog(message);
                 break;
         }
+    }
+    /**
+     * 機能　GooglePlayのAPPページへ
+     *
+     * @param downLoadUrl 当アプリはGooglePlayのダウンロードURL
+     */
+    protected void toGooglePlay(final String downLoadUrl) {
+        Uri uri = Uri.parse(downLoadUrl);
+        Intent installIntent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(installIntent);
     }
 
     /**

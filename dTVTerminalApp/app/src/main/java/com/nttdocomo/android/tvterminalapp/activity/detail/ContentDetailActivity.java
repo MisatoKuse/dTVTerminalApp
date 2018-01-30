@@ -1856,9 +1856,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                                 }
                                 //DTVアプリ存在しない場合
                             } else {
-                                Uri uri = Uri.parse(GOOGLEPLAY_DOWNLOAD_URL);
-                                Intent installIntent = new Intent(Intent.ACTION_VIEW, uri);
-                                startActivity(installIntent);
+                                toGooglePlay(GOOGLEPLAY_DOWNLOAD_URL);
                             }
                         }
                     });
@@ -1882,9 +1880,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                                     startApp(DANIMESTORE_START_URL);
                                 }
                             } else {
-                                Uri uri = Uri.parse(DANIMESTORE_GOOGLEPLAY_DOWNLOAD_URL);
-                                Intent installIntent = new Intent(Intent.ACTION_VIEW, uri);
-                                startActivity(installIntent);
+                                toGooglePlay(DANIMESTORE_GOOGLEPLAY_DOWNLOAD_URL);
                             }
                         }
                     });
