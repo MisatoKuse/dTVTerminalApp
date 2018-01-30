@@ -49,4 +49,14 @@
         android:textColor="#FFFFFF"
         android:textSize="@dimen/main_header_title_text_size"
         android:textStyle="bold" />
+
+    <!-- 番組表カレンダー矢印 -->
+    <ImageView
+        android:id="@+id/tv_program_list_main_layout_calendar_arrow"
+        android:layout_width="@dimen/tv_program_list_main_layout_calendar_arrow_width"
+        android:layout_height="@dimen/tv_program_list_main_layout_calendar_arrow_height"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/header_layout_text"
+        android:background="@mipmap/icon_normal_arrow_bottom"
+        android:visibility="gone"/>
 </RelativeLayout>
