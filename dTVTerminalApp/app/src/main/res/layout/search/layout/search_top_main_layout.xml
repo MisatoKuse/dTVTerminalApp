@@ -2,42 +2,37 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="#000000"
+              android:background="@color/keyword_search_header_background"
               android:orientation="vertical">
-
-
 
 	<android.support.v7.widget.SearchView
 		android:id="@+id/keyword_search_form"
 		android:layout_width="match_parent"
-		android:layout_height="40dp"
-		android:layout_marginBottom="10dp"
-		android:layout_marginLeft="20dp"
-		android:layout_marginRight="20dp"
-		android:layout_marginTop="10dp"
-		android:background="@color/keyword_search_background"/>
+		android:layout_height="@dimen/search_form_height"
+		android:layout_marginBottom="@dimen/search_form_margin_bottom"
+		android:layout_marginEnd="@dimen/search_form_margin_right"
+		android:layout_marginStart="@dimen/search_form_margin_left"
+		android:layout_marginTop="@dimen/search_form_margin_top"
+		android:background="@color/keyword_search_background" />
+
+	<RelativeLayout
+		android:id="@+id/rl_search_tab"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/tab_layout_area_height"
+		android:background="@color/common_tab_background_color"
+		android:visibility="gone" />
 
 	<!-- 検索結果画面 -->
 	<RelativeLayout
 		android:id="@+id/fl_search_result"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
+		android:layout_height="wrap_content"
 		android:visibility="gone">
-
-		<HorizontalScrollView
-			android:id="@+id/hs_tab_strip_scroll"
-			android:layout_width="match_parent"
-			android:layout_height="50dp"
-			android:layout_marginTop="10dp"
-			android:fillViewport="true"
-			android:foregroundGravity="center_horizontal"
-			android:scrollbars="none"/>
 
 		<android.support.v4.view.ViewPager
 			android:id="@+id/vp_search_result"
 			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:layout_below="@id/hs_tab_strip_scroll"
+			android:layout_height="wrap_content"
 			android:layout_centerHorizontal="true"
 			android:layout_centerVertical="true"/>
 	</RelativeLayout>

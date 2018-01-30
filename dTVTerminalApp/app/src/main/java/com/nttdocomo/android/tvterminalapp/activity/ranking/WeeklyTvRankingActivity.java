@@ -5,22 +5,19 @@
 package com.nttdocomo.android.tvterminalapp.activity.ranking;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -36,19 +33,20 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListMetaData;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingFragmentScrollListener;
+import com.nttdocomo.android.tvterminalapp.model.TabItemLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class WeeklyTvRankingActivity extends BaseActivity implements RankingTopDataProvider.WeeklyRankingApiDataProviderCallback, RankingFragmentScrollListener
-    ,VideoGenreProvider.RankGenreListCallback{
+    ,VideoGenreProvider.RankGenreListCallback, TabItemLayout.OnClickTabTextListener{
 
     private boolean mIsCommunicating = false;
     private static final int NUM_PER_PAGE = 10;
     private String[] mTabNames;
     private RankingTopDataProvider mRankingDataProvider;
     private RankingFragmentFactory mRankingFragmentFactory = null;
-    private HorizontalScrollView mTabScrollView;
+    private TabItemLayout mTabLayout;
     private LinearLayout mLinearLayout;
     private ViewPager mViewPager;
     private ArrayList<GenreListMetaData> genreMetaDataList;
@@ -148,7 +146,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements RankingTopD
     private void initView() {
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
-        mTabScrollView = findViewById(R.id.weekly_ranking_tab_strip_scroll);
         progressBar = findViewById(R.id.weekly_ranking_progress);
         mViewPager = findViewById(R.id.vp_weekly_ranking_result);
     }
@@ -166,20 +163,11 @@ public class WeeklyTvRankingActivity extends BaseActivity implements RankingTopD
                 // スクロールによるタブ切り替え
                 super.onPageSelected(position);
                 setTab(position);
-                scrollOffsetCheck(position);
                 getGenreData();
             }
         });
         initTabData();
         getGenreData();
-    }
-
-    private void scrollOffsetCheck(int position){
-        final TextView textView = (TextView) mLinearLayout.getChildAt(position);
-        int left = textView.getLeft();
-        int width = textView.getMeasuredWidth();
-        int toX = left + width / 2 - getWidthDensity() / 2;
-        mTabScrollView.smoothScrollTo(toX, 0);
     }
 
     /**
@@ -201,45 +189,27 @@ public class WeeklyTvRankingActivity extends BaseActivity implements RankingTopD
      * tabのレイアウトを設定.
      */
     private void initTabData() {
-        mTabScrollView.removeAllViews();
-        mLinearLayout = new LinearLayout(this);
-        LinearLayout.LayoutParams layoutParams
-                = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        mLinearLayout.setLayoutParams(layoutParams);
-        mLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
-        mLinearLayout.setBackgroundColor(Color.BLACK);
-        mLinearLayout.setGravity(Gravity.CENTER);
-        mTabScrollView.addView(mLinearLayout);
-
-        for (int i = 0; i < mTabNames.length; i++) {
-            TextView tabTextView = new TextView(this);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT);
-            if (i != 0) {
-                params.setMargins(LEFT_MARGIN, 0, 0, 0);
-            }
-            tabTextView.setLayoutParams(params);
-            tabTextView.setText(mTabNames[i]);
-            tabTextView.setTextSize(TEXT_SIZE);
-            tabTextView.setBackgroundColor(Color.BLACK);
-            tabTextView.setTextColor(Color.WHITE);
-            tabTextView.setGravity(Gravity.CENTER_VERTICAL);
-            tabTextView.setTag(i);
-            if (i == 0) {
-                tabTextView.setBackgroundResource(R.drawable.indicating);
-            }
-            tabTextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // タップによるタブ切り替え
-                    int position = (int) view.getTag();
-                    mViewPager.setCurrentItem(position);
-                    setTab(position);
-                }
-            });
-            mLinearLayout.addView(tabTextView);
+        DTVTLogger.start();
+        if (mTabLayout == null) {
+            mTabLayout = new TabItemLayout(this);
+            mTabLayout.setTabClickListener(this);
+            mTabLayout.initTabView(mTabNames, TabItemLayout.ActivityType.WEEKLY_RANKING_ACTIVITY);
+            RelativeLayout tabRelativeLayout = findViewById(R.id.rl_weekly_ranking_tab);
+            tabRelativeLayout.addView(mTabLayout);
+        } else {
+            mTabLayout.resetTabView(mTabNames);
         }
+        DTVTLogger.end();
+    }
+
+    @Override
+    public void onClickTab(int position) {
+        DTVTLogger.start("position = " + position);
+        if (null != mViewPager) {
+            DTVTLogger.debug("viewpager not null");
+            mViewPager.setCurrentItem(position);
+        }
+        DTVTLogger.end();
     }
 
     /**
@@ -363,16 +333,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements RankingTopD
      */
     private void setTab(int position) {
         //mCurrentPageNum = position;
-        if (mLinearLayout != null) {
-            for (int i = 0; i < mTabNames.length; i++) {
-                TextView mTextView = (TextView) mLinearLayout.getChildAt(i);
-                if (position == i) {
-                    mTextView.setBackgroundResource(R.drawable.indicating);
-                } else {
-                    mTextView.setBackgroundResource(R.drawable.indicating_no);
-                }
-            }
-        }
+        mTabLayout.setTab(position);
         progressBar.setVisibility(View.VISIBLE);
     }
 

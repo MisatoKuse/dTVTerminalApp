@@ -5,6 +5,13 @@
     android:background="@color/recorded_background"
     android:orientation="vertical">
 
+    <RelativeLayout
+        android:id="@+id/rl_recorded_list_tab"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/tab_layout_area_height"
+        android:background="@color/common_tab_background_color"
+        android:visibility="visible" />
+
     <!-- 検索結果画面 -->
     <RelativeLayout
         android:id="@+id/record_list_main_layout_result"
@@ -12,21 +19,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <HorizontalScrollView
-            android:id="@+id/record_list_main_layout_scroll"
-            style="@style/tabTextView"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/recorded_scroll_height"
-            android:fillViewport="true"
-            android:foregroundGravity="center_horizontal"
-            android:scrollbars="none" />
-
         <ProgressBar
             android:id="@+id/record_list_main_layout_progress"
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/record_list_main_layout_scroll"
             android:layout_centerHorizontal="true" />
 
         <android.support.v4.view.ViewPager

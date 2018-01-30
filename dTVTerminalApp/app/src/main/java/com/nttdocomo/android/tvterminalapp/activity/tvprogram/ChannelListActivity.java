@@ -5,23 +5,18 @@
 package com.nttdocomo.android.tvterminalapp.activity.tvprogram;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -44,6 +39,7 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListListener;
+import com.nttdocomo.android.tvterminalapp.model.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
@@ -53,7 +49,7 @@ import java.util.ArrayList;
 public class ChannelListActivity extends BaseActivity implements
         View.OnClickListener, ChannelListFragment.ChannelListFragmentListener,
         DlnaRecVideoListener, DlnaTerChListListener, DlnaBsChListListener,
-        ScaledDownProgramListDataProvider.ApiDataProviderCallback {
+        ScaledDownProgramListDataProvider.ApiDataProviderCallback, TabItemLayout.OnClickTabTextListener {
 
     private String[] mTabNames = null;
     private int screenWidth = 0;
@@ -64,7 +60,7 @@ public class ChannelListActivity extends BaseActivity implements
 
     private LinearLayout mTabsLayout = null;
     private ViewPager mViewPager = null;
-
+    private TabItemLayout mTabLayout = null;
     private ChannelListFragmentFactory mFactory = null;
     private DlnaProvRecVideo mDlnaProvRecVideo = null;
     private DlnaProvBsChList mDlnaProvBsChList = null;
@@ -80,10 +76,6 @@ public class ChannelListActivity extends BaseActivity implements
     private final int CHANNEL_LIST_TAB_BS = 2;
     private final int CHANNEL_LIST_TAB_DTV = 3;
     private final int CHANNEL_LIST_TAB_DELAY_TIME = 1300;
-    private static final int TAB_TEXT_SIZE = 14;
-    private static final int TAB_HEIGHT = 52;
-    private static final int TEXT_MARGIN_LEFT = 16;
-    private static final int MARGIN_ZERO = 0;
 
     private Handler mHandle = new Handler();
 
@@ -188,9 +180,8 @@ public class ChannelListActivity extends BaseActivity implements
         DTVTLogger.start();
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
-        HorizontalScrollView horizontalScrollView = findViewById(R.id.channel_list_main_layout_channel_titles_hs);
         //mViewPager = findViewById(R.id.channel_list_main_layout_channel_body_vp);
-        initChannelListTab(horizontalScrollView);
+        initChannelListTab();
         ChannelListPagerAdapter adp = new ChannelListPagerAdapter(getSupportFragmentManager());
         mViewPager = findViewById(R.id.channel_list_main_layout_channel_body_vp);
         mViewPager.setAdapter(adp);
@@ -199,7 +190,7 @@ public class ChannelListActivity extends BaseActivity implements
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                setTab(position);
+                mTabLayout.setTab(position);
             }
         });
         DTVTLogger.end();
@@ -378,75 +369,27 @@ public class ChannelListActivity extends BaseActivity implements
     }
 
     /**
-     * Tab初期化
-     *
-     * @param channelList channelList
+     * tab関連Viewの初期化
      */
-    private void initChannelListTab(HorizontalScrollView channelList) {
-        DTVTLogger.start();
+    private void initChannelListTab() {
         mTabNames = getResources().getStringArray(R.array.channel_list_tab_names);
-        channelList.removeAllViews();
-        mTabsLayout = new LinearLayout(this);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                (int) getDensity() * TAB_HEIGHT);
-        mTabsLayout.setLayoutParams(layoutParams);
-        mTabsLayout.setOrientation(LinearLayout.HORIZONTAL);
-        mTabsLayout.setBackgroundColor(ContextCompat.getColor(this,R.color.channel_list_background_color));
-        mTabsLayout.setBackgroundResource(R.drawable.rectangele_channel_list);
-        channelList.addView(mTabsLayout);
-        for (int i = 0; i < mTabNames.length; i++) {
-            TextView tabTextView = new TextView(this);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT);
-            params.setMargins((int) getDensity() * TEXT_MARGIN_LEFT, MARGIN_ZERO, MARGIN_ZERO, MARGIN_ZERO);
-            tabTextView.setLayoutParams(params);
-            tabTextView.setText(mTabNames[i]);
-            tabTextView.setBackgroundColor(ContextCompat.getColor(this,R.color.channel_list_background_color));
-            tabTextView.setTextColor(Color.WHITE);
-            tabTextView.setGravity(Gravity.CENTER_VERTICAL);
-            tabTextView.setTag(i);
-            tabTextView.setBackgroundResource(0);
-            tabTextView.setTextColor(Color.WHITE);
-            tabTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP,TAB_TEXT_SIZE);
-            if (i == 0) {
-                tabTextView.setBackgroundResource(R.drawable.rectangele_channel);
-                tabTextView.setTextColor(ContextCompat.getColor(this,R.color.channel_list_name_select_color));
-            }
-            tabTextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int tab_index = (int) view.getTag();
-                    setTab(tab_index);
-                    mViewPager.setCurrentItem(tab_index);
-                    //onPageChange(tab_index);
-                }
-            });
-            mTabsLayout.addView(tabTextView);
+        if (mTabLayout == null) {
+            mTabLayout = new TabItemLayout(this);
+            mTabLayout.setTabClickListener(this);
+            mTabLayout.initTabView(mTabNames, TabItemLayout.ActivityType.SEARCH_ACTIVITY);
+            RelativeLayout tabRelativeLayout = findViewById(R.id.rl_channel_list_tab);
+            tabRelativeLayout.addView(mTabLayout);
+        } else {
+            mTabLayout.resetTabView(mTabNames);
         }
-        DTVTLogger.end();
     }
 
-    /**
-     * Tab内容を設定
-     *
-     * @param position position
-     */
-    private void setTab(int position) {
-        DTVTLogger.start();
-        //onPageChange(position);
-        if (mTabsLayout != null) {
-            for (int i = 0; i < mTabNames.length; i++) {
-                TextView mTextView = (TextView) mTabsLayout.getChildAt(i);
-                if (position == i) {
-                    mTextView.setBackgroundResource(R.drawable.rectangele_channel);
-                    mTextView.setTextColor(Color.GRAY);
-                } else {
-                    mTextView.setBackgroundResource(0);
-                    mTextView.setTextColor(Color.WHITE);
-                }
-            }
+    @Override
+    public void onClickTab(int position) {
+        DTVTLogger.debug("position = " + position);
+        if (null != mViewPager) {
+            DTVTLogger.debug("viewpager not null");
+            mViewPager.setCurrentItem(position);
         }
         DTVTLogger.end();
     }

@@ -122,13 +122,12 @@
                 </LinearLayout>
             </RelativeLayout>
 
-            <LinearLayout
-                android:id="@+id/dtv_contents_detail_main_layout_tab"
+            <RelativeLayout
+                android:id="@+id/rl_dtv_contents_detail_tab"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/contents_detail_tabs_height"
-                android:background="@drawable/rectangele_all"
-                android:gravity="center_vertical"
-                android:orientation="horizontal" />
+                android:layout_height="@dimen/tab_layout_area_height"
+                android:background="@color/dtv_contents_detail_tab_background_color"
+                android:visibility="visible" />
 
             <com.nttdocomo.android.tvterminalapp.view.ContentsDetailViewPager
                 android:id="@+id/dtv_contents_detail_main_layout_vp"

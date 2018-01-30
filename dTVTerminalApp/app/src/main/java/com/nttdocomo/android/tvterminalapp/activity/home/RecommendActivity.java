@@ -16,11 +16,9 @@ import android.support.v4.view.ViewPager;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.View;
 import android.widget.AbsListView;
-import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.RelativeLayout;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -31,19 +29,20 @@ import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendBaseFragm
 import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendBaseFragmentScrollListener;
 import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.model.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 
 import java.util.List;
 
 public class RecommendActivity extends BaseActivity implements
-        RecommendBaseFragmentScrollListener, RecommendDataProvider.RecommendApiDataProviderCallback {
+        RecommendBaseFragmentScrollListener, RecommendDataProvider.RecommendApiDataProviderCallback, TabItemLayout.OnClickTabTextListener {
 
     private String[] mTabNames = null;
     private boolean mIsSearching = false;
     private Boolean mIsMenuLaunch = false;
 
     private LinearLayout mLinearLayout = null;
-    private HorizontalScrollView mTabScrollView = null;
+    private TabItemLayout mTabLayout = null;
     //ページャーのクラス(staticにしないと前回の値が維持され、データの更新に失敗する場合がある)
     private static ViewPager sRecommendViewPager = null;
 
@@ -166,7 +165,6 @@ public class RecommendActivity extends BaseActivity implements
             return;
         }
         sRecommendViewPager = findViewById(R.id.vp_recommend_list_items);
-        mTabScrollView = findViewById(R.id.recommend_tab_strip_scroll);
         initTabVIew();
 
         sRecommendViewPager.setAdapter(new RecommendActivity.TabAdpater(getSupportFragmentManager(), this));
@@ -176,7 +174,7 @@ public class RecommendActivity extends BaseActivity implements
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                setTab(position);
+                mTabLayout.setTab(position);
                 clearAllFragment();
                 setPagingStatus(false);
                 sShowListSize = 0;
@@ -194,86 +192,26 @@ public class RecommendActivity extends BaseActivity implements
      */
     private void initTabVIew() {
         DTVTLogger.start();
-        int screenWidth = getWidthDensity();
-        mTabScrollView.removeAllViews();
-        mLinearLayout = new LinearLayout(this);
-        LinearLayout.LayoutParams layoutParams
-                = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                screenWidth / SCREEN_TIME_WIDTH_PERCENT +
-                        (int) getDensity() * MARGIN_LEFT_TAB);
-        mLinearLayout.setLayoutParams(layoutParams);
-        mLinearLayout.setBackgroundResource(R.drawable.rectangele_all);
-        mLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
-        mLinearLayout.setGravity(Gravity.CENTER);
-        mTabScrollView.addView(mLinearLayout);
-
-        // tabの設定
-        for (int i = 0; i < mTabNames.length; i++) {
-            TextView tabTextView = new TextView(this);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT);
-            if (i != 0) {
-                params.setMargins((int)
-                                getResources().getDimension(R.dimen.contents_detail_16dp),
-                        MARGIN_ZERO, MARGIN_ZERO, MARGIN_ZERO);
-            }
-
-            tabTextView.setLayoutParams(params);
-            tabTextView.setText(mTabNames[i]);
-            tabTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE);
-            tabTextView.setBackgroundColor(ContextCompat.getColor(this, R.color.black_text));
-            tabTextView.setTextColor(ContextCompat.getColor(this, R.color.white_text));
-            tabTextView.setGravity(Gravity.CENTER_VERTICAL);
-            tabTextView.setTag(i);
-            if (i == 0) {
-                //デフォルト選択タブは、線を白くして文字を灰色にする
-                tabTextView.setBackgroundResource(R.drawable.rectangele);
-                tabTextView.setTextColor(ContextCompat.getColor(this, R.color.gray_text));
-            } else {
-                //デフォルト選択タブ以外は線を透明にして表示されなくする
-                tabTextView.setBackgroundResource(0);
-            }
-            // tabタップ時の処理
-            tabTextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int position = (int) view.getTag();
-                    sRecommendViewPager.setCurrentItem(position);
-                    setTab(position);
-                    sShowListSize = 0;
-                    sCntPageing = 0;
-                    sSearchLastItem = 0;
-                    //ここでフラグをクリアしないと、以後の更新が行われなくなる場合がある
-                    setSearchStart(false);
-                    requestRecommendData();
-                }
-            });
-            mLinearLayout.addView(tabTextView);
+        if (mTabLayout == null) {
+            mTabLayout = new TabItemLayout(this);
+            mTabLayout.setTabClickListener(this);
+            mTabLayout.initTabView(mTabNames, TabItemLayout.ActivityType.RECOMMEND_LIST_ACTIVITY);
+            RelativeLayout tabRelativeLayout = findViewById(R.id.rl_recommend_tab);
+            tabRelativeLayout.addView(mTabLayout);
+        } else {
+            mTabLayout.resetTabView(mTabNames);
         }
         DTVTLogger.end();
     }
 
-    /**
-     * インジケーター設置
-     *
-     * @param position
-     */
-    public void setTab(int position) {
-        if (mLinearLayout != null) {
-            for (int i = 0; i < mTabNames.length; i++) {
-                TextView textView = (TextView) mLinearLayout.getChildAt(i);
-                if (position == i) {
-                    textView.setBackgroundResource(R.drawable.rectangele);
-                    //選択タブは文字を灰色にする
-                    textView.setTextColor(ContextCompat.getColor(this, R.color.gray_text));
-                } else {
-                    textView.setBackgroundResource(0);
-                    //選択タブ以外は文字を白くする
-                    textView.setTextColor(ContextCompat.getColor(this, R.color.white_text));
-                }
-            }
+    @Override
+    public void onClickTab(int position) {
+        DTVTLogger.start("position = " + position);
+        if (null != sRecommendViewPager) {
+            DTVTLogger.debug("viewpager not null");
+            sRecommendViewPager.setCurrentItem(position);
         }
+        DTVTLogger.end();
     }
 
     /**

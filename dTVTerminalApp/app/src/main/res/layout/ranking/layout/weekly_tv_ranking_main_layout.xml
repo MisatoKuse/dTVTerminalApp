@@ -5,14 +5,12 @@
     style="@style/default_layout_style"
     android:orientation="vertical">
 
-    <HorizontalScrollView
-        android:id="@+id/weekly_ranking_tab_strip_scroll"
+    <RelativeLayout
+        android:id="@+id/rl_weekly_ranking_tab"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@android:color/background_dark"
-        android:fillViewport="true"
-        android:foregroundGravity="center_horizontal"
-        android:scrollbars="none" />
+        android:layout_height="@dimen/tab_layout_area_height"
+        android:background="@color/common_tab_background_color"
+        android:visibility="visible" />
 
     <ProgressBar
         android:id="@+id/weekly_ranking_progress"
@@ -24,7 +22,6 @@
     <android.support.v4.view.ViewPager
         android:id="@+id/vp_weekly_ranking_result"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/clip_hs_tab_strip_scroll" />
+        android:layout_height="match_parent" />
 
 </LinearLayout>
