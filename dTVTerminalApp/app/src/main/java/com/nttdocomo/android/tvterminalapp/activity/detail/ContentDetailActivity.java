@@ -1985,26 +1985,26 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                         setRemoteProgressVisible(View.VISIBLE);
                     }
                     switch (mDetailData.getCategoryId()) {
-                        //dTVチャンネルの放送
+                        //番組の場合
                         case DTV_CHANNEL_CATEGORY_BROADCAST:
                             requestStartApplicationDtvChannel(
                                     RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL,
                                     RemoteControlRelayClient.SERVICE_CATEGORY_TYPES.DTV_CHANNEL_CATEGORY_BROADCAST,
-                                    "", mDetailData.getChannelId());
+                                    mDetailFullData.getCrid(), mDetailData.getChannelId());
                             break;
-                        //dTVチャンネルのVOD(見逃し)
+                        //VOD(見逃し)の場合
                         case DTV_CHANNEL_CATEGORY_MISSED:
                             requestStartApplicationDtvChannel(
                                     RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL,
                                     RemoteControlRelayClient.SERVICE_CATEGORY_TYPES.DTV_CHANNEL_CATEGORY_MISSED,
-                                    mDetailData.getContentId(), "");
+                                    mDetailFullData.getCrid(), mDetailData.getChannelId());
                             break;
-                        //dTVチャンネルのVOD(見逃し)
+                        //VOD(見逃し)の場合
                         case DTV_CHANNEL_CATEGORY_RELATION:
                             requestStartApplicationDtvChannel(
                                     RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL,
                                     RemoteControlRelayClient.SERVICE_CATEGORY_TYPES.DTV_CHANNEL_CATEGORY_RELATION,
-                                    mDetailData.getContentId(), "");
+                                    mDetailFullData.getCrid(), mDetailData.getChannelId());
                             break;
                         default:
                             break;
