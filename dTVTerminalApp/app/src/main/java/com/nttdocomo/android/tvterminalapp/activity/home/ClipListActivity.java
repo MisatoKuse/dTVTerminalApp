@@ -5,46 +5,45 @@
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.View;
 import android.widget.AbsListView;
-import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ClipMainAdapter;
+import com.nttdocomo.android.tvterminalapp.fragment.cliplist.ClipListBaseFragment;
+import com.nttdocomo.android.tvterminalapp.fragment.cliplist.ClipListBaseFragmentScrollListener;
+import com.nttdocomo.android.tvterminalapp.fragment.cliplist.ClipListFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.TvClipDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VodClipDataProvider;
-import com.nttdocomo.android.tvterminalapp.fragment.cliplist.ClipListBaseFragment;
-import com.nttdocomo.android.tvterminalapp.fragment.cliplist.ClipListBaseFragmentScrollListener;
-import com.nttdocomo.android.tvterminalapp.fragment.cliplist.ClipListFragmentFactory;
+import com.nttdocomo.android.tvterminalapp.model.TabItemLayout;
 
 import java.util.List;
 
 public class ClipListActivity extends BaseActivity implements
         VodClipDataProvider.ApiDataProviderCallback,
         TvClipDataProvider.TvClipDataProviderCallback,
-        ClipListBaseFragmentScrollListener {
+        ClipListBaseFragmentScrollListener,
+        TabItemLayout.OnClickTabTextListener {
 
     private String[] mTabNames = null;
     private boolean mIsCommunicating = false;
 
     private LinearLayout mLinearLayout = null;
-    private HorizontalScrollView mTabScrollView = null;
+    private TabItemLayout mTabLayout = null;
     private ViewPager mViewPager = null;
     private Boolean mIsMenuLaunch = false;
 
@@ -362,7 +361,6 @@ public class ClipListActivity extends BaseActivity implements
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
 
-        mTabScrollView = findViewById(R.id.clip_hs_tab_strip_scroll);
         mViewPager = findViewById(R.id.vp_clip_result);
         ClipPagerAdapter clipPagerAdapter
                 = new ClipPagerAdapter(getSupportFragmentManager());
@@ -372,7 +370,7 @@ public class ClipListActivity extends BaseActivity implements
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                setTab(position);
+                mTabLayout.setTab(position);
 
                 switch (mViewPager.getCurrentItem()) {
                     case 0:
@@ -408,45 +406,27 @@ public class ClipListActivity extends BaseActivity implements
      * tabに関連Viewの初期化
      */
     private void initTabVIew() {
-        mTabScrollView.removeAllViews();
-        mLinearLayout = new LinearLayout(this);
-        LinearLayout.LayoutParams layoutParams
-                = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT
-                , LinearLayout.LayoutParams.WRAP_CONTENT);
-        mLinearLayout.setLayoutParams(layoutParams);
-        mLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
-        mLinearLayout.setBackgroundColor(Color.BLACK);
-        mLinearLayout.setGravity(Gravity.CENTER);
-        mTabScrollView.addView(mLinearLayout);
-
-        for (int i = 0; i < mTabNames.length; i++) {
-            TextView tabTextView = new TextView(this);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT);
-            if (i != 0) {
-                params.setMargins(30, 0, 0, 0);
-            }
-            tabTextView.setLayoutParams(params);
-            tabTextView.setText(mTabNames[i]);
-            tabTextView.setTextSize(15);
-            tabTextView.setBackgroundColor(Color.BLACK);
-            tabTextView.setTextColor(Color.WHITE);
-            tabTextView.setGravity(Gravity.CENTER_VERTICAL);
-            tabTextView.setTag(i);
-            if (i == 0) {
-                tabTextView.setBackgroundResource(R.drawable.indicating);
-            }
-            tabTextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int position = (int) view.getTag();
-                    mViewPager.setCurrentItem(position);
-                    setTab(position);
-                }
-            });
-            mLinearLayout.addView(tabTextView);
+        DTVTLogger.start();
+        if (mTabLayout == null) {
+            mTabLayout = new TabItemLayout(this);
+            mTabLayout.setTabClickListener(this);
+            mTabLayout.initTabView(mTabNames, TabItemLayout.ActivityType.CLIP_LIST_ACTIVITY);
+            RelativeLayout tabRelativeLayout = findViewById(R.id.rl_clip_list_tab);
+            tabRelativeLayout.addView(mTabLayout);
+        } else {
+            mTabLayout.resetTabView(mTabNames);
         }
+        DTVTLogger.end();
+    }
+
+    @Override
+    public void onClickTab(int position) {
+        DTVTLogger.start("position = " + position);
+        if (null != mViewPager) {
+            DTVTLogger.debug("viewpager not null");
+            mViewPager.setCurrentItem(position);
+        }
+        DTVTLogger.end();
     }
 
     /**
@@ -459,9 +439,9 @@ public class ClipListActivity extends BaseActivity implements
             for (int i = 0; i < mTabNames.length; i++) {
                 TextView mTextView = (TextView) mLinearLayout.getChildAt(i);
                 if (position == i) {
-                    mTextView.setBackgroundResource(R.drawable.indicating);
+                    mTextView.setBackgroundResource(R.drawable.indicating_common);
                 } else {
-                    mTextView.setBackgroundResource(R.drawable.indicating_no);
+                    mTextView.setBackgroundResource(R.drawable.indicating_no_common);
                 }
             }
         }

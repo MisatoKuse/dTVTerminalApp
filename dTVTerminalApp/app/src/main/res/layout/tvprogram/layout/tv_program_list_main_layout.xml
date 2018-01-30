@@ -6,19 +6,17 @@
     android:layout_height="match_parent"
     android:background="@color/tv_program_list_root_view_bg">
 
-    <HorizontalScrollView
-        android:id="@+id/tv_program_list_main_layout_tab_hs"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:fillViewport="true"
-        android:foregroundGravity="center_horizontal"
-        android:scrollbars="none" />
+	<RelativeLayout
+		android:id="@+id/rl_tv_program_list_tab"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/tab_layout_area_program_list_height"
+		android:background="@color/program_list_tab_background_color"
+		android:visibility="visible" />
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tv_program_list_main_layout_tab_hs"
+        android:layout_below="@id/rl_tv_program_list_tab"
         android:splitMotionEvents="false">
 
         <ImageView

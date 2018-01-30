@@ -62,6 +62,10 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
     private View mTeleviFragmentView;
     private ListView mTeveviListview;
 
+    /**
+     * Viewの初期化
+     * @return
+     */
     public View initView() {
         if (null == mTeleviFragmentView) {
             mTeleviFragmentView = View.inflate(getActivity()
@@ -86,6 +90,10 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         return mTeleviFragmentView;
     }
 
+    /**
+     * 画面の更新
+     * @param count
+     */
     public void notifyDataSetChanged(String count) {
         if (null != mSearchResultBaseAdapter) {
             initView();
@@ -102,6 +110,10 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         }
     }
 
+    /**
+     * プログレスダイアログの表示/非表示
+     * @param b
+     */
     public void displayLoadMore(boolean b) {
         if (null != mTeveviListview && null != mLoadMoreView) {
             if (b) {
@@ -112,6 +124,10 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         }
     }
 
+    /**
+     * 検索結果件数の表示非表示
+     * @param visibility
+     */
     public void setResultTextVisibility(Boolean visibility) {
         if (null != mCountText) {
             if (visibility) {

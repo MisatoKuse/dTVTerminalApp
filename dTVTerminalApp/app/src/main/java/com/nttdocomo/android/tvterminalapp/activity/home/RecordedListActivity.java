@@ -21,10 +21,8 @@ import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.HorizontalScrollView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -44,6 +42,7 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoListener;
 import com.nttdocomo.android.tvterminalapp.jni.download.DlnaProvDownload;
+import com.nttdocomo.android.tvterminalapp.model.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadService;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloaderBase;
@@ -61,13 +60,12 @@ import java.util.Locale;
 import java.util.Map;
 
 public class RecordedListActivity extends BaseActivity implements View.OnClickListener,
-        RecordedBaseFragmentScrollListener, DlnaRecVideoListener {
+        RecordedBaseFragmentScrollListener, DlnaRecVideoListener, TabItemLayout.OnClickTabTextListener {
 
     private String[] mTabNames = null;
 
-    private LinearLayout mTabLinearLayout = null;
+    private TabItemLayout mTabLayout = null;
     private ViewPager mViewPager = null;
-    private HorizontalScrollView mTabScrollView = null;
     private ProgressBar progressBar;
     private Boolean mIsMenuLaunch = false;
 
@@ -137,7 +135,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         mViewPager = findViewById(R.id.record_list_main_layout_viewpagger);
-        mTabScrollView = findViewById(R.id.record_list_main_layout_scroll);
         mTabNames = getResources().getStringArray(R.array.record_list_tab_names);
         mRecordedFragmentFactory = new RecordedFragmentFactory();
         progressBar = findViewById(R.id.record_list_main_layout_progress);
@@ -165,41 +162,27 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      */
     private void initTabVIew() {
         DTVTLogger.start();
-        int screenWidth = getWidthDensity();
-        mTabScrollView.removeAllViews();
-        mTabLinearLayout = new LinearLayout(this);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                screenWidth / SCREEN_TIME_WIDTH_PERCENT + (int) getDensity() * MARGIN_LEFT_TAB);
-        mTabLinearLayout.setLayoutParams(layoutParams);
-        mTabLinearLayout.setBackgroundResource(R.drawable.rectangele_all);
-        mTabScrollView.addView(mTabLinearLayout);
-        for (int i = 0; i < mTabNames.length; i++) {
-            TextView tabTextView = new TextView(this);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT);
-            params.setMargins((int) getResources().getDimension(R.dimen.contents_detail_16dp), MARGIN_ZERO, MARGIN_ZERO, MARGIN_ZERO);
-            tabTextView.setLayoutParams(params);
-            tabTextView.setText(mTabNames[i]);
-            tabTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE);
-            tabTextView.setTag(i);
-            tabTextView.setBackgroundResource(0);
-            tabTextView.setTextColor(ContextCompat.getColor(this, R.color.white_text));
-            if (i == 0) {
-                tabTextView.setBackgroundResource(R.drawable.rectangele);
-                tabTextView.setTextColor(ContextCompat.getColor(this, R.color.gray_text));
-            }
-            tabTextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int position = (int) view.getTag();
-                    mViewPager.setCurrentItem(position);
-                    setTab(position);
-                }
-            });
-            mTabLinearLayout.addView(tabTextView);
+        if (mTabLayout == null) {
+            mTabLayout = new TabItemLayout(this);
+            mTabLayout.setTabClickListener(this);
+            mTabLayout.initTabView(mTabNames, TabItemLayout.ActivityType.RECORDED_LIST_ACTIVITY);
+            RelativeLayout tabRelativeLayout = findViewById(R.id.rl_recorded_list_tab);
+            tabRelativeLayout.addView(mTabLayout);
+        } else {
+            mTabLayout.resetTabView(mTabNames);
         }
+        DTVTLogger.end();
+    }
+
+    @Override
+    public void onClickTab(int position) {
+        DTVTLogger.start("position = " + position);
+        progressBar.setVisibility(View.VISIBLE);
+        if (null != mViewPager) {
+            DTVTLogger.debug("viewpager not null");
+            mViewPager.setCurrentItem(position);
+        }
+        DTVTLogger.end();
     }
 
     /**
@@ -210,17 +193,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      */
     private void setTab(int position) {
         DTVTLogger.start();
-        if (mTabLinearLayout != null) {
-            for (int i = 0; i < mTabNames.length; i++) {
-                TextView mTextView = (TextView) mTabLinearLayout.getChildAt(i);
-                if (position == i) {
-                    mTextView.setBackgroundResource(R.drawable.rectangele);
-                    mTextView.setTextColor(ContextCompat.getColor(this, R.color.gray_text));
-                } else {
-                    mTextView.setBackgroundResource(0);
-                    mTextView.setTextColor(ContextCompat.getColor(this, R.color.white_text));
-                }
-            }
+        if (mTabLayout != null) {
+            mTabLayout.setTab(position);
         }
         progressBar.setVisibility(View.VISIBLE);
         switch (mViewPager.getCurrentItem()) {

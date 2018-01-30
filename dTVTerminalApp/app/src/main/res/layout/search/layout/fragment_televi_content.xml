@@ -8,16 +8,17 @@
 		android:id="@+id/tv_searched_result"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginTop="6dp"
-		android:layout_marginBottom="6dp"
-		android:layout_marginLeft="20dp"
+		android:layout_marginTop="@dimen/search_result_count_text_margin_top"
+		android:layout_marginBottom="@dimen/search_result_count_text_margin_buttom"
+		android:layout_marginStart="@dimen/search_result_count_text_margin_left"
+		android:layout_marginEnd="@dimen/search_result_count_text_margin_right"
 		android:textColor="@android:color/white"
-		android:textSize="13dp"
+		android:textSize="@dimen/search_result_count_text_size"
 		android:visibility="invisible" />
 
 	<TextView
 		android:layout_width="match_parent"
-		android:layout_height="1dp"
+		android:layout_height="@dimen/search_result_list_border_height"
 		android:layout_below="@+id/tv_searched_result"
 		android:layout_marginLeft="16dp"
 		android:layout_marginRight="16dp"
@@ -29,7 +30,7 @@
 		android:layout_height="match_parent"
 		android:layout_below="@id/tv_searched_result"
 		android:divider="@drawable/list_item_divider"
-		android:dividerHeight="1dp">
+		android:dividerHeight="@dimen/search_result_list_border_height">
 	</ListView>
 
 	<!-- 201804対応
