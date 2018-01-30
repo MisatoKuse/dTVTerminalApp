@@ -424,6 +424,11 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             case ContentsAdapter.DOWNLOAD_STATUS_LOADING :
                 mProgress = getResources().getString(R.string.record_download_status) + progress + getResources().getString(R.string.record_download_percent_mark);
                 if (textView != null) {
+                    TextView timeView = view.findViewById(R.id.item_common_result_content_time);
+                    if(null != timeView){
+                        String time = (String) timeView.getText();
+                    }
+
                     view.findViewById(R.id.item_common_result_recorded_content_hyphen).setVisibility(View.VISIBLE);
                     textView.setVisibility(View.VISIBLE);
                     textView.setTextColor(ContextCompat.getColor(mActivity, R.color.record_download_status_color));

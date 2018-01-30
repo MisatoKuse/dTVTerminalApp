@@ -35,7 +35,6 @@ import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.DownLoadListDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordedContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.recorded.RecordedBaseFragmentScrollListener;
@@ -100,7 +99,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private static final String DATE_FORMAT = "yyyy/MM/ddHH:mm:ss";
     private String mDate[] = {"日", "月", "火", "水", "木", "金", "土"};
 
-    private boolean mIsDlOk=false;
+    private static final String sMinus = "-";
+
+    //private boolean mIsDlOk=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,9 +133,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private void initDl() {
         boolean isRunning= isDownloadServiceRunning();
         if(isRunning){
-            mIsDlOk=true;
+            //mIsDlOk=true;
         }else {
-            mIsDlOk= DlnaProvDownload.initGlobalDl(DownloaderBase.getDownloadPath(this));
+            //mIsDlOk= DlnaProvDownload.initGlobalDl(DownloaderBase.getDownloadPath(this));
+            DlnaProvDownload.initGlobalDl(DownloaderBase.getDownloadPath(this));
         }
     }
 
@@ -643,12 +645,36 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                             mDate[calendar.get(Calendar.DAY_OF_WEEK) - 1], ") ",
                             String.valueOf(calendar.get(Calendar.HOUR_OF_DAY)), ":",
                             String.valueOf(calendar.get(Calendar.MINUTE))};
+                    if(null != strings && 0<strings.length){
+                        int mon = Integer.parseInt(strings[0]);
+                        ++mon;
+                        strings[0] = String.valueOf(mon);
+                    }
                     selectDate = util.getConnectString(strings);
                 } catch (ParseException e) {
                     DTVTLogger.debug(e);
                 }
             }
-            contentsData.setTime(selectDate);
+            //duration && channel name begin
+            String mins = dlnaRecVideoItem.getDurationInMinutes();
+
+            String channelName = dlnaRecVideoItem.mChannelName;
+            StringBuilder sb = new StringBuilder();
+            sb.append(selectDate);
+            if(null != mins){
+                sb.append("（");
+                sb.append(mins);
+                sb.append("分）");
+            }
+//            if(null != channelName && !channelName.isEmpty()){
+//                sb.append(" ");
+//                sb.append(sMinus);
+//                sb.append(" ");
+//                sb.append(channelName);
+//            }
+
+            //duration && channel name end
+            contentsData.setTime(sb.toString());
             contentsData.setDownloadFlg(baseFrgament.mContentsList.get(i).getDownLoadStatus());
             baseFrgament.getContentsData().add(contentsData);
         } else {

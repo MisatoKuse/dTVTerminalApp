@@ -93,6 +93,7 @@ namespace dtvt {
     const char * const RecVideoItem_Field_mDate       ="mDate";
     const char * const RecVideoItem_Field_mVideoType       ="mVideoType";
     const char * const RecVideoItem_Field_mClearTextSize   ="mClearTextSize";
+    const char * const RecVideoItem_Field_mChannelName   ="mChannelName";
     
     //DlnaBsChListItem フィールド定義
     const char * const DlnaBsChListItem_Field_mChannelNo ="mChannelNo";
@@ -147,11 +148,11 @@ namespace dtvt {
     const int Xml_Item_AllowedUse= Xml_Item_Id + 9;
     const int Xml_Item_VideoType= Xml_Item_Id + 10;   //mVideoType
     const int Xml_Item_ClearTextSize= Xml_Item_Id + 11;   //mClearTextSize
+    const int Xml_Item_ChannelName= Xml_Item_Id + 12;   //mChannelName
 
     //for searching end tag
     const char * const RecVideoXml_Item_Begin_Tag ="<item id=\"";
     const char * const RecVideoXml_Item_End_Tag ="</item>";
-
 
 
     #define IfNullGoTo(var, where) { if (NULL == (var) ) { goto  where; } }
@@ -160,6 +161,7 @@ namespace dtvt {
     #define IfNullReturnFalse(var) { if (NULL == (var) ) { return false; } }
     #define DelIfNotNull(obj) {  if(NULL != (obj) ) { delete obj; obj = NULL; }  }
     #define DelIfNotNullArray(obj) {  if(NULL!=(obj)) { delete[] obj; obj = NULL; }  }
+    #define IfFalseRetFalse(yn) { if(!yn) { return false; } }
 
     //開発段階にて、本番のDMSはないので、仮DMSを使っていますが、違うDMSを定義し、どのDMSを選択できるよう
     //#define DLNA_KARI_DMS_UNIVERSAL

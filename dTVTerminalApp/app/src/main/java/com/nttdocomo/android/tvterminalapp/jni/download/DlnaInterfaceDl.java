@@ -5,7 +5,6 @@
 package com.nttdocomo.android.tvterminalapp.jni.download;
 
 import android.content.Context;
-import android.os.Handler;
 
 import com.digion.dixim.android.util.EnvironmentUtil;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -19,7 +18,7 @@ import java.io.File;
  * 機能：For Dlna download
  */
 public class DlnaInterfaceDl {
-    private Handler mHandler= new Handler();
+    //private Handler mHandler= new Handler();
 
     //Download
     private DlnaDlListener mDlnaDlListener;

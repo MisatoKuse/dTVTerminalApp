@@ -54,6 +54,7 @@ namespace dtvt {
     const char * const RecVideoParse_Field_Class        ="class";
     const char * const RecVideoParse_Field_VideoItem    ="object.item.videoItem";
     const char * const RecVideoParse_Field_Videos       ="Videos";
+    const char * const RecVideoParse_Field_ChannelName  ="channelName";
 
     //ビデオ種類
     const char * const RecVideoParse_Field_Mp4           ="http-get:*:video/mp4";

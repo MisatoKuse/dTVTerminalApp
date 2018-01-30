@@ -379,6 +379,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
                 case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
                 case TYPE_RECORDED_LIST: // 録画番組一覧
+                    holder.tv_time.setText(listContentInfo.getTime());
                     break;
                 default:
                     break;

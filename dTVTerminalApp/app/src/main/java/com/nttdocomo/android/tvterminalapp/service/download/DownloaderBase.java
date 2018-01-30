@@ -327,7 +327,17 @@ public abstract class DownloaderBase {
                         File file = files[i];
                         if (file != null) {
                             downLoadPath = file.getAbsolutePath() + File.separator + dmp;
-                            break;
+                            File dmpFile = new File(downLoadPath);
+                            if(!dmpFile.exists()){
+                                boolean r = dmpFile.mkdirs();
+                                if(r){
+                                    break;
+                                } else {
+                                    downLoadPath = null;
+                                }
+                            } else {
+                                break;
+                            }
                         }
                     }
                 }

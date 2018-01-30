@@ -656,71 +656,53 @@ namespace dtvt {
 
         //mItemId
         bool ret= setJavaObjectField(env, cl, RecVideoItem_Field_mItemId, Dlna_Java_String_Path,  *i++, objOut);
-        if(!ret){
-            return false;
-        }
+        IfFalseRetFalse(ret);
 
         //mTitle
         ret= setJavaObjectField(env, cl, RecVideoItem_Field_mTitle, Dlna_Java_String_Path,  *i++, objOut);
-        if(!ret){
-            return false;
-        }
+        IfFalseRetFalse(ret);
 
         //mSize
         ret= setJavaObjectField(env, cl, RecVideoItem_Field_mSize, Dlna_Java_String_Path,  *i++, objOut);
-        if(!ret){
-            return false;
-        }
+        IfFalseRetFalse(ret);
 
         //mDuration
         ret= setJavaObjectField(env, cl, RecVideoItem_Field_mDuration, Dlna_Java_String_Path,  *i++, objOut);
-        if(!ret){
-            return false;
-        }
+        IfFalseRetFalse(ret);
 
         //mResolution
         ret= setJavaObjectField(env, cl, RecVideoItem_Field_mResolution, Dlna_Java_String_Path,  *i++, objOut);
-        if(!ret){
-            return false;
-        }
+        IfFalseRetFalse(ret);
 
         //mBitrate
         ret= setJavaObjectField(env, cl, RecVideoItem_Field_mBitrate, Dlna_Java_String_Path, *i++, objOut);
-        if(!ret){
-            return false;
-        }
+        IfFalseRetFalse(ret);
 
         //mUpnpIcon
         ret= setJavaObjectField(env, cl, RecVideoItem_Field_mResUrl, Dlna_Java_String_Path,  *i++, objOut);
-        if(!ret){
-            return false;
-        }
+        IfFalseRetFalse(ret);
 
         //mUpnpIcon
         ret= setJavaObjectField(env, cl, RecVideoItem_Field_mUpnpIcon, Dlna_Java_String_Path,  *i++, objOut);
-        if(!ret){
-            return false;
-        }
+        IfFalseRetFalse(ret);
 
         //mDate
         ret= setJavaObjectField(env, cl, RecVideoItem_Field_mDate, Dlna_Java_String_Path,  *i++, objOut);
-        if(!ret){
-            return false;
-        }
+        IfFalseRetFalse(ret);
 
         //mAllowedUse?
 
         //mVideoType
         ret= setJavaObjectField(env, cl, RecVideoItem_Field_mVideoType, Dlna_Java_String_Path,  *i++, objOut);
-        if(!ret){
-            return false;
-        }
+        IfFalseRetFalse(ret);
 
         //mClearTextSize
-        ret= setJavaObjectField(env, cl, RecVideoItem_Field_mClearTextSize, Dlna_Java_String_Path,  *i, objOut);
-        if(!ret){
-            return false;
-        }
+        ret= setJavaObjectField(env, cl, RecVideoItem_Field_mClearTextSize, Dlna_Java_String_Path,  *i++, objOut);
+        IfFalseRetFalse(ret);
+
+        //mChannelName
+        ret= setJavaObjectField(env, cl, RecVideoItem_Field_mChannelName, Dlna_Java_String_Path,  *i, objOut);
+        IfFalseRetFalse(ret);
 
         ret=env->CallBooleanMethod(listObj , listAddId , objOut);
 

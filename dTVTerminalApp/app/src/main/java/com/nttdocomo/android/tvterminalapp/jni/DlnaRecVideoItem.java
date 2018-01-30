@@ -5,6 +5,8 @@
 package com.nttdocomo.android.tvterminalapp.jni;
 
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+
 /**
  * 機能：録画情報を表示するクラス
  */
@@ -22,7 +24,7 @@ public class DlnaRecVideoItem {
     public String mTitle="";
     //protocolInfo start
     public String mSize="";
-    public String mDuration="";
+    public String mDuration="";     //e.g.  "00:26:54"
     public String mResolution="";
     public String mBitrate="";
     public String mResUrl="";
@@ -36,6 +38,7 @@ public class DlnaRecVideoItem {
     public int mAllowedUse = 0;
     public String mVideoType="";
     public String mClearTextSize="";
+    public String mChannelName;    //upnp:channelName
 
     /**
      * 機能：DlnaRecVideoItem情報クラスを構造
@@ -55,5 +58,31 @@ public class DlnaRecVideoItem {
         }
         boolean ret= (this.mTitle.equals(item2.mTitle) && this.mResUrl.equals(item2.mResUrl));
         return ret;
+    }
+
+    /**
+     * 「"00:26:54"」から分に変換
+     * @return String str
+     */
+    public String getDurationInMinutes(){
+        if(null == mDuration) {
+            return null;
+        }
+        String duration = mDuration.trim();
+        if(8 == duration.length()) {
+            String hour = duration.substring(0, 2);
+            String min = duration.substring(3, 5);
+            if(null == hour || null == min){
+                return null;
+            }
+            try {
+                int h = Integer.parseInt(hour);
+                int m = Integer.parseInt(min);
+                return String.valueOf(60 * h + m);
+            } catch (Exception e) {
+                DTVTLogger.debug(e);
+            }
+        }
+        return null;
     }
 }
