@@ -210,28 +210,31 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      */
     protected ClipKeyListDao.CONTENT_TYPE searchContentsType(
             final String dispType, final String contentType, final String dTv) {
-        // TODO DREM-767 QA回答により別BLにて判定処理を修正
-        if (ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
-                && contentType.isEmpty()) {
-            return ClipKeyListDao.CONTENT_TYPE.TV;
-        }
-        if (!ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
-                && ClipKeyListDao.META_DTV_FLAG_TRUE.equals(dTv)) {
-            return ClipKeyListDao.CONTENT_TYPE.VOD;
-        }
-        if (ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
-                && !contentType.isEmpty()
-                && ClipKeyListDao.META_DTV_FLAG_TRUE.equals(dTv)) {
-            return ClipKeyListDao.CONTENT_TYPE.VOD;
-        }
-        if (!ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
-                && ClipKeyListDao.META_DTV_FLAG_FALSE.equals(dTv)) {
-            return ClipKeyListDao.CONTENT_TYPE.DTV;
-        }
-        if (ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
-                && !contentType.isEmpty()
-                && ClipKeyListDao.META_DTV_FLAG_FALSE.equals(dTv)) {
-            return ClipKeyListDao.CONTENT_TYPE.DTV;
+        //ぷららサーバ対応
+        if (dispType != null && contentType != null && dTv != null) {
+            // TODO DREM-767 QA回答により別BLにて判定処理を修正
+            if (ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
+                    && contentType.isEmpty()) {
+                return ClipKeyListDao.CONTENT_TYPE.TV;
+            }
+            if (!ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
+                    && ClipKeyListDao.META_DTV_FLAG_TRUE.equals(dTv)) {
+                return ClipKeyListDao.CONTENT_TYPE.VOD;
+            }
+            if (ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
+                    && !contentType.isEmpty()
+                    && ClipKeyListDao.META_DTV_FLAG_TRUE.equals(dTv)) {
+                return ClipKeyListDao.CONTENT_TYPE.VOD;
+            }
+            if (!ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
+                    && ClipKeyListDao.META_DTV_FLAG_FALSE.equals(dTv)) {
+                return ClipKeyListDao.CONTENT_TYPE.DTV;
+            }
+            if (ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
+                    && !contentType.isEmpty()
+                    && ClipKeyListDao.META_DTV_FLAG_FALSE.equals(dTv)) {
+                return ClipKeyListDao.CONTENT_TYPE.DTV;
+            }
         }
         return null;
     }
@@ -245,6 +248,9 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      */
     protected ClipKeyListDao.TABLE_TYPE decisionTableType(
             final String dispType, final String contentType) {
+        if (dispType == null || contentType == null) {
+            return null;
+        }
         if (ClipKeyListDao.META_DISPLAY_TYPE_TV_PROGRAM.equals(dispType)
                 && contentType.length() < 1) {
             return ClipKeyListDao.TABLE_TYPE.TV;
@@ -353,15 +359,17 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         String titleId = mClipRequestData.getTitleId();
         ClipKeyListDao.TABLE_TYPE tableType = decisionTableType(dispType, contentType);
 
-        switch (operationId) {
-            case CLIP_ROW_DELETE:
-                dataManager.deleteRowSqlStart(tableType, serviceId, eventId, titleId);
-                break;
-            case CLIP_ROW_INSERT:
-                dataManager.insertRowSqlStart(tableType, serviceId, eventId, type, titleId);
-                break;
-            default:
-                break;
+        if (tableType != null) {
+            switch (operationId) {
+                case CLIP_ROW_DELETE:
+                    dataManager.deleteRowSqlStart(tableType, serviceId, eventId, titleId);
+                    break;
+                case CLIP_ROW_INSERT:
+                    dataManager.insertRowSqlStart(tableType, serviceId, eventId, type, titleId);
+                    break;
+                default:
+                    break;
+            }
         }
         return null;
     }
@@ -384,7 +392,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         boolean clipStatus = false;
         ClipKeyListDao.CONTENT_TYPE contentType = searchContentsType(dispType, contentsType, dTv);
         ClipKeyListDao.TABLE_TYPE tableType = decisionTableType(dispType, contentsType);
-        if (contentType != null) {
+        if (contentType != null && tableType != null) {
             switch (contentType) {
                 case TV:
                     clipStatus = findDbTvClipKeyData(tableType,

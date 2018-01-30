@@ -420,7 +420,7 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
     /**
      * チャンネルデータの整形.
      *
-     * @param channels チャンネル一覧
+     * @param channels    チャンネル一覧
      * @param channelList パースされたチャンネル情報
      */
     private void setChannelData(final ArrayList<ChannelInfo> channels, final List<HashMap<String, String>> channelList) {
@@ -464,7 +464,7 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
          *
          * @param contentsDetailInfo 画面に渡すチャンネル番組情報
          */
-        void onContentsDetailInfoCallback(ArrayList<VodMetaFullData> contentsDetailInfo,boolean clipStatus);
+        void onContentsDetailInfoCallback(ArrayList<VodMetaFullData> contentsDetailInfo, boolean clipStatus);
 
         /**
          * ロールリスト情報取得.
@@ -661,14 +661,16 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
      * @param metaFullData コンテンツ詳細データ
      */
     private void requestGetClipKeyList(final VodMetaFullData metaFullData) {
-        ClipKeyListDao.TABLE_TYPE tableType = decisionTableType(metaFullData.getDisp_type(),metaFullData.getmContent_type());
-        switch (tableType) {
-            case TV:
-                getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.TV));
-                break;
-            case VOD:
-                getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
-                break;
+        ClipKeyListDao.TABLE_TYPE tableType = decisionTableType(metaFullData.getDisp_type(), metaFullData.getmContent_type());
+        if (tableType != null) {
+            switch (tableType) {
+                case TV:
+                    getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.TV));
+                    break;
+                case VOD:
+                    getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+                    break;
+            }
         }
     }
 }
