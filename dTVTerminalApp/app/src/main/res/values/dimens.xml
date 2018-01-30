@@ -139,7 +139,7 @@
     <dimen name="contents_text_vertical_margin">10dp</dimen>
     <dimen name="contents_text_info_margin">16dp</dimen>
     <dimen name="view_button_size">80dp</dimen>
-    <dimen name="contents_detail_tabs_height">40dp</dimen>
+    <dimen name="contents_detail_tabs_height">52dp</dimen>
     <dimen name="tab_under_indicator">1.5dp</dimen>
     <dimen name="contents_detail_2dp">2dp</dimen>
     <dimen name="contents_detail_5dp">5dp</dimen>
