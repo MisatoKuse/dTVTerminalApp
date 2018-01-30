@@ -69,6 +69,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     private LinearLayout mBaseLinearLayout = null;
     private RelativeLayout mHeaderLayout = null;
     protected TextView titleTextView = null;
+    protected ImageView mTitleArrowImage = null;
     private ImageView mHeaderBackIcon = null;
     private ImageView mStbStatusIcon = null;
     private DlnaProvDevList mDlnaProvDevListForBase = null;
@@ -193,6 +194,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         mBaseLinearLayout = findViewById(R.id.base_ll);
         mHeaderLayout = findViewById(R.id.base_title);
         titleTextView = findViewById(R.id.header_layout_text);
+        mTitleArrowImage = findViewById(R.id.tv_program_list_main_layout_calendar_arrow);
         DTVTLogger.end();
         mHeaderBackIcon = findViewById(R.id.header_layout_back);
         mStbStatusIcon = findViewById(R.id.header_stb_status_icon);
@@ -374,6 +376,21 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             return titleTextView.getText();
         }
         return "";
+    }
+
+    /**
+     * 番組表タイトル矢印表示非表示を設定.
+     *
+     * @param visible 表示状態
+     */
+    protected void setTvProgramTitleArrowVisibility(Boolean visible) {
+        if (mTitleArrowImage != null) {
+            if (visible) {
+                mTitleArrowImage.setVisibility(View.VISIBLE);
+            } else {
+                mTitleArrowImage.setVisibility(View.GONE);
+            }
+        }
     }
 
     /**

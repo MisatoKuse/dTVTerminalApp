@@ -114,6 +114,8 @@ public class TvProgramListActivity extends BaseActivity
 
         initView();
         syncScroll(mChannelRecyclerView, mProgramRecyclerView);
+        //タイトル矢印表示
+        setTvProgramTitleArrowVisibility(true);
         //タブ設定
         setTabView();
         //タグ設定
@@ -146,6 +148,7 @@ public class TvProgramListActivity extends BaseActivity
         mTagImageView.bringToFront();
         mTagImageView.setOnClickListener(this);
         titleTextView.setOnClickListener(this);
+        mTitleArrowImage.setOnClickListener(this);
         mTimeScrollView.setScrollView(programScrollView);
         programScrollView.setScrollView(mTimeScrollView);
         programScrollView.setOnTouchListener(new View.OnTouchListener() {
@@ -478,6 +481,10 @@ public class TvProgramListActivity extends BaseActivity
                 break;
             case R.id.header_layout_text:
                 //日付選択ダイアログ
+                showDatePickDlg();
+                break;
+            case R.id.tv_program_list_main_layout_calendar_arrow:
+                //日付選択ダイアログ(矢印)
                 showDatePickDlg();
                 break;
             default:
