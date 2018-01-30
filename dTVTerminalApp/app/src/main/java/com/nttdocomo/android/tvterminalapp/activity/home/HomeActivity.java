@@ -631,24 +631,24 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private void getUserInfoErrorDialog() {
         CustomDialog failedRecordingReservationDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
         failedRecordingReservationDialog.setContent(getResources().getString(R.string.get_user_info_error_message));
-        failedRecordingReservationDialog.setConfirmText(R.string.common_text_close);
+        failedRecordingReservationDialog.setCancelText(R.string.common_text_close);
         // Cancelable
-        failedRecordingReservationDialog.setCancelText(R.string.common_text_retry);
+        failedRecordingReservationDialog.setConfirmText(R.string.common_text_retry);
         failedRecordingReservationDialog.showDialog();
         failedRecordingReservationDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
-                //ユーザ情報なし(未契約表示)
-                requestHomeData();
+                //リトライ
+                initData();
+                getUserInfo();
             }
         });
 
         failedRecordingReservationDialog.setApiCancelCallback(new CustomDialog.ApiCancelCallback() {
             @Override
             public void onCancelCallback() {
-                //リトライ
-                initData();
-                getUserInfo();
+                //ユーザ情報なし(未契約表示)
+                requestHomeData();
             }
         });
 
