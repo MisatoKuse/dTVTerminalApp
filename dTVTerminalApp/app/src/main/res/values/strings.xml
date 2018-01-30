@@ -60,7 +60,6 @@
     <string name="remote_controller_viewpager_watch_by_tv">テレビで視聴する</string>
 
     <!-- Home -->
-    <string name="home_header_title">ホーム</string>
     <string name="recommend_list_title">おすすめ番組・ビデオ</string>
     <string name="home_now_on_air_channel_list">チャンネルリスト</string>
     <string-array name="recommend_list_tab_names">
