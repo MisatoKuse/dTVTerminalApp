@@ -615,6 +615,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                                         toGooglePlay(DTVTERMINAL_GOOGLEPLAY_DOWNLOAD_URL);
                                     }
                                 });
+                                dTVTUpDateDialog.showDialog();
                                 break;
                             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE:
                                 showErrorDialog(getResources().getString(R.string.stb_application_version_update));
@@ -634,6 +635,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                                         toGooglePlay(DTVTERMINAL_GOOGLEPLAY_DOWNLOAD_URL);
                                     }
                                 });
+                                dTVTUpDateDialog.showDialog();
                                 break;
                             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE:
                                 showErrorDialog(getResources().getString(R.string.stb_application_version_update));
