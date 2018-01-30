@@ -65,6 +65,8 @@ public class ContentsData {
     private String mCategoryId = null;
     // 開始時刻
     private String mStartViewing = null;
+    //終了時刻
+    private String mEndViewing = null;
     // reserved
     private String mReserved = null;
     // みどころ
@@ -345,6 +347,14 @@ public class ContentsData {
 
     public void setStartViewing(String mStartViewing) {
         this.mStartViewing = mStartViewing;
+    }
+
+    public String getEndViewing() {
+        return mEndViewing;
+    }
+
+    public void setEndViewing(String mEndViewing) {
+        this.mEndViewing = mEndViewing;
     }
 
     public String getReserved() {

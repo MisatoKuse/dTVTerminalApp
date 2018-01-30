@@ -351,4 +351,12 @@
     <dimen name="edit_my_channel_list_item_add_btn_margin_right">10dp</dimen>
     <dimen name="edit_my_channel_list_item_text_size">14dp</dimen>
 
+    <!-- おすすめ番組・ビデオ -->
+    <dimen name="recommend_list_0dp">0dp</dimen>
+    <dimen name="recommend_list_tv_video_margin_top">2dp</dimen>
+    <dimen name="recommend_list_dtv_danime_margin_top">13dp</dimen>
+    <dimen name="recommend_list_general_margine">10dp</dimen>
+    <dimen name="recommend_list_left_margine">5dp</dimen>
+    <dimen name="recommend_list_right_margine">15dp</dimen>
+
 </resources>
