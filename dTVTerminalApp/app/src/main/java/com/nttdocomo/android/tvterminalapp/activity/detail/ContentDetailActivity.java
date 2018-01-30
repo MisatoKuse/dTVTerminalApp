@@ -896,7 +896,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
 
             //test e
             uri = Uri.parse(sb.toString());
-            long ss = (long) Integer.parseInt(datas.getClearTextSize());
+            //long ss = (long) Integer.parseInt(datas.getClearTextSize());
             mCurrentMediaInfo = new MediaVideoInfo(
                     uri,           //uri
                     type2,         //"application/x-dtcp1", "video/mp4", RESOURCE_MIMETYPE

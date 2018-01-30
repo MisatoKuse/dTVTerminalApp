@@ -44,7 +44,9 @@ import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.nttdocomo.android.tvterminalapp.view.CustomDialog.DialogType.CONFIRM;
 
@@ -64,6 +66,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     private final int mPercentToUpdateUi = 1;
     private Activity activity;
     private String mProgress;
+	private Set<String> mChannelNameCache;
 
     @Override
     public Context getContext() {
@@ -89,6 +92,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     private void initData() {
         DTVTLogger.start();
         mContentsData = new ArrayList<>();
+		mChannelNameCache = new HashSet<>();
     }
 
     private View mRecordedFragmentView;
@@ -129,16 +133,16 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         }
     }
 
-    public void displayLoadMore(boolean b) {
-        DTVTLogger.start();
-        if (null != mRecordedListview && null != mLoadMoreView) {
-            if (b) {
-                mRecordedListview.addFooterView(mLoadMoreView);
-            } else {
-                mRecordedListview.removeFooterView(mLoadMoreView);
-            }
-        }
-    }
+//    public void displayLoadMore(boolean b) {
+//        DTVTLogger.start();
+//        if (null != mRecordedListview && null != mLoadMoreView) {
+//            if (b) {
+//                mRecordedListview.addFooterView(mLoadMoreView);
+//            } else {
+//                mRecordedListview.removeFooterView(mLoadMoreView);
+//            }
+//        }
+//    }
 
     public void clear() {
         DTVTLogger.start();
@@ -248,6 +252,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     @Override
     public void onFail(final DLError error, final String savePath) {
         DTVTLogger.debug("download fail savePath:"+savePath);
+		restoreChannelAndTime();
         if(null==mHandler){
             return;
         }
@@ -327,6 +332,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             if (view != null) {
                 view.findViewById(R.id.item_common_result_clip_tv).setBackgroundResource(R.mipmap.icon_circle_normal_download_check);
                 setDownloadStatusClear(view.findViewById(R.id.item_common_result_clip_tv));
+				restoreChannelAndTime();
             }
             mContentsData.get(queIndex.get(0)).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
             mContentsData.get(queIndex.get(0)).setDownloadStatus("");
@@ -335,12 +341,30 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
         setNextDownLoad();
     }
 
+	private void restoreChannelAndTime(){
+        if(null == queIndex || 0<queIndex.size() || null==mRecordedListview){
+
+        }
+        View view = mRecordedListview.getChildAt(queIndex.get(0)-mRecordedListview.getFirstVisiblePosition());
+        if(null==view){
+            return;
+        }
+        TextView timeView = view.findViewById(R.id.item_common_result_content_time);
+        if (null != timeView) {
+            String timeOnly = (String) timeView.getText();
+            String timeAndChannel = getChannelTimeContent(timeOnly);
+            if(null!=timeAndChannel) {
+                timeView.setText(timeAndChannel);
+            }
+        }
+    }
     private void setCancelStatus(String fullPath){
         if(queIndex.size() > 0){
             View view = mRecordedListview.getChildAt(queIndex.get(0)-mRecordedListview.getFirstVisiblePosition());
             if (view != null) {
                 view.findViewById(R.id.item_common_result_clip_tv).setBackgroundResource(R.mipmap.icon_circle_normal_download);
                 //setDownloadStatusClear(view.findViewById(R.id.item_common_result_clip_tv));
+				restoreChannelAndTime();
             }
             mContentsData.get(queIndex.get(0)).setDownloadFlg(ContentsAdapter.DOWNLOAD_STATUS_ALLOW);
             mContentsData.get(queIndex.get(0)).setDownloadStatus("");
@@ -425,8 +449,11 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 mProgress = getResources().getString(R.string.record_download_status) + progress + getResources().getString(R.string.record_download_percent_mark);
                 if (textView != null) {
                     TextView timeView = view.findViewById(R.id.item_common_result_content_time);
-                    if(null != timeView){
-                        String time = (String) timeView.getText();
+                    if (null != timeView) {
+                        String timeAndChannel = (String) timeView.getText();
+                        mChannelNameCache.add(timeAndChannel);
+                        String timeOnly = getCutChannelTimeContent(timeAndChannel);
+                        timeView.setText(timeOnly);
                     }
 
                     view.findViewById(R.id.item_common_result_recorded_content_hyphen).setVisibility(View.VISIBLE);
@@ -439,6 +466,29 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             default:
                 break;
         }
+    }
+
+	private String getCutChannelTimeContent(String timeAndChannel){
+        if(null == timeAndChannel || timeAndChannel.isEmpty()){
+            return null;
+        }
+        int p = timeAndChannel.lastIndexOf(RecordedListActivity.sMinus);
+        if(0>p){
+            return timeAndChannel;
+        }
+        return timeAndChannel.substring(0, p);
+    }
+
+    private String getChannelTimeContent(String onlyTime){
+        if(null == onlyTime || onlyTime.isEmpty()){
+            return null;
+        }
+        for(String timeChannel: mChannelNameCache){
+            if(timeChannel.contains(onlyTime)){
+                return timeChannel;
+            }
+        }
+        return null;
     }
 
     @Override

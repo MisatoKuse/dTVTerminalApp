@@ -84,7 +84,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private static final String DATE_FORMAT = "yyyy/MM/ddHH:mm:ss";
     private String mDate[] = {"日", "月", "火", "水", "木", "金", "土"};
 
-    private static final String sMinus = "-";
+    public static final String sMinus = "-";
 
     //private boolean mIsDlOk=false;
 
@@ -245,6 +245,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                             contentsData.setDlFileFullPath(fullPath);
                             list.add(contentsData);
                             RecordedContentsDetailData detailData = new RecordedContentsDetailData();
+							detailData.setDownLoadStatus(ContentsAdapter.DOWNLOAD_STATUS_COMPLETED);
+                            detailData.setDlFileFullPath(fullPath);
                             detailData.setItemId(itemId);
                             detailData.setUpnpIcon(upnpIcon);
                             detailData.setSize(totalSize);
@@ -505,12 +507,12 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 sb.append(mins);
                 sb.append("分）");
             }
-//            if(null != channelName && !channelName.isEmpty()){
-//                sb.append(" ");
-//                sb.append(sMinus);
-//                sb.append(" ");
-//                sb.append(channelName);
-//            }
+            if(null != channelName && !channelName.isEmpty()){
+                sb.append(" ");
+                sb.append(sMinus);
+                sb.append(" ");
+                sb.append(channelName);
+            }
 
             //duration && channel name end
             contentsData.setTime(sb.toString());
