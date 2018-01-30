@@ -58,6 +58,10 @@ public class UserInfoUtils {
         }
 
         List<UserInfoList.AccountList> mLoggedInAccountList = infoList.getLoggedinAccount();
+        if (mLoggedInAccountList.size() == 0) {
+            return false;
+        }
+
         UserInfoList.AccountList mLoggedInAccount = mLoggedInAccountList.get(INT_LIST_HEAD);
 
         //ユーザ情報がないときは契約情報は無し
