@@ -150,7 +150,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     private boolean mIsPlayer = false;
     private boolean mIsControllerVisible = false;
     private Intent mIntent = null;
-    private Toast mToast = null;
 
     private LinearLayout mThumbnailBtn = null;
     private RelativeLayout mThumbnailRelativeLayout = null;
@@ -705,7 +704,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                         }
                         mPlayerController.seekTo(pos);
                         mIsHideOperate = false;
-                        showMessage("←10");
                     }
                     if (e.getX() > mScreenWidth / 2 + mVideoPlayPause.getWidth() / 2
                             && e.getX() < mScreenWidth - mScreenWidth / 6) { //30秒送り
@@ -719,7 +717,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                         }
                         mPlayerController.seekTo(pos);
                         mIsHideOperate = false;
-                        showMessage("30→");
                     }
                 }
                 DTVTLogger.end();
@@ -739,14 +736,12 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                         pos = pos < 0 ? 0 : pos;
                         mPlayerController.seekTo(pos);
                         mIsHideOperate = false;
-                        showMessage("←10");
                     } else if (e1.getX() < e2.getX() && e1.getX() > (float) (mScreenWidth / 2 + mVideoPlayPause.getWidth() / 2)) {
                         int pos = mPlayerController.getCurrentPosition();
                         pos += FAST_SECOND;
                         pos = pos > mPlayerController.getDuration() ? mPlayerController.getDuration() : pos;
                         mPlayerController.seekTo(pos);
                         mIsHideOperate = false;
-                        showMessage("30→");
                     }
                 }
                 DTVTLogger.end();
@@ -801,7 +796,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         }
         String url = datas.getResUrl();
         if (null == url || 0 == url.length()) {
-            showMessage("プレイヤーは「null」コンテンツを再生できない");
+            showMessage(getApplicationContext().getString(R.string.contents_player_bad_contents_info));
             DTVTLogger.end();
             return false;
         }
@@ -1018,15 +1013,13 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     /**
      * showMessage.
      *
-     * @param msg トーストに表示する文言
+     * @param msg エラーダイアログに表示する文言
      */
     private void showMessage(String msg) {
         DTVTLogger.start();
-        if (null == mToast) {
-            mToast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
-        }
-        mToast.setText(msg);
-        mToast.show();
+        CustomDialog customDialog = new CustomDialog(getApplicationContext(), CustomDialog.DialogType.ERROR);
+        customDialog.setContent(msg);
+        customDialog.showDialog();
         DTVTLogger.end();
     }
 
@@ -1036,7 +1029,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     private void errorExit() {
         DTVTLogger.start();
         // TODO エラー表示の要修正
-        showMessage("ビデオ情報はただしくないです。もう一回試してください。");
+        showMessage(getApplicationContext().getString(R.string.contents_player_bad_contents_info));
         setCanPlay(false);
         DTVTLogger.end();
     }
@@ -1837,7 +1830,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 //DTVの場合
                 if (mDetailData != null && mDetailData.getServiceId() == DTV_CONTENTS_SERVICE_ID) {
                     CustomDialog startAppDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-                    startAppDialog.setTitle(getResources().getString(R.string.dtv_content_service_start_dialog));
+                    startAppDialog.setContent(getResources().getString(R.string.dtv_content_service_start_dialog));
                     startAppDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                         @Override
                         public void onOKCallback(boolean isOK) {
@@ -2073,22 +2066,11 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 pauseButton();
                 break;
             case MediaPlayerDefinitions.PE_START_NETWORK_CONNECTION:
-                break;
             case MediaPlayerDefinitions.PE_START_AUTHENTICATION:
-                showMessage("認証開始");
-                break;
             case MediaPlayerDefinitions.PE_START_BUFFERING:
-                showMessage("バッファー開始");
-                break;
             case MediaPlayerDefinitions.PE_START_RENDERING:
-                if (mIsLocalPlaying) {
-                    showMessage("ローカル再生開始");
-                } else {
-                    showMessage("再生開始");
-                }
-                break;
             case MediaPlayerDefinitions.PE_FIRST_FRAME_RENDERED:
-                //showMessage("PE_FIRST_FRAME_RENDERED");
+            default:
                 break;
         }
         DTVTLogger.end();
@@ -2144,7 +2126,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     private void showDialogToConfirmClose() {
         mPlayerController.stop();
         CustomDialog closeDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
-        closeDialog.setContent("年齢制限のため視聴できません");
+        closeDialog.setContent(getApplicationContext().getString(R.string.contents_detail_parental_check_fail));
         closeDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(boolean isOK) {
@@ -2165,8 +2147,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     @Override
     public void onError(MediaPlayerController mediaPlayerController, int i, long l) {
         DTVTLogger.start();
-        showMessage("" + i);
-        DTVTLogger.end();
     }
 
     /**
@@ -2213,9 +2193,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             mExternalDisplayHelper.onPause();
         }
         finishPlayer();
-        if (null != mToast) {
-            mToast.cancel();
-        }
     }
 
     @Override
@@ -2326,7 +2303,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      */
     private void showCompleteDialog() {
         CustomDialog completeRecordingReservationDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
-        completeRecordingReservationDialog.setTitle(getResources().getString(R.string.recording_reservation_complete_dialog_title));
         completeRecordingReservationDialog.setContent(getResources().getString(R.string.recording_reservation_complete_dialog_msg));
         completeRecordingReservationDialog.setConfirmText(R.string.recording_reservation_complete_dialog_ok);
         // Cancelable
@@ -2380,7 +2356,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      */
     private CustomDialog createRecordingReservationConfirmDialog() {
         CustomDialog recordingReservationConfirmDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-        recordingReservationConfirmDialog.setTitle(getResources().getString(R.string.recording_reservation_confirm_dialog_title));
         recordingReservationConfirmDialog.setContent(getResources().getString(R.string.recording_reservation_confirm_dialog_msg));
         recordingReservationConfirmDialog.setConfirmText(R.string.recording_reservation_confirm_dialog_confirm);
         recordingReservationConfirmDialog.setCancelText(R.string.recording_reservation_confirm_dialog_cancel);
