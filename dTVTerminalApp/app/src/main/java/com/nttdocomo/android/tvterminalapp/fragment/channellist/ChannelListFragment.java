@@ -28,39 +28,105 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * チャンネルリスト用フラグメント.
+ */
 public class ChannelListFragment extends Fragment implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
 
+    /**
+     * コールバックリスナー.
+     */
     public interface ChannelListFragmentListener {
+        /**
+         * スクロール時のコールバック.
+         *
+         * @param fragment fragment
+         * @param absListView absListView
+         * @param firstVisibleItem firstVisibleItem
+         * @param visibleItemCount visibleItemCount
+         * @param totalItemCount totalItemCount
+         */
         void onScroll(ChannelListFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount);
 
+        /**
+         * スクロール状態が変化した時のコールバック.
+         *
+         * @param fragment fragment
+         * @param absListView absListView
+         * @param scrollState スクロール状態
+         */
         void onScrollStateChanged(ChannelListFragment fragment, AbsListView absListView, int scrollState);
 
+        /**
+         * 表示状態/非表示状態の変化時のコールバック.
+         *
+         * @param isVisibleToUser true:表示 false:非表示
+         * @param fragment fragment
+         */
         void setUserVisibleHint(boolean isVisibleToUser, ChannelListFragment fragment);
     }
 
-    private Context mActivity;
+    /**
+     * コンテキスト.
+     */
+    private Context mContext;
+    /**
+     * 表示するデータ.
+     */
     private List mData = null;
+    /**
+     * rootView.
+     */
     private View mRootView;
+    /**
+     * 表示するListView自体.
+     */
     private ListView mListview;
+    /**
+     * データ読み込み中のView.
+     */
+    private View mLoadMoreView;
+    /**
+     * Listにセットするアダプタ.
+     */
     private ChannelListAdapter mChannelListAdapter;
+    /**
+     * リストスクロールのコールバックリスナー.
+     */
     private ChannelListFragmentListener mScrollListener;
+    /**
+     * データタイプ.
+     */
     private ChannelListAdapter.ChListDataType mChListDataType;
 
+    /**
+     * コンストラクタ.
+     */
     public ChannelListFragment() {
         mData = new ArrayList();
     }
 
+    /**
+     * データタイプを設定する.
+     *
+     * @param type データタイプ
+     */
     public void setChListDataType(final ChannelListAdapter.ChListDataType type) {
         mChListDataType = type;
     }
 
+    /**
+     * データタイプを取得する.
+     *
+     * @return データタイプ
+     */
     public ChannelListAdapter.ChListDataType getChListDataType() {
         return mChListDataType;
     }
 
     @Override
     public Context getContext() {
-        return mActivity;
+        return mContext;
     }
 
     @Override
@@ -78,24 +144,37 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
 
     @Override
     public void onAttach(final Context context) {
-        mActivity = context;
+        mContext = context;
         super.onAttach(context);
     }
 
     @Override
     public void onDetach() {
-        mActivity = null;
+        mContext = null;
         super.onDetach();
     }
 
+    /**
+     * スクロールに対するリスナーを設定する.
+     *
+     * @param lis リスナー
+     */
     public void setScrollListener(final ChannelListFragmentListener lis) {
         mScrollListener = lis;
     }
 
+    /**
+     * アダプタを取得する.
+     *
+     * @return アダプタ
+     */
     public ChannelListAdapter getAdapter() {
         return mChannelListAdapter;
     }
 
+    /**
+     * Viewの初期化処理.
+     */
     private void initContentListView() {
         mListview = mRootView.findViewById(R.id.channel_list_content_body_lv);
 
@@ -106,6 +185,9 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         mListview.setAdapter(mChannelListAdapter);
     }
 
+    /**
+     * リストの更新を促す.
+     */
     public void noticeRefresh() {
         if (null != mChannelListAdapter) {
             mChannelListAdapter.setChListDataType(mChListDataType);
@@ -113,8 +195,11 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         }
     }
 
-    private View mLoadMoreView;
-
+    /**
+     * 追加読み込みViewの表示/非表示を行う.
+     *
+     * @param b true:表示する false:非表示にする
+     */
     public void displayMoreData(final boolean b) {
         if (null != mListview) {
             if (b) {
@@ -125,6 +210,11 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         }
     }
 
+    /**
+     * 表示するデータを設定する.
+     *
+     * @param item 表示するデータ
+     */
     public void addData(final Object item) {
         if (mData == null) {
             mData = new ArrayList();
@@ -132,12 +222,20 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         mData.add(item);
     }
 
+    /**
+     * 表示するデータを消去する.
+     */
     public void clearDatas() {
         if (null != mData) {
             mData.clear();
         }
     }
 
+    /**
+     * 表示しているコンテンツ数を返却する.
+     *
+     * @return コンテンツ数
+     */
     public int getDataCount() {
         if (null == mData) {
             return 0;
@@ -145,6 +243,12 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         return mData.size();
     }
 
+    /**
+     * 表示されているデータに、引数のデータが含まれているかどうか.
+     *
+     * @param item 表示されているか確認を行うデータ
+     * @return true:含まれている false:含まれていない
+     */
     public boolean hasData(final Object item) {
         if (null == item || null == mData || 0 == mData.size()) {
             return false;
@@ -152,33 +256,45 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         boolean ret = false;
         switch (mChListDataType) {
             case CH_LIST_DATA_TYPE_BS:
-                DlnaBsChListItem bs2 = (DlnaBsChListItem) item;
-                for (Object obj : mData) {
-                    DlnaBsChListItem bs1 = (DlnaBsChListItem) obj;
-                    ret = bs1.equalTo(bs2);
-                    if (ret) {
-                        break;
+                if (item instanceof  DlnaBsChListItem) {
+                    DlnaBsChListItem bs2 = (DlnaBsChListItem) item;
+                    for (Object obj : mData) {
+                        if (obj instanceof DlnaBsChListItem) {
+                            DlnaBsChListItem bs1 = (DlnaBsChListItem) obj;
+                            ret = bs1.equalTo(bs2);
+                            if (ret) {
+                                break;
+                            }
+                        }
                     }
                 }
                 break;
             case CH_LIST_DATA_TYPE_TER:
-                DlnaTerChListItem ter2 = (DlnaTerChListItem) item;
-                for (Object obj : mData) {
-                    DlnaTerChListItem ter1 = (DlnaTerChListItem) obj;
-                    ret = ter1.equalTo(ter2);
-                    if (ret) {
-                        break;
+                if (item instanceof DlnaTerChListItem) {
+                    DlnaTerChListItem ter2 = (DlnaTerChListItem) item;
+                    for (Object obj : mData) {
+                        if (obj instanceof DlnaTerChListItem) {
+                            DlnaTerChListItem ter1 = (DlnaTerChListItem) obj;
+                            ret = ter1.equalTo(ter2);
+                            if (ret) {
+                                break;
+                            }
+                        }
                     }
                 }
                 break;
             case CH_LIST_DATA_TYPE_HIKARI:
             case CH_LIST_DATA_TYPE_DTV:
-                ChannelInfo ch2 = (ChannelInfo) item;
-                for (Object obj : mData) {
-                    ChannelInfo ch1 = (ChannelInfo) obj;
-                    ret = ch1.equalTo(ch2);
-                    if (ret) {
-                        break;
+                if (item instanceof ChannelInfo) {
+                    ChannelInfo ch2 = (ChannelInfo) item;
+                    for (Object obj : mData) {
+                        if (obj instanceof  ChannelInfo) {
+                            ChannelInfo ch1 = (ChannelInfo) obj;
+                            ret = ch1.equalTo(ch2);
+                            if (ret) {
+                                break;
+                            }
+                        }
                     }
                 }
                 break;
@@ -230,14 +346,20 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         if (null == datas) {
             return;
         }
-        if (null != mActivity) {
-            Intent intent = new Intent(mActivity, ContentDetailActivity.class);
+        if (null != mContext) {
+            Intent intent = new Intent(mContext, ContentDetailActivity.class);
             intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
             intent.putExtra(RecordedListActivity.RECORD_LIST_KEY, datas);
             startActivity(intent);
         }
     }
 
+    /**
+     * タップされたコンテンツから、コンテンツ詳細画面に渡すデータを取得する.
+     *
+     * @param i タップされたリスト番号
+     * @return 整形されたデータ
+     */
     private RecordedContentsDetailData getParcleData(final int i) {
         RecordedContentsDetailData ret = new RecordedContentsDetailData();
         switch (mChListDataType) {
@@ -273,6 +395,4 @@ public class ChannelListFragment extends Fragment implements AbsListView.OnScrol
         }
         return ret;
     }
-
-
 }

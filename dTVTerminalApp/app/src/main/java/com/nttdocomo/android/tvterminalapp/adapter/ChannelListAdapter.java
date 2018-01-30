@@ -23,28 +23,86 @@ import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * チャンネルリストのアダプタ.
+ */
 public class ChannelListAdapter extends BaseAdapter {
 
+    /**
+     * チャンネルリストのタイプ.
+     */
     public enum ChListDataType {
+        /**
+         * タイプ:未定.
+         */
         CH_LIST_DATA_TYPE_INVALID,
+        /**
+         * タイプ:BS.
+         */
         CH_LIST_DATA_TYPE_BS,
+        /**
+         * タイプ:地上波.
+         */
         CH_LIST_DATA_TYPE_TER,
+        /**
+         * タイプ:ひかりTV.
+         */
         CH_LIST_DATA_TYPE_HIKARI,
+        /**
+         * タイプ:dTVチャンネル.
+         */
         CH_LIST_DATA_TYPE_DTV,
     }
 
+    /**
+     * コンテキスト.
+     */
     private Context mContext;
+    /**
+     * 表示するデータのリスト.
+     */
     private List mData;
+    /**
+     * 表示するレイアウトのリソースID.
+     */
     private int mLayoutId;
+    /**
+     * サムネイル取得用プロパイダー.
+     */
     private ThumbnailProvider mThumbnailProvider;
+    /**
+     * データタイプ.
+     */
     private ChListDataType mChListDataType;
 
+    /**
+     * テキストの高さ.
+     */
     private static final int TEXT_HEIGHT = 46;
+    /**
+     * テキストのSTARTマージン.
+     */
     private static final int TEXT_MARGIN_START = 10;
+    /**
+     * テキストのENDマージン.
+     */
     private static final int TEXT_MARGIN_END = 16;
+    /**
+     * チャンネル名取得用定数.
+     */
     private static final int POSITION_ZERO = 0;
+    /**
+     * サムネイル取得用定数.
+     */
     private static final int POSITION_ONE = 1;
 
+    /**
+     * コンストラクタ.
+     *
+     * @param context コンテキスト
+     * @param data コンテンツデータ
+     * @param id リソースID
+     */
     public ChannelListAdapter(final Context context, final List data, final int id) {
         this.mContext = context;
         this.mData = data;
@@ -52,6 +110,11 @@ public class ChannelListAdapter extends BaseAdapter {
         this.mThumbnailProvider = new ThumbnailProvider(context);
     }
 
+    /**
+     * データタイプを設定.
+     *
+     * @param type データタイプ
+     */
     public void setChListDataType(final ChListDataType type) {
         mChListDataType = type;
     }
@@ -78,7 +141,7 @@ public class ChannelListAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(final int position,View convertView, final  ViewGroup parent) {
+    public View getView(final int position, View convertView, final  ViewGroup parent) {
         View view = null;
         ViewHolder holder = null;
         if (convertView == null) {
@@ -113,7 +176,7 @@ public class ChannelListAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        ArrayList<String> nameThumbnail = new ArrayList();
+        ArrayList<String> nameThumbnail = new ArrayList<>();
         getDatas(nameThumbnail, position);
         String chName = nameThumbnail.get(POSITION_ZERO);
         String thumbnail = nameThumbnail.get(POSITION_ONE);
@@ -137,37 +200,51 @@ public class ChannelListAdapter extends BaseAdapter {
         return convertView;
     }
 
+    /**
+     * 表示用データを取得.
+     *
+     * @param nameThumbnailOut 取得したデータを詰めるリスト
+     * @param position ポジション
+     */
     private void getDatas(final ArrayList<String> nameThumbnailOut, final int position) {
         String chName = null;
         String thumbnail = null;
         if (null != mData) {
             switch (mChListDataType) {
                 case CH_LIST_DATA_TYPE_BS:
-                    DlnaBsChListItem bsItem = (DlnaBsChListItem) mData.get(position);
-                    if (null != bsItem) {
-                        chName = bsItem.mTitle;
-                        thumbnail = null;
+                    if (mData.get(position) instanceof  DlnaBsChListItem) {
+                        DlnaBsChListItem bsItem = (DlnaBsChListItem) mData.get(position);
+                        if (null != bsItem) {
+                            chName = bsItem.mTitle;
+                            thumbnail = null;
+                        }
                     }
                     break;
                 case CH_LIST_DATA_TYPE_TER:
-                    DlnaTerChListItem terItem = (DlnaTerChListItem) mData.get(position);
-                    if (null != terItem) {
-                        chName = terItem.mTitle;
-                        thumbnail = null;
+                    if (mData.get(position) instanceof DlnaTerChListItem) {
+                        DlnaTerChListItem terItem = (DlnaTerChListItem) mData.get(position);
+                        if (null != terItem) {
+                            chName = terItem.mTitle;
+                            thumbnail = null;
+                        }
                     }
                     break;
                 case CH_LIST_DATA_TYPE_HIKARI:
-                    ChannelInfo ch = (ChannelInfo) mData.get(position);
-                    if (null != ch) {
-                        chName = ch.getTitle();
-                        thumbnail = ch.getThumbnail();
+                    if (mData.get(position) instanceof ChannelInfo) {
+                        ChannelInfo ch = (ChannelInfo) mData.get(position);
+                        if (null != ch) {
+                            chName = ch.getTitle();
+                            thumbnail = ch.getThumbnail();
+                        }
                     }
                     break;
                 case CH_LIST_DATA_TYPE_DTV:
-                    ChannelInfo ch2 = (ChannelInfo) mData.get(position);
-                    if (null != ch2) {
-                        chName = ch2.getTitle();
-                        thumbnail = ch2.getThumbnail();
+                    if (mData.get(position) instanceof ChannelInfo) {
+                        ChannelInfo ch2 = (ChannelInfo) mData.get(position);
+                        if (null != ch2) {
+                            chName = ch2.getTitle();
+                            thumbnail = ch2.getThumbnail();
+                        }
                     }
                     break;
                 case CH_LIST_DATA_TYPE_INVALID:
@@ -178,8 +255,17 @@ public class ChannelListAdapter extends BaseAdapter {
         nameThumbnailOut.add(thumbnail);
     }
 
+    /**
+     * ViewHolder.
+     */
     class ViewHolder {
+        /**
+         * サムネイル.
+         */
         ImageView mThumbnail;
+        /**
+         * チャンネル名.
+         */
         TextView mChannelName;
     }
 }
