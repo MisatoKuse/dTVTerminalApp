@@ -210,7 +210,8 @@ public class RentalChListJsonParser extends AsyncTask<Object, Object, Object> {
                     activeData.setLicenseId(listData.getString(
                             JsonConstants.META_RESPONSE_LICENSE_ID));
                     }
-                    if (!listData.isNull(JsonConstants.META_RESPONSE_VAILD_END_DATE)) {
+                    String strDate = listData.getString(JsonConstants.META_RESPONSE_VAILD_END_DATE);
+                    if (!listData.isNull(JsonConstants.META_RESPONSE_VAILD_END_DATE) && DBUtils.isNumber(strDate)) {
                         activeData.setValidEndDate(StringUtils.changeString2Long(listData.getLong(
                                 JsonConstants.META_RESPONSE_VAILD_END_DATE)));
                     }

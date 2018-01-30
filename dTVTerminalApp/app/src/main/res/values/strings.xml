@@ -5,7 +5,7 @@
 <resources>
 
     <!-- Common -->
-    <string name="app_name">dTVTerminalApp</string>
+    <string name="app_name">ドコモテレビターミナルアプリ</string>
     <string name="back_key">く</string>
     <string name="close_key">×</string>
     <string name="list_transition">></string>
@@ -370,11 +370,9 @@
     <!-- MY番組表設定 -->
     <string name="my_channel_list_setting">マイ番組表設定</string>
     <string name="my_channel_list_setting_select_channel">チャンネルを選択</string>
-    <string name="my_channel_list_setting_failed_dialog_title">エラー</string>
-    <string name="my_channel_list_setting_failed_dialog_content_register">登録失敗!</string>
-    <string name="my_channel_list_setting_failed_dialog_content_unregister">解除失敗!</string>
-    <string name="my_channel_list_setting_dialog_title_unregister">確認!</string>
-    <string name="my_channel_list_setting_dialog_content_unregister">本当削除しますか?</string>
+    <string name="my_channel_list_setting_failed_dialog_content_register">マイ番組表の登録に失敗しました</string>
+    <string name="my_channel_list_setting_failed_dialog_content_unregister">マイ番組表の削除に失敗しました</string>
+    <string name="my_channel_list_setting_dialog_content_unregister">を番組表から削除しますか?</string>
 
     <!-- dアカウント登録 -->
     <string name="d_account_regist_error">dアカウントの処理に失敗しました</string>

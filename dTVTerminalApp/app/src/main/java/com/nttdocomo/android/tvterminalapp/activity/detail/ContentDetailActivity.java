@@ -12,6 +12,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Point;
@@ -25,9 +26,11 @@ import android.os.PowerManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -1129,19 +1132,22 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             ThumbnailProvider mThumbnailProvider = new ThumbnailProvider(this);
             mThumbnail.setTag(url);
             Bitmap bitmap = mThumbnailProvider.getThumbnailImage(mThumbnail, url);
-            if (bitmap != null) {
-                //縦横比を維持したまま幅100%に拡大縮小
-                DisplayMetrics displaymetrics = new DisplayMetrics();
-                WindowManager wm = getWindowManager();
-                Display display = wm.getDefaultDisplay();
-                display.getMetrics(displaymetrics);
-                float ratio = ((float) displaymetrics.widthPixels / (float) bitmap.getWidth());
-                Matrix matrix = new Matrix();
-                matrix.postScale(ratio, ratio);
-                Bitmap resizeBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
-                        bitmap.getHeight(), matrix, true);
-                mThumbnail.setImageBitmap(resizeBitmap);
+            if (bitmap == null) {
+                //サムネイル取得失敗時は取得失敗画像をセットする
+                bitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.error_movie);
             }
+
+            //縦横比を維持したまま幅100%に拡大縮小
+            DisplayMetrics displaymetrics = new DisplayMetrics();
+            WindowManager wm = getWindowManager();
+            Display display = wm.getDefaultDisplay();
+            display.getMetrics(displaymetrics);
+            float ratio = ((float) displaymetrics.widthPixels / (float) bitmap.getWidth());
+            Matrix matrix = new Matrix();
+            matrix.postScale(ratio, ratio);
+            Bitmap resizeBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
+                    bitmap.getHeight(), matrix, true);
+            mThumbnail.setImageBitmap(resizeBitmap);
         }
     }
 
@@ -1514,7 +1520,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                     CONTENTS_DETAIL_TAB_OTHER_MARGIN, CONTENTS_DETAIL_TAB_OTHER_MARGIN, CONTENTS_DETAIL_TAB_OTHER_MARGIN);
             tabTextView.setLayoutParams(params);
             tabTextView.setText(mTabNames[i]);
-            tabTextView.setTextSize(CONTENTS_DETAIL_TAB_TEXT_SIZE);
+            tabTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, CONTENTS_DETAIL_TAB_TEXT_SIZE);
             tabTextView.setGravity(Gravity.CENTER_VERTICAL);
             tabTextView.setTag(i);
             if (i == 0) {
@@ -1547,10 +1553,10 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 TextView mTextView = (TextView) mTabLinearLayout.getChildAt(i);
                 if (position == i) {
                     mTextView.setBackgroundResource(R.drawable.rectangele);
-                    mTextView.setTextColor(Color.GRAY);
+                    mTextView.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.contents_detail_tab_gray_text_color));
                 } else {
                     mTextView.setBackgroundResource(0);
-                    mTextView.setTextColor(Color.WHITE);
+                    mTextView.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.contents_detail_tab_white_text_color));
                 }
             }
         }

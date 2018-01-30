@@ -26,6 +26,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * ビデオジャンル一覧.
+ */
 public class VideoGenreProvider implements
         GenreListWebClient.GenreListJsonParserCallback,
         GenreCountGetWebClient.GenreCountGetJsonParserCallback {
@@ -98,7 +101,7 @@ public class VideoGenreProvider implements
      *
      * @param context コンテキスト
      */
-    public VideoGenreProvider(Context context) {
+    public VideoGenreProvider(final Context context) {
         this.mApiGenreListDataProviderCallback = (apiGenreListDataProviderCallback) context;
         genreListMapCallback = (GenreListMapCallback) context;
         mContext = context;
@@ -111,7 +114,8 @@ public class VideoGenreProvider implements
      * @param mRankGenreListCallback コールバック
      * @param type                   コンテンツタイプ
      */
-    public VideoGenreProvider(Context context, RankGenreListCallback mRankGenreListCallback, ContentsAdapter.ActivityTypeItem type) {
+    public VideoGenreProvider(final Context context, final RankGenreListCallback mRankGenreListCallback,
+                              final ContentsAdapter.ActivityTypeItem type) {
         this.type = type;
         this.mRankGenreListCallback = mRankGenreListCallback;
         mContext = context;
@@ -157,9 +161,8 @@ public class VideoGenreProvider implements
         int limit = 1;
         int offset = 1;
         String filter = "";
-        String type = "";
         int ageReq = 1;
-        webClient.getGenreCountGetApi(filter, ageReq, genreId, type, this);
+        webClient.getGenreCountGetApi(filter, ageReq, genreId, this);
     }
 
     /**

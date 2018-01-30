@@ -392,8 +392,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
      * @param dailyRankMapList コンテンツリストデータ
      * @return ListView表示用データ
      */
-    private List<ContentsData> setRankingContentData(
-            List<Map<String, String>> dailyRankMapList) {
+    private List<ContentsData> setRankingContentData(final List<Map<String, String>> dailyRankMapList) {
         DTVTLogger.start();
         List<ContentsData> rankingContentsDataList = new ArrayList<>();
 
@@ -570,13 +569,11 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             int offset = 1;
             String filter = "";
             int ageReq = 1;
-            String type = "";
             //TODO：暫定的に人気順でソートする
             String sort = JsonConstants.GENRE_PER_CONTENTS_SORT_PLAY_COUNT_DESC;
 
             //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
-            webClient.getContentsListPerGenreApi(limit, offset,
-                    filter, ageReq, genreId, type, sort, this);
+            webClient.getContentsListPerGenreApi(limit, offset, filter, ageReq, genreId, sort, this);
         }
         return list;
     }
