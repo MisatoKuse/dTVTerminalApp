@@ -16,11 +16,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.HorizontalScrollView;
@@ -61,8 +59,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class RecordedListActivity extends BaseActivity implements View.OnClickListener,
         RecordedBaseFragmentScrollListener, DlnaRecVideoListener {
@@ -71,7 +67,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     private LinearLayout mTabLinearLayout = null;
     private ViewPager mViewPager = null;
-    private SearchView mSearchView = null;
     private HorizontalScrollView mTabScrollView = null;
     private ProgressBar progressBar;
     private Boolean mIsMenuLaunch = false;
@@ -79,19 +74,11 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private DlnaProvRecVideo mDlnaProvRecVideo = null;
     private RecordedFragmentFactory mRecordedFragmentFactory = null;
 
-    private final static long SEARCH_INTERVAL = 1000;
-
     private final static int TEXT_SIZE = 15;
 
     private static final int SCREEN_TIME_WIDTH_PERCENT = 9;
     private static final int MARGIN_ZERO = 0;
     private static final int MARGIN_LEFT_TAB = 5;
-    private static final int MARGIN_LEFT_NOT_INDEX = 15;
-
-    // タブTYPE：すべて
-    private static final int RECORDED_MODE_NO_OF_ALL = 0;
-    // タブTYPE：持ち出し
-    private static final int RECORDED_MODE_NO_OF_TAKE_OUT = 1;
 
     public static final String RECORD_LIST_KEY = "recordListKey";
 
@@ -126,7 +113,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         getData();
         initTabVIew();
         setPagerAdapter();
-        setSearchViewState();
         DTVTLogger.end();
     }
 
@@ -138,126 +124,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             //mIsDlOk= DlnaProvDownload.initGlobalDl(DownloaderBase.getDownloadPath(this));
             DlnaProvDownload.initGlobalDl(DownloaderBase.getDownloadPath(this));
         }
-    }
-
-    /**
-     * TODO 検索バーの内部処理はSprint7では実装しない
-     */
-    private void setSearchViewState() {
-        mSearchView.setIconifiedByDefault(false);
-        SearchView.SearchAutoComplete searchAutoComplete
-                = findViewById(android.support.v7.appcompat.R.id.search_src_text);
-
-        //mSearchView.set
-
-        mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
-            Timer mTimer = null;
-
-            @Override
-            public void onFocusChange(View view, boolean isFocus) {
-                if (isFocus) {
-                    DTVTLogger.debug("SearchView Focus");
-                    // フォーカスが当たった時
-                    mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-
-                        private Handler mHandler = new Handler();
-                        // 次回検索日時
-                        long mSearchTime = 0;
-                        // 前回文字列
-                        private String mBeforeText = null;
-                        // 入力文字列
-                        private String mInputText = null;
-
-                        @Override
-                        public boolean onQueryTextSubmit(String s) {
-                            // 決定ボタンがタップされた時
-                            long submit_time = System.currentTimeMillis();
-                            mInputText = s;
-                            DTVTLogger.debug("onQueryTextSubmit");
-                            if ((mSearchTime + SEARCH_INTERVAL) > submit_time) {
-                                mTimer.cancel();
-                                mTimer = null;
-                            }
-                            // 検索処理実行
-//                            initSearchedResultView();
-                            setSearchData(mInputText);
-                            mSearchView.clearFocus();
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onQueryTextChange(String s) {
-                            // 検索フォームに文字が入力された時
-                            //一時検索画面が表示される
-//                            initSearchedResultView();
-                            if (s.length() > 0) {
-                                mInputText = s;
-                                mSearchTime = System.currentTimeMillis();
-                                // result用画面に切り替え
-                                if (mTimer == null) {
-                                    mTimer = new Timer();
-                                    mTimer.schedule(new TimerTask() {
-                                        @Override
-                                        public void run() {
-                                            mHandler.post(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    DTVTLogger.debug("1 sencond passed");
-                                                    mSearchTime = System.currentTimeMillis();
-                                                    if (!mInputText.equals(mBeforeText)) {
-                                                        // 文字列に変化があった場合
-                                                        DTVTLogger.debug("Start IncrementalSearch:" + mInputText);
-//                                                        initSearchedResultView();
-                                                        setSearchData(mInputText);
-                                                        mBeforeText = mInputText;
-                                                    } else {
-                                                        // nop.
-                                                        DTVTLogger.debug("Don't Start IncrementalSearch I=" + mInputText + ":B=" + mBeforeText);
-                                                    }
-                                                }
-                                            });
-                                        }
-                                    }, SEARCH_INTERVAL, SEARCH_INTERVAL);
-                                    mSearchView.setSubmitButtonEnabled(true);
-                                    //setSearchData(s);
-                                } else {
-                                    // nop.
-                                }
-                            } else {
-                                if (mTimer != null) {
-                                    mTimer.cancel();
-                                    mTimer = null;
-                                }
-                                mSearchView.setSubmitButtonEnabled(false);
-                                clearAllFragment();
-                            }
-                            //setSearchData(s);
-                            return false;
-                        }
-                    });
-                } else {
-                    if (mTimer != null) {
-                        mTimer.cancel();
-                        mTimer = null;
-                    }
-                    // フォーカスが外れた時
-                    mSearchView.clearFocus();
-                }
-            }
-        });
-        mSearchView.setFocusable(false);
-        searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.keyword_search_text));
-        searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.keyword_search_hint));
-        searchAutoComplete.setHint(R.string.keyword_search_hint);
-        searchAutoComplete.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE);
-    }
-
-    /**
-     * 検索処理実行
-     * @param searchText
-     */
-    private void setSearchData(String searchText) {
-        // TODO 検索バーの内部処理はSprint7では実装しない
     }
 
     /**
@@ -274,7 +140,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         mTabScrollView = findViewById(R.id.record_list_main_layout_scroll);
         mTabNames = getResources().getStringArray(R.array.record_list_tab_names);
         mRecordedFragmentFactory = new RecordedFragmentFactory();
-        mSearchView = findViewById(R.id.record_list_main_layout_searchview);
         progressBar = findViewById(R.id.record_list_main_layout_progress);
     }
 
@@ -793,18 +658,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             DTVTLogger.start();
             return mTabNames[position];
         }
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        DTVTLogger.start();
-        View currentView = getCurrentFocus();
-        if (currentView != null && currentView instanceof SearchView) {
-        } else {
-            //検索ボックス以外タッチならキーボードを消す
-            mSearchView.clearFocus();
-        }
-        return super.dispatchTouchEvent(event);
     }
 
     /**
