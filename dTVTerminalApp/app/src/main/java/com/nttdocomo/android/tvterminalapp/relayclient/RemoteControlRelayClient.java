@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -132,17 +133,25 @@ public class RemoteControlRelayClient {
     }
 
     /**
-     * サービス・カテゴリー分類.
+     * dTVチャンネル：サービス・カテゴリー分類.
      */
-    public enum SERVICE_CATEGORY_TYPES {
+    public enum DTVCHANNEL_SERVICE_CATEGORY_TYPES {
         // 初期値
         UNKNOWN,
         // 放送
-        DTV_CHANNEL_CATEGORY_BROADCAST,
+        DTVCHANNEL_CATEGORY_BROADCAST,
         // VOD（見逃し）
-        DTV_CHANNEL_CATEGORY_MISSED,
+        DTVCHANNEL_CATEGORY_MISSED,
         // VOD（関連番組）
-        DTV_CHANNEL_CATEGORY_RELATION,
+        DTVCHANNEL_CATEGORY_RELATION
+    }
+
+    /**
+     * ひかりTV：サービス・カテゴリー分類.
+     */
+    public enum H4D_SERVICE_CATEGORY_TYPES {
+        // 初期値
+        UNKNOWN,
         // 地デジ
         H4D_CATEGORY_TERRESTRIAL_DIGITAL,
         // BS
@@ -175,8 +184,12 @@ public class RemoteControlRelayClient {
     public enum STB_REQUEST_COMMAND_TYPES {
         // 受信タイムアウト時
         COMMAND_UNKNOWN,
+        // 電源ON/OFF要求
+        KEYEVENT_KEYCODE_POWER,
         // ユーザ登録チェック
         IS_USER_ACCOUNT_EXIST,
+        // ユーザーアカウント切り替え（エラー応答時）
+        SET_DEFAULT_USER_ACCOUNT,
         // サービスアプリ：タイトル詳細表示起動要求
         TITLE_DETAIL,
         // サービスアプリ：起動要求
@@ -197,6 +210,7 @@ public class RemoteControlRelayClient {
     private static final String RELAY_COMMAND_IS_USER_ACCOUNT_EXIST = "IS_USER_ACCOUNT_EXIST";
     private static final String RELAY_COMMAND_START_APPLICATION = "START_APPLICATION";
     private static final String RELAY_COMMAND_KEYEVENT_KEYCODE_POWER = "KEYEVENT_KEYCODE_POWER";
+    private static final String RELAY_COMMAND_SET_DEFAULT_USER_ACCOUNT = "SET_DEFAULT_USER_ACCOUNT";
     private static final String RELAY_COMMAND_UNKNOWN = "COMMAND_UNKNOWN";
     private static final String RELAY_COMMAND_APPLICATION_ID = "APP_ID";
     private static final String RELAY_COMMAND_REQUEST_COMMAND = "REQUEST_COMMAND";
@@ -232,14 +246,19 @@ public class RemoteControlRelayClient {
     private static final String RELAY_RESULT_APPLICATION_NOT_INSTALL = "APPLICATION_NOT_INSTALL";
     private static final String RELAY_RESULT_APPLICATION_ID_NOTEXIST = "APPLICATION_ID_NOTEXIST";
     private static final String RELAY_RESULT_APPLICATION_START_FAILED = "APPLICATION_START_FAILED";
-    private static final String RELAY_RESULT_VERSION_CODE_INCOMPATIBLE = "VERSION_CODE_INCOMPATIBLE";
+    private static final String RELAY_RESULT_VERSION_CODE_INCOMPATIBLE = "VERSION_CODE_INCOMPATIBLE"; // STBサービスアプリのバージョンコード不適合
     private static final String RELAY_RESULT_CONTENTS_ID_NOTEXIST = "CONTENTS_ID_NOTEXIST";
+    private static final String RELAY_RESULT_CRID_NOTEXIST  = "CRID_NOTEXIST";
+    private static final String RELAY_RESULT_CHNO_NOTEXIST  = "CHNO_NOTEXIST";
+    private static final String RELAY_RESULT_SERVICE_CATEGORY_TYPE_NOTEXIST = "SERVICE_CATEGORY_TYPE_NOTEXIST";
 
     private static final String RELAY_RESULT_NOT_REGISTERED_SERVICE = "NOT_REGISTERED_SERVICE";
     private static final String RELAY_RESULT_UNREGISTERED_USER_ID = "UNREGISTERED_USER_ID";
     private static final String RELAY_RESULT_CONNECTION_TIMEOUT = "CONNECTION_TIMEOUT";
     private static final String RELAY_RESULT_RELAY_SERVICE_BUSY = "SERVICE_BUSY";
     private static final String RELAY_RESULT_USER_INVALID_STATE = "USER_INVALID_STATE";
+    private static final String RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE = "dTVT_APPLICATION_VERSION_INCOMPATIBLE"; // dTVTアプリのバージョンコード不適合
+    private static final String RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE = "STB_RELAY_SERVICE_VERSION_INCOMPATIBLE"; // 中継アプリのバージョンコード不適合
 
     // アプリ起動要求種別に対応するアプリ名シンボル
     private static final Map<STB_APPLICATION_TYPES, String> mStbApplicationSymbolMap = new HashMap<STB_APPLICATION_TYPES, String>() {
@@ -253,11 +272,11 @@ public class RemoteControlRelayClient {
     };
 
     // dTVチャンネル・カテゴリー分類に対応するカテゴリー・シンボル名
-    private static final Map<SERVICE_CATEGORY_TYPES, String> mServiceCategorySymbolMap = new HashMap<SERVICE_CATEGORY_TYPES, String>() {
+    private static final Map<DTVCHANNEL_SERVICE_CATEGORY_TYPES, String> mDtvChannelServiceCategorySymbolMap = new HashMap<DTVCHANNEL_SERVICE_CATEGORY_TYPES, String>() {
         {
-            put(SERVICE_CATEGORY_TYPES.DTV_CHANNEL_CATEGORY_BROADCAST, STB_APPLICATION_DTVCHANNEL_CATEGORY_BROADCAST);    // dTVチャンネル・放送
-            put(SERVICE_CATEGORY_TYPES.DTV_CHANNEL_CATEGORY_MISSED, STB_APPLICATION_DTVCHANNEL_CATEGORY_MISSED);    // dTVチャンネル・VOD（見逃し）
-            put(SERVICE_CATEGORY_TYPES.DTV_CHANNEL_CATEGORY_RELATION, STB_APPLICATION_DTVCHANNEL_CATEGORY_RELATION);  // dTVチャンネル・VOD（関連番組）
+            put(DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_BROADCAST, STB_APPLICATION_DTVCHANNEL_CATEGORY_BROADCAST);    // dTVチャンネル・放送
+            put(DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_MISSED, STB_APPLICATION_DTVCHANNEL_CATEGORY_MISSED);    // dTVチャンネル・VOD（見逃し）
+            put(DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_RELATION, STB_APPLICATION_DTVCHANNEL_CATEGORY_RELATION);  // dTVチャンネル・VOD（関連番組）
         }
     };
 
@@ -289,7 +308,7 @@ public class RemoteControlRelayClient {
      */
     private boolean isRequestStbElapsedTime() {
         if (getRequestStbElapsedTime() > TcpClient.SEND_RECV_TIMEOUT) {
-            DTVTLogger.debug(String.format("RequestStbElapsedTime [%d] exceeded TCP timeout :[%d]", getRequestStbElapsedTime(), TcpClient.SEND_RECV_TIMEOUT));
+            DTVTLogger.debug(String.format(Locale.getDefault(), "RequestStbElapsedTime [%d] exceeded TCP timeout :[%d]", getRequestStbElapsedTime(), TcpClient.SEND_RECV_TIMEOUT));
             return true;
         }
         return false;
@@ -300,7 +319,7 @@ public class RemoteControlRelayClient {
      */
     private void setRequestStbElapsedTime() {
         mRequestStbElapsedTime = SystemClock.elapsedRealtime();
-        DTVTLogger.debug(String.format("RequestStbElapsedTime:[%d]", mRequestStbElapsedTime));
+        DTVTLogger.debug(String.format(Locale.getDefault(), "RequestStbElapsedTime:[%d]", mRequestStbElapsedTime));
     }
 
     /**
@@ -366,14 +385,14 @@ public class RemoteControlRelayClient {
 
         // 電源キーをフックする
         if (KEYCODE_POWER.equals(keycode)) {
-            DTVTLogger.debug(String.format("KEYCODE_POWER, action:%d canceled:%s", action, canceled));
+            DTVTLogger.debug(String.format(Locale.getDefault(), "KEYCODE_POWER, action:[%d] canceled:[%s]", action, canceled));
             if (KeyEvent.ACTION_UP == action && !canceled) {
                 //ユーザID取得
                 String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(context);
                 if (userId != null && !userId.isEmpty()) {
                     requestParam = setSwitchStbPowerRequest(userId);
                     if (requestParam != null) {
-                        DTVTLogger.debug(String.format("KEYCODE_POWER, action:%d canceled:%s send", action, canceled));
+                        DTVTLogger.debug(String.format(Locale.getDefault(), "KEYCODE_POWER, action:[%d] canceled:[%s] send", action, canceled));
                         // STB電源ON/OFF要求をSTBへ送信する
                         sendStartApplicationRequest(requestParam);
                     }
@@ -412,18 +431,25 @@ public class RemoteControlRelayClient {
         public static final int RELAY_RESULT_APPLICATION_ID_NOTEXIST = 13;
         public static final int RELAY_RESULT_APPLICATION_START_FAILED = 14;
         public static final int RELAY_RESULT_VERSION_CODE_INCOMPATIBLE = 15;
+        public static final int RELAY_RESULT_CONTENTS_ID_NOTEXIST = 16;
+        public static final int RELAY_RESULT_CRID_NOTEXIST = 17;
+        public static final int RELAY_RESULT_CHNO_NOTEXIST = 18;
 
-        public static final int RELAY_RESULT_NOT_REGISTERED_SERVICE = 16;
-        public static final int RELAY_RESULT_UNREGISTERED_USER_ID = 17;
-        public static final int RELAY_RESULT_CONNECTION_TIMEOUT = 18;
-        public static final int RELAY_RESULT_RELAY_SERVICE_BUSY = 19;
-        public static final int RELAY_RESULT_USER_INVALID_STATE = 20;
-        public static final int RELAY_RESULT_DISTINATION_UNREACHABLE = 21;
+        public static final int RELAY_RESULT_NOT_REGISTERED_SERVICE = 21;
+        public static final int RELAY_RESULT_UNREGISTERED_USER_ID = 22;
+        public static final int RELAY_RESULT_CONNECTION_TIMEOUT = 23;
+        public static final int RELAY_RESULT_RELAY_SERVICE_BUSY = 24;
+        public static final int RELAY_RESULT_USER_INVALID_STATE = 25;
+        public static final int RELAY_RESULT_DISTINATION_UNREACHABLE = 26;
+        public static final int RELAY_RESULT_SERVICE_CATEGORY_TYPE_NOTEXIST = 27;
+        public static final int RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE = 28;
+        public static final int RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE = 29;
 
         private int mResult = RELAY_RESULT_OK;
         private int mResultCode = RELAY_RESULT_SUCCESS;
         private STB_APPLICATION_TYPES mApplicationTypes = STB_APPLICATION_TYPES.UNKNOWN;
         private STB_REQUEST_COMMAND_TYPES mRequestCommandTypes = STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN;
+        private DTVCHANNEL_SERVICE_CATEGORY_TYPES mDtvChannelServiceCategoryTypes = DTVCHANNEL_SERVICE_CATEGORY_TYPES.UNKNOWN;
 
         // 応答結果の変換
         public final Map<String, Integer> mResultMap = new HashMap<String, Integer>() {
@@ -439,21 +465,28 @@ public class RemoteControlRelayClient {
                 put(RemoteControlRelayClient.RELAY_RESULT_INTERNAL_ERROR, RELAY_RESULT_INTERNAL_ERROR);
                 put(RemoteControlRelayClient.RELAY_RESULT_APPLICATION_NOT_INSTALL, RELAY_RESULT_APPLICATION_NOT_INSTALL);
                 put(RemoteControlRelayClient.RELAY_RESULT_APPLICATION_ID_NOTEXIST, RELAY_RESULT_APPLICATION_ID_NOTEXIST);
+                put(RemoteControlRelayClient.RELAY_RESULT_CONTENTS_ID_NOTEXIST, RELAY_RESULT_CONTENTS_ID_NOTEXIST);
+                put(RemoteControlRelayClient.RELAY_RESULT_CRID_NOTEXIST, RELAY_RESULT_CRID_NOTEXIST);
+                put(RemoteControlRelayClient.RELAY_RESULT_CHNO_NOTEXIST, RELAY_RESULT_CHNO_NOTEXIST);
                 put(RemoteControlRelayClient.RELAY_RESULT_APPLICATION_START_FAILED, RELAY_RESULT_APPLICATION_START_FAILED);
                 put(RemoteControlRelayClient.RELAY_RESULT_VERSION_CODE_INCOMPATIBLE, RELAY_RESULT_VERSION_CODE_INCOMPATIBLE);
-
                 put(RemoteControlRelayClient.RELAY_RESULT_NOT_REGISTERED_SERVICE, RELAY_RESULT_NOT_REGISTERED_SERVICE);
                 put(RemoteControlRelayClient.RELAY_RESULT_UNREGISTERED_USER_ID, RELAY_RESULT_UNREGISTERED_USER_ID);
                 put(RemoteControlRelayClient.RELAY_RESULT_CONNECTION_TIMEOUT, RELAY_RESULT_CONNECTION_TIMEOUT);
                 put(RemoteControlRelayClient.RELAY_RESULT_RELAY_SERVICE_BUSY, RELAY_RESULT_RELAY_SERVICE_BUSY);
                 put(RemoteControlRelayClient.RELAY_RESULT_USER_INVALID_STATE, RELAY_RESULT_USER_INVALID_STATE);
+                put(RemoteControlRelayClient.RELAY_RESULT_SERVICE_CATEGORY_TYPE_NOTEXIST, RELAY_RESULT_SERVICE_CATEGORY_TYPE_NOTEXIST);
+                put(RemoteControlRelayClient.RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE, RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE);
+                put(RemoteControlRelayClient.RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE, RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE);
             }
         };
         // リクエストコマンド応答結果コードの変換
         public final Map<String, STB_REQUEST_COMMAND_TYPES> mRequestCommandMap = new HashMap<String, STB_REQUEST_COMMAND_TYPES>() {
             {
                 put(RemoteControlRelayClient.RELAY_COMMAND_UNKNOWN, STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
+                put(RemoteControlRelayClient.RELAY_COMMAND_KEYEVENT_KEYCODE_POWER, STB_REQUEST_COMMAND_TYPES.KEYEVENT_KEYCODE_POWER);
                 put(RemoteControlRelayClient.RELAY_COMMAND_IS_USER_ACCOUNT_EXIST, STB_REQUEST_COMMAND_TYPES.IS_USER_ACCOUNT_EXIST);
+                put(RemoteControlRelayClient.RELAY_COMMAND_SET_DEFAULT_USER_ACCOUNT, STB_REQUEST_COMMAND_TYPES.SET_DEFAULT_USER_ACCOUNT);
                 put(RemoteControlRelayClient.RELAY_COMMAND_TITLE_DETAIL, STB_REQUEST_COMMAND_TYPES.TITLE_DETAIL);
                 put(RemoteControlRelayClient.RELAY_COMMAND_START_APPLICATION, STB_REQUEST_COMMAND_TYPES.START_APPLICATION);
             }
@@ -467,6 +500,15 @@ public class RemoteControlRelayClient {
                 put(STB_APPLICATION_DTVCHANNEL, STB_APPLICATION_TYPES.DTVCHANNEL);  // dTVチャンネル
                 put(STB_APPLICATION_HIKARITV, STB_APPLICATION_TYPES.HIKARITV);    // ひかりTV
                 put(STB_APPLICATION_DAZN, STB_APPLICATION_TYPES.DAZN);    // ダ・ゾーン
+            }
+        };
+
+        // dTVチャンネル：サービス・カテゴリー分類シンボルに対するdTVチャンネル：サービス・カテゴリー分類
+        private final Map<String, DTVCHANNEL_SERVICE_CATEGORY_TYPES> mDtvChannelServiceCategoryTypesMap = new HashMap<String, DTVCHANNEL_SERVICE_CATEGORY_TYPES>() {
+            {
+                put(STB_APPLICATION_DTVCHANNEL_CATEGORY_BROADCAST, DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_BROADCAST); // dTVチャンネル・放送
+                put(STB_APPLICATION_DTVCHANNEL_CATEGORY_MISSED, DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_MISSED); // dTVチャンネル・VOD（見逃し）
+                put(STB_APPLICATION_DTVCHANNEL_CATEGORY_RELATION, DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_RELATION); // dTVチャンネル・VOD（関連番組）
             }
         };
 
@@ -506,6 +548,14 @@ public class RemoteControlRelayClient {
 
         public void setRequestCommandTypes(STB_REQUEST_COMMAND_TYPES requestCommandTypes) {
             mRequestCommandTypes = requestCommandTypes;
+        }
+
+        public DTVCHANNEL_SERVICE_CATEGORY_TYPES getDtvChannelServiceCategoryTypes() {
+            return mDtvChannelServiceCategoryTypes;
+        }
+
+        public void setDtvChannelServiceCategoryTypes(DTVCHANNEL_SERVICE_CATEGORY_TYPES dtvChannelServiceCategoryTypes) {
+            mDtvChannelServiceCategoryTypes = dtvChannelServiceCategoryTypes;
         }
 
         public STB_REQUEST_COMMAND_TYPES getRequestCommandTypes() {
@@ -602,7 +652,7 @@ public class RemoteControlRelayClient {
      * @return
      */
     public boolean startApplicationDtvChannelRequest(final STB_APPLICATION_TYPES applicationType,
-                                                     final SERVICE_CATEGORY_TYPES serviceCategoryType,
+                                                     final DTVCHANNEL_SERVICE_CATEGORY_TYPES serviceCategoryType,
                                                     final String crid, final String chno, Context context) {
         String applicationId = getApplicationId(applicationType);
         String requestParam;
@@ -724,10 +774,10 @@ public class RemoteControlRelayClient {
      * @param serviceCategoryType
      * @return  dTVチャンネル・カテゴリー分類に対応するカテゴリー・シンボル名
      */
-    private String getServiceCategorySymbol(SERVICE_CATEGORY_TYPES serviceCategoryType) {
+    private String getDtvChannelServiceCategorySymbol(DTVCHANNEL_SERVICE_CATEGORY_TYPES serviceCategoryType) {
         String serviceCategorySymbol = "";
-        if (mServiceCategorySymbolMap.containsKey(serviceCategoryType)) {
-            serviceCategorySymbol = mServiceCategorySymbolMap.get(serviceCategoryType);
+        if (mDtvChannelServiceCategorySymbolMap.containsKey(serviceCategoryType)) {
+            serviceCategorySymbol = mDtvChannelServiceCategorySymbolMap.get(serviceCategoryType);
         }
         return serviceCategorySymbol;
     }
@@ -792,10 +842,7 @@ public class RemoteControlRelayClient {
          */
         private ResponseMessage setResponse(String recvResult) {
             JSONObject recvJson = new JSONObject();
-            String message = null;
-            String errorcode = null;
-            String requestCommand= null;
-            String appId = null;
+
             ResponseMessage response = new ResponseMessage();
             try {
                 response.setResult(ResponseMessage.RELAY_RESULT_ERROR);
@@ -806,7 +853,7 @@ public class RemoteControlRelayClient {
                     response.setResult(response.mResultMap.get(recvJson.get(RELAY_RESULT).toString()));
                     // エラーの場合、応答結果コードをエラーコード値に変換
                     if (recvJson.has(RELAY_RESULT_ERROR_CODE)) {
-                        errorcode = recvJson.get(RELAY_RESULT_ERROR_CODE).toString();
+                        String errorcode = recvJson.get(RELAY_RESULT_ERROR_CODE).toString();
                         if (response.mResultCodeMap.containsKey(errorcode)) {
                             response.setResultCode(response.mResultCodeMap.get(errorcode));
                         } else {
@@ -815,16 +862,27 @@ public class RemoteControlRelayClient {
                     }
                     // STBアプリ起動要求のアプリ種別をアプリ種別コードに変換
                     if (recvJson.has(RELAY_COMMAND_APPLICATION_ID)) {
-                        appId = recvJson.get(RELAY_COMMAND_APPLICATION_ID).toString();
+                        String appId = recvJson.get(RELAY_COMMAND_APPLICATION_ID).toString();
                         if (response.mStbApplicationEnumMap.containsKey(appId)) {
                             response.setApplicationTypes(response.mStbApplicationEnumMap.get(appId));
                         } else {
                             response.setResultCode(ResponseMessage.RELAY_RESULT_INTERNAL_ERROR);
                         }
                     }
+                    // STBアプリ起動要求のサービス・カテゴリー分類シンボルに対するdTVチャンネル：サービス・カテゴリー分類に変換
+                    if (recvJson.has(RELAY_COMMAND_SERVICE_CATEGORY_TYPE)) {
+                        String dtvChannelServiceCategoryType = recvJson.get(RELAY_COMMAND_SERVICE_CATEGORY_TYPE).toString();
+                        if (response.mDtvChannelServiceCategoryTypesMap.containsKey(dtvChannelServiceCategoryType)) {
+                            response.setDtvChannelServiceCategoryTypes(response.mDtvChannelServiceCategoryTypesMap.get(dtvChannelServiceCategoryType));
+                        } else if (/*response.mH4dServiceCategoryTypesMap.containsKey(h4dServiceCategoryType)*/false) {
+                            /*response.setH4dServiceCategoryTypes(response.mH4dServiceCategoryTypesMap.get(h4dServiceCategoryType));*/
+                        } else {
+                            response.setResultCode(ResponseMessage.RELAY_RESULT_INTERNAL_ERROR);
+                        }
+                    }
                     // dアカチェック要求のリクエストコマンド種別をリクエストコマンド種別に変換
                     if (recvJson.has(RELAY_COMMAND_REQUEST_COMMAND)) {
-                        requestCommand = recvJson.get(RELAY_COMMAND_REQUEST_COMMAND).toString();
+                        String requestCommand = recvJson.get(RELAY_COMMAND_REQUEST_COMMAND).toString();
                         if (response.mRequestCommandMap.containsKey(requestCommand)) {
                             response.setRequestCommandTypes(response.mRequestCommandMap.get(requestCommand));
                         } else {
@@ -915,7 +973,7 @@ public class RemoteControlRelayClient {
      * @return アプリ起動要求メッセージ（JSON形式）
      */
     private String setTitleDetailDtvChannelRequest(String applicationId,
-                                                    SERVICE_CATEGORY_TYPES serviceCategoryType,
+                                                   DTVCHANNEL_SERVICE_CATEGORY_TYPES serviceCategoryType,
                                                     String crid, String chno, String userId) {
 
         JSONObject requestJson = new JSONObject();
@@ -924,7 +982,7 @@ public class RemoteControlRelayClient {
         try {
             requestJson.put(RELAY_COMMAND, RELAY_COMMAND_TITLE_DETAIL);
             requestJson.put(RELAY_COMMAND_APPLICATION_ID, applicationId);
-            requestJson.put(RELAY_COMMAND_SERVICE_CATEGORY_TYPE, getServiceCategorySymbol(serviceCategoryType));
+            requestJson.put(RELAY_COMMAND_SERVICE_CATEGORY_TYPE, getDtvChannelServiceCategorySymbol(serviceCategoryType));
             requestJson.put(RELAY_COMMAND_CRID, crid);
             requestJson.put(RELAY_COMMAND_CHNO, chno);
             requestJson.put(RELAY_COMMAND_APPLICATION_VERSION_COMPATIBILITY, getApplicationVersionCompatibilityRequest());

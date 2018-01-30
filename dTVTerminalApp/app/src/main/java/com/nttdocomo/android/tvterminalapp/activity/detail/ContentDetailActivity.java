@@ -1989,21 +1989,21 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                         case DTV_CHANNEL_CATEGORY_BROADCAST:
                             requestStartApplicationDtvChannel(
                                     RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL,
-                                    RemoteControlRelayClient.SERVICE_CATEGORY_TYPES.DTV_CHANNEL_CATEGORY_BROADCAST,
+                                    RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_BROADCAST,
                                     mDetailFullData.getCrid(), mDetailData.getChannelId());
                             break;
                         //VOD(見逃し)の場合
                         case DTV_CHANNEL_CATEGORY_MISSED:
                             requestStartApplicationDtvChannel(
                                     RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL,
-                                    RemoteControlRelayClient.SERVICE_CATEGORY_TYPES.DTV_CHANNEL_CATEGORY_MISSED,
+                                    RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_MISSED,
                                     mDetailFullData.getCrid(), mDetailData.getChannelId());
                             break;
                         //VOD(見逃し)の場合
                         case DTV_CHANNEL_CATEGORY_RELATION:
                             requestStartApplicationDtvChannel(
                                     RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL,
-                                    RemoteControlRelayClient.SERVICE_CATEGORY_TYPES.DTV_CHANNEL_CATEGORY_RELATION,
+                                    RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_RELATION,
                                     mDetailFullData.getCrid(), mDetailData.getChannelId());
                             break;
                         default:

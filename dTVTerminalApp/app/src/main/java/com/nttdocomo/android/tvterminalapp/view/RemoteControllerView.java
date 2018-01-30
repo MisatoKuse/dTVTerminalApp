@@ -449,7 +449,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      */
     public void sendStartApplicationDtvChannelRequest(
             RemoteControlRelayClient.STB_APPLICATION_TYPES type,
-            RemoteControlRelayClient.SERVICE_CATEGORY_TYPES serviceCategoryType,
+            RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES serviceCategoryType,
             String crid, String chno) {
         DTVTLogger.start();
         remoteControllerSendKeyAction.getRelayClient().startApplicationDtvChannelRequest(type, serviceCategoryType, crid, chno, mContext);

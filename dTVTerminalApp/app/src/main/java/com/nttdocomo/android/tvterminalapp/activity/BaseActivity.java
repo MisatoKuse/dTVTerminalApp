@@ -1022,7 +1022,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      * @param serviceCategoryType
      */
     protected void requestStartApplicationDtvChannel(final RemoteControlRelayClient.STB_APPLICATION_TYPES type,
-                                                        final RemoteControlRelayClient.SERVICE_CATEGORY_TYPES serviceCategoryType,
+                                                        final RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES serviceCategoryType,
                                                         final String crid, final String chno) {
         remoteControllerView.sendStartApplicationDtvChannelRequest(type, serviceCategoryType, crid, chno);
     }
