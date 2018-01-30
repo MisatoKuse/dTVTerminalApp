@@ -5,16 +5,6 @@
     android:background="@color/recorded_background"
     android:orientation="vertical">
 
-    <android.support.v7.widget.SearchView
-        android:id="@+id/record_list_main_layout_searchview"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/recorded_searchview_height"
-        android:layout_marginBottom="@dimen/recorded_searchview_bottom_margin"
-        android:layout_marginLeft="@dimen/recorded_searchview_left_margin"
-        android:layout_marginRight="@dimen/recorded_searchview_right_margin"
-        android:layout_marginTop="@dimen/recorded_searchview_top_margin"
-        android:background="@color/keyword_search_background" />
-
     <!-- 検索結果画面 -->
     <RelativeLayout
         android:id="@+id/record_list_main_layout_result"
