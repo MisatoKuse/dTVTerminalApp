@@ -180,6 +180,7 @@ public class RemoteControlRelayClient {
 
     /**
      * リクエストコマンド種別.
+     *
      */
     public enum STB_REQUEST_COMMAND_TYPES {
         // 受信タイムアウト時
@@ -190,6 +191,8 @@ public class RemoteControlRelayClient {
         IS_USER_ACCOUNT_EXIST,
         // ユーザーアカウント切り替え（エラー応答時）
         SET_DEFAULT_USER_ACCOUNT,
+        // アプリケーションバージョンチェック
+        CHECK_APPLICATION_VERSION_COMPATIBILITY,
         // サービスアプリ：タイトル詳細表示起動要求
         TITLE_DETAIL,
         // サービスアプリ：起動要求
@@ -211,6 +214,7 @@ public class RemoteControlRelayClient {
     private static final String RELAY_COMMAND_START_APPLICATION = "START_APPLICATION";
     private static final String RELAY_COMMAND_KEYEVENT_KEYCODE_POWER = "KEYEVENT_KEYCODE_POWER";
     private static final String RELAY_COMMAND_SET_DEFAULT_USER_ACCOUNT = "SET_DEFAULT_USER_ACCOUNT";
+    private static final String RELAY_COMMAND_CHECK_APPLICATION_VERSION_COMPATIBILITY = "CHECK_APPLICATION_VERSION_COMPATIBILITY";
     private static final String RELAY_COMMAND_UNKNOWN = "COMMAND_UNKNOWN";
     private static final String RELAY_COMMAND_APPLICATION_ID = "APP_ID";
     private static final String RELAY_COMMAND_REQUEST_COMMAND = "REQUEST_COMMAND";
@@ -486,7 +490,8 @@ public class RemoteControlRelayClient {
                 put(RemoteControlRelayClient.RELAY_COMMAND_UNKNOWN, STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
                 put(RemoteControlRelayClient.RELAY_COMMAND_KEYEVENT_KEYCODE_POWER, STB_REQUEST_COMMAND_TYPES.KEYEVENT_KEYCODE_POWER);
                 put(RemoteControlRelayClient.RELAY_COMMAND_IS_USER_ACCOUNT_EXIST, STB_REQUEST_COMMAND_TYPES.IS_USER_ACCOUNT_EXIST);
-                put(RemoteControlRelayClient.RELAY_COMMAND_SET_DEFAULT_USER_ACCOUNT, STB_REQUEST_COMMAND_TYPES.SET_DEFAULT_USER_ACCOUNT);
+                put(RemoteControlRelayClient.RELAY_COMMAND_SET_DEFAULT_USER_ACCOUNT, STB_REQUEST_COMMAND_TYPES.SET_DEFAULT_USER_ACCOUNT); // エラー応答時
+                put(RemoteControlRelayClient.RELAY_COMMAND_CHECK_APPLICATION_VERSION_COMPATIBILITY, STB_REQUEST_COMMAND_TYPES.CHECK_APPLICATION_VERSION_COMPATIBILITY); // エラー応答時
                 put(RemoteControlRelayClient.RELAY_COMMAND_TITLE_DETAIL, STB_REQUEST_COMMAND_TYPES.TITLE_DETAIL);
                 put(RemoteControlRelayClient.RELAY_COMMAND_START_APPLICATION, STB_REQUEST_COMMAND_TYPES.START_APPLICATION);
             }
