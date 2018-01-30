@@ -223,10 +223,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     protected void onResume() {
         super.onResume();
 
-        //起動時はプログレスダイアログを表示
-        initData();
         //アプリ起動時のデータ取得はonCreateで実施済みのためonResumeでは行わない
         if (mIsOnCreateFinish) {
+            //起動時はプログレスダイアログを表示
+            initData();
             requestHomeData();
         }
         mIsOnCreateFinish = true;
