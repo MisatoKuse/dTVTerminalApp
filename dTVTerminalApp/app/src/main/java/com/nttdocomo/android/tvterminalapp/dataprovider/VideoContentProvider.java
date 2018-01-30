@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * ビデオ一覧専用DPクラス
+ * ビデオ一覧専用DPクラス.
  */
-public class VideoContentProvider  extends  ClipKeyListDataProvider implements
+public class VideoContentProvider extends ClipKeyListDataProvider implements
         ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback {
 
     private Context mContext = null;
@@ -34,9 +34,9 @@ public class VideoContentProvider  extends  ClipKeyListDataProvider implements
     private VideoRankList mVideoRankList = null;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
-     * @param mContext
+     * @param mContext コンテキスト
      */
     public VideoContentProvider(Context mContext) {
         super(mContext);
@@ -45,23 +45,25 @@ public class VideoContentProvider  extends  ClipKeyListDataProvider implements
     }
 
     /**
-     * ビデオコンテンツ一覧画面用データを返却するためのコールバック
+     * ビデオコンテンツ一覧画面用データを返却するためのコールバック.
      */
     public interface apiVideoContentDataProviderCallback {
         /**
-         * ビデオコンテンツ一覧用コールバック
+         * ビデオコンテンツ一覧用コールバック.
          *
-         * @param videoHashMap
+         * @param videoHashMap ビデオコンテンツ一覧データ
          */
         void videoContentCallback(List<ContentsData> videoHashMap);
     }
 
     /**
-     * VideoContentListActivityからのデータ取得要求受付
+     * VideoContentListActivityからのデータ取得要求受付.
+     *
+     * @param genreId
      */
-    public void getVideoContentData(String genreId) {
+    public void getVideoContentData(final String genreId) {
         mVideoRankList = null;
-        if(mRequiredClipKeyList) {
+        if (mRequiredClipKeyList) {
             getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
         }
         // コンテンツ数
@@ -69,43 +71,40 @@ public class VideoContentProvider  extends  ClipKeyListDataProvider implements
     }
 
     /**
-     * ビデオコンテンツ一覧のデータ取得要求を行う
-     *
-     * @return
+     * ビデオコンテンツ一覧のデータ取得要求を行う.
+     * @param genreId ジャンルID
      */
-    private void getVideoContentListData(String genreId) {
+    private void getVideoContentListData(final String genreId) {
         //通信クラスにデータ取得要求を出す
         ContentsListPerGenreWebClient webClient = new ContentsListPerGenreWebClient(mContext);
         int limit = 1;
         int offset = 1;
         String filter = "";
         int ageReq = 1;
-        String type = "";
         //TODO：暫定的に人気順でソートする
         String sort = JsonConstants.GENRE_PER_CONTENTS_SORT_PLAY_COUNT_DESC;
 
         //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
-        webClient.getContentsListPerGenreApi(limit, offset,
-                filter, ageReq, genreId, type, sort, this);
+        webClient.getContentsListPerGenreApi(limit, offset, filter, ageReq, genreId, sort, this);
     }
 
     /**
-     * ビデオコンテンツ一覧をVideoContentListActivityに送る
+     * ビデオコンテンツ一覧をVideoContentListActivityに送る.
      *
-     * @param list
+     * @param list ビデオコンテンツ一覧
      */
-    public void sendContentListData(List<Map<String, String>> list) {
+    private void sendContentListData(List<Map<String, String>> list) {
         List<ContentsData> contentsDataList = setVideoContentData(list);
         mApiVideoContentDataProviderCallback.videoContentCallback(contentsDataList);
     }
 
     /**
-     * 取得したリストマップをContentsDataクラスへ入れる
+     * 取得したリストマップをContentsDataクラスへ入れる.
      *
      * @param videoContentMapList コンテンツリストデータ
      * @return dataList 読み込み表示フラグ
      */
-    private List<ContentsData> setVideoContentData(List<Map<String, String>> videoContentMapList) {
+    private List<ContentsData> setVideoContentData(final List<Map<String, String>> videoContentMapList) {
         this.videoContentMapList = videoContentMapList;
         List<ContentsData> videoContentsDataList = new ArrayList<>();
 
@@ -153,7 +152,7 @@ public class VideoContentProvider  extends  ClipKeyListDataProvider implements
 //            requestData.setTableType(decisionTableType(contentsType, contentsType));
             contentsData.setRequestData(requestData);
 
-            if(mRequiredClipKeyList) {
+            if (mRequiredClipKeyList) {
                 // クリップ状態をコンテンツリストに格納
                 contentsData.setClipStatus(getClipStatus(dispType, contentsType, dTv,
                         contentsData.getCrid(), contentsData.getServiceId(),

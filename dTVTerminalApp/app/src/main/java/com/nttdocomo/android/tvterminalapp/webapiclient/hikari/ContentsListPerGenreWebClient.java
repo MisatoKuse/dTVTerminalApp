@@ -17,13 +17,14 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+/**
+ * ジャンル毎コンテンツ一覧.
+ */
 public class ContentsListPerGenreWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
-    //ジャンル毎コンテンツ一覧
-
     /**
-     * コールバック
+     * コールバック.
      */
     public interface ContentsListPerGenreJsonParserCallback {
         /**
@@ -39,16 +40,16 @@ public class ContentsListPerGenreWebClient
             mContentsListPerGenreJsonParserCallback;
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
-    public ContentsListPerGenreWebClient(Context context) {
+    public ContentsListPerGenreWebClient(final Context context) {
         super(context);
     }
 
     /**
-     * 通信成功時のコールバック
+     * 通信成功時のコールバック.
      *
      * @param returnCode 戻り値構造体
      */
@@ -56,7 +57,7 @@ public class ContentsListPerGenreWebClient
     public void onAnswer(ReturnCode returnCode) {
         //拡張情報付きでパースを行う
         VideoRankJsonParser videoRankJsonParser = new VideoRankJsonParser(
-                mContentsListPerGenreJsonParserCallback,returnCode.extraData);
+                mContentsListPerGenreJsonParserCallback, returnCode.extraData);
 
         //JSONをパースして、データを返す
         videoRankJsonParser.execute(returnCode.bodyData);
@@ -75,24 +76,23 @@ public class ContentsListPerGenreWebClient
 
 
     /**
-     * ジャンル毎コンテンツ一覧取得
+     * ジャンル毎コンテンツ一覧取得.
      *
      * @param limit                                  取得する最大件数(値は1以上)
      * @param offset                                 取得位置(値は1以上)
      * @param filter                                 フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
      * @param ageReq                                 年齢設定値1-17（ゼロの場合は1扱い）
      * @param genreId                                ジャンルID（ヌルや空文字ならば出力されず、無指定となる）
-     * @param type                                   タイプ（hikaritv_vod/dtv_vod/hikaritv_and_dtv_vod/指定なしはすべてのVOD）
      * @param sort                                   ソート指定（titleruby_asc/avail_s_asc/avail_e_desc/play_count_desc
      * @param contentsListPerGenreJsonParserCallback コールバック
      * @return パラメータエラー等ならばfalse
      */
-    public boolean getContentsListPerGenreApi(int limit, int offset, String filter, int ageReq,
-                                              String genreId, String type, String sort,
-                                              ContentsListPerGenreJsonParserCallback
-                                                      contentsListPerGenreJsonParserCallback) {
+    public boolean getContentsListPerGenreApi(
+            final int limit, final int offset, final String filter, final int ageReq,
+            final String genreId, final String sort,
+            final ContentsListPerGenreJsonParserCallback contentsListPerGenreJsonParserCallback) {
         //パラメーターのチェック(genreIdはヌルを受け付けるので、チェックしない)
-        if (!checkNormalParameter(limit, offset, filter, ageReq, genreId, type, sort,
+        if (!checkNormalParameter(limit, offset, filter, ageReq, genreId, sort,
                 contentsListPerGenreJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、falseで帰る
             return false;
@@ -101,8 +101,10 @@ public class ContentsListPerGenreWebClient
         //コールバックを呼べるようにする
         mContentsListPerGenreJsonParserCallback = contentsListPerGenreJsonParserCallback;
 
+        //取得コンテンツタイプを"すべて"に固定
+        final String CONTENTS_LIST_TYPE = "";
         //送信用パラメータの作成
-        String sendParameter = makeSendParameter(limit, offset, filter, ageReq, genreId, type, sort);
+        String sendParameter = makeSendParameter(limit, offset, filter, ageReq, genreId, CONTENTS_LIST_TYPE, sort);
 
         //JSONの組み立てに失敗していれば、falseで帰る
         if (sendParameter.isEmpty()) {
@@ -111,33 +113,32 @@ public class ContentsListPerGenreWebClient
 
         //拡張情報を追加する
         Bundle bundle = new Bundle();
-        bundle.putString("genreId",genreId);
+        bundle.putString("genreId", genreId);
 
         //ジャンル毎コンテンツ一覧取得を呼び出す
         openUrlWithExtraData(UrlConstants.WebApiUrl.CONTENTS_LIST_PER_GENRE_WEB_CLIENT,
-                sendParameter, this,bundle);
+                sendParameter, this, bundle);
 
         //今のところ失敗は無いので、trueで帰る
         return true;
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param limit                                  取得する最大件数(値は1以上)
      * @param offset                                 取得位置(値は1以上)
      * @param filter                                 フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
      * @param ageReq                                 年齢設定値1-17（ゼロの場合は1扱い）
      * @param genreId                                ジャンルID（ヌルや空文字ならば出力されず、無指定となる）
-     * @param type                                   タイプ（hikaritv_vod/dtv_vod/hikaritv_and_dtv_vod/指定なしはすべてのVOD）
      * @param sort                                   ソート指定（titleruby_asc/avail_s_asc/avail_e_desc/play_count_desc
      * @param contentsListPerGenreJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(int limit, int offset, String filter, int ageReq,
-                                         String genreId, String type, String sort,
-                                         ContentsListPerGenreJsonParserCallback
-                                                 contentsListPerGenreJsonParserCallback) {
+    private boolean checkNormalParameter(
+            final int limit, final int offset, final String filter, final int ageReq,
+            final String genreId, final String sort,
+            final ContentsListPerGenreJsonParserCallback contentsListPerGenreJsonParserCallback) {
         // 各値が下限以下ならばfalse
         if (limit < 1) {
             return false;
@@ -166,14 +167,6 @@ public class ContentsListPerGenreWebClient
         List<String> typeList = makeStringArry(TYPE_HIKARI_TV_VOD, TYPE_DTV_VOD,
                 TYPE_HIKARI_TV_AND_DTV_VOD);
 
-        //指定された文字がひとまとめにした中に含まれるか確認
-        if (typeList.indexOf(type) == -1) {
-            //空文字ならば有効なので、それ以外はfalse
-            if (!type.isEmpty()) {
-                return false;
-            }
-        }
-
         //ソート用の固定値をひとまとめにする
         List<String> sortList = makeStringArry(SORT_TITLE_RUBY_ASC, SORT_AVAIL_S_ASC,
                 SORT_AVAIL_E_DESC, SORT_PLAY_COUNT_DESC);
@@ -196,7 +189,7 @@ public class ContentsListPerGenreWebClient
     }
 
     /**
-     * 指定されたパラメータをJSONで組み立てて文字列にする
+     * 指定されたパラメータをJSONで組み立てて文字列にする.
      *
      * @param limit   取得する最大件数(値は1以上)
      * @param offset  取得位置(値は1以上)
@@ -207,10 +200,12 @@ public class ContentsListPerGenreWebClient
      * @param sort    ソート指定（titleruby_asc/avail_s_asc/avail_e_desc/play_count_desc
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(int limit, int offset, String filter, int ageReq,
-                                     String genreId, String type, String sort) {
+    private String makeSendParameter(final int limit, final int offset, final String filter,
+                                     final int ageReq, final String genreId, final String type,
+                                     final String sort) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
+        int intAgeReq = ageReq;
         try {
             //ページャー部の作成
             JSONObject jsonPagerObject = new JSONObject();
@@ -222,11 +217,11 @@ public class ContentsListPerGenreWebClient
             jsonObject.put(JsonConstants.META_RESPONSE_FILTER, filter);
 
             //数字がゼロの場合は無指定と判断して1にする
-            if (ageReq == 0) {
-                ageReq = 1;
+            if (intAgeReq == 0) {
+                intAgeReq = 1;
             }
 
-            jsonObject.put(JsonConstants.META_RESPONSE_AGE_REQ, ageReq);
+            jsonObject.put(JsonConstants.META_RESPONSE_AGE_REQ, intAgeReq);
 
             //ヌルや空文字ではないならば、値を出力する
             if (genreId != null && !genreId.isEmpty()) {

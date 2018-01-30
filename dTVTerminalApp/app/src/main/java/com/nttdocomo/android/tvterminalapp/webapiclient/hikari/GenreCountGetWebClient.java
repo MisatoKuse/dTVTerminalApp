@@ -15,9 +15,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * ジャンル毎コンテンツ数.
+ */
 public class GenreCountGetWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
@@ -29,11 +31,11 @@ public class GenreCountGetWebClient
     private static final String TYPE_STR = "type_id";
 
     /**
-     * コールバック
+     * コールバック.
      */
     public interface GenreCountGetJsonParserCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
          *
          * @param genreCountGetResponse JSONパース後のデータ
          */
@@ -46,11 +48,11 @@ public class GenreCountGetWebClient
             mGenreCountGetJsonParserCallback;
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
-    public GenreCountGetWebClient(Context context) {
+    public GenreCountGetWebClient(final Context context) {
         super(context);
     }
 
@@ -80,23 +82,22 @@ public class GenreCountGetWebClient
 
     /**
      * ジャンル毎コンテンツ数取得
-     * (パラメータ名は元仕様に準拠）
+     * (パラメータ名は元仕様に準拠）.
      *
      * @param filter                          フィルター（release/testa/demoの何れかを指定可能。ヌルや空文字の場合はreleaseとなる）
      * @param ageReq                          年齢設定値（1から17を指定。それ以外を指定した場合1(全年齢)となる）
      * @param genreId                         ジャンルID
-     * @param type                            タイプ（hikaritv_vod/dtv_vod/hikaritv_and_dtv_vodのいずれかを指定。ヌルや空文字の場合は全てのVODとなる）
      * @param genreCountGetJsonParserCallback コールバック
      * @return パラメータエラーの場合はfalse
      */
-    public boolean getGenreCountGetApi(String filter, int ageReq, List<String> genreId, String type,
-                                       GenreCountGetJsonParserCallback
-                                               genreCountGetJsonParserCallback) {
+    public boolean getGenreCountGetApi(
+            final String filter, final int ageReq, final List<String> genreId,
+            final GenreCountGetJsonParserCallback genreCountGetJsonParserCallback) {
 
         DTVTLogger.start();
 
         //パラメーターのチェック
-        if (!checkNormalParameter(filter, ageReq, genreId, type,
+        if (!checkNormalParameter(filter, ageReq, genreId,
                 genreCountGetJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、falseで帰る
             DTVTLogger.end_ret(String.valueOf(false));
@@ -107,8 +108,10 @@ public class GenreCountGetWebClient
         mGenreCountGetJsonParserCallback =
                 genreCountGetJsonParserCallback;
 
+        //取得コンテンツタイプを"すべて"に固定
+        final String GENRE_CONTENT_COUNT_TYPE = "";
         //送信用パラメータの作成
-        String sendParameter = makeSendParameter(filter, ageReq, genreId, type);
+        String sendParameter = makeSendParameter(filter, ageReq, genreId, GENRE_CONTENT_COUNT_TYPE);
 
         //送信パラメータがヌルや空文字ならばfalse
         if (sendParameter == null || sendParameter.isEmpty()) {
@@ -127,17 +130,17 @@ public class GenreCountGetWebClient
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param filter         フィルター（release/testa/demoの何れかを指定可能。ヌルや空文字の場合はreleaseとなる）
      * @param ageReq         年齢設定値（1から17を指定。それ以外を指定した場合1(全年齢)となる）
      * @param genreId        ジャンルID
-     * @param type           タイプ（hikaritv_vod/dtv_vod/hikaritv_and_dtv_vodのいずれかを指定。ヌルや空文字の場合は全てのVODとなる）
      * @param parserCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(String filter, int ageReq, List<String> genreId, String type,
-                                         GenreCountGetJsonParserCallback parserCallback) {
+    private boolean checkNormalParameter(
+            final String filter, final int ageReq, final List<String> genreId,
+            final GenreCountGetJsonParserCallback parserCallback) {
 
         //フィルターはヌルや空文字が有効なので、先に判定する
         if (!(filter == null || filter.isEmpty())) {
@@ -158,16 +161,6 @@ public class GenreCountGetWebClient
             return false;
         }
 
-        //タイプはヌルや空文字が有効なので、先に判定する
-        if (!(type == null || type.isEmpty())) {
-            //ヌルや空文字以外の場合、正規の三種類以外ならばfalse
-            List<String> typeList = makeStringArry(
-                    TYPE_HIKARI_TV_VOD, TYPE_DTV_VOD, TYPE_HIKARI_TV_AND_DTV_VOD);
-            if (typeList.indexOf(type) == -1) {
-                return false;
-            }
-        }
-
         //コールバックが指定されていないならばfalse
         if (parserCallback == null) {
             return false;
@@ -179,7 +172,7 @@ public class GenreCountGetWebClient
 
 
     /**
-     * 指定されたパラメータをJSONで組み立てて文字列にする
+     * 指定されたパラメータをJSONで組み立てて文字列にする.
      *
      * @param filter  フィルター（release/testa/demoの何れかを指定可能。ヌルや空文字の場合はreleaseとなる）
      * @param ageReq  年齢設定値（1から17を指定。それ以外を指定した場合1(全年齢)となる）
@@ -187,29 +180,32 @@ public class GenreCountGetWebClient
      * @param type    タイプ（hikaritv_vod/dtv_vod/hikaritv_and_dtv_vodのいずれかを指定。ヌルや空文字の場合は全てのVODとなる）
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(String filter, int ageReq, List<String> genreId, String type) {
+    private String makeSendParameter(
+            final String filter, final int ageReq, final List<String> genreId, final String type) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
+        String strFilter = filter;
+        int intAge = ageReq;
         try {
             //フィルターがヌルや空文字だった場合は"release"とする
-            if (filter == null || filter.isEmpty()) {
-                filter = WebApiBasePlala.FILTER_RELEASE;
+            if (strFilter == null || strFilter.isEmpty()) {
+                strFilter = WebApiBasePlala.FILTER_RELEASE;
             }
 
             //フィルターの設定
-            jsonObject.put(FILTER_STR, filter);
+            jsonObject.put(FILTER_STR, strFilter);
 
             //年齢設定値がゼロの場合は1になる
-            if (ageReq < WebApiBasePlala.AGE_LOW_VALUE) {
-                ageReq = WebApiBasePlala.AGE_LOW_VALUE;
+            if (intAge < WebApiBasePlala.AGE_LOW_VALUE) {
+                intAge = WebApiBasePlala.AGE_LOW_VALUE;
             }
 
             //年齢設定の設定
-            jsonObject.put(AGE_REQ_STR, ageReq);
+            jsonObject.put(AGE_REQ_STR, intAge);
 
             //ジャンルIDはリストの中に入れなければならない
             JSONArray array = new JSONArray();
-            for(int i = 0;i<genreId.size();i++){
+            for (int i = 0; i < genreId.size(); i++) {
                 JSONObject genreJson = new JSONObject();
                 genreJson.put(GENRE_ID_STR, genreId.get(i));
                 array.put(genreJson);

@@ -433,7 +433,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             //ビデオランキング
             //TODO：Sprint11では視聴年齢値、ソート順のみの指定のためその他の値は固定値
             int ageReq = SharedPreferencesUtils.getSharedPreferencesAgeReq(mContext);
-            List<Map<String, String>> VideoRankList = getVideoRankListData(1, 1, "", ageReq, "", "",
+            List<Map<String, String>> VideoRankList = getVideoRankListData(1, 1, "", ageReq, "",
                     JsonConstants.GENRE_PER_CONTENTS_SORT_PLAY_COUNT_DESC);
             if (VideoRankList != null && VideoRankList.size() > 0) {
                 sendVideoRankListData(VideoRankList);
@@ -647,10 +647,10 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 mContext.getApplicationContext(), this);
 
         //レコメンドデータプロバイダーからおすすめ番組情報を取得する・DBに既に入っていた場合はその値を使用するので、trueを指定する
-        List<ContentsData> recommendTvData =
-                recommendDataProvider.startGetRecommendData(RecommendDataProvider.TV_NO,
-                        SearchConstants.RecommendList.FIRST_POSITION,
-                        SearchConstants.RecommendList.RECOMMEND_PRELOAD_COUNT, true);
+        List<ContentsData> recommendTvData
+                = recommendDataProvider.startGetRecommendData(RecommendDataProvider.TV_NO,
+                SearchConstants.RecommendList.FIRST_POSITION,
+                SearchConstants.RecommendList.RECOMMEND_PRELOAD_COUNT, true);
 
         //取得したデータを渡す
         return recommendTvData;
@@ -667,10 +667,10 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 mContext.getApplicationContext(), this);
 
         //レコメンドデータプロバイダーからおすすめビデオ情報を取得する・DBに既に入っていた場合はその値を使用するので、trueを指定する
-        List<ContentsData> recommendVideoData =
-                recommendDataProvider.startGetRecommendData(RecommendDataProvider.VIDEO_NO,
-                        SearchConstants.RecommendList.FIRST_POSITION,
-                        SearchConstants.RecommendList.RECOMMEND_PRELOAD_COUNT, true);
+        List<ContentsData> recommendVideoData
+                = recommendDataProvider.startGetRecommendData(RecommendDataProvider.VIDEO_NO,
+                SearchConstants.RecommendList.FIRST_POSITION,
+                SearchConstants.RecommendList.RECOMMEND_PRELOAD_COUNT, true);
 
         //取得したデータを渡す
         return recommendVideoData;
@@ -775,14 +775,12 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      * @param filter  フィルター
      * @param ageReq  年齢設定値
      * @param genreId ジャンルID
-     * @param type    コンテンツタイプ
      * @param sort    ソート指定
      * @return ビデオランキング情報
      */
-    private List<Map<String, String>> getVideoRankListData(final int limit, final int offset,
-                                                           final String filter, final int ageReq,
-                                                           final String genreId, final String type,
-                                                           final String sort) {
+    private List<Map<String, String>> getVideoRankListData(
+            final int limit, final int offset, final String filter, final int ageReq,
+            final String genreId, final String sort) {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.VIDEO_RANK_LAST_INSERT);
         List<Map<String, String>> list = new ArrayList<>();
@@ -795,8 +793,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         } else {
             //通信クラスにデータ取得要求を出す
             ContentsListPerGenreWebClient webClient = new ContentsListPerGenreWebClient(mContext);
-            webClient.getContentsListPerGenreApi(limit, offset,
-                    filter, ageReq, genreId, type, sort, this);
+            webClient.getContentsListPerGenreApi(limit, offset, filter, ageReq, genreId, sort, this);
         }
         return list;
     }
