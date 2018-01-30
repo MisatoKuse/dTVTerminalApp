@@ -246,7 +246,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private void requestHomeData() {
         networkCheck();
         //Home画面用データを取得
-        showMainLayout();
         HomeDataProvider homeDataProvider = new HomeDataProvider(this);
         homeDataProvider.getHomeData();
     }
@@ -516,12 +515,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(final Message msg) {
-            showMainLayout();
             if (msg.what == HOME_CONTENTS_CHANNEL_LIST) {
                 setChannelData((ChannelList) msg.obj);
             } else {
                 setRecyclerView((List) msg.obj, msg.what);
             }
+            showMainLayout();
         }
     };
 
@@ -669,7 +668,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                initData();
                 String message = getResources().getString(R.string.get_contents_data_error_message);
                 errorDialog(message, R.string.custom_dialog_ok);
             }
