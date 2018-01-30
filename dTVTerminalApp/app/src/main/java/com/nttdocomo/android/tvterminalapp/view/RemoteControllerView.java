@@ -1,5 +1,9 @@
 
 
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
 package com.nttdocomo.android.tvterminalapp.view;
 
 import android.content.Context;
@@ -15,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Scroller;
@@ -261,8 +266,8 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
     public void setPager() {
         LayoutInflater lf = LayoutInflater.from(this.getContext());
-        View inflate1 = lf.inflate(R.layout.remote_controller_player_ui_layout, null);
-        View inflate = lf.inflate(R.layout.remote_controller_channel_ui_layout, null);
+        View inflate1 = lf.inflate(R.layout.remote_controller_player_ui_layout, this, false);
+        View inflate = lf.inflate(R.layout.remote_controller_channel_ui_layout, this, false);
         ViewPagerAdapter remokonAdapter = null;
 
         mViewList.add(inflate1);
@@ -280,6 +285,27 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         if (mIsTop) {
             startRemoteControl(false);
         }
+
+        findViewById(R.id.remote_controller_close).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                closeRemoteControllerUI();
+            }
+        });
+    }
+
+    private void setPagerIndex(int position){
+        LinearLayout linearLayout = findViewById(R.id.remocon_index);
+        if(linearLayout != null && linearLayout.getChildCount() > 1){
+            for(int i = 0; i < linearLayout.getChildCount(); i++){
+                ImageView imageView = (ImageView) linearLayout.getChildAt(i);
+                if(position == i){
+                    imageView.setImageResource(R.mipmap.remote_material_paging_current);
+                } else {
+                    imageView.setImageResource(R.mipmap.remote_material_paging_normal);
+                }
+            }
+        }
     }
 
     @Override
@@ -288,6 +314,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
     @Override
     public void onPageSelected(int position) {
+        setPagerIndex(position);
     }
 
     @Override
