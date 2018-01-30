@@ -83,6 +83,9 @@
     <!-- レンタル一覧 -->
     <color name="rental_background_color">#1d1d1d</color>
 
+    <!--録画予約-->
+    <color name="record_reservation_list_root_bg">#000000</color>
+
     <!--CustomDialog-->
     <color name="custom_dialog_backgroud_color">#eeeeee</color>
     <color name="custom_dialog_separate_color">#555555</color>
