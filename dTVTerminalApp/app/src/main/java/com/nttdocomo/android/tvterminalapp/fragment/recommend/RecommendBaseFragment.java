@@ -13,17 +13,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ListView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.RecommendListBaseAdapter;
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.view.RecommendListView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class RecommendBaseFragment extends Fragment implements AbsListView.OnScrollListener,
         AdapterView.OnItemClickListener {
@@ -32,9 +33,11 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     public List<ContentsData> mData = null;
     private View mLoadMoreView = null;
     private View mRecommendFragmentView = null;
-    private ListView mRecommendListview = null;
+    private RecommendListView mRecommendListview = null;
     private RecommendListBaseAdapter mRecommendListBaseAdapter = null;
     private RecommendBaseFragmentScrollListener mRecommendBaseFragmentScrollListener = null;
+    //チャンネルデータ
+    private List<Map<String, String>> mChannelMap;
 
     public void setRecommendBaseFragmentScrollListener(RecommendBaseFragmentScrollListener lis) {
         mRecommendBaseFragmentScrollListener = lis;
@@ -61,7 +64,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     /**
      * Viewの初期設定
      *
-     * @return
+     * @return この行のビュー
      */
     public View initView() {
         if (null == mRecommendFragmentView) {
@@ -78,7 +81,8 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
 
         //SearchResultBaseAdapter searchResultBaseAdapter
         mRecommendListBaseAdapter =
-                new RecommendListBaseAdapter(getContext(), mData);
+                new RecommendListBaseAdapter(getContext(), mData, R.layout.item_recommend_list,
+                        mChannelMap);
         mRecommendListview.setAdapter(mRecommendListBaseAdapter);
 
         return mRecommendFragmentView;
@@ -106,6 +110,13 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     }
 
     /**
+     * チャンネルリストを受け取る
+     */
+    public void setChannelData(List<Map<String, String>> channelData) {
+        mChannelMap = channelData;
+    }
+
+    /**
      * リストの最後に更新中の行を追加または追加した行を削除する
      *
      * @param loadFlag
@@ -122,7 +133,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
 
     public void clear() {
         //データがヌルなら初期化する
-        if(mData == null) {
+        if (mData == null) {
             initData();
         }
 

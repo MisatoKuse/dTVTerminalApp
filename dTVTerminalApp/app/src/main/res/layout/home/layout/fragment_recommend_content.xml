@@ -8,14 +8,15 @@
                 android:layout_height="match_parent"
 				android:background="@color/recommend_list_background">
 
-	<ListView
+	<!-- 例外防止リストビュー -->
+	<com.nttdocomo.android.tvterminalapp.view.RecommendListView
 		android:id="@+id/lv_recommend_list"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:layout_marginTop="@dimen/list_item_time_start_margin"
 		android:divider="@drawable/list_item_divider"
 		android:dividerHeight="@dimen/list_divider_height">
-	</ListView>
+	</com.nttdocomo.android.tvterminalapp.view.RecommendListView>
 
 	<!-- 201804対応 並べ替え/絞り込みボタン
 	<Button

@@ -444,11 +444,11 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      */
     private String getTerebiRequestSCIdStr() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(recommendRequestId.HIKARITV_DOCOMO_IPTV.getRequestSCId())
+        stringBuilder.append(recommendRequestId.DTVCHANNEL_BLOADCAST.getRequestSCId())
                 .append(COMMA)
-                .append(recommendRequestId.HIKARITV_DOCOMO_DTV_BLOADCAST.getRequestSCId())
+                .append(recommendRequestId.HIKARITV_DOCOMO_IPTV.getRequestSCId())
                 .append(COMMA)
-                .append(recommendRequestId.HIKARITV_DOCOMO_DTV_MISS.getRequestSCId());
+                .append(recommendRequestId.HIKARITV_DOCOMO_DTV_BLOADCAST.getRequestSCId());
         return stringBuilder.toString();
     }
 
@@ -459,11 +459,23 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      */
     private String getVideoRequestSCIdStr() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(recommendRequestId.HIKARITV_DOCOMO_DTV_RELATION.getRequestSCId())
+        stringBuilder.append(recommendRequestId.HIKARITV_DOCOMO_DTV_MISS.getRequestSCId())
+                .append(COMMA)
+                .append(recommendRequestId.HIKARITV_DOCOMO_DTV_RELATION.getRequestSCId())
                 .append(COMMA)
                 .append(recommendRequestId.HIKARITV_DOCOMO_HIKARITV_VOD.getRequestSCId())
                 .append(COMMA)
-                .append(recommendRequestId.HIKARITV_DOCOMO_DTV_SVOD.getRequestSCId());
+                .append(recommendRequestId.HIKARITV_DOCOMO_DTV_SVOD.getRequestSCId())
+                .append(COMMA)
+                .append(recommendRequestId.DTV_SVOD.getRequestSCId())
+                .append(COMMA)
+                .append(recommendRequestId.DTV_TVOD.getRequestSCId())
+                .append(COMMA)
+                .append(recommendRequestId.DTVCHANNEL_MISS.getRequestSCId())
+                .append(COMMA)
+                .append(recommendRequestId.DTVCHANNEL_RELATION.getRequestSCId())
+                .append(COMMA)
+                .append(recommendRequestId.DANIME.getRequestSCId());
         return stringBuilder.toString();
     }
 
@@ -474,11 +486,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      */
     private String getDCHRequestSCIdStr() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(recommendRequestId.DTVCHANNEL_BLOADCAST.getRequestSCId())
-                .append(COMMA)
-                .append(recommendRequestId.DTVCHANNEL_MISS.getRequestSCId())
-                .append(COMMA)
-                .append(recommendRequestId.DTVCHANNEL_RELATION.getRequestSCId());
+        stringBuilder.append(recommendRequestId.DTVCHANNEL_BLOADCAST.getRequestSCId());
         return stringBuilder.toString();
     }
 
@@ -489,10 +497,7 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      */
     private String getDTVRequestSCIdStr() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(recommendRequestId.DTV_SVOD.getRequestSCId())
-                .append(COMMA)
-                .append(recommendRequestId.DTV_TVOD.getRequestSCId());
-
+        stringBuilder.append(recommendRequestId.DTV_SVOD.getRequestSCId());
         return stringBuilder.toString();
     }
 

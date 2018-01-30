@@ -73,6 +73,8 @@
 					android:textColor="@color/gray_text"
 					android:textSize="@dimen/list_item_today_ranking_time_size"
 					/>
+
+				<!-- maxLinesの単純な数値は@dimen等に入らないので即値 -->
 				<TextView
 					android:id="@+id/recommend_now_on_air"
 					android:layout_width="wrap_content"
@@ -81,6 +83,7 @@
 					android:textSize="@dimen/list_item_today_ranking_time_size"
 					android:text="@string/now_on_air"
 					android:ellipsize="end"
+					android:maxLines="1"
 					/>
 			</LinearLayout>
 
@@ -104,13 +107,7 @@
 					/>
 			</LinearLayout>
 
-			<RatingBar
-				android:id="@+id/recommend_rating_star"
-				style="@style/roomRatingBar"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center_vertical" />
-
+			<!-- maxLinesの単純な数値は@dimen等に入らないので即値 -->
 			<TextView
 				android:id="@+id/recommend_des"
 				android:layout_width="match_parent"

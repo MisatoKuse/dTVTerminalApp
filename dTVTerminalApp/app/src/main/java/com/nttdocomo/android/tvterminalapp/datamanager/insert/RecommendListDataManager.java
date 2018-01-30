@@ -29,6 +29,7 @@ import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.Recomme
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED4;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_ENDVIEWING;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID;
 
@@ -40,7 +41,7 @@ public class RecommendListDataManager {
     private RecommendListDao mRecommendListDao = null;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
      * @param context
      */
@@ -53,7 +54,7 @@ public class RecommendListDataManager {
     }
 
     /**
-     * VodClipAPIの解析結果をDBに格納する。
+     * VodClipAPIの解析結果をDBに格納する.
      *
      * @return
      */
@@ -102,7 +103,7 @@ public class RecommendListDataManager {
     }
 
     /**
-     * キャッシュからリストデータを表示件数分取得する
+     * キャッシュからリストデータを表示件数分取得する.
      */
     public List<ContentsData> selectRecommendList(int tagPageNo, int startIndex, int maxResult) {
 
@@ -113,6 +114,7 @@ public class RecommendListDataManager {
                 RECOMMENDCHANNEL_LIST_CTPICURL1,
                 RECOMMENDCHANNEL_LIST_TITLE,
                 RECOMMENDCHANNEL_LIST_STARTVIEWING,
+                RECOMMENDCHANNEL_LIST_ENDVIEWING,
                 RECOMMENDCHANNEL_LIST_CHANNELID,
                 RECOMMENDCHANNEL_LIST_RECOMMENDORDER,
                 RECOMMENDCHANNEL_LIST_PAGEID,
@@ -135,6 +137,7 @@ public class RecommendListDataManager {
             contentsData.setThumURL(map.get(RECOMMENDCHANNEL_LIST_CTPICURL1));
             contentsData.setTitle(map.get(RECOMMENDCHANNEL_LIST_TITLE));
             contentsData.setStartViewing(map.get(RECOMMENDCHANNEL_LIST_STARTVIEWING));
+            contentsData.setEndViewing(map.get(RECOMMENDCHANNEL_LIST_ENDVIEWING));
             contentsData.setReserved(map.get(RECOMMENDCHANNEL_LIST_RESERVED4));
             contentsData.setChannelId(map.get(RECOMMENDCHANNEL_LIST_CHANNELID));
             contentsData.setRecommendOrder(map.get(RECOMMENDCHANNEL_LIST_RECOMMENDORDER));
