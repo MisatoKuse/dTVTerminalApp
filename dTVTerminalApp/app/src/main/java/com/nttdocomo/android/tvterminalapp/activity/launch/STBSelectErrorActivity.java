@@ -51,10 +51,10 @@ public class STBSelectErrorActivity extends BaseActivity {
         mErrorCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(mErrorCheckBox.isChecked()){
+                if (mErrorCheckBox.isChecked()) {
                     mErrorCheckBox.setBackgroundResource(R.drawable.
                             ic_check_box_white_24dp);
-                }else {
+                } else {
                     mErrorCheckBox.setBackgroundResource(R.drawable.
                             ic_check_box_outline_blank_white_24dp);
                 }
@@ -73,10 +73,10 @@ public class STBSelectErrorActivity extends BaseActivity {
         } else if (v.equals(mWithoutParing)) {
             SharedPreferencesUtils.setSharedPreferencesStbSelect(this, mIsNextTimeHide);
             startActivity(HomeActivity.class, null);
-        }else if(v.equals(mErrorCheckboxText)){
-            if(mErrorCheckBox.isChecked()){
+        } else if (v.equals(mErrorCheckboxText)) {
+            if (mErrorCheckBox.isChecked()) {
                 mErrorCheckBox.setChecked(false);
-            }else if(!mErrorCheckBox.isChecked()){
+            } else if (!mErrorCheckBox.isChecked()) {
                 mErrorCheckBox.setChecked(true);
             }
         }

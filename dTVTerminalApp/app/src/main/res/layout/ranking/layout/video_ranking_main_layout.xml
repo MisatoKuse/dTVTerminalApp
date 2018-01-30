@@ -3,13 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     style="@style/default_layout_style"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/channel_list_background_color">
 
     <RelativeLayout
         android:id="@+id/rl_video_ranking_tab"
         android:layout_width="match_parent"
         android:layout_height="@dimen/tab_layout_area_height"
-        android:background="@color/common_tab_background_color"
         android:visibility="visible" />
 
     <ProgressBar

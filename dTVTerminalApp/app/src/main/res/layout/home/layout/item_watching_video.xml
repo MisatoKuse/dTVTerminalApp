@@ -48,7 +48,7 @@
             android:maxLines="2"
             android:gravity="center|start"
             android:textSize="@dimen/list_item_title_text_size"
-            android:textColor="@android:color/white" />
+            android:textColor="@color/basic_text_color_white" />
 
         <RatingBar
             android:id="@+id/wl_video_rating"

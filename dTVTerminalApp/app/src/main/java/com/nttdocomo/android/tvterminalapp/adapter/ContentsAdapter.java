@@ -68,7 +68,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     private final static int STATUS_MARGINTOP10 = 10;
 
     //番組タイトル margintop
-    private final static int TITLE_MARGINTOP21 = 21;
+    private final static int TITLE_MARGINTOP17 = 17;
 
     //クリップアイコンmargintop
     private final static int CLIP_MARGINTOP35 = 35;
@@ -212,7 +212,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 break;
             case TYPE_VIDEO_RANK:
             case TYPE_VIDEO_CONTENT_LIST:
-                textMargin = TITLE_MARGINTOP21;
+                textMargin = TITLE_MARGINTOP17;
                 setTextMargin(textMargin, holder, view);
                 layoutParamsClip.addRule(RelativeLayout.ALIGN_PARENT_END, R.id.parent_relative_layout);
                 layoutParamsClip.addRule(RelativeLayout.CENTER_VERTICAL);
@@ -506,6 +506,14 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
             holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
             holder.tv_recorded_ch_name.setText(listContentInfo.getChannelName());
+        } else {
+            //TODO: 仕様不定の為仮実装
+            //TODO:チャンネル名の出所が不明なので、ダミー値を指定
+            if (mType == ActivityTypeItem.TYPE_DAILY_RANK || mType == ActivityTypeItem. TYPE_WEEKLY_RANK ) {
+                holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
+                holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
+                holder.tv_recorded_ch_name.setText("ダミー");
+            }
         }
     }
 
@@ -522,6 +530,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_RECORDED_LIST: // 録画番組一覧
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
                 view = mInflater.inflate(R.layout.item_common_result, parent, false);
+                break;
             default:
                 break;
         }
@@ -554,8 +563,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         // TODO 録画予約一覧以外のパターンも共通項目以外を抽出し、修正する
         holder = setCommonListItem(holder, view);
         switch (mType) {
-            case TYPE_DAILY_RANK: // 今日のテレビランキング
-            case TYPE_WEEKLY_RANK: // 週間ランキング
             case TYPE_VIDEO_RANK: // ビデオランキング
             case TYPE_RENTAL_RANK: // レンタル一覧
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
@@ -566,6 +573,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_recorded_hyphen = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
                 holder.tv_recorded_ch_name = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
                 break;
+            case TYPE_DAILY_RANK: // 今日のテレビランキング
+            case TYPE_WEEKLY_RANK: // 週間ランキング
             case TYPE_RECORDED_LIST: // 録画番組一覧
                 holder.tv_recorded_hyphen = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
                 holder.tv_recorded_ch_name = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
@@ -587,9 +596,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_clip.setVisibility(View.GONE);
                 break;
             case TYPE_VIDEO_RANK: // ビデオランキング
-            case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
                 holder.tv_time.setVisibility(View.GONE);
                 holder.tv_clip.setVisibility(View.GONE);
+                break;
+            case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
+                holder.tv_time.setVisibility(View.GONE);
                 holder.tv_rank.setVisibility(View.GONE);
                 break;
             case TYPE_RENTAL_RANK: // レンタル一覧
