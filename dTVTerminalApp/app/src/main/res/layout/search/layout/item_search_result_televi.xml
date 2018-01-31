@@ -23,7 +23,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/clip_common_margin"
-            android:src="@mipmap/icon_circle_opacity_clip"
+            android:background="@mipmap/icon_circle_opacity_clip"
             android:clickable="true" />
 
         <LinearLayout

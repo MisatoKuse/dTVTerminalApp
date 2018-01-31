@@ -74,6 +74,7 @@ public class SearchResultBaseAdapter extends BaseAdapter {
                     @Override
                     public void onClick(View view) {
                         //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、画像比較でクリップ済/未を判定する
+                        //TODO:検索レコメンドではクリップ判定データが不足していること、AdapterをContentsAdapterに統合予定のため、最低限の実装にとどめます
                         Bitmap clipButtonBitmap = ((BitmapDrawable) clipButton.getBackground()).getBitmap();
                         Bitmap activeClipBitmap = ((BitmapDrawable) ResourcesCompat.getDrawable(mContext.getResources(),
                                 R.mipmap.icon_circle_active_clip, null)).getBitmap();
