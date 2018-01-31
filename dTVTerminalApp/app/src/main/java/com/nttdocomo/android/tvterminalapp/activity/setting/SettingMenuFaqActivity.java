@@ -35,7 +35,7 @@ public class SettingMenuFaqActivity extends BaseActivity {
 
         mFaqWebView = findViewById(R.id.setting_menu_main_webview);
         mFaqWebView.setWebViewClient(new WebViewClient());
-        mFaqWebView.getSettings().setJavaScriptEnabled(true);
+        mFaqWebView.getSettings().setJavaScriptEnabled(false);
         mFaqWebView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
         mFaqWebView.loadUrl(SETTING_MENU_FAQ_URL);
 

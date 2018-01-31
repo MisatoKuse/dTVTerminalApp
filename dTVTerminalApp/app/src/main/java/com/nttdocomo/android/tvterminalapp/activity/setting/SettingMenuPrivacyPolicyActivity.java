@@ -32,7 +32,7 @@ public class SettingMenuPrivacyPolicyActivity extends BaseActivity {
 
         mPrivacyPolicyWebView = findViewById(R.id.setting_menu_main_webview);
         mPrivacyPolicyWebView.setWebViewClient(new WebViewClient());
-        mPrivacyPolicyWebView.getSettings().setJavaScriptEnabled(true);
+        mPrivacyPolicyWebView.getSettings().setJavaScriptEnabled(false);
         mPrivacyPolicyWebView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
         mPrivacyPolicyWebView.loadUrl(SETTING_MENU_PRIVACY_POLICY_URL);
 

@@ -35,7 +35,7 @@ public class SettingMenuAppActivity extends BaseActivity {
 
         mAppWebView = findViewById(R.id.setting_menu_main_webview);
         mAppWebView.setWebViewClient(new WebViewClient());
-        mAppWebView.getSettings().setJavaScriptEnabled(true);
+        mAppWebView.getSettings().setJavaScriptEnabled(false);
         mAppWebView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
         mAppWebView.loadUrl(SETTING_MENU_APP_URL);
 
