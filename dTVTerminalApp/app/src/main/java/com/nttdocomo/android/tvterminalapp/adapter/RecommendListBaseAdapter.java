@@ -14,19 +14,20 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
-import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.SearchServiceType;
+import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * おすすめ番組・ビデオ用アダプタ.
@@ -45,6 +46,7 @@ public class RecommendListBaseAdapter extends BaseAdapter {
      * サムネイル取得用プロパイダ.
      */
     private ThumbnailProvider mThumbnailProvider = null;
+    List<Map<String, String>> mChannelMap;
 
     /**
      * 選択タブ名・仕様変更に自動対応するため敢えて文字列.
@@ -104,12 +106,14 @@ public class RecommendListBaseAdapter extends BaseAdapter {
      * コンストラクタ.
      *
      * @param context コンテキスト
-     * @param data コンテンツデータ
+     * @param data    コンテンツデータ
      */
-    public RecommendListBaseAdapter(final Context context, final List<ContentsData> data) {
+    public RecommendListBaseAdapter(Context context, List data, int id,
+                                    List<Map<String, String>> channelMap) {
         this.mContext = context;
         this.mData = data;
         mThumbnailProvider = new ThumbnailProvider(mContext);
+        mChannelMap = channelMap;
 
         //選択タブ初期化
         mSelectedTab = 0;
@@ -133,7 +137,12 @@ public class RecommendListBaseAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int position, View view, final ViewGroup parent) {
-        final ContentsData recommendContentInfo =  mData.get(position);
+        if (mData.size() < position) {
+            //データが存在しないのでスキップ
+            return null;
+        }
+
+        final ContentsData recommendContentInfo = mData.get(position);
         ViewHolder holder;
         if (null == view) {
             view = View.inflate(mContext, R.layout.item_recommend_list, null);
@@ -204,7 +213,6 @@ public class RecommendListBaseAdapter extends BaseAdapter {
         holder.tvDateLine = view.findViewById(R.id.recommend_time_and_now_on_air);
         holder.tvDate = view.findViewById(R.id.recommend_time);
         holder.tvNowOnAir = view.findViewById(R.id.recommend_now_on_air);
-        holder.tvRatingBar = view.findViewById(R.id.recommend_rating_star);
         holder.tvVideoMargin = view.findViewById(R.id.recommend_tv_video_margin);
         holder.otherMargin = view.findViewById(R.id.recommend_dtv_danime_margin);
         return holder;
@@ -213,18 +221,18 @@ public class RecommendListBaseAdapter extends BaseAdapter {
     /**
      * 表示非表示項目の制御.
      *
-     * @param holder ビューの構造体
+     * @param holder               ビューの構造体
      * @param recommendContentInfo 1行分のデータ
      */
     private void visibleControl(final ViewHolder holder, final ContentsData recommendContentInfo) {
         final ImageView clipButton = holder.iv_clip;
 
+        //各行の最大表示行数を2行にする
+        holder.tv_title.setMaxLines(MAX_2LINE);
+
         //ひかりコンテンツのみクリップボタンを表示する
         if (recommendContentInfo.getServiceId().equals(SearchServiceType.ServiceId.HIKARI_TV_FOR_DOCOMO)) {
             holder.iv_clip.setVisibility(View.VISIBLE);
-
-            //各行の最大表示行数を2行にする
-            holder.tv_title.setMaxLines(MAX_2LINE);
 
             holder.iv_clip.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -239,20 +247,18 @@ public class RecommendListBaseAdapter extends BaseAdapter {
                         recommendContentInfo.getRequestData().setClipStatus(false);
                     }
                     //クリップボタンイベント
-                    ((BaseActivity) mContext).sendClipRequest(recommendContentInfo.getRequestData(), clipButton);
+                    ((BaseActivity) mContext).sendClipRequest(
+                            recommendContentInfo.getRequestData(), clipButton);
                 }
             });
 
         } else {
+            //クリップを非表示にする
             holder.iv_clip.setVisibility(View.GONE);
-
-            //各行の最大表示行数を1行にする
-            holder.tv_title.setMaxLines(MAX_1LINE);
         }
 
-        //日時欄とレーティングの星は通常非表示にする
+        //日時欄は通常非表示にする
         holder.tvDateLine.setVisibility(View.GONE);
-        holder.tvRatingBar.setVisibility(View.GONE);
 
         //タブ毎の表示切替
         switch (mSelectedTab) {
@@ -292,16 +298,10 @@ public class RecommendListBaseAdapter extends BaseAdapter {
                 }
                 break;
             case VIDEO_TAB:
-                holder.tvVideoMargin.setVisibility(View.VISIBLE);
-
-                //ビデオタブでは、レーティングの星を表示する
-                holder.tvRatingBar.setVisibility(View.VISIBLE);
-                //TODO: ダミー値
-                holder.tvRatingBar.setRating(3.5f);
-                break;
             case DTV_TAB:
             case DTV_CHANNEL_TAB:
             case DANIME_TAB:
+                //データが少ないので、大サイズのマージンを設定
                 holder.otherMargin.setVisibility(View.VISIBLE);
                 break;
             default:
@@ -310,23 +310,30 @@ public class RecommendListBaseAdapter extends BaseAdapter {
 
     /**
      * チャンネル名取得.
-     * TODO: 仕様不定の為仮実装
      *
      * @param recommendContentInfo 1行分のデータ
      * @return チャンネル名
      */
     private String getChannelName(final ContentsData recommendContentInfo) {
-        String channelName = recommendContentInfo.getChannelName();
+        String channelId = recommendContentInfo.getChannelId();
+        String channelName = "";
+        if (channelId != null && !channelId.isEmpty() && mChannelMap != null) {
+            //チャンネル名検索
+            for (Map<String, String> channel : mChannelMap) {
+                //キーを見つける
+                String key = (String) channel.get(JsonConstants.META_RESPONSE_SERVICE_ID);
+                if (key.equals(channelId)) {
+                    //キーを見つけた
+                    channelName = (String) channel.get(JsonConstants.META_RESPONSE_TITLE);
+                    break;
+                }
+            }
 
-        if (channelName != null && !channelName.isEmpty()) {
-            //チャンネル名が存在していれば使用する
             return channelName;
         }
 
-        String channelId = recommendContentInfo.getChannelId();
-
-        //TODO:チャンネル名の出所が不明なので、ダミー値を指定
-        return "ダミー";
+        //チャンネルリストが取れないので、空文字
+        return "";
     }
 
     /**
@@ -362,10 +369,6 @@ public class RecommendListBaseAdapter extends BaseAdapter {
          * 現在放送中表示.
          */
         TextView tvNowOnAir;
-        /**
-         * レーティングの星.
-         */
-        RatingBar tvRatingBar;
         /**
          * テレビ・ビデオタブ用のマージン.
          */
