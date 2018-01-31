@@ -46,7 +46,11 @@ public class RecommendListBaseAdapter extends BaseAdapter {
      * サムネイル取得用プロパイダ.
      */
     private ThumbnailProvider mThumbnailProvider = null;
-    List<Map<String, String>> mChannelMap;
+
+    /**
+     * チャンネル情報.
+     */
+    private List<Map<String, String>> mChannelMap;
 
     /**
      * 選択タブ名・仕様変更に自動対応するため敢えて文字列.
@@ -80,11 +84,6 @@ public class RecommendListBaseAdapter extends BaseAdapter {
     private final static int MAX_2LINE = 2;
 
     /**
-     * 最大表示行数1行.
-     */
-    private final static int MAX_1LINE = 1;
-
-    /**
      * 日付用固定値.
      */
     private final static String DATE_SEPARATOR = " - ";
@@ -108,15 +107,23 @@ public class RecommendListBaseAdapter extends BaseAdapter {
      * @param context コンテキスト
      * @param data    コンテンツデータ
      */
-    public RecommendListBaseAdapter(Context context, List data, int id,
-                                    List<Map<String, String>> channelMap) {
+    public RecommendListBaseAdapter(Context context, List data) {
         this.mContext = context;
         this.mData = data;
         mThumbnailProvider = new ThumbnailProvider(mContext);
-        mChannelMap = channelMap;
 
         //選択タブ初期化
         mSelectedTab = 0;
+    }
+
+    /**
+     * チャンネル情報を受け取る.
+     *
+     * @param channelMap チャンネル情報
+     */
+    public void setChannel(List<Map<String, String>> channelMap) {
+        //受け取ったチャンネル情報を蓄積する
+        mChannelMap = channelMap;
     }
 
     @Override

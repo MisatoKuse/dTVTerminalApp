@@ -62,7 +62,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     }
 
     /**
-     * Viewの初期設定
+     * Viewの初期設定.
      *
      * @return この行のビュー
      */
@@ -76,13 +76,13 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
             mRecommendListview.setOnItemClickListener(this);
 
             getContext();
-            mLoadMoreView = LayoutInflater.from(mActivity).inflate(R.layout.search_load_more, null);
+            mLoadMoreView = LayoutInflater.from(mActivity).inflate(
+                    R.layout.search_load_more, null);
         }
 
         //SearchResultBaseAdapter searchResultBaseAdapter
         mRecommendListBaseAdapter =
-                new RecommendListBaseAdapter(getContext(), mData, R.layout.item_recommend_list,
-                        mChannelMap);
+                new RecommendListBaseAdapter(getContext(), mData);
         mRecommendListview.setAdapter(mRecommendListBaseAdapter);
 
         return mRecommendFragmentView;
@@ -99,9 +99,9 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     }
 
     /**
-     * リストのカーソルを移動
+     * リストのカーソルを移動.
      *
-     * @param itemNo
+     * @param itemNo アイテム番号
      */
     public void setSelection(int itemNo) {
         if (null != mRecommendListview) {
@@ -110,16 +110,30 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     }
 
     /**
-     * チャンネルリストを受け取る
+     * チャンネルリストを受け取り、アダプターに渡す.
+     *
+     * @param channelData チャンネル情報
      */
     public void setChannelData(List<Map<String, String>> channelData) {
+        if (channelData == null || channelData.size() <= 0) {
+            //データが無いならば即座に帰る
+            return;
+        }
+
+        //チャンネル情報の蓄積
         mChannelMap = channelData;
+
+        //さらにアダプターに横流しする
+        mRecommendListBaseAdapter.setChannel(mChannelMap);
+
+        //リストにチャンネル情報を反映させる為に再描画する
+        mRecommendListBaseAdapter.notifyDataSetChanged();
     }
 
     /**
-     * リストの最後に更新中の行を追加または追加した行を削除する
+     * リストの最後に更新中の行を追加または追加した行を削除する.
      *
-     * @param loadFlag
+     * @param loadFlag ロード中フラグ
      */
     public void displayLoadMore(boolean loadFlag) {
         if (null != mRecommendListview && null != mLoadMoreView) {
@@ -164,7 +178,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     }
 
     /**
-     * コンテンツ詳細に必要なデータを返す
+     * コンテンツ詳細に必要なデータを返す.
      *
      * @param info レコメンド情報
      * @return コンテンツ情報
