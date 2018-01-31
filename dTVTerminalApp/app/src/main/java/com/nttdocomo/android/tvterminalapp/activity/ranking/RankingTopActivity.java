@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -107,9 +108,10 @@ public class RankingTopActivity extends BaseActivity implements RankingTopDataPr
         View view = mLinearLayout.getChildAt(tag);
         view.setVisibility(View.VISIBLE);
         TextView typeTextView = view.findViewById(R.id.home_main_item_type_tx);
-        TextView countTextView = view.findViewById(R.id.home_main_item_type_tx_count);
+        ImageView rightArrowImageView = view.findViewById(R.id.home_main_item_right_arrow);
         //各一覧を遷移すること
-        countTextView.setOnClickListener(new View.OnClickListener() {
+
+        rightArrowImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
                 startTo(tag);
@@ -118,7 +120,6 @@ public class RankingTopActivity extends BaseActivity implements RankingTopDataPr
         RecyclerView recyclerView = view.findViewById(R.id.home_main_item_recyclerview);
         //コンテンツタイプを設定
         typeTextView.setText(typeContentName);
-        countTextView.setText(String.valueOf(contentsDataList.size()));
         //リサイクルビューデータ設定
         setRecyclerViewData(recyclerView, contentsDataList, tag);
     }

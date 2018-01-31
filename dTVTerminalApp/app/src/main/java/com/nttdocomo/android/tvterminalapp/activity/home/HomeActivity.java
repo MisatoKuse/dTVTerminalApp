@@ -352,8 +352,15 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         view.setVisibility(View.VISIBLE);
         TextView typeTextView = view.findViewById(R.id.home_main_item_type_tx);
         TextView countTextView = view.findViewById(R.id.home_main_item_type_tx_count);
+        ImageView rightArrowImageView = view.findViewById(R.id.home_main_item_right_arrow);
         //各一覧を遷移すること
         countTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                startTo(tag);
+            }
+        });
+        rightArrowImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
                 startTo(tag);
@@ -365,8 +372,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         //コンテンツカウントを設定（20）
         if (typeContentName.equals(getString(R.string.home_label_now_on_air))) {
             countTextView.setText(getString(R.string.home_now_on_air_channel_list));
-        } else {
-            countTextView.setText(resultCount);
         }
         //リサイクルビューデータ設定
         setRecyclerViewData(recyclerView, contentsDataList, tag);
