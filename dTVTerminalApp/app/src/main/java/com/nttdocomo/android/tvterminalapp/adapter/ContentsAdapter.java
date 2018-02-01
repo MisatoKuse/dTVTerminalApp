@@ -37,74 +37,144 @@ import java.util.List;
 
 import static com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter.ActivityTypeItem.TYPE_RECORDING_RESERVATION_LIST;
 
+/**
+ * コンテンツ一覧系共通リストアダプター.
+ */
 public class ContentsAdapter extends BaseAdapter implements OnClickListener {
 
-    //各Activityインスタンス
+    /**
+     * 各Activityインスタンス.
+     */
     private Context mContext = null;
-    //リスト用データソース
+    /**
+     * リスト用データソース.
+     */
     private List<ContentsData> mListData = null;
-    //サムネイル取得用プロバイダー
+    /**
+     * サムネイル取得用プロバイダー.
+     */
     private ThumbnailProvider mThumbnailProvider = null;
-    //表示項目のタイプ
+    /**
+     * 表示項目のタイプ.
+     */
     private ActivityTypeItem mType;
-    //ビューの生成
+    /**
+     * ビューの生成.
+     */
     private LayoutInflater mInflater;
-    //評価基準値
+    /**
+     * 評価基準値.
+     */
     private final static int NUM_STARS_TOTAL = 5;
-    //サムネイル幅さ display3分の1
+    /**
+     * サムネイル幅さ display3分の1.
+     */
     private final static int THUMBNAIL_WIDTH = 3;
-    //サムネイル高さ サムネイル幅さ2分の1
+    /**
+     * サムネイル高さ サムネイル幅さ2分の1.
+     */
     private final static int THUMBNAIL_HEIGHT = 2;
-    //サムネイルmarginleft
+    /**
+     * サムネイルmarginleft.
+     */
     private final static int THUMBNAIL_MARGINLEFT = 16;
-    //サムネイルmargintop
+    /**
+     * サムネイルmargintop.
+     */
     private final static int THUMBNAIL_MARGINEND = 10;
-    //サムネイルmarginright
+    /**
+     * サムネイルmarginright.
+     */
     private final static int THUMBNAIL_MARGINRIGHT = 16;
-    //サムネイルmarginbottom
+    /**
+     * サムネイルmarginbottom.
+     */
     private final static int THUMBNAIL_MARGINBOTTOM = 10;
-    //status　margintop
+    /**
+     * status　margintop.
+     */
     private final static int STATUS_MARGINTOP17 = 17;
+    /**
+     * status　margintop.
+     */
     private final static int STATUS_MARGINTOP10 = 10;
 
-    //番組タイトル margintop
+    /**
+     * 番組タイトル margintop.
+     */
     private final static int TITLE_MARGINTOP17 = 17;
 
-    //クリップアイコンmargintop
+    /**
+     * クリップアイコンmargintop.
+     */
     private final static int CLIP_MARGINTOP35 = 35;
-    //時刻テキストサイズ
+    /**
+     * 時刻テキストサイズ.
+     */
     private final static int TIME_TEXT_SIZE = 12;
-    //margin0
+    /**
+     * margin0.
+     */
     private final static int THUMBNAIL_MARGIN0 = 0;
-    //ライン高さ
+    /**
+     * ライン高さ.
+     */
     private final static int LINE_HEIGHT = 1;
-    //コピー残り回数
+    /**
+     * コピー残り回数.
+     */
     private final static int ALLOWED_USE = 0;
 
-    //受付アイコンマージン
+    /**
+     * 受付アイコンマージン.
+     */
     private final static int RECEPTION_MARGINTOP30 = 30;
 
-    // クリップ登録済み判定用
+    /**
+     * クリップ登録済み判定用.
+     */
     private final static String ACTIVE_CLIP_DISPLAY = "1";
 
-    // クリップ未登録判定用
+    /**
+     * クリップ未登録判定用.
+     */
     private final static String OPACITY_CLIP_DISPLAY = "0";
 
+    /**
+     * ダウンロードStatus種別.
+     */
     public final static int DOWNLOAD_STATUS_ALLOW = 0;
 
+    /**
+     * ダウンロードStatus種別.
+     */
     public final static int DOWNLOAD_STATUS_LOADING = 1;
 
+    /**
+     * ダウンロードStatus種別.
+     */
     public final static int DOWNLOAD_STATUS_COMPLETED = 2;
-    //アイテムposition
-    public final static int CONTENT_POSITION_ONE = 0;
-    public final static int CONTENT_POSITION_TWO = 1;
-    public final static int CONTENT_POSITION_THREE = 2;
+    /**
+     * アイテムposition.
+     */
+    private final static int CONTENT_POSITION_ONE = 0;
+    /**
+     * アイテムposition.
+     */
+    private final static int CONTENT_POSITION_TWO = 1;
+    /**
+     * アイテムposition.
+     */
+    private final static int CONTENT_POSITION_THREE = 2;
 
+    /**
+     * ダウンロードcallback.
+     */
     private DownloadCallback mDownloadCallback;
 
     /**
      * 機能
-     * 共通アダプター使う
+     * 共通アダプター使う.
      */
     public enum ActivityTypeItem {
         TYPE_DAILY_RANK,          //今日のテレビランキング
@@ -114,16 +184,17 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         TYPE_RECORDING_RESERVATION_LIST, // 録画予約一覧
         TYPE_VIDEO_CONTENT_LIST, // ビデオコンテンツ一覧
         TYPE_RECORDED_LIST, // 録画番組一覧
+        TYPE_WATCHING_VIDEO_LIST // 視聴中ビデオ一覧
     }
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
      * @param mContext Activity
      * @param listData リストデータ
      * @param type     　項目コントロール
      */
-    public ContentsAdapter(Context mContext, List<ContentsData> listData, ActivityTypeItem type) {
+    public ContentsAdapter(final Context mContext, final List<ContentsData> listData, final ActivityTypeItem type) {
         this.mContext = mContext;
         mInflater = LayoutInflater.from(mContext);
         this.mListData = listData;
@@ -131,7 +202,16 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         mThumbnailProvider = new ThumbnailProvider(mContext);
     }
 
-    public ContentsAdapter(Context mContext, List<ContentsData> listData, ActivityTypeItem type, DownloadCallback callback) {
+    /**
+     * コンストラクタ.
+     *
+     * @param mContext Activity
+     * @param listData リストデータ
+     * @param type     　項目コントロール
+     * @param callback callback
+     */
+    public ContentsAdapter(final Context mContext, final List<ContentsData> listData,
+                           final ActivityTypeItem type, final DownloadCallback callback) {
         this.mContext = mContext;
         mInflater = LayoutInflater.from(mContext);
         this.mListData = listData;
@@ -146,27 +226,29 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     }
 
     @Override
-    public Object getItem(int position) {
+    public Object getItem(final int position) {
         return mListData.get(position);
     }
 
     @Override
-    public long getItemId(int position) {
+    public long getItemId(final int position) {
         return position;
     }
 
     @Override
-    public View getView(final int position, View view, final ViewGroup parent) {
+    public View getView(final int position, final View view, final ViewGroup parent) {
         ViewHolder holder = null;
 
+        View contentView = view;
         //ビューの再利用
-        if (view == null) {
+        if (contentView == null) {
             holder = new ViewHolder();
-            view = setViewPattern(parent);
-            holder = setListItemPattern(holder, view);
-            view.setTag(holder);
+            contentView = mInflater.inflate(R.layout.item_common_result, parent, false);
+            ;
+            holder = setListItemPattern(holder, contentView);
+            contentView.setTag(holder);
         } else {
-            holder = (ViewHolder) view.getTag();
+            holder = (ViewHolder) contentView.getTag();
         }
         setShowDataVisibility(holder);
         //各アイテムデータを取得
@@ -177,7 +259,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         if (!ActivityTypeItem.TYPE_RECORDED_LIST.equals(mType)) {
             //クリップボタン処理を設定する
             final ClipRequestData requestData = listContentInfo.getRequestData();
-            final ImageView clipButton = view.findViewById(R.id.item_common_result_clip_tv);
+            final ImageView clipButton = contentView.findViewById(R.id.item_common_result_clip_tv);
             listContentInfo.setClipButton(clipButton);
             clipButton.setOnClickListener(new OnClickListener() {
                 @Override
@@ -207,31 +289,32 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_WEEKLY_RANK:
                 textMargin = STATUS_MARGINTOP17;
                 clipMargin = CLIP_MARGINTOP35;
-                setTextMargin(textMargin, holder, view);
-                setClipMargin(clipMargin, view);
+                setTextMargin(textMargin, holder, contentView);
+                setClipMargin(clipMargin, contentView);
                 break;
             case TYPE_VIDEO_RANK:
             case TYPE_VIDEO_CONTENT_LIST:
+            case TYPE_WATCHING_VIDEO_LIST:
                 textMargin = TITLE_MARGINTOP17;
-                setTextMargin(textMargin, holder, view);
+                setTextMargin(textMargin, holder, contentView);
                 layoutParamsClip.addRule(RelativeLayout.ALIGN_PARENT_END, R.id.parent_relative_layout);
                 layoutParamsClip.addRule(RelativeLayout.CENTER_VERTICAL);
-                view.findViewById(R.id.item_common_result_show_status_area).setLayoutParams(layoutParamsClip);
+                contentView.findViewById(R.id.item_common_result_show_status_area).setLayoutParams(layoutParamsClip);
                 break;
             case TYPE_RENTAL_RANK:
                 textMargin = STATUS_MARGINTOP10;
-                setTextMargin(textMargin, holder, view);
+                setTextMargin(textMargin, holder, contentView);
                 layoutParamsClip.addRule(RelativeLayout.ALIGN_PARENT_END, R.id.parent_relative_layout);
                 layoutParamsClip.addRule(RelativeLayout.CENTER_VERTICAL);
-                view.findViewById(R.id.item_common_result_show_status_area).setLayoutParams(layoutParamsClip);
+                contentView.findViewById(R.id.item_common_result_show_status_area).setLayoutParams(layoutParamsClip);
                 break;
             case TYPE_RECORDING_RESERVATION_LIST:
                 //録画予約一覧用余白設定
                 textMargin = STATUS_MARGINTOP17;
                 setTextAllMargin(THUMBNAIL_MARGINLEFT, textMargin, THUMBNAIL_MARGINBOTTOM,
-                        textMargin, holder, view);
+                        textMargin, holder, contentView);
                 clipMargin = RECEPTION_MARGINTOP30;
-                setClipMargin(clipMargin, view);
+                setClipMargin(clipMargin, contentView);
                 break;
 
             //ENUMの値をswitch分岐すると、全ての値を書かないとアナライザーがエラーを出すので、caseを追加
@@ -255,10 +338,16 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_rank.setTextColor(ContextCompat.getColor(mContext, R.color.white_text));
             }
         }
-        return view;
+        return contentView;
     }
 
-    private void setClipMargin(int clipMargin, View view) {
+    /**
+     * クリップボタンレイアウト設定.
+     *
+     * @param clipMargin マージン
+     * @param view       View
+     */
+    private void setClipMargin(final int clipMargin, final View view) {
         DisplayMetrics DisplayMetrics = mContext.getResources().getDisplayMetrics();
         float density = DisplayMetrics.density;
 
@@ -270,7 +359,14 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         view.findViewById(R.id.item_common_result_show_status_area).setLayoutParams(layoutParamsClip);
     }
 
-    private void setTextMargin(int textMargin, ViewHolder holder, View view) {
+    /**
+     * TextViewマージン設定.
+     *
+     * @param textMargin マージン
+     * @param holder     ViewHolder
+     * @param view       View
+     */
+    private void setTextMargin(final int textMargin, final ViewHolder holder, final View view) {
         DisplayMetrics DisplayMetrics = mContext.getResources().getDisplayMetrics();
         float density = DisplayMetrics.density;
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
@@ -290,7 +386,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     }
 
     /**
-     * 4方向のマージンをセットする
+     * 4方向のマージンをセットする.
      *
      * @param leftMargin   左マージン
      * @param topMargin    上マージン
@@ -299,8 +395,9 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * @param holder       ビューの集合体
      * @param view         マージンを指定するビュー
      */
-    private void setTextAllMargin(int leftMargin, int topMargin,
-                                  int rightMargin, int bottomMargin, ViewHolder holder, View view) {
+    private void setTextAllMargin(
+            final int leftMargin, final int topMargin, final int rightMargin,
+            final int bottomMargin, final ViewHolder holder, final View view) {
         //解像度の倍率を取得する
         DisplayMetrics DisplayMetrics = mContext.getResources().getDisplayMetrics();
         float density = DisplayMetrics.density;
@@ -328,12 +425,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     }
 
     /**
-     * 各コンテンツデータを設定
+     * 各コンテンツデータを設定.
      *
      * @param holder          ビューの集合
      * @param listContentInfo 行データー
      */
-    private void setContentsData(ViewHolder holder, ContentsData listContentInfo) {
+    private void setContentsData(final ViewHolder holder, final ContentsData listContentInfo) {
         DTVTLogger.start();
         setRankData(holder, listContentInfo);
         setTitleData(holder, listContentInfo);
@@ -346,29 +443,38 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     }
 
     /**
-     * データの設定（ランク）
+     * データの設定（ランク）.
+     *
+     * @param holder          ViewHolder
+     * @param listContentInfo ContentsData
      */
-    private void setRankData(ViewHolder holder, ContentsData listContentInfo) {
-        if (!TextUtils.isEmpty(listContentInfo.getRank())) {//ランク
+    private void setRankData(final ViewHolder holder, final ContentsData listContentInfo) {
+        if (!TextUtils.isEmpty(listContentInfo.getRank())) { //ランク
             holder.tv_rank.setText(listContentInfo.getRank());
         }
     }
 
     /**
-     * データの設定（タイトル）
+     * データの設定（タイトル）.
+     *
+     * @param holder          　ViewHolder
+     * @param listContentInfo 　ContentsData
      */
-    private void setTitleData(ViewHolder holder, ContentsData listContentInfo) {
-        if (!TextUtils.isEmpty(listContentInfo.getTitle())) {//タイトル
+    private void setTitleData(final ViewHolder holder, final ContentsData listContentInfo) {
+        if (!TextUtils.isEmpty(listContentInfo.getTitle())) { //タイトル
             String title = listContentInfo.getTitle() + mContext.getResources().getString(R.string.common_ranking_enter);
             holder.tv_title.setText(title);
         }
     }
 
     /**
-     * データの設定（開始時刻）
+     * データの設定（開始時刻）.
+     *
+     * @param holder          　ViewHolder
+     * @param listContentInfo 　ContentsData
      */
-    private void setTimeData(ViewHolder holder, ContentsData listContentInfo) {
-        if (!TextUtils.isEmpty(listContentInfo.getTime())) {//時間
+    private void setTimeData(final ViewHolder holder, final ContentsData listContentInfo) {
+        if (!TextUtils.isEmpty(listContentInfo.getTime())) { //時間
             switch (mType) {
                 case TYPE_DAILY_RANK: // 今日のテレビランキング
                 case TYPE_WEEKLY_RANK: // 週間ランキング
@@ -377,6 +483,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 case TYPE_VIDEO_RANK: // ビデオランキング
                 case TYPE_RENTAL_RANK: // レンタル一覧
                 case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
+                case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
                 case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
                 case TYPE_RECORDED_LIST: // 録画番組一覧
                     holder.tv_time.setText(listContentInfo.getTime());
@@ -388,10 +495,13 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     }
 
     /**
-     * データの設定（評価）
+     * データの設定（評価）.
+     *
+     * @param holder          ViewHolder
+     * @param listContentInfo ContentsData
      */
-    private void setRatStarData(ViewHolder holder, ContentsData listContentInfo) {
-        if (!TextUtils.isEmpty(listContentInfo.getRatStar())) {//評価
+    private void setRatStarData(final ViewHolder holder, final ContentsData listContentInfo) {
+        if (!TextUtils.isEmpty(listContentInfo.getRatStar())) { //評価
             holder.rb_rating.setNumStars(NUM_STARS_TOTAL);
             holder.rb_rating.setRating(Float.parseFloat(listContentInfo.getRatStar()));
             holder.tv_rating_num.setText(listContentInfo.getRatStar());
@@ -400,9 +510,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
 
     /**
      * データの設定（サムネイル）
+     *
+     * @param holder          ViewHolder
+     * @param listContentInfo ContentsData
      */
-    private void setThumbnailData(ViewHolder holder, ContentsData listContentInfo) {
-        if (!TextUtils.isEmpty(listContentInfo.getThumURL())) {//サムネイル
+    private void setThumbnailData(final ViewHolder holder, final ContentsData listContentInfo) {
+        if (!TextUtils.isEmpty(listContentInfo.getThumURL())) { //サムネイル
             holder.rl_thumbnail.setVisibility(View.VISIBLE);
             holder.iv_thumbnail.setTag(listContentInfo.getThumURL());
             Bitmap thumbnailImage = mThumbnailProvider.getThumbnailImage(holder.iv_thumbnail, listContentInfo.getThumURL());
@@ -416,11 +529,14 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     }
 
     /**
-     * データの設定（録画予約ステータス）
+     * データの設定（録画予約ステータス）.
+     *
+     * @param holder          ViewHolder
+     * @param listContentInfo ContentsData
      */
-    private void setRecodingReservationStatusData(ViewHolder holder, ContentsData listContentInfo) {
+    private void setRecodingReservationStatusData(final ViewHolder holder, final ContentsData listContentInfo) {
         DTVTLogger.start("status = " + listContentInfo.getRecordingReservationStatus());
-        if (holder.tv_recording_reservation != null) {// 録画予約ステータス
+        if (holder.tv_recording_reservation != null) { // 録画予約ステータス
             int status = listContentInfo.getRecordingReservationStatus();
             switch (status) {
                 case RecordingReservationListDataProvider.RECORD_RESERVATION_SYNC_STATUS_REFLECTS_WAITING:
@@ -459,9 +575,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     }
 
     /**
-     * ダウンロードアイコンの設定（録画番組用チャンネル名）
+     * ダウンロードアイコンの設定（録画番組用チャンネル名）.
+     *
+     * @param holder          ViewHolder
+     * @param listContentInfo ContentsData
      */
-    private void setRedordedDownloadIcon(ViewHolder holder, ContentsData listContentInfo) {
+    private void setRedordedDownloadIcon(final ViewHolder holder, final ContentsData listContentInfo) {
         DTVTLogger.start();
         //TODO:録画予約一覧等、クリップボタンを表示しない画面はここで外す
         if (!mType.equals(TYPE_RECORDING_RESERVATION_LIST)) {
@@ -498,18 +617,21 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     }
 
     /**
-     * データの設定（チャンネル名）
+     * データの設定（チャンネル名）.
+     *
+     * @param holder          ViewHolder
+     * @param listContentInfo ContentsData
      */
-    private void setChannelName(ViewHolder holder, ContentsData listContentInfo) {
+    private void setChannelName(final ViewHolder holder, final ContentsData listContentInfo) {
         DTVTLogger.start();
-        if (!TextUtils.isEmpty(listContentInfo.getChannelName())) {//ランク
+        if (!TextUtils.isEmpty(listContentInfo.getChannelName())) { //ランク
             holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
             holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
             holder.tv_recorded_ch_name.setText(listContentInfo.getChannelName());
         } else {
             //TODO: 仕様不定の為仮実装
             //TODO:チャンネル名の出所が不明なので、ダミー値を指定
-            if (mType == ActivityTypeItem.TYPE_DAILY_RANK || mType == ActivityTypeItem. TYPE_WEEKLY_RANK ) {
+            if (mType == ActivityTypeItem.TYPE_DAILY_RANK || mType == ActivityTypeItem.TYPE_WEEKLY_RANK) {
                 holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
                 holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
                 holder.tv_recorded_ch_name.setText("ダミー");
@@ -517,30 +639,14 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         }
     }
 
-    private View setViewPattern(ViewGroup parent) {
-        DTVTLogger.start();
-        // TODO 録画予約一覧以外のパターンも共通項目以外を抽出し、修正する
-        View view = null;
-        switch (mType) {
-            case TYPE_DAILY_RANK: // 今日のテレビランキング
-            case TYPE_WEEKLY_RANK: // 週間ランキング
-            case TYPE_VIDEO_RANK: // ビデオランキング
-            case TYPE_RENTAL_RANK: // レンタル一覧
-            case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
-            case TYPE_RECORDED_LIST: // 録画番組一覧
-            case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
-                view = mInflater.inflate(R.layout.item_common_result, parent, false);
-                break;
-            default:
-                break;
-        }
-        return view;
-    }
-
     /**
-     * 共通Itemの設定
+     * 共通Itemの設定.
+     *
+     * @param holder ViewHolder
+     * @param view   View
+     * @return 初期化済みViewHolder
      */
-    private ViewHolder setCommonListItem(ViewHolder holder, View view) {
+    private ViewHolder setCommonListItem(final ViewHolder holder, final View view) {
         DTVTLogger.start();
         holder.rl_thumbnail = view.findViewById(R.id.item_common_result_thumbnail_rl);
         holder.iv_thumbnail = view.findViewById(R.id.item_common_result_thumbnail_iv);
@@ -556,39 +662,47 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     }
 
     /**
-     * Itemのパターンを設定
+     * Itemのパターンを設定.
+     *
+     * @param holder ViewHolder
+     * @param view   View
+     * @return 各画面特化ViewHolder
      */
-    private ViewHolder setListItemPattern(ViewHolder holder, View view) {
+    private ViewHolder setListItemPattern(final ViewHolder holder, final View view) {
         DTVTLogger.start();
         // TODO 録画予約一覧以外のパターンも共通項目以外を抽出し、修正する
-        holder = setCommonListItem(holder, view);
+        ViewHolder viewHolder = holder;
+        viewHolder = setCommonListItem(viewHolder, view);
         switch (mType) {
             case TYPE_VIDEO_RANK: // ビデオランキング
             case TYPE_RENTAL_RANK: // レンタル一覧
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
+            case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
                 break;
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
-                holder.tv_recording_reservation =
+                viewHolder.tv_recording_reservation =
                         view.findViewById(R.id.item_common_result_recording_reservation_status);
-                holder.tv_recorded_hyphen = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
-                holder.tv_recorded_ch_name = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
+                viewHolder.tv_recorded_hyphen = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
+                viewHolder.tv_recorded_ch_name = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
                 break;
             case TYPE_DAILY_RANK: // 今日のテレビランキング
             case TYPE_WEEKLY_RANK: // 週間ランキング
             case TYPE_RECORDED_LIST: // 録画番組一覧
-                holder.tv_recorded_hyphen = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
-                holder.tv_recorded_ch_name = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
+                viewHolder.tv_recorded_hyphen = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
+                viewHolder.tv_recorded_ch_name = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
                 break;
             default:
                 break;
         }
-        return holder;
+        return viewHolder;
     }
 
     /**
-     * データの設定
+     * データの設定.
+     *
+     * @param holder 設定済みViewHolder
      */
-    private void setShowDataVisibility(ViewHolder holder) {
+    private void setShowDataVisibility(final ViewHolder holder) {
         switch (mType) {
             case TYPE_DAILY_RANK: // 今日のテレビランキング
             case TYPE_WEEKLY_RANK: // 週間ランキング
@@ -600,6 +714,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_clip.setVisibility(View.GONE);
                 break;
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
+            case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
                 holder.tv_time.setVisibility(View.GONE);
                 holder.tv_rank.setVisibility(View.GONE);
                 break;
@@ -626,12 +741,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     }
 
     /**
-     * クリップ表示処理
+     * クリップ表示処理.
      *
      * @param holder          クリップアイコン
      * @param listContentInfo 行データー
      */
-    private void setClipButton(ViewHolder holder, ContentsData listContentInfo) {
+    private void setClipButton(final ViewHolder holder, final ContentsData listContentInfo) {
         if (holder.tv_clip != null) {
             String clipType = listContentInfo.getRequestData().getType();
             //ひかりコンテンツ判定
@@ -654,9 +769,14 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     }
 
     /**
-     * ダウンロードステータス設定
+     * ダウンロードステータス設定.
+     *
+     * @param holder          ViewHolder
+     * @param listContentInfo ContentsData
+     * @param position        ポジション
      */
-    private void setDownloadStatus(ViewHolder holder, ContentsData listContentInfo, int position) {
+    private void setDownloadStatus(final ViewHolder holder, final ContentsData listContentInfo,
+                                   final int position) {
         if (holder.tv_clip != null && listContentInfo != null) {
             holder.tv_clip.setTag(position);
             holder.tv_clip.setOnClickListener(this);
@@ -692,45 +812,81 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     }
 
     /**
-     * ビュー管理クラス
+     * ビュー管理クラス.
      */
     private static class ViewHolder {
-        //サムネイル親レイアウト
+        /**
+         * サムネイル親レイアウト.
+         */
         RelativeLayout rl_thumbnail;
-        //サムネイル
+        /**
+         * サムネイル.
+         */
         ImageView iv_thumbnail;
-        //評価の親レイアウト
+        /**
+         * 評価の親レイアウト.
+         */
         LinearLayout ll_rating;
-        //評価（星）
+        /**
+         * 評価（星）.
+         */
         RatingBar rb_rating;
-        //評価（count）
+        /**
+         * 評価（count）.
+         */
         TextView tv_rating_num;
-        //ラベル
+        /**
+         * ラベル.
+         */
         TextView tv_rank;
-        //サブタイトル
+        /**
+         * サブタイトル.
+         */
         TextView tv_time;
-        //メインタイトル
+        /**
+         * メインタイトル.
+         */
         TextView tv_title;
-        //操作アイコンボタン
+        /**
+         * 操作アイコンボタン.
+         */
         ImageView tv_clip;
-        //ライン
+        /**
+         * ライン.
+         */
         TextView tv_line;
-        // 録画予約ステータス
+        /**
+         * 録画予約ステータス.
+         */
         TextView tv_recording_reservation = null;
-        // チャンネル名
+        /**
+         * チャンネル名.
+         */
         TextView tv_channel_name = null;
-        //ハイフン
+        /**
+         * ハイフン.
+         */
         TextView tv_recorded_hyphen;
-        // 録画番組用チャンネル名
+        /**
+         * 録画番組用チャンネル名.
+         */
         TextView tv_recorded_ch_name;
     }
 
+    /**
+     * ダウンロードボタンイベントコールバック.
+     */
     public interface DownloadCallback {
-        public void downloadClick(View v);
+        /**
+         * ダウンロードボタンイベントコールバック.
+         *
+         * @param v 　View
+         */
+        void downloadClick(View v);
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(final View v) {
 
         mDownloadCallback.downloadClick(v);
     }
