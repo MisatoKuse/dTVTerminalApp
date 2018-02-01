@@ -46,7 +46,9 @@ public class RecommendActivity extends BaseActivity implements
     private boolean mIsSearching = false;
     private Boolean mIsMenuLaunch = false;
 
+    //チャンネル情報
     private List<Map<String, String>> mChannelMap;
+
     private LinearLayout mLinearLayout = null;
     private TabItemLayout mTabLayout = null;
     //ページャーのクラス(staticにしないと前回の値が維持され、データの更新に失敗する場合がある)
@@ -84,6 +86,7 @@ public class RecommendActivity extends BaseActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recommend_main_layout);
+
         //チャンネルリスト取得
         getChannelList();
 
@@ -131,9 +134,9 @@ public class RecommendActivity extends BaseActivity implements
     }
 
     /**
-     * チャンネルリストの取得
+     * チャンネルリストの取得.
      */
-    void getChannelList() {
+    private void getChannelList() {
         //チャンネルリストプロバイダーでデータを取得する
         mHikariTvChDataProvider = new HikariTvChDataProvider(this);
         mHikariTvChDataProvider.getChannelList(1, mPagingOffset, "");
@@ -147,9 +150,9 @@ public class RecommendActivity extends BaseActivity implements
     }
 
     /**
-     * 検索中フラグの変更
+     * 検索中フラグの変更.
      *
-     * @param seachingFlag
+     * @param seachingFlag 検索中フラグ
      */
     private void setSearchStart(boolean seachingFlag) {
         synchronized (this) {
@@ -158,7 +161,7 @@ public class RecommendActivity extends BaseActivity implements
     }
 
     /**
-     * データプロバイダへデータ取得要求
+     * データプロバイダへデータ取得要求.
      */
     private void requestRecommendData() {
         if (null == mRecommendDataProvider) {
@@ -186,7 +189,7 @@ public class RecommendActivity extends BaseActivity implements
     }
 
     /**
-     * レコメンドのリストを初期化
+     * レコメンドのリストを初期化.
      */
     private void initRecommendListView() {
         //ページカウンターの初期化が必要になった
@@ -214,12 +217,13 @@ public class RecommendActivity extends BaseActivity implements
                 //ここでフラグをクリアしないと、以後の更新が行われなくなる場合がある
                 setSearchStart(false);
                 requestRecommendData();
+                getChannelList();
             }
         });
     }
 
     /**
-     * tabの関連Viewを初期化
+     * tabの関連Viewを初期化.
      */
     private void initTabVIew() {
         DTVTLogger.start();
@@ -246,9 +250,9 @@ public class RecommendActivity extends BaseActivity implements
     }
 
     /**
-     * フラグメントの取得
+     * フラグメントの取得.
      *
-     * @return
+     * @return 現在のフラグメント
      */
     private RecommendBaseFragment getCurrentRecommendBaseFragment() {
         int currentPageNo = sRecommendViewPager.getCurrentItem();
@@ -257,9 +261,9 @@ public class RecommendActivity extends BaseActivity implements
     }
 
     /**
-     * レコメンド取得完了時の表示処理
+     * レコメンド取得完了時の表示処理.
      *
-     * @param resultInfoList
+     * @param resultInfoList レコメンド情報
      */
     public void recommendDataProviderSuccess(List<ContentsData> resultInfoList) {
         RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
@@ -291,6 +295,7 @@ public class RecommendActivity extends BaseActivity implements
 
             //フラグメントにチャンネルリストを送信する
             baseFragment.setChannelData(mChannelMap);
+
             baseFragment.setSelection(sSearchLastItem);
             baseFragment.displayLoadMore(false);
             setSearchStart(false);
@@ -331,9 +336,9 @@ public class RecommendActivity extends BaseActivity implements
     }
 
     /**
-     * ページング判定の変更
+     * ページング判定の変更.
      *
-     * @param bool
+     * @param bool ページングの有無
      */
     private void setPagingStatus(boolean bool) {
         synchronized (this) {
@@ -343,7 +348,7 @@ public class RecommendActivity extends BaseActivity implements
 
     @Override
     public void channelInfoCallback(ChannelInfoList channelsInfo) {
-        //
+        //チャンネル情報取得後のコールバック
         try {
             mChannelMap = mHikariTvChDataProvider.dbOperation(SEARCH_CHANNEL);
 
@@ -356,6 +361,7 @@ public class RecommendActivity extends BaseActivity implements
 
     @Override
     public void channelListCallback(ArrayList<ChannelInfo> channels) {
+        //チャンネル情報取得後のコールバック
         try {
             mChannelMap = mHikariTvChDataProvider.dbOperation(SEARCH_CHANNEL);
 
@@ -420,9 +426,9 @@ public class RecommendActivity extends BaseActivity implements
     }
 
     /**
-     * おすすめテレビ用コールバック
+     * おすすめテレビ用コールバック.
      *
-     * @param recommendContentInfoList
+     * @param recommendContentInfoList テレビタブ用情報
      */
     @Override
     public void RecommendChannelCallback(List<ContentsData> recommendContentInfoList) {
@@ -433,9 +439,9 @@ public class RecommendActivity extends BaseActivity implements
     }
 
     /**
-     * おすすめビデオ用コールバック
+     * おすすめビデオ用コールバック.
      *
-     * @param recommendContentInfoList
+     * @param recommendContentInfoList ビデオタブ用情報
      */
     @Override
     public void RecommendVideoCallback(List<ContentsData> recommendContentInfoList) {
@@ -446,9 +452,9 @@ public class RecommendActivity extends BaseActivity implements
     }
 
     /**
-     * おすすめdTV用コールバック
+     * おすすめdTV用コールバック.
      *
-     * @param recommendContentInfoList
+     * @param recommendContentInfoList dTV用情報
      */
     @Override
     public void RecommendDTVCallback(List<ContentsData> recommendContentInfoList) {
@@ -460,9 +466,9 @@ public class RecommendActivity extends BaseActivity implements
     }
 
     /**
-     * おすすめdアニメ用コールバック
+     * おすすめdアニメ用コールバック.
      *
-     * @param recommendContentInfoList
+     * @param recommendContentInfoList dアニメ用情報
      */
     @Override
     public void RecommendDAnimeCallback(List<ContentsData> recommendContentInfoList) {
@@ -473,9 +479,9 @@ public class RecommendActivity extends BaseActivity implements
     }
 
     /**
-     * おすすめdチャンネル用コールバック
+     * おすすめdチャンネル用コールバック.
      *
-     * @param recommendContentInfoList
+     * @param recommendContentInfoList dTVチャンネル用情報
      */
     @Override
     public void RecommendDChannelCallback(List<ContentsData> recommendContentInfoList) {
@@ -487,7 +493,7 @@ public class RecommendActivity extends BaseActivity implements
     }
 
     /**
-     * 0件コールバック
+     * 0件コールバック.
      */
     @Override
     public void RecommendNGCallback() {
