@@ -18,14 +18,15 @@
     <dimen name="launch_text_left_padding">24dp</dimen>
     <dimen name="launch_text_right_padding">0dp</dimen>
     <dimen name="launch_text_end_padding">0dp</dimen>
+    <dimen name="launch_device_list_dividerHeight">1dp</dimen>
     <dimen name="launch_device_list_layout_high">0dp</dimen>
     <dimen name="launch_device_search_error_help">1dp</dimen>
     <dimen name="launch_device_search_error_help_text">15dp</dimen>
     <dimen name="launch_stb_checkbox_start_margin">19dp</dimen>
     <dimen name="launch_stb_checkbox_right_margin">11dp</dimen>
-    <dimen name="launch_stb_device_font_size">16dp</dimen>
+    <dimen name="launch_stb_device_font_size">14dp</dimen>
     <dimen name="launch_stb_checkbox_high">18dp</dimen>
-    <dimen name="launch_stb_margin_top">32dp</dimen>
+    <dimen name="launch_stb_margin_top">40dp</dimen>
     <dimen name="launch_stb_name_margin_bottom">1.5dp</dimen>
     <dimen name="launch_stb_progress_bar_padding">15dp</dimen>
     <dimen name="launch_stb_start_up_icon1_high">36dp</dimen>

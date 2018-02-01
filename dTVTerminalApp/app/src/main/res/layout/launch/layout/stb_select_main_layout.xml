@@ -17,8 +17,8 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="@dimen/launch_image_bottom_margin" />
-
     </RelativeLayout>
+
     <TextView
         android:id="@+id/stb_select_status_text"
         android:layout_width="match_parent"
@@ -28,9 +28,9 @@
         android:layout_marginStart="@dimen/launch_image_bottom_margin"
         android:layout_marginEnd="@dimen/launch_image_bottom_margin"
         android:lineSpacingMultiplier="1.5"
-        android:gravity="center"
+        android:gravity="center_horizontal|bottom"
+        android:textStyle="bold"
         android:textSize="@dimen/launch_text_size"
-        android:layout_marginTop="@dimen/launch_stb_text_margin_top"
         android:layout_below="@+id/stb_icon_relative_layout"
         android:layout_alignParentStart="true" />
 
@@ -39,14 +39,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/stb_select_status_text"
-        android:layout_marginBottom="@dimen/launch_stb_name_margin_bottom"
-        >
+        android:layout_marginBottom="@dimen/launch_stb_name_margin_bottom">
 
         <TextView
             android:id="@+id/stb_select_status_selected_text"
             android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/launch_stb_margin_top"
             android:layout_height="@dimen/launch_text_layout_high_size"
+            android:layout_marginTop="@dimen/launch_stb_margin_top"
             android:layout_marginRight="@dimen/launch_stb_list_start_margin"
             android:layout_marginLeft="@dimen/launch_stb_list_start_margin"
             android:paddingStart="@dimen/launch_text_left_padding"
@@ -54,8 +53,8 @@
             android:maxLines="1"
             android:ellipsize="end"
             android:gravity="center_vertical|start"
-            android:visibility="gone"
-            />
+            android:visibility="gone"/>
+
         <ImageView
             android:id="@+id/stb_device_check_mark"
             android:layout_width="wrap_content"
@@ -85,7 +84,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/launch_stb_margin_top"
         android:layout_below="@id/stb_device_progress"
-        android:layout_above="@+id/checkBoxSTBSelectActivity">
+        android:layout_above="@+id/checkBoxSTBSelectActivity"
+        android:dividerHeight="@dimen/launch_device_list_dividerHeight"
+        android:divider="@color/stb_select_background_color">
     </ListView>
 
     <CheckBox
@@ -117,7 +118,6 @@
         android:layout_marginBottom="@dimen/launch_stb_checkbox_bottom_margin"
         />
 
-
     <TextView
         android:id="@+id/useWithoutPairingSTBParingInvitation"
         android:layout_width="match_parent"
@@ -129,6 +129,7 @@
         android:gravity="center"
         android:text="@string/str_stb_no_pair_use_text"
         android:textColor="@color/stb_select_black_color"
+        android:textStyle="bold"
         android:textSize="@dimen/launch_text_size"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
