@@ -27,7 +27,7 @@
 			android:layout_alignParentRight="true"
 			android:layout_centerVertical="true"
 			android:clickable="true"
-			android:src="@mipmap/icon_circle_opacity_clip"
+			android:background="@mipmap/icon_circle_opacity_clip"
 			android:layout_margin="@dimen/clip_common_margin"
 			android:visibility="gone"/>
 
