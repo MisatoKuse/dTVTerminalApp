@@ -8,9 +8,8 @@
     android:layout_height="match_parent">
 
     <WebView
-        android:id="@+id/d_account_help_webView"
+        android:id="@+id/stb_d_account_regist_help_webview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+        android:layout_height="match_parent"/>
 
 </RelativeLayout>
