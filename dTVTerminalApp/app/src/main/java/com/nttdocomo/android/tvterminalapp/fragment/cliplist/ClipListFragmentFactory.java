@@ -7,12 +7,25 @@ package com.nttdocomo.android.tvterminalapp.fragment.cliplist;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * クリップFragment生成.
+ */
 public class ClipListFragmentFactory {
 
-    private  Map<Integer, ClipListBaseFragment> mFragments = new HashMap<Integer, ClipListBaseFragment>();
+    /**
+     * Fragment格納Map.
+     */
+    private Map<Integer, ClipListBaseFragment> mFragments = new HashMap<>();
 
-    public ClipListBaseFragment createFragment(int position, ClipListBaseFragmentScrollListener lis) {
-        ClipListBaseFragment fragment = null;
+    /**
+     * Fragment生成.
+     *
+     * @param position タブPosition
+     * @param lis      ScrollListener
+     * @return ClipListBaseFragment
+     */
+    public ClipListBaseFragment createFragment(final int position, final ClipListBaseFragmentScrollListener lis) {
+        ClipListBaseFragment fragment;
         fragment = mFragments.get(position);
         if (fragment == null) {
             if (position == 0) {

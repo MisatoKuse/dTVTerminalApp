@@ -20,7 +20,7 @@ import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.adapter.ClipMainAdapter;
+import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.fragment.cliplist.ClipListBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.cliplist.ClipListBaseFragmentScrollListener;
 import com.nttdocomo.android.tvterminalapp.fragment.cliplist.ClipListFragmentFactory;
@@ -33,31 +33,70 @@ import com.nttdocomo.android.tvterminalapp.model.TabItemLayout;
 
 import java.util.List;
 
+/**
+ * クリップ画面.
+ */
 public class ClipListActivity extends BaseActivity implements
         VodClipDataProvider.ApiDataProviderCallback,
         TvClipDataProvider.TvClipDataProviderCallback,
         ClipListBaseFragmentScrollListener,
         TabItemLayout.OnClickTabTextListener {
 
+    /**
+     * タブ名.
+     */
     private String[] mTabNames = null;
+    /**
+     * 接続中フラグ.
+     */
     private boolean mIsCommunicating = false;
 
+    /**
+     * レイアウト.
+     */
     private LinearLayout mLinearLayout = null;
+    /**
+     * タブアイテムレイアウト.
+     */
     private TabItemLayout mTabLayout = null;
+    /**
+     * ViewPager.
+     */
     private ViewPager mViewPager = null;
+    /**
+     * メニュー表示フラグ.
+     */
     private Boolean mIsMenuLaunch = false;
 
+    /**
+     * VodClipデータプロバイダ.
+     */
     private VodClipDataProvider mVodClipDataProvider = null;
+    /**
+     * TvClipデータプロバイダ.
+     */
     private TvClipDataProvider mTvClipDataProvider = null;
+    /**
+     * FragmentFactory.
+     */
     private ClipListFragmentFactory mClipListFragmentFactory = null;
 
+    /**
+     * ページング単位設定値.
+     */
     private final int NUM_PER_PAGE = 10;
 
-    private static final int CLIP_LIST_PAGE_NO_OF_TV = 0;
-    private static final int CLIP_LIST_PAGE_NO_OF_VOD = 1;
+    /**
+     * タブポジション(Tv).
+     */
+    public static final int CLIP_LIST_PAGE_NO_OF_TV = 0;
+    /**
+     * タブポジション(ビデオ)
+     */
+    public static final int CLIP_LIST_PAGE_NO_OF_VOD = 1;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.clip_list_main);
 
@@ -77,40 +116,53 @@ public class ClipListActivity extends BaseActivity implements
         setTv();
     }
 
+    /**
+     * リセットページ開始.
+     */
     private void resetPaging() {
         synchronized (this) {
             setCommunicatingStatus(false);
             ClipListBaseFragment baseFragment = getCurrentFragment();
-            if (null != baseFragment && null != baseFragment.mData) {
-                baseFragment.mData.clear();
+            if (null != baseFragment && null != baseFragment.mClipListData) {
+                baseFragment.mClipListData.clear();
                 baseFragment.noticeRefresh();
             }
         }
     }
 
-    private void setCommunicatingStatus(boolean bool) {
+    /**
+     * 接続中フラグ設定.
+     *
+     * @param bool
+     */
+    private void setCommunicatingStatus(final boolean bool) {
         synchronized (this) {
             mIsCommunicating = bool;
         }
     }
 
+    /**
+     * ページング単位値取得.
+     *
+     * @return
+     */
     private int getCurrentNumber() {
         ClipListBaseFragment baseFragment = getCurrentFragment();
-        if (null == baseFragment || null == baseFragment.mData || 0 == baseFragment.mData.size()) {
+        if (null == baseFragment || null == baseFragment.mClipListData || 0 == baseFragment.mClipListData.size()) {
             return 0;
         }
-        return baseFragment.mData.size() / NUM_PER_PAGE;
+        return baseFragment.mClipListData.size() / NUM_PER_PAGE;
     }
 
     /**
-     * 取得結果が更新前と同じなら更新しない
+     * 取得結果が更新前と同じなら更新しない.
      *
      * @param tvClipContentInfo 取得コンテンツデータ
-     * @return
+     * @return コンテンツデータ更新フラグ
      */
-    private boolean isSkipTv(List<ContentsData> tvClipContentInfo) {
+    private boolean isSkipTv(final List<ContentsData> tvClipContentInfo) {
         ClipListBaseFragment baseFragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_TV, this);
-        if (null == baseFragment || null == baseFragment.mData || 0 == baseFragment.mData.size()) {
+        if (null == baseFragment || null == baseFragment.mClipListData || 0 == baseFragment.mClipListData.size()) {
             return false;
         }
 
@@ -118,20 +170,20 @@ public class ClipListActivity extends BaseActivity implements
             return true;
         }
 
-        ContentsData item1 = baseFragment.mData.get(baseFragment.mData.size() - 1);
+        ContentsData item1 = baseFragment.mClipListData.get(baseFragment.mClipListData.size() - 1);
         ContentsData item2 = tvClipContentInfo.get(tvClipContentInfo.size() - 1);
         return isContentEqual(item1, item2);
     }
 
     /**
-     * 取得結果が更新前と同じなら更新しない
+     * 取得結果が更新前と同じなら更新しない.
      *
      * @param vodClipContentInfo 取得コンテンツデータ
-     * @return
+     * @return コンテンツデータ更新フラグ
      */
-    private boolean isSkipVod(List<ContentsData> vodClipContentInfo) {
+    private boolean isSkipVod(final List<ContentsData> vodClipContentInfo) {
         ClipListBaseFragment baseFragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_VOD, this);
-        if (null == baseFragment || null == baseFragment.mData || 0 == baseFragment.mData.size()) {
+        if (null == baseFragment || null == baseFragment.mClipListData || 0 == baseFragment.mClipListData.size()) {
             return false;
         }
 
@@ -139,19 +191,19 @@ public class ClipListActivity extends BaseActivity implements
             return true;
         }
 
-        ContentsData item1 = baseFragment.mData.get(baseFragment.mData.size() - 1);
+        ContentsData item1 = baseFragment.mClipListData.get(baseFragment.mClipListData.size() - 1);
         ContentsData item2 = vodClipContentInfo.get(vodClipContentInfo.size() - 1);
         return isContentEqual(item1, item2);
     }
 
     /**
-     * 同じコンテンツデータか判定
+     * 同じコンテンツデータか判定.
      *
      * @param item1 取得済みデータ
      * @param item2 更新データ
      * @return 判定結果
      */
-    private boolean isContentEqual(ContentsData item1, ContentsData item2) {
+    private boolean isContentEqual(final ContentsData item1, final ContentsData item2) {
         if (null == item1 || null == item2) {
             return false;
         }
@@ -160,6 +212,9 @@ public class ClipListActivity extends BaseActivity implements
                 && item1.getTitle().equals(item2.getTitle());
     }
 
+    /**
+     * データ初期化.
+     */
     private void initData() {
         mTabNames = getResources().getStringArray(R.array.tab_clip_names);
         mVodClipDataProvider = new VodClipDataProvider(this);
@@ -173,13 +228,13 @@ public class ClipListActivity extends BaseActivity implements
         for (int i = 0; i < 2; ++i) {
             ClipListBaseFragment b = mClipListFragmentFactory.createFragment(i, this);
             if (null != b) {
-                b.mData.clear();
+                b.mClipListData.clear();
             }
         }
     }
 
     @Override
-    public void tvClipListCallback(List<ContentsData> clipContentInfo) {
+    public void tvClipListCallback(final List<ContentsData> clipContentInfo) {
         if (null == clipContentInfo || 0 == clipContentInfo.size()) {
             //通信とJSON Parseに関してerror処理
             DTVTLogger.debug("ClipListActivity::TvClipListCallback, get data failed.");
@@ -203,8 +258,8 @@ public class ClipListActivity extends BaseActivity implements
 
         int pageNumber = getCurrentNumber();
         for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE && i < clipContentInfo.size(); ++i) {
-            if (null != fragment.mData) {
-                fragment.mData.add(clipContentInfo.get(i));
+            if (null != fragment.mClipListData) {
+                fragment.mClipListData.add(clipContentInfo.get(i));
             }
         }
 
@@ -215,7 +270,7 @@ public class ClipListActivity extends BaseActivity implements
     }
 
     @Override
-    public void vodClipListCallback(List<ContentsData> clipContentInfo) {
+    public void vodClipListCallback(final List<ContentsData> clipContentInfo) {
         if (null == clipContentInfo || 0 == clipContentInfo.size()) {
             //通信とJSON Parseに関してerror処理
             DTVTLogger.debug("ClipListActivity::VodClipListCallback, get data failed");
@@ -239,8 +294,8 @@ public class ClipListActivity extends BaseActivity implements
 
         int pageNumber = getCurrentNumber();
         for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE && i < clipContentInfo.size(); ++i) {
-            if (null != fragment.mData) {
-                fragment.mData.add(clipContentInfo.get(i));
+            if (null != fragment.mClipListData) {
+                fragment.mClipListData.add(clipContentInfo.get(i));
             }
         }
 
@@ -250,6 +305,9 @@ public class ClipListActivity extends BaseActivity implements
         fragment.noticeRefresh();
     }
 
+    /**
+     * 接続中止.
+     */
     private void resetCommunication() {
         ClipListBaseFragment baseFragment = getCurrentFragment();
         if (null == baseFragment) {
@@ -260,7 +318,9 @@ public class ClipListActivity extends BaseActivity implements
     }
 
     @Override
-    public void onScroll(ClipListBaseFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+    public void onScroll(
+            final ClipListBaseFragment fragment, final AbsListView absListView,
+            final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
         synchronized (this) {
             ClipListBaseFragment baseFragment = getCurrentFragment();
             if (null == baseFragment || null == fragment.getClipMainAdapter()) {
@@ -279,7 +339,8 @@ public class ClipListActivity extends BaseActivity implements
     }
 
     @Override
-    public void onScrollStateChanged(ClipListBaseFragment fragment, AbsListView absListView, int scrollState) {
+    public void onScrollStateChanged(final ClipListBaseFragment fragment,
+                                     final AbsListView absListView, final int scrollState) {
         synchronized (this) {
 
             ClipListBaseFragment baseFragment = getCurrentFragment();
@@ -290,8 +351,8 @@ public class ClipListActivity extends BaseActivity implements
                 return;
             }
 
-            if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE &&
-                    absListView.getLastVisiblePosition() == fragment.getClipMainAdapter().getCount() - 1) {
+            if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
+                    && absListView.getLastVisiblePosition() == fragment.getClipMainAdapter().getCount() - 1) {
 
                 if (mIsCommunicating) {
                     return;
@@ -310,8 +371,8 @@ public class ClipListActivity extends BaseActivity implements
                     public void run() {
 
                         int offset = 0;
-                        if (null != finalFragment.mData) {
-                            offset = finalFragment.mData.size();
+                        if (null != finalFragment.mClipListData) {
+                            offset = finalFragment.mClipListData.size();
                         }
                         switch (mViewPager.getCurrentItem()) {
                             case CLIP_LIST_PAGE_NO_OF_TV:
@@ -329,20 +390,30 @@ public class ClipListActivity extends BaseActivity implements
         }
     }
 
+    /**
+     * Activity取得.
+     *
+     * @return
+     */
     private ClipListActivity getClipListActivity() {
         return this;
     }
 
     /**
-     * 検索結果タブ専用アダプター
+     * 検索結果タブ専用アダプター.
      */
-    class ClipPagerAdapter extends FragmentStatePagerAdapter {
-        public ClipPagerAdapter(FragmentManager fm) {
+    private class ClipPagerAdapter extends FragmentStatePagerAdapter {
+        /**
+         * コンストラクタ.
+         *
+         * @param fm
+         */
+        public ClipPagerAdapter(final FragmentManager fm) {
             super(fm);
         }
 
         @Override
-        public Fragment getItem(int position) {
+        public Fragment getItem(final int position) {
             return mClipListFragmentFactory.createFragment(position, getClipListActivity());
         }
 
@@ -352,11 +423,14 @@ public class ClipListActivity extends BaseActivity implements
         }
 
         @Override
-        public CharSequence getPageTitle(int position) {
+        public CharSequence getPageTitle(final int position) {
             return mTabNames[position];
         }
     }
 
+    /**
+     * 画面初期設定.
+     */
     private void initView() {
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
@@ -368,7 +442,7 @@ public class ClipListActivity extends BaseActivity implements
         mViewPager.addOnPageChangeListener(new ViewPager
                 .SimpleOnPageChangeListener() {
             @Override
-            public void onPageSelected(int position) {
+            public void onPageSelected(final int position) {
                 super.onPageSelected(position);
                 mTabLayout.setTab(position);
 
@@ -387,23 +461,27 @@ public class ClipListActivity extends BaseActivity implements
         initTabVIew();
     }
 
+    /**
+     * クリップ(ビデオ)画面設定.
+     */
     private void setVod() {
 
         ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_VOD, this);
-        //fragment.clearAllDatas();
-        fragment.setMode(ClipMainAdapter.Mode.CLIP_LIST_MODE_VIDEO);
+        fragment.setMode(ContentsAdapter.ActivityTypeItem.CLIP_LIST_MODE_VIDEO);
         mVodClipDataProvider.getClipData(1);
     }
 
+    /**
+     * クリップ(テレビ)画面設定
+     */
     private void setTv() {
         ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_TV, this);
-        //fragment.clearAllDatas();
-        fragment.setMode(ClipMainAdapter.Mode.CLIP_LIST_MODE_TV);
+        fragment.setMode(ContentsAdapter.ActivityTypeItem.CLIP_LIST_MODE_TV);
         mTvClipDataProvider.getClipData(1);
     }
 
     /**
-     * tabに関連Viewの初期化
+     * tabに関連Viewの初期化.
      */
     private void initTabVIew() {
         DTVTLogger.start();
@@ -420,7 +498,7 @@ public class ClipListActivity extends BaseActivity implements
     }
 
     @Override
-    public void onClickTab(int position) {
+    public void onClickTab(final int position) {
         DTVTLogger.start("position = " + position);
         if (null != mViewPager) {
             DTVTLogger.debug("viewpager not null");
@@ -430,10 +508,11 @@ public class ClipListActivity extends BaseActivity implements
     }
 
     /**
-     * インジケーター設置
-     * @param position
+     * インジケーター設置.
+     *
+     * @param position インジケータ位置
      */
-    public void setTab(int position) {
+    public void setTab(final int position) {
         //mCurrentPageNum = position;
         if (mLinearLayout != null) {
             for (int i = 0; i < mTabNames.length; i++) {
@@ -447,6 +526,11 @@ public class ClipListActivity extends BaseActivity implements
         }
     }
 
+    /**
+     * Fragment生成.
+     *
+     * @return Fragment
+     */
     private ClipListBaseFragment getCurrentFragment() {
 
         int i = mViewPager.getCurrentItem();
@@ -454,7 +538,7 @@ public class ClipListActivity extends BaseActivity implements
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         DTVTLogger.start();
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
