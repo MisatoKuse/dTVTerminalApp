@@ -11,13 +11,13 @@ public class BaseUrlConstants {
      * 検索サーバAPIのURL.
      */
     public static final String TOTAL_SEARCH_URL =
-            "https://sea.dtv.dmkt-sp.jp/irengine/search/index.do";
+            "https://sea2.stg.dtv.dmkt-sp.jp/irengine/search/index.do";
 
     /**
      * レコメンド情報取得APIのURL.
      */
     public static final String RECOMMEND_LIST_GET_URL =
-            "https://ve.m.service.smt.docomo.ne.jp/srermd/recommend/index.do";
+            "https://ve.m.support2.smt.docomo.ne.jp/srermd/recommend/index.do";
 
     /**
      * ワンタイムパスワードでレコメンドサーバーを認証するURL.
