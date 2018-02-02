@@ -12,6 +12,7 @@ import android.webkit.WebViewClient;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 /**
  * APP画面.
@@ -21,8 +22,15 @@ public class SettingMenuAppActivity extends BaseActivity {
     /**
      * WebView.
      */
-    WebView mAppWebView = null;
-
+    private WebView mAppWebView = null;
+    /**
+     * webViewの読み込み進行度.
+     */
+    private int mProgress = 0;
+    /**
+     * webViewの読み込み完了値.
+     */
+    private final static int PROGRESS_FINISH = 100;
     /**
      * TODO 仮のURL.
      */
@@ -50,9 +58,28 @@ public class SettingMenuAppActivity extends BaseActivity {
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK){
-            if(mAppWebView.canGoBack() ) {
+    protected void onRestart() {
+        super.onRestart();
+        DTVTLogger.start();
+        if (mProgress != PROGRESS_FINISH) {
+            mAppWebView.reload();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        DTVTLogger.start();
+        mProgress = mAppWebView.getProgress();
+        if (mProgress != PROGRESS_FINISH) {
+            mAppWebView.stopLoading();
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (mAppWebView.canGoBack()) {
                 mAppWebView.goBack();
                 return false;
             }

@@ -12,6 +12,7 @@ import android.webkit.WebViewClient;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 /**
  * ドコモテレビターミナルにdアカウントを登録するには 画面.
@@ -22,6 +23,14 @@ public class DAccountSettingHelpActivity extends BaseActivity {
      * WebView.
      */
     private WebView dAccountHelpPageWebView = null;
+    /**
+     * webViewの読み込み進行度.
+     */
+    private int mProgress = 0;
+    /**
+     * webViewの読み込み完了値.
+     */
+    private final static int PROGRESS_FINISH = 100;
     /**
      * 表示するWebPageのURL.
      * TODO 仮のURL
@@ -46,6 +55,25 @@ public class DAccountSettingHelpActivity extends BaseActivity {
         enableHeaderBackIcon(true);
         enableStbStatusIcon(false);
         enableGlobalMenuIcon(false);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        DTVTLogger.start();
+        if (mProgress != PROGRESS_FINISH) {
+            dAccountHelpPageWebView.reload();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        DTVTLogger.start();
+        mProgress = dAccountHelpPageWebView.getProgress();
+        if (mProgress != PROGRESS_FINISH) {
+            dAccountHelpPageWebView.stopLoading();
+        }
     }
 
     @Override

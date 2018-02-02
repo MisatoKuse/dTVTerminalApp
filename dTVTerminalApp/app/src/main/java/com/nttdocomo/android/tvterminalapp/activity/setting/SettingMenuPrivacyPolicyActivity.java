@@ -12,21 +12,32 @@ import android.webkit.WebViewClient;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
+/**
+ * 設定画面 プライバシーポリシー.
+ */
 public class SettingMenuPrivacyPolicyActivity extends BaseActivity {
 
     /**
      * WebView.
      */
-    WebView mPrivacyPolicyWebView = null;
-
+    private WebView mPrivacyPolicyWebView = null;
     /**
-     * TODO 仮のURL
+     * webViewの読み込み進行度.
+     */
+    private int mProgress = 0;
+    /**
+     * webViewの読み込み完了値.
+     */
+    private final static int PROGRESS_FINISH = 100;
+    /**
+     * TODO 仮のURL.
      */
     private final static String SETTING_MENU_PRIVACY_POLICY_URL = "https://www.nttdocomo.co.jp/";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.setting_menu_item_main_view);
 
@@ -47,9 +58,28 @@ public class SettingMenuPrivacyPolicyActivity extends BaseActivity {
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK){
-            if(mPrivacyPolicyWebView.canGoBack() ) {
+    protected void onRestart() {
+        super.onRestart();
+        DTVTLogger.start();
+        if (mProgress != PROGRESS_FINISH) {
+            mPrivacyPolicyWebView.reload();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        DTVTLogger.start();
+        mProgress = mPrivacyPolicyWebView.getProgress();
+        if (mProgress != PROGRESS_FINISH) {
+            mPrivacyPolicyWebView.stopLoading();
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (mPrivacyPolicyWebView.canGoBack()) {
                 mPrivacyPolicyWebView.goBack();
                 return false;
             }
