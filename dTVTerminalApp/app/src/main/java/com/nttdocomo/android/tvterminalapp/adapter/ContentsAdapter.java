@@ -177,14 +177,46 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * 共通アダプター使う.
      */
     public enum ActivityTypeItem {
-        TYPE_DAILY_RANK,          //今日のテレビランキング
-        TYPE_WEEKLY_RANK,         //週間テレビランキング
-        TYPE_VIDEO_RANK,          //ビデオランキング
-        TYPE_RENTAL_RANK,          //レンタル
-        TYPE_RECORDING_RESERVATION_LIST, // 録画予約一覧
-        TYPE_VIDEO_CONTENT_LIST, // ビデオコンテンツ一覧
-        TYPE_RECORDED_LIST, // 録画番組一覧
-        TYPE_WATCHING_VIDEO_LIST // 視聴中ビデオ一覧
+        /**
+         * 今日のテレビランキング.
+         */
+        TYPE_DAILY_RANK,
+        /**
+         * 週間テレビランキング.
+         */
+        TYPE_WEEKLY_RANK,
+        /**
+         * ビデオランキング.
+         */
+        TYPE_VIDEO_RANK,
+        /**
+         * レンタル.
+         */
+        TYPE_RENTAL_RANK,
+        /**
+         * 録画予約一覧.
+         */
+        TYPE_RECORDING_RESERVATION_LIST,
+        /**
+         * ビデオコンテンツ一覧.
+         */
+        TYPE_VIDEO_CONTENT_LIST,
+        /**
+         * 録画番組一覧.
+         */
+        TYPE_RECORDED_LIST,
+        /**
+         * 視聴中ビデオ一覧.
+         */
+        TYPE_WATCHING_VIDEO_LIST,
+        /**
+         * TVタブ(クリップ).
+         */
+        CLIP_LIST_MODE_TV,
+        /**
+         * ビデオタブ(クリップ).
+         */
+        CLIP_LIST_MODE_VIDEO
     }
 
     /**
@@ -263,7 +295,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             listContentInfo.setClipButton(clipButton);
             clipButton.setOnClickListener(new OnClickListener() {
                 @Override
-                public void onClick(View view) {
+                public void onClick(final View view) {
                     //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、画像比較でクリップ済/未を判定する
                     Bitmap clipButtonBitmap = ((BitmapDrawable) clipButton.getBackground()).getBitmap();
                     Bitmap activeClipBitmap = ((BitmapDrawable) ResourcesCompat.getDrawable(mContext.getResources(),
@@ -295,6 +327,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_VIDEO_RANK:
             case TYPE_VIDEO_CONTENT_LIST:
             case TYPE_WATCHING_VIDEO_LIST:
+            case CLIP_LIST_MODE_VIDEO:
                 textMargin = TITLE_MARGINTOP17;
                 setTextMargin(textMargin, holder, contentView);
                 layoutParamsClip.addRule(RelativeLayout.ALIGN_PARENT_END, R.id.parent_relative_layout);
@@ -316,7 +349,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 clipMargin = RECEPTION_MARGINTOP30;
                 setClipMargin(clipMargin, contentView);
                 break;
-
+            case CLIP_LIST_MODE_TV: //TVタブ(クリップ)
+                break;
             //ENUMの値をswitch分岐すると、全ての値を書かないとアナライザーがエラーを出すので、caseを追加
             case TYPE_RECORDED_LIST:
             default:
@@ -486,6 +520,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
                 case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
                 case TYPE_RECORDED_LIST: // 録画番組一覧
+                case CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
+                case CLIP_LIST_MODE_TV: //TVタブ(クリップ)
                     holder.tv_time.setText(listContentInfo.getTime());
                     break;
                 default:
@@ -543,31 +579,31 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 case RecordingReservationListDataProvider.RECORD_RESERVATION_SYNC_STATUS_DURING_REFLECT:
                     // 受付中
                     holder.tv_recording_reservation.setVisibility(View.VISIBLE);
-                    holder.tv_recording_reservation.setTextColor
-                            (ContextCompat.getColor(mContext, R.color.recording_reservation_status_text_color_red));
-                    holder.tv_recording_reservation.setBackgroundColor
-                            (ContextCompat.getColor(mContext, R.color.recording_reservation_status_background_white));
+                    holder.tv_recording_reservation.setTextColor(
+                            ContextCompat.getColor(mContext, R.color.recording_reservation_status_text_color_red));
+                    holder.tv_recording_reservation.setBackgroundColor(
+                            ContextCompat.getColor(mContext, R.color.recording_reservation_status_background_white));
                     holder.tv_recording_reservation.setText(R.string.recording_reservation_status_accepting);
                     break;
                 case RecordingReservationListDataProvider.RECORD_RESERVATION_SYNC_STATUS_REFLECT_FAILURE:
                     // 受付失敗
                     holder.tv_recording_reservation.setVisibility(View.VISIBLE);
-                    holder.tv_recording_reservation.setTextColor
-                            (ContextCompat.getColor(mContext, R.color.recording_reservation_status_text_color_white));
-                    holder.tv_recording_reservation.setBackgroundColor
-                            (ContextCompat.getColor(mContext, R.color.recording_reservation_status_background_red));
+                    holder.tv_recording_reservation.setTextColor(
+                            ContextCompat.getColor(mContext, R.color.recording_reservation_status_text_color_white));
+                    holder.tv_recording_reservation.setBackgroundColor(
+                            ContextCompat.getColor(mContext, R.color.recording_reservation_status_background_red));
                     holder.tv_recording_reservation.setText(R.string.recording_reservation_status_accept_failure);
                     break;
                 case RecordingReservationListDataProvider.RECORD_RESERVATION_SYNC_STATUS_ALREADY_REFLECT:
                     // 受信完了
                     holder.tv_recording_reservation.setVisibility(View.GONE);
-                    holder.tv_recording_reservation.setBackgroundColor
-                            (ContextCompat.getColor(mContext, R.color.recording_reservation_status_background_black));
+                    holder.tv_recording_reservation.setBackgroundColor(
+                            ContextCompat.getColor(mContext, R.color.recording_reservation_status_background_black));
                     break;
                 default:
                     holder.tv_recording_reservation.setVisibility(View.GONE);
-                    holder.tv_recording_reservation.setBackgroundColor
-                            (ContextCompat.getColor(mContext, R.color.recording_reservation_status_background_black));
+                    holder.tv_recording_reservation.setBackgroundColor(
+                            ContextCompat.getColor(mContext, R.color.recording_reservation_status_background_black));
                     break;
             }
             DTVTLogger.end();
@@ -591,8 +627,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 if (downloadFlg != -1) {
                     // ダウンロード済み
                     holder.tv_clip.setVisibility(View.VISIBLE);
-                    holder.tv_clip.setBackgroundColor
-                            (ContextCompat.getColor(mContext, R.color.ranking_list_border));
+                    holder.tv_clip.setBackgroundColor(
+                            ContextCompat.getColor(mContext, R.color.ranking_list_border));
                 } else {
                     // 未ダウンロード
                     int allowedUse = listContentInfo.getAllowedUse();
@@ -602,8 +638,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                     } else {
                         // ダウンロード回数の残数有り
                         holder.tv_clip.setVisibility(View.VISIBLE);
-                        holder.tv_clip.setBackgroundColor
-                                (ContextCompat.getColor(mContext, R.color.recording_reservation_status_background_red));
+                        holder.tv_clip.setBackgroundColor(
+                                ContextCompat.getColor(mContext, R.color.recording_reservation_status_background_red));
                     }
                 }
             }
@@ -678,6 +714,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_RENTAL_RANK: // レンタル一覧
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
             case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
+            case CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
+            case CLIP_LIST_MODE_TV: //TVタブ(クリップ)
                 break;
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
                 viewHolder.tv_recording_reservation =
@@ -715,6 +753,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 break;
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
             case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
+            case CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
                 holder.tv_time.setVisibility(View.GONE);
                 holder.tv_rank.setVisibility(View.GONE);
                 break;
@@ -734,6 +773,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.rl_thumbnail.setVisibility(View.GONE);
                 holder.iv_thumbnail.setVisibility(View.GONE);
                 holder.rb_rating.setVisibility(View.GONE);
+                break;
+            case CLIP_LIST_MODE_TV: //TVタブ(クリップ)
+                holder.tv_time.setVisibility(View.GONE);
+                holder.tv_rank.setVisibility(View.GONE);
+                holder.rb_rating.setVisibility(View.GONE);
+                holder.tv_rating_num.setVisibility(View.GONE);
                 break;
             default:
                 break;
@@ -809,6 +854,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 }
             }
         }
+    }
+
+    public void setMode(ActivityTypeItem type) {
+        mType = type;
     }
 
     /**
