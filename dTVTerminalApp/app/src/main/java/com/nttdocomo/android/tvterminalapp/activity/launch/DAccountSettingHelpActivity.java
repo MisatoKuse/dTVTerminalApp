@@ -33,9 +33,9 @@ public class DAccountSettingHelpActivity extends BaseActivity {
     private final static int PROGRESS_FINISH = 100;
     /**
      * 表示するWebPageのURL.
-     * TODO 仮のURL
+     * TODO 仮のHTMLファイル
      */
-    private final static String STB_REGIST_D_ACCOUNT_URL = "https://www.nttdocomo.co.jp/";
+    private final static String STB_REGIST_D_ACCOUNT_URL = "file:///android_asset/first_pairing_d_account_help.html";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
