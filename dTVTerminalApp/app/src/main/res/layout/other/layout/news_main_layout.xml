@@ -1,31 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+  - Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/default_layout_style"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#000000"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/Back3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="戻る"
-        android:textColor="#ffffffff"/>
-
-    <TextView
-        android:id="@+id/tv_news1"
+    <WebView
+        android:id="@+id/news_main_webview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:text="お知らせ内容一"
-        android:textColor="#ffffffff"/>
-
-    <TextView
-        android:id="@+id/tv_news2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:text="お知らせ内容二"
-        android:textColor="#ffffffff"/>
-
-</LinearLayout>
+        android:layout_height="match_parent" />
+</RelativeLayout>
