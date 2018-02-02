@@ -22,6 +22,7 @@
     <dimen name="launch_device_list_layout_high">0dp</dimen>
     <dimen name="launch_device_search_error_help">1dp</dimen>
     <dimen name="launch_device_search_error_help_text">15dp</dimen>
+    <dimen name="launch_device_search_error_help_button_text">14dp</dimen>
     <dimen name="launch_stb_checkbox_start_margin">19dp</dimen>
     <dimen name="launch_stb_checkbox_right_margin">11dp</dimen>
     <dimen name="launch_stb_device_font_size">14dp</dimen>
