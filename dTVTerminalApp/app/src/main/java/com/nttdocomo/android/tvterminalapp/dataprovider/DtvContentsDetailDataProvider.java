@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.text.TextUtils;
 
+import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
@@ -136,19 +137,24 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
     }
 
     @Override
-    public void onContentsDetailJsonParsed(final ContentsDetailGetResponse ContentsDetailLists) {
-        if (ContentsDetailLists != null) {
-            ArrayList<VodMetaFullData> detailListInfo = ContentsDetailLists.getVodMetaFullData();
-            if (detailListInfo != null) {
-                if (!mRequiredClipKeyList) {
-                    mApiDataProviderCallback.onContentsDetailInfoCallback(
-                            detailListInfo, getContentsDetailClipStatus(detailListInfo.get(0)));
-                } else {
-                    mVodMetaFullDataList = detailListInfo;
-                    if (detailListInfo.size() > 0) {
-                        requestGetClipKeyList(detailListInfo.get(0));
+    public void onContentsDetailJsonParsed(final ContentsDetailGetResponse contentsDetailLists) {
+        if (contentsDetailLists != null) {
+            if (contentsDetailLists.getStatus().equals(mContext.getString(R.string.contents_detail_response_ok))) {
+                ArrayList<VodMetaFullData> detailListInfo = contentsDetailLists.getVodMetaFullData();
+                if (detailListInfo != null) {
+                    if (!mRequiredClipKeyList) {
+                        mApiDataProviderCallback.onContentsDetailInfoCallback(
+                                detailListInfo, getContentsDetailClipStatus(detailListInfo.get(0)));
+                    } else {
+                        mVodMetaFullDataList = detailListInfo;
+                        if (detailListInfo.size() > 0) {
+                            requestGetClipKeyList(detailListInfo.get(0));
+                        }
                     }
                 }
+            } else {
+                //status = "NG"の場合
+                mApiDataProviderCallback.onContentsDetailInfoCallback(null, false);
             }
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定

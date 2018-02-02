@@ -239,6 +239,7 @@
     <string name="contents_detail_contract_button_ch">ドコモテレビターミナルで契約する</string>
     <string name="contents_detail_external_display_dialog_msg">外部出力が検知されたため再生を停止します。</string>
     <string name="contents_detail_parental_check_fail">年齢制限のため視聴できません。</string>
+    <string name="contents_detail_response_ok">OK</string>
     <string name="contents_player_bad_contents_info">コンテンツの情報が正しくないため再生できません</string>
 
     <!-- チャンネルリストタイトル -->
