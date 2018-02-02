@@ -467,7 +467,7 @@ public class ClipListActivity extends BaseActivity implements
     private void setVod() {
 
         ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_VOD, this);
-        fragment.setMode(ContentsAdapter.ActivityTypeItem.CLIP_LIST_MODE_VIDEO);
+        fragment.setMode(ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_VIDEO);
         mVodClipDataProvider.getClipData(1);
     }
 
@@ -476,7 +476,7 @@ public class ClipListActivity extends BaseActivity implements
      */
     private void setTv() {
         ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_TV, this);
-        fragment.setMode(ContentsAdapter.ActivityTypeItem.CLIP_LIST_MODE_TV);
+        fragment.setMode(ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_TV);
         mTvClipDataProvider.getClipData(1);
     }
 
