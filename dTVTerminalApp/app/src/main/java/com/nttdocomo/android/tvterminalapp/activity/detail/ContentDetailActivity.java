@@ -1131,19 +1131,27 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 //サムネイル取得失敗時は取得失敗画像をセットする
                 bitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.error_movie);
             }
-
-            //縦横比を維持したまま幅100%に拡大縮小
-            DisplayMetrics displaymetrics = new DisplayMetrics();
-            WindowManager wm = getWindowManager();
-            Display display = wm.getDefaultDisplay();
-            display.getMetrics(displaymetrics);
-            float ratio = ((float) displaymetrics.widthPixels / (float) bitmap.getWidth());
-            Matrix matrix = new Matrix();
-            matrix.postScale(ratio, ratio);
-            Bitmap resizeBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
-                    bitmap.getHeight(), matrix, true);
-            mThumbnail.setImageBitmap(resizeBitmap);
+            setThumbnail(bitmap);
         }
+    }
+
+    /**
+     * サムネイル画像を表示する.
+     *
+     * @param bitmap サムネイル
+     */
+    private void setThumbnail(Bitmap bitmap) {
+        //縦横比を維持したまま幅100%に拡大縮小
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        WindowManager wm = getWindowManager();
+        Display display = wm.getDefaultDisplay();
+        display.getMetrics(displaymetrics);
+        float ratio = ((float) displaymetrics.widthPixels / (float) bitmap.getWidth());
+        Matrix matrix = new Matrix();
+        matrix.postScale(ratio, ratio);
+        Bitmap resizeBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
+                bitmap.getHeight(), matrix, true);
+        mThumbnail.setImageBitmap(resizeBitmap);
     }
 
     /**
@@ -1631,6 +1639,12 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 } else if (mDetailData.getServiceId() == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID) {
                     setThrumnailText(getResources().getString(R.string.dtv_content_service_start_text));
                 }
+            }
+        } else {
+            //データ取得失敗時
+            if (!mIsOtherService) {
+                Bitmap bitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.error_movie);
+                setThumbnail(bitmap);
             }
         }
     }
