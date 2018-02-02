@@ -53,7 +53,7 @@ public class ClipListBaseFragment extends Fragment
     /**
      * FragmentListView.
      */
-    private ListView mTeveviListview = null;
+    private ListView mTvListView = null;
 
     /**
      * コンテンツリストアダプター.
@@ -99,9 +99,9 @@ public class ClipListBaseFragment extends Fragment
     }
 
     /**
-     * スクロールリスナー.
+     * スクロールリスナ.
      *
-     * @param lis
+     * @param lis リスナ
      */
     public void setClipListBaseFragmentScrollListener(final ClipListBaseFragmentScrollListener lis) {
         mClipListBaseFragmentScrollListener = lis;
@@ -122,6 +122,11 @@ public class ClipListBaseFragment extends Fragment
         return mTvFragmentView;
     }
 
+    /**
+     * アダプタ取得.
+     *
+     * @return ContentsAdapter
+     */
     public ContentsAdapter getClipMainAdapter() {
         return mClipMainAdapter;
     }
@@ -130,18 +135,18 @@ public class ClipListBaseFragment extends Fragment
      * テレビタブコンテンツ初期化.
      */
     private void initContentListView() {
-        mTeveviListview = mTvFragmentView
+        mTvListView = mTvFragmentView
                 .findViewById(R.id.clip_list_lv_searched_result);
 
-        mTeveviListview.setOnScrollListener(this);
-        mTeveviListview.setOnItemClickListener(this);
+        mTvListView.setOnScrollListener(this);
+        mTvListView.setOnItemClickListener(this);
 
         //スクロールの上下方向検知用のリスナーを設定
-        mTeveviListview.setOnTouchListener(this);
+        mTvListView.setOnTouchListener(this);
 
         ThumbnailProvider thumbnailProvider = new ThumbnailProvider(getActivity());
-        mClipMainAdapter = new ContentsAdapter(getContext(), mClipListData, ContentsAdapter.ActivityTypeItem.CLIP_LIST_MODE_TV);
-        mTeveviListview.setAdapter(mClipMainAdapter);
+        mClipMainAdapter = new ContentsAdapter(getContext(), mClipListData, ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_TV);
+        mTvListView.setAdapter(mClipMainAdapter);
     }
 
     /**
@@ -156,25 +161,25 @@ public class ClipListBaseFragment extends Fragment
     /**
      * ページング.
      *
-     * @param loadFlag
+     * @param loadFlag ページングフラグ
      */
     public void displayMoreData(final boolean loadFlag) {
-        if (null != mTeveviListview) {
+        if (null != mTvListView) {
             if (loadFlag) {
-                mTeveviListview.addFooterView(mLoadMoreView);
+                mTvListView.addFooterView(mLoadMoreView);
 
                 //スクロール位置を最下段にすることで、追加した更新フッターを画面内に入れる
-                mTeveviListview.setSelection(mTeveviListview.getMaxScrollAmount());
+                mTvListView.setSelection(mTvListView.getMaxScrollAmount());
             } else {
-                mTeveviListview.removeFooterView(mLoadMoreView);
+                mTvListView.removeFooterView(mLoadMoreView);
             }
         }
     }
 
     /**
-     * タブアイテム種別設定.
+     * タブ種別設定.
      *
-     * @param mode
+     * @param mode タブ種別
      */
     public void setMode(final ContentsAdapter.ActivityTypeItem mode) {
         if (null != mClipMainAdapter) {

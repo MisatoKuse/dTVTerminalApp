@@ -212,11 +212,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         /**
          * TVタブ(クリップ).
          */
-        CLIP_LIST_MODE_TV,
+        TYPE_CLIP_LIST_MODE_TV,
         /**
          * ビデオタブ(クリップ).
          */
-        CLIP_LIST_MODE_VIDEO
+        TYPE_CLIP_LIST_MODE_VIDEO
     }
 
     /**
@@ -319,6 +319,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         switch (mType) {
             case TYPE_DAILY_RANK:
             case TYPE_WEEKLY_RANK:
+            case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
                 textMargin = STATUS_MARGINTOP17;
                 clipMargin = CLIP_MARGINTOP35;
                 setTextMargin(textMargin, holder, contentView);
@@ -327,7 +328,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_VIDEO_RANK:
             case TYPE_VIDEO_CONTENT_LIST:
             case TYPE_WATCHING_VIDEO_LIST:
-            case CLIP_LIST_MODE_VIDEO:
+            case TYPE_CLIP_LIST_MODE_VIDEO:
                 textMargin = TITLE_MARGINTOP17;
                 setTextMargin(textMargin, holder, contentView);
                 layoutParamsClip.addRule(RelativeLayout.ALIGN_PARENT_END, R.id.parent_relative_layout);
@@ -348,8 +349,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                         textMargin, holder, contentView);
                 clipMargin = RECEPTION_MARGINTOP30;
                 setClipMargin(clipMargin, contentView);
-                break;
-            case CLIP_LIST_MODE_TV: //TVタブ(クリップ)
                 break;
             //ENUMの値をswitch分岐すると、全ての値を書かないとアナライザーがエラーを出すので、caseを追加
             case TYPE_RECORDED_LIST:
@@ -508,6 +507,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * @param listContentInfo 　ContentsData
      */
     private void setTimeData(final ViewHolder holder, final ContentsData listContentInfo) {
+        //TODO:基本的には日付はすべてエポック秒で扱い、表示する際にYYYY/MM/DD形式に変換する方針にする(今日のテレビランキング、週間ランキングと同じ方式に統一))
         if (!TextUtils.isEmpty(listContentInfo.getTime())) { //時間
             switch (mType) {
                 case TYPE_DAILY_RANK: // 今日のテレビランキング
@@ -520,8 +520,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
                 case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
                 case TYPE_RECORDED_LIST: // 録画番組一覧
-                case CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
-                case CLIP_LIST_MODE_TV: //TVタブ(クリップ)
+                case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
+                case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
                     holder.tv_time.setText(listContentInfo.getTime());
                     break;
                 default:
@@ -667,7 +667,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         } else {
             //TODO: 仕様不定の為仮実装
             //TODO:チャンネル名の出所が不明なので、ダミー値を指定
-            if (mType == ActivityTypeItem.TYPE_DAILY_RANK || mType == ActivityTypeItem.TYPE_WEEKLY_RANK) {
+            if (mType == ActivityTypeItem.TYPE_DAILY_RANK || mType == ActivityTypeItem.TYPE_WEEKLY_RANK
+                    || mType == ActivityTypeItem.TYPE_CLIP_LIST_MODE_TV) {
                 holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
                 holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
                 holder.tv_recorded_ch_name.setText("ダミー");
@@ -714,8 +715,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_RENTAL_RANK: // レンタル一覧
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
             case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
-            case CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
-            case CLIP_LIST_MODE_TV: //TVタブ(クリップ)
+            case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
                 break;
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
                 viewHolder.tv_recording_reservation =
@@ -726,6 +726,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_DAILY_RANK: // 今日のテレビランキング
             case TYPE_WEEKLY_RANK: // 週間ランキング
             case TYPE_RECORDED_LIST: // 録画番組一覧
+            case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
                 viewHolder.tv_recorded_hyphen = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
                 viewHolder.tv_recorded_ch_name = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
                 break;
@@ -744,6 +745,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         switch (mType) {
             case TYPE_DAILY_RANK: // 今日のテレビランキング
             case TYPE_WEEKLY_RANK: // 週間ランキング
+            case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
                 holder.ll_rating.setVisibility(View.GONE);
                 holder.tv_clip.setVisibility(View.GONE);
                 break;
@@ -753,7 +755,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 break;
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
             case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
-            case CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
+            case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
                 holder.tv_time.setVisibility(View.GONE);
                 holder.tv_rank.setVisibility(View.GONE);
                 break;
@@ -773,12 +775,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.rl_thumbnail.setVisibility(View.GONE);
                 holder.iv_thumbnail.setVisibility(View.GONE);
                 holder.rb_rating.setVisibility(View.GONE);
-                break;
-            case CLIP_LIST_MODE_TV: //TVタブ(クリップ)
-                holder.tv_time.setVisibility(View.GONE);
-                holder.tv_rank.setVisibility(View.GONE);
-                holder.rb_rating.setVisibility(View.GONE);
-                holder.tv_rating_num.setVisibility(View.GONE);
                 break;
             default:
                 break;
@@ -856,7 +852,12 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         }
     }
 
-    public void setMode(ActivityTypeItem type) {
+    /**
+     * タブ種別設定(クリップリスト用).
+     *
+     * @param type タブ種別
+     */
+    public void setMode(final ActivityTypeItem type) {
         mType = type;
     }
 
