@@ -19,54 +19,89 @@ import android.widget.Toast;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
-import com.nttdocomo.android.tvterminalapp.adapter.WatchListenVideoBaseAdapter;
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.WatchListenVideoListDataProvider;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Math.abs;
 
+/**
+ * 視聴中ビデオ一覧.
+ */
 public class WatchingVideoListActivity extends BaseActivity implements
         AdapterView.OnItemClickListener,
         WatchListenVideoListDataProvider.WatchListenVideoListProviderCallback,
         AbsListView.OnScrollListener, View.OnTouchListener {
 
+    /**
+     * 接続状態フラグ.
+     */
     private boolean mIsCommunicating = false;
+    /**
+     * メニュー開始フラグ.
+     */
     private Boolean mIsMenuLaunch = false;
 
-
-    //スクロール位置の記録
+    /**
+     * スクロール位置の記録.
+     */
     private int mFirstVisibleItem = 0;
 
-    //最後のスクロール方向が上ならばtrue
+    /**
+     * 最後のスクロール方向が上ならばtrue.
+     */
     private boolean mLastScrollUp = false;
 
-    private List mData = new ArrayList<>();
+    /**
+     * ContentsDataList.
+     */
+    private List<ContentsData> mWatchingVideoListData = new ArrayList<>();
 
-    //指を置いたY座標
+    /**
+     * 指を置いたY座標.
+     */
     private float mStartY = 0;
 
-    //指を置いたX座標
+    /**
+     * 指を置いたX座標.
+     */
     private float mStartX = 0;
 
+    /**
+     * loading表示.
+     */
     private View mLoadMoreView = null;
+    /**
+     * ListView.
+     */
     private ListView mListView = null;
 
-    private WatchListenVideoBaseAdapter mWatchListenVideoBaseAdapter = null;
-    //private boolean mPagingStatus = false;
+    /**
+     * ContentsAdapter.
+     */
+    private ContentsAdapter mWatchListenVideoBaseAdapter = null;
+    /**
+     * DataProvider.
+     */
     private WatchListenVideoListDataProvider mWatchListenVideoListDataProvider = null;
 
-    //横スクロール判定用倍率
+    /**
+     * 横スクロール判定用倍率.
+     */
     private static final float RANGE_MAGNIFICATION = 3;
 
+    /**
+     * ページング単位.
+     */
     private final int NUM_PER_PAGE = 10;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.watching_video_list_main_layout);
 
@@ -89,6 +124,9 @@ public class WatchingVideoListActivity extends BaseActivity implements
         mListView.setOnTouchListener(this);
     }
 
+    /**
+     * View初期化.
+     */
     private void initView() {
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
@@ -98,13 +136,13 @@ public class WatchingVideoListActivity extends BaseActivity implements
         mListView.setOnScrollListener(this);
 
         mWatchListenVideoBaseAdapter
-                = new WatchListenVideoBaseAdapter(this, mData, R.layout.item_watching_video);
+                = new ContentsAdapter(this, mWatchingVideoListData, ContentsAdapter.ActivityTypeItem.TYPE_WATCHING_VIDEO_LIST);
         mListView.setAdapter(mWatchListenVideoBaseAdapter);
         mLoadMoreView = LayoutInflater.from(this).inflate(R.layout.search_load_more, null);
     }
 
     @Override
-    public boolean onTouch(View view, MotionEvent motionEvent) {
+    public boolean onTouch(final View view, final MotionEvent motionEvent) {
         if (!(view instanceof ListView)) {
             //今回はリストビューの事しか考えないので、他のビューならば帰る
             return false;
@@ -146,21 +184,31 @@ public class WatchingVideoListActivity extends BaseActivity implements
         return false;
     }
 
-    private void setCommunicatingStatus(boolean b) {
+    /**
+     * 接続状態設定.
+     *
+     * @param b 接続状態
+     */
+    private void setCommunicatingStatus(final boolean b) {
         synchronized (this) {
             mIsCommunicating = b;
         }
     }
 
+    /**
+     * ページング番号返却.
+     *
+     * @return ページング番号
+     */
     private int getCurrentNumber() {
-        if (null == mData) {
+        if (null == mWatchingVideoListData) {
             return 0;
         }
-        return mData.size() / NUM_PER_PAGE;
+        return mWatchingVideoListData.size() / NUM_PER_PAGE;
     }
 
     @Override
-    public void watchListenVideoListCallback(List<ContentsData> watchListenVideoContentInfo) {
+    public void watchListenVideoListCallback(final List<ContentsData> watchListenVideoContentInfo) {
         if (null == watchListenVideoContentInfo) {
             //通信とJSON Parseに関してerror処理
             DTVTLogger.debug("ClipListActivity::VodClipListCallback, get data failed.");
@@ -178,37 +226,43 @@ public class WatchingVideoListActivity extends BaseActivity implements
         }
 
         int pageNumber = getCurrentNumber();
-        for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE &&
-                i < watchListenVideoContentInfo.size(); ++i) { //mPageNumber
-            mData.add(watchListenVideoContentInfo.get(i));
+        for (int i = pageNumber * NUM_PER_PAGE; i < (pageNumber + 1) * NUM_PER_PAGE
+                && i < watchListenVideoContentInfo.size(); ++i) { //mPageNumber
+            mWatchingVideoListData.add(watchListenVideoContentInfo.get(i));
         }
 
         //アナライザーの指摘によるヌルチェック
-        if (mData != null) {
-            DTVTLogger.debug("WatchListenVideoCallback, mData.size==" + mData.size());
+        if (mWatchingVideoListData != null) {
+            DTVTLogger.debug("WatchListenVideoCallback, mWatchingVideoListData.size==" + mWatchingVideoListData.size());
         }
 
         resetCommunication();
         mWatchListenVideoBaseAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * 接続状態解除.
+     */
     private void resetCommunication() {
         displayMoreData(false);
         setCommunicatingStatus(false);
     }
 
     @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+    public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
         Intent intent = new Intent(this, ContentDetailActivity.class);
         intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
         startActivity(intent);
     }
 
+    /**
+     * ページングリセット.
+     */
     private void resetPaging() {
         synchronized (this) {
             setCommunicatingStatus(false);
-            if (null != mData) {
-                mData.clear();
+            if (null != mWatchingVideoListData) {
+                mWatchingVideoListData.clear();
                 if (null != mWatchListenVideoBaseAdapter) {
                     mWatchListenVideoBaseAdapter.notifyDataSetChanged();
                 }
@@ -216,7 +270,12 @@ public class WatchingVideoListActivity extends BaseActivity implements
         }
     }
 
-    private void displayMoreData(boolean b) {
+    /**
+     * スクロール時の追加表示.
+     *
+     * @param b 更新フラグ
+     */
+    private void displayMoreData(final boolean b) {
         if (null != mListView && null != mLoadMoreView) {
             if (b) {
                 mListView.addFooterView(mLoadMoreView);
@@ -230,8 +289,8 @@ public class WatchingVideoListActivity extends BaseActivity implements
     }
 
     @Override
-    public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount,
-                         int totalItemCount) {
+    public void onScroll(final AbsListView absListView, final int firstVisibleItem, final int visibleItemCount,
+                         final int totalItemCount) {
         //int page = getCurrentNumber();
         synchronized (this) {
             //現在のスクロール位置の記録
@@ -243,30 +302,18 @@ public class WatchingVideoListActivity extends BaseActivity implements
                 //&& page <= mMaxPage
                 //&& !mPagingStatus
                     ) {
-                DTVTLogger.debug("onScroll, paging, firstVisibleItem=" + firstVisibleItem + "," +
-                        " totalItemCount=" + totalItemCount +
-                        ", visibleItemCount=" + visibleItemCount);
+                DTVTLogger.debug("onScroll, paging, firstVisibleItem=" + firstVisibleItem + ","
+                        + " totalItemCount=" + totalItemCount + ", visibleItemCount=" + visibleItemCount);
                 //setSetPagingStatus(true);
             }
         }
     }
 
     @Override
-    public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+    public void onScrollStateChanged(final AbsListView absListView, final int scrollState) {
         synchronized (this) {
-            //if (mPagingStatus && scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
-            //if (absListView.getLastVisiblePosition() == mListView.getAdapter().getCount() - 1
-            //        && scrollState == SCROLL_STATE_IDLE && !mIsLoadingOrComplete && !mIsAllVisible) {
-            if (/*mPagingStatus && */scrollState ==
-                    AbsListView.OnScrollListener.SCROLL_STATE_IDLE &&
-                    absListView.getLastVisiblePosition() ==
-                            mListView.getAdapter().getCount() - 1) {
-                /*
-                if(mIsFirstScroll){
-                    setFirstScroll(false);
-                    return;
-                }
-                */
+            if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
+                    && absListView.getLastVisiblePosition() == mListView.getAdapter().getCount() - 1) {
 
                 if (mIsCommunicating) {
                     return;
@@ -288,8 +335,8 @@ public class WatchingVideoListActivity extends BaseActivity implements
                     public void run() {
 
                         int offset = 0;
-                        if (null != mData) {
-                            offset = mData.size();
+                        if (null != mWatchingVideoListData) {
+                            offset = mWatchingVideoListData.size();
                         }
                         mWatchListenVideoListDataProvider.getWatchListenVideoData(offset);
 
@@ -300,7 +347,7 @@ public class WatchingVideoListActivity extends BaseActivity implements
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         DTVTLogger.start();
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
