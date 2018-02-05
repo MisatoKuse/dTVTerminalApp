@@ -80,7 +80,6 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
                     R.layout.search_load_more, null);
         }
 
-        //SearchResultBaseAdapter searchResultBaseAdapter
         mRecommendListBaseAdapter =
                 new RecommendListBaseAdapter(getContext(), mData);
         mRecommendListview.setAdapter(mRecommendListBaseAdapter);

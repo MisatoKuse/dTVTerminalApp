@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -37,19 +38,34 @@ import java.util.List;
  */
 public class SearchDataProvider implements TotalSearchWebApiDelegate {
 
+    /**
+     * 検索の状態.
+     */
     private SearchState mState = SearchState.inital;
-
+    /**
+     * 検索プロパイダ.
+     */
     private SearchDataProviderListener mSearchDataProviderListener = null;
 
-    //テレビ
+    /**
+     * テレビtab.
+     */
     private static final int PAGE_NO_OF_SERVICE_TELEVISION = 0;
-    //ビデオ
+    /**
+     * ビデオtab.
+     */
     private static final int PAGE_NO_OF_SERVICE_VIDEO = PAGE_NO_OF_SERVICE_TELEVISION + 1;
-    //dTVチャンネル
+    /**
+     * dTVチャンネルtab.
+     */
     private static final int PAGE_NO_OF_SERVICE_DTV_CHANNEL = PAGE_NO_OF_SERVICE_TELEVISION + 2;
-    //dTV
+    /**
+     * dTVtab.
+     */
     private static final int PAGE_NO_OF_SERVICE_DTV = PAGE_NO_OF_SERVICE_TELEVISION + 3;
-    //dアニメ
+    /**
+     * dアニメtab.
+     */
     private static final int PAGE_NO_OF_SERVICE_DANIME = PAGE_NO_OF_SERVICE_TELEVISION + 4;
 
     /**
@@ -111,7 +127,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
                                 final int pageNumber,
                                 /*TotalSearchContentInfo handler, */
                                 final Context context) {
-        TotalSearchWebApi totalSearchWebApi = null;
+        TotalSearchWebApi totalSearchWebApi;
         //this.handler = handler;
         setSearchState(SearchState.running);
         TotalSearchRequestData request = new TotalSearchRequestData();
@@ -145,13 +161,6 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
 
     @Override
     public void onSuccess(final TotalSearchResponseData result) {
-        /* //for test
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            DTVTLogger.debug(e);
-        }
-        */
         DTVTLogger.debug("SearchDataProvider::onSuccess(), _state=" + mState.toString());
         synchronized (this) {
             if (mState != SearchState.canceled) {
@@ -196,7 +205,11 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
             //画面表示用データ設定
             contentsData.setContentsId(ci.contentId);
             contentsData.setServiceId(String.valueOf(ci.serviceId));
-            contentsData.setThumURL(ci.contentPictureUrl);
+            if (!TextUtils.isEmpty(ci.contentPictureUrl1)) {
+                contentsData.setThumURL(ci.contentPictureUrl1);
+            } else {
+                contentsData.setThumURL(ci.contentPictureUrl2);
+            }
             contentsData.setTitle(ci.title);
             contentsData.setRecommendOrder(ci.rank);
 
