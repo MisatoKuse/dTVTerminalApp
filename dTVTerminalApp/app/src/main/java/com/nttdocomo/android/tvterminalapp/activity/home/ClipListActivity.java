@@ -91,7 +91,7 @@ public class ClipListActivity extends BaseActivity implements
      */
     public static final int CLIP_LIST_PAGE_NO_OF_TV = 0;
     /**
-     * タブポジション(ビデオ)
+     * タブポジション(ビデオ).
      */
     public static final int CLIP_LIST_PAGE_NO_OF_VOD = 1;
 
@@ -133,7 +133,7 @@ public class ClipListActivity extends BaseActivity implements
     /**
      * 接続中フラグ設定.
      *
-     * @param bool
+     * @param bool 接続中フラグ
      */
     private void setCommunicatingStatus(final boolean bool) {
         synchronized (this) {
@@ -144,7 +144,7 @@ public class ClipListActivity extends BaseActivity implements
     /**
      * ページング単位値取得.
      *
-     * @return
+     * @return ページング単位
      */
     private int getCurrentNumber() {
         ClipListBaseFragment baseFragment = getCurrentFragment();
@@ -364,17 +364,18 @@ public class ClipListActivity extends BaseActivity implements
                 fragment.displayMoreData(true);
                 setCommunicatingStatus(true);
 
-                final ClipListBaseFragment finalFragment = fragment;
+                //非同期中にタブ移動することがあるため、ここでスクロール開始タブ位置を保持しておく
+                final int TAB_POSITION = mViewPager.getCurrentItem();
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
 
                         int offset = 0;
-                        if (null != finalFragment.mClipListData) {
-                            offset = finalFragment.mClipListData.size();
+                        if (null != fragment.mClipListData) {
+                            offset = fragment.mClipListData.size();
                         }
-                        switch (mViewPager.getCurrentItem()) {
+                        switch (TAB_POSITION) {
                             case CLIP_LIST_PAGE_NO_OF_TV:
                                 mTvClipDataProvider.getClipData(offset);
                                 break;
@@ -393,7 +394,7 @@ public class ClipListActivity extends BaseActivity implements
     /**
      * Activity取得.
      *
-     * @return
+     * @return this
      */
     private ClipListActivity getClipListActivity() {
         return this;
@@ -406,9 +407,9 @@ public class ClipListActivity extends BaseActivity implements
         /**
          * コンストラクタ.
          *
-         * @param fm
+         * @param fm FragmentManager
          */
-        public ClipPagerAdapter(final FragmentManager fm) {
+        private ClipPagerAdapter(final FragmentManager fm) {
             super(fm);
         }
 
@@ -467,17 +468,27 @@ public class ClipListActivity extends BaseActivity implements
     private void setVod() {
 
         ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_VOD, this);
-        fragment.setMode(ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_VIDEO);
-        mVodClipDataProvider.getClipData(1);
+        //スワイプ時にページング中のプログレスバーを非表示にする
+        resetCommunication();
+        if (fragment.mClipListData == null || fragment.mClipListData.size() < 1) {
+            //スワイプ時に取得済みデータがある場合は再取得しない
+            fragment.setMode(ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_VIDEO);
+            mVodClipDataProvider.getClipData(1);
+        }
     }
 
     /**
-     * クリップ(テレビ)画面設定
+     * クリップ(テレビ)画面設定.
      */
     private void setTv() {
         ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_TV, this);
-        fragment.setMode(ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_TV);
-        mTvClipDataProvider.getClipData(1);
+        //スワイプ時にページング中のプログレスバーを非表示にする
+        resetCommunication();
+        if (fragment.mClipListData == null || fragment.mClipListData.size() < 1) {
+            //スワイプ時に取得済みデータがある場合は再取得しない
+            fragment.setMode(ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_TV);
+            mTvClipDataProvider.getClipData(1);
+        }
     }
 
     /**
