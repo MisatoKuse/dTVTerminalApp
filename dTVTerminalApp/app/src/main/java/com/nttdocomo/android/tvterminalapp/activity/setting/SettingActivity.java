@@ -35,10 +35,6 @@ import java.util.List;
 public class SettingActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
     /**
-     * グローバルメニューから起動しているかどうか.
-     */
-    private Boolean mIsMenuLaunch = false;
-    /**
      * 項目名の配列を保持.
      */
     private String[] mItemName = null;
@@ -81,10 +77,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         //Headerの設定
         setTitleText(getString(R.string.nav_menu_item_setting));
         Intent intent = getIntent();
-        mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
-        if (mIsMenuLaunch) {
-            enableHeaderBackIcon(false);
-        }
+        enableHeaderBackIcon(false);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
 
@@ -243,21 +236,5 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
             }
         }
         mAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
-        DTVTLogger.start();
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_BACK:
-                if (mIsMenuLaunch) {
-                    //メニューから起動の場合はアプリ終了ダイアログを表示
-                    showTips();
-                    return false;
-                }
-            default:
-                break;
-        }
-        return super.onKeyDown(keyCode, event);
     }
 }
