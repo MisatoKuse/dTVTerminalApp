@@ -154,20 +154,21 @@
     <!--//縮小番組表-->
     <color name="tv_program_list_time_line_now">#fd0003</color>
     <color name="tv_program_list_root_view_bg">#000000</color>
-    <color name="tv_program_list_tab_checked_text">#999999</color>
-    <color name="tv_program_list_tab_unchecked_text">#ffffff</color>
     <color name="tv_program_list_cur_time_btn_bg">#222222</color>
     <color name="tv_program_list_ch_bg">#1d1d1d</color>
     <color name="tv_program_list_ch_tab_bottom_line">#777777</color>
     <color name="tv_program_list_ch_tab_bg">#000000</color>
     <color name="tv_program_list_ch_title_checked_line">#FFFFFF</color>
-    <color name="program_gray">#AAAAAA</color>
+    <color name="program_end_gray">#000000</color>
+	<color name="program_playing_gray">#404040</color>
+    <color name="program_start_gray">#1D1D1D</color>
     <color name="tv_program_list_ch_title_text_color">#FFFFFF</color>
     <color name="tv_program_list_panel_start_time_text_color">#FFFFFF</color>
     <color name="tv_program_list_content_text_color">#FFFFFF</color>
     <color name="tv_program_list_content_detail_text_color">#FFFFFF</color>
     <color name="tv_program_item_bg">#000000</color>
     <color name="tv_program_item_panel_bg">#222222</color>
+    <color name="tv_program_miss_vod">#999999</color>
 
     <!--//アプリケーション情報-->
     <color name="application_info_application_title">#808080</color>
