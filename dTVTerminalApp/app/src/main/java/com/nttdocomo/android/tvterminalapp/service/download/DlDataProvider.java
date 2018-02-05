@@ -366,15 +366,6 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
 
     @Override
     public void onCancel(final String filePath) {
-//        if(!TextUtils.isEmpty(filePath)){
-//            if(filePath.contains(File.separator)){
-//                String paths[] = filePath.split(File.separator);
-//                itemId = filePath.split(File.separator)[paths.length - 1];
-//                if(!TextUtils.isEmpty(itemId)){
-//                    updateDownloadStatusToDb();
-//                }
-//            }
-//        }
         if (null != mDlDataProviderListener && DownloadService.getBindStatus() == DownloadService.BINDED) {
             DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok 1");
             mDlDataProviderListener.onCancel(filePath);

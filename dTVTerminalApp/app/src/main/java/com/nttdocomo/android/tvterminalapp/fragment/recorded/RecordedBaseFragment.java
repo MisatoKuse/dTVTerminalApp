@@ -147,7 +147,9 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
 
     public void clear() {
         DTVTLogger.start();
-        mContentsData.clear();
+        if(null!=mContentsData){
+            mContentsData.clear();
+        }
     }
 
     public List<ContentsData> getContentsData() {

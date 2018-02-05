@@ -284,7 +284,31 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         }
         setShowDataVisibility(holder);
         //各アイテムデータを取得
-        final ContentsData listContentInfo = mListData.get(position);
+        ContentsData listContentInfoTmp = null;
+        switch (mType) {
+            case TYPE_DAILY_RANK:
+            case TYPE_WEEKLY_RANK:
+            case TYPE_CLIP_LIST_MODE_TV:
+            case TYPE_VIDEO_RANK:
+            case TYPE_VIDEO_CONTENT_LIST:
+            case TYPE_WATCHING_VIDEO_LIST:
+            case TYPE_CLIP_LIST_MODE_VIDEO:
+            case TYPE_RENTAL_RANK:
+            case TYPE_RECORDING_RESERVATION_LIST:
+                listContentInfoTmp = mListData.get(position);   //final ContentsData listContentInfo = mListData.get(position);　もともとの内容は変わらないように
+                break;
+            case TYPE_RECORDED_LIST:
+                try{
+                    listContentInfoTmp = mListData.get(position);
+                } catch (Exception e){
+                    DTVTLogger.debug(e);
+                    return view;
+                }
+                break;
+            default:
+                break;
+        }
+        final ContentsData listContentInfo = listContentInfoTmp;
         // アイテムデータを設定する
         setContentsData(holder, listContentInfo);
 

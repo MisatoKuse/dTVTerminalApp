@@ -289,6 +289,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 mDlnaProvRecVideo = new DlnaProvRecVideo();
             }
             if (mDlnaProvRecVideo.start(dlnaDmsItem, this)) {
+                clearFragment(0);
                 mDlnaProvRecVideo.browseRecVideoDms();
             } else {
                 setProgressBarGone();
@@ -325,6 +326,17 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 RecordedBaseFragment baseFragment = mRecordedFragmentFactory.createFragment(i, this);
                 baseFragment.clear();
             }
+        }
+    }
+
+    /**
+     * フラグメントをクリア
+     */
+    public void clearFragment(int tabNo) {
+        DTVTLogger.start();
+        if (null != mViewPager) {
+            RecordedBaseFragment baseFragment = mRecordedFragmentFactory.createFragment(tabNo, this);
+            baseFragment.clear();
         }
     }
 
@@ -409,7 +421,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         List<Map<String, String>> resultList = getDownloadListFromDb();
         setTakeOutContentsToAll(dlnaRecVideoItems, resultList);
         List<ContentsData> listData = baseFrgament.getContentsData();
-        listData.clear();
+        if(null != listData) {
+            listData.clear();
+        }
         if(baseFrgament.queIndex == null){
             baseFrgament.queIndex = new ArrayList<>();
         }
