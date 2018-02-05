@@ -25,8 +25,10 @@ namespace dtvt {
      */
     extern "C" jlong
     Java_com_nttdocomo_android_tvterminalapp_jni_download_DlnaInterfaceDl_nativeCreateDlnaDownloadObject(JNIEnv *env, jobject obj) {
+        #pragma warning(disable: 27)
         jlong result;
         result = (jlong) new DlnaDownload();
+        #pragma warning(default: 27)
         return result;
     }
 
@@ -36,7 +38,7 @@ namespace dtvt {
     extern "C" jboolean JNICALL
     Java_com_nttdocomo_android_tvterminalapp_jni_download_DlnaInterfaceDl_nativeStartDlna(JNIEnv *env, jobject obj, jlong thiz, jstring dirToSave_, jint percentToNotify) {
         unsigned char ret = 0;
-        if (NULL == thiz) {
+        if (0 == thiz) {
             DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_download_DlnaInterfaceDl_nativeStartDlna exit, 0==thiz");
             return (jboolean) ret;
         }
@@ -56,9 +58,9 @@ namespace dtvt {
         }
 
         bool ret2 = dlnaDownloadPtr->start(env, obj, dirToSave, percentToNotify);
-        ret = (true == ret2 ? 1 : 0);
+        ret = (true == ret2 ? 0x01 : 0x00);
 
-        env->ReleaseStringUTFChars(dirToSave_, (const char *) dirToSave);
+        env->ReleaseStringUTFChars(dirToSave_, dirToSave);
 
         return (jboolean) ret;
     }
@@ -68,8 +70,8 @@ namespace dtvt {
      */
     extern "C" void JNICALL
     Java_com_nttdocomo_android_tvterminalapp_jni_download_DlnaInterfaceDl_nativeStopDlna(JNIEnv *env, jobject obj, jlong thiz) {
-        unsigned char ret = 0;
-        if (NULL == thiz) {
+        //unsigned char ret = 0;
+        if (0 == thiz) {
             DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_download_DlnaInterfaceDl_nativeStartDlna exit, 0==thiz");
             return;
         }
@@ -91,7 +93,7 @@ namespace dtvt {
     extern "C"  void JNICALL
     Java_com_nttdocomo_android_tvterminalapp_jni_download_DlnaInterfaceDl_download(JNIEnv *env,
                                                                         jobject instance, jlong thiz,
-                                                                        /*jstring dirToSave_, */jstring fileNameToSave_, jstring dtcp1host_, int dtcp1port, jstring url_, int cleartextSize, jstring xml_) {
+                                                                        jstring fileNameToSave_, jstring dtcp1host_, int dtcp1port, jstring url_, int cleartextSize, jstring xml_) {
         DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_download_DlnaInterfaceDl_download enter");
         if (0==thiz) {
             DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_download_DlnaInterfaceDl_download exit, 0==thiz");
@@ -115,22 +117,22 @@ namespace dtvt {
         }
         if(NULL==dtcp1host){
             DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_download_DlnaInterfaceDl_download exit, param error 4");
-            env->ReleaseStringUTFChars(fileNameToSave_, (const char *) fileNameToSave);
+            env->ReleaseStringUTFChars(fileNameToSave_, fileNameToSave);
             dlnaDownloadPtr->downloaderStatusHandler(DOWNLOADER_STATUS_UNKNOWN, NULL, dlnaDownloadPtr);
             return;
         }
         if(NULL==url){
             DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_download_DlnaInterfaceDl_download exit, param error 5");
-            env->ReleaseStringUTFChars(fileNameToSave_, (const char *) fileNameToSave);
-            env->ReleaseStringUTFChars(dtcp1host_, (const char *) dtcp1host);
+            env->ReleaseStringUTFChars(fileNameToSave_, fileNameToSave);
+            env->ReleaseStringUTFChars(dtcp1host_, dtcp1host);
             dlnaDownloadPtr->downloaderStatusHandler(DOWNLOADER_STATUS_UNKNOWN, NULL, dlnaDownloadPtr);
             return;
         }
         if(NULL==xml){
             DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_download_DlnaInterfaceDl_download exit, param error 6");
-            env->ReleaseStringUTFChars(fileNameToSave_, (const char *) fileNameToSave);
-            env->ReleaseStringUTFChars(dtcp1host_, (const char *) dtcp1host);
-            env->ReleaseStringUTFChars(url_, (const char *) url);
+            env->ReleaseStringUTFChars(fileNameToSave_, fileNameToSave);
+            env->ReleaseStringUTFChars(dtcp1host_, dtcp1host);
+            env->ReleaseStringUTFChars(url_, url);
             dlnaDownloadPtr->downloaderStatusHandler(DOWNLOADER_STATUS_UNKNOWN, NULL, dlnaDownloadPtr);
             return;
         }
@@ -138,10 +140,10 @@ namespace dtvt {
         dlnaDownloadPtr->dtcpDownload(string((char *) fileNameToSave), string((char *) dtcp1host),
                               dtcp1port, string((char *) url), cleartextSize, xml);
 
-        env->ReleaseStringUTFChars(fileNameToSave_, (const char *) fileNameToSave);
-        env->ReleaseStringUTFChars(dtcp1host_, (const char *) dtcp1host);
-        env->ReleaseStringUTFChars(url_, (const char *) url);
-        env->ReleaseStringUTFChars(xml_, (const char *) xml);
+        env->ReleaseStringUTFChars(fileNameToSave_, fileNameToSave);
+        env->ReleaseStringUTFChars(dtcp1host_, dtcp1host);
+        env->ReleaseStringUTFChars(url_, url);
+        env->ReleaseStringUTFChars(xml_, xml);
         DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_download_DlnaInterfaceDl_download exit");
     }
 
@@ -176,7 +178,7 @@ namespace dtvt {
             return (jboolean)0;
         }
         DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_download_DlnaInterfaceDl_initGlobalDl exit, cipher_file_context_global_create ok");
-        env->ReleaseStringUTFChars(privateHome_, (const char *) privateHome);
+        env->ReleaseStringUTFChars(privateHome_, privateHome);
         ret=1;
         gIsGlobalDtcpInited=true;
 

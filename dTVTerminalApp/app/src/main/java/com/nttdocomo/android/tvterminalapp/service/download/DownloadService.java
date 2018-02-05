@@ -9,7 +9,8 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
-import android.support.v7.app.NotificationCompat;
+//import android.support.v7.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.jni.download.DlnaProvDownload;
@@ -27,6 +28,7 @@ public class DownloadService extends Service implements DownloadListener {
     public static final int UNBINED = 1;
     public static final int BINDED = 2;
     public static final int BACKGROUD = 3;
+    private boolean mIsUiRunning = false;
 
     public static final String DONWLOAD_UPDATE = "update";
     public static final String DONWLOAD_SUCCESS = "success";
@@ -183,7 +185,8 @@ public class DownloadService extends Service implements DownloadListener {
     private Notification getNotification(String title, int progress) {
 //        Intent intent = new Intent(this, RecordedListActivity.class);
 //        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        //NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "");
         builder.setSmallIcon(R.mipmap.icd_app_tvterminal);
         builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.icd_app_tvterminal));
 //        builder.setContentIntent(pi);
@@ -206,19 +209,12 @@ public class DownloadService extends Service implements DownloadListener {
         boolean isUiRunning=isUiRunning();
         if(!isUiRunning) {
             DlnaProvDownload.uninitGlobalDl();
+            DlDataProvider.releaseInstance();
         }
     }
 
     private boolean isUiRunning(){
-        switch (BINDSTATUS) {
-            case BACKGROUD:
-                return true;
-            case UNBINED:
-                return false;
-            case BINDED:
-                return true;
-        }
-        return true;
+        return mIsUiRunning;
     }
 
     /**
@@ -349,5 +345,12 @@ public class DownloadService extends Service implements DownloadListener {
             return;
         }
         mDownloaderBase.stop();
+    }
+
+    /**
+     * Ui runningを設定
+     */
+    public void setUiRunning(boolean yn){
+        mIsUiRunning = yn;
     }
 }

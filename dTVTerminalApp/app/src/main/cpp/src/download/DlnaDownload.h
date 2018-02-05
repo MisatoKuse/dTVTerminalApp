@@ -84,7 +84,7 @@ namespace dtvt {
         inline const int getPercentToNotify(){ return mPercentToNotify; }
 
     private:
-        bool startDlEnv(JNIEnv *env, jobject obj, std::string& dirToSave);
+        bool startDlEnv(jobject obj, std::string& dirToSave);
 
         void notify(int msg, std::string content);
         bool isStarted();

@@ -35,7 +35,7 @@ namespace dtvt {
     extern "C" jboolean JNICALL
     Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterfaceRl_nativeStartDlnaRm(JNIEnv *env, jobject obj, jlong thiz, jstring confPath_) {
         unsigned char ret = 0;
-        if (NULL == thiz) {
+        if (0 == thiz) {
             DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_DlnaInterfaceRl_nativeStartDlnaRm exit, 0==thiz");
             return (jboolean) ret;
         }

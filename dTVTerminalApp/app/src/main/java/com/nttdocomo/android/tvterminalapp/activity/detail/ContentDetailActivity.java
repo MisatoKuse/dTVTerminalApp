@@ -468,7 +468,8 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         mPlayerController.setOnFormatChangeListener(this);
         mPlayerController.setOnPlayerEventListener(this);
         mPlayerController.setOnErrorListener(this);
-        mPlayerController.setWakeMode(this, PowerManager.FULL_WAKE_LOCK);
+        //mPlayerController.setWakeMode(this, PowerManager.FULL_WAKE_LOCK);
+        mPlayerController.setWakeMode(this, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mPlayerController.setCaptionDataListener(this);
         mPlayerController.setCurrentCaption(0); // start caption.
         boolean ret = isActivited();

@@ -12,8 +12,6 @@
 #include <dupnp_soap.h>
 #include <cstring>
 #include "Dlna.h"
-#include "download/dtcp.hpp"
-#include "download/downloader.h"
 #include "DmsInfo.h"
 #include "DlnaBSDigitalXmlParser.h"
 #include "DlnaTerChXmlParser.h"
@@ -62,13 +60,11 @@ namespace dtvt {
 
     bool Dlna::start(JNIEnv *env, jobject obj) {
         du_bool isStartOk = false;
-
         jclass tmpDMSItem=NULL;
         jclass tmpDlnaRecVideoItem=NULL;
         jclass tmpDlnaBsChListItem=NULL;
         jclass tmpDlnaTerChListItem=NULL;
         jclass tmpDlnaHikariChListItem=NULL;
-
         jint ret = 0;
         bool ok = false;
 
@@ -476,6 +472,12 @@ namespace dtvt {
                 case DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST:
                     thiz->notifyObject(parser->getMsgId(), vv);
                     break;
+                case DLNA_MSG_ID_DEV_DISP_LEAVE:
+                case DLNA_MSG_ID_DL_PROGRESS:
+                case DLNA_MSG_ID_DL_STATUS:
+                case DLNA_MSG_ID_DL_XMLPARAM:
+                case DLNA_MSG_ID_INVALID:
+                    break;
             }
         }
     }
@@ -485,7 +487,7 @@ namespace dtvt {
             return;
         }
 
-        if(DLNA_MSG_ID::DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST != parser->getMsgId()){
+        if(DLNA_MSG_ID_BROWSE_REC_VIDEO_LIST != parser->getMsgId()){
             return;
         }
 
@@ -956,6 +958,9 @@ namespace dtvt {
                 case DLNA_MSG_ID_DEV_DISP_JOIN:
                 case DLNA_MSG_ID_DEV_DISP_LEAVE:
                 case DLNA_MSG_ID_INVALID:
+                case DLNA_MSG_ID_DL_PROGRESS:
+                case DLNA_MSG_ID_DL_STATUS:
+                case DLNA_MSG_ID_DL_XMLPARAM:
                     break;
             }
             env->DeleteLocalRef(objOut);
@@ -1069,6 +1074,9 @@ namespace dtvt {
                 break;
             case DLNA_MSG_ID_DEV_DISP_LEAVE:
             case DLNA_MSG_ID_INVALID:
+            case DLNA_MSG_ID_DL_PROGRESS:
+            case DLNA_MSG_ID_DL_STATUS:
+            case DLNA_MSG_ID_DL_XMLPARAM:
                 break;
         }
 

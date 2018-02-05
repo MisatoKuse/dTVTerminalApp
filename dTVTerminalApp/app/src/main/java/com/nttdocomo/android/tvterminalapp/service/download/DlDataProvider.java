@@ -34,13 +34,29 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     private DlData dlData;
     private String itemId;
     private boolean isRegistered;
+    private static DlDataProvider sDlDataProvider= new DlDataProvider();
 
-    public DlDataProvider(Activity activity, DlDataProviderListener dlDataProviderListener) throws Exception {
+    private DlDataProvider(){
+
+    }
+
+    public static DlDataProvider getInstance(Activity activity, DlDataProviderListener dlDataProviderListener) throws Exception {
         if (null == activity) {
             throw new Exception("DlDataProvider.DlDataProvider, null activity");
         }
-        this.mActivity = activity;
-        mDlDataProviderListener = dlDataProviderListener;
+        if(null==sDlDataProvider){
+            sDlDataProvider = new DlDataProvider();
+        }
+        sDlDataProvider.mActivity = activity;
+        sDlDataProvider.mDlDataProviderListener = dlDataProviderListener;
+        return sDlDataProvider;
+    }
+
+    public static void releaseInstance() {
+        if(null == sDlDataProvider) {
+            return;
+        }
+        sDlDataProvider = null;
     }
 
     public void setIsRegistered(boolean yn){
@@ -77,7 +93,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
         DownloadService.setBindStatus(DownloadService.BINDED);
         Intent intent = new Intent(mActivity, DownloadService.class);
-        mActivity.bindService(intent, this, Context.BIND_AUTO_CREATE);
+        isRegistered = mActivity.bindService(intent, this, Context.BIND_AUTO_CREATE);
     }
 
     /**
@@ -244,17 +260,12 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
 
     @Override
     public void onProgress(int receivedBytes, int percent) {
-        if (null != mDlDataProviderListener && DownloadService.getBindStatus() == DownloadService.BINDED) {
-            mDlDataProviderListener.onProgress(receivedBytes, percent);
-        }
-        if(DownloadService.getBindStatus() == DownloadService.BACKGROUD){
-            DownloadService ds = getDownloadService();
-            if (null != ds) {
-                Intent intent = new Intent();
-                intent.setAction(DownloadService.DONWLOAD_UPDATE);
-                intent.putExtra(DownloadService.DONWLOAD_UPDATE, percent);
-                ds.sendBroadcast(intent);
-            }
+        DownloadService ds = getDownloadService();
+        if (null != ds) {
+            Intent intent = new Intent();
+            intent.setAction(DownloadService.DONWLOAD_UPDATE);
+            intent.putExtra(DownloadService.DONWLOAD_UPDATE, percent);
+            ds.sendBroadcast(intent);
         }
     }
 
@@ -481,6 +492,9 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     }
 
     public void cancelDownLoadStatus(String path){
+        if(null == path || path.isEmpty()){
+            return;
+        }
         if(!TextUtils.isEmpty(path) && path.contains(sSeparator)){
             String paths[] = path.split(sSeparator);
             String ids[] = path.split(sSeparator);
@@ -603,15 +617,13 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
     }
 
-//    /**
-//     * 機能：
-//     *      １．Download Uiがなくなる場合、且サービスにqueueはない場合、必ずこれをコールする
-//     *      ２．Download Uiがない場合、Serviceは閉じる時、必ずこれをコールする
-//     */
-//    public void stop(){
-//        DownloadService ds = getDownloadService();
-//        if (null != ds) {
-//            ds.stop();
-//        }
-//    }
+    /**
+     * Ui runningを設定
+     */
+    public void setUiRunning(boolean yn){
+        DownloadService ds = getDownloadService();
+        if (null != ds) {
+            ds.setUiRunning(yn);
+        }
+    }
 }

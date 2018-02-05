@@ -12,7 +12,6 @@
 #include "DlnaDownload.h"
 #include "dtcp.hpp"
 #include "downloader.h"
-#include "../DTVTLogger.h"
 
 namespace dtvt {
 
@@ -93,7 +92,7 @@ namespace dtvt {
             return false;
         }
 
-        if(!startDlEnv(env, obj, dirToSave)){
+        if(!startDlEnv(obj, dirToSave)){
             env->DeleteGlobalRef(mEvent.mJObject);
             mEvent.mJObject=NULL;
             mEvent.mJavaVM = NULL;
@@ -112,46 +111,24 @@ namespace dtvt {
         if(mDtcp){
             dixim::dmsp::dtcp::dtcp* dtcp= (dixim::dmsp::dtcp::dtcp *) mDtcp;
             dtcp->stop();
-//            cipher_file_context_global_free();
-//            secure_io_global_free();
-//            DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaDownload.cpp DlnaDownload::stop, cipher_file_context_global_free");
-//            DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaDownload.cpp DlnaDownload::stop, secure_io_global_free");
+            DelIfNotNull(dtcp);
+            mDtcp = NULL;
         }
-//        if(mEvent.mJavaVM){
-//            JNIEnv *env= NULL;
-//            mEvent.mJavaVM->GetEnv((void **) &env, JNI_VERSION_1_6);
-//            if(env){
-//                env->DeleteGlobalRef(mEvent.mJObject);
-//            }
-//        }
-        DelIfNotNull(mDtcp);
-//        mEvent.mJObject=NULL;
-//        mEvent.mJavaVM = NULL;
         DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaDownload.cpp DlnaDownload::stop exit");
     }
 
-    bool DlnaDownload::startDlEnv(JNIEnv *env, jobject instance, std::string& dirToSave){
+    bool DlnaDownload::startDlEnv(jobject instance, std::string& dirToSave){
         if(false==gIsGlobalDtcpInited){
             return false;
         }
         if(mDtcp){
             return true;
         }
-//        if (!secure_io_global_create()) {
-//            return false;
-//        }
 
         const du_uchar* private_data_home_path = DU_UCHAR_CONST(dirToSave.c_str());
-        JavaVM *vm=NULL;
+        //JavaVM *vm=NULL;
         dixim::dmsp::dtcp::dtcp* dtcp=NULL;
 
-//        if (!cipher_file_context_global_create(secure_io_global_get_instance(), private_data_home_path)) {
-//            goto error2;
-//        }
-//        DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaDownload.cpp DlnaDownload::startDlEnv, secure_io_global_get_instance");
-//        DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaDownload.cpp DlnaDownload::startDlEnv, cipher_file_context_global_create");
-
-        //DelIfNotNull(mDtcp);
         mDtcp = new dixim::dmsp::dtcp::dtcp();
         if(!mDtcp){
             return false;
@@ -170,16 +147,21 @@ namespace dtvt {
         error3:
             cipher_file_context_global_free();
             DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaDownload.cpp DlnaDownload::startDlEnv, cipher_file_context_global_free when error");
-        error2:
             secure_io_global_free();
             DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaDownload.cpp DlnaDownload::startDlEnv, secure_io_global_free when error");
             du_log_wv(0, DU_UCHAR_CONST("ERROR"));
             downloaderStatusHandler(DOWNLOADER_STATUS_ERROR_OCCURED, 0, this);
-            DelIfNotNull(mDtcp);
+            if(mDtcp){
+                dtcp= (dixim::dmsp::dtcp::dtcp *) mDtcp;
+                DelIfNotNull(dtcp);
+                mDtcp = NULL;
+            }
+
         return false;
     }
 
     void DlnaDownload::downloaderStatusHandler(DownloaderStatus status, const du_uchar* http_status, void* arg){
+        http_status = http_status;  //for no warnnnig
         if (NULL == arg) {
             return;
         }
@@ -205,36 +187,32 @@ namespace dtvt {
         }
         DlnaDownload *thiz = (DlnaDownload *) arg;
 
-        static int lastNotifiedBytes = 0;
-        long diff= sent_size - lastNotifiedBytes;
+        static du_uint64 lastNotifiedBytes = 0;
+        du_uint64 diff= sent_size - lastNotifiedBytes;
         int percent = thiz->getPercentToNotify();
 
         float res = ((float)(diff)) / ((float)total_size);
         float pp = percent * 0.01f;
 
-        //if(thiz->mDownloadedBytes>=total_size){
+        if(0 == lastNotifiedBytes){
+            thiz->notify(DLNA_MSG_ID_DL_PROGRESS, "0");
+        }
+
         if(sent_size >= total_size){
             std::string content= longToString(total_size);
             thiz->notify(DLNA_MSG_ID_DL_PROGRESS, content);
             lastNotifiedBytes=0;
-            //thiz->mDownloadedBytes=0;
             return;
         }
-        //thiz->mDownloadedBytes += diff;
         if (res >= pp) {
             float f1 = ((float) sent_size);
             float f2 = ((float) total_size);
             int ff = (int) ((f1 / f2) * 100);
             DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaDownload.cpp %d%%", ff);
-            //std::string content= longToString(thiz->mDownloadedBytes);
             std::string content= longToString(diff);
             thiz->notify(DLNA_MSG_ID_DL_PROGRESS, content);
             lastNotifiedBytes = sent_size;
         }
-        //
-
-//        std::string content= longToString(sent_size);
-//        thiz->notify(DLNA_MSG_ID_DL_PROGRESS, content);
     }
 
 
@@ -288,7 +266,7 @@ namespace dtvt {
         du_bool move = 1;
         string fileToDownload= mDirToSave + "/" + fileNameToSave;
         const du_uchar* dixim_file = DU_UCHAR_CONST(fileToDownload.c_str());
-        du_uint64 cleartext_size = cleartextSize;
+        du_uint64 cleartext_size = (du_uint64)cleartextSize;
         du_str_array* request_header = 0;
         du_uchar* xmlStrDu = NULL;
         dixim::dmsp::dtcp::dtcp* dtcp= (dixim::dmsp::dtcp::dtcp *) mDtcp;
@@ -328,6 +306,7 @@ namespace dtvt {
     void DlnaDownload::dtcpDownloadCancel(){
         setIsJustCanceled(true);
         downloader_cancel();
+        DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaDownload.cpp DlnaDownload::dtcpDownloadCancel()");
     }
 
 } //namespace dtvt
