@@ -216,7 +216,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         /**
          * ビデオタブ(クリップ).
          */
-        TYPE_CLIP_LIST_MODE_VIDEO
+        TYPE_CLIP_LIST_MODE_VIDEO,
+        /**
+         * 検索.
+         */
+        TYPE_SEARCH_LIST
     }
 
     /**
@@ -276,7 +280,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         if (contentView == null) {
             holder = new ViewHolder();
             contentView = mInflater.inflate(R.layout.item_common_result, parent, false);
-            ;
             holder = setListItemPattern(holder, contentView);
             contentView.setTag(holder);
         } else {
@@ -284,31 +287,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         }
         setShowDataVisibility(holder);
         //各アイテムデータを取得
-        ContentsData listContentInfoTmp = null;
-        switch (mType) {
-            case TYPE_DAILY_RANK:
-            case TYPE_WEEKLY_RANK:
-            case TYPE_CLIP_LIST_MODE_TV:
-            case TYPE_VIDEO_RANK:
-            case TYPE_VIDEO_CONTENT_LIST:
-            case TYPE_WATCHING_VIDEO_LIST:
-            case TYPE_CLIP_LIST_MODE_VIDEO:
-            case TYPE_RENTAL_RANK:
-            case TYPE_RECORDING_RESERVATION_LIST:
-                listContentInfoTmp = mListData.get(position);   //final ContentsData listContentInfo = mListData.get(position);　もともとの内容は変わらないように
-                break;
-            case TYPE_RECORDED_LIST:
-                try{
-                    listContentInfoTmp = mListData.get(position);
-                } catch (Exception e){
-                    DTVTLogger.debug(e);
-                    return view;
-                }
-                break;
-            default:
-                break;
-        }
-        final ContentsData listContentInfo = listContentInfoTmp;
+        final ContentsData listContentInfo = mListData.get(position);
         // アイテムデータを設定する
         setContentsData(holder, listContentInfo);
 
@@ -344,6 +323,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_DAILY_RANK:
             case TYPE_WEEKLY_RANK:
             case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
+            case TYPE_SEARCH_LIST:
                 textMargin = STATUS_MARGINTOP17;
                 clipMargin = CLIP_MARGINTOP35;
                 setTextMargin(textMargin, holder, contentView);
@@ -546,6 +526,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 case TYPE_RECORDED_LIST: // 録画番組一覧
                 case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
                 case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
+                case TYPE_SEARCH_LIST:
                     holder.tv_time.setText(listContentInfo.getTime());
                     break;
                 default:
@@ -569,12 +550,14 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     }
 
     /**
-     * データの設定（サムネイル）
+     * データの設定（サムネイル）.
      *
      * @param holder          ViewHolder
      * @param listContentInfo ContentsData
      */
     private void setThumbnailData(final ViewHolder holder, final ContentsData listContentInfo) {
+        //スクロール時にリサイクル前の画像が表示され続けないように一旦画像を消去する
+        holder.iv_thumbnail.setImageResource(0);
         if (!TextUtils.isEmpty(listContentInfo.getThumURL())) { //サムネイル
             holder.rl_thumbnail.setVisibility(View.VISIBLE);
             holder.iv_thumbnail.setTag(listContentInfo.getThumURL());
@@ -740,6 +723,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
             case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
             case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
+            case TYPE_SEARCH_LIST:
                 break;
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
                 viewHolder.tv_recording_reservation =
@@ -800,6 +784,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.iv_thumbnail.setVisibility(View.GONE);
                 holder.rb_rating.setVisibility(View.GONE);
                 break;
+            case TYPE_SEARCH_LIST: //検索
+                holder.tv_time.setVisibility(View.GONE);
+                holder.tv_rank.setVisibility(View.GONE);
+                holder.rb_rating.setVisibility(View.GONE);
             default:
                 break;
         }

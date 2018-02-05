@@ -9,6 +9,8 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -39,48 +41,102 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * 検索画面.
+ */
 public class SearchTopActivity extends BaseActivity
         implements SearchDataProvider.SearchDataProviderListener,
         View.OnClickListener, SearchBaseFragmentScrollListener, TabItemLayout.OnClickTabTextListener {
 
+    /**
+     * 検索結果件数.
+     */
     private int mSearchTotalCount = 0;
+    /**
+     * 検索結果ページ数.
+     */
     private int mPageNumber = 0;
-    private int mSearchLastItem = 0;
+    /**
+     * ページング中判定フラグ.
+     */
     private boolean mIsPaging = false;
+    /**
+     * 県sカウ中判定フラグ.
+     */
     private boolean mIsSearching = false;
+    /**
+     * タブ名.
+     */
     private String[] mTabNames = null;
+    /**
+     * 現在の検索文字列.
+     */
     private static String sCurrentSearchText = "";
-
-    public final static String sSearchCountDefault = "検索結果:0件";
-
+    /**
+     * tabのレイアウト.
+     */
     private TabItemLayout mTabLayout = null;
+    /**
+     * ViewPager.
+     */
     private ViewPager mSearchViewPager = null;
+    /**
+     * 検索窓.
+     */
     private SearchView mSearchView = null;
+    /**
+     * グローバルメニューからの表示かどうか.
+     */
     private Boolean mIsMenuLaunch = false;
 
-    SearchDataProvider mSearchDataProvider = null;
-    SearchNarrowCondition mSearchNarrowCondition = null;
-    SearchSortKind mSearchSortKind = new SearchSortKind("SearchSortKindNone");
-
+    /**
+     * 検索用データプロパイダ.
+     */
+    private SearchDataProvider mSearchDataProvider = null;
+    /**
+     * 検索条件.
+     */
+    private SearchNarrowCondition mSearchNarrowCondition = null;
+    /**
+     * 検索時のソート種別.
+     */
+    private SearchSortKind mSearchSortKind = new SearchSortKind("SearchSortKindNone");
+    /**
+     * fragment factory.
+     */
     private SearchFragmentFactory mFragmentFactory = null;
 
-    //テレビ
+    /**
+     * テレビ.
+     */
     private static final int PAGE_NO_OF_SERVICE_TELEVISION = 0;
-    //ビデオ
+    /**
+     * ビデオ.
+     */
     private static final int PAGE_NO_OF_SERVICE_VIDEO = PAGE_NO_OF_SERVICE_TELEVISION + 1;
-    //dTVチャンネル
+    /**
+     * dTVチャンネル.
+     */
     private static final int PAGE_NO_OF_SERVICE_DTV_CHANNEL = PAGE_NO_OF_SERVICE_TELEVISION + 2;
-    //dTV
+    /**
+     * dTV.
+     */
     private static final int PAGE_NO_OF_SERVICE_DTV = PAGE_NO_OF_SERVICE_TELEVISION + 3;
-    //dアニメ
+    /**
+     * dアニメ.
+     */
     private static final int PAGE_NO_OF_SERVICE_DANIME = PAGE_NO_OF_SERVICE_TELEVISION + 4;
-
+    /**
+     * 検索インターバル.
+     */
     private static final long SEARCH_INTERVAL = 1000;
-
+    /**
+     * 検索窓内の文字の大きさ.
+     */
     private static final int TEXT_SIZE = 15;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_top_main_layout);
 
@@ -99,6 +155,9 @@ public class SearchTopActivity extends BaseActivity
         setSearchViewState();
     }
 
+    /**
+     * 初期化処理.
+     */
     private void initData() {
         mTabNames = getResources().getStringArray(R.array.tab_names);
         setSearchNarrowCondition();
@@ -108,7 +167,7 @@ public class SearchTopActivity extends BaseActivity
     }
 
     /**
-     * 検索トップ画面初期化
+     * 検索トップ画面初期化.
      */
     private void initView() {
         mSearchView = findViewById(R.id.keyword_search_form);
@@ -116,7 +175,7 @@ public class SearchTopActivity extends BaseActivity
     }
 
     /**
-     * 検索フォームの設定
+     * 検索フォームの設定.
      */
     private void setSearchViewState() {
         mSearchView.setIconifiedByDefault(false);
@@ -127,7 +186,7 @@ public class SearchTopActivity extends BaseActivity
             Timer mTimer = null;
 
             @Override
-            public void onFocusChange(View view, boolean isFocus) {
+            public void onFocusChange(final View view, final boolean isFocus) {
                 if (isFocus) {
                     DTVTLogger.debug("SearchView Focus");
                     // フォーカスが当たった時
@@ -142,10 +201,10 @@ public class SearchTopActivity extends BaseActivity
                         private String mInputText = null;
 
                         @Override
-                        public boolean onQueryTextSubmit(String s) {
+                        public boolean onQueryTextSubmit(final String str) {
                             // 決定ボタンがタップされた時
                             long submit_time = System.currentTimeMillis();
-                            mInputText = s;
+                            mInputText = str;
                             DTVTLogger.debug("onQueryTextSubmit");
                             if ((mSearchTime + SEARCH_INTERVAL) > submit_time) {
                                 mTimer.cancel();
@@ -159,16 +218,16 @@ public class SearchTopActivity extends BaseActivity
                         }
 
                         @Override
-                        public boolean onQueryTextChange(String seachText) {
+                        public boolean onQueryTextChange(final String searchText) {
                             // 検索フォームに文字が入力された時
                             // 空白でインクリメンタル検索を行うと、以後の検索で0件と表示され続けるため除外
-                            if (seachText.trim().length() == 0 && seachText.length() > 0) {
+                            if (searchText.trim().length() == 0 && searchText.length() > 0) {
                                 return false;
                             }
                             //一時検索画面が表示される
                             initSearchedResultView();
-                            if (seachText.length() > 0) {
-                                mInputText = seachText;
+                            if (searchText.length() > 0) {
+                                mInputText = searchText;
                                 if (mInputText.isEmpty()) {
                                     DTVTLogger.debug("isEmpty");
                                 }
@@ -200,8 +259,6 @@ public class SearchTopActivity extends BaseActivity
                                     }, SEARCH_INTERVAL, SEARCH_INTERVAL);
                                     mSearchView.setSubmitButtonEnabled(true);
                                     //setSearchData(s);
-                                } else {
-                                    // nop.
                                 }
                             } else {
                                 if (mTimer != null) {
@@ -234,19 +291,27 @@ public class SearchTopActivity extends BaseActivity
         searchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.keyword_search_text));
         searchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.keyword_search_hint));
         searchAutoComplete.setHint(R.string.keyword_search_hint);
-        searchAutoComplete.setTextSize(TEXT_SIZE);
+        searchAutoComplete.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE);
     }
 
-    private void setPageNumber(int pageNumber) {
+    /**
+     * ページ数を設定.
+     *
+     * @param pageNumber ページ数
+     */
+    private void setPageNumber(final int pageNumber) {
         mPageNumber = pageNumber;
         mPageNumber = (mPageNumber < 0 ? 0 : mPageNumber);
     }
 
+    /**
+     * 検索フィルタを設定.
+     */
     private void setSearchNarrowCondition() {
         if (null == mSearchNarrowCondition) {
             ArrayList<SearchFilterTypeMappable> arr = new ArrayList<>();
-            SearchGenreType genreType = new SearchGenreType("SearchGenreTypeActive_001");      //映画
-            SearchDubbedType dubbedType = new SearchDubbedType("SearchDubbedTypeBoth");         //字幕
+            SearchGenreType genreType = new SearchGenreType("SearchGenreTypeActive_001");   //映画
+            SearchDubbedType dubbedType = new SearchDubbedType("SearchDubbedTypeBoth");     //字幕
             //SearchChargeType
             //SearchOtherType
             arr.add(genreType);
@@ -255,13 +320,23 @@ public class SearchTopActivity extends BaseActivity
         }
     }
 
-    private void setSearchStart(boolean searchingFlag) {
+    /**
+     * 検索中フラグの設定.
+     *
+     * @param searchingFlag 検索中フラグ
+     */
+    private void setSearchStart(final boolean searchingFlag) {
         synchronized (this) {
             mIsSearching = searchingFlag;
         }
     }
 
-    private void setSearchData(String searchText) {
+    /**
+     * 検索データを設定.
+     *
+     * @param searchText 検索文字列
+     */
+    private void setSearchData(final String searchText) {
         if (null == mSearchDataProvider) {
             DTVTLogger.debug("SearchTopActivity::setSearchData, mSearchDataProvider is null");
             return;
@@ -274,17 +349,7 @@ public class SearchTopActivity extends BaseActivity
                 return;
             }
         }
-        if (null != searchText) {
-            /*
-            if(false ==mCurrentSearchText.equals(searchText)){
-                SearchBaseFragment b=getCurrentSearchBaseFragment();
-                if(null!=b){
-                    b.clear();
-                    setPageNumber(0);
-                    setPagingStatus(false);
-                }
-            }
-            */
+        if (!TextUtils.isEmpty(searchText)) {
             SearchBaseFragment baseFragment = getCurrentSearchBaseFragment();
             if (null != baseFragment) {
                 baseFragment.clear();
@@ -295,10 +360,6 @@ public class SearchTopActivity extends BaseActivity
                 setPagingStatus(false);
             }
             sCurrentSearchText = searchText;
-        }
-
-        if (sCurrentSearchText.length() == 0) {
-            return;
         }
 
         //現在のページ番号を取得
@@ -312,16 +373,11 @@ public class SearchTopActivity extends BaseActivity
                 mPageNumber,
                 this
         );
-        /* //for test
-        try {
-            Thread.sleep(1000);
-            dp.cancelSearch();
-        } catch (InterruptedException e) {
-            DTVTLogger.debug(e);
-        }
-        */
     }
 
+    /**
+     * 検索結果表示Viewを初期化.
+     */
     private void initSearchedResultView() {
         if (null != mSearchViewPager) {
             return;
@@ -337,7 +393,7 @@ public class SearchTopActivity extends BaseActivity
         mSearchViewPager.addOnPageChangeListener(new ViewPager
                 .SimpleOnPageChangeListener() {
             @Override
-            public void onPageSelected(int position) {
+            public void onPageSelected(final int position) {
                 super.onPageSelected(position);
                 mTabLayout.setTab(position);
 
@@ -356,7 +412,7 @@ public class SearchTopActivity extends BaseActivity
     }
 
     /**
-     * tab関連Viewの初期化
+     * tab関連Viewの初期化.
      */
     private void initTabView() {
         DTVTLogger.start();
@@ -373,7 +429,7 @@ public class SearchTopActivity extends BaseActivity
     }
 
     @Override
-    public void onClickTab(int position) {
+    public void onClickTab(final int position) {
         DTVTLogger.start("position = " + position);
         if (null != mSearchViewPager) {
             DTVTLogger.debug("viewpager not null");
@@ -382,6 +438,11 @@ public class SearchTopActivity extends BaseActivity
         DTVTLogger.end();
     }
 
+    /**
+     * 表示しているタブのfragmentを返却する.
+     *
+     * @return 表示しているタブのfragment
+     */
     private SearchBaseFragment getCurrentSearchBaseFragment() {
         if (null != mSearchViewPager) {
             int currentPageNo = mSearchViewPager.getCurrentItem();
@@ -391,11 +452,11 @@ public class SearchTopActivity extends BaseActivity
     }
 
     @Override
-    public void onSearchDataProviderFinishOk(ResultType<TotalSearchContentInfo> resultType) {
+    public void onSearchDataProviderFinishOk(final ResultType<TotalSearchContentInfo> resultType) {
         TotalSearchContentInfo content = resultType.getResultType();
         mSearchTotalCount = content.totalCount;
 
-        SearchBaseFragment baseFragment = getCurrentSearchBaseFragment();//(SearchBaseFragment)mFragmentFactory.createFragment(currentPageNo, this);
+        SearchBaseFragment baseFragment = getCurrentSearchBaseFragment();
         if (null == baseFragment) {
             return;
         }
@@ -421,7 +482,7 @@ public class SearchTopActivity extends BaseActivity
             DTVTLogger.debug("baseFragment.mData.size = " + baseFragment.mData.size());
 
             baseFragment.notifyDataSetChanged(getResultString());
-            baseFragment.setSelection(mSearchLastItem);
+            baseFragment.invalidateViews();
         } else {
             //表示件数0件の場合は"タブ名+検索結果:0件"を表示する
             baseFragment.notifyDataSetChanged(getResultString());
@@ -430,7 +491,10 @@ public class SearchTopActivity extends BaseActivity
         setSearchStart(false);
     }
 
-    public void clearAllFragment() {
+    /**
+     * 全fragmentを消去する.
+     */
+    private void clearAllFragment() {
         if (null != mSearchViewPager) {
             int sum = mFragmentFactory.getFragmentCount();
             for (int i = 0; i < sum; ++i) {
@@ -442,20 +506,25 @@ public class SearchTopActivity extends BaseActivity
     }
 
     @Override
-    public void onSearchDataProviderFinishNg(ResultType<SearchResultError> resultType) {
+    public void onSearchDataProviderFinishNg(final ResultType<SearchResultError> resultType) {
         clearAllFragment();
         DTVTLogger.debug("onSearchDataProviderFinishNg");
     }
 
-    private void setPagingStatus(boolean pagingFlag) {
+    /**
+     * ページング状態を設定する.
+     *
+     * @param pagingFlag ページングフラグ
+     */
+    private void setPagingStatus(final boolean pagingFlag) {
         synchronized (this) {
             mIsPaging = pagingFlag;
         }
     }
 
     @Override
-    public void onScroll(SearchBaseFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        mSearchLastItem = firstVisibleItem + visibleItemCount - 1;
+    public void onScroll(final SearchBaseFragment fragment, final AbsListView absListView,
+                         final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
         int pageMax = (mPageNumber + 1) * SearchConstants.Search.requestMaxResultCount;
         int maxPage = mSearchTotalCount / SearchConstants.Search.requestMaxResultCount;
         if (firstVisibleItem + visibleItemCount >= pageMax && maxPage >= 1 + mPageNumber) {
@@ -475,17 +544,26 @@ public class SearchTopActivity extends BaseActivity
     }
 
     /**
-     * 検索結果タブ専用アダプター
+     * 検索結果タブ専用アダプター.
      */
     private class MainAdapter extends FragmentStatePagerAdapter {
+        /**
+         * 自身のActivity.
+         */
         private SearchTopActivity mSearchTopActivity = null;
-        MainAdapter(FragmentManager fm, SearchTopActivity top) {
+
+        /**
+         * コンストラクタ.
+         * @param fm FragmentManager
+         * @param top SearchTopActivity
+         */
+        MainAdapter(final FragmentManager fm, final SearchTopActivity top) {
             super(fm);
             mSearchTopActivity = top;
         }
 
         @Override
-        public Fragment getItem(int position) {
+        public Fragment getItem(final int position) {
             synchronized (this) {
                 return mFragmentFactory.createFragment(position, mSearchTopActivity);
             }
@@ -497,16 +575,15 @@ public class SearchTopActivity extends BaseActivity
         }
 
         @Override
-        public CharSequence getPageTitle(int position) {
+        public CharSequence getPageTitle(final int position) {
             return mTabNames[position];
         }
     }
 
     @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
+    public boolean dispatchTouchEvent(final MotionEvent event) {
         View currentView = getCurrentFocus();
-        if (currentView != null && currentView instanceof SearchView) {
-        } else {
+        if (currentView == null || !(currentView instanceof SearchView)) {
             //検索ボックス以外タッチならキーボードを消す
             mSearchView.clearFocus();
         }
@@ -514,7 +591,7 @@ public class SearchTopActivity extends BaseActivity
     }
 
     /**
-     * 検索結果件数を表示する文字列を返す
+     * 検索結果件数を表示する文字列を返す.
      *
      * @return 検索結果件数の文字列
      */
@@ -531,7 +608,7 @@ public class SearchTopActivity extends BaseActivity
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         DTVTLogger.start();
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
