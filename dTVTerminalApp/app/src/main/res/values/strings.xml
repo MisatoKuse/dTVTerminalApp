@@ -58,7 +58,7 @@
 
     <!-- リモコン-->
     <string name="remote_controller_viewpager_watch_by_tv">テレビで視聴する</string>
-
+    <string name="remote_controller_viewpager_text_use_remote">リモコンを使う</string>
     <!-- Home -->
     <string name="recommend_list_title">おすすめ番組・ビデオ</string>
     <string name="home_now_on_air_channel_list">チャンネルリスト</string>
