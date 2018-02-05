@@ -569,4 +569,27 @@ public class DlnaInterface {
 
         return sDlnaInterface.getDlParam(itemId);
     }
+
+    public static boolean dlnaOnResume(){
+        if(null==sDlnaInterface){
+            return false;
+        }
+
+        return sDlnaInterface.startDlna();
+    }
+
+    public static void dlnaOnStop(){
+        if(null==sDlnaInterface){
+            return;
+        }
+
+        synchronized (sDlnaInterface) {
+            if (!sDlnaInterface.mIsDlnaRunning) {
+                return;
+            }
+
+            sDlnaInterface.nativeStopDlna(sDlnaInterface.mNativeDlna);
+            sDlnaInterface.setDlnaStatus(false);
+        }
+    }
 }

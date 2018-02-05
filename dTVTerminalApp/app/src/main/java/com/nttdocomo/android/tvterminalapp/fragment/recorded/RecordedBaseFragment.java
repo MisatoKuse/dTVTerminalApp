@@ -454,6 +454,9 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
     }
 
     private void setDownloadStatus(int index, int progress){
+        if(index>=mContentsData.size()){
+            return;
+        }
         View view = mRecordedListview.getChildAt(index-mRecordedListview.getFirstVisiblePosition());
         TextView textView = null;
         if (view != null) {

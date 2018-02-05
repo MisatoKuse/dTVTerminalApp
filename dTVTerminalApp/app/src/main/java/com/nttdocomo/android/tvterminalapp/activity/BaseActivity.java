@@ -35,6 +35,7 @@ import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectErrorActivity;
 import com.nttdocomo.android.tvterminalapp.activity.setting.SettingActivity;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
@@ -451,6 +452,10 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     protected void onResume() {
         super.onResume();
         DTVTLogger.start();
+		boolean r = DlnaInterface.dlnaOnResume();
+        if(!r){
+            DTVTLogger.debug("BaseActivity.onResume, dlnaOnResume failed");
+        }
         registerDevListDlna();
 
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
@@ -504,6 +509,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         DTVTLogger.start();
         mRemoteControlRelayClient.resetHandler();
         //unregisterDevListDlna();
+        DlnaInterface.dlnaOnStop();
         DTVTLogger.end();
     }
 
