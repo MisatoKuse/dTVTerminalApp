@@ -58,7 +58,8 @@ public class ProgramDataManager {
                 JsonConstants.META_RESPONSE_DISP_TYPE, JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_DTV_TYPE,
                 JsonConstants.META_RESPONSE_CH_TYPE, JsonConstants.META_RESPONSE_PUID, JsonConstants.META_RESPONSE_SUB_PUID,
                 JsonConstants.META_RESPONSE_CHPACK + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_PUID,
-                JsonConstants.META_RESPONSE_CHPACK + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_SUB_PUID};
+                JsonConstants.META_RESPONSE_CHPACK + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_SUB_PUID,
+                JsonConstants.META_RESPONSE_CID};
 
         //Daoクラス使用準備
         DBHelper channelListDBHelper = new DBHelper(mContext);
@@ -96,7 +97,7 @@ public class ProgramDataManager {
                 JsonConstants.META_RESPONSE_TITLE_ID, JsonConstants.META_RESPONSE_R_VALUE,
                 JsonConstants.META_RESPONSE_CONTENT_TYPE, JsonConstants.META_RESPONSE_DTV,
                 JsonConstants.META_RESPONSE_TV_SERVICE, JsonConstants.META_RESPONSE_DTV_TYPE,
-                JsonConstants.META_RESPONSE_EPITITLE};
+                JsonConstants.META_RESPONSE_EPITITLE, JsonConstants.META_RESPONSE_CID};
 
         //Daoクラス使用準備
         DBHelper channelListDBHelper = new DBHelper(mContext);

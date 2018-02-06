@@ -160,7 +160,7 @@ public class HomeDataManager {
         String[] columns = {JsonConstants.META_RESPONSE_CHNO, JsonConstants.META_RESPONSE_DEFAULT_THUMB,
                 JsonConstants.META_RESPONSE_TITLE, JsonConstants.META_RESPONSE_AVAIL_START_DATE,
                 JsonConstants.META_RESPONSE_AVAIL_END_DATE, JsonConstants.META_RESPONSE_DISP_TYPE,
-                JsonConstants.META_RESPONSE_SERVICE_ID};
+                JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_CID};
 
         //Daoクラス使用準備
         DBHelper channelListDBHelper = new DBHelper(mContext);
@@ -256,7 +256,7 @@ public class HomeDataManager {
                 JsonConstants.META_RESPONSE_AVAIL_START_DATE, JsonConstants.META_RESPONSE_AVAIL_END_DATE,
                 JsonConstants.META_RESPONSE_DISP_TYPE, JsonConstants.META_RESPONSE_CONTENT_TYPE,
                 JsonConstants.META_RESPONSE_DTV, JsonConstants.META_RESPONSE_TV_SERVICE,
-                JsonConstants.META_RESPONSE_DTV_TYPE};
+                JsonConstants.META_RESPONSE_DTV_TYPE, JsonConstants.META_RESPONSE_CID};
 
         //Daoクラス使用準備
         DBHelper dailyRankListDBHelper = new DBHelper(mContext);
@@ -285,7 +285,8 @@ public class HomeDataManager {
 
         //ホーム画面に必要な列を列挙する
         String[] columns = {JsonConstants.META_RESPONSE_THUMB_448, JsonConstants.META_RESPONSE_TITLE,
-                JsonConstants.META_RESPONSE_AVAIL_START_DATE, JsonConstants.META_RESPONSE_AVAIL_END_DATE};
+                JsonConstants.META_RESPONSE_AVAIL_START_DATE, JsonConstants.META_RESPONSE_AVAIL_END_DATE,
+                JsonConstants.META_RESPONSE_DISP_TYPE, JsonConstants.META_RESPONSE_CONTENT_TYPE, JsonConstants.META_RESPONSE_CID};
 
         //Daoクラス使用準備
         DBHelper tvScheduleListDBHelper = new DBHelper(mContext);
@@ -321,7 +322,7 @@ public class HomeDataManager {
                 JsonConstants.META_RESPONSE_AVAIL_START_DATE, JsonConstants.META_RESPONSE_AVAIL_END_DATE,
                 JsonConstants.META_RESPONSE_DISP_TYPE, JsonConstants.META_RESPONSE_CONTENT_TYPE,
                 JsonConstants.META_RESPONSE_DTV, JsonConstants.META_RESPONSE_DTV_TYPE,
-                JsonConstants.META_RESPONSE_TV_SERVICE};
+                JsonConstants.META_RESPONSE_TV_SERVICE, JsonConstants.META_RESPONSE_CID};
 
         //Daoクラス使用準備
         DBHelper weeklyRankListDBHelper = new DBHelper(mContext);

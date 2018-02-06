@@ -56,6 +56,8 @@ public class ScheduleInfo {
     private boolean mClipExec = false;
     // クリップ未/済
     private boolean mClipStatus = false;
+    //コンテンツID
+    private  String mContentsId = null;
 
     /*
      * タイトルを取得する
@@ -207,6 +209,14 @@ public class ScheduleInfo {
 
     public boolean isClipStatus() {
         return mClipStatus;
+    }
+
+    public String getContentsId() {
+        return mContentsId;
+    }
+
+    public void setContentsId(String mContentsId) {
+        this.mContentsId = mContentsId;
     }
 
     public void setClipStatus(boolean mClipStatus) {
