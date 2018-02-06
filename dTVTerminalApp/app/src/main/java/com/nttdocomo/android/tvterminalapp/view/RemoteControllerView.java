@@ -571,7 +571,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
     /**
      * 中継アプリ起動リクエスト処理を呼び出し.
-     * ・ひかりTV内 dTVチャンネル VOD（見逃し）
+     * ・ひかりTV内 dTVチャンネル VOD（関連番組）
      *
      * @param tvCid
      */
