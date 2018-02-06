@@ -67,6 +67,13 @@
                     android:contentDescription="@string/contents_info_thumbnail_text"
                     android:scaleType="fitXY" />
 
+                <ImageView
+                    android:id="@+id/dtv_contents_detail_main_layout_thumbnail_shadow"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@mipmap/thumb_material_mask_overlay_gradation"
+                    android:visibility="gone" />
+
                 <LinearLayout
                     android:id="@+id/dtv_contents_detail_main_layout_thumbnail_btn"
                     android:layout_width="wrap_content"

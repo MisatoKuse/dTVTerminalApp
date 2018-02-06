@@ -158,6 +158,7 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
             }
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
+            mApiDataProviderCallback.onContentsDetailInfoCallback(null, false);
         }
     }
 
