@@ -476,7 +476,13 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
 
     /**
-     * 中継アプリ起動リクエスト処理を呼び出し
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・dTVチャンネル・カテゴリー分類に対応
+     *
+     * @param type dTVチャンネル
+     * @param serviceCategoryType カテゴリー分類
+     * @param crid
+     * @param chno チャンネル番号
      */
     public void sendStartApplicationDtvChannelRequest(
             RemoteControlRelayClient.STB_APPLICATION_TYPES type,
@@ -486,6 +492,120 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         remoteControllerSendKeyAction.getRelayClient().startApplicationDtvChannelRequest(type, serviceCategoryType, crid, chno, mContext);
         DTVTLogger.end();
     }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTVの番組（地デジ）
+     *
+     * @param serviceRef
+     */
+    public void sendStartApplicationHikariTvCategoryTerrestrialDigitalRequest(String serviceRef) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryTerrestrialDigitalRequest(serviceRef, mContext);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTVの番組（BS）
+     *
+     * @param serviceRef
+     */
+    public void sendStartApplicationHikariTvCategorySatelliteBsRequest(String serviceRef) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategorySatelliteBsRequest(serviceRef, mContext);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTVの番組（IPTV）
+     *
+     * @param serviceRef
+     */
+    public void sendStartApplicationHikariTvCategoryIptvRequest(String serviceRef) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryIptvRequest(serviceRef, mContext);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTVのVOD
+     *
+     * @param licenseId
+     * @param cid
+     * @param crid
+     */
+    public void sendStartApplicationHikariTvCategoryHikaritvVodRequest(final String licenseId,
+                                                                       final String cid, final String crid) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryHikaritvVodRequest(
+                licenseId, cid, crid, mContext);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTV内 dTVチャンネルの番組
+     *
+     * @param chno
+     */
+    public void sendStartApplicationHikariTvCategoryDtvchannelBroadcastRequest(String chno) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvchannelBroadcastRequest(chno, mContext);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTV内 dTVチャンネル VOD（見逃し）
+     *
+     * @param tvCid
+     */
+    public void sendStartApplicationHikariTvCategoryDtvchannelMissedRequest(String tvCid) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvchannelMissedRequest(tvCid, mContext);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTV内 dTVチャンネル VOD（見逃し）
+     *
+     * @param tvCid
+     */
+    public void sendStartApplicationHikariTvCategoryDtvchannelRelationRequest(String tvCid) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvchannelRelationRequest(tvCid, mContext);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTV内 dTVのVOD
+     *
+     * @param episodeId
+     */
+    public void sendStartApplicationHikariTvCategoryDtvVodRequest(String episodeId) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvVodRequest(episodeId, mContext);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTV内VOD(dTV含む)のシリーズ
+     *
+     * @param crid
+     */
+    public void sendStartApplicationHikariTvCategoryDtvSvodRequest(String crid) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvSvodRequest(
+                crid, mContext);
+        DTVTLogger.end();
+    }
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         DTVTLogger.start();
