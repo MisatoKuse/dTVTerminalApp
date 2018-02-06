@@ -102,6 +102,12 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     private int cancelVisibility = View.VISIBLE;
 
     private boolean mIsButtonTap = false;
+
+    /**
+     * 画面外タップによるキャンセル判定値
+     */
+    private boolean mCancelableOutside = true;
+
     /**
      * OKボタン押下を返却するためのコールバック.
      */
@@ -310,7 +316,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
         }
         dialog = dialogBuilder.create();
         dialog.setCancelable(cancelable);
-        dialog.setCanceledOnTouchOutside(true);
+        dialog.setCanceledOnTouchOutside(mCancelableOutside);
         dialog.setOnKeyListener(keyListener);
 
         if (TextUtils.isEmpty(title)) {
@@ -464,5 +470,13 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
             mDialogDismissCallback.onDialogDismissCallback();
         }
         mIsButtonTap = false;
+    }
+
+    /**
+     * 画面外タップのキャンセル処理の可/不可を
+     * @param cancelable
+     */
+    public void setOnTouchOutside(boolean cancelable) {
+        mCancelableOutside = cancelable;
     }
 }

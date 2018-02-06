@@ -27,6 +27,9 @@
     <string name="parental_r_20">R20</string>
     <string name="common_text_close">閉じる</string>
     <string name="common_text_retry">リトライ</string>
+    <string name="transoceanic_communication_dialog_confirm">利用する</string>
+    <string name="transoceanic_communication_dialog_content">海外でのパケット通信は、日本国内とは異なる料金体系となりますのでご注意ください \n※通信料はご契約の通信会社提供のプランにより異なります。\n※Wi-Fi接続でご利用される場合はこの限りではありません。</string>
+    <string name="transoceanic_communication_dialog_title">海外通信の利用</string>
 
     <!-- Launch -->
     <string name="str_app_title">ドコモテレビターミナル</string>

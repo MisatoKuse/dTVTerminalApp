@@ -35,6 +35,7 @@ import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectErrorActivity;
 import com.nttdocomo.android.tvterminalapp.activity.setting.SettingActivity;
+import com.nttdocomo.android.tvterminalapp.dataprovider.callback.TransoceanicCommunicationAlertDialogCallback;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
@@ -65,7 +66,7 @@ import java.util.List;
 public class BaseActivity extends FragmentActivity implements MenuDisplayEventListener,
         DlnaDevListListener, View.OnClickListener, RemoteControllerView.OnStartRemoteControllerUIListener,
         ClipRegistWebClient.ClipRegistJsonParserCallback, ClipDeleteWebClient.ClipDeleteJsonParserCallback,
-        DaccountControl.DaccountControlCallBack {
+        DaccountControl.DaccountControlCallBack, TransoceanicCommunicationAlertDialogCallback {
 
     private LinearLayout mBaseLinearLayout = null;
     private RelativeLayout mHeaderLayout = null;
@@ -439,7 +440,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         //検討中
 //        UserInfoDataProvider dataProvider = new UserInfoDataProvider(getApplicationContext(), this);
 //        dataProvider.getUserInfo();
-
         DTVTLogger.end();
     }
 
@@ -1443,4 +1443,53 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         //アニメーションを付加する
         overridePendingTransition(R.anim.in_righttoleft, R.anim.out_lefttoright);
     }
+
+    /**
+     * 海外通信警告ダイアログの設定・表示
+     */
+    private void showTransoceanicCommunicationDialog() {
+        CustomDialog dialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+        dialog.setCancelable(false);
+        dialog.setOnTouchOutside(false);
+        dialog.setConfirmText(R.string.transoceanic_communication_dialog_confirm);
+        dialog.setConfirmVisibility(View.VISIBLE);
+        dialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+            @Override
+            public void onOKCallback(boolean isOK) {
+                selectOkTransoceanicCommunicationDialogCallback();
+            }
+        });
+        dialog.setApiCancelCallback(new CustomDialog.ApiCancelCallback() {
+            @Override
+            public void onCancelCallback() {
+                selectNgTransoceanicCommunicationDialogCallback();
+            }
+        });
+        dialog.setContent(getResources().getString(R.string.transoceanic_communication_dialog_content));
+        dialog.setTitle(getResources().getString(R.string.transoceanic_communication_dialog_title));
+        dialog.showDialog();
+        showTransoceanicCommunicationDialogCallback();
+    }
+
+
+    @Override
+    public void showTransoceanicCommunicationDialogCallback() {
+        // 海外判定となり警告ダイアログが表示された場合、サービスを含む全通信を止める
+        // TODO 各画面はこのメソッドをOverrideし、各通信を止める
+        DTVTLogger.start();
+        DTVTLogger.end();
+    }
+
+    @Override
+    public void selectOkTransoceanicCommunicationDialogCallback() {
+        // TODO 止めた通信を再開する
+        DTVTLogger.start();
+        DTVTLogger.end();
+    }
+
+    @Override
+    public void selectNgTransoceanicCommunicationDialogCallback() {
+        // TODO 海外通信を許可しない場合の処理
+    }
+
 }
