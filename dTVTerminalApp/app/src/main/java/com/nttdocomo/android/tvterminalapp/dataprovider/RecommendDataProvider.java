@@ -343,29 +343,24 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
                 setStructDB(recChList, DateUtils.RECOMMEND_CH_LAST_INSERT,
                         SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_TV);
                 mApiDataProviderCallback.RecommendChannelCallback(recommendContentInfoList);
-                return;
             } else if (Arrays.asList(RECOMMEND_CATEGORY_ID_VIDEO).contains(categoryId)) {
                 //RECOMMEND_CATEGORY_ID_VIDEOの中のどれかにcategoryIdが一致した場合
                 setStructDB(recChList, DateUtils.RECOMMEND_VD_LAST_INSERT,
                         SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_VIDEO);
                 mApiDataProviderCallback.RecommendVideoCallback(recommendContentInfoList);
-                return;
             }
         } else if ((serviceId == Integer.parseInt(recommendRequestId.DTVCHANNEL_BLOADCAST.getServiceId()))) {
             setStructDB(recChList, DateUtils.RECOMMEND_DCHANNEL_LAST_INSERT,
                     SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV_CHANNEL);
             mApiDataProviderCallback.RecommendDChannelCallback(recommendContentInfoList);
-            return;
         } else if (serviceId == Integer.parseInt(recommendRequestId.DTV_SVOD.getServiceId())) {
             setStructDB(recChList, DateUtils.RECOMMEND_DTV_LAST_INSERT,
                     SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DTV);
             mApiDataProviderCallback.RecommendDTVCallback(recommendContentInfoList);
-            return;
         } else if (serviceId == Integer.parseInt(recommendRequestId.DANIME.getServiceId())) {
             setStructDB(recChList, DateUtils.RECOMMEND_DANIME_LAST_INSERT,
                     SearchConstants.RecommendTabPageNo.RECOMMEND_PAGE_NO_OF_SERVICE_DANIME);
             mApiDataProviderCallback.RecommendDAnimeCallback(recommendContentInfoList);
-            return;
         }
     }
 
@@ -385,7 +380,9 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         contentsData.setTitle(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_TITLE));
         contentsData.setStartViewing(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING));
         contentsData.setEndViewing(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_ENDVIEWING));
-        contentsData.setReserved(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED4));
+        contentsData.setReserved1(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED1));
+        contentsData.setReserved2(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED2));
+        contentsData.setReserved4(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED4));
         contentsData.setChannelId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CHANNELID));
         contentsData.setRecommendOrder(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDORDER));
         contentsData.setPageId(map.get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_PAGEID));

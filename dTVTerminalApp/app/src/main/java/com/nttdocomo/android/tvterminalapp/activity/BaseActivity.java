@@ -614,7 +614,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                                 break;
                             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE:
                                 CustomDialog dTVTUpDateDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-                                dTVTUpDateDialog.setTitle(getResources().getString(R.string.d_tv_terminal_application_version_update_dialog));
+                                dTVTUpDateDialog.setContent(getResources().getString(R.string.d_tv_terminal_application_version_update_dialog));
                                 dTVTUpDateDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                                     @Override
                                     public void onOKCallback(boolean isOK) {
@@ -634,7 +634,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                         switch (resultcode) {
                             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE:
                                 CustomDialog dTVTUpDateDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-                                dTVTUpDateDialog.setTitle(getResources().getString(R.string.d_tv_terminal_application_version_update_dialog));
+                                dTVTUpDateDialog.setContent(getResources().getString(R.string.d_tv_terminal_application_version_update_dialog));
                                 dTVTUpDateDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                                     @Override
                                     public void onOKCallback(boolean isOK) {

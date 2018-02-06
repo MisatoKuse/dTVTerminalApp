@@ -13,7 +13,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.net.Uri;
@@ -22,15 +21,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.os.PowerManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -48,7 +44,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.digion.dixim.android.activation.ActivationClientDefinition;
 import com.digion.dixim.android.secureplayer.MediaPlayerController;
@@ -165,6 +160,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     public static final int DTV_CHANNEL_CONTENTS_SERVICE_ID = 43;
     private static final int CONTENTS_DETAIL_TAB_TEXT_SIZE = 15;
     private static final int CONTENTS_DETAIL_TAB_OTHER_MARGIN = 0;
+    private static final String CONTENTS_DETAIL_RESERVEDID = "1";
 
     /* コンテンツ詳細 end */
     /*DTV起動*/
@@ -1106,7 +1102,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      *
      * @param content 表示内容
      */
-    private void setThrumnailText(final String content) {
+    private void setThumbnailText(final String content) {
         mThumbnailBtn.setVisibility(View.VISIBLE);
         setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
         TextView startAppIcon = findViewById(R.id.view_contents_button_text);
@@ -1164,25 +1160,36 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         mDetailData = mIntent.getParcelableExtra(RECOMMEND_INFO_BUNDLE_KEY);
         if (mDetailData != null) {
             int serviceId = mDetailData.getServiceId();
+            // TODO: 2018/02/06 「mobileViewingFlg」が「0」の場合モバイル視聴不可(レスポンスとして現在返却されていないため、現状「モバイル視聴可」として扱って)
             if (serviceId == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID
                     || serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID
                     || serviceId == OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID) {
                 // 他サービス(dtv/dtvチャンネル/dアニメ)フラグを立てる
                 mIsOtherService = true;
-                if (serviceId == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID
-                        || serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID
+                if (serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID
                         || serviceId == OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID) {
                     // リモコンUIのリスナーを設定
                     createRemoteControllerView(true);
                     mIsControllerVisible = true;
                     setStartRemoteControllerUIListener(this);
-                } else if (serviceId == OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID) {
-                    if (METARESPONSE_DISP_TYPE_TV_PROGRAM.equals(mDetailFullData.getDisp_type())
-                            && DTV_CHANNEL_TV_SERVICE1.equals(mDetailFullData.getmTv_service())) {
+                    //「serviceId」が「15」(dTVコンテンツ)の場合
+                } else {
+                    // 「reserved1」が「1」STB視聴不可
+                    if (CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved1())) {
+                        createRemoteControllerView(false);
+                        mIsControllerVisible = false;
+                    } else {
                         createRemoteControllerView(true);
                         mIsControllerVisible = true;
                         setStartRemoteControllerUIListener(this);
                     }
+                }
+            } else if (serviceId == OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID) {
+                if (METARESPONSE_DISP_TYPE_TV_PROGRAM.equals(mDetailFullData.getDisp_type())
+                        && DTV_CHANNEL_TV_SERVICE1.equals(mDetailFullData.getmTv_service())) {
+                    createRemoteControllerView(true);
+                    mIsControllerVisible = true;
+                    setStartRemoteControllerUIListener(this);
                 }
             }
         }
@@ -1619,9 +1626,8 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 mDetailData = mIntent.getParcelableExtra(PLALA_INFO_BUNDLE_KEY);
                 if (mDetailData != null) {
                     // TODO: 2018/01/12 契約状態判定
-                    setThrumnailText(getResources().getString(R.string.dtv_content_service_start_text));
+                    setThumbnailText(getResources().getString(R.string.dtv_content_service_start_text));
                 }
-                setThrumnailText(getResources().getString(R.string.dtv_content_service_start_text));
             } else {
                 if (mDetailData.getServiceId() == OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID) {
                     String mDispType = mDetailFullData.getDisp_type();
@@ -1629,16 +1635,22 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                         if (mDispTypes[i].equals(mDispType)) {
                             //ひかりTV中にDTVの場合
                             if (METARESPONSE1.equals(mDetailFullData.getDtv())) {
-                                setThrumnailText(getResources().getString(R.string.dtv_content_service_start_text));
+                                setThumbnailText(getResources().getString(R.string.dtv_content_service_start_text));
                             }
                         }
                     }
                     //ｄアニメストアの場合
                 } else if (mDetailData.getServiceId() == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID) {
-                    setThrumnailText(getResources().getString(R.string.d_anime_store_content_service_start_text));
+                    setThumbnailText(getResources().getString(R.string.d_anime_store_content_service_start_text));
                     //ｄTVの場合
                 } else if (mDetailData.getServiceId() == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID) {
-                    setThrumnailText(getResources().getString(R.string.dtv_content_service_start_text));
+                    //DTVコンテンツ　「reserved2」が「1」　Androidのモバイル視聴不可
+                    if (CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved2())) {
+                        setThumbnailText(getResources().getString(R.string.contents_detail_thumbnail_text));
+                        mThumbnailBtn.setEnabled(false);
+                    } else {
+                        setThumbnailText(getResources().getString(R.string.dtv_content_service_start_text));
+                    }
                 }
             }
         } else {
@@ -2024,6 +2036,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                         }
 */
                     }
+                    break;
                 default:
                     break;
             }

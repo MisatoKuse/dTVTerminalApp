@@ -67,8 +67,12 @@ public class ContentsData {
     private String mStartViewing = null;
     //終了時刻
     private String mEndViewing = null;
-    // reserved
-    private String mReserved = null;
+    // reserved1
+    private String mReserved1 = null;
+    // reserved2
+    private String mReserved2 = null;
+    // reserved4
+    private String mReserved4 = null;
     // みどころ
     private String mHighlight = null;
     // クリップボタン
@@ -357,12 +361,28 @@ public class ContentsData {
         this.mEndViewing = mEndViewing;
     }
 
-    public String getReserved() {
-        return mReserved;
+    public String getReserved1() {
+        return mReserved1;
     }
 
-    public void setReserved(String mReserved) {
-        this.mReserved = mReserved;
+    public void setReserved1(String mReserved1) {
+        this.mReserved1 = mReserved1;
+    }
+
+    public String getReserved2() {
+        return mReserved2;
+    }
+
+    public void setReserved2(String mReserved2) {
+        this.mReserved2 = mReserved2;
+    }
+
+    public String getReserved4() {
+        return mReserved4;
+    }
+
+    public void setReserved4(String mReserved4) {
+        this.mReserved4 = mReserved4;
     }
 
     public ClipRequestData getRequestData() {
