@@ -497,11 +497,11 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * 中継アプリ起動リクエスト処理を呼び出し.
      * ・ひかりTVの番組（地デジ）
      *
-     * @param serviceRef
+     * @param chno
      */
-    public void sendStartApplicationHikariTvCategoryTerrestrialDigitalRequest(String serviceRef) {
+    public void sendStartApplicationHikariTvCategoryTerrestrialDigitalRequest(String chno) {
         DTVTLogger.start();
-        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryTerrestrialDigitalRequest(serviceRef, mContext);
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryTerrestrialDigitalRequest(chno, mContext);
         DTVTLogger.end();
     }
 
@@ -509,11 +509,11 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * 中継アプリ起動リクエスト処理を呼び出し.
      * ・ひかりTVの番組（BS）
      *
-     * @param serviceRef
+     * @param chno
      */
-    public void sendStartApplicationHikariTvCategorySatelliteBsRequest(String serviceRef) {
+    public void sendStartApplicationHikariTvCategorySatelliteBsRequest(String chno) {
         DTVTLogger.start();
-        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategorySatelliteBsRequest(serviceRef, mContext);
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategorySatelliteBsRequest(chno, mContext);
         DTVTLogger.end();
     }
 
@@ -521,11 +521,11 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
      * 中継アプリ起動リクエスト処理を呼び出し.
      * ・ひかりTVの番組（IPTV）
      *
-     * @param serviceRef
+     * @param chno
      */
-    public void sendStartApplicationHikariTvCategoryIptvRequest(String serviceRef) {
+    public void sendStartApplicationHikariTvCategoryIptvRequest(String chno) {
         DTVTLogger.start();
-        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryIptvRequest(serviceRef, mContext);
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryIptvRequest(chno, mContext);
         DTVTLogger.end();
     }
 

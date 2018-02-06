@@ -18,6 +18,8 @@ import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -240,6 +242,7 @@ public class RemoteControlRelayClient {
     // ひかりTVのタイトル詳細起動：電文パラメータ：カテゴリー分類毎に別のパラメータを意味する
     private static final String RELAY_COMMAND_ARGUMENT_ARG5 = "ARG5";
     private static final String RELAY_COMMAND_ARGUMENT_CRID_HIKARITV_ARG5 = RELAY_COMMAND_ARGUMENT_ARG5;
+    private static final String RELAY_COMMAND_ARGUMENT_ARIB_SERVICE_REF = "arib://7780.%04x.%04x"; // ひかりTVの番組の chno を SERVICE_REF への変換
     //
     private static final String RELAY_RESULT = "RESULT";
     private static final String RELAY_RESULT_OK = "OK";
@@ -751,14 +754,14 @@ public class RemoteControlRelayClient {
      * ・ひかりTV・カテゴリー分類
      * 　ひかりTVの番組（地デジ）
      *
-     * @param serviceRef
+     * @param chno
      * @param context
      * @return
      */
-    public boolean startApplicationHikariTvCategoryTerrestrialDigitalRequest(final String serviceRef,
+    public boolean startApplicationHikariTvCategoryTerrestrialDigitalRequest(final String chno,
                                                                              final Context context) {
         return startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_TERRESTRIAL_DIGITAL,
-                    context, serviceRef);
+                    context, setCommandArgumentServiceRef(chno));
     }
 
     /**
@@ -766,14 +769,14 @@ public class RemoteControlRelayClient {
      * ・ひかりTV・カテゴリー分類
      * 　ひかりTVの番組（BS）
      *
-     * @param serviceRef
+     * @param chno
      * @param context
      * @return
      */
-    public boolean startApplicationHikariTvCategorySatelliteBsRequest(final String serviceRef,
+    public boolean startApplicationHikariTvCategorySatelliteBsRequest(final String chno,
                                                                              final Context context) {
         return startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_SATELLITE_BS,
-                context, serviceRef);
+                context, setCommandArgumentServiceRef(chno));
     }
 
     /**
@@ -781,14 +784,34 @@ public class RemoteControlRelayClient {
      * ・ひかりTV・カテゴリー分類
      * 　ひかりTVの番組（IPTV）
      *
-     * @param serviceRef
+     * @param chno
      * @param context
      * @return
      */
-    public boolean startApplicationHikariTvCategoryIptvRequest(final String serviceRef,
+    public boolean startApplicationHikariTvCategoryIptvRequest(final String chno,
                                                                final Context context) {
         return startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_IPTV,
-                context, serviceRef);
+                context, setCommandArgumentServiceRef(chno));
+    }
+
+    /**
+     * ひかりTVの番組の chno の SERVICE_REF への変換.
+     *
+     * @param chno
+     * @return
+     */
+    private String setCommandArgumentServiceRef(String chno) {
+        String serviceRef = "";
+        try {
+            int iChno = Integer.parseInt(chno);
+            serviceRef = URLEncoder.encode(String.format(RELAY_COMMAND_ARGUMENT_ARIB_SERVICE_REF, iChno, iChno),
+                    java.nio.charset.StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            DTVTLogger.debug(e);
+        } catch (NumberFormatException e) {
+            DTVTLogger.debug(e);
+        }
+        return serviceRef;
     }
 
     /**
