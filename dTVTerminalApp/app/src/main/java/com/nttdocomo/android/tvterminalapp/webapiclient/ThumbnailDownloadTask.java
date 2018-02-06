@@ -21,6 +21,9 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLPeerUnverifiedException;
@@ -45,6 +48,14 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
      * SSLチェック用コンテキスト.
      */
     private Context mContext;
+    /**
+     * 通信停止用コネクション蓄積.
+     */
+    private volatile static List<HttpURLConnection> mUrlConnections = null;
+    /**
+     * 通信停止フラグ.
+     */
+    private boolean mIsStop = false;
 
     /**
      * サムネイルダウンロードのコンストラクタ.
@@ -53,19 +64,28 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
      * @param thumbnailProvider サムネイルプロバイダー
      * @param context コンテキスト
      */
-    public ThumbnailDownloadTask(ImageView imageView, ThumbnailProvider thumbnailProvider, Context context) {
+    public ThumbnailDownloadTask(final ImageView imageView, final ThumbnailProvider thumbnailProvider,
+                                 final Context context) {
         this.imageView = imageView;
         this.thumbnailProvider = thumbnailProvider;
 
         //コンテキストの退避
         mContext = context;
+
+        //コネクション蓄積が存在しなければ作成する
+        if (mUrlConnections == null) {
+            mUrlConnections = new ArrayList<>();
+        }
     }
 
     @Override
-    protected Bitmap doInBackground(String... params) {
+    protected Bitmap doInBackground(final String... params) {
         HttpURLConnection urlConnection = null;
         BufferedInputStream in = null;
         try {
+            if (isCancelled() || mIsStop) {
+                return null;
+            }
             imageUrl = params[0];
             URL url = new URL(imageUrl);
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -82,6 +102,12 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
                 ocspURLConnection.connect();
             }
 
+            int statusCode = urlConnection.getResponseCode();
+            if (statusCode == HttpURLConnection.HTTP_OK) {
+                //コネクトに成功したので、控えておく
+                addUrlConnections(urlConnection);
+            }
+
             in = new BufferedInputStream(urlConnection.getInputStream(), 8 * 1024);
             Bitmap bitmap = BitmapFactory.decodeStream(in);
             // ディスクに保存する
@@ -91,7 +117,6 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
                 thumbnailProvider.mThumbnailCacheManager.putBitmapToMem(imageUrl, bitmap);
             }
             return bitmap;
-
         } catch (SSLHandshakeException e) {
             //　SSL証明書が失効していたので、通信中止
             DTVTLogger.debug(e);
@@ -119,7 +144,7 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
     }
 
     @Override
-    protected void onPostExecute(Bitmap result) {
+    protected void onPostExecute(final Bitmap result) {
         super.onPostExecute(result);
         if (imageView != null) {
             if (result != null) {
@@ -139,4 +164,48 @@ public class ThumbnailDownloadTask extends AsyncTask<String, Integer, Bitmap> {
         --thumbnailProvider.currentQueueCount;
         thumbnailProvider.checkQueueList();
     }
+
+    /**
+     * 削除に備えてコネクション蓄積.
+     *
+     * @param mUrlConnection コネクション
+     */
+    private synchronized void addUrlConnections(final HttpURLConnection mUrlConnection) {
+        //通信が終わり、ヌルが入れられる場合に備えたヌルチェック
+        if (mUrlConnections == null) {
+            //既に削除されていたので、再度確保を行う
+            mUrlConnections = new ArrayList<>();
+        }
+
+        //HTTPコネクションを追加する
+        mUrlConnections.add(mUrlConnection);
+    }
+
+    /**
+     * 全ての通信を遮断する.
+     */
+     public synchronized void stopAllConnections() {
+         mIsStop = true;
+         if (mUrlConnections == null) {
+             return;
+         }
+
+         //全てのコネクションにdisconnectを送る
+         Iterator<HttpURLConnection> iterator = mUrlConnections.iterator();
+         while (iterator.hasNext()) {
+             final HttpURLConnection stopConnection = iterator.next();
+
+             Thread thread = new Thread(new Runnable() {
+                 @Override
+                 public void run() {
+                     stopConnection.disconnect();
+                 }
+             });
+             thread.run();
+
+             //止めた物は消す
+             iterator.remove();
+         }
+
+     }
 }

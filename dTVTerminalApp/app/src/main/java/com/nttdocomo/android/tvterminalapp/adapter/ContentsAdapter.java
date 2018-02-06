@@ -171,6 +171,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * ダウンロードcallback.
      */
     private DownloadCallback mDownloadCallback;
+    /**
+     * ダウンロード禁止判定フラグ.
+     */
+    private boolean isDownloadStop = false;
 
     /**
      * 機能
@@ -216,7 +220,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         /**
          * ビデオタブ(クリップ).
          */
-        TYPE_CLIP_LIST_MODE_VIDEO
+        TYPE_CLIP_LIST_MODE_VIDEO,
+        /**
+         * 検索.
+         */
+        TYPE_SEARCH_LIST
     }
 
     /**
@@ -269,14 +277,13 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
 
     @Override
     public View getView(final int position, final View view, final ViewGroup parent) {
-        ViewHolder holder = null;
+        ViewHolder holder;
 
         View contentView = view;
         //ビューの再利用
         if (contentView == null) {
             holder = new ViewHolder();
             contentView = mInflater.inflate(R.layout.item_common_result, parent, false);
-            ;
             holder = setListItemPattern(holder, contentView);
             contentView.setTag(holder);
         } else {
@@ -320,6 +327,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_DAILY_RANK:
             case TYPE_WEEKLY_RANK:
             case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
+            case TYPE_SEARCH_LIST:
                 textMargin = STATUS_MARGINTOP17;
                 clipMargin = CLIP_MARGINTOP35;
                 setTextMargin(textMargin, holder, contentView);
@@ -472,7 +480,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         setRatStarData(holder, listContentInfo);
         setRecodingReservationStatusData(holder, listContentInfo);
         setChannelName(holder, listContentInfo);
-        setRedordedDownloadIcon(holder, listContentInfo);
+        setRecordedDownloadIcon(holder, listContentInfo);
     }
 
     /**
@@ -522,6 +530,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 case TYPE_RECORDED_LIST: // 録画番組一覧
                 case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
                 case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
+                case TYPE_SEARCH_LIST:
                     holder.tv_time.setText(listContentInfo.getTime());
                     break;
                 default:
@@ -545,18 +554,23 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
     }
 
     /**
-     * データの設定（サムネイル）
+     * データの設定（サムネイル）.
      *
      * @param holder          ViewHolder
      * @param listContentInfo ContentsData
      */
     private void setThumbnailData(final ViewHolder holder, final ContentsData listContentInfo) {
+        DTVTLogger.start();
+        //スクロール時にリサイクル前の画像が表示され続けないように一旦画像を消去する
+        holder.iv_thumbnail.setImageResource(0);
         if (!TextUtils.isEmpty(listContentInfo.getThumURL())) { //サムネイル
-            holder.rl_thumbnail.setVisibility(View.VISIBLE);
-            holder.iv_thumbnail.setTag(listContentInfo.getThumURL());
-            Bitmap thumbnailImage = mThumbnailProvider.getThumbnailImage(holder.iv_thumbnail, listContentInfo.getThumURL());
-            if (thumbnailImage != null) {
-                holder.iv_thumbnail.setImageBitmap(thumbnailImage);
+            if (!isDownloadStop) {
+                holder.rl_thumbnail.setVisibility(View.VISIBLE);
+                holder.iv_thumbnail.setTag(listContentInfo.getThumURL());
+                Bitmap thumbnailImage = mThumbnailProvider.getThumbnailImage(holder.iv_thumbnail, listContentInfo.getThumURL());
+                if (thumbnailImage != null) {
+                    holder.iv_thumbnail.setImageBitmap(thumbnailImage);
+                }
             }
         } else {
             //URLがない場合はサムネイル取得失敗の画像を表示
@@ -616,13 +630,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * @param holder          ViewHolder
      * @param listContentInfo ContentsData
      */
-    private void setRedordedDownloadIcon(final ViewHolder holder, final ContentsData listContentInfo) {
+    private void setRecordedDownloadIcon(final ViewHolder holder, final ContentsData listContentInfo) {
         DTVTLogger.start();
         //TODO:録画予約一覧等、クリップボタンを表示しない画面はここで外す
         if (!mType.equals(TYPE_RECORDING_RESERVATION_LIST)) {
-            BaseActivity baseActivity = new BaseActivity();
             if (holder.tv_clip != null) {
-                //Boolean contentsFlag = baseActivity.getDownloadContentsFalag();
                 int downloadFlg = listContentInfo.getDownloadFlg();
                 if (downloadFlg != -1) {
                     // ダウンロード済み
@@ -716,6 +728,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
             case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
             case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
+            case TYPE_SEARCH_LIST:
                 break;
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
                 viewHolder.tv_recording_reservation =
@@ -776,6 +789,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.iv_thumbnail.setVisibility(View.GONE);
                 holder.rb_rating.setVisibility(View.GONE);
                 break;
+            case TYPE_SEARCH_LIST: //検索
+                holder.tv_time.setVisibility(View.GONE);
+                holder.tv_rank.setVisibility(View.GONE);
+                holder.rb_rating.setVisibility(View.GONE);
             default:
                 break;
         }
@@ -937,7 +954,17 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
 
     @Override
     public void onClick(final View v) {
-
         mDownloadCallback.downloadClick(v);
+    }
+
+    /**
+     * サムネイル取得処理を止める.
+     */
+    public void stopConnect() {
+        DTVTLogger.start();
+        isDownloadStop = true;
+        if (mThumbnailProvider != null) {
+            mThumbnailProvider.stopConnect();
+        }
     }
 }

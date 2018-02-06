@@ -16,29 +16,50 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.ThumbnailDownloadTask;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * サムネイル取得用プロパイダ.
+ */
 public class ThumbnailProvider {
 
-	// キャッシュマネージャー
+	/**
+	 * キャッシュマネージャー.
+	 */
 	public ThumbnailCacheManager mThumbnailCacheManager;
-
-	//Queue
+	/**
+	 * Queue.
+	 */
 	public int currentQueueCount = 0;
+	/**
+	 * Queueの最大数.
+	 */
 	private static final int MAXQUEUECOUNT = 4;
-
-	//ImageViewリスト
-	public List<ImageView> listImageView = new ArrayList<>();
-	//URLリスト
-	public List<String> listURL = new ArrayList<>();
-
-	//コンテキスト
+	/**
+	 * ImageViewリスト.
+	 */
+	private List<ImageView> listImageView = new ArrayList<>();
+	/**
+	 * URLリスト.
+	 */
+	private List<String> listURL = new ArrayList<>();
+	/**
+	 * コンテキスト.
+	 */
 	private Context mContext;
+	/**
+	 * サムネイルダウンロードのタスク.
+	 */
+	private ThumbnailDownloadTask mDownloadTask = null;
+	/**
+	 * ダウンロードキャンセルフラグ.
+	 */
+	private boolean isCancel = false;
 
 	/**
 	 * コンストラクタ.
 	 *
 	 * @param context コンテキスト
 	 */
-	public ThumbnailProvider(Context context) {
+	public ThumbnailProvider(final Context context) {
 		mThumbnailCacheManager = new ThumbnailCacheManager(context);
 		mThumbnailCacheManager.initMemCache();
 
@@ -47,12 +68,12 @@ public class ThumbnailProvider {
 	}
 
 	/**
-	 * 画像の取得
+	 * 画像の取得.
 	 * 
-	 * @param imageView
-	 * @param imageUrl
+	 * @param imageView 取得した画像を表示するimageView
+	 * @param imageUrl サムネイル取得先URL
 	 */
-	public Bitmap getThumbnailImage(ImageView imageView, String imageUrl) {
+	public Bitmap getThumbnailImage(final ImageView imageView, final String imageUrl) {
 		// メモリから取得
 		Bitmap bitmap = mThumbnailCacheManager.getBitmapFromMem(imageUrl);
 
@@ -70,37 +91,55 @@ public class ThumbnailProvider {
 			return bitmap;
 		}
 
-		// サーバからQueueで取得
-		if (!TextUtils.isEmpty(imageUrl)) {
-			DTVTLogger.debug("download start..... url=" + imageUrl);
-            if (TextUtils.isEmpty(imageUrl)) {
-                return null;
-            }
-            imageView.setTag(imageUrl);
-            //queue処理を追加
-            if (MAXQUEUECOUNT > currentQueueCount) {
-                ++currentQueueCount;
-                new ThumbnailDownloadTask(imageView, this, mContext).execute(imageUrl);
-            } else {
-                listImageView.add(imageView);
-                listURL.add(imageUrl);
-            }
+		if (!isCancel) {
+			// サーバからQueueで取得
+			if (!TextUtils.isEmpty(imageUrl)) {
+				DTVTLogger.debug("download start..... url=" + imageUrl);
+				if (TextUtils.isEmpty(imageUrl)) {
+					return null;
+				}
+				imageView.setTag(imageUrl);
+				//queue処理を追加
+				if (MAXQUEUECOUNT > currentQueueCount) {
+					++currentQueueCount;
+					mDownloadTask = new ThumbnailDownloadTask(imageView, this, mContext);
+					mDownloadTask.execute(imageUrl);
+				} else {
+					listImageView.add(imageView);
+					listURL.add(imageUrl);
+				}
+			}
 		}
 		return null;
 	}
 
 	/**
-	 * queueチェック
-	 *
+	 * queueチェック.
 	 */
 	public void checkQueueList() {
-		if (MAXQUEUECOUNT > currentQueueCount) {
-			if (listImageView.size() > 0){
-				++currentQueueCount;
-				new ThumbnailDownloadTask(listImageView.get(0), this, mContext).execute(listURL.get(0));
-				listImageView.remove(0);
-				listURL.remove(0);
+		DTVTLogger.start();
+		DTVTLogger.debug("" + isCancel);
+		if (!isCancel) {
+			if (MAXQUEUECOUNT > currentQueueCount) {
+				if (listImageView.size() > 0) {
+					++currentQueueCount;
+					new ThumbnailDownloadTask(listImageView.get(0), this, mContext).execute(listURL.get(0));
+					listImageView.remove(0);
+					listURL.remove(0);
+				}
 			}
+		}
+	}
+
+	/**
+	 * ダウンロード処理を停止する.
+	 */
+	public void stopConnect() {
+		DTVTLogger.start();
+		isCancel = true;
+		if (mDownloadTask != null) {
+            mDownloadTask.cancel(true);
+			mDownloadTask.stopAllConnections();
 		}
 	}
 }

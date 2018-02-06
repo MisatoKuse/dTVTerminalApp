@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
@@ -26,24 +27,54 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.RentalDataProvider;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * レンタル一覧を表示.
+ */
 public class RentalListActivity extends BaseActivity implements AdapterView.OnItemClickListener,
         AbsListView.OnScrollListener, RentalDataProvider.ApiDataProviderCallback {
 
+    /**
+     * レンタル一覧を取得するデータプロパイダ.
+     */
     private RentalDataProvider mRentalDataProvider;
+    /**
+     * レンタル一覧を表示するリスト.
+     */
     private ListView mListView;
+    /**
+     * データの追加読み込み時のダイアログ.
+     */
     private View mLoadMoreView;
+    /**
+     * コンテンツ一覧.
+     */
     private List<ContentsData> mContentsList;
+    /**
+     * データの追加読み込み中判定フラグ.
+     */
     private boolean mIsCommunicating = false;
+    /**
+     * グローバルメニューからの起動かどうか.
+     */
     private Boolean mIsMenuLaunch = false;
+    /**
+     * コンテンツを表示するリストのアダプタ.
+     */
     private ContentsAdapter mContentsAdapter;
-    private final int NUM_PER_PAGE = 20;
-    private final int LOAD_PAGE_DELEY_TIME = 1000;
+    /**
+     * ページ当たりの取得件数.
+     */
+    private static final int NUM_PER_PAGE = 20;
+    /**
+     * データの追加読み込みディレイ時間.
+     */
+    private static final int LOAD_PAGE_TIME_DELAY = 1000;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.rental_list_main_layout);
-        mContentsList = new ArrayList();
+        mContentsList = new ArrayList<>();
 
         //Headerの設定
         setTitleText(getString(R.string.rental_title));
@@ -58,22 +89,19 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
         resetPaging();
 
         initView();
-        mRentalDataProvider = new RentalDataProvider(this);
-        mRentalDataProvider.getRentalData(true);
     }
 
     /**
-     * アダプタを設定
+     * アダプタを設定.
      */
     private void initView() {
-
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         mListView = findViewById(R.id.rental_list);
         mListView.setOnItemClickListener(this);
         mListView.setOnScrollListener(this);
         if (mContentsList == null) {
-            mContentsList = new ArrayList();
+            mContentsList = new ArrayList<>();
         }
         mContentsAdapter = new ContentsAdapter(this, mContentsList,
                 ContentsAdapter.ActivityTypeItem.TYPE_RENTAL_RANK);
@@ -82,11 +110,11 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
     }
 
     /**
-     * 再読み込み時のダイアログ表示処理
+     * 再読み込み時のダイアログ表示処理.
      *
-     * @param bool
+     * @param bool true:ダイアログ表示 false:非表示
      */
-    private void displayMoreData(boolean bool) {
+    private void displayMoreData(final boolean bool) {
         if (null != mListView && null != mLoadMoreView) {
             if (bool) {
                 mListView.addFooterView(mLoadMoreView);
@@ -97,7 +125,7 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
     }
 
     /**
-     * 再読み込み時の処理
+     * 再読み込み時の処理.
      */
     private void resetCommunication() {
         displayMoreData(false);
@@ -105,18 +133,18 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
     }
 
     /**
-     * 再読み込み実施フラグ設定
+     * 再読み込み実施フラグ設定.
      *
-     * @param b
+     * @param b フラグ
      */
-    private void setCommunicatingStatus(boolean b) {
+    private void setCommunicatingStatus(final boolean b) {
         synchronized (this) {
             mIsCommunicating = b;
         }
     }
 
     @Override
-    public void rentalListCallback(List<ContentsData> dataList) {
+    public void rentalListCallback(final List<ContentsData> dataList) {
         if (null == dataList) {
             //TODO:データ取得失敗時の仕様が未定のため仮実装
             resetPaging();
@@ -145,7 +173,7 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
     }
 
     /**
-     * ページングリセット
+     * ページングリセット.
      */
     private void resetPaging() {
         synchronized (this) {
@@ -160,9 +188,9 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
     }
 
     /**
-     * ページング数取得
+     * ページング数取得.
      *
-     * @return
+     * @return ページング数
      */
     private int getCurrentNumber() {
         if (null == mContentsList) {
@@ -172,7 +200,7 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
     }
 
     @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+    public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
         if (mLoadMoreView.equals(view)) {
             return;
         }
@@ -182,11 +210,11 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
     }
 
     @Override
-    public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+    public void onScrollStateChanged(final AbsListView absListView, final int scrollState) {
 
         synchronized (this) {
-            if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE &&
-                    absListView.getLastVisiblePosition() == mListView.getAdapter().getCount() - 1) {
+            if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
+                    && absListView.getLastVisiblePosition() == mListView.getAdapter().getCount() - 1) {
 
                 if (mIsCommunicating) {
                     return;
@@ -204,14 +232,14 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
                     public void run() {
                         mRentalDataProvider.getRentalData(false);
                     }
-                }, LOAD_PAGE_DELEY_TIME);
+                }, LOAD_PAGE_TIME_DELAY);
             }
         }
     }
 
     @Override
-    public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount,
-                         int totalItemCount) {
+    public void onScroll(final AbsListView absListView, final int firstVisibleItem,
+                         final int visibleItemCount, final int totalItemCount) {
         synchronized (this) {
             if (firstVisibleItem + visibleItemCount == totalItemCount
                     && 0 != totalItemCount
@@ -224,7 +252,7 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         DTVTLogger.start();
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
@@ -237,5 +265,73 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
                 break;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        DTVTLogger.start();
+        mRentalDataProvider = new RentalDataProvider(this);
+        mRentalDataProvider.getRentalData(true);
+        if (mContentsAdapter != null) {
+            mContentsAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        DTVTLogger.start();
+        //通信を止める
+        StopRentalDataConnect stopConnect = new StopRentalDataConnect();
+        stopConnect.execute(mRentalDataProvider);
+        StopAdapterConnect stopAdapterConnect = new StopAdapterConnect();
+        stopAdapterConnect.execute(mContentsAdapter);
+    }
+}
+
+/**
+ * レンタルVODリスト取得の通信を止める.
+ */
+class StopRentalDataConnect extends AsyncTask<RentalDataProvider, Void, Void> {
+    /**
+     * コンストラクタ.
+     */
+    StopRentalDataConnect() {
+        DTVTLogger.start();
+    }
+    @Override
+    protected Void doInBackground(final RentalDataProvider... dataProviders) {
+        DTVTLogger.start();
+        //通信を行っている処理を止める
+        if (dataProviders != null) {
+            for (RentalDataProvider rentalDataProvider : dataProviders) {
+                rentalDataProvider.stopConnect();
+            }
+        }
+        return null;
+    }
+}
+
+/**
+ * アダプタで行っている通信を止める.
+ */
+class StopAdapterConnect extends AsyncTask<ContentsAdapter, Void, Void> {
+    /**
+     * コンストラクタ.
+     */
+    StopAdapterConnect() {
+        DTVTLogger.start();
+    }
+    @Override
+    protected Void doInBackground(final ContentsAdapter... adapters) {
+        DTVTLogger.start();
+        //通信を行っている処理を止める
+        if (adapters != null) {
+            for (ContentsAdapter contentsAdapter : adapters) {
+                contentsAdapter.stopConnect();
+            }
+        }
+        return null;
     }
 }
