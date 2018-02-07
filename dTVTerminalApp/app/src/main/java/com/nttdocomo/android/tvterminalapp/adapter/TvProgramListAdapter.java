@@ -27,6 +27,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -332,6 +333,8 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                         Intent intent = new Intent();
                         intent.setClass(mContext, ContentDetailActivity.class);
                         intent.putExtra(DTVTConstants.SOURCE_SCREEN, mContext.getComponentName().getClassName());
+                        OtherContentsDetailData detailData = getOtherContentsDetailData(itemSchedule, ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
+                        intent.putExtra(detailData.getRecommendFlg(), detailData);
                         mContext.startActivityForResult(intent, 0);
                     }
                 }
@@ -517,5 +520,24 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         }
 
         RelativeLayout layout;
+    }
+
+    /**
+     * コンテンツ詳細に必要なデータを返す.
+     *
+     * @param itemSchedule レコメンド情報
+     * @param recommendFlg レコメンドフラグ
+     * @return コンテンツ情報
+     */
+    public static OtherContentsDetailData getOtherContentsDetailData(ScheduleInfo itemSchedule, String recommendFlg) {
+        OtherContentsDetailData detailData = new OtherContentsDetailData();
+
+        //コンテンツIDの受け渡しを追加
+        detailData.setContentId(itemSchedule.getContentsId());
+        detailData.setDispType(itemSchedule.getDispType());
+        detailData.setContentsType(itemSchedule.getContentType());
+        detailData.setRecommendFlg(recommendFlg);
+
+        return detailData;
     }
 }

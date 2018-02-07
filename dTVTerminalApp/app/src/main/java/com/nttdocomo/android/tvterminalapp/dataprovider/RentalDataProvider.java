@@ -6,7 +6,6 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RentalListInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
@@ -14,6 +13,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalVodListWebClient;
@@ -179,6 +179,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
             data.setDtvType(dtvType);
             data.setDispType(dispType);
             data.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
+            data.setContentsId(vodMetaFullData.getCid());
 
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
