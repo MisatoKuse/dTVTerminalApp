@@ -483,7 +483,11 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 }
             }
         } else if (v.getId() == R.id.stb_paring_failed_red_help) {
-            startActivity(PairingHelpActivity.class,null);
+            // ペアリングヘルプ画面へ遷移
+            Intent intent = new Intent(getApplicationContext(), PairingHelpActivity.class);
+            intent.putExtra(PairingHelpActivity.START_WHERE, PairingHelpActivity.ParingHelpFromMode.
+                    ParingHelpFromMode_Setting.ordinal());
+            startActivity(intent);
         }
         DTVTLogger.end();
     }
