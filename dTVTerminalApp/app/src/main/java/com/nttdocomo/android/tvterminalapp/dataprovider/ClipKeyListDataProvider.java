@@ -53,7 +53,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     /**
      * クリップ種別(ひかりTV).
      */
-    private static final String CLIP_KEY_LIST_TYPE_OTHER_CHANNEL = "h4d_iptv";
+    public static final String CLIP_KEY_LIST_TYPE_OTHER_CHANNEL = "h4d_iptv";
 
     /**
      * クリップリクエスト用データ.
@@ -72,10 +72,10 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     @Override
     public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
+        mResponseEndFlag = true;
         if (clipKeyListResponse != null && clipKeyListResponse.getIsUpdate()) {
             DTVTLogger.debug("ClipKeyListResponse Insert DB");
             setStructDB(ClipKeyListDao.TABLE_TYPE.TV, clipKeyListResponse);
-            mResponseEndFlag = true;
         }
         DTVTLogger.end();
     }
@@ -83,10 +83,10 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     @Override
     public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
+        mResponseEndFlag = true;
         if (clipKeyListResponse != null && clipKeyListResponse.getIsUpdate()) {
             DTVTLogger.debug("ClipKeyListResponse Insert DB");
             setStructDB(ClipKeyListDao.TABLE_TYPE.VOD, clipKeyListResponse);
-            mResponseEndFlag = true;
         }
         DTVTLogger.end();
     }
@@ -347,21 +347,21 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     @Override
     public List<Map<String, String>> dbOperation(final int operationId) throws Exception {
         ClipKeyListInsertDataManager dataManager = new ClipKeyListInsertDataManager(mContext);
+        String crid = mClipRequestData.getCrid();
         String dispType = mClipRequestData.getDispType();
         String contentType = mClipRequestData.getContentType();
         String serviceId = mClipRequestData.getServiceId();
         String eventId = mClipRequestData.getEventId();
-        String type = mClipRequestData.getType();
         String titleId = mClipRequestData.getTitleId();
         ClipKeyListDao.TABLE_TYPE tableType = decisionTableType(dispType, contentType);
 
         if (tableType != null) {
             switch (operationId) {
                 case CLIP_ROW_DELETE:
-                    dataManager.deleteRowSqlStart(tableType, serviceId, eventId, titleId);
+                    dataManager.deleteRowSqlStart(tableType, crid, serviceId, eventId, titleId);
                     break;
                 case CLIP_ROW_INSERT:
-                    dataManager.insertRowSqlStart(tableType, serviceId, eventId, type, titleId);
+                    dataManager.insertRowSqlStart(tableType, crid, serviceId, eventId, titleId);
                     break;
                 default:
                     break;
