@@ -26,11 +26,18 @@ import java.util.Map;
 public class VideoContentProvider extends ClipKeyListDataProvider implements
         ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback {
 
+    /**
+     * コンテキスト.
+     */
     private Context mContext = null;
 
-    // ビデオコンテンツ画面用コールバック
+    /**
+     * ビデオコンテンツ画面用コールバック.
+     */
     private apiVideoContentDataProviderCallback mApiVideoContentDataProviderCallback = null;
-    private List<Map<String, String>> videoContentMapList;
+    /**
+     * ビデオランキングリスト.
+     */
     private VideoRankList mVideoRankList = null;
 
     /**
@@ -38,7 +45,7 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
      *
      * @param mContext コンテキスト
      */
-    public VideoContentProvider(Context mContext) {
+    public VideoContentProvider(final Context mContext) {
         super(mContext);
         this.mContext = mContext;
         this.mApiVideoContentDataProviderCallback = (apiVideoContentDataProviderCallback) mContext;
@@ -59,7 +66,7 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
     /**
      * VideoContentListActivityからのデータ取得要求受付.
      *
-     * @param genreId
+     * @param genreId ジャンルID
      */
     public void getVideoContentData(final String genreId) {
         mVideoRankList = null;
@@ -93,7 +100,7 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
      *
      * @param list ビデオコンテンツ一覧
      */
-    private void sendContentListData(List<Map<String, String>> list) {
+    private void sendContentListData(final List<Map<String, String>> list) {
         List<ContentsData> contentsDataList = setVideoContentData(list);
         mApiVideoContentDataProviderCallback.videoContentCallback(contentsDataList);
     }
@@ -105,7 +112,6 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
      * @return dataList 読み込み表示フラグ
      */
     private List<ContentsData> setVideoContentData(final List<Map<String, String>> videoContentMapList) {
-        this.videoContentMapList = videoContentMapList;
         List<ContentsData> videoContentsDataList = new ArrayList<>();
 
         ContentsData contentsData;
@@ -156,8 +162,8 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
             if (mRequiredClipKeyList) {
                 // クリップ状態をコンテンツリストに格納
                 contentsData.setClipStatus(getClipStatus(dispType, contentsType, dTv,
-                        contentsData.getCrid(), contentsData.getServiceId(),
-                        contentsData.getEventId(), contentsData.getTitleId()));
+                        requestData.getCrid(), requestData.getServiceId(),
+                        requestData.getEventId(), requestData.getTitleId()));
             }
 
             videoContentsDataList.add(contentsData);
@@ -167,7 +173,7 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onContentsListPerGenreJsonParsed(List<VideoRankList> contentsListPerGenre) {
+    public void onContentsListPerGenreJsonParsed(final List<VideoRankList> contentsListPerGenre) {
         if (contentsListPerGenre != null && contentsListPerGenre.size() > 0) {
             VideoRankList list = contentsListPerGenre.get(0);
             if (!mRequiredClipKeyList
@@ -182,7 +188,7 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
         super.onVodClipKeyListJsonParsed(clipKeyListResponse);
         // コールバック判定

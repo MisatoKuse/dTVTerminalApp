@@ -49,22 +49,37 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
         WeeklyRankWebClient.WeeklyRankJsonParserCallback,
         ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback {
 
+    /**
+     * コンテキストファイル.
+     */
     private Context mContext;
-    // RakingTop画面用コールバック
+    /**
+     * RakingTop画面用コールバック.
+     */
     private ApiDataProviderCallback mApiDataProviderCallback = null;
-    // WeeklyRanking用コールバック
+    /**
+     * WeeklyRanking用コールバック.
+     */
     private WeeklyRankingApiDataProviderCallback mWeeklyRankingApiCallback = null;
-    // VideoRanking用コールバック
+    /**
+     * VideoRanking用コールバック.
+     */
     private VideoRankingApiDataProviderCallback mVideoRankingApiDataProviderCallback = null;
-    // 週間テレビランキングリストデータ
+    /**
+     * 週間テレビランキングリストデータ.
+     */
     private WeeklyRankList mWeeklyRankList = null;
-    // 今日のテレビランキングリストデータ
+    /**
+     * 今日のテレビランキングリストデータ.
+     */
     private DailyRankList mDailyRankList = null;
-    // ビデオランキングリストデータ
+    /**
+     * ビデオランキングリストデータ.
+     */
     private VideoRankList mVideoRankList = null;
 
     @Override
-    public void onDailyRankJsonParsed(List<DailyRankList> dailyRankLists) {
+    public void onDailyRankJsonParsed(final List<DailyRankList> dailyRankLists) {
         if (dailyRankLists != null && dailyRankLists.size() > 0) {
             DailyRankList list = dailyRankLists.get(0);
             setStructDB(list);
@@ -85,7 +100,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
 
 
     @Override
-    public void onWeeklyRankJsonParsed(List<WeeklyRankList> weeklyRankLists) {
+    public void onWeeklyRankJsonParsed(final List<WeeklyRankList> weeklyRankLists) {
         DTVTLogger.start();
         if (weeklyRankLists != null && weeklyRankLists.size() > 0) {
             WeeklyRankList list = weeklyRankLists.get(0);
@@ -114,7 +129,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onContentsListPerGenreJsonParsed(List<VideoRankList> contentsListPerGenre) {
+    public void onContentsListPerGenreJsonParsed(final List<VideoRankList> contentsListPerGenre) {
         if (contentsListPerGenre != null && contentsListPerGenre.size() > 0) {
             VideoRankList list = contentsListPerGenre.get(0);
             setStructDB(list);
@@ -134,7 +149,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onTvClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+    public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
         super.onTvClipKeyListJsonParsed(clipKeyListResponse);
         // コールバック判定
@@ -171,7 +186,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
         super.onVodClipKeyListJsonParsed(clipKeyListResponse);
         // コールバック判定
@@ -449,8 +464,8 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 boolean clipStatus = false;
                 // クリップ状態をコンテンツリストに格納
                 clipStatus = getClipStatus(dispType, contentsType, dTv,
-                        rankingContentInfo.getCrid(), rankingContentInfo.getServiceId(),
-                        rankingContentInfo.getEventId(), rankingContentInfo.getTitleId());
+                        requestData.getCrid(), requestData.getServiceId(),
+                        requestData.getEventId(), requestData.getTitleId());
                 rankingContentInfo.setClipStatus(clipStatus);
                 requestData.setClipStatus(clipStatus);
             }

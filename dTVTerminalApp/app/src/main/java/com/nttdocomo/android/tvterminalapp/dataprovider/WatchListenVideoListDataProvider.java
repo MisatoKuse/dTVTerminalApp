@@ -21,10 +21,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * 視聴中ビデオ一覧.
+ */
 public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider implements WatchListenVideoWebClient.WatchListenVideoJsonParserCallback {
 
+    /**
+     * コンテキスト.
+     */
     private Context mContext = null;
+    /**
+     * 視聴中ビデオ一覧データ.
+     */
     private WatchListenVideoList mWatchListenVideoList = null;
 
     /**
@@ -32,8 +40,13 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
      */
     public static final int DEFAULT_PAGE_OFFSET = 1;
 
+    /**
+     * callback.
+     */
+    private WatchListenVideoListProviderCallback mApiDataProviderCallback;
+
     @Override
-    public void onWatchListenVideoJsonParsed(List<WatchListenVideoList> watchListenVideoList) {
+    public void onWatchListenVideoJsonParsed(final List<WatchListenVideoList> watchListenVideoList) {
         if (watchListenVideoList != null && watchListenVideoList.size() > 0) {
             WatchListenVideoList list = watchListenVideoList.get(0);
             if (!mRequiredClipKeyList
@@ -50,36 +63,34 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     }
 
     @Override
-    public void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
         super.onVodClipKeyListJsonParsed(clipKeyListResponse);
         // コールバック判定
-        if(mWatchListenVideoList != null) {
+        if (mWatchListenVideoList != null) {
             sendWatchListenVideoListData(mWatchListenVideoList.getVcList());
         }
         DTVTLogger.end();
     }
 
     /**
-     * 画面用データを返却するためのコールバック
+     * 画面用データを返却するためのコールバック.
      */
     public interface WatchListenVideoListProviderCallback {
         /**
-         * クリップリスト用コールバック
+         * クリップリスト用コールバック.
          *
          * @param clipContentInfo コンテンツ情報
          */
         void watchListenVideoListCallback(List<ContentsData> clipContentInfo);
     }
 
-    private WatchListenVideoListProviderCallback mApiDataProviderCallback;
-
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
      * @param context コンテキスト
      */
-    public WatchListenVideoListDataProvider(Context context) {
+    public WatchListenVideoListDataProvider(final Context context) {
         super(context);
         this.mContext = context;
         this.mApiDataProviderCallback = (WatchListenVideoListProviderCallback) context;
@@ -88,10 +99,10 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     /**
      * Activityからのデータ取得要求受付.
      */
-    public void getWatchListenVideoData(int pagerOffset) {
+    public void getWatchListenVideoData(final int pagerOffset) {
         mWatchListenVideoList = null;
         // クリップキー一覧を取得
-        if(mRequiredClipKeyList) {
+        if (mRequiredClipKeyList) {
             getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
         }
 
@@ -190,11 +201,11 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
 //            requestData.setTableType(decisionTableType(contentsType, contentsType));
             contentInfo.setRequestData(requestData);
 
-            if(mRequiredClipKeyList) {
+            if (mRequiredClipKeyList) {
                 // クリップ状態をコンテンツリストに格納
                 contentInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv,
-                        contentInfo.getCrid(), contentInfo.getServiceId(),
-                        contentInfo.getEventId(), contentInfo.getTitleId()));
+                        requestData.getCrid(), requestData.getServiceId(),
+                        requestData.getEventId(), requestData.getTitleId()));
             }
 
             rankingContentsDataList.add(contentInfo);

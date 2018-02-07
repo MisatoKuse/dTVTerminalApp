@@ -24,11 +24,22 @@ import java.util.Map;
  * クリップ(TV)用データプロバイダ.
  */
 public class TvClipDataProvider extends ClipKeyListDataProvider implements TvClipWebClient.TvClipJsonParserCallback {
+    /**
+     * コンテキスト.
+     */
     private Context mContext;
+    /**
+     * クリップリスト.
+     */
     private TvClipList mClipList = null;
 
+    /**
+     * callback.
+     */
+    private TvClipDataProviderCallback apiDataProviderCallback;
+
     @Override
-    public void onTvClipJsonParsed(List<TvClipList> tvClipLists) {
+    public void onTvClipJsonParsed(final List<TvClipList> tvClipLists) {
         if (tvClipLists != null && tvClipLists.size() > 0) {
             TvClipList list = tvClipLists.get(0);
 //            setStructDB(list);
@@ -52,7 +63,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
     }
 
     @Override
-    public void onTvClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+    public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
         super.onTvClipKeyListJsonParsed(clipKeyListResponse);
         // コールバック判定
@@ -73,8 +84,6 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
          */
         void tvClipListCallback(List<ContentsData> clipContentInfo);
     }
-
-    private TvClipDataProviderCallback apiDataProviderCallback;
 
     /**
      * コンストラクタ.
@@ -171,18 +180,18 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
             requestData.setIsNotify(dispType, contentsType, linearEndDate, tvService, dTv);
             requestData.setDispType(dispType);
             requestData.setContentType(contentsType);
-//            requestData.setTableType(decisionTableType(contentsType, contentsType));
             contentInfo.setRequestData(requestData);
 
-            contentsDataList.add(contentInfo);
             DTVTLogger.info("RankingContentInfo " + contentInfo.getRank());
 
             if (mRequiredClipKeyList) {
                 // クリップ状態をコンテンツリストに格納
                 contentInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv,
-                        contentInfo.getCrid(), contentInfo.getServiceId(),
-                        contentInfo.getEventId(), contentInfo.getTitleId()));
+                        requestData.getCrid(), requestData.getServiceId(),
+                        requestData.getEventId(), requestData.getTitleId()));
             }
+            //生成した contentInfo をリストに格納する
+            contentsDataList.add(contentInfo);
         }
 
         return contentsDataList;

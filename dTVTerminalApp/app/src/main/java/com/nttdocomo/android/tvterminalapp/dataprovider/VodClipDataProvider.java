@@ -25,11 +25,22 @@ import java.util.Map;
  */
 public class VodClipDataProvider extends ClipKeyListDataProvider implements VodClipWebClient.VodClipJsonParserCallback {
 
+    /**
+     * コンテキスト.
+     */
     private Context mContext;
+    /**
+     * クリップ一覧データ.
+     */
     private VodClipList mClipList = null;
 
+    /**
+     * callback.
+     */
+    private ApiDataProviderCallback apiDataProviderCallback;
+
     @Override
-    public void onVodClipJsonParsed(List<VodClipList> vodClipLists) {
+    public void onVodClipJsonParsed(final List<VodClipList> vodClipLists) {
         if (vodClipLists != null && vodClipLists.size() > 0) {
             VodClipList list = vodClipLists.get(0);
 //            setStructDB(list);
@@ -53,7 +64,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
     }
 
     @Override
-    public void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
         super.onVodClipKeyListJsonParsed(clipKeyListResponse);
         // コールバック判定
@@ -74,8 +85,6 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
          */
         void vodClipListCallback(List<ContentsData> clipContentInfo);
     }
-
-    private ApiDataProviderCallback apiDataProviderCallback;
 
     /**
      * コンストラクタ.
@@ -174,8 +183,8 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
             if (mRequiredClipKeyList) {
                 // クリップ状態をコンテンツリストに格納
                 clipContentInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv,
-                        clipContentInfo.getCrid(), clipContentInfo.getServiceId(),
-                        clipContentInfo.getEventId(), clipContentInfo.getTitleId()));
+                        requestData.getCrid(), requestData.getServiceId(),
+                        requestData.getEventId(), requestData.getTitleId()));
             }
 
             clipDataList.add(clipContentInfo);

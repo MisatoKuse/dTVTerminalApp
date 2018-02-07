@@ -12,6 +12,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListDao;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
+import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -21,25 +22,32 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * クリップキー用InsertDataManager.
+ */
 public class ClipKeyListInsertDataManager {
 
+    /**
+     * コンテキストファイル.
+     */
     private Context mContext;
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
-     * @param context
+     * @param context コンテキストファイル
      */
-    public ClipKeyListInsertDataManager(Context context) {
+    public ClipKeyListInsertDataManager(final Context context) {
         mContext = context;
     }
 
     /**
-     * TvClipAPIの解析結果をDBに格納する。
+     * TvClipAPIの解析結果をDBに格納する.
      *
+     * @param type                テーブル種別
      * @param clipKeyListResponse クリップキー一覧 レスポンスデータ
      */
-    public void insertClipKeyListInsert(ClipKeyListDao.TABLE_TYPE type, ClipKeyListResponse clipKeyListResponse) {
+    public void insertClipKeyListInsert(final ClipKeyListDao.TABLE_TYPE type, final ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
         //各種オブジェクト作成
         DBHelper ClipKeyListDBHelper = new DBHelper(mContext);
@@ -73,13 +81,14 @@ public class ClipKeyListInsertDataManager {
      * クリップ登録成功後の行データ挿入.
      *
      * @param tableType テーブル種別(TV/VOD)
+     * @param crId      コンテンツ識別子
      * @param serviceId サービスID
      * @param eventId   イベントID
-     * @param type      クリップ種別
      * @param titleId   タイトルID
      */
-    public void insertRowSqlStart(final ClipKeyListDao.TABLE_TYPE tableType, final String serviceId,
-                              final String eventId, final String type, final String titleId) {
+    public void insertRowSqlStart(
+            final ClipKeyListDao.TABLE_TYPE tableType, final String crId, final String serviceId,
+            final String eventId, final String titleId) {
         DTVTLogger.start();
         //各種オブジェクト作成
         DBHelper ClipKeyListDBHelper = new DBHelper(mContext);
@@ -88,9 +97,10 @@ public class ClipKeyListInsertDataManager {
 
         //コンテンツデータ作成
         ContentValues values = new ContentValues();
+        values.put(JsonConstants.META_RESPONSE_CRID, crId);
         values.put(JsonConstants.META_RESPONSE_SERVICE_ID, serviceId);
         values.put(JsonConstants.META_RESPONSE_EVENT_ID, eventId);
-        values.put(JsonConstants.META_RESPONSE_TYPE, type);
+        values.put(JsonConstants.META_RESPONSE_TYPE, ClipKeyListDataProvider.CLIP_KEY_LIST_TYPE_OTHER_CHANNEL);
         values.put(JsonConstants.META_RESPONSE_TITLE_ID, titleId);
         clipKeyListDao.insert(tableType, values);
         DTVTLogger.end();
@@ -100,25 +110,28 @@ public class ClipKeyListInsertDataManager {
      * 条件に一致する行を削除する.
      *
      * @param tableType テーブル種別(TV/VOD)
+     * @param crId      コンテンツ識別子
      * @param serviceId サービスID
      * @param eventId   イベントID
      * @param titleId   タイトルID
      */
-    public void deleteRowSqlStart(final ClipKeyListDao.TABLE_TYPE tableType, final String serviceId,
-                                 final String eventId, final String titleId) {
+    public void deleteRowSqlStart(
+            final ClipKeyListDao.TABLE_TYPE tableType, final String crId, final String serviceId,
+            final String eventId, final String titleId) {
         DTVTLogger.start();
         //各種オブジェクト作成
         DBHelper ClipKeyListDBHelper = new DBHelper(mContext);
         SQLiteDatabase db = ClipKeyListDBHelper.getWritableDatabase();
         ClipKeyListDao clipKeyListDao = new ClipKeyListDao(db);
 
-        String query = StringUtils.getConnectStrings(JsonConstants.META_RESPONSE_CRID, "=? OR",
-                JsonConstants.META_RESPONSE_SERVICE_ID, "=? AND",
-                JsonConstants.META_RESPONSE_EVENT_ID, "=? AND",
-                JsonConstants.META_RESPONSE_TYPE, "=h4d_iptv OR",
+        String query = StringUtils.getConnectStrings(JsonConstants.META_RESPONSE_CRID, "=? OR ",
+                JsonConstants.META_RESPONSE_SERVICE_ID, "=? AND ",
+                JsonConstants.META_RESPONSE_EVENT_ID, "=? AND ",
+                JsonConstants.META_RESPONSE_TYPE, "=? OR ",
                 JsonConstants.META_RESPONSE_TITLE_ID, "=?");
 
-        String[] columns = {serviceId, eventId, titleId};
+        String[] columns = {crId, serviceId, eventId, ClipKeyListDataProvider.CLIP_KEY_LIST_TYPE_OTHER_CHANNEL, titleId};
         clipKeyListDao.deleteRowData(tableType, query, columns);
+        DTVTLogger.end();
     }
 }
