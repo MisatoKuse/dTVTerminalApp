@@ -163,6 +163,51 @@ public class DateUtils {
     public static final String DATE_MMDDE = "MM/dd (E)";
 
     /**
+     * 日付フォーマット.
+     */
+    public static final String DATE_YYYYMMDDE = "yyyy年MM月dd日 (E)";
+
+    /**
+     * 日付フォーマット.
+     */
+    public static final String DATE_YYYYMMDD = "yyyy-MM-dd";
+
+    /**
+     * 日付フォーマット.
+     */
+    public static final String DATE_YYYY_MM_DD_J = "yyyy年MM月dd日";
+
+    /**
+     * 日付フォーマット.
+     */
+    public static final String DATE_HHMMSS = "HHmmss";
+
+    /**
+     * 日付フォーマット.
+     */
+    public static final String DATE_Y = "年";
+
+    /**
+     * 日付フォーマット.
+     */
+    public static final String DATE_M = "月";
+
+    /**
+     * 日付フォーマット.
+     */
+    public static final String DATE_D = "日";
+
+    /**
+     * 日付フォーマット.
+     */
+    public static final String DATE_STANDARD_START = "04:00:00";
+
+    /**
+     * 日付フォーマット.
+     */
+    public static final String DATE_STANDARD_END = "03:00:00";
+
+    /**
      * DB保存期限.
      */
     private static final int LIMIT_HOUR = 1;

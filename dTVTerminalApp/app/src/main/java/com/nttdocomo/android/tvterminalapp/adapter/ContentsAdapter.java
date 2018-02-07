@@ -824,6 +824,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_CONTENT_DETAIL_CHANNEL_LIST: // コンテンツ詳細チャンネル一覧
                 holder.tv_rank.setVisibility(View.GONE);
                 holder.rb_rating.setVisibility(View.GONE);
+                holder.tv_line.setVisibility(View.VISIBLE);
                 break;
             case TYPE_SEARCH_LIST: //検索
                 holder.tv_time.setVisibility(View.GONE);

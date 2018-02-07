@@ -6,44 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:id="@+id/dtv_contents_channel_rl"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/contents_detail_channel_height">
-
-        <ImageView
-            android:id="@+id/dtv_contents_channel_img"
-            android:layout_width="@dimen/contents_detail_channel_img_width"
-            android:layout_height="match_parent"
-            android:padding="@dimen/contents_detail_channel_img_padding"
-            android:contentDescription="@null"
-            android:scaleType="fitStart"/>
-
-        <TextView
-            android:id="@+id/dtv_contents_channel_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@id/dtv_contents_channel_img"
-            android:textColor="@color/white_text"
-            android:textSize="@dimen/contents_detail_channel_txt_size"
-            android:textStyle="bold" />
-    </RelativeLayout>
-
-    <TextView
-        android:id="@+id/dtv_contents_channel_line"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/channel_list_divider_height"
-        android:layout_below="@id/dtv_contents_channel_rl"
-        android:background="@color/contents_detail_channel_line_color" />
-
     <ListView
         android:id="@+id/dtv_contents_channel_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/dtv_contents_channel_line"
-        android:divider="@drawable/list_item_divider"
-        android:dividerHeight="@dimen/channel_list_divider_height"
         android:listSelector="@drawable/channel_list_item_selector"/>
 
 </RelativeLayout>
