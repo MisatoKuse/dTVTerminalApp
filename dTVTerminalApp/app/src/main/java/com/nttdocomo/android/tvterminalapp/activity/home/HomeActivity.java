@@ -505,9 +505,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 startActivity(WatchingVideoListActivity.class, null);
                 break;
             case HOME_CONTENTS_SORT_TV_CLIP:
-            case HOME_CONTENTS_SORT_VOD_CLIP:
                 //クリップ一覧へ遷移
                 startActivity(ClipListActivity.class, null);
+                break;
+            case HOME_CONTENTS_SORT_VOD_CLIP:
+                //クリップ一覧へ遷移
+                final Bundle bundle = new Bundle();
+                bundle.putInt(ClipListActivity.CLIP_LIST_START_PAGE, ClipListActivity.CLIP_LIST_PAGE_NO_OF_VOD);
+                startActivity(ClipListActivity.class, bundle);
                 break;
             default:
                 break;

@@ -17,6 +17,7 @@ import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,13 +43,20 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
     @Override
     public void onVodClipJsonParsed(final List<VodClipList> vodClipLists) {
         if (vodClipLists != null && vodClipLists.size() > 0) {
-            VodClipList list = vodClipLists.get(0);
+            HashMap hashMap = (HashMap) vodClipLists.get(0).getVcList().get(0);
+            if (!hashMap.isEmpty()) {
+                VodClipList list = vodClipLists.get(0);
 //            setStructDB(list);
-            if (!mRequiredClipKeyList
-                    || mResponseEndFlag) {
-                sendVodClipListData(list.getVcList());
+                if (!mRequiredClipKeyList
+                        || mResponseEndFlag) {
+                    sendVodClipListData(list.getVcList());
+                } else {
+                    mClipList = list;
+                }
             } else {
-                mClipList = list;
+                if (null != apiDataProviderCallback) {
+                    apiDataProviderCallback.vodClipListCallback(null);
+                }
             }
         } else {
             //TODO:Sprint10でDB使用を一時停止
