@@ -172,7 +172,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
         long lastTime = SharedPreferencesUtils.getSharedPreferencesUserInfoDate(mContext);
 
         //現在日時が最終取得日時+1時間以下ならば、まだデータは新しい
-        if (System.currentTimeMillis() < lastTime + (DateUtils.EPOCH_TIME_ONE_HOUR * 1000)) {
+        if (DateUtils.getNowTimeFormatEpoch() < lastTime + DateUtils.EPOCH_TIME_ONE_HOUR) {
             DTVTLogger.end("false");
             return false;
         }
