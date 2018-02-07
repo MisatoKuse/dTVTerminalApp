@@ -437,7 +437,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             mTextDivider1.setVisibility(View.GONE);
             mTextDivider2.setVisibility(View.GONE);
             mPairingImage.setVisibility(View.VISIBLE);
-            mUseWithoutPairingSTBParingInvitationTextView.setVisibility(View.INVISIBLE);
             //プログレスビューを中央にする
             RelativeLayout parentLayout = findViewById(R.id.paring_select_text_relative_layout);
             if (parentLayout.getChildCount() == 2) {
@@ -452,6 +451,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 newLayout.addView(mLoadMoreView);
             }
         }
+        mUseWithoutPairingSTBParingInvitationTextView.setVisibility(View.INVISIBLE);
         mDeviceListView.setVisibility(View.GONE);
         mLoadMoreView.setVisibility(View.VISIBLE);
         DTVTLogger.end();
