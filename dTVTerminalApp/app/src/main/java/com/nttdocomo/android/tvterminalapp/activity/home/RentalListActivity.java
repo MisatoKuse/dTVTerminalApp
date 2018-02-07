@@ -5,7 +5,6 @@
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
@@ -19,11 +18,13 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRentalDataConnect;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RentalDataProvider;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -274,6 +275,7 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
     protected void onResume() {
         super.onResume();
         DTVTLogger.start();
+        //TODO 仮実装
         mRentalDataProvider = new RentalDataProvider(this);
         mRentalDataProvider.getRentalData(true);
         if (mContentsAdapter != null) {
@@ -288,53 +290,7 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
         //通信を止める
         StopRentalDataConnect stopConnect = new StopRentalDataConnect();
         stopConnect.execute(mRentalDataProvider);
-        StopAdapterConnect stopAdapterConnect = new StopAdapterConnect();
+        StopContentsAdapterConnect stopAdapterConnect = new StopContentsAdapterConnect();
         stopAdapterConnect.execute(mContentsAdapter);
-    }
-}
-
-/**
- * レンタルVODリスト取得の通信を止める.
- */
-class StopRentalDataConnect extends AsyncTask<RentalDataProvider, Void, Void> {
-    /**
-     * コンストラクタ.
-     */
-    StopRentalDataConnect() {
-        DTVTLogger.start();
-    }
-    @Override
-    protected Void doInBackground(final RentalDataProvider... dataProviders) {
-        DTVTLogger.start();
-        //通信を行っている処理を止める
-        if (dataProviders != null) {
-            for (RentalDataProvider rentalDataProvider : dataProviders) {
-                rentalDataProvider.stopConnect();
-            }
-        }
-        return null;
-    }
-}
-
-/**
- * アダプタで行っている通信を止める.
- */
-class StopAdapterConnect extends AsyncTask<ContentsAdapter, Void, Void> {
-    /**
-     * コンストラクタ.
-     */
-    StopAdapterConnect() {
-        DTVTLogger.start();
-    }
-    @Override
-    protected Void doInBackground(final ContentsAdapter... adapters) {
-        DTVTLogger.start();
-        //通信を行っている処理を止める
-        if (adapters != null) {
-            for (ContentsAdapter contentsAdapter : adapters) {
-                contentsAdapter.stopConnect();
-            }
-        }
-        return null;
     }
 }
