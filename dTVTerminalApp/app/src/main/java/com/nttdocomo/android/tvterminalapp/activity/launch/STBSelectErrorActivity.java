@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
@@ -25,7 +26,7 @@ public class STBSelectErrorActivity extends BaseActivity {
     private boolean mIsNextTimeHide = false;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.stb_select_error_layout);
         setContents();
@@ -63,11 +64,14 @@ public class STBSelectErrorActivity extends BaseActivity {
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(final View v) {
         if (v.equals(mParingAgain)) {
             finish();
         } else if (v.equals(mParingHelp)) {
-            startActivity(PairingHelpActivity.class, null);
+            Intent intent = new Intent(getApplicationContext(), PairingHelpActivity.class);
+            intent.putExtra(PairingHelpActivity.START_WHERE, PairingHelpActivity.ParingHelpFromMode.
+                    ParingHelpFromMode_Launch.ordinal());
+            startActivity(intent);
         } else if (v.equals(mErrorCheckBox)) {
             mIsNextTimeHide = mErrorCheckBox.isChecked();
         } else if (v.equals(mWithoutParing)) {
