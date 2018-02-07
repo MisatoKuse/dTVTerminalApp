@@ -6,13 +6,13 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
 
@@ -129,6 +129,7 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
             contentsData.setDtvType(dtvType);
             contentsData.setDispType(dispType);
             contentsData.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
+            contentsData.setContentsId(map.get(JsonConstants.META_RESPONSE_CONTENTS_ID));
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
 

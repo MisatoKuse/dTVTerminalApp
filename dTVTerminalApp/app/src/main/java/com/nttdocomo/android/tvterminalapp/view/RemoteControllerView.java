@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Scroller;
+import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
@@ -57,6 +58,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     private GestureDetector mGestureDetector = null;
     private LinearLayout mBottomLinearLayout, mTopLinearLayout = null;
     private OnStartRemoteControllerUIListener mStartUIListener = null;
+    private TextView mTextViewUseRemote = null;
 
     private static final long CLICK_MAX_TIME = 100;
 
@@ -404,12 +406,14 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
             mBottomLinearLayout = findViewById(R.id.bottom_view_ll);
             mBottomLinearLayout.setVisibility(VISIBLE);
             mTopLinearLayout = findViewById(R.id.top_view_ll);
+            mTextViewUseRemote = findViewById(R.id.watch_by_tv);
             mTopLinearLayout.setVisibility(GONE);
             mFrameLayout = findViewById(R.id.header_watch_by_tv);
             mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner, null));
             remoteControllerSendKeyAction.cancelTimer();
             if (null != mStartUIListener) {
                 mStartUIListener.onEndRemoteControl();
+                mTextViewUseRemote.setText(getResources().getString(R.string.remote_controller_viewpager_text_use_remote));
             }
             setDefaultPage();
         }
@@ -472,7 +476,13 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
 
     /**
-     * 中継アプリ起動リクエスト処理を呼び出し
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・dTVチャンネル・カテゴリー分類に対応
+     *
+     * @param type dTVチャンネル
+     * @param serviceCategoryType カテゴリー分類
+     * @param crid
+     * @param chno チャンネル番号
      */
     public void sendStartApplicationDtvChannelRequest(
             RemoteControlRelayClient.STB_APPLICATION_TYPES type,
@@ -482,6 +492,120 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         remoteControllerSendKeyAction.getRelayClient().startApplicationDtvChannelRequest(type, serviceCategoryType, crid, chno, mContext);
         DTVTLogger.end();
     }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTVの番組（地デジ）
+     *
+     * @param chno
+     */
+    public void sendStartApplicationHikariTvCategoryTerrestrialDigitalRequest(String chno) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryTerrestrialDigitalRequest(chno, mContext);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTVの番組（BS）
+     *
+     * @param chno
+     */
+    public void sendStartApplicationHikariTvCategorySatelliteBsRequest(String chno) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategorySatelliteBsRequest(chno, mContext);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTVの番組（IPTV）
+     *
+     * @param chno
+     */
+    public void sendStartApplicationHikariTvCategoryIptvRequest(String chno) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryIptvRequest(chno, mContext);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTVのVOD
+     *
+     * @param licenseId
+     * @param cid
+     * @param crid
+     */
+    public void sendStartApplicationHikariTvCategoryHikaritvVodRequest(final String licenseId,
+                                                                       final String cid, final String crid) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryHikaritvVodRequest(
+                licenseId, cid, crid, mContext);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTV内 dTVチャンネルの番組
+     *
+     * @param chno
+     */
+    public void sendStartApplicationHikariTvCategoryDtvchannelBroadcastRequest(String chno) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvchannelBroadcastRequest(chno, mContext);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTV内 dTVチャンネル VOD（見逃し）
+     *
+     * @param tvCid
+     */
+    public void sendStartApplicationHikariTvCategoryDtvchannelMissedRequest(String tvCid) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvchannelMissedRequest(tvCid, mContext);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTV内 dTVチャンネル VOD（関連番組）
+     *
+     * @param tvCid
+     */
+    public void sendStartApplicationHikariTvCategoryDtvchannelRelationRequest(String tvCid) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvchannelRelationRequest(tvCid, mContext);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTV内 dTVのVOD
+     *
+     * @param episodeId
+     */
+    public void sendStartApplicationHikariTvCategoryDtvVodRequest(String episodeId) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvVodRequest(episodeId, mContext);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTV内VOD(dTV含む)のシリーズ
+     *
+     * @param crid
+     */
+    public void sendStartApplicationHikariTvCategoryDtvSvodRequest(String crid) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvSvodRequest(
+                crid, mContext);
+        DTVTLogger.end();
+    }
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         DTVTLogger.start();

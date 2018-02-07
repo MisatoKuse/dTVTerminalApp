@@ -8,71 +8,87 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
+/**
+ * お知らせ画面.
+ */
 public class NewsActivity extends BaseActivity implements View.OnClickListener {
-    private TextView tv_toNewsDetail1;
-    private TextView tv_toNewsDetail2;
-    private Button bt_back3;
-    private Boolean mIsMenuLaunch = false;
+
+    /**
+     * WebView.
+     */
+    private WebView mNewsWebView = null;
+    /**
+     * webViewの読み込み進行度.
+     */
+    private int mProgress = 0;
+    /**
+     * webViewの読み込み完了値.
+     */
+    private final static int PROGRESS_FINISH = 100;
+    /**
+     * 表示するWebPageのURL.
+     * TODO 仮のHTMLファイル
+     */
+    private final static String NEWS_URL = "https://www.nttdocomo.co.jp/";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.news_main_layout);
+
+        mNewsWebView = findViewById(R.id.news_main_webview);
+        mNewsWebView.setWebViewClient(new WebViewClient());
+        WebSettings webSettings = mNewsWebView.getSettings();
+        webSettings.setJavaScriptEnabled(false);
+        webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        mNewsWebView.loadUrl(NEWS_URL);
 
         //Headerの設定
         setTitleText(getString(R.string.information_title));
         Intent intent = getIntent();
-        mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
-        if (mIsMenuLaunch) {
-            enableHeaderBackIcon(false);
-        }
+        enableHeaderBackIcon(false);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
 
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
-
-        tv_toNewsDetail1 = findViewById(R.id.tv_news1);
-        tv_toNewsDetail2 = findViewById(R.id.tv_news2);
-        bt_back3 = findViewById(R.id.Back3);
-        tv_toNewsDetail1.setClickable(true);
-        tv_toNewsDetail2.setClickable(true);
-        tv_toNewsDetail1.setOnClickListener(this);
-        tv_toNewsDetail2.setOnClickListener(this);
-        bt_back3.setOnClickListener(this);
     }
 
     @Override
-    public void onClick(View view) {
-        switch(view.getId()) {
-            case R.id.Back3:
-                finish();
-                break;
-            case R.id.tv_news1:
-                case R.id.tv_news2:
-                    startActivity(NewsDetailActivity.class, null);
-                    break;
-            default:
-                super.onClick(view);
+    protected void onRestart() {
+        super.onRestart();
+        DTVTLogger.start();
+        if (mProgress != PROGRESS_FINISH) {
+            mNewsWebView.reload();
         }
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    protected void onStop() {
+        super.onStop();
+        DTVTLogger.start();
+        mProgress = mNewsWebView.getProgress();
+        if (mProgress != PROGRESS_FINISH) {
+            mNewsWebView.stopLoading();
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         DTVTLogger.start();
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
-                if (mIsMenuLaunch) {
-                    //メニューから起動の場合はアプリ終了ダイアログを表示
-                    showTips();
+                if (mNewsWebView.canGoBack()) {
+                    mNewsWebView.goBack();
                     return false;
                 }
             default:

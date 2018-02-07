@@ -26,6 +26,8 @@ import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.Recomme
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_PAGEID;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDMETHODID;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RECOMMENDORDER;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED1;
+import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED2;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_RESERVED4;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_SERVICEID;
 import static com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_STARTVIEWING;
@@ -138,7 +140,9 @@ public class RecommendListDataManager {
             contentsData.setTitle(map.get(RECOMMENDCHANNEL_LIST_TITLE));
             contentsData.setStartViewing(map.get(RECOMMENDCHANNEL_LIST_STARTVIEWING));
             contentsData.setEndViewing(map.get(RECOMMENDCHANNEL_LIST_ENDVIEWING));
-            contentsData.setReserved(map.get(RECOMMENDCHANNEL_LIST_RESERVED4));
+            contentsData.setReserved1(map.get(RECOMMENDCHANNEL_LIST_RESERVED1));
+            contentsData.setReserved2(map.get(RECOMMENDCHANNEL_LIST_RESERVED2));
+            contentsData.setReserved4(map.get(RECOMMENDCHANNEL_LIST_RESERVED4));
             contentsData.setChannelId(map.get(RECOMMENDCHANNEL_LIST_CHANNELID));
             contentsData.setRecommendOrder(map.get(RECOMMENDCHANNEL_LIST_RECOMMENDORDER));
             contentsData.setPageId(map.get(RECOMMENDCHANNEL_LIST_PAGEID));

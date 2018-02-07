@@ -6,7 +6,6 @@
 
     <!-- Common -->
     <string name="app_name">ドコモテレビターミナルアプリ</string>
-    <string name="list_transition">></string>
     <string name="contents_hyphen">-</string>
     <string name="contents_more">すべてを見る</string>
     <string name="positive_response">はい</string>
@@ -35,7 +34,6 @@
     <string name="str_app_title">ドコモテレビターミナル</string>
     <string name="str_launch_title">起動画面</string>
     <string name="str_tutorial_title">チュートリアル画面</string>
-    <string name="str_get_info_title">情報取得中</string>
     <string name="str_stb_select_result_text">ペアリング可能なデバイスが\n見つかりました。</string>
     <string name="str_stb_next_not_display_text">次回以降表示しない</string>
     <string name="str_stb_connect_success_text">ドコモテレビターミナルとペアリングしました。</string>
@@ -61,7 +59,7 @@
 
     <!-- リモコン-->
     <string name="remote_controller_viewpager_watch_by_tv">テレビで視聴する</string>
-
+    <string name="remote_controller_viewpager_text_use_remote">リモコンを使う</string>
     <!-- Home -->
     <string name="recommend_list_title">おすすめ番組・ビデオ</string>
     <string name="home_now_on_air_channel_list">チャンネルリスト</string>
@@ -215,6 +213,7 @@
     <string name="d_anime_store_content_service_update_dialog">ドコモテレビターミナルのdアニメストアのバージョンアップが必要です</string>
     <string name="d_tv_terminal_application_version_update_dialog">ドコモテレビターミナルを操作したい場合は、ドコモテレビターミナルアプリをアップデートしてください。</string>
     <string name="stb_application_version_update">ご利用のドコモテレビターミナルの最新版がありますドコモテレビターミナルのアップデートをしてください。</string>
+    <string name="contents_detail_thumbnail_text">テレビで視聴できます</string>
     <string-array name="other_service_contents_detail_tabs">
         <item>作品情報</item>
     </string-array>
@@ -222,7 +221,6 @@
         <item>番組詳細</item>
         <item>チャンネル</item>
     </string-array>
-    <string name="recording_reservation_complete_dialog_title">録画予約完了</string>
     <string name="recording_reservation_complete_dialog_msg">録画予約依頼を受け付けました。</string>
     <string name="recording_reservation_complete_dialog_ok">OK</string>
     <string name="recording_reservation_failed_dialog_msg">登録件数が一杯のため録画予約に失敗しました。</string>
@@ -232,7 +230,6 @@
     <string name="recording_reservation_failed_dialog_param">リクエストパラメータ不正</string>
     <string name="recording_reservation_failed_dialog_over">登録件数超過</string>
     <string name="recording_reservation_failed_dialog_no_agreement">未契約エラー</string>
-    <string name="recording_reservation_confirm_dialog_title">録画予約確認</string>
     <string name="recording_reservation_confirm_dialog_msg">録画予約しますか？</string>
     <string name="recording_reservation_confirm_dialog_confirm">録画予約する</string>
     <string name="recording_reservation_confirm_dialog_cancel">キャンセル</string>

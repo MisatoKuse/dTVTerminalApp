@@ -3,12 +3,12 @@
  */
 
 #include <sstream>
-#include <du_http_client.h>
+//#include <du_http_client.h>
 #include <cstring>
-#include <ddtcp.h>
-#include <cipher_file_context_global.h>
-#include <secure_io_global.h>
-#include <du_log.h>
+//#include <ddtcp.h>
+//#include <cipher_file_context_global.h>
+//#include <secure_io_global.h>
+//#include <du_log.h>
 #include "DlnaRemote.h"
 #include "../DTVTLogger.h"
 
@@ -73,7 +73,7 @@ namespace dtvt {
 //            dixim::dmsp::dtcp::dtcp* dtcp= (dixim::dmsp::dtcp::dtcp *) mDtcp;
 //            dtcp->stop();
 //        }
-        DelIfNotNull(mDtcp);
+        //DelIfNotNull(mDtcp);
         DTVT_LOG_DBG("C>>>>>>>>>>>>>>>>DlnaRemote.cpp DlnaRemote::stop exit");
     }
 

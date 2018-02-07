@@ -19,11 +19,12 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VideoContentProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.VideoGenreListDataInfo;
 
 import java.util.ArrayList;
@@ -254,6 +255,8 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         }
         Intent intent = new Intent(this, ContentDetailActivity.class);
         intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
+        OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(mContentsList.get(position), ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
+        intent.putExtra(detailData.getRecommendFlg(), detailData);
         startActivity(intent);
     }
 

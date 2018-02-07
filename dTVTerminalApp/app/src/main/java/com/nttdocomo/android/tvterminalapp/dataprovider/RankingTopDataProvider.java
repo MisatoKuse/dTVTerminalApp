@@ -12,7 +12,6 @@ import com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivi
 import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.WeeklyTvRankingActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DailyRankInsertDataManager;
@@ -27,6 +26,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WeeklyRankList;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
@@ -422,6 +422,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             rankingContentInfo.setDtvType(dtvType);
             rankingContentInfo.setDispType(dispType);
             rankingContentInfo.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
+            rankingContentInfo.setContentsId(map.get(JsonConstants.META_RESPONSE_CID));
 
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();

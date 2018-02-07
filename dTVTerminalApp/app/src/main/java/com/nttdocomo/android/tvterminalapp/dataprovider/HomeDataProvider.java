@@ -9,32 +9,32 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.text.TextUtils;
 
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.WatchListenVideoDataManager;
-import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
-import com.nttdocomo.android.tvterminalapp.datamanager.insert.RoleListInsertDataManager;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListResponse;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListResponse;
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DailyRankInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RentalListInsertDataManager;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.RoleListInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.TvScheduleInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.VideoRankInsertDataManager;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.WatchListenVideoDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.HomeDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.RankingTopDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedChListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvClipList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WatchListenVideoList;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
@@ -604,7 +604,9 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 //レコメンドからのデータはキーが違うため再取得する
                 contentInfo.setThumURL(mapList.get(i).get(RecommendChannelXmlParser.RECOMMENDCHANNEL_LIST_CTPICURL1));
             }
-
+            contentInfo.setDispType(mapList.get(i).get(JsonConstants.META_RESPONSE_DISP_TYPE));
+            contentInfo.setContentsType(mapList.get(i).get(JsonConstants.META_RESPONSE_CONTENT_TYPE));
+            contentInfo.setContentsId(mapList.get(i).get(JsonConstants.META_RESPONSE_CID));
             contentsDataList.add(contentInfo);
         }
 

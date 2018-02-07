@@ -6,13 +6,13 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
 
@@ -151,6 +151,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
             clipContentInfo.setDtvType(dtvType);
             clipContentInfo.setDispType(dispType);
             clipContentInfo.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
+            clipContentInfo.setContentsId(map.get(JsonConstants.META_RESPONSE_CONTENTS_ID));
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
             requestData.setCrid(map.get(JsonConstants.META_RESPONSE_CRID));

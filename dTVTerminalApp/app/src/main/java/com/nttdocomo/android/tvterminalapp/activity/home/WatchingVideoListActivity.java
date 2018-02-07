@@ -23,6 +23,7 @@ import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.WatchListenVideoListDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 
 import java.util.ArrayList;
@@ -252,6 +253,8 @@ public class WatchingVideoListActivity extends BaseActivity implements
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
         Intent intent = new Intent(this, ContentDetailActivity.class);
         intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
+        OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(mWatchingVideoListData.get(i), ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
+        intent.putExtra(detailData.getRecommendFlg(), detailData);
         startActivity(intent);
     }
 

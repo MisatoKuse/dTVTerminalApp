@@ -29,10 +29,10 @@ import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplayEventListener;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuItem;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuItemParam;
+import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.DAccountReSettingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
-import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectErrorActivity;
 import com.nttdocomo.android.tvterminalapp.activity.setting.SettingActivity;
 import com.nttdocomo.android.tvterminalapp.dataprovider.callback.TransoceanicCommunicationAlertDialogCallback;
@@ -41,12 +41,15 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaInterface;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -440,6 +443,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         //検討中
 //        UserInfoDataProvider dataProvider = new UserInfoDataProvider(getApplicationContext(), this);
 //        dataProvider.getUserInfo();
+
         DTVTLogger.end();
     }
 
@@ -451,6 +455,10 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     protected void onResume() {
         super.onResume();
         DTVTLogger.start();
+		boolean r = DlnaInterface.dlnaOnResume();
+        if(!r){
+            DTVTLogger.debug("BaseActivity.onResume, dlnaOnResume failed");
+        }
         registerDevListDlna();
 
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
@@ -504,6 +512,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         DTVTLogger.start();
         mRemoteControlRelayClient.resetHandler();
         //unregisterDevListDlna();
+        DlnaInterface.dlnaOnStop();
         DTVTLogger.end();
     }
 
@@ -608,7 +617,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                                 break;
                             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE:
                                 CustomDialog dTVTUpDateDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-                                dTVTUpDateDialog.setTitle(getResources().getString(R.string.stb_application_version_update));
+                                dTVTUpDateDialog.setContent(getResources().getString(R.string.d_tv_terminal_application_version_update_dialog));
                                 dTVTUpDateDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                                     @Override
                                     public void onOKCallback(boolean isOK) {
@@ -628,7 +637,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                         switch (resultcode) {
                             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE:
                                 CustomDialog dTVTUpDateDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-                                dTVTUpDateDialog.setTitle(getResources().getString(R.string.stb_application_version_update));
+                                dTVTUpDateDialog.setContent(getResources().getString(R.string.d_tv_terminal_application_version_update_dialog));
                                 dTVTUpDateDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                                     @Override
                                     public void onOKCallback(boolean isOK) {
@@ -1442,6 +1451,38 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
 
         //アニメーションを付加する
         overridePendingTransition(R.anim.in_righttoleft, R.anim.out_lefttoright);
+    }
+
+    /**
+     * コンテンツ詳細に必要なデータを返す.
+     *
+     * @param info レコメンド情報
+     * @param recommendFlg レコメンドフラグ
+     * @return コンテンツ情報
+     */
+    public static OtherContentsDetailData getOtherContentsDetailData(ContentsData info, String recommendFlg) {
+        OtherContentsDetailData detailData = new OtherContentsDetailData();
+        detailData.setTitle(info.getTitle());
+        detailData.setThumb(info.getThumURL());
+        detailData.setDetail(info.getSynop());
+        detailData.setComment(info.getComment());
+        detailData.setHighlight(info.getHighlight());
+        if (ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY.equals(recommendFlg)) {
+            detailData.setServiceId(Integer.parseInt(info.getServiceId()));
+        }
+        detailData.setReserved4(info.getReserved4());
+        detailData.setContentId(info.getContentsId());
+        detailData.setDispType(info.getDispType());
+        detailData.setContentsType(info.getContentsType());
+        detailData.setChannelId(info.getChannelId());
+        detailData.setRecommendOrder(info.getRecommendOrder());
+        detailData.setPageId(info.getPageId());
+        detailData.setGroupId(info.getGroupId());
+        detailData.setRecommendMethodId(info.getRecommendMethodId());
+        detailData.setCategoryId(info.getCategoryId());
+        detailData.setRecommendFlg(recommendFlg);
+
+        return detailData;
     }
 
     /**

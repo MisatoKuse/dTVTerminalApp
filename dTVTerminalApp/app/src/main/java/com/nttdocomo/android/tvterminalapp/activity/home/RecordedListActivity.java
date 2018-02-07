@@ -289,6 +289,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 mDlnaProvRecVideo = new DlnaProvRecVideo();
             }
             if (mDlnaProvRecVideo.start(dlnaDmsItem, this)) {
+                clearFragment(0);
                 mDlnaProvRecVideo.browseRecVideoDms();
             } else {
                 setProgressBarGone();
@@ -325,6 +326,17 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 RecordedBaseFragment baseFragment = mRecordedFragmentFactory.createFragment(i, this);
                 baseFragment.clear();
             }
+        }
+    }
+
+    /**
+     * フラグメントをクリア
+     */
+    public void clearFragment(int tabNo) {
+        DTVTLogger.start();
+        if (null != mViewPager) {
+            RecordedBaseFragment baseFragment = mRecordedFragmentFactory.createFragment(tabNo, this);
+            baseFragment.clear();
         }
     }
 
@@ -409,7 +421,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         List<Map<String, String>> resultList = getDownloadListFromDb();
         setTakeOutContentsToAll(dlnaRecVideoItems, resultList);
         List<ContentsData> listData = baseFrgament.getContentsData();
-        listData.clear();
+        if(null != listData) {
+            listData.clear();
+        }
         if(baseFrgament.queIndex == null){
             baseFrgament.queIndex = new ArrayList<>();
         }
@@ -452,7 +466,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 }
             }
             baseFrgament.mContentsList.add(detailData);
-            setNotifyData(baseFrgament, itemData, i);
+            setNotifyData(baseFrgament, itemData, i, detailData.getDlFileFullPath());
         }
         runOnUiThread(new Runnable() {
             @Override
@@ -465,7 +479,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         });
     }
 
-    private void setNotifyData(RecordedBaseFragment baseFrgament, DlnaRecVideoItem dlnaRecVideoItem, int i){
+    private void setNotifyData(RecordedBaseFragment baseFrgament, DlnaRecVideoItem dlnaRecVideoItem, int i, String fullDlPaht){
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.JAPAN);
         // TODO 年齢取得未実装の為、固定値を返却
         boolean isAge = true;
@@ -517,6 +531,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             //duration && channel name end
             contentsData.setTime(sb.toString());
             contentsData.setDownloadFlg(baseFrgament.mContentsList.get(i).getDownLoadStatus());
+            contentsData.setDlFileFullPath(fullDlPaht);
             baseFrgament.getContentsData().add(contentsData);
         } else {
             // NOP
@@ -693,5 +708,38 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                 break;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    /**
+     *
+     * @param dlPaht
+     * @param thiz
+     */
+    public void onNoticeActDel(String dlPaht, RecordedBaseFragment thiz) {
+        if(null == mRecordedFragmentFactory){
+            return;
+        }
+        RecordedBaseFragment fra = mRecordedFragmentFactory.createFragment(0, RecordedListActivity.this);
+        if(null != fra){
+            if(fra == thiz){
+                return;
+            }
+            fra.delItemData(dlPaht);
+        }
+    }
+
+    /**
+     * 「すべて」タッブから情報を取得
+     * @return yn yn
+     */
+    public boolean isDownloading() {
+        if(null == mRecordedFragmentFactory){
+            return false;
+        }
+        RecordedBaseFragment fra = mRecordedFragmentFactory.createFragment(0, RecordedListActivity.this);
+        if(null != fra){
+            return fra.checkIsDownloading();
+        }
+        return false;
     }
 }

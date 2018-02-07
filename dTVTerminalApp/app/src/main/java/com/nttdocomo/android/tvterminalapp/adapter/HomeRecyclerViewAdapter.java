@@ -15,16 +15,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
-import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -337,12 +338,20 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             //URLがない場合はサムネイル取得失敗の画像を表示
             viewHolder.mImage.setImageResource(R.mipmap.error_scroll);
         }
+        String recommendFlg = "";
+        if (mIndex == HOME_CONTENTS_SORT_RECOMMEND_PROGRAM || mIndex == HOME_CONTENTS_SORT_RECOMMEND_PROGRAM + 1) {
+            recommendFlg = ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY;
+        } else {
+            recommendFlg = ContentDetailActivity.PLALA_INFO_BUNDLE_KEY;
+        }
+        final OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(contentsData, recommendFlg);
         viewHolder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
                 Intent intent = new Intent(mContext, ContentDetailActivity.class);
                 ComponentName componentName = mContext.getComponentName();
                 intent.putExtra(DTVTConstants.SOURCE_SCREEN, componentName.getClassName());
+                intent.putExtra(detailData.getRecommendFlg(), detailData);
                 mContext.startActivity(intent);
             }
         });

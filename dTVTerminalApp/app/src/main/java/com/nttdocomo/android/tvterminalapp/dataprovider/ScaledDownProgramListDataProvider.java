@@ -115,6 +115,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                         mSchedule.setDispType(dispType);
                         mSchedule.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
                         mSchedule.setClipRequestData(setClipData((HashMap<String, String>) hashMap));
+                        mSchedule.setContentsId(hashMap.get(JsonConstants.META_RESPONSE_CID));
 
                         if (!TextUtils.isEmpty(chNo)) {
                             ChannelInfo channel = new ChannelInfo();
@@ -169,6 +170,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                                     hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID),
                                     hashMap.get(JsonConstants.META_RESPONSE_EVENT_ID),
                                     hashMap.get(JsonConstants.META_RESPONSE_TITLE_ID)));
+                            mSchedule.setContentsId(hashMap.get(JsonConstants.META_RESPONSE_CID));
 
                             if (!TextUtils.isEmpty(chNo)) {//CH毎番組データ取得して、整形する
                                 ArrayList<ChannelInfo> oldChannelList = channelsInfo.getChannels();
@@ -372,6 +374,7 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 schedule.setDispType(dispType);
                 schedule.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
                 schedule.setClipRequestData(setClipData(hashMap));
+                schedule.setContentsId(hashMap.get(JsonConstants.META_RESPONSE_CID));
 
                 schedule.setClipStatus(getClipStatus(dispType, contentType, dtv,
                         hashMap.get(JsonConstants.META_RESPONSE_CRID),
