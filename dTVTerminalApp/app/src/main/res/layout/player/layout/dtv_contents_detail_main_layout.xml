@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
   -->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/dtv_contents_detail_main_layout_ll"
     style="@style/default_layout_style"
@@ -8,139 +9,133 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ScrollView
-        android:id="@+id/contents_detail_scroll_view"
+    <LinearLayout
+        android:id="@+id/contents_detail_scroll_layout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/contents_detail_scroll_layout"
+        <!--サムネイル用レイアウト-->
+        <RelativeLayout
+            android:id="@+id/dtv_contents_detail_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:visibility="visible">
 
-            <!--サムネイル用レイアウト-->
             <RelativeLayout
-                android:id="@+id/dtv_contents_detail_layout"
+                android:id="@+id/dtv_contents_detail_main_layout_player_rl"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="visible">
+                android:layout_height="match_parent"
+                android:visibility="gone">
 
-                <RelativeLayout
-                    android:id="@+id/dtv_contents_detail_main_layout_player_rl"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <com.digion.dixim.android.secureplayer.SecureVideoView
-                        android:id="@+id/dtv_contents_detail_main_layout_player_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_centerHorizontal="true" />
-
-                    <TextView
-                        android:id="@+id/tv_player_main_layout_video_ctrl_player_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="@dimen/contents_detail_player_title_text_start_margin"
-                        android:layout_marginEnd="@dimen/contents_detail_player_title_text_end_margin"
-                        android:layout_marginTop="@dimen/contents_detail_player_title_text_top_margin"
-                        android:maxLines="2"
-                        android:ellipsize="end"
-                        android:textStyle="bold"
-                        android:textColor="@color/contents_player_landscape_title_text_color"
-                        android:textSize="@dimen/contents_detail_player_media_controller_text_size" />
-
-                    <ImageView
-                        android:id="@+id/tv_player_main_layout_video_ctrl_player_logo"
-                        android:layout_width="@dimen/contents_detail_player_logo_width"
-                        android:layout_height="@dimen/contents_detail_player_logo_height"
-                        android:layout_marginStart="@dimen/contents_detail_player_logo_start_margin"
-                        android:layout_marginTop="@dimen/contents_detail_player_logo_top_margin"
-                        android:background="@color/contents_logo_background_default_color"/>
-                </RelativeLayout>
-
-                <ImageView
-                    android:id="@+id/dtv_contents_detail_main_layout_thumbnail"
+                <com.digion.dixim.android.secureplayer.SecureVideoView
+                    android:id="@+id/dtv_contents_detail_main_layout_player_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:contentDescription="@string/contents_info_thumbnail_text"
-                    android:scaleType="fitXY" />
+                    android:layout_centerHorizontal="true" />
 
-                <ImageView
-                    android:id="@+id/dtv_contents_detail_main_layout_thumbnail_shadow"
+                <TextView
+                    android:id="@+id/tv_player_main_layout_video_ctrl_player_title"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@mipmap/thumb_material_mask_overlay_gradation"
-                    android:visibility="gone" />
+                    android:layout_marginStart="@dimen/contents_detail_player_title_text_start_margin"
+                    android:layout_marginEnd="@dimen/contents_detail_player_title_text_end_margin"
+                    android:layout_marginTop="@dimen/contents_detail_player_title_text_top_margin"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    android:textStyle="bold"
+                    android:textColor="@color/contents_player_landscape_title_text_color"
+                    android:textSize="@dimen/contents_detail_player_media_controller_text_size" />
 
-                <LinearLayout
-                    android:id="@+id/dtv_contents_detail_main_layout_thumbnail_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:orientation="vertical"
-                    android:visibility="gone">
-                    <!--中央ボタン画像-->
-                    <ImageView
-                        android:id="@+id/dtv_contents_view_button"
-                        android:layout_width="@dimen/contents_detail_watch_dtv_image_width"
-                        android:layout_height="@dimen/contents_detail_watch_dtv_image_height"
-                        android:layout_gravity="center"
-                        android:contentDescription="@string/contents_info_thumbnail_button"
-                        android:src="@mipmap/thumb_icon_cast" />
-                    <!--テキスト-->
-                    <TextView
-                        android:id="@+id/view_contents_button_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/contents_detail_16dp"
-                        android:gravity="center"
-                        android:textColor="@color/white_text"
-                        android:layout_gravity="center_horizontal"
-                        android:textSize="@dimen/contents_detail_12dp"
-                        android:visibility="gone" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/contract_leading_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:orientation="vertical"
-                    android:visibility="gone">
-                    <TextView
-                        android:id="@+id/contract_leading_text"
-                        android:layout_width="@dimen/contents_detail_contract_leading_text_width"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/contents_detail_contract_leading_text_bottom_margin"
-                        android:gravity="center"
-                        android:textColor="@color/contents_contract_leading_text_color"
-                        android:textSize="@dimen/contents_detail_contract_leading_text_size" />
-                    <Button
-                        android:id="@+id/contract_leading_button"
-                        android:layout_width="@dimen/contents_detail_contract_leading_button_width"
-                        android:layout_height="@dimen/contents_detail_contract_leading_button_height"
-                        android:layout_gravity="center_horizontal"
-                        android:onClick="contractButtonClick"
-                        android:textColor="@color/contents_contract_leading_button_text_color"
-                        android:textSize="@dimen/contents_detail_contract_leading_button_text_size"
-                        android:background="@drawable/shape_round_corner_5dp"/>
-                </LinearLayout>
+                <ImageView
+                    android:id="@+id/tv_player_main_layout_video_ctrl_player_logo"
+                    android:layout_width="@dimen/contents_detail_player_logo_width"
+                    android:layout_height="@dimen/contents_detail_player_logo_height"
+                    android:layout_marginStart="@dimen/contents_detail_player_logo_start_margin"
+                    android:layout_marginTop="@dimen/contents_detail_player_logo_top_margin"
+                    android:background="@color/contents_logo_background_default_color"/>
             </RelativeLayout>
 
-            <RelativeLayout
-                android:id="@+id/rl_dtv_contents_detail_tab"
+            <ImageView
+                android:id="@+id/dtv_contents_detail_main_layout_thumbnail"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/tab_layout_area_height"
-                android:background="@color/dtv_contents_detail_tab_background_color"
-                android:visibility="visible" />
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/contents_info_thumbnail_text"
+                android:scaleType="fitXY" />
 
-            <com.nttdocomo.android.tvterminalapp.view.ContentsDetailViewPager
-                android:id="@+id/dtv_contents_detail_main_layout_vp"
+            <ImageView
+                android:id="@+id/dtv_contents_detail_main_layout_thumbnail_shadow"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent"
+                android:src="@mipmap/thumb_material_mask_overlay_gradation"
+                android:visibility="gone" />
 
-        </LinearLayout>
-    </ScrollView>
+            <LinearLayout
+                android:id="@+id/dtv_contents_detail_main_layout_thumbnail_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:orientation="vertical"
+                android:visibility="gone">
+                <!--中央ボタン画像-->
+                <ImageView
+                    android:id="@+id/dtv_contents_view_button"
+                    android:layout_width="@dimen/contents_detail_watch_dtv_image_width"
+                    android:layout_height="@dimen/contents_detail_watch_dtv_image_height"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/contents_info_thumbnail_button"
+                    android:src="@mipmap/thumb_icon_cast" />
+                <!--テキスト-->
+                <TextView
+                    android:id="@+id/view_contents_button_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/contents_detail_staff_margin_top"
+                    android:gravity="center"
+                    android:textColor="@color/white_text"
+                    android:layout_gravity="center_horizontal"
+                    android:textSize="@dimen/contents_detail_thumnail_text_size"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/contract_leading_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:orientation="vertical"
+                android:visibility="gone">
+                <TextView
+                    android:id="@+id/contract_leading_text"
+                    android:layout_width="@dimen/contents_detail_contract_leading_text_width"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/contents_detail_contract_leading_text_bottom_margin"
+                    android:gravity="center"
+                    android:textColor="@color/contents_contract_leading_text_color"
+                    android:textSize="@dimen/contents_detail_contract_leading_text_size" />
+                <Button
+                    android:id="@+id/contract_leading_button"
+                    android:layout_width="@dimen/contents_detail_contract_leading_button_width"
+                    android:layout_height="@dimen/contents_detail_contract_leading_button_height"
+                    android:layout_gravity="center_horizontal"
+                    android:onClick="contractButtonClick"
+                    android:textColor="@color/contents_contract_leading_button_text_color"
+                    android:textSize="@dimen/contents_detail_contract_leading_button_text_size"
+                    android:background="@drawable/shape_round_corner_5dp"/>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_dtv_contents_detail_tab"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/tab_layout_area_height"
+            android:background="@color/dtv_contents_detail_tab_background_color"
+            android:visibility="visible" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/dtv_contents_detail_main_layout_vp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
 </LinearLayout>

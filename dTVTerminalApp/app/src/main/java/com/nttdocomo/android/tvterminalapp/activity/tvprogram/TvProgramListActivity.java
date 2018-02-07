@@ -32,6 +32,7 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.MyChannelDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
+import com.nttdocomo.android.tvterminalapp.struct.CalendarComparator;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.view.ChannelItemClickListener;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
@@ -80,7 +81,6 @@ public class TvProgramListActivity extends BaseActivity
     private static final String DATE_SELECT_FORMAT = "yyyy-MM-dd";
     private static final String SELECT_DATE_FORMAT = "yyyy年MM月dd日";
     private static final String TIME_FORMAT = "HHmmss";
-    private static final String CUR_TIME_FORMAT = "yyyy-MM-ddHH:mm:ss";
     private String mSelectDateStr = null;
     private String mDate[] = {"日", "月", "火", "水", "木", "金", "土"};
     private String mToDay = null;
@@ -719,32 +719,6 @@ public class TvProgramListActivity extends BaseActivity
         mTimeLine.setY(timeLinePosition - (float) mNowImage.getHeight() / 2);
     }
 
-    /**
-     * ソート処理
-     */
-    private static class CalendarComparator implements Comparator<ScheduleInfo>, Serializable {
-        private static final long serialVersionUID = -1L;
-
-        @Override
-        public int compare(ScheduleInfo s1, ScheduleInfo s2) {
-            StringBuilder time1 = new StringBuilder();
-            time1.append(s1.getStartTime().substring(0, 10));
-            time1.append(s1.getStartTime().substring(11, 19));
-            StringBuilder time2 = new StringBuilder();
-            time2.append(s2.getStartTime().substring(0, 10));
-            time2.append(s2.getStartTime().substring(11, 19));
-            SimpleDateFormat format = new SimpleDateFormat(CUR_TIME_FORMAT, Locale.JAPAN);
-            Date date1 = new Date();
-            Date date2 = new Date();
-            try {
-                date1 = format.parse(time1.toString());
-                date2 = format.parse(time2.toString());
-            } catch (Exception e) {
-                DTVTLogger.debug(e);
-            }
-            return date1.compareTo(date2);
-        }
-    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

@@ -144,10 +144,8 @@ public class TvScheduleListDao {
     public int deleteByType(String type) {
         StringBuilder deleteSelection = new StringBuilder();
         deleteSelection.append(JsonConstants.META_RESPONSE_DISP_TYPE);
-        deleteSelection.append("=? AND ");
-        deleteSelection.append(DATE_TYPE);
-        deleteSelection.append("=?");
-        return db.delete(TV_SCHEDULE_LIST_TABLE_NAME, deleteSelection.toString(), new String[]{type, "program"});
+        deleteSelection.append("=? ");
+        return db.delete(TV_SCHEDULE_LIST_TABLE_NAME, deleteSelection.toString(), new String[]{type});
     }
 }
 

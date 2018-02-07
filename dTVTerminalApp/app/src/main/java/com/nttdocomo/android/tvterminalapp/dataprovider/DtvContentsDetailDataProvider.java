@@ -33,7 +33,6 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.struct.RecordingReservationContentsDetailInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsDetailGetWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RemoteRecordingReservationWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalChListWebClient;
@@ -49,8 +48,7 @@ import java.util.Map;
  * コンテンツ詳細画面のDataProvider.
  */
 public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider implements ContentsDetailGetWebClient.ContentsDetailJsonParserCallback,
-        RoleListWebClient.RoleListJsonParserCallback, ChannelWebClient.ChannelJsonParserCallback,
-        DbThread.DbOperation, RemoteRecordingReservationWebClient.RemoteRecordingReservationJsonParserCallback,
+        RoleListWebClient.RoleListJsonParserCallback, DbThread.DbOperation, RemoteRecordingReservationWebClient.RemoteRecordingReservationJsonParserCallback,
         RentalVodListWebClient.RentalVodListJsonParserCallback, RentalChListWebClient.RentalChListJsonParserCallback {
 
     /**
@@ -236,70 +234,9 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
     }
 
     @Override
-    public void onChannelJsonParsed(final List<ChannelList> channelLists) {
-        ArrayList<ChannelInfo> channels = null;
-        if (channelLists != null) {
-            mChannelList = channelLists.get(0);
-            List<HashMap<String, String>> channelList = mChannelList.getChannelList();
-            if (channelList != null) {
-                channels = new ArrayList<>();
-                setChannelData(channels, channelList);
-                Handler handler = new Handler(); //チャンネル情報更新
-                try {
-                    DbThread t = new DbThread(handler, this, CHANNEL_UPDATE);
-                    t.start();
-                } catch (Exception e) {
-                    DTVTLogger.debug(e);
-                }
-            }
-        } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
-        }
-        if (null != mApiDataProviderCallback) {
-            mApiDataProviderCallback.channelListCallback(channels);
-        }
-    }
-
-    @Override
     public void onDbOperationFinished(final boolean isSuccessful, final List<Map<String, String>> resultSet, final int operationId) {
         if (isSuccessful) {
             switch (operationId) {
-                case CHANNEL_SELECT:
-                    ArrayList<ChannelInfo> channels = new ArrayList<>();
-                    for (int i = 0; i < resultSet.size(); i++) {
-                        Map<String, String> hashMap = resultSet.get(i);
-                        String chNo = hashMap.get(JsonConstants.META_RESPONSE_CHNO);
-                        String title = hashMap.get(JsonConstants.META_RESPONSE_TITLE);
-                        String serviceId = hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID);
-                        String startDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE);
-                        String endDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE);
-                        String chType = hashMap.get(JsonConstants.META_RESPONSE_CH_TYPE);
-                        String puId = hashMap.get(JsonConstants.META_RESPONSE_PUID);
-                        String subPuId = hashMap.get(JsonConstants.META_RESPONSE_SUB_PUID);
-                        String chPackPuId = hashMap.get(JsonConstants.META_RESPONSE_CHPACK
-                                + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_PUID);
-                        String chPackSubPuId = hashMap.get(JsonConstants.META_RESPONSE_CHPACK
-                                + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_SUB_PUID);
-
-                        if (!TextUtils.isEmpty(chNo)) {
-                            ChannelInfo channel = new ChannelInfo();
-                            channel.setChNo(Integer.parseInt(chNo));
-                            channel.setTitle(title);
-                            channel.setServiceId(serviceId);
-                            channel.setStartDate(startDate);
-                            channel.setEndDate(endDate);
-                            channel.setChType(chType);
-                            channel.setPuId(puId);
-                            channel.setSubPuId(subPuId);
-                            channel.setChPackPuId(chPackPuId);
-                            channel.setChPackSubPuId(chPackSubPuId);
-                            channels.add(channel);
-                        }
-                    }
-                    if (null != mApiDataProviderCallback) {
-                        mApiDataProviderCallback.channelListCallback(channels);
-                    }
-                    break;
                 case ROLELIST_SELECT:
                     ArrayList<RoleListMetaData> roleListData = new ArrayList<>();
                     for (int i = 0; i < resultSet.size(); i++) {
@@ -481,13 +418,6 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
         void onRoleListCallback(ArrayList<RoleListMetaData> roleListInfo);
 
         /**
-         * チャンネルリストを戻す.
-         *
-         * @param channels 　画面に渡すチャンネル情報
-         */
-        void channelListCallback(ArrayList<ChannelInfo> channels);
-
-        /**
          * リモート録画予約実行結果を返す.
          *
          * @param response 実行結果
@@ -604,34 +534,6 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
             dateUtils.addLastProgramDate(DateUtils.ROLELIST_LAST_UPDATE);
             RoleListWebClient roleListWebClient = new RoleListWebClient(mContext);
             roleListWebClient.getRoleListApi(this);
-        }
-    }
-
-    /**
-     * CH一覧取得.
-     *
-     * @param limit  レスポンスの最大件数
-     * @param offset 取得位置(1～)
-     * @param filter release、testa、demo ※指定なしの場合release
-     * @param type   dch：dチャンネル, hikaritv：ひかりTVの多ch, 指定なしの場合：すべて
-     */
-    public void getChannelList(final int limit, final int offset, final String filter, final int type) {
-        this.mChannelDisplayType = type;
-        DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(DateUtils.CHANNEL_LAST_UPDATE);
-        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate)) {
-            //データをDBから取得する
-            Handler handler = new Handler(); //チャンネル情報更新
-            try {
-                DbThread t = new DbThread(handler, this, CHANNEL_SELECT);
-                t.start();
-            } catch (Exception e) {
-                DTVTLogger.debug(e);
-            }
-        } else {
-            dateUtils.addLastProgramDate(DateUtils.CHANNEL_LAST_UPDATE);
-            ChannelWebClient mChannelList = new ChannelWebClient(mContext);
-            mChannelList.getChannelApi(limit, offset, filter, JsonConstants.DISPLAY_TYPE[type], this);
         }
     }
 

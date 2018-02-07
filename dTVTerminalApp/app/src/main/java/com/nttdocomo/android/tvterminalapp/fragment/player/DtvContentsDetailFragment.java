@@ -5,7 +5,6 @@
 package com.nttdocomo.android.tvterminalapp.fragment.player;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -261,7 +260,7 @@ public class DtvContentsDetailFragment extends Fragment {
                     LinearLayout.LayoutParams.WRAP_CONTENT);
             if (i != 0) {
                 if (isAdded()) {
-                    imageParams.setMargins((int) getResources().getDimension(R.dimen.contents_detail_8dp),
+                    imageParams.setMargins((int) getResources().getDimension(R.dimen.contents_detail_clip_margin),
                             (int) getResources().getDimension(R.dimen.contents_tab_top_margin),
                             (int) getResources().getDimension(R.dimen.contents_tab_top_margin),
                             (int) getResources().getDimension(R.dimen.contents_tab_top_margin));
@@ -283,6 +282,7 @@ public class DtvContentsDetailFragment extends Fragment {
     private void setStaff() {
         List<String> staffList = mOtherContentsDetailData.getStaffList();
         mStaffLayout.setVisibility(View.VISIBLE);
+        mStaffLayout.removeAllViews();
         for (int i = 0; i < staffList.size(); i++) {
             Context context = getContext();
             if (context != null) {
@@ -306,8 +306,8 @@ public class DtvContentsDetailFragment extends Fragment {
                 tabTextView.setGravity(Gravity.CENTER_VERTICAL);
                 itemLayout.setTag(i);
                 tabTextView.setTextColor(ContextCompat.getColor(context, R.color.contents_detail_schedule_detail_sub_title));
-                tabTextView.setLineSpacing(getResources().getDimension(R.dimen.contents_detail_5dp), 1);
-                contentParams.setMargins(0, (int) getResources().getDimension(R.dimen.contents_detail_16dp), 0, 0);
+                tabTextView.setLineSpacing(getResources().getDimension(R.dimen.contents_detail_content_line_space), 1);
+                contentParams.setMargins(0, (int) getResources().getDimension(R.dimen.contents_detail_staff_margin_top), 0, 0);
                 if (text.contains(File.separator)) {
                     tabTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_12);
                     tabTextView.setText(text.substring(0, text.length() - 1));
@@ -410,18 +410,11 @@ public class DtvContentsDetailFragment extends Fragment {
      * チャンネル情報の更新.
      */
     public void refreshChannelInfo() {
-        boolean flag = false;
         if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelName())) {
             mTxtChannelName.setText(mOtherContentsDetailData.getChannelName());
-            flag = true;
         }
         if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelDate())) {
             mTxtChannelDate.setText(mOtherContentsDetailData.getChannelDate());
-            if (flag) {
-                flag = true;
-            }
-        } else {
-            flag = false;
         }
     }
 

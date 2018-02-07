@@ -747,11 +747,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public void channelListCallback(final ArrayList<ChannelInfo> channels) {
-        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
-    }
-
-    @Override
     public void recordingReservationResult(final RemoteRecordingReservationResultResponse response) {
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }

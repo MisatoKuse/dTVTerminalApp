@@ -58,6 +58,12 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
+import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
+import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsChannelFragment;
+import com.nttdocomo.android.tvterminalapp.struct.CalendarComparator;
+import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -84,7 +90,6 @@ import com.nttdocomo.android.tvterminalapp.struct.RecordingReservationContentsDe
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
-import com.nttdocomo.android.tvterminalapp.view.ContentsDetailViewPager;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SendOperateLog;
 
@@ -96,6 +101,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -111,7 +118,8 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         View.OnClickListener, MediaPlayerController.OnStateChangeListener, MediaPlayerController.OnFormatChangeListener,
         MediaPlayerController.OnPlayerEventListener, MediaPlayerController.OnErrorListener, MediaPlayerController.OnCaptionDataListener,
         RemoteControllerView.OnStartRemoteControllerUIListener, DtvContentsDetailFragment.RecordingReservationIconListener,
-        TabItemLayout.OnClickTabTextListener {
+        TabItemLayout.OnClickTabTextListener, ScaledDownProgramListDataProvider.ApiDataProviderCallback,
+        DtvContentsChannelFragment.ChangedScrollLoadListener {
 
     /**
      * アスペクト比(16:9)の16.
@@ -136,7 +144,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
 
     /* コンテンツ詳細 start */
     private TabItemLayout mTabLayout = null;
-    private ContentsDetailViewPager mViewPager = null;
+    private ViewPager mViewPager = null;
     private OtherContentsDetailData mDetailData = null;
     private VodMetaFullData mDetailFullData = null;
     private DtvContentsDetailDataProvider mDetailDataProvider = null;
@@ -163,6 +171,8 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     private static final int CONTENTS_DETAIL_TAB_TEXT_SIZE = 15;
     private static final int CONTENTS_DETAIL_TAB_OTHER_MARGIN = 0;
     private static final String CONTENTS_DETAIL_RESERVEDID = "1";
+    private int mDateIndex = 0;
+    private String dateList[] = null;
 
     /* コンテンツ詳細 end */
     /*DTV起動*/
@@ -415,7 +425,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             DTVTLogger.start();
             super.handleMessage(msg);
             if (null == mPlayerController) {
-                getContentsData();
+                getScheduleDetailData();
                 DTVTLogger.end();
                 return;
             }
@@ -1056,7 +1066,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     /**
      * コンテンツ詳細データ取得.
      */
-    private void getContentsData() {
+    private void getScheduleDetailData() {
         mDetailDataProvider = new DtvContentsDetailDataProvider(this);
         String[] cRid;
         if (mDetailData != null) {
@@ -1070,6 +1080,97 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             cRid = new String[1];
             cRid[cRid.length - 1] = "682017101601";
             mDetailDataProvider.getContentsDetailData(cRid, "", 1);
+        }
+    }
+
+    /**
+     * フラグメント生成
+     */
+    private Fragment getCurrentFragment(int ...position) {
+        DTVTLogger.start();
+        int tabIndex;
+        if(position != null && position.length > 0){
+            tabIndex = position[0];
+        } else {
+            tabIndex = mViewPager.getCurrentItem();
+        }
+        return mFragmentFactory.createFragment(tabIndex);
+    }
+
+    /**
+     * コンテンツ詳細データ取得.
+     */
+    public void getChannelDetailData() {
+        Fragment fragment = getCurrentFragment();
+        DtvContentsChannelFragment channelFragment = (DtvContentsChannelFragment)fragment;
+        channelFragment.loadComplete();
+        //TODO テストのため一時表示 start
+        mChannel = new ChannelInfo();
+        mChannel.setChNo(1);
+        mChannel.setTitle("FOX HD");
+        //TODO テストのため一時表示 end
+        if(mChannel != null) {
+            channelFragment.setChannelDataChanged(mChannel);
+            mDateIndex = 0;
+            getChannelDetailByPageNo();
+        }
+    }
+
+    /**
+     * ページングでチャンネルデータ取得
+     */
+    private void getChannelDetailByPageNo(){
+        ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
+        int channelNos[] = new int[mChannel.getChNo()];
+        dateList = null;
+        if(mDateIndex <= 6){//一週間以内
+            dateList = new String[1];
+        }
+        if(dateList != null){
+            try{
+                Calendar calendar = Calendar.getInstance();
+                SimpleDateFormat todaySdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DD, Locale.JAPAN);
+                String today = todaySdf.format(calendar.getTime()) + "04:00:00";
+                SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.JAPAN);
+                Date date = sdf.parse(today);
+                //AM4:00以前の場合 日付-1
+                boolean is4HourPre = false;
+                if(calendar.getTime().compareTo(date) == -1){
+                    is4HourPre = true;
+                }
+                if(is4HourPre){
+                    calendar.add(Calendar.DAY_OF_MONTH, mDateIndex-1);
+                } else {
+                    calendar.add(Calendar.DAY_OF_MONTH, mDateIndex);
+                }
+                dateList[0] = sdf.format(calendar.getTime());
+                mDateIndex++;
+            } catch (ParseException e){
+                channelLoadCompleted();
+                e.printStackTrace();
+                DTVTLogger.debug(e);
+            }
+            scaledDownProgramListDataProvider.getProgram(channelNos, dateList, 1);
+        } else {
+            channelLoadCompleted();
+        }
+    }
+
+    private void channelLoadCompleted(){
+        Fragment fragment = getCurrentFragment(1);
+        DtvContentsChannelFragment channelFragment = (DtvContentsChannelFragment) fragment;
+        channelFragment.loadComplete();
+    }
+
+    @Override
+    public void onChannelLoadMore() {
+        getChannelDetailByPageNo();
+    }
+
+    @Override
+    public void onUserVisibleHint() {
+        if(loadHandler != null){
+            loadHandler.removeCallbacks(loadRunnable);
         }
     }
 
@@ -1226,10 +1327,26 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 // スクロールによるタブ切り替え
                 super.onPageSelected(position);
                 mTabLayout.setTab(position);
+                if(position == 1){
+                    ((DtvContentsChannelFragment)getCurrentFragment(1)).initLoad();
+                }
+                loadHandler.postDelayed(loadRunnable, 1200);
             }
         });
         setIntentDetailData();
     }
+
+   private Handler loadHandler = new Handler();
+   private Runnable loadRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if(mViewPager.getCurrentItem() == 0){
+                getScheduleDetailData();
+            } else {
+                getChannelDetailData();
+            }
+        }
+    };
 
     /**
      * initView function.
@@ -1248,6 +1365,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         RelativeLayout videoCtrlRootView = null;
         RelativeLayout playerViewLayout;
         playerViewLayout = findViewById(R.id.dtv_contents_detail_main_layout_player_rl);
+        playerViewLayout.setVisibility(View.VISIBLE);
         playerViewLayout.removeView(mRecordCtrlView);
         mRecordCtrlView = (RelativeLayout) LayoutInflater.from(this)
                 .inflate(R.layout.tv_player_ctrl_video_record, null, false);
@@ -1573,6 +1691,9 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             //Fragmentへデータを渡す
             Bundle args = new Bundle();
             args.putParcelable(RECOMMEND_INFO_BUNDLE_KEY, mDetailData);
+            if(position == 1){
+                ((DtvContentsChannelFragment)fragment).setScrollCallBack(ContentDetailActivity.this);
+            }
             fragment.setArguments(args);
             return fragment;
         }
@@ -1630,7 +1751,8 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 mDetailDataProvider.getRoleListData();
             }
             if (!TextUtils.isEmpty(mDetailFullData.getmService_id())) {
-                mDetailDataProvider.getChannelList(1, 1, "", 1);
+                ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
+                scaledDownProgramListDataProvider.getChannelList(1, 1, "", 1);
             }
             //ログイン状態でしか送信しない
             if (UserInfoUtils.getUserLoggedinInfo(this)) {
@@ -1761,6 +1883,123 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             if (mIsEnableWatch != ENABLE_WATCH_NO_DEFINE) {
                 changeUIBasedContractInfo();
             }
+        }
+    }
+
+    @Override
+    public void channelInfoCallback(ChannelInfoList channelsInfo) {
+        if (channelsInfo != null && channelsInfo.getChannels() != null) {
+            ArrayList<ChannelInfo> channels = channelsInfo.getChannels();
+            sort(channels);
+            if(channels.size() > 0){
+                if(mViewPager.getCurrentItem() == 1){
+                    Fragment fragment = getCurrentFragment();
+                    DtvContentsChannelFragment channelFragment = (DtvContentsChannelFragment)fragment;
+                    ChannelInfo channelInfo = channels.get(0);
+                    ArrayList<ScheduleInfo> scheduleInfos = channelInfo.getSchedules();
+                    if(mDateIndex == 1 && channelFragment.mContentsData != null){
+                        channelFragment.mContentsData.clear();
+                    }
+                    boolean isFirst = false;
+                    for(ScheduleInfo scheduleInfo : scheduleInfos){
+                        String endTime = scheduleInfo.getEndTime();
+                        String startTime = scheduleInfo.getStartTime();
+                        String start = startTime.substring(0, 10) + startTime.substring(11, 19);
+                        String end = endTime.substring(0, 10) + endTime.substring(11, 19);
+                        if(!isLastDate(end)){
+                            if(dateList != null){
+                                ContentsData contentsData = new ContentsData();
+                                if(!isFirst){
+                                    if(mDateIndex == 1){
+                                        if(isNowOnAir(start, end)){//NOW ON AIR の判断
+                                            contentsData.setChannelName(getString(R.string.home_label_now_on_air));
+                                        }
+                                    }
+                                    contentsData.setSubTitle(getDate());
+                                    isFirst = true;
+                                }
+                                contentsData.setTitle(scheduleInfo.getTitle());
+                                contentsData.setRequestData(scheduleInfo.getClipRequestData());
+                                contentsData.setThumURL(scheduleInfo.getImageUrl());
+                                contentsData.setTime(scheduleInfo.getStartTime().substring(11,16));
+                                contentsData.setClipExec(scheduleInfo.isClipExec());
+                                channelFragment.mContentsData.add(contentsData);
+                            }
+                        }
+                    }
+                    if(mDateIndex == 1){
+                        getChannelDetailByPageNo();
+                    } else {
+                        channelFragment.setNotifyDataChanged();
+                    }
+                }
+            }
+            channelLoadCompleted();
+        }
+    }
+
+    private String getDate(){
+        String subTitle = null;
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.JAPAN);
+        try {
+            Calendar calendar = Calendar.getInstance(Locale.JAPAN);
+            calendar.setTime(sdf.parse(dateList[0]));
+            int month = calendar.get(Calendar.MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            int week = calendar.get(Calendar.DAY_OF_WEEK);
+            subTitle = (month + 1) + "/" + day + "（" +
+                    DateUtils.STRING_DAY_OF_WEEK[week]+"）";
+        } catch (ParseException e){
+            DTVTLogger.debug(e);
+        }
+        return subTitle;
+    }
+
+    private boolean isNowOnAir(String startTime, String endTime){
+        boolean isNow = false;
+        Date startDate = new Date();
+        Date endDate = new Date();
+        Date nowDate = new Date();
+        SimpleDateFormat format = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
+        Calendar c = Calendar.getInstance();
+        try {
+            startDate = format.parse(startTime);
+            endDate = format.parse(endTime);
+            nowDate = c.getTime();
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+        }
+        //return (nowDate.compareTo(startDate) != -1 && nowDate.compareTo(endDate) != 1);TODO データを表示させるため、一時コメントアウトします
+        return true;
+    }
+
+    /**
+     * ソートを行う
+     *
+     *  @param endTime　終了時刻
+     *  @return 過去の番組
+     */
+    private boolean isLastDate(String endTime){
+        Date endDate = new Date();
+        Date now = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
+        Calendar c = Calendar.getInstance();
+        try {
+            endDate = sdf.parse(endTime);
+            now = c.getTime();
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+        }
+//        return (date1.compareTo(now) == -1);TODO データを表示させるため、一時コメントアウトします
+        return false;
+    }
+
+    /**
+     * ソートを行う
+     */
+    private void sort(ArrayList<ChannelInfo> channels) {
+        for (ChannelInfo channel : channels) {
+            Collections.sort(channel.getSchedules(), new CalendarComparator());
         }
     }
 
@@ -2958,11 +3197,11 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      */
     private void showProsessBar(boolean showProsessBar) {
         if (showProsessBar) {
-            findViewById(R.id.contents_detail_scroll_view).setVisibility(View.INVISIBLE);
+            findViewById(R.id.contents_detail_scroll_layout).setVisibility(View.INVISIBLE);
             setRemoteProgressVisible(View.VISIBLE);
         } else {
             setRemoteProgressVisible(View.INVISIBLE);
-            findViewById(R.id.contents_detail_scroll_view).setVisibility(View.VISIBLE);
+            findViewById(R.id.contents_detail_scroll_layout).setVisibility(View.VISIBLE);
         }
     }
 
