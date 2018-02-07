@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<dasho version="8.2.0">
+    <propertylist>
+        <property name="projectname" value="dasho"/>
+        <property name="ANDROID_BUILD_TOOLS_HOME" value="${sdk.dir}\build-tools\26.0.2"/>
+        <property name="apkOutput" value="TVTerminal_test_unsigned-obfuscated.apk"/>
+        <property name="apkInput" value="TVTerminal_test_unsigned.apk"/>
+        <property name="sdk.dir" value="${ANDROID_SDK_DIR}"/>
+        <property name="manifest.package" value="com.nttdocomo.android.tvterminalapp"/>
+        <property name="dasho.results.dir" value="dasho-results_TVTerminal_test_unsigned"/>
+    </propertylist>
+    <global>
+        <option>IGNORENOTFOUNDCLASSES</option>
+        <option>FORNAMEDETECTION</option>
+        <option>FORCE</option>
+    </global>
+    <inputpath>
+        <pathelement location="..\app\build\outputs\apk\TVTerminal_test_unsigned.apk"/>
+    </inputpath>
+    <globalProcessingExclude>
+        <classes name="android.**"/>
+        <classes name="com.nttdocomo.android.ocsplib.*"/>
+        <classes name="com.nttdocomo.android.tvterminalapp.jni.*"/>
+        <classes name="com.nttdocomo.android.tvterminalapp.jni.activation.*"/>
+        <classes name="com.nttdocomo.android.tvterminalapp.jni.download.*"/>
+        <classes name="com.nttdocomo.android.tvterminalapp.jni.remote.*"/>
+    </globalProcessingExclude>
+    <classpath appendrtjar="false">
+        <pathelement location="${sdk.dir}\platforms\android-26\android.jar"/>
+    </classpath>
+    <entrypoints>
+        <android name="com.digion.dixim.android.activation.ActivationActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.detail.ChannelDetailPlayerActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.home.ClipListActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.home.RecommendActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.home.RecordReservationListActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.home.RentalListActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.home.WatchingVideoListActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.launch.DAccountReSettingActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.launch.DAccountSettingHelpActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.launch.PairingHelpActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.launch.STBConnectActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectErrorActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.launch.TutorialActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.ranking.RankingTopActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.ranking.WeeklyTvRankingActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.search.SearchTopActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.setting.ApplicationInfoActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.setting.NewsActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.setting.NewsDetailActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.setting.SettingActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.setting.SettingImageQualityActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.setting.SettingMenuAppActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.setting.SettingMenuFaqActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.setting.SettingMenuLicenseActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.setting.SettingMenuPrivacyPolicyActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.setting.SettingMenuTermsOfServiceActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.tvprogram.MyChannelEditActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.tvprogram.WeekTvProgramListActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.video.VideoContentListActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.activity.video.VideoTopActivity" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.service.download.DownloadService" rename-class="true"/>
+        <android name="com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountReceiver"/>
+        <classes name="com.digion.dixim.android.secureplayer.SecureVideoView">
+            <method name="&lt;init&gt;" signature="**" modifiers="public"/>
+        </classes>
+        <classes name="com.nttdocomo.android.ocsplib.bouncycastle.LICENSE">
+            <method name="main" signature="java.lang.String[]" modifiers="public static"/>
+        </classes>
+        <classes name="com.nttdocomo.android.tvterminalapp.view.NoScrollViewPager">
+            <method name="&lt;init&gt;" signature="**" modifiers="public"/>
+        </classes>
+        <classes name="com.nttdocomo.android.tvterminalapp.view.ProgramRecyclerView">
+            <method name="&lt;init&gt;" signature="**" modifiers="public"/>
+        </classes>
+        <classes name="com.nttdocomo.android.tvterminalapp.view.ProgramScrollView">
+            <method name="&lt;init&gt;" signature="**" modifiers="public"/>
+        </classes>
+        <classes name="com.nttdocomo.android.tvterminalapp.view.RecommendListView">
+            <method name="&lt;init&gt;" signature="**" modifiers="public"/>
+        </classes>
+        <classes name="com.nttdocomo.android.tvterminalapp.view.RemoteControllerView">
+            <method name="&lt;init&gt;" signature="**" modifiers="public"/>
+        </classes>
+        <classes name="**" rename="true">
+            <method name="contentsDetailBackKey" signature="android.view.View" modifiers="public"/>
+            <method name="contractButtonClick" signature="android.view.View" modifiers="public"/>
+        </classes>
+    </entrypoints>
+    <report path="${dasho.results.dir}/${projectname}-report.txt"/>
+    <output merge="false" compress="false" level="0">
+        <apk path="${apkOutput}"/>
+    </output>
+    <removal classes="unused" members="unused-non-public">
+        <debug/>
+        <attributes/>
+        <excludelist>
+            <classes name="com.digion.dixim.android.player.secure.openmaxal.R">
+                <field name="**"/>
+                <method name="**" signature="**"/>
+            </classes>
+            <classes name="com.digion.dixim.android.player.secure.openmaxal.R$*">
+                <field name="**"/>
+                <method name="**" signature="**"/>
+            </classes>
+            <classes name="com.digion.dixim.android.util.R">
+                <field name="**"/>
+                <method name="**" signature="**"/>
+            </classes>
+            <classes name="com.digion.dixim.android.util.R$*">
+                <field name="**"/>
+                <method name="**" signature="**"/>
+            </classes>
+            <classes name="com.digion.dixim.android.player.secure.nativecodec.R">
+                <field name="**"/>
+                <method name="**" signature="**"/>
+            </classes>
+            <classes name="com.digion.dixim.android.player.secure.nativecodec.R$*">
+                <field name="**"/>
+                <method name="**" signature="**"/>
+            </classes>
+            <classes name="com.digion.dixim.android.activation.R">
+                <field name="**"/>
+                <method name="**" signature="**"/>
+            </classes>
+            <classes name="com.digion.dixim.android.activation.R$*">
+                <field name="**"/>
+                <method name="**" signature="**"/>
+            </classes>
+            <classes name="com.digion.dixim.android.player.R">
+                <field name="**"/>
+                <method name="**" signature="**"/>
+            </classes>
+            <classes name="com.digion.dixim.android.player.R$*">
+                <field name="**"/>
+                <method name="**" signature="**"/>
+            </classes>
+        </excludelist>
+    </removal>
+    <methodCallRemoval/>
+    <renaming option="on">
+        <class-options randomize="true" prefix="${manifest.package}."/>
+        <member-options randomize="true"/>
+        <excludelist>
+            <classes name="com.digion.dixim.android.player.secure.openmaxal.R">
+                <field name="**"/>
+                <method name="**" signature="**"/>
+            </classes>
+            <classes name="com.digion.dixim.android.player.secure.openmaxal.R$*">
+                <field name="**"/>
+                <method name="**" signature="**"/>
+            </classes>
+            <classes name="com.digion.dixim.android.util.R">
+                <field name="**"/>
+                <method name="**" signature="**"/>
+            </classes>
+            <classes name="com.digion.dixim.android.util.R$*">
+                <field name="**"/>
+                <method name="**" signature="**"/>
+            </classes>
+            <classes name="com.digion.dixim.android.player.secure.nativecodec.R">
+                <field name="**"/>
+                <method name="**" signature="**"/>
+            </classes>
+            <classes name="com.digion.dixim.android.player.secure.nativecodec.R$*">
+                <field name="**"/>
+                <method name="**" signature="**"/>
+            </classes>
+            <classes name="com.digion.dixim.android.activation.R">
+                <field name="**"/>
+                <method name="**" signature="**"/>
+            </classes>
+            <classes name="com.digion.dixim.android.activation.R$*">
+                <field name="**"/>
+                <method name="**" signature="**"/>
+            </classes>
+            <classes name="com.digion.dixim.android.player.R">
+                <field name="**"/>
+                <method name="**" signature="**"/>
+            </classes>
+            <classes name="com.digion.dixim.android.player.R$*">
+                <field name="**"/>
+                <method name="**" signature="**"/>
+            </classes>
+            <classes name="com.nttdocomo.android.tvterminalapp.jni.DlnaInterface">
+                <method name="notifyFromNative" signature="int,java.lang.String"/>
+                <method name="notifyObjFromNative" signature="int,java.util.ArrayList"/>
+            </classes>
+            <classes name="com.nttdocomo.android.tvterminalapp.jni.download.DlnaInterfaceDl">
+                <method name="notifyFromNative" signature="int,java.lang.String"/>
+                <method name="getUniqueId" signature=""/>
+            </classes>
+        </excludelist>
+        <mapping>
+            <mapreport path="${dasho.results.dir}/${projectname}-mapreport.txt"/>
+            <mapoutput overwrite="true" path="${dasho.results.dir}/${projectname}.map"/>
+        </mapping>
+    </renaming>
+    <optimization option="on"/>
+    <controlflow option="on" tryCatch="on"/>
+    <stringencrypt option="on">
+        <seOutput path="${dasho.results.dir}/${projectname}-se.map"/>
+    </stringencrypt>
+    <injection>
+        <instrumentation option="off">
+            <runtime target="android4"/>
+        </instrumentation>
+    </injection>
+</dasho>
