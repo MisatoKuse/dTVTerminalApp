@@ -9,7 +9,7 @@
             <solid android:color="@color/tv_program_list_root_view_bg" />
         </shape>
     </item>
-    <item android:left="@dimen/tv_program_list_gap_between_programs" android:top="@dimen/tv_program_list_gap_between_programs">
+    <item android:left="@dimen/tv_program_list_gap_between_programs" android:top="@dimen/tv_program_list_gap_between_programs" android:right="@dimen/tv_program_list_gap_between_programs">
     <shape>
         <solid android:color="@color/program_end_gray" />
     </shape>
