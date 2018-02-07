@@ -47,6 +47,7 @@ import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadService;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloaderBase;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
@@ -63,27 +64,13 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         RecordedBaseFragmentScrollListener, DlnaRecVideoListener, TabItemLayout.OnClickTabTextListener {
 
     private String[] mTabNames = null;
-
     private TabItemLayout mTabLayout = null;
     private ViewPager mViewPager = null;
     private ProgressBar progressBar;
     private Boolean mIsMenuLaunch = false;
-
     private DlnaProvRecVideo mDlnaProvRecVideo = null;
     private RecordedFragmentFactory mRecordedFragmentFactory = null;
-
-    private final static int TEXT_SIZE = 15;
-
-    private static final int SCREEN_TIME_WIDTH_PERCENT = 9;
-    private static final int MARGIN_ZERO = 0;
-    private static final int MARGIN_LEFT_TAB = 5;
-
     public static final String RECORD_LIST_KEY = "recordListKey";
-
-    //設定するマージンのピクセル数
-    private static final String DATE_FORMAT = "yyyy/MM/ddHH:mm:ss";
-    private String mDate[] = {"日", "月", "火", "水", "木", "金", "土"};
-
     public static final String sMinus = "-";
 
     //private boolean mIsDlOk=false;
@@ -145,7 +132,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      */
     private void setPagerAdapter() {
         DTVTLogger.start();
-        mViewPager.setAdapter(new RecordedListActivity.MainAdpater(getSupportFragmentManager()));
+        mViewPager.setAdapter(new MainAdpater(getSupportFragmentManager()));
         mViewPager.addOnPageChangeListener(new ViewPager
                 .SimpleOnPageChangeListener() {
             @Override
@@ -480,7 +467,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void setNotifyData(RecordedBaseFragment baseFrgament, DlnaRecVideoItem dlnaRecVideoItem, int i, String fullDlPaht){
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.JAPAN);
+        SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
         // TODO 年齢取得未実装の為、固定値を返却
         boolean isAge = true;
         ContentsData contentsData = new ContentsData();
@@ -497,7 +484,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                     StringUtils util = new StringUtils(this);
                     String[] strings = {String.valueOf(calendar.get(Calendar.MONTH)), "/",
                             String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)), " (",
-                            mDate[calendar.get(Calendar.DAY_OF_WEEK) - 1], ") ",
+                            DateUtils.STRING_DAY_OF_WEEK[calendar.get(Calendar.DAY_OF_WEEK)], ") ",
                             String.valueOf(calendar.get(Calendar.HOUR_OF_DAY)), ":",
                             String.valueOf(calendar.get(Calendar.MINUTE))};
                     if(null != strings && 0<strings.length){

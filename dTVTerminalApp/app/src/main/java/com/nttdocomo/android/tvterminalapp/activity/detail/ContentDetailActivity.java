@@ -151,7 +151,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     private DtvContentsDetailFragmentFactory mFragmentFactory = null;
 
     private String[] mTabNames = null;
-    private String[] mDate = {"日", "月", "火", "水", "木", "金", "土"};
     private String[] mDispTypes = {"video_program", "series", "wizard", "video_package", "subscription_package", "series_svod"};
     private boolean mIsPlayer = false;
     private boolean mIsControllerVisible = false;
@@ -164,7 +163,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
 
     public static final String RECOMMEND_INFO_BUNDLE_KEY = "recommendInfoKey";
     public static final String PLALA_INFO_BUNDLE_KEY = "plalaInfoKey";
-    private static final String DATE_FORMAT = "yyyy/MM/ddHH:mm:ss";
     public static final int DTV_CONTENTS_SERVICE_ID = 15;
     public static final int D_ANIMATION_CONTENTS_SERVICE_ID = 17;
     public static final int DTV_CHANNEL_CONTENTS_SERVICE_ID = 43;
@@ -933,7 +931,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         return true;
     }
 
-    //test b
+    //test TODO テストのため、便利なので
     public String ReadFile(File file) {
         FileInputStream inStream = null;
         ByteArrayOutputStream outStream = null;
@@ -1105,9 +1103,11 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         DtvContentsChannelFragment channelFragment = (DtvContentsChannelFragment)fragment;
         channelFragment.loadComplete();
         //TODO テストのため一時表示 start
-        mChannel = new ChannelInfo();
-        mChannel.setChNo(1);
-        mChannel.setTitle("FOX HD");
+        if(mChannel == null){
+            mChannel = new ChannelInfo();
+            mChannel.setChNo(1);
+            mChannel.setTitle("FOX HD");
+        }
         //TODO テストのため一時表示 end
         if(mChannel != null) {
             channelFragment.setChannelDataChanged(mChannel);
@@ -1130,8 +1130,8 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             try{
                 Calendar calendar = Calendar.getInstance();
                 SimpleDateFormat todaySdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DD, Locale.JAPAN);
-                String today = todaySdf.format(calendar.getTime()) + "04:00:00";
-                SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.JAPAN);
+                String today = todaySdf.format(calendar.getTime()) + DateUtils.DATE_STANDARD_START;
+                SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
                 Date date = sdf.parse(today);
                 //AM4:00以前の場合 日付-1
                 boolean is4HourPre = false;
@@ -1940,7 +1940,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
 
     private String getDate(){
         String subTitle = null;
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.JAPAN);
+        SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
         try {
             Calendar calendar = Calendar.getInstance(Locale.JAPAN);
             calendar.setTime(sdf.parse(dateList[0]));
@@ -2014,7 +2014,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         String channelDate = "";
         if (!TextUtils.isEmpty(start)) {
             start = start.replaceAll("-", "/");
-            SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.JAPAN);
+            SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
             StringBuilder startBuilder = new StringBuilder();
             startBuilder.append(start.substring(0, 10));
             startBuilder.append(start.substring(11, 19));
@@ -2024,7 +2024,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 StringUtils util = new StringUtils(this);
                 String[] strings = {String.valueOf(calendar.get(Calendar.MONTH)), "/",
                         String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)), " (",
-                        mDate[calendar.get(Calendar.DAY_OF_WEEK) - 1], ") ",
+                        DateUtils.STRING_DAY_OF_WEEK[calendar.get(Calendar.DAY_OF_WEEK)], ") ",
                         start.substring(11, 16), " - ",
                         end.substring(11, 16)};
                 channelDate = util.getConnectString(strings);

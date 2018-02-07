@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/dtv_contents_channel_header_rl"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/contents_detail_channel_height">
+
+        <ImageView
+            android:id="@+id/dtv_contents_channel_header_img"
+            android:layout_width="@dimen/contents_detail_channel_img_width"
+            android:layout_height="match_parent"
+            android:padding="@dimen/contents_detail_channel_img_padding"
+            android:contentDescription="@null"
+            android:scaleType="fitStart"/>
+
+        <TextView
+            android:id="@+id/dtv_contents_channel_header_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/dtv_contents_channel_header_img"
+            android:textColor="@color/white_text"
+            android:textSize="@dimen/contents_detail_channel_txt_size"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/dtv_contents_channel_header_line"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/channel_list_divider_height"
+        android:layout_alignParentBottom="true"
+        android:background="@color/contents_detail_channel_line_color" />
+
+</RelativeLayout>

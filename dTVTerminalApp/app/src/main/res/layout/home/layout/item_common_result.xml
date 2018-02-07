@@ -15,11 +15,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="10dp"
+        android:paddingTop="@dimen/contents_detail_channel_sub_title_padding_top"
+        android:paddingBottom="@dimen/contents_detail_channel_sub_title_padding_bottom"
         android:layout_marginStart="@dimen/watch_listen_thumbnail_margin_left"
-        android:layout_marginTop="24dp"
         android:textColor="@color/white_text"
-        android:textSize="15dp"
+        android:textSize="@dimen/contents_detail_channel_sub_title_txt_size"
         android:visibility="gone"/>
 
     <RelativeLayout
@@ -181,11 +181,12 @@
 
         <TextView
             android:id="@+id/item_common_result_line"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/channel_list_divider_height"
             android:layout_marginStart="@dimen/watch_listen_thumbnail_margin_left"
             android:layout_alignParentBottom="true"
-            android:background="@color/ranking_list_background" />
+            android:background="@color/setting_list_divider_color"
+            android:visibility="gone"/>
 
         <LinearLayout
             android:layout_width="match_parent"

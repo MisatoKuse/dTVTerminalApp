@@ -155,6 +155,9 @@
     <dimen name="contents_detail_channel_img_width">76dp</dimen>
     <dimen name="contents_detail_channel_img_padding">16dp</dimen>
     <dimen name="contents_detail_channel_txt_size">14dp</dimen>
+    <dimen name="contents_detail_channel_sub_title_padding_top">24dp</dimen>
+    <dimen name="contents_detail_channel_sub_title_padding_bottom">10dp</dimen>
+    <dimen name="contents_detail_channel_sub_title_txt_size">15dp</dimen>
 
     <!-- WatchingVideoActivity -->
     <dimen name="watch_listen_video_divider_high">1dp</dimen>

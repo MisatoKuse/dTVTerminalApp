@@ -42,7 +42,9 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
     private TextView mChannelTxt;
     private boolean mIsLoading;
     private ChangedScrollLoadListener mChangedScrollLoadListener;
+    private View mHeaderView;
     private View mFootView;
+
 
     /**
      * コールバックリスナー.
@@ -95,10 +97,15 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
         if (null == mFootView) {
             mFootView = LayoutInflater.from(getContext()).inflate(R.layout.search_load_more, container, false);
         }
+        if(null == mHeaderView){
+            mHeaderView = LayoutInflater.from(getContext()).inflate(R.layout.dtv_contents_channel_fragment_header, container, false);
+            mHeaderView.setOnClickListener(null);
+        }
         mContentsAdapter = new ContentsAdapter(getContext(), mContentsData, ContentsAdapter.ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST);
         mChannelListView.setAdapter(mContentsAdapter);
-        mChannelImg = mView.findViewById(R.id.dtv_contents_channel_img);
-        mChannelTxt = mView.findViewById(R.id.dtv_contents_channel_name);
+        mChannelImg = mHeaderView.findViewById(R.id.dtv_contents_channel_header_img);
+        mChannelTxt = mHeaderView.findViewById(R.id.dtv_contents_channel_header_name);
+        mChannelListView.addHeaderView(mHeaderView);
         //TODO 一時表示のため、削除予定
         mChannelImg.setImageResource(R.drawable.test_image);
         DTVTLogger.end();

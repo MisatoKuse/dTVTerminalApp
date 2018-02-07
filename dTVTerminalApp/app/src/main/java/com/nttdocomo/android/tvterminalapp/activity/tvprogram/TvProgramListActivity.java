@@ -8,10 +8,8 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -34,20 +32,18 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDat
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
 import com.nttdocomo.android.tvterminalapp.struct.CalendarComparator;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.view.ChannelItemClickListener;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.view.ProgramRecyclerView;
 import com.nttdocomo.android.tvterminalapp.view.ProgramScrollView;
-import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
 import com.nttdocomo.android.tvterminalapp.model.TabItemLayout;
 
-import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
@@ -62,7 +58,6 @@ public class TvProgramListActivity extends BaseActivity
 
     private static final int INDEX_TAB_HIKARI = 1;
     private static final int INDEX_TAB_MY_CHANNEL = 0;
-    private static final float TAB_TITLE_SIZE = 14;
     private ProgramRecyclerView mProgramRecyclerView = null;
     private Boolean mIsMenuLaunch = false;
     private int mScreenHeight = 0;
@@ -70,19 +65,12 @@ public class TvProgramListActivity extends BaseActivity
     private ProgramScrollView mTimeScrollView = null;
     private RecyclerView mChannelRecyclerView = null;
     private TabItemLayout mTabLayout = null;
-    private LinearLayout mTabLinearLayout = null;
     private ImageView mTagImageView = null;
     private static final int START_TIME = 4;
     private static final int STANDARD_TIME = 24;
-    private static final int SCREEN_TIME_WIDTH_PERCENT = 9;
     private static final int TIME_LINE_WIDTH = 44;
     private static final int ONE_HOUR_UNIT = 180;
-    private static final String DATE_FORMAT = "yyyy年MM月dd日 (E)";
-    private static final String DATE_SELECT_FORMAT = "yyyy-MM-dd";
-    private static final String SELECT_DATE_FORMAT = "yyyy年MM月dd日";
-    private static final String TIME_FORMAT = "HHmmss";
     private String mSelectDateStr = null;
-    private String mDate[] = {"日", "月", "火", "水", "木", "金", "土"};
     private String mToDay = null;
     private LinearLayout mLinearLayout = null;
     private String mProgramTabNames[] = null;
@@ -186,7 +174,7 @@ public class TvProgramListActivity extends BaseActivity
         int curYear = 0;
         int curMonth = 0;
         int curDay = 0;
-        SimpleDateFormat sdf = new SimpleDateFormat(SELECT_DATE_FORMAT, Locale.JAPAN);
+        SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DD_J, Locale.JAPAN);
 
         DatePickerDialog.OnDateSetListener onDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -250,19 +238,19 @@ public class TvProgramListActivity extends BaseActivity
         }
         day.append(dayOfMonth);
         selectDate.append(year);
-        selectDate.append("年");
+        selectDate.append(DateUtils.DATE_Y);
         selectDate.append(month.toString());
-        selectDate.append("月");
+        selectDate.append(DateUtils.DATE_M);
         selectDate.append(day);
-        selectDate.append("日");
+        selectDate.append(DateUtils.DATE_D);
         mToDay = selectDate.toString();
         selectDate = new StringBuilder();
         selectDate.append(month.toString());
-        selectDate.append("月");
+        selectDate.append(DateUtils.DATE_M);
         selectDate.append(day);
-        selectDate.append("日");
+        selectDate.append(DateUtils.DATE_D);
         selectDate.append(" (");
-        selectDate.append(mDate[week - 1]);
+        selectDate.append(DateUtils.STRING_DAY_OF_WEEK[week]);
         selectDate.append(")");
         setTitleText(selectDate.toString());
         selectDate = new StringBuilder();
@@ -282,10 +270,10 @@ public class TvProgramListActivity extends BaseActivity
         //フォーマットパターンを指定して表示する
         Calendar c = Calendar.getInstance();
         Locale.setDefault(Locale.JAPAN);
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.JAPAN);
+        SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYYMMDDE, Locale.JAPAN);
         mToDay = sdf.format(c.getTime());
         setTitleText(mToDay.substring(5));
-        sdf = new SimpleDateFormat(DATE_SELECT_FORMAT, Locale.JAPAN);
+        sdf = new SimpleDateFormat(DateUtils.DATE_YYYYMMDD, Locale.JAPAN);
         mSelectDateStr = sdf.format(c.getTime());
     }
 
@@ -494,7 +482,7 @@ public class TvProgramListActivity extends BaseActivity
      * 現在時刻にスクロール
      */
     private void scrollToCurTime() {
-        String curTime = new SimpleDateFormat(TIME_FORMAT, Locale.JAPAN).format(new Date());
+        String curTime = new SimpleDateFormat(DateUtils.DATE_HHMMSS, Locale.JAPAN).format(new Date());
         int curClock = Integer.parseInt(curTime.substring(0, 2));
         int scrollDis;
         if (START_TIME <= curClock && curClock < STANDARD_TIME) {
@@ -668,7 +656,7 @@ public class TvProgramListActivity extends BaseActivity
      */
     @Override
     public void onScrollOffset(int offset) {
-        String curTime = new SimpleDateFormat(TIME_FORMAT, Locale.JAPAN).format(new Date());
+        String curTime = new SimpleDateFormat(DateUtils.DATE_HHMMSS, Locale.JAPAN).format(new Date());
         int curClock = Integer.parseInt(curTime.substring(0, 2));
         int curMin = Integer.parseInt(curTime.substring(2, 4));
         int curSec = Integer.parseInt(curTime.substring(4, 6));
@@ -691,7 +679,7 @@ public class TvProgramListActivity extends BaseActivity
      * 現在時刻ラインの表示位置を更新
      */
     private void refreshTimeLine() {
-        String curTime = new SimpleDateFormat(TIME_FORMAT, Locale.JAPAN).format(new Date());
+        String curTime = new SimpleDateFormat(DateUtils.DATE_HHMMSS, Locale.JAPAN).format(new Date());
         int curClock = Integer.parseInt(curTime.substring(0, 2));
         int curMin = Integer.parseInt(curTime.substring(2, 4));
         int curSec = Integer.parseInt(curTime.substring(4, 6));
