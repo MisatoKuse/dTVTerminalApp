@@ -291,6 +291,10 @@ public class RemoteControlRelayClient {
     private static final String RELAY_RESULT_USER_INVALID_STATE = "USER_INVALID_STATE";
     private static final String RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE = "dTVT_APPLICATION_VERSION_INCOMPATIBLE"; // dTVTアプリのバージョンコード不適合
     private static final String RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE = "STB_RELAY_SERVICE_VERSION_INCOMPATIBLE"; // 中継アプリのバージョンコード不適合
+    // URLエンコード対応文字
+    private static final String URL_ENCODED_ASTERISK = "%2a";
+    private static final String URL_ENCODED_HYPHEN = "%2d";
+    private static final String URL_ENCODED_SPACE = "%20";
 
     // アプリ起動要求種別に対応するアプリ名シンボル
     private static final Map<STB_APPLICATION_TYPES, String> mStbApplicationSymbolMap = new HashMap<STB_APPLICATION_TYPES, String>() {
@@ -801,17 +805,8 @@ public class RemoteControlRelayClient {
      * @return
      */
     private String setCommandArgumentServiceRef(String chno) {
-        String serviceRef = "";
-        try {
-            int iChno = Integer.parseInt(chno);
-            serviceRef = URLEncoder.encode(String.format(RELAY_COMMAND_ARGUMENT_ARIB_SERVICE_REF, iChno, iChno),
-                    java.nio.charset.StandardCharsets.UTF_8.toString());
-        } catch (UnsupportedEncodingException e) {
-            DTVTLogger.debug(e);
-        } catch (NumberFormatException e) {
-            DTVTLogger.debug(e);
-        }
-        return serviceRef;
+        int iChno = Integer.parseInt(chno);
+        return rfc3986UrlEncode(String.format(RELAY_COMMAND_ARGUMENT_ARIB_SERVICE_REF, iChno, iChno));
     }
 
     /**
@@ -819,9 +814,9 @@ public class RemoteControlRelayClient {
      * ・ひかりTV・カテゴリー分類
      * 　ひかりTVのVOD
      *
-     * @param licenseId
-     * @param cid
-     * @param crid
+     * @param licenseId ビデオ視聴可能商品ID
+     * @param cid コンテンツID
+     * @param crid CRID
      * @param context
      * @return
      */
@@ -829,7 +824,7 @@ public class RemoteControlRelayClient {
                                                                       final String cid, final String crid,
                                                                       final Context context) {
         return startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_HIKARITV_VOD,
-                context, licenseId, cid, crid);
+                context, rfc3986UrlEncode(licenseId), rfc3986UrlEncode(cid), rfc3986UrlEncode(crid));
     }
 
     /**
@@ -859,7 +854,7 @@ public class RemoteControlRelayClient {
     public boolean startApplicationHikariTvCategoryDtvchannelMissedRequest(final String tvCid,
                                                                               final Context context) {
         return startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_MISSED,
-                context, tvCid);
+                context, rfc3986UrlEncode(tvCid));
     }
 
     /**
@@ -874,7 +869,7 @@ public class RemoteControlRelayClient {
     public boolean startApplicationHikariTvCategoryDtvchannelRelationRequest(final String tvCid,
                                                                            final Context context) {
         return startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_RELATION,
-                context, tvCid);
+                context, rfc3986UrlEncode(tvCid));
     }
 
     /**
@@ -888,7 +883,7 @@ public class RemoteControlRelayClient {
      */
     public boolean startApplicationHikariTvCategoryDtvVodRequest(final String episodeId, final Context context) {
         return startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_VOD,
-                context, episodeId);
+                context, rfc3986UrlEncode(episodeId));
     }
 
     /**
@@ -902,7 +897,27 @@ public class RemoteControlRelayClient {
      */
     public boolean startApplicationHikariTvCategoryDtvSvodRequest(final String crid, final Context context) {
         return startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTV_SVOD,
-                context, crid);
+                context, rfc3986UrlEncode(crid));
+    }
+
+    /**
+     * URLエンコード
+     *
+     * @return URLエンコード文字列
+     */
+    private String rfc3986UrlEncode(final String url) {
+        String encodeUrl = "";
+        try {
+            encodeUrl = URLEncoder.encode(url, java.nio.charset.StandardCharsets.UTF_8.toString());
+            encodeUrl = encodeUrl.replace("*", URL_ENCODED_ASTERISK); // URLEncoder.encode はURLエンコードしないためエンコードする
+            encodeUrl = encodeUrl.replace("-", URL_ENCODED_HYPHEN); // URLEncoder.encode はURLエンコードしないためエンコードする
+            encodeUrl = encodeUrl.replace("+", URL_ENCODED_SPACE); // URLEncoder.encode が変換した空白コードを再エンコードする
+        } catch (UnsupportedEncodingException e) {
+            DTVTLogger.debug(e);
+        } catch (NumberFormatException e) {
+            DTVTLogger.debug(e);
+        }
+        return encodeUrl;
     }
 
     /**
