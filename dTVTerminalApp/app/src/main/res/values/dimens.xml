@@ -25,6 +25,7 @@
     <dimen name="launch_stb_margin_top">40dp</dimen>
     <dimen name="launch_stb_name_margin_bottom">1.5dp</dimen>
     <dimen name="launch_stb_progress_bar_padding">15dp</dimen>
+    <dimen name="launch_stb_progress_bar_margin_top">84dp</dimen>
     <dimen name="launch_stb_start_up_icon1_high">36dp</dimen>
     <dimen name="launch_stb_start_up_icon1_width">70dp</dimen>
     <dimen name="launch_stb_text_margin_top">6dp</dimen>
@@ -237,6 +238,20 @@
     <dimen name="main_setting_list_checkbox_length">32dp</dimen>
     <dimen name="main_setting_checkbox_margin">10dp</dimen>
     <dimen name="main_setting_quality_list_separate">1dp</dimen>
+
+    <!--ペアリング設定画面-->
+    <dimen name="paring_setting_device_name_text_size">45dp</dimen>
+    <dimen name="paring_setting_terminal_to_pair_text_height">47dp</dimen>
+    <dimen name="paring_setting_text_margin_start_end">16dp</dimen>
+    <dimen name="paring_setting_check_mark_size">24dp</dimen>
+    <dimen name="paring_setting_divider_height">1dp</dimen>
+    <dimen name="paring_setting_terminal_to_pair_text_size">12dp</dimen>
+    <dimen name="paring_setting_progressbar_size">16dp</dimen>
+    <dimen name="paring_setting_progressbar_margin_start">9dp</dimen>
+    <dimen name="paring_setting_progressbar_margin_top">23dp</dimen>
+    <dimen name="paring_setting_search_failed_margin_top">10dp</dimen>
+    <dimen name="paring_setting_search_help_margin_top">8dp</dimen>
+    <dimen name="paring_setting_search_image_margin_top">17dp</dimen>
 
     <!--縮小番組表-->
     <dimen name="tv_program_list_time_scrollview_width">35dp</dimen>
