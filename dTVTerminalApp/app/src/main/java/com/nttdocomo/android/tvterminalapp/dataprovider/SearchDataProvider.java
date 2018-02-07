@@ -46,6 +46,14 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
      * 検索プロパイダ.
      */
     private SearchDataProviderListener mSearchDataProviderListener = null;
+    /**
+     * 検索用WebAPI.
+     */
+    private TotalSearchWebApi mTotalSearchWebApi;
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
 
     /**
      * テレビtab.
@@ -125,30 +133,29 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
                                 final int pageIndex,
                                 final SearchSortKind sortKind,
                                 final int pageNumber,
-                                /*TotalSearchContentInfo handler, */
                                 final Context context) {
-        TotalSearchWebApi totalSearchWebApi;
-        //this.handler = handler;
-        setSearchState(SearchState.running);
-        TotalSearchRequestData request = new TotalSearchRequestData();
-        try {
-            request.query = URLEncoder.encode(keyword, "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            DTVTLogger.debug(e);
+        if (!mIsCancel) {
+            setSearchState(SearchState.running);
+            TotalSearchRequestData request = new TotalSearchRequestData();
+            try {
+                request.query = URLEncoder.encode(keyword, "utf-8");
+            } catch (UnsupportedEncodingException e) {
+                DTVTLogger.debug(e);
+            }
+
+            request.serviceId = StringUtils.setCommaSeparator(getCurrentSearchServiceTypeArray(pageIndex));
+            request.categoryId = StringUtils.setCommaSeparator(getCurrentSearchCategoryTypeArray(pageIndex));
+            request.sortKind = sortKind.searchWebSortType().ordinal();
+            request.filterTypeList = condition.searchFilterList();
+            request.maxResult = SearchConstants.Search.requestMaxResultCount;
+            request.startIndex = pageNumber * SearchConstants.Search.requestMaxResultCount + 1;
+            request.filterViewableAge = UserInfoUtils.getRecommendUserAge(getUserAgeInfo(context, pageIndex));
+
+            mTotalSearchWebApi = new TotalSearchWebApi(context);
+            mTotalSearchWebApi.setDelegate(this);
+            mSearchDataProviderListener = (SearchDataProviderListener) context;
+            mTotalSearchWebApi.request(request);
         }
-
-        request.serviceId = StringUtils.setCommaSeparator(getCurrentSearchServiceTypeArray(pageIndex));
-        request.categoryId = StringUtils.setCommaSeparator(getCurrentSearchCategoryTypeArray(pageIndex));
-        request.sortKind = sortKind.searchWebSortType().ordinal();
-        request.filterTypeList = condition.searchFilterList();
-        request.maxResult = SearchConstants.Search.requestMaxResultCount;
-        request.startIndex = pageNumber * SearchConstants.Search.requestMaxResultCount + 1;
-        request.filterViewableAge = UserInfoUtils.getRecommendUserAge(getUserAgeInfo(context, pageIndex));
-
-        totalSearchWebApi = new TotalSearchWebApi(context);
-        totalSearchWebApi.setDelegate(this);
-        mSearchDataProviderListener = (SearchDataProviderListener) context;
-        totalSearchWebApi.request(request);
     }
 
     /**
@@ -161,9 +168,9 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
 
     @Override
     public void onSuccess(final TotalSearchResponseData result) {
-        DTVTLogger.debug("SearchDataProvider::onSuccess(), _state=" + mState.toString());
         synchronized (this) {
-            if (mState != SearchState.canceled) {
+            DTVTLogger.debug("SearchDataProvider::onSuccess(), _state=" + mState.toString());
+            if (mState != SearchState.canceled || !mIsCancel) {
 
                 final ArrayList<SearchContentInfo> contentArray = new ArrayList<>();
                 result.map(contentArray);
@@ -244,7 +251,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
 
     @Override
     public void onFailure(final TotalSearchErrorData result) {
-        if (SearchState.canceled != getSearchState()) {
+        if (SearchState.canceled != getSearchState() || !mIsCancel) {
 
             SearchResultError error = SearchResultError.systemError;
             if (result.error.id.equals(SearchConstants.SearchResponseErrorId.requestError)) {
@@ -354,5 +361,25 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
                 break;
         }
         return userAge;
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnect() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        cancelSearch();
+        if (mTotalSearchWebApi != null) {
+            mTotalSearchWebApi.stopConnection();
+        }
+    }
+
+    /**
+     * 通信を許可する.
+     */
+    public void enableConnect() {
+        DTVTLogger.start();
+        mIsCancel = false;
     }
 }

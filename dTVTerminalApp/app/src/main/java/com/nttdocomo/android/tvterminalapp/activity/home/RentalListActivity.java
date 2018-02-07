@@ -279,6 +279,7 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
         mRentalDataProvider = new RentalDataProvider(this);
         mRentalDataProvider.getRentalData(true);
         if (mContentsAdapter != null) {
+            mContentsAdapter.enableConnect();
             mContentsAdapter.notifyDataSetChanged();
         }
     }

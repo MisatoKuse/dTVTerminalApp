@@ -967,4 +967,15 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             mThumbnailProvider.stopConnect();
         }
     }
+
+    /**
+     * 止めたサムネイル取得処理を再度取得可能な状態にする.
+     */
+    public void enableConnect() {
+        DTVTLogger.start();
+        isDownloadStop = false;
+        if (mThumbnailProvider != null) {
+            mThumbnailProvider.enableConnect();
+        }
+    }
 }

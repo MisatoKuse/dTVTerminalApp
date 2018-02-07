@@ -4,37 +4,52 @@
 
 package com.nttdocomo.android.tvterminalapp.fragment.search;
 
-import java.util.HashMap;
-import java.util.Map;
+import android.util.SparseArray;
 
+/**
+ * 検索用Fragment作成クラス.
+ */
 public class SearchFragmentFactory {
 
-    private Map<Integer, SearchBaseFragment> mFragments = new HashMap<Integer, SearchBaseFragment>();
+    /**
+     * Fragmentを保持するArray.
+     */
+    private SparseArray<SearchBaseFragment> mFragments = new SparseArray<>();
 
-    public SearchFragmentFactory(){
-
+    /**
+     * コンストラクタ.
+     */
+    public SearchFragmentFactory() {
     }
 
-    public synchronized SearchBaseFragment createFragment(int position, SearchBaseFragmentScrollListener lis) {
-        SearchBaseFragment fragment = null;
-        fragment = mFragments.get(position);
+    /**
+     * フラグメントを作成する.
+     *
+     * @param position 番号
+     * @param listener リスナー
+     * @return フラグメント
+     */
+    public synchronized SearchBaseFragment createFragment(final int position,
+                                                          final SearchBaseFragmentScrollListener listener) {
+        SearchBaseFragment fragment = mFragments.get(position);
 
         if (null == fragment) {
             fragment = new SearchBaseFragment();
-            if (fragment != null) {
-                mFragments.put(position, fragment);
-                fragment.setSearchBaseFragmentScrollListener(lis);
-            }
+            mFragments.put(position, fragment);
+            fragment.setSearchBaseFragmentScrollListener(listener);
         }
-
         return fragment;
     }
 
-    public synchronized int getFragmentCount(){
-        if(null!=mFragments){
+    /**
+     * フラグメント数を返却する.
+     *
+     * @return フラグメント数
+     */
+    public synchronized int getFragmentCount() {
+        if (null != mFragments) {
             return mFragments.size();
         }
-
         return 0;
     }
 }

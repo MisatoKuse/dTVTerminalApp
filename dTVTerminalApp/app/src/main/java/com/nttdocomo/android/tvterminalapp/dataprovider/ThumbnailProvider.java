@@ -32,7 +32,7 @@ public class ThumbnailProvider {
 	/**
 	 * Queueの最大数.
 	 */
-	private static final int MAXQUEUECOUNT = 4;
+	private static final int MAX_QUEUE_COUNT = 4;
 	/**
 	 * ImageViewリスト.
 	 */
@@ -69,9 +69,10 @@ public class ThumbnailProvider {
 
 	/**
 	 * 画像の取得.
-	 * 
+	 *
 	 * @param imageView 取得した画像を表示するimageView
 	 * @param imageUrl サムネイル取得先URL
+     * @return サムネイル画像
 	 */
 	public Bitmap getThumbnailImage(final ImageView imageView, final String imageUrl) {
 		// メモリから取得
@@ -100,7 +101,7 @@ public class ThumbnailProvider {
 				}
 				imageView.setTag(imageUrl);
 				//queue処理を追加
-				if (MAXQUEUECOUNT > currentQueueCount) {
+				if (MAX_QUEUE_COUNT > currentQueueCount) {
 					++currentQueueCount;
 					mDownloadTask = new ThumbnailDownloadTask(imageView, this, mContext);
 					mDownloadTask.execute(imageUrl);
@@ -120,7 +121,7 @@ public class ThumbnailProvider {
 		DTVTLogger.start();
 		DTVTLogger.debug("" + isCancel);
 		if (!isCancel) {
-			if (MAXQUEUECOUNT > currentQueueCount) {
+			if (MAX_QUEUE_COUNT > currentQueueCount) {
 				if (listImageView.size() > 0) {
 					++currentQueueCount;
 					new ThumbnailDownloadTask(listImageView.get(0), this, mContext).execute(listURL.get(0));
@@ -141,5 +142,12 @@ public class ThumbnailProvider {
             mDownloadTask.cancel(true);
 			mDownloadTask.stopAllConnections();
 		}
+	}
+
+	/**
+	 * 止めたダウンロード処理を再度可能な状態にする.
+	 */
+	public void enableConnect() {
+		isCancel = false;
 	}
 }

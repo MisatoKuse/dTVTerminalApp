@@ -22,6 +22,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.SearchDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopSearchDataConnect;
 import com.nttdocomo.android.tvterminalapp.fragment.search.SearchBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.search.SearchBaseFragmentScrollListener;
 import com.nttdocomo.android.tvterminalapp.fragment.search.SearchFragmentFactory;
@@ -61,7 +62,7 @@ public class SearchTopActivity extends BaseActivity
      */
     private boolean mIsPaging = false;
     /**
-     * 県sカウ中判定フラグ.
+     * 検索中判定フラグ.
      */
     private boolean mIsSearching = false;
     /**
@@ -71,7 +72,7 @@ public class SearchTopActivity extends BaseActivity
     /**
      * 現在の検索文字列.
      */
-    private static String sCurrentSearchText = "";
+    private String sCurrentSearchText = "";
     /**
      * tabのレイアウト.
      */
@@ -88,6 +89,10 @@ public class SearchTopActivity extends BaseActivity
      * グローバルメニューからの表示かどうか.
      */
     private Boolean mIsMenuLaunch = false;
+    /**
+     * スクロールによるデータ取得中フラグ.
+     */
+    private Boolean mIsScroll = false;
 
     /**
      * 検索用データプロパイダ.
@@ -326,9 +331,7 @@ public class SearchTopActivity extends BaseActivity
      * @param searchingFlag 検索中フラグ
      */
     private void setSearchStart(final boolean searchingFlag) {
-        synchronized (this) {
-            mIsSearching = searchingFlag;
-        }
+        mIsSearching = searchingFlag;
     }
 
     /**
@@ -379,6 +382,7 @@ public class SearchTopActivity extends BaseActivity
      * 検索結果表示Viewを初期化.
      */
     private void initSearchedResultView() {
+        DTVTLogger.start();
         if (null != mSearchViewPager) {
             return;
         }
@@ -455,6 +459,7 @@ public class SearchTopActivity extends BaseActivity
     public void onSearchDataProviderFinishOk(final ResultType<TotalSearchContentInfo> resultType) {
         TotalSearchContentInfo content = resultType.getResultType();
         mSearchTotalCount = content.totalCount;
+        mIsScroll = false;
 
         SearchBaseFragment baseFragment = getCurrentSearchBaseFragment();
         if (null == baseFragment) {
@@ -466,9 +471,7 @@ public class SearchTopActivity extends BaseActivity
                 baseFragment.displayLoadMore(false);
                 setPagingStatus(false);
             } else {
-                //if(0==mPageNumber) {
                 baseFragment.clear();
-                //}
             }
         }
         baseFragment.setResultTextVisibility(true);
@@ -507,8 +510,14 @@ public class SearchTopActivity extends BaseActivity
 
     @Override
     public void onSearchDataProviderFinishNg(final ResultType<SearchResultError> resultType) {
-        clearAllFragment();
-        DTVTLogger.debug("onSearchDataProviderFinishNg");
+        if (mIsScroll) {
+            //TODO ページング中のデータ取得に失敗した場合のエラー処理
+            DTVTLogger.debug("error while paging");
+        } else {
+            clearAllFragment();
+            DTVTLogger.debug("onSearchDataProviderFinishNg");
+        }
+        mIsScroll = false;
     }
 
     /**
@@ -517,6 +526,7 @@ public class SearchTopActivity extends BaseActivity
      * @param pagingFlag ページングフラグ
      */
     private void setPagingStatus(final boolean pagingFlag) {
+        DTVTLogger.start("" + pagingFlag);
         synchronized (this) {
             mIsPaging = pagingFlag;
         }
@@ -527,6 +537,7 @@ public class SearchTopActivity extends BaseActivity
                          final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
         int pageMax = (mPageNumber + 1) * SearchConstants.Search.requestMaxResultCount;
         int maxPage = mSearchTotalCount / SearchConstants.Search.requestMaxResultCount;
+        mIsScroll = true;
         if (firstVisibleItem + visibleItemCount >= pageMax && maxPage >= 1 + mPageNumber) {
             setPageNumber(mPageNumber + 1);
             DTVTLogger.debug("page no=" + (mPageNumber + 1));
@@ -621,5 +632,42 @@ public class SearchTopActivity extends BaseActivity
                 break;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        DTVTLogger.start();
+        //TODO 仮実装
+        if (mIsSearching) {
+            //検索中にバックグラウンドに遷移した場合はページ数を補正する
+            setPageNumber(mPageNumber - 1);
+            setSearchStart(false);
+        }
+        if (mSearchDataProvider != null) {
+            mSearchDataProvider.enableConnect();
+        }
+        SearchBaseFragment baseFragment = getCurrentSearchBaseFragment();
+        if (baseFragment != null) {
+            baseFragment.enableContentsAdapterCommunication();
+            baseFragment.displayLoadMore(false);
+            baseFragment.invalidateViews();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        DTVTLogger.start();
+
+        //検索の通信を止める
+        StopSearchDataConnect stopSearchDataConnect = new StopSearchDataConnect();
+        stopSearchDataConnect.execute(mSearchDataProvider);
+
+        //FragmentにContentsAdapterの通信を止めるように通知する
+        SearchBaseFragment baseFragment = getCurrentSearchBaseFragment();
+        if (baseFragment != null) {
+            baseFragment.stopContentsAdapterCommunication();
+        }
     }
 }
