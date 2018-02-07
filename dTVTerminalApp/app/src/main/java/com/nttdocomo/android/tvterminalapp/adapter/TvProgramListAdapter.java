@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -59,6 +60,10 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     private static final int EPI_MARGIN_TOP_THUMB = 4;
     private static final float TITLE_TEXT_SIZE = 13.0f;
     private static final float EPI_TEXT_SIZE = 11.0f;
+    private static final String HYPHEN = "-";
+    private static final String MISS_CUT_OUT = "1";
+    private static final String MISS_COMPLETE = "2";
+    private static final String MISS_VOD = "3";
     private TvProgramListActivity mContext = null;
     //ディスプレイ幅さ
     private int mScreenWidth = 0;
@@ -98,16 +103,12 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         getCurTime();
         for (int i = 0; i < mProgramList.size(); i++) {
             ChannelInfo itemChannel = mProgramList.get(i);
-            boolean isLast = false;
             if (itemChannel != null && itemChannel.getSchedules() != null) {
                 ArrayList<ScheduleInfo> itemSchedules = itemChannel.getSchedules();
                 for (int j = 0; j < itemSchedules.size(); j++) {
                     ScheduleInfo itemSchedule = itemSchedules.get(j);
-                    if (j == itemSchedules.size() - 1) {
-                        isLast = true;
-                    }
                     ItemViewHolder itemViewHolder = new ItemViewHolder(itemSchedules.get(j));
-                    setView(itemViewHolder, itemSchedule, isLast);
+                    setView(itemViewHolder, itemSchedule);
                     mItemViews.add(itemViewHolder);
                 }
             }
@@ -153,6 +154,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     private class ItemViewHolder {
         public View mView = null;
         private boolean mInUsage = false;
+        private boolean missedVod = false;
 
         TextView mStartM = null;
         TextView mContent = null;
@@ -163,6 +165,14 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
 
         void setUsing() {
             mInUsage = true;
+        }
+
+        void setMissedVod(boolean missedVod) {
+            this.missedVod = missedVod;
+        }
+
+        boolean isMissedVod() {
+            return this.missedVod;
         }
 
         /**
@@ -231,15 +241,11 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         }
         if (itemChannel != null && itemChannel.getSchedules() != null) {
             ArrayList<ScheduleInfo> itemSchedule = itemChannel.getSchedules();
-            boolean isLast = false;
             for (int i = 0; i < itemSchedule.size(); i++) {
                 ItemViewHolder itemViewHolder = getUnused();
                 if (itemViewHolder == null) {
                     itemViewHolder = new ItemViewHolder(itemSchedule.get(i));
-                    if (i == itemSchedule.size() - 1) {
-                        isLast = true;
-                    }
-                    setView(itemViewHolder, itemSchedule.get(i), isLast);
+                    setView(itemViewHolder, itemSchedule.get(i));
                 }
                 itemViewHolder.setUsing();
                 holder.layout.addView(itemViewHolder.mView);
@@ -270,9 +276,8 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
      *
      * @param itemViewHolder ビューホルダー
      * @param itemSchedule   番組情報
-     * @param isLast         末尾フラグ
      */
-    private void setView(final ItemViewHolder itemViewHolder, final ScheduleInfo itemSchedule, final boolean isLast) {
+    private void setView(final ItemViewHolder itemViewHolder, final ScheduleInfo itemSchedule) {
 
         //年齢制限フラグ
         boolean isParental = setParental(StringUtils.convertRValueToAgeReq(mContext, itemSchedule.getRValue()));
@@ -282,13 +287,16 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         if (!TextUtils.isEmpty(startTime)) {
             itemViewHolder.mStartM.setText(startTime.substring(14, 16));
         }
-        String end = endTime.substring(0, 10) + endTime.substring(11, 19);
-        Date date1 = new Date();
-        Date date2 = new Date();
+        String start = slash2Hyphen(startTime);
+        String end = slash2Hyphen(endTime);
+        Date endDate = new Date();
+        Date curDate = new Date();
+        Date startData = new Date();
         SimpleDateFormat format = new SimpleDateFormat(CUR_TIME_FORMAT, Locale.JAPAN);
         try {
-            date1 = format.parse(end);
-            date2 = format.parse(mCurDate);
+            endDate = format.parse(end);
+            curDate = format.parse(mCurDate);
+            startData = format.parse(start);
         } catch (Exception e) {
             DTVTLogger.debug(e);
         }
@@ -298,22 +306,19 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         itemViewHolder.mView.setLayoutParams(itemViewHolder.mLayoutParams);
         itemViewHolder.mView.setY(marginTop * (mContext.dip2px(ONE_HOUR_UNIT)));
 
-        if (isLast) {
-            if (date1.compareTo(date2) == -1) {
-                itemViewHolder.mView.setBackgroundResource(R.drawable.program_end_gray);
-                itemViewHolder.mView.setTag(0);
-            } else {
-                itemViewHolder.mView.setBackgroundResource(R.drawable.program_rectangele_end);
-                itemViewHolder.mView.setTag(1);
-            }
+        String contentType = itemSchedule.getContentType();
+        //放送済み
+        if (endDate.compareTo(curDate) == -1) {
+            watchByContentType(itemViewHolder, contentType);
         } else {
-            if (date1.compareTo(date2) == -1) {
-                itemViewHolder.mView.setBackgroundResource(R.drawable.program_start_gray);
-                itemViewHolder.mView.setTag(0);
+            //放送中
+            if (startData.compareTo(curDate) == -1) {
+                itemViewHolder.mView.setBackgroundResource(R.drawable.program_playing_gray);
             } else {
-                itemViewHolder.mView.setBackgroundResource(R.drawable.program_rectangele_start);
-                itemViewHolder.mView.setTag(1);
+                //未放送
+                itemViewHolder.mView.setBackgroundResource(R.drawable.program_start_gray);
             }
+            itemViewHolder.mView.setTag(1);
         }
 
         boolean isClipHide = false;
@@ -344,6 +349,41 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         itemViewHolder.mDetail.setText(detail);
         changeProgramInfoInOrderToShow(itemViewHolder, isParental, isClipHide, itemSchedule.isClipStatus());
         itemViewHolder.mContent.setText(title);
+    }
+
+    /**
+     * 視聴できるかのを判定する
+     *
+     * @param itemViewHolder
+     * @param contentType
+     */
+    private void watchByContentType(final ItemViewHolder itemViewHolder, final String contentType) {
+        //見逃し(あり)
+        if (MISS_CUT_OUT.equals(contentType) || MISS_COMPLETE.equals(contentType)) {
+            itemViewHolder.mView.setBackgroundResource(R.drawable.program_start_gray);
+            itemViewHolder.setMissedVod(false);
+            itemViewHolder.mView.setTag(1);
+        }
+        //関連VOD(なし)
+        if (MISS_VOD.equals(contentType)) {
+            itemViewHolder.mView.setBackgroundResource(R.drawable.program_end_gray);
+            itemViewHolder.mStartM.setTextColor(ContextCompat.getColor(mContext, R.color.tv_program_miss_vod));
+            itemViewHolder.mContent.setTextColor(ContextCompat.getColor(mContext, R.color.tv_program_miss_vod));
+            itemViewHolder.mDetail.setTextColor(ContextCompat.getColor(mContext, R.color.tv_program_miss_vod));
+            itemViewHolder.setMissedVod(true);
+            itemViewHolder.mThumbnail.setImageAlpha(128);
+            itemViewHolder.mView.setTag(0);
+        }
+    }
+
+    /**
+     * タイムの形で"/"から"-"に変更する
+     * @param time
+     * @return
+     */
+    private String slash2Hyphen(String time) {
+        return time.substring(0, 4) + HYPHEN + time.substring(5, 7) + HYPHEN
+                + time.substring(8, 10) + time.substring(11, 19);
     }
 
     /**
@@ -432,6 +472,11 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
                 } else {
                     itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+                }
+                if (itemViewHolder.isMissedVod()) {
+                    // TODO: 2018/02/06 ①専用クリップアイコン入れていない ②クリップ非活動化設置仕様確認必要
+                    itemViewHolder.mClipButton.setClickable(false);
+                    itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.thumb_icon_cast);
                 }
             }
         } else {

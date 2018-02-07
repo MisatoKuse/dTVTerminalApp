@@ -235,7 +235,7 @@
     <dimen name="main_setting_quality_list_separate">1dp</dimen>
 
     <!--縮小番組表-->
-    <dimen name="tv_program_list_time_scrollview_width">44dp</dimen>
+    <dimen name="tv_program_list_time_scrollview_width">35dp</dimen>
     <dimen name="tv_program_list_time_line_width">48dp</dimen>
     <dimen name="tv_program_list_time_line_height">25dp</dimen>
     <dimen name="tv_program_list_cur_time_padding">10dp</dimen>

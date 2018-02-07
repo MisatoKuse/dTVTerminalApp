@@ -172,6 +172,8 @@ public class TvProgramListActivity extends BaseActivity
         } else {
             mIsFromBackFlag = false;
         }
+        clearData();
+        getChannelData();
         scrollToCurTime();
         refreshTimeLine();
     }
@@ -313,27 +315,6 @@ public class TvProgramListActivity extends BaseActivity
         clearData();
         getChannelData();
         DTVTLogger.end();
-    }
-
-    /**
-     * 機能
-     * タブを切り替え
-     *
-     * @param position タブインデックス
-     */
-    public void setTab(int position) {
-        if (mTabLinearLayout != null) {
-            for (int i = 0; i < mProgramTabNames.length; i++) {
-                TextView mTextView = (TextView) mTabLinearLayout.getChildAt(i);
-                if (position == i) {
-                    mTextView.setBackgroundResource(R.drawable.rectangele);
-                    mTextView.setTextColor(ContextCompat.getColor(this, R.color.tv_program_list_tab_checked_text));
-                } else {
-                    mTextView.setBackgroundResource(0);
-                    mTextView.setTextColor(ContextCompat.getColor(this, R.color.tv_program_list_tab_unchecked_text));
-                }
-            }
-        }
     }
 
     /**
