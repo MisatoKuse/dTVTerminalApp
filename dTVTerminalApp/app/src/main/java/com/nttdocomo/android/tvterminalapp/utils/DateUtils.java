@@ -145,12 +145,22 @@ public class DateUtils {
     /**
      * 日付フォーマット.
      */
-    private static final String DATE_YYYY_MM_DD = "yyyy/MM/dd";
+    public static final String DATE_YYYY_MM_DD = "yyyy/MM/dd";
 
     /**
      * 日付フォーマット.
      */
     private static final String DATE_YYYY_MM_DD_HH_MM_SS = "yyyyMMddHHmmss";
+
+    /**
+     * 日付フォーマット.
+     */
+    public static final String DATE_YYYY_MM_DDHHMMSS = "yyyy/MM/ddHH:mm:ss";
+
+    /**
+     * 日付フォーマット.
+     */
+    public static final String DATE_MMDDE = "MM/dd (E)";
 
     /**
      * DB保存期限.
@@ -160,7 +170,7 @@ public class DateUtils {
     /**
      * 曜日配列.
      */
-    private static final String[] STRING_DAY_OF_WEEK = {null, "日", "月", "火", "水", "木", "金", "土"};
+    public static final String[] STRING_DAY_OF_WEEK = {null, "日", "月", "火", "水", "木", "金", "土"};
 
     /**
      * マイ番組表取得日付キー.

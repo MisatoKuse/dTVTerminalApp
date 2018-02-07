@@ -73,7 +73,6 @@ public class ChannelInsertDataManager {
                     values.put(UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
                 }
                 values.put(DBUtils.fourKFlgConversion(keyName), valName);
-                values.put(DATE_TYPE, "program");
             }
             channelListDao.insert(values);
         }

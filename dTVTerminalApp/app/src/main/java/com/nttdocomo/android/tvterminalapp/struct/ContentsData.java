@@ -104,7 +104,16 @@ public class ContentsData {
     private boolean mClipExec = false;
     // クリップ未/済
     private boolean mClipStatus = false;
+    // サブタイトル
+    private String mSubTitle = null;
 
+    public String getSubTitle() {
+        return mSubTitle;
+    }
+
+    public void setSubTitle(String mSubTitle) {
+        this.mSubTitle = mSubTitle;
+    }
 
     public String getRank() {
         return mRank;
