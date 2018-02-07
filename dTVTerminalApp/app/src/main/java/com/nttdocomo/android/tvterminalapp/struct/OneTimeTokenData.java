@@ -1,0 +1,118 @@
+/*
+ * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+ */
+
+package com.nttdocomo.android.tvterminalapp.struct;
+
+
+import android.text.TextUtils;
+
+import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
+
+/*
+ * ワンタイムトークンの情報伝達用構造体.
+ */
+public class OneTimeTokenData {
+    //ワンタイムトークンのデータ分離用文字列
+    private static final String ONE_TIME_TOKEN_SPRITTER = "|";
+
+    //ワンタイムトークンのパラメータ順
+    private final int ONE_TIME_TOKEN_POSITION = 0;
+
+    //ワンタイムトークン取得日時のパラメータ順
+    private final int ONE_TIME_TOKEN_TIME_POSITION = 1;
+
+    //ワンタイムトークン
+    private String mOneTimeToken;
+
+    //ワンタイムトークン取得日時（エポック秒で記録）
+    private long mOneTimeTokenTime;
+
+    /**
+     * コンストラクタ
+     */
+    public OneTimeTokenData() {
+        //初期化を行う
+        initData();
+    }
+
+    /**
+     * 初期データ付きコンストラクタ
+     */
+    public OneTimeTokenData(String source) {
+        //初期化を行う
+        initData();
+
+        //データを解析して格納する
+        analyzeOneTimeTokenString(source);
+    }
+
+    public String getOneTimeToken() {
+        return mOneTimeToken;
+    }
+
+    public void setOneTimeToken(String oneTimeToken) {
+        mOneTimeToken = oneTimeToken;
+    }
+
+    public long getOneTimeTokenGetTime() {
+        return mOneTimeTokenTime;
+    }
+
+    public void setOneTimeTokenGetTime(long oneTimeTokenGetTime) {
+        mOneTimeTokenTime = oneTimeTokenGetTime;
+    }
+
+
+    /**
+     * 値の初期化.
+     */
+    void initData() {
+        mOneTimeToken = "";
+        mOneTimeTokenTime = Long.MIN_VALUE;
+    }
+
+    /**
+     * ワンタイムトークン用データを解析して格納する.
+     *
+     * @param source 元になる文字列
+     */
+    public void analyzeOneTimeTokenString(String source) {
+        //値が空か、分割できないならば初期化して帰る
+        if (TextUtils.isEmpty(source) || source.contains(ONE_TIME_TOKEN_SPRITTER)) {
+            initData();
+            return;
+        }
+
+        //元の文字列を分割する
+        String[] buffer = source.split(ONE_TIME_TOKEN_SPRITTER);
+
+        //トークンを取得
+        mOneTimeToken = buffer[ONE_TIME_TOKEN_POSITION];
+
+        //数字判定を行う
+        if (DBUtils.isNumber(buffer[ONE_TIME_TOKEN_TIME_POSITION])) {
+            //取得日時を取得
+            mOneTimeTokenTime = Long.parseLong(
+                    buffer[ONE_TIME_TOKEN_TIME_POSITION]);
+        } else {
+            //数字ではなかったので、最小値にする
+            mOneTimeTokenTime = Long.MIN_VALUE;
+        }
+    }
+
+    /**
+     * プリファレンス書き込み用文字列の作成
+     *
+     * @return 整形後のトークン情報
+     */
+    public String makeOneTimeTokenString() {
+        //書き込み文字列の作成
+        String buffer = StringUtils.getConnectStrings(mOneTimeToken, ONE_TIME_TOKEN_SPRITTER,
+                String.valueOf(mOneTimeTokenTime));
+
+        //整形下したデータを返す
+        return buffer;
+    }
+}

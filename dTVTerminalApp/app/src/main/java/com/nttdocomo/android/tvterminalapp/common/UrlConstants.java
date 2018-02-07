@@ -25,6 +25,15 @@ public class UrlConstants {
         //"https://ve.m.service.smt.docomo.ne.jp/auth/cgi/aplpwdauth";
 
         /**
+         * ワンタイムパスワードでサービストークンを取得する認証するURL.
+         * TODO: 内容が固まるまでは、BaseUrlConstsへの記載は取りやめ。
+         */
+        public static final String ONE_TIME_TOKEN_GET_URL =
+                "https://tif.hikaritv-docomo.jp/dtt_stub_mix/auth/daccount/authorization";
+                //"https://tif.hikaritv-docomo.jp/dtt_stub_mix/auth/daccount/authentication";
+                //BaseUrlConstants.ONE_TIME_TOKEN_GET_URL;
+
+        /**
          * VODクリップ一覧の呼び出し先.
          * （定義名に最初と最後のスラッシュは無用なので注意）
          */

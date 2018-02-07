@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
+import com.nttdocomo.android.tvterminalapp.struct.OneTimeTokenData;
 
 /**
  * ユーザ情報やペアリング情報等の保存/取得を管理するクラス.
@@ -104,6 +105,10 @@ public class SharedPreferencesUtils {
      * ビデオジャンル一覧データ.
      */
     private static final String VIDEO_GENRE_LIST_DATA = "video_genre_list_data";
+    /**
+     * ワンタイムトークン.
+     */
+    private static final String ONE_TIME_TOKEN = "ONE_TIME_TOKEN";
 
     /**
      * 独自の削除メソッドがある接続済みSTB情報以外の、dアカウントユーザー切り替え時の削除対象
@@ -121,6 +126,19 @@ public class SharedPreferencesUtils {
             SHARED_KEY_IS_DISPLAYED_PARING_INVITATION,
             // ホーム画面ペアリング済み判定 保存キー
             SHARED_KEY_DECISION_PARING_SETTLED,
+
+            //下記は別途削除しているのでここに記す必要は無い。しかし後日、指定漏れと誤認したので、混乱を避ける為にコメントとして追記。
+            //SHARED_KEY_SELECTED_STB_DATA_INFOMATION,
+            //SHARED_KEY_SELECTED_STB_DATA_INFOMATION_UDN,
+            //SHARED_KEY_SELECTED_STB_DATA_INFOMATION_CONTROL_URL,
+            //SHARED_KEY_SELECTED_STB_DATA_INFOMATION_HTTP,
+            //SHARED_KEY_SELECTED_STB_DATA_INFOMATION_FRIENDLY_NAME,
+            //SHARED_KEY_SELECTED_STB_DATA_INFOMATION_IPADDRESS,
+
+            //下記は削除を行わないチュートリアル関連フラグなので、本来必要は無い。しかし後日、指定漏れと誤認したのでコメントとして追記。
+            //SHARED_KEY_SCREEN_INFORMATION,
+            //SHARED_KEY_IS_DISPLAYED_TUTORIAL,
+
             // SettingActivity 画質設定の設定値
             SHARED_KEY_IMAGE_QUALITY,
             // 持ち出しコンテンツダウンロード先
@@ -129,8 +147,16 @@ public class SharedPreferencesUtils {
             LAST_D_ACCOUNT_ID,
             //最後に取得したワンタイムパスワード
             LAST_ONE_TIME_PASSWORD,
+            // アプリ再起動フラグは自動消去なので必要ないが、後日、指定漏れと誤認したのでコメントとして追記。
+            //RESTART_FLAG,
+            //ユーザ年齢情報キー
+            USER_AGE_REQ_SHARED_KEY,
             //ユーザー情報取得日時
             LAST_USER_INFO_DATE,
+            //ビデオジャンル一覧データ
+            VIDEO_GENRE_LIST_DATA,
+            // ワンタイムトークン
+            ONE_TIME_TOKEN,
     };
 
 
@@ -495,7 +521,7 @@ public class SharedPreferencesUtils {
      * @param context コンテキスト
      */
     public static void clearAlmostSharedPreferences(final Context context) {
-        //接続済みSTB情報には削除処理があるので使用する
+        //接続済みSTB情報系列には削除処理があるので使用する(一見一つしか削除していないが、元締めを消しているのですべて消える)
         resetSharedPreferencesStbInfo(context);
 
         //他の情報の削除を行う
@@ -598,5 +624,46 @@ public class SharedPreferencesUtils {
 
         //保存したビデオジャンルが無いときはnullを返却
         return data.getString(VIDEO_GENRE_LIST_DATA, null);
+    }
+
+    /**
+     * ワンタイムトークン関連情報の取得.
+     *
+     * @param context コンテキスト
+     * @return ワンタイムトークン情報構造体
+     */
+    public static OneTimeTokenData getOneTimeTokenData(final Context context) {
+        DTVTLogger.start();
+        //プリファレンスから読み込む
+        SharedPreferences data = context.getSharedPreferences(
+                ONE_TIME_TOKEN, Context.MODE_PRIVATE);
+        String buffer = data.getString(ONE_TIME_TOKEN,"");
+
+        //読み込んだ物を分割
+        OneTimeTokenData tokenData = new OneTimeTokenData(buffer);
+
+        DTVTLogger.end();
+
+        return tokenData;
+    }
+
+    /**
+     * ワンタイムトークン関連情報の書き込み.
+     *
+     * @param context コンテキスト
+     * @param tokenData 書き込むワンタイムトークン
+     */
+    public static void setOneTimeTokenData(Context context, OneTimeTokenData tokenData) {
+        DTVTLogger.start();
+        //書き込み用の文字列を作成する
+        String buffer = tokenData.makeOneTimeTokenString();
+
+        //書き込む
+        SharedPreferences data = context.getSharedPreferences(
+                ONE_TIME_TOKEN, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = data.edit();
+        editor.putString(ONE_TIME_TOKEN, buffer);
+        editor.apply();
+        DTVTLogger.end();
     }
 }
