@@ -52,7 +52,7 @@ public class ThumbnailProvider {
 	/**
 	 * ダウンロードキャンセルフラグ.
 	 */
-	private boolean isCancel = false;
+	private boolean mIsCancel = false;
 
 	/**
 	 * コンストラクタ.
@@ -92,7 +92,7 @@ public class ThumbnailProvider {
 			return bitmap;
 		}
 
-		if (!isCancel) {
+		if (!mIsCancel) {
 			// サーバからQueueで取得
 			if (!TextUtils.isEmpty(imageUrl)) {
 				DTVTLogger.debug("download start..... url=" + imageUrl);
@@ -110,7 +110,9 @@ public class ThumbnailProvider {
 					listURL.add(imageUrl);
 				}
 			}
-		}
+		} else {
+            DTVTLogger.error("ThumbnailProvider is stopping connection");
+        }
 		return null;
 	}
 
@@ -119,8 +121,8 @@ public class ThumbnailProvider {
 	 */
 	public void checkQueueList() {
 		DTVTLogger.start();
-		DTVTLogger.debug("" + isCancel);
-		if (!isCancel) {
+		DTVTLogger.debug("" + mIsCancel);
+		if (!mIsCancel) {
 			if (MAX_QUEUE_COUNT > currentQueueCount) {
 				if (listImageView.size() > 0) {
 					++currentQueueCount;
@@ -129,7 +131,9 @@ public class ThumbnailProvider {
 					listURL.remove(0);
 				}
 			}
-		}
+		} else {
+            DTVTLogger.error("ThumbnailProvider is stopping connection");
+        }
 	}
 
 	/**
@@ -137,7 +141,7 @@ public class ThumbnailProvider {
 	 */
 	public void stopConnect() {
 		DTVTLogger.start();
-		isCancel = true;
+		mIsCancel = true;
 		if (mDownloadTask != null) {
             mDownloadTask.cancel(true);
 			mDownloadTask.stopAllConnections();
@@ -148,6 +152,6 @@ public class ThumbnailProvider {
 	 * 止めたダウンロード処理を再度可能な状態にする.
 	 */
 	public void enableConnect() {
-		isCancel = false;
+		mIsCancel = false;
 	}
 }

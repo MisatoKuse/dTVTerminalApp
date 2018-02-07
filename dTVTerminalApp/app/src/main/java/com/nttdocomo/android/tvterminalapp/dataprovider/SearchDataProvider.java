@@ -155,6 +155,8 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
             mTotalSearchWebApi.setDelegate(this);
             mSearchDataProviderListener = (SearchDataProviderListener) context;
             mTotalSearchWebApi.request(request);
+        } else {
+            DTVTLogger.error("SearchDataProvider is stopping connection");
         }
     }
 
@@ -170,7 +172,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
     public void onSuccess(final TotalSearchResponseData result) {
         synchronized (this) {
             DTVTLogger.debug("SearchDataProvider::onSuccess(), _state=" + mState.toString());
-            if (mState != SearchState.canceled || !mIsCancel) {
+            if (mState != SearchState.canceled) {
 
                 final ArrayList<SearchContentInfo> contentArray = new ArrayList<>();
                 result.map(contentArray);
@@ -251,7 +253,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
 
     @Override
     public void onFailure(final TotalSearchErrorData result) {
-        if (SearchState.canceled != getSearchState() || !mIsCancel) {
+        if (SearchState.canceled != getSearchState()) {
 
             SearchResultError error = SearchResultError.systemError;
             if (result.error.id.equals(SearchConstants.SearchResponseErrorId.requestError)) {

@@ -114,6 +114,8 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
             }
 
             get(UrlConstants.WebApiUrl.TOTAL_SEARCH_URL, queryItems, this, mContext);
+        } else {
+            DTVTLogger.error("TotalSearchWebApi is stopping connection");
         }
     }
 
@@ -243,6 +245,7 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
 
     /**
      * 通信を止める.
+     * TotalSearchWebApiは検索の度にnewされているので通信可能状態にする処理は不要
      */
     public void stopConnection() {
         DTVTLogger.start();
@@ -250,5 +253,3 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
         stopHTTPConnection();
     }
 }
-
-

@@ -91,6 +91,8 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
         resetPaging();
 
         initView();
+        mRentalDataProvider = new RentalDataProvider(this);
+        mRentalDataProvider.getRentalData(true);
     }
 
     /**
@@ -174,6 +176,13 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
         mContentsAdapter.notifyDataSetChanged();
     }
 
+    @Override
+    public void rentalListNgCallback() {
+        DTVTLogger.start();
+        //データ取得失敗時
+        resetCommunication();
+    }
+
     /**
      * ページングリセット.
      */
@@ -245,9 +254,7 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
     public void onScroll(final AbsListView absListView, final int firstVisibleItem,
                          final int visibleItemCount, final int totalItemCount) {
         synchronized (this) {
-            if (firstVisibleItem + visibleItemCount == totalItemCount
-                    && 0 != totalItemCount
-                    ) {
+            if (firstVisibleItem + visibleItemCount == totalItemCount && 0 != totalItemCount) {
                 DTVTLogger.debug("onScroll, paging, firstVisibleItem=" + firstVisibleItem
                         + ", totalItemCount=" + totalItemCount + ", visibleItemCount="
                         + visibleItemCount);
@@ -276,11 +283,14 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
         super.onResume();
         DTVTLogger.start();
         //TODO 仮実装
-        mRentalDataProvider = new RentalDataProvider(this);
-        mRentalDataProvider.getRentalData(true);
+        if (mRentalDataProvider != null) {
+            mRentalDataProvider.enableConnect();
+        }
         if (mContentsAdapter != null) {
             mContentsAdapter.enableConnect();
-            mContentsAdapter.notifyDataSetChanged();
+        }
+        if (mListView != null) {
+            mListView.invalidateViews();
         }
     }
 

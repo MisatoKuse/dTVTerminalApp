@@ -137,6 +137,7 @@ public class ClipKeyListWebClient
                                      final TvClipKeyListJsonParserCallback tvClipKeyListJsonParserCallback,
                                      final VodClipKeyListJsonParserCallback vodClipKeyListJsonParserCallback) {
         if (mIsCancel) {
+            DTVTLogger.error("ClipKeyListWebClient is stopping connection");
             return false;
         }
 
@@ -178,6 +179,7 @@ public class ClipKeyListWebClient
                                          final TvClipKeyListJsonParserCallback tvClipKeyListJsonParserCallback,
                                          final VodClipKeyListJsonParserCallback vodClipKeyListJsonParserCallback) {
         if (mIsCancel) {
+            DTVTLogger.error("ClipKeyListWebClient is stopping connection");
             return false;
         }
 
@@ -226,5 +228,13 @@ public class ClipKeyListWebClient
         DTVTLogger.start();
         mIsCancel = true;
         stopAllConnections();
+    }
+
+    /**
+     * 通信可能状態にする.
+     */
+    public void enableConnection() {
+        DTVTLogger.start();
+        mIsCancel = false;
     }
 }

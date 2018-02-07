@@ -107,11 +107,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      */
     public ClipKeyListDataProvider(final Context context) {
         this.mContext = context;
-        if (checkInstance(context)) {
-            mRequiredClipKeyList = true;
-        } else {
-            mRequiredClipKeyList = false;
-        }
+        mRequiredClipKeyList = checkInstance(context);
     }
 
     /**
@@ -124,6 +120,8 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
             getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.TV));
             // VODクリップキー一覧を取得
             getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+        } else {
+            DTVTLogger.error("ClipKeyListDataProvider is stopping connection");
         }
         DTVTLogger.end();
     }
@@ -146,6 +144,8 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
             } else {
                 mClient.getClipKeyListApi(request, null, this);
             }
+        } else {
+            DTVTLogger.error("ClipKeyListDataProvider stop connection");
         }
         DTVTLogger.end();
     }
@@ -428,6 +428,17 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         mIsCancel = true;
         if (mClient != null) {
             mClient.stopConnection();
+        }
+    }
+
+    /**
+     * 通信可能状態にする.
+     */
+    void enableConnection() {
+        DTVTLogger.start();
+        mIsCancel = false;
+        if (mClient != null) {
+            mClient.enableConnection();
         }
     }
 }

@@ -80,6 +80,7 @@ public class RentalVodListWebClient
      */
     public boolean getRentalVodListApi(final RentalVodListJsonParserCallback rentalVodListJsonParserCallback) {
         if (mIsCancel) {
+            DTVTLogger.error("RentalVodListWebClient is stopping connection");
             return false;
         }
 
@@ -122,5 +123,13 @@ public class RentalVodListWebClient
         DTVTLogger.start();
         mIsCancel = true;
         stopAllConnections();
+    }
+
+    /**
+     * 通信可能状態にする.
+     */
+    public void enableConnection() {
+        DTVTLogger.start();
+        mIsCancel = false;
     }
 }
