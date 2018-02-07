@@ -20,6 +20,7 @@
         android:paddingStart="@dimen/launch_text_left_padding"
         android:paddingEnd="@dimen/launch_text_right_padding"
         android:maxLines="1"
+        android:textStyle="bold"
         android:ellipsize="end"
         />
 

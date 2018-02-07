@@ -96,6 +96,7 @@
     <drawable name="color_white">#ffffff</drawable>
     <drawable name="color_black">#000000</drawable>
     <drawable name="color_gray">#4a4a4a</drawable>
+    <drawable name="setting_color_gray">#1d1d1d</drawable>
     <color name ="stb_select_black_color">@color/basic_text_color_black</color>
     <color name ="stb_select_white_color">#ffffff</color>
     <color name="stb_select_background_color">#1d1d1d</color>
@@ -112,6 +113,11 @@
     <color name="setting_list_background_color">#1c1c1c</color>
     <color name="setting_list_divider_color">#333333</color>
     <color name="setting_background_color_black">#000000</color>
+
+    <!--//ペアリング設定画面-->
+    <color name="paring_setting_list_divider_color">#333333</color>
+    <color name="paring_setting_help_text_color">#cc0033</color>
+    <color name="paring_setting_terminal_to_pair_text_color">#cccccc</color>
 
     <!--//マイ番組表設定-->
     <color name="item_num_black">#1d1d1d</color>
