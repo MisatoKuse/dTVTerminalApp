@@ -1108,6 +1108,61 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
+     * STBのサービスアプリ起動リクエスト処理を実行.
+     * ・ひかりTVのVOD
+     *
+     * @param licenseId
+     * @param cid
+     * @param crid
+     */
+    protected void requestStartApplicationHikariTvCategoryHikaritvVod(final String licenseId,
+                                                                      final String cid, final String crid) {
+        remoteControllerView.sendStartApplicationHikariTvCategoryHikaritvVodRequest(licenseId, cid, crid);
+    }
+
+    /**
+     * STBのサービスアプリ起動リクエスト処理を実行.
+     * ひかりTV内dTVのVOD
+     *
+     * @param episodeId
+     */
+    protected void requestStartApplicationHikariTvCategoryDtvVod(final String episodeId) {
+        remoteControllerView.sendStartApplicationHikariTvCategoryDtvVodRequest(episodeId);
+    }
+
+    /**
+     * STBのサービスアプリ起動リクエスト処理を実行.
+     * ひかりTV内VOD(dTV含む)のシリーズ
+     *
+     * @param crid
+     */
+    protected void requestStartApplicationHikariTvCategoryDtvSvod(final String crid) {
+        remoteControllerView.sendStartApplicationHikariTvCategoryDtvSvodRequest(crid);
+    }
+
+    /**
+     * STBのサービスアプリ起動リクエスト処理を実行.
+     * ひかりTV内dTVチャンネルの番組
+     * ひかりTV内dTVチャンネルの番組(見逃し、関連VOD予定だが未配信)
+     *
+     * @param chno
+     */
+    protected void requestStartApplicationHikariTvCategoryDtvchannelBroadcast(final String chno) {
+        remoteControllerView.sendStartApplicationHikariTvCategoryDtvchannelBroadcastRequest(chno);
+    }
+
+    /**
+     * STBのサービスアプリ起動リクエスト処理を実行.
+     * ひかりTV内dTVチャンネルの見逃し、関連VOD
+     *
+     * @param tvCid
+     */
+    protected void requestStartApplicationHikariTvCategoryDtvchannelMissed(final String tvCid) {
+        remoteControllerView.sendStartApplicationHikariTvCategoryDtvchannelMissedRequest(tvCid);
+
+    }
+
+    /**
      * リモコンUI画面を取得.
      *
      * @return RemoteControllerView
