@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.jni;
 
 import android.os.Handler;
 
+import com.digion.dixim.android.util.AribExternalCharConverter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 import java.util.ArrayList;
@@ -53,6 +54,8 @@ public class DlnaInterface {
     private DlnaBsChListInfo mDlnaBsChListInfo;
     private DlnaTerChListInfo mDlnaTerChListInfo;
     private Handler mHandler= new Handler();
+
+    private AribExternalCharConverter mAribExternalCharConverter = AribExternalCharConverter.getInstance();
 
     /**
      * 機能：デフォールト構造を禁止
@@ -369,7 +372,84 @@ public class DlnaInterface {
         if (null != mDlnaRecVideoListener) {
             DlnaRecVideoInfo info = DlnaRecVideoInfo.fromArrayList(content);
             if (null != info) {
+                aribConvertRecorded(info);
                 mDlnaRecVideoListener.onVideoBrows(info);
+            }
+        }
+    }
+
+    /**
+     * ARIB変換
+     * @param info info
+     */
+    private void aribConvertRecorded(DlnaRecVideoInfo info){
+        if(null == mAribExternalCharConverter){
+            mAribExternalCharConverter = AribExternalCharConverter.getInstance();
+        }
+        if(null == info || 0 == info.size() || null == mAribExternalCharConverter){
+            return;
+        }
+
+        for(DlnaRecVideoItem item: info.getRecordVideoLists()){
+            if(null!=item){
+                item.mTitle = mAribExternalCharConverter.getConverted(item.mTitle);
+            }
+        }
+    }
+
+    /**
+     * ARIB変換
+     * @param info info
+     */
+    private void aribConvertBs(DlnaBsChListInfo info){
+        if(null == mAribExternalCharConverter){
+            mAribExternalCharConverter = AribExternalCharConverter.getInstance();
+        }
+        if(null == info || 0 == info.size() || null == mAribExternalCharConverter){
+            return;
+        }
+
+        for(DlnaBsChListItem item: info.getBsChLists()){
+            if(null!=item){
+                item.mTitle = mAribExternalCharConverter.getConverted(item.mTitle);
+            }
+        }
+    }
+
+    /**
+     * ARIB変換
+     * @param info info
+     */
+    private void aribConvertTer(DlnaTerChListInfo info){
+        if(null == mAribExternalCharConverter){
+            mAribExternalCharConverter = AribExternalCharConverter.getInstance();
+        }
+        if(null == info || 0 == info.size() || null == mAribExternalCharConverter){
+            return;
+        }
+
+        for(DlnaTerChListItem item: info.getTerChLists()){
+            if(null!=item){
+                item.mTitle = mAribExternalCharConverter.getConverted(item.mTitle);
+            }
+        }
+    }
+
+    /**
+     * ARIB変換
+     * @param info info
+     */
+    private void aribConvertHikari(DlnaHikariChListInfo info){
+        if(null == mAribExternalCharConverter){
+            mAribExternalCharConverter = AribExternalCharConverter.getInstance();
+        }
+        if(null == info || 0 == info.size() || null == mAribExternalCharConverter){
+            return;
+        }
+
+        for(DlnaHikariChListItem item: info.getHikariChLists()){
+            if(null!=item){
+                item.mTitle = mAribExternalCharConverter.getConverted(item.mTitle);
             }
         }
     }
@@ -382,6 +462,7 @@ public class DlnaInterface {
         if (null != mDlnaBsChListListener) {
             DlnaBsChListInfo info = DlnaBsChListInfo.fromArrayList(content);
             if (null != info) {
+                aribConvertBs(info);
                 mDlnaBsChListListener.onListUpdate(info);
             }
         }
@@ -395,6 +476,7 @@ public class DlnaInterface {
         if (null != mDlnaTerChListListener) {
             DlnaTerChListInfo info = DlnaTerChListInfo.fromArrayList(content);
             if (null != info) {
+                aribConvertTer(info);
                 mDlnaTerChListListener.onListUpdate(info);
             }
         }
@@ -408,6 +490,7 @@ public class DlnaInterface {
         if (null != mDlnaHikariChListListener) {
             DlnaHikariChListInfo info = DlnaHikariChListInfo.fromArrayList(content);
             if (null != info) {
+                aribConvertHikari(info);
                 mDlnaHikariChListListener.onListUpdate(info);
             }
         }

@@ -73,7 +73,7 @@ public class DlnaTerChListInfo {
         return ret;
     }
 
-    public ArrayList<DlnaTerChListItem> getRecordVideoLists() {
+    public ArrayList<DlnaTerChListItem> getTerChLists() {
         return mLists;
     }
 }
