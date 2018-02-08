@@ -5,13 +5,14 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
-import android.text.TextUtils;
 
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.ServiceTokenData;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
-import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.TokenParser;
 
-import java.util.List;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * サービストークン取得APIの呼び出し.
@@ -21,15 +22,17 @@ public class ServiceTokenClient
 
     /**
      * 正常時識別パラメータ.
-     * 後の判定用にパブリック
+     * 自動リダイレクト処理を強制的に中断させる為、プロトコル名を敢えて不正な物にしている
      */
-    public static final String SUCCESS_STRING = "https%3a%2f%2fwww%2egoogle%2eco%2ejp";
+    //private static final String SUCCESS_STRING = "https://www.google.co.jp";
+    private static final String SUCCESS_STRING = "aaaa%3a%2f%2fwww%2egoogle%2eco%2ejp";
 
     /**
      * エラー時識別パラメータ.
-     * 後のエラー判定用にパブリック
+     * 自動リダイレクト処理を強制的に中断させる為、プロトコル名を敢えて不正な物にしている
      */
-    public static final String ERROR_STRING = "https%3a%2f%2fwww%2egoo%2ene%2ejp%2f";
+    //private static final String ERROR_STRING = "https://www.goo.ne.jp/";
+    private static final String ERROR_STRING = "bbbb%3a%2f%2fwww%2egoo%2ene%2ejp%2f";
 
     // 送信パラメータの最初の固定部
     private static final String FIRST_PARAMETER = "state=client=dremote urlok=";
@@ -42,23 +45,23 @@ public class ServiceTokenClient
 
     //統合送信パラメータ
     private static final String UNITE_SEND_PARAMETER = StringUtils.getConnectStrings(
-            FIRST_PARAMETER,SUCCESS_STRING,
-            SECOND_PARAMETER,ERROR_STRING,
+            FIRST_PARAMETER, SUCCESS_STRING,
+            SECOND_PARAMETER, ERROR_STRING,
             THIRD_PARAMETER);
 
     //コールバックのインスタンス
-    private TokenJsonParserCallback mTokenJsonParserCallback;
+    private TokenGetCallback mTokenGetCallback;
 
     /**
      * コールバック.
      */
-    public interface TokenJsonParserCallback {
+    public interface TokenGetCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 終了した場合に呼ばれるコールバック.
          *
-         * @param channelLists JSONパース後のデータ
+         * @param success 取得に成功した場合はtrue
          */
-        void onTokenJsonParsed(List<ServiceTokenData> channelLists);
+        void onTokenGot(boolean success);
     }
 
     /**
@@ -71,14 +74,42 @@ public class ServiceTokenClient
     }
 
     /**
+     * 結果識別用にOK URLをデコードして返却.
+     *
+     * @return デコード後のOK URL
+     */
+    public static String getOkUrlString() {
+        try {
+            //デコード
+            return URLDecoder.decode(SUCCESS_STRING, StandardCharsets.UTF_8.name());
+        } catch (UnsupportedEncodingException e) {
+            return "";
+        }
+    }
+
+    /**
+     * 結果識別用にNG URLをデコードして返却.
+     *
+     * @return デコード後のNG URL
+     */
+    public static String getNgUrlString() {
+        try {
+            //デコード
+            return URLDecoder.decode(ERROR_STRING, StandardCharsets.UTF_8.name());
+        } catch (UnsupportedEncodingException e) {
+            return "";
+        }
+    }
+
+    /**
      * 通信成功時のコールバック.
      *
      * @param returnCode 戻り値構造体
      */
     @Override
     public void onAnswer(ReturnCode returnCode) {
-        //JSONをパースして、データを返す
-        new TokenParser(mTokenJsonParserCallback).execute(returnCode.bodyData);
+        //取得に成功したので、trueを返す
+        mTokenGetCallback.onTokenGot(true);
     }
 
     /**
@@ -88,27 +119,27 @@ public class ServiceTokenClient
      */
     @Override
     public void onError(ReturnCode returnCode) {
-        //エラーが発生したのでヌルを返す
-        mTokenJsonParserCallback.onTokenJsonParsed(null);
+        //エラーが発生したのでfalseを返す
+        mTokenGetCallback.onTokenGot(false);
     }
 
     /**
      * サービストークン取得.
      *
-     * @param oneTimePass             ワンタイムパスワード
-     * @param tokenJsonParserCallback コールバック
+     * @param oneTimePass      ワンタイムパスワード
+     * @param tokenGetCallback コールバック
      * @return パラメータエラー等が発生した場合はfalse
      */
     public boolean getServiceTokenApi(String oneTimePass,
-                                      TokenJsonParserCallback tokenJsonParserCallback) {
+                                      TokenGetCallback tokenGetCallback) {
         //パラメーターのチェック
-        if (!checkNormalParameter(oneTimePass, tokenJsonParserCallback)) {
+        if (!checkNormalParameter(oneTimePass, tokenGetCallback)) {
             //パラメーターがおかしければ通信不能なので、falseで帰る
             return false;
         }
 
         //コールバックの設定
-        mTokenJsonParserCallback = tokenJsonParserCallback;
+        mTokenGetCallback = tokenGetCallback;
 
         //送信用パラメータの作成
         String sendParameter = makeSendParameter(oneTimePass);
@@ -133,7 +164,7 @@ public class ServiceTokenClient
      * @return 値がおかしいならばfalse
      */
     private boolean checkNormalParameter(String oneTimePass,
-                                         TokenJsonParserCallback channelJsonParserCallback) {
+                                         TokenGetCallback channelJsonParserCallback) {
         if (oneTimePass == null || oneTimePass.isEmpty()) {
             //ワンタイムパスワードがヌルや空文字ならばエラー
             return false;
@@ -155,11 +186,15 @@ public class ServiceTokenClient
      * @return 組み立て後の文字列
      */
     private String makeSendParameter(String oneTimePass) {
-        String answerText;
+        String answerText = null;
 
         //送信パラメータの作成
-        answerText = StringUtils.getConnectStrings(UNITE_SEND_PARAMETER,
-                TextUtils.htmlEncode(oneTimePass));
+        try {
+            answerText = StringUtils.getConnectStrings(UNITE_SEND_PARAMETER,
+                    URLEncoder.encode(oneTimePass, StandardCharsets.UTF_8.name()));
+        } catch (UnsupportedEncodingException e) {
+            DTVTLogger.debug(e);
+        }
 
         return answerText;
     }
