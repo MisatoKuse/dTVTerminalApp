@@ -11,7 +11,7 @@ package com.nttdocomo.android.tvterminalapp.jni;
 public class DlnaProvDevList {
 
     /**
-     * 機能：DlnaProvDevListを構造
+     * 機能：DlnaProvDevListのコンストラクタ
      */
     public DlnaProvDevList() {
 
@@ -29,7 +29,7 @@ public class DlnaProvDevList {
     }
 
     /**
-     * 機能：指定するudnのdmsが存在しるか
+     * 機能：指定するudnのdmsが存在するか
      * @param udn udn
      * @return 存在しるか
      */
