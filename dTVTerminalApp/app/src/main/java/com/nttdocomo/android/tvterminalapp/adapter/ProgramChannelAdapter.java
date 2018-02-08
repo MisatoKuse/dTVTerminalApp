@@ -16,7 +16,6 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.TvProgramListActivity;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
-import com.nttdocomo.android.tvterminalapp.view.ChannelItemClickListener;
 
 import java.util.ArrayList;
 
@@ -26,7 +25,6 @@ public class ProgramChannelAdapter extends
     private LayoutInflater mInflater;
     private ArrayList<ChannelInfo> channelList;
     private int screenWidth = 0;
-    private ChannelItemClickListener channelItemClickListener;
     private static final int TIME_LINE_WIDTH = 44;
 
 
@@ -51,17 +49,9 @@ public class ProgramChannelAdapter extends
                 mContext.dip2px(TIME_LINE_WIDTH));
         layoutParams.gravity = Gravity.CENTER;
         view.setLayoutParams(layoutParams);
-        ViewHolder viewHolder = new ViewHolder(view, channelItemClickListener);
+        ViewHolder viewHolder = new ViewHolder(view);
         viewHolder.channelText = view.findViewById(R.id.tv_program_channel_list_item_layout_content);
         return viewHolder;
-    }
-
-    /**
-     * リスナーを設定
-     * @param listener リスナー
-     */
-    public void setOnItemClickListener(ChannelItemClickListener listener){
-        this.channelItemClickListener = listener;
     }
 
     @Override
@@ -69,20 +59,10 @@ public class ProgramChannelAdapter extends
         viewHolder.channelText.setText(channelList.get(i).getTitle());
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private ChannelItemClickListener mOnItemListener;
+    static class ViewHolder extends RecyclerView.ViewHolder {
 
-        ViewHolder(View view, ChannelItemClickListener mOnItemListener) {
+        ViewHolder(View view) {
             super(view);
-            this.mOnItemListener = mOnItemListener;
-            view.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            if(mOnItemListener != null){
-                mOnItemListener.onChannelItemClick(v, getAdapterPosition());
-            }
         }
 
         TextView channelText;
