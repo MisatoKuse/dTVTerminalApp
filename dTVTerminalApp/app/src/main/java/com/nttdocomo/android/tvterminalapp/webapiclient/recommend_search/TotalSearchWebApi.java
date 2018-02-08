@@ -15,18 +15,41 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.WebApiBase;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-
+/**
+ * 検索WebApi.
+ */
 public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, SearchXmlParser.XMLParserFinishListener {
 
-    private TotalSearchWebApiDelegate delegate;
+    /**
+     * callback.
+     */
+    private TotalSearchWebApiDelegate mDelegate = null;
 
-    String genreFilterString = "";
-    String dubbedFilterString = "";
-    String chargeFilterString = "";
-    String otherFilterString = "";
+    /**
+     * ジャンルフィルター.
+     */
+    private String mGenreFilterString = "";
+    /**
+     * ダビングフィルター.
+     */
+    private String mDubbedFilterString = "";
+    /**
+     * 料金フィルター.
+     */
+    private String mChargeFilterString = "";
+    /**
+     * その他フィルター.
+     */
+    private String mOtherFilterString = "";
 
+    /**
+     * リクエストパラメータ"displayId"固定値.
+     */
+    private static final String SEARCH_WEBAPI_PARAM_DISPLAY_ID = "SEA0000001";
 
-    //SSLチェック用コンテキスト
+    /**
+     * SSLチェック用コンテキスト.
+     */
     private Context mContext;
 
     /**
@@ -34,18 +57,28 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
      *
      * @param context コンテキスト
      */
-    public TotalSearchWebApi(Context context) {
+    public TotalSearchWebApi(final Context context) {
         //コンテキストの退避
         mContext = context;
     }
-    public void setDelegate(TotalSearchWebApiDelegate de){
+
+    /**
+     * callbackセット.
+     *
+     * @param de コールバック
+     */
+    public void setDelegate(final TotalSearchWebApiDelegate de) {
         synchronized (this) {
-            delegate = de;
+            mDelegate = de;
         }
     }
 
-    // 1.request
-    public void request(TotalSearchRequestData requestData){
+    /**
+     * request.
+     *
+     * @param requestData リクエストデータ.
+     */
+    public void request(final TotalSearchRequestData requestData) {
 
         DTVTLogger.debug("request");
 
@@ -54,24 +87,24 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
 
         LinkedHashMap<String, String> queryItems = new LinkedHashMap<>();
         queryItems.put(SearchRequestKey.kUserId, data.userId);
-        queryItems.put(SearchRequestKey.kFunction, data.function.value()+"");   //ok
+        queryItems.put(SearchRequestKey.kFunction, data.function.value() + "");   //ok
         //queryItems.put(SearchRequestKey.kFunction, new String(2+""));   //ng for test
         queryItems.put(SearchRequestKey.kResponseType, String.valueOf(data.responseType.ordinal() + 1));
         queryItems.put(SearchRequestKey.kQuery, data.query);
         queryItems.put(SearchRequestKey.kStartIndex, String.valueOf(data.startIndex));
         queryItems.put(SearchRequestKey.kMaxResult, String.valueOf(data.maxResult));
 
-        String serviceId= data.serviceId;
+        String serviceId = data.serviceId;
         queryItems.put(SearchRequestKey.kServiceId, serviceId);
 
-        String categoryId= data.categoryId;
+        String categoryId = data.categoryId;
         queryItems.put(SearchRequestKey.kCategoryId, categoryId);
 
         int sortKind = data.sortKind;
-        queryItems.put(SearchRequestKey.kSortKind, sortKind+"");
+        queryItems.put(SearchRequestKey.kSortKind, sortKind + "");
 
-        ArrayList<SearchFilterType> filterList =requestData.filterTypeList;
-        for( SearchFilterType type : filterList) {
+        ArrayList<SearchFilterType> filterList = requestData.filterTypeList;
+        for (SearchFilterType type : filterList) {
             appendString(type);
         }
         queryItems.put(SearchRequestKey.kCondition, concatFilterString());
@@ -81,117 +114,132 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
         if (filterViewableAge != null) {
             queryItems.put(SearchRequestKey.kFilterViewableAge, filterViewableAge);
         }
+        //固定値のため直接指定する
+        queryItems.put(SearchRequestKey.kDisplayId, SEARCH_WEBAPI_PARAM_DISPLAY_ID);
 
         get(UrlConstants.WebApiUrl.TOTAL_SEARCH_URL, queryItems, this, mContext);
     }
 
-    // MARK : - private method
+    /**
+     * フィルター文字列連結.
+     *
+     * @return フィルター文字列
+     */
     private String concatFilterString() {
         String resultString = "";
-        if(!genreFilterString.isEmpty()) {
-            resultString +=genreFilterString;
+        if (!mGenreFilterString.isEmpty()) {
+            resultString += mGenreFilterString;
         }
-        if(!dubbedFilterString.isEmpty()) {
-            if(resultString.isEmpty()){
-                resultString += dubbedFilterString;
+        if (!mDubbedFilterString.isEmpty()) {
+            if (resultString.isEmpty()) {
+                resultString += mDubbedFilterString;
             } else {
                 resultString += "+";
-                resultString +=dubbedFilterString;
+                resultString += mDubbedFilterString;
             }
         }
-        if(!chargeFilterString.isEmpty()) {
-            if(resultString.isEmpty()){
-                resultString +=chargeFilterString;
+        if (!mChargeFilterString.isEmpty()) {
+            if (resultString.isEmpty()) {
+                resultString += mChargeFilterString;
             } else {
-                resultString +="+";
-                resultString +="chargeFilterString";
+                resultString += "+";
+                resultString += "mChargeFilterString";
             }
         }
-        if(!otherFilterString.isEmpty()){
-            if(resultString.isEmpty()){
-                resultString+=otherFilterString;
+        if (!mOtherFilterString.isEmpty()) {
+            if (resultString.isEmpty()) {
+                resultString += mOtherFilterString;
             } else {
-                resultString+="+";
-                resultString+=otherFilterString;
+                resultString += "+";
+                resultString += mOtherFilterString;
             }
         }
-        genreFilterString = "";
-        dubbedFilterString = "";
-        chargeFilterString = "";
-        otherFilterString = "";
+        mGenreFilterString = "";
+        mDubbedFilterString = "";
+        mChargeFilterString = "";
+        mOtherFilterString = "";
         return resultString;
     }
 
-    private void appendString(SearchFilterType addType){
+    /**
+     * 各フィルター文字列設定.
+     * @param addType 各フィルター文字列
+     */
+    private void appendString(final SearchFilterType addType) {
         switch (addType) {
-        case genreMovie:
-            genreFilterString = "genre:" + getValueFromFilterType(addType);
-            break;
-        case dubbedText:
-        case dubbedTextAndDubbing:
-        case dubbedDubbed:
-            if(dubbedFilterString.isEmpty()) {
-                dubbedFilterString = "dubbed:" + getValueFromFilterType(addType);
-            } else {
-                dubbedFilterString+=",";
-                dubbedFilterString +=(getValueFromFilterType(addType));
-            }
-            break;
-        case chargeUnlimited:
-        case chargeRental:
-            if(chargeFilterString.isEmpty()) {
-                chargeFilterString = "charge:" + getValueFromFilterType(addType);
-            } else {
-                chargeFilterString +=",";
-                chargeFilterString +=(getValueFromFilterType(addType));
-            }
-            break;
-        case otherHdWork:
-            otherFilterString = "other:" + getValueFromFilterType(addType);
+            case genreMovie:
+                mGenreFilterString = "genre:" + getValueFromFilterType(addType);
+                break;
+            case dubbedText:
+            case dubbedTextAndDubbing:
+            case dubbedDubbed:
+                if (mDubbedFilterString.isEmpty()) {
+                    mDubbedFilterString = "dubbed:" + getValueFromFilterType(addType);
+                } else {
+                    mDubbedFilterString += ",";
+                    mDubbedFilterString += (getValueFromFilterType(addType));
+                }
+                break;
+            case chargeUnlimited:
+            case chargeRental:
+                if (mChargeFilterString.isEmpty()) {
+                    mChargeFilterString = "charge:" + getValueFromFilterType(addType);
+                } else {
+                    mChargeFilterString += ",";
+                    mChargeFilterString += (getValueFromFilterType(addType));
+                }
+                break;
+            case otherHdWork:
+                mOtherFilterString = "other:" + getValueFromFilterType(addType);
         }
 
     }
 
-    private String getValueFromFilterType(SearchFilterType type) {
+    /**
+     * フィルタータイプ返却.
+     * @param type フィルタータイプ
+     * @return フィルタータイプ
+     */
+    private String getValueFromFilterType(final SearchFilterType type) {
         switch (type) {
-        case genreMovie:
-            return "active_v001";
-        case dubbedText:
-            return "1";
-        case dubbedDubbed:
-            return "2";
-        case dubbedTextAndDubbing:
-            return "3";
-        case chargeUnlimited:
-            return "0";
-        case chargeRental:
-            return "1";
-        case otherHdWork:
-            return "1";
+            case genreMovie:
+                return "active_v001";
+            case dubbedText:
+                return "1";
+            case dubbedDubbed:
+                return "2";
+            case dubbedTextAndDubbing:
+                return "3";
+            case chargeUnlimited:
+                return "0";
+            case chargeRental:
+                return "1";
+            case otherHdWork:
+                return "1";
         }
         return "1"; //test
     }
 
     @Override
-    public void onFinish(String responseData) {
-        String str= responseData;
-        if(null==responseData || 0==responseData.length()){
+    public void onFinish(final String responseData) {
+        String str = responseData;
+        if (null == responseData || 0 == responseData.length()) {
             str = "";
         }
         new SearchXmlParser(this).execute(str);
     }
 
     @Override
-    public void onXMLParserFinish(TotalSearchResponseData responseData) {
-        if(null!=delegate) {
-            delegate.onSuccess(responseData);
+    public void onXMLParserFinish(final TotalSearchResponseData responseData) {
+        if (null != mDelegate) {
+            mDelegate.onSuccess(responseData);
         }
     }
 
     @Override
-    public void onXMLParserError(TotalSearchErrorData errorData) {
-        if(null!=delegate) {
-            delegate.onFailure(errorData);
+    public void onXMLParserError(final TotalSearchErrorData errorData) {
+        if (null != mDelegate) {
+            mDelegate.onFailure(errorData);
         }
     }
 }
