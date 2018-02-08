@@ -56,6 +56,10 @@ public class TotalSearchResponseData {
          * タイトル.
          */
         String title;
+        /**
+         * mobileViewingFlg モバイル視聴可否フラグ
+         */
+        String  mobileViewingFlg;
         //String person;    //iosソースより、保留
         //int titleKind;    //iosソースより、保留
     }
@@ -111,7 +115,7 @@ public class TotalSearchResponseData {
         }
         for (Content content: contentList) {
             SearchContentInfo info = new SearchContentInfo(false, content.ctId, content.serviceId,
-                    content.ctPicURL1, content.ctPicURL2, content.title, content.rank);
+                    content.ctPicURL1, content.ctPicURL2, content.title, content.rank, content.mobileViewingFlg);
             searchContentInfoArray.add(info);
         }
     }

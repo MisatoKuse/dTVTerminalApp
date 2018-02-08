@@ -229,6 +229,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         detailData.setComment(info.getComment());
         detailData.setHighlight(info.getHighlight());
         detailData.setServiceId(Integer.parseInt(info.getServiceId()));
+        detailData.setMobileViewingFlg(info.getMobileViewingFlg());
 
         //コンテンツIDの受け渡しを追加
         detailData.setContentId(info.getContentsId());

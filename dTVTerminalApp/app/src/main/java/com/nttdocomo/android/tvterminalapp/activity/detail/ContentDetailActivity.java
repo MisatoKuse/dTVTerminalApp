@@ -170,6 +170,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     private static final int CONTENTS_DETAIL_TAB_TEXT_SIZE = 15;
     private static final int CONTENTS_DETAIL_TAB_OTHER_MARGIN = 0;
     private static final String CONTENTS_DETAIL_RESERVEDID = "1";
+    private static final String MOBILEVIEWINGFLG_FLAG_ZERO = "0";
     private int mDateIndex = 0;
     private String dateList[] = null;
 
@@ -1775,32 +1776,34 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             }
             if (mDetailData == null) {
                 mDetailData = mIntent.getParcelableExtra(PLALA_INFO_BUNDLE_KEY);
-                if (mDetailData != null) {
-                    // TODO: 2018/01/12 契約状態判定
-                    setThumbnailText(getResources().getString(R.string.dtv_content_service_start_text));
-                }
             } else {
-                if (mDetailData.getServiceId() == OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID) {
-                    String mDispType = mDetailFullData.getDisp_type();
-                    for (int i = 0; i < mDispTypes.length; i++) {
-                        if (mDispTypes[i].equals(mDispType)) {
-                            //ひかりTV中にDTVの場合
-                            if (METARESPONSE1.equals(mDetailFullData.getDtv())) {
-                                setThumbnailText(getResources().getString(R.string.dtv_content_service_start_text));
+                //「mobileViewingFlg」が「0」の場合モバイル視聴不可
+                if (MOBILEVIEWINGFLG_FLAG_ZERO.equals(mDetailData.getMobileViewingFlg())) {
+                    setThumbnailText(getResources().getString(R.string.contents_detail_thumbnail_text));
+                    mThumbnailBtn.setEnabled(false);
+                } else {
+                    if (mDetailData.getServiceId() == OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID) {
+                        String mDispType = mDetailData.getDispType();
+                        for (int i = 0; i < mDispTypes.length; i++) {
+                            if (mDispTypes[i].equals(mDispType)) {
+                                //ひかりTV中にDTVの場合
+                                if (METARESPONSE1.equals(mDetailFullData.getDtv())) {
+                                    setThumbnailText(getResources().getString(R.string.dtv_content_service_start_text));
+                                }
                             }
                         }
-                    }
-                    //ｄアニメストアの場合
-                } else if (mDetailData.getServiceId() == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID) {
-                    setThumbnailText(getResources().getString(R.string.d_anime_store_content_service_start_text));
-                    //ｄTVの場合
-                } else if (mDetailData.getServiceId() == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID) {
-                    //DTVコンテンツ　「reserved2」が「1」　Androidのモバイル視聴不可
-                    if (CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved2())) {
-                        setThumbnailText(getResources().getString(R.string.contents_detail_thumbnail_text));
-                        mThumbnailBtn.setEnabled(false);
-                    } else {
-                        setThumbnailText(getResources().getString(R.string.dtv_content_service_start_text));
+                        //ｄアニメストアの場合
+                    } else if (mDetailData.getServiceId() == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID) {
+                        setThumbnailText(getResources().getString(R.string.d_anime_store_content_service_start_text));
+                        //ｄTVの場合
+                    } else if (mDetailData.getServiceId() == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID) {
+                        //DTVコンテンツ　「reserved2」が「1」　Androidのモバイル視聴不可
+                        if (CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved2())) {
+                            setThumbnailText(getResources().getString(R.string.contents_detail_thumbnail_text));
+                            mThumbnailBtn.setEnabled(false);
+                        } else {
+                            setThumbnailText(getResources().getString(R.string.dtv_content_service_start_text));
+                        }
                     }
                 }
             }
@@ -2291,7 +2294,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                                             //一致した「active_list」の「valid_end_date」> 現在時刻の場合
                                             if (activeData.getValidEndDate() > DateUtils.getNowTimeFormatEpoch()) {
                                                 // TODO: 2018/02/08  license_idが複数ある場合は「valid_end_date」が一番長い「license_id」を指定する
-//
+
                                                 requestStartApplicationHikariTvCategoryHikaritvVod(activeData.getLicenseId(),
                                                         mDetailFullData.getCid(), mDetailFullData.getCrid());
                                             }
