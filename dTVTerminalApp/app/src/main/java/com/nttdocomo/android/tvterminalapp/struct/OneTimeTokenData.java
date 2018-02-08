@@ -15,13 +15,13 @@ import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
  */
 public class OneTimeTokenData {
     //ワンタイムトークンのデータ分離用文字列
-    private static final String ONE_TIME_TOKEN_SPRITTER = "|";
+    private static final String ONE_TIME_TOKEN_SPLITTER = "/";
 
     //ワンタイムトークンのパラメータ順
-    private final int ONE_TIME_TOKEN_POSITION = 0;
+    private static final int ONE_TIME_TOKEN_POSITION = 0;
 
     //ワンタイムトークン取得日時のパラメータ順
-    private final int ONE_TIME_TOKEN_TIME_POSITION = 1;
+    private static final int ONE_TIME_TOKEN_TIME_POSITION = 1;
 
     //ワンタイムトークン
     private String mOneTimeToken;
@@ -56,6 +56,11 @@ public class OneTimeTokenData {
         mOneTimeToken = oneTimeToken;
     }
 
+    /**
+     * ワンタイムトークン使用期限のエポック秒.
+     *
+     * @return 使用期限のエポック秒
+     */
     public long getOneTimeTokenGetTime() {
         return mOneTimeTokenTime;
     }
@@ -68,9 +73,9 @@ public class OneTimeTokenData {
     /**
      * 値の初期化.
      */
-    void initData() {
+    private void initData() {
         mOneTimeToken = "";
-        mOneTimeTokenTime = Long.MIN_VALUE;
+        mOneTimeTokenTime = Long.MAX_VALUE;
     }
 
     /**
@@ -80,13 +85,13 @@ public class OneTimeTokenData {
      */
     public void analyzeOneTimeTokenString(String source) {
         //値が空か、分割できないならば初期化して帰る
-        if (TextUtils.isEmpty(source) || source.contains(ONE_TIME_TOKEN_SPRITTER)) {
+        if (TextUtils.isEmpty(source) || source.contains(ONE_TIME_TOKEN_SPLITTER)) {
             initData();
             return;
         }
 
         //元の文字列を分割する
-        String[] buffer = source.split(ONE_TIME_TOKEN_SPRITTER);
+        String[] buffer = source.split(ONE_TIME_TOKEN_SPLITTER);
 
         //トークンを取得
         mOneTimeToken = buffer[ONE_TIME_TOKEN_POSITION];
@@ -97,8 +102,8 @@ public class OneTimeTokenData {
             mOneTimeTokenTime = Long.parseLong(
                     buffer[ONE_TIME_TOKEN_TIME_POSITION]);
         } else {
-            //数字ではなかったので、最小値にする
-            mOneTimeTokenTime = Long.MIN_VALUE;
+            //数字ではなかったので、最大値にする
+            mOneTimeTokenTime = Long.MAX_VALUE;
         }
     }
 
@@ -109,7 +114,7 @@ public class OneTimeTokenData {
      */
     public String makeOneTimeTokenString() {
         //書き込み文字列の作成
-        String buffer = StringUtils.getConnectStrings(mOneTimeToken, ONE_TIME_TOKEN_SPRITTER,
+        String buffer = StringUtils.getConnectStrings(mOneTimeToken, ONE_TIME_TOKEN_SPLITTER,
                 String.valueOf(mOneTimeTokenTime));
 
         //整形下したデータを返す

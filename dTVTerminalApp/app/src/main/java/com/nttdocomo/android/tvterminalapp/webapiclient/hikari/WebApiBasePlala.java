@@ -15,7 +15,6 @@ import com.nttdocomo.android.ocsplib.exception.OcspParameterException;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.ServiceTokenData;
 import com.nttdocomo.android.tvterminalapp.struct.OneTimeTokenData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
@@ -28,6 +27,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
+import java.net.CookieStore;
+import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
@@ -69,13 +73,15 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
     private String mAnswerBuffer = "";
 
     //ワンタイムトークン情報
-    OneTimeTokenData mOneTimeTokenData = null;
+    private OneTimeTokenData mOneTimeTokenData = null;
+
+    //クッキーマネージャー
+    private CookieManager mCookieManager;
 
     //リクエスト種別・基本はPOST
     private static final String REQUEST_METHOD = "POST";
     //リダイレクト処理用にGETも定義
     private static final String REQUEST_METHOD_GET = "GET";
-
 
     //文字種別 UTF-8
     private static final String UTF8_CHARACTER_SET = "UTF-8";
@@ -93,10 +99,13 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
     //TODO: 当面ワンタイムトークンは固定値とするので、その値
     private static final String INTERIM_ONE_TIME_TOKEN = "test";
 
+    //サービストークンのクッキーでのキー名
+    private static final String SERVICE_TOKEN_KEY_NAME = "daccount_auth";
+
     // 日付形式判定用
     private static final String DATE_PATTERN = "yyyyMMdd";
 
-    //リダイレクト用飛び先取得
+    //リダイレクト用飛び先関連情報取得
     private static final String REDIRECT_JUMP_URL_GET = "Location";
 
     /**
@@ -437,8 +446,8 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
         //ワンタイムトークンの情報を取得する
         mOneTimeTokenData = SharedPreferencesUtils.getOneTimeTokenData(mContext);
 
-        //ワンタイムトークンの取得後1時間が経過している可能化の確認
-        if (mOneTimeTokenData.getOneTimeTokenGetTime() + DateUtils.EPOCH_TIME_ONE_HOUR <
+        //ワンタイムトークンの期限切れ確認
+        if (mOneTimeTokenData.getOneTimeTokenGetTime()  <
                 DateUtils.getNowTimeFormatEpoch()) {
             //期限切れなので、ワンタイムパスワードの取得を起動
             getOneTimePassword(mContext);
@@ -484,29 +493,50 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
 
     @Override
     public void getOttCallBack(int result, String id, String oneTimePassword) {
+        //ワンタイムトークンが期限内ならば、そのまま使用する
+        OneTimeTokenData tokenData = SharedPreferencesUtils.getOneTimeTokenData(mContext);
+
+        //期限内ならば、そのまま使用する
+        if (tokenData.getOneTimeTokenGetTime() < DateUtils.getNowTimeFormatEpoch()) {
+            //取得済みのトークンを使用する
+            mCommunicationTask.setOneTimeToken(tokenData.getOneTimeToken());
+
+            //結果格納構造体の作成
+            ReturnCode returnCode = new ReturnCode();
+
+            //ワンタイムトークンの取得結果を元にして、通信を開始する
+            mCommunicationTask.execute(returnCode);
+            return;
+        }
+
+
         //ワンタイムトークンとその取得時間を取得する
         ServiceTokenClient tokenClient = new ServiceTokenClient(mContext);
 
-        boolean answer = tokenClient.getServiceTokenApi(oneTimePassword, new ServiceTokenClient.TokenJsonParserCallback() {
-            @Override
-            public void onTokenJsonParsed(List<ServiceTokenData> channelLists) {
-                //トークンの値をダミー値で初期化
-                String tokenData = INTERIM_ONE_TIME_TOKEN;
+        boolean answer = tokenClient.getServiceTokenApi(oneTimePassword,
+                new ServiceTokenClient.TokenGetCallback() {
+                    @Override
+                    public void onTokenGot(boolean successFlag) {
+                        //トークンの値をダミー値で初期化
+                        String tokenData = INTERIM_ONE_TIME_TOKEN;
 
-                //結果に値があるかを確認
-                if (channelLists != null && !channelLists.isEmpty()) {
-                    //TODO: トークンを取り出してセットする
-                }
+                        //結果に値があるかを確認
+                        if (successFlag) {
+                            //値があったので、セット
+                            mCommunicationTask.setOneTimeToken(
+                                    SharedPreferencesUtils.getOneTimeTokenData(mContext).getOneTimeToken());
+                        } else {
+                            //値が無いのでリセット
+                            mCommunicationTask.setOneTimeToken("");
+                        }
 
-                mCommunicationTask.setOneTimeToken(INTERIM_ONE_TIME_TOKEN);
+                        //結果格納構造体の作成
+                        ReturnCode returnCode = new ReturnCode();
 
-                //結果格納構造体の作成
-                ReturnCode returnCode = new ReturnCode();
-
-                //ワンタイムトークンの取得結果を元にして、通信を開始する
-                mCommunicationTask.execute(returnCode);
-            }
-        });
+                        //ワンタイムトークンの取得結果を元にして、通信を開始する
+                        mCommunicationTask.execute(returnCode);
+                    }
+                });
 
         if (!answer) {
             mCommunicationTask.setOneTimeToken(INTERIM_ONE_TIME_TOKEN);
@@ -603,18 +633,21 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      *
      * @param newUrlString 飛び先URL
      * @param parameter    使用するパラメータ・使用しない場合はヌルか空文字
-     * @param cookie       使用するクッキー・使用しない場合はヌルか空文字
      */
-    private void gotoRedirect(String newUrlString, String parameter, String cookie) {
+    private void gotoRedirect(String newUrlString, String parameter) {
+        DTVTLogger.start();
+
         HttpsURLConnection httpsConnection = null;
         try {
+            //指定された名前であらたなコネクションを開く
             httpsConnection = (HttpsURLConnection) new URL(newUrlString).openConnection();
             httpsConnection.setDoOutput(true);
             httpsConnection.setDoInput(true);
 
+            //DTVTLogger.debug("newHeader=" + httpsConnection.getHeaderFields().toString());
+            //コンテントタイプの設定
             httpsConnection.setRequestProperty(CONTENT_TYPE_KEY_TEXT,
                     ONE_TIME_TOKEN_GET_CONTENT_TYPE);
-
             if (TextUtils.isEmpty(parameter)) {
                 //パラメータをgetで送る
                 httpsConnection.setRequestMethod(REQUEST_METHOD_GET);
@@ -629,41 +662,38 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                 httpsConnection.setRequestMethod(REQUEST_METHOD);
             }
 
-            //クッキーが指定されていれば使用する
-            if (!TextUtils.isEmpty(cookie)) {
-                httpsConnection.setRequestProperty("Cookie", cookie);
-            }
-
-            //自動リダイレクトを無効化する
-            HttpsURLConnection.setDefaultAllowUserInteraction(false);
-            httpsConnection.setInstanceFollowRedirects(false);
+            //自動リダイレクトを有効化する
+            HttpsURLConnection.setDefaultAllowUserInteraction(true);
+            httpsConnection.setInstanceFollowRedirects(true);
 
             httpsConnection.connect();
+            DTVTLogger.debug("header=" + httpsConnection.getHeaderFields().toString());
 
             //ステータスを取得する
             int status = httpsConnection.getResponseCode();
             DTVTLogger.debug("status=" + status);
 
-            //新たな飛び先とクッキーを取得する
+            //新たな飛び先を取得する
             String newUrl = httpsConnection.getHeaderField(REDIRECT_JUMP_URL_GET);
-            String cookies = httpsConnection.getHeaderField("Set-Cookie");
 
             DTVTLogger.debug("newUrl=" + newUrl);
-            DTVTLogger.debug("cookies=" + cookies);
 
-            //レスポンスを取得
-            String answerString = getAnswer(httpsConnection);
-            DTVTLogger.debug("answer String =" + answerString);
-
-            //リダイレクトのステータスならば、取得したURLで再度呼び出し
+            //リダイレクトのステータスを判定
             if (isRedirectCode(status)) {
-                gotoRedirect(newUrl, "", cookies);
-                httpsConnection.disconnect();
-                return;
+                if (newUrl.contains(ServiceTokenClient.getOkUrlString()) ||
+                        newUrl.contains(ServiceTokenClient.getNgUrlString())) {
+                    //リダイレクトで、ロケーションがOKかNGに指定したURLならば、サービストークン取得処理へ遷移
+                    getServiceToken(newUrl, httpsConnection);
+                    //コネクションを閉じる
+                    httpsConnection.disconnect();
+                    return;
+                } else {
+                    //リダイレクトかつ、OKとNGのURLではないならば、取得したURLで再度呼び出し
+                    gotoRedirect(newUrl, "");
+                    httpsConnection.disconnect();
+                    return;
+                }
             }
-
-            //TODO: 正常に処理が終えられた場合に、サービストークンを取得する処理がここにくる
-            //今のところ正常動作が実現していないので、未着手
 
         } catch (IOException e) {
             DTVTLogger.debug(e);
@@ -679,6 +709,54 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
     }
 
     /**
+     * 返ってきたロケーションが最初にこちらで指定したURLだった場合の処理.
+     *
+     * @param location 取得したロケーション
+     */
+    private void getServiceToken(String location, HttpsURLConnection httpsConnection) {
+        //クッキー情報のバッファ
+        String serviceToken = "";
+        long serviceTokenMaxAge = 0;
+
+        if (location.contains(ServiceTokenClient.getOkUrlString())) {
+            //正常にサービストークンが取得できた場合はクッキーを取得
+            CookieStore cookieStore = mCookieManager.getCookieStore();
+            List<HttpCookie> cookies = cookieStore.getCookies();
+
+            //取得したクッキーの数だけ回る
+            for (HttpCookie cookie : cookies) {
+                //サービストークンを見つける
+                if (cookie.getName().equals(SERVICE_TOKEN_KEY_NAME)) {
+                    OneTimeTokenData oneTimeTokenData = new OneTimeTokenData();
+
+                    //見つけたので蓄積
+                    serviceToken = cookie.getValue();
+                    serviceTokenMaxAge = cookie.getMaxAge();
+
+                    //取得した時間は生存秒数なので、ミリ秒の無効化予定時間を算出する
+                    serviceTokenMaxAge = (serviceTokenMaxAge * 1000) +
+                            DateUtils.getNowTimeFormatEpoch();
+
+                    oneTimeTokenData.setOneTimeToken(serviceToken);
+                    oneTimeTokenData.setOneTimeTokenGetTime(serviceTokenMaxAge);
+
+                    //プリファレンスに書き込み
+                    SharedPreferencesUtils.setOneTimeTokenData(mContext, oneTimeTokenData);
+                    break;
+                }
+            }
+
+            if (serviceToken.isEmpty()) {
+                //サービストークンは見つからなかったので、エラーコードを設定する
+                mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
+            }
+        } else {
+            //なんらかの異常があった場合はエラーコードを設定
+            mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
+        }
+    }
+
+    /**
      * HTTPSのコネクションのレスポンスを取得.
      *
      * @param connection HTTPSのコネクション
@@ -687,11 +765,12 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
     private String getAnswer(HttpsURLConnection connection) {
         InputStream stream = null;
         StringBuilder stringBuilder = new StringBuilder();
+        BufferedReader bufferedReader = null;
         try {
             stream = connection.getInputStream();
             String lineBuffer;
             InputStreamReader inputStreamReader = new InputStreamReader(stream, UTF8_CHARACTER_SET);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            bufferedReader = new BufferedReader(inputStreamReader);
             //内容が尽きるまで蓄積する
             while ((lineBuffer = bufferedReader.readLine()) != null) {
                 stringBuilder.append(lineBuffer);
@@ -705,6 +784,14 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
         } catch (IOException e) {
             //エラーコードを設定する
             mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
+        } finally {
+            if (bufferedReader != null) {
+                try {
+                    bufferedReader.close();
+                } catch (IOException e) {
+                    DTVTLogger.debug(e);
+                }
+            }
         }
 
         return stringBuilder.toString();
@@ -899,12 +986,17 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
          */
         @Override
         protected ReturnCode doInBackground(Object... strings) {
+            //クッキー管理の初期化
+            mCookieManager = new CookieManager();
+            mCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+            CookieHandler.setDefault(mCookieManager);
+
             //サービストークン取得は専用の処理に移行した。
             // その為、以降の処理からもサービストークン取得用の処理は取り除いた。
             if (oneTimeTokenGetSwitch) {
                 DTVTLogger.debug("first Url=" + mSourceUrl);
                 DTVTLogger.debug("first param=" + mSendParameter);
-                gotoRedirect(mSourceUrl, mSendParameter, "");
+                gotoRedirect(mSourceUrl, mSendParameter);
                 return mReturnCode;
             }
 
