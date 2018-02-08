@@ -454,10 +454,10 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     protected void onResume() {
         super.onResume();
         DTVTLogger.start();
-//		boolean r = DlnaInterface.dlnaOnResume();
-//        if(!r){
-//            DTVTLogger.debug("BaseActivity.onResume, dlnaOnResume failed");
-//        }
+		boolean r = DlnaInterface.dlnaOnResume();
+        if(!r){
+            DTVTLogger.debug("BaseActivity.onResume, dlnaOnResume failed");
+        }
         registerDevListDlna();
 
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
@@ -511,7 +511,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         DTVTLogger.start();
         mRemoteControlRelayClient.resetHandler();
         //unregisterDevListDlna();
-        //DlnaInterface.dlnaOnStop();
         DTVTLogger.end();
     }
 
@@ -1068,6 +1067,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             // onPause時にリモコンUIを閉じる
             remoteControllerView.closeRemoteControllerUI();
         }
+        DlnaInterface.dlnaOnStop();
         super.onPause();
     }
 

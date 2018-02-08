@@ -154,7 +154,6 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     private class ItemViewHolder {
         public View mView = null;
         private boolean mInUsage = false;
-        private boolean missedVod = false;
 
         TextView mStartM = null;
         TextView mContent = null;
@@ -165,14 +164,6 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
 
         void setUsing() {
             mInUsage = true;
-        }
-
-        void setMissedVod(boolean missedVod) {
-            this.missedVod = missedVod;
-        }
-
-        boolean isMissedVod() {
-            return this.missedVod;
         }
 
         /**
@@ -361,7 +352,6 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         //見逃し(あり)
         if (MISS_CUT_OUT.equals(contentType) || MISS_COMPLETE.equals(contentType)) {
             itemViewHolder.mView.setBackgroundResource(R.drawable.program_start_gray);
-            itemViewHolder.setMissedVod(false);
             itemViewHolder.mView.setTag(1);
         }
         //関連VOD(なし)
@@ -370,7 +360,6 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
             itemViewHolder.mStartM.setTextColor(ContextCompat.getColor(mContext, R.color.tv_program_miss_vod));
             itemViewHolder.mContent.setTextColor(ContextCompat.getColor(mContext, R.color.tv_program_miss_vod));
             itemViewHolder.mDetail.setTextColor(ContextCompat.getColor(mContext, R.color.tv_program_miss_vod));
-            itemViewHolder.setMissedVod(true);
             itemViewHolder.mThumbnail.setImageAlpha(128);
             itemViewHolder.mView.setTag(0);
         }
@@ -472,11 +461,6 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
                 } else {
                     itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
-                }
-                if (itemViewHolder.isMissedVod()) {
-                    // TODO: 2018/02/06 ①専用クリップアイコン入れていない ②クリップ非活動化設置仕様確認必要
-                    itemViewHolder.mClipButton.setClickable(false);
-                    itemViewHolder.mClipButton.setBackgroundResource(R.mipmap.thumb_icon_cast);
                 }
             }
         } else {

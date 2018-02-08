@@ -165,7 +165,7 @@ namespace dtvt {
             DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_download_DlnaInterfaceDl_initGlobalDl exit, secure_io_global_create error");
             ret = 0;
         }
-        DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_download_DlnaInterfaceDl_initGlobalDl exit, secure_io_global_create ok");
+        DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_download_DlnaInterfaceDl_initGlobalDl, secure_io_global_create ok");
 
         const char *privateHome = env->GetStringUTFChars(privateHome_, 0);
         if(NULL==privateHome){
@@ -177,13 +177,13 @@ namespace dtvt {
             secure_io_global_free();
             return (jboolean)0;
         }
-        DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_download_DlnaInterfaceDl_initGlobalDl exit, cipher_file_context_global_create ok");
+        DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_download_DlnaInterfaceDl_initGlobalDl, cipher_file_context_global_create ok");
         env->ReleaseStringUTFChars(privateHome_, privateHome);
         ret=1;
         gIsGlobalDtcpInited=true;
 
         set_android_log_handler();
-
+        DTVT_LOG_DBG("Java_com_nttdocomo_android_tvterminalapp_jni_download_DlnaInterfaceDl_initGlobalDl, exit ok");
         return (jboolean)ret;
     }
 

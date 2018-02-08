@@ -546,7 +546,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start();
         if (mCallbackTimer.getTimerStatus() != TimerStatus.TIMER_STATUS_DURING_STARTUP) {
             // SharedPreferencesにSTBデータを保存
-//            SharedPreferencesUtils.setSharedPreferencesStbInfo(this, mDlnaDmsItemList.get(selectDevice));
+            //SharedPreferencesUtils.setSharedPreferencesStbInfo(this, mDlnaDmsItemList.get(selectDevice));
             if (mDlnaDmsItemList != null) {
                 if (mStartMode == STBSelectFromMode.STBSelectFromMode_Setting.ordinal()
                         && mParingDevice.getVisibility() == View.VISIBLE) {

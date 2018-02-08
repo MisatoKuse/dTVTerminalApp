@@ -38,6 +38,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
     private String reserved1;
     private String reserved2;
     private String reserved4;
+    private String mobileViewingFlg;
     private List<String> staffList;
 
     // クリップ情報取得用
@@ -101,6 +102,14 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
 
     public void setServiceId(int serviceId) {
         this.mServiceId = serviceId;
+    }
+
+    public String getMobileViewingFlg() {
+        return mobileViewingFlg;
+    }
+
+    public void setMobileViewingFlg(String mobileViewingFlg) {
+        this.mobileViewingFlg = mobileViewingFlg;
     }
 
     public String getDetail() {
@@ -352,6 +361,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         dest.writeString(this.reserved1);
         dest.writeString(this.reserved2);
         dest.writeString(this.reserved4);
+        dest.writeString(this.mobileViewingFlg);
         dest.writeStringList(this.staffList);
         dest.writeSerializable(this.mVodMetaFullData);
         dest.writeString(this.mContentId);
@@ -391,6 +401,7 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         this.reserved1 = in.readString();
         this.reserved2 = in.readString();
         this.reserved4 = in.readString();
+        this.mobileViewingFlg = in.readString();
         this.staffList = in.createStringArrayList();
         this.mVodMetaFullData = (VodMetaFullData) in.readSerializable();
         this.mContentId = in.readString();

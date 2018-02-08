@@ -22,7 +22,6 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.detail.ChannelDetailPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ProgramChannelAdapter;
 import com.nttdocomo.android.tvterminalapp.adapter.TvProgramListAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
@@ -30,14 +29,13 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.MyChannelDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
+import com.nttdocomo.android.tvterminalapp.model.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.struct.CalendarComparator;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
-import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.view.ChannelItemClickListener;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.view.ProgramRecyclerView;
 import com.nttdocomo.android.tvterminalapp.view.ProgramScrollView;
-import com.nttdocomo.android.tvterminalapp.model.TabItemLayout;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -49,8 +47,7 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 
 public class TvProgramListActivity extends BaseActivity
-        implements ChannelItemClickListener,
-        View.OnClickListener,
+        implements View.OnClickListener,
         ScaledDownProgramListDataProvider.ApiDataProviderCallback,
         ProgramScrollView.OnScrollOffsetListener,
         MyChannelDataProvider.ApiDataProviderCallback,
@@ -60,8 +57,6 @@ public class TvProgramListActivity extends BaseActivity
     private static final int INDEX_TAB_MY_CHANNEL = 0;
     private ProgramRecyclerView mProgramRecyclerView = null;
     private Boolean mIsMenuLaunch = false;
-    private int mScreenHeight = 0;
-    private int mScreenWidth = 0;
     private ProgramScrollView mTimeScrollView = null;
     private RecyclerView mChannelRecyclerView = null;
     private TabItemLayout mTabLayout = null;
@@ -120,8 +115,6 @@ public class TvProgramListActivity extends BaseActivity
      * ビューの初期化
      */
     private void initView() {
-        mScreenHeight = getHeightDensity();
-        mScreenWidth = getWidthDensity();
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         mTimeScrollView = findViewById(R.id.tv_program_list_main_layout_time_sl);
@@ -393,13 +386,7 @@ public class TvProgramListActivity extends BaseActivity
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mChannelRecyclerView.setLayoutManager(linearLayoutManager);
         mProgramChannelAdapter = new ProgramChannelAdapter(this, channels);
-        mProgramChannelAdapter.setOnItemClickListener(this);
         mChannelRecyclerView.setAdapter(mProgramChannelAdapter);
-    }
-
-    @Override
-    public void onChannelItemClick(View view, int position) {
-        startActivity(ChannelDetailPlayerActivity.class, null);
     }
 
     /**
