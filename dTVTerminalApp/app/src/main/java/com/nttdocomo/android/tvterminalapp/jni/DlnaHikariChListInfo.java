@@ -62,7 +62,7 @@ public class DlnaHikariChListInfo {
         return info;
     }
 
-    public ArrayList<DlnaHikariChListItem> getRecordVideoLists() {
+    public ArrayList<DlnaHikariChListItem> getHikariChLists() {
         return mLists;
     }
 }
