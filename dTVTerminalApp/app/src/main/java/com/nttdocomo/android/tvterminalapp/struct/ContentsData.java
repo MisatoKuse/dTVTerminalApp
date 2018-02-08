@@ -73,6 +73,8 @@ public class ContentsData {
     private String mReserved2 = null;
     // reserved4
     private String mReserved4 = null;
+    // mobileViewingFlg
+    private String  mobileViewingFlg = null;
     // みどころ
     private String mHighlight = null;
     // クリップボタン
@@ -486,7 +488,15 @@ public class ContentsData {
         mDlFileFullPath=path;
     }
 
-    public String getDlFileFullPath(){
+    public String getDlFileFullPath() {
         return mDlFileFullPath;
+    }
+
+    public String getMobileViewingFlg() {
+        return mobileViewingFlg;
+    }
+
+    public void setMobileViewingFlg(String mobileViewingFlg) {
+        this.mobileViewingFlg = mobileViewingFlg;
     }
 }

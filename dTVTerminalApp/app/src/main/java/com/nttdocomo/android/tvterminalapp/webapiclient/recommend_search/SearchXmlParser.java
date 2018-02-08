@@ -140,6 +140,10 @@ public class SearchXmlParser extends AsyncTask<String, Integer, String> {
      * kCondition.
      */
     private static final String kCondition = "condition";
+    /**
+     *kMobileViewingFlg
+     */
+    private static final String kMobileViewingFlg = "mobileViewingFlg";
 
     /**
      * Parserのリスナー.
@@ -402,6 +406,10 @@ public class SearchXmlParser extends AsyncTask<String, Integer, String> {
             TotalSearchResponseData.Content content = searchResponse.contentList.get(currentContentListIndex);
             content.title = value;
             searchResponse.contentList.set(currentContentListIndex, content);
+        } else if (kMobileViewingFlg.equals(tagName)) {
+            int currentContentListIndex = searchResponse.contentList.size() - 1;
+            TotalSearchResponseData.Content content = searchResponse.contentList.get(currentContentListIndex);
+            content.mobileViewingFlg = value;
         } else if (kId.equals(tagName)) {
             ifNullCreate();
             searchError.error.id = value;

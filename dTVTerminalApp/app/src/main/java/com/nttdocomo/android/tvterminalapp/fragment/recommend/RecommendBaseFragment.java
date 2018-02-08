@@ -190,6 +190,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
         detailData.setComment(info.getComment());
         detailData.setHighlight(info.getHighlight());
         detailData.setServiceId(Integer.parseInt(info.getServiceId()));
+        detailData.setMobileViewingFlg(info.getMobileViewingFlg());
         detailData.setReserved4(info.getReserved4());
         detailData.setReserved1(info.getReserved1());
         detailData.setReserved2(info.getReserved2());
