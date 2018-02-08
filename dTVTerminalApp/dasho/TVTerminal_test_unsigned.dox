@@ -4,7 +4,7 @@
         <property name="projectname" value="dasho"/>
         <property name="ANDROID_BUILD_TOOLS_HOME" value="${sdk.dir}\build-tools\26.0.2"/>
         <property name="apkOutput" value="TVTerminal_test_unsigned-obfuscated.apk"/>
-        <property name="apkInput" value="TVTerminal_test_unsigned.apk"/>
+        <property name="apkInput" value="..\app\build\outputs\apk\TVTerminal_test_unsigned.apk"/>
         <property name="sdk.dir" value="${ANDROID_SDK_DIR}"/>
         <property name="manifest.package" value="com.nttdocomo.android.tvterminalapp"/>
         <property name="dasho.results.dir" value="dasho-results_TVTerminal_test_unsigned"/>
@@ -15,7 +15,7 @@
         <option>FORCE</option>
     </global>
     <inputpath>
-        <pathelement location="..\app\build\outputs\apk\TVTerminal_test_unsigned.apk"/>
+        <pathelement location="${apkInput}"/>
     </inputpath>
     <globalProcessingExclude>
         <classes name="android.**"/>
