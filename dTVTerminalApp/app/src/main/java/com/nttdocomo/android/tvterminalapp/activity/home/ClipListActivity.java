@@ -80,7 +80,6 @@ public class ClipListActivity extends BaseActivity implements
      * FragmentFactory.
      */
     private ClipListFragmentFactory mClipListFragmentFactory = null;
-
     /**
      * ページング単位設定値.
      */
@@ -89,11 +88,15 @@ public class ClipListActivity extends BaseActivity implements
     /**
      * タブポジション(Tv).
      */
-    public static final int CLIP_LIST_PAGE_NO_OF_TV = 0;
+    private static final int CLIP_LIST_PAGE_NO_OF_TV = 0;
     /**
      * タブポジション(ビデオ).
      */
     public static final int CLIP_LIST_PAGE_NO_OF_VOD = 1;
+    /**
+     * 表示開始タブ指定キー.
+     */
+    public static final String CLIP_LIST_START_PAGE = "clipListStartPage";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -103,6 +106,7 @@ public class ClipListActivity extends BaseActivity implements
         //Headerの設定
         setTitleText(getString(R.string.str_clip_activity_title));
         Intent intent = getIntent();
+        int startPageNo = intent.getIntExtra(CLIP_LIST_START_PAGE, CLIP_LIST_PAGE_NO_OF_TV);
         mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
         if (mIsMenuLaunch) {
             enableHeaderBackIcon(false);
@@ -113,7 +117,15 @@ public class ClipListActivity extends BaseActivity implements
         initData();
         initView();
         resetPaging();
-        setTv();
+        //前画面からのタブ指定起動反映
+        if (startPageNo == CLIP_LIST_PAGE_NO_OF_VOD) {
+            setVod();
+        } else {
+            setTv();
+        }
+        //初回表示のみ前画面からのタブ指定を反映する
+        mViewPager.setCurrentItem(startPageNo);
+        mTabLayout.setTab(startPageNo);
     }
 
     /**
