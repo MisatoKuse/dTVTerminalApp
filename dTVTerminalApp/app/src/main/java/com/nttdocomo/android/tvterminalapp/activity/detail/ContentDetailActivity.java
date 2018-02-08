@@ -206,6 +206,9 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     /*dTVチャンネル起動*/
 
     /*ひかりTV起動*/
+    private static final String H4D_CATEGORY_TERRESTRIAL_DIGITAL = "01";
+    private static final String H4D_CATEGORY_SATELLITE_BS = "02";
+    private static final String H4D_CATEGORY_IPTV = "03";
     private static final String H4D_CATEGORY_DTV_CHANNEL_BROADCAST = "04";
     private static final String H4D_CATEGORY_DTV_CHANNEL_MISSED = "05";
     private static final String H4D_CATEGORY_DTV_CHANNEL_RELATION = "06";
@@ -1289,37 +1292,41 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         // タブ数を先に決定するため、コンテンツ詳細のデータを最初に取得しておく
         mDetailData = mIntent.getParcelableExtra(RECOMMEND_INFO_BUNDLE_KEY);
         if (mDetailData != null) {
+            if (getStbStatus() == false) {
+                createRemoteControllerView(false);
+                mIsControllerVisible = false;
+            } else {
             int serviceId = mDetailData.getServiceId();
-            // TODO: 2018/02/06 「mobileViewingFlg」が「0」の場合モバイル視聴不可(レスポンスとして現在返却されていないため、現状「モバイル視聴可」として扱って)
             if (serviceId == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID
-                    || serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID
-                    || serviceId == OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID) {
-                // 他サービス(dtv/dtvチャンネル/dアニメ)フラグを立てる
-                mIsOtherService = true;
-                if (serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID
+                        || serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID
                         || serviceId == OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID) {
-                    // リモコンUIのリスナーを設定
-                    createRemoteControllerView(true);
-                    mIsControllerVisible = true;
-                    setStartRemoteControllerUIListener(this);
-                    //「serviceId」が「15」(dTVコンテンツ)の場合
-                } else {
-                    // 「reserved1」が「1」STB視聴不可
-                    if (CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved1())) {
-                        createRemoteControllerView(false);
-                        mIsControllerVisible = false;
+                    // 他サービス(dtv/dtvチャンネル/dアニメ)フラグを立てる
+                    mIsOtherService = true;
+                    if (serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID
+                            || serviceId == OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID) {
+                        // リモコンUIのリスナーを設定
+                        createRemoteControllerView(true);
+                        mIsControllerVisible = true;
+                        setStartRemoteControllerUIListener(this);
+                        //「serviceId」が「15」(dTVコンテンツ)の場合
                     } else {
+                        // 「reserved1」が「1」STB視聴不可
+                        if (CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved1())) {
+                            createRemoteControllerView(false);
+                            mIsControllerVisible = false;
+                        } else {
+                            createRemoteControllerView(true);
+                            mIsControllerVisible = true;
+                            setStartRemoteControllerUIListener(this);
+                        }
+                    }
+                } else if (serviceId == OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID) {
+                    if (METARESPONSE_DISP_TYPE_TV_PROGRAM.equals(mDetailData.getDispType())
+                            && DTV_CHANNEL_TV_SERVICE1.equals(mDetailFullData.getmTv_service())) {
                         createRemoteControllerView(true);
                         mIsControllerVisible = true;
                         setStartRemoteControllerUIListener(this);
                     }
-                }
-            } else if (serviceId == OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID) {
-                if (METARESPONSE_DISP_TYPE_TV_PROGRAM.equals(mDetailData.getDispType())
-                        && DTV_CHANNEL_TV_SERVICE1.equals(mDetailFullData.getmTv_service())) {
-                    createRemoteControllerView(true);
-                    mIsControllerVisible = true;
-                    setStartRemoteControllerUIListener(this);
                 }
             }
         }
@@ -2294,7 +2301,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                                             //一致した「active_list」の「valid_end_date」> 現在時刻の場合
                                             if (activeData.getValidEndDate() > DateUtils.getNowTimeFormatEpoch()) {
                                                 // TODO: 2018/02/08  license_idが複数ある場合は「valid_end_date」が一番長い「license_id」を指定する
-
                                                 requestStartApplicationHikariTvCategoryHikaritvVod(activeData.getLicenseId(),
                                                         mDetailFullData.getCid(), mDetailFullData.getCrid());
                                             }
@@ -2314,8 +2320,16 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                     } else if (TV_PROGRAM.equals(mDetailData.getDispType())) {
                         //「tv_service」が「0」の場合 ひかりTVの番組
                         if (TV_SERVICE_FLAG_ZERO.equals(mDetailFullData.getmTv_service())) {
-                            // TODO: 2018/02/08  中継アプリにURLエンコードした「arib://7780.xxxx.xxxx」を通知すること。
-
+                            //ひかりTVの番組 地デジ
+                            if (H4D_CATEGORY_TERRESTRIAL_DIGITAL.equals(mDetailData.getCategoryId())) {
+                                requestStartApplicationHikariTvCategoryTerrestrialDigital(mDetailFullData.getmChno());
+                                //ひかりTVの番組 BS
+                            } else if (H4D_CATEGORY_SATELLITE_BS.equals(mDetailData.getCategoryId())) {
+                                requestStartApplicationHikariTvCategorySatelliteBs(mDetailFullData.getmChno());
+                                //ひかりTVの番組 IPTV
+                            } else if (H4D_CATEGORY_IPTV.equals(mDetailData.getCategoryId())) {
+                                requestStartApplicationHikariTvCategoryIptv(mDetailFullData.getmChno());
+                            }
                             //「tv_service」が「1」の場合
                         } else if (TV_SERVICE_FLAG_ONE.equals(mDetailFullData.getmTv_service())) {
                             //「contents_type」が「0」または未設定の場合  ひかりTV内dTVチャンネルの番組
@@ -2330,11 +2344,16 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                                 if (DateUtils.getNowTimeFormatEpoch() < mDetailFullData.getmVod_start_date()) {
                                     //中継アプリに「chno」を通知する
                                     requestStartApplicationHikariTvCategoryDtvchannelBroadcast(mDetailFullData.getmChno());
-                                    //「vod_start_date」 <= 現在時刻 < 「vod_end_date」の場合  ひかりTV内dTVチャンネルの見逃し、関連VOD
+                                    //「vod_start_date」 <= 現在時刻 < 「vod_end_date」の場合  //「tv_cid」を通知する
                                 } else if (DateUtils.getNowTimeFormatEpoch() >= mDetailFullData.getmVod_start_date()
                                         && DateUtils.getNowTimeFormatEpoch() < mDetailFullData.getmVod_end_date()) {
-                                    //「tv_cid」を通知する
-                                    requestStartApplicationHikariTvCategoryDtvchannelMissed(mDetailFullData.getmTv_cid());
+                                    // ひかりTV内dTVチャンネル 見逃し
+                                    if (H4D_CATEGORY_DTV_CHANNEL_MISSED.equals(mDetailData.getCategoryId())) {
+                                        requestStartApplicationHikariTvCategoryDtvchannelMissed(mDetailFullData.getmTv_cid());
+                                        // ひかりTV内dTVチャンネル 関連VOD
+                                    } else if (H4D_CATEGORY_DTV_CHANNEL_RELATION.equals(mDetailData.getCategoryId())) {
+                                        requestStartApplicationHikariTvCategoryDtvchannelRelation(mDetailFullData.getmTv_cid());
+                                    }
                                 }
                             }
                         }
