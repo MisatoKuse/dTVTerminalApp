@@ -56,7 +56,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     private RemoteControllerSendKeyAction remoteControllerSendKeyAction = null;
     private GestureDetector mParentGestureDetector = null;
     private GestureDetector mGestureDetector = null;
-    private LinearLayout mBottomLinearLayout, mTopLinearLayout = null;
+    private RelativeLayout mBottomLinearLayout, mTopLinearLayout = null;
     private OnStartRemoteControllerUIListener mStartUIListener = null;
     private TextView mTextViewUseRemote = null;
 
@@ -83,7 +83,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         super(context, attrs, defStyleAttr);
         mContext = context;
         if (context instanceof ContentDetailActivity) {
-            mHeaderHeight = 50;
+            mHeaderHeight = 52;
         } else {
             mHeaderHeight = 0;
         }
@@ -276,6 +276,30 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         mViewList.add(inflate);
 
         mViewPager = findViewById(R.id.remocon_viewpager);
+        float width = getContext().getResources().getDisplayMetrics().widthPixels;
+        float height = getContext().getResources().getDisplayMetrics().heightPixels;
+        float density = getContext().getResources().getDisplayMetrics().density;
+        int paddinglr = 0;//左右padding
+        int paddingtb = 0;//下padding
+        if(width > 360 * density){//360 基準値（幅さ）
+            paddinglr = (int) ((width - 360 * density) / 2);
+        }
+        if(height > 640 * density){//640 基準値（高さ）
+            paddingtb = (int) (height - (640 * density));
+        }
+        if(paddinglr != 0 || paddingtb != 0){
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                    (int)(width - 16 * density),//padding除く
+                    (int)(height - 80 * density));//タイトル除く
+            mViewPager.setLayoutParams(params);
+            RelativeLayout.LayoutParams childLayoutParams = new RelativeLayout.LayoutParams(
+                    LayoutParams.MATCH_PARENT,
+                    LayoutParams.MATCH_PARENT);
+            inflate1.setPadding(paddinglr, 0 , paddinglr, paddingtb);
+            inflate1.setLayoutParams(childLayoutParams);
+            inflate.setPadding(paddinglr, 0 , paddinglr, paddingtb);
+            inflate.setLayoutParams(childLayoutParams);
+        }
         remokonAdapter = new ViewPagerAdapter();
         mViewPager.setAdapter(remokonAdapter);
         mViewPager.addOnPageChangeListener(this);

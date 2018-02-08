@@ -98,13 +98,13 @@
 
         <TextView
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="12" />
 
         <Button
             android:id="@+id/remote_controller_bt_three"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="96"
             android:background="@mipmap/remote_ch_btn_ch_03" />
 
@@ -133,7 +133,7 @@
         <Button
             android:id="@+id/remote_controller_bt_four"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="96"
             android:background="@mipmap/remote_ch_btn_ch_04" />
 
@@ -186,7 +186,7 @@
         <Button
             android:id="@+id/remote_controller_bt_seven"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="96"
             android:background="@mipmap/remote_ch_btn_ch_07" />
 
@@ -198,7 +198,7 @@
         <Button
             android:id="@+id/remote_controller_bt_eight"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="96"
             android:background="@mipmap/remote_ch_btn_ch_08" />
 
@@ -210,7 +210,7 @@
         <Button
             android:id="@+id/remote_controller_bt_nine"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="96"
             android:background="@mipmap/remote_ch_btn_ch_09" />
 
@@ -239,7 +239,7 @@
         <Button
             android:id="@+id/remote_controller_bt_ten"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="96"
             android:background="@mipmap/remote_ch_btn_ch_10" />
 
@@ -251,7 +251,7 @@
         <Button
             android:id="@+id/remote_controller_bt_eleven"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="96"
             android:background="@mipmap/remote_ch_btn_ch_11" />
 
@@ -263,14 +263,14 @@
         <Button
             android:id="@+id/remote_controller_bt_twelve"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="96"
             android:background="@mipmap/remote_ch_btn_ch_12" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="24" />
+            android:layout_weight="24"/>
     </LinearLayout>
 
 
@@ -330,18 +330,18 @@
 
         <RelativeLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="72">
 
             <ImageView
                 android:id="@+id/remote_controller_tv_channel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:contentDescription="@null"
                 android:src="@mipmap/remote_ch_btn_ch_vertical" />
             <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:src="@mipmap/remote_ch_btn_ch_vertical_text"
                 android:contentDescription="@null"
                 android:layout_centerInParent="true"/>
@@ -383,7 +383,7 @@
 
             <Button
                 android:id="@+id/remote_controller_bt_notice"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="32"
                 android:background="@mipmap/remote_ch_btn_info" />
@@ -395,7 +395,7 @@
 
             <Button
                 android:id="@+id/remote_controller_bt_ddata"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="32"
                 android:background="@mipmap/remote_ch_btn_d_data" />
