@@ -7,7 +7,6 @@
     <!-- Common -->
     <string name="app_name">ドコモテレビターミナルアプリ</string>
     <string name="contents_hyphen">-</string>
-    <string name="contents_more">すべてを見る</string>
     <string name="positive_response">はい</string>
     <string name="negative_response">いいえ</string>
     <string name="custom_dialog_ok">OK</string>
@@ -77,7 +76,6 @@
     <string name="get_contents_data_error_message">情報の取得に失敗したため、一部のコンテンツのみ表示します。\nしばらく時間が経ってから再度お試しください。</string>
     <string name="home_no_contract_info_text">ご利用中のdアカウントでひかりTV for docomoの契約がありません。</string>
     <string name="home_contract_button_text">契約する</string>
-    <string name="home_contents_list_see_all">すべてを見る</string>
     <string name="home_contents_pipe">" | "</string>
     <string name="home_contents_hyphen">" - "</string>
     <string name="home_contents_colon">:</string>

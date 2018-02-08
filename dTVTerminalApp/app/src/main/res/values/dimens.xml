@@ -82,7 +82,8 @@
     <dimen name="home_contents_item_num_right_margin">4dp</dimen>
     <dimen name="home_contents_item_num_text_size">14dp</dimen>
     <dimen name="home_contents_item_right_arrow_size">24dp</dimen>
-    <dimen name="home_contents_see_all_text_size">12dp</dimen>
+    <dimen name="home_contents_item_more_arrow_size">24dp</dimen>
+    <dimen name="home_contents_item_more_arrow_width">80dp</dimen>
     <dimen name="home_contents_thumbnail_width">243dp</dimen>
     <dimen name="home_contents_thumbnail_height">147dp</dimen>
     <dimen name="home_contents_thumbnail_left_padding">0dp</dimen>

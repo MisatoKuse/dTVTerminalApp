@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -138,10 +139,9 @@ public class RankingTopActivity extends BaseActivity implements RankingTopDataPr
         HomeRecyclerViewAdapter mHorizontalViewAdapter = new HomeRecyclerViewAdapter(this, contentsDataList, index + RANKING_CONTENTS_DISTINCTION_ADAPTER);
         recyclerView.setAdapter(mHorizontalViewAdapter);
         View footer = LayoutInflater.from(this).inflate(R.layout.home_main_layout_recyclerview_footer, recyclerView, false);
-        TextView mTextView = footer.findViewById(R.id.home_main_layout_recyclerview_footer);
-        mTextView.setText(getString(R.string.contents_more));
+        RelativeLayout rankingMore = footer.findViewById(R.id.home_main_layout_recyclerview_footer);
         //もっと見るの遷移先を設定
-        mTextView.setOnClickListener(new View.OnClickListener() {
+        rankingMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
                 startTo(index);
