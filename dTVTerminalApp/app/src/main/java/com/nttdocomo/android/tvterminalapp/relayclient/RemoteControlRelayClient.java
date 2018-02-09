@@ -185,7 +185,7 @@ public class RemoteControlRelayClient {
         IS_USER_ACCOUNT_EXIST,
         // ユーザーアカウント切り替え（エラー応答時）
         SET_DEFAULT_USER_ACCOUNT,
-        // アプリケーションバージョンチェック
+        // アプリケーションバージョンチェック（エラー応答時）
         CHECK_APPLICATION_VERSION_COMPATIBILITY,
         // サービスアプリ：タイトル詳細表示起動要求
         TITLE_DETAIL,
@@ -1117,65 +1117,99 @@ public class RemoteControlRelayClient {
         }
 
         /**
-         * 中継アプリの応答を返す.
+         * 中継アプリの応答をメッセージ形式に変換する.
          *
          * @param recvResult
          * @return
          */
         private ResponseMessage setResponse(String recvResult) {
             JSONObject recvJson = new JSONObject();
+            int resultErrorCode;
+            STB_REQUEST_COMMAND_TYPES requestCommand = STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN;
 
             ResponseMessage response = new ResponseMessage();
             try {
+                // 初期化
                 response.setResult(ResponseMessage.RELAY_RESULT_ERROR);
                 response.setResultCode(ResponseMessage.RELAY_RESULT_INTERNAL_ERROR);
                 response.setRequestCommandTypes(STB_REQUEST_COMMAND_TYPES.COMMAND_UNKNOWN);
-                if (recvResult != null) {
-                    recvJson = new JSONObject(recvResult);
-                    response.setResult(response.mResultMap.get(recvJson.get(RELAY_RESULT).toString()));
-                    // エラーの場合、応答結果コードをエラーコード値に変換
-                    if (recvJson.has(RELAY_RESULT_ERROR_CODE)) {
-                        String errorcode = recvJson.get(RELAY_RESULT_ERROR_CODE).toString();
-                        if (response.mResultCodeMap.containsKey(errorcode)) {
-                            response.setResultCode(response.mResultCodeMap.get(errorcode));
+                if (null == recvResult) {
+                    return response;
+                }
+                recvJson = new JSONObject(recvResult);
+                int result = response.mResultMap.get(recvJson.get(RELAY_RESULT).toString());
+                response.setResult(result);
+                switch(result) {
+                    case ResponseMessage.RELAY_RESULT_OK:
+                        break;
+                    case ResponseMessage.RELAY_RESULT_ERROR:
+                        // エラー応答の場合、応答結果コードをエラーコード値に変換
+                        if (recvJson.has(RELAY_RESULT_ERROR_CODE)) {
+                            String errorCodeStr = recvJson.get(RELAY_RESULT_ERROR_CODE).toString();
+                            if (response.mResultCodeMap.containsKey(errorCodeStr)) {
+                                resultErrorCode = response.mResultCodeMap.get(errorCodeStr);
+                                response.setResultCode(resultErrorCode);
+                            } else {
+                                return response;
+                            }
                         } else {
-                            response.setResultCode(ResponseMessage.RELAY_RESULT_INTERNAL_ERROR);
+                            return response;
                         }
-                    }
-                    // STBアプリ起動要求のアプリ種別をアプリ種別コードに変換
-                    String appId = getAppIdApplicationRequest(recvJson);
-                    if (!appId.isEmpty() && response.mStbApplicationEnumMap.containsKey(appId)) {
-                        response.setApplicationTypes(response.mStbApplicationEnumMap.get(appId));
+                        break;
+                }
+                // 正常応答時のコマンド要求種別またはエラー応答時のdアカチェック、アプリケーションバージョンチェックのリクエストコマンド種別をリクエストコマンド種別に変換
+                if (recvJson.has(RELAY_COMMAND_REQUEST_COMMAND)) {
+                    String requestCommandStr = recvJson.get(RELAY_COMMAND_REQUEST_COMMAND).toString();
+                    if (response.mRequestCommandMap.containsKey(requestCommandStr)) {
+                        requestCommand = response.mRequestCommandMap.get(requestCommandStr);
+                        response.setRequestCommandTypes(requestCommand);
                     } else {
-                        response.setResultCode(ResponseMessage.RELAY_RESULT_INTERNAL_ERROR);
+                        return response;
                     }
-                    // dTVチャンネル：STBアプリ起動要求のサービス・カテゴリー分類シンボルに対するサービス・カテゴリー分類に変換
-                    if (recvJson.has(RELAY_COMMAND_ARGUMENT_SERVICE_CATEGORY_TYPE_DTVCHANNEL)) {
-                        String dtvChannelServiceCategoryType = recvJson.get(RELAY_COMMAND_ARGUMENT_SERVICE_CATEGORY_TYPE_DTVCHANNEL).toString();
-                        if (response.mDtvChannelServiceCategoryTypesMap.containsKey(dtvChannelServiceCategoryType)) {
-                            response.setDtvChannelServiceCategoryTypes(response.mDtvChannelServiceCategoryTypesMap.get(dtvChannelServiceCategoryType));
+                } else {
+                    return response;
+                }
+                // リクエストコマンド種別の応答
+                switch(requestCommand) {
+                    // 正常応答（エラー応答含む）のコマンド要求種別
+                    case KEYEVENT_KEYCODE_POWER:
+                    case IS_USER_ACCOUNT_EXIST:
+                        break;
+                    // 正常応答（エラー応答含む）のコマンド要求種別
+                    case START_APPLICATION:
+                    case TITLE_DETAIL:
+                        // STBアプリ起動要求のアプリ種別をアプリ種別コードに変換
+                        String appId = getAppIdApplicationRequest(recvJson);
+                        if (!appId.isEmpty() && response.mStbApplicationEnumMap.containsKey(appId)) {
+                            response.setApplicationTypes(response.mStbApplicationEnumMap.get(appId));
                         } else {
-                            response.setResultCode(ResponseMessage.RELAY_RESULT_INTERNAL_ERROR);
+                            return response;
                         }
-                    }
-                    // ひかりTV：STBアプリ起動要求のサービス・カテゴリー分類シンボルに対するサービス・カテゴリー分類に変換
-                    if (recvJson.has(RELAY_COMMAND_ARGUMENT_SERVICE_CATEGORY_TYPE_HIKARITV)) {
-                        String hikariTvServiceCategoryType = recvJson.get(RELAY_COMMAND_ARGUMENT_SERVICE_CATEGORY_TYPE_HIKARITV).toString();
-                        if (response.mHikariTvServiceCategoryTypesMap.containsKey(hikariTvServiceCategoryType)) {
-                            response.setHikariTvServiceCategoryTypes(response.mHikariTvServiceCategoryTypesMap.get(hikariTvServiceCategoryType));
-                        } else {
-                            response.setResultCode(ResponseMessage.RELAY_RESULT_INTERNAL_ERROR);
+                        // dTVチャンネル：STBアプリ起動要求のサービス・カテゴリー分類シンボルに対するサービス・カテゴリー分類に変換
+                        if (recvJson.has(RELAY_COMMAND_ARGUMENT_SERVICE_CATEGORY_TYPE_DTVCHANNEL)) {
+                            String dtvChannelServiceCategoryType = recvJson.get(RELAY_COMMAND_ARGUMENT_SERVICE_CATEGORY_TYPE_DTVCHANNEL).toString();
+                            if (response.mDtvChannelServiceCategoryTypesMap.containsKey(dtvChannelServiceCategoryType)) {
+                                response.setDtvChannelServiceCategoryTypes(response.mDtvChannelServiceCategoryTypesMap.get(dtvChannelServiceCategoryType));
+                            } else {
+                                return response;
+                            }
                         }
-                    }
-                    // dアカチェック要求のリクエストコマンド種別をリクエストコマンド種別に変換
-                    if (recvJson.has(RELAY_COMMAND_REQUEST_COMMAND)) {
-                        String requestCommand = recvJson.get(RELAY_COMMAND_REQUEST_COMMAND).toString();
-                        if (response.mRequestCommandMap.containsKey(requestCommand)) {
-                            response.setRequestCommandTypes(response.mRequestCommandMap.get(requestCommand));
-                        } else {
-                            response.setResultCode(ResponseMessage.RELAY_RESULT_INTERNAL_ERROR);
+                        // ひかりTV：STBアプリ起動要求のサービス・カテゴリー分類シンボルに対するサービス・カテゴリー分類に変換
+                        if (recvJson.has(RELAY_COMMAND_ARGUMENT_SERVICE_CATEGORY_TYPE_HIKARITV)) {
+                            String hikariTvServiceCategoryType = recvJson.get(RELAY_COMMAND_ARGUMENT_SERVICE_CATEGORY_TYPE_HIKARITV).toString();
+                            if (response.mHikariTvServiceCategoryTypesMap.containsKey(hikariTvServiceCategoryType)) {
+                                response.setHikariTvServiceCategoryTypes(response.mHikariTvServiceCategoryTypesMap.get(hikariTvServiceCategoryType));
+                            } else {
+                                return response;
+                            }
                         }
-                    }
+                        break;
+                    // コマンド要求時以外のエラー応答のリクエストコマンド種別
+                    case CHECK_APPLICATION_VERSION_COMPATIBILITY:
+                    case SET_DEFAULT_USER_ACCOUNT:
+                    case COMMAND_UNKNOWN:
+                    default:
+                        break;
                 }
             } catch (JSONException e) {
                 DTVTLogger.debug(e);

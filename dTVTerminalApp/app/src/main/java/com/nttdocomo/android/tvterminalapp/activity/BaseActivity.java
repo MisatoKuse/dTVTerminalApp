@@ -1249,6 +1249,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         View base = findViewById(R.id.base_motion_detection_rl);
         base.setOnClickListener(mRemoteControllerOnClickListener);
         base.setVisibility(View.VISIBLE);
+        setRelayClientHandler();
     }
 
     @Override
