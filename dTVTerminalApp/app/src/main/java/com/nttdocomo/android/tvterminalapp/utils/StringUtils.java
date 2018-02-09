@@ -335,6 +335,12 @@ public class StringUtils {
         return context.getString(R.string.message_three_asterisk);
     }
 
+    /**
+     * 契約情報を取得する.
+     *
+     * @param userInfoList ユーザーデータ
+     * @return 契約しているかどうか
+     */
     public static String getUserContractInfo(final List<UserInfoList> userInfoList) {
         final int INT_LIST_HEAD = 0;
         final String CONTRACT_DTV = "001";
@@ -354,6 +360,12 @@ public class StringUtils {
         }
 
         List<UserInfoList.AccountList> mLoggedInAccountList = infoList.getLoggedinAccount();
+
+        //ログインユーザ情報がないときは契約情報は無し
+        if (mLoggedInAccountList == null || userInfoList.size() < 1) {
+            return CONTRACT_INFO_NONE;
+        }
+
         UserInfoList.AccountList mLoggedInAccount = mLoggedInAccountList.get(INT_LIST_HEAD);
 
         //ユーザ情報がないときは契約情報は無し
