@@ -193,7 +193,13 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         //日付の選択できる範囲を設定
         DatePicker datePicker = datePickerDialog.getDatePicker();
         GregorianCalendar gc = new GregorianCalendar();
-        gc.setTime(new Date());
+        if(isLastDay()){
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_MONTH, -1);
+            gc.setTime(calendar.getTime());
+        } else {
+            gc.setTime(new Date());
+        }
         if (mTabIndex == mProgramTabNames.length - 1) {
             gc.add(Calendar.DAY_OF_MONTH, -EXPIRE_DATE);
         }
@@ -231,22 +237,6 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
             day.append(DAY_PRE0);
         }
         day.append(dayOfMonth);
-        selectDate.append(year);
-        selectDate.append(DateUtils.DATE_Y);
-        selectDate.append(month.toString());
-        selectDate.append(DateUtils.DATE_M);
-        selectDate.append(day);
-        selectDate.append(DateUtils.DATE_D);
-        mToDay = selectDate.toString();
-        selectDate = new StringBuilder();
-        selectDate.append(month.toString());
-        selectDate.append(DateUtils.DATE_M);
-        selectDate.append(day);
-        selectDate.append(DateUtils.DATE_D);
-        selectDate.append(WEEK_LEFT);
-        selectDate.append(DateUtils.STRING_DAY_OF_WEEK[week]);
-        selectDate.append(WEEK_RIGHT);
-        setTitleText(selectDate.toString());
         selectDate = new StringBuilder();
         selectDate.append(year);
         selectDate.append(DATE_LINE);
@@ -254,6 +244,29 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         selectDate.append(DATE_LINE);
         selectDate.append(day);
         mSelectDateStr = getSystemTimeAndCheckHour(selectDate.toString());
+        SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYYMMDD, Locale.JAPAN);
+        try {
+            Date date = sdf.parse(mSelectDateStr);
+            SimpleDateFormat format = new SimpleDateFormat(DateUtils.DATE_YYYYMMDDE, Locale.JAPAN);
+            String newDate = format.format(date.getTime());
+            setTitleText(newDate.substring(5));
+            SimpleDateFormat formatDialog = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DD_J, Locale.JAPAN);
+            mToDay = formatDialog.format(date.getTime());
+        } catch (ParseException e){
+            e.printStackTrace();
+            DTVTLogger.debug(e);
+        }
+    }
+
+    /**
+     * 機能
+     * 昨日の日付であるかどうか
+     */
+    private boolean isLastDay(){
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat todaySdf = new SimpleDateFormat(DateUtils.DATE_HHMMSS, Locale.JAPAN);
+        int hour = Integer.parseInt(todaySdf.format(calendar.getTime()).substring(0,2));
+        return hour < START_TIME;
     }
 
     /**
@@ -272,9 +285,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
             } else {
                 formatDay = sdf.format(calendar.getTime());
             }
-            SimpleDateFormat todaySdf = new SimpleDateFormat(DateUtils.DATE_HHMMSS, Locale.JAPAN);
-            int hour = Integer.parseInt(todaySdf.format(calendar.getTime()).substring(0,2));
-            if(hour < START_TIME){
+            if(isLastDay()){
                 calendar.setTime(sdf.parse(formatDay));
                 calendar.add(Calendar.DAY_OF_MONTH, -1);
                 formatDay = sdf.format(calendar.getTime());
@@ -295,10 +306,13 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         //フォーマットパターンを指定して表示する
         Calendar c = Calendar.getInstance();
         Locale.setDefault(Locale.JAPAN);
+        if(isLastDay()){
+            c.add(Calendar.DAY_OF_MONTH, -1);
+        }
         SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYYMMDDE, Locale.JAPAN);
         mToDay = sdf.format(c.getTime());
         setTitleText(mToDay.substring(5));
-        mSelectDateStr =getSystemTimeAndCheckHour(null);
+        mSelectDateStr = getSystemTimeAndCheckHour(null);
     }
 
     /**
