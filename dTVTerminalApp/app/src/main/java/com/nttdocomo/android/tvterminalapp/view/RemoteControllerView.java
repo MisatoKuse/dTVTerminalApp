@@ -59,6 +59,30 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     private RelativeLayout mBottomLinearLayout, mTopLinearLayout = null;
     private OnStartRemoteControllerUIListener mStartUIListener = null;
     private TextView mTextViewUseRemote = null;
+    /**
+     * 640 基準値（幅さ）
+     */
+    private static final int BASE_WIDTH = 360;
+    /**
+     * 640 基準値（高さ）
+     */
+    private static final int BASE_HEIGHT = 640;
+    /**
+     * 8 基準値（左右padding）
+     */
+    private static final int BASE_LEFT_RIGHT_PADDING = 8;
+    /**
+     * 80 基準値（タイトル高さ）
+     */
+    private static final int BASE_TITLE = 80;
+    /**
+     * 0 基準値（paddingTop 0）
+     */
+    private static final int BASE_PADDING_TOP = 0;
+    /**
+     * 2 基準値（両側）
+     */
+    private static final int BASE_LEFT_RIGHT = 2;
 
     private static final long CLICK_MAX_TIME = 100;
 
@@ -281,23 +305,23 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         float density = getContext().getResources().getDisplayMetrics().density;
         int paddinglr = 0;//左右padding
         int paddingtb = 0;//下padding
-        if(width > 360 * density){//360 基準値（幅さ）
-            paddinglr = (int) ((width - (360 * density)) / 2);
+        if(width > BASE_WIDTH * density){//360 基準値（幅さ）
+            paddinglr = (int) ((width - (BASE_WIDTH * density)) / BASE_LEFT_RIGHT);
         }
-        if(height > 640 * density){//640 基準値（高さ）
-            paddingtb = (int) (height - (640 * density));
+        if(height > BASE_HEIGHT * density){
+            paddingtb = (int) (height - (BASE_HEIGHT * density));
         }
         if(paddinglr != 0 || paddingtb != 0){
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                    (int)(width - (16 * density)),//padding除く
-                    (int)(height - (80 * density)));//タイトル除く
+                    (int)(width - (BASE_LEFT_RIGHT_PADDING * BASE_LEFT_RIGHT * density)),//padding除く
+                    (int)(height - (BASE_TITLE * density)));//タイトル除く
             mViewPager.setLayoutParams(params);
             RelativeLayout.LayoutParams childLayoutParams = new RelativeLayout.LayoutParams(
                     LayoutParams.MATCH_PARENT,
                     LayoutParams.MATCH_PARENT);
-            inflate1.setPadding(paddinglr, 0 , paddinglr, paddingtb);
+            inflate1.setPadding(paddinglr, BASE_PADDING_TOP , paddinglr, paddingtb);
             inflate1.setLayoutParams(childLayoutParams);
-            inflate.setPadding(paddinglr, 0 , paddinglr, paddingtb);
+            inflate.setPadding(paddinglr, BASE_PADDING_TOP , paddinglr, paddingtb);
             inflate.setLayoutParams(childLayoutParams);
         }
         remokonAdapter = new ViewPagerAdapter();
