@@ -4,7 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
-import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,10 +13,8 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
@@ -93,11 +90,11 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
 
-        initDl();
-        initView();
-        getData();
-        initTabVIew();
-        setPagerAdapter();
+//        initDl();
+//        initView();
+//        getData();
+//        initTabVIew();
+//        setPagerAdapter();
         DTVTLogger.end();
     }
 
@@ -260,10 +257,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     protected void onPause() {
-        super.onPause();
         if (mDlnaProvRecVideo != null) {
             mDlnaProvRecVideo.stopListen();
         }
+        super.onPause();
     }
 
     /**
@@ -513,7 +510,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             contentsData.setTime(sb.toString());
             contentsData.setDownloadFlg(baseFrgament.mContentsList.get(i).getDownLoadStatus());
             contentsData.setDlFileFullPath(fullDlPaht);
-            baseFrgament.getContentsData().add(contentsData);
+            List<ContentsData> l = baseFrgament.getContentsData();
+            if(null!=l){
+                l.add(contentsData);
+            }
         } else {
             // NOP
         }
@@ -523,6 +523,11 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     protected void onResume() {
         super.onResume();
         registReceiver();
+        initDl();
+        initView();
+        getData();
+        initTabVIew();
+        setPagerAdapter();
     }
 
     @Override

@@ -816,12 +816,16 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
             return;
         }
         TextView textView = ((RelativeLayout) view.getParent().getParent()).findViewById(R.id.item_common_result_recorded_content_channel_name);
-        if (TextUtils.isEmpty(mContentsData.get((Integer)view.getTag()).getRecordedChannelName())){
-            ((RelativeLayout) view.getParent().getParent()).findViewById(R.id.item_common_result_recorded_content_hyphen).setVisibility(View.GONE);
-            textView.setVisibility(View.GONE);
-        } else {
-            textView.setText(mContentsData.get((Integer)view.getTag()).getRecordedChannelName());
-            textView.setTextColor(ContextCompat.getColor(mActivity, R.color.content_time_text));
+        try {
+            if (TextUtils.isEmpty(mContentsData.get((Integer) view.getTag()).getRecordedChannelName())) {
+                ((RelativeLayout) view.getParent().getParent()).findViewById(R.id.item_common_result_recorded_content_hyphen).setVisibility(View.GONE);
+                textView.setVisibility(View.GONE);
+            } else {
+                textView.setText(mContentsData.get((Integer) view.getTag()).getRecordedChannelName());
+                textView.setTextColor(ContextCompat.getColor(mActivity, R.color.content_time_text));
+            }
+        } catch (Exception e){
+            DTVTLogger.debug(e);
         }
     }
 
