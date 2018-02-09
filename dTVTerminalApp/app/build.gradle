@@ -199,6 +199,9 @@ android {
             aidl.srcDirs = [
                     'src/main/aidl'
             ]
+            jniLibs.srcDirs = [
+                    'libs'
+            ]
             res.srcDirs =
                     [
                             'src/main/res/layout/launch',
@@ -304,7 +307,7 @@ dependencies {
     compile 'com.android.support:design:26.1.0'
     testCompile 'junit:junit:4.12'
     //DiXiM SecurePlayer SDK Debug Version
-    compile(name: 'dixim-android-activation-lib-debug', ext: 'aar')
+    //compile(name: 'dixim-android-activation-lib-debug', ext: 'aar')
     compile(name: 'dixim-android-player-lib-debug', ext: 'aar')
     compile(name: 'dixim-android-player-secure-nativecodec-debug', ext: 'aar')
     compile(name: 'dixim-android-player-secure-openmaxal-debug', ext: 'aar')

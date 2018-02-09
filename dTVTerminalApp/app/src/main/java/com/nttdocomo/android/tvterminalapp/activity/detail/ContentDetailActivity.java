@@ -46,7 +46,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.digion.dixim.android.activation.ActivationClientDefinition;
+import com.digion.dixim.android.activation.helper.ActivationHelper;
 import com.digion.dixim.android.secureplayer.MediaPlayerController;
 import com.digion.dixim.android.secureplayer.MediaPlayerDefinitions;
 import com.digion.dixim.android.secureplayer.SecureVideoView;
@@ -232,8 +232,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     /* player start */
     private static final long HIDE_IN_3_SECOND = 3 * 1000;
     private static final int REFRESH_VIDEO_VIEW = 0;
-    private final static int ACTIVATION_REQUEST_CODE = 1;
-    private final static int ACTIVATION_REQUEST_MAX_CNT = 3;
     private static final int REWIND_SECOND = 10 * 1000;
     private static final int FAST_SECOND = 30 * 1000;
 
@@ -257,7 +255,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     private Handler mCtrlHandler = new Handler(Looper.getMainLooper());
     private GestureDetector mGestureDetector = null;
 
-    private int mActivationTimes = 0;
     private int mScreenWidth = 0;
     private boolean mCanPlay = false;
     private boolean mIsHideOperate = true;
@@ -351,6 +348,14 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     //外部出力制御
     private ExternalDisplayHelper mExternalDisplayHelper;
     private boolean mExternalDisplayFlg = false;
+
+    /**
+     * アクティベーション.
+     */
+    private Handler mActivationHandler = null;
+    private ActivationHelper mActivationHelper;
+    private String mDeviceKey;
+    private ActivationThread mActivationThread;
 
     private Runnable mHideCtrlViewThread = new Runnable() {
 
@@ -536,28 +541,85 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         } else {
             activate();
         }
+        showProsessBar(false);
         DTVTLogger.end();
         return false;
     }
 
     /**
-     * activate.
+     * アクティベーションダイアログ表示.
      */
     private void activate() {
         DTVTLogger.start();
-        if (mActivationTimes >= ACTIVATION_REQUEST_MAX_CNT) {
-            DTVTLogger.end();
+        mActivationHandler = new Handler();
+        mDeviceKey = EnvironmentUtil.getPrivateDataHome(ContentDetailActivity.this, EnvironmentUtil.ACTIVATE_DATA_HOME.PLAYER);
+        if (TextUtils.isEmpty(mDeviceKey)){
             return;
         }
-        Intent intent = new Intent();
-        intent.setClassName(ContentDetailActivity.this.getPackageName(),
-                ActivationClientDefinition.activationActivity);
-        intent.putExtra(ActivationClientDefinition.EXTRA_DEVICE_KEY,
-                EnvironmentUtil.getPrivateDataHome(ContentDetailActivity.this,
-                        EnvironmentUtil.ACTIVATE_DATA_HOME.PLAYER));
-        startActivityForResult(intent, ACTIVATION_REQUEST_CODE);
-        ++mActivationTimes;
+        mActivationHelper = new ActivationHelper(this, mDeviceKey);
+        mActivationThread = new ActivationThread();
+        CustomDialog customDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+		customDialog.setTitle(getResources().getString(R.string.activation_confirm_dialog_title));
+		customDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+			@Override
+			public void onOKCallback(boolean isOK) {
+				if (isOK) {
+					runActivation();
+				}
+			}
+		});
+		customDialog.showDialog();
         DTVTLogger.end();
+    }
+
+    /**
+     * アクティベーションThread.
+     */
+    class ActivationThread extends Thread {
+        public void start(){
+            super.start();
+        }
+
+        public void run() {
+            int ret = RESULT_FIRST_USER + 2;
+            if (ContentDetailActivity.this.mActivationHelper != null){
+                ret = ContentDetailActivity.this.mActivationHelper.activation(ContentDetailActivity.this.mDeviceKey);
+            }
+            final int result = ret;
+            if (ContentDetailActivity.this.mActivationHandler == null){
+                return;
+            }
+            ContentDetailActivity.this.mActivationHandler.post(new Runnable(){
+                @Override
+                public void run(){
+                    ContentDetailActivity.this.onThreadFinish(result);
+                }
+            });
+        }
+    }
+
+    /**
+     * アクティベーション処理開始.
+     */
+    private void runActivation() {
+        showProsessBar(true);
+        if (mActivationThread != null)
+            mActivationThread.start();
+    }
+
+    /**
+     * アクティベーション処理終了.
+     *
+     * @param result 処理結果
+     */
+    private void onThreadFinish(int result){
+        showProsessBar(false);
+        if (result == ActivationHelper.ACTC_OK){
+            onResume();
+            return;
+        } else {
+            showErrorDialog(getResources().getString(R.string.activation_failed_error));
+        }
     }
 
     /**
@@ -715,7 +777,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     private void initPlayer() {
         mSecureVideoPlayer = findViewById(R.id.dtv_contents_detail_main_layout_player_view);
         mScreenWidth = getWidthDensity();
-        initPlayerData();
         boolean ok = setCurrentMediaInfo();
         if (!ok) {
             errorExit();
@@ -1374,15 +1435,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             }
         }
     };
-
-    /**
-     * initView function.
-     */
-    private void initPlayerData() {
-        DTVTLogger.start();
-        mActivationTimes = 0;
-        DTVTLogger.end();
-    }
 
     /**
      * initPlayerView mView.

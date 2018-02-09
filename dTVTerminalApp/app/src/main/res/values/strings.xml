@@ -126,6 +126,8 @@
     <string name="record_download_cancel_title">ダウンロードを取りやめますか？</string>
     <string name="record_download_cancel_confirm">取りやめる</string>
     <string name="record_download_notification">録画番組をダウンロード中</string>
+    <string name="activation_confirm_dialog_title">アクティベーション実行の確認</string>
+    <string name="activation_failed_error">アクティベーション出来ませんでした。</string>
 
     <!-- ビデオ一覧 -->
     <string name="video_content_top_title">ビデオ</string>

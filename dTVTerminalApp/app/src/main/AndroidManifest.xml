@@ -129,11 +129,6 @@
             android:name=".activity.detail.ContentDetailActivity"
             android:configChanges="keyboardHidden|keyboard|orientation|screenSize"
             android:screenOrientation="portrait" />
-        <activity
-            android:name="com.digion.dixim.android.activation.ActivationActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="Activation"
-            android:theme="@style/DiximPlayerPanelTheme" />
         <!-- ======================================  Player グループ End ====================================== -->
 
 
