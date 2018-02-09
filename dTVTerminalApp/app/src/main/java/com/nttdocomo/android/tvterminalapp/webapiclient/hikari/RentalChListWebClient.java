@@ -34,7 +34,7 @@ public class RentalChListWebClient
     private RentalChListJsonParserCallback mRentalChListJsonParserCallback;
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
@@ -81,7 +81,7 @@ public class RentalChListWebClient
         mRentalChListJsonParserCallback = rentalChListJsonParserCallback;
 
         //購入済みCH一覧を呼び出す
-        openUrl(UrlConstants.WebApiUrl.RENTAL_CH_LIST_WEB_CLIENT, "", this);
+        openUrlAddOtt(UrlConstants.WebApiUrl.RENTAL_CH_LIST_WEB_CLIENT, "", this, null);
 
         //今のところ失敗していないので、trueを返す
         return true;

@@ -637,10 +637,13 @@ public class SharedPreferencesUtils {
         //プリファレンスから読み込む
         SharedPreferences data = context.getSharedPreferences(
                 ONE_TIME_TOKEN, Context.MODE_PRIVATE);
-        String buffer = data.getString(ONE_TIME_TOKEN,"");
+        String buffer = data.getString(ONE_TIME_TOKEN, "");
+
+        //復号する
+        String afterBuffer = StringUtils.getClearString(context, buffer);
 
         //読み込んだ物を分割
-        OneTimeTokenData tokenData = new OneTimeTokenData(buffer);
+        OneTimeTokenData tokenData = new OneTimeTokenData(afterBuffer);
 
         DTVTLogger.end();
 
@@ -650,7 +653,7 @@ public class SharedPreferencesUtils {
     /**
      * ワンタイムトークン関連情報の書き込み.
      *
-     * @param context コンテキスト
+     * @param context   コンテキスト
      * @param tokenData 書き込むワンタイムトークン
      */
     public static void setOneTimeTokenData(Context context, OneTimeTokenData tokenData) {
@@ -658,12 +661,28 @@ public class SharedPreferencesUtils {
         //書き込み用の文字列を作成する
         String buffer = tokenData.makeOneTimeTokenString();
 
+        //暗号化
+        String afterBuffer = StringUtils.getCipherString(context,buffer);
+
         //書き込む
         SharedPreferences data = context.getSharedPreferences(
                 ONE_TIME_TOKEN, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = data.edit();
-        editor.putString(ONE_TIME_TOKEN, buffer);
+        editor.putString(ONE_TIME_TOKEN, afterBuffer);
         editor.apply();
+        DTVTLogger.end();
+    }
+
+    /**
+     * ワンタイムトークンの削除を行う.
+     *
+     * @param context コンテキスト
+     */
+    public static void deleteOneTimeTokenData(Context context) {
+        DTVTLogger.start();
+        SharedPreferences deleteData = context.getSharedPreferences(
+                ONE_TIME_TOKEN, Context.MODE_PRIVATE);
+        deleteData.edit().clear().apply();
         DTVTLogger.end();
     }
 }

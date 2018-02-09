@@ -14,11 +14,11 @@ public class RemoteRecordingReservationListWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
     /**
-     * コールバック
+     * コールバック.
      */
     public interface RemoteRecordingReservationListJsonParserCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
          *
          * @param RemoteRecordingReservationListResponse JSONパース後のデータ
          */
@@ -31,7 +31,7 @@ public class RemoteRecordingReservationListWebClient
             mRemoteRecordingReservationListJsonParserCallback;
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
@@ -64,7 +64,7 @@ public class RemoteRecordingReservationListWebClient
     }
 
     /**
-     * リモート録画予約一覧取得
+     * リモート録画予約一覧取得.
      *
      * @param remoteRecordingReservationListJsonParserCallback コールバックTODO:
      * 本WebAPIには通常のパラメータが無く、基底クラスで追加するサービストークンのみとなる。）
@@ -85,15 +85,15 @@ public class RemoteRecordingReservationListWebClient
                 remoteRecordingReservationListJsonParserCallback;
 
         //リモート録画一覧の情報を読み込むため、リモート録画一覧を呼び出す
-        openUrl(UrlConstants.WebApiUrl.REMOTE_RECORDING_RESERVATION_LIST_WEB_CLIENT,
-                "", this);
+        openUrlAddOtt(UrlConstants.WebApiUrl.REMOTE_RECORDING_RESERVATION_LIST_WEB_CLIENT,
+                "", this, null);
 
         //今のところ失敗していないので、trueを返す
         return true;
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param remoteRecordingReservationListJsonParserCallback コールバック
      * @return 値がおかしいならばfalse

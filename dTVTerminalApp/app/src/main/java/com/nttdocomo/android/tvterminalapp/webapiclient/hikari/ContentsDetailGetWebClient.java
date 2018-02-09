@@ -20,11 +20,11 @@ public class ContentsDetailGetWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
     /**
-     * コールバック
+     * コールバック.
      */
     public interface ContentsDetailJsonParserCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
          *
          * @param ContentsDetailLists JSONパース後のデータ
          */
@@ -35,7 +35,7 @@ public class ContentsDetailGetWebClient
     private ContentsDetailJsonParserCallback mContentsDetailJsonParserCallback;
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
@@ -44,7 +44,7 @@ public class ContentsDetailGetWebClient
     }
 
     /**
-     * 通信成功時のコールバック
+     * 通信成功時のコールバック.
      *
      * @param returnCode 戻り値構造体
      */
@@ -71,7 +71,7 @@ public class ContentsDetailGetWebClient
     }
 
     /**
-     * コンテンツ詳細情報取得
+     * コンテンツ詳細情報取得.
      *
      * @param crid                             取得したい情報のコンテンツ識別ID(crid)の配列
      * @param filter                           フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
@@ -100,14 +100,15 @@ public class ContentsDetailGetWebClient
         }
 
         //チャンネル一覧を呼び出す
-        openUrl(UrlConstants.WebApiUrl.CONTENTS_DETAIL_GET_WEB_CLIENT, sendParameter, this);
+        openUrlAddOtt(UrlConstants.WebApiUrl.CONTENTS_DETAIL_GET_WEB_CLIENT, sendParameter,
+                this, null);
 
         //現状失敗は無いのでtrue
         return true;
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param crid                             取得したい情報のコンテンツ識別ID(crid)の配列
      * @param filter                           フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
@@ -144,7 +145,7 @@ public class ContentsDetailGetWebClient
     }
 
     /**
-     * 指定されたパラメータをJSONで組み立てて文字列にする
+     * 指定されたパラメータをJSONで組み立てて文字列にする.
      *
      * @param crids  取得したい情報のコンテンツ識別ID(crid)の配列
      * @param filter フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease

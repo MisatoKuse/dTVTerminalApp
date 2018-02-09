@@ -23,7 +23,7 @@ public class WatchListenVideoWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback, JsonParserThread.JsonParser {
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
@@ -48,7 +48,7 @@ public class WatchListenVideoWebClient
     }
 
     /**
-     * コールバック
+     * コールバック.
      */
     public interface WatchListenVideoJsonParserCallback {
         /**
@@ -63,7 +63,7 @@ public class WatchListenVideoWebClient
     private WatchListenVideoJsonParserCallback mWatchListenVideoJsonParserCallback;
 
     /**
-     * 通信成功時のコールバック
+     * 通信成功時のコールバック.
      *
      * @param returnCode 戻り値構造体
      */
@@ -92,7 +92,7 @@ public class WatchListenVideoWebClient
     }
 
     /**
-     * 視聴中ビデオ一覧取得
+     * 視聴中ビデオ一覧取得.
      *
      * @param ageReq                             視聴年齢制限値（1から17までの値）
      * @param upperPagetLimit                    結果の最大件数（1以上）
@@ -123,15 +123,15 @@ public class WatchListenVideoWebClient
         }
 
         //視聴中ビデオ一覧を呼び出す
-        openUrl(UrlConstants.WebApiUrl.WATCH_LISTEN_VIDEO_LIST,
-                sendParameter, this);
+        openUrlAddOtt(UrlConstants.WebApiUrl.WATCH_LISTEN_VIDEO_LIST,
+                sendParameter, this, null);
 
         //今のところ正常なので、trueで帰る
         return true;
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param ageReq                             視聴年齢制限値
      * @param upperPagetLimit                    結果の最大件数
@@ -170,7 +170,7 @@ public class WatchListenVideoWebClient
     }
 
     /**
-     * 指定されたパラメータをJSONで組み立てて文字列にする
+     * 指定されたパラメータをJSONで組み立てて文字列にする.
      *
      * @param ageReq          視聴年齢制限値
      * @param upperPagetLimit 結果の最大件数

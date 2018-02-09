@@ -19,11 +19,11 @@ public class MyChannelDeleteWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
     /**
-     * コールバック
+     * コールバック.
      */
     public interface MyChannelDeleteJsonParserCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
          *
          * @param myChannelDeleteResponse JSONパース後のデータ
          */
@@ -35,7 +35,7 @@ public class MyChannelDeleteWebClient
     private MyChannelDeleteJsonParserCallback myChannelDeleteJsonParserCallback;
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
@@ -66,7 +66,7 @@ public class MyChannelDeleteWebClient
     }
 
     /**
-     * マイチャンネル解除取得
+     * マイチャンネル解除取得.
      *
      * @param myChannelDeleteJsonParserCallback コールバックTODO:
      *                                          本WebAPIには通常のパラメータが無く、基底クラスで追加するサービストークンのみとなる。）
@@ -92,15 +92,15 @@ public class MyChannelDeleteWebClient
         }
 
         //リモート録画一覧の情報を読み込むため、リモート録画一覧を呼び出す
-        openUrl(UrlConstants.WebApiUrl.MY_CHANNEL_RELEASE_WEB_CLIENT,
-                sendParameter, this);
+        openUrlAddOtt(UrlConstants.WebApiUrl.MY_CHANNEL_RELEASE_WEB_CLIENT,
+                sendParameter, this, null);
 
         //今のところ失敗していないので、trueを返す
         return true;
     }
 
     /**
-     * 指定されたパラメータをJSONで組み立てて文字列にする
+     * 指定されたパラメータをJSONで組み立てて文字列にする.
      *
      * @param serviceId サービスID
      * @return 組み立て後の文字列
@@ -123,7 +123,7 @@ public class MyChannelDeleteWebClient
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param serviceId                         サービスID
      * @param myChannelDeleteJsonParserCallback コールバック

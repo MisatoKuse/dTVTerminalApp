@@ -43,7 +43,7 @@ public class ClipRegistWebClient
     private ClipRegistJsonParserCallback mClipRegistJsonParserCallback;
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
@@ -120,7 +120,8 @@ public class ClipRegistWebClient
         }
 
         //チャンネル一覧を呼び出す
-        openUrl(UrlConstants.WebApiUrl.CLIP_REGISTER_GET_WEB_CLIENT, sendParameter, this);
+        openUrlAddOtt(UrlConstants.WebApiUrl.CLIP_REGISTER_GET_WEB_CLIENT, sendParameter,
+                this, null);
 
         //現状失敗は無いのでtrue
         return true;

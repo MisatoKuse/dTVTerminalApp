@@ -22,11 +22,11 @@ public class WeeklyRankWebClient
     public static final String WEEKLY_RANK_CLIENT_BUNDLE_KEY = "genreId";
 
     /**
-     * コールバック
+     * コールバック.
      */
     public interface WeeklyRankJsonParserCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
          *
          * @param weeklyRankLists JSONパース後のデータ
          */
@@ -38,7 +38,7 @@ public class WeeklyRankWebClient
 
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
@@ -71,7 +71,7 @@ public class WeeklyRankWebClient
 
 
     /**
-     * 週間のクリップ数番組ランキング取得
+     * 週間のクリップ数番組ランキング取得.
      *
      * @param limit                        取得する最大件数(値は1以上)
      * @param offset                       　取得位置(値は1以上)
@@ -106,7 +106,7 @@ public class WeeklyRankWebClient
         bundle.putString(WEEKLY_RANK_CLIENT_BUNDLE_KEY,genreId);
 
         //週毎ランク一覧を呼び出す
-        openUrlWithExtraData(UrlConstants.WebApiUrl.WEEKLY_RANK_LIST,sendParameter,this,bundle);
+        openUrlAddOtt(UrlConstants.WebApiUrl.WEEKLY_RANK_LIST, sendParameter, this, bundle);
 
 
         //今のところ失敗は無いので、trueで帰る
@@ -114,7 +114,7 @@ public class WeeklyRankWebClient
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param limit  取得する最大件数(値は1以上)
      * @param offset 取得位置(値は1以上)
@@ -163,7 +163,7 @@ public class WeeklyRankWebClient
     }
 
     /**
-     * 指定されたパラメータをJSONで組み立てて文字列にする
+     * 指定されたパラメータをJSONで組み立てて文字列にする.
      *
      * @param limit   取得する最大件数(値は1以上)
      * @param offset  取得位置(値は1以上)

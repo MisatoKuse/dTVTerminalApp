@@ -20,7 +20,7 @@ public class DailyRankWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
     /**
-     * コールバック
+     * コールバック.
      */
     public interface DailyRankJsonParserCallback {
         /**
@@ -35,7 +35,7 @@ public class DailyRankWebClient
     private DailyRankJsonParserCallback mDailyRankJsonParserCallback;
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
@@ -63,7 +63,7 @@ public class DailyRankWebClient
     }
 
     /**
-     * 当日のクリップ数番組ランキング取得
+     * 当日のクリップ数番組ランキング取得.
      *
      * @param limit                       取得する最大件数(値は1以上)
      * @param offset                      取得位置(値は1以上)
@@ -92,14 +92,14 @@ public class DailyRankWebClient
         }
 
         //日毎ランク一覧を呼び出す
-        openUrl(UrlConstants.WebApiUrl.DAILY_RANK_LIST, sendParameter, this);
+        openUrlAddOtt(UrlConstants.WebApiUrl.DAILY_RANK_LIST, sendParameter, this, null);
 
         //今のところ失敗していないので、trueを返す
         return true;
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param limit  取得する最大件数(値は1以上)
      * @param offset 取得位置(値は1以上)
@@ -147,7 +147,7 @@ public class DailyRankWebClient
     }
 
     /**
-     * 指定されたパラメータをJSONで組み立てて文字列にする
+     * 指定されたパラメータをJSONで組み立てて文字列にする.
      *
      * @param limit  取得する最大件数(値は1以上)
      * @param offset 取得位置(値は1以上)
