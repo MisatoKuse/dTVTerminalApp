@@ -790,7 +790,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         switch (mType) {
             case TYPE_DAILY_RANK: // 今日のテレビランキング
             case TYPE_WEEKLY_RANK: // 週間ランキング
-            case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
                 holder.ll_rating.setVisibility(View.GONE);
                 holder.tv_clip.setVisibility(View.GONE);
                 break;
@@ -802,6 +801,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
             case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
                 holder.tv_time.setVisibility(View.GONE);
+                holder.tv_rank.setVisibility(View.GONE);
+                break;
+            case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
+                holder.ll_rating.setVisibility(View.GONE);
+                holder.tv_clip.setVisibility(View.GONE);
                 holder.tv_rank.setVisibility(View.GONE);
                 break;
             case TYPE_RENTAL_RANK: // レンタル一覧
@@ -821,15 +825,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.iv_thumbnail.setVisibility(View.GONE);
                 holder.rb_rating.setVisibility(View.GONE);
                 break;
-            case TYPE_CONTENT_DETAIL_CHANNEL_LIST: // コンテンツ詳細チャンネル一覧
-                holder.tv_rank.setVisibility(View.GONE);
-                holder.rb_rating.setVisibility(View.GONE);
-                holder.tv_line.setVisibility(View.VISIBLE);
-                break;
-            case TYPE_SEARCH_LIST: //検索
-                holder.tv_time.setVisibility(View.GONE);
-                holder.tv_rank.setVisibility(View.GONE);
-                holder.rb_rating.setVisibility(View.GONE);
             default:
                 break;
         }
