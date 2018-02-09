@@ -339,7 +339,7 @@ public class CustomDialog implements DialogInterface.OnClickListener, AdapterVie
     /**
      * ダイアログを閉じる.
      */
-    private void dismissDialog() {
+    public void dismissDialog() {
         if (dialog != null) {
             dialog.dismiss();
         }

@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.Window;
@@ -35,8 +37,7 @@ import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectErrorActivity;
 import com.nttdocomo.android.tvterminalapp.activity.setting.SettingActivity;
-import com.nttdocomo.android.tvterminalapp.dataprovider.callback.TransoceanicCommunicationAlertDialogCallback;
-import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
+import com.nttdocomo.android.tvterminalapp.application.TvtApplication;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
@@ -51,8 +52,10 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
+import com.nttdocomo.android.tvterminalapp.utils.RuntimePermissionUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
+import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountControl;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipDeleteWebClient;
@@ -69,7 +72,7 @@ import java.util.List;
 public class BaseActivity extends FragmentActivity implements MenuDisplayEventListener,
         DlnaDevListListener, View.OnClickListener, RemoteControllerView.OnStartRemoteControllerUIListener,
         ClipRegistWebClient.ClipRegistJsonParserCallback, ClipDeleteWebClient.ClipDeleteJsonParserCallback,
-        DaccountControl.DaccountControlCallBack, TransoceanicCommunicationAlertDialogCallback {
+        DaccountControl.DaccountControlCallBack {
 
     private LinearLayout mBaseLinearLayout = null;
     private RelativeLayout mHeaderLayout = null;
@@ -80,9 +83,21 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     private DlnaProvDevList mDlnaProvDevListForBase = null;
 
     private ImageView mMenuImageViewForBase = null;
+    /**
+     * リモコンレイアウト.
+     */
     private RemoteControllerView remoteControllerView = null;
+    /**
+     * Activityのコンテキスト.
+     */
     private Context mContext = null;
+    /**
+     * Activityのコンテキスト.
+     */
     private Activity mActivity = null;
+    /**
+     * 中継アプリ連携クライアント.
+     */
     private RemoteControlRelayClient mRemoteControlRelayClient = null;
     private UserState mUserState = UserState.LOGIN_NG;
 
@@ -102,7 +117,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      */
     private boolean mIsStbStatusOn = false;
     /**
-     * GooglePlayのドコテレアプリページ
+     * GooglePlayのドコテレアプリページ.
      * 現在
      */
     private static final String DTVTERMINAL_GOOGLEPLAY_DOWNLOAD_URL =
@@ -112,7 +127,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      * タイムアウト時間.
      */
     public static final int LOAD_PAGE_DELAY_TIME = 1000;
-
+    /**
+     * ダブルクリック抑止用 DELAY.
+     */
     private static final int MIN_CLICK_DELAY_TIME = 1000;
 
     /**
@@ -136,9 +153,12 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     private List<UserInfoList> mUserInfo;
 
     /**
-     * ヘッダーに表示されているアイコンがメニューアイコンか×ボタンアイコンかを判別するタグ.
+     * ヘッダーに表示されているアイコンがメニューアイコンか×ボタンアイコンかを判別するタグ(menu).
      */
     private static final String HEADER_ICON_MENU = "menu";
+    /**
+     * ヘッダーに表示されているアイコンがメニューアイコンか×ボタンアイコンかを判別するタグ(close).
+     */
     private static final String HEADER_ICON_CLOSE = "close";
 
     /**
@@ -164,6 +184,28 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     public String getScreenTitle() {
         return "";
     }
+
+    /**
+     * 海外通信ダイアログ表示中フラグ.
+     * このフラグが true の時、全通信を止めるor通信処理を実行しない
+     */
+    protected boolean showTransoceanicCommunicationFlag = false;
+    /**
+     * requestPermissions()表示によるonPauseを判断するためのフラグ.
+     */
+    private boolean mShowPermissionDialogFlag = false;
+    /**
+     * 表示中ダイアログ.
+     */
+    private CustomDialog mShowDialog = null;
+    /**
+     * 国内通信 MCC (440 Japan).
+     */
+    private static final int DOMESTIC_COMMUNICATION_MCC_1 = 440;
+    /**
+     * 国内通信 MCC (441 Japan).
+     */
+    private static final int DOMESTIC_COMMUNICATION_MCC_2 = 441;
 
     /**
      * 関数機能：
@@ -394,7 +436,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      *
      * @param visible 表示状態
      */
-    protected void setTvProgramTitleArrowVisibility(Boolean visible) {
+    protected void setTvProgramTitleArrowVisibility(final Boolean visible) {
         if (mTitleArrowImage != null) {
             if (visible) {
                 mTitleArrowImage.setVisibility(View.VISIBLE);
@@ -415,16 +457,16 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * 機能：onCreate
+     * 機能：onCreate.
      * Sub classにて、super.onCreate(savedInstanceState)をコールする必要がある
      *
      * @param savedInstanceState savedInstanceState
      */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         DTVTLogger.start();
 
-        //TODO: 認証付きアプリのデバッグ時に有効化すると、デバッグのアタッチが行われるまでここで停止する。最終的には削除を行う事
+        // TODO 認証付きアプリのデバッグ時に有効化すると、デバッグのアタッチが行われるまでここで停止する。最終的には削除を行う事
         //android.os.Debug.waitForDebugger();
 
         super.onCreate(savedInstanceState);
@@ -433,14 +475,14 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         mActivity = this;
         initView();
 
-        //TODO: STBのIPアドレスはSTBにDMS機能が搭載された暁にはペアリング時に保存した値を用いるようにする.
+        // TODO STBのIPアドレスはSTBにDMS機能が搭載された暁にはペアリング時に保存した値を用いるようにする.
         mRemoteControlRelayClient = RemoteControlRelayClient.getInstance();
         mRemoteControlRelayClient.setDebugRemoteIp("192.168.11.51");
         //dアカウントの検知処理を追加する
         setDaccountControl();
 
         //ユーザー情報の変更検知
-        //検討中
+        // TODO 検討中
 //        UserInfoDataProvider dataProvider = new UserInfoDataProvider(getApplicationContext(), this);
 //        dataProvider.getUserInfo();
 
@@ -455,46 +497,30 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     protected void onResume() {
         super.onResume();
         DTVTLogger.start();
-		boolean r = DlnaInterface.dlnaOnResume();
-        if(!r){
-            DTVTLogger.debug("BaseActivity.onResume, dlnaOnResume failed");
+        TvtApplication app = (TvtApplication) getApplication();
+        // BG → FG でのonResumeかを判定
+        if (app.getIsChangeApplicationVisible()) {
+            permissionCheckExec();
+        } else {
+            // 通常のライフサイクル
+            showTransoceanicCommunicationFlag = false;
+            this.onStartCommunication();
         }
-        registerDevListDlna();
-
-        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-        if (null == dlnaDmsItem) {
-            return;
-        }
-        if (null != mDlnaProvDevListForBase) {
-            boolean isAvai = mDlnaProvDevListForBase.isDmsAvailable(dlnaDmsItem.mUdn);
-            setStbStatus(isAvai);
-        }
-
-        DTVTLogger.debug("RestartFlag check "
-                + SharedPreferencesUtils.getSharedPreferencesRestartFlag(getApplicationContext()));
-
-        // 再起動フラグがtrueならば、再起動メッセージを表示する
-        if (SharedPreferencesUtils.getSharedPreferencesRestartFlag(getApplicationContext())) {
-            restartMessageDialog();
-        }
-
-        //再起動フラグをOFFにする
-        SharedPreferencesUtils.setSharedPreferencesRestartFlag(getApplicationContext(), false);
-
-        DTVTLogger.debug("RestartFlag falsed "
-                + SharedPreferencesUtils.getSharedPreferencesRestartFlag(getApplicationContext()));
 
         DTVTLogger.end();
     }
 
     @Override
     protected void onRestart() {
-        super.onRestart();
         DTVTLogger.start();
+        super.onRestart();
 
-        checkDAccountOnRestart();
+        DTVTLogger.end();
     }
 
+    /**
+     * dアカウントチェックの再実行.
+     */
     protected void checkDAccountOnRestart() {
         //BGからFGに遷移するときにdアカチェックを行う
         setRelayClientHandler();
@@ -510,9 +536,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     protected void onStop() {
         super.onStop();
         DTVTLogger.start();
-        mRemoteControlRelayClient.resetHandler();
-        //unregisterDevListDlna();
-        DlnaInterface.dlnaOnStop();
+
         DTVTLogger.end();
     }
 
@@ -553,18 +577,20 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      */
     public Handler mRelayClientHandler = new Handler() {
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(final Message msg) {
             DTVTLogger.debug(String.format("msg:%s", msg));
             setRemoteProgressVisible(View.GONE);
-            onStbClientResponce(msg);
+            onStbClientResponse(msg);
             mRemoteControlRelayClient.resetHandler();
         }
     };
 
     /**
      * STB応答時処理.
+     *
+     * @param msg 応答メッセージ
      */
-    protected void onStbClientResponce(Message msg){
+    protected void onStbClientResponse(final Message msg) {
         RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES requestCommand
                 = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getRequestCommandTypes();
         DTVTLogger.debug("msg.what: " + msg.what + "requestCommand: " + requestCommand);
@@ -587,26 +613,30 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                 }
                 break;
             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_ERROR:
-                int resultcode = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getResultCode();
-                DTVTLogger.debug("resultcode: " + resultcode);
+                int resultCode = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getResultCode();
+                DTVTLogger.debug("resultCode: " + resultCode);
                 switch (requestCommand) {
                     case START_APPLICATION:
                     case TITLE_DETAIL:
                         RemoteControlRelayClient.STB_APPLICATION_TYPES appId
                                 = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getApplicationTypes();
-                        startApplicationErrorHander(resultcode, appId);
+                        startApplicationErrorHandler(resultCode, appId);
                         break;
                     case IS_USER_ACCOUNT_EXIST:
-                        switch (resultcode) {
-                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_INTERNAL_ERROR://サーバエラー
-                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE://ユーザアカウントチェックサービス未登録
-                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY:// //中継アプリからの応答待ち中に新しい要求を行った場合
-                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_CONNECTION_TIMEOUT: //STBの中継アプリ~応答が無かった場合(要求はできたのでSTBとの通信はOK)
+                        switch (resultCode) {
+                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_INTERNAL_ERROR:
+                                //サーバエラー
+                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE:
+                                //ユーザアカウントチェックサービス未登録
+                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_RELAY_SERVICE_BUSY:
+                                //中継アプリからの応答待ち中に新しい要求を行った場合
+                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_CONNECTION_TIMEOUT:
+                                //STBの中継アプリ~応答が無かった場合(要求はできたのでSTBとの通信はOK)
                                 break;
                             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_UNREGISTERED_USER_ID://指定ユーザIDなし
                                 // チェック処理の状態で処理を分岐する
                                 SharedPreferencesUtils.resetSharedPreferencesStbInfo(getApplicationContext());
-                                //TODO:アプリのキャッシュをきれいにクリアする処理が必要
+                                // TODO アプリのキャッシュをきれいにクリアする処理が必要
                                 Intent intent = new Intent(mActivity, DAccountReSettingActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                 startActivity(intent);
@@ -620,7 +650,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                                 dTVTUpDateDialog.setContent(getResources().getString(R.string.d_tv_terminal_application_version_update_dialog));
                                 dTVTUpDateDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                                     @Override
-                                    public void onOKCallback(boolean isOK) {
+                                    public void onOKCallback(final boolean isOK) {
                                         toGooglePlay(DTVTERMINAL_GOOGLEPLAY_DOWNLOAD_URL);
                                     }
                                 });
@@ -634,13 +664,13 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                         }
                         break;
                     case CHECK_APPLICATION_VERSION_COMPATIBILITY:
-                        switch (resultcode) {
+                        switch (resultCode) {
                             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE:
                                 CustomDialog dTVTUpDateDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
                                 dTVTUpDateDialog.setContent(getResources().getString(R.string.d_tv_terminal_application_version_update_dialog));
                                 dTVTUpDateDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
                                     @Override
-                                    public void onOKCallback(boolean isOK) {
+                                    public void onOKCallback(final boolean isOK) {
                                         toGooglePlay(DTVTERMINAL_GOOGLEPLAY_DOWNLOAD_URL);
                                     }
                                 });
@@ -654,7 +684,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                         }
                         break;
                     case COMMAND_UNKNOWN:
-                        switch (resultcode) {
+                        switch (resultCode) {
                             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
                                 showErrorDialog(getResources().getString(R.string.main_setting_connect_error_message));
                                 //ペアリングアイコンをOFFにする
@@ -672,14 +702,13 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         }
     }
 
-
     /**
      * dTVアプリ起動エラーハンドラ.
      *
      * @param resultCode 実行コード
      * @param appId      アプリID
      */
-    protected void startApplicationErrorHander(final int resultCode, final RemoteControlRelayClient.STB_APPLICATION_TYPES appId) {
+    protected void startApplicationErrorHandler(final int resultCode, final RemoteControlRelayClient.STB_APPLICATION_TYPES appId) {
         String message;
         switch (resultCode) {
             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_APPLICATION_NOT_INSTALL:
@@ -758,8 +787,9 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                 break;
         }
     }
+
     /**
-     * 機能　GooglePlayのAPPページへ
+     * 機能　GooglePlayのAPPページへ.
      *
      * @param downLoadUrl 当アプリはGooglePlayのダウンロードURL
      */
@@ -804,7 +834,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         //startAppDialog.setTitle(getString(R.string.dTV_content_service_start_dialog));
         restartDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
-            public void onOKCallback(boolean isOK) {
+            public void onOKCallback(final boolean isOK) {
                 //OKが押されたので、ホーム画面の表示
                 DAccountUtils.reStartApplication(activity);
             }
@@ -880,6 +910,10 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         return "Test User";
     }
 
+    /**
+     * ユーザステータスの取得.
+     * @return ユーザステータス
+     */
     public UserState getUserState() {
         return mUserState;
     }
@@ -968,17 +1002,17 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     @Override
-    public void onPreUserStateChange(UserState oldUserState, UserState newUserState) {
+    public void onPreUserStateChange(final UserState oldUserState, final UserState newUserState) {
 
     }
 
     @Override
-    public void onUserStateChanged(UserState oldUserState, UserState newUserState) {
+    public void onUserStateChanged(final UserState oldUserState, final UserState newUserState) {
 
     }
 
     @Override
-    public void onMenuItemSelected(MenuItem menuItem) {
+    public void onMenuItemSelected(final MenuItem menuItem) {
 
     }
 
@@ -1069,13 +1103,17 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             // onPause時にリモコンUIを閉じる
             remoteControllerView.closeRemoteControllerUI();
         }
+        mRemoteControlRelayClient.resetHandler();
+        //unregisterDevListDlna();
+        DlnaInterface.dlnaOnStop();
+        DismissDialog();
         super.onPause();
     }
 
     /**
      * リモコンUIにリスナーを設定する.
      *
-     * @param listener リスナ
+     * @param listener リスナー
      */
     protected void setStartRemoteControllerUIListener(final RemoteControllerView.OnStartRemoteControllerUIListener listener) {
         remoteControllerView.setOnStartRemoteControllerUI(listener);
@@ -1097,14 +1135,14 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      * STBのサービスアプリ起動リクエスト処理を実行.
      * ・dTVチャンネル
      *
-     * @param type
-     * @param crid
-     * @param chno
-     * @param serviceCategoryType
+     * @param type アプリのタイプ
+     * @param crid crid
+     * @param chno チャンネル番号
+     * @param serviceCategoryType サービス形態
      */
     protected void requestStartApplicationDtvChannel(final RemoteControlRelayClient.STB_APPLICATION_TYPES type,
-                                                        final RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES serviceCategoryType,
-                                                        final String crid, final String chno) {
+                                                     final RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES serviceCategoryType,
+                                                     final String crid, final String chno) {
         remoteControllerView.sendStartApplicationDtvChannelRequest(type, serviceCategoryType, crid, chno);
     }
 
@@ -1122,7 +1160,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      */
     protected View.OnClickListener mRemoteControllerOnClickListener = new View.OnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onClick(final View v) {
             switch (v.getId()) {
                 case R.id.header_stb_status_icon:
                     if (getStbStatus()) {
@@ -1151,7 +1189,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     };
 
     @Override
-    public void onStartRemoteControl(boolean isFromHeader) {
+    public void onStartRemoteControl(final boolean isFromHeader) {
         DTVTLogger.debug("base_start_control");
         View base = findViewById(R.id.base_motion_detection_rl);
         base.setOnClickListener(mRemoteControllerOnClickListener);
@@ -1290,7 +1328,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     @Override
-    public void daccountControlCallBack(boolean result) {
+    public void daccountControlCallBack(final boolean result) {
         DTVTLogger.start();
         //dアカウントの登録結果を受け取るコールバック
         if (result) {
@@ -1348,7 +1386,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         applicationFinishDialog.setCancelable(false);
         applicationFinishDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
-            public void onOKCallback(boolean isOK) {
+            public void onOKCallback(final boolean isOK) {
                 //アプリ終了する
                 Intent startMain = new Intent(Intent.ACTION_MAIN);
                 startMain.addCategory(Intent.CATEGORY_HOME);
@@ -1359,7 +1397,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         });
         applicationFinishDialog.showDialog();
     }
-//検討中
+//    TODO 検討中
 //    @Override
 //    public void userInfoListCallback(boolean isChange, List<UserInfoList> list) {
 //        //年齢情報に変化があったのでホーム画面に飛ぶ。ただし、初回実行時はチュートリアル等のスキップを防ぐために、必ずfalseになる
@@ -1415,22 +1453,31 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         return mSourceScreenClass;
     }
 
-    /** dip → px */
-    public int dip2px(int dip) {
+    /**
+     * dip → px変換.
+     *
+     * @param dip 変換値
+     * @return 変換後の値 px値
+     */
+    public int dip2px(final int dip) {
         return (int) (dip * getDensity() + 0.5f);
     }
 
-    public void setRemoteProgressVisible(int visible){
+    /**
+     * プログレスの表示設定.
+     * @param visible 表示値
+     */
+    public void setRemoteProgressVisible(final int visible) {
         findViewById(R.id.base_progress_rl).setVisibility(visible);
     }
 
     /**
-     * アニメーション付きスタートアクティビティ
+     * アニメーション付きスタートアクティビティ.
      *
      * @param intent アクティビティ呼び出し情報
      */
     @Override
-    public void startActivity(Intent intent) {
+    public void startActivity(final Intent intent) {
         //普通にアクティビティを起動する
         super.startActivity(intent);
 
@@ -1439,12 +1486,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         if (intent != null && intent.getComponent() != null) {
             callName = intent.getComponent().toShortString();
         }
-
         //飛び先がSTB選択の関連画面ならば、アニメは付加せず帰る
-        if (callName.contains(STBSelectActivity.class.getSimpleName()) ||
-                callName.contains(STBSelectErrorActivity.class.getSimpleName())) {
+        if (callName.contains(STBSelectActivity.class.getSimpleName())
+                || callName.contains(STBSelectErrorActivity.class.getSimpleName())) {
             //ただし、設定画面から呼ばれた場合はアニメーションは行うので帰らない
-            if(!(this instanceof SettingActivity)) {
+            if (!(this instanceof SettingActivity)) {
                 return;
             }
         }
@@ -1456,11 +1502,11 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     /**
      * コンテンツ詳細に必要なデータを返す.
      *
-     * @param info レコメンド情報
+     * @param info         レコメンド情報
      * @param recommendFlg レコメンドフラグ
      * @return コンテンツ情報
      */
-    public static OtherContentsDetailData getOtherContentsDetailData(ContentsData info, String recommendFlg) {
+    public static OtherContentsDetailData getOtherContentsDetailData(final ContentsData info, final String recommendFlg) {
         OtherContentsDetailData detailData = new OtherContentsDetailData();
         detailData.setTitle(info.getTitle());
         detailData.setThumb(info.getThumURL());
@@ -1486,9 +1532,68 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * 海外通信警告ダイアログの設定・表示
+     * SIM情報取得permission取得 / 海外通信判定実行.
      */
-    private void showTransoceanicCommunicationDialog() {
+    public void permissionCheckExec() {
+        DTVTLogger.start();
+        if (!mShowPermissionDialogFlag) {
+            // "今後表示しない"判定
+            if (RuntimePermissionUtils.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE)) {
+                // 許可されているかを判定
+                if (RuntimePermissionUtils.hasSelfPermissions(this, Manifest.permission.READ_PHONE_STATE)) {
+                    checkCommunication();
+                } else {
+                    onStartCommunication();
+                }
+            } else {
+                mShowDialog = createPermissionDetailDialog();
+                mShowDialog.showDialog();
+            }
+        } else {
+            mShowPermissionDialogFlag = false;
+            if (RuntimePermissionUtils.hasSelfPermissions(this, Manifest.permission.READ_PHONE_STATE)) {
+                // 海外判定の実施
+                checkCommunication();
+            } else {
+                // 海外判定を行わず通信を行う
+                onStartCommunication();
+            }
+        }
+        DTVTLogger.end();
+    }
+
+    /**
+     * 海外通信が不許可又はSIM情報取得不許可.
+     *
+     * @return 表示するCustomDialog
+     */
+    private CustomDialog createPermissionDeniedDialog() {
+        DTVTLogger.start();
+        CustomDialog dialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+        dialog.setOnTouchOutside(false);
+        dialog.setCancelable(false);
+        // TODO 文言は仮実装
+        dialog.setContent(this.getResources().getString(R.string.permission_denied_dialog_content));
+        // TODO 文言は仮実装
+        dialog.setTitle(this.getResources().getString(R.string.permission_denied_dialog_title));
+        dialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+            @Override
+            public void onOKCallback(final boolean isOK) {
+                mShowDialog = null;
+                finish();
+            }
+        });
+        DTVTLogger.end();
+        return dialog;
+    }
+
+    /**
+     * 海外通信警告ダイアログの設定・表示.
+     *
+     * @return 表示するCustomDialog
+     */
+    private CustomDialog createTransoceanicCommunicationDialog() {
+        DTVTLogger.start();
         CustomDialog dialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
         dialog.setCancelable(false);
         dialog.setOnTouchOutside(false);
@@ -1496,41 +1601,162 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         dialog.setConfirmVisibility(View.VISIBLE);
         dialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
-            public void onOKCallback(boolean isOK) {
-                selectOkTransoceanicCommunicationDialogCallback();
+            public void onOKCallback(final boolean isOK) {
+                onStartCommunication();
             }
         });
         dialog.setApiCancelCallback(new CustomDialog.ApiCancelCallback() {
             @Override
             public void onCancelCallback() {
-                selectNgTransoceanicCommunicationDialogCallback();
+                mShowDialog = createPermissionDeniedDialog();
+                mShowDialog.showDialog();
             }
         });
-        dialog.setContent(getResources().getString(R.string.transoceanic_communication_dialog_content));
-        dialog.setTitle(getResources().getString(R.string.transoceanic_communication_dialog_title));
-        dialog.showDialog();
-        showTransoceanicCommunicationDialogCallback();
+        dialog.setContent(this.getResources().getString(
+                R.string.transoceanic_communication_dialog_content));
+        dialog.setTitle(this.getResources().getString(
+                R.string.transoceanic_communication_dialog_title));
+        DTVTLogger.end();
+        return dialog;
     }
 
-
-    @Override
-    public void showTransoceanicCommunicationDialogCallback() {
-        // 海外判定となり警告ダイアログが表示された場合、サービスを含む全通信を止める
-        // TODO 各画面はこのメソッドをOverrideし、各通信を止める
+    /**
+     * permissionの用途を表示するダイアログ.
+     * TODO 文言は仮実装
+     *
+     * @return 表示するCustomDialog
+     */
+    private CustomDialog createPermissionDetailDialog() {
         DTVTLogger.start();
+        CustomDialog dialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+        dialog.setCancelable(false);
+        dialog.setOnTouchOutside(false);
+        dialog.setConfirmText(R.string.permission_detail_dialog_confirm);
+        dialog.setConfirmVisibility(View.VISIBLE);
+        dialog.setCancelText(R.string.permission_detail_dialog_cancel);
+        dialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+            @Override
+            public void onOKCallback(final boolean isOK) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    // permission許可ダイアログ表示中判定Flagを立てる
+                    mShowPermissionDialogFlag = true;
+                    mShowDialog = null;
+                    // permission許可ダイアログを表示
+                    mActivity.requestPermissions(
+                            new String[]{Manifest.permission.READ_PHONE_STATE}, 0);
+                }
+            }
+        });
+        dialog.setApiCancelCallback(new CustomDialog.ApiCancelCallback() {
+            @Override
+            public void onCancelCallback() {
+                // 海外判定を実施せず通信を行う
+                mShowDialog = null;
+                onStartCommunication();
+            }
+        });
+        dialog.setContent(this.getResources().getString(
+                R.string.permission_detail_dialog_content));
+        dialog.setTitle(this.getResources().getString(
+                R.string.permission_detail_dialog_title));
+        DTVTLogger.end();
+        return dialog;
+    }
+
+    /**
+     * 海外通信判定を実施.
+     */
+    private void checkCommunication() {
+        DTVTLogger.start();
+        // SIMからMCC情報取得　日本(440,441) 以外で海外判定となる
+        TelephonyManager telManager = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
+        DTVTLogger.debug("mcc + mnc : " + telManager.getSimOperator());
+        String strMccMnc = telManager.getSimOperator();
+        // MCC情報取得判定
+        if (strMccMnc.length() > 0) {
+            String strMcc = strMccMnc.substring(0, 3);
+            int intMcc = Integer.parseInt(strMcc);
+            if (intMcc == DOMESTIC_COMMUNICATION_MCC_1
+                    || intMcc == DOMESTIC_COMMUNICATION_MCC_2) {
+                // 国内通信
+                onStartCommunication();
+            } else {
+                // 海外通信
+                showTransoceanicCommunicationDialog();
+                mShowDialog = createTransoceanicCommunicationDialog();
+                mShowDialog.showDialog();
+            }
+        } else {
+            // SIM情報なし
+            onStartCommunication();
+        }
         DTVTLogger.end();
     }
 
-    @Override
-    public void selectOkTransoceanicCommunicationDialogCallback() {
-        // TODO 止めた通信を再開する
+    /**
+     * 表示中のダイアログがある場合、閉じる.
+     */
+    private void DismissDialog() {
         DTVTLogger.start();
+        if (mShowDialog != null) {
+            mShowDialog.dismissDialog();
+            DTVTLogger.debug("dismiss");
+        }
         DTVTLogger.end();
     }
 
-    @Override
-    public void selectNgTransoceanicCommunicationDialogCallback() {
-        // TODO 海外通信を許可しない場合の処理
+    /**
+     * 海外通信警告ダイアログの表示通知.
+     * サービスを含む全通信を止める.
+     */
+    private void showTransoceanicCommunicationDialog() {
+        DTVTLogger.start();
+        showTransoceanicCommunicationFlag = true;
+        mRemoteControlRelayClient.resetHandler();
+        unregisterDevListDlna();
+        DlnaInterface.dlnaOnStop();
+        DTVTLogger.end();
     }
 
+    /**
+     * 通信可能通知.
+     * onResume処理及び止めた通信の再開処理を行う.
+     * TODO 各ActivityはこのメソッドをOverrideしてResume処理を行う.
+     * TODO ※必ずBaseActivityのメソッドを呼び出してから各ActivityのResume処理を行う
+     */
+    public void onStartCommunication() {
+        DTVTLogger.start();
+        setRelayClientHandler();
+        checkDAccountOnRestart();
+        boolean r = DlnaInterface.dlnaOnResume();
+        if (!r) {
+            DTVTLogger.debug("BaseActivity.onResume, dlnaOnResume failed");
+        }
+        registerDevListDlna();
+
+        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
+        if (null == dlnaDmsItem) {
+            return;
+        }
+        if (null != mDlnaProvDevListForBase) {
+            boolean isAvai = mDlnaProvDevListForBase.isDmsAvailable(dlnaDmsItem.mUdn);
+            setStbStatus(isAvai);
+        }
+
+        DTVTLogger.debug("RestartFlag check "
+                + SharedPreferencesUtils.getSharedPreferencesRestartFlag(getApplicationContext()));
+
+        // 再起動フラグがtrueならば、再起動メッセージを表示する
+        if (SharedPreferencesUtils.getSharedPreferencesRestartFlag(getApplicationContext())) {
+            restartMessageDialog();
+        }
+
+        //再起動フラグをOFFにする
+        SharedPreferencesUtils.setSharedPreferencesRestartFlag(getApplicationContext(), false);
+
+        DTVTLogger.debug("RestartFlag false "
+                + SharedPreferencesUtils.getSharedPreferencesRestartFlag(getApplicationContext()));
+
+        DTVTLogger.end();
+    }
 }
