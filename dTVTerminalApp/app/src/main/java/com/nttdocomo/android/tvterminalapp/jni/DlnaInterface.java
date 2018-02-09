@@ -255,18 +255,18 @@ public class DlnaInterface {
         return ret;
     }
 
-    /**
-     * 機能：ひかりTVに関して、チャンネルリストを発見
-     *
-     * @return 成功:true 失敗: false
-     */
-    public boolean browseHikariChListDms() {
-        //return browseHikariChListDms(mNativeDlna, ctl);
-        if(null== mCurrentDmsItem || null== mCurrentDmsItem.mControlUrl || 1> mCurrentDmsItem.mControlUrl.length()){
-            return false;
-        }
-        return browseHikariChListDms(mNativeDlna, mCurrentDmsItem.mControlUrl);
-    }
+//    /**
+//     * 機能：ひかりTVに関して、チャンネルリストを発見
+//     *
+//     * @return 成功:true 失敗: false
+//     */
+//    public boolean browseHikariChListDms() {
+//        //return browseHikariChListDms(mNativeDlna, ctl);
+//        if(null== mCurrentDmsItem || null== mCurrentDmsItem.mControlUrl || 1> mCurrentDmsItem.mControlUrl.length()){
+//            return false;
+//        }
+//        return browseHikariChListDms(mNativeDlna, mCurrentDmsItem.mControlUrl);
+//    }
 
     /**
      * 機能：jni c/c++からの通知を処理
@@ -521,11 +521,6 @@ public class DlnaInterface {
         }
         if(null!=mCurrentDmsItem && null!=mCurrentDmsItem.mUdn && mCurrentDmsItem.mUdn.equals(item.mUdn)){
             mCurrentDmsItem=item;
-            //本番ソース begin
-            browseBsChListDms();
-            //browseTerChListDms();
-            //本番ソース end
-            //browseRecVideoDms();    //test
         }
     }
 
@@ -674,5 +669,12 @@ public class DlnaInterface {
             sDlnaInterface.nativeStopDlna(sDlnaInterface.mNativeDlna);
             sDlnaInterface.setDlnaStatus(false);
         }
+    }
+
+    public static boolean isDlnaRunning(){
+        if (null == sDlnaInterface) {
+            return false;
+        }
+        return sDlnaInterface.mIsDlnaRunning;
     }
 }
