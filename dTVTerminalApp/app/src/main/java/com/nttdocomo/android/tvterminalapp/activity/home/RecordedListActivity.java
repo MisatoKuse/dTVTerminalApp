@@ -360,18 +360,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     private boolean isDownloadServiceRunning(){
-        ActivityManager mActivityManager = (ActivityManager)getSystemService(ACTIVITY_SERVICE);
-        List<ActivityManager.RunningServiceInfo> mServiceList = mActivityManager.getRunningServices(Integer.MAX_VALUE);
-        return serviceIsStart(mServiceList, DownloadService.class.getName());
-    }
-
-    private boolean serviceIsStart(List<ActivityManager.RunningServiceInfo> list, String className) {
-        for (int i = 0; i < list.size(); i++) {
-            if (className.equals(list.get(i).service.getClassName())){
-                return true;
-            }
-        }
-        return false;
+        return DownloadService.getDlDataQue() != null && DownloadService.getDlDataQue().size() > 0;
     }
 
     private List<Map<String, String>> getDownloadListFromDb(){
