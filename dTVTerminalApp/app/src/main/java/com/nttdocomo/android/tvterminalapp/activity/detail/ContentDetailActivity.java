@@ -440,7 +440,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         public void handleMessage(Message msg) {
             DTVTLogger.start();
             super.handleMessage(msg);
-            if (null == mPlayerController) {
+            if (!mIsPlayer) {
                 getScheduleDetailData();
                 DTVTLogger.end();
                 return;
