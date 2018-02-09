@@ -366,7 +366,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     private void setNowOnAirInfo(final ContentsData contentsData, final ViewHolder viewHolder) {
         String startTime = contentsData.getLinearStartDate();
         String endTime = contentsData.getLinearEndDate();
-        String channelName = getChannelName(contentsData.getServiceId());
+        String channelName = contentsData.getChannelName();
         if (TextUtils.isEmpty(startTime) || !DBUtils.isNumber(startTime)) {
             //TODO 放送開始時間が取得できなかった場合の仕様は現在未決定のため仮の時間を設定する.
             startTime = "1516766741";
@@ -569,24 +569,5 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
          * ※ランキングコンテンツonly
          */
         TextView mRankNum;
-    }
-
-    /**
-     * コンテンツのServiceIDとServiceIDが一致するチャンネル名を取得する.
-     *
-     * @param ServiceId コンテンツのServiceID
-     * @return チャンネル名
-     */
-    private String getChannelName(final String ServiceId) {
-        if (mChannelList != null) {
-            List<HashMap<String, String>> list = mChannelList.getChannelList();
-            for (HashMap<String, String> hashMap : list) {
-                if (TextUtils.isEmpty(hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID))
-                        && ServiceId.equals(hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID))) {
-                    return hashMap.get(JsonConstants.META_RESPONSE_TITLE);
-                }
-            }
-        }
-        return "";
     }
 }
