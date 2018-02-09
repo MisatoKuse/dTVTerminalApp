@@ -46,12 +46,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-public class TvProgramListActivity extends BaseActivity
-        implements View.OnClickListener,
-        ScaledDownProgramListDataProvider.ApiDataProviderCallback,
-        ProgramScrollView.OnScrollOffsetListener,
-        MyChannelDataProvider.ApiDataProviderCallback,
-        TabItemLayout.OnClickTabTextListener {
+public class TvProgramListActivity extends BaseActivity implements View.OnClickListener,ScaledDownProgramListDataProvider.ApiDataProviderCallback,
+        ProgramScrollView.OnScrollOffsetListener, MyChannelDataProvider.ApiDataProviderCallback, TabItemLayout.OnClickTabTextListener {
 
     private static final int INDEX_TAB_HIKARI = 1;
     private static final int INDEX_TAB_MY_CHANNEL = 0;
@@ -69,7 +65,7 @@ public class TvProgramListActivity extends BaseActivity
     private String mToDay = null;
     private LinearLayout mLinearLayout = null;
     private String mProgramTabNames[] = null;
-    private static int EXPIRE_DATE = 7;
+    private static final int EXPIRE_DATE = 7;
     private int mTabIndex = 0;
     private TvProgramListAdapter mTvProgramListAdapter = null;
     private ProgramChannelAdapter mProgramChannelAdapter = null;
@@ -81,6 +77,11 @@ public class TvProgramListActivity extends BaseActivity
     private ArrayList<MyChannelMetaData> myChannelDataList;
     private RelativeLayout mTimeLine;
     private ImageView mNowImage;
+    private static final String DAY_PRE0 = "0";
+    private static final String WEEK_LEFT = " (";
+    private static final String WEEK_RIGHT = ")";
+    private static final String DATE_LINE = "-";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -223,11 +224,11 @@ public class TvProgramListActivity extends BaseActivity
         StringBuilder month = new StringBuilder();
         StringBuilder day = new StringBuilder();
         if (monthOfYear < 10) {
-            month.append("0");
+            month.append(DAY_PRE0);
         }
         month.append(monthOfYear);
         if (dayOfMonth < 10) {
-            day.append("0");
+            day.append(DAY_PRE0);
         }
         day.append(dayOfMonth);
         selectDate.append(year);
@@ -242,17 +243,48 @@ public class TvProgramListActivity extends BaseActivity
         selectDate.append(DateUtils.DATE_M);
         selectDate.append(day);
         selectDate.append(DateUtils.DATE_D);
-        selectDate.append(" (");
+        selectDate.append(WEEK_LEFT);
         selectDate.append(DateUtils.STRING_DAY_OF_WEEK[week]);
-        selectDate.append(")");
+        selectDate.append(WEEK_RIGHT);
         setTitleText(selectDate.toString());
         selectDate = new StringBuilder();
         selectDate.append(year);
-        selectDate.append("-");
+        selectDate.append(DATE_LINE);
         selectDate.append(month.toString());
-        selectDate.append("-");
+        selectDate.append(DATE_LINE);
         selectDate.append(day);
-        mSelectDateStr = selectDate.toString();
+        mSelectDateStr = getSystemTimeAndCheckHour(selectDate.toString());
+    }
+
+    /**
+     * 機能
+     * システム時間取得して、日付(hour)チェックを行う、1時～４時の場合は日付-1
+     * @param selectDay チェする日付する、ない場合システム日付
+     * @return formatDay チェックした時刻を返却
+     */
+    private String getSystemTimeAndCheckHour(String selectDay){
+        String formatDay;
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYYMMDD, Locale.JAPAN);
+        try {
+            if(selectDay != null){
+                formatDay = selectDay;
+            } else {
+                formatDay = sdf.format(calendar.getTime());
+            }
+            SimpleDateFormat todaySdf = new SimpleDateFormat(DateUtils.DATE_HHMMSS, Locale.JAPAN);
+            int hour = Integer.parseInt(todaySdf.format(calendar.getTime()).substring(0,2));
+            if(hour < START_TIME){
+                calendar.setTime(sdf.parse(formatDay));
+                calendar.add(Calendar.DAY_OF_MONTH, -1);
+                formatDay = sdf.format(calendar.getTime());
+            }
+            return formatDay;
+        } catch (ParseException e){
+            e.printStackTrace();
+            DTVTLogger.debug(e);
+        }
+        return sdf.format(calendar.getTime());
     }
 
     /**
@@ -266,8 +298,7 @@ public class TvProgramListActivity extends BaseActivity
         SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYYMMDDE, Locale.JAPAN);
         mToDay = sdf.format(c.getTime());
         setTitleText(mToDay.substring(5));
-        sdf = new SimpleDateFormat(DateUtils.DATE_YYYYMMDD, Locale.JAPAN);
-        mSelectDateStr = sdf.format(c.getTime());
+        mSelectDateStr =getSystemTimeAndCheckHour(null);
     }
 
     /**
