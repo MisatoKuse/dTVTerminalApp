@@ -23,49 +23,78 @@ import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * タブありランキング画面の各タブ画面を表示するためのフラグメント.
+ */
 public class RankingBaseFragment extends Fragment implements AbsListView.OnScrollListener,
         AdapterView.OnItemClickListener, AdapterView.OnTouchListener {
-
-    public Context mActivity;
+    /**
+     * コンテキスト.
+     */
+    private Context mContext;
+    /**
+     * コンテンツ詳細データのリスト.
+     */
     public List<ContentsData> mData = null;
-
+    /**
+     * 各タブのView.
+     */
     private View mRankingFragmentView = null;
+    /**
+     * 各タブのリストView.
+     */
     private ListView mRankingListView = null;
-
+    /**
+     * リスト表示用アダプタ.
+     */
     private ContentsAdapter mContentsAdapter;
+    /**
+     * リストのスクロール状態をコールバックするリスナー.
+     */
     private RankingFragmentScrollListener mRankingBaseFragmentScrollListener = null;
-
+    /**
+     * データの追加読み込み時に表示するView.
+     */
     private View mLoadMoreView;
+    /**
+     * ランキング種別.
+     */
     private ContentsAdapter.ActivityTypeItem mRankingMode;
-
-    //スクロール位置の記録
+    /**
+     * スクロール位置の記録.
+     */
     private int mFirstVisibleItem = 0;
-
-    //最後のスクロール方向が上ならばtrue
+    /**
+     * 最後のスクロール方向が上ならばtrue.
+     */
     private boolean mLastScrollUp = false;
-
-    //指を置いたY座標
+    /**
+     * 指を置いたY座標.
+     */
     private float mStartY = 0;
 
+    /**
+     * コンストラクタ.
+     */
     public RankingBaseFragment() {
-        mData = new ArrayList();
+        mData = new ArrayList<>();
     }
 
     @Override
     public Context getContext() {
-        this.mActivity = getActivity();
-        return mActivity;
+        this.mContext = getActivity();
+        return mContext;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
+                             final Bundle savedInstanceState) {
         //initData();//一時使うデータ
         DTVTLogger.debug("onCreateView");
 
@@ -73,15 +102,17 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
     }
 
     /**
-     * 各タブ画面は別々に実現して表示されること
+     * 各タブ画面は別々に実現して表示されること.
+     *
+     * @return 各タブ画面
      */
     private View initView() {
         if (mData == null) {
-            mData = new ArrayList();
+            mData = new ArrayList<>();
         }
         if (null == mRankingFragmentView) {
-            mRankingFragmentView = View.inflate(getActivity()
-                    , R.layout.fragment_ranking_content, null);
+            mRankingFragmentView = View.inflate(getActivity(),
+                    R.layout.fragment_ranking_content, null);
             mRankingListView = mRankingFragmentView.findViewById(R.id.lv_ranking_list);
 
             mRankingListView.setOnScrollListener(this);
@@ -89,7 +120,6 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
 
             //スクロールの上下方向検知用のリスナーを設定
             mRankingListView.setOnTouchListener(this);
-
         }
         mLoadMoreView = LayoutInflater.from(getActivity()).inflate(R.layout.search_load_more,
                 null);
@@ -100,29 +130,31 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
     }
 
     /**
-     * リスナーの設定
+     * リスナーの設定.
      *
-     * @param lis
+     * @param listener リスナー
      */
-    public void setRankingBaseFragmentScrollListener(RankingFragmentScrollListener lis) {
-        mRankingBaseFragmentScrollListener = lis;
+    public void setRankingBaseFragmentScrollListener(final RankingFragmentScrollListener listener) {
+        mRankingBaseFragmentScrollListener = listener;
     }
 
     /**
-     * 各ランキングページを判定
+     * 各ランキングページを判定.
      */
-    public void initRankingView() {
-        if (ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK.equals(mRankingMode)) {// 週間
+    private void initRankingView() {
+        if (ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK.equals(mRankingMode)) { // 週間
             initWeeklyContentListView();
-        } else if(ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK.equals(mRankingMode)){// ビデオ
+        } else if (ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK.equals(mRankingMode)) { // ビデオ
             initVideoContentListView();
         }
     }
 
     /**
-     * 各ランキングページを切り替え
+     * 各ランキングページを切り替え.
+     *
+     * @param rankingMode ランキング種別
      */
-    public void switchRankingMode(ContentsAdapter.ActivityTypeItem rankingMode) {
+    public void switchRankingMode(final ContentsAdapter.ActivityTypeItem rankingMode) {
         mRankingMode = rankingMode;
         mContentsAdapter = null;
         if (mRankingListView != null) {
@@ -131,16 +163,16 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
     }
 
     /**
-     * Adapterを取得
+     * Adapterを取得.
      *
-     * @return
+     * @return Adapter
      */
     public ContentsAdapter getRankingAdapter() {
         return mContentsAdapter;
     }
 
     /**
-     * 週間ランキングコンテンツ初期化
+     * 週間ランキングコンテンツ初期化.
      */
     private void initWeeklyContentListView() {
         if (mData != null) {
@@ -152,7 +184,7 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
     }
 
     /**
-     * ビデオランキングコンテンツ初期化
+     * ビデオランキングコンテンツ初期化.
      */
     private void initVideoContentListView() {
         if (mData != null) {
@@ -163,7 +195,7 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
     }
 
     /**
-     * Adapterをリフレッシュする
+     * Adapterをリフレッシュする.
      */
     public void noticeRefresh() {
         if (null != mContentsAdapter) {
@@ -172,18 +204,17 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
     }
 
     /**
-     * 読み込み表示を行う
+     * 読み込み表示を行う.
      *
-     * @param bool
+     * @param bool フッターを表示するかどうか
      */
-    public void displayMoreData(boolean bool) {
+    public void displayMoreData(final boolean bool) {
         if (null != mRankingListView) {
             if (bool) {
                 mRankingListView.addFooterView(mLoadMoreView);
 
                 //スクロール位置を最下段にすることで、追加した更新フッターを画面内に入れる
                 mRankingListView.setSelection(mRankingListView.getMaxScrollAmount());
-
             } else {
                 mRankingListView.removeFooterView(mLoadMoreView);
             }
@@ -191,7 +222,7 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
     }
 
     @Override
-    public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+    public void onScrollStateChanged(final AbsListView absListView, final int scrollState) {
         //スクロール位置がリストの先頭で上スクロールだった場合は、更新をせずに帰る
         if (mFirstVisibleItem == 0 && mLastScrollUp) {
             return;
@@ -204,8 +235,8 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
     }
 
     @Override
-    public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount,
-                         int totalItemCount) {
+    public void onScroll(final AbsListView absListView, final int firstVisibleItem,
+                         final int visibleItemCount, final int totalItemCount) {
         if (null != mRankingBaseFragmentScrollListener) {
             mRankingBaseFragmentScrollListener.onScroll(this, absListView, firstVisibleItem,
                     visibleItemCount, totalItemCount);
@@ -216,11 +247,12 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
     }
 
     @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        if(mLoadMoreView.equals(view) || mActivity == null) {
+    public void onItemClick(final AdapterView<?> adapterView, final View view,
+                            final int position, final long l) {
+        if (mLoadMoreView.equals(view) || mContext == null) {
             return;
         }
-        Intent intent = new Intent(mActivity, ContentDetailActivity.class);
+        Intent intent = new Intent(mContext, ContentDetailActivity.class);
         intent.putExtra(DTVTConstants.SOURCE_SCREEN, getActivity().getComponentName().getClassName());
         OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(mData.get(position), ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
         intent.putExtra(detailData.getRecommendFlg(), detailData);
@@ -228,7 +260,7 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
     }
 
     @Override
-    public boolean onTouch(View view, MotionEvent motionEvent) {
+    public boolean onTouch(final View view, final MotionEvent motionEvent) {
         if (!(view instanceof ListView)) {
             //今回はリストビューの事しか考えないので、他のビューならば帰る
             return false;
@@ -244,19 +276,50 @@ public class RankingBaseFragment extends Fragment implements AbsListView.OnScrol
                 //指を離したので、位置を記録
                 float mEndY = motionEvent.getY();
 
-                mLastScrollUp = false;
+                changeLastScrollUp(false);
 
                 //スクロール方向の判定
                 if (mStartY < mEndY) {
                     //終了時のY座標の方が大きいので、上スクロール
-                    mLastScrollUp = true;
+                    changeLastScrollUp(true);
                 }
 
                 break;
             default:
                 //現状処理は無い・警告対応
+                break;
         }
 
         return false;
+    }
+
+    /**
+     * mLastScrollUpを設定する.
+     *
+     * @param bool 追加データ読み込みを許可するかどうか
+     */
+    public void changeLastScrollUp(final Boolean bool) {
+        mLastScrollUp = bool;
+    }
+
+    /**
+     * ContentsAdapterの通信を止める.
+     */
+    public void stopContentsAdapterCommunication() {
+        DTVTLogger.start();
+        StopContentsAdapterConnect stopContentsAdapterConnect = new StopContentsAdapterConnect();
+        if (mContentsAdapter != null) {
+            stopContentsAdapterConnect.execute(mContentsAdapter);
+        }
+    }
+
+    /**
+     * ContentsAdapterで止めた通信を再度可能な状態にする.
+     */
+    public void enableContentsAdapterCommunication() {
+        DTVTLogger.start();
+        if (mContentsAdapter != null) {
+            mContentsAdapter.enableConnect();
+        }
     }
 }
