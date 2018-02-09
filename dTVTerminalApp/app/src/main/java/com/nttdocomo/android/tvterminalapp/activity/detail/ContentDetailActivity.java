@@ -60,10 +60,12 @@ import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsChannelFragment;
+import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.struct.CalendarComparator;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -1294,12 +1296,11 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         // タブ数を先に決定するため、コンテンツ詳細のデータを最初に取得しておく
         mDetailData = mIntent.getParcelableExtra(RECOMMEND_INFO_BUNDLE_KEY);
         if (mDetailData != null) {
-            if (getStbStatus() == false) {
-                createRemoteControllerView(false);
-                mIsControllerVisible = false;
-            } else {
-            int serviceId = mDetailData.getServiceId();
-            if (serviceId == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID
+            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
+            //ペアリング済み状態　「テレビで視聴」が表示
+            if (null != dlnaDmsItem && null != dlnaDmsItem.mUdn && !dlnaDmsItem.mUdn.isEmpty()) {
+                int serviceId = mDetailData.getServiceId();
+                if (serviceId == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID
                         || serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID
                         || serviceId == OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID) {
                     // 他サービス(dtv/dtvチャンネル/dアニメ)フラグを立てる
@@ -1331,8 +1332,10 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                     }
                 }
             }
+        } else {   //ペアリングしてない状態　「テレビで視聴する」非表示
+            createRemoteControllerView(false);
+            mIsControllerVisible = false;
         }
-
         if (mIsOtherService) {
             // コンテンツ詳細(他サービスの時は、タブ一つに設定する)
             mTabNames = getResources().getStringArray(R.array.other_service_contents_detail_tabs);
