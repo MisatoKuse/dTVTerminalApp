@@ -2,75 +2,73 @@
   ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/tv_program_item_panel_bg"
-    android:baselineAligned="false"
-    android:orientation="horizontal">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/tv_program_item_panel_bg"
+              android:baselineAligned="false"
+              android:orientation="horizontal">
 
-    <RelativeLayout
-        android:id="@+id/tv_program_item_panel_clip_rv"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="3">
+	<RelativeLayout
+		android:id="@+id/tv_program_item_panel_clip_rv"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginEnd="@dimen/panel_clip_margin_right"
+		android:layout_marginStart="@dimen/panel_start_time_margin_left"
+		android:layout_marginTop="@dimen/panel_start_time_margin_top">
 
-        <TextView
-            android:id="@+id/tv_program_item_panel_clip_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/panel_start_time_margin_top"
-            android:layout_marginStart="@dimen/panel_start_time_margin_left"
-            android:textSize="@dimen/panel_start_time_margin_text_size"
-            android:textColor="@color/tv_program_list_panel_start_time_text_color" />
+		<TextView
+			android:id="@+id/tv_program_item_panel_clip_tv"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textColor="@color/tv_program_list_panel_start_time_text_color"
+			android:textSize="@dimen/panel_start_time_margin_text_size"/>
 
-        <ImageView
-            android:id="@+id/tv_program_item_panel_clip_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tv_program_item_panel_clip_tv"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="@dimen/panel_clip_margin_left"
-            android:layout_marginEnd="@dimen/panel_clip_margin_right"
-            android:layout_marginTop="@dimen/panel_clip_margin_top"
-            android:contentDescription="@null"
-            android:clickable="true"
-            android:scaleType="fitCenter"
-            android:src="@mipmap/icon_circle_opacity_clip" />
-    </RelativeLayout>
+		<ImageView
+			android:id="@+id/tv_program_item_panel_clip_iv"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/tv_program_item_panel_clip_tv"
+			android:layout_marginTop="@dimen/panel_clip_margin_top"
+			android:clickable="true"
+			android:contentDescription="@null"
+			android:scaleType="fitCenter"
+			android:src="@mipmap/icon_circle_opacity_clip"/>
+	</RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/tv_program_item_panel_content_rl"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="13">
+	<RelativeLayout
+		android:id="@+id/tv_program_item_panel_content_rl"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginEnd="@dimen/tv_program_item_panel_margin_right"
+		android:layout_marginTop="@dimen/panel_content_des_margin_top">
 
-        <TextView
-            android:id="@+id/tv_program_item_panel_content_des_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/panel_content_des_margin_top"
-            android:textStyle="bold"
-            android:ellipsize="end"
-            android:textColor="@color/tv_program_list_content_text_color"/>
+		<TextView
+			android:id="@+id/tv_program_item_panel_content_des_tv"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:ellipsize="end"
+			android:textColor="@color/tv_program_list_content_text_color"
+			android:textSize="@dimen/tv_program_item_panel_content_title_text_size"
+			android:textStyle="bold"/>
 
-        <ImageView
-            android:id="@+id/tv_program_item_panel_content_thumbnail_iv"
-            android:layout_width="@dimen/panel_content_thumbnail_width"
-            android:layout_height="@dimen/panel_content_thumbnail_height"
-            android:layout_below="@id/tv_program_item_panel_content_des_tv"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/panel_content_thumbnail_margin_top"
-            android:scaleType="fitXY"
-            android:contentDescription="@null" />
+		<ImageView
+			android:id="@+id/tv_program_item_panel_content_thumbnail_iv"
+			android:layout_width="@dimen/panel_content_thumbnail_width"
+			android:layout_height="@dimen/panel_content_thumbnail_height"
+			android:layout_below="@id/tv_program_item_panel_content_des_tv"
+			android:layout_centerHorizontal="true"
+			android:layout_marginTop="@dimen/panel_content_thumbnail_margin_top"
+			android:contentDescription="@null"
+			android:scaleType="fitXY"/>
 
-        <TextView
-            android:id="@+id/tv_program_item_panel_content_detail_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:layout_below="@id/tv_program_item_panel_content_thumbnail_iv"
-            android:layout_marginTop="@dimen/panel_content_detail_margin_top"
-            android:textColor="@color/tv_program_list_content_detail_text_color" />
-    </RelativeLayout>
+		<TextView
+			android:id="@+id/tv_program_item_panel_content_detail_tv"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/tv_program_item_panel_content_thumbnail_iv"
+			android:layout_marginTop="@dimen/panel_content_detail_margin_top"
+			android:ellipsize="end"
+			android:textColor="@color/tv_program_list_content_detail_text_color"
+			android:textSize="@dimen/tv_program_item_panel_content_detail_text_size"/>
+	</RelativeLayout>
 </LinearLayout>
