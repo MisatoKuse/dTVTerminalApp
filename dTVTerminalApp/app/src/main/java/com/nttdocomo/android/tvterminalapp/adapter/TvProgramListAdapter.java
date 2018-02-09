@@ -56,10 +56,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     private static final int THUMB_MARGIN_TOP_TITLE = 16;
     private static final int THUMB_MARGIN_LEFT = 30;
     private static final int PADDING_RIGHT = 8;
-    private static final int PADDING_LEFT = 7;
     private static final int EPI_MARGIN_TOP_THUMB = 4;
-    private static final float TITLE_TEXT_SIZE = 13.0f;
-    private static final float EPI_TEXT_SIZE = 11.0f;
     private static final String HYPHEN = "-";
     private static final String MISS_CUT_OUT = "1";
     private static final String MISS_COMPLETE = "2";
@@ -196,17 +193,6 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                     mContext.sendClipRequest(schedule.getClipRequestData(), mClipButton);
                 }
             });
-            setComponentParameters();
-        }
-
-        /**
-         * デザイン設定.
-         */
-        private void setComponentParameters() {
-            mView.setPadding(PADDING_LEFT, PADDING_TOP, PADDING_RIGHT, PADDING_BOTTOM);
-            mContent.setTextSize(TITLE_TEXT_SIZE);
-            mContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-            mDetail.setTextSize(EPI_TEXT_SIZE);
         }
     }
 
