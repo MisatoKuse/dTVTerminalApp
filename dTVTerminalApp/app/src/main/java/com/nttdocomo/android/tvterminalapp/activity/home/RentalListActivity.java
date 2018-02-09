@@ -91,8 +91,6 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
         resetPaging();
 
         initView();
-        mRentalDataProvider = new RentalDataProvider(this);
-        mRentalDataProvider.getRentalData(true);
     }
 
     /**
@@ -282,7 +280,6 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
     protected void onResume() {
         super.onResume();
         DTVTLogger.start();
-        //TODO 仮実装
         if (mRentalDataProvider != null) {
             mRentalDataProvider.enableConnect();
         }
@@ -291,6 +288,12 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
         }
         if (mListView != null) {
             mListView.invalidateViews();
+        }
+
+        if (mContentsList != null) {
+            //コンテンツ情報が無ければ取得を行う
+            mRentalDataProvider = new RentalDataProvider(this);
+            mRentalDataProvider.getRentalData(true);
         }
     }
 

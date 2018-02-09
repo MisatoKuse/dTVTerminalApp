@@ -638,7 +638,6 @@ public class SearchTopActivity extends BaseActivity
     protected void onResume() {
         super.onResume();
         DTVTLogger.start();
-        //TODO 仮実装
         if (mIsSearching) {
             //検索中にバックグラウンドに遷移した場合はページ数を補正する
             setPageNumber(mPageNumber - 1);
