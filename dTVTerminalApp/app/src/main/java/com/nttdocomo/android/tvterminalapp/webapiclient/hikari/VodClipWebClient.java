@@ -23,7 +23,7 @@ public class VodClipWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback, JsonParserThread.JsonParser{
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
@@ -48,7 +48,7 @@ public class VodClipWebClient
     }
 
     /**
-     * コールバック
+     * コールバック.
      */
     public interface VodClipJsonParserCallback {
         /**
@@ -62,7 +62,8 @@ public class VodClipWebClient
     private VodClipJsonParserCallback mVodClipJsonParserCallback;
 
     /**
-     * 通信成功時のコールバック
+     * 通信成功時のコールバック.
+     *
      * @param returnCode 戻り値構造体
      */
     @Override
@@ -101,7 +102,8 @@ public class VodClipWebClient
     }
 
     /**
-     * VODクリップ取得
+     * VODクリップ取得.
+     *
      * @param ageReq                         視聴年齢制限値（1から17までの値）
      * @param upperPagetLimit               結果の最大件数（1以上）
      * @param lowerPagetLimit　             結果の最小件数（1以上）
@@ -132,15 +134,16 @@ public class VodClipWebClient
         }
 
         //VODクリップ一覧を呼び出す
-        openUrl(UrlConstants.WebApiUrl.VOD_CLIP_LIST,
-                sendParameter,this);
+        openUrlAddOtt(UrlConstants.WebApiUrl.VOD_CLIP_LIST,
+                sendParameter, this, null);
 
         //今のところ正常なので、trueで帰る
         return true;
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
+     *
      * @param ageReq                        視聴年齢制限値
      * @param upperPagetLimit              結果の最大件数
      * @param lowerPagetLimit　            結果の最小件数
@@ -178,7 +181,8 @@ public class VodClipWebClient
     }
 
     /**
-     * 指定されたパラメータをJSONで組み立てて文字列にする
+     * 指定されたパラメータをJSONで組み立てて文字列にする.
+     *
      * @param ageReq            視聴年齢制限値
      * @param upperPagetLimit  結果の最大件数
      * @param lowerPagetLimit　結果の最小件数

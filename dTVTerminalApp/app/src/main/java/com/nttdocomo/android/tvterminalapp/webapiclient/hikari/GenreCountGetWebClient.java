@@ -120,8 +120,8 @@ public class GenreCountGetWebClient
         }
 
         //ジャンル毎コンテンツ数取得情報を読み込むためにAPIを呼び出す
-        openUrl(UrlConstants.WebApiUrl.GENRE_COUNT_GET_WEB_CLIENT,
-                sendParameter, this);
+        openUrlAddOtt(UrlConstants.WebApiUrl.GENRE_COUNT_GET_WEB_CLIENT,
+                sendParameter, this, null);
 
         DTVTLogger.end();
 

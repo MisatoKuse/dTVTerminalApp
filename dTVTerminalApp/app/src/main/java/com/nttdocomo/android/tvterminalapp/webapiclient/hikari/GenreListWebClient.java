@@ -15,7 +15,7 @@ public class GenreListWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
     /**
-     * コールバック
+     * コールバック.
      */
     public interface GenreListJsonParserCallback {
         /**
@@ -31,7 +31,7 @@ public class GenreListWebClient
             mGenreListJsonParserCallback;
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
@@ -64,7 +64,7 @@ public class GenreListWebClient
     }
 
     /**
-     * ジャンル一覧の取得
+     * ジャンル一覧の取得.
      *
      * @param genreListJsonParserCallback コールバック
      * @return パラメータエラー等が発生した場合はfalse
@@ -86,7 +86,7 @@ public class GenreListWebClient
                 genreListJsonParserCallback;
 
         //ジャンル一覧ファイルを読み込む
-        openUrl(UrlConstants.WebApiUrl.GENRE_LIST_FILE, "", this);
+        openUrlAddOtt(UrlConstants.WebApiUrl.GENRE_LIST_FILE, "", this, null);
 
         DTVTLogger.end();
         //今のところ失敗していないので、trueを返す
@@ -94,7 +94,7 @@ public class GenreListWebClient
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param genreListJsonParserCallback コールバック
      * @return 値がおかしいならばfalse

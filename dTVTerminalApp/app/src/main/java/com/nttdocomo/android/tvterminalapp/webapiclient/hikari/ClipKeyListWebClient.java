@@ -23,7 +23,7 @@ public class ClipKeyListWebClient
     private ClipKeyListRequest mRequest = null;
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
@@ -53,7 +53,7 @@ public class ClipKeyListWebClient
     }
 
     /**
-     * コールバック
+     * コールバック.
      */
     public interface TvClipKeyListJsonParserCallback {
         /**
@@ -65,7 +65,7 @@ public class ClipKeyListWebClient
     }
 
     /**
-     * コールバック
+     * コールバック.
      */
     public interface VodClipKeyListJsonParserCallback {
         /**
@@ -82,7 +82,7 @@ public class ClipKeyListWebClient
     private VodClipKeyListJsonParserCallback mVodClipKeyListJsonParserCallback;
 
     /**
-     * 通信成功時のコールバック
+     * 通信成功時のコールバック.
      *
      * @param returnCode 戻り値構造体
      */
@@ -115,7 +115,7 @@ public class ClipKeyListWebClient
     }
 
     /**
-     * クリップキー一覧取得
+     * クリップキー一覧取得.
      *
      * @param requestParam                     クリップキー一覧リクエスト
      * @param tvClipKeyListJsonParserCallback  コールバック
@@ -145,15 +145,15 @@ public class ClipKeyListWebClient
         }
 
         //クリップキー一覧を呼び出す
-        openUrl(UrlConstants.WebApiUrl.CLIP_KEY_LIST_WEB_CLIENT,
-                sendParameter, this);
+        openUrlAddOtt(UrlConstants.WebApiUrl.CLIP_KEY_LIST_WEB_CLIENT,
+                sendParameter, this, null);
 
         //今のところ正常なので、trueで帰る
         return true;
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param requestParam                     リクエストパラメータ
      * @param tvClipKeyListJsonParserCallback  コールバック
@@ -179,7 +179,7 @@ public class ClipKeyListWebClient
     }
 
     /**
-     * 指定されたパラメータをJSONで組み立てて文字列にする
+     * 指定されたパラメータをJSONで組み立てて文字列にする.
      *
      * @param requestParam リクエストパラメータ
      * @return 組み立て後の文字列

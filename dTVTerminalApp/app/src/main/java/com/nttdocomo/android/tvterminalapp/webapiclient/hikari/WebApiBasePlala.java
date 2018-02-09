@@ -108,6 +108,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
     //リダイレクト用飛び先関連情報取得
     private static final String REDIRECT_JUMP_URL_GET = "Location";
 
+
     /**
      * データ受け渡しコールバック.
      */
@@ -282,7 +283,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
     /**
      * ワンタイムトークン設定のキー名.
      */
-    private static final String ONE_TIME_TOKEN_KEY = "x-service-token";
+    public static final String ONE_TIME_TOKEN_KEY = "x-service-token";
 
 
     /**
@@ -497,7 +498,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
         OneTimeTokenData tokenData = SharedPreferencesUtils.getOneTimeTokenData(mContext);
 
         //期限内ならば、そのまま使用する
-        if (tokenData.getOneTimeTokenGetTime() < DateUtils.getNowTimeFormatEpoch()) {
+        if (tokenData.getOneTimeTokenGetTime() > DateUtils.getNowTimeFormatEpoch()) {
             //取得済みのトークンを使用する
             mCommunicationTask.setOneTimeToken(tokenData.getOneTimeToken());
 
@@ -509,9 +510,22 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
             return;
         }
 
+        //ワンタイムトークンの取得を行う
+        getServiceToken(mContext,mCommunicationTask,oneTimePassword);
+    }
 
+    /**
+     * ワンタイムトークンの取得を行う.
+     *
+     * @param context　コンテキスト
+     * @param communicationTask 通信処理クラス
+     * @param oneTimePassword ワンタイムパスワード
+     */
+    public static void getServiceToken(final Context context,
+                                       final CommunicationTask communicationTask,
+                                       final String oneTimePassword) {
         //ワンタイムトークンとその取得時間を取得する
-        ServiceTokenClient tokenClient = new ServiceTokenClient(mContext);
+        ServiceTokenClient tokenClient = new ServiceTokenClient(context);
 
         boolean answer = tokenClient.getServiceTokenApi(oneTimePassword,
                 new ServiceTokenClient.TokenGetCallback() {
@@ -523,29 +537,29 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                         //結果に値があるかを確認
                         if (successFlag) {
                             //値があったので、セット
-                            mCommunicationTask.setOneTimeToken(
-                                    SharedPreferencesUtils.getOneTimeTokenData(mContext).getOneTimeToken());
+                            communicationTask.setOneTimeToken(
+                                    SharedPreferencesUtils.getOneTimeTokenData(context).getOneTimeToken());
                         } else {
                             //値が無いのでリセット
-                            mCommunicationTask.setOneTimeToken("");
+                            communicationTask.setOneTimeToken("");
                         }
 
                         //結果格納構造体の作成
                         ReturnCode returnCode = new ReturnCode();
 
                         //ワンタイムトークンの取得結果を元にして、通信を開始する
-                        mCommunicationTask.execute(returnCode);
+                        communicationTask.execute(returnCode);
                     }
                 });
 
         if (!answer) {
-            mCommunicationTask.setOneTimeToken(INTERIM_ONE_TIME_TOKEN);
+            communicationTask.setOneTimeToken(INTERIM_ONE_TIME_TOKEN);
 
             //結果格納構造体の作成
             ReturnCode returnCode = new ReturnCode();
 
             //ワンタイムトークンの取得結果を元にして、通信を開始する
-            mCommunicationTask.execute(returnCode);
+            communicationTask.execute(returnCode);
         }
     }
 
@@ -872,7 +886,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
     /**
      * 通信本体のクラス.
      */
-    private class CommunicationTask extends AsyncTask<Object, Object, ReturnCode> {
+    public class CommunicationTask extends AsyncTask<Object, Object, ReturnCode> {
         //実行するAPIの名前
         final String mSourceUrl;
 
@@ -1115,6 +1129,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
 
             //ワンタイムトークンに内容があれば、セットする
             if (mIsUseOtt && !mOneTimeToken.isEmpty()) {
+                DTVTLogger.debug("set token = [" + mOneTimeToken + "]");
                 //ワンタイムトークンをセット
                 urlConnection.addRequestProperty(ONE_TIME_TOKEN_KEY, mOneTimeToken);
             }

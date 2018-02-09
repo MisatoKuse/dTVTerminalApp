@@ -21,7 +21,7 @@ public class TvScheduleWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
@@ -30,7 +30,7 @@ public class TvScheduleWebClient
     }
 
     /**
-     * コールバック
+     * コールバック.
      */
     public interface TvScheduleJsonParserCallback {
         /**
@@ -45,7 +45,7 @@ public class TvScheduleWebClient
     private TvScheduleJsonParserCallback mTvScheduleJsonParserCallback;
 
     /**
-     * 通信成功時のコールバック
+     * 通信成功時のコールバック.
      *
      * @param returnCode 戻り値構造体
      */
@@ -67,7 +67,7 @@ public class TvScheduleWebClient
     }
 
     /**
-     * チャンネル毎番組一覧取得
+     * チャンネル毎番組一覧取得.
      *
      * @param chno   チャンネル番号
      * @param date   日付（"now"を指定した場合、現在放送中番組を返却)
@@ -93,14 +93,14 @@ public class TvScheduleWebClient
         }
 
         //チャンネル毎番組一覧を呼び出す
-        openUrl(UrlConstants.WebApiUrl.TV_SCHEDULE_LIST, sendParameter, this);
+        openUrlAddOtt(UrlConstants.WebApiUrl.TV_SCHEDULE_LIST, sendParameter, this, null);
 
         //今のところ失敗は無いので、trueで帰る
         return true;
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param chno                         チャンネル番号
      * @param date                         日付（"now"を指定した場合、現在放送中番組を返却)
@@ -151,7 +151,7 @@ public class TvScheduleWebClient
     }
 
     /**
-     * 指定されたパラメータをJSONで組み立てて文字列にする
+     * 指定されたパラメータをJSONで組み立てて文字列にする.
      *
      * @param chno   チャンネル番号
      * @param date   日付（"now"を指定した場合、現在放送中番組を返却)

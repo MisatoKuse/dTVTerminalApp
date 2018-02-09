@@ -14,11 +14,11 @@ public class RentalVodListWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
     /**
-     * コールバック
+     * コールバック.
      */
     public interface RentalVodListJsonParserCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
          *
          * @param RentalVodListResponse JSONパース後のデータ
          */
@@ -29,7 +29,7 @@ public class RentalVodListWebClient
     private RentalVodListJsonParserCallback mRentalVodListJsonParserCallback;
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
@@ -60,7 +60,7 @@ public class RentalVodListWebClient
     }
 
     /**
-     * レンタルビデオ情報一覧取得
+     * レンタルビデオ情報一覧取得.
      *
      * @param rentalVodListJsonParserCallback コールバックTODO:
      *                                           （本WebAPIには通常のパラメータが無く、基底クラスで追加するサービストークのみとなる。）
@@ -78,14 +78,14 @@ public class RentalVodListWebClient
         mRentalVodListJsonParserCallback = rentalVodListJsonParserCallback;
 
         //レンタルビデオの情報を読み込むため、購入済みVOD一覧を呼び出す
-        openUrl(UrlConstants.WebApiUrl.RENTAL_VOD_LIST_WEB_CLIENT, "", this);
+        openUrlAddOtt(UrlConstants.WebApiUrl.RENTAL_VOD_LIST_WEB_CLIENT, "", this, null);
 
         //今のところ失敗していないので、trueを返す
         return true;
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param purchasedVodListCallback コールバック
      * @return 値がおかしいならばfalse

@@ -25,6 +25,7 @@
     <string name="parental_r_20">R20</string>
     <string name="common_text_close">閉じる</string>
     <string name="common_text_retry">リトライ</string>
+    <string name="save_token">トークンの保存を行います。</string>
 
     <!-- Launch -->
     <string name="str_app_title">ドコモテレビターミナル</string>

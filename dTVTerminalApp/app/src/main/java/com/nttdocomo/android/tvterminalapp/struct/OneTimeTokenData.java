@@ -75,7 +75,7 @@ public class OneTimeTokenData {
      */
     private void initData() {
         mOneTimeToken = "";
-        mOneTimeTokenTime = Long.MAX_VALUE;
+        mOneTimeTokenTime = Long.MIN_VALUE;
     }
 
     /**
@@ -83,9 +83,9 @@ public class OneTimeTokenData {
      *
      * @param source 元になる文字列
      */
-    public void analyzeOneTimeTokenString(String source) {
+    private void analyzeOneTimeTokenString(String source) {
         //値が空か、分割できないならば初期化して帰る
-        if (TextUtils.isEmpty(source) || source.contains(ONE_TIME_TOKEN_SPLITTER)) {
+        if (TextUtils.isEmpty(source) || !source.contains(ONE_TIME_TOKEN_SPLITTER)) {
             initData();
             return;
         }
@@ -103,7 +103,7 @@ public class OneTimeTokenData {
                     buffer[ONE_TIME_TOKEN_TIME_POSITION]);
         } else {
             //数字ではなかったので、最大値にする
-            mOneTimeTokenTime = Long.MAX_VALUE;
+            mOneTimeTokenTime = Long.MIN_VALUE;
         }
     }
 

@@ -15,11 +15,11 @@ public class RoleListWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
     /**
-     * コールバック
+     * コールバック.
      */
     public interface RoleListJsonParserCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
          *
          * @param roleListResponse JSONパース後のデータ
          */
@@ -30,7 +30,7 @@ public class RoleListWebClient
     private RoleListJsonParserCallback mRoleListJsonParserCallback;
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
@@ -61,7 +61,7 @@ public class RoleListWebClient
     }
 
     /**
-     * ジャンル一覧の取得
+     * ジャンル一覧の取得.
      *
      * @param roleListJsonParserCallback コールバック
      * @return パラメータエラー等が発生した場合はfalse
@@ -80,7 +80,7 @@ public class RoleListWebClient
         mRoleListJsonParserCallback = roleListJsonParserCallback;
 
         //ジャンル一覧ファイルを読み込む
-        openUrl(UrlConstants.WebApiUrl.ROLE_LIST_FILE, "", this);
+        openUrlAddOtt(UrlConstants.WebApiUrl.ROLE_LIST_FILE, "", this, null);
 
         DTVTLogger.end();
         //今のところ失敗していないので、trueを返す
@@ -88,7 +88,7 @@ public class RoleListWebClient
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param roleListJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
