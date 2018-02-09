@@ -38,7 +38,6 @@
     <color name="home_contract_button_background_color">#fd0003</color>
     <color name="home_contract_button_text_color">@color/basic_text_color_white</color>
     <color name="home_item_name_text_color">@color/basic_text_color_white</color>
-    <color name="home_item_see_all_text_color">@color/basic_text_color_white</color>
     <color name="home_item_contents_num_text_color">#c9c9c9</color>
     <color name="home_item_contents_background_color">#121212</color>
     <color name="home_item_contents_text_color">@color/basic_text_color_white</color>
