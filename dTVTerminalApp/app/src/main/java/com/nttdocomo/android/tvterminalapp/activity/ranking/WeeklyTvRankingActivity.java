@@ -56,7 +56,7 @@ public class WeeklyTvRankingActivity extends BaseActivity
      */
     private String[] mTabNames;
     /**
-     * DataProveder.
+     * DataProvider.
      */
     private RankingTopDataProvider mRankingDataProvider;
     /**
@@ -123,6 +123,8 @@ public class WeeklyTvRankingActivity extends BaseActivity
 
     /**
      * mIsCommunicationを変更.
+     *
+     * @param bool 通信中フラグ
      */
     private void setCommunicatingStatus(final boolean bool) {
         synchronized (this) {
@@ -241,6 +243,8 @@ public class WeeklyTvRankingActivity extends BaseActivity
 
     /**
      * 取得結果の設定・表示.
+     *
+     * @param contentsDataList 週間ランキングリスト
      */
     private void setShowWeeklyRanking(final List<ContentsData> contentsDataList) {
         if (null == contentsDataList || 0 == contentsDataList.size()) {
@@ -284,15 +288,6 @@ public class WeeklyTvRankingActivity extends BaseActivity
         }
         b.displayMoreData(false);
         setCommunicatingStatus(false);
-    }
-
-    /**
-     * コンテンツ詳細への遷移.
-     */
-    public void contentsDetailButton(View view) {
-        Intent intent = new Intent(this, ContentDetailActivity.class);
-        intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
-        startActivity(intent);
     }
 
     @Override
@@ -390,7 +385,6 @@ public class WeeklyTvRankingActivity extends BaseActivity
         return this;
     }
 
-
     /**
      * 取得条件"総合"用コールバック.
      * TODO:正規のジャンルで動的に処理するようにしないといけない
@@ -429,6 +423,7 @@ public class WeeklyTvRankingActivity extends BaseActivity
     private class RankingPagerAdapter extends FragmentStatePagerAdapter {
         /**
          * コンストラクタ.
+         *
          * @param fm FragmentManager
          */
         private RankingPagerAdapter(final FragmentManager fm) {
