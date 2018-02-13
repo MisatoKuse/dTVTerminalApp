@@ -1858,7 +1858,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 mScaledDownProgramListDataProvider.getChannelList(1, 1, "", 1);
             }
             //ログイン状態でしか送信しない
-            if (UserInfoUtils.getUserLoggedinInfo(this)) {
+            if (!TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesDaccountId(this))) {
                 new SendOperateLog(getApplicationContext()).sendOpeLog(
                         mDetailData, mDetailFullData);
             }

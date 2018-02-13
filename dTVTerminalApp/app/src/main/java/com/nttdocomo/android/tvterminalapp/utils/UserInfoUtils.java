@@ -40,49 +40,6 @@ public class UserInfoUtils {
     }
 
     /**
-     * ログイン状態を返却する.
-     * TODO:dアカログイン状態はdアカ情報で判断するようにする
-     * @param context
-     * @return
-     */
-    public static boolean getUserLoggedinInfo(Context context) {
-        final int INT_LIST_HEAD = 0;
-
-        UserInfoInsertDataManager dataManager = new UserInfoInsertDataManager(context);
-        if (dataManager == null) {
-            return false;
-        }
-        dataManager.readUserInfoInsertList();
-        List<UserInfoList> userInfoList = dataManager.getmUserData();
-
-        //ユーザ情報がないときは契約情報は無し
-        if (userInfoList == null || userInfoList.size() < 1) {
-            return false;
-        }
-
-        UserInfoList infoList = userInfoList.get(INT_LIST_HEAD);
-
-        //ユーザ情報がないときは契約情報は無し
-        if (infoList == null) {
-            return false;
-        }
-
-        List<UserInfoList.AccountList> mLoggedInAccountList = infoList.getLoggedinAccount();
-        if (mLoggedInAccountList.size() == 0) {
-            return false;
-        }
-
-        UserInfoList.AccountList mLoggedInAccount = mLoggedInAccountList.get(INT_LIST_HEAD);
-
-        //ユーザ情報がないときは契約情報は無し
-        if (mLoggedInAccount == null) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
      * 契約情報を取得する.
      *
      * @param userInfoList ユーザーデータ

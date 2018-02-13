@@ -47,6 +47,15 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
      */
     private WatchListenVideoListProviderCallback mApiDataProviderCallback;
 
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
+    /**
+     * 視聴中ビデオリスト取得WebClient.
+     */
+    private WatchListenVideoWebClient mWebClient = null;
+
     @Override
     public void onWatchListenVideoJsonParsed(final List<WatchListenVideoList> watchListenVideoList) {
         WatchListenVideoListDataManager videoListDataManager = new WatchListenVideoListDataManager(mContext);
@@ -110,21 +119,26 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
      * Activityからのデータ取得要求受付.
      */
     public void getWatchListenVideoData(final int pagerOffset) {
-        mWatchListenVideoList = null;
-        // クリップキー一覧を取得
-        if (mRequiredClipKeyList) {
-            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+        if (!mIsCancel) {
+            mWatchListenVideoList = null;
+            // クリップキー一覧を取得
+            if (mRequiredClipKeyList) {
+                getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+            }
+
+            mWebClient = new WatchListenVideoWebClient(mContext);
+            int ageReq = 1;
+            int upperPageLimit = 1;
+            int lowerPageLimit = 1;
+            //int pagerOffset = 1;
+            String pagerDirection = "";
+
+            mWebClient.getWatchListenVideoApi(ageReq, upperPageLimit,
+                    lowerPageLimit, pagerOffset, pagerDirection, this);
+        } else {
+            DTVTLogger.error("WatchListenVideoListDataProvider is stopping connection");
+            mApiDataProviderCallback.watchListenVideoListCallback(null);
         }
-
-        WatchListenVideoWebClient webClient = new WatchListenVideoWebClient(mContext);
-        int ageReq = 1;
-        int upperPageLimit = 1;
-        int lowerPageLimit = 1;
-        //int pagerOffset = 1;
-        String pagerDirection = "";
-
-        webClient.getWatchListenVideoApi(ageReq, upperPageLimit,
-                lowerPageLimit, pagerOffset, pagerDirection, this);
     }
 
     /**
@@ -235,5 +249,29 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
         }
 
         mApiDataProviderCallback.watchListenVideoListCallback(rankingContentsDataList);
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnect() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        stopConnection();
+        if (mWebClient != null) {
+            mWebClient.stopConnection();
+        }
+    }
+
+    /**
+     * 通信許可状態にする.
+     */
+    public void enableConnect() {
+        DTVTLogger.start();
+        mIsCancel = false;
+        enableConnection();
+        if (mWebClient != null) {
+            mWebClient.enableConnection();
+        }
     }
 }
