@@ -294,6 +294,7 @@ public class RemoteControlRelayClient {
     // URLエンコード対応文字
     private static final String URL_ENCODED_ASTERISK = "%2a";
     private static final String URL_ENCODED_HYPHEN = "%2d";
+    private static final String URL_ENCODED_PERIOD = "%2e";
     private static final String URL_ENCODED_SPACE = "%20";
 
     // アプリ起動要求種別に対応するアプリ名シンボル
@@ -909,9 +910,12 @@ public class RemoteControlRelayClient {
         String encodeUrl = "";
         try {
             encodeUrl = URLEncoder.encode(url, java.nio.charset.StandardCharsets.UTF_8.toString());
-            encodeUrl = encodeUrl.replace("*", URL_ENCODED_ASTERISK); // URLEncoder.encode はURLエンコードしないためエンコードする
-            encodeUrl = encodeUrl.replace("-", URL_ENCODED_HYPHEN); // URLEncoder.encode はURLエンコードしないためエンコードする
-            encodeUrl = encodeUrl.replace("+", URL_ENCODED_SPACE); // URLEncoder.encode が変換した空白コードを再エンコードする
+            // URLEncoder.encode はURLエンコードしないためエンコードする
+            encodeUrl = encodeUrl.replace("*", URL_ENCODED_ASTERISK);
+            encodeUrl = encodeUrl.replace("-", URL_ENCODED_HYPHEN);
+            encodeUrl = encodeUrl.replace(".", URL_ENCODED_PERIOD);
+            // URLEncoder.encode が変換した空白コードを再エンコードする
+            encodeUrl = encodeUrl.replace("+", URL_ENCODED_SPACE);
         } catch (UnsupportedEncodingException e) {
             DTVTLogger.debug(e);
         } catch (NumberFormatException e) {
