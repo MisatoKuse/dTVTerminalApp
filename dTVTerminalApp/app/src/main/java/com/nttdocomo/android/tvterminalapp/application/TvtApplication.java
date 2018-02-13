@@ -24,6 +24,14 @@ public class TvtApplication extends Application implements Application.ActivityL
      * ActivityのLifecycle記録用マップ.
      */
     private Map<String, Map<LIFECYCLE_TYPE, Integer>> mActivityMap = null;
+    /**
+     * アプリケーションの起動時、最初のActivityであるかどうかのフラグ.
+     */
+    private boolean mIsFirstActivityStartUp = true;
+    /**
+     * 最前面にいるActivityのLocalClassNameを保持.
+     */
+    private String mShowActivityLocalName = null;
 
     /**
      * LifecycleMap用のキー値.
@@ -81,6 +89,7 @@ public class TvtApplication extends Application implements Application.ActivityL
     @Override
     public void onActivityCreated(final Activity activity, final Bundle savedInstanceState) {
         DTVTLogger.start("ActivityLocalClassName : " + activity.getLocalClassName());
+        mShowActivityLocalName = activity.getLocalClassName();
         if (!mActivityMap.containsKey(activity.getLocalClassName())) {
             mActivityMap.put(activity.getLocalClassName(), createNewActivityMap());
         }
@@ -105,19 +114,18 @@ public class TvtApplication extends Application implements Application.ActivityL
         Integer cnt = map.get(LIFECYCLE_TYPE.RESUME) + 1;
         map.put(LIFECYCLE_TYPE.RESUME, cnt);
         mActivityMap.put(activity.getLocalClassName(), map);
-
+        DTVTLogger.debug("LifecycleCnt : " + cnt);
         DTVTLogger.end();
     }
 
     @Override
     public void onActivityPaused(final Activity activity) {
         DTVTLogger.start("ActivityLocalClassName : " + activity.getLocalClassName());
-
         Map<LIFECYCLE_TYPE, Integer> map = mActivityMap.get(activity.getLocalClassName());
         Integer cnt = map.get(LIFECYCLE_TYPE.PAUSE) + 1;
         map.put(LIFECYCLE_TYPE.PAUSE, cnt);
         mActivityMap.put(activity.getLocalClassName(), map);
-
+        DTVTLogger.debug("LifecycleCnt : " + cnt);
         DTVTLogger.end();
     }
 
@@ -128,15 +136,21 @@ public class TvtApplication extends Application implements Application.ActivityL
     @Override
     public void onActivityStarted(final Activity activity) {
         DTVTLogger.start("ActivityLocalClassName : " + activity.getLocalClassName());
-
         Map<LIFECYCLE_TYPE, Integer> map = mActivityMap.get(activity.getLocalClassName());
-        // Stop後であるならばカウントは一致する
-        mIsChangeApplicationVisible = (map.get(LIFECYCLE_TYPE.START) != 0
-                && map.get(LIFECYCLE_TYPE.START).equals(map.get(LIFECYCLE_TYPE.STOP)));
+        // 表示中のActivity名とonStartを実行したActivityが異なる場合、バックキーによる画面遷移と判定
+        if (mShowActivityLocalName.equals(activity.getLocalClassName())) {
+            // Stop後であるならばカウントは一致する
+            mIsChangeApplicationVisible = (map.get(LIFECYCLE_TYPE.START) != 0
+                    && map.get(LIFECYCLE_TYPE.START).equals(map.get(LIFECYCLE_TYPE.STOP)));
+        } else {
+            // 表示中のActivity名を変更
+            mShowActivityLocalName = activity.getLocalClassName();
+            mIsChangeApplicationVisible = false;
+        }
         Integer cnt = map.get(LIFECYCLE_TYPE.START) + 1;
         map.put(LIFECYCLE_TYPE.START, cnt);
         mActivityMap.put(activity.getLocalClassName(), map);
-
+        DTVTLogger.debug("LifecycleCnt : " + cnt);
         DTVTLogger.end();
     }
 
@@ -148,7 +162,7 @@ public class TvtApplication extends Application implements Application.ActivityL
         Integer cnt = map.get(LIFECYCLE_TYPE.STOP) + 1;
         map.put(LIFECYCLE_TYPE.STOP, cnt);
         mActivityMap.put(activity.getLocalClassName(), map);
-
+        DTVTLogger.debug("LifecycleCnt : " + cnt);
         DTVTLogger.end();
     }
 
@@ -185,5 +199,23 @@ public class TvtApplication extends Application implements Application.ActivityL
 
         DTVTLogger.end();
         return lifecycleMap;
+    }
+
+    /**
+     * 起動後初回判定実行フラグを変更する（海外判定実行用）.
+     *
+     * @param isFirstActivityStartUp 起動後初回判定実施要否
+     */
+    public void setIsFirstActivityStartUp(final boolean isFirstActivityStartUp) {
+        mIsFirstActivityStartUp = isFirstActivityStartUp;
+    }
+
+    /**
+     * 起動後初回判定実行フラグを取得（海外判定実行用）.
+     *
+     * @return true:起動後初回判定 false:初回判定済み
+     */
+    public boolean getIsFirstActivityStartUp() {
+        return mIsFirstActivityStartUp;
     }
 }
