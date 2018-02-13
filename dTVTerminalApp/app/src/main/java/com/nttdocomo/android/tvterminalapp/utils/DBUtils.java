@@ -13,16 +13,18 @@ import com.nttdocomo.android.tvterminalapp.datamanager.databese.dao.ClipKeyListD
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.helper.DBHelper;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.SearchConstants;
 
-import org.json.JSONArray;
-
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * DB関連のUtilクラス.
+ */
 public class DBUtils {
+    /**
+     * 整数の正規表現.
+     */
     private final static String NUMERICAL_DECISION = "^[0-9]*$";
-
-    //日付項目判定用配列
 
     //日付用パラメータの識別用
     private static final String[] DATE_PARA = {
@@ -41,12 +43,12 @@ public class DBUtils {
     };
 
     /**
-     * Jsonのキー名の"4kflg"によるDBエラー回避用
+     * Jsonのキー名の"4kflg"によるDBエラー回避用.
      *
      * @param string 検査用文字列
      * @return 変換後文字列
      */
-    public static String fourKFlgConversion(String string) {
+    public static String fourKFlgConversion(final String string) {
         String s = string;
         if (string.equals(DBConstants.FOUR_K_FLG)) {
             s = DBConstants.UNDER_BAR_FOUR_K_FLG;
@@ -55,34 +57,14 @@ public class DBUtils {
     }
 
     /**
-     * JSONArray to String[]
-     *
-     * @param array 読み込みJSON ARRAY
-     * @return 文字配列
-     */
-    public static String[] toStringArray(JSONArray array) {
-
-        String[] arr = null;
-        if (array == null) {
-            return null;
-        }
-
-        arr = new String[array.length()];
-        for (int i = 0; i < arr.length; i++) {
-            arr[i] = array.optString(i);
-        }
-        return arr;
-    }
-
-    /**
-     * 数値なのかを判定
+     * 数値なのかを判定.
      *
      * @param num 　判定したい数値
      * @return 数値の場合true
      */
-    public static boolean isNumber(String num) {
+    public static boolean isNumber(final String num) {
         //ヌルや空欄ならば数値ではない
-        if(num == null || num.isEmpty()) {
+        if (num == null || num.isEmpty()) {
             return false;
         }
 
@@ -92,37 +74,55 @@ public class DBUtils {
     }
 
     /**
-     * 与えられたオブジェクトが小数を含む数値か、小数を表す文字列だった場合は、ダブル型で返す
+     * 数値なのかを判定(Float).
+     *
+     * @param num 　判定したい数値
+     * @return 数値の場合true
+     */
+    public static boolean isFloat(final String num) {
+        //ヌルや空欄ならば数値ではない
+        if (num == null || num.isEmpty()) {
+            return false;
+        }
+        String regex = "^-?[0-9]*.?[0-9]+$";
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(num);
+        return m.find();
+    }
+
+    /**
+     * 与えられたオブジェクトが小数を含む数値か、小数を表す文字列だった場合は、ダブル型で返す.
+     *
      * @param num 返還対象のオブジェクト
      * @return 変換後の数値。変換に失敗した場合はゼロとなる
      */
-    public static double getDecimal(Object num) {
+    public static double getDecimal(final Object num) {
         //例外に頼らずに済むものは、事前に排除する
         //ヌルならば即座に帰る
-        if(num == null) {
+        if (num == null) {
             return 0;
         }
 
         //整数型ならばダブル型に変換して帰る
-        if(num instanceof Integer) {
+        if (num instanceof Integer) {
             return ((Integer) num).doubleValue();
         }
 
         //長い整数型ならばダブル型に変換して帰る
-        if(num instanceof Long) {
+        if (num instanceof Long) {
             return ((Long) num).doubleValue();
         }
 
         double answer;
         try {
-            answer = (double)num;
-        } catch(ClassCastException classCastException) {
+            answer = (double) num;
+        } catch (ClassCastException classCastException) {
             //ダブルへのキャストに失敗するので、数値の類ではない
             try {
-                answer = Double.parseDouble((String)num);
+                answer = Double.parseDouble((String) num);
             } catch (NumberFormatException numberFormatException) {
                 //ダブルへのパースに失敗するので、小数ではない
-                answer=0;
+                answer = 0;
             }
         }
 
@@ -130,12 +130,12 @@ public class DBUtils {
     }
 
     /**
-     * 数値取得
+     * 数値取得.
      *
      * @param data 　数値判定オブジェクト
      * @return 数値
      */
-    public static int getNumeric(Object data) {
+    public static int getNumeric(final Object data) {
         int i = 0;
         if (data instanceof Integer) {
             i = ((Integer) data);
@@ -144,32 +144,34 @@ public class DBUtils {
         }
         return i;
     }
+
     /**
-     * long型数値取得
+     * long型数値取得.
      *
      * @param data 　数値判定オブジェクト
      * @return long型数値
      */
-    public static long getLong(Object data) {
+    public static long getLong(final Object data) {
         long i = 0;
         if (data instanceof Integer) {
             i = ((Integer) data).longValue();
         } else if (data instanceof Long) {
-            i =  (Long) data;
+            i = (Long) data;
         }
         return i;
     }
 
     /**
-     * Jsonの項目名が日付関連か同課を見る
+     * Jsonの項目名が日付関連か同課を見る.
+     *
      * @param parameterName 調べたい項目名
      * @return 日付関連の項目名ならばtrue
      */
-    public static boolean isDateItem(String parameterName) {
+    public static boolean isDateItem(final String parameterName) {
         boolean answer = false;
 
         //日付関連項目が含まれるかどうかを見る
-        if(Arrays.asList(DATE_PARA).contains(parameterName)) {
+        if (Arrays.asList(DATE_PARA).contains(parameterName)) {
             //日付関連項目なので、true
             answer = true;
         }
@@ -178,13 +180,13 @@ public class DBUtils {
     }
 
     /**
-     * 引数指定されたテーブルにレコードが存在するかを返す
+     * 引数指定されたテーブルにレコードが存在するかを返す.
      *
-     * @param context
-     * @param tableName
-     * @return
+     * @param context   コンテキストファイル
+     * @param tableName テーブル名
+     * @return データ存在チェック結果
      */
-    public static boolean isCachingRecord(Context context, String tableName) {
+    public static boolean isCachingRecord(final Context context, final String tableName) {
         DBHelper dBHelper = new DBHelper(context);
         long recordCount = DatabaseUtils.queryNumEntries(dBHelper.getWritableDatabase(), tableName);
         if (recordCount > 0) {
@@ -194,15 +196,16 @@ public class DBUtils {
     }
 
     /**
-     * 引数指定されたテーブルにレコードが存在するかを返す
+     * 引数指定されたテーブルにレコードが存在するかを返す.
      *
-     * @param context
+     * @param context コンテキスト
      * @param tableName テーブル名
      * @param selection WHERE句の内容
      * @param args      selectionに"?" が入っている場合のパラメータ
-     * @return
+     * @return データ存在チェック結果
      */
-    public static boolean isCachingRecord(Context context, String tableName, String selection, String[] args) {
+    public static boolean isCachingRecord(
+            final Context context, final String tableName, final String selection, final String[] args) {
         DBHelper dBHelper = new DBHelper(context);
         long recordCount = DatabaseUtils.queryNumEntries(dBHelper.getWritableDatabase(), tableName, selection, args);
         if (recordCount > 0) {

@@ -44,7 +44,7 @@ public class WatchListenVideoListDataManager {
 
         //データ存在チェック
         List<Map<String, String>> list;
-        if (!DBUtils.isCachingRecord(mContext, DBConstants.VODCLIP_LIST_TABLE_NAME)) {
+        if (!DBUtils.isCachingRecord(mContext, DBConstants.WATCH_LISTEN_VIDEO_TABLE_NAME)) {
             return null;
         }
 

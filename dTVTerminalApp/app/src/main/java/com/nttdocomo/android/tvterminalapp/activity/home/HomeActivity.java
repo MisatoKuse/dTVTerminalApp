@@ -82,6 +82,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private boolean mIsCloseDialog = false;
     /**
+     * コンテンツ情報取得失敗フラグ.
+     */
+    private boolean mIsGetContentsInfoFailed = false;
+    /**
      * onCreateが終了しているかのフラグ.
      */
     private boolean mIsOnCreateFinish = false;
@@ -224,7 +228,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onResume() {
         super.onResume();
-
+        mIsGetContentsInfoFailed = false;
         //アプリ起動時のデータ取得はonCreateで実施済みのためonResumeでは行わない
         if (mIsOnCreateFinish) {
             //起動時はプログレスダイアログを表示
@@ -440,7 +444,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * 機能
      * コンテンツ一覧データを設定.
      *
-     * @param recyclerView    リサイクルビュー
+     * @param recyclerView     リサイクルビュー
      * @param contentsDataList コンテンツ情報
      * @param index            遷移先
      */
@@ -668,13 +672,17 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * データ取得失敗ダイアログ.
      */
     private void showGetDataFailedDialog() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                String message = getResources().getString(R.string.get_contents_data_error_message);
-                errorDialog(message, R.string.custom_dialog_ok);
-            }
-        });
+        //一度表示されたら表示しない
+        if (!mIsGetContentsInfoFailed) {
+            mIsGetContentsInfoFailed = true;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String message = getResources().getString(R.string.get_contents_data_error_message);
+                    errorDialog(message, R.string.custom_dialog_ok);
+                }
+            });
+        }
     }
 
     /**

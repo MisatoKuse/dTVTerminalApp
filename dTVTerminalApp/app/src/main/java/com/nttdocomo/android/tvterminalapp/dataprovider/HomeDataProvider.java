@@ -11,6 +11,7 @@ import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.ChannelInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.DailyRankInsertDataManager;
@@ -35,6 +36,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WatchListenVideoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
@@ -265,11 +267,13 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     public void onWatchListenVideoJsonParsed(final List<WatchListenVideoList> watchListenVideoList) {
         if (watchListenVideoList != null && watchListenVideoList.size() > 0) {
             WatchListenVideoList list = watchListenVideoList.get(0);
-            if (!mRequiredClipKeyList
-                    || mResponseEndFlag) {
-                sendWatchingVideoListData(list.getVcList());
+            setStructDB(list);
+            List<Map<String,String>> vcList = list.getVcList();
+            if ((!mRequiredClipKeyList || mResponseEndFlag) && vcList != null
+                    && vcList.size() > 0 && !vcList.get(0).isEmpty()) {
+                sendWatchingVideoListData(vcList);
             } else {
-                mWatchListenVideoList = list;
+                mApiDataProviderCallback.watchingVideoCallback(null);
             }
         } else {
             if (null != mApiDataProviderCallback) {
@@ -500,7 +504,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             getRoleListData();
 
             //チャンネルリスト取得
-            getChannelList(1, 1, "", DEFAULT_CHANNEL_DISPLAY_TYPE);
+            getChannelList(0, 0, "", DEFAULT_CHANNEL_DISPLAY_TYPE);
 
             UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
             if (userInfoDataProvider.isH4dUser()) {
@@ -915,8 +919,9 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
         }
 
-        //視聴中ビデオ一覧のDB保存履歴と、有効期間を確認
-        if ((lastDate == null || lastDate.length() < 1 || dateUtils.isBeforeLimitDate(lastDate))
+        //視聴中ビデオ一覧のDB保存履歴と、有効期間を確認(DBにデータが不在の時もデータ再取得)
+        if ((lastDate == null || lastDate.length() < 1 || dateUtils.isBeforeLimitDate(lastDate)
+                || !DBUtils.isCachingRecord(mContext, DBConstants.WATCH_LISTEN_VIDEO_TABLE_NAME))
                 && NetWorkUtils.isOnline(mContext)) {
             WatchListenVideoWebClient webClient = new WatchListenVideoWebClient(mContext);
             //TODO：仮設定値
@@ -927,6 +932,12 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
 
             webClient.getWatchListenVideoApi(ageReq, upperPageLimit,
                     lowerPageLimit, pagerOffset, pagerDirection, this);
+        } else {
+            //キャッシュ期限内ならDBから取得
+            List<Map<String, String>> watchListenList = new ArrayList<>();
+            HomeDataManager watchListenVideoDataManager = new HomeDataManager(mContext);
+            watchListenList = watchListenVideoDataManager.selectWatchingVideoHomeData();
+            sendWatchingVideoListData(watchListenList);
         }
     }
 
