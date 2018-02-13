@@ -136,11 +136,12 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
         //視聴中ビデオ一覧のDB保存履歴と、有効期間を確認
         if (lastDate == null || lastDate.length() < 1 || dateUtils.isBeforeLimitDate(lastDate)) {
             WatchListenVideoWebClient webClient = new WatchListenVideoWebClient(mContext);
-            //TODO：仮設定値
-            int ageReq = 1;
-            int upperPageLimit = 1;
+
+            UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
+            int ageReq = userInfoDataProvider.getUserAge();
+            int upperPageLimit = 20;
             int lowerPageLimit = 1;
-            String pagerDirection = "";
+            String pagerDirection = "next";
 
             webClient.getWatchListenVideoApi(ageReq, upperPageLimit,
                     lowerPageLimit, pagerOffset, pagerDirection, this);

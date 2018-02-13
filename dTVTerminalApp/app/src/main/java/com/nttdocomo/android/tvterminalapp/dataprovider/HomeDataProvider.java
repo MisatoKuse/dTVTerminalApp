@@ -972,11 +972,12 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
                 WatchListenVideoWebClient webClient = new WatchListenVideoWebClient(mContext);
-                //TODO：仮設定値
-                int ageReq = 1;
-                int upperPageLimit = 1;
+
+                UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
+                int ageReq = userInfoDataProvider.getUserAge();
+                int upperPageLimit = 20;
                 int lowerPageLimit = 1;
-                String pagerDirection = "";
+                String pagerDirection = "next";
 
                 webClient.getWatchListenVideoApi(ageReq, upperPageLimit,
                         lowerPageLimit, pagerOffset, pagerDirection, this);
