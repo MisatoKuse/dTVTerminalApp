@@ -25,6 +25,8 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.WatchListenVideoListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopWatchListenVideoListDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 
 import java.util.ArrayList;
@@ -125,8 +127,6 @@ public class WatchingVideoListActivity extends BaseActivity implements
         initView();
         mListView.setVisibility(View.GONE);
         mRelativeLayout.setVisibility(View.VISIBLE);
-        mWatchListenVideoListDataProvider = new WatchListenVideoListDataProvider(this);
-        mWatchListenVideoListDataProvider.getWatchListenVideoData(WatchListenVideoListDataProvider.DEFAULT_PAGE_OFFSET);
 
         //スクロールの上下方向検知用のリスナーを設定
         mListView.setOnTouchListener(this);
@@ -373,5 +373,35 @@ public class WatchingVideoListActivity extends BaseActivity implements
                 break;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        DTVTLogger.start();
+        if (mWatchListenVideoListDataProvider != null) {
+            mWatchListenVideoListDataProvider.enableConnect();
+        }
+        if (mWatchListenVideoBaseAdapter != null) {
+            mWatchListenVideoBaseAdapter.enableConnect();
+        }
+        if (mListView != null) {
+            mListView.invalidateViews();
+        }
+        if (mWatchingVideoListData != null) {
+            mWatchListenVideoListDataProvider = new WatchListenVideoListDataProvider(this);
+            mWatchListenVideoListDataProvider.getWatchListenVideoData(WatchListenVideoListDataProvider.DEFAULT_PAGE_OFFSET);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        DTVTLogger.start();
+        //通信を止める
+        StopWatchListenVideoListDataConnect stopConnect = new StopWatchListenVideoListDataConnect();
+        stopConnect.execute(mWatchListenVideoListDataProvider);
+        StopContentsAdapterConnect stopAdapterConnect = new StopContentsAdapterConnect();
+        stopAdapterConnect.execute(mWatchListenVideoBaseAdapter);
     }
 }
