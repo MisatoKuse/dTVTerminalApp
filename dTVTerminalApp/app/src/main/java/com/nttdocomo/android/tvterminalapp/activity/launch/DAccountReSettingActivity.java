@@ -114,15 +114,18 @@ public class DAccountReSettingActivity extends BaseActivity implements View.OnCl
      * ペアリングの再実行を行う.
      */
     private void onReturnButton() {
-        startActivity(STBSelectActivity.class, null);
-        this.finish();
+        Intent intent = new Intent(getApplicationContext(), STBSelectActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     /**
      * dアカウント設定ヘルプ.
      */
     private void onDAccountRegButton() {
-        startActivity(DAccountSettingHelpActivity.class, null);
+        Intent intent = new Intent(getApplicationContext(), DAccountSettingHelpActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     /**

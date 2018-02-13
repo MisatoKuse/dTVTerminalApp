@@ -4,6 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
@@ -25,12 +26,14 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
+import com.nttdocomo.android.tvterminalapp.activity.setting.SettingActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvDevList;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
+import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 
@@ -81,6 +84,11 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private static final int MARGIN23 = 23;
     private static final int MARGIN9 = 9;
     private static final String DEVICE_NAME_KEY = "DEVICE_NAME_KEY";
+
+    /**
+     *デバイスを選択してDアカウントを登録フラグ
+     */
+    private boolean mDaccountFlag = false;
 
     private enum TimerStatus {
         /**
@@ -286,6 +294,8 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     public void onResume() {
         super.onResume();
         DTVTLogger.start();
+        //dアカウント情報取得
+        setDaccountControl();
         initView();
 //        setContents();
         if (mIsAppDL) {
@@ -487,6 +497,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             Intent intent = new Intent(getApplicationContext(), PairingHelpActivity.class);
             intent.putExtra(PairingHelpActivity.START_WHERE, PairingHelpActivity.ParingHelpFromMode.
                     ParingHelpFromMode_Setting.ordinal());
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
         DTVTLogger.end();
@@ -507,16 +518,23 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         //STB選択画面"次回以降表示しない" 状態をSharedPreferenceに保存
         if (mStartMode == STBSelectFromMode.STBSelectFromMode_Launch.ordinal()) {
             SharedPreferencesUtils.setSharedPreferencesStbSelect(this, mIsNextTimeHide);
-            startActivity(HomeActivity.class, null);
+            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
         } else if (mStartMode == STBSelectFromMode.STBSelectFromMode_Setting.ordinal()) {
             if (mParingDevice.getVisibility() == View.VISIBLE) {
                 //ペアリング解除する場合、すべてのSTBキャッシュデータを削除して、ホーム画面に遷移する
                 mDlnaProvDevList.dmsRemove();
                 SharedPreferencesUtils.resetSharedPreferencesStbInfo(this);
-                startActivity(HomeActivity.class, null);
+                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             } else {
                 //ペアリングししないで利用する場合、設定画面に戻る
-                finish();
+                Intent intent = new Intent(getApplicationContext(), SettingActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             }
         }
         DTVTLogger.end();
@@ -889,7 +907,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                     case IS_USER_ACCOUNT_EXIST:
                         //TODO 皆さんに影響内容ないようにコメントアウト
                         SharedPreferencesUtils.setSharedPreferencesStbInfo(this, mDlnaDmsItemList.get(mSelectDevice));
-                        startActivity(STBConnectActivity.class, null);
+//                        startActivity(STBConnectActivity.class, null);
                         Intent intent = new Intent(this, STBConnectActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
@@ -921,15 +939,14 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                                 // チェック処理の状態で処理を分岐する
                                 SharedPreferencesUtils.resetSharedPreferencesStbInfo(getApplicationContext());
                                 Intent intent = new Intent(this, DAccountReSettingActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
                                 break;
                             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
                                 // TODO STBと接続しないとHOMEにいけない為、本体側のSTB機能が搭載されるまでは一旦ホームに遷移させておく.
                                 Intent homeintent = new Intent(this, HomeActivity.class);
-                                homeintent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                homeintent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(homeintent);
-
                                 break;
                             default:
                                 break;
@@ -939,9 +956,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                         switch (resultcode) {
                             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
                                 // TODO STBと接続しないとHOMEにいけない為、本体側のSTB機能が搭載されるまでは一旦ホームに遷移させておく.
-                                Intent homestartintent = new Intent(this, HomeActivity.class);
-                                homestartintent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                startActivity(homestartintent);
+                                createUnKnownDialog();
                                 break;
                             default:
                                 break;
@@ -958,7 +973,29 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     /**
      * エラーダイアログ表示.
      */
-    private CustomDialog createErrorDialog() {
+    private void createUnKnownDialog() {
+        CustomDialog failedRecordingReservationDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+        failedRecordingReservationDialog.setContent(getResources().getString(R.string.main_setting_connect_error_message));
+        failedRecordingReservationDialog.setCancelText(R.string.recording_reservation_failed_dialog_confirm);
+        // Cancelable
+        failedRecordingReservationDialog.setCancelable(false);
+        failedRecordingReservationDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+            @Override
+            public void onOKCallback(boolean isOK) {
+                //初期状態に戻る
+                onResume();
+                if (mStartMode == STBSelectFromMode.STBSelectFromMode_Launch.ordinal()) {
+                    initLaunchView();
+                }
+            }
+        });
+        failedRecordingReservationDialog.showDialog();
+    }
+
+    /**
+     * エラーダイアログ表示.
+     */
+    private void createErrorDialog() {
         CustomDialog failedRecordingReservationDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
         failedRecordingReservationDialog.setContent(getResources().getString(R.string.str_stb_stb_error));
         failedRecordingReservationDialog.setCancelText(R.string.recording_reservation_failed_dialog_confirm);
@@ -970,6 +1007,49 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 revertSelectStbState();
             }
         });
-        return failedRecordingReservationDialog;
+        failedRecordingReservationDialog.showDialog();
+//        return failedRecordingReservationDialog;
+    }
+
+    /**
+     * 再起動時のダイアログ・引数無しに対応するため、可変長引数とする.
+     *
+     * @param message 省略した場合はdアカウント用メッセージを表示。指定した場合は、常に先頭文字列のみ使用される
+     */
+    @Override
+    protected void restartMessageDialog(final String... message) {
+        //呼び出し用のアクティビティの退避
+        final Activity activity = this;
+
+        //出力メッセージのデフォルトはdアカウント用
+        String printMessage = getString(R.string.d_account_chamge_message);
+
+        //引数がある場合はその先頭を使用する
+        if (message != null && message.length > 0) {
+            printMessage = message[0];
+        }
+
+        //ペアリング画面の時はダイアログ出さない
+        if (getTitleText().equals(
+                getString(R.string.str_app_title))) {
+            return;
+        }
+        //ペアリング設定画面かつユーザーがデバイスを選択してDアカウントを登録の場合はダイアログ出さない
+        if (getTitleText().equals(getString(R.string.str_stb_paring_setting_title)) && mDaccountFlag) {
+            mDaccountFlag = false;
+            return;
+        }
+        //ダイアログを、OKボタンのコールバックありに設定する
+        CustomDialog restartDialog = new CustomDialog(this, CustomDialog.DialogType.ERROR);
+        restartDialog.setContent(printMessage);
+        //startAppDialog.setTitle(getString(R.string.dTV_content_service_start_dialog));
+        restartDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+            @Override
+            public void onOKCallback(boolean isOK) {
+                //OKが押されたので、ホーム画面の表示
+                DAccountUtils.reStartApplication(activity);
+            }
+        });
+        restartDialog.showDialog();
     }
 }

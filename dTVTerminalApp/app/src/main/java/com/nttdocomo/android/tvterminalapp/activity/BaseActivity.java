@@ -783,7 +783,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
      *
      * @param message 省略した場合はdアカウント用メッセージを表示。指定した場合は、常に先頭文字列のみ使用される
      */
-    private void restartMessageDialog(final String... message) {
+    protected void restartMessageDialog(final String... message) {
 
         //呼び出し用のアクティビティの退避
         final Activity activity = this;
@@ -1377,7 +1377,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     /**
      * dアカウントの切り替えや無効化を受信できるように設定を行う.
      */
-    private void setDaccountControl() {
+    protected void setDaccountControl() {
         //dアカウント関連の処理を依頼する
         mDaccountControl = new DaccountControl();
         mDaccountControl.registService(getApplicationContext(), this);

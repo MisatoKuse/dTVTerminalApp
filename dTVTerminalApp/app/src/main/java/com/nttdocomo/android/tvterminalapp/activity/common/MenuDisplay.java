@@ -26,6 +26,7 @@ import com.nttdocomo.android.tvterminalapp.activity.home.RecordReservationListAc
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RentalListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.WatchingVideoListActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.setting.NewsActivity;
 import com.nttdocomo.android.tvterminalapp.activity.setting.SettingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.ranking.RankingTopActivity;
@@ -280,9 +281,13 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                 if (null != mMenuDisplayEventListener) {
                     mMenuDisplayEventListener.onMenuItemSelected(MenuItem.SETTING);
                     if (!(mActivity instanceof SettingActivity)) {
-                        intent.setClass(mActivity, SettingActivity.class);
-                        intent.setFlags(0);
-                        mActivity.startActivity(intent);
+                        if (mActivity instanceof STBSelectActivity) {
+                            mActivity.finish();
+                        } else {
+                            intent.setClass(mActivity, SettingActivity.class);
+                            intent.setFlags(0);
+                            mActivity.startActivity(intent);
+                        }
                     }
                 }
             } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_hikari_tv))) {
