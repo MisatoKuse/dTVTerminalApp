@@ -169,7 +169,7 @@ public class EditMyChannelListAdapter extends BaseAdapter implements View.OnClic
      */
     private void requestChannelListDataFromServer() {
         HikariTvChDataProvider hikariTvChDataProvider = new HikariTvChDataProvider(mContext);
-        hikariTvChDataProvider.getChannelList(1, 1, "");
+        hikariTvChDataProvider.getChannelList(0, 0, "");
     }
 
     /**

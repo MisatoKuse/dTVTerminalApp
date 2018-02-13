@@ -137,18 +137,16 @@ public class UrlConstants {
         /**
          * ジャンル一覧リストファイル：こちらはAPIではなく、ファイルの直接読み込みとのこと.
          * APIではないので、例外としてURL全体を指定する
-         * TODO: 当然後ほど変更する事となる。
          */
         public static final String GENRE_LIST_FILE =
-                BaseUrlConstants.PLALA_BASE_URL + "genreList_sample_1445.json";
+                BaseUrlConstants.PLALA_ID_FILE_URL + "genreList.json";
 
         /**
          * ロール一覧リストファイル：こちらはAPIではなく、ファイルの直接読み込みとのこと.
          * APIではないので、例外としてURL全体を指定する
-         * TODO: 当然後ほど変更する事となる。
          */
         public static final String ROLE_LIST_FILE =
-                BaseUrlConstants.PLALA_BASE_URL + "roleList_sample.json";
+                BaseUrlConstants.PLALA_ID_FILE_URL + "roleList.json";
 
         /**
          * ジャンル毎コンテンツ数取得.

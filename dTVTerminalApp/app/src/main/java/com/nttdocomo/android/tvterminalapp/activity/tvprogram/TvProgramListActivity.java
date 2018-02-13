@@ -442,7 +442,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
     private void getChannelData() {
         if(mTabIndex != INDEX_TAB_MY_CHANNEL){//ひかり、dTVチャンネル
             ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
-            scaledDownProgramListDataProvider.getChannelList(1, 1, "", mTabIndex);
+            scaledDownProgramListDataProvider.getChannelList(0, 0, "", mTabIndex);
         } else {//MY番組表
             MyChannelDataProvider myChannelDataProvider = new MyChannelDataProvider(this);
             myChannelDataProvider.getMyChannelList(R.layout.tv_program_list_main_layout);
@@ -667,7 +667,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         if (myChannelMetaData != null && myChannelMetaData.size() > 0) {
             this.myChannelDataList = myChannelMetaData;
             ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
-            scaledDownProgramListDataProvider.getChannelList(1, 1, "", INDEX_TAB_HIKARI);//ひかりリストからチャンネル選択
+            scaledDownProgramListDataProvider.getChannelList(0, 0, "", INDEX_TAB_HIKARI);//ひかりリストからチャンネル選択
         }else {//MY番組表情報がなければMY番組表を設定していないとする
             showMyChannelNoItem(true);
         }

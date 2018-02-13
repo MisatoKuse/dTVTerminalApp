@@ -289,7 +289,7 @@ public class ChannelListActivity extends BaseActivity implements
         @Override
         public void run() {
             DTVTLogger.start();
-            mHikariTvChDataProvider.getChannelList(1, mPagingOffset, "");
+            mHikariTvChDataProvider.getChannelList(0, 0, "");
             DTVTLogger.end();
         }
     };
@@ -301,7 +301,7 @@ public class ChannelListActivity extends BaseActivity implements
         @Override
         public void run() {
             DTVTLogger.start();
-            mDTvChDataProvider.getChannelList(1, mPagingOffset, "");
+            mDTvChDataProvider.getChannelList(0, 0, "");
             DTVTLogger.end();
         }
     };

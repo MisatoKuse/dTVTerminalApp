@@ -140,7 +140,7 @@ public class RecommendActivity extends BaseActivity implements
     private void getChannelList() {
         //チャンネルリストプロバイダーでデータを取得する
         mHikariTvChDataProvider = new HikariTvChDataProvider(this);
-        mHikariTvChDataProvider.getChannelList(1, mPagingOffset, "");
+        mHikariTvChDataProvider.getChannelList(0, 0, "");
 
         try {
             mChannelMap = mHikariTvChDataProvider.dbOperation(SEARCH_CHANNEL);

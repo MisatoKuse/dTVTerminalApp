@@ -240,11 +240,9 @@ public class RecordingReservationListDataProvider implements
         List<HashMap<String, String>> list = new ArrayList<>();
         //通信クラスにデータ取得要求を出す
         ChannelWebClient webClient = new ChannelWebClient(mContext);
-        int pagerLimit = 1;
-        int pagerOffset = 1;
         String filter = "";
         String type = "";
-        webClient.getChannelApi(pagerLimit, pagerOffset, filter, type, this);
+        webClient.getChannelApi(0, 0, filter, type, this);
         DTVTLogger.end();
     }
 

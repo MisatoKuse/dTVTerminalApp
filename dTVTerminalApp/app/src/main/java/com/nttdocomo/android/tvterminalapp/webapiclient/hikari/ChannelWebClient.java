@@ -186,10 +186,13 @@ public class ChannelWebClient
         String answerText;
         try {
             //ページャー部の作成
-            JSONObject jsonPagerObject = new JSONObject();
-            jsonPagerObject.put(JsonConstants.META_RESPONSE_PAGER_LIMIT, pagetLimit);
-            jsonPagerObject.put(JsonConstants.META_RESPONSE_OFFSET, pagerOffset);
-            jsonObject.put(JsonConstants.META_RESPONSE_PAGER, jsonPagerObject);
+            //TODO:ページング指定を外してもぷららサーバ側からMax10件しか取得できない(実際にはレスポンスのtotal件数は200件以上になっている)
+            if (pagetLimit > 0 && pagerOffset > 0) {
+                JSONObject jsonPagerObject = new JSONObject();
+                jsonPagerObject.put(JsonConstants.META_RESPONSE_PAGER_LIMIT, pagetLimit);
+                jsonPagerObject.put(JsonConstants.META_RESPONSE_OFFSET, pagerOffset);
+                jsonObject.put(JsonConstants.META_RESPONSE_PAGER, jsonPagerObject);
+            }
 
             //その他
             jsonObject.put(JsonConstants.META_RESPONSE_FILTER, filter);
