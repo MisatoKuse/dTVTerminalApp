@@ -96,6 +96,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         }
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
+        setStatusBarColor(true);
 
         initView();
         syncScroll(mChannelRecyclerView, mProgramRecyclerView);

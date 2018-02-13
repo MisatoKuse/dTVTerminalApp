@@ -8,6 +8,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -19,7 +20,10 @@ import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -246,6 +250,54 @@ public class BaseActivity extends FragmentActivity implements
         mHeaderBackIcon = findViewById(R.id.header_layout_back);
         mStbStatusIcon = findViewById(R.id.header_stb_status_icon);
         mMenuImageViewForBase = findViewById(R.id.header_layout_menu);
+    }
+
+    /**
+     * 機能：ステータスバー色を変更する(Android4.4用).
+     *
+     * @param isColorRed true:ステータスバー色 = 赤 false:ステータスバー色 = 黒
+     */
+    protected void setStatusBarColor(final Boolean isColorRed) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+                && Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            int statusBarHeight = getStatusBarHeight(this);
+
+            View view = new View(getApplicationContext());
+            view.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            view.getLayoutParams().height = statusBarHeight;
+            ((ViewGroup) window.getDecorView()).addView(view);
+            if (isColorRed) {
+                view.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.header_background_color_red));
+            } else {
+                view.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.header_background_color_black));
+            }
+
+            LinearLayout linearLayout = findViewById(R.id.baseStatusBarLayout);
+            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) linearLayout.getLayoutParams();
+            layoutParams.setMargins(0, statusBarHeight, 0, 0);
+            linearLayout.setLayoutParams(layoutParams);
+        }
+    }
+
+    /**
+     * ステータスバーの高さを取得する.
+     *
+     * @param activity アクティビティ
+     * @return ステータスバーの高さ
+     */
+    private static int getStatusBarHeight(final Activity activity) {
+        int result = 0;
+        Resources res = activity.getResources();
+        int resourceId = res.getIdentifier(
+                activity.getString(R.string.status_bar_height_name),
+                activity.getString(R.string.status_bar_height_deftype),
+                activity.getString(R.string.status_bar_height_defpackage));
+        if (resourceId > 0) {
+            result = res.getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 
     /**

@@ -102,6 +102,7 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
         }
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
+        setStatusBarColor(true);
 
         initView();
     }

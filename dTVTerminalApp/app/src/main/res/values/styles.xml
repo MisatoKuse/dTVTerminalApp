@@ -4,7 +4,17 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/header_background_color_red</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowDisablePreview">true</item>
+
+        <!-- テーマにトランジションアニメを定義 -->
+        <item name="android:windowAnimationStyle">@style/GeneralAnimation</item>
+    </style>
+    <style name="AppThemeBlack" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/header_background_color_black</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowDisablePreview">true</item>
 
@@ -42,7 +52,7 @@
         <item name="android:windowAnimationStyle">@style/Animation</item>
         <item name="android:windowNoTitle">true</item>
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/header_background_color_red</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
@@ -72,7 +82,7 @@
     <style name="ContentsDetailTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/contents_header_background</item>
+        <item name="colorPrimaryDark">@color/header_background_color_black</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 

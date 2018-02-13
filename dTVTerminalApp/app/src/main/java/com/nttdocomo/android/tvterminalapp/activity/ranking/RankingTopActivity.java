@@ -92,6 +92,7 @@ public class RankingTopActivity extends BaseActivity implements RankingTopDataPr
         }
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
+        setStatusBarColor(true);
 
         //ビューの初期化処理
         initView();

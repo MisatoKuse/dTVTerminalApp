@@ -118,6 +118,7 @@ public class WatchingVideoListActivity extends BaseActivity implements
         }
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
+        setStatusBarColor(true);
 
         resetPaging();
 

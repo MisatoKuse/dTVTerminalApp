@@ -54,7 +54,9 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         DlnaProvBsChList dlnaProvBsChList;
 
         setContentView(R.layout.launch_main_layout);
+        setTitleText(getString(R.string.str_launch_title));
         enableHeaderBackIcon(false);
+        setStatusBarColor(true);
 
         //アプリ起動時のサービストークン削除を行う
         SharedPreferencesUtils.deleteOneTimeTokenData(getApplicationContext());
@@ -81,9 +83,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
      * 画面設定を行う.
      */
     private void setContents() {
-        TextView title = findViewById(R.id.titleLanchActivity);
-        title.setText(getScreenTitle());
-
         mFirstLaunchLaunchYesActivity = findViewById(R.id.firstLanchLanchYesActivity);
         mFirstLaunchLaunchYesActivity.setOnClickListener(this);
 

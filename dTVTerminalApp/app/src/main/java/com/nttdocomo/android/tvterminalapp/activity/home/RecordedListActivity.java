@@ -89,6 +89,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         }
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
+        setStatusBarColor(true);
 
 //        initDl();
 //        initView();

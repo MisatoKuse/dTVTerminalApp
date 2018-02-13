@@ -113,6 +113,7 @@ public class ClipListActivity extends BaseActivity implements
         }
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
+        setStatusBarColor(true);
 
         initData();
         initView();

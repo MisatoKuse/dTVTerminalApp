@@ -43,6 +43,7 @@ public class DAccountInductionActivity extends BaseActivity {
      */
     private void setContents() {
         setTitleText(getString(R.string.str_app_title));
+        setStatusBarColor(true);
         findViewById(R.id.header_layout_back).setVisibility(View.INVISIBLE);
         mDownLoadTextView = findViewById(R.id.d_account_application_download);
         mUseWithoutLogIn = findViewById(R.id.use_without_login_induction);

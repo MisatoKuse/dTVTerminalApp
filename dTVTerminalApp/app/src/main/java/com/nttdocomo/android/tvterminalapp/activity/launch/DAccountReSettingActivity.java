@@ -62,6 +62,7 @@ public class DAccountReSettingActivity extends BaseActivity implements View.OnCl
         enableHeaderBackIcon(true);
         enableStbStatusIcon(false);
         enableGlobalMenuIcon(false);
+        setStatusBarColor(true);
 
         setContents();
     }

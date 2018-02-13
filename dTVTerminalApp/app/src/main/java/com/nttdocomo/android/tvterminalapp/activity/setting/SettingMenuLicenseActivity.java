@@ -43,6 +43,7 @@ public class SettingMenuLicenseActivity extends BaseActivity {
         enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
+        setStatusBarColor(true);
     }
 
     @Override
