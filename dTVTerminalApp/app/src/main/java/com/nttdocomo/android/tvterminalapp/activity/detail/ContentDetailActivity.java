@@ -1855,7 +1855,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 if(mScaledDownProgramListDataProvider == null){
                     mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
                 }
-                mScaledDownProgramListDataProvider.getChannelList(1, 1, "", 1);
+                mScaledDownProgramListDataProvider.getChannelList(0, 0, "", 1);
             }
             //ログイン状態でしか送信しない
             if (!TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesDaccountId(this))) {

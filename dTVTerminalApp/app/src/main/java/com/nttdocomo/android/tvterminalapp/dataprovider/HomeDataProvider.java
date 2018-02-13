@@ -500,7 +500,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             getRoleListData();
 
             //チャンネルリスト取得
-            getChannelList(1, 1, "", DEFAULT_CHANNEL_DISPLAY_TYPE);
+            getChannelList(0, 0, "", DEFAULT_CHANNEL_DISPLAY_TYPE);
 
             UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
             if (userInfoDataProvider.isH4dUser()) {

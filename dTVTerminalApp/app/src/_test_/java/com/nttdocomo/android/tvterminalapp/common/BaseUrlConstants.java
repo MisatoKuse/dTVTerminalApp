@@ -41,4 +41,9 @@ public class BaseUrlConstants {
     public static final String PLALA_AUTH = PLALA_BASE_URL + "dtt_stub_mix/auth/";
     public static final String PLALA_CLIENT = PLALA_BASE_URL + "dtt_stub_mix/client/";
 
+    /**
+     * ぷららサーバー ID管理ファイルアクセス用のベースURL.
+     */
+    public static final String PLALA_ID_FILE_URL = "https://dev-conf.dch.dmkt-sp.jp/common/client/";
+
 }
