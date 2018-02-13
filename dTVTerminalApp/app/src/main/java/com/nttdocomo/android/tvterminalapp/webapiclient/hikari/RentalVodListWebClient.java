@@ -6,12 +6,21 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.RentalVodListJsonParser;
 
+/**
+ * レンタルVODリスト取得用Webクライアント.
+ */
 public class RentalVodListWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
+
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
 
     /**
      * コールバック.
@@ -25,7 +34,9 @@ public class RentalVodListWebClient
         void onRentalVodListJsonParsed(PurchasedVodListResponse RentalVodListResponse);
     }
 
-    //コールバックのインスタンス
+    /**
+     * コールバックのインスタンス.
+     */
     private RentalVodListJsonParserCallback mRentalVodListJsonParserCallback;
 
     /**
@@ -33,13 +44,13 @@ public class RentalVodListWebClient
      *
      * @param context コンテキスト
      */
-    public RentalVodListWebClient(Context context) {
+    public RentalVodListWebClient(final Context context) {
         super(context);
     }
 
     @Override
-    public void onAnswer(ReturnCode returnCode) {
-        if(mRentalVodListJsonParserCallback != null) {
+    public void onAnswer(final ReturnCode returnCode) {
+        if (mRentalVodListJsonParserCallback != null) {
             //JSONをパースして、データを返す
             new RentalVodListJsonParser(mRentalVodListJsonParserCallback)
                     .execute(returnCode.bodyData);
@@ -52,8 +63,8 @@ public class RentalVodListWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError(ReturnCode returnCode) {
-        if(mRentalVodListJsonParserCallback != null) {
+    public void onError(final ReturnCode returnCode) {
+        if (mRentalVodListJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
             mRentalVodListJsonParserCallback.onRentalVodListJsonParsed(null);
         }
@@ -62,12 +73,17 @@ public class RentalVodListWebClient
     /**
      * レンタルビデオ情報一覧取得.
      *
-     * @param rentalVodListJsonParserCallback コールバックTODO:
-     *                                           （本WebAPIには通常のパラメータが無く、基底クラスで追加するサービストークのみとなる。）
-     *                                           TODO: 仕様確定後に基底クラスへサービストークンの処理の追加が必要
+     * @param rentalVodListJsonParserCallback コールバック
+     * TODO:（本WebAPIには通常のパラメータが無く、基底クラスで追加するサービストークのみとなる。）
+     * TODO: 仕様確定後に基底クラスへサービストークンの処理の追加が必要
      * @return パラメータエラー等が発生した場合はfalse
      */
-    public boolean getRentalVodListApi(RentalVodListJsonParserCallback rentalVodListJsonParserCallback) {
+    public boolean getRentalVodListApi(final RentalVodListJsonParserCallback rentalVodListJsonParserCallback) {
+        if (mIsCancel) {
+            DTVTLogger.error("RentalVodListWebClient is stopping connection");
+            return false;
+        }
+
         //パラメーターのチェック
         if (!checkNormalParameter(rentalVodListJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、falseで帰る
@@ -90,7 +106,7 @@ public class RentalVodListWebClient
      * @param purchasedVodListCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(RentalVodListJsonParserCallback purchasedVodListCallback) {
+    private boolean checkNormalParameter(final RentalVodListJsonParserCallback purchasedVodListCallback) {
         //コールバックが指定されていないならばfalse
         if (purchasedVodListCallback == null) {
             return false;
@@ -98,5 +114,22 @@ public class RentalVodListWebClient
 
         //何もエラーが無いのでtrue
         return true;
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnection() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        stopAllConnections();
+    }
+
+    /**
+     * 通信可能状態にする.
+     */
+    public void enableConnection() {
+        DTVTLogger.start();
+        mIsCancel = false;
     }
 }

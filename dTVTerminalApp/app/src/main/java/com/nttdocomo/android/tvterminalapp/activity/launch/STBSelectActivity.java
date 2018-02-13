@@ -874,7 +874,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     }
 
     @Override
-    protected void onStbClientResponce(final Message msg) {
+    protected void onStbClientResponse(final Message msg){
         RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES requestCommand
                 = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getRequestCommandTypes();
         DTVTLogger.debug("msg.what: " + msg.what + "requestCommand: " + requestCommand);
@@ -907,7 +907,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                     case TITLE_DETAIL:
                         RemoteControlRelayClient.STB_APPLICATION_TYPES appId
                                 = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getApplicationTypes();
-                        startApplicationErrorHander(resultcode, appId);
+                        startApplicationErrorHandler(resultcode, appId);
                         break;
                     case IS_USER_ACCOUNT_EXIST:
                         switch (resultcode) {

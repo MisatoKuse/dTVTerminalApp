@@ -31,41 +31,72 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLPeerUnverifiedException;
 
+/**
+ * HTTP通信スレッド.
+ */
 public class HttpThread extends Thread implements DaccountGetOTT.DaccountGetOttCallBack {
 
+    /**
+     * ハンドラー.
+     */
     private Handler mHandler = null;
+    /**
+     * 通信を行うURL.
+     */
     private String mUrl = null;
+    /**
+     * 読み込んだデータを保存.
+     */
     private String mXmlStr = "";
+    /**
+     * 通信終了コールバック.
+     */
     private HttpThreadFinish mHttpThreadFinish = null;
+    /**
+     * 通信の成功/失敗フラグ.
+     */
     private boolean mError = false;
-
-    //SSL証明書チェック用コンテキスト
+    /**
+     * SSL証明書チェック用コンテキスト.
+     */
     private Context mContext = null;
-
+    /**
+     * HTTPURLConnection.
+     */
+    private HttpsURLConnection mHttpUrlConn;
     //サービストークン情報
     private OneTimeTokenData mOneTimeTokenData = null;
-
-    //エラー時ステータスの構造体
+    /**
+     * エラー時ステータスの構造体.
+     */
     public static class ErrorStatus {
-        //エラーコード
+        /**
+         * エラーコード.
+         */
         DTVTConstants.ERROR_TYPE errType;
-        //メッセージ
+        /**
+         * メッセージ.
+         */
         String message;
 
         /**
          * コンストラクタ.
          */
-        public ErrorStatus() {
+        ErrorStatus() {
             //内容の初期化
             errType = DTVTConstants.ERROR_TYPE.SUCCESS;
             message = "";
         }
     }
 
-    //エラーコード構造体の作成
+    /**
+     * エラーコード構造体の作成.
+     */
     private ErrorStatus mErrorStatus;
 
-
+    /**
+     * HTTP通信終了を通知するインターフェイス.
+     */
     public interface HttpThreadFinish {
         /**
          * 終了コールバック.
@@ -73,26 +104,30 @@ public class HttpThread extends Thread implements DaccountGetOTT.DaccountGetOttC
          * @param str 読み込んだ情報
          * @param errorStatus エラー情報構造体
          */
-        public void onHttpThreadFinish(String str, ErrorStatus errorStatus);
+        void onHttpThreadFinish(String str, ErrorStatus errorStatus);
     }
 
-    private void setError(boolean b) {
+    /**
+     * エラーステータスを設定する.
+     *
+     * @param bool true:エラー未発生 false:エラー発生
+     */
+    private void setError(final boolean bool) {
         synchronized (this) {
-            mError = b;
+            mError = bool;
         }
     }
 
     /**
-     * HTTP通信スレッドのコンストラクタ.
+     * HTTP通信スレッドのコンストラクタ(非同期処理から呼ぶ場合).
      *
      * @param url              URL
      * @param httpThreadFinish 終了コールバック
      * @param context          コンテキスト
      */
-    public HttpThread(String url, HttpThreadFinish httpThreadFinish, Context context) {
+    public HttpThread(final String url, final HttpThreadFinish httpThreadFinish, final Context context) {
         //コンストラクターの共通処理
         commonContractor(url, httpThreadFinish, context);
-
         clearStatus();
     }
 
@@ -104,14 +139,12 @@ public class HttpThread extends Thread implements DaccountGetOTT.DaccountGetOttC
      * @param httpThreadFinish 終了コールバック
      * @param context          コンテキスト
      */
-    public HttpThread(String url, Handler handler, HttpThreadFinish httpThreadFinish,
-                      Context context) {
+    public HttpThread(final String url, final Handler handler,
+                      final HttpThreadFinish httpThreadFinish, final Context context) {
         //コンストラクターの共通処理
         commonContractor(url, httpThreadFinish, context);
-
         //ハンドラーの退避
         mHandler = handler;
-
         clearStatus();
     }
 
@@ -122,7 +155,8 @@ public class HttpThread extends Thread implements DaccountGetOTT.DaccountGetOttC
      * @param httpThreadFinish 終了コールバック
      * @param context          コンテキスト
      */
-    private void commonContractor(String url, HttpThreadFinish httpThreadFinish, Context context) {
+    private synchronized void commonContractor(final String url, final HttpThreadFinish httpThreadFinish,
+                                  final Context context) {
         //各パラメータの退避
         mUrl = url;
         mHttpThreadFinish = httpThreadFinish;
@@ -132,7 +166,10 @@ public class HttpThread extends Thread implements DaccountGetOTT.DaccountGetOttC
         mErrorStatus = new ErrorStatus();
     }
 
-    private void clearStatus() {
+    /**
+     * ステータスの初期化.
+     */
+    private synchronized void clearStatus() {
         mXmlStr = "";
         setError(false);
     }
@@ -185,22 +222,21 @@ public class HttpThread extends Thread implements DaccountGetOTT.DaccountGetOttC
      */
     private void runEntity() {
         clearStatus();
-        HttpsURLConnection httpUrlConn = null;
         final StringBuffer sb = new StringBuffer();
-        String str = null;
+        String str;
         BufferedReader br = null;
 
         try {
             URL url = new URL(this.mUrl);
-            httpUrlConn = (HttpsURLConnection) url.openConnection();
+            mHttpUrlConn = (HttpsURLConnection) url.openConnection();
 
-            httpUrlConn.setReadTimeout(DTVTConstants.SEARCH_SERVER_TIMEOUT);
-            httpUrlConn.setRequestMethod("GET");
-            httpUrlConn.setRequestProperty("Accept-Charset", "utf-8");
-            httpUrlConn.setRequestProperty("contentType", "utf-8");
+            mHttpUrlConn.setReadTimeout(DTVTConstants.SEARCH_SERVER_TIMEOUT);
+            mHttpUrlConn.setRequestMethod("GET");
+            mHttpUrlConn.setRequestProperty("Accept-Charset", "utf-8");
+            mHttpUrlConn.setRequestProperty("contentType", "utf-8");
 
             //サービストークンを付加する
-            addToken(httpUrlConn);
+            addToken(mHttpUrlConn);
 
             //コンテキストがあればSSL証明書失効チェックを行う
             if (mContext != null) {
@@ -210,13 +246,13 @@ public class HttpThread extends Thread implements DaccountGetOTT.DaccountGetOttC
                 OcspUtil.init(mContext);
 
                 //SSL証明書失効チェックを行う
-                OcspURLConnection ocspURLConnection = new OcspURLConnection(httpUrlConn);
+                OcspURLConnection ocspURLConnection = new OcspURLConnection(mHttpUrlConn);
                 ocspURLConnection.connect();
             }
 
-            if (httpUrlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            if (mHttpUrlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
 
-                InputStream is = httpUrlConn.getInputStream();
+                InputStream is = mHttpUrlConn.getInputStream();
                 if (null == is) {
                     throw new IOException("HttpThread::run, is==null");
                 }
@@ -248,7 +284,7 @@ public class HttpThread extends Thread implements DaccountGetOTT.DaccountGetOttC
             //その他通信エラー処理
             setErrorStatus(e, DTVTConstants.ERROR_TYPE.COMMUNICATION_ERROR);
         } finally {
-            if(br != null) {
+            if (br != null) {
                 try {
                     br.close();
                 } catch (IOException e) {
@@ -283,7 +319,7 @@ public class HttpThread extends Thread implements DaccountGetOTT.DaccountGetOttC
      * @param e 例外情報
      * @param errorType エラーコード
      */
-    private void setErrorStatus(Exception e, DTVTConstants.ERROR_TYPE errorType) {
+    private synchronized void setErrorStatus(final Exception e, final DTVTConstants.ERROR_TYPE errorType) {
         //例外種類のログ出力
         DTVTLogger.debug(e);
 
@@ -299,10 +335,9 @@ public class HttpThread extends Thread implements DaccountGetOTT.DaccountGetOttC
      *
      * @param stringBuffer 読み込みデータ
      */
-    private void finishSelect(final StringBuffer stringBuffer) {
+    private synchronized void finishSelect(final StringBuffer stringBuffer) {
         if (mHandler != null) {
             mHandler.post(new Runnable() {
-
                 @Override
                 public void run() {
                     if (null != mHttpThreadFinish) {
@@ -324,6 +359,17 @@ public class HttpThread extends Thread implements DaccountGetOTT.DaccountGetOttC
                 }
                 mHttpThreadFinish.onHttpThreadFinish(mXmlStr, mErrorStatus);
             }
+        }
+    }
+
+    /**
+     * HTTP通信を止める.
+     */
+    public void disconnect() {
+        DTVTLogger.start();
+        if (mHttpUrlConn != null) {
+            mHttpUrlConn.disconnect();
+            finishSelect(new StringBuffer(""));
         }
     }
 }

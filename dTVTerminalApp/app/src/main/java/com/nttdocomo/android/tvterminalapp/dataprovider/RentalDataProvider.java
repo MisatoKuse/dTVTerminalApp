@@ -27,20 +27,27 @@ import java.util.List;
 public class RentalDataProvider extends ClipKeyListDataProvider implements RentalVodListWebClient.RentalVodListJsonParserCallback {
 
     /**
-     * コンテキストファイル.
+     * コンテキスト.
      */
     private Context mContext = null;
     /**
      * DB保存フラグ.
      */
     private boolean mSetDB = false;
-
     /**
-     * callback.
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
+    /**
+     * レンタルVODリスト取得WebClient.
+     */
+    private RentalVodListWebClient mWebClient = null;
+    /**
+     * コールバック.
      */
     private ApiDataProviderCallback mApiDataProviderCallback = null;
     /**
-     * レスポンスデータ.
+     * 購入済みVODレスポンス.
      */
     private PurchasedVodListResponse mPurchasedVodListResponse = null;
 
@@ -56,6 +63,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
             }
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
+            mApiDataProviderCallback.rentalListNgCallback();
         }
     }
 
@@ -81,6 +89,11 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
          * @param list コンテンツリスト
          */
         void rentalListCallback(List<ContentsData> list);
+
+        /**
+         * データ取得失敗時用コールバック.
+         */
+        void rentalListNgCallback();
     }
 
     /**
@@ -102,13 +115,18 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
      */
     public void getRentalData(final boolean flg) {
         mPurchasedVodListResponse = null;
-        // クリップキー一覧を取得
-        if (mRequiredClipKeyList) {
-            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+        if (!mIsCancel) {
+            // クリップキー一覧を取得
+            if (mRequiredClipKeyList) {
+                getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+            }
+            mSetDB = flg;
+            //レンタル一覧取得
+            getRentalListData();
+        } else {
+            DTVTLogger.error("RentalDataProvider is stopping connection");
+            mApiDataProviderCallback.rentalListNgCallback();
         }
-        mSetDB = flg;
-        //レンタル一覧取得
-        getRentalListData();
     }
 
     /**
@@ -129,24 +147,9 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
      * レンタル一覧を取得する.
      */
     private void getRentalListData() {
-        PurchasedVodListResponse response = new PurchasedVodListResponse();
-
         //通信クラスにデータ取得要求を出す
-        RentalVodListWebClient webClient = new RentalVodListWebClient(mContext);
-        webClient.getRentalVodListApi(this);
-        //TODO: Display用ダミーデータ(消去予定)ここから
-//        ArrayList<VodMetaFullData> list = new ArrayList<>();
-//        for (int i = 0; i < 30; i++) {
-//            VodMetaFullData vodMetaFullData = new VodMetaFullData();
-//            vodMetaFullData.setTitle("title" + i);
-//            vodMetaFullData.setmThumb_448_252("https://www.nhk.or.jp/prog/img/944/g944.jpg");
-//            vodMetaFullData.setAvail_end_date(1512054000);//"2017/12/01"
-//            vodMetaFullData.setRating(i);
-//            list.add(vodMetaFullData);
-//        }
-//        response.setVodMetaFullData(list);
-//        sendRentalListData(response);
-        //Display用ダミーデータ(消去予定)ここまで
+        mWebClient = new RentalVodListWebClient(mContext);
+        mWebClient.getRentalVodListApi(this);
     }
 
     /**
@@ -231,5 +234,29 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
             list.add(data);
         }
         return list;
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnect() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        stopConnection();
+        if (mWebClient != null) {
+            mWebClient.stopConnection();
+        }
+    }
+
+    /**
+     * 通信許可状態にする.
+     */
+    public void enableConnect() {
+        DTVTLogger.start();
+        mIsCancel = false;
+        enableConnection();
+        if (mWebClient != null) {
+            mWebClient.enableConnection();
+        }
     }
 }

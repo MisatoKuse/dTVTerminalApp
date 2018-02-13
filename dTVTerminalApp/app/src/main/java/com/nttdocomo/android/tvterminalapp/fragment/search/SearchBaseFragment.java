@@ -19,6 +19,8 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
@@ -54,7 +56,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
     /**
      * 検索結果リスト用アダプタ.
      */
-    private ContentsAdapter mSearchResultBaseAdapter = null;
+    private ContentsAdapter mContentsAdapter = null;
     /**
      * 検索結果のリスト部分のView全体.
      */
@@ -66,7 +68,7 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
     /**
      * 検索結果数文字列の初期値.
      */
-    public final static String SearchCountDefault = "検索結果:0件";
+    private final static String SearchCountDefault = "検索結果:0件";
 
     /**
      * スクロールリスナーをセットする.
@@ -115,9 +117,9 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         }
 
         if (getContext() != null) {
-            mSearchResultBaseAdapter = new ContentsAdapter(getContext(), mData, ContentsAdapter.ActivityTypeItem.TYPE_SEARCH_LIST);
+            mContentsAdapter = new ContentsAdapter(getContext(), mData, ContentsAdapter.ActivityTypeItem.TYPE_SEARCH_LIST);
         }
-        mTvListView.setAdapter(mSearchResultBaseAdapter);
+        mTvListView.setAdapter(mContentsAdapter);
 
         if (null == mCountText) {
             mCountText = mTvFragmentView.findViewById(R.id.tv_searched_result);
@@ -132,8 +134,8 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
      * @param count 検索結果件数
      */
     public void notifyDataSetChanged(final String count) {
-        if (null != mSearchResultBaseAdapter) {
-            mSearchResultBaseAdapter.notifyDataSetChanged();
+        if (null != mContentsAdapter) {
+            mContentsAdapter.notifyDataSetChanged();
         }
         if (null != mCountText) {
             mCountText.setText(count);
@@ -236,5 +238,26 @@ public class SearchBaseFragment extends Fragment implements AbsListView.OnScroll
         detailData.setRecommendOrder(info.getRecommendOrder());
 
         return detailData;
+    }
+
+    /**
+     * ContentsAdapterの通信を止める.
+     */
+    public void stopContentsAdapterCommunication() {
+        DTVTLogger.start();
+        StopContentsAdapterConnect stopContentsAdapterConnect = new StopContentsAdapterConnect();
+        if (mContentsAdapter != null) {
+            stopContentsAdapterConnect.execute(mContentsAdapter);
+        }
+    }
+
+    /**
+     * ContentsAdapterで止めた通信を再度可能な状態にする.
+     */
+    public void enableContentsAdapterCommunication() {
+        DTVTLogger.start();
+        if (mContentsAdapter != null) {
+            mContentsAdapter.enableConnect();
+        }
     }
 }

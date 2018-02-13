@@ -97,7 +97,7 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback,
         }
 
         //指定されたURLとパラメータで通信を行う
-        getReccomendInfo(url, queryItems, this, mContext);
+        getRecomendInfo(url, queryItems, this, mContext);
     }
 
     public interface RecommendCallback {

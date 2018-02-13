@@ -171,6 +171,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * ダウンロードcallback.
      */
     private DownloadCallback mDownloadCallback;
+    /**
+     * ダウンロード禁止判定フラグ.
+     */
+    private boolean isDownloadStop = false;
 
     /**
      * 機能
@@ -277,7 +281,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
 
     @Override
     public View getView(final int position, final View view, final ViewGroup parent) {
-        ViewHolder holder = null;
+        ViewHolder holder;
 
         View contentView = view;
         //ビューの再利用
@@ -481,7 +485,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         setRatStarData(holder, listContentInfo);
         setRecodingReservationStatusData(holder, listContentInfo);
         setChannelName(holder, listContentInfo);
-        setRedordedDownloadIcon(holder, listContentInfo);
+        setRecordedDownloadIcon(holder, listContentInfo);
         if(ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST.equals(mType)){
             setSubTitle(holder, listContentInfo);
         }
@@ -565,14 +569,17 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * @param listContentInfo ContentsData
      */
     private void setThumbnailData(final ViewHolder holder, final ContentsData listContentInfo) {
+        DTVTLogger.start();
         //スクロール時にリサイクル前の画像が表示され続けないように一旦画像を消去する
         holder.iv_thumbnail.setImageResource(0);
         if (!TextUtils.isEmpty(listContentInfo.getThumURL())) { //サムネイル
-            holder.rl_thumbnail.setVisibility(View.VISIBLE);
-            holder.iv_thumbnail.setTag(listContentInfo.getThumURL());
-            Bitmap thumbnailImage = mThumbnailProvider.getThumbnailImage(holder.iv_thumbnail, listContentInfo.getThumURL());
-            if (thumbnailImage != null) {
-                holder.iv_thumbnail.setImageBitmap(thumbnailImage);
+            if (!isDownloadStop) {
+                holder.rl_thumbnail.setVisibility(View.VISIBLE);
+                holder.iv_thumbnail.setTag(listContentInfo.getThumURL());
+                Bitmap thumbnailImage = mThumbnailProvider.getThumbnailImage(holder.iv_thumbnail, listContentInfo.getThumURL());
+                if (thumbnailImage != null) {
+                    holder.iv_thumbnail.setImageBitmap(thumbnailImage);
+                }
             }
         } else {
             //URLがない場合はサムネイル取得失敗の画像を表示
@@ -632,13 +639,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * @param holder          ViewHolder
      * @param listContentInfo ContentsData
      */
-    private void setRedordedDownloadIcon(final ViewHolder holder, final ContentsData listContentInfo) {
+    private void setRecordedDownloadIcon(final ViewHolder holder, final ContentsData listContentInfo) {
         DTVTLogger.start();
         //TODO:録画予約一覧等、クリップボタンを表示しない画面はここで外す
         if (!mType.equals(TYPE_RECORDING_RESERVATION_LIST)) {
-            BaseActivity baseActivity = new BaseActivity();
             if (holder.tv_clip != null) {
-                //Boolean contentsFlag = baseActivity.getDownloadContentsFalag();
                 int downloadFlg = listContentInfo.getDownloadFlg();
                 if (downloadFlg != -1) {
                     // ダウンロード済み
@@ -999,7 +1004,28 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
 
     @Override
     public void onClick(final View v) {
-
         mDownloadCallback.downloadClick(v);
+    }
+
+    /**
+     * サムネイル取得処理を止める.
+     */
+    public void stopConnect() {
+        DTVTLogger.start();
+        isDownloadStop = true;
+        if (mThumbnailProvider != null) {
+            mThumbnailProvider.stopConnect();
+        }
+    }
+
+    /**
+     * 止めたサムネイル取得処理を再度取得可能な状態にする.
+     */
+    public void enableConnect() {
+        DTVTLogger.start();
+        isDownloadStop = false;
+        if (mThumbnailProvider != null) {
+            mThumbnailProvider.enableConnect();
+        }
     }
 }

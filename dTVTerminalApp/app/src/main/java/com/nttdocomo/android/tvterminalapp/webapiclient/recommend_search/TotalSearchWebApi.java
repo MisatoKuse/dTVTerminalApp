@@ -11,7 +11,6 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.webapiclient.WebApiBase;
 
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -21,9 +20,9 @@ import java.util.LinkedHashMap;
 public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, SearchXmlParser.XMLParserFinishListener {
 
     /**
-     * callback.
+     * XMLのparse結果をコールバックする.
      */
-    private TotalSearchWebApiDelegate mDelegate = null;
+    private TotalSearchWebApiDelegate mDelegate;
 
     /**
      * ジャンルフィルター.
@@ -51,6 +50,10 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
      * SSLチェック用コンテキスト.
      */
     private Context mContext;
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
 
     /**
      * コンストラクタ.
@@ -63,67 +66,70 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
     }
 
     /**
-     * callbackセット.
+     * delegateの設定.
      *
-     * @param de コールバック
+     * @param delegate デリゲート
      */
-    public void setDelegate(final TotalSearchWebApiDelegate de) {
+    public void setDelegate(final TotalSearchWebApiDelegate delegate) {
         synchronized (this) {
-            mDelegate = de;
+            mDelegate = delegate;
         }
     }
 
     /**
-     * request.
+     * 検索リクエスト.
      *
-     * @param requestData リクエストデータ.
+     * @param requestData リクエストデータ
      */
     public void request(final TotalSearchRequestData requestData) {
-
         DTVTLogger.debug("request");
 
-        TotalSearchRequestData data = requestData;
-        data.userId = "1234567890"; //KARI
+        if (!mIsCancel) {
+            TotalSearchRequestData data = requestData;
+            data.userId = "1234567890"; //KARI
 
-        LinkedHashMap<String, String> queryItems = new LinkedHashMap<>();
-        queryItems.put(SearchRequestKey.kUserId, data.userId);
-        queryItems.put(SearchRequestKey.kFunction, data.function.value() + "");   //ok
-        //queryItems.put(SearchRequestKey.kFunction, new String(2+""));   //ng for test
-        queryItems.put(SearchRequestKey.kResponseType, String.valueOf(data.responseType.ordinal() + 1));
-        queryItems.put(SearchRequestKey.kQuery, data.query);
-        queryItems.put(SearchRequestKey.kStartIndex, String.valueOf(data.startIndex));
-        queryItems.put(SearchRequestKey.kMaxResult, String.valueOf(data.maxResult));
+            LinkedHashMap<String, String> queryItems = new LinkedHashMap<>();
+            queryItems.put(SearchRequestKey.kUserId, data.userId);
+            queryItems.put(SearchRequestKey.kFunction, data.function.value() + ""); //ok
+            //queryItems.put(SearchRequestKey.kFunction, new String(2+"")); //ng for test
+            queryItems.put(SearchRequestKey.kResponseType, String.valueOf(data.responseType.ordinal() + 1));
+            queryItems.put(SearchRequestKey.kQuery, data.query);
+            queryItems.put(SearchRequestKey.kStartIndex, String.valueOf(data.startIndex));
+            queryItems.put(SearchRequestKey.kMaxResult, String.valueOf(data.maxResult));
 
-        String serviceId = data.serviceId;
-        queryItems.put(SearchRequestKey.kServiceId, serviceId);
+            String serviceId = data.serviceId;
+            queryItems.put(SearchRequestKey.kServiceId, serviceId);
 
-        String categoryId = data.categoryId;
-        queryItems.put(SearchRequestKey.kCategoryId, categoryId);
+            String categoryId = data.categoryId;
+            queryItems.put(SearchRequestKey.kCategoryId, categoryId);
 
-        int sortKind = data.sortKind;
-        queryItems.put(SearchRequestKey.kSortKind, sortKind + "");
+            int sortKind = data.sortKind;
+            queryItems.put(SearchRequestKey.kSortKind, sortKind + "");
 
-        ArrayList<SearchFilterType> filterList = requestData.filterTypeList;
-        for (SearchFilterType type : filterList) {
-            appendString(type);
+            ArrayList<SearchFilterType> filterList = requestData.filterTypeList;
+            for (SearchFilterType type : filterList) {
+                appendString(type);
+            }
+            queryItems.put(SearchRequestKey.kCondition, concatFilterString());
+
+            //ユーザ情報が設定されている時のみパラメータを追加する
+            String filterViewableAge = data.filterViewableAge;
+            if (filterViewableAge != null) {
+                queryItems.put(SearchRequestKey.kFilterViewableAge, filterViewableAge);
+            }
+            //固定値のため直接指定する
+            queryItems.put(SearchRequestKey.kDisplayId, SEARCH_WEBAPI_PARAM_DISPLAY_ID);
+
+            get(UrlConstants.WebApiUrl.TOTAL_SEARCH_URL, queryItems, this, mContext);
+        } else {
+            DTVTLogger.error("TotalSearchWebApi is stopping connection");
         }
-        queryItems.put(SearchRequestKey.kCondition, concatFilterString());
-
-        //ユーザ情報が設定されている時のみパラメータを追加する
-        String filterViewableAge = data.filterViewableAge;
-        if (filterViewableAge != null) {
-            queryItems.put(SearchRequestKey.kFilterViewableAge, filterViewableAge);
-        }
-        //固定値のため直接指定する
-        queryItems.put(SearchRequestKey.kDisplayId, SEARCH_WEBAPI_PARAM_DISPLAY_ID);
-
-        get(UrlConstants.WebApiUrl.TOTAL_SEARCH_URL, queryItems, this, mContext);
     }
 
     /**
-     * フィルター文字列連結.
+     * フィルタ文字列の連結.
      *
-     * @return フィルター文字列
+     * @return 連結した文字列.
      */
     private String concatFilterString() {
         String resultString = "";
@@ -162,7 +168,7 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
     }
 
     /**
-     * 各フィルター文字列設定.
+     * 各フィルタ文字列設定.
      * @param addType 各フィルター文字列
      */
     private void appendString(final SearchFilterType addType) {
@@ -192,13 +198,13 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
             case otherHdWork:
                 mOtherFilterString = "other:" + getValueFromFilterType(addType);
         }
-
     }
 
     /**
-     * フィルタータイプ返却.
-     * @param type フィルタータイプ
-     * @return フィルタータイプ
+     * FilterTypeを基に文字列を返却する.
+     *
+     * @param type FilterType
+     * @return 文字列
      */
     private String getValueFromFilterType(final SearchFilterType type) {
         switch (type) {
@@ -242,6 +248,14 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
             mDelegate.onFailure(errorData);
         }
     }
+
+    /**
+     * 通信を止める.
+     * TotalSearchWebApiは検索の度にnewされているので通信可能状態にする処理は不要
+     */
+    public void stopConnection() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        stopHTTPConnection();
+    }
 }
-
-

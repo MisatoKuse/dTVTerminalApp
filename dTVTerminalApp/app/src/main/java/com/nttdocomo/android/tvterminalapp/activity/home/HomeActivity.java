@@ -585,7 +585,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public void watchingVideoCallback(List<ContentsData> watchingVideoList) {
+    public void watchingVideoCallback(final List<ContentsData> watchingVideoList) {
         if (watchingVideoList != null && watchingVideoList.size() > 0) {
             Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_WATCHING_VIDEO, watchingVideoList);
             mHandler.sendMessage(msg);
@@ -727,6 +727,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
+    public void rentalListNgCallback() {
+        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+    }
+
+    @Override
     public void watchListenVideoListCallback(final List<ContentsData> clipContentInfo) {
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
@@ -742,7 +747,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public void onContentsDetailInfoCallback(final ArrayList<VodMetaFullData> contentsDetailInfo, boolean clipStatus) {
+    public void onContentsDetailInfoCallback(final ArrayList<VodMetaFullData> contentsDetailInfo, final boolean clipStatus) {
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 

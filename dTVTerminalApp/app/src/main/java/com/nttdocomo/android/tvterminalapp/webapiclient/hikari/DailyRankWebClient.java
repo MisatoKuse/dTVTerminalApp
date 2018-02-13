@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.DailyRankList;
@@ -16,6 +17,9 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+/**
+ * 今日のテレビランキング取得用Webクライアント.
+ */
 public class DailyRankWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
@@ -24,27 +28,33 @@ public class DailyRankWebClient
      */
     public interface DailyRankJsonParserCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
          *
          * @param dailyRankLists JSONパース後のデータ
          */
         void onDailyRankJsonParsed(List<DailyRankList> dailyRankLists);
     }
 
-    //コールバックのインスタンス
+    /**
+     * コールバックのインスタンス.
+     */
     private DailyRankJsonParserCallback mDailyRankJsonParserCallback;
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
 
     /**
      * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
-    public DailyRankWebClient(Context context) {
+    public DailyRankWebClient(final Context context) {
         super(context);
     }
 
     @Override
-    public void onAnswer(ReturnCode returnCode) {
+    public void onAnswer(final ReturnCode returnCode) {
         //JSONをパースして、データを返す
         new DailyRankJsonParser(mDailyRankJsonParserCallback).execute(returnCode.bodyData);
     }
@@ -55,7 +65,7 @@ public class DailyRankWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError(ReturnCode returnCode) {
+    public void onError(final ReturnCode returnCode) {
         if (mDailyRankJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
             mDailyRankJsonParserCallback.onDailyRankJsonParsed(null);
@@ -72,8 +82,14 @@ public class DailyRankWebClient
      * @param dailyRankJsonParserCallback コールバック
      * @return パラメータエラー等が発生した場合はfalse
      */
-    public boolean getDailyRankApi(int limit, int offset, String filter, int ageReq,
-                                   DailyRankJsonParserCallback dailyRankJsonParserCallback) {
+    public boolean getDailyRankApi(final int limit, final int offset, final String filter, final int ageReq,
+                                   final DailyRankJsonParserCallback dailyRankJsonParserCallback) {
+        if (mIsCancel) {
+            //通信禁止中はfalseで帰る
+            DTVTLogger.error("DailyRankWebClient is stopping connection");
+            return false;
+        }
+
         //パラメーターのチェック
         if (!checkNormalParameter(limit, offset, filter, ageReq, dailyRankJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、falseで帰る
@@ -101,13 +117,15 @@ public class DailyRankWebClient
     /**
      * 指定されたパラメータがおかしいかどうかのチェック.
      *
-     * @param limit  取得する最大件数(値は1以上)
+     * @param limit 取得する最大件数(値は1以上)
      * @param offset 取得位置(値は1以上)
      * @param filter フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
+     * @param ageReq 年齢設定値（ゼロの場合は1扱い）
+     * @param dailyRankJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(int limit, int offset, String filter, int ageReq,
-                                         DailyRankJsonParserCallback dailyRankJsonParserCallback) {
+    private boolean checkNormalParameter(final int limit, final int offset, final String filter, final int ageReq,
+                                         final DailyRankJsonParserCallback dailyRankJsonParserCallback) {
         // 各値が下限以下ならばfalse
         if (limit < 1) {
             return false;
@@ -152,9 +170,10 @@ public class DailyRankWebClient
      * @param limit  取得する最大件数(値は1以上)
      * @param offset 取得位置(値は1以上)
      * @param filter フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
+     * @param ageReq 年齢設定値（ゼロの場合は1扱い）
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(int limit, int offset, String filter, int ageReq) {
+    private String makeSendParameter(final int limit, final int offset, final String filter, final int ageReq) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
@@ -167,12 +186,13 @@ public class DailyRankWebClient
             //その他
             jsonObject.put(JsonConstants.META_RESPONSE_FILTER, filter);
 
+            int age = ageReq;
             //数字がゼロの場合は無指定と判断して1にする
             if (ageReq == 0) {
-                ageReq = 1;
+                age = 1;
             }
 
-            jsonObject.put(JsonConstants.META_RESPONSE_AGE_REQ, ageReq);
+            jsonObject.put(JsonConstants.META_RESPONSE_AGE_REQ, age);
 
             answerText = jsonObject.toString();
 
@@ -182,5 +202,23 @@ public class DailyRankWebClient
         }
 
         return answerText;
+    }
+
+    /**
+     * 通信を止める.
+     * DailyRankWebClientは使用時に毎回newしているため、通信再開処理は不要.
+     */
+    public void stopConnection() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        stopAllConnections();
+    }
+
+    /**
+     * 通信を許可する.
+     */
+    public void enableConnect() {
+        DTVTLogger.start();
+        mIsCancel = false;
     }
 }

@@ -18,21 +18,28 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.JsonParserThr
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * クリップキー位置取得用Webクライアント.
+ */
 public class ClipKeyListWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback, JsonParserThread.JsonParser {
-    private ClipKeyListRequest mRequest = null;
+
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
 
     /**
      * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
-    public ClipKeyListWebClient(Context context) {
+    public ClipKeyListWebClient(final Context context) {
         super(context);
     }
 
     @Override
-    public void onParserFinished(Object parsedData) {
+    public void onParserFinished(final Object parsedData) {
         //パース後のデータを返す
         if (null != mTvClipKeyListJsonParserCallback) {
             mTvClipKeyListJsonParserCallback.onTvClipKeyListJsonParsed((ClipKeyListResponse) parsedData);
@@ -44,7 +51,7 @@ public class ClipKeyListWebClient
     }
 
     @Override
-    public Object parse(String body) {
+    public Object parse(final String body) {
         ClipKeyListJsonParser clipKeyListJsonParser = new ClipKeyListJsonParser();
         ClipKeyListResponse pursedRespData;
         pursedRespData = clipKeyListJsonParser.clipKeyListSender(body);
@@ -57,7 +64,7 @@ public class ClipKeyListWebClient
      */
     public interface TvClipKeyListJsonParserCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
          *
          * @param clipKeyListResponse JSONパース後のデータ
          */
@@ -69,16 +76,20 @@ public class ClipKeyListWebClient
      */
     public interface VodClipKeyListJsonParserCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
          *
          * @param clipKeyListResponse JSONパース後のデータ
          */
         void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse);
     }
 
-    //コールバックのインスタンス(TV)
+    /**
+     * コールバックのインスタンス(TV).
+     */
     private TvClipKeyListJsonParserCallback mTvClipKeyListJsonParserCallback;
-    //コールバックのインスタンス(VOD)
+    /**
+     * コールバックのインスタンス(VOD).
+     */
     private VodClipKeyListJsonParserCallback mVodClipKeyListJsonParserCallback;
 
     /**
@@ -87,7 +98,7 @@ public class ClipKeyListWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onAnswer(ReturnCode returnCode) {
+    public void onAnswer(final ReturnCode returnCode) {
         Handler handler = new Handler();
         try {
             JsonParserThread thread = new JsonParserThread(returnCode.bodyData, handler, this);
@@ -104,7 +115,7 @@ public class ClipKeyListWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError(ReturnCode returnCode) {
+    public void onError(final ReturnCode returnCode) {
         //エラーが発生したのでレスポンスデータにnullを設定してを返す
         if (null != mTvClipKeyListJsonParserCallback) {
             mTvClipKeyListJsonParserCallback.onTvClipKeyListJsonParsed(null);
@@ -122,10 +133,14 @@ public class ClipKeyListWebClient
      * @param vodClipKeyListJsonParserCallback コールバック
      * @return パラメータ等に問題があった場合はfalse
      */
-    public boolean getClipKeyListApi(ClipKeyListRequest requestParam,
-                                     TvClipKeyListJsonParserCallback tvClipKeyListJsonParserCallback,
-                                     VodClipKeyListJsonParserCallback vodClipKeyListJsonParserCallback) {
-        mRequest = requestParam;
+    public boolean getClipKeyListApi(final ClipKeyListRequest requestParam,
+                                     final TvClipKeyListJsonParserCallback tvClipKeyListJsonParserCallback,
+                                     final VodClipKeyListJsonParserCallback vodClipKeyListJsonParserCallback) {
+        if (mIsCancel) {
+            DTVTLogger.error("ClipKeyListWebClient is stopping connection");
+            return false;
+        }
+
         //パラメーターのチェック
         if (!checkNormalParameter(requestParam, tvClipKeyListJsonParserCallback, vodClipKeyListJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、ヌルで帰る
@@ -160,9 +175,14 @@ public class ClipKeyListWebClient
      * @param vodClipKeyListJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(ClipKeyListRequest requestParam,
-                                         TvClipKeyListJsonParserCallback tvClipKeyListJsonParserCallback,
-                                         VodClipKeyListJsonParserCallback vodClipKeyListJsonParserCallback) {
+    private boolean checkNormalParameter(final ClipKeyListRequest requestParam,
+                                         final TvClipKeyListJsonParserCallback tvClipKeyListJsonParserCallback,
+                                         final VodClipKeyListJsonParserCallback vodClipKeyListJsonParserCallback) {
+        if (mIsCancel) {
+            DTVTLogger.error("ClipKeyListWebClient is stopping connection");
+            return false;
+        }
+
         // 必須項目に値が入っていなければエラー
         if (ClipKeyListRequest.DEFAULT_STRING.equals(requestParam.getType())) {
             return false;
@@ -184,7 +204,7 @@ public class ClipKeyListWebClient
      * @param requestParam リクエストパラメータ
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(ClipKeyListRequest requestParam) {
+    private String makeSendParameter(final ClipKeyListRequest requestParam) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
@@ -199,5 +219,22 @@ public class ClipKeyListWebClient
         }
 
         return answerText;
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnection() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        stopAllConnections();
+    }
+
+    /**
+     * 通信可能状態にする.
+     */
+    public void enableConnection() {
+        DTVTLogger.start();
+        mIsCancel = false;
     }
 }

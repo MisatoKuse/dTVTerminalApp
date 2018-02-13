@@ -19,6 +19,8 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.HomeRecyclerViewAdapter;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopHomeRecyclerViewAdapterConnect;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRankingTopDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -35,6 +37,22 @@ public class RankingTopActivity extends BaseActivity implements RankingTopDataPr
      * ランキングトップ画面の主View.
      */
     private LinearLayout mLinearLayout;
+    /**
+     * ランキングトップ画面のデータ取得用データプロパイダ.
+     */
+    private RankingTopDataProvider mRankingTopDataProvider;
+    /**
+     * 今日のテレビランキングのリスト表示用アダプタ.
+     */
+    private HomeRecyclerViewAdapter mHorizontalViewAdapterToday = null;
+    /**
+     * 週間のテレビランキングのリスト表示用アダプタ.
+     */
+    private HomeRecyclerViewAdapter mHorizontalViewAdapterWeekly = null;
+    /**
+     * ビデオランキングのリスト表示用アダプタ.
+     */
+    private HomeRecyclerViewAdapter mHorizontalViewAdapterVod = null;
     /**
      * グローバルメニューからの起動かを判定するフラグ.
      */
@@ -77,8 +95,6 @@ public class RankingTopActivity extends BaseActivity implements RankingTopDataPr
 
         //ビューの初期化処理
         initView();
-        RankingTopDataProvider rankingTopDataProvider = new RankingTopDataProvider(this);
-        rankingTopDataProvider.getRankingTopData();
     }
 
     /**
@@ -136,8 +152,8 @@ public class RankingTopActivity extends BaseActivity implements RankingTopDataPr
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         recyclerView.setLayoutManager(linearLayoutManager);
-        HomeRecyclerViewAdapter mHorizontalViewAdapter = new HomeRecyclerViewAdapter(this, contentsDataList, index + RANKING_CONTENTS_DISTINCTION_ADAPTER);
-        recyclerView.setAdapter(mHorizontalViewAdapter);
+        HomeRecyclerViewAdapter horizontalViewAdapter = new HomeRecyclerViewAdapter(this, contentsDataList, index + RANKING_CONTENTS_DISTINCTION_ADAPTER);
+        recyclerView.setAdapter(horizontalViewAdapter);
         View footer = LayoutInflater.from(this).inflate(R.layout.home_main_layout_recyclerview_footer, recyclerView, false);
         RelativeLayout rankingMore = footer.findViewById(R.id.home_main_layout_recyclerview_footer);
         //もっと見るの遷移先を設定
@@ -148,7 +164,15 @@ public class RankingTopActivity extends BaseActivity implements RankingTopDataPr
             }
         });
         //リサイクルビューデータの設定
-        mHorizontalViewAdapter.setFooterView(footer);
+        horizontalViewAdapter.setFooterView(footer);
+        //各アダプタを保存
+        if (index == TODAY_SORT) {
+            mHorizontalViewAdapterToday = horizontalViewAdapter;
+        } else if (index == WEEK_SORT) {
+            mHorizontalViewAdapterWeekly = horizontalViewAdapter;
+        } else if (index == VIDEO_SORT) {
+            mHorizontalViewAdapterVod = horizontalViewAdapter;
+        }
     }
 
     /**
@@ -235,5 +259,68 @@ public class RankingTopActivity extends BaseActivity implements RankingTopDataPr
                 break;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        DTVTLogger.start();
+        boolean getData = false;
+
+        //データプロパイダがあれば通信を許可し、無ければ作成する.
+        if (mRankingTopDataProvider != null) {
+            mRankingTopDataProvider.enableConnect();
+        } else {
+            mRankingTopDataProvider = new RankingTopDataProvider(this);
+        }
+
+        //各ランキングのコンテンツ情報が無ければデータの取得フラグを立てる
+        if (mHorizontalViewAdapterToday != null) {
+            mHorizontalViewAdapterToday.enableConnect();
+            if (mHorizontalViewAdapterToday.getItemCount() == 0) {
+                getData = true;
+            } else {
+                mHorizontalViewAdapterToday.notifyDataSetChanged();
+            }
+        }
+        if (mHorizontalViewAdapterWeekly != null) {
+            mHorizontalViewAdapterWeekly.enableConnect();
+            if (mHorizontalViewAdapterWeekly.getItemCount() == 0) {
+                getData = true;
+            } else {
+                mHorizontalViewAdapterWeekly.notifyDataSetChanged();
+            }
+        }
+        if (mHorizontalViewAdapterVod != null) {
+            mHorizontalViewAdapterVod.enableConnect();
+            if (mHorizontalViewAdapterVod.getItemCount() == 0) {
+                getData = true;
+            } else {
+                mHorizontalViewAdapterVod.notifyDataSetChanged();
+            }
+        }
+
+        //作成されていないアダプタがあればデータの取得フラグを立てる
+        if (mHorizontalViewAdapterToday == null || mHorizontalViewAdapterWeekly == null
+                || mHorizontalViewAdapterVod == null) {
+            getData = true;
+        }
+
+        //足りないデータがあるのでデータの取得を行う
+        if (getData) {
+            mRankingTopDataProvider.getRankingTopData();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        DTVTLogger.start();
+        //通信を止める
+        StopRankingTopDataConnect stopRankingTopDataConnect = new StopRankingTopDataConnect();
+        stopRankingTopDataConnect.execute(mRankingTopDataProvider);
+        StopHomeRecyclerViewAdapterConnect stopHomeRecyclerViewAdapterConnect = new StopHomeRecyclerViewAdapterConnect();
+        stopHomeRecyclerViewAdapterConnect.execute(mHorizontalViewAdapterToday,
+                mHorizontalViewAdapterWeekly, mHorizontalViewAdapterVod);
     }
 }

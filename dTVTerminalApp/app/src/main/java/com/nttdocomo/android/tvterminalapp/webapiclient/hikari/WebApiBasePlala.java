@@ -41,6 +41,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -48,67 +49,110 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLPeerUnverifiedException;
 
+/**
+ * 通信処理.
+ */
 public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
-    //エラー値
-    private ReturnCode mReturnCode = null;
-
-    //コンテキスト
-    private Context mContext = null;
-
     /**
-     * コールバックのインスタンス
+     * エラー値.
+     */
+    private ReturnCode mReturnCode = null;
+    /**
+     * コンテキスト.
+     */
+    private Context mContext = null;
+    /**
+     * コールバックのインスタンス.
      */
     private WebApiBasePlalaCallback mWebApiBasePlalaCallback = null;
-
-    //通信停止用コネクション蓄積
+    /**
+     * 通信停止用コネクション蓄積.
+     */
     private volatile static List<HttpURLConnection> mUrlConnections = null;
-
-    //全部止まった場合のフラグ
+    /**
+     * 全部止まった場合のフラグ.
+     */
     private static boolean mIsStopAllConnections = false;
-
-    //コネクション
+    /**
+     * コネクション.
+     */
     private HttpURLConnection mUrlConnection = null;
-
-    //結果を受け取るバッファ
+    /**
+     * 結果を受け取るバッファ.
+     */
     private String mAnswerBuffer = "";
-
-    //ワンタイムトークン情報
+    /**
+     * ワンタイムトークン情報
+     */
     private OneTimeTokenData mOneTimeTokenData = null;
-
-    //クッキーマネージャー
+    /**
+     * クッキーマネージャー
+     */
     private CookieManager mCookieManager;
-
-    //リクエスト種別・基本はPOST
+    /**
+     * リクエスト種別・基本はPOST.
+     */
     private static final String REQUEST_METHOD = "POST";
-    //リダイレクト処理用にGETも定義
+    /**
+     * リダイレクト処理用にGETも定義
+     */
     private static final String REQUEST_METHOD_GET = "GET";
-
-    //文字種別 UTF-8
+    /**
+     * 文字種別 UTF-8.
+     */
     private static final String UTF8_CHARACTER_SET = "UTF-8";
 
     //POSTでJSONを送信する為のパラメータ群
+    /**
+     * Content-Type.
+     */
     private static final String CONTENT_TYPE_KEY_TEXT = "Content-Type";
-    private static final String CONTENT_TYPE_TEXT = "application/json; charset=" +
-            UTF8_CHARACTER_SET; //final同士なので、+での結合こそベスト
+    /**
+     * application/json: charset=UTF-8.
+     */
+    private static final String CONTENT_TYPE_TEXT = "application/json; charset="
+            + UTF8_CHARACTER_SET; //final同士なので、+での結合こそベスト
+    /**
+     * Connection.
+     */
     private static final String CONNECTION_KEY_TEXT = "Connection";
+    /**
+     * close.
+     */
     private static final String CONTENT_CLOSE_TEXT = "close";
 
-    //ワンタイムトークンの取得コールバックからのタスク呼び出し用
+    /**
+     * API通信用タスク.
+     */
+    private CommunicationTask mCommunicationTaskAPI = null;
+    /**
+     * API通信用フラグ(拡張情報付き).
+     */
+    private CommunicationTask mCommunicationTaskExtra = null;
+    /**
+     * ワンタイムトークンの取得コールバックからのタスク呼び出し用.
+     */
     private CommunicationTask mCommunicationTask = null;
-
-    //TODO: 当面ワンタイムトークンは固定値とするので、その値
+    /**
+     * 通信停止用フラグ.
+     */
+    private boolean mIsStop = false;
+    /**
+     * TODO: 当面ワンタイムトークンは固定値とするので、その値.
+     */
     private static final String INTERIM_ONE_TIME_TOKEN = "test";
-
-    //サービストークンのクッキーでのキー名
+    /**
+     * サービストークンのクッキーでのキー名
+     */
     private static final String SERVICE_TOKEN_KEY_NAME = "daccount_auth";
-
-    // 日付形式判定用
+    /**
+     * 日付形式判定用.
+     */
     private static final String DATE_PATTERN = "yyyyMMdd";
-
-    //リダイレクト用飛び先関連情報取得
+    /**
+     * リダイレクト用飛び先関連情報取得
+     */
     private static final String REDIRECT_JUMP_URL_GET = "Location";
-
-
     /**
      * データ受け渡しコールバック.
      */
@@ -294,8 +338,17 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
 
     //戻り値用構造体
     static protected class ReturnCode {
+        /**
+         * 通信時エラー情報.
+         */
         DTVTConstants.ERROR_TYPE errorType;
+        /**
+         * 本体データ.
+         */
         String bodyData;
+        /**
+         * 拡張データ.
+         */
         Bundle extraData;
 
         /**
@@ -310,8 +363,10 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
 
     /**
      * コンストラクタ.
+     *
+     * @param context コンテキスト
      */
-    public WebApiBasePlala(Context context) {
+    public WebApiBasePlala(final Context context) {
         //コンテキストの退避
         mContext = context;
 
@@ -329,7 +384,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      *
      * @param mUrlConnection コネクション
      */
-    private void addUrlConnections(HttpURLConnection mUrlConnection) {
+    private void addUrlConnections(final HttpURLConnection mUrlConnection) {
         //通信が終わり、ヌルが入れられる場合に備えたヌルチェック
         if (mUrlConnections == null) {
             //既に削除されていたので、再度確保を行う
@@ -344,7 +399,19 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      * 全ての通信を遮断する.
      * TODO:実装予定のすべての通信を遮断するAPIで使用の予定
      */
-    static public void stopAllConnections() {
+    synchronized void stopAllConnections() {
+        //各通信タスクにキャンセルを通知する
+        mIsStop = true;
+        if (mCommunicationTaskAPI != null) {
+            mCommunicationTaskAPI.cancel(true);
+        }
+        if (mCommunicationTaskExtra != null) {
+            mCommunicationTaskExtra.cancel(true);
+        }
+        if (mCommunicationTask != null) {
+            mCommunicationTask.cancel(true);
+        }
+
         if (mUrlConnections == null) {
             return;
         }
@@ -353,11 +420,19 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
         mIsStopAllConnections = true;
 
         //全てのコネクションにdisconnectを送る
-        for (HttpURLConnection stopConnection : mUrlConnections) {
-            stopConnection.disconnect();
+        Iterator<HttpURLConnection> iterator = mUrlConnections.iterator();
+        while (iterator.hasNext()) {
+            final HttpURLConnection stopConnection = iterator.next();
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    stopConnection.disconnect();
+                }
+            });
+            thread.run();
 
             //止めた物は消す
-            removeConnections(stopConnection);
+            iterator.remove();
         }
     }
 
@@ -366,7 +441,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      *
      * @param connection 削除したいコネクション
      */
-    static private void removeConnections(HttpURLConnection connection) {
+    static private void removeConnections(final HttpURLConnection connection) {
         if (mUrlConnections != null) {
 
             mUrlConnections.remove(connection);
@@ -385,9 +460,9 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      * @param receivedParameters      API呼び出し用パラメータ
      * @param webApiBasePlalaCallback コールバック
      */
-    public void openUrl(final String sourceUrl, String receivedParameters,
-                        WebApiBasePlalaCallback webApiBasePlalaCallback) {
-        CommunicationTask communicationTask = new CommunicationTask(sourceUrl, receivedParameters);
+    public void openUrl(final String sourceUrl, final String receivedParameters,
+                        final WebApiBasePlalaCallback webApiBasePlalaCallback) {
+        mCommunicationTaskAPI = new CommunicationTask(sourceUrl, receivedParameters);
 
         //コールバックの準備
         mWebApiBasePlalaCallback = webApiBasePlalaCallback;
@@ -396,7 +471,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
         ReturnCode returnCode = new ReturnCode();
 
         //通信本体の開始
-        communicationTask.execute(returnCode);
+        mCommunicationTaskAPI.execute(returnCode);
     }
 
     /**
@@ -407,11 +482,11 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      * @param webApiBasePlalaCallback 結果のコールバック
      * @param extraDataSrc            拡張情報
      */
-    public void openUrlWithExtraData(final String sourceUrl, String receivedParameters,
-                                     WebApiBasePlalaCallback webApiBasePlalaCallback,
-                                     Bundle extraDataSrc) {
+    public void openUrlWithExtraData(final String sourceUrl, final String receivedParameters,
+                                     final WebApiBasePlalaCallback webApiBasePlalaCallback,
+                                     final Bundle extraDataSrc) {
         //拡張情報もセットする
-        CommunicationTask communicationTask = new CommunicationTask(sourceUrl,
+        mCommunicationTaskExtra = new CommunicationTask(sourceUrl,
                 receivedParameters, extraDataSrc);
 
         //コールバックの準備
@@ -421,7 +496,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
         ReturnCode returnCode = new ReturnCode();
 
         //通信本体の開始
-        communicationTask.execute(returnCode);
+        mCommunicationTaskExtra.execute(returnCode);
     }
 
     /**
@@ -432,9 +507,9 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      * @param webApiBasePlalaCallback 結果のコールバック
      * @param extraDataSrc            拡張情報（使用しないときはヌルをセット）
      */
-    public void openUrlAddOtt(final String sourceUrl, String receivedParameters,
-                              WebApiBasePlalaCallback webApiBasePlalaCallback,
-                              Bundle extraDataSrc) {
+    public void openUrlAddOtt(final String sourceUrl, final String receivedParameters,
+                              final WebApiBasePlalaCallback webApiBasePlalaCallback,
+                              final Bundle extraDataSrc) {
         //タスクを作成する
         mCommunicationTask = new CommunicationTask(sourceUrl, receivedParameters,
                 extraDataSrc, true);
@@ -486,14 +561,14 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      *
      * @param context コンテキスト
      */
-    private void getOneTimePassword(Context context) {
+    private void getOneTimePassword(final Context context) {
         //ワンタイムパスワードの取得
         DaccountGetOTT getOtt = new DaccountGetOTT();
         getOtt.execDaccountGetOTT(context, this);
     }
 
     @Override
-    public void getOttCallBack(int result, String id, String oneTimePassword) {
+    public void getOttCallBack(final int result, final String id, final String oneTimePassword) {
         //ワンタイムトークンが期限内ならば、そのまま使用する
         OneTimeTokenData tokenData = SharedPreferencesUtils.getOneTimeTokenData(mContext);
 
@@ -850,9 +925,9 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      * @param inputStreamReader UTF-8を指定したストリーム
      * @param bufferedReader    バッファーストリーム
      */
-    private void streamCloser(InputStream stream,
-                              InputStreamReader inputStreamReader,
-                              BufferedReader bufferedReader) {
+    private void streamCloser(final InputStream stream,
+                              final InputStreamReader inputStreamReader,
+                              final BufferedReader bufferedReader) {
 
         if (stream != null) {
             try {
@@ -887,30 +962,37 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      * 通信本体のクラス.
      */
     public class CommunicationTask extends AsyncTask<Object, Object, ReturnCode> {
-        //実行するAPIの名前
+        /**
+         * 実行するAPIの名前.
+         */
         final String mSourceUrl;
-
-        //送るパラメータ
+        /**
+         * 送るパラメータ.
+         */
         final String mSendParameter;
-
-        //拡張データ
+        /**
+         * 拡張データ.
+         */
         Bundle mExtraData = null;
-
-        //ワンタイムトークンの取得の有無
+        /**
+         * ワンタイムトークンの取得の有無.
+         */
         private boolean mIsUseOtt = false;
-
-        //ワンタイムトークンの値
+        /**
+         * ワンタイムトークンの値.
+         */
         private String mOneTimeToken = "";
-
-        //ワンタイムトークン取得のスイッチ
+        /**
+         * ワンタイムトークン取得のスイッチ
+         */
         private boolean oneTimeTokenGetSwitch = false;
 
         /**
-         * ワンタイムトークンの値を設定する
+         * ワンタイムトークンの値を設定する.
          *
          * @param oneTimeToken 設定したいワンタイムトークン
          */
-        public void setOneTimeToken(String oneTimeToken) {
+        public void setOneTimeToken(final String oneTimeToken) {
             mOneTimeToken = oneTimeToken;
         }
 
@@ -920,7 +1002,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
          * @param sourceUrl          実行するAPIの名前
          * @param receivedParameters 送るパラメータ
          */
-        CommunicationTask(String sourceUrl, String receivedParameters) {
+        CommunicationTask(final String sourceUrl, final String receivedParameters) {
             mSourceUrl = sourceUrl;
             mSendParameter = receivedParameters;
 
@@ -937,7 +1019,8 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
          * @param receivedParameters 送るパラメータ
          * @param extraDataSrc       受け渡す拡張情報
          */
-        CommunicationTask(String sourceUrl, String receivedParameters, Bundle extraDataSrc) {
+        CommunicationTask(final String sourceUrl, final String receivedParameters,
+                          final Bundle extraDataSrc) {
             mSourceUrl = sourceUrl;
             mSendParameter = receivedParameters;
 
@@ -957,8 +1040,8 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
          * @param extraDataSrc       受け渡す拡張情報
          * @param isGetOtt           ワンタイムトークンの使用可否
          */
-        CommunicationTask(String sourceUrl, String receivedParameters, Bundle extraDataSrc,
-                          boolean isGetOtt) {
+        CommunicationTask(final String sourceUrl, final String receivedParameters,
+                          final Bundle extraDataSrc, final boolean isGetOtt) {
             mSourceUrl = sourceUrl;
             mSendParameter = receivedParameters;
 
@@ -999,7 +1082,10 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
          * @return 不使用
          */
         @Override
-        protected ReturnCode doInBackground(Object... strings) {
+        protected ReturnCode doInBackground(final Object... strings) {
+            if (isCancelled() || mIsStop) {
+                return null;
+            }
             //クッキー管理の初期化
             mCookieManager = new CookieManager();
             mCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
@@ -1081,7 +1167,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
          * @param returnCode 結果格納構造体
          */
         @Override
-        protected void onPostExecute(ReturnCode returnCode) {
+        protected void onPostExecute(final ReturnCode returnCode) {
             //拡張情報があればそれも伝える
             if (mExtraData != null) {
                 returnCode.extraData = mExtraData;
@@ -1121,8 +1207,9 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
          * HTTPリクエスト用のパラメータを指定する.
          *
          * @param urlConnection コネクション
+         * @throws ProtocolException プロトコルエクセプション
          */
-        void setParameters(HttpURLConnection urlConnection) throws ProtocolException {
+        void setParameters(final HttpURLConnection urlConnection) throws ProtocolException {
             //送る文字列長の算出
             byte[] sendParameterByte = mSendParameter.getBytes(StandardCharsets.UTF_8);
             int sendParameterLength = sendParameterByte.length;
@@ -1149,7 +1236,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
          *
          * @param urlConnection 書き込み対象のコネクション
          */
-        void setPostData(HttpURLConnection urlConnection) {
+        void setPostData(final HttpURLConnection urlConnection) {
             if (urlConnection == null) {
                 return;
             }
@@ -1182,7 +1269,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      * @param strings ひとまとめにしたい文字列
      * @return ひとまとめになった文字列
      */
-    List<String> makeStringArry(String... strings) {
+    List<String> makeStringArry(final String... strings) {
         return Arrays.asList(strings);
     }
 
@@ -1192,7 +1279,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      * @param dateString 日付(yyyyMMdd)であることが期待される文字列
      * @return 日付ならばtrue
      */
-    boolean checkDateString(String dateString) {
+    boolean checkDateString(final String dateString) {
         //日付フォーマットの設定
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_PATTERN, Locale.JAPAN);
         dateFormat.setLenient(false);

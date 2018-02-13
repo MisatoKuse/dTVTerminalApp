@@ -897,7 +897,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             //通信クラスにデータ取得要求を出す
             dateUtils.addLastProgramDate(DateUtils.CHANNEL_LAST_UPDATE);
             ChannelWebClient mChannelList = new ChannelWebClient(mContext);
-            mChannelList.getChannelApi(limit, offset, filter, JsonConstants.DISPLAY_TYPE[type], (ChannelWebClient.ChannelJsonParserCallback) this);
+            mChannelList.getChannelApi(limit, offset, filter, JsonConstants.DISPLAY_TYPE[type], this);
         }
     }
 
@@ -926,7 +926,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             String pagerDirection = "";
 
             webClient.getWatchListenVideoApi(ageReq, upperPageLimit,
-                    lowerPageLimit, pagerOffset, pagerDirection, (WatchListenVideoWebClient.WatchListenVideoJsonParserCallback) this);
+                    lowerPageLimit, pagerOffset, pagerDirection, this);
         }
     }
 
@@ -958,7 +958,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if ((TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate))
                 && NetWorkUtils.isOnline(mContext)) {
             RentalChListWebClient rentalChListWebClient = new RentalChListWebClient(mContext);
-            rentalChListWebClient.getRentalChListApi((RentalChListWebClient.RentalChListJsonParserCallback) this);
+            rentalChListWebClient.getRentalChListApi(this);
         }
         //TODO:Homeでこのデータを使用する場合はオフライン時等にキャッシュ取得等の対応が必要
     }
@@ -973,7 +973,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 && NetWorkUtils.isOnline(mContext)) {
             dateUtils.addLastProgramDate(DateUtils.ROLELIST_LAST_UPDATE);
             RoleListWebClient roleListWebClient = new RoleListWebClient(mContext);
-            roleListWebClient.getRoleListApi((RoleListWebClient.RoleListJsonParserCallback) this);
+            roleListWebClient.getRoleListApi(this);
         }
         //TODO:Homeでこのデータを使用する場合はオフライン時等にキャッシュ取得等の対応が必要
     }
@@ -1204,7 +1204,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
             List<ContentsData> recommendVodInfoList;
-            HomeDataManager homeDataManager = new HomeDataManager(mContext);
             RecommendDataProvider recommendDataProvider = new RecommendDataProvider(mContext);
             recommendVodInfoList = recommendDataProvider.getRecommendListDataCache(
                     DateUtils.RECOMMEND_VD_LAST_INSERT, RecommendDataProvider.VIDEO_NO,

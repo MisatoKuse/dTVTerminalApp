@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 import android.content.Context;
 import android.os.Bundle;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
@@ -28,16 +29,21 @@ public class ContentsListPerGenreWebClient
      */
     public interface ContentsListPerGenreJsonParserCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
          *
          * @param contentsListPerGenre JSONパース後のデータ
          */
         void onContentsListPerGenreJsonParsed(List<VideoRankList> contentsListPerGenre);
     }
 
-    //コールバックのインスタンス
-    private ContentsListPerGenreJsonParserCallback
-            mContentsListPerGenreJsonParserCallback;
+    /**
+     * コールバックのインスタンス.
+     */
+    private ContentsListPerGenreJsonParserCallback mContentsListPerGenreJsonParserCallback;
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
 
     /**
      * コンテキストを継承元のコンストラクタに送る.
@@ -54,7 +60,7 @@ public class ContentsListPerGenreWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onAnswer(ReturnCode returnCode) {
+    public void onAnswer(final ReturnCode returnCode) {
         //拡張情報付きでパースを行う
         VideoRankJsonParser videoRankJsonParser = new VideoRankJsonParser(
                 mContentsListPerGenreJsonParserCallback, returnCode.extraData);
@@ -69,9 +75,11 @@ public class ContentsListPerGenreWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError(ReturnCode returnCode) {
+    public void onError(final ReturnCode returnCode) {
         //エラーが発生したのでヌルを返す
-        mContentsListPerGenreJsonParserCallback.onContentsListPerGenreJsonParsed(null);
+        if (mContentsListPerGenreJsonParserCallback != null) {
+            mContentsListPerGenreJsonParserCallback.onContentsListPerGenreJsonParsed(null);
+        }
     }
 
 
@@ -91,6 +99,12 @@ public class ContentsListPerGenreWebClient
             final int limit, final int offset, final String filter, final int ageReq,
             final String genreId, final String sort,
             final ContentsListPerGenreJsonParserCallback contentsListPerGenreJsonParserCallback) {
+        if (mIsCancel) {
+            //通信禁止中はfalseで帰る
+            DTVTLogger.error("ContentsListPerGenreWebClient is stopping connection");
+            return false;
+        }
+
         //パラメーターのチェック(genreIdはヌルを受け付けるので、チェックしない)
         if (!checkNormalParameter(limit, offset, filter, ageReq, genreId, sort,
                 contentsListPerGenreJsonParserCallback)) {
@@ -246,5 +260,22 @@ public class ContentsListPerGenreWebClient
         }
 
         return answerText;
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnect() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        stopAllConnections();
+    }
+
+    /**
+     * 通信を許可する.
+     */
+    public void enableConnect() {
+        DTVTLogger.start();
+        mIsCancel = false;
     }
 }
