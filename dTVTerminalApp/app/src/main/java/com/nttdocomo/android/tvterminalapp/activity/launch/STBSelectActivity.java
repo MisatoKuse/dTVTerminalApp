@@ -896,8 +896,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     protected void onStbClientResponse(final Message msg){
         RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES requestCommand
                 = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getRequestCommandTypes();
-        DTVTLogger.debug("msg.what: " + msg.what + "requestCommand: " + requestCommand);
-        DTVTLogger.debug(String.format("requestCommand:%s", requestCommand));
+        DTVTLogger.debug(String.format("msg.what:%s requestCommand:%s", msg.what, requestCommand));
         switch (msg.what) {
             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_OK:
                 switch (requestCommand) {
@@ -913,6 +912,10 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                         break;
+                    case SET_DEFAULT_USER_ACCOUNT:
+                    case CHECK_APPLICATION_VERSION_COMPATIBILITY:
+                        // STB_REQUEST_COMMAND_TYPES misses case 抑制. ※RELAY_RESULT_OK 応答時は requestCommand に SET_DEFAULT_USER_ACCOUNT/CHECK_APPLICATION_VERSION_COMPATIBILITY は設定されない
+                    case KEYEVENT_KEYCODE_POWER:
                     case COMMAND_UNKNOWN:
                     default:
                         break;
@@ -922,6 +925,9 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 int resultcode = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getResultCode();
                 DTVTLogger.debug("resultcode: " + resultcode);
                 switch (requestCommand) {
+                    case KEYEVENT_KEYCODE_POWER:
+                        // STB_REQUEST_COMMAND_TYPES misses case 抑制. ※RELAY_RESULT_ERROR 応答時は requestCommand に KEYEVENT_KEYCODE_POWER は設定されない
+                        break;
                     case START_APPLICATION:
                     case TITLE_DETAIL:
                         RemoteControlRelayClient.STB_APPLICATION_TYPES appId
@@ -929,6 +935,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                         startApplicationErrorHandler(resultcode, appId);
                         break;
                     case IS_USER_ACCOUNT_EXIST:
+                    case SET_DEFAULT_USER_ACCOUNT:
                         switch (resultcode) {
                             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_INTERNAL_ERROR://サーバエラー
                             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE://ユーザアカウントチェックサービス未登録
@@ -948,6 +955,26 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                                 Intent homeintent = new Intent(this, HomeActivity.class);
                                 homeintent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(homeintent);
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case CHECK_APPLICATION_VERSION_COMPATIBILITY:
+                        switch (resultcode) {
+                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE:
+                                CustomDialog dTVTUpDateDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
+                                dTVTUpDateDialog.setContent(getResources().getString(R.string.d_tv_terminal_application_version_update_dialog));
+                                dTVTUpDateDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
+                                    @Override
+                                    public void onOKCallback(final boolean isOK) {
+                                        toGooglePlay(DTVTERMINAL_GOOGLEPLAY_DOWNLOAD_URL);
+                                    }
+                                });
+                                dTVTUpDateDialog.showDialog();
+                                break;
+                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE:
+                                showErrorDialog(getResources().getString(R.string.stb_application_version_update));
                                 break;
                             default:
                                 break;

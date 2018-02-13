@@ -120,7 +120,7 @@ public class BaseActivity extends FragmentActivity implements
      * GooglePlayのドコテレアプリページ.
      * 現在
      */
-    private static final String DTVTERMINAL_GOOGLEPLAY_DOWNLOAD_URL =
+    protected static final String DTVTERMINAL_GOOGLEPLAY_DOWNLOAD_URL =
             "https://www.nttdocomo.co.jp/product/docomo_select/tt01/index.html";
 
     /**
@@ -680,8 +680,7 @@ public class BaseActivity extends FragmentActivity implements
     protected void onStbClientResponse(final Message msg) {
         RemoteControlRelayClient.STB_REQUEST_COMMAND_TYPES requestCommand
                 = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getRequestCommandTypes();
-        DTVTLogger.debug("msg.what: " + msg.what + "requestCommand: " + requestCommand);
-        DTVTLogger.debug(String.format("requestCommand:%s", requestCommand));
+        DTVTLogger.debug(String.format("msg.what:%s requestCommand:%s", msg.what, requestCommand));
         switch (msg.what) {
             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_OK:
                 switch (requestCommand) {
@@ -691,9 +690,11 @@ public class BaseActivity extends FragmentActivity implements
 //                        menuRemoteController();
                         break;
                     case IS_USER_ACCOUNT_EXIST:
-                        break;
-                    case COMMAND_UNKNOWN:
+                    case SET_DEFAULT_USER_ACCOUNT:
                     case CHECK_APPLICATION_VERSION_COMPATIBILITY:
+                        // STB_REQUEST_COMMAND_TYPES misses case 抑制. ※RELAY_RESULT_OK 応答時は requestCommand に SET_DEFAULT_USER_ACCOUNT/CHECK_APPLICATION_VERSION_COMPATIBILITY は設定されない
+                    case KEYEVENT_KEYCODE_POWER:
+                    case COMMAND_UNKNOWN:
                         break;
                     default:
                         break;
@@ -701,8 +702,11 @@ public class BaseActivity extends FragmentActivity implements
                 break;
             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_ERROR:
                 int resultCode = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getResultCode();
-                DTVTLogger.debug("resultCode: " + resultCode);
+                DTVTLogger.debug(String.format("resultCode:%s", resultCode));
                 switch (requestCommand) {
+                    case KEYEVENT_KEYCODE_POWER:
+                        // STB_REQUEST_COMMAND_TYPES misses case 抑制. ※RELAY_RESULT_ERROR 応答時は requestCommand に KEYEVENT_KEYCODE_POWER は設定されない
+                        break;
                     case START_APPLICATION:
                     case TITLE_DETAIL:
                         RemoteControlRelayClient.STB_APPLICATION_TYPES appId
@@ -710,6 +714,7 @@ public class BaseActivity extends FragmentActivity implements
                         startApplicationErrorHandler(resultCode, appId);
                         break;
                     case IS_USER_ACCOUNT_EXIST:
+                    case SET_DEFAULT_USER_ACCOUNT:
                         switch (resultCode) {
                             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_INTERNAL_ERROR:
                                 //サーバエラー
@@ -727,24 +732,6 @@ public class BaseActivity extends FragmentActivity implements
                                 Intent intent = new Intent(mActivity, DAccountReSettingActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                 startActivity(intent);
-                                break;
-                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
-                                //ペアリングアイコンをOFFにする
-                                setStbStatus(false);
-                                break;
-                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DTVT_APPLICATION_VERSION_INCOMPATIBLE:
-                                CustomDialog dTVTUpDateDialog = new CustomDialog(this, CustomDialog.DialogType.CONFIRM);
-                                dTVTUpDateDialog.setContent(getResources().getString(R.string.d_tv_terminal_application_version_update_dialog));
-                                dTVTUpDateDialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
-                                    @Override
-                                    public void onOKCallback(final boolean isOK) {
-                                        toGooglePlay(DTVTERMINAL_GOOGLEPLAY_DOWNLOAD_URL);
-                                    }
-                                });
-                                dTVTUpDateDialog.showDialog();
-                                break;
-                            case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_STB_RELAY_SERVICE_VERSION_INCOMPATIBLE:
-                                showErrorDialog(getResources().getString(R.string.stb_application_version_update));
                                 break;
                             default:
                                 break;
