@@ -1346,7 +1346,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             case CHANNEL_LIST:
                 dateUtils.addLastDate(DateUtils.CHANNEL_LAST_UPDATE);
                 ChannelInsertDataManager channelInsertDataManager = new ChannelInsertDataManager(mContext);
-                channelInsertDataManager.insertChannelInsertList(mChannelList, JsonConstants.DISPLAY_TYPE[DEFAULT_CHANNEL_DISPLAY_TYPE]);
+                channelInsertDataManager.insertChannelInsertList(mChannelList);
                 break;
             case TV_SCHEDULE_LIST:
                 dateUtils.addLastDate(DateUtils.TV_SCHEDULE_LAST_INSERT);

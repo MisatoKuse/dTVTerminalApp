@@ -44,9 +44,8 @@ public class ChannelInsertDataManager {
     /**
      * チャンネル一覧の情報をDBに格納する.
      * @param channelList  チャンネルリスト情報
-     * @param display_type  ひかりTV or dCh
      */
-    public void insertChannelInsertList(ChannelList channelList, String display_type) {
+    public void insertChannelInsertList(ChannelList channelList) {
 
         //各種オブジェクト作成
         DBHelper channelListDBHelper = new DBHelper(mContext);
@@ -57,7 +56,8 @@ public class ChannelInsertDataManager {
         List<HashMap<String, String>> hashMaps = channelList.getChannelList();
 
         //DB保存前に前回取得したデータは全消去する
-        channelListDao.deleteByType(display_type);
+        //TODO:日付とチャンネルを管理し、それらが一致するデータだけを消す事.またキャッシュ期限もその単位で管理する必要があるのでDB再設計が必要
+        channelListDao.delete();
 
         //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
         for (int i = 0; i < hashMaps.size(); i++) {

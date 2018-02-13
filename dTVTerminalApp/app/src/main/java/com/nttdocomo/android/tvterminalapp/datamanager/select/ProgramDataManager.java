@@ -41,10 +41,10 @@ public class ProgramDataManager {
     /**
      * ホーム画面用CH一覧データを返却する.
      *
-     * @param displayType ディスプレイタイプ.
+     * @param service チャンネルメタのservice.ひかり or dch(空文字の場合は両方)
      * @return list チャンネルデータ
      */
-    public List<Map<String, String>> selectChannelListProgramData(final String displayType) {
+    public List<Map<String, String>> selectChannelListProgramData(final String service) {
 
         //データ存在チェック
         List<Map<String, String>> list = new ArrayList<>();
@@ -68,7 +68,7 @@ public class ProgramDataManager {
         ChannelListDao channelListDao = new ChannelListDao(database);
 
         //ホーム画面用データ取得
-        list = channelListDao.findByTypeAndDate(columns, displayType);
+        list = channelListDao.findByService(columns, service);
         DataBaseManager.getInstance().closeDatabase();
         return list;
     }

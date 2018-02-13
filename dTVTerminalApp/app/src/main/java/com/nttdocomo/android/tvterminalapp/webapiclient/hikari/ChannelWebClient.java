@@ -128,10 +128,10 @@ public class ChannelWebClient
                                          String filter, String type,
                                          ChannelJsonParserCallback channelJsonParserCallback) {
         // 各値が下限以下ならばfalse
-        if (pagetLimit < 1) {
+        if (pagetLimit < 0) {
             return false;
         }
-        if (pagerOffset < 1) {
+        if (pagerOffset < 0) {
             return false;
         }
 

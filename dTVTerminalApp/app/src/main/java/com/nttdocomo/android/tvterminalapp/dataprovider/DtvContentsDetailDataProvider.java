@@ -52,10 +52,6 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
         RentalVodListWebClient.RentalVodListJsonParserCallback, RentalChListWebClient.RentalChListJsonParserCallback {
 
     /**
-     * ディスプレイタイプを保持.
-     */
-    private int mChannelDisplayType = 0;
-    /**
      * ApiDataProviderCallbackのインスタンス.
      */
     private ApiDataProviderCallback mApiDataProviderCallback = null;
@@ -352,11 +348,11 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                 break;
             case CHANNEL_UPDATE: //サーバーから取得したチャンネルデータをDBに保存する
                 ChannelInsertDataManager channelInsertDataManager = new ChannelInsertDataManager(mContext);
-                channelInsertDataManager.insertChannelInsertList(mChannelList, JsonConstants.DISPLAY_TYPE[mChannelDisplayType]);
+                channelInsertDataManager.insertChannelInsertList(mChannelList);
                 break;
             case CHANNEL_SELECT: //DBからチャンネルデータを取得して、画面に返却する
                 ProgramDataManager channelDataManager = new ProgramDataManager(mContext);
-                resultSet = channelDataManager.selectChannelListProgramData(JsonConstants.DISPLAY_TYPE[mChannelDisplayType]);
+                resultSet = channelDataManager.selectChannelListProgramData("");
                 break;
             case RENTAL_VOD_UPDATE: //サーバーから取得した購入済みVODデータをDBに保存する
                 RentalListInsertDataManager rentalListInsertDataManager = new RentalListInsertDataManager(mContext);
