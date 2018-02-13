@@ -32,7 +32,6 @@ import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
-import com.nttdocomo.android.tvterminalapp.activity.common.MenuItem;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.DAccountReSettingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity;
@@ -46,7 +45,6 @@ import com.nttdocomo.android.tvterminalapp.datamanager.insert.UserInfoInsertData
 import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDMSInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDevListListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
@@ -64,8 +62,6 @@ import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountControl;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipDeleteWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ClipRegistWebClient;
-
-import java.util.List;
 
 /**
  * クラス機能：
@@ -162,10 +158,10 @@ public class BaseActivity extends FragmentActivity implements
 
     /**
      * 関数機能：
-     * 「Activity」の「画面ID」を戻す。
-     * 各ActivityにてOverrideする関数である。
+     * 「Activity」の「画面ID」を戻す.
+     * 各ActivityにてOverrideする関数である.
      *
-     * @return 「Activity」の「画面ID」を戻す。
+     * @return 「Activity」の「画面ID」を戻す
      */
     public String getScreenID() {
         return "";
@@ -513,9 +509,12 @@ public class BaseActivity extends FragmentActivity implements
             String contractInfo = UserInfoUtils.getUserContractInfo(dataManager.getmUserData());
             DTVTLogger.debug("contractInfo: " + contractInfo);
             //契約なし、またはDTVのみ契約の時は未契約扱い.
-            if (contractInfo == null || contractInfo.isEmpty() || UserInfoUtils.CONTRACT_INFO_NONE.equals(contractInfo) || UserInfoUtils.CONTRACT_INFO_DTV.equals(contractInfo)) {
+            if (contractInfo == null
+                    || contractInfo.isEmpty()
+                    || UserInfoUtils.CONTRACT_INFO_NONE.equals(contractInfo)
+                    || UserInfoUtils.CONTRACT_INFO_DTV.equals(contractInfo)) {
                 param = UserState.LOGIN_OK_CONTRACT_NG;
-            // 契約済の場合はペアリング状態によって変わる
+                // 契約済の場合はペアリング状態によって変わる
             } else {
                 // ペアリング済みかどうか.
                 if (isPairing()) {
@@ -534,6 +533,7 @@ public class BaseActivity extends FragmentActivity implements
 
     /**
      * ペアリング済みかどうか判定.
+     *
      * @return ペアリング済みかどうか(true ペアリング済み, false 未ペアリング)
      */
     public boolean isPairing() {
@@ -544,7 +544,6 @@ public class BaseActivity extends FragmentActivity implements
         }
         return true;
     }
-
 
     /**
      * 機能：onCreate.
@@ -570,7 +569,7 @@ public class BaseActivity extends FragmentActivity implements
         mRemoteControlRelayClient.setDebugRemoteIp("192.168.11.51");
         //dアカウントの検知処理を追加する
         setDaccountControl();
-
+        setRelayClientHandler();
         //ユーザー情報の変更検知
         // TODO 検討中
 //        UserInfoDataProvider dataProvider = new UserInfoDataProvider(getApplicationContext(), this);
@@ -589,7 +588,8 @@ public class BaseActivity extends FragmentActivity implements
         DTVTLogger.start();
         TvtApplication app = (TvtApplication) getApplication();
         // BG → FG でのonResumeかを判定
-        if (app.getIsChangeApplicationVisible()) {
+        if (app.getIsChangeApplicationVisible()
+                || app.getIsFirstActivityStartUp()) {
             permissionCheckExec();
         } else {
             // 通常のライフサイクル
@@ -614,7 +614,6 @@ public class BaseActivity extends FragmentActivity implements
     protected void checkDAccountOnRestart() {
         //BGからFGに遷移するときにdアカチェックを行う
         if (getStbStatus()) {
-            setRelayClientHandler();
             RemoteControlRelayClient.getInstance().isUserAccountExistRequest(getApplicationContext());
         }
         DTVTLogger.end();
@@ -637,15 +636,11 @@ public class BaseActivity extends FragmentActivity implements
      */
     private void registerDevListDlna() {
         DTVTLogger.start();
-        if (this instanceof STBSelectActivity
-                || this instanceof LaunchActivity
-            //|| this instanceof RecordedListActivity
-                ) {
-            DTVTLogger.end();
-            return;
+        if (!(this instanceof STBSelectActivity)
+                || !(this instanceof LaunchActivity)) {
+            mDlnaProvDevListForBase = new DlnaProvDevList();
+            mDlnaProvDevListForBase.start(this);
         }
-        mDlnaProvDevListForBase = new DlnaProvDevList();
-        mDlnaProvDevListForBase.start(this);
         DTVTLogger.end();
     }
 
@@ -1006,6 +1001,7 @@ public class BaseActivity extends FragmentActivity implements
 
     /**
      * ユーザステータスの取得.
+     *
      * @return ユーザステータス
      */
     public UserState getUserState() {
@@ -1184,7 +1180,7 @@ public class BaseActivity extends FragmentActivity implements
         mRemoteControlRelayClient.resetHandler();
         //unregisterDevListDlna();
         DlnaInterface.dlnaOnStop();
-        DismissDialog();
+        dismissDialog();
         super.onPause();
     }
 
@@ -1213,9 +1209,9 @@ public class BaseActivity extends FragmentActivity implements
      * STBのサービスアプリ起動リクエスト処理を実行.
      * ・dTVチャンネル
      *
-     * @param type アプリのタイプ
-     * @param crid crid
-     * @param chno チャンネル番号
+     * @param type                アプリのタイプ
+     * @param crid                crid
+     * @param chno                チャンネル番号
      * @param serviceCategoryType サービス形態
      */
     protected void requestStartApplicationDtvChannel(final RemoteControlRelayClient.STB_APPLICATION_TYPES type,
@@ -1228,9 +1224,9 @@ public class BaseActivity extends FragmentActivity implements
      * STBのサービスアプリ起動リクエスト処理を実行.
      * ・ひかりTVのVOD
      *
-     * @param licenseId
-     * @param cid
-     * @param crid
+     * @param licenseId ライセンスID
+     * @param cid       コンテンツID
+     * @param crid      crid
      */
     protected void requestStartApplicationHikariTvCategoryHikaritvVod(final String licenseId,
                                                                       final String cid, final String crid) {
@@ -1241,7 +1237,7 @@ public class BaseActivity extends FragmentActivity implements
      * STBのサービスアプリ起動リクエスト処理を実行.
      * ひかりTV内dTVのVOD
      *
-     * @param episodeId
+     * @param episodeId エピソードID
      */
     protected void requestStartApplicationHikariTvCategoryDtvVod(final String episodeId) {
         remoteControllerView.sendStartApplicationHikariTvCategoryDtvVodRequest(episodeId);
@@ -1251,7 +1247,7 @@ public class BaseActivity extends FragmentActivity implements
      * STBのサービスアプリ起動リクエスト処理を実行.
      * ひかりTV内VOD(dTV含む)のシリーズ
      *
-     * @param crid
+     * @param crid crid
      */
     protected void requestStartApplicationHikariTvCategoryDtvSvod(final String crid) {
         remoteControllerView.sendStartApplicationHikariTvCategoryDtvSvodRequest(crid);
@@ -1262,7 +1258,7 @@ public class BaseActivity extends FragmentActivity implements
      * ひかりTV内dTVチャンネルの番組
      * ひかりTV内dTVチャンネルの番組(見逃し、関連VOD予定だが未配信)
      *
-     * @param chno
+     * @param chno チャンネル番号
      */
     protected void requestStartApplicationHikariTvCategoryDtvchannelBroadcast(final String chno) {
         remoteControllerView.sendStartApplicationHikariTvCategoryDtvchannelBroadcastRequest(chno);
@@ -1272,7 +1268,7 @@ public class BaseActivity extends FragmentActivity implements
      * STBのサービスアプリ起動リクエスト処理を実行.
      * ひかりTV内dTVチャンネルのVOD（見逃し）
      *
-     * @param tvCid
+     * @param tvCid コンテンツID
      */
     protected void requestStartApplicationHikariTvCategoryDtvchannelMissed(final String tvCid) {
         remoteControllerView.sendStartApplicationHikariTvCategoryDtvchannelMissedRequest(tvCid);
@@ -1282,7 +1278,7 @@ public class BaseActivity extends FragmentActivity implements
      * STBのサービスアプリ起動リクエスト処理を実行.
      * ひかりTV内 dTVチャンネル VOD（関連番組）
      *
-     * @param tvCid
+     * @param tvCid コンテンツID
      */
     protected void requestStartApplicationHikariTvCategoryDtvchannelRelation(final String tvCid) {
         remoteControllerView.sendStartApplicationHikariTvCategoryDtvchannelRelationRequest(tvCid);
@@ -1292,7 +1288,7 @@ public class BaseActivity extends FragmentActivity implements
      * STBのサービスアプリ起動リクエスト処理を実行.
      * ひかりTVの番組 (地デジ)
      *
-     * @param chno
+     * @param chno チャンネル番号
      */
     protected void requestStartApplicationHikariTvCategoryTerrestrialDigital(final String chno) {
         remoteControllerView.sendStartApplicationHikariTvCategoryTerrestrialDigitalRequest(chno);
@@ -1302,7 +1298,7 @@ public class BaseActivity extends FragmentActivity implements
      * STBのサービスアプリ起動リクエスト処理を実行.
      * ひかりTVの番組 （BS）
      *
-     * @param chno
+     * @param chno チャンネル番号
      */
     protected void requestStartApplicationHikariTvCategorySatelliteBs(final String chno) {
         remoteControllerView.sendStartApplicationHikariTvCategorySatelliteBsRequest(chno);
@@ -1312,7 +1308,7 @@ public class BaseActivity extends FragmentActivity implements
      * STBのサービスアプリ起動リクエスト処理を実行.
      * ひかりTVの番組 （IPTV）
      *
-     * @param chno
+     * @param chno チャンネル番号
      */
     protected void requestStartApplicationHikariTvCategoryIptv(final String chno) {
         remoteControllerView.sendStartApplicationHikariTvCategoryIptvRequest(chno);
@@ -1638,6 +1634,7 @@ public class BaseActivity extends FragmentActivity implements
 
     /**
      * プログレスの表示設定.
+     *
      * @param visible 表示値
      */
     public void setRemoteProgressVisible(final int visible) {
@@ -1710,17 +1707,17 @@ public class BaseActivity extends FragmentActivity implements
     public void permissionCheckExec() {
         DTVTLogger.start();
         if (!mShowPermissionDialogFlag) {
-            // "今後表示しない"判定
-            if (RuntimePermissionUtils.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE)) {
-                // 許可されているかを判定
-                if (RuntimePermissionUtils.hasSelfPermissions(this, Manifest.permission.READ_PHONE_STATE)) {
-                    checkCommunication();
-                } else {
-                    onStartCommunication();
-                }
+            // 許可されているかを判定
+            if (RuntimePermissionUtils.hasSelfPermissions(this, Manifest.permission.READ_PHONE_STATE)) {
+                checkCommunication();
             } else {
-                mShowDialog = createPermissionDetailDialog();
-                mShowDialog.showDialog();
+                // "今後表示しない"判定
+                if (RuntimePermissionUtils.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE)) {
+                    onReStartCommunication();
+                } else {
+                    mShowDialog = createPermissionDetailDialog();
+                    mShowDialog.showDialog();
+                }
             }
         } else {
             mShowPermissionDialogFlag = false;
@@ -1729,14 +1726,14 @@ public class BaseActivity extends FragmentActivity implements
                 checkCommunication();
             } else {
                 // 海外判定を行わず通信を行う
-                onStartCommunication();
+                onReStartCommunication();
             }
         }
         DTVTLogger.end();
     }
 
     /**
-     * 海外通信が不許可又はSIM情報取得不許可.
+     * 海外通信不許可時ダイアログ.
      *
      * @return 表示するCustomDialog
      */
@@ -1775,7 +1772,7 @@ public class BaseActivity extends FragmentActivity implements
         dialog.setOkCallBack(new CustomDialog.ApiOKCallback() {
             @Override
             public void onOKCallback(final boolean isOK) {
-                onStartCommunication();
+                onReStartCommunication();
             }
         });
         dialog.setApiCancelCallback(new CustomDialog.ApiCancelCallback() {
@@ -1825,7 +1822,7 @@ public class BaseActivity extends FragmentActivity implements
             public void onCancelCallback() {
                 // 海外判定を実施せず通信を行う
                 mShowDialog = null;
-                onStartCommunication();
+                onReStartCommunication();
             }
         });
         dialog.setContent(this.getResources().getString(
@@ -1852,7 +1849,7 @@ public class BaseActivity extends FragmentActivity implements
             if (intMcc == DOMESTIC_COMMUNICATION_MCC_1
                     || intMcc == DOMESTIC_COMMUNICATION_MCC_2) {
                 // 国内通信
-                onStartCommunication();
+                onReStartCommunication();
             } else {
                 // 海外通信
                 showTransoceanicCommunicationDialog();
@@ -1861,7 +1858,7 @@ public class BaseActivity extends FragmentActivity implements
             }
         } else {
             // SIM情報なし
-            onStartCommunication();
+            onReStartCommunication();
         }
         DTVTLogger.end();
     }
@@ -1869,11 +1866,11 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * 表示中のダイアログがある場合、閉じる.
      */
-    private void DismissDialog() {
+    private void dismissDialog() {
         DTVTLogger.start();
         if (mShowDialog != null) {
             mShowDialog.dismissDialog();
-            DTVTLogger.debug("dismiss");
+            DTVTLogger.debug("Show Dialog Dismiss");
         }
         DTVTLogger.end();
     }
@@ -1899,14 +1896,7 @@ public class BaseActivity extends FragmentActivity implements
      */
     public void onStartCommunication() {
         DTVTLogger.start();
-        setRelayClientHandler();
-        checkDAccountOnRestart();
-        boolean r = DlnaInterface.dlnaOnResume();
-        if (!r) {
-            DTVTLogger.debug("BaseActivity.onResume, dlnaOnResume failed");
-        }
         registerDevListDlna();
-
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
         if (null == dlnaDmsItem) {
             return;
@@ -1931,5 +1921,24 @@ public class BaseActivity extends FragmentActivity implements
                 + SharedPreferencesUtils.getSharedPreferencesRestartFlag(getApplicationContext()));
 
         DTVTLogger.end();
+    }
+
+    /**
+     * アプリがBGからFGに遷移した際のResume処理.
+     */
+    private void onReStartCommunication() {
+        TvtApplication app = (TvtApplication) getApplication();
+        if (!app.getIsFirstActivityStartUp()) {
+            setRelayClientHandler();
+            checkDAccountOnRestart();
+            boolean r = DlnaInterface.dlnaOnResume();
+            if (!r) {
+                DTVTLogger.debug("BaseActivity.onResume, dlnaOnResume failed");
+            }
+        } else {
+            // アプリが起動して最初の1回のみ通る
+            app.setIsFirstActivityStartUp(false);
+        }
+        onStartCommunication();
     }
 }
