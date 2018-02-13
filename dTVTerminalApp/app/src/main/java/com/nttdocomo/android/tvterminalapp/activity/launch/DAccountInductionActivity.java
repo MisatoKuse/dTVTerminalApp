@@ -74,8 +74,9 @@ public class DAccountInductionActivity extends BaseActivity {
             dAccountInstallDialog.showDialog();
         } else if (view.equals(mUseWithoutLogIn)) {
             //dアカウント未登録時の"ログインしないで使用する"ボタン
-            startActivity(HomeActivity.class, null);
-            finish();
+            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
         }
     }
 }

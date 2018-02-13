@@ -184,13 +184,17 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         if (SharedPreferencesUtils.getSharedPreferencesStbConnect(this)) {
             // ペアリング済み HOME画面遷移
             SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(this, true);
-            startActivity(HomeActivity.class, null);
+            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
             DTVTLogger.debug("ParingOK Start HomeActivity");
         } else if (SharedPreferencesUtils.getSharedPreferencesStbSelect(this)) {
             // 次回から表示しないをチェック済み
             // 未ペアリング HOME画面遷移
             SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(this, false);
-            startActivity(HomeActivity.class, null);
+            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
             DTVTLogger.debug("ParingNG Start HomeActivity");
         } else {
             // STB選択画面へ遷移

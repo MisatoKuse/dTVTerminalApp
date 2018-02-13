@@ -40,7 +40,7 @@ public class DAccountUtils {
         //再起動処理を行う
         Intent intent = new Intent();
         intent.setClass(activity, HomeActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(intent);
 
         DTVTLogger.end();

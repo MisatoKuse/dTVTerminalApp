@@ -71,12 +71,15 @@ public class STBSelectErrorActivity extends BaseActivity {
             Intent intent = new Intent(getApplicationContext(), PairingHelpActivity.class);
             intent.putExtra(PairingHelpActivity.START_WHERE, PairingHelpActivity.ParingHelpFromMode.
                     ParingHelpFromMode_Launch.ordinal());
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         } else if (v.equals(mErrorCheckBox)) {
             mIsNextTimeHide = mErrorCheckBox.isChecked();
         } else if (v.equals(mWithoutParing)) {
             SharedPreferencesUtils.setSharedPreferencesStbSelect(this, mIsNextTimeHide);
-            startActivity(HomeActivity.class, null);
+            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
         } else if (v.equals(mErrorCheckboxText)) {
             if (mErrorCheckBox.isChecked()) {
                 mErrorCheckBox.setChecked(false);
