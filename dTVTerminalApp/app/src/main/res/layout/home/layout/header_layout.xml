@@ -38,7 +38,8 @@
     <RelativeLayout
         android:layout_width="@dimen/main_header_title_text_width"
         android:layout_height="match_parent"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:gravity="center">
     <TextView
         android:id="@+id/header_layout_text"
         style="@style/autoscroll"
