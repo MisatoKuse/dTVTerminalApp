@@ -153,6 +153,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      * リダイレクト用飛び先関連情報取得
      */
     private static final String REDIRECT_JUMP_URL_GET = "Location";
+
     /**
      * データ受け渡しコールバック.
      */
@@ -807,7 +808,11 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
         String serviceToken = "";
         long serviceTokenMaxAge = 0;
 
-        if (location.contains(ServiceTokenClient.getOkUrlString())) {
+        //事前に判定しないと、なぜかfalse時の動作が不正だった
+        boolean locationCheck = location.contains(ServiceTokenClient.getOkUrlString());
+
+        //OK URLが含まれているかどうか
+        if (locationCheck) {
             //正常にサービストークンが取得できた場合はクッキーを取得
             CookieStore cookieStore = mCookieManager.getCookieStore();
             List<HttpCookie> cookies = cookieStore.getCookies();
@@ -835,9 +840,12 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                 }
             }
 
-            if (serviceToken.isEmpty()) {
+            if (TextUtils.isEmpty(serviceToken)) {
                 //サービストークンは見つからなかったので、エラーコードを設定する
                 mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
+            } else {
+                //サービストークン取得では使用しないが、データを格納しなければエラー扱いになるので、トークンを入れておく
+                mAnswerBuffer = serviceToken;
             }
         } else {
             //なんらかの異常があった場合はエラーコードを設定

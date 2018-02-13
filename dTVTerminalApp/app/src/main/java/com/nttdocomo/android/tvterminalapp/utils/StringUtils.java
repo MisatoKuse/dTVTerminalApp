@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.utils;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Base64;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -560,6 +561,11 @@ public class StringUtils {
      * @return 元の文字列
      */
     public static String getClearString(Context context, String source) {
+        if (TextUtils.isEmpty(source)) {
+            //元データが空ならば何もできないので、空文字を返す
+            return "";
+        }
+
         try {
             // 元文字列をバイト配列へ変換
             byte[] byteSource = new byte[0];
@@ -613,6 +619,11 @@ public class StringUtils {
      * @return 暗号化後文字列
      */
     public static String getCipherString(Context context, String source) {
+        if (TextUtils.isEmpty(source)) {
+            //元データが空ならば何もできないので、空文字を返す
+            return "";
+        }
+
         try {
             // 元文字列をバイト配列へ変換
             byte[] byteSource = new byte[0];

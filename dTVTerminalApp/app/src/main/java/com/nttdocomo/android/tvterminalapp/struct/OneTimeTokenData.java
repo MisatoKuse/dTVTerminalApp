@@ -15,7 +15,7 @@ import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
  */
 public class OneTimeTokenData {
     //ワンタイムトークンのデータ分離用文字列
-    private static final String ONE_TIME_TOKEN_SPLITTER = "/";
+    private static final String ONE_TIME_TOKEN_SPLITTER = "／";
 
     //ワンタイムトークンのパラメータ順
     private static final int ONE_TIME_TOKEN_POSITION = 0;

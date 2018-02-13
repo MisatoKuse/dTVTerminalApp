@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -145,7 +146,7 @@ public class ServiceTokenClient
         String sendParameter = makeSendParameter(oneTimePass);
 
         //JSONの組み立てに失敗していれば、falseで帰る
-        if (sendParameter.isEmpty()) {
+        if (TextUtils.isEmpty(sendParameter)) {
             return false;
         }
 
@@ -165,7 +166,7 @@ public class ServiceTokenClient
      */
     private boolean checkNormalParameter(String oneTimePass,
                                          TokenGetCallback channelJsonParserCallback) {
-        if (oneTimePass == null || oneTimePass.isEmpty()) {
+        if (TextUtils.isEmpty(oneTimePass)) {
             //ワンタイムパスワードがヌルや空文字ならばエラー
             return false;
         }
