@@ -732,7 +732,6 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
         try {
             //指定された名前であらたなコネクションを開く
             httpsConnection = (HttpsURLConnection) new URL(newUrlString).openConnection();
-            httpsConnection.setDoOutput(true);
             httpsConnection.setDoInput(true);
 
             //DTVTLogger.debug("newHeader=" + httpsConnection.getHeaderFields().toString());
@@ -743,6 +742,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                 //パラメータをgetで送る
                 httpsConnection.setRequestMethod(REQUEST_METHOD_GET);
             } else {
+                httpsConnection.setDoOutput(true);
                 //送る文字列長の算出
                 byte[] sendParameterByte = parameter.getBytes(StandardCharsets.UTF_8);
                 int sendParameterLength = sendParameterByte.length;
@@ -1257,7 +1257,9 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
             //ジャンルID、ロールIDはファイルDLのためGETメソッドリクエストする
             //POSTでJSONを送ることを宣言
             urlConnection.setRequestMethod(mRequestMethod);
-            urlConnection.setDoOutput(true);
+            if ( mRequestMethod.equals(REQUEST_METHOD) ) {
+                urlConnection.setDoOutput(true);
+            }
             urlConnection.setDoInput(true);
             urlConnection.setFixedLengthStreamingMode(sendParameterLength);
         }
