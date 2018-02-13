@@ -252,17 +252,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onClick(final View view) {
+        super.onClick(view);
         switch (view.getId()) {
             case R.id.home_main_layout_pr:
             case R.id.home_main_layout_kytv:
                 if (isFastClick()) {
                     startBrowser();
-                }
-                break;
-            case R.id.header_layout_menu:
-                //ダブルクリックを防ぐ
-                if (isFastClick()) {
-                    onSampleGlobalMenuButton_PairLoginOk();
                 }
                 break;
             default:

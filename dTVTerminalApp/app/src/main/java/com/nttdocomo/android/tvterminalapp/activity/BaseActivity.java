@@ -28,9 +28,7 @@ import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
-import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplayEventListener;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuItem;
-import com.nttdocomo.android.tvterminalapp.activity.common.MenuItemParam;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.DAccountReSettingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity;
@@ -40,6 +38,7 @@ import com.nttdocomo.android.tvterminalapp.activity.setting.SettingActivity;
 import com.nttdocomo.android.tvterminalapp.application.TvtApplication;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UserState;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.UserInfoInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ClipKeyListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
@@ -55,6 +54,7 @@ import com.nttdocomo.android.tvterminalapp.utils.DAccountUtils;
 import com.nttdocomo.android.tvterminalapp.utils.RuntimePermissionUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.view.RemoteControllerView;
 import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountControl;
@@ -69,7 +69,7 @@ import java.util.List;
  * 「Activity」全体にとって、共通の機能があれば、追加すること.
  */
 
-public class BaseActivity extends FragmentActivity implements MenuDisplayEventListener,
+public class BaseActivity extends FragmentActivity implements
         DlnaDevListListener, View.OnClickListener, RemoteControllerView.OnStartRemoteControllerUIListener,
         ClipRegistWebClient.ClipRegistJsonParserCallback, ClipDeleteWebClient.ClipDeleteJsonParserCallback,
         DaccountControl.DaccountControlCallBack {
@@ -148,11 +148,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     private static String mSourceScreenClass = "";
 
     /**
-     * 契約情報.
-     */
-    private List<UserInfoList> mUserInfo;
-
-    /**
      * ヘッダーに表示されているアイコンがメニューアイコンか×ボタンアイコンかを判別するタグ(menu).
      */
     private static final String HEADER_ICON_MENU = "menu";
@@ -162,7 +157,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     private static final String HEADER_ICON_CLOSE = "close";
 
     /**
-     * Created on 2017/09/21.
      * 関数機能：
      * 「Activity」の「画面ID」を戻す。
      * 各ActivityにてOverrideする関数である。
@@ -447,14 +441,56 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     }
 
     /**
-     * 契約・ペアリング済み用.
+     * グローバルメニュー表示.
      */
-    protected void onSampleGlobalMenuButton_PairLoginOk() {
-        MenuItemParam param = new MenuItemParam();
-        param.setParamForContractOkPairingOk(3, 1, 2, 6, 8);
+    protected void displayGlobalMenu() {
+        UserState param = UserState.LOGIN_NG;
+
+        // dアカログイン状態取得
+        String userId = SharedPreferencesUtils.getSharedPreferencesDaccountId(this);
+        if (userId == null || userId.isEmpty()) {
+            // dアカ未ログイン
+            param = UserState.LOGIN_NG;
+        } else {
+            // dアカログイン状態なら契約状態判断.
+            //DBに保存されているUserInfoから契約情報を確認する
+            UserInfoInsertDataManager dataManager = new UserInfoInsertDataManager(this);
+            dataManager.readUserInfoInsertList();
+            String contractInfo = UserInfoUtils.getUserContractInfo(dataManager.getmUserData());
+            DTVTLogger.debug("contractInfo: " + contractInfo);
+            //契約なし、またはDTVのみ契約の時は未契約扱い.
+            if (contractInfo == null || contractInfo.isEmpty() || UserInfoUtils.CONTRACT_INFO_NONE.equals(contractInfo) || UserInfoUtils.CONTRACT_INFO_DTV.equals(contractInfo)) {
+                param = UserState.LOGIN_OK_CONTRACT_NG;
+            // 契約済の場合はペアリング状態によって変わる
+            } else {
+                // ペアリング済みかどうか.
+                if (isPairing()) {
+                    //契約済みかつペアリング済み
+                    param = UserState.CONTRACT_OK_PARING_OK;
+                } else {
+                    //契約済みかつ未ペアリング
+                    param = UserState.CONTRACT_OK_PAIRING_NG;
+                }
+            }
+        }
+        DTVTLogger.debug("displayGlobalMenu userState=" + param);
         setUserState(param);
         displayMenu();
     }
+
+    /**
+     * ペアリング済みかどうか判定.
+     * @return ペアリング済みかどうか(true ペアリング済み, false 未ペアリング)
+     */
+    public boolean isPairing() {
+        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
+        if (dlnaDmsItem == null || dlnaDmsItem.mControlUrl.isEmpty()) {
+            // 未ペアリング時
+            return false;
+        }
+        return true;
+    }
+
 
     /**
      * 機能：onCreate.
@@ -921,11 +957,10 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
     /**
      * ユーザ状態設定.
      *
-     * @param param メニュー表示情報
+     * @param userState ユーザ状態(ペアリング・契約・ログイン)
      */
-    public void setUserState(final MenuItemParam param) {
+    public void setUserState(final UserState userState) {
         synchronized (this) {
-            mUserState = param.getUserState();
             MenuDisplay menu = MenuDisplay.getInstance();
             try {
                 menu.setActivityAndListener(this, this);
@@ -933,7 +968,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
                 DTVTLogger.debug(e);
                 return;
             }
-            menu.changeUserState(param);
+            menu.changeUserState(userState);
         }
     }
 
@@ -1001,21 +1036,6 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
         return false;
     }
 
-    @Override
-    public void onPreUserStateChange(final UserState oldUserState, final UserState newUserState) {
-
-    }
-
-    @Override
-    public void onUserStateChanged(final UserState oldUserState, final UserState newUserState) {
-
-    }
-
-    @Override
-    public void onMenuItemSelected(final MenuItem menuItem) {
-
-    }
-
     /**
      * 機能：DMSを加入する場合コールされる.
      *
@@ -1076,7 +1096,7 @@ public class BaseActivity extends FragmentActivity implements MenuDisplayEventLi
             } else {
                 //ダブルクリックを防ぐ
                 if (isFastClick()) {
-                    onSampleGlobalMenuButton_PairLoginOk();
+                    displayGlobalMenu();
                 }
             }
         }

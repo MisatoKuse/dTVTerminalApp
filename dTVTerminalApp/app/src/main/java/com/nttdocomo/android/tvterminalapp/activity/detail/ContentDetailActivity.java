@@ -2484,7 +2484,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     private void setUserAgeInfo() {
         UserInfoInsertDataManager dataManager = new UserInfoInsertDataManager(this);
         dataManager.readUserInfoInsertList();
-        mAge = StringUtils.getUserAgeInfoWrapper(dataManager.getmUserData());
+        mAge = UserInfoUtils.getUserAgeInfoWrapper(dataManager.getmUserData());
     }
 
     /**
@@ -2751,7 +2751,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      * コンテンツの視聴可否判定を行う.
      */
     private void checkWatchContents() {
-        final String CONTRACT_STATUS_NONE = "none";
         final String CONTRACT_STATUS_DTV = "001";
         final String CONTRACT_STATUS_H4D = "002";
 
@@ -2761,16 +2760,16 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         //DBに保存されているUserInfoから契約情報を確認する
         UserInfoInsertDataManager dataManager = new UserInfoInsertDataManager(this);
         dataManager.readUserInfoInsertList();
-        String contractInfo = StringUtils.getUserContractInfo(dataManager.getmUserData());
+        String contractInfo = UserInfoUtils.getUserContractInfo(dataManager.getmUserData());
         DTVTLogger.debug("contractInfo: " + contractInfo);
 
-        if (contractInfo == null || contractInfo.isEmpty() || CONTRACT_STATUS_NONE.equals(contractInfo)) {
+        if (contractInfo == null || contractInfo.isEmpty() || UserInfoUtils.CONTRACT_INFO_NONE.equals(contractInfo)) {
             //契約情報が未設定、または"none"の場合は視聴不可(契約導線を表示)
             mIsEnableWatch = DISABLE_WATCH_LEAD_CONTRACT;
             DTVTLogger.debug("Unviewable(Not contract)");
-        } else if (CONTRACT_STATUS_DTV.equals(contractInfo)) {
+        } else if (UserInfoUtils.CONTRACT_INFO_DTV.equals(contractInfo)) {
             contractInfoOne();
-        } else if (CONTRACT_STATUS_H4D.equals(contractInfo)) {
+        } else if (UserInfoUtils.CONTRACT_INFO_H4D.equals(contractInfo)) {
             contractInfoTwo();
         }
     }

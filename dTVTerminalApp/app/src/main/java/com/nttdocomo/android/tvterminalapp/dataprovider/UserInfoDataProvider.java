@@ -15,6 +15,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.UserInfoWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser;
 
@@ -217,7 +218,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
 
         //新旧の年齢データを比較する
         int beforeAge = SharedPreferencesUtils.getSharedPreferencesAgeReq(mContext);
-        int newAge = StringUtils.getUserAgeInfoWrapper(userInfoLists);
+        int newAge = UserInfoUtils.getUserAgeInfoWrapper(userInfoLists);
 
         DTVTLogger.debug("before age " + beforeAge);
         DTVTLogger.debug("new age " + newAge);
@@ -254,7 +255,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
 
         //取得したユーザ情報から、年齢情報を抽出する
         if (list != null && list.size() > 0) {
-            userAgeReq = StringUtils.getUserAgeInfo(list);
+            userAgeReq = UserInfoUtils.getUserAgeInfo(list);
         }
 
         return userAgeReq;

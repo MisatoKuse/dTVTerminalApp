@@ -175,14 +175,6 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         }
     }
 
-
-    @Override
-    public void onClick(View view) {
-        if (view == mMenuImageView) {
-            onSampleGlobalMenuButton_PairLoginOk();
-        }
-    }
-
     /**
      * ページングを行った回数を取得
      *

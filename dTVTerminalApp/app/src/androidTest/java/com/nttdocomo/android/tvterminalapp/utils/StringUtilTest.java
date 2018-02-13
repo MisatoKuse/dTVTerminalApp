@@ -74,7 +74,7 @@ public class StringUtilTest {
             userInfoMapList.add(userInfoMap);
 
             //その他
-            assertEquals(StringUtils.getUserAgeInfo(userInfoMapList), Integer.parseInt(answer[i]));
+            assertEquals(UserInfoUtils.getUserAgeInfo(userInfoMapList), Integer.parseInt(answer[i]));
         }
     }
 

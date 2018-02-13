@@ -259,7 +259,7 @@
 
     <!-- 設定画面 -->
     <string name="main_setting_d_account_message">dアカウントアプリがインストールされていません。\nインストールしますか？</string>
-    <string name="main_setting_paring">ペアリング済み</string>
+    <string name="main_setting_pairing">ペアリング済み</string>
     <string name="main_setting_not_paring">未ペアリング</string>
     <string name="main_setting_image_quality_low">標準画質</string>
     <string name="main_setting_image_quality_middle">高画質</string>
