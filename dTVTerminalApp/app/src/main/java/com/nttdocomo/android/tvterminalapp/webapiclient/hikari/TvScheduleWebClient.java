@@ -104,7 +104,7 @@ public class TvScheduleWebClient
         }
 
         //チャンネル毎番組一覧を呼び出す
-        openUrlAddOtt(UrlConstants.WebApiUrl.TV_SCHEDULE_LIST, sendParameter, this, null);
+        openUrl(UrlConstants.WebApiUrl.TV_SCHEDULE_LIST, sendParameter, this);
 
         //今のところ失敗は無いので、trueで帰る
         return true;

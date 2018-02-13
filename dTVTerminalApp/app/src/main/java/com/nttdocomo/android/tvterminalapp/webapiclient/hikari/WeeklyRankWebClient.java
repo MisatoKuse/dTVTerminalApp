@@ -123,8 +123,7 @@ public class WeeklyRankWebClient
         bundle.putString(WEEKLY_RANK_CLIENT_BUNDLE_KEY, genreId);
 
         //週毎ランク一覧を呼び出す
-        openUrlAddOtt(UrlConstants.WebApiUrl.WEEKLY_RANK_LIST, sendParameter, this, bundle);
-
+        openUrlWithExtraData(UrlConstants.WebApiUrl.WEEKLY_RANK_LIST,sendParameter,this,bundle);
 
         //今のところ失敗は無いので、trueで帰る
         return true;
