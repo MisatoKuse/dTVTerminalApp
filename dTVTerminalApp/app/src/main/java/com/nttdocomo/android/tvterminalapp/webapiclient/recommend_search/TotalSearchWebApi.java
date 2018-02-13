@@ -86,13 +86,9 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
 
         if (!mIsCancel) {
             TotalSearchRequestData data = requestData;
-            data.userId = "1234567890"; //KARI
 
             LinkedHashMap<String, String> queryItems = new LinkedHashMap<>();
-            queryItems.put(SearchRequestKey.kUserId, data.userId);
-            queryItems.put(SearchRequestKey.kFunction, data.function.value() + ""); //ok
-            //queryItems.put(SearchRequestKey.kFunction, new String(2+"")); //ng for test
-            queryItems.put(SearchRequestKey.kResponseType, String.valueOf(data.responseType.ordinal() + 1));
+
             queryItems.put(SearchRequestKey.kQuery, data.query);
             queryItems.put(SearchRequestKey.kStartIndex, String.valueOf(data.startIndex));
             queryItems.put(SearchRequestKey.kMaxResult, String.valueOf(data.maxResult));
@@ -105,12 +101,6 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
 
             int sortKind = data.sortKind;
             queryItems.put(SearchRequestKey.kSortKind, sortKind + "");
-
-            ArrayList<SearchFilterType> filterList = requestData.filterTypeList;
-            for (SearchFilterType type : filterList) {
-                appendString(type);
-            }
-            queryItems.put(SearchRequestKey.kCondition, concatFilterString());
 
             //ユーザ情報が設定されている時のみパラメータを追加する
             String filterViewableAge = data.filterViewableAge;
