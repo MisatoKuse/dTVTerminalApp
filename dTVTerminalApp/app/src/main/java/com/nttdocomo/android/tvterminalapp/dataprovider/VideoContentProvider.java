@@ -15,6 +15,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,32 +68,31 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
      * VideoContentListActivityからのデータ取得要求受付.
      *
      * @param genreId ジャンルID
+     * @param offset 取得位置
      */
-    public void getVideoContentData(final String genreId) {
+    public void getVideoContentData(final String genreId, final int offset) {
         mVideoRankList = null;
         if (mRequiredClipKeyList) {
             getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
         }
         // コンテンツ数
-        getVideoContentListData(genreId);
+        getVideoContentListData(genreId, offset);
     }
 
     /**
      * ビデオコンテンツ一覧のデータ取得要求を行う.
      * @param genreId ジャンルID
      */
-    private void getVideoContentListData(final String genreId) {
+    private void getVideoContentListData(final String genreId, final int offset) {
         //通信クラスにデータ取得要求を出す
         ContentsListPerGenreWebClient webClient = new ContentsListPerGenreWebClient(mContext);
-        int limit = 1;
-        int offset = 1;
-        String filter = "";
-        int ageReq = 1;
+        int upperPageLimit = 20;
+        UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
+        int ageReq = userInfoDataProvider.getUserAge();
         //TODO：暫定的に人気順でソートする
         String sort = JsonConstants.GENRE_PER_CONTENTS_SORT_PLAY_COUNT_DESC;
 
-        //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
-        webClient.getContentsListPerGenreApi(limit, offset, filter, ageReq, genreId, sort, this);
+        webClient.getContentsListPerGenreApi(upperPageLimit, offset, WebApiBasePlala.FILTER_RELEASE, ageReq, genreId, sort, this);
     }
 
     /**

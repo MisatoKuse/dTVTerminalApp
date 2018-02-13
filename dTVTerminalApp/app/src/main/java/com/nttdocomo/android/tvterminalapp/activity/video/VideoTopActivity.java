@@ -44,7 +44,7 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
     private VideoGenreProvider mVideoGenreProvider = null;
 
     // ジャンルIDのIntent KEY
-    private static final String VIDEO_CONTENTS_BUNDLE_KEY = "videoContentKey";
+    private static final String VIDEO_GENRE_ID_BUNDLE_KEY = "videoContentKey";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +60,7 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
         if (intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false)) {
             mVideoGenreListDataInfo = null;
         } else {
-            mVideoGenreListDataInfo = intent.getParcelableExtra(VIDEO_CONTENTS_BUNDLE_KEY);
+            mVideoGenreListDataInfo = intent.getParcelableExtra(VIDEO_GENRE_ID_BUNDLE_KEY);
         }
         VideoGenreList showData = null;
         // 初回 + VideoTopActivityが消えていない状態で遷移した際に初期画面を表示する
@@ -156,7 +156,7 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
         }
         info.setSubGenre(mVideoGenreListDataInfo.getSubGenre());
 
-        bundle.putParcelable(VIDEO_CONTENTS_BUNDLE_KEY, info);
+        bundle.putParcelable(VIDEO_GENRE_ID_BUNDLE_KEY, info);
 
         // サブジャンル最終階層の場合は、コンテンツ一覧画面に遷移
         if (videoGenreList.getSubGenre() == null ||

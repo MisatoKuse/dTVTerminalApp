@@ -41,7 +41,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         AbsListView.OnTouchListener {
 
     // 最大表示件数
-    private final static int NUM_PER_PAGE = 10;
+    private final static int NUM_PER_PAGE = 999;
 
     private ImageView mMenuImageView;
     private VideoContentProvider mVideoContentProvider;
@@ -75,19 +75,18 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         mMenuImageView = findViewById(R.id.header_layout_menu);
         mMenuImageView.setVisibility(View.VISIBLE);
         mMenuImageView.setOnClickListener(this);
-        setTitleText(getString(R.string.video_content_sub_genre_title));
         enableStbStatusIcon(true);
         setStatusBarColor(true);
 
         // コンテンツツリー画面からのデータ受け取り
         VideoGenreListDataInfo info = getIntent().getParcelableExtra(VIDEO_CONTENTS_BUNDLE_KEY);
         mGenreId = info.getGenreId();
-
+        setTitleText(info.getVideoGenreListShowData().getTitle());
         resetPaging();
 
         initView();
         mVideoContentProvider = new VideoContentProvider(this);
-        mVideoContentProvider.getVideoContentData(mGenreId);
+        mVideoContentProvider.getVideoContentData(mGenreId, 1);
     }
 
     /**
@@ -234,7 +233,11 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mVideoContentProvider.getVideoContentData(mGenreId);
+                        int offset = 0;
+                        if (null != mContentsList) {
+                            offset = mContentsList.size() + 1;
+                        }
+                        mVideoContentProvider.getVideoContentData(mGenreId, offset);
                     }
                 }, LOAD_PAGE_DELAY_TIME);
             }

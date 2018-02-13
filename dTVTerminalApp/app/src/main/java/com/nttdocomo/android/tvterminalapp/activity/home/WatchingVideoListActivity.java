@@ -349,7 +349,7 @@ public class WatchingVideoListActivity extends BaseActivity implements
 
                         int offset = 0;
                         if (null != mWatchingVideoListData) {
-                            offset = mWatchingVideoListData.size();
+                            offset = mWatchingVideoListData.size() + 1;
                         }
                         mWatchListenVideoListDataProvider.getWatchListenVideoData(offset);
 
