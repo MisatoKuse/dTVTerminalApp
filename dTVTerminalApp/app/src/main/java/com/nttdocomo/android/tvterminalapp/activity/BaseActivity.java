@@ -627,7 +627,9 @@ public class BaseActivity extends FragmentActivity implements
     protected void onStop() {
         super.onStop();
         DTVTLogger.start();
-
+        mRemoteControlRelayClient.resetHandler();
+        //unregisterDevListDlna();
+        DlnaInterface.dlnaOnStop();
         DTVTLogger.end();
     }
 
@@ -636,11 +638,15 @@ public class BaseActivity extends FragmentActivity implements
      */
     private void registerDevListDlna() {
         DTVTLogger.start();
-        if (!(this instanceof STBSelectActivity)
-                || !(this instanceof LaunchActivity)) {
-            mDlnaProvDevListForBase = new DlnaProvDevList();
-            mDlnaProvDevListForBase.start(this);
+        if (this instanceof STBSelectActivity
+                || this instanceof LaunchActivity
+            //|| this instanceof RecordedListActivity
+                ) {
+            DTVTLogger.end();
+            return;
         }
+        mDlnaProvDevListForBase = new DlnaProvDevList();
+        mDlnaProvDevListForBase.start(this);
         DTVTLogger.end();
     }
 
@@ -1164,9 +1170,6 @@ public class BaseActivity extends FragmentActivity implements
             // onPause時にリモコンUIを閉じる
             remoteControllerView.closeRemoteControllerUI();
         }
-        mRemoteControlRelayClient.resetHandler();
-        //unregisterDevListDlna();
-        DlnaInterface.dlnaOnStop();
         dismissDialog();
         super.onPause();
     }
@@ -1872,6 +1875,8 @@ public class BaseActivity extends FragmentActivity implements
         mRemoteControlRelayClient.resetHandler();
         unregisterDevListDlna();
         DlnaInterface.dlnaOnStop();
+        // TODO dアカウント通信を止める
+//        mDaccountControl.stopCommunication();
         DTVTLogger.end();
     }
 
