@@ -250,7 +250,6 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                     mTopLinearLayout = findViewById(R.id.top_view_ll);
                     mTopLinearLayout.setVisibility(GONE);
                     mFrameLayout = findViewById(R.id.header_watch_by_tv);
-                    mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner, null));
                     if (mIsTop) {
                         closeRemoteControllerUI();
                         mIsTop = false;
@@ -457,7 +456,6 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
             mTextViewUseRemote = findViewById(R.id.watch_by_tv);
             mTopLinearLayout.setVisibility(GONE);
             mFrameLayout = findViewById(R.id.header_watch_by_tv);
-            mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner, null));
             remoteControllerSendKeyAction.cancelTimer();
             if (null != mStartUIListener) {
                 mStartUIListener.onEndRemoteControl();
