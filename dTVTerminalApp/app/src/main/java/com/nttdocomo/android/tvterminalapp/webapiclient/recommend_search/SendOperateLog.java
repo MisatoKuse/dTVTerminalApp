@@ -13,6 +13,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetail
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.WebApiBase;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ServiceTokenGetControl;
 
 public class SendOperateLog extends WebApiBase {
 
@@ -31,7 +32,7 @@ public class SendOperateLog extends WebApiBase {
         mContext = context;
     }
 
-    public void sendOpeLog(OtherContentsDetailData mDetailData, VodMetaFullData mDetailFullData) {
+    public void sendOpeLog(final OtherContentsDetailData mDetailData, VodMetaFullData mDetailFullData) {
         if (mDetailData != null) {
             if (OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
                 mCategoryId = getCategoryId(mDetailFullData);
@@ -39,7 +40,16 @@ public class SendOperateLog extends WebApiBase {
                 mCategoryId = mDetailData.getCategoryId();
             }
             if (!TextUtils.isEmpty(mCategoryId)) {
-                new HttpThread(getUrl(mDetailData), null, mContext).start();
+                //トークンを取得する
+                ServiceTokenGetControl serviceTokenGetControl =
+                        new ServiceTokenGetControl(mContext);
+                serviceTokenGetControl.getToken(new ServiceTokenGetControl.NextProcessInterface() {
+                    @Override
+                    public void onTokenGot() {
+                        //トークンの取得後に呼び出す
+                        new HttpThread(getUrl(mDetailData), null, mContext).start();
+                    }
+                });
             }
         }
     }

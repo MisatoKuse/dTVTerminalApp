@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ServiceTokenGetControl;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.HttpThread;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.WebApiCallback;
 
@@ -38,11 +39,23 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
      */
     public void get(final String urlString, final LinkedHashMap<String, String> queryItems,
                     final WebApiCallback callback, final Context context) {
-        Handler handler = new Handler();
-        String url = createUrlComponents(urlString, queryItems);
+        final Handler handler = new Handler();
+        final String url = createUrlComponents(urlString, queryItems);
         mWebApiCallback = callback;
-        mHttpThread = new HttpThread(url, handler, this, context);
-        mHttpThread.start();
+        final WebApiBase webApiBase = this;
+        //Log.d(DCommon.LOG_DEF_TAG, "WebApiBase::get, url= " + url);
+
+        //トークンを取得する
+        ServiceTokenGetControl serviceTokenGetControl =
+                new ServiceTokenGetControl(context);
+        serviceTokenGetControl.getToken(new ServiceTokenGetControl.NextProcessInterface() {
+            @Override
+            public void onTokenGot() {
+                //トークンの取得後に呼び出す
+                mHttpThread = new HttpThread(url, handler, webApiBase, context);
+                mHttpThread.start();
+            }
+        });
     }
 
     /**
@@ -55,10 +68,21 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
      */
     protected void getRecomendInfo(final String urlString, final LinkedHashMap<String, String> queryItems,
                                    final WebApiCallback callback, final Context context) {
-        String url = createUrlComponents(urlString, queryItems);
+        final String url = createUrlComponents(urlString, queryItems);
         mWebApiCallback = callback;
-        mHttpThread = new HttpThread(url, this, context);
-        mHttpThread.start();
+        final WebApiBase webApiBase = this;
+        //Log.d(DCommon.LOG_DEF_TAG, "WebApiBase::get, url= " + url);
+        //トークンを取得する
+        ServiceTokenGetControl serviceTokenGetControl =
+                new ServiceTokenGetControl(context);
+        serviceTokenGetControl.getToken(new ServiceTokenGetControl.NextProcessInterface() {
+            @Override
+            public void onTokenGot() {
+                //トークンの取得後に呼び出す
+                mHttpThread = new HttpThread(url, webApiBase, context);
+                mHttpThread.start();
+            }
+        });
     }
 
     /**

@@ -14,10 +14,7 @@ import com.nttdocomo.android.ocsplib.exception.OcspParameterException;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.struct.OneTimeTokenData;
-import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
-import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOTT;
-import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ServiceTokenClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
 import java.io.BufferedReader;
@@ -34,7 +31,7 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 /**
  * HTTP通信スレッド.
  */
-public class HttpThread extends Thread implements DaccountGetOTT.DaccountGetOttCallBack {
+public class HttpThread extends Thread {
 
     /**
      * ハンドラー.
@@ -64,8 +61,7 @@ public class HttpThread extends Thread implements DaccountGetOTT.DaccountGetOttC
      * HTTPURLConnection.
      */
     private HttpsURLConnection mHttpUrlConn;
-    //サービストークン情報
-    private OneTimeTokenData mOneTimeTokenData = null;
+
     /**
      * エラー時ステータスの構造体.
      */
@@ -101,7 +97,7 @@ public class HttpThread extends Thread implements DaccountGetOTT.DaccountGetOttC
         /**
          * 終了コールバック.
          *
-         * @param str 読み込んだ情報
+         * @param str         読み込んだ情報
          * @param errorStatus エラー情報構造体
          */
         void onHttpThreadFinish(String str, ErrorStatus errorStatus);
@@ -156,7 +152,7 @@ public class HttpThread extends Thread implements DaccountGetOTT.DaccountGetOttC
      * @param context          コンテキスト
      */
     private synchronized void commonContractor(final String url, final HttpThreadFinish httpThreadFinish,
-                                  final Context context) {
+                                               final Context context) {
         //各パラメータの退避
         mUrl = url;
         mHttpThreadFinish = httpThreadFinish;
@@ -176,51 +172,6 @@ public class HttpThread extends Thread implements DaccountGetOTT.DaccountGetOttC
 
     @Override
     public void run() {
-        //先行して、サービストークンの取得を行うため、期限内かどうかをみる
-        mOneTimeTokenData = SharedPreferencesUtils.getOneTimeTokenData(mContext);
-
-        //期限内ならば、そのトークンを使用するので、そのまま実行を行う
-        if(mOneTimeTokenData.getOneTimeTokenGetTime() > DateUtils.getNowTimeFormatEpoch()) {
-            runEntity();
-            return;
-        }
-
-        //dアカウントのワンタイムパスワードの取得を行う
-        DaccountGetOTT getOtt = new DaccountGetOTT();
-        getOtt.execDaccountGetOTT(mContext, this);
-
-        //以後の処理はワンタイムパスワード取得後のコールバックで行う
-    }
-
-
-    @Override
-    public void getOttCallBack(int result, String id, String oneTimePassword) {
-        if(result != 0) {
-            //パスワードの取得に失敗したので、サービストークンは取得できない。次に進む
-            runEntity();
-            return;
-        }
-
-        //サービストークンを取得してから実行を行う
-        ServiceTokenClient serviceTokenClient = new ServiceTokenClient(mContext);
-        serviceTokenClient.getServiceTokenApi(oneTimePassword,
-                new ServiceTokenClient.TokenGetCallback() {
-            @Override
-            public void onTokenGot(boolean success) {
-                //成功していれば、トークンはプリファレンスに入っているので、読み込む
-                mOneTimeTokenData = SharedPreferencesUtils.getOneTimeTokenData(mContext);
-
-                //次へ進む
-                runEntity();
-                return;
-            }
-        });
-    }
-
-    /**
-     * 通信処理の実体.
-     */
-    private void runEntity() {
         clearStatus();
         final StringBuffer sb = new StringBuffer();
         String str;
@@ -301,14 +252,17 @@ public class HttpThread extends Thread implements DaccountGetOTT.DaccountGetOttC
     /**
      * 取得できていれば、サービストークンを追加する.
      *
-     * @param httpsUrlConnection
+     * @param httpsUrlConnection コネクション
      */
     private void addToken(HttpsURLConnection httpsUrlConnection) {
-        if(!TextUtils.isEmpty(mOneTimeTokenData.getOneTimeToken())) {
-            DTVTLogger.debug("set token = " + mOneTimeTokenData.getOneTimeToken());
+        //サービストークン取得
+        OneTimeTokenData oneTimeTokenData = SharedPreferencesUtils.getOneTimeTokenData(mContext);
+
+        if (!TextUtils.isEmpty(oneTimeTokenData.getOneTimeToken())) {
+            DTVTLogger.debug("set token = " + oneTimeTokenData.getOneTimeToken());
             //サービストークンが格納されていれば、それを使用する
             httpsUrlConnection.setRequestProperty(WebApiBasePlala.ONE_TIME_TOKEN_KEY,
-                    mOneTimeTokenData.getOneTimeToken());
+                    oneTimeTokenData.getOneTimeToken());
 
         }
     }
@@ -316,7 +270,7 @@ public class HttpThread extends Thread implements DaccountGetOTT.DaccountGetOttC
     /**
      * エラー情報設定.
      *
-     * @param e 例外情報
+     * @param e         例外情報
      * @param errorType エラーコード
      */
     private synchronized void setErrorStatus(final Exception e, final DTVTConstants.ERROR_TYPE errorType) {
