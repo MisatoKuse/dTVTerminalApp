@@ -72,6 +72,10 @@ public class VideoGenreProvider implements
      * ジャンルリスト取得用webクライアント.
      */
     private GenreListWebClient mGenreListWebClient = null;
+    /**
+     * ジャンルコンテンツ数取得用webクライアント.
+     */
+    private GenreCountGetWebClient mWebClient = null;
 
     @Override
     public void onGenreListJsonParsed(final GenreListResponse genreListResponse) {
@@ -94,7 +98,9 @@ public class VideoGenreProvider implements
 
     @Override
     public void onGenreCountGetJsonParsed(final GenreCountGetResponse genreCountGetResponse) {
-        mApiGenreListDataProviderCallback.genreListCallback(genreCountGetResponse.getGenreCountGetMetaData());
+        if (mApiGenreListDataProviderCallback != null) {
+            mApiGenreListDataProviderCallback.genreListCallback(genreCountGetResponse.getGenreCountGetMetaData());
+        }
     }
 
     /**
@@ -211,17 +217,16 @@ public class VideoGenreProvider implements
      */
     public void getContentCountListData(final List<String> genreId) {
         if (!mIsCancel) {
-            //TODO videoTopActivity対応時に通信停止を対応
             //通信クラスにデータ取得要求を出す
-            GenreCountGetWebClient webClient = new GenreCountGetWebClient(mContext);
+            mWebClient = new GenreCountGetWebClient(mContext);
             int limit = 1;
             int offset = 1;
             String filter = "";
             int ageReq = 1;
-            webClient.getGenreCountGetApi(filter, ageReq, genreId, this);
+            mWebClient.getGenreCountGetApi(filter, ageReq, genreId, this);
         } else {
             DTVTLogger.error("VideoGenreProvider is stopping connection");
-            //TODO videoTopActivity対応時にコールバック対応を行う
+            mApiGenreListDataProviderCallback.genreListCallback(null);
         }
     }
 
@@ -324,7 +329,7 @@ public class VideoGenreProvider implements
      *
      * @param metaData ジャンルリスト
      * @param listMap  加工済みジャンルリスト
-     * @return listMap
+     * @return listMap 加工済みジャンルリスト
      */
     private Map<String, VideoGenreList> setVideoGenreList(final GenreListMetaData metaData, final Map<String, VideoGenreList> listMap) {
         VideoGenreList videoGenreList = new VideoGenreList();
@@ -358,6 +363,9 @@ public class VideoGenreProvider implements
         if (mGenreListWebClient != null) {
             mGenreListWebClient.stopConnect();
         }
+        if (mWebClient != null) {
+            mWebClient.stopConnect();
+        }
     }
 
     /**
@@ -368,6 +376,9 @@ public class VideoGenreProvider implements
         mIsCancel = false;
         if (mGenreListWebClient != null) {
             mGenreListWebClient.enableConnect();
+        }
+        if (mWebClient != null) {
+            mWebClient.enableConnect();
         }
     }
 }

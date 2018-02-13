@@ -131,6 +131,6 @@ public class GenreListWebClient extends WebApiBasePlala
      */
     public void enableConnect() {
         DTVTLogger.start();
-        mIsCancel = true;
+        mIsCancel = false;
     }
 }
