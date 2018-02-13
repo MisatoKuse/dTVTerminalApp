@@ -709,7 +709,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.rb_rating.setRating(Float.parseFloat(listContentInfo.getRatStar()));
                 holder.tv_rating_num.setText(listContentInfo.getRatStar());
             } else {
-                holder.rb_rating.setVisibility(View.GONE);
+                holder.rb_rating.setRating(Float.parseFloat(listContentInfo.getRatStar()));
                 holder.tv_rating_num.setText(R.string.contents_hyphen);
             }
             holder.rb_rating.setNumStars(NUM_STARS_TOTAL);

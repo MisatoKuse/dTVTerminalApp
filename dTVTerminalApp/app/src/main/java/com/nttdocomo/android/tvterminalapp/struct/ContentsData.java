@@ -152,15 +152,18 @@ public class ContentsData {
      * @param ratStar 評価値
      */
     public void setRatStar(String ratStar) {
-        final String MAX_RAT_VALUE = "5";
-        final String RAT_EXCEPTION_VALUE = "-1";
+        final String MAX_RAT_VALUE = "5.0";
+        final String RAT_EXCEPTION_VALUE = "0";
+        final String RAT_VALUE_FORMAT = "%1$.1f";
         if (DBUtils.isFloat(ratStar)) {
-            if (Float.parseFloat(ratStar) > 5) {
+            float rating = Float.parseFloat(ratStar);
+            if (rating > 5) {
                 this.mRatStar = MAX_RAT_VALUE;
-            } else if (Float.parseFloat(ratStar) <= 0) {
+            } else if (rating <= 0) {
                 this.mRatStar = RAT_EXCEPTION_VALUE;
             } else {
-                this.mRatStar = ratStar;
+                //データが整数値の可能性があるため小数点第一位表示に変換する
+                this.mRatStar = String.format(RAT_VALUE_FORMAT, rating);;
             }
         } else {
             this.mRatStar = RAT_EXCEPTION_VALUE;

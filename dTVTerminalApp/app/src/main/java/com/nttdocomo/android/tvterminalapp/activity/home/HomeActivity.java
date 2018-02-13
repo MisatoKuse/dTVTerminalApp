@@ -231,10 +231,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         super.onResume();
         mIsGetContentsInfoFailed = false;
         initData();
+        initView();
         mUserInfoDataProvider = new UserInfoDataProvider(this, this);
         //アプリ起動時のデータ取得ユーザ情報未取得又は時間切れ又はonCreateから開始した場合はユーザ情報取得から
         if (mUserInfoDataProvider.isUserInfoTimeOut()) {
-            initView();
             getUserInfo();
         } else {
             //起動時はプログレスダイアログを表示
