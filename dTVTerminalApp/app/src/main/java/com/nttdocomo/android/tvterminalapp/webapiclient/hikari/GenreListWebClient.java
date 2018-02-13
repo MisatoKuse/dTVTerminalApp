@@ -133,4 +133,9 @@ public class GenreListWebClient extends WebApiBasePlala
         DTVTLogger.start();
         mIsCancel = false;
     }
+
+    @Override
+    protected String getRequestMethod() {
+        return WebApiBasePlala.REQUEST_METHOD_GET;
+    }
 }
