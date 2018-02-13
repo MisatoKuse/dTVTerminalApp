@@ -87,6 +87,7 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
         }
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
+        setStatusBarColor(true);
 
         resetPaging();
 

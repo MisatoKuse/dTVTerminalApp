@@ -154,6 +154,7 @@ public class SearchTopActivity extends BaseActivity
         }
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
+        setStatusBarColor(true);
 
         initData();
         initView();

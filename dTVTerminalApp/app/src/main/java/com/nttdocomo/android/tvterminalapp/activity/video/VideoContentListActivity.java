@@ -77,6 +77,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         mMenuImageView.setOnClickListener(this);
         setTitleText(getString(R.string.video_content_sub_genre_title));
         enableStbStatusIcon(true);
+        setStatusBarColor(true);
 
         // コンテンツツリー画面からのデータ受け取り
         VideoGenreListDataInfo info = getIntent().getParcelableExtra(VIDEO_CONTENTS_BUNDLE_KEY);

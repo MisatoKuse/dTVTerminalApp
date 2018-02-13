@@ -151,6 +151,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         enableHeaderBackIcon(false);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
+        setStatusBarColor(true);
+
         mIsOnCreateFinish = false;
         initData();
         initView();

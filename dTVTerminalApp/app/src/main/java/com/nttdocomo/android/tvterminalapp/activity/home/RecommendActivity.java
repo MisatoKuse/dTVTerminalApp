@@ -99,6 +99,7 @@ public class RecommendActivity extends BaseActivity implements
         }
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
+        setStatusBarColor(true);
 
         initData();
         initRecommendListView();

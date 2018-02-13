@@ -55,6 +55,7 @@ public class DAccountSettingHelpActivity extends BaseActivity {
         enableHeaderBackIcon(true);
         enableStbStatusIcon(false);
         enableGlobalMenuIcon(false);
+        setStatusBarColor(true);
     }
 
     @Override

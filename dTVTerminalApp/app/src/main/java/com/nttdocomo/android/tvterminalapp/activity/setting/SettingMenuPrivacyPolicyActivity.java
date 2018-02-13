@@ -55,6 +55,7 @@ public class SettingMenuPrivacyPolicyActivity extends BaseActivity {
         enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
+        setStatusBarColor(true);
     }
 
     @Override

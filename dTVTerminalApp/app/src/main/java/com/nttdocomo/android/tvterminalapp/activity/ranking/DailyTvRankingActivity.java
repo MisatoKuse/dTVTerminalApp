@@ -96,6 +96,7 @@ public class DailyTvRankingActivity extends BaseActivity implements
         enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
+        setStatusBarColor(true);
         resetPaging();
 
         initView();

@@ -377,6 +377,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme(R.style.AppThemeBlack);
         setContentView(R.layout.dtv_contents_detail_main_layout);
         DTVTLogger.start();
         setStatusBarColor(R.color.contents_header_background);
@@ -433,6 +434,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         changeGlobalMenuIcon(false);
+        setStatusBarColor(false);
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
 

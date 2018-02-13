@@ -35,6 +35,9 @@
     <string name="permission_detail_dialog_content">・海外通信の利用確認のためSIM情報を取得</string>
     <string name="permission_detail_dialog_confirm">許可する</string>
     <string name="permission_detail_dialog_cancel">許可しない</string>
+    <string name="status_bar_height_name">status_bar_height</string>
+    <string name="status_bar_height_deftype">dimen</string>
+    <string name="status_bar_height_defpackage">android</string>
 
     <!-- Launch -->
     <string name="str_app_title">ドコモテレビターミナル</string>

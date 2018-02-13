@@ -60,6 +60,7 @@ public class RecordReservationListActivity extends BaseActivity
         }
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
+        setStatusBarColor(true);
 
         mProvider = new RecordingReservationListDataProvider(this);
         mContentsList = new ArrayList();

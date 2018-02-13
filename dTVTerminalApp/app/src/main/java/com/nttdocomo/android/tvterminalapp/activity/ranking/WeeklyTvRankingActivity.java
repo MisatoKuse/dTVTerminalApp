@@ -97,6 +97,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
+        setStatusBarColor(true);
 
         initView();
         getGenreTabData();

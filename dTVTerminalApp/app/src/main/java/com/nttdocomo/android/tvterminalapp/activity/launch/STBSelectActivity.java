@@ -210,6 +210,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
      */
     private void initView() {
         DTVTLogger.start();
+        setStatusBarColor(true);
         if (mStartMode == (STBSelectFromMode.STBSelectFromMode_Launch.ordinal())) {
             //初回起動時
             enableHeaderBackIcon(false);

@@ -37,6 +37,7 @@ public class STBSelectErrorActivity extends BaseActivity {
      */
     private void setContents() {
         setTitleText(getString(R.string.str_app_title));
+        setStatusBarColor(true);
         mParingAgain = findViewById(R.id.stb_search_failed_paring_again);
         mParingHelp = findViewById(R.id.stb_paring_failed_help);
         mErrorCheckBox = findViewById(R.id.stb_select_error_checkBox);
