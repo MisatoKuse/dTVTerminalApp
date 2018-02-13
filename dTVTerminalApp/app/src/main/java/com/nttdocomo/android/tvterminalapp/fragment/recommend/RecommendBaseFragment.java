@@ -17,9 +17,10 @@ import android.widget.AdapterView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
-import com.nttdocomo.android.tvterminalapp.adapter.RecommendListBaseAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.view.RecommendListView;
 
@@ -40,7 +41,7 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
     //チャンネルデータ
     private List<Map<String, String>> mChannelMap;
     private final int POSITION_TV =0;
-    private final int POSITION_VIDEO = POSITION_TV +1;
+    private final int POSITION_VIDEO = POSITION_TV + 1;
     private final int POSITION_D_TV = POSITION_TV + 2;
     private final int POSITION_D_CHANNEL = POSITION_TV + 3;
     private final int POSITION_D_ANIMATION = POSITION_TV + 4;
@@ -75,8 +76,8 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
      */
     public View initView() {
         if (null == mRecommendFragmentView) {
-            mRecommendFragmentView = View.inflate(getActivity()
-                    , R.layout.fragment_recommend_content, null);
+            mRecommendFragmentView = View.inflate(getActivity(),
+                    R.layout.fragment_recommend_content, null);
             mRecommendListview = mRecommendFragmentView.findViewById(R.id.lv_recommend_list);
 
             mRecommendListview.setOnScrollListener(this);
@@ -88,7 +89,8 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
         }
 
         if (getContext() != null) {
-            mRecommendListBaseAdapter = new ContentsAdapter(getContext(), mData, ContentsAdapter.ActivityTypeItem.TYPE_RECOMMEND_LIST);
+            mRecommendListBaseAdapter = new ContentsAdapter(getContext(), mData,
+                    ContentsAdapter.ActivityTypeItem.TYPE_RECOMMEND_LIST);
         }
         mRecommendListview.setAdapter(mRecommendListBaseAdapter);
 
@@ -231,5 +233,35 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
         detailData.setAvailStartDate(info.getStartViewing());
         detailData.setAvailEndDate(info.getEndViewing());
         return detailData;
+    }
+
+    /**
+     * ContentsAdapterの通信を止める.
+     */
+    public void stopContentsAdapterCommunication() {
+        DTVTLogger.start();
+        StopContentsAdapterConnect stopContentsAdapterConnect = new StopContentsAdapterConnect();
+        if (mRecommendListBaseAdapter != null) {
+            stopContentsAdapterConnect.execute(mRecommendListBaseAdapter);
+        }
+    }
+
+    /**
+     * ContentsAdapterで止めた通信を再度可能な状態にする.
+     */
+    public void enableContentsAdapterCommunication() {
+        DTVTLogger.start();
+        if (mRecommendListBaseAdapter != null) {
+            mRecommendListBaseAdapter.enableConnect();
+        }
+    }
+
+    /**
+     * リストの表示を更新する.
+     */
+    public void invalidateViews() {
+        if (null != mRecommendListview) {
+            mRecommendListview.invalidateViews();
+        }
     }
 }

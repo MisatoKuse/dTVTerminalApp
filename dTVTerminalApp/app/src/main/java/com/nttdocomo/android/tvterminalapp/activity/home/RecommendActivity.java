@@ -23,6 +23,8 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.HikariTvChDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecommendDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopHikariTvChDataConnect;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRecommendDataConnect;
 import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendBaseFragmentScrollListener;
 import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendFragmentFactory;
@@ -202,7 +204,7 @@ public class RecommendActivity extends BaseActivity implements
         sRecommendViewPager = findViewById(R.id.vp_recommend_list_items);
         initTabVIew();
 
-        sRecommendViewPager.setAdapter(new RecommendActivity.TabAdpater(getSupportFragmentManager(), this));
+        sRecommendViewPager.setAdapter(new TabAdpater(getSupportFragmentManager(), this));
         // フリックによるtab切り替え
         sRecommendViewPager.addOnPageChangeListener(new ViewPager
                 .SimpleOnPageChangeListener() {
@@ -538,4 +540,42 @@ public class RecommendActivity extends BaseActivity implements
         System.runFinalization();
         System.gc();
     }
+
+
+    @Override
+    public void onStartCommunication() {
+        super.onStartCommunication();
+        DTVTLogger.start();
+        if (mRecommendDataProvider != null) {
+            mRecommendDataProvider.enableConnect();
+        }
+        if (mHikariTvChDataProvider != null) {
+            mHikariTvChDataProvider.enableConnect();
+        }
+        RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
+        if (baseFragment != null) {
+            baseFragment.enableContentsAdapterCommunication();
+            baseFragment.displayLoadMore(false);
+            baseFragment.invalidateViews();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        DTVTLogger.start();
+
+        //おすすめ番組・ビデオの通信を止める
+        StopRecommendDataConnect stopRecommendDataConnect = new StopRecommendDataConnect();
+        StopHikariTvChDataConnect stopHikariTvChDataConnect = new StopHikariTvChDataConnect();
+        stopRecommendDataConnect.execute(mRecommendDataProvider);
+        stopHikariTvChDataConnect.execute(mHikariTvChDataProvider);
+
+        //FragmentにContentsAdapterの通信を止めるように通知する
+        RecommendBaseFragment baseFragment = getCurrentRecommendBaseFragment();
+        if (baseFragment != null) {
+            baseFragment.stopContentsAdapterCommunication();
+        }
+    }
+
 }
