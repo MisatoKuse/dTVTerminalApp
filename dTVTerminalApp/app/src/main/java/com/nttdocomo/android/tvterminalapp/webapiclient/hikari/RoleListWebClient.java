@@ -130,4 +130,9 @@ public class RoleListWebClient
         DTVTLogger.start();
         mIsCancel = false;
     }
+
+    @Override
+    protected String getRequestMethod() {
+        return WebApiBasePlala.REQUEST_METHOD_GET;
+    }
 }

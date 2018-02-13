@@ -92,11 +92,11 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
     /**
      * リクエスト種別・基本はPOST.
      */
-    private static final String REQUEST_METHOD = "POST";
+    protected static final String REQUEST_METHOD = "POST";
     /**
      * リダイレクト処理用にGETも定義
      */
-    private static final String REQUEST_METHOD_GET = "GET";
+    protected static final String REQUEST_METHOD_GET = "GET";
     /**
      * 文字種別 UTF-8.
      */
@@ -463,7 +463,8 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      */
     public void openUrl(final String sourceUrl, final String receivedParameters,
                         final WebApiBasePlalaCallback webApiBasePlalaCallback) {
-        mCommunicationTaskAPI = new CommunicationTask(sourceUrl, receivedParameters);
+
+        mCommunicationTaskAPI = new CommunicationTask(sourceUrl, receivedParameters, getRequestMethod());
 
         //コールバックの準備
         mWebApiBasePlalaCallback = webApiBasePlalaCallback;
@@ -488,7 +489,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                                      final Bundle extraDataSrc) {
         //拡張情報もセットする
         mCommunicationTaskExtra = new CommunicationTask(sourceUrl,
-                receivedParameters, extraDataSrc);
+                receivedParameters, extraDataSrc, getRequestMethod());
 
         //コールバックの準備
         mWebApiBasePlalaCallback = webApiBasePlalaCallback;
@@ -513,7 +514,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                               final Bundle extraDataSrc) {
         //タスクを作成する
         mCommunicationTask = new CommunicationTask(sourceUrl, receivedParameters,
-                extraDataSrc, true);
+                extraDataSrc, true, getRequestMethod());
 
         //呼び出し元に戻るコールバックの準備
         mWebApiBasePlalaCallback = webApiBasePlalaCallback;
@@ -749,7 +750,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
 
                 //パラメータをpostで送る
                 setHttpsPostData(httpsConnection, parameter);
-                httpsConnection.setRequestMethod(REQUEST_METHOD);
+                httpsConnection.setRequestMethod(getRequestMethod());
             }
 
             //自動リダイレクトを有効化する
@@ -967,6 +968,16 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
     }
 
     /**
+     * リクエストメソッド取得.
+     * POSTリクエストしない場合はオーバライドしてメソッド名を返却する事.
+     *
+     * @return メソッド名
+     */
+    protected String getRequestMethod() {
+        return REQUEST_METHOD;
+    }
+
+    /**
      * 通信本体のクラス.
      */
     public class CommunicationTask extends AsyncTask<Object, Object, ReturnCode> {
@@ -994,6 +1005,10 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
          * ワンタイムトークン取得のスイッチ
          */
         private boolean oneTimeTokenGetSwitch = false;
+        /**
+         * リクエストに利用するHTTPメソッド.
+         */
+        private String mRequestMethod = REQUEST_METHOD;
 
         /**
          * ワンタイムトークンの値を設定する.
@@ -1009,8 +1024,9 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
          *
          * @param sourceUrl          実行するAPIの名前
          * @param receivedParameters 送るパラメータ
+         * @param requestMethod     HTTPリクエストメソッド
          */
-        CommunicationTask(final String sourceUrl, final String receivedParameters) {
+        CommunicationTask(final String sourceUrl, final String receivedParameters, final String requestMethod) {
             mSourceUrl = sourceUrl;
             mSendParameter = receivedParameters;
 
@@ -1018,6 +1034,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
             mExtraData = null;
             mIsUseOtt = false;
             oneTimeTokenGetSwitch = false;
+            mRequestMethod = requestMethod;
         }
 
         /**
@@ -1026,9 +1043,10 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
          * @param sourceUrl          実行するAPIの名前
          * @param receivedParameters 送るパラメータ
          * @param extraDataSrc       受け渡す拡張情報
+         * @param requestMethod     HTTPリクエストメソッド
          */
         CommunicationTask(final String sourceUrl, final String receivedParameters,
-                          final Bundle extraDataSrc) {
+                          final Bundle extraDataSrc, final String requestMethod) {
             mSourceUrl = sourceUrl;
             mSendParameter = receivedParameters;
 
@@ -1038,6 +1056,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
             //ワンタイムトークンは使用しない
             mIsUseOtt = false;
             oneTimeTokenGetSwitch = false;
+            mRequestMethod = requestMethod;
         }
 
         /**
@@ -1047,9 +1066,10 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
          * @param receivedParameters 送るパラメータ
          * @param extraDataSrc       受け渡す拡張情報
          * @param isGetOtt           ワンタイムトークンの使用可否
+         * @param requestMethod     HTTPリクエストメソッド
          */
         CommunicationTask(final String sourceUrl, final String receivedParameters,
-                          final Bundle extraDataSrc, final boolean isGetOtt) {
+                          final Bundle extraDataSrc, final boolean isGetOtt, final String requestMethod) {
             mSourceUrl = sourceUrl;
             mSendParameter = receivedParameters;
 
@@ -1063,6 +1083,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
             //ワンタイムトークンの使用可否
             mIsUseOtt = isGetOtt;
             oneTimeTokenGetSwitch = false;
+            mRequestMethod = requestMethod;
         }
 
         /**
@@ -1081,6 +1102,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
 
             //ワンタイムトークン取得時スイッチをONにする
             oneTimeTokenGetSwitch = true;
+            mRequestMethod = REQUEST_METHOD;
         }
 
         /**
@@ -1232,8 +1254,9 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
             //コンテントタイプを指定する
             urlConnection.setRequestProperty(CONTENT_TYPE_KEY_TEXT, CONTENT_TYPE_TEXT);
 
+            //ジャンルID、ロールIDはファイルDLのためGETメソッドリクエストする
             //POSTでJSONを送ることを宣言
-            urlConnection.setRequestMethod(REQUEST_METHOD);
+            urlConnection.setRequestMethod(mRequestMethod);
             urlConnection.setDoOutput(true);
             urlConnection.setDoInput(true);
             urlConnection.setFixedLengthStreamingMode(sendParameterLength);
@@ -1304,4 +1327,5 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
         String temporaryDateString = dateFormat.format(parsedDate);
         return temporaryDateString.equals(dateString);
     }
+
 }
