@@ -130,7 +130,7 @@ public class ContentsListPerGenreWebClient
         bundle.putString("genreId", genreId);
 
         //ジャンル毎コンテンツ一覧取得を呼び出す
-        openUrlWithExtraData(UrlConstants.WebApiUrl.CONTENTS_LIST_PER_GENRE_WEB_CLIENT,
+        openUrlAddOtt(UrlConstants.WebApiUrl.CONTENTS_LIST_PER_GENRE_WEB_CLIENT,
                 sendParameter, this, bundle);
 
         //今のところ失敗は無いので、trueで帰る

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/stb_search_device_name_setting"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/paring_setting_device_name_text_size"
+        android:layout_marginStart="@dimen/paring_setting_text_margin_start_end"
+        android:textSize="@dimen/launch_text_size"
+        android:textStyle="bold"
+        android:gravity="center_vertical|start"
+        android:textColor="@color/basic_text_color_white"
+        android:maxLines="1"
+        android:ellipsize="end"
+        />
+
+</RelativeLayout>

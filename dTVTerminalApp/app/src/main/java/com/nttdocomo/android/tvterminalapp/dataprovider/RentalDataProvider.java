@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * レンタル情報取得プロパイダ.
+ * レンタル一覧DataProvider.
  */
 public class RentalDataProvider extends ClipKeyListDataProvider implements RentalVodListWebClient.RentalVodListJsonParserCallback {
 
@@ -31,7 +31,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
      */
     private Context mContext = null;
     /**
-     * DBに情報を保存するかのフラグ.
+     * DB保存フラグ.
      */
     private boolean mSetDB = false;
     /**
@@ -227,8 +227,8 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
             if (mRequiredClipKeyList) {
                 // クリップ状態をコンテンツリストに格納
                 data.setClipStatus(getClipStatus(dispType, contentsType, dTv,
-                        data.getCrid(), data.getServiceId(),
-                        data.getEventId(), data.getTitleId()));
+                        requestData.getCrid(), requestData.getServiceId(),
+                        requestData.getEventId(), requestData.getTitleId()));
             }
 
             list.add(data);

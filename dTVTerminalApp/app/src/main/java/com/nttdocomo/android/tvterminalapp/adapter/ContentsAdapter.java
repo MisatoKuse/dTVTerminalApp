@@ -224,7 +224,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         /**
          * 検索.
          */
-        TYPE_SEARCH_LIST
+        TYPE_SEARCH_LIST,
+        /**
+         * // コンテンツ詳細チャンネル一覧.
+         */
+        TYPE_CONTENT_DETAIL_CHANNEL_LIST
     }
 
     /**
@@ -328,6 +332,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_WEEKLY_RANK:
             case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
             case TYPE_SEARCH_LIST:
+            case TYPE_CONTENT_DETAIL_CHANNEL_LIST:
                 textMargin = STATUS_MARGINTOP17;
                 clipMargin = CLIP_MARGINTOP35;
                 setTextMargin(textMargin, holder, contentView);
@@ -481,6 +486,9 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         setRecodingReservationStatusData(holder, listContentInfo);
         setChannelName(holder, listContentInfo);
         setRecordedDownloadIcon(holder, listContentInfo);
+        if(ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST.equals(mType)){
+            setSubTitle(holder, listContentInfo);
+        }
     }
 
     /**
@@ -531,6 +539,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
                 case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
                 case TYPE_SEARCH_LIST:
+                case TYPE_CONTENT_DETAIL_CHANNEL_LIST: // コンテンツ詳細チャンネル一覧
                     holder.tv_time.setText(listContentInfo.getTime());
                     break;
                 default:
@@ -676,6 +685,9 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
             holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
             holder.tv_recorded_ch_name.setText(listContentInfo.getChannelName());
+            if(mType == ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST){
+                holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.record_download_status_color));
+            }
         } else {
             //TODO: 仕様不定の為仮実装
             //TODO:チャンネル名の出所が不明なので、ダミー値を指定
@@ -685,6 +697,26 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
                 holder.tv_recorded_ch_name.setText("ダミー");
             }
+            if(mType == ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST){
+                holder.tv_recorded_hyphen.setVisibility(View.GONE);
+                holder.tv_recorded_ch_name.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    /**
+     * データの設定（サブタイトル）.
+     *
+     * @param holder          ViewHolder
+     * @param listContentInfo ContentsData
+     */
+    private void setSubTitle(final ViewHolder holder, final ContentsData listContentInfo){
+        if(!TextUtils.isEmpty(listContentInfo.getSubTitle())){
+            holder.tv_sub_title.setVisibility(View.VISIBLE);
+            holder.tv_sub_title.setText(listContentInfo.getSubTitle());
+            holder.tv_sub_title.setOnClickListener(null);
+        } else {
+            holder.tv_sub_title.setVisibility(View.GONE);
         }
     }
 
@@ -743,6 +775,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 viewHolder.tv_recorded_hyphen = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
                 viewHolder.tv_recorded_ch_name = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
                 break;
+            case TYPE_CONTENT_DETAIL_CHANNEL_LIST: // コンテンツ詳細チャンネル一覧
+                holder.tv_recorded_hyphen = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
+                holder.tv_recorded_ch_name = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
+                holder.tv_sub_title = view.findViewById(R.id.item_common_result_subtitle);
+                break;
             default:
                 break;
         }
@@ -758,7 +795,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         switch (mType) {
             case TYPE_DAILY_RANK: // 今日のテレビランキング
             case TYPE_WEEKLY_RANK: // 週間ランキング
-            case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
                 holder.ll_rating.setVisibility(View.GONE);
                 holder.tv_clip.setVisibility(View.GONE);
                 break;
@@ -770,6 +806,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
             case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
                 holder.tv_time.setVisibility(View.GONE);
+                holder.tv_rank.setVisibility(View.GONE);
+                break;
+            case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
+                holder.ll_rating.setVisibility(View.GONE);
+                holder.tv_clip.setVisibility(View.GONE);
                 holder.tv_rank.setVisibility(View.GONE);
                 break;
             case TYPE_RENTAL_RANK: // レンタル一覧
@@ -788,6 +829,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.rl_thumbnail.setVisibility(View.GONE);
                 holder.iv_thumbnail.setVisibility(View.GONE);
                 holder.rb_rating.setVisibility(View.GONE);
+                break;
+            case TYPE_CONTENT_DETAIL_CHANNEL_LIST: // コンテンツ詳細チャンネル一覧
+                holder.tv_rank.setVisibility(View.GONE);
+                holder.rb_rating.setVisibility(View.GONE);
+                holder.tv_line.setVisibility(View.VISIBLE);
                 break;
             case TYPE_SEARCH_LIST: //検索
                 holder.tv_time.setVisibility(View.GONE);
@@ -938,6 +984,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
          * 録画番組用チャンネル名.
          */
         TextView tv_recorded_ch_name;
+        /**
+         * サブタイトル
+         */
+        TextView tv_sub_title = null;
     }
 
     /**

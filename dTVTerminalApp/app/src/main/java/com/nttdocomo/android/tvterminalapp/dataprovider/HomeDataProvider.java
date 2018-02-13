@@ -183,6 +183,11 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      */
     private TvScheduleList mTvScheduleList = null;
 
+    /**
+     * 番組表コンテンツリスト.
+     */
+    private List<ContentsData> mTvScheduleContentsList = null;
+
     @Override
     public void onTvClipJsonParsed(final List<TvClipList> tvClipLists) {
         if (tvClipLists != null && tvClipLists.size() > 0) {
@@ -217,13 +222,14 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     public void onTvScheduleJsonParsed(final List<TvScheduleList> tvScheduleList) {
         if (tvScheduleList != null && tvScheduleList.size() > 0) {
             TvScheduleList list = tvScheduleList.get(0);
+            mTvScheduleContentsList = setHomeContentData(list.geTvsList(), false);
             setStructDB(list);
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
             List<Map<String, String>> scheduleList;
             HomeDataManager homeDataManager = new HomeDataManager(mContext);
             scheduleList = homeDataManager.selectTvScheduleListHomeData();
-            sendTvScheduleListData(scheduleList);
+            mTvScheduleContentsList = setHomeContentData(scheduleList, false);
         }
     }
 
@@ -297,12 +303,39 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if (channelLists != null && channelLists.size() > 0) {
             ChannelList list = channelLists.get(0);
             setStructDB(list);
+            sendTvScheduleListData(setChannelName(mTvScheduleContentsList,list));
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
             HomeDataManager homeDataManager = new HomeDataManager(mContext);
             List<Map<String, String>> channelList = homeDataManager.selectChannelListHomeData();
-            sendChannelListData(channelList);
+            sendTvScheduleListData(setChannelName(mTvScheduleContentsList,setHomeChannelData(channelList)));
         }
+    }
+
+    /**
+     * コンテンツのServiceIDとServiceIDが一致するチャンネル名を追加する.
+     *
+     * @param scheduleList 番組表コンテンツリスト
+     * @return チャンネル名
+     */
+    private List<ContentsData> setChannelName(final List<ContentsData> scheduleList, final ChannelList channelList) {
+        mTvScheduleContentsList = scheduleList;
+        if (channelList != null && mTvScheduleContentsList != null) {
+            List<HashMap<String, String>> list = channelList.getChannelList();
+            for (int i = 0; i < mTvScheduleContentsList.size(); i++) {
+                String scheduleId = mTvScheduleContentsList.get(i).getServiceId();
+                if (!TextUtils.isEmpty(scheduleId)) {
+                    for (HashMap<String, String> hashMap : list) {
+                        String channelId = (hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID));
+                        //番組表と
+                        if (!TextUtils.isEmpty(channelId) && scheduleId.equals(channelId)) {
+                            mTvScheduleContentsList.get(i).setChannelName(hashMap.get(JsonConstants.META_RESPONSE_TITLE));
+                        }
+                    }
+                }
+            }
+        }
+        return mTvScheduleContentsList;
     }
 
     @Override
@@ -418,6 +451,14 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
     }
 
     /**
+     * タスクキャンセル.
+     */
+    public void cancelHomeTask() {
+        //TODO:Cancel開始処理記載
+        homeDataDownloadTask.cancel(true);
+    }
+
+    /**
      * 非同期処理でHOME画面に表示するデータの取得を行う.
      */
     private AsyncTask<Void, Void, Void> homeDataDownloadTask = new AsyncTask<Void, Void, Void>() {
@@ -426,7 +467,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             //NOW ON AIR
             List<Map<String, String>> tvScheduleListData = getTvScheduleListData();
             if (tvScheduleListData != null && tvScheduleListData.size() > 0) {
-                sendTvScheduleListData(tvScheduleListData);
+                mTvScheduleContentsList = setHomeContentData(tvScheduleListData, false);
             }
             //おすすめ番組・レコメンド情報は最初からContentsDataのリストなので、そのまま使用する
             List<ContentsData> recommendChListData = getRecommendChListData();
@@ -488,6 +529,19 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             }
             return null;
         }
+
+        @Override
+        protected void onPostExecute(final Void aVoid) {
+            super.onPostExecute(aVoid);
+            //TODO:仮実装
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            //TODO:仮実装
+            DTVTLogger.debug("タスクをキャンセルしました");
+        }
     };
 
     /**
@@ -495,8 +549,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      *
      * @param list 番組リスト
      */
-    private void sendTvScheduleListData(final List<Map<String, String>> list) {
-        mApiDataProviderCallback.tvScheduleListCallback(setHomeContentData(list, false));
+    private void sendTvScheduleListData(final List<ContentsData> list) {
+        mApiDataProviderCallback.tvScheduleListCallback(list);
     }
 
     /**
@@ -838,7 +892,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             //データをDBから取得する
             HomeDataManager homeDataManager = new HomeDataManager(mContext);
             List<Map<String, String>> channelList = homeDataManager.selectChannelListHomeData();
-            sendChannelListData(channelList);
+            sendTvScheduleListData(setChannelName(mTvScheduleContentsList, setHomeChannelData(channelList)));
         } else {
             //通信クラスにデータ取得要求を出す
             dateUtils.addLastProgramDate(DateUtils.CHANNEL_LAST_UPDATE);
@@ -946,7 +1000,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      */
     private void setStructDB(final TvScheduleList tvScheduleList) {
         mTvScheduleList = tvScheduleList;
-        sendTvScheduleListData(mTvScheduleList.geTvsList());
         //DB保存
         Handler handler = new Handler();
         try {
@@ -1000,7 +1053,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      */
     private void setStructDB(final ChannelList channelList) {
         mChannelList = channelList;
-        mApiDataProviderCallback.channelListCallback(channelList);
         //DB保存
         Handler handler = new Handler();
         try {

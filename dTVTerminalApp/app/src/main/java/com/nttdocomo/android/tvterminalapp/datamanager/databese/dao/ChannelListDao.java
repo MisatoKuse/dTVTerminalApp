@@ -87,8 +87,6 @@ public class ChannelListDao {
         List<Map<String, String>> list = new ArrayList<>();
         String[] selectionStrings = {
                 JsonConstants.META_RESPONSE_DISP_TYPE,
-                "=? AND ",
-                DBConstants.DATE_TYPE,
                 "=? "
         };
         String selection = StringUtils.getConnectString(selectionStrings);
@@ -96,7 +94,7 @@ public class ChannelListDao {
                 DBConstants.CHANNEL_LIST_TABLE_NAME,
                 strings,
                 selection,
-                new  String[]{type, "program"},
+                new  String[]{type},
                 null,
                 null,
                 null);
@@ -144,12 +142,7 @@ public class ChannelListDao {
      * @return SQLiteDatabaseクラスの戻り値(削除されたレコード数)
      */
     public int delete() {
-        String[] selectionStrings = {
-                DBConstants.DATE_TYPE,
-                "=?"
-        };
-        String selection = StringUtils.getConnectString(selectionStrings);
-        return db.delete(DBConstants.CHANNEL_LIST_TABLE_NAME, selection, new String[]{"home"});
+        return db.delete(DBConstants.CHANNEL_LIST_TABLE_NAME, null, null);
     }
 
     /**
@@ -160,11 +153,9 @@ public class ChannelListDao {
     public int deleteByType(final String type) {
         String[] selectionStrings = {
                 JsonConstants.META_RESPONSE_DISP_TYPE,
-                "=? AND ",
-                DBConstants.DATE_TYPE,
-                "=?"
+                "=? "
         };
         String selection = StringUtils.getConnectString(selectionStrings);
-        return db.delete(DBConstants.CHANNEL_LIST_TABLE_NAME, selection, new String[]{type, "program"});
+        return db.delete(DBConstants.CHANNEL_LIST_TABLE_NAME, selection, new String[]{type});
     }
 }

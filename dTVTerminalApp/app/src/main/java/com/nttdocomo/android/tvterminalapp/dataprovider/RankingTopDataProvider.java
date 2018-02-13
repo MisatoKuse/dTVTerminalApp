@@ -197,7 +197,7 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
         super.onVodClipKeyListJsonParsed(clipKeyListResponse);
         // コールバック判定
@@ -496,8 +496,8 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
                 boolean clipStatus;
                 // クリップ状態をコンテンツリストに格納
                 clipStatus = getClipStatus(dispType, contentsType, dTv,
-                        rankingContentInfo.getCrid(), rankingContentInfo.getServiceId(),
-                        rankingContentInfo.getEventId(), rankingContentInfo.getTitleId());
+                        requestData.getCrid(), requestData.getServiceId(),
+                        requestData.getEventId(), requestData.getTitleId());
                 rankingContentInfo.setClipStatus(clipStatus);
                 requestData.setClipStatus(clipStatus);
             }

@@ -9,6 +9,7 @@ import android.util.Base64;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
@@ -22,10 +23,20 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
 
 
 /**
@@ -53,6 +64,13 @@ public class StringUtils {
 
     //カンマ
     private static final String COMMA_SEPARATOR = ",";
+
+    //暗号化方法
+    private static String CIPHER_TYPE = "AES";
+    private static String CIPHER_DATA = "AES/ECB/PKCS5Padding";
+
+    //暗号化キーの長さ
+    private static int CIPHER_KEY_LENGTH = 16;
 
     public StringUtils(final Context context) {
         mContext = context;
@@ -335,6 +353,12 @@ public class StringUtils {
         return context.getString(R.string.message_three_asterisk);
     }
 
+    /**
+     * 契約情報を取得する.
+     *
+     * @param userInfoList ユーザーデータ
+     * @return 契約しているかどうか
+     */
     public static String getUserContractInfo(final List<UserInfoList> userInfoList) {
         final int INT_LIST_HEAD = 0;
         final String CONTRACT_DTV = "001";
@@ -354,6 +378,12 @@ public class StringUtils {
         }
 
         List<UserInfoList.AccountList> mLoggedInAccountList = infoList.getLoggedinAccount();
+
+        //ログインユーザ情報がないときは契約情報は無し
+        if (mLoggedInAccountList == null || userInfoList.size() < 1) {
+            return CONTRACT_INFO_NONE;
+        }
+
         UserInfoList.AccountList mLoggedInAccount = mLoggedInAccountList.get(INT_LIST_HEAD);
 
         //ユーザ情報がないときは契約情報は無し
@@ -520,5 +550,110 @@ public class StringUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * 暗号化した文字列を復号する.
+     *
+     * @param context コンテキスト
+     * @param source 暗号文字列
+     * @return 元の文字列
+     */
+    public static String getClearString(Context context, String source) {
+        try {
+            // 元文字列をバイト配列へ変換
+            byte[] byteSource = new byte[0];
+            byteSource = source.getBytes(StandardCharsets.UTF_8.name());
+
+            //base64デコード
+            byte[] decodeSource = Base64.decode(byteSource, Base64.DEFAULT);
+
+            //暗号化キーをバイト配列へ変換
+            String cipherKey = (String) context.getText(R.string.save_token);
+            byte[] byteKey = cipherKey.getBytes(StandardCharsets.UTF_8.name());
+
+            // 暗号化情報生成
+            SecretKeySpec key = new SecretKeySpec(byteKey, 0, CIPHER_KEY_LENGTH, CIPHER_TYPE);
+
+            // 暗号化クラスの初期化
+            Cipher cipher = Cipher.getInstance(CIPHER_DATA);
+            cipher.init(Cipher.DECRYPT_MODE, key);
+
+            // 暗号化の結果格納
+            byte[] byteResult = cipher.doFinal(decodeSource);
+
+            //文字列に変換する
+            String stringResult = new String(byteResult,StandardCharsets.UTF_8);
+
+            return stringResult;
+
+        } catch (UnsupportedEncodingException e) {
+            DTVTLogger.debug(e);
+        } catch (NoSuchAlgorithmException e) {
+            DTVTLogger.debug(e);
+        } catch (InvalidKeyException e) {
+            DTVTLogger.debug(e);
+        } catch (NoSuchPaddingException e) {
+            DTVTLogger.debug(e);
+        } catch (BadPaddingException e) {
+            DTVTLogger.debug(e);
+        } catch (IllegalBlockSizeException e) {
+            DTVTLogger.debug(e);
+        }
+
+        //何らかの原因で失敗したので、元の物をそのまま返す
+        return source;
+    }
+
+    /**
+     * 平文のままでは抵抗がある文字列を暗号化する.
+     * （ただし、暗号化強度を高める設定は何もしていないので、本当に重要な情報には使用不可）
+     *
+     * @param source 元の文字列
+     * @return 暗号化後文字列
+     */
+    public static String getCipherString(Context context, String source) {
+        try {
+            // 元文字列をバイト配列へ変換
+            byte[] byteSource = new byte[0];
+            byteSource = source.getBytes(StandardCharsets.UTF_8.name());
+
+            //暗号化キーの取得
+            String cipherKey = (String) context.getText(R.string.save_token);
+
+            // 暗号化キーをバイト配列へ変換
+            byte[] byteKey = cipherKey.getBytes(StandardCharsets.UTF_8.name());
+
+            // 暗号化キー生成
+            SecretKeySpec key = new SecretKeySpec(byteKey, 0, CIPHER_KEY_LENGTH, CIPHER_TYPE);
+
+            // 暗号化クラスの初期化
+            Cipher cipher = Cipher.getInstance(CIPHER_DATA);
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+
+            // 暗号化の結果格納
+            byte[] byteResult = cipher.doFinal(byteSource);
+
+            // Base64エンコード
+            String stringResult = Base64.encodeToString(byteResult,Base64.DEFAULT);
+
+            return stringResult;
+
+        } catch (UnsupportedEncodingException e) {
+            DTVTLogger.debug(e);
+        } catch (NoSuchAlgorithmException e) {
+            DTVTLogger.debug(e);
+        } catch (InvalidKeyException e) {
+            DTVTLogger.debug(e);
+        } catch (NoSuchPaddingException e) {
+            DTVTLogger.debug(e);
+        } catch (BadPaddingException e) {
+            DTVTLogger.debug(e);
+        } catch (IllegalBlockSizeException e) {
+            DTVTLogger.debug(e);
+        }
+
+        //何らかの原因で失敗したので、元の物をそのまま返す
+        return source;
     }
 }

@@ -48,7 +48,11 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
      */
     private boolean mIsCommunicating = false;
     /**
-     * tab名.
+     * ページング単位.
+     */
+    private static final int NUM_PER_PAGE = 20;
+    /**
+     * タブ名.
      */
     private String[] mTabNames;
     /**
@@ -60,7 +64,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
      */
     private RankingFragmentFactory mRankingFragmentFactory = null;
     /**
-     * tabレイアウト.
+     * タブ用レイアウト.
      */
     private TabItemLayout mTabLayout;
     /**
@@ -72,17 +76,9 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
      */
     private ArrayList<GenreListMetaData> genreMetaDataList;
     /**
-     * プログレスダイアログ.
-     */
-    private ProgressBar progressBar;
-    /**
      * ビデオジャンル取得用プロパイダ.
      */
     private VideoGenreProvider mVideoGenreProvider = null;
-    /**
-     * 1ページ当たりの読み込み件数.
-     */
-    private static final int NUM_PER_PAGE = 10;
     /**
      * 標準タブ数.
      */
@@ -182,7 +178,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
     private void initView() {
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
-        progressBar = findViewById(R.id.weekly_ranking_progress);
         mViewPager = findViewById(R.id.vp_weekly_ranking_result);
     }
 
@@ -201,6 +196,7 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
             public void onPageSelected(final int position) {
                 // スクロールによるタブ切り替え
                 super.onPageSelected(position);
+                resetPaging();
                 setTab(position);
                 getGenreData();
             }
@@ -219,8 +215,6 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         }
         if (genreMetaDataList != null && genreMetaDataList.size() > 0) {
             mRankingDataProvider.getWeeklyRankingData(genreMetaDataList.get(mViewPager.getCurrentItem()).getId());
-        } else {
-            progressBar.setVisibility(View.GONE);
         }
     }
 
@@ -367,14 +361,15 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         }
 
     }
+
     /**
      * インジケーター設置.
      *
-     * @param position tabの位置
+     * @param position タブの位置
      */
     private void setTab(final int position) {
         mTabLayout.setTab(position);
-        progressBar.setVisibility(View.VISIBLE);
+//        progressBar.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -400,14 +395,13 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         return this;
     }
 
-
     /**
      * 取得条件"総合"用コールバック.
      * TODO:正規のジャンルで動的に処理するようにしないといけない
      */
     @Override
     public void onWeeklyRankListCallback(final List<ContentsData> contentsDataList) {
-        progressBar.setVisibility(View.GONE);
+//        progressBar.setVisibility(View.GONE);
         DTVTLogger.start("ResponseDataSize :" + contentsDataList.size());
         setShowWeeklyRanking(contentsDataList);
     }

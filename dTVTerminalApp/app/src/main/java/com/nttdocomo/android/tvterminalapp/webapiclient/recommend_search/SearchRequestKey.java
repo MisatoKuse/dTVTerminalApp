@@ -4,8 +4,9 @@
 
 package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
-
-
+/**
+ * 検索レコメンドAPI用リクエストキー.
+ */
 public class SearchRequestKey {
     //request key
     public static final String kUserId = "?userId";
@@ -19,4 +20,5 @@ public class SearchRequestKey {
     public static final String kCategoryId = "&filterCategoryId";
     public static final String kCondition = "&condition";
     public static final String kFilterViewableAge = "&filterViewableAge";
+    public static final String kDisplayId = "&displayId";
 }

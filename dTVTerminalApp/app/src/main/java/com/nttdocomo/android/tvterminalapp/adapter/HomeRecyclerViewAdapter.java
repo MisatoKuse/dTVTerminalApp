@@ -373,7 +373,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     private void setNowOnAirInfo(final ContentsData contentsData, final ViewHolder viewHolder) {
         String startTime = contentsData.getLinearStartDate();
         String endTime = contentsData.getLinearEndDate();
-        String channelName = getChannelName(contentsData.getServiceId());
+        String channelName = contentsData.getChannelName();
         if (TextUtils.isEmpty(startTime) || !DBUtils.isNumber(startTime)) {
             //TODO 放送開始時間が取得できなかった場合の仕様は現在未決定のため仮の時間を設定する.
             startTime = "1516766741";

@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.UPDATE_DATE;
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATE_TYPE;
 
 public class TvScheduleInsertDataManager {
 
@@ -66,7 +65,6 @@ public class TvScheduleInsertDataManager {
                 }
                 values.put(DBUtils.fourKFlgConversion(keyName), valName);
             }
-            values.put(DATE_TYPE, "home");
             tvScheduleListDao.insert(values);
         }
         DataBaseManager.getInstance().closeDatabase();
@@ -121,7 +119,6 @@ public class TvScheduleInsertDataManager {
                 }
                 values.put(DBUtils.fourKFlgConversion(keyName), valName);
             }
-            values.put(DATE_TYPE, "program");
             tvScheduleListDao.insert(values);
         }
         DataBaseManager.getInstance().closeDatabase();

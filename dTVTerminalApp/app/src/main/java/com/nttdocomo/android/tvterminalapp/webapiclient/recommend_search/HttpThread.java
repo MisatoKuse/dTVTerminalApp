@@ -6,12 +6,19 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
 import android.content.Context;
 import android.os.Handler;
+import android.text.TextUtils;
 
 import com.nttdocomo.android.ocsplib.OcspURLConnection;
 import com.nttdocomo.android.ocsplib.OcspUtil;
 import com.nttdocomo.android.ocsplib.exception.OcspParameterException;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.struct.OneTimeTokenData;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOTT;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ServiceTokenClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,7 +34,7 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 /**
  * HTTP通信スレッド.
  */
-public class HttpThread extends Thread {
+public class HttpThread extends Thread implements DaccountGetOTT.DaccountGetOttCallBack {
 
     /**
      * ハンドラー.
@@ -57,7 +64,8 @@ public class HttpThread extends Thread {
      * HTTPURLConnection.
      */
     private HttpsURLConnection mHttpUrlConn;
-
+    //サービストークン情報
+    private OneTimeTokenData mOneTimeTokenData = null;
     /**
      * エラー時ステータスの構造体.
      */
@@ -168,6 +176,51 @@ public class HttpThread extends Thread {
 
     @Override
     public void run() {
+        //先行して、サービストークンの取得を行うため、期限内かどうかをみる
+        mOneTimeTokenData = SharedPreferencesUtils.getOneTimeTokenData(mContext);
+
+        //期限内ならば、そのトークンを使用するので、そのまま実行を行う
+        if(mOneTimeTokenData.getOneTimeTokenGetTime() > DateUtils.getNowTimeFormatEpoch()) {
+            runEntity();
+            return;
+        }
+
+        //dアカウントのワンタイムパスワードの取得を行う
+        DaccountGetOTT getOtt = new DaccountGetOTT();
+        getOtt.execDaccountGetOTT(mContext, this);
+
+        //以後の処理はワンタイムパスワード取得後のコールバックで行う
+    }
+
+
+    @Override
+    public void getOttCallBack(int result, String id, String oneTimePassword) {
+        if(result != 0) {
+            //パスワードの取得に失敗したので、サービストークンは取得できない。次に進む
+            runEntity();
+            return;
+        }
+
+        //サービストークンを取得してから実行を行う
+        ServiceTokenClient serviceTokenClient = new ServiceTokenClient(mContext);
+        serviceTokenClient.getServiceTokenApi(oneTimePassword,
+                new ServiceTokenClient.TokenGetCallback() {
+            @Override
+            public void onTokenGot(boolean success) {
+                //成功していれば、トークンはプリファレンスに入っているので、読み込む
+                mOneTimeTokenData = SharedPreferencesUtils.getOneTimeTokenData(mContext);
+
+                //次へ進む
+                runEntity();
+                return;
+            }
+        });
+    }
+
+    /**
+     * 通信処理の実体.
+     */
+    private void runEntity() {
         clearStatus();
         final StringBuffer sb = new StringBuffer();
         String str;
@@ -181,6 +234,9 @@ public class HttpThread extends Thread {
             mHttpUrlConn.setRequestMethod("GET");
             mHttpUrlConn.setRequestProperty("Accept-Charset", "utf-8");
             mHttpUrlConn.setRequestProperty("contentType", "utf-8");
+
+            //サービストークンを付加する
+            addToken(mHttpUrlConn);
 
             //コンテキストがあればSSL証明書失効チェックを行う
             if (mContext != null) {
@@ -240,6 +296,21 @@ public class HttpThread extends Thread {
 
         //ハンドラーの有無でコールバックの返し方を変える
         finishSelect(sb);
+    }
+
+    /**
+     * 取得できていれば、サービストークンを追加する.
+     *
+     * @param httpsUrlConnection
+     */
+    private void addToken(HttpsURLConnection httpsUrlConnection) {
+        if(!TextUtils.isEmpty(mOneTimeTokenData.getOneTimeToken())) {
+            DTVTLogger.debug("set token = " + mOneTimeTokenData.getOneTimeToken());
+            //サービストークンが格納されていれば、それを使用する
+            httpsUrlConnection.setRequestProperty(WebApiBasePlala.ONE_TIME_TOKEN_KEY,
+                    mOneTimeTokenData.getOneTimeToken());
+
+        }
     }
 
     /**

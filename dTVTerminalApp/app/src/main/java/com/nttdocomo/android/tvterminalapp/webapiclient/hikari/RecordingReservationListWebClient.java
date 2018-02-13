@@ -22,11 +22,11 @@ public class RecordingReservationListWebClient
 
 
     /**
-     * コールバック
+     * コールバック.
      */
     public interface RecordingReservationListJsonParserCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
          *
          * @param RecordingReservationListResponse JSONパース後のデータ
          */
@@ -39,7 +39,7 @@ public class RecordingReservationListWebClient
             mRecordingReservationListJsonParserCallback;
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
@@ -72,7 +72,7 @@ public class RecordingReservationListWebClient
     }
 
     /**
-     * 録画予約一覧取得
+     * 録画予約一覧取得.
      *
      * @param limit レスポンスの最大件数・ゼロの場合全件とする
      * @param offset 取得位置・ゼロの場合全件とする
@@ -97,15 +97,15 @@ public class RecordingReservationListWebClient
         String sendParameter = makeSendParameter(limit, offset);
 
         //録画一覧の情報を読み込むため、録画一覧APIを呼び出す
-        openUrl(UrlConstants.WebApiUrl.RECORDING_RESERVATION_LIST_WEB_CLIENT,
-                sendParameter, this);
+        openUrlAddOtt(UrlConstants.WebApiUrl.RECORDING_RESERVATION_LIST_WEB_CLIENT,
+                sendParameter, this, null);
 
         //今のところ失敗していないので、trueを返す
         return true;
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param limit                                      レスポンスの最大件数・ゼロの場合全件とする
      * @param offset                                     取得位置・ゼロの場合全件とする
@@ -136,7 +136,7 @@ public class RecordingReservationListWebClient
 
 
     /**
-     * 指定されたパラメータをJSONで組み立てて文字列にする
+     * 指定されたパラメータをJSONで組み立てて文字列にする.
      *
      * @param limit  レスポンスの最大件数・ゼロの場合全件とする
      * @param offset 取得位置・ゼロの場合全件とする

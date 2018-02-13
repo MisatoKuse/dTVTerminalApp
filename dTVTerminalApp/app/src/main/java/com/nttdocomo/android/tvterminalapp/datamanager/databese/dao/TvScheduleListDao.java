@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATE_TYPE;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.TV_SCHEDULE_LIST_TABLE_NAME;
 
 public class TvScheduleListDao {
@@ -144,10 +143,8 @@ public class TvScheduleListDao {
     public int deleteByType(String type) {
         StringBuilder deleteSelection = new StringBuilder();
         deleteSelection.append(JsonConstants.META_RESPONSE_DISP_TYPE);
-        deleteSelection.append("=? AND ");
-        deleteSelection.append(DATE_TYPE);
-        deleteSelection.append("=?");
-        return db.delete(TV_SCHEDULE_LIST_TABLE_NAME, deleteSelection.toString(), new String[]{type, "program"});
+        deleteSelection.append("=? ");
+        return db.delete(TV_SCHEDULE_LIST_TABLE_NAME, deleteSelection.toString(), new String[]{type});
     }
 }
 

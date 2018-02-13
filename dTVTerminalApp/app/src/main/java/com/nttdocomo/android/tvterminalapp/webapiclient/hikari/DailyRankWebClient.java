@@ -108,7 +108,7 @@ public class DailyRankWebClient
         }
 
         //日毎ランク一覧を呼び出す
-        openUrl(UrlConstants.WebApiUrl.DAILY_RANK_LIST, sendParameter, this);
+        openUrlAddOtt(UrlConstants.WebApiUrl.DAILY_RANK_LIST, sendParameter, this, null);
 
         //今のところ失敗していないので、trueを返す
         return true;

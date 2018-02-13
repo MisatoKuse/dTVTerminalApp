@@ -221,6 +221,7 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
             }
             contentsData.setTitle(ci.title);
             contentsData.setRecommendOrder(ci.rank);
+            contentsData.setMobileViewingFlg(ci.mobileViewingFlg);
 
             SearchContentInfo searchContentInfo = resultType.getResultType().searchContentInfo.get(i);
 

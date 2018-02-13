@@ -160,8 +160,8 @@ public class ClipKeyListWebClient
         }
 
         //クリップキー一覧を呼び出す
-        openUrl(UrlConstants.WebApiUrl.CLIP_KEY_LIST_WEB_CLIENT,
-                sendParameter, this);
+        openUrlAddOtt(UrlConstants.WebApiUrl.CLIP_KEY_LIST_WEB_CLIENT,
+                sendParameter, this, null);
 
         //今のところ正常なので、trueで帰る
         return true;

@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent">
-    <TextView
-        android:id="@+id/home_main_layout_recyclerview_footer"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_centerVertical="true"
-        android:text="@string/home_contents_list_see_all"
-        android:textSize="@dimen/home_contents_see_all_text_size"
-        android:gravity="center_vertical"
-        android:textColor="@color/home_item_see_all_text_color"/>
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/home_main_layout_recyclerview_footer"
+	android:layout_width="@dimen/home_contents_item_more_arrow_width"
+	android:layout_height="match_parent">
+
+	<ImageView
+		android:layout_width="@dimen/home_contents_item_more_arrow_size"
+		android:layout_height="@dimen/home_contents_item_more_arrow_size"
+		android:layout_centerInParent="true"
+		android:background="@drawable/selector_home_more_arrow"/>
 </RelativeLayout>

@@ -25,21 +25,26 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
     private TotalSearchWebApiDelegate mDelegate;
 
     /**
-     * genreFilter文字列.
+     * ジャンルフィルター.
      */
-    private String genreFilterString = "";
+    private String mGenreFilterString = "";
     /**
-     * dubbedFilter文字列.
+     * ダビングフィルター.
      */
-    private String dubbedFilterString = "";
+    private String mDubbedFilterString = "";
     /**
-     * chargeFilter文字列.
+     * 料金フィルター.
      */
-    private String chargeFilterString = "";
+    private String mChargeFilterString = "";
     /**
-     * otherFilter文字列.
+     * その他フィルター.
      */
-    private String otherFilterString = "";
+    private String mOtherFilterString = "";
+
+    /**
+     * リクエストパラメータ"displayId"固定値.
+     */
+    private static final String SEARCH_WEBAPI_PARAM_DISPLAY_ID = "SEA0000001";
 
     /**
      * SSLチェック用コンテキスト.
@@ -112,6 +117,8 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
             if (filterViewableAge != null) {
                 queryItems.put(SearchRequestKey.kFilterViewableAge, filterViewableAge);
             }
+            //固定値のため直接指定する
+            queryItems.put(SearchRequestKey.kDisplayId, SEARCH_WEBAPI_PARAM_DISPLAY_ID);
 
             get(UrlConstants.WebApiUrl.TOTAL_SEARCH_URL, queryItems, this, mContext);
         } else {
@@ -126,71 +133,70 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
      */
     private String concatFilterString() {
         String resultString = "";
-        if (!genreFilterString.isEmpty()) {
-            resultString += genreFilterString;
+        if (!mGenreFilterString.isEmpty()) {
+            resultString += mGenreFilterString;
         }
-        if (!dubbedFilterString.isEmpty()) {
+        if (!mDubbedFilterString.isEmpty()) {
             if (resultString.isEmpty()) {
-                resultString += dubbedFilterString;
+                resultString += mDubbedFilterString;
             } else {
                 resultString += "+";
-                resultString += dubbedFilterString;
+                resultString += mDubbedFilterString;
             }
         }
-        if (!chargeFilterString.isEmpty()) {
+        if (!mChargeFilterString.isEmpty()) {
             if (resultString.isEmpty()) {
-                resultString += chargeFilterString;
+                resultString += mChargeFilterString;
             } else {
                 resultString += "+";
-                resultString += "chargeFilterString";
+                resultString += "mChargeFilterString";
             }
         }
-        if (!otherFilterString.isEmpty()) {
+        if (!mOtherFilterString.isEmpty()) {
             if (resultString.isEmpty()) {
-                resultString += otherFilterString;
+                resultString += mOtherFilterString;
             } else {
                 resultString += "+";
-                resultString += otherFilterString;
+                resultString += mOtherFilterString;
             }
         }
-        genreFilterString = "";
-        dubbedFilterString = "";
-        chargeFilterString = "";
-        otherFilterString = "";
+        mGenreFilterString = "";
+        mDubbedFilterString = "";
+        mChargeFilterString = "";
+        mOtherFilterString = "";
         return resultString;
     }
 
     /**
-     * 文字の追加.
-     *
-     * @param addType 追加する文字
+     * 各フィルタ文字列設定.
+     * @param addType 各フィルター文字列
      */
     private void appendString(final SearchFilterType addType) {
         switch (addType) {
-        case genreMovie:
-            genreFilterString = "genre:" + getValueFromFilterType(addType);
-            break;
-        case dubbedText:
-        case dubbedTextAndDubbing:
-        case dubbedDubbed:
-            if (dubbedFilterString.isEmpty()) {
-                dubbedFilterString = "dubbed:" + getValueFromFilterType(addType);
-            } else {
-                dubbedFilterString += ",";
-                dubbedFilterString += (getValueFromFilterType(addType));
-            }
-            break;
-        case chargeUnlimited:
-        case chargeRental:
-            if (chargeFilterString.isEmpty()) {
-                chargeFilterString = "charge:" + getValueFromFilterType(addType);
-            } else {
-                chargeFilterString += ",";
-                chargeFilterString += (getValueFromFilterType(addType));
-            }
-            break;
-        case otherHdWork:
-            otherFilterString = "other:" + getValueFromFilterType(addType);
+            case genreMovie:
+                mGenreFilterString = "genre:" + getValueFromFilterType(addType);
+                break;
+            case dubbedText:
+            case dubbedTextAndDubbing:
+            case dubbedDubbed:
+                if (mDubbedFilterString.isEmpty()) {
+                    mDubbedFilterString = "dubbed:" + getValueFromFilterType(addType);
+                } else {
+                    mDubbedFilterString += ",";
+                    mDubbedFilterString += (getValueFromFilterType(addType));
+                }
+                break;
+            case chargeUnlimited:
+            case chargeRental:
+                if (mChargeFilterString.isEmpty()) {
+                    mChargeFilterString = "charge:" + getValueFromFilterType(addType);
+                } else {
+                    mChargeFilterString += ",";
+                    mChargeFilterString += (getValueFromFilterType(addType));
+                }
+                break;
+            case otherHdWork:
+                mOtherFilterString = "other:" + getValueFromFilterType(addType);
         }
     }
 
@@ -202,20 +208,20 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
      */
     private String getValueFromFilterType(final SearchFilterType type) {
         switch (type) {
-        case genreMovie:
-            return "active_v001";
-        case dubbedText:
-            return "1";
-        case dubbedDubbed:
-            return "2";
-        case dubbedTextAndDubbing:
-            return "3";
-        case chargeUnlimited:
-            return "0";
-        case chargeRental:
-            return "1";
-        case otherHdWork:
-            return "1";
+            case genreMovie:
+                return "active_v001";
+            case dubbedText:
+                return "1";
+            case dubbedDubbed:
+                return "2";
+            case dubbedTextAndDubbing:
+                return "3";
+            case chargeUnlimited:
+                return "0";
+            case chargeRental:
+                return "1";
+            case otherHdWork:
+                return "1";
         }
         return "1"; //test
     }

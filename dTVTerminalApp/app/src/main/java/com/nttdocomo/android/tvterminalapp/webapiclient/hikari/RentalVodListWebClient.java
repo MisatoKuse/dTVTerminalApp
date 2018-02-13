@@ -94,7 +94,7 @@ public class RentalVodListWebClient
         mRentalVodListJsonParserCallback = rentalVodListJsonParserCallback;
 
         //レンタルビデオの情報を読み込むため、購入済みVOD一覧を呼び出す
-        openUrl(UrlConstants.WebApiUrl.RENTAL_VOD_LIST_WEB_CLIENT, "", this);
+        openUrlAddOtt(UrlConstants.WebApiUrl.RENTAL_VOD_LIST_WEB_CLIENT, "", this, null);
 
         //今のところ失敗していないので、trueを返す
         return true;

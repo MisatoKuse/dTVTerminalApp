@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATE_TYPE;
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.UPDATE_DATE;
 
 /**
@@ -73,7 +72,6 @@ public class ChannelInsertDataManager {
                     values.put(UPDATE_DATE, !TextUtils.isEmpty(valName) ? valName.substring(0, 10) : "");
                 }
                 values.put(DBUtils.fourKFlgConversion(keyName), valName);
-                values.put(DATE_TYPE, "program");
             }
             channelListDao.insert(values);
         }

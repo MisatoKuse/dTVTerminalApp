@@ -73,6 +73,8 @@ public class ContentsData {
     private String mReserved2 = null;
     // reserved4
     private String mReserved4 = null;
+    // mobileViewingFlg
+    private String  mobileViewingFlg = null;
     // みどころ
     private String mHighlight = null;
     // クリップボタン
@@ -104,7 +106,16 @@ public class ContentsData {
     private boolean mClipExec = false;
     // クリップ未/済
     private boolean mClipStatus = false;
+    // サブタイトル
+    private String mSubTitle = null;
 
+    public String getSubTitle() {
+        return mSubTitle;
+    }
+
+    public void setSubTitle(String mSubTitle) {
+        this.mSubTitle = mSubTitle;
+    }
 
     public String getRank() {
         return mRank;
@@ -477,7 +488,15 @@ public class ContentsData {
         mDlFileFullPath=path;
     }
 
-    public String getDlFileFullPath(){
+    public String getDlFileFullPath() {
         return mDlFileFullPath;
+    }
+
+    public String getMobileViewingFlg() {
+        return mobileViewingFlg;
+    }
+
+    public void setMobileViewingFlg(String mobileViewingFlg) {
+        this.mobileViewingFlg = mobileViewingFlg;
     }
 }

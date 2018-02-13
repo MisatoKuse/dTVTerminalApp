@@ -21,7 +21,7 @@ public class MyChannelRegisterWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
     /**
-     * コールバック
+     * コールバック.
      */
     public interface MyChannelRegisterJsonParserCallback {
         /**
@@ -37,7 +37,7 @@ public class MyChannelRegisterWebClient
     private MyChannelRegisterJsonParserCallback myChannelRegisterJsonParserCallback;
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
@@ -68,7 +68,7 @@ public class MyChannelRegisterWebClient
     }
 
     /**
-     * マイチャンネル登録取得
+     * マイチャンネル登録取得.
      *
      * @param serviceId                           サービスID
      * @param title                               　チャンネル名
@@ -100,15 +100,15 @@ public class MyChannelRegisterWebClient
         }
 
         //リモート録画一覧の情報を読み込むため、リモート録画一覧を呼び出す
-        openUrl(UrlConstants.WebApiUrl.MY_CHANNEL_SET_WEB_CLIENT,
-                sendParameter, this);
+        openUrlAddOtt(UrlConstants.WebApiUrl.MY_CHANNEL_SET_WEB_CLIENT,
+                sendParameter, this, null);
 
         //今のところ失敗していないので、trueを返す
         return true;
     }
 
     /**
-     * 指定されたパラメータをJSONで組み立てて文字列にする
+     * 指定されたパラメータをJSONで組み立てて文字列にする.
      *
      * @param serviceId サービスID
      * @return 組み立て後の文字列
@@ -135,7 +135,7 @@ public class MyChannelRegisterWebClient
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param myChannelRegisterJsonParserCallback コールバック
      * @return 値がおかしいならばfalse

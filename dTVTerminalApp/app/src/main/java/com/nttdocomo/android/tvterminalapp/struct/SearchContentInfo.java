@@ -48,6 +48,10 @@ public class SearchContentInfo {
      * ランク.
      */
     public String rank;
+    /**
+     *  mobileViewingFlg　
+     */
+    public String  mobileViewingFlg;
 
     /**
      * コンストラクタ.
@@ -62,7 +66,7 @@ public class SearchContentInfo {
      */
     public SearchContentInfo(final boolean clipFlag, final String contentId, final int serviceId,
                              final String contentPictureUrl1, final String contentPictureUrl2,
-                             final String title, final int rank) {
+                             final String title, final int rank, final String  mobileViewingFlg) {
         this.clipFlag = clipFlag;
         this.contentId = contentId;
         this.serviceId = serviceId;
@@ -70,6 +74,7 @@ public class SearchContentInfo {
         this.contentPictureUrl2 = contentPictureUrl2;
         this.title = title;
         this.rank = String.valueOf(rank);
+        this.mobileViewingFlg = mobileViewingFlg;
         //TODO:↓レコメンドサーバからコンテンツ詳細情報が取得できるようになったら、synop、comment、highlight取得に関する一連の処理を追加する
         this.synop = "";
         this.comment = "※解説(ダミー)【吹替版】" +

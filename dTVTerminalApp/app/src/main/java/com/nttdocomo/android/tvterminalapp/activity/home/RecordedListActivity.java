@@ -4,7 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.activity.home;
 
-import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,10 +13,8 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
@@ -47,6 +44,7 @@ import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadService;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloaderBase;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
@@ -63,27 +61,13 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         RecordedBaseFragmentScrollListener, DlnaRecVideoListener, TabItemLayout.OnClickTabTextListener {
 
     private String[] mTabNames = null;
-
     private TabItemLayout mTabLayout = null;
     private ViewPager mViewPager = null;
     private ProgressBar progressBar;
     private Boolean mIsMenuLaunch = false;
-
     private DlnaProvRecVideo mDlnaProvRecVideo = null;
     private RecordedFragmentFactory mRecordedFragmentFactory = null;
-
-    private final static int TEXT_SIZE = 15;
-
-    private static final int SCREEN_TIME_WIDTH_PERCENT = 9;
-    private static final int MARGIN_ZERO = 0;
-    private static final int MARGIN_LEFT_TAB = 5;
-
     public static final String RECORD_LIST_KEY = "recordListKey";
-
-    //設定するマージンのピクセル数
-    private static final String DATE_FORMAT = "yyyy/MM/ddHH:mm:ss";
-    private String mDate[] = {"日", "月", "火", "水", "木", "金", "土"};
-
     public static final String sMinus = "-";
 
     //private boolean mIsDlOk=false;
@@ -106,11 +90,11 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
 
-        initDl();
-        initView();
-        getData();
-        initTabVIew();
-        setPagerAdapter();
+//        initDl();
+//        initView();
+//        getData();
+//        initTabVIew();
+//        setPagerAdapter();
         DTVTLogger.end();
     }
 
@@ -138,6 +122,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         mTabNames = getResources().getStringArray(R.array.record_list_tab_names);
         mRecordedFragmentFactory = new RecordedFragmentFactory();
         progressBar = findViewById(R.id.record_list_main_layout_progress);
+        mViewPager.setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -145,7 +130,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      */
     private void setPagerAdapter() {
         DTVTLogger.start();
-        mViewPager.setAdapter(new RecordedListActivity.MainAdpater(getSupportFragmentManager()));
+        mViewPager.setAdapter(new MainAdpater(getSupportFragmentManager()));
         mViewPager.addOnPageChangeListener(new ViewPager
                 .SimpleOnPageChangeListener() {
             @Override
@@ -177,6 +162,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onClickTab(int position) {
         DTVTLogger.start("position = " + position);
+        mViewPager.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.VISIBLE);
         if (null != mViewPager) {
             DTVTLogger.debug("viewpager not null");
@@ -196,6 +182,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         if (mTabLayout != null) {
             mTabLayout.setTab(position);
         }
+        mViewPager.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.VISIBLE);
         switch (mViewPager.getCurrentItem()) {
             case 0:
@@ -265,14 +252,15 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             baseFragment.notifyDataSetChanged();
         }
         progressBar.setVisibility(View.GONE);
+        mViewPager.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void onPause() {
-        super.onPause();
         if (mDlnaProvRecVideo != null) {
             mDlnaProvRecVideo.stopListen();
         }
+        super.onPause();
     }
 
     /**
@@ -362,24 +350,14 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             public void run() {
                 if(progressBar != null){
                     progressBar.setVisibility(View.GONE);
+                    mViewPager.setVisibility(View.VISIBLE);
                 }
             }
         });
     }
 
     private boolean isDownloadServiceRunning(){
-        ActivityManager mActivityManager = (ActivityManager)getSystemService(ACTIVITY_SERVICE);
-        List<ActivityManager.RunningServiceInfo> mServiceList = mActivityManager.getRunningServices(Integer.MAX_VALUE);
-        return serviceIsStart(mServiceList, DownloadService.class.getName());
-    }
-
-    private boolean serviceIsStart(List<ActivityManager.RunningServiceInfo> list, String className) {
-        for (int i = 0; i < list.size(); i++) {
-            if (className.equals(list.get(i).service.getClassName())){
-                return true;
-            }
-        }
-        return false;
+        return DownloadService.getDlDataQue() != null && DownloadService.getDlDataQue().size() > 0;
     }
 
     private List<Map<String, String>> getDownloadListFromDb(){
@@ -480,7 +458,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void setNotifyData(RecordedBaseFragment baseFrgament, DlnaRecVideoItem dlnaRecVideoItem, int i, String fullDlPaht){
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.JAPAN);
+        SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);
         // TODO 年齢取得未実装の為、固定値を返却
         boolean isAge = true;
         ContentsData contentsData = new ContentsData();
@@ -497,7 +475,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                     StringUtils util = new StringUtils(this);
                     String[] strings = {String.valueOf(calendar.get(Calendar.MONTH)), "/",
                             String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)), " (",
-                            mDate[calendar.get(Calendar.DAY_OF_WEEK) - 1], ") ",
+                            DateUtils.STRING_DAY_OF_WEEK[calendar.get(Calendar.DAY_OF_WEEK)], ") ",
                             String.valueOf(calendar.get(Calendar.HOUR_OF_DAY)), ":",
                             String.valueOf(calendar.get(Calendar.MINUTE))};
                     if(null != strings && 0<strings.length){
@@ -532,7 +510,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             contentsData.setTime(sb.toString());
             contentsData.setDownloadFlg(baseFrgament.mContentsList.get(i).getDownLoadStatus());
             contentsData.setDlFileFullPath(fullDlPaht);
-            baseFrgament.getContentsData().add(contentsData);
+            List<ContentsData> l = baseFrgament.getContentsData();
+            if(null!=l){
+                l.add(contentsData);
+            }
         } else {
             // NOP
         }
@@ -542,6 +523,11 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     protected void onResume() {
         super.onResume();
         registReceiver();
+        initDl();
+        initView();
+        getData();
+        initTabVIew();
+        setPagerAdapter();
     }
 
     @Override

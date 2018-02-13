@@ -459,9 +459,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         HomeRecyclerViewAdapter horizontalViewAdapter = new HomeRecyclerViewAdapter(this, contentsDataList, index + HOME_CONTENTS_DISTINCTION_ADAPTER);
         recyclerView.setAdapter(horizontalViewAdapter);
         View footer = LayoutInflater.from(this).inflate(R.layout.home_main_layout_recyclerview_footer, recyclerView, false);
-        TextView textView = footer.findViewById(R.id.home_main_layout_recyclerview_footer);
+        RelativeLayout homeMore = footer.findViewById(R.id.home_main_layout_recyclerview_footer);
         //もっと見るの遷移先を設定
-        textView.setOnClickListener(new View.OnClickListener() {
+        homeMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
                 startTo(index);
@@ -505,9 +505,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 startActivity(WatchingVideoListActivity.class, null);
                 break;
             case HOME_CONTENTS_SORT_TV_CLIP:
-            case HOME_CONTENTS_SORT_VOD_CLIP:
                 //クリップ一覧へ遷移
                 startActivity(ClipListActivity.class, null);
+                break;
+            case HOME_CONTENTS_SORT_VOD_CLIP:
+                //クリップ一覧へ遷移
+                final Bundle bundle = new Bundle();
+                bundle.putInt(ClipListActivity.CLIP_LIST_START_PAGE, ClipListActivity.CLIP_LIST_PAGE_NO_OF_VOD);
+                startActivity(ClipListActivity.class, bundle);
                 break;
             default:
                 break;
@@ -748,11 +753,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onRoleListCallback(final ArrayList<RoleListMetaData> roleListInfo) {
-        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
-    }
-
-    @Override
-    public void channelListCallback(final ArrayList<ChannelInfo> channels) {
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 

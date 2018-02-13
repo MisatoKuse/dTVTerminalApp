@@ -60,6 +60,9 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         setContentView(R.layout.launch_main_layout);
         enableHeaderBackIcon(false);
 
+        //アプリ起動時のサービストークン削除を行う
+        SharedPreferencesUtils.deleteOneTimeTokenData(getApplicationContext());
+
         boolean isDlnaOk = startDlna();
         if (!isDlnaOk) {
             DTVTLogger.debug("BaseActivity");

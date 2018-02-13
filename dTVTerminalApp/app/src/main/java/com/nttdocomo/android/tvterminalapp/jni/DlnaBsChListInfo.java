@@ -73,7 +73,7 @@ public class DlnaBsChListInfo {
         return ret;
     }
 
-    public ArrayList<DlnaBsChListItem> getRecordVideoLists() {
+    public ArrayList<DlnaBsChListItem> getBsChLists() {
         return mLists;
     }
 }

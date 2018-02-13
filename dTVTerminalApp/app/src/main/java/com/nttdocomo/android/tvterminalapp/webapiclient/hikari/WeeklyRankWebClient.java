@@ -23,7 +23,6 @@ import java.util.List;
  */
 public class WeeklyRankWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
-
     /**
      * ジャンルID送信用キー.
      */
@@ -49,8 +48,6 @@ public class WeeklyRankWebClient
      * 通信禁止判定フラグ.
      */
     private boolean mIsCancel = false;
-
-
     /**
      * コンテキストを継承元のコンストラクタに送る.
      *
@@ -126,7 +123,7 @@ public class WeeklyRankWebClient
         bundle.putString(WEEKLY_RANK_CLIENT_BUNDLE_KEY, genreId);
 
         //週毎ランク一覧を呼び出す
-        openUrlWithExtraData(UrlConstants.WebApiUrl.WEEKLY_RANK_LIST, sendParameter, this, bundle);
+        openUrlAddOtt(UrlConstants.WebApiUrl.WEEKLY_RANK_LIST, sendParameter, this, bundle);
 
 
         //今のところ失敗は無いので、trueで帰る

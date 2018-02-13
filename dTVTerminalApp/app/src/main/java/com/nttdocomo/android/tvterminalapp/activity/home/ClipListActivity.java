@@ -80,20 +80,23 @@ public class ClipListActivity extends BaseActivity implements
      * FragmentFactory.
      */
     private ClipListFragmentFactory mClipListFragmentFactory = null;
-
     /**
      * ページング単位設定値.
      */
-    private final int NUM_PER_PAGE = 10;
+    private final int NUM_PER_PAGE = 20;
 
     /**
      * タブポジション(Tv).
      */
-    public static final int CLIP_LIST_PAGE_NO_OF_TV = 0;
+    private static final int CLIP_LIST_PAGE_NO_OF_TV = 0;
     /**
      * タブポジション(ビデオ).
      */
     public static final int CLIP_LIST_PAGE_NO_OF_VOD = 1;
+    /**
+     * 表示開始タブ指定キー.
+     */
+    public static final String CLIP_LIST_START_PAGE = "clipListStartPage";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -103,6 +106,7 @@ public class ClipListActivity extends BaseActivity implements
         //Headerの設定
         setTitleText(getString(R.string.str_clip_activity_title));
         Intent intent = getIntent();
+        int startPageNo = intent.getIntExtra(CLIP_LIST_START_PAGE, CLIP_LIST_PAGE_NO_OF_TV);
         mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
         if (mIsMenuLaunch) {
             enableHeaderBackIcon(false);
@@ -113,7 +117,15 @@ public class ClipListActivity extends BaseActivity implements
         initData();
         initView();
         resetPaging();
-        setTv();
+        //前画面からのタブ指定起動反映
+        if (startPageNo == CLIP_LIST_PAGE_NO_OF_VOD) {
+            setVod();
+        } else {
+            setTv();
+        }
+        //初回表示のみ前画面からのタブ指定を反映する
+        mViewPager.setCurrentItem(startPageNo);
+        mTabLayout.setTab(startPageNo);
     }
 
     /**
@@ -225,10 +237,14 @@ public class ClipListActivity extends BaseActivity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        for (int i = 0; i < 2; ++i) {
-            ClipListBaseFragment b = mClipListFragmentFactory.createFragment(i, this);
-            if (null != b) {
-                b.mClipListData.clear();
+        //全フラグメントを削除
+        if (null != mViewPager) {
+            int sum = mClipListFragmentFactory.getFragmentCount();
+            for (int i = 0; i < sum; ++i) {
+                ClipListBaseFragment b = mClipListFragmentFactory.createFragment(i, this);
+                if (null != b) {
+                    b.mClipListData.clear();
+                }
             }
         }
     }
@@ -446,6 +462,8 @@ public class ClipListActivity extends BaseActivity implements
             public void onPageSelected(final int position) {
                 super.onPageSelected(position);
                 mTabLayout.setTab(position);
+                //タブ移動時にページリセット
+                resetPaging();
 
                 switch (mViewPager.getCurrentItem()) {
                     case 0:
@@ -470,11 +488,8 @@ public class ClipListActivity extends BaseActivity implements
         ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_VOD, this);
         //スワイプ時にページング中のプログレスバーを非表示にする
         resetCommunication();
-        if (fragment.mClipListData == null || fragment.mClipListData.size() < 1) {
-            //スワイプ時に取得済みデータがある場合は再取得しない
-            fragment.setMode(ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_VIDEO);
-            mVodClipDataProvider.getClipData(1);
-        }
+        fragment.setMode(ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_VIDEO);
+        mVodClipDataProvider.getClipData(1);
     }
 
     /**
@@ -484,11 +499,8 @@ public class ClipListActivity extends BaseActivity implements
         ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_TV, this);
         //スワイプ時にページング中のプログレスバーを非表示にする
         resetCommunication();
-        if (fragment.mClipListData == null || fragment.mClipListData.size() < 1) {
-            //スワイプ時に取得済みデータがある場合は再取得しない
-            fragment.setMode(ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_TV);
-            mTvClipDataProvider.getClipData(1);
-        }
+        fragment.setMode(ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_TV);
+        mTvClipDataProvider.getClipData(1);
     }
 
     /**

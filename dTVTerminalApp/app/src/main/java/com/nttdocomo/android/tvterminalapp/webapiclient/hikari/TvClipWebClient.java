@@ -23,7 +23,7 @@ public class TvClipWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback, JsonParserThread.JsonParser {
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
@@ -48,11 +48,11 @@ public class TvClipWebClient
     }
 
     /**
-     * コールバック
+     * コールバック.
      */
     public interface TvClipJsonParserCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
          *
          * @param tvClipLists JSONパース後のデータ
          */
@@ -63,7 +63,7 @@ public class TvClipWebClient
     private TvClipJsonParserCallback mTvClipJsonParserCallback;
 
     /**
-     * 通信成功時のコールバック
+     * 通信成功時のコールバック.
      *
      * @param returnCode 戻り値構造体
      */
@@ -92,7 +92,7 @@ public class TvClipWebClient
     }
 
     /**
-     * TVクリップ取得
+     * TVクリップ取得.
      *
      * @param ageReq                   視聴年齢制限値（1から17までの値）
      * @param upperPagetLimit          結果の最大件数（1以上）
@@ -123,15 +123,15 @@ public class TvClipWebClient
         }
 
         //TVクリップ一覧を呼び出す
-        openUrl(UrlConstants.WebApiUrl.TV_CLIP_LIST,
-                sendParameter, this);
+        openUrlAddOtt(UrlConstants.WebApiUrl.TV_CLIP_LIST,
+                sendParameter, this, null);
 
         //今のところ正常なので、trueで帰る
         return true;
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param ageReq                   視聴年齢制限値
      * @param upperPagetLimit          結果の最大件数
@@ -169,7 +169,7 @@ public class TvClipWebClient
     }
 
     /**
-     * 指定されたパラメータをJSONで組み立てて文字列にする
+     * 指定されたパラメータをJSONで組み立てて文字列にする.
      *
      * @param ageReq          視聴年齢制限値
      * @param upperPagetLimit 結果の最大件数

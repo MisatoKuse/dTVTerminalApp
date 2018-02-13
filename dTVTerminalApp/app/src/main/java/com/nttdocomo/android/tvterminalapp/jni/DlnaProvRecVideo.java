@@ -40,7 +40,7 @@ public class DlnaProvRecVideo {
         if(null==di){
             return false;
         }
-        if(!di.startDlna()){
+        if(!isDlnaProRecVideoAvailable()){
             return false;
         }
         boolean ret = di.registerCurrentDms(item);
@@ -61,5 +61,9 @@ public class DlnaProvRecVideo {
             return false;
         }
         return di.browseRecVideoDms();
+    }
+
+    public boolean isDlnaProRecVideoAvailable(){
+        return DlnaInterface.isDlnaRunning();
     }
 }
