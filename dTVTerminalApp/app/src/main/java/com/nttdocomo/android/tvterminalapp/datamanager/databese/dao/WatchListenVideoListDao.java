@@ -57,12 +57,14 @@ public class WatchListenVideoListDao {
             for (String stringBuffer : strings) {
                 map.put(stringBuffer, cursor.getString(cursor.getColumnIndex(stringBuffer)));
             }
-            list.add(map);
-
+            if (map.isEmpty()) {
+                list = null;
+            } else {
+                list.add(map);
+            }
             isEof = cursor.moveToNext();
         }
         cursor.close();
-
         return list;
     }
 

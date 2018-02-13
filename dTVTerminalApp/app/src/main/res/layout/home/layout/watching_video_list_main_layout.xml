@@ -4,11 +4,26 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:id="@+id/watch_listen_list_linear_layout"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/watch_listen_background_color"
-    android:id="@+id/watch_listen_list_linear_layout"
-    >
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/video_watching_progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/base_progress"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
 
     <ListView
         android:id="@+id/video_watching_list"
@@ -18,5 +33,4 @@
         android:listSelector="@drawable/channel_list_item_selector"
         android:dividerHeight="@dimen/watch_listen_video_divider_high">
     </ListView>
-
 </LinearLayout>

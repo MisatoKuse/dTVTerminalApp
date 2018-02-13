@@ -6,6 +6,21 @@
     android:layout_height="match_parent"
     android:background="@color/ranking_list_background">
 
+    <RelativeLayout
+        android:id="@+id/tv_rank_progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/base_progress"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
+
     <ListView
         android:id="@+id/tv_rank_list"
         android:layout_width="match_parent"

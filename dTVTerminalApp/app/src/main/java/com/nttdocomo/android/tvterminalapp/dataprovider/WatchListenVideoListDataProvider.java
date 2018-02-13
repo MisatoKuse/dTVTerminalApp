@@ -8,6 +8,7 @@ import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.select.WatchListenVideoListDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
@@ -18,6 +19,7 @@ import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WatchListenVideoWebClient;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,17 +49,25 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
 
     @Override
     public void onWatchListenVideoJsonParsed(final List<WatchListenVideoList> watchListenVideoList) {
+        WatchListenVideoListDataManager videoListDataManager = new WatchListenVideoListDataManager(mContext);
         if (watchListenVideoList != null && watchListenVideoList.size() > 0) {
             WatchListenVideoList list = watchListenVideoList.get(0);
             if (!mRequiredClipKeyList
                     || mResponseEndFlag) {
-                sendWatchListenVideoListData(list.getVcList());
+                List<HashMap<String, String>> vcList = list.getVcList();
+                if (vcList != null && vcList.get(0).size() > 0 && vcList.get(0).isEmpty()) {
+                    sendWatchListenVideoListData(list.getVcList());
+                } else {
+                    //通信でデータ取得できないときはDBから取得
+                    sendWatchListenVideoListData(videoListDataManager.selectWatchListenVideoData());
+                }
             } else {
                 mWatchListenVideoList = list;
             }
         } else {
             if (null != mApiDataProviderCallback) {
-                mApiDataProviderCallback.watchListenVideoListCallback(null);
+                //通信でデータ取得できないときはDBから取得
+                sendWatchListenVideoListData(videoListDataManager.selectWatchListenVideoData());
             }
         }
     }
@@ -142,6 +152,12 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
 
             webClient.getWatchListenVideoApi(ageReq, upperPageLimit,
                     lowerPageLimit, pagerOffset, pagerDirection, this);
+        } else {
+            //WEBAPIを取得できなかった時はDBのデータを使用
+            List<Map<String, String>> watchListenList = new ArrayList<>();
+            WatchListenVideoListDataManager watchListenVideoDataManager = new WatchListenVideoListDataManager(mContext);
+            watchListenList = watchListenVideoDataManager.selectWatchListenVideoData();
+            sendWatchListenVideoListData(watchListenList);
         }
     }
 
@@ -151,6 +167,12 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
      * @param mapList コンテンツリストデータ
      */
     private void sendWatchListenVideoListData(final List<Map<String, String>> mapList) {
+        //情報が取得できなかった時はActivityにnullを返却
+        if (mapList == null || mapList.size() < 1 || mapList.get(0).isEmpty()) {
+            mApiDataProviderCallback.watchListenVideoListCallback(null);
+            return;
+        }
+
         List<ContentsData> rankingContentsDataList = new ArrayList<>();
 
         ContentsData contentInfo;

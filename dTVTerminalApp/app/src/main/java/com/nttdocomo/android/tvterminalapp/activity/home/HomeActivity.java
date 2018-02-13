@@ -18,11 +18,9 @@ import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -51,7 +49,6 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
-import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalChListWebClient;
@@ -206,11 +203,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mLinearLayout.setVisibility(View.GONE);
         mRelativeLayout = findViewById(R.id.home_main_layout_progress_bar_Layout);
         mRelativeLayout.setVisibility(View.VISIBLE);
-        ProgressBar progressBar = new ProgressBar(HomeActivity.this, null, android.R.attr.progressBarStyle);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.addRule(RelativeLayout.CENTER_IN_PARENT);
-        mRelativeLayout.addView(progressBar, params);
     }
 
     /**
@@ -307,6 +299,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         TextView agreementTextView = findViewById(R.id.home_main_layout_kytv);
         LinearLayout agreementRl = findViewById(R.id.home_main_layout_kyrl);
         ImageView prImageView = findViewById(R.id.home_main_layout_pr);
+        //TODO:契約状態取得が実装されるまで未契約メッセージは暫定的に非表示とする
+        agreementRl.setVisibility(View.GONE);
+        //TODO:契約状態取得が実装されるまでバナーは暫定的に非表示とする
+        prImageView.setVisibility(View.GONE);
         agreementTextView.setOnClickListener(this);
         prImageView.setOnClickListener(this);
 
