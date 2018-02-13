@@ -51,6 +51,8 @@
     <dimen name="main_header_icon_size">44dp</dimen>
     <dimen name="main_header_back_icon_left_margin">8dp</dimen>
     <dimen name="main_header_menu_padding_end">8dp</dimen>
+    <dimen name="main_header_title_text_width">182dp</dimen>
+    <dimen name="main_header_title_image_width">176dp</dimen>
     <dimen name="header_title_text_size">16dp</dimen>
     <dimen name="list_item_time_text_size">12dp</dimen>
     <dimen name="list_item_today_ranking_time_size">12dp</dimen>

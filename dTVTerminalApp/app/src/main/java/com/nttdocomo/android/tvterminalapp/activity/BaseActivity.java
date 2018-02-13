@@ -33,8 +33,13 @@ import android.widget.Toast;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.common.MenuDisplay;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.DAccountInductionActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.DAccountReSettingActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.DAccountSettingHelpActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.LaunchActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.PairingHelpActivity;
+import com.nttdocomo.android.tvterminalapp.activity.launch.STBConnectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectErrorActivity;
 import com.nttdocomo.android.tvterminalapp.activity.setting.SettingActivity;
@@ -76,7 +81,8 @@ public class BaseActivity extends FragmentActivity implements
 
     private LinearLayout mBaseLinearLayout = null;
     private RelativeLayout mHeaderLayout = null;
-    protected TextView titleTextView = null;
+    protected TextView mTitleTextView = null;
+    private ImageView mTitleImageView = null;
     protected ImageView mTitleArrowImage = null;
     private ImageView mHeaderBackIcon = null;
     private ImageView mStbStatusIcon = null;
@@ -240,12 +246,13 @@ public class BaseActivity extends FragmentActivity implements
         DTVTLogger.start();
         mBaseLinearLayout = findViewById(R.id.base_ll);
         mHeaderLayout = findViewById(R.id.base_title);
-        titleTextView = findViewById(R.id.header_layout_text);
+        mTitleTextView = findViewById(R.id.header_layout_text);
+        mTitleImageView = findViewById(R.id.header_layout_title_image);
         mTitleArrowImage = findViewById(R.id.tv_program_list_main_layout_calendar_arrow);
-        DTVTLogger.end();
         mHeaderBackIcon = findViewById(R.id.header_layout_back);
         mStbStatusIcon = findViewById(R.id.header_stb_status_icon);
         mMenuImageViewForBase = findViewById(R.id.header_layout_menu);
+        DTVTLogger.end();
     }
 
     /**
@@ -454,12 +461,26 @@ public class BaseActivity extends FragmentActivity implements
 
     /**
      * タイトル内容を設定.
+     * ドコモテレビターミナル画像を出す場合は空文字を指定し、enableStbStatusIcon()より後に呼ぶ必要がある.
+     * //TODO タイトルとSTBアイコンが重なった場合の処理
      *
      * @param text 設定する文字列
      */
     protected void setTitleText(final CharSequence text) {
-        if (titleTextView != null) {
-            titleTextView.setText(text);
+        if (this instanceof LaunchActivity || this instanceof STBConnectActivity
+                || (this instanceof STBSelectActivity && text.equals(getString(R.string.str_app_title))
+                || this instanceof STBSelectErrorActivity || this instanceof PairingHelpActivity
+                || this instanceof DAccountInductionActivity || this instanceof HomeActivity
+                || this instanceof DAccountReSettingActivity || this instanceof DAccountSettingHelpActivity)) {
+            if (mTitleImageView != null) {
+                //ヘッダーに「ドコモテレビターミナル」画像を表示する対応
+                mTitleTextView.setVisibility(View.GONE);
+                mTitleImageView.setVisibility(View.VISIBLE);
+            }
+        } else if (mTitleTextView != null) {
+            mTitleTextView.setVisibility(View.VISIBLE);
+            mTitleImageView.setVisibility(View.GONE);
+            mTitleTextView.setText(text);
         }
     }
 
@@ -469,8 +490,8 @@ public class BaseActivity extends FragmentActivity implements
      * @return タイトル内容
      */
     protected CharSequence getTitleText() {
-        if (titleTextView != null) {
-            return titleTextView.getText();
+        if (mTitleTextView != null) {
+            return mTitleTextView.getText();
         }
         return "";
     }

@@ -130,7 +130,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
         mChannelRecyclerView.bringToFront();
         mTagImageView.bringToFront();
         mTagImageView.setOnClickListener(this);
-        titleTextView.setOnClickListener(this);
+        mTitleTextView.setOnClickListener(this);
         mTitleArrowImage.setOnClickListener(this);
         mTimeScrollView.setScrollView(programScrollView);
         programScrollView.setScrollView(mTimeScrollView);

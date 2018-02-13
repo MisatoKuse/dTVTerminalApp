@@ -38,7 +38,7 @@
     <TextView
         android:id="@+id/header_layout_text"
         style="@style/autoscroll"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/main_header_title_text_width"
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
         android:maxEms="9"
@@ -49,6 +49,14 @@
         android:textColor="#FFFFFF"
         android:textSize="@dimen/main_header_title_text_size"
         android:textStyle="bold" />
+    
+    <ImageView
+        android:id="@+id/header_layout_title_image"
+        android:layout_width="@dimen/main_header_title_image_width"
+        android:layout_height="match_parent"
+        android:src="@mipmap/header_material_title_logo_drt"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"/>
 
     <!-- 番組表カレンダー矢印 -->
     <ImageView
