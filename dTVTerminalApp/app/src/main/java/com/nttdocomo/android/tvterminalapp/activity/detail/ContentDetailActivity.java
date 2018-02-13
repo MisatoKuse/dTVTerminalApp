@@ -24,6 +24,7 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -169,6 +170,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     public static final int DTV_CONTENTS_SERVICE_ID = 15;
     public static final int D_ANIMATION_CONTENTS_SERVICE_ID = 17;
     public static final int DTV_CHANNEL_CONTENTS_SERVICE_ID = 43;
+    public static final int DTV_HIKARI_CONTENTS_SERVICE_ID = 44;
     private static final int CONTENTS_DETAIL_TAB_TEXT_SIZE = 15;
     private static final int CONTENTS_DETAIL_TAB_OTHER_MARGIN = 0;
     private static final String CONTENTS_DETAIL_RESERVEDID = "1";
@@ -245,6 +247,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     private RelativeLayout mVideoCtrlRootView;
     private FrameLayout mVideoPlayPause = null;
     private TextView mVideoCurTime = null;
+    private FrameLayout mFrameLayout = null;
     private TextView mVideoTotalTime = null;
     private TextView mTvTitle = null;
     private ImageView mVideoRewind10 = null;
@@ -1341,27 +1344,28 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      * データの初期化.
      */
     private void initContentData() {
-
+        mFrameLayout = findViewById(R.id.header_watch_by_tv);
         // タブ数を先に決定するため、コンテンツ詳細のデータを最初に取得しておく
         mDetailData = mIntent.getParcelableExtra(RECOMMEND_INFO_BUNDLE_KEY);
         if (mDetailData != null) {
             DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-            //ペアリング済み状態　「テレビで視聴」が表示
+//            STBに接続している　「テレビで視聴」が表示
             if (null != dlnaDmsItem && null != dlnaDmsItem.mUdn && !dlnaDmsItem.mUdn.isEmpty()) {
+//            if (getStbStatus()) {
                 int serviceId = mDetailData.getServiceId();
                 if (serviceId == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID
                         || serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID
                         || serviceId == OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID) {
                     // 他サービス(dtv/dtvチャンネル/dアニメ)フラグを立てる
                     mIsOtherService = true;
-                    if (serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID
-                            || serviceId == OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID) {
+                    if (serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID) {
                         // リモコンUIのリスナーを設定
                         createRemoteControllerView(true);
                         mIsControllerVisible = true;
+                        mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner_d_anime, null));
                         setStartRemoteControllerUIListener(this);
                         //「serviceId」が「15」(dTVコンテンツ)の場合
-                    } else {
+                    } else if (serviceId == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID) {
                         // 「reserved1」が「1」STB視聴不可
                         if (CONTENTS_DETAIL_RESERVEDID.equals(mDetailData.getReserved1())) {
                             createRemoteControllerView(false);
@@ -1369,21 +1373,28 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                         } else {
                             createRemoteControllerView(true);
                             mIsControllerVisible = true;
+                            mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner_dtv, null));
                             setStartRemoteControllerUIListener(this);
                         }
+                    } else {
+                        createRemoteControllerView(true);
+                        mIsControllerVisible = true;
+                        mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari, null));
+                        setStartRemoteControllerUIListener(this);
                     }
                 } else if (serviceId == OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID) {
                     if (METARESPONSE_DISP_TYPE_TV_PROGRAM.equals(mDetailData.getDispType())
                             && DTV_CHANNEL_TV_SERVICE1.equals(mDetailFullData.getmTv_service())) {
                         createRemoteControllerView(true);
                         mIsControllerVisible = true;
+                        mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari, null));
                         setStartRemoteControllerUIListener(this);
                     }
                 }
+            } else {   //STBに接続してない状態　「テレビで視聴する」非表示
+                createRemoteControllerView(false);
+                mIsControllerVisible = false;
             }
-        } else {   //ペアリングしてない状態　「テレビで視聴する」非表示
-            createRemoteControllerView(false);
-            mIsControllerVisible = false;
         }
         if (mIsOtherService) {
             // コンテンツ詳細(他サービスの時は、タブ一つに設定する)
@@ -2445,7 +2456,14 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
 
     @Override
     public void onEndRemoteControl() {
-        // nop.
+        if (DTV_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
+            mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner_dtv, null));
+        } else if (D_ANIMATION_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
+            mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner_d_anime, null));
+        } else if (DTV_CHANNEL_CONTENTS_SERVICE_ID == mDetailData.getServiceId()
+                || DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
+            mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner_dtvchannel_and_hikari, null));
+        }
         super.onEndRemoteControl();
     }
 
