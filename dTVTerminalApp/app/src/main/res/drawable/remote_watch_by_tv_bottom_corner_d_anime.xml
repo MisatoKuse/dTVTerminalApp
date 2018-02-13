@@ -4,9 +4,11 @@
   -->
 
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#DD5e30" />
-    <corners android:topLeftRadius="8dp"
-        android:topRightRadius="8dp"
-/>
-    <stroke android:width="0dp" android:color="#DD5e30" />
+    <solid android:color="@color/remote_watch_by_tv_bottom_corners_d_anime" />
+    <corners
+        android:topLeftRadius="@dimen/remote_watch_by_tv_bottom_corners"
+        android:topRightRadius="@dimen/remote_watch_by_tv_bottom_corners" />
+    <stroke
+        android:width="@dimen/remote_watch_by_tv_bottom_width"
+        android:color="@color/remote_watch_by_tv_bottom_corners_d_anime" />
 </shape>

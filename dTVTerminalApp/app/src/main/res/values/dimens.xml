@@ -160,6 +160,10 @@
     <dimen name="contents_detail_channel_sub_title_padding_bottom">10dp</dimen>
     <dimen name="contents_detail_channel_sub_title_txt_size">15dp</dimen>
 
+    <!--リモコン -->
+    <dimen name="remote_watch_by_tv_bottom_corners">8dp</dimen>
+    <dimen name="remote_watch_by_tv_bottom_width">0dp</dimen>
+
     <!-- WatchingVideoActivity -->
     <dimen name="watch_listen_video_divider_high">1dp</dimen>
     <dimen name="watch_listen_thumbnail_high">127dp</dimen>

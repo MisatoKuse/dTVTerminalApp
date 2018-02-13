@@ -103,6 +103,9 @@
 
     <!--//リモコン画面-->
     <drawable name="color_little_gray">#E5E5E5</drawable>
+    <color name="remote_watch_by_tv_bottom_corners_dtv">#D3052C</color>
+    <color name="remote_watch_by_tv_bottom_corners_d_anime">#DD5e30</color>
+    <color name="remote_watch_by_tv_bottom_corners_dtvchannel_and_hikari">#00A2E6</color>
     <!--//視聴中ビデオ-->
     <color name="watch_listen_background_color">#1d1d1d</color>
     <!--//チャンネルリスト-->

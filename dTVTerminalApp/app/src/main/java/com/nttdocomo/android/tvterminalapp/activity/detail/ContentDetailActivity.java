@@ -1353,7 +1353,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
 //            STBに接続している　「テレビで視聴」が表示
             if (null != dlnaDmsItem && null != dlnaDmsItem.mUdn && !dlnaDmsItem.mUdn.isEmpty()) {
-//            if (getStbStatus()) {
                 int serviceId = mDetailData.getServiceId();
                 if (serviceId == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID
                         || serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID
