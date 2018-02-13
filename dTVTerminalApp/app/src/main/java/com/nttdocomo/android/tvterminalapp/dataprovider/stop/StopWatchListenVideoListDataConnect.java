@@ -26,7 +26,9 @@ public class StopWatchListenVideoListDataConnect extends AsyncTask<WatchListenVi
         //通信を行っている処理を止める
         if (dataProviders != null) {
             for (WatchListenVideoListDataProvider watchListenVideoListDataProvider : dataProviders) {
-                watchListenVideoListDataProvider.stopConnect();
+                if (watchListenVideoListDataProvider != null) {
+                    watchListenVideoListDataProvider.stopConnect();
+                }
             }
         }
         return null;

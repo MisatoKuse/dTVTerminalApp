@@ -153,10 +153,12 @@ public class VideoRankingActivity extends BaseActivity implements VideoRankingAp
         }
 
         for (int i = 0; i < tabCount; ++i) { // タブの数だけ処理を行う
-            RankingBaseFragment baseFragment = mRankingFragmentFactory.createFragment(
-                    ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK, i, this);
-            if (null != baseFragment) {
-                baseFragment.mData.clear();
+            if (mRankingFragmentFactory != null) {
+                RankingBaseFragment baseFragment = mRankingFragmentFactory.createFragment(
+                        ContentsAdapter.ActivityTypeItem.TYPE_VIDEO_RANK, i, this);
+                if (null != baseFragment) {
+                    baseFragment.mData.clear();
+                }
             }
         }
     }

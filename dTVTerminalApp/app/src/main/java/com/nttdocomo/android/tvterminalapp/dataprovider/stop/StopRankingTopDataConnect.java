@@ -26,7 +26,9 @@ public class StopRankingTopDataConnect extends AsyncTask<RankingTopDataProvider,
         //通信を行っている処理を止める
         if (dataProviders != null) {
             for (RankingTopDataProvider rankingTopDataProvider : dataProviders) {
-                rankingTopDataProvider.stopConnect();
+                if (rankingTopDataProvider != null) {
+                    rankingTopDataProvider.stopConnect();
+                }
             }
         }
         return null;

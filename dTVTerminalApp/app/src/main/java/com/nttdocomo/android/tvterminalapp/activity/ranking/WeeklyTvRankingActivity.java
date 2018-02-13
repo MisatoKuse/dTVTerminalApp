@@ -14,7 +14,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -165,10 +164,12 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
         }
 
         for (int i = 0; i < tabCount; ++i) { // タブの数だけ処理を行う
-            RankingBaseFragment b = mRankingFragmentFactory.createFragment(
-                    ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK, i, this);
-            if (null != b) {
-                b.mData.clear();
+            if (mRankingFragmentFactory != null) {
+                RankingBaseFragment b = mRankingFragmentFactory.createFragment(
+                        ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK, i, this);
+                if (null != b) {
+                    b.mData.clear();
+                }
             }
         }
     }
@@ -469,8 +470,8 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    public void onStartCommunication() {
+        super.onStartCommunication();
         DTVTLogger.start();
 
         //ジャンル取得のデータプロパイダがあれば通信を許可し、無ければ取得する
@@ -482,6 +483,9 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
                     ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK);
             mVideoGenreProvider.getGenreListDataRequest();
             //ジャンルデータを使用してランキングデータ取得を行うため、以降の処理を行わない
+            if (mRankingDataProvider != null) {
+                mRankingDataProvider.enableConnect();
+            }
             return;
         }
 
@@ -506,9 +510,19 @@ public class WeeklyTvRankingActivity extends BaseActivity implements
 
         RankingBaseFragment baseFragment = getCurrentFragment();
         if (baseFragment != null) {
-            baseFragment.enableContentsAdapterCommunication();
-            baseFragment.changeLastScrollUp(false);
-            baseFragment.displayMoreData(false);
+            if (baseFragment.mData.size() == 0) {
+                //Fragmentがデータを保持していない場合は再取得を行う
+                mVideoGenreProvider = new VideoGenreProvider(this, this,
+                        ContentsAdapter.ActivityTypeItem.TYPE_WEEKLY_RANK);
+                mVideoGenreProvider.getGenreListDataRequest();
+                return;
+            }
+            if (baseFragment.getRankingAdapter() != null) {
+                baseFragment.enableContentsAdapterCommunication();
+                baseFragment.noticeRefresh();
+                baseFragment.changeLastScrollUp(false);
+                baseFragment.displayMoreData(false);
+            }
         }
     }
 

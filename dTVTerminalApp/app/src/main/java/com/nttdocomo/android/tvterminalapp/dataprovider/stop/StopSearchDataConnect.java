@@ -26,7 +26,9 @@ public class StopSearchDataConnect extends AsyncTask<SearchDataProvider, Void, V
         //通信を行っている処理を止める
         if (dataProviders != null) {
             for (SearchDataProvider searchDataProvider : dataProviders) {
-                searchDataProvider.stopConnect();
+                if (searchDataProvider != null) {
+                    searchDataProvider.stopConnect();
+                }
             }
         }
         return null;

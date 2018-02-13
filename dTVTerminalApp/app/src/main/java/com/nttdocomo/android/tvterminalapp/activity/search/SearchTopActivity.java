@@ -636,8 +636,8 @@ public class SearchTopActivity extends BaseActivity
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    public void onStartCommunication() {
+        super.onStartCommunication();
         DTVTLogger.start();
         if (mIsSearching) {
             //検索中にバックグラウンドに遷移した場合はページ数を補正する

@@ -278,8 +278,8 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    public void onStartCommunication() {
+        super.onStartCommunication();
         DTVTLogger.start();
         if (mRentalDataProvider != null) {
             mRentalDataProvider.enableConnect();

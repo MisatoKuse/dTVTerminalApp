@@ -26,7 +26,9 @@ public class StopScaledProListDataConnect extends AsyncTask<ScaledDownProgramLis
         //通信を行っている処理を止める
         if (dataProviders != null) {
             for (ScaledDownProgramListDataProvider scaledDownProgramListDataProvider : dataProviders) {
-                scaledDownProgramListDataProvider.stopConnect();
+                if (scaledDownProgramListDataProvider != null) {
+                    scaledDownProgramListDataProvider.stopConnect();
+                }
             }
         }
         return null;

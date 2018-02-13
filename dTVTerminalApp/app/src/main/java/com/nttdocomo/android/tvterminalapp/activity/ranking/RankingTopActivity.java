@@ -263,8 +263,8 @@ public class RankingTopActivity extends BaseActivity implements RankingTopDataPr
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    public void onStartCommunication() {
+        super.onStartCommunication();
         DTVTLogger.start();
         boolean getData = false;
 

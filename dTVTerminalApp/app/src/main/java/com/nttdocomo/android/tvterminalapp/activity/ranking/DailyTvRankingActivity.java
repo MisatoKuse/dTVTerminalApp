@@ -354,8 +354,8 @@ public class DailyTvRankingActivity extends BaseActivity implements
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    public void onStartCommunication() {
+        super.onStartCommunication();
         DTVTLogger.start();
 
         //データプロパイダあれば通信を許可し、無ければ作成

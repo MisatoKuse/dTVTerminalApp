@@ -26,7 +26,9 @@ public class StopRentalDataConnect extends AsyncTask<RentalDataProvider, Void, V
         //通信を行っている処理を止める
         if (dataProviders != null) {
             for (RentalDataProvider rentalDataProvider : dataProviders) {
-                rentalDataProvider.stopConnect();
+                if (rentalDataProvider != null) {
+                    rentalDataProvider.stopConnect();
+                }
             }
         }
         return null;

@@ -26,7 +26,9 @@ public class StopContentsAdapterConnect extends AsyncTask<ContentsAdapter, Void,
         //通信を行っている処理を止める
         if (adapters != null) {
             for (ContentsAdapter contentsAdapter : adapters) {
-                contentsAdapter.stopConnect();
+                if (contentsAdapter != null) {
+                    contentsAdapter.stopConnect();
+                }
             }
         }
         return null;

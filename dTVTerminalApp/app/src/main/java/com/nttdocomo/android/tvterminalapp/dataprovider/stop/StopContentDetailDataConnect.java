@@ -26,7 +26,9 @@ public class StopContentDetailDataConnect extends AsyncTask<DtvContentsDetailDat
         //通信を行っている処理を止める
         if (dataProviders != null) {
             for (DtvContentsDetailDataProvider contentsDetailDataProvider : dataProviders) {
-                contentsDetailDataProvider.stopConnect();
+                if (contentsDetailDataProvider != null) {
+                    contentsDetailDataProvider.stopConnect();
+                }
             }
         }
         return null;

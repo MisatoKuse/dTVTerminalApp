@@ -26,7 +26,9 @@ public class StopVideoGenreConnect extends AsyncTask<VideoGenreProvider, Void, V
         //通信を行っている処理を止める
         if (providers != null) {
             for (VideoGenreProvider videoGenreProvider : providers) {
-                videoGenreProvider.stopConnect();
+                if (videoGenreProvider != null) {
+                    videoGenreProvider.stopConnect();
+                }
             }
         }
         return null;
