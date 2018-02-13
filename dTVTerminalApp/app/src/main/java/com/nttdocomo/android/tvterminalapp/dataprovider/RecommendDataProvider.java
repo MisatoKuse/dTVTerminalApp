@@ -43,10 +43,18 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
 
     //コールバック
     private RecommendApiDataProviderCallback mApiDataProviderCallback = null;
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsStop = false;
 
     //タブ番号の控え
     private int mRequestPageNo;
 
+    /**
+     * RecommendWebClient.
+     */
+    private RecommendWebClient mRecommendWebClient = null;
     /**
      * テレビカテゴリー一覧（dTVチャンネル　VOD（見逃し）が無くなった等の新情報を反映）.
      */
@@ -330,10 +338,13 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         }
         requestData.startIndex = String.valueOf(startIndex);
         requestData.maxResult = String.valueOf(maxResult);
-        // サーバへリクエストを送信
-        RecommendWebClient webClient = new RecommendWebClient(this, mContext);
-        webClient.getRecommendApi(requestData);
-
+        if (!mIsStop) {
+            // サーバへリクエストを送信
+            mRecommendWebClient = new RecommendWebClient(this, mContext);
+            mRecommendWebClient.getRecommendApi(requestData);
+        } else {
+            DTVTLogger.error("RecommendDataProvider is stopping connect");
+        }
         //戻り値はコールバック任せとなるので、こちらはヌルを返す
         return null;
     }
@@ -530,5 +541,26 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         stringBuilder.append(recommendRequestId.DANIME.getRequestSCId());
 
         return stringBuilder.toString();
+    }
+    /**
+     * 通信を止める.
+     */
+    public void stopConnect() {
+        DTVTLogger.start();
+        mIsStop = true;
+        if (mRecommendWebClient != null) {
+            mRecommendWebClient.stopConnection();
+        }
+    }
+
+    /**
+     * 通信を許可する.
+     */
+    public void enableConnect() {
+        DTVTLogger.start();
+        mIsStop = false;
+        if (mRecommendWebClient != null) {
+            mRecommendWebClient.enableConnection();
+        }
     }
 }

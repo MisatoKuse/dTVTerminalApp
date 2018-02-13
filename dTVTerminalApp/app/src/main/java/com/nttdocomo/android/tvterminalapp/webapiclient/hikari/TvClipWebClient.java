@@ -23,6 +23,11 @@ public class TvClipWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback, JsonParserThread.JsonParser {
 
     /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
+
+    /**
      * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
@@ -104,6 +109,11 @@ public class TvClipWebClient
     public boolean getTvClipApi(int ageReq, int upperPagetLimit, int lowerPagetLimit,
                                 int pagerOffset, String pagerDirection,
                                 TvClipJsonParserCallback tvClipJsonParserCallback) {
+        if (mIsCancel) {
+            DTVTLogger.error("TvClipWebClient is stopping connection");
+            return false;
+        }
+
         //パラメーターのチェック
         if (!checkNormalParameter(ageReq, upperPagetLimit, lowerPagetLimit,
                 pagerOffset, pagerDirection, tvClipJsonParserCallback)) {
@@ -200,5 +210,22 @@ public class TvClipWebClient
         }
 
         return answerText;
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnection() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        stopAllConnections();
+    }
+
+    /**
+     * 通信可能状態にする.
+     */
+    public void enableConnection() {
+        DTVTLogger.start();
+        mIsCancel = false;
     }
 }

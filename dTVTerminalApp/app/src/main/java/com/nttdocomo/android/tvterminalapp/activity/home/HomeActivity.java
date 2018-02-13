@@ -31,6 +31,8 @@ import com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivi
 import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopHomeDataConnect;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopUserInfoDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -85,10 +87,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * コンテンツ情報取得失敗フラグ.
      */
     private boolean mIsGetContentsInfoFailed = false;
-    /**
-     * onCreateが終了しているかのフラグ.
-     */
-    private boolean mIsOnCreateFinish = false;
     /**
      * NOW ON AIR用チャンネル一覧.
      */
@@ -145,6 +143,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * アダプタ内でのリスト識別用定数.
      */
     private final static int HOME_CONTENTS_DISTINCTION_ADAPTER = 10;
+    /**
+     * HomeDataProvider.
+     */
+    private HomeDataProvider mHomeDataProvider = null;
+    /**
+     * UserInfoDataProvider.
+     */
+    private UserInfoDataProvider mUserInfoDataProvider = null;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -156,11 +162,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
-
-        mIsOnCreateFinish = false;
-        initData();
-        initView();
-        getUserInfo();
     }
 
     /**
@@ -229,13 +230,43 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     protected void onResume() {
         super.onResume();
         mIsGetContentsInfoFailed = false;
-        //アプリ起動時のデータ取得はonCreateで実施済みのためonResumeでは行わない
-        if (mIsOnCreateFinish) {
+        initData();
+        mUserInfoDataProvider = new UserInfoDataProvider(this, this);
+        //アプリ起動時のデータ取得ユーザ情報未取得又は時間切れ又はonCreateから開始した場合はユーザ情報取得から
+        if (mUserInfoDataProvider.isUserInfoTimeOut()) {
+            initView();
+            getUserInfo();
+        } else {
             //起動時はプログレスダイアログを表示
-            initData();
             requestHomeData();
         }
-        mIsOnCreateFinish = true;
+    }
+
+    @Override
+    public void onStartCommunication() {
+        super.onStartCommunication();
+        DTVTLogger.start();
+        //通信を再開
+        if (mHomeDataProvider != null) {
+            mHomeDataProvider.enableConnect();
+        }
+        if (mUserInfoDataProvider != null) {
+            mUserInfoDataProvider.enableConnect();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //通信を止める
+        if (mHomeDataProvider != null) {
+            StopHomeDataConnect stopHomeDataConnect = new StopHomeDataConnect();
+            stopHomeDataConnect.execute(mHomeDataProvider);
+        }
+        if (mUserInfoDataProvider != null) {
+            StopUserInfoDataConnect stopUserInfoDataConnect = new StopUserInfoDataConnect();
+            stopUserInfoDataConnect.execute(mUserInfoDataProvider);
+        }
     }
 
     /**
@@ -244,8 +275,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private void requestHomeData() {
         networkCheck();
         //Home画面用データを取得
-        HomeDataProvider homeDataProvider = new HomeDataProvider(this);
-        homeDataProvider.getHomeData();
+        mHomeDataProvider = new HomeDataProvider(this);
+        mHomeDataProvider.getHomeData();
     }
 
     @Override
@@ -627,8 +658,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private void getUserInfo() {
         networkCheck();
         //ユーザー情報の変更検知
-        UserInfoDataProvider dataProvider = new UserInfoDataProvider(this, this);
-        dataProvider.getUserInfo();
+        mUserInfoDataProvider.getUserInfo();
     }
 
     /**

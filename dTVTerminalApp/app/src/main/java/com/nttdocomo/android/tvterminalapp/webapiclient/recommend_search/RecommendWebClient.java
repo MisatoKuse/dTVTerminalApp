@@ -75,9 +75,18 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback,
     //ページID. TODO: 現在はダミーの値
     public static final String USE_PAGE_ID = "0";
 
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
+
     @Override
     public void oneTimePasswordAuthCallback(String url, LinkedHashMap queryItems,
                                             boolean useOnetimePass) {
+        if (mIsCancel) {
+            DTVTLogger.error("RecommendWebClient is stopping connection");
+            return;
+        }
         //ワンタイムパスワードの認証の有無で動作を分ける
         if (useOnetimePass) {
             //ワンタイムパスワードの処理用にクッキーを有効化する
@@ -195,5 +204,22 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback,
     public void onFinish(String responseData) {
         //得られたXMLのパースを行って、データを返す
         new RecommendWebXmlParser(mRecommendCallback).execute(responseData);
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnection() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        stopHTTPConnection();
+    }
+
+    /**
+     * 通信可能状態にする.
+     */
+    public void enableConnection() {
+        DTVTLogger.start();
+        mIsCancel = false;
     }
 }

@@ -20,7 +20,12 @@ import org.json.JSONObject;
 import java.util.List;
 
 public class VodClipWebClient
-        extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback, JsonParserThread.JsonParser{
+        extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback, JsonParserThread.JsonParser {
+
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
 
     /**
      * コンテキストを継承元のコンストラクタに送る.
@@ -115,6 +120,10 @@ public class VodClipWebClient
     public boolean getVodClipApi(int ageReq,int upperPagetLimit,int lowerPagetLimit,
                                  int pagerOffset, String pagerDirection,
                                  VodClipJsonParserCallback vodClipJsonParserCallback) {
+        if (mIsCancel) {
+            DTVTLogger.error("VodClipWebClient is stopping connection");
+            return false;
+        }
         //パラメーターのチェック
         if(!checkNormalParameter(ageReq, upperPagetLimit, lowerPagetLimit,
                 pagerOffset, pagerDirection, vodClipJsonParserCallback)) {
@@ -214,5 +223,22 @@ public class VodClipWebClient
         }
 
         return answerText;
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnection() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        stopAllConnections();
+    }
+
+    /**
+     * 通信可能状態にする.
+     */
+    public void enableConnection() {
+        DTVTLogger.start();
+        mIsCancel = false;
     }
 }
