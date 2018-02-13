@@ -83,7 +83,7 @@ public class DateUtils {
     public static final String RECOMMEND_DTV_LAST_INSERT = "RecommendDTVLastInsert";
 
     /**
-     * おすすめdTV取得日付キー.
+     * おすすめdチャンネル取得日付キー.
      */
     public static final String RECOMMEND_DCHANNEL_LAST_INSERT = "RecommendDCHLastInsert";
 
