@@ -61,7 +61,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/contents_info_thumbnail_text"
-                android:scaleType="fitXY" />
+                android:scaleType="fitCenter" />
 
             <ImageView
                 android:id="@+id/dtv_contents_detail_main_layout_thumbnail_shadow"

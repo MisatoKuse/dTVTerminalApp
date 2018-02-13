@@ -1315,38 +1315,26 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         if (!TextUtils.isEmpty(url)) {
             ThumbnailProvider mThumbnailProvider = new ThumbnailProvider(this);
             mThumbnail.setTag(url);
+            setThumbnail();
             Bitmap bitmap = mThumbnailProvider.getThumbnailImage(mThumbnail, url);
-            if (bitmap == null) {
+            if (bitmap != null) {
                 //サムネイル取得失敗時は取得失敗画像をセットする
-                bitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.error_movie);
+                mThumbnail.setImageBitmap(bitmap);
             }
-            setThumbnail(bitmap);
         }
     }
 
     /**
      * サムネイル画像を表示する.
-     *
-     * @param bitmap サムネイル
      */
-    private void setThumbnail(Bitmap bitmap) {
-        //縦横比を維持したまま幅100%に拡大縮小
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        WindowManager wm = getWindowManager();
-        Display display = wm.getDefaultDisplay();
-        display.getMetrics(displaymetrics);
-        float ratio = ((float) displaymetrics.widthPixels / (float) bitmap.getWidth());
-        Matrix matrix = new Matrix();
-        matrix.postScale(ratio, ratio);
-        Bitmap resizeBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
-                bitmap.getHeight(), matrix, true);
-        mThumbnail.setImageBitmap(resizeBitmap);
-
-        ViewGroup.LayoutParams mShadowLayoutParams = mThumbnailShadow.getLayoutParams();
-        mShadowLayoutParams.width = resizeBitmap.getWidth();
-        mShadowLayoutParams.height = resizeBitmap.getHeight();
-        mThumbnailShadow.setLayoutParams(mShadowLayoutParams);
+    private void setThumbnail() {
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                getWidthDensity(), getWidthDensity() / SCREEN_RATIO_WIDTH_16 * SCREEN_RATIO_HEIGHT_9);
+        Bitmap bitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.error_movie);
+        mThumbnail.setLayoutParams(layoutParams);
+        mThumbnailShadow.setLayoutParams(layoutParams);
         mThumbnailShadow.setVisibility(View.VISIBLE);
+        mThumbnail.setImageBitmap(bitmap);
     }
 
     /**
@@ -1874,8 +1862,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         } else {
             //データ取得失敗時
             if (!mIsOtherService) {
-                Bitmap bitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.error_movie);
-                setThumbnail(bitmap);
+                setThumbnail();
             }
         }
         showProsessBar(false);
