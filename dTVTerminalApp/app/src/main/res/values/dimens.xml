@@ -284,6 +284,7 @@
     <dimen name="panel_content_detail_margin_top">4dp</dimen>
     <dimen name="tv_program_list_main_layout_calendar_arrow_width">24dp</dimen>
     <dimen name="tv_program_list_main_layout_calendar_arrow_height">24dp</dimen>
+    <dimen name="tv_program_item_panel_clip_width">15dp</dimen>
 
     <!--アプリケーション情報-->
     <dimen name="application_info_image_width">128dp</dimen>

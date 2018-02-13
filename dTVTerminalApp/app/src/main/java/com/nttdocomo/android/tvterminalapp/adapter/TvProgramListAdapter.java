@@ -339,9 +339,8 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         if (MISS_CUT_OUT.equals(contentType) || MISS_COMPLETE.equals(contentType)) {
             itemViewHolder.mView.setBackgroundResource(R.drawable.program_start_gray);
             itemViewHolder.mView.setTag(1);
-        }
+        }else {
         //関連VOD(なし)
-        if (MISS_VOD.equals(contentType)) {
             itemViewHolder.mView.setBackgroundResource(R.drawable.program_end_gray);
             itemViewHolder.mStartM.setTextColor(ContextCompat.getColor(mContext, R.color.tv_program_miss_vod));
             itemViewHolder.mContent.setTextColor(ContextCompat.getColor(mContext, R.color.tv_program_miss_vod));
