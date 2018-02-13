@@ -249,7 +249,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 @Override
                 public void onClick(View view) {
                     if (isFastClick()) {
-                        onSampleGlobalMenuButton_PairLoginOk();
+                        displayGlobalMenu();
                     }
                 }
             });
