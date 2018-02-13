@@ -224,7 +224,7 @@ public class WatchingVideoListActivity extends BaseActivity implements
             //通信とJSON Parseに関してerror処理
             DTVTLogger.debug("ClipListActivity::VodClipListCallback, get data failed.");
             // TODO:エラーメッセージ表示はリスト画面上に表示する
-            Toast.makeText(this, "クリップデータ取得失敗", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "視聴中ビデオデータ取得失敗", Toast.LENGTH_SHORT).show();
             resetPaging();
             resetCommunication();
             return;

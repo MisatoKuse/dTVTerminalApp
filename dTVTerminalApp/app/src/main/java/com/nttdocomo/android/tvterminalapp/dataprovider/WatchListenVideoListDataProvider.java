@@ -5,9 +5,12 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
+import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.WatchListenVideoDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.WatchListenVideoListDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
@@ -61,10 +64,11 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
         WatchListenVideoListDataManager videoListDataManager = new WatchListenVideoListDataManager(mContext);
         if (watchListenVideoList != null && watchListenVideoList.size() > 0) {
             WatchListenVideoList list = watchListenVideoList.get(0);
+            setStructDB(list);
             if (!mRequiredClipKeyList
                     || mResponseEndFlag) {
                 List<HashMap<String, String>> vcList = list.getVcList();
-                if (vcList != null && vcList.get(0).size() > 0 && vcList.get(0).isEmpty()) {
+                if (vcList != null && vcList.get(0).size() > 0 && !vcList.get(0).isEmpty()) {
                     sendWatchListenVideoListData(list.getVcList());
                 } else {
                     //通信でデータ取得できないときはDBから取得
@@ -117,36 +121,10 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
 
     /**
      * Activityからのデータ取得要求受付.
-     */
-    public void getWatchListenVideoData(final int pagerOffset) {
-        if (!mIsCancel) {
-            mWatchListenVideoList = null;
-            // クリップキー一覧を取得
-            if (mRequiredClipKeyList) {
-                getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
-            }
-
-            mWebClient = new WatchListenVideoWebClient(mContext);
-            int ageReq = 1;
-            int upperPageLimit = 1;
-            int lowerPageLimit = 1;
-            //int pagerOffset = 1;
-            String pagerDirection = "";
-
-            mWebClient.getWatchListenVideoApi(ageReq, upperPageLimit,
-                    lowerPageLimit, pagerOffset, pagerDirection, this);
-        } else {
-            DTVTLogger.error("WatchListenVideoListDataProvider is stopping connection");
-            mApiDataProviderCallback.watchListenVideoListCallback(null);
-        }
-    }
-
-    /**
-     * Homeからのデータ取得要求受付.
      *
      * @param pagerOffset 取得位置
      */
-    public void requestWatchListenVideoData(final int pagerOffset) {
+    public void getWatchListenVideoData(final int pagerOffset) {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.WATCHING_VIDEO_LIST_LAST_INSERT);
 
@@ -273,5 +251,19 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
         if (mWebClient != null) {
             mWebClient.enableConnection();
         }
+    }
+
+    /**
+     * 視聴中ビデオ一覧データをDBに格納する.
+     *
+     * @param watchListenVideoList 視聴中ビデオ一覧用データ
+     */
+    private void setStructDB(final WatchListenVideoList watchListenVideoList) {
+        mWatchListenVideoList = watchListenVideoList;
+        //DB保存
+        DateUtils dateUtils = new DateUtils(mContext);
+        dateUtils.addLastDate(DateUtils.WATCHING_VIDEO_LIST_LAST_INSERT);
+        WatchListenVideoDataManager watchListenVideoDataManager = new WatchListenVideoDataManager(mContext);
+        watchListenVideoDataManager.insertWatchListenVideoInsertList(mWatchListenVideoList);
     }
 }
