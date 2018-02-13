@@ -488,10 +488,12 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             if (dailyRankList != null && dailyRankList.size() > 0) {
                 sendDailyRankListData(dailyRankList);
             }
+
+            UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
+
             //ビデオランキング
-            //TODO：Sprint11では視聴年齢値、ソート順のみの指定のためその他の値は固定値
-            int ageReq = SharedPreferencesUtils.getSharedPreferencesAgeReq(mContext);
-            List<Map<String, String>> VideoRankList = getVideoRankListData(1, 1, "", ageReq, "",
+            int ageReq = userInfoDataProvider.getUserAge();
+            List<Map<String, String>> VideoRankList = getVideoRankListData(100, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, "",
                     JsonConstants.GENRE_PER_CONTENTS_SORT_PLAY_COUNT_DESC);
             if (VideoRankList != null && VideoRankList.size() > 0) {
                 sendVideoRankListData(VideoRankList);
@@ -506,7 +508,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             //チャンネルリスト取得
             getChannelList(0, 0, "", DEFAULT_CHANNEL_DISPLAY_TYPE);
 
-            UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
             if (userInfoDataProvider.isH4dUser()) {
                 //H4dユーザに必要なデータ取得開始
                 //クリップキー一覧(今日のテレビランキングにまとめられてるので省略するか検討中)
@@ -838,13 +839,11 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         } else {
             //通信クラスにデータ取得要求を出す
             DailyRankWebClient webClient = new DailyRankWebClient(mContext);
-            int ageReq = 1;
-            int upperPageLimit = 1;
-            String lowerPageLimit = "";
-            int pagerOffset = 1;
-            //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
-            webClient.getDailyRankApi(ageReq, upperPageLimit,
-                    lowerPageLimit, pagerOffset, this);
+            // 年齢情報取得(取得済み情報より)
+            UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
+            int ageReq = userInfoDataProvider.getUserAge();
+            int upperPageLimit = 100;
+            webClient.getDailyRankApi(upperPageLimit, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, this);
         }
         return list;
     }

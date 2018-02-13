@@ -31,6 +31,7 @@ import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.DailyRankWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WeeklyRankWebClient;
 
 import java.util.ArrayList;
@@ -557,11 +558,10 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             if (!mIsCancel) {
                 //通信クラスにデータ取得要求を出す
                 mDailyRankWebClient = new DailyRankWebClient(mContext);
-                int ageReq = 1;
-                int upperPageLimit = 1;
-                String lowerPageLimit = "";
-                int pagerOffset = 1;
-                mDailyRankWebClient.getDailyRankApi(ageReq, upperPageLimit, lowerPageLimit, pagerOffset, this);
+                UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
+                int ageReq = userInfoDataProvider.getUserAge();
+                int upperPageLimit = 100;
+                mDailyRankWebClient.getDailyRankApi(upperPageLimit, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, this);
             } else {
                 DTVTLogger.error("RankingTopDataProvider is stopping connect");
             }
@@ -589,11 +589,10 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             if (!mIsCancel) {
                 //通信クラスにデータ取得要求を出す
                 mWeeklyRankWebClient = new WeeklyRankWebClient(mContext);
-                int limit = 1;
-                int offset = 1;
-                String filter = "";
-                int ageReq = 1;
-                mWeeklyRankWebClient.getWeeklyRankApi(limit, offset, filter, ageReq, genreId, this);
+                int upperPageLimit = 100;
+                UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
+                int ageReq = userInfoDataProvider.getUserAge();
+                mWeeklyRankWebClient.getWeeklyRankApi(upperPageLimit, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, genreId, this);
             } else {
                 DTVTLogger.error("RankingTopDataProvider is stopping connect");
             }
@@ -621,14 +620,14 @@ public class RankingTopDataProvider extends ClipKeyListDataProvider implements
             if (!mIsCancel) {
                 //通信クラスにデータ取得要求を出す
                 mContentsListPerGenreWebClient = new ContentsListPerGenreWebClient(mContext);
-                int limit = 1;
-                int offset = 1;
-                String filter = "";
-                int ageReq = 1;
-                //TODO：暫定的に人気順でソートする
+
+                int upperPageLimit = 100;
+                UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
+                int ageReq = userInfoDataProvider.getUserAge();
+                //人気順でソートする
                 String sort = JsonConstants.GENRE_PER_CONTENTS_SORT_PLAY_COUNT_DESC;
                 mContentsListPerGenreWebClient.getContentsListPerGenreApi(
-                        limit, offset, filter, ageReq, genreId, sort, this);
+                        upperPageLimit, 1, WebApiBasePlala.FILTER_RELEASE, ageReq, genreId, sort, this);
             } else {
                 DTVTLogger.error("RankingTopDataProvider is stopping connect");
             }
