@@ -532,8 +532,12 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                 DTVTLogger.debug(e);
             }
         } else {
-            mRentalChListWebClient = new RentalChListWebClient(mContext);
-            mRentalChListWebClient.getRentalChListApi(this);
+            if(!isStop){
+                mRentalChListWebClient = new RentalChListWebClient(mContext);
+                mRentalChListWebClient.getRentalChListApi(this);
+            } else {
+                DTVTLogger.error("DtvContentsDetailDataProvider is stopping connect");
+            }
         }
     }
 
@@ -563,8 +567,12 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                 DTVTLogger.debug(e);
             }
         } else {
-            mRoleListWebClient = new RoleListWebClient(mContext);
-            mRoleListWebClient.getRoleListApi(this);
+            if(!isStop){
+                mRoleListWebClient = new RoleListWebClient(mContext);
+                mRoleListWebClient.getRoleListApi(this);
+            } else {
+                DTVTLogger.error("DtvContentsDetailDataProvider is stopping connect");
+            }
         }
     }
 
