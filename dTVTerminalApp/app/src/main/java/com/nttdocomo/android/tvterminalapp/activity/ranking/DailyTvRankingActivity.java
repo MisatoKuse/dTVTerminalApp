@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -41,7 +42,7 @@ public class DailyTvRankingActivity extends BaseActivity implements
     /**
      * 最大表示件数.
      */
-    private final static int NUM_PER_PAGE = 10;
+    private final static int NUM_PER_PAGE = 20;
     /**
      * タイムアウト時間.
      */
@@ -82,6 +83,7 @@ public class DailyTvRankingActivity extends BaseActivity implements
      * 指を置いたY座標.
      */
     private float mStartY = 0;
+    private RelativeLayout mRelativeLayout = null;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -97,6 +99,10 @@ public class DailyTvRankingActivity extends BaseActivity implements
         resetPaging();
 
         initView();
+        mListView.setVisibility(View.GONE);
+        mRelativeLayout.setVisibility(View.VISIBLE);
+        mRankingTopDataProvider = new RankingTopDataProvider(this);
+        mRankingTopDataProvider.getDailyRankList();
     }
 
     /**
@@ -114,6 +120,7 @@ public class DailyTvRankingActivity extends BaseActivity implements
         //スクロールの上下方向検知用のリスナーを設定
         mListView.setOnTouchListener(this);
 
+        mRelativeLayout = findViewById(R.id.tv_rank_progress);
         //アナライズの警告対応のsynchronized
         synchronized (this) {
             mContentsAdapter = new ContentsAdapter(this, mContentsList,
@@ -163,6 +170,7 @@ public class DailyTvRankingActivity extends BaseActivity implements
                 }
             }
         }
+
     }
 
     /**
@@ -214,7 +222,9 @@ public class DailyTvRankingActivity extends BaseActivity implements
                     //終了時のY座標の方が大きいので、上スクロール
                     mLastScrollUp = true;
                 }
+
                 break;
+
             default:
                 //現状処理は無い・警告対応
         }
@@ -287,6 +297,8 @@ public class DailyTvRankingActivity extends BaseActivity implements
 
     @Override
     public void dailyRankListCallback(final List<ContentsData> contentsDataList) {
+        mListView.setVisibility(View.VISIBLE);
+        mRelativeLayout.setVisibility(View.GONE);
         setShowDailyRanking(contentsDataList);
     }
 

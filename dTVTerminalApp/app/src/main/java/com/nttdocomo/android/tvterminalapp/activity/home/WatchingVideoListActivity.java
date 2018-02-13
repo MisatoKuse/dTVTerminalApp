@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -81,7 +82,10 @@ public class WatchingVideoListActivity extends BaseActivity implements
      * ListView.
      */
     private ListView mListView = null;
-
+    /**
+     * RelativeLayout.
+     */
+    private RelativeLayout mRelativeLayout = null;
     /**
      * ContentsAdapter.
      */
@@ -99,7 +103,7 @@ public class WatchingVideoListActivity extends BaseActivity implements
     /**
      * ページング単位.
      */
-    private final int NUM_PER_PAGE = 10;
+    private final int NUM_PER_PAGE = 20;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -118,6 +122,8 @@ public class WatchingVideoListActivity extends BaseActivity implements
         resetPaging();
 
         initView();
+        mListView.setVisibility(View.GONE);
+        mRelativeLayout.setVisibility(View.VISIBLE);
         mWatchListenVideoListDataProvider = new WatchListenVideoListDataProvider(this);
         mWatchListenVideoListDataProvider.getWatchListenVideoData(WatchListenVideoListDataProvider.DEFAULT_PAGE_OFFSET);
 
@@ -132,6 +138,7 @@ public class WatchingVideoListActivity extends BaseActivity implements
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
 
+        mRelativeLayout = findViewById(R.id.video_watching_progress);
         mListView = findViewById(R.id.video_watching_list);
         mListView.setOnItemClickListener(this);
         mListView.setOnScrollListener(this);
@@ -210,6 +217,8 @@ public class WatchingVideoListActivity extends BaseActivity implements
 
     @Override
     public void watchListenVideoListCallback(final List<ContentsData> watchListenVideoContentInfo) {
+        mListView.setVisibility(View.VISIBLE);
+        mRelativeLayout.setVisibility(View.GONE);
         if (null == watchListenVideoContentInfo) {
             //通信とJSON Parseに関してerror処理
             DTVTLogger.debug("ClipListActivity::VodClipListCallback, get data failed.");
