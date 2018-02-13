@@ -84,7 +84,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailFragmentFactory;
-import com.nttdocomo.android.tvterminalapp.model.TabItemLayout;
+import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.MediaVideoInfo;

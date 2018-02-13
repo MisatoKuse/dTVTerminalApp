@@ -28,7 +28,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRecommendDataCo
 import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendBaseFragmentScrollListener;
 import com.nttdocomo.android.tvterminalapp.fragment.recommend.RecommendFragmentFactory;
-import com.nttdocomo.android.tvterminalapp.model.TabItemLayout;
+import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;

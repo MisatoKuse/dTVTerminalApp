@@ -2,7 +2,7 @@
  * Copyright (c) 2018 NTT DOCOMO, INC. All Rights Reserved.
  */
 
-package com.nttdocomo.android.tvterminalapp.model;
+package com.nttdocomo.android.tvterminalapp.view;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;

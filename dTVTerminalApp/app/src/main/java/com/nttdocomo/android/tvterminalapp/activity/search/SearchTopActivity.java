@@ -26,7 +26,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopSearchDataConne
 import com.nttdocomo.android.tvterminalapp.fragment.search.SearchBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.search.SearchBaseFragmentScrollListener;
 import com.nttdocomo.android.tvterminalapp.fragment.search.SearchFragmentFactory;
-import com.nttdocomo.android.tvterminalapp.model.TabItemLayout;
+import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.struct.ResultType;
 import com.nttdocomo.android.tvterminalapp.struct.SearchNarrowCondition;
 import com.nttdocomo.android.tvterminalapp.struct.SearchSortKind;

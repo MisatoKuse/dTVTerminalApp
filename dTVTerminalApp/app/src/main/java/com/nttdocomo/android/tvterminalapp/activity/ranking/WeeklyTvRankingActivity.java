@@ -30,7 +30,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListMetaData;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingFragmentFactory;
 import com.nttdocomo.android.tvterminalapp.fragment.ranking.RankingFragmentScrollListener;
-import com.nttdocomo.android.tvterminalapp.model.TabItemLayout;
+import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 
 import java.util.ArrayList;
 import java.util.List;

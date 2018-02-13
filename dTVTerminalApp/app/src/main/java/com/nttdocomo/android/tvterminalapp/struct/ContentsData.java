@@ -343,30 +343,8 @@ public class ContentsData {
         return mComment;
     }
 
-    public void setComment(String mComment) {
-        //TODO:レスポンスがないためダミー
-//        this.mComment = mComment;
-        this.mComment = "※解説(ダミー)【吹替版】" +
-                "魔女の呪いによって野獣の姿に変えられてしまった王子。呪いを解く鍵は、" +
-                "魔法のバラの花びらが全て散る前に誰かを心から愛し、そして愛されること―。" +
-                "だが野獣の姿になった彼を愛するものなどいるはずがない。" +
-                "独り心を閉ざしていく中、心に孤独を抱えながらも、自分の輝きを信じて生きる、" +
-                "聡明で美しい女性、ベルと出会うが。。。";
-    }
-
     public String getHighlight() {
         return mHighlight;
-    }
-
-    public void setHighlight(String mHighlight) {
-        //TODO:レスポンスがないためダミー
-//        this.mHighlight = mHighlight;
-        this.mHighlight = "※みどころ(ダミー)【吹替版】" +
-                "魔女の呪いによって野獣の姿に変えられてしまった王子。呪いを解く鍵は、" +
-                "魔法のバラの花びらが全て散る前に誰かを心から愛し、そして愛されること―。" +
-                "だが野獣の姿になった彼を愛するものなどいるはずがない。" +
-                "独り心を閉ざしていく中、心に孤独を抱えながらも、自分の輝きを信じて生きる、" +
-                "聡明で美しい女性、ベルと出会うが。。。";
     }
 
     public String getCategoryId() {
