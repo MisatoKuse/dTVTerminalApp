@@ -4,7 +4,11 @@
 
 package com.nttdocomo.android.tvterminalapp.common;
 
-
+/**
+ * 各サーバAPIのURL.
+ * ベースとなるURLはBuildValiant毎にBaseUrlConstantsクラスに定義.
+ * ここではそれらに続く部分を定義する.
+ */
 public class UrlConstants {
 
     public class WebApiUrl {
@@ -86,7 +90,7 @@ public class UrlConstants {
          * ジャンル毎コンテンツ一覧.
          */
         public static final String CONTENTS_LIST_PER_GENRE_WEB_CLIENT =
-                BaseUrlConstants.PLALA_CLIENT + "meta/genrecontents";
+                BaseUrlConstants.PLALA_CLIENT + "meta/genrecontents/list";
 
         /**
          * 購入済みチャンネル一覧取得.
