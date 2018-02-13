@@ -611,8 +611,10 @@ public class BaseActivity extends FragmentActivity implements
      */
     protected void checkDAccountOnRestart() {
         //BGからFGに遷移するときにdアカチェックを行う
-        setRelayClientHandler();
-        RemoteControlRelayClient.getInstance().isUserAccountExistRequest(getApplicationContext());
+        if (getStbStatus()) {
+            setRelayClientHandler();
+            RemoteControlRelayClient.getInstance().isUserAccountExistRequest(getApplicationContext());
+        }
         DTVTLogger.end();
     }
 
@@ -774,9 +776,11 @@ public class BaseActivity extends FragmentActivity implements
                     case COMMAND_UNKNOWN:
                         switch (resultCode) {
                             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_DISTINATION_UNREACHABLE: // STBに接続できない場合
-                                showErrorDialog(getResources().getString(R.string.main_setting_connect_error_message));
-                                //ペアリングアイコンをOFFにする
-                                setStbStatus(false);
+                                if (getStbStatus()) {
+                                    showErrorDialog(getResources().getString(R.string.main_setting_connect_error_message));
+                                    //ペアリングアイコンをOFFにする
+                                    setStbStatus(false);
+                                }
                                 break;
                             default:
                                 break;
