@@ -138,10 +138,6 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      */
     private boolean mIsStop = false;
     /**
-     * TODO: 当面ワンタイムトークンは固定値とするので、その値.
-     */
-    private static final String INTERIM_ONE_TIME_TOKEN = "test";
-    /**
      * サービストークンのクッキーでのキー名
      */
     private static final String SERVICE_TOKEN_KEY_NAME = "daccount_auth";
@@ -525,7 +521,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
         mOneTimeTokenData = SharedPreferencesUtils.getOneTimeTokenData(mContext);
 
         //ワンタイムトークンの期限切れ確認
-        if (mOneTimeTokenData.getOneTimeTokenGetTime()  <
+        if (mOneTimeTokenData.getOneTimeTokenGetTime() <
                 DateUtils.getNowTimeFormatEpoch()) {
             //期限切れなので、ワンタイムパスワードの取得を起動
             getOneTimePassword(mContext);
@@ -588,15 +584,15 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
         }
 
         //ワンタイムトークンの取得を行う
-        getServiceToken(mContext,mCommunicationTask,oneTimePassword);
+        getServiceToken(mContext, mCommunicationTask, oneTimePassword);
     }
 
     /**
      * ワンタイムトークンの取得を行う.
      *
-     * @param context　コンテキスト
+     * @param context           　コンテキスト
      * @param communicationTask 通信処理クラス
-     * @param oneTimePassword ワンタイムパスワード
+     * @param oneTimePassword   ワンタイムパスワード
      */
     public static void getServiceToken(final Context context,
                                        final CommunicationTask communicationTask,
@@ -608,9 +604,6 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                 new ServiceTokenClient.TokenGetCallback() {
                     @Override
                     public void onTokenGot(boolean successFlag) {
-                        //トークンの値をダミー値で初期化
-                        String tokenData = INTERIM_ONE_TIME_TOKEN;
-
                         //結果に値があるかを確認
                         if (successFlag) {
                             //値があったので、セット
@@ -630,12 +623,10 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                 });
 
         if (!answer) {
-            communicationTask.setOneTimeToken(INTERIM_ONE_TIME_TOKEN);
-
             //結果格納構造体の作成
             ReturnCode returnCode = new ReturnCode();
 
-            //ワンタイムトークンの取得結果を元にして、通信を開始する
+            //ワンタイムトークンは取得できなかったので、そのまま通信を開始する
             communicationTask.execute(returnCode);
         }
     }
@@ -1024,7 +1015,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
          *
          * @param sourceUrl          実行するAPIの名前
          * @param receivedParameters 送るパラメータ
-         * @param requestMethod     HTTPリクエストメソッド
+         * @param requestMethod      HTTPリクエストメソッド
          */
         CommunicationTask(final String sourceUrl, final String receivedParameters, final String requestMethod) {
             mSourceUrl = sourceUrl;
@@ -1043,7 +1034,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
          * @param sourceUrl          実行するAPIの名前
          * @param receivedParameters 送るパラメータ
          * @param extraDataSrc       受け渡す拡張情報
-         * @param requestMethod     HTTPリクエストメソッド
+         * @param requestMethod      HTTPリクエストメソッド
          */
         CommunicationTask(final String sourceUrl, final String receivedParameters,
                           final Bundle extraDataSrc, final String requestMethod) {
@@ -1066,7 +1057,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
          * @param receivedParameters 送るパラメータ
          * @param extraDataSrc       受け渡す拡張情報
          * @param isGetOtt           ワンタイムトークンの使用可否
-         * @param requestMethod     HTTPリクエストメソッド
+         * @param requestMethod      HTTPリクエストメソッド
          */
         CommunicationTask(final String sourceUrl, final String receivedParameters,
                           final Bundle extraDataSrc, final boolean isGetOtt, final String requestMethod) {
@@ -1257,7 +1248,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
             //ジャンルID、ロールIDはファイルDLのためGETメソッドリクエストする
             //POSTでJSONを送ることを宣言
             urlConnection.setRequestMethod(mRequestMethod);
-            if ( mRequestMethod.equals(REQUEST_METHOD) ) {
+            if (mRequestMethod.equals(REQUEST_METHOD)) {
                 urlConnection.setDoOutput(true);
             }
             urlConnection.setDoInput(true);
