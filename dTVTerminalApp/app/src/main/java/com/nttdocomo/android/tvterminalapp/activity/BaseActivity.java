@@ -411,6 +411,7 @@ public class BaseActivity extends FragmentActivity implements
                     try {
                         synchronized (this) {
                             if (isOn) {
+                                DTVTLogger.debug("STB icon ON");
                                 mStbStatusIcon.setImageResource(R.mipmap.header_material_icon_tv);
                                 //ペアリングアイコンがOFF→ON(点灯)になった際にdアカチェックを行う
                                 if (!mIsStbStatusOn) {
@@ -418,6 +419,7 @@ public class BaseActivity extends FragmentActivity implements
                                 }
 
                             } else {
+                                DTVTLogger.debug("STB icon OFF");
                                 mStbStatusIcon.setImageResource(R.mipmap.header_material_icon_tv_active);
                             }
                             mIsStbStatusOn = isOn;
