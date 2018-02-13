@@ -524,11 +524,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             if (recommendChListData != null && recommendChListData.size() > 0) {
                 sendRecommendChListData(recommendChListData);
             }
-            //おすすめビデオ・レコメンド情報は最初からContentsDataのリストなので、そのまま使用する
-            List<ContentsData> recommendVdListData = getRecommendVdListData();
-            if (recommendVdListData != null && recommendVdListData.size() > 0) {
-                sendRecommendVdListData(recommendVdListData);
-            }
             //今日のテレビランキング
             List<Map<String, String>> dailyRankList = getDailyRankListData();
             if (dailyRankList != null && dailyRankList.size() > 0) {
@@ -766,11 +761,11 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         mRecommendDataProvider = new RecommendDataProvider(
                 mContext.getApplicationContext(), this);
 
-        //レコメンドデータプロバイダーからおすすめ番組情報を取得する・DBに既に入っていた場合はその値を使用するので、trueを指定する
+        //レコメンドデータプロバイダーからおすすめ番組情報を取得する・常にコールバックで値を取るのでfalseを指定する
         List<ContentsData> recommendTvData =
                 mRecommendDataProvider.startGetRecommendData(RecommendDataProvider.TV_NO,
                         SearchConstants.RecommendList.FIRST_POSITION,
-                        SearchConstants.RecommendList.RECOMMEND_PRELOAD_COUNT, true);
+                        SearchConstants.RecommendList.RECOMMEND_PRELOAD_COUNT, false);
 
         //取得したデータを渡す
         return recommendTvData;
@@ -1271,6 +1266,13 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                     SearchConstants.RecommendList.FIRST_POSITION,
                     SearchConstants.RecommendList.RECOMMEND_PRELOAD_COUNT);
             sendRecommendChListData(recommendChannelInfoList);
+        }
+
+        //おすすめビデオ・レコメンド情報は最初からContentsDataのリストなので、そのまま使用する
+        //ワンタイムパスワードが競合しないように、おすすめ番組取得後に動作を開始する
+        List<ContentsData> recommendVdListData = getRecommendVdListData();
+        if (recommendVdListData != null && recommendVdListData.size() > 0) {
+            sendRecommendVdListData(recommendVdListData);
         }
     }
 
