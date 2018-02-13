@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ContentsDetailGetResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ContentsDetailJsonParser;
@@ -18,6 +19,11 @@ import java.util.List;
 
 public class ContentsDetailGetWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
+
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
 
     /**
      * コールバック.
@@ -82,6 +88,11 @@ public class ContentsDetailGetWebClient
     public boolean getContentsDetailApi(String[] crid, String filter, int ageReq,
                                         ContentsDetailJsonParserCallback
                                                 contentsDetailJsonParserCallback) {
+        if (mIsCancel) {
+            DTVTLogger.error("ContentsDetailGetWebClient is stopping connection");
+            return false;
+        }
+
         //パラメーターのチェック（ageReqは範囲外が全部1になるので、チェックは行わない）
         if (!checkNormalParameter(crid, filter, contentsDetailJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、falseで帰る
@@ -193,6 +204,23 @@ public class ContentsDetailGetWebClient
         }
 
         return answerText;
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnection() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        stopAllConnections();
+    }
+
+    /**
+     * 通信可能状態にする.
+     */
+    public void enableConnection() {
+        DTVTLogger.start();
+        mIsCancel = false;
     }
 
 }

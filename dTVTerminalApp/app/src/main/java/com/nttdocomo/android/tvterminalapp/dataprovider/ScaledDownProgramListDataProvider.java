@@ -30,8 +30,6 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.TvScheduleWebClie
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -71,6 +69,18 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     // クリップキーリスト取得済み判定
     private boolean tvClipKeyListResponse = false;
     private boolean vodClipKeyListResponse = false;
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean isStop = false;
+    /**
+     * チャンネルリスト取得WebClient.
+     */
+    private ChannelWebClient mChannelWebClient = null;
+    /**
+     * 番組リスト取得WebClient.
+     */
+    private TvScheduleWebClient mTvScheduleWebClient = null;
 
     /**
      * コンストラクタ.
@@ -182,6 +192,8 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     public void onChannelJsonParsed(List<ChannelList> channelLists) {
         ArrayList<ChannelInfo> channels = null;
         if (channelLists != null) {
+            DateUtils dateUtils = new DateUtils(mContext);
+            dateUtils.addLastProgramDate(DateUtils.TVSCHEDULE_LAST_UPDATE);
             mChannelList = channelLists.get(0);
             List<HashMap<String, String>> channelList = mChannelList.getChannelList();
             if (channelList != null) {
@@ -205,6 +217,8 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
     @Override
     public void onTvScheduleJsonParsed(List<TvScheduleList> tvScheduleList) {
         if (tvScheduleList != null) {
+            DateUtils dateUtils = new DateUtils(mContext);
+            dateUtils.addLastProgramDate(DateUtils.CHANNEL_LAST_UPDATE);
             //チャンネルデータ
             mTvScheduleList = tvScheduleList.get(0);
             if (mRequiredClipKeyList) {
@@ -447,9 +461,12 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 DTVTLogger.debug(e);
             }
         } else {
-            dateUtils.addLastProgramDate(DateUtils.CHANNEL_LAST_UPDATE);
-            ChannelWebClient mChannelList = new ChannelWebClient(mContext);
-            mChannelList.getChannelApi(limit, offset, filter, JsonConstants.DISPLAY_TYPE[type], this);
+            if(!isStop){
+                mChannelWebClient = new ChannelWebClient(mContext);
+                mChannelWebClient.getChannelApi(limit, offset, filter, JsonConstants.DISPLAY_TYPE[type], this);
+            } else {
+                DTVTLogger.error("ScaledDownProgramListDataProvider is stopping connect");
+            }
         }
     }
 
@@ -507,9 +524,40 @@ public class ScaledDownProgramListDataProvider extends ClipKeyListDataProvider i
                 list[j] = sdf.format(calendar.getTime());
                 j++;
             }
-            dateUtils.addLastProgramDate(DateUtils.TVSCHEDULE_LAST_UPDATE);
-            TvScheduleWebClient mChannelProgramList = new TvScheduleWebClient(mContext);
-            mChannelProgramList.getTvScheduleApi(chList, list, filter, this);
+            if(!isStop){
+                mTvScheduleWebClient = new TvScheduleWebClient(mContext);
+                mTvScheduleWebClient.getTvScheduleApi(chList, list, filter, this);
+            } else {
+                DTVTLogger.error("ScaledDownProgramListDataProvider is stopping connect");
+            }
+        }
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnect() {
+        DTVTLogger.start();
+        isStop = true;
+        if (mChannelWebClient != null) {
+            mChannelWebClient.stopConnection();
+        }
+        if (mTvScheduleWebClient != null) {
+            mTvScheduleWebClient.stopConnection();
+        }
+    }
+
+    /**
+     * 通信を許可する.
+     */
+    public void enableConnect() {
+        DTVTLogger.start();
+        isStop = false;
+        if (mChannelWebClient != null) {
+            mChannelWebClient.enableConnection();
+        }
+        if (mTvScheduleWebClient != null) {
+            mTvScheduleWebClient.enableConnection();
         }
     }
 }

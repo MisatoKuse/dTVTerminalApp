@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.TvScheduleList;
@@ -19,6 +20,11 @@ import java.util.List;
 
 public class TvScheduleWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
+
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
 
     /**
      * コンテキストを継承元のコンストラクタに送る.
@@ -76,6 +82,11 @@ public class TvScheduleWebClient
      */
     public boolean getTvScheduleApi(int[] chno, String[] date, String filter,
                                     TvScheduleJsonParserCallback tvScheduleJsonParserCallback) {
+
+        if (mIsCancel) {
+            DTVTLogger.error("TvScheduleWebClient is stopping connection");
+            return false;
+        }
 
         if (!checkNormalParameter(chno, date, filter, tvScheduleJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、falseで帰る
@@ -189,6 +200,23 @@ public class TvScheduleWebClient
         }
 
         return answerText;
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnection() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        stopAllConnections();
+    }
+
+    /**
+     * 通信可能状態にする.
+     */
+    public void enableConnection() {
+        DTVTLogger.start();
+        mIsCancel = false;
     }
 
 }

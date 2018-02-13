@@ -25,6 +25,7 @@ import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 
@@ -179,5 +180,26 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
         Intent intent = new Intent();
         intent.setClass(mActivity, ContentDetailActivity.class);
         startActivity(intent);
+    }
+
+    /**
+     * ContentsAdapterの通信を止める.
+     */
+    public void stopContentsAdapterCommunication() {
+        DTVTLogger.start();
+        StopContentsAdapterConnect stopContentsAdapterConnect = new StopContentsAdapterConnect();
+        if (mContentsAdapter != null) {
+            stopContentsAdapterConnect.execute(mContentsAdapter);
+        }
+    }
+
+    /**
+     * ContentsAdapterで止めた通信を再度可能な状態にする.
+     */
+    public void enableContentsAdapterCommunication() {
+        DTVTLogger.start();
+        if (mContentsAdapter != null) {
+            mContentsAdapter.enableConnect();
+        }
     }
 }

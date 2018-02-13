@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
@@ -18,6 +19,11 @@ import java.util.List;
 
 public class ChannelWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
+
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
 
     /**
      * コールバック
@@ -78,6 +84,12 @@ public class ChannelWebClient
     public boolean getChannelApi(int pagetLimit, int pagerOffset,
                                  String filter, String type,
                                  ChannelJsonParserCallback channelJsonParserCallback) {
+
+        if (mIsCancel) {
+            DTVTLogger.error("ChannelWebClient is stopping connection");
+            return false;
+        }
+
         //パラメーターのチェック
         if (!checkNormalParameter(pagetLimit, pagerOffset, filter, type, channelJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、falseで帰る
@@ -191,5 +203,22 @@ public class ChannelWebClient
         }
 
         return answerText;
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnection() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        stopAllConnections();
+    }
+
+    /**
+     * 通信可能状態にする.
+     */
+    public void enableConnection() {
+        DTVTLogger.start();
+        mIsCancel = false;
     }
 }

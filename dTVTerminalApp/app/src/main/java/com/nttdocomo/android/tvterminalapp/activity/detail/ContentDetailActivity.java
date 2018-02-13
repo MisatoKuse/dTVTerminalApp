@@ -13,7 +13,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
@@ -27,7 +26,6 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -37,7 +35,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -60,6 +57,8 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentDetailDataConnect;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopScaledProListDataConnect;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsChannelFragment;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.struct.CalendarComparator;
@@ -151,6 +150,9 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     private OtherContentsDetailData mDetailData = null;
     private VodMetaFullData mDetailFullData = null;
     private DtvContentsDetailDataProvider mDetailDataProvider = null;
+    private ScaledDownProgramListDataProvider mScaledDownProgramListDataProvider = null;
+    private ThumbnailProvider mThumbnailProvider = null;
+    private boolean isDownloadStop = false;
     private DtvContentsDetailFragmentFactory mFragmentFactory = null;
     private  PurchasedVodListResponse response = null;
 
@@ -400,6 +402,20 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             initSecurePlayer();
             setPlayerEvent();
             setUserAgeInfo();
+        }
+        //通信を止める
+        if(mDetailDataProvider != null){
+            mDetailDataProvider.enableConnect();
+        }
+        if(mScaledDownProgramListDataProvider != null){
+            mScaledDownProgramListDataProvider.enableConnect();
+        }
+        enableThumbnailConnect();
+        //FragmentにContentsAdapterの通信を止めるように通知する
+        Fragment fragment = getCurrentFragment(1);
+        if(fragment != null){
+            DtvContentsChannelFragment channelFragment = (DtvContentsChannelFragment)fragment;
+            channelFragment.enableContentsAdapterCommunication();
         }
         DTVTLogger.end();
     }
@@ -1208,7 +1224,9 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      * ページングでチャンネルデータ取得
      */
     private void getChannelDetailByPageNo(){
-        ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
+        if(mScaledDownProgramListDataProvider == null){
+            mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
+        }
         int channelNos[] = new int[mChannel.getChNo()];
         dateList = null;
         if(mDateIndex <= 6){//一週間以内
@@ -1238,7 +1256,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 e.printStackTrace();
                 DTVTLogger.debug(e);
             }
-            scaledDownProgramListDataProvider.getProgram(channelNos, dateList, 1);
+            mScaledDownProgramListDataProvider.getProgram(channelNos, dateList, 1);
         } else {
             channelLoadCompleted();
         }
@@ -1318,13 +1336,17 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             setTitleText(title);
         }
         if (!TextUtils.isEmpty(url)) {
-            ThumbnailProvider mThumbnailProvider = new ThumbnailProvider(this);
-            mThumbnail.setTag(url);
-            setThumbnail();
-            Bitmap bitmap = mThumbnailProvider.getThumbnailImage(mThumbnail, url);
-            if (bitmap != null) {
-                //サムネイル取得失敗時は取得失敗画像をセットする
-                mThumbnail.setImageBitmap(bitmap);
+            if(mThumbnailProvider == null){
+                mThumbnailProvider = new ThumbnailProvider(this);
+            }
+            if(!isDownloadStop){
+                mThumbnail.setTag(url);
+                setThumbnail();
+                Bitmap bitmap = mThumbnailProvider.getThumbnailImage(mThumbnail, url);
+                if (bitmap != null) {
+                    //サムネイル取得失敗時は取得失敗画像をセットする
+                    mThumbnail.setImageBitmap(bitmap);
+                }
             }
         }
     }
@@ -1830,8 +1852,10 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 mDetailDataProvider.getRoleListData();
             }
             if (!TextUtils.isEmpty(mDetailFullData.getmService_id())) {
-                ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
-                scaledDownProgramListDataProvider.getChannelList(1, 1, "", 1);
+                if(mScaledDownProgramListDataProvider == null){
+                    mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
+                }
+                mScaledDownProgramListDataProvider.getChannelList(1, 1, "", 1);
             }
             //ログイン状態でしか送信しない
             if (UserInfoUtils.getUserLoggedinInfo(this)) {
@@ -2579,6 +2603,44 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             mExternalDisplayHelper.onPause();
         }
         finishPlayer();
+        //通信を止める
+        if(mDetailDataProvider != null){
+            StopContentDetailDataConnect stopContentDetailDataConnect = new StopContentDetailDataConnect();
+            stopContentDetailDataConnect.execute(mDetailDataProvider);
+        }
+        if(mScaledDownProgramListDataProvider != null){
+            StopScaledProListDataConnect stopScaledProListDataConnect = new StopScaledProListDataConnect();
+            stopScaledProListDataConnect.execute(mScaledDownProgramListDataProvider);
+        }
+        stopThumbnailConnect();
+        //FragmentにContentsAdapterの通信を止めるように通知する
+        Fragment fragment = getCurrentFragment(1);
+        if(fragment != null){
+            DtvContentsChannelFragment channelFragment = (DtvContentsChannelFragment)fragment;
+            channelFragment.stopContentsAdapterCommunication();
+        }
+    }
+
+    /**
+     * サムネイル取得処理を止める.
+     */
+    private void stopThumbnailConnect() {
+        DTVTLogger.start();
+        isDownloadStop = true;
+        if (mThumbnailProvider != null) {
+            mThumbnailProvider.stopConnect();
+        }
+    }
+
+    /**
+     * 止めたサムネイル取得処理を再度取得可能な状態にする.
+     */
+    private void enableThumbnailConnect() {
+        DTVTLogger.start();
+        isDownloadStop = false;
+        if (mThumbnailProvider != null) {
+            mThumbnailProvider.enableConnect();
+        }
     }
 
     @Override

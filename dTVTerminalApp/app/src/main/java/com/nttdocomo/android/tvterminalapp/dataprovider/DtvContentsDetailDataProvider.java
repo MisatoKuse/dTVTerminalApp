@@ -122,6 +122,26 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
     private static final int RENTAL_CHANNEL_SELECT = 8;
 
     private ArrayList<VodMetaFullData> mVodMetaFullDataList = null;
+    /**
+     * コンテンツ詳細取得WebClient.
+     */
+    private ContentsDetailGetWebClient mDetailGetWebClient = null;
+    /**
+     * ロールリスト取得WebClient.
+     */
+    private RoleListWebClient mRoleListWebClient = null;
+    /**
+     * レンタルチャンネル一覧取得WebClient.
+     */
+    private RentalChListWebClient mRentalChListWebClient = null;
+    /**
+     * レンタルVOD一覧取得WebClient.
+     */
+    private RentalVodListWebClient mRentalVodListWebClient = null;
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean isStop = false;
 
     /**
      * コンストラクタ.
@@ -178,6 +198,8 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
     public void onRentalVodListJsonParsed(final PurchasedVodListResponse purchasedVodListResponse) {
         mPurchasedVodListResponse = purchasedVodListResponse;
         if (mPurchasedVodListResponse != null) {
+            DateUtils dateUtils = new DateUtils(mContext);
+            dateUtils.addLastProgramDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
             Handler handler = new Handler(); //チャンネル情報更新
             try {
                 DbThread t = new DbThread(handler, this, RENTAL_VOD_UPDATE);
@@ -197,6 +219,8 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
     public void onRentalChListJsonParsed(final PurchasedChListResponse purchasedChListResponse) {
         mPurchasedChListResponse = purchasedChListResponse;
         if (mPurchasedChListResponse != null) {
+            DateUtils dateUtils = new DateUtils(mContext);
+            dateUtils.addLastProgramDate(DateUtils.RENTAL_CHANNEL_LAST_UPDATE);
             Handler handler = new Handler(); //チャンネル情報更新
             try {
                 DbThread t = new DbThread(handler, this, RENTAL_CHANNEL_UPDATE);
@@ -215,6 +239,8 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
     @Override
     public void onRoleListJsonParsed(final RoleListResponse roleListResponse) {
         if (roleListResponse != null) {
+            DateUtils dateUtils = new DateUtils(mContext);
+            dateUtils.addLastProgramDate(DateUtils.ROLELIST_LAST_UPDATE);
             mRoleListInfo = roleListResponse.getRoleList();
             if (mRoleListInfo != null) {
                 Handler handler = new Handler(); //チャンネル情報更新
@@ -447,8 +473,12 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
      * @param ageReq dch：dチャンネル, hikaritv：ひかりTVの多ch, 指定なしの場合：すべて
      */
     public void getContentsDetailData(final String[] crid, final String filter, final int ageReq) {
-        ContentsDetailGetWebClient detailGetWebClient = new ContentsDetailGetWebClient(mContext);
-        detailGetWebClient.getContentsDetailApi(crid, filter, ageReq, this);
+        if(!isStop){
+            mDetailGetWebClient = new ContentsDetailGetWebClient(mContext);
+            mDetailGetWebClient.getContentsDetailApi(crid, filter, ageReq, this);
+        } else {
+            DTVTLogger.error("DtvContentsDetailDataProvider is stopping connect");
+        }
     }
 
     /**
@@ -467,9 +497,12 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                 DTVTLogger.debug(e);
             }
         } else {
-            dateUtils.addLastProgramDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
-            RentalVodListWebClient rentalVodListWebClient = new RentalVodListWebClient(mContext);
-            rentalVodListWebClient.getRentalVodListApi(this);
+            if(!isStop){
+                mRentalVodListWebClient = new RentalVodListWebClient(mContext);
+                mRentalVodListWebClient.getRentalVodListApi(this);
+            } else {
+                DTVTLogger.error("DtvContentsDetailDataProvider is stopping connect");
+            }
         }
     }
 
@@ -479,8 +512,8 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
     public void getForceVodListData() {
         DateUtils dateUtils = new DateUtils(mContext);
         dateUtils.addLastProgramDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
-        RentalVodListWebClient rentalVodListWebClient = new RentalVodListWebClient(mContext);
-        rentalVodListWebClient.getRentalVodListApi(this);
+        mRentalVodListWebClient = new RentalVodListWebClient(mContext);
+        mRentalVodListWebClient.getRentalVodListApi(this);
     }
 
     /**
@@ -499,9 +532,8 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                 DTVTLogger.debug(e);
             }
         } else {
-            dateUtils.addLastProgramDate(DateUtils.RENTAL_CHANNEL_LAST_UPDATE);
-            RentalChListWebClient rentalChListWebClient = new RentalChListWebClient(mContext);
-            rentalChListWebClient.getRentalChListApi(this);
+            mRentalChListWebClient = new RentalChListWebClient(mContext);
+            mRentalChListWebClient.getRentalChListApi(this);
         }
     }
 
@@ -511,8 +543,8 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
     public void getForceChListData() {
         DateUtils dateUtils = new DateUtils(mContext);
         dateUtils.addLastProgramDate(DateUtils.RENTAL_CHANNEL_LAST_UPDATE);
-        RentalChListWebClient rentalChListWebClient = new RentalChListWebClient(mContext);
-        rentalChListWebClient.getRentalChListApi(this);
+        mRentalChListWebClient = new RentalChListWebClient(mContext);
+        mRentalChListWebClient.getRentalChListApi(this);
     }
 
     /**
@@ -531,9 +563,8 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                 DTVTLogger.debug(e);
             }
         } else {
-            dateUtils.addLastProgramDate(DateUtils.ROLELIST_LAST_UPDATE);
-            RoleListWebClient roleListWebClient = new RoleListWebClient(mContext);
-            roleListWebClient.getRoleListApi(this);
+            mRoleListWebClient = new RoleListWebClient(mContext);
+            mRoleListWebClient.getRoleListApi(this);
         }
     }
 
@@ -580,6 +611,46 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                     getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
                     break;
             }
+        }
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnect() {
+        DTVTLogger.start();
+        isStop = true;
+        if (mDetailGetWebClient != null) {
+            mDetailGetWebClient.stopConnection();
+        }
+        if (mRoleListWebClient != null) {
+            mRoleListWebClient.stopConnection();
+        }
+        if (mRentalChListWebClient != null) {
+            mRentalChListWebClient.stopConnection();
+        }
+        if (mRentalVodListWebClient != null) {
+            mRentalVodListWebClient.stopConnection();
+        }
+    }
+
+    /**
+     * 通信を許可する.
+     */
+    public void enableConnect() {
+        DTVTLogger.start();
+        isStop = false;
+        if (mDetailGetWebClient != null) {
+            mDetailGetWebClient.enableConnection();
+        }
+        if (mRoleListWebClient != null) {
+            mRoleListWebClient.enableConnection();
+        }
+        if (mRentalChListWebClient != null) {
+            mRentalChListWebClient.enableConnection();
+        }
+        if (mRentalVodListWebClient != null) {
+            mRentalVodListWebClient.enableConnection();
         }
     }
 }
