@@ -74,8 +74,7 @@ public class RentalVodListWebClient
      * レンタルビデオ情報一覧取得.
      *
      * @param rentalVodListJsonParserCallback コールバック
-     * TODO:（本WebAPIには通常のパラメータが無く、基底クラスで追加するサービストークのみとなる。）
-     * TODO: 仕様確定後に基底クラスへサービストークンの処理の追加が必要
+     * （本WebAPIには通常のパラメータが無く、基底クラスで追加するサービストークのみとなる。）
      * @return パラメータエラー等が発生した場合はfalse
      */
     public boolean getRentalVodListApi(final RentalVodListJsonParserCallback rentalVodListJsonParserCallback) {

@@ -76,7 +76,6 @@ public class RemoteRecordingReservationWebClient
      *
      * @param contentsDetailInfo                           リモート録画予約送信用パラメータ
      * @param remoteRecordingReservationJsonParserCallback コールバック
-     *                                                     TODO: 仕様確定後に基底クラスへサービストークンの処理の追加が必要
      * @return パラメータエラーの場合はfalse
      */
     public boolean getRemoteRecordingReservationApi(RecordingReservationContentsDetailInfo contentsDetailInfo,

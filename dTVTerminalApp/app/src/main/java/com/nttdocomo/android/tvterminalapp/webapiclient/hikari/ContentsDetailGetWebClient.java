@@ -111,8 +111,7 @@ public class ContentsDetailGetWebClient
         }
 
         //チャンネル一覧を呼び出す
-        openUrlAddOtt(UrlConstants.WebApiUrl.CONTENTS_DETAIL_GET_WEB_CLIENT, sendParameter,
-                this, null);
+        openUrl(UrlConstants.WebApiUrl.CONTENTS_DETAIL_GET_WEB_CLIENT, sendParameter, this);
 
         //現状失敗は無いのでtrue
         return true;

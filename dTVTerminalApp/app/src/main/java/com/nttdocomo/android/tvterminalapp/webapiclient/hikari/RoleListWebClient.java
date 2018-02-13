@@ -90,7 +90,7 @@ public class RoleListWebClient
         mRoleListJsonParserCallback = roleListJsonParserCallback;
 
         //ジャンル一覧ファイルを読み込む
-        openUrlAddOtt(UrlConstants.WebApiUrl.ROLE_LIST_FILE, "", this, null);
+        openUrl(UrlConstants.WebApiUrl.ROLE_LIST_FILE, "", this);
 
         DTVTLogger.end();
         //今のところ失敗していないので、trueを返す

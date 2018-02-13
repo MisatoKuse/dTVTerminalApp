@@ -108,7 +108,7 @@ public class ChannelWebClient
         }
 
         //チャンネル一覧を呼び出す
-        openUrlAddOtt(UrlConstants.WebApiUrl.CHANNEL_LIST, sendParameter, this, null);
+        openUrl(UrlConstants.WebApiUrl.CHANNEL_LIST,sendParameter,this);
 
         //現状失敗は無いのでtrue
         return true;

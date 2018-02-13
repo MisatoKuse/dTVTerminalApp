@@ -77,7 +77,6 @@ public class RecordingReservationListWebClient
      * @param limit レスポンスの最大件数・ゼロの場合全件とする
      * @param offset 取得位置・ゼロの場合全件とする
      * @param recordingReservationListJsonParserCallback コールバック
-     * TODO: 仕様確定後に基底クラスへサービストークンの処理の追加が必要
      * @return パラメータエラーの場合はfalse
      */
     public boolean getRecordingReservationListApi(int limit, int offset,
