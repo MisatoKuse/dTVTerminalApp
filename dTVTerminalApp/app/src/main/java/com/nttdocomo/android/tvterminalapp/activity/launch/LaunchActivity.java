@@ -45,10 +45,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
      * test用ボタン.
      */
     private Button mFirstLaunchLaunchNoActivity = null;
-    /**
-     * 録画ビデオ一覧問い合わせ用.
-     */
-    private DlnaProvRecVideo mDlnaProvRecVideo = null;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -77,17 +73,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
                  */
                 return;
             }
-            mDlnaProvRecVideo = new DlnaProvRecVideo();
-            mDlnaProvRecVideo.start(dlnaDmsItem, this);
-            mDlnaProvRecVideo.browseRecVideoDms();
-
-            dlnaProvTerChList = new DlnaProvTerChList();
-            dlnaProvTerChList.start(dlnaDmsItem, this);
-            dlnaProvTerChList.browseChListDms();
-
-            dlnaProvBsChList = new DlnaProvBsChList();
-            dlnaProvBsChList.start(dlnaDmsItem, this);
-            dlnaProvBsChList.browseChListDms();
         }
         setContents();
     }
@@ -138,7 +123,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     protected void onStop() {
-        mDlnaProvRecVideo.stopListen();
         super.onStop();
     }
 
