@@ -96,10 +96,10 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
         mChannelListView.setOnScrollListener(this);
         mChannelListView.setOnItemClickListener(this);
         if (null == mFootView) {
-            mFootView = LayoutInflater.from(getContext()).inflate(R.layout.search_load_more, container, false);
+            mFootView = View.inflate(getContext(), R.layout.search_load_more, null);
         }
         if(null == mHeaderView){
-            mHeaderView = LayoutInflater.from(getContext()).inflate(R.layout.dtv_contents_channel_fragment_header, container, false);
+            mHeaderView = View.inflate(getContext(), R.layout.dtv_contents_channel_fragment_header, null);
             mHeaderView.setOnClickListener(null);
         }
         mContentsAdapter = new ContentsAdapter(getContext(), mContentsData, ContentsAdapter.ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST);
