@@ -498,7 +498,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             Intent intent = new Intent(getApplicationContext(), PairingHelpActivity.class);
             intent.putExtra(PairingHelpActivity.START_WHERE, PairingHelpActivity.ParingHelpFromMode.
                     ParingHelpFromMode_Setting.ordinal());
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
         DTVTLogger.end();
