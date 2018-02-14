@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecordingReservationListResponse;
@@ -14,11 +15,20 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.RecordingRese
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * 録画予約リスト取得用Webクライアント.
+ */
 public class RecordingReservationListWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
-    //実際の値の下限
+    /**
+     * 実際の値の下限.
+     */
     private static final int LOWER_LIMIT = 1;
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
 
 
     /**
@@ -34,7 +44,9 @@ public class RecordingReservationListWebClient
                 RecordingReservationListResponse RecordingReservationListResponse);
     }
 
-    //コールバックのインスタンス
+    /**
+     * コールバックのインスタンス.
+     */
     private RecordingReservationListJsonParserCallback
             mRecordingReservationListJsonParserCallback;
 
@@ -43,12 +55,12 @@ public class RecordingReservationListWebClient
      *
      * @param context コンテキスト
      */
-    public RecordingReservationListWebClient(Context context) {
+    public RecordingReservationListWebClient(final Context context) {
         super(context);
     }
 
     @Override
-    public void onAnswer(ReturnCode returnCode) {
+    public void onAnswer(final ReturnCode returnCode) {
         if (mRecordingReservationListJsonParserCallback != null) {
             //JSONをパースして、データを返す
             new RecordingReservationListJsonParser(
@@ -63,7 +75,7 @@ public class RecordingReservationListWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError(ReturnCode returnCode) {
+    public void onError(final ReturnCode returnCode) {
         if (mRecordingReservationListJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
             mRecordingReservationListJsonParserCallback
@@ -79,9 +91,15 @@ public class RecordingReservationListWebClient
      * @param recordingReservationListJsonParserCallback コールバック
      * @return パラメータエラーの場合はfalse
      */
-    public boolean getRecordingReservationListApi(int limit, int offset,
-                                                  RecordingReservationListJsonParserCallback
+    public boolean getRecordingReservationListApi(final int limit, final int offset,
+                                                  final RecordingReservationListJsonParserCallback
                                                           recordingReservationListJsonParserCallback) {
+        if (mIsCancel) {
+            //通信禁止状態なのでfalseで帰る
+            DTVTLogger.error("RecordingReservationListWebClient is stopping connection");
+            return false;
+        }
+
         //パラメーターのチェック
         if (!checkNormalParameter(limit, offset, recordingReservationListJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、falseで帰る
@@ -111,8 +129,8 @@ public class RecordingReservationListWebClient
      * @param recordingReservationListJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(int limit, int offset,
-                                         RecordingReservationListJsonParserCallback
+    private boolean checkNormalParameter(final int limit, final int offset,
+                                         final RecordingReservationListJsonParserCallback
                                                  recordingReservationListJsonParserCallback) {
         //リミットが負数ならばfalse
         if (limit < 0) {
@@ -141,7 +159,7 @@ public class RecordingReservationListWebClient
      * @param offset 取得位置・ゼロの場合全件とする
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(int limit, int offset) {
+    private String makeSendParameter(final int limit, final int offset) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
@@ -172,5 +190,22 @@ public class RecordingReservationListWebClient
         }
 
         return answerText;
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnection() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        stopAllConnections();
+    }
+
+    /**
+     * 通信を許可する.
+     */
+    public void enableConnection() {
+        mIsCancel = false;
+        DTVTLogger.start();
     }
 }

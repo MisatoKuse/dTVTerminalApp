@@ -6,12 +6,21 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RemoteRecordingReservationListResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.RemoteRecordingReservationListJsonParser;
 
+/**
+ * Remoteの録画予約リスト取得Webクライアント.
+ */
 public class RemoteRecordingReservationListWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
+
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
 
     /**
      * コールバック.
@@ -26,7 +35,9 @@ public class RemoteRecordingReservationListWebClient
                 RemoteRecordingReservationListResponse RemoteRecordingReservationListResponse);
     }
 
-    //コールバックのインスタンス
+    /**
+     * コールバックのインスタンス.
+     */
     private RemoteRecordingReservationListJsonParserCallback
             mRemoteRecordingReservationListJsonParserCallback;
 
@@ -35,12 +46,12 @@ public class RemoteRecordingReservationListWebClient
      *
      * @param context コンテキスト
      */
-    public RemoteRecordingReservationListWebClient(Context context) {
+    public RemoteRecordingReservationListWebClient(final Context context) {
         super(context);
     }
 
     @Override
-    public void onAnswer(ReturnCode returnCode) {
+    public void onAnswer(final ReturnCode returnCode) {
         if (mRemoteRecordingReservationListJsonParserCallback != null) {
             //JSONをパースして、データを返す
             new RemoteRecordingReservationListJsonParser(
@@ -55,7 +66,7 @@ public class RemoteRecordingReservationListWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError(ReturnCode returnCode) {
+    public void onError(final ReturnCode returnCode) {
         if (mRemoteRecordingReservationListJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
             mRemoteRecordingReservationListJsonParserCallback
@@ -66,13 +77,20 @@ public class RemoteRecordingReservationListWebClient
     /**
      * リモート録画予約一覧取得.
      *
-     * @param remoteRecordingReservationListJsonParserCallback コールバックTODO:
-     * 本WebAPIには通常のパラメータが無く、基底クラスで追加するサービストークンのみとなる。）
+     * @param remoteRecordingReservationListJsonParserCallback コールバック
+     * TODO:本WebAPIには通常のパラメータが無く、基底クラスで追加するサービストークンのみとなる。）
      * @return パラメータエラー等が発生した場合はfalse
      */
     public boolean getRemoteRecordingReservationListApi(
-            RemoteRecordingReservationListJsonParserCallback
+            final RemoteRecordingReservationListJsonParserCallback
                     remoteRecordingReservationListJsonParserCallback) {
+
+        if (mIsCancel) {
+            //通信禁止状態なのでfalseで帰る
+            DTVTLogger.error("RemoteRecordingReservationListWebClient is stopping connection");
+            return false;
+        }
+
         //パラメーターのチェック
         if (!checkNormalParameter(remoteRecordingReservationListJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、falseで帰る
@@ -97,7 +115,7 @@ public class RemoteRecordingReservationListWebClient
      * @param remoteRecordingReservationListJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(RemoteRecordingReservationListJsonParserCallback
+    private boolean checkNormalParameter(final RemoteRecordingReservationListJsonParserCallback
                                                  remoteRecordingReservationListJsonParserCallback) {
         //コールバックが指定されていないならばfalse
         if (remoteRecordingReservationListJsonParserCallback == null) {
@@ -106,5 +124,22 @@ public class RemoteRecordingReservationListWebClient
 
         //何もエラーが無いのでtrue
         return true;
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnection() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        stopAllConnections();
+    }
+
+    /**
+     * 通信を許可する.
+     */
+    public void enableConnection() {
+        mIsCancel = false;
+        DTVTLogger.start();
     }
 }

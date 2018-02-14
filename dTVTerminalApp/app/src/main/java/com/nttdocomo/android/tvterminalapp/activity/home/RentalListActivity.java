@@ -291,7 +291,7 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
             mListView.invalidateViews();
         }
 
-        if (mContentsList != null) {
+        if (mContentsList == null || mContentsList.size() == 0) {
             //コンテンツ情報が無ければ取得を行う
             mRentalDataProvider = new RentalDataProvider(this);
             mRentalDataProvider.getRentalData(true);

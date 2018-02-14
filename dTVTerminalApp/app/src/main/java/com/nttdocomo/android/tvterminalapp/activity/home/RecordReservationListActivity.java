@@ -23,31 +23,61 @@ import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRecordingReservationListDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 録画予約一覧画面.
+ */
 public class RecordReservationListActivity extends BaseActivity
         implements AdapterView.OnItemClickListener, AbsListView.OnScrollListener,
         RecordingReservationListDataProvider.ApiDataProviderCallback {
 
+    /**
+     * 録画予約データ取得用データプロパイダ.
+     */
     private RecordingReservationListDataProvider mProvider = null;
+    /**
+     * 録画予約リスト表示用アダプタ.
+     */
     private ContentsAdapter mContentsAdapter = null;
+    /**
+     * 録画予約表示用リスト.
+     */
     private ListView mListView = null;
-    private List mContentsList = null;
+    /**
+     * 録画予約詳細データリスト.
+     */
+    private List<ContentsData> mContentsList = null;
+    /**
+     * 追加読み込みビュー.
+     */
     private View mLoadMoreView = null;
-
-    //先頭の区切り線
+    /**
+     * 先頭の区切り線.
+     */
     private View mHeaderDivider = null;
-
+    /**
+     * 通信中判定フラグ.
+     */
     private boolean mIsCommunicating = false;
+    /**
+     * グローバルメニューからの起動かどうか.
+     */
     private Boolean mIsMenuLaunch = false;
+    /**
+     * 1ページ当たりの表示件数.
+     */
     private final int NUM_PER_PAGE = 20;
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.record_reservation_list_main_layout);
 
@@ -62,12 +92,13 @@ public class RecordReservationListActivity extends BaseActivity
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
 
-        mProvider = new RecordingReservationListDataProvider(this);
-        mContentsList = new ArrayList();
+        mContentsList = new ArrayList<>();
         initView();
-        mProvider.requestRecordingReservationListData();
     }
 
+    /**
+     * Viewの初期化.
+     */
     private void initView() {
         DTVTLogger.start();
         // ContentsListAdapter設定
@@ -75,7 +106,7 @@ public class RecordReservationListActivity extends BaseActivity
         mListView.setOnItemClickListener(this);
         mListView.setOnScrollListener(this);
         if (mContentsList == null) {
-            mContentsList = new ArrayList();
+            mContentsList = new ArrayList<>();
         }
         mContentsAdapter = new ContentsAdapter(this, mContentsList,
                 ContentsAdapter.ActivityTypeItem.TYPE_RECORDING_RESERVATION_LIST);
@@ -92,24 +123,24 @@ public class RecordReservationListActivity extends BaseActivity
     }
 
     /**
-     * リストの更新時間を取得
+     * リストの更新時間を取得.
      */
     private void setUpdateTime() {
         if (!TextUtils.isEmpty(mProvider.mReservationTime)) {
             TextView textView = findViewById(R.id.reservation_update_time);
-            StringBuilder strBuilder = new StringBuilder();
-            strBuilder.append(mProvider.mReservationTime).append(getString(R.string.recording_reservation_list_update_time));
-            textView.setText(strBuilder.toString());
+            String strBuilder = StringUtils.getConnectStrings(mProvider.mReservationTime,
+                    getString(R.string.recording_reservation_list_update_time));
+            textView.setText(strBuilder);
         }
     }
 
     // スクロール処理(ページング)
     @Override
-    public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount,
-                         int totalItemCount) {
+    public void onScroll(final AbsListView absListView, final int firstVisibleItem,
+                         final int visibleItemCount, final int totalItemCount) {
         //先頭の区切り線の表示の有無の切り替え
-        if(mHeaderDivider != null && absListView != null &&
-                absListView.getChildAt(0) != null) {
+        if (mHeaderDivider != null && absListView != null
+                && absListView.getChildAt(0) != null) {
             //スクロール位置の判定
             if (absListView.getChildAt(0).getTop() == 0) {
                 //先頭なので、線を表示する
@@ -121,9 +152,7 @@ public class RecordReservationListActivity extends BaseActivity
         }
 
         synchronized (this) {
-            if (firstVisibleItem + visibleItemCount == totalItemCount
-                    && 0 != totalItemCount
-                    ) {
+            if (firstVisibleItem + visibleItemCount == totalItemCount && 0 != totalItemCount) {
                 DTVTLogger.debug("onScroll, paging, firstVisibleItem=" + firstVisibleItem
                         + ", totalItemCount=" + totalItemCount + ", visibleItemCount="
                         + visibleItemCount);
@@ -132,10 +161,10 @@ public class RecordReservationListActivity extends BaseActivity
     }
 
     @Override
-    public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+    public void onScrollStateChanged(final AbsListView absListView, final int scrollState) {
         synchronized (this) {
-            if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE &&
-                    absListView.getLastVisiblePosition() == mListView.getAdapter().getCount() - 1) {
+            if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
+                    && absListView.getLastVisiblePosition() == mListView.getAdapter().getCount() - 1) {
 
                 if (mIsCommunicating) {
                     return;
@@ -159,11 +188,11 @@ public class RecordReservationListActivity extends BaseActivity
     }
 
     /**
-     * 再読み込み時のダイアログ表示処理
+     * 再読み込み時のダイアログ表示処理.
      *
      * @param bool フッター付加フラグ
      */
-    private void displayMoreData(boolean bool) {
+    private void displayMoreData(final boolean bool) {
         if (null != mListView && null != mLoadMoreView) {
             if (bool) {
                 mListView.addFooterView(mLoadMoreView);
@@ -174,7 +203,7 @@ public class RecordReservationListActivity extends BaseActivity
     }
 
     /**
-     * 再読み込み時の処理
+     * 再読み込み時の処理.
      */
     private void resetCommunication() {
         displayMoreData(false);
@@ -182,18 +211,18 @@ public class RecordReservationListActivity extends BaseActivity
     }
 
     /**
-     * 再読み込み実施フラグ設定
+     * 再読み込み実施フラグ設定.
      *
      * @param bool 再読み込み実施フラグ
      */
-    private void setCommunicatingStatus(boolean bool) {
+    private void setCommunicatingStatus(final boolean bool) {
         synchronized (this) {
             mIsCommunicating = bool;
         }
     }
 
     /**
-     * ページングリセット
+     * ページングリセット.
      */
     private void resetPaging() {
         synchronized (this) {
@@ -208,7 +237,7 @@ public class RecordReservationListActivity extends BaseActivity
     }
 
     /**
-     * ページング数取得
+     * ページング数取得.
      *
      * @return ページング数
      */
@@ -220,12 +249,12 @@ public class RecordReservationListActivity extends BaseActivity
     }
 
     @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+    public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
         // 録画予約一覧画面ではItemのタップで画面遷移しない
     }
 
     @Override
-    public void recordingReservationListCallback(List<ContentsData> dataList) {
+    public void recordingReservationListCallback(final List<ContentsData> dataList) {
         DTVTLogger.start();
         setUpdateTime();
         if (null == dataList) {
@@ -258,7 +287,7 @@ public class RecordReservationListActivity extends BaseActivity
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
         DTVTLogger.start();
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
@@ -271,5 +300,41 @@ public class RecordReservationListActivity extends BaseActivity
                 break;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onStartCommunication() {
+        super.onStartCommunication();
+        DTVTLogger.start();
+
+        //プロパイダが無ければ作成し、あれば通信を許可する
+        if (mProvider != null) {
+            mProvider.enableConnect();
+        }
+        if (mContentsAdapter != null) {
+            mContentsAdapter.enableConnect();
+            mContentsAdapter.notifyDataSetChanged();
+        }
+        if (mListView != null) {
+            mListView.invalidateViews();
+        }
+
+        if (mContentsList == null || mContentsList.size() == 0) {
+            //コンテンツ情報が無ければ取得を行う
+            mProvider = new RecordingReservationListDataProvider(this);
+            mProvider.requestRecordingReservationListData();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        DTVTLogger.start();
+        //通信を止める
+        StopRecordingReservationListDataConnect stopRecordingReservationListDataConnect =
+                new StopRecordingReservationListDataConnect();
+        stopRecordingReservationListDataConnect.execute(mProvider);
+        StopContentsAdapterConnect stopContentsAdapterConnect = new StopContentsAdapterConnect();
+        stopContentsAdapterConnect.execute(mContentsAdapter);
     }
 }
