@@ -43,19 +43,22 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
     @Override
     public void onVodClipJsonParsed(final List<VodClipList> vodClipLists) {
         if (vodClipLists != null && vodClipLists.size() > 0) {
-            HashMap hashMap = (HashMap) vodClipLists.get(0).getVcList().get(0);
-            if (!hashMap.isEmpty()) {
-                VodClipList list = vodClipLists.get(0);
-//            setStructDB(list);
-                if (!mRequiredClipKeyList
-                        || mResponseEndFlag) {
-                    sendVodClipListData(list.getVcList());
+            List vclist = vodClipLists.get(0).getVcList();
+            if(vclist != null && vclist.size() > 0) {
+                HashMap hashMap = (HashMap) vclist.get(0);
+                if (!hashMap.isEmpty()) {
+                    VodClipList list = vodClipLists.get(0);
+                    //            setStructDB(list);
+                    if (!mRequiredClipKeyList
+                            || mResponseEndFlag) {
+                        sendVodClipListData(list.getVcList());
+                    } else {
+                        mClipList = list;
+                    }
                 } else {
-                    mClipList = list;
-                }
-            } else {
-                if (null != apiDataProviderCallback) {
-                    apiDataProviderCallback.vodClipListCallback(null);
+                    if (null != apiDataProviderCallback) {
+                        apiDataProviderCallback.vodClipListCallback(null);
+                    }
                 }
             }
         } else {

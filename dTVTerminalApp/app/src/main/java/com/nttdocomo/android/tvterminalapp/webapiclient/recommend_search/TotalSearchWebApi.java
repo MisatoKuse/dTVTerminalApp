@@ -11,7 +11,6 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.webapiclient.WebApiBase;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 /**
@@ -110,7 +109,7 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
             //固定値のため直接指定する
             queryItems.put(SearchRequestKey.kDisplayId, SEARCH_WEBAPI_PARAM_DISPLAY_ID);
 
-            get(UrlConstants.WebApiUrl.TOTAL_SEARCH_URL, queryItems, this, mContext);
+            getNoPassword(UrlConstants.WebApiUrl.TOTAL_SEARCH_URL, queryItems, this, mContext);
         } else {
             DTVTLogger.error("TotalSearchWebApi is stopping connection");
         }
@@ -159,6 +158,7 @@ public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, Sea
 
     /**
      * 各フィルタ文字列設定.
+     *
      * @param addType 各フィルター文字列
      */
     private void appendString(final SearchFilterType addType) {

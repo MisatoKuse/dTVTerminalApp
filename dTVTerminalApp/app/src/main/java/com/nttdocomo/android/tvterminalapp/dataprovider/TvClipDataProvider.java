@@ -42,19 +42,22 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
     @Override
     public void onTvClipJsonParsed(final List<TvClipList> tvClipLists) {
         if (tvClipLists != null && tvClipLists.size() > 0) {
-            HashMap hashMap = (HashMap) tvClipLists.get(0).getVcList().get(0);
-            if (!hashMap.isEmpty()) {
-                TvClipList list = tvClipLists.get(0);
-//            setStructDB(list);
-                if (!mRequiredClipKeyList
-                        || mResponseEndFlag) {
-                    sendTvClipListData(list.getVcList());
+            List vclist = tvClipLists.get(0).getVcList();
+            if(vclist != null && vclist.size() > 0) {
+                HashMap hashMap = (HashMap) vclist.get(0);
+                if (!hashMap.isEmpty()) {
+                    TvClipList list = tvClipLists.get(0);
+                    //            setStructDB(list);
+                    if (!mRequiredClipKeyList
+                            || mResponseEndFlag) {
+                        sendTvClipListData(list.getVcList());
+                    } else {
+                        mClipList = list;
+                    }
                 } else {
-                    mClipList = list;
-                }
-            } else {
-                if (null != apiDataProviderCallback) {
-                    apiDataProviderCallback.tvClipListCallback(null);
+                    if (null != apiDataProviderCallback) {
+                        apiDataProviderCallback.tvClipListCallback(null);
+                    }
                 }
             }
         } else {
