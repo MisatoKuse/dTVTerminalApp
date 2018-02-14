@@ -30,31 +30,23 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
     private HttpThread mHttpThread = null;
 
     /**
-     * 情報通信処理.
+     * 情報通信処理（ワンタイムパスワード認証等が不要の場合）.
      *
      * @param urlString  URL
      * @param queryItems 通信パラメータ
      * @param callback   終了コールバック
      * @param context    コンテキスト
      */
-    public void get(final String urlString, final LinkedHashMap<String, String> queryItems,
-                    final WebApiCallback callback, final Context context) {
+    public void getNoPassword(final String urlString, final LinkedHashMap<String, String> queryItems,
+                              final WebApiCallback callback, final Context context) {
         final Handler handler = new Handler();
         final String url = createUrlComponents(urlString, queryItems);
         mWebApiCallback = callback;
         final WebApiBase webApiBase = this;
-        //Log.d(DCommon.LOG_DEF_TAG, "WebApiBase::get, url= " + url);
 
-        //dアカウントのワンタイムパスワードの取得を行う
-        DaccountGetOTT getOtt = new DaccountGetOTT();
-        getOtt.execDaccountGetOTT(context, new DaccountGetOTT.DaccountGetOttCallBack() {
-            @Override
-            public void getOttCallBack(int result, String id, String oneTimePassword) {
-                //ワンタイムパスワードの取得後に呼び出す
-                mHttpThread = new HttpThread(url, handler, webApiBase, context, oneTimePassword);
-                mHttpThread.start();
-            }
-        });
+        //ワンタイムパスワード無しで呼び出す
+        mHttpThread = new HttpThread(url, handler, webApiBase, context, "");
+        mHttpThread.start();
     }
 
     /**

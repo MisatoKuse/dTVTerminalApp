@@ -80,6 +80,22 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
     };
 
     /**
+     * dTVカテゴリー一覧.
+     */
+    private final String[] RECOMMEND_CATEGORY_ID_DTV = {
+            recommendRequestId.DTV_SVOD.getRequestSCId(),
+            recommendRequestId.DTV_TVOD.getRequestSCId(),
+    };
+
+    /**
+     * dTVチャンネルカテゴリー一覧.
+     */
+    private final String[] RECOMMEND_CATEGORY_ID_DTV_CHANNEL = {
+            recommendRequestId.DTVCHANNEL_BLOADCAST.getRequestSCId(),
+            recommendRequestId.DTVCHANNEL_MISS.getRequestSCId(),
+            recommendRequestId.DTVCHANNEL_RELATION.getRequestSCId(),
+    };
+    /**
      * 取得対象サービスID:カテゴリーID.
      */
     public enum recommendRequestId {
@@ -516,7 +532,17 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      */
     private String getDCHRequestSCIdStr() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(recommendRequestId.DTVCHANNEL_BLOADCAST.getRequestSCId());
+
+        //ビデオカテゴリー一覧の数だけループ
+        for (int counter = 0; counter < RECOMMEND_CATEGORY_ID_DTV_CHANNEL.length; counter++) {
+            //カテゴリーIDとサービスIDを蓄積
+            stringBuilder.append(RECOMMEND_CATEGORY_ID_DTV_CHANNEL[counter]);
+
+            if (counter != RECOMMEND_CATEGORY_ID_DTV_CHANNEL.length - 1) {
+                //最後のデータ以外はカンマを入れる
+                stringBuilder.append(COMMA);
+            }
+        }
         return stringBuilder.toString();
     }
 
@@ -527,7 +553,17 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
      */
     private String getDTVRequestSCIdStr() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(recommendRequestId.DTV_SVOD.getRequestSCId());
+
+        //ビデオカテゴリー一覧の数だけループ
+        for (int counter = 0; counter < RECOMMEND_CATEGORY_ID_DTV.length; counter++) {
+            //カテゴリーIDとサービスIDを蓄積
+            stringBuilder.append(RECOMMEND_CATEGORY_ID_DTV[counter]);
+
+            if (counter != RECOMMEND_CATEGORY_ID_DTV.length - 1) {
+                //最後のデータ以外はカンマを入れる
+                stringBuilder.append(COMMA);
+            }
+        }
         return stringBuilder.toString();
     }
 

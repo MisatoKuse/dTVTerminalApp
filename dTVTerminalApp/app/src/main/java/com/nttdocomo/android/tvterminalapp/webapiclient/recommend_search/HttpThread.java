@@ -279,6 +279,7 @@ public class HttpThread extends Thread {
      * @return ワンタイムパスワードの認証付加後のURL
      */
     private String addUrlPassword(String srcUrl) {
+        //ワンタイムパスワードが無い場合の為、元のURLをあらかじめセットしておく
         String redirectUrl = srcUrl;
 
         //ワンタイムパスワードの取得に成功していれば、認証付加を開始する
