@@ -569,6 +569,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
     @Override
     public void channelListCallback(ArrayList<ChannelInfo> channels) {
         if (channels != null) {
+            showMyChannelNoItem(false);
             if(mTabIndex == INDEX_TAB_MY_CHANNEL){//MY番組表
                 this.hikariChannels = channels;
                 mappedMyChannelList = executeMapping();
@@ -577,7 +578,6 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
             }else {//ひかり、dTVチャンネル
                 this.mChannels = channels;
                 setChannelContentsView(mChannels);
-                showMyChannelNoItem(false);
                 ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
                 int channelNos[] = new int[channels.size()];
                 for (int i = 0; i < channels.size(); i++) {
