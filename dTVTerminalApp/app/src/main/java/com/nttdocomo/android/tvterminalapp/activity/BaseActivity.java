@@ -587,7 +587,7 @@ public class BaseActivity extends FragmentActivity implements
 
         // TODO STBのIPアドレスはSTBにDMS機能が搭載された暁にはペアリング時に保存した値を用いるようにする.
         mRemoteControlRelayClient = RemoteControlRelayClient.getInstance();
-        mRemoteControlRelayClient.setDebugRemoteIp("192.168.11.51");
+        mRemoteControlRelayClient.setDebugRemoteIp("192.168.11.15");
         //dアカウントの検知処理を追加する
         setDaccountControl();
         setRelayClientHandler();
