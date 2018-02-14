@@ -84,7 +84,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.player.DtvContentsDetailFragmentFactory;
-import com.nttdocomo.android.tvterminalapp.model.TabItemLayout;
+import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.relayclient.RemoteControlRelayClient;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.MediaVideoInfo;
@@ -1372,15 +1372,17 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         // タブ数を先に決定するため、コンテンツ詳細のデータを最初に取得しておく
         mDetailData = mIntent.getParcelableExtra(RECOMMEND_INFO_BUNDLE_KEY);
         if (mDetailData != null) {
+            int serviceId = mDetailData.getServiceId();
+            if (serviceId == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID
+                    || serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID
+                    || serviceId == OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID) {
+                // 他サービス(dtv/dtvチャンネル/dアニメ)フラグを立てる
+                mIsOtherService = true;
+            }
             DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
 //            STBに接続している　「テレビで視聴」が表示
             if (null != dlnaDmsItem && null != dlnaDmsItem.mUdn && !dlnaDmsItem.mUdn.isEmpty()) {
-                int serviceId = mDetailData.getServiceId();
-                if (serviceId == OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID
-                        || serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID
-                        || serviceId == OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID) {
-                    // 他サービス(dtv/dtvチャンネル/dアニメ)フラグを立てる
-                    mIsOtherService = true;
+                if (mIsOtherService) {
                     if (serviceId == OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID) {
                         // リモコンUIのリスナーを設定
                         createRemoteControllerView(true);

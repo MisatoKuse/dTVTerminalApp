@@ -309,11 +309,6 @@ public class VideoGenreProvider implements
             genreMetaDataList.add(firstNodData);
         }
 
-        //ARIBコンテンツデータをすべて取得
-        if (listMap.get(VIDEO_GENRE_KEY_ARIB) != null) {
-            genreMetaDataList.addAll(listMap.get(VIDEO_GENRE_KEY_ARIB));
-        }
-
         // 初期画面のジャンルIDを設定
         List<String> firstPageGenreIdList = new ArrayList<>();
         Map<String, VideoGenreList> videoGenreListMap = new HashMap<>();

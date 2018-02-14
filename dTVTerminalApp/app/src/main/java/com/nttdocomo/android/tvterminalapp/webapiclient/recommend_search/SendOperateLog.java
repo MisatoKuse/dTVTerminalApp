@@ -13,7 +13,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetail
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.WebApiBase;
-import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ServiceTokenGetControl;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOTT;
 
 public class SendOperateLog extends WebApiBase {
 
@@ -25,6 +25,7 @@ public class SendOperateLog extends WebApiBase {
 
     /**
      * コンストラクタ
+     *
      * @param context コンテキスト
      */
     public SendOperateLog(Context context) {
@@ -40,14 +41,14 @@ public class SendOperateLog extends WebApiBase {
                 mCategoryId = mDetailData.getCategoryId();
             }
             if (!TextUtils.isEmpty(mCategoryId)) {
-                //トークンを取得する
-                ServiceTokenGetControl serviceTokenGetControl =
-                        new ServiceTokenGetControl(mContext);
-                serviceTokenGetControl.getToken(new ServiceTokenGetControl.NextProcessInterface() {
+                //dアカウントのワンタイムパスワードの取得を行う
+                DaccountGetOTT getOtt = new DaccountGetOTT();
+                getOtt.execDaccountGetOTT(mContext, new DaccountGetOTT.DaccountGetOttCallBack() {
                     @Override
-                    public void onTokenGot() {
-                        //トークンの取得後に呼び出す
-                        new HttpThread(getUrl(mDetailData), null, mContext).start();
+                    public void getOttCallBack(int result, String id, String oneTimePassword) {
+                        //ワンタイムパスワードの取得後に呼び出す
+                        new HttpThread(getUrl(mDetailData), null,
+                                mContext,oneTimePassword).start();
                     }
                 });
             }
@@ -57,7 +58,7 @@ public class SendOperateLog extends WebApiBase {
     /**
      * Urlを設定.
      */
-    private String getUrl(OtherContentsDetailData mDetailData){
+    private String getUrl(OtherContentsDetailData mDetailData) {
         mUrl.append("?serviceId=");
         mUrl.append(String.valueOf(mDetailData.getServiceId()));
         mUrl.append("&categoryId=");
@@ -69,7 +70,7 @@ public class SendOperateLog extends WebApiBase {
         mUrl.append("&cid=");
         mUrl.append(mDetailData.getContentId());
         mUrl.append("&operateKind=");
-        if (ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY.equals(mDetailData.getRecommendFlg())){
+        if (ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY.equals(mDetailData.getRecommendFlg())) {
             mUrl.append("412");
         } else {
             mUrl.append("411");
@@ -98,7 +99,7 @@ public class SendOperateLog extends WebApiBase {
     /**
      * カテゴリーIDを設定.
      */
-    private String getCategoryId(VodMetaFullData mDetailFullData){
+    private String getCategoryId(VodMetaFullData mDetailFullData) {
         if (mDetailFullData != null) {
             switch (mDetailFullData.getDisp_type()) {
                 case "tv_program":

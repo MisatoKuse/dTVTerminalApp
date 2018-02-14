@@ -41,10 +41,10 @@ public class ProgramDataManager {
     /**
      * ホーム画面用CH一覧データを返却する.
      *
-     * @param displayType ディスプレイタイプ.
+     * @param service チャンネルメタのservice.ひかり or dch(空文字の場合は両方)
      * @return list チャンネルデータ
      */
-    public List<Map<String, String>> selectChannelListProgramData(final String displayType) {
+    public List<Map<String, String>> selectChannelListProgramData(final String service) {
 
         //データ存在チェック
         List<Map<String, String>> list = new ArrayList<>();
@@ -54,8 +54,8 @@ public class ProgramDataManager {
 
         //ホーム画面に必要な列を列挙する
         String[] columns = {JsonConstants.META_RESPONSE_CHNO, JsonConstants.META_RESPONSE_DEFAULT_THUMB, JsonConstants.META_RESPONSE_TITLE,
-                JsonConstants.META_RESPONSE_AVAIL_START_DATE, JsonConstants.META_RESPONSE_AVAIL_END_DATE,
-                JsonConstants.META_RESPONSE_DISP_TYPE, JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_DTV_TYPE,
+                JsonConstants.META_RESPONSE_AVAIL_START_DATE, JsonConstants.META_RESPONSE_AVAIL_END_DATE, JsonConstants.META_RESPONSE_DISP_TYPE,
+                JsonConstants.META_RESPONSE_SERVICE, JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_DTV_TYPE,
                 JsonConstants.META_RESPONSE_CH_TYPE, JsonConstants.META_RESPONSE_PUID, JsonConstants.META_RESPONSE_SUB_PUID,
                 JsonConstants.META_RESPONSE_CHPACK + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_PUID,
                 JsonConstants.META_RESPONSE_CHPACK + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_SUB_PUID,
@@ -68,7 +68,7 @@ public class ProgramDataManager {
         ChannelListDao channelListDao = new ChannelListDao(database);
 
         //ホーム画面用データ取得
-        list = channelListDao.findByTypeAndDate(columns, displayType);
+        list = channelListDao.findByService(columns, service);
         DataBaseManager.getInstance().closeDatabase();
         return list;
     }
@@ -91,7 +91,7 @@ public class ProgramDataManager {
         //ホーム画面に必要な列を列挙する
         String[] columns = {JsonConstants.META_RESPONSE_THUMB_448, JsonConstants.META_RESPONSE_TITLE,
                 JsonConstants.META_RESPONSE_AVAIL_START_DATE, JsonConstants.META_RESPONSE_AVAIL_END_DATE,
-                JsonConstants.META_RESPONSE_CHNO, JsonConstants.META_RESPONSE_DISP_TYPE,
+                JsonConstants.META_RESPONSE_CHNO, JsonConstants.META_RESPONSE_DISP_TYPE, JsonConstants.META_RESPONSE_SERVICE,
                 JsonConstants.META_RESPONSE_SEARCH_OK, JsonConstants.META_RESPONSE_CRID,
                 JsonConstants.META_RESPONSE_SERVICE_ID, JsonConstants.META_RESPONSE_EVENT_ID,
                 JsonConstants.META_RESPONSE_TITLE_ID, JsonConstants.META_RESPONSE_R_VALUE,

@@ -83,7 +83,7 @@ public class TvScheduleInsertDataManager {
         List<HashMap<String,String>> hashMaps = tvScheduleList.geTvsList();
 
         //DB保存前に前回取得したデータは全消去する
-        tvScheduleListDao.deleteByType(display_type);
+        tvScheduleListDao.delete();
 
         //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
         for (int i = 0; i < hashMaps.size(); i++) {

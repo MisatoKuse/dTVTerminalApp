@@ -67,14 +67,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
             /*
              * to do: DLNA起動失敗の場合、仕様はないので、ここで将来対応
              */
-        } else {
-            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-            if (null == dlnaDmsItem) {
-                /*
-                 * to do: ペアリングするか、ここで将来対応
-                 */
-                return;
-            }
         }
         setContents();
     }
@@ -114,9 +106,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     protected void onResume() {
-        if (!mIsFirstRun) {
-            mFirstLaunchLaunchYesActivity.setVisibility(View.GONE);
-        }
         super.onResume();
     }
 
@@ -149,23 +138,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
             doScreenTransition();
         }
     }
-
-    /**
-     * 初回起動判定.
-     *
-     * @return 初回起動かどうか
-     */
-    public static boolean isFirstRun() {
-        return mIsFirstRun;
-    }
-
-    /**
-     * 初回起動判定値設定.
-     */
-    public static void setNotFirstRun() {
-        LaunchActivity.mIsFirstRun = false;
-    }
-
 
     /**
      * チュートリアル画面へ遷移.

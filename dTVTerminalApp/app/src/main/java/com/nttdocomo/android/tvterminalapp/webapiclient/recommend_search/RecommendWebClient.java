@@ -5,21 +5,17 @@
 package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
 import android.content.Context;
-import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.RecommendChList;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.WebApiBase;
 import com.nttdocomo.android.tvterminalapp.webapiclient.xmlparser.RecommendWebXmlParser;
 
-import java.net.CookieHandler;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
 import java.util.LinkedHashMap;
 
-public class RecommendWebClient extends WebApiBase implements WebApiCallback,
-        OneTimePasswordAuth.OneTimePasswordAuthCallback {
+public class RecommendWebClient extends WebApiBase implements WebApiCallback {
 
     //コンテキスト
     private Context mContext = null;
@@ -28,10 +24,6 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback,
     private boolean mfirstParmater = false;
 
     private final RecommendCallback mRecommendCallback;
-
-    //コールバックにエラーを返すためのハンドラー
-    private Handler handler;
-    private Runnable runnable;
 
     // 汎用レコメンド情報取得API
     /**
@@ -80,35 +72,6 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback,
      */
     private boolean mIsCancel = false;
 
-    @Override
-    public void oneTimePasswordAuthCallback(String url, LinkedHashMap queryItems,
-                                            boolean useOnetimePass) {
-        if (mIsCancel) {
-            DTVTLogger.error("RecommendWebClient is stopping connection");
-            return;
-        }
-        //ワンタイムパスワードの認証の有無で動作を分ける
-        if (useOnetimePass) {
-            //ワンタイムパスワードの処理用にクッキーを有効化する
-            // CookieManager の生成
-            CookieManager manager = new CookieManager();
-
-            // すべての Cookie を受けいれる
-            manager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
-
-            // CookieHandler のデフォルトに設定
-            CookieHandler.setDefault(manager);
-        }
-
-        //ヌルの場合は初期化を行う
-        if(queryItems == null) {
-            queryItems = new LinkedHashMap();
-        }
-
-        //指定されたURLとパラメータで通信を行う
-        getRecomendInfo(url, queryItems, this, mContext);
-    }
-
     public interface RecommendCallback {
         void RecommendCallback(RecommendChList mRecommendChList);
     }
@@ -148,12 +111,14 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback,
         itemAdder(queryItems, PAGE_ID, recommendRequestData.pageId);
 
         if (!queryItems.isEmpty()) {
-            //サーバーへおすすめ情報取得を依頼する
-            //get(UrlConstants.WebApiUrl.RECOMMEND_LIST_GET_URL, queryItems, this);
-            OneTimePasswordAuth oneTimePasswordAuth = new OneTimePasswordAuth(this);
-            oneTimePasswordAuth.authOneTimePasswordStart(mContext,
-                    UrlConstants.WebApiUrl.RECOMMEND_LIST_GET_URL, queryItems);
-
+            //通信停止中ならば通信処理への遷移は行わない
+            if (!mIsCancel) {
+                //サーバーへおすすめ情報取得を依頼する
+                //get(UrlConstants.WebApiUrl.RECOMMEND_LIST_GET_URL, queryItems, this, mContext);
+                getRecomendInfo(UrlConstants.WebApiUrl.RECOMMEND_LIST_GET_URL, queryItems, this, mContext);
+            } else {
+                DTVTLogger.error("RecommendWebClient is stopping connection");
+            }
         } else {
             //パラメータに誤りがあったので、ヌルを返却する
             if (mRecommendCallback != null) {
@@ -182,13 +147,13 @@ public class RecommendWebClient extends WebApiBase implements WebApiCallback,
 
         if (mfirstParmater) {
             //先頭ならば前に？を付加
-            keyname = "?" + keyname;
+            keyname = StringUtils.getConnectStrings("?", keyname);
 
             //先頭0は終わるのでフラグを更新
             mfirstParmater = false;
         } else {
             //2番目以降ならば前に&を付加
-            keyname = "&" + keyname;
+            keyname = StringUtils.getConnectStrings("&" ,keyname);
         }
 
         //テーブルに蓄積

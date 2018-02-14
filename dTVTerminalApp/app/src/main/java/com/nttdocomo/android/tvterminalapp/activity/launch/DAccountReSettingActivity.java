@@ -57,8 +57,7 @@ public class DAccountReSettingActivity extends BaseActivity implements View.OnCl
         setContentView(R.layout.daccount_resetting_main_layout);
 
         //Headerの設定
-        //TODO ヘッダーのタイトル名変更対応(BaseActivity側で変更予定のため仮)
-        setTitleText("ドコテレ画像");
+        setTitleText("");
         enableHeaderBackIcon(true);
         enableStbStatusIcon(false);
         enableGlobalMenuIcon(false);

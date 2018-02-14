@@ -8,7 +8,7 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ServiceTokenGetControl;
+import com.nttdocomo.android.tvterminalapp.webapiclient.daccount.DaccountGetOTT;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.HttpThread;
 import com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search.WebApiCallback;
 
@@ -32,10 +32,10 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
     /**
      * 情報通信処理.
      *
-     * @param urlString URL
+     * @param urlString  URL
      * @param queryItems 通信パラメータ
-     * @param callback 終了コールバック
-     * @param context コンテキスト
+     * @param callback   終了コールバック
+     * @param context    コンテキスト
      */
     public void get(final String urlString, final LinkedHashMap<String, String> queryItems,
                     final WebApiCallback callback, final Context context) {
@@ -45,14 +45,13 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
         final WebApiBase webApiBase = this;
         //Log.d(DCommon.LOG_DEF_TAG, "WebApiBase::get, url= " + url);
 
-        //トークンを取得する
-        ServiceTokenGetControl serviceTokenGetControl =
-                new ServiceTokenGetControl(context);
-        serviceTokenGetControl.getToken(new ServiceTokenGetControl.NextProcessInterface() {
+        //dアカウントのワンタイムパスワードの取得を行う
+        DaccountGetOTT getOtt = new DaccountGetOTT();
+        getOtt.execDaccountGetOTT(context, new DaccountGetOTT.DaccountGetOttCallBack() {
             @Override
-            public void onTokenGot() {
-                //トークンの取得後に呼び出す
-                mHttpThread = new HttpThread(url, handler, webApiBase, context);
+            public void getOttCallBack(int result, String id, String oneTimePassword) {
+                //ワンタイムパスワードの取得後に呼び出す
+                mHttpThread = new HttpThread(url, handler, webApiBase, context, oneTimePassword);
                 mHttpThread.start();
             }
         });
@@ -61,10 +60,10 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
     /**
      * 情報通信処理・Handlerが使用できないASyncTaskの処理内で使用する.
      *
-     * @param urlString URL
+     * @param urlString  URL
      * @param queryItems 通信用パラメータ
-     * @param callback 終了コールバック
-     * @param context コンテキスト
+     * @param callback   終了コールバック
+     * @param context    コンテキスト
      */
     protected void getRecomendInfo(final String urlString, final LinkedHashMap<String, String> queryItems,
                                    final WebApiCallback callback, final Context context) {
@@ -72,14 +71,13 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
         mWebApiCallback = callback;
         final WebApiBase webApiBase = this;
         //Log.d(DCommon.LOG_DEF_TAG, "WebApiBase::get, url= " + url);
-        //トークンを取得する
-        ServiceTokenGetControl serviceTokenGetControl =
-                new ServiceTokenGetControl(context);
-        serviceTokenGetControl.getToken(new ServiceTokenGetControl.NextProcessInterface() {
+        //dアカウントのワンタイムパスワードの取得を行う
+        DaccountGetOTT getOtt = new DaccountGetOTT();
+        getOtt.execDaccountGetOTT(context, new DaccountGetOTT.DaccountGetOttCallBack() {
             @Override
-            public void onTokenGot() {
-                //トークンの取得後に呼び出す
-                mHttpThread = new HttpThread(url, webApiBase, context);
+            public void getOttCallBack(int result, String id, String oneTimePassword) {
+                //ワンタイムパスワードの取得後に呼び出す
+                mHttpThread = new HttpThread(url, webApiBase, context, oneTimePassword);
                 mHttpThread.start();
             }
         });
@@ -88,7 +86,7 @@ public class WebApiBase implements HttpThread.HttpThreadFinish {
     /**
      * get呼び出し用に、URLとパラメータを統合する.
      *
-     * @param url 呼び出し用URL
+     * @param url        呼び出し用URL
      * @param queryItems 呼び出し用パラメータ
      * @return 統合後文字列
      */

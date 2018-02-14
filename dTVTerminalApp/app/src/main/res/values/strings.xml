@@ -5,7 +5,7 @@
 <resources>
 
     <!-- Common -->
-    <string name="app_name">ドコモテレビターミナルアプリ</string>
+    <string name="app_name">ドコモテレビターミナル</string>
     <string name="contents_hyphen">-</string>
     <string name="positive_response">はい</string>
     <string name="negative_response">いいえ</string>
@@ -144,7 +144,6 @@
 
     <!-- ビデオ一覧 -->
     <string name="video_content_top_title">ビデオ</string>
-    <string name="video_content_sub_genre_title">全ての作品</string>
     <string name="video_list_genre_all">すべて</string>
     <string name="video_list_genre_nod">NHKオンデマンド</string>
 

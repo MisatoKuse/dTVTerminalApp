@@ -524,11 +524,6 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             if (recommendChListData != null && recommendChListData.size() > 0) {
                 sendRecommendChListData(recommendChListData);
             }
-            //おすすめビデオ・レコメンド情報は最初からContentsDataのリストなので、そのまま使用する
-            List<ContentsData> recommendVdListData = getRecommendVdListData();
-            if (recommendVdListData != null && recommendVdListData.size() > 0) {
-                sendRecommendVdListData(recommendVdListData);
-            }
             //今日のテレビランキング
             List<Map<String, String>> dailyRankList = getDailyRankListData();
             if (dailyRankList != null && dailyRankList.size() > 0) {
@@ -766,11 +761,11 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         mRecommendDataProvider = new RecommendDataProvider(
                 mContext.getApplicationContext(), this);
 
-        //レコメンドデータプロバイダーからおすすめ番組情報を取得する・DBに既に入っていた場合はその値を使用するので、trueを指定する
+        //レコメンドデータプロバイダーからおすすめ番組情報を取得する・常にコールバックで値を取るのでfalseを指定する
         List<ContentsData> recommendTvData =
                 mRecommendDataProvider.startGetRecommendData(RecommendDataProvider.TV_NO,
                         SearchConstants.RecommendList.FIRST_POSITION,
-                        SearchConstants.RecommendList.RECOMMEND_PRELOAD_COUNT, true);
+                        SearchConstants.RecommendList.RECOMMEND_PRELOAD_COUNT, false);
 
         //取得したデータを渡す
         return recommendTvData;
@@ -977,11 +972,12 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 && NetWorkUtils.isOnline(mContext)) {
             if (!mIsStop) {
                 WatchListenVideoWebClient webClient = new WatchListenVideoWebClient(mContext);
-                //TODO：仮設定値
-                int ageReq = 1;
-                int upperPageLimit = 1;
+
+                UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
+                int ageReq = userInfoDataProvider.getUserAge();
+                int upperPageLimit = 20;
                 int lowerPageLimit = 1;
-                String pagerDirection = "";
+                String pagerDirection = "next";
 
                 webClient.getWatchListenVideoApi(ageReq, upperPageLimit,
                         lowerPageLimit, pagerOffset, pagerDirection, this);
@@ -1272,6 +1268,13 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                     SearchConstants.RecommendList.RECOMMEND_PRELOAD_COUNT);
             sendRecommendChListData(recommendChannelInfoList);
         }
+
+        //おすすめビデオ・レコメンド情報は最初からContentsDataのリストなので、そのまま使用する
+        //ワンタイムパスワードが競合しないように、おすすめ番組取得後に動作を開始する
+        List<ContentsData> recommendVdListData = getRecommendVdListData();
+        if (recommendVdListData != null && recommendVdListData.size() > 0) {
+            sendRecommendVdListData(recommendVdListData);
+        }
     }
 
     /**
@@ -1346,7 +1349,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
             case CHANNEL_LIST:
                 dateUtils.addLastDate(DateUtils.CHANNEL_LAST_UPDATE);
                 ChannelInsertDataManager channelInsertDataManager = new ChannelInsertDataManager(mContext);
-                channelInsertDataManager.insertChannelInsertList(mChannelList, JsonConstants.DISPLAY_TYPE[DEFAULT_CHANNEL_DISPLAY_TYPE]);
+                channelInsertDataManager.insertChannelInsertList(mChannelList);
                 break;
             case TV_SCHEDULE_LIST:
                 dateUtils.addLastDate(DateUtils.TV_SCHEDULE_LAST_INSERT);
