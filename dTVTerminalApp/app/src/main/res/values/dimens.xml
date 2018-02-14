@@ -262,6 +262,7 @@
     <dimen name="paring_setting_search_failed_margin_top">10dp</dimen>
     <dimen name="paring_setting_search_help_margin_top">8dp</dimen>
     <dimen name="paring_setting_search_image_margin_top">17dp</dimen>
+    <dimen name="pairing_setting_search_failed_text_size">35dp</dimen>
 
     <!--縮小番組表-->
     <dimen name="tv_program_list_time_scrollview_width">35dp</dimen>
