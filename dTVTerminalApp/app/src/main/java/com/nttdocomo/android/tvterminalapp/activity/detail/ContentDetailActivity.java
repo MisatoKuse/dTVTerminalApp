@@ -2345,19 +2345,19 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                         requestStartApplicationDtvChannel(
                                 RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL,
                                 RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_BROADCAST,
-                                mDetailFullData.getCrid(), mDetailData.getChannelId());
+                                mDetailData.getContentId(), mDetailData.getChannelId());
                         //VOD(見逃し)の場合
                     }else if(DTV_CHANNEL_CATEGORY_MISSED.equals(mDetailData.getCategoryId())){
                         requestStartApplicationDtvChannel(
                                 RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL,
                                 RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_MISSED,
-                                mDetailFullData.getCrid(), mDetailData.getChannelId());
+                                mDetailData.getContentId(), mDetailData.getChannelId());
                         //VOD(見逃し)の場合
                     }else if (DTV_CHANNEL_CATEGORY_RELATION.equals(mDetailData.getCategoryId())){
                         requestStartApplicationDtvChannel(
                                 RemoteControlRelayClient.STB_APPLICATION_TYPES.DTVCHANNEL,
                                 RemoteControlRelayClient.DTVCHANNEL_SERVICE_CATEGORY_TYPES.DTVCHANNEL_CATEGORY_RELATION,
-                                mDetailFullData.getCrid(), mDetailData.getChannelId());
+                                mDetailData.getContentId(), mDetailData.getChannelId());
                     }
                     break;
                 case OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID://ひかりTV
