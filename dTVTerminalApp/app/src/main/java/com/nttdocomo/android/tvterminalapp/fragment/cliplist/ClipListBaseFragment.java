@@ -21,8 +21,8 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
-import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 
 import java.util.ArrayList;
@@ -146,7 +146,6 @@ public class ClipListBaseFragment extends Fragment
         //スクロールの上下方向検知用のリスナーを設定
         mTvListView.setOnTouchListener(this);
 
-        ThumbnailProvider thumbnailProvider = new ThumbnailProvider(getActivity());
         mClipMainAdapter = new ContentsAdapter(getContext(), mClipListData, ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_TV);
         mTvListView.setAdapter(mClipMainAdapter);
     }
@@ -256,5 +255,19 @@ public class ClipListBaseFragment extends Fragment
             intent.putExtra(detailData.getRecommendFlg(), detailData);
             startActivity(intent);
         }
+    }
+
+    public void enableContentsAdapterConnect() {
+        if (mClipMainAdapter != null) {
+            mClipMainAdapter.enableConnect();
+        }
+        if (mTvListView != null) {
+            mTvListView.invalidateViews();
+        }
+    }
+
+    public void stopContentsAdapterConnect() {
+        StopContentsAdapterConnect stopAdapterConnect = new StopContentsAdapterConnect();
+        stopAdapterConnect.execute(mClipMainAdapter);
     }
 }

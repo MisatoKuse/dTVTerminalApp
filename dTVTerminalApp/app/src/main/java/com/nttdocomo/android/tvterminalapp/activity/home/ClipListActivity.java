@@ -21,6 +21,8 @@ import android.widget.Toast;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopTvClipDataConnect;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopVodClipDataConnect;
 import com.nttdocomo.android.tvterminalapp.fragment.cliplist.ClipListBaseFragment;
 import com.nttdocomo.android.tvterminalapp.fragment.cliplist.ClipListBaseFragmentScrollListener;
 import com.nttdocomo.android.tvterminalapp.fragment.cliplist.ClipListFragmentFactory;
@@ -97,6 +99,10 @@ public class ClipListActivity extends BaseActivity implements
      * 表示開始タブ指定キー.
      */
     public static final String CLIP_LIST_START_PAGE = "clipListStartPage";
+    /**
+     * 開始ページ.
+     */
+    int mStartPageNo = 0;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -106,7 +112,7 @@ public class ClipListActivity extends BaseActivity implements
         //Headerの設定
         setTitleText(getString(R.string.str_clip_activity_title));
         Intent intent = getIntent();
-        int startPageNo = intent.getIntExtra(CLIP_LIST_START_PAGE, CLIP_LIST_PAGE_NO_OF_TV);
+        mStartPageNo = intent.getIntExtra(CLIP_LIST_START_PAGE, CLIP_LIST_PAGE_NO_OF_TV);
         mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
         if (mIsMenuLaunch) {
             enableHeaderBackIcon(false);
@@ -118,15 +124,9 @@ public class ClipListActivity extends BaseActivity implements
         initData();
         initView();
         resetPaging();
-        //前画面からのタブ指定起動反映
-        if (startPageNo == CLIP_LIST_PAGE_NO_OF_VOD) {
-            setVod();
-        } else {
-            setTv();
-        }
         //初回表示のみ前画面からのタブ指定を反映する
-        mViewPager.setCurrentItem(startPageNo);
-        mTabLayout.setTab(startPageNo);
+        mViewPager.setCurrentItem(mStartPageNo);
+        mTabLayout.setTab(mStartPageNo);
     }
 
     /**
@@ -468,9 +468,11 @@ public class ClipListActivity extends BaseActivity implements
 
                 switch (mViewPager.getCurrentItem()) {
                     case 0:
+                        mStartPageNo = CLIP_LIST_PAGE_NO_OF_TV;
                         setTv();
                         break;
                     case 1:
+                        mStartPageNo = CLIP_LIST_PAGE_NO_OF_VOD;
                         setVod();
                         break;
                     default:
@@ -487,6 +489,7 @@ public class ClipListActivity extends BaseActivity implements
     private void setVod() {
 
         ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_VOD, this);
+        fragment.enableContentsAdapterConnect();
         //スワイプ時にページング中のプログレスバーを非表示にする
         resetCommunication();
         fragment.setMode(ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_VIDEO);
@@ -498,6 +501,7 @@ public class ClipListActivity extends BaseActivity implements
      */
     private void setTv() {
         ClipListBaseFragment fragment = mClipListFragmentFactory.createFragment(CLIP_LIST_PAGE_NO_OF_TV, this);
+        fragment.enableContentsAdapterConnect();
         //スワイプ時にページング中のプログレスバーを非表示にする
         resetCommunication();
         fragment.setMode(ContentsAdapter.ActivityTypeItem.TYPE_CLIP_LIST_MODE_TV);
@@ -575,5 +579,38 @@ public class ClipListActivity extends BaseActivity implements
                 break;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onStartCommunication() {
+        super.onStartCommunication();
+        DTVTLogger.start();
+        if (mVodClipDataProvider != null) {
+            mVodClipDataProvider.enableConnect();
+        }
+        if (mTvClipDataProvider != null) {
+            mTvClipDataProvider.enableConnect();
+        }
+        //前画面からのタブ指定起動反映
+        if (mStartPageNo == CLIP_LIST_PAGE_NO_OF_VOD) {
+            setVod();
+        } else {
+            setTv();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        DTVTLogger.start();
+        //通信を止める
+        StopVodClipDataConnect stopVodClipDataConnect = new StopVodClipDataConnect();
+        stopVodClipDataConnect.execute(mVodClipDataProvider);
+        StopTvClipDataConnect stopTvClipDataConnect = new StopTvClipDataConnect();
+        stopTvClipDataConnect.execute(mTvClipDataProvider);
+        ClipListBaseFragment fragment = getCurrentFragment();
+        if (fragment != null) {
+            fragment.stopContentsAdapterConnect();
+        }
     }
 }
