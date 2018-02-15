@@ -39,6 +39,19 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
      */
     private TvClipDataProviderCallback apiDataProviderCallback;
 
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
+    /**
+     * 視聴中ビデオリスト取得WebClient.
+     */
+    private TvClipWebClient mWebClient = null;
+    /**
+     * クリップキー一覧取得プロバイダ.
+     */
+    private ClipKeyListDataProvider mClipKeyListDataProvider = null;
+
     @Override
     public void onTvClipJsonParsed(final List<TvClipList> tvClipLists) {
         if (tvClipLists != null && tvClipLists.size() > 0) {
@@ -114,17 +127,25 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
      */
     public void getClipData(final int pagerOffset) {
         mClipList = null;
-        // クリップキー一覧を取得
-        if (mRequiredClipKeyList) {
-            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.TV));
-        }
-        //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
+        if (!mIsCancel) {
+            // クリップキー一覧を取得
+            if (mRequiredClipKeyList) {
+                mClipKeyListDataProvider = new ClipKeyListDataProvider(mContext);
+                mClipKeyListDataProvider.getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.TV));
+            }
+            //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
 //        List<Map<String, String>> tvClipList = getTvClipListData(pagerOffset);
         getTvClipListData(pagerOffset);
 
 //        if (tvClipList != null && tvClipList.size() > 0) {
 //            sendTvClipListData(tvClipList);
 //        }
+        } else {
+            DTVTLogger.error("TvClipDataProvider is stopping connection");
+            if (null != apiDataProviderCallback) {
+                apiDataProviderCallback.tvClipListCallback(null);
+            }
+        }
     }
 
     /**
@@ -219,7 +240,7 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
 //        DateUtils dateUtils = new DateUtils(mContext);
 //        String lastDate = dateUtils.getLastDate(TV_LAST_INSERT);
 
-        List<Map<String, String>> list = new ArrayList<>();
+        //List<Map<String, String>> list = new ArrayList<>();
         //Vodクリップ一覧のDB保存履歴と、有効期間を確認
         //if (true) { //test
 /*        boolean fromDb = lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate);
@@ -233,15 +254,22 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
         }*/
 
 //        if (!fromDb) {
-        //通信クラスにデータ取得要求を出す
-        TvClipWebClient webClient = new TvClipWebClient(mContext);
-        int ageReq = 1;
-        int upperPageLimit = 1;
-        int lowerPageLimit = 1;
-        //int pagerOffset = 1;
-        String pagerDirection = "";
-        webClient.getTvClipApi(ageReq, upperPageLimit,
-                lowerPageLimit, pagerOffset, pagerDirection, this);
+        if (!mIsCancel) {
+            //通信クラスにデータ取得要求を出す
+            mWebClient = new TvClipWebClient(mContext);
+            int ageReq = 1;
+            int upperPageLimit = 1;
+            int lowerPageLimit = 1;
+            //int pagerOffset = 1;
+            String pagerDirection = "";
+            mWebClient.getTvClipApi(ageReq, upperPageLimit,
+                    lowerPageLimit, pagerOffset, pagerDirection, this);
+        } else {
+            DTVTLogger.error("TvClipDataProvider is stopping connection");
+            if (null != apiDataProviderCallback) {
+                apiDataProviderCallback.tvClipListCallback(null);
+            }
+        }
 //        }
 //        return list;
     }
@@ -257,5 +285,32 @@ public class TvClipDataProvider extends ClipKeyListDataProvider implements TvCli
 //        dateUtils.addLastDate(TV_LAST_INSERT);
 //        TvClipInsertDataManager dataManager = new TvClipInsertDataManager(mContext);
 //        dataManager.insertTvClipInsertList(tvClipList);
+    }
+    /**
+     * 通信を止める.
+     */
+    public void stopConnect() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        if (mClipKeyListDataProvider != null) {
+            mClipKeyListDataProvider.stopConnection();
+        }
+        if (mWebClient != null) {
+            mWebClient.stopConnection();
+        }
+    }
+
+    /**
+     * 通信許可状態にする.
+     */
+    public void enableConnect() {
+        DTVTLogger.start();
+        mIsCancel = false;
+        if (mClipKeyListDataProvider != null) {
+            mClipKeyListDataProvider.enableConnection();
+        }
+        if (mWebClient != null) {
+            mWebClient.enableConnection();
+        }
     }
 }

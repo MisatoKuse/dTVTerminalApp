@@ -40,6 +40,19 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
      */
     private ApiDataProviderCallback apiDataProviderCallback;
 
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
+    /**
+     * 視聴中ビデオリスト取得WebClient.
+     */
+    private VodClipWebClient mWebClient = null;
+    /**
+     * クリップキー一覧取得プロバイダ.
+     */
+    private ClipKeyListDataProvider mClipKeyListDataProvider = null;
+
     @Override
     public void onVodClipJsonParsed(final List<VodClipList> vodClipLists) {
         if (vodClipLists != null && vodClipLists.size() > 0) {
@@ -115,16 +128,24 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
      */
     public void getClipData(final int pagerOffset) {
         mClipList = null;
-        // クリップキー一覧を取得
-        if (mRequiredClipKeyList) {
-            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
-        }
-        //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
+        if (!mIsCancel) {
+            // クリップキー一覧を取得
+            if (mRequiredClipKeyList) {
+                mClipKeyListDataProvider = new ClipKeyListDataProvider(mContext);
+                mClipKeyListDataProvider.getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+            }
+            //TODO:Sprint10において、一旦クリップ一覧をキャッシュする処理を消去することになった
 //        List<Map<String, String>> vodClipList = getVodClipListData(pagerOffset);
         getVodClipListData(pagerOffset);
 //        if(vodClipList != null && vodClipList.size() > 0){
 //            sendVodClipListData(vodClipList);
 //        }
+        } else {
+            DTVTLogger.error("VodClipDataProvider is stopping connection");
+            if (null != apiDataProviderCallback) {
+                apiDataProviderCallback.vodClipListCallback(null);
+            }
+        }
     }
 
     /**
@@ -229,16 +250,23 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
         }
 */
 //        if(!fromDb){
-        //通信クラスにデータ取得要求を出す
-        VodClipWebClient webClient = new VodClipWebClient(mContext);
-        int ageReq = 1;
-        int upperPageLimit = 1;
-        int lowerPageLimit = 1;
-        //int pagerOffset = 1;
-        String direction = "";
+        if (!mIsCancel) {
+            //通信クラスにデータ取得要求を出す
+            mWebClient = new VodClipWebClient(mContext);
+            int ageReq = 1;
+            int upperPageLimit = 1;
+            int lowerPageLimit = 1;
+            //int pagerOffset = 1;
+            String direction = "";
 
-        webClient.getVodClipApi(ageReq, upperPageLimit,
-                lowerPageLimit, pagerOffset, direction, this);
+            mWebClient.getVodClipApi(ageReq, upperPageLimit,
+                    lowerPageLimit, pagerOffset, direction, this);
+        } else {
+            DTVTLogger.error("VodClipDataProvider is stopping connection");
+            if (null != apiDataProviderCallback) {
+                apiDataProviderCallback.vodClipListCallback(null);
+            }
+        }
 //        }
 //        return list;
     }
@@ -254,5 +282,33 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
 //        dateUtils.addLastDate(VOD_LAST_INSERT);
 //        VodClipInsertDataManager dataManager = new VodClipInsertDataManager(mContext);
 //        dataManager.insertVodClipInsertList(vodClipList);
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnect() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        if (mClipKeyListDataProvider != null) {
+            mClipKeyListDataProvider.stopConnection();
+        }
+        if (mWebClient != null) {
+            mWebClient.stopConnection();
+        }
+    }
+
+    /**
+     * 通信許可状態にする.
+     */
+    public void enableConnect() {
+        DTVTLogger.start();
+        mIsCancel = false;
+        if (mClipKeyListDataProvider != null) {
+            mClipKeyListDataProvider.enableConnection();
+        }
+        if (mWebClient != null) {
+            mWebClient.enableConnection();
+        }
     }
 }
