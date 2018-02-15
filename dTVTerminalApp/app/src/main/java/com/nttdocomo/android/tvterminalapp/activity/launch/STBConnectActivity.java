@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -40,6 +41,7 @@ public class STBConnectActivity extends BaseActivity {
         DTVTLogger.start();
         setTitleText(getString(R.string.str_app_title));
         enableHeaderBackIcon(false);
+        setStatusBarColor(true);
         TextView connectResult = findViewById(R.id.connect_result_text);
         connectResult.setVisibility(View.VISIBLE);
         connectResult.setText(R.string.str_stb_connect_success_text);
@@ -59,7 +61,9 @@ public class STBConnectActivity extends BaseActivity {
                 if (!isStbConnected) {
                     SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(
                             mContext, true);
-                    startActivity(HomeActivity.class, null);
+                    Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
                 }
             } catch (Exception e) {
                 // TODO Auto-generated catch block

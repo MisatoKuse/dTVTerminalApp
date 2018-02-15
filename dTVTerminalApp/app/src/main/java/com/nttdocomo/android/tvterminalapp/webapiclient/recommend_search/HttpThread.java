@@ -6,10 +6,12 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.recommend_search;
 
 import android.content.Context;
 import android.os.Handler;
+import android.text.TextUtils;
 
 import com.nttdocomo.android.ocsplib.OcspURLConnection;
 import com.nttdocomo.android.ocsplib.OcspUtil;
 import com.nttdocomo.android.ocsplib.exception.OcspParameterException;
+import com.nttdocomo.android.tvterminalapp.common.BaseUrlConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
@@ -17,102 +19,163 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLPeerUnverifiedException;
 
+/**
+ * HTTP通信スレッド.
+ */
 public class HttpThread extends Thread {
-
+    /**
+     * 遷移先URLの項目名.
+     * 先頭パラメータなので?を付ける
+     */
+    static private final String DESTINATION_URL_NAME = "?rl=";
+    /**
+     * ワンタイムパスワードの項目名.
+     * 2番目のパラメータなので&を付ける
+     */
+    static private final String AUTH_OTP_NAME = "&AuthOtp=";
+    /**
+     * ハンドラー.
+     */
     private Handler mHandler = null;
+    /**
+     * 通信を行うURL.
+     */
     private String mUrl = null;
+    /**
+     * 読み込んだデータを保存.
+     */
     private String mXmlStr = "";
+    /**
+     * 通信終了コールバック.
+     */
     private HttpThreadFinish mHttpThreadFinish = null;
+    /**
+     * 通信の成功/失敗フラグ.
+     */
     private boolean mError = false;
-
-    //SSL証明書チェック用コンテキスト
+    /**
+     * SSL証明書チェック用コンテキスト.
+     */
     private Context mContext = null;
+    /**
+     * HTTPURLConnection.
+     */
+    private HttpsURLConnection mHttpUrlConn;
+    /**
+     * ワンタイムパスワード
+     */
+    private String mOneTimePassword;
 
-    //エラー時ステータスの構造体
+    /**
+     * エラー時ステータスの構造体.
+     */
     public static class ErrorStatus {
-        //エラーコード
+        /**
+         * エラーコード.
+         */
         DTVTConstants.ERROR_TYPE errType;
-        //メッセージ
+        /**
+         * メッセージ.
+         */
         String message;
 
         /**
-         * コンストラクタ
+         * コンストラクタ.
          */
-        public ErrorStatus() {
+        ErrorStatus() {
             //内容の初期化
             errType = DTVTConstants.ERROR_TYPE.SUCCESS;
             message = "";
         }
     }
 
-    //エラーコード構造体の作成
+    /**
+     * エラーコード構造体の作成.
+     */
     private ErrorStatus mErrorStatus;
 
-
+    /**
+     * HTTP通信終了を通知するインターフェイス.
+     */
     public interface HttpThreadFinish {
         /**
-         * 終了コールバック
+         * 終了コールバック.
          *
-         * @param str 読み込んだ情報
+         * @param str         読み込んだ情報
          * @param errorStatus エラー情報構造体
          */
-        public void onHttpThreadFinish(String str, ErrorStatus errorStatus);
+        void onHttpThreadFinish(String str, ErrorStatus errorStatus);
     }
 
-    private void setError(boolean b) {
+    /**
+     * エラーステータスを設定する.
+     *
+     * @param bool true:エラー未発生 false:エラー発生
+     */
+    private void setError(final boolean bool) {
         synchronized (this) {
-            mError = b;
+            mError = bool;
         }
     }
 
     /**
-     * HTTP通信スレッドのコンストラクタ
+     * HTTP通信スレッドのコンストラクタ(非同期処理から呼ぶ場合).
      *
      * @param url              URL
      * @param httpThreadFinish 終了コールバック
      * @param context          コンテキスト
+     * @param oneTimePassword  ワンタイムパスワード
      */
-    public HttpThread(String url, HttpThreadFinish httpThreadFinish, Context context) {
+    public HttpThread(final String url, final HttpThreadFinish httpThreadFinish,
+                      final Context context, final String oneTimePassword) {
+        //ワンタイムパスワードのセット
+        mOneTimePassword = oneTimePassword;
+
         //コンストラクターの共通処理
         commonContractor(url, httpThreadFinish, context);
-
         clearStatus();
     }
 
     /**
-     * HTTP通信スレッドのコンストラクタ
+     * HTTP通信スレッドのコンストラクタ.
      *
      * @param url              URL
      * @param handler          ハンドラー
      * @param httpThreadFinish 終了コールバック
      * @param context          コンテキスト
+     * @param oneTimePassword  ワンタイムパスワード
      */
-    public HttpThread(String url, Handler handler, HttpThreadFinish httpThreadFinish,
-                      Context context) {
+    public HttpThread(final String url, final Handler handler,
+                      final HttpThreadFinish httpThreadFinish, final Context context,
+                      final String oneTimePassword) {
+        //ワンタイムパスワードのセット
+        mOneTimePassword = oneTimePassword;
+
         //コンストラクターの共通処理
         commonContractor(url, httpThreadFinish, context);
-
         //ハンドラーの退避
         mHandler = handler;
-
         clearStatus();
     }
 
     /**
-     * コンストラクターの共通処理
+     * コンストラクターの共通処理.
      *
      * @param url              URL
      * @param httpThreadFinish 終了コールバック
      * @param context          コンテキスト
      */
-    private void commonContractor(String url, HttpThreadFinish httpThreadFinish, Context context) {
+    private synchronized void commonContractor(final String url, final HttpThreadFinish httpThreadFinish,
+                                               final Context context) {
         //各パラメータの退避
         mUrl = url;
         mHttpThreadFinish = httpThreadFinish;
@@ -122,7 +185,10 @@ public class HttpThread extends Thread {
         mErrorStatus = new ErrorStatus();
     }
 
-    private void clearStatus() {
+    /**
+     * ステータスの初期化.
+     */
+    private synchronized void clearStatus() {
         mXmlStr = "";
         setError(false);
     }
@@ -130,35 +196,37 @@ public class HttpThread extends Thread {
     @Override
     public void run() {
         clearStatus();
-        HttpsURLConnection httpUrlConn = null;
         final StringBuffer sb = new StringBuffer();
-        String str = null;
+        String str;
         BufferedReader br = null;
 
         try {
-            URL url = new URL(this.mUrl);
-            httpUrlConn = (HttpsURLConnection) url.openConnection();
+            //必要ならばURLにパスワード認証を付加する
+            String srcUrl = addUrlPassword(this.mUrl);
+            URL url = new URL(srcUrl);
 
-            httpUrlConn.setReadTimeout(DTVTConstants.SEARCH_SERVER_TIMEOUT);
-            httpUrlConn.setRequestMethod("GET");
-            httpUrlConn.setRequestProperty("Accept-Charset", "utf-8");
-            httpUrlConn.setRequestProperty("contentType", "utf-8");
+            mHttpUrlConn = (HttpsURLConnection) url.openConnection();
+
+            mHttpUrlConn.setReadTimeout(DTVTConstants.SEARCH_SERVER_TIMEOUT);
+            mHttpUrlConn.setRequestMethod("GET");
+            mHttpUrlConn.setRequestProperty("Accept-Charset", "utf-8");
+            mHttpUrlConn.setRequestProperty("contentType", "utf-8");
 
             //コンテキストがあればSSL証明書失効チェックを行う
             if (mContext != null) {
-                DTVTLogger.debug(mUrl);
+                DTVTLogger.debug(srcUrl);
 
                 //SSL証明書失効チェックライブラリの初期化を行う
                 OcspUtil.init(mContext);
 
                 //SSL証明書失効チェックを行う
-                OcspURLConnection ocspURLConnection = new OcspURLConnection(httpUrlConn);
+                OcspURLConnection ocspURLConnection = new OcspURLConnection(mHttpUrlConn);
                 ocspURLConnection.connect();
             }
 
-            if (httpUrlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            if (mHttpUrlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
 
-                InputStream is = httpUrlConn.getInputStream();
+                InputStream is = mHttpUrlConn.getInputStream();
                 if (null == is) {
                     throw new IOException("HttpThread::run, is==null");
                 }
@@ -190,7 +258,7 @@ public class HttpThread extends Thread {
             //その他通信エラー処理
             setErrorStatus(e, DTVTConstants.ERROR_TYPE.COMMUNICATION_ERROR);
         } finally {
-            if(br != null) {
+            if (br != null) {
                 try {
                     br.close();
                 } catch (IOException e) {
@@ -205,12 +273,55 @@ public class HttpThread extends Thread {
     }
 
     /**
-     * エラー情報設定
+     * ワンタイムパスワードの認証を経由する為、指定されたURLをリダイレクト先にして、URLを構築する.
      *
-     * @param e 例外情報
+     * @param srcUrl 元のURL
+     * @return ワンタイムパスワードの認証付加後のURL
+     */
+    private String addUrlPassword(String srcUrl) {
+        //ワンタイムパスワードが無い場合の為、元のURLをあらかじめセットしておく
+        String redirectUrl = srcUrl;
+
+        //ワンタイムパスワードの取得に成功していれば、認証付加を開始する
+        if (!TextUtils.isEmpty(mOneTimePassword)) {
+            DTVTLogger.debug("set Ott = " + mOneTimePassword);
+
+            //パラメータ編集
+            StringBuilder queryItems = new StringBuilder();
+
+            //呼び出し先を認証サイトにする
+            queryItems.append(BaseUrlConstants.ONE_TIME_PASSWORD_AUTH_URL);
+
+            //本来の呼び出し先はリダイレクト先に設定する為、URLエンコードを行う
+            String encodedUrl;
+            try {
+                encodedUrl = URLEncoder.encode(srcUrl, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                encodedUrl = srcUrl;
+            }
+
+            // リダイレクト先として設定する(先頭パラメータなので?を付加済み)
+            queryItems.append(DESTINATION_URL_NAME);
+            queryItems.append(encodedUrl);
+
+            // ワンタイムパスワードの指定(2個目のパラメータなので、&を付加済み)
+            queryItems.append(AUTH_OTP_NAME);
+            queryItems.append(mOneTimePassword);
+
+            // 作成した物を確定する
+            redirectUrl = queryItems.toString();
+        }
+
+        return redirectUrl;
+    }
+
+    /**
+     * エラー情報設定.
+     *
+     * @param e         例外情報
      * @param errorType エラーコード
      */
-    private void setErrorStatus(Exception e, DTVTConstants.ERROR_TYPE errorType) {
+    private synchronized void setErrorStatus(final Exception e, final DTVTConstants.ERROR_TYPE errorType) {
         //例外種類のログ出力
         DTVTLogger.debug(e);
 
@@ -222,14 +333,13 @@ public class HttpThread extends Thread {
     }
 
     /**
-     * 終端処理（メソッドの超過警告避け）
+     * 終端処理（メソッドの超過警告避け）.
      *
      * @param stringBuffer 読み込みデータ
      */
-    private void finishSelect(final StringBuffer stringBuffer) {
+    private synchronized void finishSelect(final StringBuffer stringBuffer) {
         if (mHandler != null) {
             mHandler.post(new Runnable() {
-
                 @Override
                 public void run() {
                     if (null != mHttpThreadFinish) {
@@ -251,6 +361,17 @@ public class HttpThread extends Thread {
                 }
                 mHttpThreadFinish.onHttpThreadFinish(mXmlStr, mErrorStatus);
             }
+        }
+    }
+
+    /**
+     * HTTP通信を止める.
+     */
+    public void disconnect() {
+        DTVTLogger.start();
+        if (mHttpUrlConn != null) {
+            mHttpUrlConn.disconnect();
+            finishSelect(new StringBuffer(""));
         }
     }
 }

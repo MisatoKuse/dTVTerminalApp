@@ -40,4 +40,16 @@ public class ClipListFragmentFactory {
         }
         return fragment;
     }
+
+    /**
+     * 生成したフラグメント数を返却する.
+     *
+     * @return fragmentCount
+     */
+    public synchronized int getFragmentCount() {
+        if (null != mFragments) {
+            return mFragments.size();
+        }
+        return 0;
+    }
 }

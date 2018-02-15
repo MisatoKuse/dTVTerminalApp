@@ -15,6 +15,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
+import com.nttdocomo.android.tvterminalapp.utils.UserInfoUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.UserInfoWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser;
 
@@ -37,6 +38,14 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
     public static final String CONTRACT_STATUS_NONE = "none";
     public static final String CONTRACT_STATUS_DTV = "001";
     public static final String CONTRACT_STATUS_H4D = "002";
+    /**
+     * UserInfoWebClient.
+     */
+    private UserInfoWebClient mUserInfoWebClient = null;
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsStop = false;
 
     @Override
     public void onUserInfoJsonParsed(List<UserInfoList> userInfoLists) {
@@ -128,10 +137,13 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
             return;
         }
 
-        //新たなデータを取得する
-        UserInfoWebClient userInfoWebClient = new UserInfoWebClient(mContext);
-        userInfoWebClient.getUserInfoApi(this);
-
+        if (!mIsStop) {
+            //新たなデータを取得する
+            mUserInfoWebClient = new UserInfoWebClient(mContext);
+            mUserInfoWebClient.getUserInfoApi(this);
+        } else {
+            DTVTLogger.error("UserInfoDataProvider is stopping connect");
+        }
         DTVTLogger.end();
     }
 
@@ -165,14 +177,14 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
      *
      * @return データが古いので、取得が必要ならばtrue
      */
-    private boolean isUserInfoTimeOut() {
+    public boolean isUserInfoTimeOut() {
         DTVTLogger.start();
 
         //最終取得日時の取得
         long lastTime = SharedPreferencesUtils.getSharedPreferencesUserInfoDate(mContext);
 
         //現在日時が最終取得日時+1時間以下ならば、まだデータは新しい
-        if (System.currentTimeMillis() < lastTime + (DateUtils.EPOCH_TIME_ONE_HOUR * 1000)) {
+        if (DateUtils.getNowTimeFormatEpoch() < lastTime + DateUtils.EPOCH_TIME_ONE_HOUR) {
             DTVTLogger.end("false");
             return false;
         }
@@ -217,7 +229,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
 
         //新旧の年齢データを比較する
         int beforeAge = SharedPreferencesUtils.getSharedPreferencesAgeReq(mContext);
-        int newAge = StringUtils.getUserAgeInfoWrapper(userInfoLists);
+        int newAge = UserInfoUtils.getUserAgeInfoWrapper(userInfoLists);
 
         DTVTLogger.debug("before age " + beforeAge);
         DTVTLogger.debug("new age " + newAge);
@@ -254,7 +266,7 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
 
         //取得したユーザ情報から、年齢情報を抽出する
         if (list != null && list.size() > 0) {
-            userAgeReq = StringUtils.getUserAgeInfo(list);
+            userAgeReq = UserInfoUtils.getUserAgeInfo(list);
         }
 
         return userAgeReq;
@@ -280,5 +292,27 @@ public class UserInfoDataProvider implements UserInfoWebClient.UserInfoJsonParse
             }
         }
         return isH4dUser;
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnect() {
+        DTVTLogger.start();
+        mIsStop = true;
+        if (mUserInfoWebClient != null) {
+            mUserInfoWebClient.stopConnection();
+        }
+    }
+
+    /**
+     * 通信を許可する.
+     */
+    public void enableConnect() {
+        DTVTLogger.start();
+        mIsStop = false;
+        if (mUserInfoWebClient != null) {
+            mUserInfoWebClient.enableConnection();
+        }
     }
 }

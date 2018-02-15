@@ -5,26 +5,39 @@
 package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
+import android.os.Handler;
 
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
+import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
+import com.nttdocomo.android.tvterminalapp.datamanager.insert.WatchListenVideoDataManager;
+import com.nttdocomo.android.tvterminalapp.datamanager.select.WatchListenVideoListDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WatchListenVideoList;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WatchListenVideoWebClient;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * 視聴中ビデオ一覧.
+ */
 public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider implements WatchListenVideoWebClient.WatchListenVideoJsonParserCallback {
 
+    /**
+     * コンテキスト.
+     */
     private Context mContext = null;
+    /**
+     * 視聴中ビデオ一覧データ.
+     */
     private WatchListenVideoList mWatchListenVideoList = null;
 
     /**
@@ -32,54 +45,75 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
      */
     public static final int DEFAULT_PAGE_OFFSET = 1;
 
+    /**
+     * callback.
+     */
+    private WatchListenVideoListProviderCallback mApiDataProviderCallback;
+
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
+    /**
+     * 視聴中ビデオリスト取得WebClient.
+     */
+    private WatchListenVideoWebClient mWebClient = null;
+
     @Override
-    public void onWatchListenVideoJsonParsed(List<WatchListenVideoList> watchListenVideoList) {
+    public void onWatchListenVideoJsonParsed(final List<WatchListenVideoList> watchListenVideoList) {
+        WatchListenVideoListDataManager videoListDataManager = new WatchListenVideoListDataManager(mContext);
         if (watchListenVideoList != null && watchListenVideoList.size() > 0) {
             WatchListenVideoList list = watchListenVideoList.get(0);
+            setStructDB(list);
             if (!mRequiredClipKeyList
                     || mResponseEndFlag) {
-                sendWatchListenVideoListData(list.getVcList());
+                List<HashMap<String, String>> vcList = list.getVcList();
+                if (vcList != null && vcList.get(0).size() > 0 && !vcList.get(0).isEmpty()) {
+                    sendWatchListenVideoListData(list.getVcList());
+                } else {
+                    //通信でデータ取得できないときはDBから取得
+                    sendWatchListenVideoListData(videoListDataManager.selectWatchListenVideoData());
+                }
             } else {
                 mWatchListenVideoList = list;
             }
         } else {
             if (null != mApiDataProviderCallback) {
-                mApiDataProviderCallback.watchListenVideoListCallback(null);
+                //通信でデータ取得できないときはDBから取得
+                sendWatchListenVideoListData(videoListDataManager.selectWatchListenVideoData());
             }
         }
     }
 
     @Override
-    public void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
         super.onVodClipKeyListJsonParsed(clipKeyListResponse);
         // コールバック判定
-        if(mWatchListenVideoList != null) {
+        if (mWatchListenVideoList != null) {
             sendWatchListenVideoListData(mWatchListenVideoList.getVcList());
         }
         DTVTLogger.end();
     }
 
     /**
-     * 画面用データを返却するためのコールバック
+     * 画面用データを返却するためのコールバック.
      */
     public interface WatchListenVideoListProviderCallback {
         /**
-         * クリップリスト用コールバック
+         * クリップリスト用コールバック.
          *
          * @param clipContentInfo コンテンツ情報
          */
         void watchListenVideoListCallback(List<ContentsData> clipContentInfo);
     }
 
-    private WatchListenVideoListProviderCallback mApiDataProviderCallback;
-
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
      * @param context コンテキスト
      */
-    public WatchListenVideoListDataProvider(Context context) {
+    public WatchListenVideoListDataProvider(final Context context) {
         super(context);
         this.mContext = context;
         this.mApiDataProviderCallback = (WatchListenVideoListProviderCallback) context;
@@ -87,31 +121,10 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
 
     /**
      * Activityからのデータ取得要求受付.
-     */
-    public void getWatchListenVideoData(int pagerOffset) {
-        mWatchListenVideoList = null;
-        // クリップキー一覧を取得
-        if(mRequiredClipKeyList) {
-            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
-        }
-
-        WatchListenVideoWebClient webClient = new WatchListenVideoWebClient(mContext);
-        int ageReq = 1;
-        int upperPageLimit = 1;
-        int lowerPageLimit = 1;
-        //int pagerOffset = 1;
-        String pagerDirection = "";
-
-        webClient.getWatchListenVideoApi(ageReq, upperPageLimit,
-                lowerPageLimit, pagerOffset, pagerDirection, this);
-    }
-
-    /**
-     * Homeからのデータ取得要求受付.
      *
      * @param pagerOffset 取得位置
      */
-    public void requestWatchListenVideoData(final int pagerOffset) {
+    public void getWatchListenVideoData(final int pagerOffset) {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.WATCHING_VIDEO_LIST_LAST_INSERT);
 
@@ -123,14 +136,21 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
         //視聴中ビデオ一覧のDB保存履歴と、有効期間を確認
         if (lastDate == null || lastDate.length() < 1 || dateUtils.isBeforeLimitDate(lastDate)) {
             WatchListenVideoWebClient webClient = new WatchListenVideoWebClient(mContext);
-            //TODO：仮設定値
-            int ageReq = 1;
-            int upperPageLimit = 1;
+
+            UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
+            int ageReq = userInfoDataProvider.getUserAge();
+            int upperPageLimit = 20;
             int lowerPageLimit = 1;
-            String pagerDirection = "";
+            String pagerDirection = "next";
 
             webClient.getWatchListenVideoApi(ageReq, upperPageLimit,
                     lowerPageLimit, pagerOffset, pagerDirection, this);
+        } else {
+            //WEBAPIを取得できなかった時はDBのデータを使用
+            List<Map<String, String>> watchListenList = new ArrayList<>();
+            WatchListenVideoListDataManager watchListenVideoDataManager = new WatchListenVideoListDataManager(mContext);
+            watchListenList = watchListenVideoDataManager.selectWatchListenVideoData();
+            sendWatchListenVideoListData(watchListenList);
         }
     }
 
@@ -140,6 +160,12 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
      * @param mapList コンテンツリストデータ
      */
     private void sendWatchListenVideoListData(final List<Map<String, String>> mapList) {
+        //情報が取得できなかった時はActivityにnullを返却
+        if (mapList == null || mapList.size() < 1 || mapList.get(0).isEmpty()) {
+            mApiDataProviderCallback.watchListenVideoListCallback(null);
+            return;
+        }
+
         List<ContentsData> rankingContentsDataList = new ArrayList<>();
 
         ContentsData contentInfo;
@@ -167,6 +193,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
             contentInfo.setDtvType(dtvType);
             contentInfo.setDispType(dispType);
             contentInfo.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
+            contentInfo.setContentsId(map.get(JsonConstants.META_RESPONSE_CONTENTS_ID));
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
             requestData.setCrid(map.get(JsonConstants.META_RESPONSE_CRID));
@@ -189,11 +216,11 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
 //            requestData.setTableType(decisionTableType(contentsType, contentsType));
             contentInfo.setRequestData(requestData);
 
-            if(mRequiredClipKeyList) {
+            if (mRequiredClipKeyList) {
                 // クリップ状態をコンテンツリストに格納
                 contentInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv,
-                        contentInfo.getCrid(), contentInfo.getServiceId(),
-                        contentInfo.getEventId(), contentInfo.getTitleId()));
+                        requestData.getCrid(), requestData.getServiceId(),
+                        requestData.getEventId(), requestData.getTitleId()));
             }
 
             rankingContentsDataList.add(contentInfo);
@@ -201,5 +228,43 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
         }
 
         mApiDataProviderCallback.watchListenVideoListCallback(rankingContentsDataList);
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnect() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        stopConnection();
+        if (mWebClient != null) {
+            mWebClient.stopConnection();
+        }
+    }
+
+    /**
+     * 通信許可状態にする.
+     */
+    public void enableConnect() {
+        DTVTLogger.start();
+        mIsCancel = false;
+        enableConnection();
+        if (mWebClient != null) {
+            mWebClient.enableConnection();
+        }
+    }
+
+    /**
+     * 視聴中ビデオ一覧データをDBに格納する.
+     *
+     * @param watchListenVideoList 視聴中ビデオ一覧用データ
+     */
+    private void setStructDB(final WatchListenVideoList watchListenVideoList) {
+        mWatchListenVideoList = watchListenVideoList;
+        //DB保存
+        DateUtils dateUtils = new DateUtils(mContext);
+        dateUtils.addLastDate(DateUtils.WATCHING_VIDEO_LIST_LAST_INSERT);
+        WatchListenVideoDataManager watchListenVideoDataManager = new WatchListenVideoDataManager(mContext);
+        watchListenVideoDataManager.insertWatchListenVideoInsertList(mWatchListenVideoList);
     }
 }

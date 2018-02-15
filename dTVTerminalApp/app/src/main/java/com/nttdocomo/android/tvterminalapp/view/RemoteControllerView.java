@@ -56,9 +56,33 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
     private RemoteControllerSendKeyAction remoteControllerSendKeyAction = null;
     private GestureDetector mParentGestureDetector = null;
     private GestureDetector mGestureDetector = null;
-    private LinearLayout mBottomLinearLayout, mTopLinearLayout = null;
+    private RelativeLayout mBottomLinearLayout, mTopLinearLayout = null;
     private OnStartRemoteControllerUIListener mStartUIListener = null;
     private TextView mTextViewUseRemote = null;
+    /**
+     * 640 基準値（幅さ）
+     */
+    private static final int BASE_WIDTH = 360;
+    /**
+     * 640 基準値（高さ）
+     */
+    private static final int BASE_HEIGHT = 640;
+    /**
+     * 8 基準値（左右padding）
+     */
+    private static final int BASE_LEFT_RIGHT_PADDING = 8;
+    /**
+     * 80 基準値（タイトル高さ）
+     */
+    private static final int BASE_TITLE = 80;
+    /**
+     * 0 基準値（paddingTop 0）
+     */
+    private static final int BASE_PADDING_TOP = 0;
+    /**
+     * 2 基準値（両側）
+     */
+    private static final int BASE_LEFT_RIGHT = 2;
 
     private static final long CLICK_MAX_TIME = 100;
 
@@ -83,7 +107,7 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         super(context, attrs, defStyleAttr);
         mContext = context;
         if (context instanceof ContentDetailActivity) {
-            mHeaderHeight = 50;
+            mHeaderHeight = 52;
         } else {
             mHeaderHeight = 0;
         }
@@ -226,7 +250,6 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
                     mTopLinearLayout = findViewById(R.id.top_view_ll);
                     mTopLinearLayout.setVisibility(GONE);
                     mFrameLayout = findViewById(R.id.header_watch_by_tv);
-                    mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner, null));
                     if (mIsTop) {
                         closeRemoteControllerUI();
                         mIsTop = false;
@@ -276,6 +299,30 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         mViewList.add(inflate);
 
         mViewPager = findViewById(R.id.remocon_viewpager);
+        float width = getContext().getResources().getDisplayMetrics().widthPixels;
+        float height = getContext().getResources().getDisplayMetrics().heightPixels;
+        float density = getContext().getResources().getDisplayMetrics().density;
+        int paddinglr = 0;//左右padding
+        int paddingtb = 0;//下padding
+        if(width > BASE_WIDTH * density){//360 基準値（幅さ）
+            paddinglr = (int) ((width - (BASE_WIDTH * density)) / BASE_LEFT_RIGHT);
+        }
+        if(height > BASE_HEIGHT * density){
+            paddingtb = (int) (height - (BASE_HEIGHT * density));
+        }
+        if(paddinglr != 0 || paddingtb != 0){
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                    (int)(width - (BASE_LEFT_RIGHT_PADDING * BASE_LEFT_RIGHT * density)),//padding除く
+                    (int)(height - (BASE_TITLE * density)));//タイトル除く
+            mViewPager.setLayoutParams(params);
+            RelativeLayout.LayoutParams childLayoutParams = new RelativeLayout.LayoutParams(
+                    LayoutParams.MATCH_PARENT,
+                    LayoutParams.MATCH_PARENT);
+            inflate1.setPadding(paddinglr, BASE_PADDING_TOP , paddinglr, paddingtb);
+            inflate1.setLayoutParams(childLayoutParams);
+            inflate.setPadding(paddinglr, BASE_PADDING_TOP , paddinglr, paddingtb);
+            inflate.setLayoutParams(childLayoutParams);
+        }
         remokonAdapter = new ViewPagerAdapter();
         mViewPager.setAdapter(remokonAdapter);
         mViewPager.addOnPageChangeListener(this);
@@ -409,7 +456,6 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
             mTextViewUseRemote = findViewById(R.id.watch_by_tv);
             mTopLinearLayout.setVisibility(GONE);
             mFrameLayout = findViewById(R.id.header_watch_by_tv);
-            mFrameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.remote_watch_by_tv_bottom_corner, null));
             remoteControllerSendKeyAction.cancelTimer();
             if (null != mStartUIListener) {
                 mStartUIListener.onEndRemoteControl();
@@ -476,7 +522,13 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
 
 
     /**
-     * 中継アプリ起動リクエスト処理を呼び出し
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・dTVチャンネル・カテゴリー分類に対応
+     *
+     * @param type dTVチャンネル
+     * @param serviceCategoryType カテゴリー分類
+     * @param crid
+     * @param chno チャンネル番号
      */
     public void sendStartApplicationDtvChannelRequest(
             RemoteControlRelayClient.STB_APPLICATION_TYPES type,
@@ -486,6 +538,120 @@ public class RemoteControllerView extends RelativeLayout implements ViewPager.On
         remoteControllerSendKeyAction.getRelayClient().startApplicationDtvChannelRequest(type, serviceCategoryType, crid, chno, mContext);
         DTVTLogger.end();
     }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTVの番組（地デジ）
+     *
+     * @param chno
+     */
+    public void sendStartApplicationHikariTvCategoryTerrestrialDigitalRequest(String chno) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryTerrestrialDigitalRequest(chno, mContext);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTVの番組（BS）
+     *
+     * @param chno
+     */
+    public void sendStartApplicationHikariTvCategorySatelliteBsRequest(String chno) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategorySatelliteBsRequest(chno, mContext);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTVの番組（IPTV）
+     *
+     * @param chno
+     */
+    public void sendStartApplicationHikariTvCategoryIptvRequest(String chno) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryIptvRequest(chno, mContext);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTVのVOD
+     *
+     * @param licenseId
+     * @param cid
+     * @param crid
+     */
+    public void sendStartApplicationHikariTvCategoryHikaritvVodRequest(final String licenseId,
+                                                                       final String cid, final String crid) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryHikaritvVodRequest(
+                licenseId, cid, crid, mContext);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTV内 dTVチャンネルの番組
+     *
+     * @param chno
+     */
+    public void sendStartApplicationHikariTvCategoryDtvchannelBroadcastRequest(String chno) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvchannelBroadcastRequest(chno, mContext);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTV内 dTVチャンネル VOD（見逃し）
+     *
+     * @param tvCid
+     */
+    public void sendStartApplicationHikariTvCategoryDtvchannelMissedRequest(String tvCid) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvchannelMissedRequest(tvCid, mContext);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTV内 dTVチャンネル VOD（関連番組）
+     *
+     * @param tvCid
+     */
+    public void sendStartApplicationHikariTvCategoryDtvchannelRelationRequest(String tvCid) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvchannelRelationRequest(tvCid, mContext);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTV内 dTVのVOD
+     *
+     * @param episodeId
+     */
+    public void sendStartApplicationHikariTvCategoryDtvVodRequest(String episodeId) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvVodRequest(episodeId, mContext);
+        DTVTLogger.end();
+    }
+
+    /**
+     * 中継アプリ起動リクエスト処理を呼び出し.
+     * ・ひかりTV内VOD(dTV含む)のシリーズ
+     *
+     * @param crid
+     */
+    public void sendStartApplicationHikariTvCategoryDtvSvodRequest(String crid) {
+        DTVTLogger.start();
+        remoteControllerSendKeyAction.getRelayClient().startApplicationHikariTvCategoryDtvSvodRequest(
+                crid, mContext);
+        DTVTLogger.end();
+    }
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         DTVTLogger.start();

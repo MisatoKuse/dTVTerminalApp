@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.UPDATE_DATE;
-import static com.nttdocomo.android.tvterminalapp.datamanager.databese.DBConstants.DATE_TYPE;
 
 public class TvScheduleInsertDataManager {
 
@@ -66,7 +65,6 @@ public class TvScheduleInsertDataManager {
                 }
                 values.put(DBUtils.fourKFlgConversion(keyName), valName);
             }
-            values.put(DATE_TYPE, "home");
             tvScheduleListDao.insert(values);
         }
         DataBaseManager.getInstance().closeDatabase();
@@ -85,7 +83,7 @@ public class TvScheduleInsertDataManager {
         List<HashMap<String,String>> hashMaps = tvScheduleList.geTvsList();
 
         //DB保存前に前回取得したデータは全消去する
-        tvScheduleListDao.deleteByType(display_type);
+        tvScheduleListDao.delete();
 
         //HashMapの要素とキーを一行ずつ取り出し、DBに格納する
         for (int i = 0; i < hashMaps.size(); i++) {
@@ -121,7 +119,6 @@ public class TvScheduleInsertDataManager {
                 }
                 values.put(DBUtils.fourKFlgConversion(keyName), valName);
             }
-            values.put(DATE_TYPE, "program");
             tvScheduleListDao.insert(values);
         }
         DataBaseManager.getInstance().closeDatabase();

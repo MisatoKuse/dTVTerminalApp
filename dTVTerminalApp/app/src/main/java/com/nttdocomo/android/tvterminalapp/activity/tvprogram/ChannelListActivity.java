@@ -39,7 +39,7 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListListener;
-import com.nttdocomo.android.tvterminalapp.model.TabItemLayout;
+import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
@@ -289,7 +289,7 @@ public class ChannelListActivity extends BaseActivity implements
         @Override
         public void run() {
             DTVTLogger.start();
-            mHikariTvChDataProvider.getChannelList(1, mPagingOffset, "");
+            mHikariTvChDataProvider.getChannelList(0, 0, "");
             DTVTLogger.end();
         }
     };
@@ -301,7 +301,7 @@ public class ChannelListActivity extends BaseActivity implements
         @Override
         public void run() {
             DTVTLogger.start();
-            mDTvChDataProvider.getChannelList(1, mPagingOffset, "");
+            mDTvChDataProvider.getChannelList(0, 0, "");
             DTVTLogger.end();
         }
     };

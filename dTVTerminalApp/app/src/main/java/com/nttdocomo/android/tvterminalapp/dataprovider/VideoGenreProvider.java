@@ -32,22 +32,53 @@ import java.util.Map;
 public class VideoGenreProvider implements
         GenreListWebClient.GenreListJsonParserCallback,
         GenreCountGetWebClient.GenreCountGetJsonParserCallback {
-
+    /**
+     * ジャンルデータ取得プロパイダのコールバック.
+     */
     private apiGenreListDataProviderCallback mApiGenreListDataProviderCallback = null;
-
+    /**
+     * ビデオジャンル:IPTV.
+     */
     private static final String VIDEO_GENRE_KEY_IPTV = "IPTV";
+    /**
+     * ビデオジャンル;NOD.
+     */
     private static final String VIDEO_GENRE_KEY_NOD = "NOD";
+    /**
+     * ビデオジャンル:ARIB.
+     */
     private static final String VIDEO_GENRE_KEY_ARIB = "ARIB";
+    /**
+     * コンテキスト.
+     */
     private Context mContext = null;
-
+    /**
+     * ジャンルデータMapを返却するためのコールバック.
+     */
     private GenreListMapCallback genreListMapCallback;
-
+    /**
+     * ジャンルデータ取得のコールバック.
+     */
     private RankGenreListCallback mRankGenreListCallback;
-
+    /**
+     * コンテンツタイプ.
+     */
     private ContentsAdapter.ActivityTypeItem type;
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
+    /**
+     * ジャンルリスト取得用webクライアント.
+     */
+    private GenreListWebClient mGenreListWebClient = null;
+    /**
+     * ジャンルコンテンツ数取得用webクライアント.
+     */
+    private GenreCountGetWebClient mWebClient = null;
 
     @Override
-    public void onGenreListJsonParsed(GenreListResponse genreListResponse) {
+    public void onGenreListJsonParsed(final GenreListResponse genreListResponse) {
 
         //取得した情報を保存する
         DateUtils dateUtils = new DateUtils(mContext);
@@ -66,8 +97,10 @@ public class VideoGenreProvider implements
     }
 
     @Override
-    public void onGenreCountGetJsonParsed(GenreCountGetResponse genreCountGetResponse) {
-        mApiGenreListDataProviderCallback.genreListCallback(genreCountGetResponse.getGenreCountGetMetaData());
+    public void onGenreCountGetJsonParsed(final GenreCountGetResponse genreCountGetResponse) {
+        if (mApiGenreListDataProviderCallback != null) {
+            mApiGenreListDataProviderCallback.genreListCallback(genreCountGetResponse.getGenreCountGetMetaData());
+        }
     }
 
     /**
@@ -86,6 +119,12 @@ public class VideoGenreProvider implements
      * ジャンルIDをキー値としたジャンルデータMapを返却するためのコールバック.
      */
     public interface GenreListMapCallback {
+        /**
+         * ジャンルデータMapを返却する.
+         *
+         * @param map ジャンルデータmap
+         * @param firstGenreIdList 初期画面のジャンルID
+         */
         void genreListMapCallback(Map<String, VideoGenreList> map, List<String> firstGenreIdList);
     }
 
@@ -93,6 +132,11 @@ public class VideoGenreProvider implements
      * ジャンルリストデータを返却するためのコールバック.
      */
     public interface RankGenreListCallback {
+        /**
+         * ジャンルリストデータを返却する.
+         *
+         * @param genreMetaDataList ジャンルリスト
+         */
         void onRankGenreListCallback(ArrayList<GenreListMetaData> genreMetaDataList);
     }
 
@@ -129,9 +173,17 @@ public class VideoGenreProvider implements
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.VIDEO_GENRE_LIST_LAST_INSERT);
         if (TextUtils.isEmpty(lastDate) || dateUtils.isBeforeProgramLimitDate(lastDate)) {
-            //データの有効期限切れなら通信で取得
-            GenreListWebClient webClient = new GenreListWebClient(mContext);
-            webClient.getGenreListApi(this);
+            if (!mIsCancel) {
+                //データの有効期限切れなら通信で取得
+                mGenreListWebClient = new GenreListWebClient(mContext);
+                mGenreListWebClient.getGenreListApi(this);
+            } else {
+                DTVTLogger.error("VideoGenreProvider is stopping connection");
+                if (mRankGenreListCallback != null) {
+                    //nullデータを返却する
+                    mRankGenreListCallback.onRankGenreListCallback(null);
+                }
+            }
         } else {
             GenreListResponse genreListResponse = StringUtils.toGenreListResponse(
                     SharedPreferencesUtils.getSharedPreferencesVideoGenreData(mContext));
@@ -143,9 +195,17 @@ public class VideoGenreProvider implements
                     getGenreList(genreListResponse);
                 }
             } else {
-                //SharedPreferences取得失敗時には通信で取得
-                GenreListWebClient webClient = new GenreListWebClient(mContext);
-                webClient.getGenreListApi(this);
+                if (!mIsCancel) {
+                    //SharedPreferences取得失敗時には通信で取得
+                    mGenreListWebClient = new GenreListWebClient(mContext);
+                    mGenreListWebClient.getGenreListApi(this);
+                } else {
+                    DTVTLogger.error("VideoGenreProvider is stopping connection");
+                    if (mRankGenreListCallback != null) {
+                        //nullデータを返却する
+                        mRankGenreListCallback.onRankGenreListCallback(null);
+                    }
+                }
             }
         }
     }
@@ -156,13 +216,18 @@ public class VideoGenreProvider implements
      * @param genreId ジャンルIDリスト
      */
     public void getContentCountListData(final List<String> genreId) {
-        //通信クラスにデータ取得要求を出す
-        GenreCountGetWebClient webClient = new GenreCountGetWebClient(mContext);
-        int limit = 1;
-        int offset = 1;
-        String filter = "";
-        int ageReq = 1;
-        webClient.getGenreCountGetApi(filter, ageReq, genreId, this);
+        if (!mIsCancel) {
+            //通信クラスにデータ取得要求を出す
+            mWebClient = new GenreCountGetWebClient(mContext);
+            int limit = 1;
+            int offset = 1;
+            String filter = "";
+            int ageReq = 1;
+            mWebClient.getGenreCountGetApi(filter, ageReq, genreId, this);
+        } else {
+            DTVTLogger.error("VideoGenreProvider is stopping connection");
+            mApiGenreListDataProviderCallback.genreListCallback(null);
+        }
     }
 
     /**
@@ -206,10 +271,10 @@ public class VideoGenreProvider implements
                     mRankGenreListCallback.onRankGenreListCallback(null);
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             DTVTLogger.error("response genreListData error");
+            mRankGenreListCallback.onRankGenreListCallback(null);
         }
     }
 
@@ -244,14 +309,9 @@ public class VideoGenreProvider implements
             genreMetaDataList.add(firstNodData);
         }
 
-        //ARIBコンテンツデータをすべて取得
-        if (listMap.get(VIDEO_GENRE_KEY_ARIB) != null) {
-            genreMetaDataList.addAll(listMap.get(VIDEO_GENRE_KEY_ARIB));
-        }
-
         // 初期画面のジャンルIDを設定
-        List<String> firstPageGenreIdList = new ArrayList<String>();
-        Map<String, VideoGenreList> videoGenreListMap = new HashMap<String, VideoGenreList>();
+        List<String> firstPageGenreIdList = new ArrayList<>();
+        Map<String, VideoGenreList> videoGenreListMap = new HashMap<>();
         for (int i = 0; i < genreMetaDataList.size(); i++) {
             firstPageGenreIdList.add(genreMetaDataList.get(i).getId());
             videoGenreListMap = setVideoGenreList(genreMetaDataList.get(i), videoGenreListMap);
@@ -265,7 +325,7 @@ public class VideoGenreProvider implements
      *
      * @param metaData ジャンルリスト
      * @param listMap  加工済みジャンルリスト
-     * @return listMap
+     * @return listMap 加工済みジャンルリスト
      */
     private Map<String, VideoGenreList> setVideoGenreList(final GenreListMetaData metaData, final Map<String, VideoGenreList> listMap) {
         VideoGenreList videoGenreList = new VideoGenreList();
@@ -288,5 +348,33 @@ public class VideoGenreProvider implements
         videoGenreListMap.put(videoGenreList.getGenreId(), videoGenreList);
 
         return videoGenreListMap;
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnect() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        if (mGenreListWebClient != null) {
+            mGenreListWebClient.stopConnect();
+        }
+        if (mWebClient != null) {
+            mWebClient.stopConnect();
+        }
+    }
+
+    /**
+     * 通信を許可する.
+     */
+    public void enableConnect() {
+        DTVTLogger.start();
+        mIsCancel = false;
+        if (mGenreListWebClient != null) {
+            mGenreListWebClient.enableConnect();
+        }
+        if (mWebClient != null) {
+            mWebClient.enableConnect();
+        }
     }
 }

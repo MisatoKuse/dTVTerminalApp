@@ -41,7 +41,7 @@ public class ClipDeleteWebClient
     private ClipDeleteJsonParserCallback mClipDeleteJsonParserCallback;
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
@@ -100,7 +100,8 @@ public class ClipDeleteWebClient
         }
 
         //チャンネル一覧を呼び出す
-        openUrl(UrlConstants.WebApiUrl.CLIP_DELETE_GET_WEB_CLIENT, sendParameter, this);
+        openUrlAddOtt(UrlConstants.WebApiUrl.CLIP_DELETE_GET_WEB_CLIENT,
+                sendParameter, this, null);
 
         //現状失敗は無いのでtrue
         return true;

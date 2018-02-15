@@ -48,6 +48,7 @@ public class SettingImageQualityActivity extends BaseActivity implements View.On
         enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
+        setStatusBarColor(true);
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
 

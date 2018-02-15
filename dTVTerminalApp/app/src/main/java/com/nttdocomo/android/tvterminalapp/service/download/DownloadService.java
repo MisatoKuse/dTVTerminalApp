@@ -37,23 +37,23 @@ public class DownloadService extends Service implements DownloadListener {
     public static final String DONWLOAD_LowStorageSpace = "lowStorageSpace";
 
 
-    public static void setDlDataQue(List<DlData> dlDataQue){
+    public synchronized static void setDlDataQue(List<DlData> dlDataQue){
         sDlDataQue = dlDataQue;
     }
 
-    public static void setDlDataQueClear(){
+    public synchronized static void setDlDataQueClear(){
         if(null != sDlDataQue){
             sDlDataQue.clear();
         }
     }
 
-    public static void setDlDataQueRemove0(){
+    public synchronized static void setDlDataQueRemove0(){
         if(null != sDlDataQue){
             sDlDataQue.remove(0);
         }
     }
 
-    public static  List<DlData> getDlDataQue(){
+    public synchronized static  List<DlData> getDlDataQue(){
         return sDlDataQue;
     }
     

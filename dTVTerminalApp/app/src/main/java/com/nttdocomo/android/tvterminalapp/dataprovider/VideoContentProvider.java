@@ -6,15 +6,16 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoRankList;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsListPerGenreWebClient;
+import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +27,18 @@ import java.util.Map;
 public class VideoContentProvider extends ClipKeyListDataProvider implements
         ContentsListPerGenreWebClient.ContentsListPerGenreJsonParserCallback {
 
+    /**
+     * コンテキスト.
+     */
     private Context mContext = null;
 
-    // ビデオコンテンツ画面用コールバック
+    /**
+     * ビデオコンテンツ画面用コールバック.
+     */
     private apiVideoContentDataProviderCallback mApiVideoContentDataProviderCallback = null;
-    private List<Map<String, String>> videoContentMapList;
+    /**
+     * ビデオランキングリスト.
+     */
     private VideoRankList mVideoRankList = null;
 
     /**
@@ -38,7 +46,7 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
      *
      * @param mContext コンテキスト
      */
-    public VideoContentProvider(Context mContext) {
+    public VideoContentProvider(final Context mContext) {
         super(mContext);
         this.mContext = mContext;
         this.mApiVideoContentDataProviderCallback = (apiVideoContentDataProviderCallback) mContext;
@@ -59,33 +67,32 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
     /**
      * VideoContentListActivityからのデータ取得要求受付.
      *
-     * @param genreId
+     * @param genreId ジャンルID
+     * @param offset 取得位置
      */
-    public void getVideoContentData(final String genreId) {
+    public void getVideoContentData(final String genreId, final int offset) {
         mVideoRankList = null;
         if (mRequiredClipKeyList) {
             getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
         }
         // コンテンツ数
-        getVideoContentListData(genreId);
+        getVideoContentListData(genreId, offset);
     }
 
     /**
      * ビデオコンテンツ一覧のデータ取得要求を行う.
      * @param genreId ジャンルID
      */
-    private void getVideoContentListData(final String genreId) {
+    private void getVideoContentListData(final String genreId, final int offset) {
         //通信クラスにデータ取得要求を出す
         ContentsListPerGenreWebClient webClient = new ContentsListPerGenreWebClient(mContext);
-        int limit = 1;
-        int offset = 1;
-        String filter = "";
-        int ageReq = 1;
+        int upperPageLimit = 20;
+        UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
+        int ageReq = userInfoDataProvider.getUserAge();
         //TODO：暫定的に人気順でソートする
         String sort = JsonConstants.GENRE_PER_CONTENTS_SORT_PLAY_COUNT_DESC;
 
-        //TODO: コールバック対応でエラーが出るようになってしまったのでコメント化
-        webClient.getContentsListPerGenreApi(limit, offset, filter, ageReq, genreId, sort, this);
+        webClient.getContentsListPerGenreApi(upperPageLimit, offset, WebApiBasePlala.FILTER_RELEASE, ageReq, genreId, sort, this);
     }
 
     /**
@@ -93,7 +100,7 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
      *
      * @param list ビデオコンテンツ一覧
      */
-    private void sendContentListData(List<Map<String, String>> list) {
+    private void sendContentListData(final List<Map<String, String>> list) {
         List<ContentsData> contentsDataList = setVideoContentData(list);
         mApiVideoContentDataProviderCallback.videoContentCallback(contentsDataList);
     }
@@ -105,7 +112,6 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
      * @return dataList 読み込み表示フラグ
      */
     private List<ContentsData> setVideoContentData(final List<Map<String, String>> videoContentMapList) {
-        this.videoContentMapList = videoContentMapList;
         List<ContentsData> videoContentsDataList = new ArrayList<>();
 
         ContentsData contentsData;
@@ -129,6 +135,7 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
             contentsData.setDtvType(dtvType);
             contentsData.setDispType(dispType);
             contentsData.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
+            contentsData.setContentsId(map.get(JsonConstants.META_RESPONSE_CONTENTS_ID));
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
 
@@ -155,8 +162,8 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
             if (mRequiredClipKeyList) {
                 // クリップ状態をコンテンツリストに格納
                 contentsData.setClipStatus(getClipStatus(dispType, contentsType, dTv,
-                        contentsData.getCrid(), contentsData.getServiceId(),
-                        contentsData.getEventId(), contentsData.getTitleId()));
+                        requestData.getCrid(), requestData.getServiceId(),
+                        requestData.getEventId(), requestData.getTitleId()));
             }
 
             videoContentsDataList.add(contentsData);
@@ -166,7 +173,7 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onContentsListPerGenreJsonParsed(List<VideoRankList> contentsListPerGenre) {
+    public void onContentsListPerGenreJsonParsed(final List<VideoRankList> contentsListPerGenre) {
         if (contentsListPerGenre != null && contentsListPerGenre.size() > 0) {
             VideoRankList list = contentsListPerGenre.get(0);
             if (!mRequiredClipKeyList
@@ -181,7 +188,7 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
     }
 
     @Override
-    public void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
         super.onVodClipKeyListJsonParsed(clipKeyListResponse);
         // コールバック判定

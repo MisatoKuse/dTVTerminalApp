@@ -35,7 +35,10 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
     private String availEndDate;
     private String displayType;
     private String categoryId;
+    private String reserved1;
+    private String reserved2;
     private String reserved4;
+    private String mobileViewingFlg;
     private List<String> staffList;
 
     // クリップ情報取得用
@@ -99,6 +102,14 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
 
     public void setServiceId(int serviceId) {
         this.mServiceId = serviceId;
+    }
+
+    public String getMobileViewingFlg() {
+        return mobileViewingFlg;
+    }
+
+    public void setMobileViewingFlg(String mobileViewingFlg) {
+        this.mobileViewingFlg = mobileViewingFlg;
     }
 
     public String getDetail() {
@@ -195,6 +206,22 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
 
     public void setContentId(String mContentId) {
         this.mContentId = mContentId;
+    }
+
+    public String getReserved1() {
+        return reserved1;
+    }
+
+    public void setReserved1(String reserved1) {
+        this.reserved1 = reserved1;
+    }
+
+    public String getReserved2() {
+        return reserved2;
+    }
+
+    public void setReserved2(String reserved2) {
+        this.reserved2 = reserved2;
     }
 
     public String getReserved4() {
@@ -331,7 +358,10 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         dest.writeString(this.availEndDate);
         dest.writeString(this.displayType);
         dest.writeString(this.categoryId);
+        dest.writeString(this.reserved1);
+        dest.writeString(this.reserved2);
         dest.writeString(this.reserved4);
+        dest.writeString(this.mobileViewingFlg);
         dest.writeStringList(this.staffList);
         dest.writeSerializable(this.mVodMetaFullData);
         dest.writeString(this.mContentId);
@@ -368,7 +398,10 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         this.availEndDate = in.readString();
         this.displayType = in.readString();
         this.categoryId = in.readString();
+        this.reserved1 = in.readString();
+        this.reserved2 = in.readString();
         this.reserved4 = in.readString();
+        this.mobileViewingFlg = in.readString();
         this.staffList = in.createStringArrayList();
         this.mVodMetaFullData = (VodMetaFullData) in.readSerializable();
         this.mContentId = in.readString();
@@ -397,4 +430,5 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
             return new OtherContentsDetailData[size];
         }
     };
+
 }

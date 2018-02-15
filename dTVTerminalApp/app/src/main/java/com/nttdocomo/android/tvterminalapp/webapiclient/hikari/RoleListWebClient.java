@@ -15,11 +15,16 @@ public class RoleListWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
     /**
-     * コールバック
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
+
+    /**
+     * コールバック.
      */
     public interface RoleListJsonParserCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
          *
          * @param roleListResponse JSONパース後のデータ
          */
@@ -30,7 +35,7 @@ public class RoleListWebClient
     private RoleListJsonParserCallback mRoleListJsonParserCallback;
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
@@ -61,13 +66,18 @@ public class RoleListWebClient
     }
 
     /**
-     * ジャンル一覧の取得
+     * ジャンル一覧の取得.
      *
      * @param roleListJsonParserCallback コールバック
      * @return パラメータエラー等が発生した場合はfalse
      */
     public boolean getRoleListApi(RoleListJsonParserCallback roleListJsonParserCallback) {
         DTVTLogger.start();
+
+        if (mIsCancel) {
+            DTVTLogger.error("RoleListWebClient is stopping connection");
+            return false;
+        }
 
         //パラメーターのチェック
         if (!checkNormalParameter(roleListJsonParserCallback)) {
@@ -88,7 +98,7 @@ public class RoleListWebClient
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param roleListJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
@@ -102,5 +112,27 @@ public class RoleListWebClient
 
         //何もエラーが無いのでtrue
         return true;
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnection() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        stopAllConnections();
+    }
+
+    /**
+     * 通信可能状態にする.
+     */
+    public void enableConnection() {
+        DTVTLogger.start();
+        mIsCancel = false;
+    }
+
+    @Override
+    protected String getRequestMethod() {
+        return WebApiBasePlala.REQUEST_METHOD_GET;
     }
 }

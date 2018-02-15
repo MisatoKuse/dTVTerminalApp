@@ -20,10 +20,15 @@ import org.json.JSONObject;
 import java.util.List;
 
 public class VodClipWebClient
-        extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback, JsonParserThread.JsonParser{
+        extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback, JsonParserThread.JsonParser {
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
+
+    /**
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
@@ -48,7 +53,7 @@ public class VodClipWebClient
     }
 
     /**
-     * コールバック
+     * コールバック.
      */
     public interface VodClipJsonParserCallback {
         /**
@@ -62,7 +67,8 @@ public class VodClipWebClient
     private VodClipJsonParserCallback mVodClipJsonParserCallback;
 
     /**
-     * 通信成功時のコールバック
+     * 通信成功時のコールバック.
+     *
      * @param returnCode 戻り値構造体
      */
     @Override
@@ -101,7 +107,8 @@ public class VodClipWebClient
     }
 
     /**
-     * VODクリップ取得
+     * VODクリップ取得.
+     *
      * @param ageReq                         視聴年齢制限値（1から17までの値）
      * @param upperPagetLimit               結果の最大件数（1以上）
      * @param lowerPagetLimit　             結果の最小件数（1以上）
@@ -113,6 +120,10 @@ public class VodClipWebClient
     public boolean getVodClipApi(int ageReq,int upperPagetLimit,int lowerPagetLimit,
                                  int pagerOffset, String pagerDirection,
                                  VodClipJsonParserCallback vodClipJsonParserCallback) {
+        if (mIsCancel) {
+            DTVTLogger.error("VodClipWebClient is stopping connection");
+            return false;
+        }
         //パラメーターのチェック
         if(!checkNormalParameter(ageReq, upperPagetLimit, lowerPagetLimit,
                 pagerOffset, pagerDirection, vodClipJsonParserCallback)) {
@@ -132,15 +143,16 @@ public class VodClipWebClient
         }
 
         //VODクリップ一覧を呼び出す
-        openUrl(UrlConstants.WebApiUrl.VOD_CLIP_LIST,
-                sendParameter,this);
+        openUrlAddOtt(UrlConstants.WebApiUrl.VOD_CLIP_LIST,
+                sendParameter, this, null);
 
         //今のところ正常なので、trueで帰る
         return true;
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
+     *
      * @param ageReq                        視聴年齢制限値
      * @param upperPagetLimit              結果の最大件数
      * @param lowerPagetLimit　            結果の最小件数
@@ -178,7 +190,8 @@ public class VodClipWebClient
     }
 
     /**
-     * 指定されたパラメータをJSONで組み立てて文字列にする
+     * 指定されたパラメータをJSONで組み立てて文字列にする.
+     *
      * @param ageReq            視聴年齢制限値
      * @param upperPagetLimit  結果の最大件数
      * @param lowerPagetLimit　結果の最小件数
@@ -210,5 +223,22 @@ public class VodClipWebClient
         }
 
         return answerText;
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnection() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        stopAllConnections();
+    }
+
+    /**
+     * 通信可能状態にする.
+     */
+    public void enableConnection() {
+        DTVTLogger.start();
+        mIsCancel = false;
     }
 }

@@ -15,16 +15,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
-import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
@@ -65,6 +67,10 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      */
     private ChannelList mChannelList = null;
     /**
+     * ダウンロード禁止判定フラグ.
+     */
+    private boolean isDownloadStop = false;
+    /**
      * 最大表示件数.
      */
     private static final int MAX_COUNT = 10;
@@ -97,7 +103,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      */
     private final static int RANKING_CONTENTES_TODAY_SORT = 20;
     /**
-     * カテゴリ 週間テレビランキング(ランキングトップ画面)
+     * カテゴリ 週間テレビランキング(ランキングトップ画面).
      */
     private final static int RANKING_CONTENTES_WEEK_SORT = RANKING_CONTENTES_TODAY_SORT + 1;
 
@@ -220,7 +226,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      *
      * @param channelList チャンネル一覧
      */
-    public void setCHannnelList(ChannelList channelList) {
+    public void setCHannnelList(final ChannelList channelList) {
         this.mChannelList = channelList;
     }
 
@@ -328,21 +334,31 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
 
         //URLによって、サムネイル取得
         if (!TextUtils.isEmpty(thumbnail)) {
-            viewHolder.mImage.setTag(thumbnail);
-            Bitmap bitmap = mThumbnailProvider.getThumbnailImage(viewHolder.mImage, thumbnail);
-            if (bitmap != null) {
-                viewHolder.mImage.setImageBitmap(bitmap);
+            if (!isDownloadStop) {
+                viewHolder.mImage.setTag(thumbnail);
+                Bitmap bitmap = mThumbnailProvider.getThumbnailImage(viewHolder.mImage, thumbnail);
+                if (bitmap != null) {
+                    viewHolder.mImage.setImageBitmap(bitmap);
+                }
             }
         } else {
             //URLがない場合はサムネイル取得失敗の画像を表示
             viewHolder.mImage.setImageResource(R.mipmap.error_scroll);
         }
+        String recommendFlg;
+        if (mIndex == HOME_CONTENTS_SORT_RECOMMEND_PROGRAM || mIndex == HOME_CONTENTS_SORT_RECOMMEND_PROGRAM + 1) {
+            recommendFlg = ContentDetailActivity.RECOMMEND_INFO_BUNDLE_KEY;
+        } else {
+            recommendFlg = ContentDetailActivity.PLALA_INFO_BUNDLE_KEY;
+        }
+        final OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(contentsData, recommendFlg);
         viewHolder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
                 Intent intent = new Intent(mContext, ContentDetailActivity.class);
                 ComponentName componentName = mContext.getComponentName();
                 intent.putExtra(DTVTConstants.SOURCE_SCREEN, componentName.getClassName());
+                intent.putExtra(detailData.getRecommendFlg(), detailData);
                 mContext.startActivity(intent);
             }
         });
@@ -357,7 +373,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     private void setNowOnAirInfo(final ContentsData contentsData, final ViewHolder viewHolder) {
         String startTime = contentsData.getLinearStartDate();
         String endTime = contentsData.getLinearEndDate();
-        String channelName = getChannelName(contentsData.getServiceId());
+        String channelName = contentsData.getChannelName();
         if (TextUtils.isEmpty(startTime) || !DBUtils.isNumber(startTime)) {
             //TODO 放送開始時間が取得できなかった場合の仕様は現在未決定のため仮の時間を設定する.
             startTime = "1516766741";
@@ -509,7 +525,7 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     }
 
     /**
-     *  開始時間と現在時刻の比較.
+     * 開始時間と現在時刻の比較.
      * 配信開始から1週間以内のコンテンツを判定する
      * @param startDate 配信開始 "yyyy/MM/dd HH:mm:ss"
      * @return 配信開始から1週間以内かどうか
@@ -520,23 +536,19 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         long startTime = DateUtils.getSecondEpochTime(startDate);
         // 現在時刻 - 開始日時
         long differenceTime = nowTimeEpoch - startTime;
-        if (differenceTime <= DateUtils.EPOCH_TIME_ONE_WEEK) {
-            // 一週間未満の差であればtrue
-            return true;
-        }
-        return false;
+        return differenceTime <= DateUtils.EPOCH_TIME_ONE_WEEK;
     }
 
     /**
      * コンテンツビューを初期化.
      */
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         /**
          * 各コンテンツを表示するViewHolder.
          *
          * @param itemView コンテンツView
          */
-        public ViewHolder(final View itemView) {
+        ViewHolder(final View itemView) {
             super(itemView);
         }
         /**
@@ -565,19 +577,45 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     /**
      * コンテンツのServiceIDとServiceIDが一致するチャンネル名を取得する.
      *
-     * @param ServiceId コンテンツのServiceID
+     * @param serviceId コンテンツのServiceID
      * @return チャンネル名
      */
-    private String getChannelName(final String ServiceId) {
+    private String getChannelName(final String serviceId) {
+        if (serviceId == null) {
+            return "";
+        }
         if (mChannelList != null) {
             List<HashMap<String, String>> list = mChannelList.getChannelList();
             for (HashMap<String, String> hashMap : list) {
-                if (TextUtils.isEmpty(hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID))
-                        && ServiceId.equals(hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID))) {
-                    return hashMap.get(JsonConstants.META_RESPONSE_TITLE);
+                if (!TextUtils.isEmpty(hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID))) {
+                    if (serviceId.equals(hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID))) {
+                        return hashMap.get(JsonConstants.META_RESPONSE_TITLE);
+                    }
                 }
             }
         }
         return "";
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnect() {
+        DTVTLogger.start();
+        isDownloadStop = true;
+        if (mThumbnailProvider != null) {
+            mThumbnailProvider.stopConnect();
+        }
+    }
+
+    /**
+     * 通信を許可する.
+     */
+    public void enableConnect() {
+        DTVTLogger.start();
+        isDownloadStop = false;
+        if (mThumbnailProvider != null) {
+            mThumbnailProvider.enableConnect();
+        }
     }
 }

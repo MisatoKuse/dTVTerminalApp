@@ -64,7 +64,7 @@ public class RecommendChWebClient extends WebApiBase implements WebApiCallback {
         }
 
         //サーバーへおすすめ情報取得を依頼する
-        getReccomendInfo(UrlConstants.WebApiUrl.RECOMMEND_LIST_GET_URL + sendUrlAdder,
+        getRecomendInfo(UrlConstants.WebApiUrl.RECOMMEND_LIST_GET_URL + sendUrlAdder,
                 queryItems, this, mContext);
     }
 

@@ -1,48 +1,55 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/base_rl"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/baseStatusBarLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/base_ll"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@color/header_background_color_red">
-        <include
-            android:id="@+id/base_title"
-            layout="@layout/header_layout" />
-    </LinearLayout>
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <RelativeLayout
-        android:id="@+id/base_motion_detection_rl"
+        android:id="@+id/base_rl"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-    <RelativeLayout
-        android:id="@+id/base_remote_controller_rl"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:visibility="invisible">
+        android:layout_height="match_parent">
 
-        <include
-            android:id="@+id/base_remote_controller"
-            layout="@layout/remote_control_main_layout" />
-    </RelativeLayout>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/base_ll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@color/header_background_color_red">
+            <include
+                android:id="@+id/base_title"
+                layout="@layout/header_layout" />
+        </LinearLayout>
 
-    <RelativeLayout
-        android:id="@+id/base_progress_rl"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clickable="true"
-        android:visibility="gone">
-
-        <ProgressBar
-            android:id="@+id/base_progress"
-            style="?android:attr/progressBarStyle"
+        <RelativeLayout
+            android:id="@+id/base_motion_detection_rl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+        <RelativeLayout
+            android:id="@+id/base_remote_controller_rl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:visibility="invisible">
+
+            <include
+                android:id="@+id/base_remote_controller"
+                layout="@layout/remote_control_main_layout" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/base_progress_rl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:visibility="gone">
+
+            <ProgressBar
+                android:id="@+id/base_progress"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
+        </RelativeLayout>
     </RelativeLayout>
-</RelativeLayout>
+</LinearLayout>

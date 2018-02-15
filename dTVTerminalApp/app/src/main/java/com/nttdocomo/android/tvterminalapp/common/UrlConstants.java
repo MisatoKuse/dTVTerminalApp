@@ -4,7 +4,11 @@
 
 package com.nttdocomo.android.tvterminalapp.common;
 
-
+/**
+ * 各サーバAPIのURL.
+ * ベースとなるURLはBuildValiant毎にBaseUrlConstantsクラスに定義.
+ * ここではそれらに続く部分を定義する.
+ */
 public class UrlConstants {
 
     public class WebApiUrl {
@@ -23,6 +27,15 @@ public class UrlConstants {
          */
         public static final String ONE_TIME_PASSWORD_AUTH_URL = BaseUrlConstants.ONE_TIME_PASSWORD_AUTH_URL;
         //"https://ve.m.service.smt.docomo.ne.jp/auth/cgi/aplpwdauth";
+
+        /**
+         * ワンタイムパスワードでサービストークンを取得する認証するURL.
+         * TODO: 内容が固まるまでは、BaseUrlConstsへの記載は取りやめ。
+         */
+        public static final String ONE_TIME_TOKEN_GET_URL =
+                "https://tif.hikaritv-docomo.jp/dtt_stub_mix/auth/daccount/authorization";
+                //"https://tif.hikaritv-docomo.jp/dtt_stub_mix/auth/daccount/authentication";
+                //BaseUrlConstants.ONE_TIME_TOKEN_GET_URL;
 
         /**
          * VODクリップ一覧の呼び出し先.
@@ -77,7 +90,7 @@ public class UrlConstants {
          * ジャンル毎コンテンツ一覧.
          */
         public static final String CONTENTS_LIST_PER_GENRE_WEB_CLIENT =
-                BaseUrlConstants.PLALA_CLIENT + "meta/genrecontents";
+                BaseUrlConstants.PLALA_CLIENT + "meta/genrecontents/list";
 
         /**
          * 購入済みチャンネル一覧取得.
@@ -124,18 +137,16 @@ public class UrlConstants {
         /**
          * ジャンル一覧リストファイル：こちらはAPIではなく、ファイルの直接読み込みとのこと.
          * APIではないので、例外としてURL全体を指定する
-         * TODO: 当然後ほど変更する事となる。
          */
         public static final String GENRE_LIST_FILE =
-                BaseUrlConstants.PLALA_BASE_URL + "genreList_sample_1445.json";
+                BaseUrlConstants.PLALA_ID_FILE_URL + "genreList.json";
 
         /**
          * ロール一覧リストファイル：こちらはAPIではなく、ファイルの直接読み込みとのこと.
          * APIではないので、例外としてURL全体を指定する
-         * TODO: 当然後ほど変更する事となる。
          */
         public static final String ROLE_LIST_FILE =
-                BaseUrlConstants.PLALA_BASE_URL + "roleList_sample.json";
+                BaseUrlConstants.PLALA_ID_FILE_URL + "roleList.json";
 
         /**
          * ジャンル毎コンテンツ数取得.

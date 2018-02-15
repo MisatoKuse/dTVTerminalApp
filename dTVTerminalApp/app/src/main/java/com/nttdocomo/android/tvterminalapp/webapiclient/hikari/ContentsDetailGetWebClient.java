@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ContentsDetailGetResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.ContentsDetailJsonParser;
@@ -20,11 +21,16 @@ public class ContentsDetailGetWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
     /**
-     * コールバック
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
+
+    /**
+     * コールバック.
      */
     public interface ContentsDetailJsonParserCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
          *
          * @param ContentsDetailLists JSONパース後のデータ
          */
@@ -35,7 +41,7 @@ public class ContentsDetailGetWebClient
     private ContentsDetailJsonParserCallback mContentsDetailJsonParserCallback;
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
@@ -44,7 +50,7 @@ public class ContentsDetailGetWebClient
     }
 
     /**
-     * 通信成功時のコールバック
+     * 通信成功時のコールバック.
      *
      * @param returnCode 戻り値構造体
      */
@@ -71,7 +77,7 @@ public class ContentsDetailGetWebClient
     }
 
     /**
-     * コンテンツ詳細情報取得
+     * コンテンツ詳細情報取得.
      *
      * @param crid                             取得したい情報のコンテンツ識別ID(crid)の配列
      * @param filter                           フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
@@ -82,6 +88,11 @@ public class ContentsDetailGetWebClient
     public boolean getContentsDetailApi(String[] crid, String filter, int ageReq,
                                         ContentsDetailJsonParserCallback
                                                 contentsDetailJsonParserCallback) {
+        if (mIsCancel) {
+            DTVTLogger.error("ContentsDetailGetWebClient is stopping connection");
+            return false;
+        }
+
         //パラメーターのチェック（ageReqは範囲外が全部1になるので、チェックは行わない）
         if (!checkNormalParameter(crid, filter, contentsDetailJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、falseで帰る
@@ -107,7 +118,7 @@ public class ContentsDetailGetWebClient
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param crid                             取得したい情報のコンテンツ識別ID(crid)の配列
      * @param filter                           フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
@@ -144,7 +155,7 @@ public class ContentsDetailGetWebClient
     }
 
     /**
-     * 指定されたパラメータをJSONで組み立てて文字列にする
+     * 指定されたパラメータをJSONで組み立てて文字列にする.
      *
      * @param crids  取得したい情報のコンテンツ識別ID(crid)の配列
      * @param filter フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
@@ -192,6 +203,23 @@ public class ContentsDetailGetWebClient
         }
 
         return answerText;
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnection() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        stopAllConnections();
+    }
+
+    /**
+     * 通信可能状態にする.
+     */
+    public void enableConnection() {
+        DTVTLogger.start();
+        mIsCancel = false;
     }
 
 }

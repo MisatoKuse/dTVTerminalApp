@@ -83,7 +83,7 @@ public class DateUtils {
     public static final String RECOMMEND_DTV_LAST_INSERT = "RecommendDTVLastInsert";
 
     /**
-     * おすすめdTV取得日付キー.
+     * おすすめdチャンネル取得日付キー.
      */
     public static final String RECOMMEND_DCHANNEL_LAST_INSERT = "RecommendDCHLastInsert";
 
@@ -145,12 +145,67 @@ public class DateUtils {
     /**
      * 日付フォーマット.
      */
-    private static final String DATE_YYYY_MM_DD = "yyyy/MM/dd";
+    public static final String DATE_YYYY_MM_DD = "yyyy/MM/dd";
 
     /**
      * 日付フォーマット.
      */
     private static final String DATE_YYYY_MM_DD_HH_MM_SS = "yyyyMMddHHmmss";
+
+    /**
+     * 日付フォーマット.
+     */
+    public static final String DATE_YYYY_MM_DDHHMMSS = "yyyy/MM/ddHH:mm:ss";
+
+    /**
+     * 日付フォーマット.
+     */
+    public static final String DATE_MMDDE = "MM/dd (E)";
+
+    /**
+     * 日付フォーマット.
+     */
+    public static final String DATE_YYYYMMDDE = "yyyy年MM月dd日 (E)";
+
+    /**
+     * 日付フォーマット.
+     */
+    public static final String DATE_YYYYMMDD = "yyyy-MM-dd";
+
+    /**
+     * 日付フォーマット.
+     */
+    public static final String DATE_YYYY_MM_DD_J = "yyyy年MM月dd日";
+
+    /**
+     * 日付フォーマット.
+     */
+    public static final String DATE_HHMMSS = "HHmmss";
+
+    /**
+     * 日付フォーマット.
+     */
+    public static final String DATE_Y = "年";
+
+    /**
+     * 日付フォーマット.
+     */
+    public static final String DATE_M = "月";
+
+    /**
+     * 日付フォーマット.
+     */
+    public static final String DATE_D = "日";
+
+    /**
+     * 日付フォーマット.
+     */
+    public static final String DATE_STANDARD_START = "04:00:00";
+
+    /**
+     * 日付フォーマット.
+     */
+    public static final String DATE_STANDARD_END = "03:00:00";
 
     /**
      * DB保存期限.
@@ -160,7 +215,7 @@ public class DateUtils {
     /**
      * 曜日配列.
      */
-    private static final String[] STRING_DAY_OF_WEEK = {null, "日", "月", "火", "水", "木", "金", "土"};
+    public static final String[] STRING_DAY_OF_WEEK = {null, "日", "月", "火", "水", "木", "金", "土"};
 
     /**
      * マイ番組表取得日付キー.

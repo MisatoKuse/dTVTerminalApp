@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.struct;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -49,13 +50,12 @@ public class ScheduleInfo {
     private ClipRequestData mClipRequestData = null;
     //時間単価換算
     private static final float FORMAT = 1000 * 60 * 60;
-    //日付format
-    private static final String DATE_FORMAT = "yyyy/MM/ddHH:mm:ss";
-    private static final String PROGRAM_FORMAT = "yyyy-MM-dd";
     // クリップ可否
     private boolean mClipExec = false;
     // クリップ未/済
     private boolean mClipStatus = false;
+    //コンテンツID
+    private  String mContentsId = null;
 
     /*
      * タイトルを取得する
@@ -209,6 +209,14 @@ public class ScheduleInfo {
         return mClipStatus;
     }
 
+    public String getContentsId() {
+        return mContentsId;
+    }
+
+    public void setContentsId(String mContentsId) {
+        this.mContentsId = mContentsId;
+    }
+
     public void setClipStatus(boolean mClipStatus) {
         this.mClipStatus = mClipStatus;
     }
@@ -225,7 +233,7 @@ public class ScheduleInfo {
             String curStartDay = startTime.substring(0, 10);
             int hour = Integer.parseInt(startTime.substring(11,13));
             if( hour>=0 && hour < 4){
-                SimpleDateFormat sdf = new SimpleDateFormat(PROGRAM_FORMAT, Locale.JAPAN);
+                SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYYMMDD, Locale.JAPAN);
                 Date date = new Date();
                 try {
                     date=sdf.parse(curStartDay);
@@ -237,7 +245,7 @@ public class ScheduleInfo {
                 calendar.add(Calendar.DAY_OF_MONTH, -1);
                 curStartDay = sdf.format(calendar.getTime());
             }
-            standardTime = curStartDay + "04:00:00";
+            standardTime = curStartDay + DateUtils.DATE_STANDARD_START;
         }
         Date startTime = stringToDate(standardTime);
         Date endTime = stringToDate(getFormatDate(this.startTime));
@@ -258,7 +266,7 @@ public class ScheduleInfo {
      * @return date
      */
     private Date stringToDate(String strDate) {
-        SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT, Locale.JAPAN);  //2017-10-12T08:00:00+09:00
+        SimpleDateFormat format = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DDHHMMSS, Locale.JAPAN);  //2017-10-12T08:00:00+09:00
         Date date = null;
         try {
             date = format.parse(strDate);

@@ -55,6 +55,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppThemeBlack);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_channel_edit_main_layout);
 
@@ -63,6 +64,7 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
         enableHeaderBackIcon(true);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
+        setStatusBarColor(true);
 
         loadData();
         initView();
@@ -345,13 +347,15 @@ public class MyChannelEditActivity extends BaseActivity implements View.OnClickL
             enableHeaderBackIcon(true);
             enableStbStatusIcon(true);
             changeGlobalMenuIcon(true);
-        } else if (position == CHANNEL_LIST_PAGE){
+            setStatusBarColor(true);
+        } else if (position == CHANNEL_LIST_PAGE) {
             //マイ番組表編集画面
             setHeaderColor(false);
             setTitleText(getString(R.string.my_channel_list_setting_select_channel));
             enableHeaderBackIcon(false);
             enableStbStatusIcon(false);
             changeGlobalMenuIcon(false);
+            setStatusBarColor(false);
         }
     }
 

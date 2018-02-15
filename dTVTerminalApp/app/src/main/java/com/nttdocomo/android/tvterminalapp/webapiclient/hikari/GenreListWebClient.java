@@ -11,41 +11,47 @@ import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListResponse;
 import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.GenreListJsonParser;
 
-public class GenreListWebClient
-        extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
+/**
+ * ジャンルリスト取得用Webクライアント.
+ */
+public class GenreListWebClient extends WebApiBasePlala
+        implements WebApiBasePlala.WebApiBasePlalaCallback {
 
     /**
-     * コールバック
+     * コールバック.
      */
     public interface GenreListJsonParserCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
          *
          * @param genreListResponse JSONパース後のデータ
          */
         void onGenreListJsonParsed(GenreListResponse genreListResponse);
     }
 
-    //コールバックのインスタンス
-    private GenreListJsonParserCallback
-            mGenreListJsonParserCallback;
+    /**
+     * コールバックのインスタンス.
+     */
+    private GenreListJsonParserCallback mGenreListJsonParserCallback;
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
-    public GenreListWebClient(Context context) {
+    public GenreListWebClient(final Context context) {
         super(context);
     }
 
     @Override
-    public void onAnswer(ReturnCode returnCode) {
+    public void onAnswer(final ReturnCode returnCode) {
         if (mGenreListJsonParserCallback != null) {
             //JSONをパースして、データを返す
-            new GenreListJsonParser(
-                    mGenreListJsonParserCallback)
-                    .execute(returnCode.bodyData);
+            new GenreListJsonParser(mGenreListJsonParserCallback).execute(returnCode.bodyData);
         }
     }
 
@@ -55,7 +61,7 @@ public class GenreListWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError(ReturnCode returnCode) {
+    public void onError(final ReturnCode returnCode) {
         if (mGenreListJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
             mGenreListJsonParserCallback
@@ -64,15 +70,17 @@ public class GenreListWebClient
     }
 
     /**
-     * ジャンル一覧の取得
+     * ジャンル一覧の取得.
      *
      * @param genreListJsonParserCallback コールバック
      * @return パラメータエラー等が発生した場合はfalse
      */
-    public boolean getGenreListApi(
-            GenreListJsonParserCallback
-                    genreListJsonParserCallback) {
+    public boolean getGenreListApi(final GenreListJsonParserCallback genreListJsonParserCallback) {
         DTVTLogger.start();
+        if (mIsCancel) {
+            //通信禁止時はfalseで帰る
+            return false;
+        }
 
         //パラメーターのチェック
         if (!checkNormalParameter(genreListJsonParserCallback)) {
@@ -94,13 +102,12 @@ public class GenreListWebClient
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param genreListJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(GenreListJsonParserCallback
-                                                 genreListJsonParserCallback) {
+    private boolean checkNormalParameter(final GenreListJsonParserCallback genreListJsonParserCallback) {
         //コールバックが指定されていないならばfalse
         if (genreListJsonParserCallback == null) {
             return false;
@@ -108,5 +115,27 @@ public class GenreListWebClient
 
         //何もエラーが無いのでtrue
         return true;
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnect() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        stopAllConnections();
+    }
+
+    /**
+     * 通信を許可する.
+     */
+    public void enableConnect() {
+        DTVTLogger.start();
+        mIsCancel = false;
+    }
+
+    @Override
+    protected String getRequestMethod() {
+        return WebApiBasePlala.REQUEST_METHOD_GET;
     }
 }

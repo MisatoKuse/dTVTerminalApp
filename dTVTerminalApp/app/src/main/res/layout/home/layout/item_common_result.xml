@@ -10,179 +10,199 @@
     android:descendantFocusability="blocksDescendants"
     android:layout_marginEnd="@dimen/watch_listen_thumbnail_margin_top_bottom">
 
+    <TextView
+        android:id="@+id/item_common_result_subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:paddingTop="@dimen/contents_detail_channel_sub_title_padding_top"
+        android:paddingBottom="@dimen/contents_detail_channel_sub_title_padding_bottom"
+        android:layout_marginStart="@dimen/watch_listen_thumbnail_margin_left"
+        android:textColor="@color/white_text"
+        android:textSize="@dimen/contents_detail_channel_sub_title_txt_size"
+        android:visibility="gone"/>
+
     <RelativeLayout
-        android:id="@+id/item_common_result_thumbnail_rl"
+        android:id="@+id/item_common_result_item_rl"
+        android:layout_below="@id/item_common_result_subtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/item_common_result_thumbnail_iv"
-            android:layout_width="@dimen/watch_listen_thumbnail_high"
-            android:layout_height="@dimen/watch_listen_thumbnail_width"
-            android:layout_marginStart="@dimen/watch_listen_thumbnail_margin_left"
-            android:layout_marginTop="@dimen/watch_listen_thumbnail_margin_top_bottom"
-            android:layout_marginBottom="@dimen/watch_listen_thumbnail_margin_top_bottom"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:adjustViewBounds="true"
-            android:background="@color/thumbnail_background"
-            android:contentDescription="@null"
-            android:scaleType="fitCenter" />
+        <RelativeLayout
+            android:id="@+id/item_common_result_thumbnail_rl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/item_common_result_rank_num"
-            android:layout_width="@dimen/watch_listen_rank_num_width"
-            android:layout_height="@dimen/watch_listen_rank_num_high"
-            android:layout_marginStart="@dimen/watch_listen_rank_num_margin_start"
-            android:layout_marginTop="@dimen/watch_listen_rank_num_margin_top"
-            android:background="@drawable/label_ranking_other"
-            android:gravity="center"
-            android:textColor="@color/white_text"
-            android:textSize="@dimen/list_item_rank_num_text_size" />
-    </RelativeLayout>
+            <ImageView
+                android:id="@+id/item_common_result_thumbnail_iv"
+                android:layout_width="@dimen/watch_listen_thumbnail_high"
+                android:layout_height="@dimen/watch_listen_thumbnail_width"
+                android:layout_marginStart="@dimen/watch_listen_thumbnail_margin_left"
+                android:layout_marginTop="@dimen/watch_listen_thumbnail_margin_top_bottom"
+                android:layout_marginBottom="@dimen/watch_listen_thumbnail_margin_top_bottom"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:adjustViewBounds="true"
+                android:background="@color/thumbnail_background"
+                android:contentDescription="@null"
+                android:scaleType="fitCenter" />
 
-    <RelativeLayout
-        android:id="@+id/item_common_result_show_status_area"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true">
+            <TextView
+                android:id="@+id/item_common_result_rank_num"
+                android:layout_width="@dimen/watch_listen_rank_num_width"
+                android:layout_height="@dimen/watch_listen_rank_num_high"
+                android:layout_marginStart="@dimen/watch_listen_rank_num_margin_start"
+                android:layout_marginTop="@dimen/watch_listen_rank_num_margin_top"
+                android:background="@drawable/label_ranking_other"
+                android:gravity="center"
+                android:textColor="@color/white_text"
+                android:textSize="@dimen/list_item_rank_num_text_size" />
+        </RelativeLayout>
 
-        <ImageView
-            android:id="@+id/item_common_result_clip_tv"
-            android:layout_width="@dimen/clip_button_size"
-            android:layout_height="@dimen/clip_button_size"
-            android:clickable="true"
-            android:layout_marginStart="@dimen/watch_listen_rating_margin_top"
-            android:layout_marginEnd="@dimen/watch_listen_text_size"
-            android:background="@color/list_item_background" />
-
-        <TextView
-            android:id="@+id/item_common_result_recording_reservation_status"
-            android:layout_width="@dimen/recording_reservation_list_status_width"
-            android:layout_height="@dimen/recording_reservation_list_status_height"
-            android:layout_marginEnd="@dimen/recording_reservation_list_status_margin_end"
-            android:background="@color/list_item_background"
-            android:gravity="center_vertical|center_horizontal"
-            android:textSize="@dimen/list_item_recording_reservation_status_text_size"
-            android:visibility="gone" />
-    </RelativeLayout>
-
-    <LinearLayout
-        android:id="@+id/item_common_result_contents"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/watch_listen_linear_layout_margin_top"
-        android:layout_marginStart="@dimen/watch_listen_thumbnail_margin_left"
-        android:layout_toEndOf="@id/item_common_result_thumbnail_rl"
-        android:layout_toStartOf="@id/item_common_result_show_status_area"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/item_common_result_channel_name"
-            android:layout_width="match_parent"
+        <RelativeLayout
+            android:id="@+id/item_common_result_show_status_area"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/recording_reservation_status_background_black"
-            android:textColor="@color/white_text"
-            android:textSize="@dimen/list_item_channel_name_text_size"
-            android:visibility="gone" />
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true">
+
+            <ImageView
+                android:id="@+id/item_common_result_clip_tv"
+                android:layout_width="@dimen/clip_button_size"
+                android:layout_height="@dimen/clip_button_size"
+                android:clickable="true"
+                android:layout_marginStart="@dimen/watch_listen_rating_margin_top"
+                android:layout_marginEnd="@dimen/watch_listen_text_size"
+                android:background="@color/list_item_background" />
+
+            <TextView
+                android:id="@+id/item_common_result_recording_reservation_status"
+                android:layout_width="@dimen/recording_reservation_list_status_width"
+                android:layout_height="@dimen/recording_reservation_list_status_height"
+                android:layout_marginEnd="@dimen/recording_reservation_list_status_margin_end"
+                android:background="@color/list_item_background"
+                android:gravity="center_vertical|center_horizontal"
+                android:textSize="@dimen/list_item_recording_reservation_status_text_size"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/item_common_result_contents"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/watch_listen_linear_layout_margin_top"
+            android:layout_marginStart="@dimen/watch_listen_thumbnail_margin_left"
+            android:layout_toEndOf="@id/item_common_result_thumbnail_rl"
+            android:layout_toStartOf="@id/item_common_result_show_status_area"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/item_common_result_channel_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/recording_reservation_status_background_black"
+                android:textColor="@color/white_text"
+                android:textSize="@dimen/list_item_channel_name_text_size"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/item_common_result_content_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/content_time_text"
+                    android:textSize="@dimen/list_item_time_text_size" />
+
+                <TextView
+                    android:id="@+id/item_common_result_recorded_content_hyphen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/list_item_time_start_margin"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/contents_hyphen"
+                    android:textColor="@color/content_time_text"
+                    android:textSize="@dimen/list_item_recording_reservation_status_text_size"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/item_common_result_recorded_content_channel_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/list_item_time_start_margin"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/content_time_text"
+                    android:textSize="@dimen/list_item_time_text_size"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/item_common_result_content_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center|start"
+                android:paddingTop="@dimen/watch_listen_result_content_text_padding_top"
+                android:maxLines="2"
+                android:textColor="@color/white_text"
+                android:textSize="@dimen/watch_listen_result_content_title" />
+
+            <LinearLayout
+                android:id="@+id/item_common_result_content_rating"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/watch_listen_result_content_rating_margin_top"
+                android:orientation="horizontal">
+
+                <RatingBar
+                    android:id="@+id/item_common_result_content_rating_star"
+                    style="@style/roomRatingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical" />
+
+                <TextView
+                    android:id="@+id/item_common_result_content_rating_num"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/list_item_rank_num_start_margin"
+                    android:textColor="@color/white_text"
+                    android:textSize="@dimen/watch_listen_text_size" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/item_common_result_line"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/channel_list_divider_height"
+            android:layout_marginStart="@dimen/watch_listen_thumbnail_margin_left"
+            android:layout_alignParentBottom="true"
+            android:background="@color/setting_list_divider_color"
+            android:visibility="gone"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:gravity="bottom|end">
 
-            <TextView
-                android:id="@+id/item_common_result_content_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textColor="@color/content_time_text"
-                android:textSize="@dimen/list_item_time_text_size" />
-
-            <TextView
-                android:id="@+id/item_common_result_recorded_content_hyphen"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/list_item_time_start_margin"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="@string/contents_hyphen"
-                android:textColor="@color/content_time_text"
-                android:textSize="@dimen/list_item_recording_reservation_status_text_size"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/item_common_result_recorded_content_channel_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/list_item_time_start_margin"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textColor="@color/content_time_text"
-                android:textSize="@dimen/list_item_time_text_size"
-                android:visibility="gone" />
+            <ImageView
+                android:id="@+id/item_common_result_sort_button"
+                android:layout_width="@dimen/video_contents_list_sort_diameter"
+                android:layout_height="@dimen/video_contents_list_sort_diameter"
+                android:layout_marginBottom="@dimen/video_contents_list_sort_margin"
+                android:layout_marginEnd="@dimen/video_contents_list_sort_margin"
+                android:contentDescription="@null"
+                android:scaleType="center" />
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/item_common_result_content_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:gravity="center|start"
-            android:paddingTop="@dimen/watch_listen_result_content_text_padding_top"
-            android:maxLines="2"
-            android:textColor="@color/white_text"
-            android:textSize="@dimen/watch_listen_result_content_title" />
-
-        <LinearLayout
-            android:id="@+id/item_common_result_content_rating"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/watch_listen_result_content_rating_margin_top"
-            android:orientation="horizontal">
-
-            <RatingBar
-                android:id="@+id/item_common_result_content_rating_star"
-                style="@style/roomRatingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical" />
-
-            <TextView
-                android:id="@+id/item_common_result_content_rating_num"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/list_item_rank_num_start_margin"
-                android:textColor="@color/white_text"
-                android:textSize="@dimen/watch_listen_text_size" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/item_common_result_line"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/watch_listen_thumbnail_margin_left"
-        android:layout_alignParentBottom="true"
-        android:background="@color/ranking_list_background" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:gravity="bottom|end">
-
-        <ImageView
-            android:id="@+id/item_common_result_sort_button"
-            android:layout_width="@dimen/video_contents_list_sort_diameter"
-            android:layout_height="@dimen/video_contents_list_sort_diameter"
-            android:layout_marginBottom="@dimen/video_contents_list_sort_margin"
-            android:layout_marginEnd="@dimen/video_contents_list_sort_margin"
-            android:contentDescription="@null"
-            android:scaleType="center" />
-    </LinearLayout>
+    </RelativeLayout>
 </RelativeLayout>

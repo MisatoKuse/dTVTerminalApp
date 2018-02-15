@@ -8,6 +8,7 @@ import android.widget.ImageView;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
+import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 
 public class ContentsData {
 
@@ -67,8 +68,14 @@ public class ContentsData {
     private String mStartViewing = null;
     //終了時刻
     private String mEndViewing = null;
-    // reserved
-    private String mReserved = null;
+    // reserved1
+    private String mReserved1 = null;
+    // reserved2
+    private String mReserved2 = null;
+    // reserved4
+    private String mReserved4 = null;
+    // mobileViewingFlg
+    private String  mobileViewingFlg = null;
     // みどころ
     private String mHighlight = null;
     // クリップボタン
@@ -100,7 +107,16 @@ public class ContentsData {
     private boolean mClipExec = false;
     // クリップ未/済
     private boolean mClipStatus = false;
+    // サブタイトル
+    private String mSubTitle = null;
 
+    public String getSubTitle() {
+        return mSubTitle;
+    }
+
+    public void setSubTitle(String mSubTitle) {
+        this.mSubTitle = mSubTitle;
+    }
 
     public String getRank() {
         return mRank;
@@ -130,8 +146,28 @@ public class ContentsData {
         return mRatStar;
     }
 
+    /**
+     * 不正な値が入った場合はここで吸収する.
+     *
+     * @param ratStar 評価値
+     */
     public void setRatStar(String ratStar) {
-        this.mRatStar = ratStar;
+        final String MAX_RAT_VALUE = "5.0";
+        final String RAT_EXCEPTION_VALUE = "0";
+        final String RAT_VALUE_FORMAT = "%1$.1f";
+        if (DBUtils.isFloat(ratStar)) {
+            float rating = Float.parseFloat(ratStar);
+            if (rating > 5) {
+                this.mRatStar = MAX_RAT_VALUE;
+            } else if (rating <= 0) {
+                this.mRatStar = RAT_EXCEPTION_VALUE;
+            } else {
+                //データが整数値の可能性があるため小数点第一位表示に変換する
+                this.mRatStar = String.format(RAT_VALUE_FORMAT, rating);;
+            }
+        } else {
+            this.mRatStar = RAT_EXCEPTION_VALUE;
+        }
     }
 
     public String getThumURL() {
@@ -307,30 +343,8 @@ public class ContentsData {
         return mComment;
     }
 
-    public void setComment(String mComment) {
-        //TODO:レスポンスがないためダミー
-//        this.mComment = mComment;
-        this.mComment = "※解説(ダミー)【吹替版】" +
-                "魔女の呪いによって野獣の姿に変えられてしまった王子。呪いを解く鍵は、" +
-                "魔法のバラの花びらが全て散る前に誰かを心から愛し、そして愛されること―。" +
-                "だが野獣の姿になった彼を愛するものなどいるはずがない。" +
-                "独り心を閉ざしていく中、心に孤独を抱えながらも、自分の輝きを信じて生きる、" +
-                "聡明で美しい女性、ベルと出会うが。。。";
-    }
-
     public String getHighlight() {
         return mHighlight;
-    }
-
-    public void setHighlight(String mHighlight) {
-        //TODO:レスポンスがないためダミー
-//        this.mHighlight = mHighlight;
-        this.mHighlight = "※みどころ(ダミー)【吹替版】" +
-                "魔女の呪いによって野獣の姿に変えられてしまった王子。呪いを解く鍵は、" +
-                "魔法のバラの花びらが全て散る前に誰かを心から愛し、そして愛されること―。" +
-                "だが野獣の姿になった彼を愛するものなどいるはずがない。" +
-                "独り心を閉ざしていく中、心に孤独を抱えながらも、自分の輝きを信じて生きる、" +
-                "聡明で美しい女性、ベルと出会うが。。。";
     }
 
     public String getCategoryId() {
@@ -357,12 +371,28 @@ public class ContentsData {
         this.mEndViewing = mEndViewing;
     }
 
-    public String getReserved() {
-        return mReserved;
+    public String getReserved1() {
+        return mReserved1;
     }
 
-    public void setReserved(String mReserved) {
-        this.mReserved = mReserved;
+    public void setReserved1(String mReserved1) {
+        this.mReserved1 = mReserved1;
+    }
+
+    public String getReserved2() {
+        return mReserved2;
+    }
+
+    public void setReserved2(String mReserved2) {
+        this.mReserved2 = mReserved2;
+    }
+
+    public String getReserved4() {
+        return mReserved4;
+    }
+
+    public void setReserved4(String mReserved4) {
+        this.mReserved4 = mReserved4;
     }
 
     public ClipRequestData getRequestData() {
@@ -457,7 +487,15 @@ public class ContentsData {
         mDlFileFullPath=path;
     }
 
-    public String getDlFileFullPath(){
+    public String getDlFileFullPath() {
         return mDlFileFullPath;
+    }
+
+    public String getMobileViewingFlg() {
+        return mobileViewingFlg;
+    }
+
+    public void setMobileViewingFlg(String mobileViewingFlg) {
+        this.mobileViewingFlg = mobileViewingFlg;
     }
 }

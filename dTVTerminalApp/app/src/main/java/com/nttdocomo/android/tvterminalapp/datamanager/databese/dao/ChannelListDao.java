@@ -79,24 +79,25 @@ public class ChannelListDao {
      * 配列で指定した列データをすべて取得.
      *
      * @param strings 取得したいテーブル名の配列
-     * @param type  TODO:不要と思われる.利用箇所を調べた上で修正、削除する事.
+     * @param service チャンネルメタのservice.ひかり or dch(空文字の場合は両方)
      * @return チャンネルリスト情報.
      */
-    public List<Map<String, String>> findByTypeAndDate(final String[] strings, final String type) {
+    public List<Map<String, String>> findByService(final String[] strings, final String service) {
         //特定IDのデータ取得はしない方針
         List<Map<String, String>> list = new ArrayList<>();
-        String[] selectionStrings = {
-                JsonConstants.META_RESPONSE_DISP_TYPE,
-                "=? AND ",
-                DBConstants.DATE_TYPE,
-                "=? "
-        };
-        String selection = StringUtils.getConnectString(selectionStrings);
+        String selection = null;
+        if (service != null && !service.isEmpty()) {
+            String[] selectionStrings = {
+                    JsonConstants.META_RESPONSE_SERVICE,
+                    "=? "
+            };
+            selection = StringUtils.getConnectString(selectionStrings);
+        }
         Cursor cursor = db.query(
                 DBConstants.CHANNEL_LIST_TABLE_NAME,
                 strings,
                 selection,
-                new  String[]{type, "program"},
+                new  String[]{service},
                 null,
                 null,
                 null);
@@ -144,27 +145,7 @@ public class ChannelListDao {
      * @return SQLiteDatabaseクラスの戻り値(削除されたレコード数)
      */
     public int delete() {
-        String[] selectionStrings = {
-                DBConstants.DATE_TYPE,
-                "=?"
-        };
-        String selection = StringUtils.getConnectString(selectionStrings);
-        return db.delete(DBConstants.CHANNEL_LIST_TABLE_NAME, selection, new String[]{"home"});
+        return db.delete(DBConstants.CHANNEL_LIST_TABLE_NAME, null, null);
     }
 
-    /**
-     * データの削除.
-     * @param type  TODO:不要と思われる.利用箇所を調べた上で修正、削除する事.
-     * @return SQLiteDatabaseクラスの戻り値(削除されたレコード数)
-     */
-    public int deleteByType(final String type) {
-        String[] selectionStrings = {
-                JsonConstants.META_RESPONSE_DISP_TYPE,
-                "=? AND ",
-                DBConstants.DATE_TYPE,
-                "=?"
-        };
-        String selection = StringUtils.getConnectString(selectionStrings);
-        return db.delete(DBConstants.CHANNEL_LIST_TABLE_NAME, selection, new String[]{type, "program"});
-    }
 }

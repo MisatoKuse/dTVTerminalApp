@@ -5,10 +5,8 @@
 <resources>
 
     <!-- Common -->
-    <string name="app_name">ドコモテレビターミナルアプリ</string>
-    <string name="list_transition">></string>
+    <string name="app_name">ドコモテレビターミナル</string>
     <string name="contents_hyphen">-</string>
-    <string name="contents_more">すべてを見る</string>
     <string name="positive_response">はい</string>
     <string name="negative_response">いいえ</string>
     <string name="custom_dialog_ok">OK</string>
@@ -27,12 +25,24 @@
     <string name="parental_r_20">R20</string>
     <string name="common_text_close">閉じる</string>
     <string name="common_text_retry">リトライ</string>
+    <string name="save_token">トークンの保存を行います。</string>
+    <string name="transoceanic_communication_dialog_confirm">利用する</string>
+    <string name="transoceanic_communication_dialog_content">海外でのパケット通信は、日本国内とは異なる料金体系となりますのでご注意ください \n※通信料はご契約の通信会社提供のプランにより異なります。\n※Wi-Fi接続でご利用される場合はこの限りではありません。</string>
+    <string name="transoceanic_communication_dialog_title">海外通信の利用</string>
+    <string name="permission_denied_dialog_title">Permission Denied</string>
+    <string name="permission_denied_dialog_content">通信許可がないためアプリケーションを終了します</string>
+    <string name="permission_detail_dialog_title">権限の用途</string>
+    <string name="permission_detail_dialog_content">・海外通信の利用確認のためSIM情報を取得</string>
+    <string name="permission_detail_dialog_confirm">許可する</string>
+    <string name="permission_detail_dialog_cancel">許可しない</string>
+    <string name="status_bar_height_name">status_bar_height</string>
+    <string name="status_bar_height_deftype">dimen</string>
+    <string name="status_bar_height_defpackage">android</string>
 
     <!-- Launch -->
     <string name="str_app_title">ドコモテレビターミナル</string>
     <string name="str_launch_title">起動画面</string>
     <string name="str_tutorial_title">チュートリアル画面</string>
-    <string name="str_get_info_title">情報取得中</string>
     <string name="str_stb_select_result_text">ペアリング可能なデバイスが\n見つかりました。</string>
     <string name="str_stb_next_not_display_text">次回以降表示しない</string>
     <string name="str_stb_connect_success_text">ドコモテレビターミナルとペアリングしました。</string>
@@ -79,7 +89,6 @@
     <string name="get_contents_data_error_message">情報の取得に失敗したため、一部のコンテンツのみ表示します。\nしばらく時間が経ってから再度お試しください。</string>
     <string name="home_no_contract_info_text">ご利用中のdアカウントでひかりTV for docomoの契約がありません。</string>
     <string name="home_contract_button_text">契約する</string>
-    <string name="home_contents_list_see_all">すべてを見る</string>
     <string name="home_contents_pipe">" | "</string>
     <string name="home_contents_hyphen">" - "</string>
     <string name="home_contents_colon">:</string>
@@ -130,10 +139,11 @@
     <string name="record_download_cancel_title">ダウンロードを取りやめますか？</string>
     <string name="record_download_cancel_confirm">取りやめる</string>
     <string name="record_download_notification">録画番組をダウンロード中</string>
+    <string name="activation_confirm_dialog_title">アクティベーション実行の確認</string>
+    <string name="activation_failed_error">アクティベーション出来ませんでした。</string>
 
     <!-- ビデオ一覧 -->
     <string name="video_content_top_title">ビデオ</string>
-    <string name="video_content_sub_genre_title">全ての作品</string>
     <string name="video_list_genre_all">すべて</string>
     <string name="video_list_genre_nod">NHKオンデマンド</string>
 
@@ -212,6 +222,7 @@
     <string name="d_anime_store_content_service_update_dialog">ドコモテレビターミナルのdアニメストアのバージョンアップが必要です</string>
     <string name="d_tv_terminal_application_version_update_dialog">ドコモテレビターミナルを操作したい場合は、ドコモテレビターミナルアプリをアップデートしてください。</string>
     <string name="stb_application_version_update">ご利用のドコモテレビターミナルの最新版がありますドコモテレビターミナルのアップデートをしてください。</string>
+    <string name="contents_detail_thumbnail_text">テレビで視聴できます</string>
     <string-array name="other_service_contents_detail_tabs">
         <item>作品情報</item>
     </string-array>
@@ -219,7 +230,6 @@
         <item>番組詳細</item>
         <item>チャンネル</item>
     </string-array>
-    <string name="recording_reservation_complete_dialog_title">録画予約完了</string>
     <string name="recording_reservation_complete_dialog_msg">録画予約依頼を受け付けました。</string>
     <string name="recording_reservation_complete_dialog_ok">OK</string>
     <string name="recording_reservation_failed_dialog_msg">登録件数が一杯のため録画予約に失敗しました。</string>
@@ -229,7 +239,6 @@
     <string name="recording_reservation_failed_dialog_param">リクエストパラメータ不正</string>
     <string name="recording_reservation_failed_dialog_over">登録件数超過</string>
     <string name="recording_reservation_failed_dialog_no_agreement">未契約エラー</string>
-    <string name="recording_reservation_confirm_dialog_title">録画予約確認</string>
     <string name="recording_reservation_confirm_dialog_msg">録画予約しますか？</string>
     <string name="recording_reservation_confirm_dialog_confirm">録画予約する</string>
     <string name="recording_reservation_confirm_dialog_cancel">キャンセル</string>
@@ -245,9 +254,14 @@
     <!-- チャンネルリストタイトル -->
     <string name="channel_list_activity_title">チャンネルリスト</string>
 
+    <!-- ペアリング設定画面 -->
+    <string name="paring_setting_search_failed_text">ペアリング可能なデバイスが見つかりませんでした。</string>
+    <string name="paring_setting_search_help_text">STBとペアリングするには</string>
+    <string name="paring_setting_select_text">ペアリングするドコモテレビターミナルを選択</string>
+
     <!-- 設定画面 -->
     <string name="main_setting_d_account_message">dアカウントアプリがインストールされていません。\nインストールしますか？</string>
-    <string name="main_setting_paring">ペアリング済み</string>
+    <string name="main_setting_pairing">ペアリング済み</string>
     <string name="main_setting_not_paring">未ペアリング</string>
     <string name="main_setting_image_quality_low">標準画質</string>
     <string name="main_setting_image_quality_middle">高画質</string>

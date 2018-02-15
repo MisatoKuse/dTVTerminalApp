@@ -45,10 +45,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
      * test用ボタン.
      */
     private Button mFirstLaunchLaunchNoActivity = null;
-    /**
-     * 録画ビデオ一覧問い合わせ用.
-     */
-    private DlnaProvRecVideo mDlnaProvRecVideo = null;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -58,7 +54,12 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         DlnaProvBsChList dlnaProvBsChList;
 
         setContentView(R.layout.launch_main_layout);
+        setTitleText(getString(R.string.str_launch_title));
         enableHeaderBackIcon(false);
+        setStatusBarColor(true);
+
+        //アプリ起動時のサービストークン削除を行う
+        SharedPreferencesUtils.deleteOneTimeTokenData(getApplicationContext());
 
         boolean isDlnaOk = startDlna();
         if (!isDlnaOk) {
@@ -66,25 +67,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
             /*
              * to do: DLNA起動失敗の場合、仕様はないので、ここで将来対応
              */
-        } else {
-            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-            if (null == dlnaDmsItem) {
-                /*
-                 * to do: ペアリングするか、ここで将来対応
-                 */
-                return;
-            }
-            mDlnaProvRecVideo = new DlnaProvRecVideo();
-            mDlnaProvRecVideo.start(dlnaDmsItem, this);
-            mDlnaProvRecVideo.browseRecVideoDms();
-
-            dlnaProvTerChList = new DlnaProvTerChList();
-            dlnaProvTerChList.start(dlnaDmsItem, this);
-            dlnaProvTerChList.browseChListDms();
-
-            dlnaProvBsChList = new DlnaProvBsChList();
-            dlnaProvBsChList.start(dlnaDmsItem, this);
-            dlnaProvBsChList.browseChListDms();
         }
         setContents();
     }
@@ -93,9 +75,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
      * 画面設定を行う.
      */
     private void setContents() {
-        TextView title = findViewById(R.id.titleLanchActivity);
-        title.setText(getScreenTitle());
-
         mFirstLaunchLaunchYesActivity = findViewById(R.id.firstLanchLanchYesActivity);
         mFirstLaunchLaunchYesActivity.setOnClickListener(this);
 
@@ -127,15 +106,11 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     protected void onResume() {
-        if (!mIsFirstRun) {
-            mFirstLaunchLaunchYesActivity.setVisibility(View.GONE);
-        }
         super.onResume();
     }
 
     @Override
     protected void onStop() {
-        mDlnaProvRecVideo.stopListen();
         super.onStop();
     }
 
@@ -165,23 +140,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     }
 
     /**
-     * 初回起動判定.
-     *
-     * @return 初回起動かどうか
-     */
-    public static boolean isFirstRun() {
-        return mIsFirstRun;
-    }
-
-    /**
-     * 初回起動判定値設定.
-     */
-    public static void setNotFirstRun() {
-        LaunchActivity.mIsFirstRun = false;
-    }
-
-
-    /**
      * チュートリアル画面へ遷移.
      */
     // TODO チュートリアル画面作成時に削除
@@ -197,13 +155,17 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
         if (SharedPreferencesUtils.getSharedPreferencesStbConnect(this)) {
             // ペアリング済み HOME画面遷移
             SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(this, true);
-            startActivity(HomeActivity.class, null);
+            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
             DTVTLogger.debug("ParingOK Start HomeActivity");
         } else if (SharedPreferencesUtils.getSharedPreferencesStbSelect(this)) {
             // 次回から表示しないをチェック済み
             // 未ペアリング HOME画面遷移
             SharedPreferencesUtils.setSharedPreferencesDecisionParingSettled(this, false);
-            startActivity(HomeActivity.class, null);
+            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
             DTVTLogger.debug("ParingNG Start HomeActivity");
         } else {
             // STB選択画面へ遷移

@@ -20,11 +20,11 @@ public class RemoteRecordingReservationWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
     /**
-     * コールバック
+     * コールバック.
      */
     public interface RemoteRecordingReservationJsonParserCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
          *
          * @param remoteRecordingReservationResultResponse JSONパース後のデータ
          */
@@ -37,7 +37,7 @@ public class RemoteRecordingReservationWebClient
             mRemoteRecordingReservationJsonParserCallback;
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
@@ -72,11 +72,10 @@ public class RemoteRecordingReservationWebClient
     }
 
     /**
-     * リモート録画予約
+     * リモート録画予約.
      *
      * @param contentsDetailInfo                           リモート録画予約送信用パラメータ
      * @param remoteRecordingReservationJsonParserCallback コールバック
-     *                                                     TODO: 仕様確定後に基底クラスへサービストークンの処理の追加が必要
      * @return パラメータエラーの場合はfalse
      */
     public boolean getRemoteRecordingReservationApi(RecordingReservationContentsDetailInfo contentsDetailInfo,
@@ -97,15 +96,15 @@ public class RemoteRecordingReservationWebClient
         String sendParameter = makeSendParameter(contentsDetailInfo);
 
         //録画一覧の情報を読み込むため、録画一覧APIを呼び出す
-        openUrl(UrlConstants.WebApiUrl.REMOTE_RECORDING_RESERVATION_CLIENT,
-                sendParameter, this);
+        openUrlAddOtt(UrlConstants.WebApiUrl.REMOTE_RECORDING_RESERVATION_CLIENT,
+                sendParameter, this, null);
 
         //今のところ失敗していないので、trueを返す
         return true;
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param contentsDetailInfo                           リモート録画予約送信用パラメータ
      * @param remoteRecordingReservationJsonParserCallback コールバック
@@ -162,7 +161,7 @@ public class RemoteRecordingReservationWebClient
 
 
     /**
-     * 指定されたパラメータをJSONで組み立てて文字列にする
+     * 指定されたパラメータをJSONで組み立てて文字列にする.
      *
      * @param contentsDetailInfo リモート録画予約送信用パラメータ
      * @return 組み立て後の文字列

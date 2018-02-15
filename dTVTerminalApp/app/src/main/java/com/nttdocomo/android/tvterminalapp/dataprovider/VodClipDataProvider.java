@@ -6,17 +6,18 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodClipList;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.VodClipWebClient;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,19 +26,40 @@ import java.util.Map;
  */
 public class VodClipDataProvider extends ClipKeyListDataProvider implements VodClipWebClient.VodClipJsonParserCallback {
 
+    /**
+     * コンテキスト.
+     */
     private Context mContext;
+    /**
+     * クリップ一覧データ.
+     */
     private VodClipList mClipList = null;
 
+    /**
+     * callback.
+     */
+    private ApiDataProviderCallback apiDataProviderCallback;
+
     @Override
-    public void onVodClipJsonParsed(List<VodClipList> vodClipLists) {
+    public void onVodClipJsonParsed(final List<VodClipList> vodClipLists) {
         if (vodClipLists != null && vodClipLists.size() > 0) {
-            VodClipList list = vodClipLists.get(0);
-//            setStructDB(list);
-            if (!mRequiredClipKeyList
-                    || mResponseEndFlag) {
-                sendVodClipListData(list.getVcList());
-            } else {
-                mClipList = list;
+            List vclist = vodClipLists.get(0).getVcList();
+            if(vclist != null && vclist.size() > 0) {
+                HashMap hashMap = (HashMap) vclist.get(0);
+                if (!hashMap.isEmpty()) {
+                    VodClipList list = vodClipLists.get(0);
+                    //            setStructDB(list);
+                    if (!mRequiredClipKeyList
+                            || mResponseEndFlag) {
+                        sendVodClipListData(list.getVcList());
+                    } else {
+                        mClipList = list;
+                    }
+                } else {
+                    if (null != apiDataProviderCallback) {
+                        apiDataProviderCallback.vodClipListCallback(null);
+                    }
+                }
             }
         } else {
             //TODO:Sprint10でDB使用を一時停止
@@ -53,7 +75,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
     }
 
     @Override
-    public void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
         super.onVodClipKeyListJsonParsed(clipKeyListResponse);
         // コールバック判定
@@ -74,8 +96,6 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
          */
         void vodClipListCallback(List<ContentsData> clipContentInfo);
     }
-
-    private ApiDataProviderCallback apiDataProviderCallback;
 
     /**
      * コンストラクタ.
@@ -151,6 +171,7 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
             clipContentInfo.setDtvType(dtvType);
             clipContentInfo.setDispType(dispType);
             clipContentInfo.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
+            clipContentInfo.setContentsId(map.get(JsonConstants.META_RESPONSE_CONTENTS_ID));
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
             requestData.setCrid(map.get(JsonConstants.META_RESPONSE_CRID));
@@ -173,8 +194,8 @@ public class VodClipDataProvider extends ClipKeyListDataProvider implements VodC
             if (mRequiredClipKeyList) {
                 // クリップ状態をコンテンツリストに格納
                 clipContentInfo.setClipStatus(getClipStatus(dispType, contentsType, dTv,
-                        clipContentInfo.getCrid(), clipContentInfo.getServiceId(),
-                        clipContentInfo.getEventId(), clipContentInfo.getTitleId()));
+                        requestData.getCrid(), requestData.getServiceId(),
+                        requestData.getEventId(), requestData.getTitleId()));
             }
 
             clipDataList.add(clipContentInfo);

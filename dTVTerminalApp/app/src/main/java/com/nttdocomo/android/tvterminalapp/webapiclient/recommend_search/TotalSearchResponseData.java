@@ -9,54 +9,128 @@ import com.nttdocomo.android.tvterminalapp.struct.SearchContentInfo;
 
 import java.util.ArrayList;
 
+/**
+ * 検索結果返却用データクラス.
+ */
 public class TotalSearchResponseData {
 
+    /**
+     * ServiceCount.
+     */
     public class ServiceCount {
+        /**
+         * serviceId.
+         */
         int serviceId;
+        /**
+         * contentCount.
+         */
         int contentCount;
     }
 
+    /**
+     * コンテンツ情報.
+     */
     public class Content {
+        /**
+         * ランク.
+         */
         int rank;
+        /**
+         * コンテンツId.
+         */
         String ctId;
+        /**
+         * サービスId.
+         */
         int serviceId;
-        String ctPicURL;
+        /**
+         * サムネイルURL1.
+         */
+        String ctPicURL1;
+        /**
+         * サムネイルURL2.
+         */
+        String ctPicURL2;
+        /**
+         * タイトル.
+         */
         String title;
+        /**
+         * mobileViewingFlg モバイル視聴可否フラグ
+         */
+        String  mobileViewingFlg;
         //String person;    //iosソースより、保留
         //int titleKind;    //iosソースより、保留
     }
 
+    /**
+     * コンストラクタ.
+     */
     public TotalSearchResponseData() {
-        serviceCountList = new ArrayList<ServiceCount>();  //[TotalSearchResponseData.ServiceCount]()
-        contentList = new ArrayList<Content>();
+        serviceCountList = new ArrayList<>();
+        contentList = new ArrayList<>();
     }
 
-    public String status;      //処理結果
-    public int totalCount;   //検索結果合計件数
-    public String query;       //クエリ
-    public int startIndex;    //検索結果返却開始位置
+    /**
+     * 処理結果.
+     */
+    public String status;
+    /**
+     * 検索結果合計件数.
+     */
+    public int totalCount;
+    /**
+     * クエリ.
+     */
+    public String query;
+    /**
+     * 検索結果返却開始位置.
+     */
+    public int startIndex;
+    /**
+     * resultCount.
+     */
     public int resultCount;
 
+    /**
+     * serviceCountの配列.
+     */
     public ArrayList<ServiceCount> serviceCountList;
+    /**
+     * contentListの配列.
+     */
     public ArrayList<Content> contentList;
 
-    public void map(ArrayList<SearchContentInfo> searchContentInfoArray){
-        if(null == searchContentInfoArray){
-            searchContentInfoArray=new ArrayList<SearchContentInfo>();
+    /**
+     * 検索結果からコンテンツ情報をリストにセットする.
+     *
+     * @param searchContentInfoArray 検索結果リスト
+     */
+    public void map(ArrayList<SearchContentInfo> searchContentInfoArray) {
+        if (null == searchContentInfoArray) {
+            searchContentInfoArray = new ArrayList<>();
         } else {
             searchContentInfoArray.clear();
         }
-        for(Content content: contentList){
-            SearchContentInfo info= new SearchContentInfo(false, content.ctId, content.serviceId, content.ctPicURL, content.title, content.rank);
+        for (Content content: contentList) {
+            SearchContentInfo info = new SearchContentInfo(false, content.ctId, content.serviceId,
+                    content.ctPicURL1, content.ctPicURL2, content.title, content.rank, content.mobileViewingFlg);
             searchContentInfoArray.add(info);
         }
     }
 
-    public void appendServiceCount(){
+    /**
+     * serviceCountを増やす.
+     */
+    public void appendServiceCount() {
         serviceCountList.add(new ServiceCount());
     }
 
-    public void appendContent(){
+    /**
+     * contentを増やす.
+     */
+    public void appendContent() {
         contentList.add(new Content());
     }
 }

@@ -24,11 +24,30 @@ public class GenreCountGetWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
     //JSON作成用固定値
+    /**
+     * filter.
+     */
     private static final String FILTER_STR = "filter";
+    /**
+     * age_req.
+     */
     private static final String AGE_REQ_STR = "age_req";
+    /**
+     * list.
+     */
     private static final String LIST_STR = "list";
+    /**
+     * genre_id.
+     */
     private static final String GENRE_ID_STR = "genre_id";
+    /**
+     * type_id.
+     */
     private static final String TYPE_STR = "type_id";
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
 
     /**
      * コールバック.
@@ -43,7 +62,9 @@ public class GenreCountGetWebClient
                 GenreCountGetResponse genreCountGetResponse);
     }
 
-    //コールバックのインスタンス
+    /**
+     * コールバックのインスタンス.
+     */
     private GenreCountGetJsonParserCallback
             mGenreCountGetJsonParserCallback;
 
@@ -57,12 +78,11 @@ public class GenreCountGetWebClient
     }
 
     @Override
-    public void onAnswer(ReturnCode returnCode) {
+    public void onAnswer(final ReturnCode returnCode) {
         if (mGenreCountGetJsonParserCallback != null) {
             //JSONをパースして、データを返す
             new GenreCountGetJsonParser(
-                    mGenreCountGetJsonParserCallback)
-                    .execute(returnCode.bodyData);
+                    mGenreCountGetJsonParserCallback).execute(returnCode.bodyData);
         }
     }
 
@@ -72,7 +92,7 @@ public class GenreCountGetWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError(ReturnCode returnCode) {
+    public void onError(final ReturnCode returnCode) {
         if (mGenreCountGetJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
             mGenreCountGetJsonParserCallback
@@ -93,8 +113,11 @@ public class GenreCountGetWebClient
     public boolean getGenreCountGetApi(
             final String filter, final int ageReq, final List<String> genreId,
             final GenreCountGetJsonParserCallback genreCountGetJsonParserCallback) {
-
         DTVTLogger.start();
+        //通信禁止時はfalseで帰る
+        if (mIsCancel) {
+            return false;
+        }
 
         //パラメーターのチェック
         if (!checkNormalParameter(filter, ageReq, genreId,
@@ -120,8 +143,8 @@ public class GenreCountGetWebClient
         }
 
         //ジャンル毎コンテンツ数取得情報を読み込むためにAPIを呼び出す
-        openUrl(UrlConstants.WebApiUrl.GENRE_COUNT_GET_WEB_CLIENT,
-                sendParameter, this);
+        openUrlAddOtt(UrlConstants.WebApiUrl.GENRE_COUNT_GET_WEB_CLIENT,
+                sendParameter, this, null);
 
         DTVTLogger.end();
 
@@ -226,5 +249,22 @@ public class GenreCountGetWebClient
         }
 
         return answerText;
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnect() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        stopAllConnections();
+    }
+
+    /**
+     * 通信を許可する.
+     */
+    public void enableConnect() {
+        DTVTLogger.start();
+        mIsCancel = false;
     }
 }

@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -37,19 +38,42 @@ import java.util.List;
  */
 public class SearchDataProvider implements TotalSearchWebApiDelegate {
 
+    /**
+     * 検索の状態.
+     */
     private SearchState mState = SearchState.inital;
-
+    /**
+     * 検索プロパイダ.
+     */
     private SearchDataProviderListener mSearchDataProviderListener = null;
+    /**
+     * 検索用WebAPI.
+     */
+    private TotalSearchWebApi mTotalSearchWebApi;
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
 
-    //テレビ
+    /**
+     * テレビtab.
+     */
     private static final int PAGE_NO_OF_SERVICE_TELEVISION = 0;
-    //ビデオ
+    /**
+     * ビデオtab.
+     */
     private static final int PAGE_NO_OF_SERVICE_VIDEO = PAGE_NO_OF_SERVICE_TELEVISION + 1;
-    //dTVチャンネル
+    /**
+     * dTVチャンネルtab.
+     */
     private static final int PAGE_NO_OF_SERVICE_DTV_CHANNEL = PAGE_NO_OF_SERVICE_TELEVISION + 2;
-    //dTV
+    /**
+     * dTVtab.
+     */
     private static final int PAGE_NO_OF_SERVICE_DTV = PAGE_NO_OF_SERVICE_TELEVISION + 3;
-    //dアニメ
+    /**
+     * dアニメtab.
+     */
     private static final int PAGE_NO_OF_SERVICE_DANIME = PAGE_NO_OF_SERVICE_TELEVISION + 4;
 
     /**
@@ -109,30 +133,31 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
                                 final int pageIndex,
                                 final SearchSortKind sortKind,
                                 final int pageNumber,
-                                /*TotalSearchContentInfo handler, */
                                 final Context context) {
-        TotalSearchWebApi totalSearchWebApi = null;
-        //this.handler = handler;
-        setSearchState(SearchState.running);
-        TotalSearchRequestData request = new TotalSearchRequestData();
-        try {
-            request.query = URLEncoder.encode(keyword, "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            DTVTLogger.debug(e);
+        if (!mIsCancel) {
+            setSearchState(SearchState.running);
+            TotalSearchRequestData request = new TotalSearchRequestData();
+            try {
+                request.query = URLEncoder.encode(keyword, "utf-8");
+            } catch (UnsupportedEncodingException e) {
+                DTVTLogger.debug(e);
+            }
+
+            request.serviceId = StringUtils.setCommaSeparator(getCurrentSearchServiceTypeArray(pageIndex));
+            request.categoryId = StringUtils.setCommaSeparator(getCurrentSearchCategoryTypeArray(pageIndex));
+            request.sortKind = sortKind.searchWebSortType().ordinal();
+            request.filterTypeList = condition.searchFilterList();
+            request.maxResult = SearchConstants.Search.requestMaxResultCount;
+            request.startIndex = pageNumber * SearchConstants.Search.requestMaxResultCount + 1;
+            request.filterViewableAge = UserInfoUtils.getRecommendUserAge(getUserAgeInfo(context, pageIndex));
+
+            mTotalSearchWebApi = new TotalSearchWebApi(context);
+            mTotalSearchWebApi.setDelegate(this);
+            mSearchDataProviderListener = (SearchDataProviderListener) context;
+            mTotalSearchWebApi.request(request);
+        } else {
+            DTVTLogger.error("SearchDataProvider is stopping connection");
         }
-
-        request.serviceId = StringUtils.setCommaSeparator(getCurrentSearchServiceTypeArray(pageIndex));
-        request.categoryId = StringUtils.setCommaSeparator(getCurrentSearchCategoryTypeArray(pageIndex));
-        request.sortKind = sortKind.searchWebSortType().ordinal();
-        request.filterTypeList = condition.searchFilterList();
-        request.maxResult = SearchConstants.Search.requestMaxResultCount;
-        request.startIndex = pageNumber * SearchConstants.Search.requestMaxResultCount + 1;
-        request.filterViewableAge = UserInfoUtils.getRecommendUserAge(getUserAgeInfo(context, pageIndex));
-
-        totalSearchWebApi = new TotalSearchWebApi(context);
-        totalSearchWebApi.setDelegate(this);
-        mSearchDataProviderListener = (SearchDataProviderListener) context;
-        totalSearchWebApi.request(request);
     }
 
     /**
@@ -145,15 +170,8 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
 
     @Override
     public void onSuccess(final TotalSearchResponseData result) {
-        /* //for test
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            DTVTLogger.debug(e);
-        }
-        */
-        DTVTLogger.debug("SearchDataProvider::onSuccess(), _state=" + mState.toString());
         synchronized (this) {
+            DTVTLogger.debug("SearchDataProvider::onSuccess(), _state=" + mState.toString());
             if (mState != SearchState.canceled) {
 
                 final ArrayList<SearchContentInfo> contentArray = new ArrayList<>();
@@ -196,9 +214,14 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
             //画面表示用データ設定
             contentsData.setContentsId(ci.contentId);
             contentsData.setServiceId(String.valueOf(ci.serviceId));
-            contentsData.setThumURL(ci.contentPictureUrl);
+            if (!TextUtils.isEmpty(ci.contentPictureUrl1)) {
+                contentsData.setThumURL(ci.contentPictureUrl1);
+            } else {
+                contentsData.setThumURL(ci.contentPictureUrl2);
+            }
             contentsData.setTitle(ci.title);
             contentsData.setRecommendOrder(ci.rank);
+            contentsData.setMobileViewingFlg(ci.mobileViewingFlg);
 
             SearchContentInfo searchContentInfo = resultType.getResultType().searchContentInfo.get(i);
 
@@ -341,5 +364,25 @@ public class SearchDataProvider implements TotalSearchWebApiDelegate {
                 break;
         }
         return userAge;
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnect() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        cancelSearch();
+        if (mTotalSearchWebApi != null) {
+            mTotalSearchWebApi.stopConnection();
+        }
+    }
+
+    /**
+     * 通信を許可する.
+     */
+    public void enableConnect() {
+        DTVTLogger.start();
+        mIsCancel = false;
     }
 }

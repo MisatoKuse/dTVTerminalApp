@@ -8,10 +8,8 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -24,7 +22,6 @@ import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
-import com.nttdocomo.android.tvterminalapp.activity.detail.ChannelDetailPlayerActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ProgramChannelAdapter;
 import com.nttdocomo.android.tvterminalapp.adapter.TvProgramListAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
@@ -32,61 +29,43 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.MyChannelDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
+import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
+import com.nttdocomo.android.tvterminalapp.struct.CalendarComparator;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
-import com.nttdocomo.android.tvterminalapp.view.ChannelItemClickListener;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
+import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.view.ProgramRecyclerView;
 import com.nttdocomo.android.tvterminalapp.view.ProgramScrollView;
-import com.nttdocomo.android.tvterminalapp.struct.ScheduleInfo;
-import com.nttdocomo.android.tvterminalapp.model.TabItemLayout;
 
-import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-public class TvProgramListActivity extends BaseActivity
-        implements ChannelItemClickListener,
-        View.OnClickListener,
-        ScaledDownProgramListDataProvider.ApiDataProviderCallback,
-        ProgramScrollView.OnScrollOffsetListener,
-        MyChannelDataProvider.ApiDataProviderCallback,
-        TabItemLayout.OnClickTabTextListener {
+public class TvProgramListActivity extends BaseActivity implements View.OnClickListener,ScaledDownProgramListDataProvider.ApiDataProviderCallback,
+        ProgramScrollView.OnScrollOffsetListener, MyChannelDataProvider.ApiDataProviderCallback, TabItemLayout.OnClickTabTextListener {
 
     private static final int INDEX_TAB_HIKARI = 1;
     private static final int INDEX_TAB_MY_CHANNEL = 0;
-    private static final float TAB_TITLE_SIZE = 14;
     private ProgramRecyclerView mProgramRecyclerView = null;
     private Boolean mIsMenuLaunch = false;
-    private int mScreenHeight = 0;
-    private int mScreenWidth = 0;
     private ProgramScrollView mTimeScrollView = null;
     private RecyclerView mChannelRecyclerView = null;
     private TabItemLayout mTabLayout = null;
-    private LinearLayout mTabLinearLayout = null;
     private ImageView mTagImageView = null;
     private static final int START_TIME = 4;
     private static final int STANDARD_TIME = 24;
-    private static final int SCREEN_TIME_WIDTH_PERCENT = 9;
     private static final int TIME_LINE_WIDTH = 44;
     private static final int ONE_HOUR_UNIT = 180;
-    private static final String DATE_FORMAT = "yyyy年MM月dd日 (E)";
-    private static final String DATE_SELECT_FORMAT = "yyyy-MM-dd";
-    private static final String SELECT_DATE_FORMAT = "yyyy年MM月dd日";
-    private static final String TIME_FORMAT = "HHmmss";
-    private static final String CUR_TIME_FORMAT = "yyyy-MM-ddHH:mm:ss";
     private String mSelectDateStr = null;
-    private String mDate[] = {"日", "月", "火", "水", "木", "金", "土"};
     private String mToDay = null;
     private LinearLayout mLinearLayout = null;
     private String mProgramTabNames[] = null;
-    private static int EXPIRE_DATE = 7;
+    private static final int EXPIRE_DATE = 7;
     private int mTabIndex = 0;
     private TvProgramListAdapter mTvProgramListAdapter = null;
     private ProgramChannelAdapter mProgramChannelAdapter = null;
@@ -98,6 +77,11 @@ public class TvProgramListActivity extends BaseActivity
     private ArrayList<MyChannelMetaData> myChannelDataList;
     private RelativeLayout mTimeLine;
     private ImageView mNowImage;
+    private static final String DAY_PRE0 = "0";
+    private static final String WEEK_LEFT = " (";
+    private static final String WEEK_RIGHT = ")";
+    private static final String DATE_LINE = "-";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +96,7 @@ public class TvProgramListActivity extends BaseActivity
         }
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
+        setStatusBarColor(true);
 
         initView();
         syncScroll(mChannelRecyclerView, mProgramRecyclerView);
@@ -132,8 +117,6 @@ public class TvProgramListActivity extends BaseActivity
      * ビューの初期化
      */
     private void initView() {
-        mScreenHeight = getHeightDensity();
-        mScreenWidth = getWidthDensity();
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
         mTimeScrollView = findViewById(R.id.tv_program_list_main_layout_time_sl);
@@ -147,7 +130,7 @@ public class TvProgramListActivity extends BaseActivity
         mChannelRecyclerView.bringToFront();
         mTagImageView.bringToFront();
         mTagImageView.setOnClickListener(this);
-        titleTextView.setOnClickListener(this);
+        mTitleTextView.setOnClickListener(this);
         mTitleArrowImage.setOnClickListener(this);
         mTimeScrollView.setScrollView(programScrollView);
         programScrollView.setScrollView(mTimeScrollView);
@@ -172,6 +155,8 @@ public class TvProgramListActivity extends BaseActivity
         } else {
             mIsFromBackFlag = false;
         }
+        clearData();
+        getChannelData();
         scrollToCurTime();
         refreshTimeLine();
     }
@@ -184,7 +169,7 @@ public class TvProgramListActivity extends BaseActivity
         int curYear = 0;
         int curMonth = 0;
         int curDay = 0;
-        SimpleDateFormat sdf = new SimpleDateFormat(SELECT_DATE_FORMAT, Locale.JAPAN);
+        SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DD_J, Locale.JAPAN);
 
         DatePickerDialog.OnDateSetListener onDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -209,7 +194,13 @@ public class TvProgramListActivity extends BaseActivity
         //日付の選択できる範囲を設定
         DatePicker datePicker = datePickerDialog.getDatePicker();
         GregorianCalendar gc = new GregorianCalendar();
-        gc.setTime(new Date());
+        if(isLastDay()){
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_MONTH, -1);
+            gc.setTime(calendar.getTime());
+        } else {
+            gc.setTime(new Date());
+        }
         if (mTabIndex == mProgramTabNames.length - 1) {
             gc.add(Calendar.DAY_OF_MONTH, -EXPIRE_DATE);
         }
@@ -240,36 +231,72 @@ public class TvProgramListActivity extends BaseActivity
         StringBuilder month = new StringBuilder();
         StringBuilder day = new StringBuilder();
         if (monthOfYear < 10) {
-            month.append("0");
+            month.append(DAY_PRE0);
         }
         month.append(monthOfYear);
         if (dayOfMonth < 10) {
-            day.append("0");
+            day.append(DAY_PRE0);
         }
         day.append(dayOfMonth);
-        selectDate.append(year);
-        selectDate.append("年");
-        selectDate.append(month.toString());
-        selectDate.append("月");
-        selectDate.append(day);
-        selectDate.append("日");
-        mToDay = selectDate.toString();
-        selectDate = new StringBuilder();
-        selectDate.append(month.toString());
-        selectDate.append("月");
-        selectDate.append(day);
-        selectDate.append("日");
-        selectDate.append(" (");
-        selectDate.append(mDate[week - 1]);
-        selectDate.append(")");
-        setTitleText(selectDate.toString());
         selectDate = new StringBuilder();
         selectDate.append(year);
-        selectDate.append("-");
+        selectDate.append(DATE_LINE);
         selectDate.append(month.toString());
-        selectDate.append("-");
+        selectDate.append(DATE_LINE);
         selectDate.append(day);
-        mSelectDateStr = selectDate.toString();
+        mSelectDateStr = getSystemTimeAndCheckHour(selectDate.toString());
+        SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYYMMDD, Locale.JAPAN);
+        try {
+            Date date = sdf.parse(mSelectDateStr);
+            SimpleDateFormat format = new SimpleDateFormat(DateUtils.DATE_YYYYMMDDE, Locale.JAPAN);
+            String newDate = format.format(date.getTime());
+            setTitleText(newDate.substring(5));
+            SimpleDateFormat formatDialog = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DD_J, Locale.JAPAN);
+            mToDay = formatDialog.format(date.getTime());
+        } catch (ParseException e){
+            e.printStackTrace();
+            DTVTLogger.debug(e);
+        }
+    }
+
+    /**
+     * 機能
+     * 昨日の日付であるかどうか
+     */
+    private boolean isLastDay(){
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat todaySdf = new SimpleDateFormat(DateUtils.DATE_HHMMSS, Locale.JAPAN);
+        int hour = Integer.parseInt(todaySdf.format(calendar.getTime()).substring(0,2));
+        return hour < START_TIME;
+    }
+
+    /**
+     * 機能
+     * システム時間取得して、日付(hour)チェックを行う、1時～４時の場合は日付-1
+     * @param selectDay チェする日付する、ない場合システム日付
+     * @return formatDay チェックした時刻を返却
+     */
+    private String getSystemTimeAndCheckHour(String selectDay){
+        String formatDay;
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYYMMDD, Locale.JAPAN);
+        try {
+            if(selectDay != null){
+                formatDay = selectDay;
+            } else {
+                formatDay = sdf.format(calendar.getTime());
+            }
+            if(isLastDay()){
+                calendar.setTime(sdf.parse(formatDay));
+                calendar.add(Calendar.DAY_OF_MONTH, -1);
+                formatDay = sdf.format(calendar.getTime());
+            }
+            return formatDay;
+        } catch (ParseException e){
+            e.printStackTrace();
+            DTVTLogger.debug(e);
+        }
+        return sdf.format(calendar.getTime());
     }
 
     /**
@@ -280,11 +307,13 @@ public class TvProgramListActivity extends BaseActivity
         //フォーマットパターンを指定して表示する
         Calendar c = Calendar.getInstance();
         Locale.setDefault(Locale.JAPAN);
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.JAPAN);
+        if(isLastDay()){
+            c.add(Calendar.DAY_OF_MONTH, -1);
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.DATE_YYYYMMDDE, Locale.JAPAN);
         mToDay = sdf.format(c.getTime());
         setTitleText(mToDay.substring(5));
-        sdf = new SimpleDateFormat(DATE_SELECT_FORMAT, Locale.JAPAN);
-        mSelectDateStr = sdf.format(c.getTime());
+        mSelectDateStr = getSystemTimeAndCheckHour(null);
     }
 
     /**
@@ -313,27 +342,6 @@ public class TvProgramListActivity extends BaseActivity
         clearData();
         getChannelData();
         DTVTLogger.end();
-    }
-
-    /**
-     * 機能
-     * タブを切り替え
-     *
-     * @param position タブインデックス
-     */
-    public void setTab(int position) {
-        if (mTabLinearLayout != null) {
-            for (int i = 0; i < mProgramTabNames.length; i++) {
-                TextView mTextView = (TextView) mTabLinearLayout.getChildAt(i);
-                if (position == i) {
-                    mTextView.setBackgroundResource(R.drawable.rectangele);
-                    mTextView.setTextColor(ContextCompat.getColor(this, R.color.tv_program_list_tab_checked_text));
-                } else {
-                    mTextView.setBackgroundResource(0);
-                    mTextView.setTextColor(ContextCompat.getColor(this, R.color.tv_program_list_tab_unchecked_text));
-                }
-            }
-        }
     }
 
     /**
@@ -424,13 +432,7 @@ public class TvProgramListActivity extends BaseActivity
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mChannelRecyclerView.setLayoutManager(linearLayoutManager);
         mProgramChannelAdapter = new ProgramChannelAdapter(this, channels);
-        mProgramChannelAdapter.setOnItemClickListener(this);
         mChannelRecyclerView.setAdapter(mProgramChannelAdapter);
-    }
-
-    @Override
-    public void onChannelItemClick(View view, int position) {
-        startActivity(ChannelDetailPlayerActivity.class, null);
     }
 
     /**
@@ -440,7 +442,7 @@ public class TvProgramListActivity extends BaseActivity
     private void getChannelData() {
         if(mTabIndex != INDEX_TAB_MY_CHANNEL){//ひかり、dTVチャンネル
             ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
-            scaledDownProgramListDataProvider.getChannelList(1, 1, "", mTabIndex);
+            scaledDownProgramListDataProvider.getChannelList(0, 0, "", mTabIndex);
         } else {//MY番組表
             MyChannelDataProvider myChannelDataProvider = new MyChannelDataProvider(this);
             myChannelDataProvider.getMyChannelList(R.layout.tv_program_list_main_layout);
@@ -513,7 +515,7 @@ public class TvProgramListActivity extends BaseActivity
      * 現在時刻にスクロール
      */
     private void scrollToCurTime() {
-        String curTime = new SimpleDateFormat(TIME_FORMAT, Locale.JAPAN).format(new Date());
+        String curTime = new SimpleDateFormat(DateUtils.DATE_HHMMSS, Locale.JAPAN).format(new Date());
         int curClock = Integer.parseInt(curTime.substring(0, 2));
         int scrollDis;
         if (START_TIME <= curClock && curClock < STANDARD_TIME) {
@@ -567,6 +569,7 @@ public class TvProgramListActivity extends BaseActivity
     @Override
     public void channelListCallback(ArrayList<ChannelInfo> channels) {
         if (channels != null) {
+            showMyChannelNoItem(false);
             if(mTabIndex == INDEX_TAB_MY_CHANNEL){//MY番組表
                 this.hikariChannels = channels;
                 mappedMyChannelList = executeMapping();
@@ -575,7 +578,6 @@ public class TvProgramListActivity extends BaseActivity
             }else {//ひかり、dTVチャンネル
                 this.mChannels = channels;
                 setChannelContentsView(mChannels);
-                showMyChannelNoItem(false);
                 ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
                 int channelNos[] = new int[channels.size()];
                 for (int i = 0; i < channels.size(); i++) {
@@ -665,7 +667,7 @@ public class TvProgramListActivity extends BaseActivity
         if (myChannelMetaData != null && myChannelMetaData.size() > 0) {
             this.myChannelDataList = myChannelMetaData;
             ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
-            scaledDownProgramListDataProvider.getChannelList(1, 1, "", INDEX_TAB_HIKARI);//ひかりリストからチャンネル選択
+            scaledDownProgramListDataProvider.getChannelList(0, 0, "", INDEX_TAB_HIKARI);//ひかりリストからチャンネル選択
         }else {//MY番組表情報がなければMY番組表を設定していないとする
             showMyChannelNoItem(true);
         }
@@ -687,7 +689,7 @@ public class TvProgramListActivity extends BaseActivity
      */
     @Override
     public void onScrollOffset(int offset) {
-        String curTime = new SimpleDateFormat(TIME_FORMAT, Locale.JAPAN).format(new Date());
+        String curTime = new SimpleDateFormat(DateUtils.DATE_HHMMSS, Locale.JAPAN).format(new Date());
         int curClock = Integer.parseInt(curTime.substring(0, 2));
         int curMin = Integer.parseInt(curTime.substring(2, 4));
         int curSec = Integer.parseInt(curTime.substring(4, 6));
@@ -710,7 +712,7 @@ public class TvProgramListActivity extends BaseActivity
      * 現在時刻ラインの表示位置を更新
      */
     private void refreshTimeLine() {
-        String curTime = new SimpleDateFormat(TIME_FORMAT, Locale.JAPAN).format(new Date());
+        String curTime = new SimpleDateFormat(DateUtils.DATE_HHMMSS, Locale.JAPAN).format(new Date());
         int curClock = Integer.parseInt(curTime.substring(0, 2));
         int curMin = Integer.parseInt(curTime.substring(2, 4));
         int curSec = Integer.parseInt(curTime.substring(4, 6));
@@ -738,32 +740,6 @@ public class TvProgramListActivity extends BaseActivity
         mTimeLine.setY(timeLinePosition - (float) mNowImage.getHeight() / 2);
     }
 
-    /**
-     * ソート処理
-     */
-    private static class CalendarComparator implements Comparator<ScheduleInfo>, Serializable {
-        private static final long serialVersionUID = -1L;
-
-        @Override
-        public int compare(ScheduleInfo s1, ScheduleInfo s2) {
-            StringBuilder time1 = new StringBuilder();
-            time1.append(s1.getStartTime().substring(0, 10));
-            time1.append(s1.getStartTime().substring(11, 19));
-            StringBuilder time2 = new StringBuilder();
-            time2.append(s2.getStartTime().substring(0, 10));
-            time2.append(s2.getStartTime().substring(11, 19));
-            SimpleDateFormat format = new SimpleDateFormat(CUR_TIME_FORMAT, Locale.JAPAN);
-            Date date1 = new Date();
-            Date date2 = new Date();
-            try {
-                date1 = format.parse(time1.toString());
-                date2 = format.parse(time2.toString());
-            } catch (Exception e) {
-                DTVTLogger.debug(e);
-            }
-            return date1.compareTo(date2);
-        }
-    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

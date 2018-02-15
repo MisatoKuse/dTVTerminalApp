@@ -59,7 +59,7 @@ android {
         unsigned_off {
             debuggable false
             jniDebuggable false
-            minifyEnabled true
+            minifyEnabled false
             versionNameSuffix revison_device_num + "0" + revison_osver_num + revison_end_num
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             externalNativeBuild {
@@ -92,7 +92,7 @@ android {
         signed_off {
             debuggable false
             jniDebuggable false
-            minifyEnabled true
+            minifyEnabled false
             versionNameSuffix revison_device_num + "2" + revison_osver_num + revison_end_num
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.dcmeval
@@ -127,7 +127,7 @@ android {
         _unsigned_off {
             debuggable false
             jniDebuggable false
-            minifyEnabled true
+            minifyEnabled false
             versionNameSuffix revison_device_num + "4" + revison_osver_num + revison_end_num
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             externalNativeBuild {
@@ -160,7 +160,7 @@ android {
         _signed_off {
             debuggable false
             jniDebuggable false
-            minifyEnabled true
+            minifyEnabled false
             versionNameSuffix revison_device_num + "6" + revison_osver_num + revison_end_num
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.dcmeval
@@ -198,6 +198,9 @@ android {
         main {
             aidl.srcDirs = [
                     'src/main/aidl'
+            ]
+            jniLibs.srcDirs = [
+                    'libs'
             ]
             res.srcDirs =
                     [
@@ -304,7 +307,7 @@ dependencies {
     compile 'com.android.support:design:26.1.0'
     testCompile 'junit:junit:4.12'
     //DiXiM SecurePlayer SDK Debug Version
-    compile(name: 'dixim-android-activation-lib-debug', ext: 'aar')
+    //compile(name: 'dixim-android-activation-lib-debug', ext: 'aar')
     compile(name: 'dixim-android-player-lib-debug', ext: 'aar')
     compile(name: 'dixim-android-player-secure-nativecodec-debug', ext: 'aar')
     compile(name: 'dixim-android-player-secure-openmaxal-debug', ext: 'aar')

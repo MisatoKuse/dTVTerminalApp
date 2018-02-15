@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 import android.content.Context;
 import android.os.Bundle;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.WeeklyRankList;
@@ -17,40 +18,50 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+/**
+ * 週間ランキング取得用Webクライアント.
+ */
 public class WeeklyRankWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
+    /**
+     * ジャンルID送信用キー.
+     */
     public static final String WEEKLY_RANK_CLIENT_BUNDLE_KEY = "genreId";
 
     /**
-     * コールバック
+     * コールバック.
      */
     public interface WeeklyRankJsonParserCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
          *
          * @param weeklyRankLists JSONパース後のデータ
          */
         void onWeeklyRankJsonParsed(List<WeeklyRankList> weeklyRankLists);
     }
 
-    //コールバックのインスタンス
-    private WeeklyRankJsonParserCallback mWeeklyRankJsonParserCallback;
-
-
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コールバックのインスタンス.
+     */
+    private WeeklyRankJsonParserCallback mWeeklyRankJsonParserCallback;
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
+    /**
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
-    public WeeklyRankWebClient(Context context) {
+    public WeeklyRankWebClient(final Context context) {
         super(context);
     }
 
     @Override
-    public void onAnswer(ReturnCode returnCode) {
+    public void onAnswer(final ReturnCode returnCode) {
         //拡張情報付きでパースを行う
         WeeklyRankJsonParser weeklyRankJsonParser = new WeeklyRankJsonParser(
-                mWeeklyRankJsonParserCallback,returnCode.extraData);
+                mWeeklyRankJsonParserCallback, returnCode.extraData);
 
         //JSONをパースして、データを返す
         weeklyRankJsonParser.execute(returnCode.bodyData);
@@ -62,7 +73,7 @@ public class WeeklyRankWebClient
      * @param returnCode 戻り値構造体
      */
     @Override
-    public void onError(ReturnCode returnCode) {
+    public void onError(final ReturnCode returnCode) {
         if (mWeeklyRankJsonParserCallback != null) {
             //エラーが発生したのでヌルを返す
             mWeeklyRankJsonParserCallback.onWeeklyRankJsonParsed(null);
@@ -71,7 +82,7 @@ public class WeeklyRankWebClient
 
 
     /**
-     * 週間のクリップ数番組ランキング取得
+     * 週間のクリップ数番組ランキング取得.
      *
      * @param limit                        取得する最大件数(値は1以上)
      * @param offset                       　取得位置(値は1以上)
@@ -81,9 +92,15 @@ public class WeeklyRankWebClient
      * @param weeklyRankJsonParserCallback コールバック
      * @return パラメータエラー等ならばfalse
      */
-    public boolean getWeeklyRankApi(int limit, int offset, String filter,
-                                    int ageReq, String genreId,
-                                    WeeklyRankJsonParserCallback weeklyRankJsonParserCallback) {
+    public boolean getWeeklyRankApi(final int limit, final int offset, final String filter,
+                                    final int ageReq, final String genreId,
+                                    final WeeklyRankJsonParserCallback weeklyRankJsonParserCallback) {
+        if (mIsCancel) {
+            //通信禁止中はfalseで帰る
+            DTVTLogger.error("WeeklyRankWebClient is stopping connection");
+            return false;
+        }
+
         //パラメーターのチェック(genreIdはヌルを受け付けるので、チェックしない)
         if (!checkNormalParameter(limit, offset, filter, ageReq, weeklyRankJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、falseで帰る
@@ -103,27 +120,27 @@ public class WeeklyRankWebClient
 
         //拡張情報の作成
         Bundle bundle = new Bundle();
-        bundle.putString(WEEKLY_RANK_CLIENT_BUNDLE_KEY,genreId);
+        bundle.putString(WEEKLY_RANK_CLIENT_BUNDLE_KEY, genreId);
 
         //週毎ランク一覧を呼び出す
         openUrlWithExtraData(UrlConstants.WebApiUrl.WEEKLY_RANK_LIST,sendParameter,this,bundle);
-
 
         //今のところ失敗は無いので、trueで帰る
         return true;
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param limit  取得する最大件数(値は1以上)
      * @param offset 取得位置(値は1以上)
      * @param filter フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
      * @param ageReq 年齢設定値（ゼロの場合は1扱い）
+     * @param weeklyRankJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(int limit, int offset, String filter, int ageReq,
-                                         WeeklyRankJsonParserCallback weeklyRankJsonParserCallback) {
+    private boolean checkNormalParameter(final int limit, final int offset, final String filter, final int ageReq,
+                                         final WeeklyRankJsonParserCallback weeklyRankJsonParserCallback) {
         // 各値が下限以下ならばfalse
         if (limit < 1) {
             return false;
@@ -163,7 +180,7 @@ public class WeeklyRankWebClient
     }
 
     /**
-     * 指定されたパラメータをJSONで組み立てて文字列にする
+     * 指定されたパラメータをJSONで組み立てて文字列にする.
      *
      * @param limit   取得する最大件数(値は1以上)
      * @param offset  取得位置(値は1以上)
@@ -172,8 +189,8 @@ public class WeeklyRankWebClient
      * @param genreId ジャンルID
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(int limit, int offset, String filter,
-                                     int ageReq, String genreId) {
+    private String makeSendParameter(final int limit, final int offset, final String filter,
+                                     final int ageReq, final String genreId) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
@@ -186,12 +203,13 @@ public class WeeklyRankWebClient
             //その他
             jsonObject.put(JsonConstants.META_RESPONSE_FILTER, filter);
 
+            int age = ageReq;
             //数字がゼロの場合は無指定と判断して1にする
             if (ageReq == 0) {
-                ageReq = 1;
+                age = 1;
             }
 
-            jsonObject.put(JsonConstants.META_RESPONSE_AGE_REQ, ageReq);
+            jsonObject.put(JsonConstants.META_RESPONSE_AGE_REQ, age);
 
             //ヌルや空文字ではないならば、値を出力する
             if (genreId != null && !genreId.isEmpty()) {
@@ -208,4 +226,20 @@ public class WeeklyRankWebClient
         return answerText;
     }
 
+    /**
+     * 通信を止める.
+     */
+    public void stopConnection() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        stopAllConnections();
+    }
+
+    /**
+     * 通信を許可する.
+     */
+    public void enableConnect() {
+        DTVTLogger.start();
+        mIsCancel = false;
+    }
 }

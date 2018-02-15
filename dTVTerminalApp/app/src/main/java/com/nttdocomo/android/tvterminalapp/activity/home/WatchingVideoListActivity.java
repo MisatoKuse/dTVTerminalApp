@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -23,6 +24,9 @@ import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.WatchListenVideoListDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopWatchListenVideoListDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 
 import java.util.ArrayList;
@@ -80,7 +84,10 @@ public class WatchingVideoListActivity extends BaseActivity implements
      * ListView.
      */
     private ListView mListView = null;
-
+    /**
+     * RelativeLayout.
+     */
+    private RelativeLayout mRelativeLayout = null;
     /**
      * ContentsAdapter.
      */
@@ -98,7 +105,7 @@ public class WatchingVideoListActivity extends BaseActivity implements
     /**
      * ページング単位.
      */
-    private final int NUM_PER_PAGE = 10;
+    private final int NUM_PER_PAGE = 20;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -113,12 +120,13 @@ public class WatchingVideoListActivity extends BaseActivity implements
         }
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
+        setStatusBarColor(true);
 
         resetPaging();
 
         initView();
-        mWatchListenVideoListDataProvider = new WatchListenVideoListDataProvider(this);
-        mWatchListenVideoListDataProvider.getWatchListenVideoData(WatchListenVideoListDataProvider.DEFAULT_PAGE_OFFSET);
+        mListView.setVisibility(View.GONE);
+        mRelativeLayout.setVisibility(View.VISIBLE);
 
         //スクロールの上下方向検知用のリスナーを設定
         mListView.setOnTouchListener(this);
@@ -131,6 +139,7 @@ public class WatchingVideoListActivity extends BaseActivity implements
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
 
+        mRelativeLayout = findViewById(R.id.video_watching_progress);
         mListView = findViewById(R.id.video_watching_list);
         mListView.setOnItemClickListener(this);
         mListView.setOnScrollListener(this);
@@ -209,11 +218,13 @@ public class WatchingVideoListActivity extends BaseActivity implements
 
     @Override
     public void watchListenVideoListCallback(final List<ContentsData> watchListenVideoContentInfo) {
+        mListView.setVisibility(View.VISIBLE);
+        mRelativeLayout.setVisibility(View.GONE);
         if (null == watchListenVideoContentInfo) {
             //通信とJSON Parseに関してerror処理
             DTVTLogger.debug("ClipListActivity::VodClipListCallback, get data failed.");
             // TODO:エラーメッセージ表示はリスト画面上に表示する
-            Toast.makeText(this, "クリップデータ取得失敗", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "視聴中ビデオデータ取得失敗", Toast.LENGTH_SHORT).show();
             resetPaging();
             resetCommunication();
             return;
@@ -252,6 +263,8 @@ public class WatchingVideoListActivity extends BaseActivity implements
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
         Intent intent = new Intent(this, ContentDetailActivity.class);
         intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
+        OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(mWatchingVideoListData.get(i), ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
+        intent.putExtra(detailData.getRecommendFlg(), detailData);
         startActivity(intent);
     }
 
@@ -336,7 +349,7 @@ public class WatchingVideoListActivity extends BaseActivity implements
 
                         int offset = 0;
                         if (null != mWatchingVideoListData) {
-                            offset = mWatchingVideoListData.size();
+                            offset = mWatchingVideoListData.size() + 1;
                         }
                         mWatchListenVideoListDataProvider.getWatchListenVideoData(offset);
 
@@ -360,5 +373,35 @@ public class WatchingVideoListActivity extends BaseActivity implements
                 break;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        DTVTLogger.start();
+        if (mWatchListenVideoListDataProvider != null) {
+            mWatchListenVideoListDataProvider.enableConnect();
+        }
+        if (mWatchListenVideoBaseAdapter != null) {
+            mWatchListenVideoBaseAdapter.enableConnect();
+        }
+        if (mListView != null) {
+            mListView.invalidateViews();
+        }
+        if (mWatchingVideoListData != null) {
+            mWatchListenVideoListDataProvider = new WatchListenVideoListDataProvider(this);
+            mWatchListenVideoListDataProvider.getWatchListenVideoData(WatchListenVideoListDataProvider.DEFAULT_PAGE_OFFSET);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        DTVTLogger.start();
+        //通信を止める
+        StopWatchListenVideoListDataConnect stopConnect = new StopWatchListenVideoListDataConnect();
+        stopConnect.execute(mWatchListenVideoListDataProvider);
+        StopContentsAdapterConnect stopAdapterConnect = new StopContentsAdapterConnect();
+        stopAdapterConnect.execute(mWatchListenVideoBaseAdapter);
     }
 }

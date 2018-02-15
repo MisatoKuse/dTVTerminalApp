@@ -6,7 +6,6 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 
 import android.content.Context;
 
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RentalListInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
@@ -14,6 +13,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.PurchasedVodListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalVodListWebClient;
@@ -21,16 +21,38 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalVodListWebC
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * レンタル一覧DataProvider.
+ */
 public class RentalDataProvider extends ClipKeyListDataProvider implements RentalVodListWebClient.RentalVodListJsonParserCallback {
 
+    /**
+     * コンテキスト.
+     */
     private Context mContext = null;
+    /**
+     * DB保存フラグ.
+     */
     private boolean mSetDB = false;
-
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
+    /**
+     * レンタルVODリスト取得WebClient.
+     */
+    private RentalVodListWebClient mWebClient = null;
+    /**
+     * コールバック.
+     */
     private ApiDataProviderCallback mApiDataProviderCallback = null;
+    /**
+     * 購入済みVODレスポンス.
+     */
     private PurchasedVodListResponse mPurchasedVodListResponse = null;
 
     @Override
-    public void onRentalVodListJsonParsed(PurchasedVodListResponse response) {
+    public void onRentalVodListJsonParsed(final PurchasedVodListResponse response) {
         if (response != null) {
             setStructDB(response);
             if (!mRequiredClipKeyList
@@ -41,39 +63,45 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
             }
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
+            mApiDataProviderCallback.rentalListNgCallback();
         }
     }
 
     @Override
-    public void onVodClipKeyListJsonParsed(ClipKeyListResponse clipKeyListResponse) {
+    public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
         super.onVodClipKeyListJsonParsed(clipKeyListResponse);
         // コールバック判定
-        if(mPurchasedVodListResponse != null) {
+        if (mPurchasedVodListResponse != null) {
             sendRentalListData(mPurchasedVodListResponse);
         }
         DTVTLogger.end();
     }
 
     /**
-     * 一覧画面用データを返却するためのコールバック
+     * 一覧画面用データを返却するためのコールバック.
      */
     public interface ApiDataProviderCallback {
 
         /**
-         * レンタル一覧用コールバック
+         * レンタル一覧用コールバック.
          *
          * @param list コンテンツリスト
          */
         void rentalListCallback(List<ContentsData> list);
+
+        /**
+         * データ取得失敗時用コールバック.
+         */
+        void rentalListNgCallback();
     }
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      *
      * @param mContext コンテキスト
      */
-    public RentalDataProvider(Context mContext) {
+    public RentalDataProvider(final Context mContext) {
         super(mContext);
         this.mContext = mContext;
         this.mApiDataProviderCallback = (ApiDataProviderCallback) mContext;
@@ -81,27 +109,32 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
     }
 
     /**
-     * RentalListActivityからのデータ取得要求受付
+     * RentalListActivityからのデータ取得要求受付.
      *
      * @param flg 初回取得時のみDB保存する
      */
-    public void getRentalData(boolean flg) {
+    public void getRentalData(final boolean flg) {
         mPurchasedVodListResponse = null;
-        // クリップキー一覧を取得
-        if(mRequiredClipKeyList) {
-            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+        if (!mIsCancel) {
+            // クリップキー一覧を取得
+            if (mRequiredClipKeyList) {
+                getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+            }
+            mSetDB = flg;
+            //レンタル一覧取得
+            getRentalListData();
+        } else {
+            DTVTLogger.error("RentalDataProvider is stopping connection");
+            mApiDataProviderCallback.rentalListNgCallback();
         }
-        mSetDB = flg;
-        //レンタル一覧取得
-        getRentalListData();
     }
 
     /**
-     * レンタル一覧データをRentalListActivityに送る
+     * レンタル一覧データをRentalListActivityに送る.
      *
      * @param response 購入済みVOD一覧データ
      */
-    public void sendRentalListData(PurchasedVodListResponse response) {
+    private void sendRentalListData(final PurchasedVodListResponse response) {
 
         //ContentsList生成
         List<ContentsData> list = makeContentsData(response);
@@ -111,35 +144,20 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
     }
 
     /**
-     * レンタル一覧を取得する
+     * レンタル一覧を取得する.
      */
     private void getRentalListData() {
-        PurchasedVodListResponse response = new PurchasedVodListResponse();
-
         //通信クラスにデータ取得要求を出す
-        RentalVodListWebClient webClient = new RentalVodListWebClient(mContext);
-        webClient.getRentalVodListApi(this);
-        //TODO: Display用ダミーデータ(消去予定)ここから
-//        ArrayList<VodMetaFullData> list = new ArrayList<>();
-//        for (int i = 0; i < 30; i++) {
-//            VodMetaFullData vodMetaFullData = new VodMetaFullData();
-//            vodMetaFullData.setTitle("title" + i);
-//            vodMetaFullData.setmThumb_448_252("https://www.nhk.or.jp/prog/img/944/g944.jpg");
-//            vodMetaFullData.setAvail_end_date(1512054000);//"2017/12/01"
-//            vodMetaFullData.setRating(i);
-//            list.add(vodMetaFullData);
-//        }
-//        response.setVodMetaFullData(list);
-//        sendRentalListData(response);
-        //Display用ダミーデータ(消去予定)ここまで
+        mWebClient = new RentalVodListWebClient(mContext);
+        mWebClient.getRentalVodListApi(this);
     }
 
     /**
-     * DB保存
+     * DB保存.
      *
      * @param response 購入済みVOD一覧データ
      */
-    public void setStructDB(PurchasedVodListResponse response) {
+    private void setStructDB(final PurchasedVodListResponse response) {
         if (mSetDB) {
             DateUtils dateUtils = new DateUtils(mContext);
             dateUtils.addLastDate(DateUtils.RENTAL_LIST_LAST_INSERT);
@@ -150,12 +168,12 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
     }
 
     /**
-     * ContentsData生成
+     * ContentsData生成.
      *
      * @param response 購入済みVOD一覧データ
      * @return コンテンツリスト
      */
-    private List<ContentsData> makeContentsData(PurchasedVodListResponse response) {
+    private List<ContentsData> makeContentsData(final PurchasedVodListResponse response) {
         List<ContentsData> list = new ArrayList<>();
         ArrayList<VodMetaFullData> metaFullData = response.getVodMetaFullData();
         for (int i = 0; i < response.getVodMetaFullData().size(); i++) {
@@ -179,6 +197,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
             data.setDtvType(dtvType);
             data.setDispType(dispType);
             data.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
+            data.setContentsId(vodMetaFullData.getCid());
 
             //クリップリクエストデータ作成
             ClipRequestData requestData = new ClipRequestData();
@@ -205,15 +224,39 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
 //            requestData.setTableType(decisionTableType(contentsType, contentsType));
             data.setRequestData(requestData);
 
-            if(mRequiredClipKeyList) {
+            if (mRequiredClipKeyList) {
                 // クリップ状態をコンテンツリストに格納
                 data.setClipStatus(getClipStatus(dispType, contentsType, dTv,
-                        data.getCrid(), data.getServiceId(),
-                        data.getEventId(), data.getTitleId()));
+                        requestData.getCrid(), requestData.getServiceId(),
+                        requestData.getEventId(), requestData.getTitleId()));
             }
 
             list.add(data);
         }
         return list;
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnect() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        stopConnection();
+        if (mWebClient != null) {
+            mWebClient.stopConnection();
+        }
+    }
+
+    /**
+     * 通信許可状態にする.
+     */
+    public void enableConnect() {
+        DTVTLogger.start();
+        mIsCancel = false;
+        enableConnection();
+        if (mWebClient != null) {
+            mWebClient.enableConnection();
+        }
     }
 }

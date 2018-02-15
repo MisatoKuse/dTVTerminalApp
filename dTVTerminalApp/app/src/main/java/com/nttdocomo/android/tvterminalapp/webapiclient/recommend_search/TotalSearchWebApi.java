@@ -11,189 +11,241 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.webapiclient.WebApiBase;
 
-
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-
+/**
+ * 検索WebApi.
+ */
 public class TotalSearchWebApi extends WebApiBase implements WebApiCallback, SearchXmlParser.XMLParserFinishListener {
 
-    private TotalSearchWebApiDelegate delegate;
+    /**
+     * XMLのparse結果をコールバックする.
+     */
+    private TotalSearchWebApiDelegate mDelegate;
 
-    String genreFilterString = "";
-    String dubbedFilterString = "";
-    String chargeFilterString = "";
-    String otherFilterString = "";
+    /**
+     * ジャンルフィルター.
+     */
+    private String mGenreFilterString = "";
+    /**
+     * ダビングフィルター.
+     */
+    private String mDubbedFilterString = "";
+    /**
+     * 料金フィルター.
+     */
+    private String mChargeFilterString = "";
+    /**
+     * その他フィルター.
+     */
+    private String mOtherFilterString = "";
 
+    /**
+     * リクエストパラメータ"displayId"固定値.
+     */
+    private static final String SEARCH_WEBAPI_PARAM_DISPLAY_ID = "SEA0000001";
 
-    //SSLチェック用コンテキスト
+    /**
+     * SSLチェック用コンテキスト.
+     */
     private Context mContext;
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
 
     /**
      * コンストラクタ.
      *
      * @param context コンテキスト
      */
-    public TotalSearchWebApi(Context context) {
+    public TotalSearchWebApi(final Context context) {
         //コンテキストの退避
         mContext = context;
     }
-    public void setDelegate(TotalSearchWebApiDelegate de){
+
+    /**
+     * delegateの設定.
+     *
+     * @param delegate デリゲート
+     */
+    public void setDelegate(final TotalSearchWebApiDelegate delegate) {
         synchronized (this) {
-            delegate = de;
+            mDelegate = delegate;
         }
     }
 
-    // 1.request
-    public void request(TotalSearchRequestData requestData){
-
+    /**
+     * 検索リクエスト.
+     *
+     * @param requestData リクエストデータ
+     */
+    public void request(final TotalSearchRequestData requestData) {
         DTVTLogger.debug("request");
 
-        TotalSearchRequestData data = requestData;
-        data.userId = "1234567890"; //KARI
+        if (!mIsCancel) {
+            TotalSearchRequestData data = requestData;
 
-        LinkedHashMap<String, String> queryItems = new LinkedHashMap<>();
-        queryItems.put(SearchRequestKey.kUserId, data.userId);
-        queryItems.put(SearchRequestKey.kFunction, data.function.value()+"");   //ok
-        //queryItems.put(SearchRequestKey.kFunction, new String(2+""));   //ng for test
-        queryItems.put(SearchRequestKey.kResponseType, String.valueOf(data.responseType.ordinal() + 1));
-        queryItems.put(SearchRequestKey.kQuery, data.query);
-        queryItems.put(SearchRequestKey.kStartIndex, String.valueOf(data.startIndex));
-        queryItems.put(SearchRequestKey.kMaxResult, String.valueOf(data.maxResult));
+            LinkedHashMap<String, String> queryItems = new LinkedHashMap<>();
 
-        String serviceId= data.serviceId;
-        queryItems.put(SearchRequestKey.kServiceId, serviceId);
+            queryItems.put(SearchRequestKey.kQuery, data.query);
+            queryItems.put(SearchRequestKey.kStartIndex, String.valueOf(data.startIndex));
+            queryItems.put(SearchRequestKey.kMaxResult, String.valueOf(data.maxResult));
 
-        String categoryId= data.categoryId;
-        queryItems.put(SearchRequestKey.kCategoryId, categoryId);
+            String serviceId = data.serviceId;
+            queryItems.put(SearchRequestKey.kServiceId, serviceId);
 
-        int sortKind = data.sortKind;
-        queryItems.put(SearchRequestKey.kSortKind, sortKind+"");
+            String categoryId = data.categoryId;
+            queryItems.put(SearchRequestKey.kCategoryId, categoryId);
 
-        ArrayList<SearchFilterType> filterList =requestData.filterTypeList;
-        for( SearchFilterType type : filterList) {
-            appendString(type);
+            int sortKind = data.sortKind;
+            queryItems.put(SearchRequestKey.kSortKind, sortKind + "");
+
+            //ユーザ情報が設定されている時のみパラメータを追加する
+            String filterViewableAge = data.filterViewableAge;
+            if (filterViewableAge != null) {
+                queryItems.put(SearchRequestKey.kFilterViewableAge, filterViewableAge);
+            }
+            //固定値のため直接指定する
+            queryItems.put(SearchRequestKey.kDisplayId, SEARCH_WEBAPI_PARAM_DISPLAY_ID);
+
+            getNoPassword(UrlConstants.WebApiUrl.TOTAL_SEARCH_URL, queryItems, this, mContext);
+        } else {
+            DTVTLogger.error("TotalSearchWebApi is stopping connection");
         }
-        queryItems.put(SearchRequestKey.kCondition, concatFilterString());
-
-        //ユーザ情報が設定されている時のみパラメータを追加する
-        String filterViewableAge = data.filterViewableAge;
-        if (filterViewableAge != null) {
-            queryItems.put(SearchRequestKey.kFilterViewableAge, filterViewableAge);
-        }
-
-        get(UrlConstants.WebApiUrl.TOTAL_SEARCH_URL, queryItems, this, mContext);
     }
 
-    // MARK : - private method
+    /**
+     * フィルタ文字列の連結.
+     *
+     * @return 連結した文字列.
+     */
     private String concatFilterString() {
         String resultString = "";
-        if(!genreFilterString.isEmpty()) {
-            resultString +=genreFilterString;
+        if (!mGenreFilterString.isEmpty()) {
+            resultString += mGenreFilterString;
         }
-        if(!dubbedFilterString.isEmpty()) {
-            if(resultString.isEmpty()){
-                resultString += dubbedFilterString;
+        if (!mDubbedFilterString.isEmpty()) {
+            if (resultString.isEmpty()) {
+                resultString += mDubbedFilterString;
             } else {
                 resultString += "+";
-                resultString +=dubbedFilterString;
+                resultString += mDubbedFilterString;
             }
         }
-        if(!chargeFilterString.isEmpty()) {
-            if(resultString.isEmpty()){
-                resultString +=chargeFilterString;
+        if (!mChargeFilterString.isEmpty()) {
+            if (resultString.isEmpty()) {
+                resultString += mChargeFilterString;
             } else {
-                resultString +="+";
-                resultString +="chargeFilterString";
+                resultString += "+";
+                resultString += "mChargeFilterString";
             }
         }
-        if(!otherFilterString.isEmpty()){
-            if(resultString.isEmpty()){
-                resultString+=otherFilterString;
+        if (!mOtherFilterString.isEmpty()) {
+            if (resultString.isEmpty()) {
+                resultString += mOtherFilterString;
             } else {
-                resultString+="+";
-                resultString+=otherFilterString;
+                resultString += "+";
+                resultString += mOtherFilterString;
             }
         }
-        genreFilterString = "";
-        dubbedFilterString = "";
-        chargeFilterString = "";
-        otherFilterString = "";
+        mGenreFilterString = "";
+        mDubbedFilterString = "";
+        mChargeFilterString = "";
+        mOtherFilterString = "";
         return resultString;
     }
 
-    private void appendString(SearchFilterType addType){
+    /**
+     * 各フィルタ文字列設定.
+     *
+     * @param addType 各フィルター文字列
+     */
+    private void appendString(final SearchFilterType addType) {
         switch (addType) {
-        case genreMovie:
-            genreFilterString = "genre:" + getValueFromFilterType(addType);
-            break;
-        case dubbedText:
-        case dubbedTextAndDubbing:
-        case dubbedDubbed:
-            if(dubbedFilterString.isEmpty()) {
-                dubbedFilterString = "dubbed:" + getValueFromFilterType(addType);
-            } else {
-                dubbedFilterString+=",";
-                dubbedFilterString +=(getValueFromFilterType(addType));
-            }
-            break;
-        case chargeUnlimited:
-        case chargeRental:
-            if(chargeFilterString.isEmpty()) {
-                chargeFilterString = "charge:" + getValueFromFilterType(addType);
-            } else {
-                chargeFilterString +=",";
-                chargeFilterString +=(getValueFromFilterType(addType));
-            }
-            break;
-        case otherHdWork:
-            otherFilterString = "other:" + getValueFromFilterType(addType);
+            case genreMovie:
+                mGenreFilterString = "genre:" + getValueFromFilterType(addType);
+                break;
+            case dubbedText:
+            case dubbedTextAndDubbing:
+            case dubbedDubbed:
+                if (mDubbedFilterString.isEmpty()) {
+                    mDubbedFilterString = "dubbed:" + getValueFromFilterType(addType);
+                } else {
+                    mDubbedFilterString += ",";
+                    mDubbedFilterString += (getValueFromFilterType(addType));
+                }
+                break;
+            case chargeUnlimited:
+            case chargeRental:
+                if (mChargeFilterString.isEmpty()) {
+                    mChargeFilterString = "charge:" + getValueFromFilterType(addType);
+                } else {
+                    mChargeFilterString += ",";
+                    mChargeFilterString += (getValueFromFilterType(addType));
+                }
+                break;
+            case otherHdWork:
+                mOtherFilterString = "other:" + getValueFromFilterType(addType);
         }
-
     }
 
-    private String getValueFromFilterType(SearchFilterType type) {
+    /**
+     * FilterTypeを基に文字列を返却する.
+     *
+     * @param type FilterType
+     * @return 文字列
+     */
+    private String getValueFromFilterType(final SearchFilterType type) {
         switch (type) {
-        case genreMovie:
-            return "active_v001";
-        case dubbedText:
-            return "1";
-        case dubbedDubbed:
-            return "2";
-        case dubbedTextAndDubbing:
-            return "3";
-        case chargeUnlimited:
-            return "0";
-        case chargeRental:
-            return "1";
-        case otherHdWork:
-            return "1";
+            case genreMovie:
+                return "active_v001";
+            case dubbedText:
+                return "1";
+            case dubbedDubbed:
+                return "2";
+            case dubbedTextAndDubbing:
+                return "3";
+            case chargeUnlimited:
+                return "0";
+            case chargeRental:
+                return "1";
+            case otherHdWork:
+                return "1";
         }
         return "1"; //test
     }
 
     @Override
-    public void onFinish(String responseData) {
-        String str= responseData;
-        if(null==responseData || 0==responseData.length()){
+    public void onFinish(final String responseData) {
+        String str = responseData;
+        if (null == responseData || 0 == responseData.length()) {
             str = "";
         }
         new SearchXmlParser(this).execute(str);
     }
 
     @Override
-    public void onXMLParserFinish(TotalSearchResponseData responseData) {
-        if(null!=delegate) {
-            delegate.onSuccess(responseData);
+    public void onXMLParserFinish(final TotalSearchResponseData responseData) {
+        if (null != mDelegate) {
+            mDelegate.onSuccess(responseData);
         }
     }
 
     @Override
-    public void onXMLParserError(TotalSearchErrorData errorData) {
-        if(null!=delegate) {
-            delegate.onFailure(errorData);
+    public void onXMLParserError(final TotalSearchErrorData errorData) {
+        if (null != mDelegate) {
+            mDelegate.onFailure(errorData);
         }
     }
+
+    /**
+     * 通信を止める.
+     * TotalSearchWebApiは検索の度にnewされているので通信可能状態にする処理は不要
+     */
+    public void stopConnection() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        stopHTTPConnection();
+    }
 }
-
-

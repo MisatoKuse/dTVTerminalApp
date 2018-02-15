@@ -57,11 +57,11 @@ public class DAccountReSettingActivity extends BaseActivity implements View.OnCl
         setContentView(R.layout.daccount_resetting_main_layout);
 
         //Headerの設定
-        //TODO ヘッダーのタイトル名変更対応(BaseActivity側で変更予定のため仮)
-        setTitleText("ドコテレ画像");
+        setTitleText("");
         enableHeaderBackIcon(true);
         enableStbStatusIcon(false);
         enableGlobalMenuIcon(false);
+        setStatusBarColor(true);
 
         setContents();
     }
@@ -114,15 +114,18 @@ public class DAccountReSettingActivity extends BaseActivity implements View.OnCl
      * ペアリングの再実行を行う.
      */
     private void onReturnButton() {
-        startActivity(STBSelectActivity.class, null);
-        this.finish();
+        Intent intent = new Intent(getApplicationContext(), STBSelectActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     /**
      * dアカウント設定ヘルプ.
      */
     private void onDAccountRegButton() {
-        startActivity(DAccountSettingHelpActivity.class, null);
+        Intent intent = new Intent(getApplicationContext(), DAccountSettingHelpActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     /**

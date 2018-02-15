@@ -18,11 +18,9 @@ import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -33,6 +31,8 @@ import com.nttdocomo.android.tvterminalapp.activity.ranking.DailyTvRankingActivi
 import com.nttdocomo.android.tvterminalapp.activity.ranking.VideoRankingActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.ChannelListActivity;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopHomeDataConnect;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopUserInfoDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -51,7 +51,6 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.RoleListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
-import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.NetWorkUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalChListWebClient;
@@ -85,9 +84,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      */
     private boolean mIsCloseDialog = false;
     /**
-     * onCreateが終了しているかのフラグ.
+     * コンテンツ情報取得失敗フラグ.
      */
-    private boolean mIsOnCreateFinish = false;
+    private boolean mIsGetContentsInfoFailed = false;
     /**
      * NOW ON AIR用チャンネル一覧.
      */
@@ -144,6 +143,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * アダプタ内でのリスト識別用定数.
      */
     private final static int HOME_CONTENTS_DISTINCTION_ADAPTER = 10;
+    /**
+     * HomeDataProvider.
+     */
+    private HomeDataProvider mHomeDataProvider = null;
+    /**
+     * UserInfoDataProvider.
+     */
+    private UserInfoDataProvider mUserInfoDataProvider = null;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -154,10 +161,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         enableHeaderBackIcon(false);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
-        mIsOnCreateFinish = false;
-        initData();
-        initView();
-        getUserInfo();
+        setStatusBarColor(true);
     }
 
     /**
@@ -206,11 +210,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mLinearLayout.setVisibility(View.GONE);
         mRelativeLayout = findViewById(R.id.home_main_layout_progress_bar_Layout);
         mRelativeLayout.setVisibility(View.VISIBLE);
-        ProgressBar progressBar = new ProgressBar(HomeActivity.this, null, android.R.attr.progressBarStyle);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.addRule(RelativeLayout.CENTER_IN_PARENT);
-        mRelativeLayout.addView(progressBar, params);
     }
 
     /**
@@ -230,14 +229,44 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onResume() {
         super.onResume();
-
-        //アプリ起動時のデータ取得はonCreateで実施済みのためonResumeでは行わない
-        if (mIsOnCreateFinish) {
+        mIsGetContentsInfoFailed = false;
+        initData();
+        initView();
+        mUserInfoDataProvider = new UserInfoDataProvider(this, this);
+        //アプリ起動時のデータ取得ユーザ情報未取得又は時間切れ又はonCreateから開始した場合はユーザ情報取得から
+        if (mUserInfoDataProvider.isUserInfoTimeOut()) {
+            getUserInfo();
+        } else {
             //起動時はプログレスダイアログを表示
-            initData();
             requestHomeData();
         }
-        mIsOnCreateFinish = true;
+    }
+
+    @Override
+    public void onStartCommunication() {
+        super.onStartCommunication();
+        DTVTLogger.start();
+        //通信を再開
+        if (mHomeDataProvider != null) {
+            mHomeDataProvider.enableConnect();
+        }
+        if (mUserInfoDataProvider != null) {
+            mUserInfoDataProvider.enableConnect();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //通信を止める
+        if (mHomeDataProvider != null) {
+            StopHomeDataConnect stopHomeDataConnect = new StopHomeDataConnect();
+            stopHomeDataConnect.execute(mHomeDataProvider);
+        }
+        if (mUserInfoDataProvider != null) {
+            StopUserInfoDataConnect stopUserInfoDataConnect = new StopUserInfoDataConnect();
+            stopUserInfoDataConnect.execute(mUserInfoDataProvider);
+        }
     }
 
     /**
@@ -246,23 +275,18 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private void requestHomeData() {
         networkCheck();
         //Home画面用データを取得
-        HomeDataProvider homeDataProvider = new HomeDataProvider(this);
-        homeDataProvider.getHomeData();
+        mHomeDataProvider = new HomeDataProvider(this);
+        mHomeDataProvider.getHomeData();
     }
 
     @Override
     public void onClick(final View view) {
+        super.onClick(view);
         switch (view.getId()) {
             case R.id.home_main_layout_pr:
             case R.id.home_main_layout_kytv:
                 if (isFastClick()) {
                     startBrowser();
-                }
-                break;
-            case R.id.header_layout_menu:
-                //ダブルクリックを防ぐ
-                if (isFastClick()) {
-                    onSampleGlobalMenuButton_PairLoginOk();
                 }
                 break;
             default:
@@ -312,6 +336,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         TextView agreementTextView = findViewById(R.id.home_main_layout_kytv);
         LinearLayout agreementRl = findViewById(R.id.home_main_layout_kyrl);
         ImageView prImageView = findViewById(R.id.home_main_layout_pr);
+        //TODO:契約状態取得が実装されるまで未契約メッセージは暫定的に非表示とする
+        agreementRl.setVisibility(View.GONE);
+        //TODO:契約状態取得が実装されるまでバナーは暫定的に非表示とする
+        prImageView.setVisibility(View.GONE);
         agreementTextView.setOnClickListener(this);
         prImageView.setOnClickListener(this);
 
@@ -447,7 +475,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * 機能
      * コンテンツ一覧データを設定.
      *
-     * @param recyclerView    リサイクルビュー
+     * @param recyclerView     リサイクルビュー
      * @param contentsDataList コンテンツ情報
      * @param index            遷移先
      */
@@ -459,9 +487,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         HomeRecyclerViewAdapter horizontalViewAdapter = new HomeRecyclerViewAdapter(this, contentsDataList, index + HOME_CONTENTS_DISTINCTION_ADAPTER);
         recyclerView.setAdapter(horizontalViewAdapter);
         View footer = LayoutInflater.from(this).inflate(R.layout.home_main_layout_recyclerview_footer, recyclerView, false);
-        TextView textView = footer.findViewById(R.id.home_main_layout_recyclerview_footer);
+        RelativeLayout homeMore = footer.findViewById(R.id.home_main_layout_recyclerview_footer);
         //もっと見るの遷移先を設定
-        textView.setOnClickListener(new View.OnClickListener() {
+        homeMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
                 startTo(index);
@@ -505,9 +533,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 startActivity(WatchingVideoListActivity.class, null);
                 break;
             case HOME_CONTENTS_SORT_TV_CLIP:
-            case HOME_CONTENTS_SORT_VOD_CLIP:
                 //クリップ一覧へ遷移
                 startActivity(ClipListActivity.class, null);
+                break;
+            case HOME_CONTENTS_SORT_VOD_CLIP:
+                //クリップ一覧へ遷移
+                final Bundle bundle = new Bundle();
+                bundle.putInt(ClipListActivity.CLIP_LIST_START_PAGE, ClipListActivity.CLIP_LIST_PAGE_NO_OF_VOD);
+                startActivity(ClipListActivity.class, bundle);
                 break;
             default:
                 break;
@@ -580,7 +613,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public void watchingVideoCallback(List<ContentsData> watchingVideoList) {
+    public void watchingVideoCallback(final List<ContentsData> watchingVideoList) {
         if (watchingVideoList != null && watchingVideoList.size() > 0) {
             Message msg = Message.obtain(mHandler, HOME_CONTENTS_SORT_WATCHING_VIDEO, watchingVideoList);
             mHandler.sendMessage(msg);
@@ -625,8 +658,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private void getUserInfo() {
         networkCheck();
         //ユーザー情報の変更検知
-        UserInfoDataProvider dataProvider = new UserInfoDataProvider(this, this);
-        dataProvider.getUserInfo();
+        mUserInfoDataProvider.getUserInfo();
     }
 
     /**
@@ -670,13 +702,17 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
      * データ取得失敗ダイアログ.
      */
     private void showGetDataFailedDialog() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                String message = getResources().getString(R.string.get_contents_data_error_message);
-                errorDialog(message, R.string.custom_dialog_ok);
-            }
-        });
+        //一度表示されたら表示しない
+        if (!mIsGetContentsInfoFailed) {
+            mIsGetContentsInfoFailed = true;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String message = getResources().getString(R.string.get_contents_data_error_message);
+                    errorDialog(message, R.string.custom_dialog_ok);
+                }
+            });
+        }
     }
 
     /**
@@ -722,6 +758,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
+    public void rentalListNgCallback() {
+        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
+    }
+
+    @Override
     public void watchListenVideoListCallback(final List<ContentsData> clipContentInfo) {
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
@@ -737,17 +778,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public void onContentsDetailInfoCallback(final ArrayList<VodMetaFullData> contentsDetailInfo, boolean clipStatus) {
+    public void onContentsDetailInfoCallback(final ArrayList<VodMetaFullData> contentsDetailInfo, final boolean clipStatus) {
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 
     @Override
     public void onRoleListCallback(final ArrayList<RoleListMetaData> roleListInfo) {
-        //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
-    }
-
-    @Override
-    public void channelListCallback(final ArrayList<ChannelInfo> channels) {
         //現状では不使用・インタフェースの仕様で宣言を強要されているだけとなる
     }
 

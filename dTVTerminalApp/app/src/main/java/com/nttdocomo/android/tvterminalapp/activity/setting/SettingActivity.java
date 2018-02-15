@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -20,7 +19,6 @@ import com.nttdocomo.android.tvterminalapp.activity.launch.STBSelectActivity;
 import com.nttdocomo.android.tvterminalapp.activity.tvprogram.MyChannelEditActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.MainSettingListAdapter;
 import com.nttdocomo.android.tvterminalapp.view.CustomDialog;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.utils.MainSettingUtils;
@@ -68,6 +66,56 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
      */
     private static final String D_ACCOUNT_APP_URI = "market://details?id=com.nttdocomo.android.idmanager";
 
+    /**
+     * メニュー項目index（Dアカウント設定）.
+     */
+    private static final int SETTING_MENU_INDEX_D_ACCOUNT = 0;
+
+    /**
+     * メニュー項目index（ペアリング設定）.
+     */
+    private static final int SETTING_MENU_INDEX_PAIRING = 1;
+
+    /**
+     * メニュー項目index（マイ番組表設定）.
+     */
+    private static final int SETTING_MENU_INDEX_MY_PROGRAM = 2;
+
+    /**
+     * メニュー項目index（外出先視聴時の画質設定）.
+     */
+    private static final int SETTING_MENU_INDEX_QUALITY = 3;
+
+    /**
+     * メニュー項目index（FAQ）.
+     */
+    private static final int SETTING_MENU_INDEX_FAQ = 4;
+
+    /**
+     * メニュー項目index（アプリケーション情報）.
+     */
+    private static final int SETTING_MENU_INDEX_APP_INFO = 5;
+
+    /**
+     * メニュー項目index（ライセンス）.
+     */
+    private static final int SETTING_MENU_INDEX_LICENCE = 6;
+
+    /**
+     * メニュー項目index（プライバシーポリシー）.
+     */
+    private static final int SETTING_MENU_INDEX_PRIVACY_POLICY = 7;
+
+    /**
+     * メニュー項目index（APP）.
+     */
+    private static final int SETTING_MENU_INDEX_APP_PRIVACY_POLICY = 8;
+
+    /**
+     * メニュー項目index（利用規約）.
+     */
+    private static final int SETTING_MENU_INDEX_AGREEMENT = 9;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,10 +124,10 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
 
         //Headerの設定
         setTitleText(getString(R.string.nav_menu_item_setting));
-        Intent intent = getIntent();
         enableHeaderBackIcon(false);
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
+        setStatusBarColor(true);
 
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
@@ -105,38 +153,38 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
     public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
         String tappedItemName = mSettingList.get(i).getText();
 
-        if (tappedItemName.equals(mItemName[0])) {
+        if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_D_ACCOUNT])) {
             //Dアカウント設定
             startDAccountSetting();
-        } else if (tappedItemName.equals(mItemName[1])) {
+        } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_PAIRING])) {
             //ペアリング設定
             Intent intent = new Intent(getApplicationContext(), STBSelectActivity.class);
             intent.putExtra(STBSelectActivity.FROM_WHERE, STBSelectActivity.STBSelectFromMode.STBSelectFromMode_Setting.ordinal());
             startActivity(intent);
-        } else if (tappedItemName.equals(mItemName[2])) {
-            //マイ番組表連携
+        } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_MY_PROGRAM])) {
+            //マイ番組表設定
             startActivity(MyChannelEditActivity.class, null);
-        } else if (tappedItemName.equals(mItemName[3])) {
+        } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_QUALITY])) {
             //外出先視聴時の画質設定画面への遷移
             Intent intent = new Intent(this, SettingImageQualityActivity.class);
             intent.putExtra(getString(R.string.main_setting_quality_status), mSettingList.get(i).getStateText());
             startActivity(intent);
-        } else if (tappedItemName.equals(mItemName[4])) {
+        } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_FAQ])) {
             //FAQ
             startActivity(SettingMenuFaqActivity.class, null);
-        } else if (tappedItemName.equals(mItemName[5])) {
+        } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_APP_INFO])) {
             //アプリケーション情報への遷移
             startActivity(ApplicationInfoActivity.class, null);
-        } else if (tappedItemName.equals(mItemName[6])) {
+        } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_LICENCE])) {
             //ライセンス
             startActivity(SettingMenuLicenseActivity.class, null);
-        } else if (tappedItemName.equals(mItemName[7])) {
+        } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_PRIVACY_POLICY])) {
             //プライバシーポリシー
             startActivity(SettingMenuPrivacyPolicyActivity.class, null);
-        } else if (tappedItemName.equals(mItemName[8])) {
+        } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_APP_PRIVACY_POLICY])) {
             //APP
             startActivity(SettingMenuAppActivity.class, null);
-        } else if (tappedItemName.equals(mItemName[9])) {
+        } else if (tappedItemName.equals(mItemName[SETTING_MENU_INDEX_AGREEMENT])) {
             //利用規約
             startActivity(SettingMenuTermsOfServiceActivity.class, null);
         }
@@ -150,7 +198,7 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
         mItemName = mResources.getStringArray(R.array.main_setting_items);
 
         // ペアリング状態の確認
-        String isParing = mResources.getString(R.string.main_setting_paring);
+        String isParing = mResources.getString(R.string.main_setting_pairing);
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
         if (dlnaDmsItem.mControlUrl.isEmpty()) {
             // 未ペアリング時
@@ -167,17 +215,22 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
             /* test code end */
         }
 
+        String dAccountId = SharedPreferencesUtils.getSharedPreferencesDaccountId(this);
+
         //項目名、設定値、>の画像、カテゴリ情報
-        mSettingList.add(new MainSettingUtils(mItemName[0], BLANK));
-        mSettingList.add(new MainSettingUtils(mItemName[1], isParing));
-        mSettingList.add(new MainSettingUtils(mItemName[2], BLANK));
-        mSettingList.add(new MainSettingUtils(mItemName[3], imageQuality));
-        mSettingList.add(new MainSettingUtils(mItemName[4], BLANK));
-        mSettingList.add(new MainSettingUtils(mItemName[5], BLANK));
-        mSettingList.add(new MainSettingUtils(mItemName[6], BLANK));
-        mSettingList.add(new MainSettingUtils(mItemName[7], BLANK));
-        mSettingList.add(new MainSettingUtils(mItemName[8], BLANK));
-        mSettingList.add(new MainSettingUtils(mItemName[9], BLANK));
+        mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_D_ACCOUNT], BLANK));
+        mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_PAIRING], isParing));
+        // 未ログイン状態ではMY番組表設定や画質設定は表示しない.
+        if (!dAccountId.isEmpty()) {
+            mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_MY_PROGRAM], BLANK));
+            mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_QUALITY], imageQuality));
+        }
+        mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_FAQ], BLANK));
+        mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_APP_INFO], BLANK));
+        mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_LICENCE], BLANK));
+        mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_PRIVACY_POLICY], BLANK));
+        mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_APP_PRIVACY_POLICY], BLANK));
+        mSettingList.add(new MainSettingUtils(mItemName[SETTING_MENU_INDEX_AGREEMENT], BLANK));
     }
 
     /**
@@ -209,15 +262,14 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
      * 再ペアリング画面からの復帰時に値を確認し、変更されていた場合は更新を行う.
      */
     private void checkIsPairing() {
-        String isParing = mResources.getString(R.string.main_setting_paring);
-        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-        if (dlnaDmsItem.mControlUrl.isEmpty()) {
+        String isParing = mResources.getString(R.string.main_setting_pairing);
+        if (!isPairing()) {
             // 未ペアリング時
             isParing = mResources.getString(R.string.main_setting_not_paring);
         }
         for (int i = 0; i < mSettingList.size(); i++) {
-            if (mSettingList.get(i).getText().equals(mItemName[1])) {
-                mSettingList.set(i, new MainSettingUtils(mItemName[1], isParing));
+            if (mSettingList.get(i).getText().equals(mItemName[SETTING_MENU_INDEX_PAIRING])) {
+                mSettingList.set(i, new MainSettingUtils(mItemName[SETTING_MENU_INDEX_PAIRING], isParing));
                 break;
             }
         }
@@ -230,8 +282,8 @@ public class SettingActivity extends BaseActivity implements AdapterView.OnItemC
     private void checkImageQuality() {
         String imageQuality = SharedPreferencesUtils.getSharedPreferencesImageQuality(this);
         for (int i = 0; i < mSettingList.size(); i++) {
-            if (mSettingList.get(i).getText().equals(mItemName[3])) {
-                mSettingList.set(i, new MainSettingUtils(mItemName[3], imageQuality));
+            if (mSettingList.get(i).getText().equals(mItemName[SETTING_MENU_INDEX_QUALITY])) {
+                mSettingList.set(i, new MainSettingUtils(mItemName[SETTING_MENU_INDEX_QUALITY], imageQuality));
                 break;
             }
         }

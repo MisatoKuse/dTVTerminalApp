@@ -33,7 +33,6 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.struct.RecordingReservationContentsDetailInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
-import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ChannelWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.ContentsDetailGetWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RemoteRecordingReservationWebClient;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalChListWebClient;
@@ -49,14 +48,9 @@ import java.util.Map;
  * コンテンツ詳細画面のDataProvider.
  */
 public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider implements ContentsDetailGetWebClient.ContentsDetailJsonParserCallback,
-        RoleListWebClient.RoleListJsonParserCallback, ChannelWebClient.ChannelJsonParserCallback,
-        DbThread.DbOperation, RemoteRecordingReservationWebClient.RemoteRecordingReservationJsonParserCallback,
+        RoleListWebClient.RoleListJsonParserCallback, DbThread.DbOperation, RemoteRecordingReservationWebClient.RemoteRecordingReservationJsonParserCallback,
         RentalVodListWebClient.RentalVodListJsonParserCallback, RentalChListWebClient.RentalChListJsonParserCallback {
 
-    /**
-     * ディスプレイタイプを保持.
-     */
-    private int mChannelDisplayType = 0;
     /**
      * ApiDataProviderCallbackのインスタンス.
      */
@@ -124,6 +118,26 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
     private static final int RENTAL_CHANNEL_SELECT = 8;
 
     private ArrayList<VodMetaFullData> mVodMetaFullDataList = null;
+    /**
+     * コンテンツ詳細取得WebClient.
+     */
+    private ContentsDetailGetWebClient mDetailGetWebClient = null;
+    /**
+     * ロールリスト取得WebClient.
+     */
+    private RoleListWebClient mRoleListWebClient = null;
+    /**
+     * レンタルチャンネル一覧取得WebClient.
+     */
+    private RentalChListWebClient mRentalChListWebClient = null;
+    /**
+     * レンタルVOD一覧取得WebClient.
+     */
+    private RentalVodListWebClient mRentalVodListWebClient = null;
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean isStop = false;
 
     /**
      * コンストラクタ.
@@ -158,6 +172,7 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
             }
         } else {
             //TODO:WEBAPIを取得できなかった時の処理を記載予定
+            mApiDataProviderCallback.onContentsDetailInfoCallback(null, false);
         }
     }
 
@@ -179,6 +194,8 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
     public void onRentalVodListJsonParsed(final PurchasedVodListResponse purchasedVodListResponse) {
         mPurchasedVodListResponse = purchasedVodListResponse;
         if (mPurchasedVodListResponse != null) {
+            DateUtils dateUtils = new DateUtils(mContext);
+            dateUtils.addLastProgramDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
             Handler handler = new Handler(); //チャンネル情報更新
             try {
                 DbThread t = new DbThread(handler, this, RENTAL_VOD_UPDATE);
@@ -198,6 +215,8 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
     public void onRentalChListJsonParsed(final PurchasedChListResponse purchasedChListResponse) {
         mPurchasedChListResponse = purchasedChListResponse;
         if (mPurchasedChListResponse != null) {
+            DateUtils dateUtils = new DateUtils(mContext);
+            dateUtils.addLastProgramDate(DateUtils.RENTAL_CHANNEL_LAST_UPDATE);
             Handler handler = new Handler(); //チャンネル情報更新
             try {
                 DbThread t = new DbThread(handler, this, RENTAL_CHANNEL_UPDATE);
@@ -216,6 +235,8 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
     @Override
     public void onRoleListJsonParsed(final RoleListResponse roleListResponse) {
         if (roleListResponse != null) {
+            DateUtils dateUtils = new DateUtils(mContext);
+            dateUtils.addLastProgramDate(DateUtils.ROLELIST_LAST_UPDATE);
             mRoleListInfo = roleListResponse.getRoleList();
             if (mRoleListInfo != null) {
                 Handler handler = new Handler(); //チャンネル情報更新
@@ -235,70 +256,9 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
     }
 
     @Override
-    public void onChannelJsonParsed(final List<ChannelList> channelLists) {
-        ArrayList<ChannelInfo> channels = null;
-        if (channelLists != null) {
-            mChannelList = channelLists.get(0);
-            List<HashMap<String, String>> channelList = mChannelList.getChannelList();
-            if (channelList != null) {
-                channels = new ArrayList<>();
-                setChannelData(channels, channelList);
-                Handler handler = new Handler(); //チャンネル情報更新
-                try {
-                    DbThread t = new DbThread(handler, this, CHANNEL_UPDATE);
-                    t.start();
-                } catch (Exception e) {
-                    DTVTLogger.debug(e);
-                }
-            }
-        } else {
-            //TODO:WEBAPIを取得できなかった時の処理を記載予定
-        }
-        if (null != mApiDataProviderCallback) {
-            mApiDataProviderCallback.channelListCallback(channels);
-        }
-    }
-
-    @Override
     public void onDbOperationFinished(final boolean isSuccessful, final List<Map<String, String>> resultSet, final int operationId) {
         if (isSuccessful) {
             switch (operationId) {
-                case CHANNEL_SELECT:
-                    ArrayList<ChannelInfo> channels = new ArrayList<>();
-                    for (int i = 0; i < resultSet.size(); i++) {
-                        Map<String, String> hashMap = resultSet.get(i);
-                        String chNo = hashMap.get(JsonConstants.META_RESPONSE_CHNO);
-                        String title = hashMap.get(JsonConstants.META_RESPONSE_TITLE);
-                        String serviceId = hashMap.get(JsonConstants.META_RESPONSE_SERVICE_ID);
-                        String startDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_START_DATE);
-                        String endDate = hashMap.get(JsonConstants.META_RESPONSE_AVAIL_END_DATE);
-                        String chType = hashMap.get(JsonConstants.META_RESPONSE_CH_TYPE);
-                        String puId = hashMap.get(JsonConstants.META_RESPONSE_PUID);
-                        String subPuId = hashMap.get(JsonConstants.META_RESPONSE_SUB_PUID);
-                        String chPackPuId = hashMap.get(JsonConstants.META_RESPONSE_CHPACK
-                                + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_PUID);
-                        String chPackSubPuId = hashMap.get(JsonConstants.META_RESPONSE_CHPACK
-                                + JsonConstants.UNDER_LINE + JsonConstants.META_RESPONSE_SUB_PUID);
-
-                        if (!TextUtils.isEmpty(chNo)) {
-                            ChannelInfo channel = new ChannelInfo();
-                            channel.setChNo(Integer.parseInt(chNo));
-                            channel.setTitle(title);
-                            channel.setServiceId(serviceId);
-                            channel.setStartDate(startDate);
-                            channel.setEndDate(endDate);
-                            channel.setChType(chType);
-                            channel.setPuId(puId);
-                            channel.setSubPuId(subPuId);
-                            channel.setChPackPuId(chPackPuId);
-                            channel.setChPackSubPuId(chPackSubPuId);
-                            channels.add(channel);
-                        }
-                    }
-                    if (null != mApiDataProviderCallback) {
-                        mApiDataProviderCallback.channelListCallback(channels);
-                    }
-                    break;
                 case ROLELIST_SELECT:
                     ArrayList<RoleListMetaData> roleListData = new ArrayList<>();
                     for (int i = 0; i < resultSet.size(); i++) {
@@ -388,11 +348,11 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                 break;
             case CHANNEL_UPDATE: //サーバーから取得したチャンネルデータをDBに保存する
                 ChannelInsertDataManager channelInsertDataManager = new ChannelInsertDataManager(mContext);
-                channelInsertDataManager.insertChannelInsertList(mChannelList, JsonConstants.DISPLAY_TYPE[mChannelDisplayType]);
+                channelInsertDataManager.insertChannelInsertList(mChannelList);
                 break;
             case CHANNEL_SELECT: //DBからチャンネルデータを取得して、画面に返却する
                 ProgramDataManager channelDataManager = new ProgramDataManager(mContext);
-                resultSet = channelDataManager.selectChannelListProgramData(JsonConstants.DISPLAY_TYPE[mChannelDisplayType]);
+                resultSet = channelDataManager.selectChannelListProgramData("");
                 break;
             case RENTAL_VOD_UPDATE: //サーバーから取得した購入済みVODデータをDBに保存する
                 RentalListInsertDataManager rentalListInsertDataManager = new RentalListInsertDataManager(mContext);
@@ -480,13 +440,6 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
         void onRoleListCallback(ArrayList<RoleListMetaData> roleListInfo);
 
         /**
-         * チャンネルリストを戻す.
-         *
-         * @param channels 　画面に渡すチャンネル情報
-         */
-        void channelListCallback(ArrayList<ChannelInfo> channels);
-
-        /**
          * リモート録画予約実行結果を返す.
          *
          * @param response 実行結果
@@ -516,8 +469,12 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
      * @param ageReq dch：dチャンネル, hikaritv：ひかりTVの多ch, 指定なしの場合：すべて
      */
     public void getContentsDetailData(final String[] crid, final String filter, final int ageReq) {
-        ContentsDetailGetWebClient detailGetWebClient = new ContentsDetailGetWebClient(mContext);
-        detailGetWebClient.getContentsDetailApi(crid, filter, ageReq, this);
+        if(!isStop){
+            mDetailGetWebClient = new ContentsDetailGetWebClient(mContext);
+            mDetailGetWebClient.getContentsDetailApi(crid, filter, ageReq, this);
+        } else {
+            DTVTLogger.error("DtvContentsDetailDataProvider is stopping connect");
+        }
     }
 
     /**
@@ -536,9 +493,12 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                 DTVTLogger.debug(e);
             }
         } else {
-            dateUtils.addLastProgramDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
-            RentalVodListWebClient rentalVodListWebClient = new RentalVodListWebClient(mContext);
-            rentalVodListWebClient.getRentalVodListApi(this);
+            if(!isStop){
+                mRentalVodListWebClient = new RentalVodListWebClient(mContext);
+                mRentalVodListWebClient.getRentalVodListApi(this);
+            } else {
+                DTVTLogger.error("DtvContentsDetailDataProvider is stopping connect");
+            }
         }
     }
 
@@ -548,8 +508,8 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
     public void getForceVodListData() {
         DateUtils dateUtils = new DateUtils(mContext);
         dateUtils.addLastProgramDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
-        RentalVodListWebClient rentalVodListWebClient = new RentalVodListWebClient(mContext);
-        rentalVodListWebClient.getRentalVodListApi(this);
+        mRentalVodListWebClient = new RentalVodListWebClient(mContext);
+        mRentalVodListWebClient.getRentalVodListApi(this);
     }
 
     /**
@@ -568,9 +528,12 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                 DTVTLogger.debug(e);
             }
         } else {
-            dateUtils.addLastProgramDate(DateUtils.RENTAL_CHANNEL_LAST_UPDATE);
-            RentalChListWebClient rentalChListWebClient = new RentalChListWebClient(mContext);
-            rentalChListWebClient.getRentalChListApi(this);
+            if(!isStop){
+                mRentalChListWebClient = new RentalChListWebClient(mContext);
+                mRentalChListWebClient.getRentalChListApi(this);
+            } else {
+                DTVTLogger.error("DtvContentsDetailDataProvider is stopping connect");
+            }
         }
     }
 
@@ -580,8 +543,8 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
     public void getForceChListData() {
         DateUtils dateUtils = new DateUtils(mContext);
         dateUtils.addLastProgramDate(DateUtils.RENTAL_CHANNEL_LAST_UPDATE);
-        RentalChListWebClient rentalChListWebClient = new RentalChListWebClient(mContext);
-        rentalChListWebClient.getRentalChListApi(this);
+        mRentalChListWebClient = new RentalChListWebClient(mContext);
+        mRentalChListWebClient.getRentalChListApi(this);
     }
 
     /**
@@ -600,37 +563,12 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                 DTVTLogger.debug(e);
             }
         } else {
-            dateUtils.addLastProgramDate(DateUtils.ROLELIST_LAST_UPDATE);
-            RoleListWebClient roleListWebClient = new RoleListWebClient(mContext);
-            roleListWebClient.getRoleListApi(this);
-        }
-    }
-
-    /**
-     * CH一覧取得.
-     *
-     * @param limit  レスポンスの最大件数
-     * @param offset 取得位置(1～)
-     * @param filter release、testa、demo ※指定なしの場合release
-     * @param type   dch：dチャンネル, hikaritv：ひかりTVの多ch, 指定なしの場合：すべて
-     */
-    public void getChannelList(final int limit, final int offset, final String filter, final int type) {
-        this.mChannelDisplayType = type;
-        DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(DateUtils.CHANNEL_LAST_UPDATE);
-        if (!TextUtils.isEmpty(lastDate) && !dateUtils.isBeforeProgramLimitDate(lastDate)) {
-            //データをDBから取得する
-            Handler handler = new Handler(); //チャンネル情報更新
-            try {
-                DbThread t = new DbThread(handler, this, CHANNEL_SELECT);
-                t.start();
-            } catch (Exception e) {
-                DTVTLogger.debug(e);
+            if(!isStop){
+                mRoleListWebClient = new RoleListWebClient(mContext);
+                mRoleListWebClient.getRoleListApi(this);
+            } else {
+                DTVTLogger.error("DtvContentsDetailDataProvider is stopping connect");
             }
-        } else {
-            dateUtils.addLastProgramDate(DateUtils.CHANNEL_LAST_UPDATE);
-            ChannelWebClient mChannelList = new ChannelWebClient(mContext);
-            mChannelList.getChannelApi(limit, offset, filter, JsonConstants.DISPLAY_TYPE[type], this);
         }
     }
 
@@ -677,6 +615,46 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
                     getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
                     break;
             }
+        }
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnect() {
+        DTVTLogger.start();
+        isStop = true;
+        if (mDetailGetWebClient != null) {
+            mDetailGetWebClient.stopConnection();
+        }
+        if (mRoleListWebClient != null) {
+            mRoleListWebClient.stopConnection();
+        }
+        if (mRentalChListWebClient != null) {
+            mRentalChListWebClient.stopConnection();
+        }
+        if (mRentalVodListWebClient != null) {
+            mRentalVodListWebClient.stopConnection();
+        }
+    }
+
+    /**
+     * 通信を許可する.
+     */
+    public void enableConnect() {
+        DTVTLogger.start();
+        isStop = false;
+        if (mDetailGetWebClient != null) {
+            mDetailGetWebClient.enableConnection();
+        }
+        if (mRoleListWebClient != null) {
+            mRoleListWebClient.enableConnection();
+        }
+        if (mRentalChListWebClient != null) {
+            mRentalChListWebClient.enableConnection();
+        }
+        if (mRentalVodListWebClient != null) {
+            mRentalVodListWebClient.enableConnection();
         }
     }
 }

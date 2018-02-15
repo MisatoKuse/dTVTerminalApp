@@ -6,6 +6,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 
 import android.content.Context;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ChannelList;
@@ -17,14 +18,20 @@ import org.json.JSONObject;
 import java.util.List;
 
 public class ChannelWebClient
-        extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback{
+        extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
+
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
 
     /**
      * コールバック
      */
     public interface ChannelJsonParserCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
+         *
          * @param channelLists JSONパース後のデータ
          */
         void onChannelJsonParsed(List<ChannelList> channelLists);
@@ -43,13 +50,14 @@ public class ChannelWebClient
     }
 
     /**
-     * 通信成功時のコールバック
+     * 通信成功時のコールバック.
+     *
      * @param returnCode 戻り値構造体
      */
     @Override
     public void onAnswer(ReturnCode returnCode) {
         //JSONをパースして、データを返す
-       new ChannelJsonParser(mChannelJsonParserCallback).execute(returnCode.bodyData);
+        new ChannelJsonParser(mChannelJsonParserCallback).execute(returnCode.bodyData);
     }
 
     /**
@@ -64,19 +72,26 @@ public class ChannelWebClient
     }
 
     /**
-     * チャンネル一覧取得
-     * @param pagetLimit                  取得する最大件数(値は1以上)
-     * @param pagerOffset                 取得位置(値は1以上)
-     * @param filter                       フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
-     * @param type                         タイプ　dch：dチャンネル・hikaritv：ひかりTVの多ch・指定なし：全て
-     * @param channelJsonParserCallback  コールバック
+     * チャンネル一覧取得.
+     *
+     * @param pagetLimit                取得する最大件数(値は1以上)
+     * @param pagerOffset               取得位置(値は1以上)
+     * @param filter                    フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
+     * @param type                      タイプ　dch：dチャンネル・hikaritv：ひかりTVの多ch・指定なし：全て
+     * @param channelJsonParserCallback コールバック
      * @return パラメータエラー等が発生した場合はfalse
      */
     public boolean getChannelApi(int pagetLimit, int pagerOffset,
-                                           String filter, String type,
-                                           ChannelJsonParserCallback channelJsonParserCallback) {
+                                 String filter, String type,
+                                 ChannelJsonParserCallback channelJsonParserCallback) {
+
+        if (mIsCancel) {
+            DTVTLogger.error("ChannelWebClient is stopping connection");
+            return false;
+        }
+
         //パラメーターのチェック
-        if(!checkNormalParameter(pagetLimit,pagerOffset,filter,type,channelJsonParserCallback)) {
+        if (!checkNormalParameter(pagetLimit, pagerOffset, filter, type, channelJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、falseで帰る
             return false;
         }
@@ -85,10 +100,10 @@ public class ChannelWebClient
         mChannelJsonParserCallback = channelJsonParserCallback;
 
         //送信用パラメータの作成
-        String sendParameter = makeSendParameter(pagetLimit,pagerOffset,filter,type);
+        String sendParameter = makeSendParameter(pagetLimit, pagerOffset, filter, type);
 
         //JSONの組み立てに失敗していれば、falseで帰る
-        if(sendParameter.isEmpty()) {
+        if (sendParameter.isEmpty()) {
             return false;
         }
 
@@ -100,54 +115,55 @@ public class ChannelWebClient
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
-     * @param pagetLimit                   取得する最大件数(値は1以上)
-     * @param pagerOffset                  取得位置(値は1以上)
-     * @param filter                        フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
-     * @param type                          タイプ　dch：dチャンネル・hikaritv：ひかりTVの多ch・指定なし：全て
-     * @param channelJsonParserCallback   コールバック
+     * 指定されたパラメータがおかしいかどうかのチェック.
+     *
+     * @param pagetLimit                取得する最大件数(値は1以上)
+     * @param pagerOffset               取得位置(値は1以上)
+     * @param filter                    フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
+     * @param type                      タイプ　dch：dチャンネル・hikaritv：ひかりTVの多ch・指定なし：全て
+     * @param channelJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
      */
-    private boolean checkNormalParameter(int pagetLimit,int pagerOffset,
-                                         String filter,String type,
+    private boolean checkNormalParameter(int pagetLimit, int pagerOffset,
+                                         String filter, String type,
                                          ChannelJsonParserCallback channelJsonParserCallback) {
         // 各値が下限以下ならばfalse
-        if(pagetLimit < 1) {
+        if (pagetLimit < 0) {
             return false;
         }
-        if(pagerOffset < 1) {
+        if (pagerOffset < 0) {
             return false;
         }
 
         //文字列がヌルならfalse
-        if(filter == null) {
+        if (filter == null) {
             return false;
         }
-        if(type == null) {
+        if (type == null) {
             return false;
         }
 
 
         //フィルター用の固定値をひとまとめにする
-        List<String> filterList = makeStringArry(FILTER_RELEASE,FILTER_TESTA,FILTER_DEMO);
+        List<String> filterList = makeStringArry(FILTER_RELEASE, FILTER_TESTA, FILTER_DEMO);
 
         //指定された文字がひとまとめにした中に含まれるか確認
-        if(filterList.indexOf(filter) == -1) {
+        if (filterList.indexOf(filter) == -1) {
             //空文字ならば有効なので、それ以外はfalse
-            if(!filter.isEmpty()) {
+            if (!filter.isEmpty()) {
                 return false;
             }
         }
 
         //タイプ用の固定値をひとまとめにする
-        List<String> typeList = makeStringArry(TYPE_D_CHANNEL,TYPE_HIKARI_TV,TYPE_ALL);
+        List<String> typeList = makeStringArry(TYPE_D_CHANNEL, TYPE_HIKARI_TV, TYPE_ALL);
 
-        if(typeList.indexOf(type) == -1) {
+        if (typeList.indexOf(type) == -1) {
             //含まれていないならばfalse
             return false;
         }
 
-        if(channelJsonParserCallback == null) {
+        if (channelJsonParserCallback == null) {
             //コールバックがヌルならばfalse
             return false;
         }
@@ -157,22 +173,26 @@ public class ChannelWebClient
     }
 
     /**
-     * 指定されたパラメータをJSONで組み立てて文字列にする
-     * @param pagetLimit    取得する最大件数(値は1以上)
-     * @param pagerOffset   取得位置(値は1以上)
-     * @param filter        フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
-     * @param type          タイプ　dch：dチャンネル・hikaritv：ひかりTVの多ch・指定なし：全て
+     * 指定されたパラメータをJSONで組み立てて文字列にする.
+     *
+     * @param pagetLimit  取得する最大件数(値は1以上)
+     * @param pagerOffset 取得位置(値は1以上)
+     * @param filter      フィルター　release・testa・demoのいずれかの文字列・指定がない場合はrelease
+     * @param type        タイプ　dch：dチャンネル・hikaritv：ひかりTVの多ch・指定なし：全て
      * @return 組み立て後の文字列
      */
-    private String makeSendParameter(int pagetLimit,int pagerOffset,String filter,String type) {
+    private String makeSendParameter(int pagetLimit, int pagerOffset, String filter, String type) {
         JSONObject jsonObject = new JSONObject();
         String answerText;
         try {
             //ページャー部の作成
-            JSONObject jsonPagerObject = new JSONObject();
-            jsonPagerObject.put(JsonConstants.META_RESPONSE_PAGER_LIMIT,pagetLimit);
-            jsonPagerObject.put(JsonConstants.META_RESPONSE_OFFSET,pagerOffset);
-            jsonObject.put(JsonConstants.META_RESPONSE_PAGER,jsonPagerObject);
+            //TODO:ページング指定を外してもぷららサーバ側からMax10件しか取得できない(実際にはレスポンスのtotal件数は200件以上になっている)
+            if (pagetLimit > 0 && pagerOffset > 0) {
+                JSONObject jsonPagerObject = new JSONObject();
+                jsonPagerObject.put(JsonConstants.META_RESPONSE_PAGER_LIMIT, pagetLimit);
+                jsonPagerObject.put(JsonConstants.META_RESPONSE_OFFSET, pagerOffset);
+                jsonObject.put(JsonConstants.META_RESPONSE_PAGER, jsonPagerObject);
+            }
 
             //その他
             jsonObject.put(JsonConstants.META_RESPONSE_FILTER, filter);
@@ -186,5 +206,22 @@ public class ChannelWebClient
         }
 
         return answerText;
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnection() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        stopAllConnections();
+    }
+
+    /**
+     * 通信可能状態にする.
+     */
+    public void enableConnection() {
+        DTVTLogger.start();
+        mIsCancel = false;
     }
 }

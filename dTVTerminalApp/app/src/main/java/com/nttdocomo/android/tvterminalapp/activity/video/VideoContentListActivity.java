@@ -19,11 +19,12 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
-import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VideoContentProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.VideoGenreListDataInfo;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         AbsListView.OnTouchListener {
 
     // 最大表示件数
-    private final static int NUM_PER_PAGE = 10;
+    private final static int NUM_PER_PAGE = 999;
 
     private ImageView mMenuImageView;
     private VideoContentProvider mVideoContentProvider;
@@ -74,18 +75,18 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         mMenuImageView = findViewById(R.id.header_layout_menu);
         mMenuImageView.setVisibility(View.VISIBLE);
         mMenuImageView.setOnClickListener(this);
-        setTitleText(getString(R.string.video_content_sub_genre_title));
         enableStbStatusIcon(true);
+        setStatusBarColor(true);
 
         // コンテンツツリー画面からのデータ受け取り
         VideoGenreListDataInfo info = getIntent().getParcelableExtra(VIDEO_CONTENTS_BUNDLE_KEY);
         mGenreId = info.getGenreId();
-
+        setTitleText(info.getVideoGenreListShowData().getTitle());
         resetPaging();
 
         initView();
         mVideoContentProvider = new VideoContentProvider(this);
-        mVideoContentProvider.getVideoContentData(mGenreId);
+        mVideoContentProvider.getVideoContentData(mGenreId, 1);
     }
 
     /**
@@ -174,14 +175,6 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         }
     }
 
-
-    @Override
-    public void onClick(View view) {
-        if (view == mMenuImageView) {
-            onSampleGlobalMenuButton_PairLoginOk();
-        }
-    }
-
     /**
      * ページングを行った回数を取得
      *
@@ -240,7 +233,11 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mVideoContentProvider.getVideoContentData(mGenreId);
+                        int offset = 0;
+                        if (null != mContentsList) {
+                            offset = mContentsList.size() + 1;
+                        }
+                        mVideoContentProvider.getVideoContentData(mGenreId, offset);
                     }
                 }, LOAD_PAGE_DELAY_TIME);
             }
@@ -254,6 +251,8 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         }
         Intent intent = new Intent(this, ContentDetailActivity.class);
         intent.putExtra(DTVTConstants.SOURCE_SCREEN, getComponentName().getClassName());
+        OtherContentsDetailData detailData = BaseActivity.getOtherContentsDetailData(mContentsList.get(position), ContentDetailActivity.PLALA_INFO_BUNDLE_KEY);
+        intent.putExtra(detailData.getRecommendFlg(), detailData);
         startActivity(intent);
     }
 

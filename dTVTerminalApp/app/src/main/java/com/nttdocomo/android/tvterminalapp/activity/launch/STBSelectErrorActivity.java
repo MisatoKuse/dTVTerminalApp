@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.launch;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
@@ -25,7 +26,7 @@ public class STBSelectErrorActivity extends BaseActivity {
     private boolean mIsNextTimeHide = false;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.stb_select_error_layout);
         setContents();
@@ -36,6 +37,7 @@ public class STBSelectErrorActivity extends BaseActivity {
      */
     private void setContents() {
         setTitleText(getString(R.string.str_app_title));
+        setStatusBarColor(true);
         mParingAgain = findViewById(R.id.stb_search_failed_paring_again);
         mParingHelp = findViewById(R.id.stb_paring_failed_help);
         mErrorCheckBox = findViewById(R.id.stb_select_error_checkBox);
@@ -63,16 +65,21 @@ public class STBSelectErrorActivity extends BaseActivity {
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(final View v) {
         if (v.equals(mParingAgain)) {
             finish();
         } else if (v.equals(mParingHelp)) {
-            startActivity(PairingHelpActivity.class, null);
+            Intent intent = new Intent(getApplicationContext(), PairingHelpActivity.class);
+            intent.putExtra(PairingHelpActivity.START_WHERE, PairingHelpActivity.ParingHelpFromMode.
+                    ParingHelpFromMode_Launch.ordinal());
+            startActivity(intent);
         } else if (v.equals(mErrorCheckBox)) {
             mIsNextTimeHide = mErrorCheckBox.isChecked();
         } else if (v.equals(mWithoutParing)) {
             SharedPreferencesUtils.setSharedPreferencesStbSelect(this, mIsNextTimeHide);
-            startActivity(HomeActivity.class, null);
+            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
         } else if (v.equals(mErrorCheckboxText)) {
             if (mErrorCheckBox.isChecked()) {
                 mErrorCheckBox.setChecked(false);

@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.SearchServiceType;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
@@ -62,6 +63,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * ビューの生成.
      */
     private LayoutInflater mInflater;
+    /**
+     * タブのタイプ.
+     */
+    private TabTypeItem mTabType;
+
     /**
      * 評価基準値.
      */
@@ -103,6 +109,16 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * 番組タイトル margintop.
      */
     private final static int TITLE_MARGINTOP17 = 17;
+
+    /**
+     * 番組タイトル margintop.
+     */
+    private final static int TITLE_MARGINTOP20 = 20;
+
+    /**
+     * 番組タイトル margintop.
+     */
+    private final static int TITLE_MARGINTOP30 = 30;
 
     /**
      * クリップアイコンmargintop.
@@ -171,6 +187,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * ダウンロードcallback.
      */
     private DownloadCallback mDownloadCallback;
+    /**
+     * ダウンロード禁止判定フラグ.
+     */
+    private boolean isDownloadStop = false;
 
     /**
      * 機能
@@ -216,7 +236,48 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         /**
          * ビデオタブ(クリップ).
          */
-        TYPE_CLIP_LIST_MODE_VIDEO
+        TYPE_CLIP_LIST_MODE_VIDEO,
+        /**
+         * 検索.
+         */
+        TYPE_SEARCH_LIST,
+        /**
+         * // コンテンツ詳細チャンネル一覧.
+         */
+        TYPE_CONTENT_DETAIL_CHANNEL_LIST,
+        /**
+         *
+         * おすすめ番組・ビデオ
+         */
+        TYPE_RECOMMEND_LIST
+    }
+
+
+    /**
+     * 機能
+     * 共通タブーを使う.
+     */
+    public enum TabTypeItem {
+        /**
+         * テレビ.
+         */
+        TAB_TV,
+        /**
+         * ビデオ.
+         */
+        TAB_VIDEO,
+        /**
+         * dTV.
+         */
+        TAB_D_TV,
+        /**
+         * dTVチャンネル.
+         */
+        TAB_D_CHANNEL,
+        /**
+         * dアニメ.
+         */
+        TAB_D_ANIMATE,
     }
 
     /**
@@ -232,6 +293,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         this.mListData = listData;
         this.mType = type;
         mThumbnailProvider = new ThumbnailProvider(mContext);
+    }
+
+    public void setTabTypeItem(final TabTypeItem tabTypeItem) {
+        this.mTabType = tabTypeItem;
     }
 
     /**
@@ -269,14 +334,13 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
 
     @Override
     public View getView(final int position, final View view, final ViewGroup parent) {
-        ViewHolder holder = null;
+        ViewHolder holder;
 
         View contentView = view;
         //ビューの再利用
         if (contentView == null) {
             holder = new ViewHolder();
             contentView = mInflater.inflate(R.layout.item_common_result, parent, false);
-            ;
             holder = setListItemPattern(holder, contentView);
             contentView.setTag(holder);
         } else {
@@ -284,31 +348,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         }
         setShowDataVisibility(holder);
         //各アイテムデータを取得
-        ContentsData listContentInfoTmp = null;
-        switch (mType) {
-            case TYPE_DAILY_RANK:
-            case TYPE_WEEKLY_RANK:
-            case TYPE_CLIP_LIST_MODE_TV:
-            case TYPE_VIDEO_RANK:
-            case TYPE_VIDEO_CONTENT_LIST:
-            case TYPE_WATCHING_VIDEO_LIST:
-            case TYPE_CLIP_LIST_MODE_VIDEO:
-            case TYPE_RENTAL_RANK:
-            case TYPE_RECORDING_RESERVATION_LIST:
-                listContentInfoTmp = mListData.get(position);   //final ContentsData listContentInfo = mListData.get(position);　もともとの内容は変わらないように
-                break;
-            case TYPE_RECORDED_LIST:
-                try{
-                    listContentInfoTmp = mListData.get(position);
-                } catch (Exception e){
-                    DTVTLogger.debug(e);
-                    return view;
-                }
-                break;
-            default:
-                break;
-        }
-        final ContentsData listContentInfo = listContentInfoTmp;
+        final ContentsData listContentInfo = mListData.get(position);
         // アイテムデータを設定する
         setContentsData(holder, listContentInfo);
 
@@ -344,6 +384,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_DAILY_RANK:
             case TYPE_WEEKLY_RANK:
             case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
+            case TYPE_SEARCH_LIST:
+            case TYPE_CONTENT_DETAIL_CHANNEL_LIST:
                 textMargin = STATUS_MARGINTOP17;
                 clipMargin = CLIP_MARGINTOP35;
                 setTextMargin(textMargin, holder, contentView);
@@ -376,6 +418,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 break;
             //ENUMの値をswitch分岐すると、全ての値を書かないとアナライザーがエラーを出すので、caseを追加
             case TYPE_RECORDED_LIST:
+                break;
+            case TYPE_RECOMMEND_LIST://おすすめ番組・ビデオ
+                setTabContentMargin(holder, contentView);
+                break;
             default:
                 break;
         }
@@ -396,6 +442,36 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             }
         }
         return contentView;
+    }
+
+    private void setTabContentMargin(final ViewHolder holder, final View contentView) {
+        int textMargin;
+        int clipMargin;
+        switch (mTabType) {
+            case TAB_TV:
+                textMargin = STATUS_MARGINTOP10;
+                clipMargin = CLIP_MARGINTOP35;
+                setTextMargin(textMargin, holder, contentView);
+                setClipMargin(clipMargin, contentView);
+                break;
+            case TAB_VIDEO:
+                textMargin = TITLE_MARGINTOP20;
+                clipMargin = CLIP_MARGINTOP35;
+                setTextMargin(textMargin, holder, contentView);
+                setClipMargin(clipMargin, contentView);
+                break;
+
+            case TAB_D_ANIMATE:
+            case TAB_D_CHANNEL:
+            case TAB_D_TV:
+                textMargin = TITLE_MARGINTOP30;
+                clipMargin = CLIP_MARGINTOP35;
+                setTextMargin(textMargin, holder, contentView);
+                setClipMargin(clipMargin, contentView);
+                break;
+            default:
+                break;
+        }
     }
 
     /**
@@ -496,7 +572,35 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         setRatStarData(holder, listContentInfo);
         setRecodingReservationStatusData(holder, listContentInfo);
         setChannelName(holder, listContentInfo);
-        setRedordedDownloadIcon(holder, listContentInfo);
+        setRecordedDownloadIcon(holder, listContentInfo);
+        if(ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST.equals(mType)){
+            setSubTitle(holder, listContentInfo);
+        }
+    }
+
+    private void setTabContentLayout( ViewHolder holder) {
+
+        switch (mTabType) {
+            case TAB_TV:
+                holder.tv_rank.setVisibility(View.GONE);
+                holder.ll_rating.setVisibility(View.GONE);
+                break;
+            case TAB_VIDEO:
+                holder.tv_rank.setVisibility(View.GONE);
+                holder.tv_time.setVisibility(View.GONE);
+                break;
+            case TAB_D_CHANNEL:
+            case TAB_D_ANIMATE:
+            case  TAB_D_TV:
+                holder.tv_rank.setVisibility(View.GONE);
+                holder.tv_time.setVisibility(View.GONE);
+                holder.ll_rating.setVisibility(View.GONE);
+                holder.tv_clip.setVisibility(View.GONE);
+                break;
+            default:
+                break;
+        }
+
     }
 
     /**
@@ -532,8 +636,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      */
     private void setTimeData(final ViewHolder holder, final ContentsData listContentInfo) {
         //TODO:基本的には日付はすべてエポック秒で扱い、表示する際にYYYY/MM/DD形式に変換する方針にする(今日のテレビランキング、週間ランキングと同じ方式に統一))
-        if (!TextUtils.isEmpty(listContentInfo.getTime())) { //時間
+        if (!TextUtils.isEmpty(listContentInfo.getTime()) || !TextUtils.isEmpty(listContentInfo.getStartViewing())) { //時間
             switch (mType) {
+                case TYPE_RECOMMEND_LIST://おすすめ番組・ビデオ
+                    setTabTimeData(holder, listContentInfo);
+                    break;
                 case TYPE_DAILY_RANK: // 今日のテレビランキング
                 case TYPE_WEEKLY_RANK: // 週間ランキング
                     holder.tv_time.setText(DateUtils.getRecordShowListItem(Long.parseLong(listContentInfo.getTime())));
@@ -546,11 +653,45 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 case TYPE_RECORDED_LIST: // 録画番組一覧
                 case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
                 case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
+                case TYPE_SEARCH_LIST:
+                case TYPE_CONTENT_DETAIL_CHANNEL_LIST: // コンテンツ詳細チャンネル一覧
                     holder.tv_time.setText(listContentInfo.getTime());
                     break;
                 default:
                     break;
             }
+        }
+    }
+
+    private void setTabTimeData(ViewHolder holder,final ContentsData listContentInfo) {
+        switch (mTabType) {
+            case TAB_TV:
+                holder.tv_time.setVisibility(View.VISIBLE);
+                //開始・終了日付の取得
+                long startDate = DateUtils.getEpochTimeLink(listContentInfo.getStartViewing());
+                long endDate = DateUtils.getEpochTimeLink(listContentInfo.getEndViewing());
+
+//                日付の表示
+                String answerText = StringUtils.getConnectStrings(
+                        DateUtils.getRecordShowListItem(startDate));
+                holder.tv_time.setText(answerText);
+                //現在時刻が開始と終了の間ならば、"Now On Air"と表示する
+                if (DateUtils.isBetweenNowTime(startDate, endDate)) {
+                    //収まっていたので、Now On Airを表示
+                    holder.tv_channel_name.setText(R.string.now_on_air);
+                    //文字をNow On Airの色にする
+                    holder.tv_channel_name.setTextColor(
+                            ContextCompat.getColor(mContext, R.color.recommend_list_now_on_air));
+                }
+                break;
+            case TAB_VIDEO:
+            case TAB_D_TV:
+            case TAB_D_CHANNEL:
+            case TAB_D_ANIMATE:
+                holder.tv_time.setVisibility(View.GONE);
+                break;
+            default:
+                break;
         }
     }
 
@@ -562,25 +703,37 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      */
     private void setRatStarData(final ViewHolder holder, final ContentsData listContentInfo) {
         if (!TextUtils.isEmpty(listContentInfo.getRatStar())) { //評価
+            //評価値が範囲外の場合は"-"を表示、星は非表示
+            float ratNumber = Float.parseFloat(listContentInfo.getRatStar());
+            if (ratNumber > 0) {
+                holder.rb_rating.setRating(Float.parseFloat(listContentInfo.getRatStar()));
+                holder.tv_rating_num.setText(listContentInfo.getRatStar());
+            } else {
+                holder.rb_rating.setRating(Float.parseFloat(listContentInfo.getRatStar()));
+                holder.tv_rating_num.setText(R.string.contents_hyphen);
+            }
             holder.rb_rating.setNumStars(NUM_STARS_TOTAL);
-            holder.rb_rating.setRating(Float.parseFloat(listContentInfo.getRatStar()));
-            holder.tv_rating_num.setText(listContentInfo.getRatStar());
         }
     }
 
     /**
-     * データの設定（サムネイル）
+     * データの設定（サムネイル）.
      *
      * @param holder          ViewHolder
      * @param listContentInfo ContentsData
      */
     private void setThumbnailData(final ViewHolder holder, final ContentsData listContentInfo) {
+        DTVTLogger.start();
+        //スクロール時にリサイクル前の画像が表示され続けないように一旦画像を消去する
+        holder.iv_thumbnail.setImageResource(0);
         if (!TextUtils.isEmpty(listContentInfo.getThumURL())) { //サムネイル
-            holder.rl_thumbnail.setVisibility(View.VISIBLE);
-            holder.iv_thumbnail.setTag(listContentInfo.getThumURL());
-            Bitmap thumbnailImage = mThumbnailProvider.getThumbnailImage(holder.iv_thumbnail, listContentInfo.getThumURL());
-            if (thumbnailImage != null) {
-                holder.iv_thumbnail.setImageBitmap(thumbnailImage);
+            if (!isDownloadStop) {
+                holder.rl_thumbnail.setVisibility(View.VISIBLE);
+                holder.iv_thumbnail.setTag(listContentInfo.getThumURL());
+                Bitmap thumbnailImage = mThumbnailProvider.getThumbnailImage(holder.iv_thumbnail, listContentInfo.getThumURL());
+                if (thumbnailImage != null) {
+                    holder.iv_thumbnail.setImageBitmap(thumbnailImage);
+                }
             }
         } else {
             //URLがない場合はサムネイル取得失敗の画像を表示
@@ -640,13 +793,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      * @param holder          ViewHolder
      * @param listContentInfo ContentsData
      */
-    private void setRedordedDownloadIcon(final ViewHolder holder, final ContentsData listContentInfo) {
+    private void setRecordedDownloadIcon(final ViewHolder holder, final ContentsData listContentInfo) {
         DTVTLogger.start();
         //TODO:録画予約一覧等、クリップボタンを表示しない画面はここで外す
         if (!mType.equals(TYPE_RECORDING_RESERVATION_LIST)) {
-            BaseActivity baseActivity = new BaseActivity();
             if (holder.tv_clip != null) {
-                //Boolean contentsFlag = baseActivity.getDownloadContentsFalag();
                 int downloadFlg = listContentInfo.getDownloadFlg();
                 if (downloadFlg != -1) {
                     // ダウンロード済み
@@ -670,10 +821,49 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         }
 
         if (!ActivityTypeItem.TYPE_RECORDED_LIST.equals(mType)) {
-            setClipButton(holder, listContentInfo);
+            if (ActivityTypeItem.TYPE_RECOMMEND_LIST.equals(mType)) {
+
+                setRecommendClipButton(holder, listContentInfo);
+            } else {
+                setClipButton(holder, listContentInfo);
+            }
+
         }
 
         DTVTLogger.end();
+    }
+
+    private void setRecommendClipButton(ViewHolder holder, ContentsData listContentInfo) {
+        holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
+        final ImageView clipTextView = holder.tv_clip;
+        final ContentsData recommendListInfo = listContentInfo;
+        if (listContentInfo.getServiceId().equals(SearchServiceType.ServiceId.HIKARI_TV_FOR_DOCOMO)) {
+            holder.tv_clip.setVisibility(View.VISIBLE);
+
+            holder.tv_clip.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View view) {
+                    //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、画像比較でクリップ済/未を判定する
+                    //TODO:レコメンドではクリップ判定データが不足していること、AdapterをContentsAdapterに統合予定のため、最低限の実装にとどめます
+                    Bitmap clipButtonBitmap = ((BitmapDrawable)  clipTextView.getBackground()).getBitmap();
+                    Bitmap activeClipBitmap = ((BitmapDrawable) ResourcesCompat.getDrawable(mContext.getResources(),
+                            R.mipmap.icon_circle_active_clip, null)).getBitmap();
+                    if (clipButtonBitmap.equals(activeClipBitmap)) {
+                        recommendListInfo.getRequestData().setClipStatus(true);
+                    } else {
+                        recommendListInfo.getRequestData().setClipStatus(false);
+                    }
+                    //クリップボタンイベント
+                    ((BaseActivity) mContext).sendClipRequest(
+                            recommendListInfo.getRequestData(), clipTextView);
+                }
+            });
+
+        } else {
+            //クリップを非表示にする
+            holder.tv_clip.setVisibility(View.GONE);
+        }
+
     }
 
     /**
@@ -688,6 +878,9 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
             holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
             holder.tv_recorded_ch_name.setText(listContentInfo.getChannelName());
+            if(mType == ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST){
+                holder.tv_recorded_ch_name.setTextColor(ContextCompat.getColor(mContext, R.color.record_download_status_color));
+            }
         } else {
             //TODO: 仕様不定の為仮実装
             //TODO:チャンネル名の出所が不明なので、ダミー値を指定
@@ -697,6 +890,47 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
                 holder.tv_recorded_ch_name.setText("ダミー");
             }
+            if (mType == ActivityTypeItem.TYPE_CONTENT_DETAIL_CHANNEL_LIST) {
+                holder.tv_recorded_hyphen.setVisibility(View.GONE);
+                holder.tv_recorded_ch_name.setVisibility(View.GONE);
+            }
+            if (mType == ActivityTypeItem.TYPE_RECOMMEND_LIST) {
+                setTabHyphenVisibility(holder);
+            }
+        }
+    }
+
+    private void setTabHyphenVisibility(ViewHolder holder) {
+        switch (mTabType){
+            case TAB_TV:
+                holder.tv_recorded_hyphen.setVisibility(View.VISIBLE);
+                holder.tv_recorded_ch_name.setVisibility(View.VISIBLE);
+                holder.tv_recorded_ch_name.setText("ダミー");
+                break;
+            case TAB_D_ANIMATE:
+            case TAB_D_CHANNEL:
+            case TAB_D_TV:
+            case TAB_VIDEO:
+                break;
+            default:
+                break;
+
+        }
+    }
+
+    /**
+     * データの設定（サブタイトル）.
+     *
+     * @param holder          ViewHolder
+     * @param listContentInfo ContentsData
+     */
+    private void setSubTitle(final ViewHolder holder, final ContentsData listContentInfo) {
+        if(!TextUtils.isEmpty(listContentInfo.getSubTitle())) {
+            holder.tv_sub_title.setVisibility(View.VISIBLE);
+            holder.tv_sub_title.setText(listContentInfo.getSubTitle());
+            holder.tv_sub_title.setOnClickListener(null);
+        } else {
+            holder.tv_sub_title.setVisibility(View.GONE);
         }
     }
 
@@ -735,11 +969,15 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         ViewHolder viewHolder = holder;
         viewHolder = setCommonListItem(viewHolder, view);
         switch (mType) {
+            case TYPE_RECOMMEND_LIST://おすすめ番組・ビデオ
+                setTabContentHyphen(holder, view);
+                break;
             case TYPE_VIDEO_RANK: // ビデオランキング
             case TYPE_RENTAL_RANK: // レンタル一覧
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
             case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
             case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
+            case TYPE_SEARCH_LIST:
                 break;
             case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
                 viewHolder.tv_recording_reservation =
@@ -754,10 +992,31 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 viewHolder.tv_recorded_hyphen = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
                 viewHolder.tv_recorded_ch_name = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
                 break;
+            case TYPE_CONTENT_DETAIL_CHANNEL_LIST: // コンテンツ詳細チャンネル一覧
+                holder.tv_recorded_hyphen = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
+                holder.tv_recorded_ch_name = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
+                holder.tv_sub_title = view.findViewById(R.id.item_common_result_subtitle);
+                break;
             default:
                 break;
         }
         return viewHolder;
+    }
+
+    private void setTabContentHyphen(final ViewHolder holder, final View view) {
+        switch (mTabType) {
+            case TAB_TV:
+                holder.tv_recorded_hyphen = view.findViewById(R.id.item_common_result_recorded_content_hyphen);
+                holder.tv_recorded_ch_name = view.findViewById(R.id.item_common_result_recorded_content_channel_name);
+                break;
+            case TAB_D_ANIMATE:
+            case TAB_D_CHANNEL:
+            case TAB_D_TV:
+            case TAB_VIDEO:
+                break;
+            default:
+                break;
+        }
     }
 
     /**
@@ -767,9 +1026,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
      */
     private void setShowDataVisibility(final ViewHolder holder) {
         switch (mType) {
+            case TYPE_RECOMMEND_LIST://おすすめ番組・ビデオ
+                setTabContentLayout(holder);
+                break;
             case TYPE_DAILY_RANK: // 今日のテレビランキング
             case TYPE_WEEKLY_RANK: // 週間ランキング
-            case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
                 holder.ll_rating.setVisibility(View.GONE);
                 holder.tv_clip.setVisibility(View.GONE);
                 break;
@@ -781,6 +1042,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
             case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
             case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
                 holder.tv_time.setVisibility(View.GONE);
+                holder.tv_rank.setVisibility(View.GONE);
+                break;
+            case TYPE_CLIP_LIST_MODE_TV: //TVタブ(クリップ)
+                holder.ll_rating.setVisibility(View.GONE);
+                holder.tv_clip.setVisibility(View.GONE);
                 holder.tv_rank.setVisibility(View.GONE);
                 break;
             case TYPE_RENTAL_RANK: // レンタル一覧
@@ -800,6 +1066,15 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.iv_thumbnail.setVisibility(View.GONE);
                 holder.rb_rating.setVisibility(View.GONE);
                 break;
+            case TYPE_CONTENT_DETAIL_CHANNEL_LIST: // コンテンツ詳細チャンネル一覧
+                holder.tv_rank.setVisibility(View.GONE);
+                holder.rb_rating.setVisibility(View.GONE);
+                holder.tv_line.setVisibility(View.VISIBLE);
+                break;
+            case TYPE_SEARCH_LIST: //検索
+                holder.tv_time.setVisibility(View.GONE);
+                holder.tv_rank.setVisibility(View.GONE);
+                holder.rb_rating.setVisibility(View.GONE);
             default:
                 break;
         }
@@ -945,6 +1220,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
          * 録画番組用チャンネル名.
          */
         TextView tv_recorded_ch_name;
+        /**
+         * サブタイトル
+         */
+        TextView tv_sub_title = null;
     }
 
     /**
@@ -961,7 +1240,28 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
 
     @Override
     public void onClick(final View v) {
-
         mDownloadCallback.downloadClick(v);
+    }
+
+    /**
+     * サムネイル取得処理を止める.
+     */
+    public void stopConnect() {
+        DTVTLogger.start();
+        isDownloadStop = true;
+        if (mThumbnailProvider != null) {
+            mThumbnailProvider.stopConnect();
+        }
+    }
+
+    /**
+     * 止めたサムネイル取得処理を再度取得可能な状態にする.
+     */
+    public void enableConnect() {
+        DTVTLogger.start();
+        isDownloadStop = false;
+        if (mThumbnailProvider != null) {
+            mThumbnailProvider.enableConnect();
+        }
     }
 }

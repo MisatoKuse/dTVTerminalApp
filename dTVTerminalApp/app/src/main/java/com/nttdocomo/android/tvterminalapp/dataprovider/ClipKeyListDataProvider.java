@@ -51,14 +51,22 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      */
     boolean mResponseEndFlag = false;
     /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
+    /**
      * クリップ種別(ひかりTV).
      */
-    private static final String CLIP_KEY_LIST_TYPE_OTHER_CHANNEL = "h4d_iptv";
+    public static final String CLIP_KEY_LIST_TYPE_OTHER_CHANNEL = "h4d_iptv";
 
     /**
      * クリップリクエスト用データ.
      */
     private ClipRequestData mClipRequestData = null;
+    /**
+     * クリップリクエスト用Webクライアント.
+     */
+    private ClipKeyListWebClient mClient = null;
 
     /**
      * クリップ削除種別用定数.
@@ -72,10 +80,10 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     @Override
     public void onTvClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
+        mResponseEndFlag = true;
         if (clipKeyListResponse != null && clipKeyListResponse.getIsUpdate()) {
             DTVTLogger.debug("ClipKeyListResponse Insert DB");
             setStructDB(ClipKeyListDao.TABLE_TYPE.TV, clipKeyListResponse);
-            mResponseEndFlag = true;
         }
         DTVTLogger.end();
     }
@@ -83,10 +91,10 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     @Override
     public void onVodClipKeyListJsonParsed(final ClipKeyListResponse clipKeyListResponse) {
         DTVTLogger.start();
+        mResponseEndFlag = true;
         if (clipKeyListResponse != null && clipKeyListResponse.getIsUpdate()) {
             DTVTLogger.debug("ClipKeyListResponse Insert DB");
             setStructDB(ClipKeyListDao.TABLE_TYPE.VOD, clipKeyListResponse);
-            mResponseEndFlag = true;
         }
         DTVTLogger.end();
     }
@@ -99,11 +107,7 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      */
     public ClipKeyListDataProvider(final Context context) {
         this.mContext = context;
-        if (checkInstance(context)) {
-            mRequiredClipKeyList = true;
-        } else {
-            mRequiredClipKeyList = false;
-        }
+        mRequiredClipKeyList = checkInstance(context);
     }
 
     /**
@@ -111,10 +115,14 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      */
     public void getClipKeyList() {
         DTVTLogger.start();
-        // TVクリップキー一覧を取得
-        getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.TV));
-        // VODクリップキー一覧を取得
-        getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+        if (!mIsCancel) {
+            // TVクリップキー一覧を取得
+            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.TV));
+            // VODクリップキー一覧を取得
+            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+        } else {
+            DTVTLogger.error("ClipKeyListDataProvider is stopping connection");
+        }
         DTVTLogger.end();
     }
 
@@ -126,14 +134,18 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
      */
     public void getClipKeyList(final ClipKeyListRequest request) {
         DTVTLogger.start();
-        mResponseEndFlag = false;
-        request.setIsForce(isCachingClipKeyListRecord(request.getType()));
-        ClipKeyListWebClient client = new ClipKeyListWebClient(mContext);
-        // リクエストによってコールバックを変える
-        if (ClipKeyListRequest.CLIP_KEY_LIST_REQUEST_TYPE_TV.equals(request.getType())) {
-            client.getClipKeyListApi(request, this, null);
+        if (!mIsCancel) {
+            mResponseEndFlag = false;
+            request.setIsForce(isCachingClipKeyListRecord(request.getType()));
+            mClient = new ClipKeyListWebClient(mContext);
+            // リクエストによってコールバックを変える
+            if (ClipKeyListRequest.CLIP_KEY_LIST_REQUEST_TYPE_TV.equals(request.getType())) {
+                mClient.getClipKeyListApi(request, this, null);
+            } else {
+                mClient.getClipKeyListApi(request, null, this);
+            }
         } else {
-            client.getClipKeyListApi(request, null, this);
+            DTVTLogger.error("ClipKeyListDataProvider stop connection");
         }
         DTVTLogger.end();
     }
@@ -347,21 +359,21 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
     @Override
     public List<Map<String, String>> dbOperation(final int operationId) throws Exception {
         ClipKeyListInsertDataManager dataManager = new ClipKeyListInsertDataManager(mContext);
+        String crid = mClipRequestData.getCrid();
         String dispType = mClipRequestData.getDispType();
         String contentType = mClipRequestData.getContentType();
         String serviceId = mClipRequestData.getServiceId();
         String eventId = mClipRequestData.getEventId();
-        String type = mClipRequestData.getType();
         String titleId = mClipRequestData.getTitleId();
         ClipKeyListDao.TABLE_TYPE tableType = decisionTableType(dispType, contentType);
 
         if (tableType != null) {
             switch (operationId) {
                 case CLIP_ROW_DELETE:
-                    dataManager.deleteRowSqlStart(tableType, serviceId, eventId, titleId);
+                    dataManager.deleteRowSqlStart(tableType, crid, serviceId, eventId, titleId);
                     break;
                 case CLIP_ROW_INSERT:
-                    dataManager.insertRowSqlStart(tableType, serviceId, eventId, type, titleId);
+                    dataManager.insertRowSqlStart(tableType, crid, serviceId, eventId, titleId);
                     break;
                 default:
                     break;
@@ -406,5 +418,27 @@ public class ClipKeyListDataProvider implements ClipKeyListWebClient.TvClipKeyLi
         }
         DTVTLogger.end();
         return clipStatus;
+    }
+
+    /**
+     * 通信を止める.
+     */
+    void stopConnection() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        if (mClient != null) {
+            mClient.stopConnection();
+        }
+    }
+
+    /**
+     * 通信可能状態にする.
+     */
+    void enableConnection() {
+        DTVTLogger.start();
+        mIsCancel = false;
+        if (mClient != null) {
+            mClient.enableConnection();
+        }
     }
 }

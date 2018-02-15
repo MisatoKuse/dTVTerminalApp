@@ -82,7 +82,7 @@ public class EditMyChannelListAdapter extends BaseAdapter implements View.OnClic
         }else {//解除
             noTv.setTextColor(ContextCompat.getColor(mContext, R.color.white_text));
             noTv.setBackgroundResource(R.mipmap.channel_num_normal);
-            editBt.setBackgroundResource(R.drawable.my_ch_btn_selector);
+            editBt.setBackgroundResource(R.drawable.selector_my_ch_btn);
         }
         return inflate;
     }
@@ -169,7 +169,7 @@ public class EditMyChannelListAdapter extends BaseAdapter implements View.OnClic
      */
     private void requestChannelListDataFromServer() {
         HikariTvChDataProvider hikariTvChDataProvider = new HikariTvChDataProvider(mContext);
-        hikariTvChDataProvider.getChannelList(1, 1, "");
+        hikariTvChDataProvider.getChannelList(0, 0, "");
     }
 
     /**

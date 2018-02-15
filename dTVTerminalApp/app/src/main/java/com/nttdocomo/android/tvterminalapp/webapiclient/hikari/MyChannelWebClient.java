@@ -14,11 +14,11 @@ public class MyChannelWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
 
     /**
-     * コールバック
+     * コールバック.
      */
     public interface MyChannelListJsonParserCallback {
         /**
-         * 正常に終了した場合に呼ばれるコールバック
+         * 正常に終了した場合に呼ばれるコールバック.
          *
          * @param myChannelListResponse JSONパース後のデータ
          */
@@ -30,7 +30,7 @@ public class MyChannelWebClient
     private MyChannelListJsonParserCallback myChannelListJsonParserCallback;
 
     /**
-     * コンテキストを継承元のコンストラクタに送る
+     * コンテキストを継承元のコンストラクタに送る.
      *
      * @param context コンテキスト
      */
@@ -61,7 +61,7 @@ public class MyChannelWebClient
     }
 
     /**
-     * マイチャンネル一覧取得
+     * マイチャンネル一覧取得.
      *
      * @param myChannelListJsonParserCallback コールバックTODO:
      * 本WebAPIには通常のパラメータが無く、基底クラスで追加するサービストークンのみとなる。）
@@ -79,15 +79,15 @@ public class MyChannelWebClient
         this.myChannelListJsonParserCallback = myChannelListJsonParserCallback;
 
         //リモート録画一覧の情報を読み込むため、リモート録画一覧を呼び出す
-        openUrl(UrlConstants.WebApiUrl.MY_CHANNEL_LIST_WEB_CLIENT,
-                "", this);
+        openUrlAddOtt(UrlConstants.WebApiUrl.MY_CHANNEL_LIST_WEB_CLIENT,
+                "", this, null);
 
         //今のところ失敗していないので、trueを返す
         return true;
     }
 
     /**
-     * 指定されたパラメータがおかしいかどうかのチェック
+     * 指定されたパラメータがおかしいかどうかのチェック.
      *
      * @param myChannelListJsonParserCallback コールバック
      * @return 値がおかしいならばfalse
