@@ -403,7 +403,13 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             setPlayerEvent();
             setUserAgeInfo();
         }
-        //通信を止める
+        DTVTLogger.end();
+    }
+
+    @Override
+    public void onStartCommunication() {
+        DTVTLogger.start();
+        super.onStartCommunication();
         if(mDetailDataProvider != null){
             mDetailDataProvider.enableConnect();
         }

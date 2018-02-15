@@ -11,37 +11,59 @@
         android:layout_centerHorizontal="true"
         android:adjustViewBounds="true"
         android:background="@color/home_item_contents_background_color"
-        android:paddingEnd="@dimen/home_contents_thumbnail_right_padding"
-        android:paddingStart="@dimen/home_contents_thumbnail_left_padding"
-        android:scaleType="fitCenter" />
-
+        android:layout_marginEnd="@dimen/home_contents_thumbnail_right_padding"
+        android:scaleType="fitCenter"
+        android:contentDescription="@null"/>
 
     <ImageView
         android:id="@+id/home_main_recyclerview_item_iv_new"
         android:layout_width="@dimen/home_contents_thumbnail_new_label_width"
         android:layout_height="@dimen/home_contents_thumbnail_new_label_height"
-        android:layout_marginLeft="@dimen/home_contents_thumbnail_new_label_margin_left"
+        android:layout_marginStart="@dimen/home_contents_thumbnail_new_label_margin_left"
         android:layout_marginTop="@dimen/home_contents_thumbnail_new_label_margin_top"
         android:src="@drawable/label_status_new"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:contentDescription="@null"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentEnd="true"
+        android:padding="@dimen/home_contents_thumbnail_service_label_padding">
+
+        <ImageView
+            android:id="@+id/home_main_recyclerview_item_iv_service_icon_first"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/home_contents_thumbnail_service_label_height"
+            android:visibility="gone"
+            android:contentDescription="@null"/>
+
+        <ImageView
+            android:id="@+id/home_main_recyclerview_item_iv_service_icon_second"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/home_contents_thumbnail_service_label_height"
+            android:visibility="gone"
+            android:contentDescription="@null"/>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/home_main_recyclerview_item_iv_rank_num"
         android:layout_width="@dimen/home_contents_thumbnail_rank_num_label_width"
         android:layout_height="@dimen/home_contents_thumbnail_rank_num_label_height"
-        android:layout_marginLeft="@dimen/home_contents_thumbnail_new_label_margin_left"
+        android:layout_marginStart="@dimen/home_contents_thumbnail_new_label_margin_left"
         android:layout_marginTop="@dimen/home_contents_thumbnail_new_label_margin_top"
         android:gravity="center"
         android:textColor="@color/basic_text_color_white"
         android:textSize="@dimen/home_contents_thumbnail_rank_num_text_size"
         android:visibility="gone" />
 
-
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY"
-        android:src="@mipmap/overlay_gradation" />
+        android:src="@mipmap/overlay_gradation"
+        android:contentDescription="@null"/>
 
     <LinearLayout
         android:layout_width="match_parent"
