@@ -58,6 +58,10 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
      * 視聴中ビデオリスト取得WebClient.
      */
     private WatchListenVideoWebClient mWebClient = null;
+    /**
+     * クリップキー一覧取得プロバイダ.
+     */
+    private ClipKeyListDataProvider mClipKeyListDataProvider = null;
 
     @Override
     public void onWatchListenVideoJsonParsed(final List<WatchListenVideoList> watchListenVideoList) {
@@ -129,13 +133,14 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
         String lastDate = dateUtils.getLastDate(DateUtils.WATCHING_VIDEO_LIST_LAST_INSERT);
 
         // クリップキー一覧を取得
-        if (mRequiredClipKeyList) {
-            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+        if (!mIsCancel && mRequiredClipKeyList) {
+                mClipKeyListDataProvider = new ClipKeyListDataProvider(mContext);
+                mClipKeyListDataProvider.getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
         }
 
         //視聴中ビデオ一覧のDB保存履歴と、有効期間を確認
-        if (lastDate == null || lastDate.length() < 1 || dateUtils.isBeforeLimitDate(lastDate)) {
-            WatchListenVideoWebClient webClient = new WatchListenVideoWebClient(mContext);
+        if (!mIsCancel && (lastDate == null || lastDate.length() < 1 || dateUtils.isBeforeLimitDate(lastDate))) {
+            mWebClient = new WatchListenVideoWebClient(mContext);
 
             UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
             int ageReq = userInfoDataProvider.getUserAge();
@@ -143,7 +148,7 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
             int lowerPageLimit = 1;
             String pagerDirection = "next";
 
-            webClient.getWatchListenVideoApi(ageReq, upperPageLimit,
+            mWebClient.getWatchListenVideoApi(ageReq, upperPageLimit,
                     lowerPageLimit, pagerOffset, pagerDirection, this);
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
@@ -236,7 +241,9 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     public void stopConnect() {
         DTVTLogger.start();
         mIsCancel = true;
-        stopConnection();
+        if (mClipKeyListDataProvider != null) {
+            mClipKeyListDataProvider.stopConnection();
+        }
         if (mWebClient != null) {
             mWebClient.stopConnection();
         }
@@ -248,7 +255,9 @@ public class WatchListenVideoListDataProvider extends ClipKeyListDataProvider im
     public void enableConnect() {
         DTVTLogger.start();
         mIsCancel = false;
-        enableConnection();
+        if (mClipKeyListDataProvider != null) {
+            mClipKeyListDataProvider.enableConnection();
+        }
         if (mWebClient != null) {
             mWebClient.enableConnection();
         }
