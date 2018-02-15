@@ -376,8 +376,8 @@ public class WatchingVideoListActivity extends BaseActivity implements
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    public void onStartCommunication() {
+        super.onStartCommunication();
         DTVTLogger.start();
         if (mWatchListenVideoListDataProvider != null) {
             mWatchListenVideoListDataProvider.enableConnect();
@@ -388,7 +388,7 @@ public class WatchingVideoListActivity extends BaseActivity implements
         if (mListView != null) {
             mListView.invalidateViews();
         }
-        if (mWatchingVideoListData != null) {
+        if (mWatchingVideoListData == null || mWatchingVideoListData.size() == 0) {
             mWatchListenVideoListDataProvider = new WatchListenVideoListDataProvider(this);
             mWatchListenVideoListDataProvider.getWatchListenVideoData(WatchListenVideoListDataProvider.DEFAULT_PAGE_OFFSET);
         }
