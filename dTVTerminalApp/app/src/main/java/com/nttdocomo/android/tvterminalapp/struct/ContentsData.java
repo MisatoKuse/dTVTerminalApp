@@ -8,7 +8,7 @@ import android.widget.ImageView;
 
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
-import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
 public class ContentsData {
 
@@ -146,28 +146,9 @@ public class ContentsData {
         return mRatStar;
     }
 
-    /**
-     * 不正な値が入った場合はここで吸収する.
-     *
-     * @param ratStar 評価値
-     */
     public void setRatStar(String ratStar) {
-        final String MAX_RAT_VALUE = "5.0";
-        final String RAT_EXCEPTION_VALUE = "0";
-        final String RAT_VALUE_FORMAT = "%1$.1f";
-        if (DBUtils.isFloat(ratStar)) {
-            float rating = Float.parseFloat(ratStar);
-            if (rating > 5) {
-                this.mRatStar = MAX_RAT_VALUE;
-            } else if (rating <= 0) {
-                this.mRatStar = RAT_EXCEPTION_VALUE;
-            } else {
-                //データが整数値の可能性があるため小数点第一位表示に変換する
-                this.mRatStar = String.format(RAT_VALUE_FORMAT, rating);;
-            }
-        } else {
-            this.mRatStar = RAT_EXCEPTION_VALUE;
-        }
+        //不正な値が入った場合のためUtilメソッドを通してから格納
+        this.mRatStar = StringUtils.toRatString(ratStar);
     }
 
     public String getThumURL() {

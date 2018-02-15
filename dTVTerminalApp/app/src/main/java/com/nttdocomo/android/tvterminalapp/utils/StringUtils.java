@@ -11,11 +11,8 @@ import android.util.Base64;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.dataprovider.UserInfoDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListResponse;
-import com.nttdocomo.android.tvterminalapp.dataprovider.data.UserInfoList;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.WebApiBasePlala;
-import com.nttdocomo.android.tvterminalapp.webapiclient.jsonparser.UserInfoJsonParser;
 
 import org.json.JSONArray;
 
@@ -25,13 +22,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -524,5 +519,33 @@ public class StringUtils {
 
         //何らかの原因で失敗したので、元の物をそのまま返す
         return source;
+    }
+
+    /**
+     * 評価値の不正を吸収する.
+     *
+     * @param ratStar 評価値
+     * @return 加工済み評価値
+     */
+    public static String toRatString(final String ratStar) {
+        final String MAX_RAT_VALUE = "5.0";
+        final String RAT_EXCEPTION_VALUE = "0";
+        String strRatStar;
+        if (DBUtils.isFloat(ratStar)) {
+            float rating = Float.parseFloat(ratStar);
+            if (rating >= 5) {
+                strRatStar = MAX_RAT_VALUE;
+            } else if (rating <= 0) {
+                strRatStar = RAT_EXCEPTION_VALUE;
+            } else {
+                //小数点第2位で四捨五入
+                BigDecimal bd = new BigDecimal(ratStar);
+                BigDecimal bd2 = bd.setScale(1, BigDecimal.ROUND_HALF_UP);
+                strRatStar = String.valueOf(bd2);
+            }
+        } else {
+            strRatStar = RAT_EXCEPTION_VALUE;
+        }
+        return strRatStar;
     }
 }
