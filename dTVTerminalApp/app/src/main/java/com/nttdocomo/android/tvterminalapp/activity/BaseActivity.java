@@ -702,6 +702,7 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * STBからの応答を通知ハンドラーを解除する.
      *
+     * @param isTopRemoteControllerUI 応答ハンドラの解除条件 false:リモコンが表示されていない／true:無条件で解除
      */
     private void resetRelayClientHandler(boolean isTopRemoteControllerUI) {
         if (null != remoteControllerView) {
@@ -710,6 +711,17 @@ public class BaseActivity extends FragmentActivity implements
                     || isTopRemoteControllerUI) {
                 mRemoteControlRelayClient.resetHandler();
             }
+        }
+    }
+
+    /**
+     * リモコンの表示.
+     *
+     */
+    private void showRemoteControllerView() {
+        // グローバルメニューまたはコンテンツ詳細からのサービスアプリ連携の正常応答時にリモコンが表示されてない場合のみ表示する
+        if (!remoteControllerView.isTopRemoteControllerUI()) {
+            menuRemoteController();
         }
     }
 
@@ -726,9 +738,8 @@ public class BaseActivity extends FragmentActivity implements
             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_OK:
                 switch (requestCommand) {
                     case START_APPLICATION:
-                        break;
                     case TITLE_DETAIL:
-//                        menuRemoteController();
+                        showRemoteControllerView();
                         break;
                     case IS_USER_ACCOUNT_EXIST:
                     case SET_DEFAULT_USER_ACCOUNT:
