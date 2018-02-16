@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.PowerManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -530,8 +531,17 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         mPlayerController.setOnFormatChangeListener(this);
         mPlayerController.setOnPlayerEventListener(this);
         mPlayerController.setOnErrorListener(this);
-        //mPlayerController.setWakeMode(this, PowerManager.FULL_WAKE_LOCK);
-        mPlayerController.setWakeMode(this, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        try {
+            //実機でandroid 5.xとandroid4.xの場合は「mPlayerController.setWakeMode(this, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);」失敗したので、
+            //バージョンチェックする
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M ) {
+                mPlayerController.setWakeMode(this, PowerManager.FULL_WAKE_LOCK);
+            } else {
+                mPlayerController.setWakeMode(this, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+        }
         mPlayerController.setCaptionDataListener(this);
         mPlayerController.setCurrentCaption(0); // start caption.
         boolean ret = isActivited();
