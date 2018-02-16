@@ -1800,6 +1800,7 @@ public class BaseActivity extends FragmentActivity implements
         dialog.setApiCancelCallback(new CustomDialog.ApiCancelCallback() {
             @Override
             public void onCancelCallback() {
+                onTransoceanicCommunicationDialogNo();
                 mShowDialog = createPermissionDeniedDialog();
                 mShowDialog.showDialog();
             }
@@ -1964,5 +1965,12 @@ public class BaseActivity extends FragmentActivity implements
             app.setIsFirstActivityStartUp(false);
         }
         onStartCommunication();
+    }
+
+    /**
+     * DTCP持ち出しダウンロード中Override
+     */
+    protected void onTransoceanicCommunicationDialogNo(){
+
     }
 }
