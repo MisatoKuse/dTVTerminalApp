@@ -647,7 +647,7 @@ public class BaseActivity extends FragmentActivity implements
     protected void onStop() {
         super.onStop();
         DTVTLogger.start();
-        mRemoteControlRelayClient.resetHandler();
+        resetRelayClientHandler(true);
         //unregisterDevListDlna();
         DTVTLogger.end();
     }
@@ -693,18 +693,33 @@ public class BaseActivity extends FragmentActivity implements
             DTVTLogger.debug(String.format("msg:%s", msg));
             setRemoteProgressVisible(View.GONE);
             onStbClientResponse(msg);
-            resetRelayClientHandler();
+            resetRelayClientHandler(false);
         }
     };
 
     /**
      * STBからの応答を通知ハンドラーを解除する.
-     * ※リモコンの電源ON/OFF操作中の応答時にリモコンが表示されている間は解除しない
+     *
+     * @param isTopRemoteControllerUI 応答ハンドラの解除条件 false:リモコンが表示されていない／true:無条件で解除
+     */
+    private void resetRelayClientHandler(boolean isTopRemoteControllerUI) {
+        if (null != remoteControllerView) {
+            // ※リモコンの電源ON/OFF操作中の応答時にリモコンが表示されている間は解除しない
+            if ((isTopRemoteControllerUI == remoteControllerView.isTopRemoteControllerUI())
+                    || isTopRemoteControllerUI) {
+                mRemoteControlRelayClient.resetHandler();
+            }
+        }
+    }
+
+    /**
+     * リモコンの表示.
      *
      */
-    private void resetRelayClientHandler() {
-        if (null != remoteControllerView && !remoteControllerView.isTopRemoteControllerUI()) {
-            mRemoteControlRelayClient.resetHandler();
+    private void showRemoteControllerView() {
+        // グローバルメニューまたはコンテンツ詳細からのサービスアプリ連携の正常応答時にリモコンが表示されてない場合のみ表示する
+        if (!remoteControllerView.isTopRemoteControllerUI()) {
+            menuRemoteController();
         }
     }
 
@@ -721,9 +736,8 @@ public class BaseActivity extends FragmentActivity implements
             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_OK:
                 switch (requestCommand) {
                     case START_APPLICATION:
-                        break;
                     case TITLE_DETAIL:
-//                        menuRemoteController();
+                        showRemoteControllerView();
                         break;
                     case IS_USER_ACCOUNT_EXIST:
                     case SET_DEFAULT_USER_ACCOUNT:
@@ -1904,7 +1918,7 @@ public class BaseActivity extends FragmentActivity implements
     private void showTransoceanicCommunicationDialog() {
         DTVTLogger.start();
         showTransoceanicCommunicationFlag = true;
-        mRemoteControlRelayClient.resetHandler();
+        resetRelayClientHandler(true);
         unregisterDevListDlna();
         DlnaInterface.dlnaOnStop();
         // TODO dアカウント通信を止める
