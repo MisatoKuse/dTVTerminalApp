@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.dataprovider;
 import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RentalListInsertDataManager;
 import com.nttdocomo.android.tvterminalapp.datamanager.select.RentalListDataManager;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
@@ -18,6 +19,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.ClipUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
+import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalVodListWebClient;
 
 import java.util.ArrayList;
@@ -69,6 +71,18 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
      * 無期限レンタルコンテンツ判定文字列.
      */
     public static final String ENABLE_VOD_WATCH_CONTENTS_UNLIMITED_HYPHEN = "-";
+    /**
+     * レンタルコンテンツ判定(video_program).
+     */
+    private static final String DISP_TYPE_VIDEO_PROGRAM = "video_program";
+    /**
+     * レンタルコンテンツ判定(video_package).
+     */
+    private static final String DISP_TYPE_VIDEO_PACKAGE = "video_package";
+    /**
+     * レンタルコンテンツ判定(0).
+     */
+    private static final String EST_FLAG_FALSE = "0";
 
     @Override
     public void onRentalVodListJsonParsed(final PurchasedVodListResponse response) {
@@ -168,15 +182,11 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
     private void getRentalListData() {
         DateUtils dateUtils = new DateUtils(mContext);
         String lastDate = dateUtils.getLastDate(DateUtils.VIDEO_RANK_LAST_INSERT);
-        List<Map<String, String>> vodMetaList = new ArrayList<>();
-        List<Map<String, String>> activeList = new ArrayList<>();
-        PurchasedVodListResponse response;
         //Vodクリップ一覧のDB保存履歴と、有効期間を確認
         boolean fromDb = lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate);
         if (fromDb) {
-            RentalListDataManager rentalListDataManager = new RentalListDataManager(mContext);
-            vodMetaList = rentalListDataManager.selectRentalChListData();
-            activeList = rentalListDataManager.selectRentalActiveListData();
+            //レンタル一覧を送る
+            mApiDataProviderCallback.rentalListCallback(getDbRentalList());
         } else {
             //通信クラスにデータ取得要求を出す
             mWebClient = new RentalVodListWebClient(mContext);
@@ -184,9 +194,74 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
         }
     }
 
-    private void makeVodMetaData(List<Map<String, String>> vodMetaList) {
-        VodMetaFullData vodMetaFullData = new VodMetaFullData();
+    /**
+     * DBからレンタル一覧を取得する.
+     *
+     * @return レンタル一覧データ.
+     */
+    public List<ContentsData> getDbRentalList() {
+        List<Map<String, String>> vodMetaList;
+        List<Map<String, String>> activeList;
+        RentalListDataManager rentalListDataManager = new RentalListDataManager(mContext);
+        vodMetaList = rentalListDataManager.selectRentalListData();
+        activeList = rentalListDataManager.selectRentalActiveListData();
+        return makeContentsData(makeVodMetaData(vodMetaList, activeList));
     }
+
+    /**
+     * DBから取得した値からPurchasedVodListResponseを作成する.
+     *
+     * @param vodMetaList 購入済VOD一覧メタデータ
+     * @param activeList  購入済VOD一覧ActiveList
+     * @return PurchasedVodListResponse
+     */
+    private PurchasedVodListResponse makeVodMetaData(final List<Map<String, String>> vodMetaList, final List<Map<String, String>> activeList) {
+        PurchasedVodListResponse response = new PurchasedVodListResponse();
+        ArrayList<VodMetaFullData> vodMetaFullDataList = new ArrayList<>();
+        for (int i = 0; i < vodMetaList.size(); i++) {
+            VodMetaFullData vodMetaFullData = new VodMetaFullData();
+            String dispType = vodMetaList.get(i).get(JsonConstants.META_RESPONSE_DISP_TYPE);
+            String estFlg = vodMetaList.get(i).get(JsonConstants.META_RESPONSE_EST_FLAG);
+            //「estflg」が「0」または未設定かつ「disp_type」が「video_program」または「video_package」
+            if ((estFlg == null || estFlg.length() == 0 || estFlg.equals(EST_FLAG_FALSE))
+                    && (dispType != null && dispType.equals(DISP_TYPE_VIDEO_PROGRAM) || dispType.equals(DISP_TYPE_VIDEO_PACKAGE))) {
+                vodMetaFullData.setTitle(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_TITLE));
+                vodMetaFullData.setmThumb_448_252(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_THUMB_448));
+                vodMetaFullData.setAvail_start_date(Long.parseLong(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_START_DATE)));
+                vodMetaFullData.setAvail_end_date(Long.parseLong(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
+                vodMetaFullData.setDisp_type(dispType);
+                vodMetaFullData.setmService_id(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_SERVICE_ID));
+                vodMetaFullData.setPublish_end_date(Long.parseLong(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE)));
+                vodMetaFullData.setmSearch_ok(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_SEARCH_OK));
+                vodMetaFullData.setCrid(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_CRID));
+                vodMetaFullData.setmEvent_id(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_EVENT_ID));
+                vodMetaFullData.setTitle_id(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_TITLE_ID));
+                vodMetaFullData.setR_value(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_R_VALUE));
+                vodMetaFullData.setDtv(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_DTV));
+                vodMetaFullData.setmTv_service(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_TV_SERVICE));
+                vodMetaFullData.setmContent_type(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_CONTENT_TYPE));
+                vodMetaFullData.setDtvType(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_DTV_TYPE));
+                vodMetaFullData.setRating(Double.parseDouble(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_RATING)));
+                vodMetaFullData.setCid(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_CID));
+                vodMetaFullData.setEpisode_id(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_EPISODE_ID));
+                vodMetaFullData.setEstFlag(estFlg);
+                vodMetaFullDataList.add(vodMetaFullData);
+            }
+        }
+        ArrayList<ActiveData> activeDataList = new ArrayList<>();
+        for (int i = 0; i < activeList.size(); i++) {
+            ActiveData activeData = new ActiveData();
+            activeData.setLicenseId(activeList.get(i).get(StringUtils.getConnectStrings(
+                    JsonConstants.META_RESPONSE_ACTIVE_LIST, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_LICENSE_ID)));
+            activeData.setValidEndDate(Long.parseLong(activeList.get(i).get(StringUtils.getConnectStrings(
+                    JsonConstants.META_RESPONSE_ACTIVE_LIST, JsonConstants.UNDER_LINE, JsonConstants.META_RESPONSE_VAILD_END_DATE))));
+            activeDataList.add(activeData);
+        }
+        response.setVodMetaFullData(vodMetaFullDataList);
+        response.setVodActiveData(activeDataList);
+        return response;
+    }
+
     /**
      * DB保存.
      *
@@ -209,9 +284,6 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
      * @return コンテンツリスト
      */
     private List<ContentsData> makeContentsData(final PurchasedVodListResponse response) {
-        final String DISP_TYPE_VIDEO_PROGRAM = "video_program";
-        final String DISP_TYPE_VIDEO_PACKAGE = "video_package";
-        final String EST_FLAG_FALSE = "0";
         List<ContentsData> list = new ArrayList<>();
         ArrayList<VodMetaFullData> metaFullData = response.getVodMetaFullData();
         ArrayList<ActiveData> activeDataList = response.getVodActiveData();
@@ -219,7 +291,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
             VodMetaFullData vodMetaFullData = metaFullData.get(i);
             //「estflg」が「0」または未設定かつ「disp_type」が「video_program」または「video_package」
             if ((vodMetaFullData.getEstFlag() == null || vodMetaFullData.getEstFlag().length() == 0 || vodMetaFullData.getEstFlag().equals(EST_FLAG_FALSE))
-                    && (vodMetaFullData.getDisp_type().equals(DISP_TYPE_VIDEO_PROGRAM) || vodMetaFullData.getDisp_type().equals(DISP_TYPE_VIDEO_PACKAGE))) {
+                    && (vodMetaFullData.getDisp_type() != null && vodMetaFullData.getDisp_type().equals(DISP_TYPE_VIDEO_PROGRAM) || vodMetaFullData.getDisp_type().equals(DISP_TYPE_VIDEO_PACKAGE))) {
                 ContentsData data = new ContentsData();
 
                 int rentalType = isEnableRentalContents(activeDataList.get(i).getValidEndDate());

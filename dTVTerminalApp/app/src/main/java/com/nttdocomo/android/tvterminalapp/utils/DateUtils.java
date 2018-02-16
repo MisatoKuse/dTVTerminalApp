@@ -411,10 +411,10 @@ public class DateUtils {
     }
 
     /**
-     * エポック秒を MM/DD かつString値に変換.
+     * エポック秒を M/D(E) かつString値に変換.
      *
      * @param epochTime エポック秒
-     * @return YYYY/MM/DD日付
+     * @return M/D(E)日付
      */
     public static String formatEpochToDateString(final long epochTime) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_MDE);
