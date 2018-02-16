@@ -901,7 +901,8 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 switch (requestCommand) {
                     case START_APPLICATION:
                     case TITLE_DETAIL:
-                        menuRemoteController();
+                        // STB_REQUEST_COMMAND_TYPES misses case 抑制.
+                        // ※RELAY_RESULT_OK 応答時は requestCommand に START_APPLICATION/TITLE_DETAIL は設定されない
                         break;
                     case IS_USER_ACCOUNT_EXIST:
                         SharedPreferencesUtils.setSharedPreferencesStbInfo(this, mDlnaDmsItemList.get(mSelectDevice));
@@ -911,9 +912,11 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                         break;
                     case SET_DEFAULT_USER_ACCOUNT:
                     case CHECK_APPLICATION_VERSION_COMPATIBILITY:
-                        // STB_REQUEST_COMMAND_TYPES misses case 抑制. ※RELAY_RESULT_OK 応答時は requestCommand に SET_DEFAULT_USER_ACCOUNT/CHECK_APPLICATION_VERSION_COMPATIBILITY は設定されない
                     case KEYEVENT_KEYCODE_POWER:
                     case COMMAND_UNKNOWN:
+                        // STB_REQUEST_COMMAND_TYPES misses case 抑制.
+                        // ※RELAY_RESULT_OK 応答時は requestCommand に SET_DEFAULT_USER_ACCOUNT/CHECK_APPLICATION_VERSION_COMPATIBILITY
+                        // KEYEVENT_KEYCODE_POWER/COMMAND_UNKNOWNは設定されない
                     default:
                         break;
                 }
@@ -923,16 +926,14 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 DTVTLogger.debug("resultcode: " + resultcode);
                 switch (requestCommand) {
                     case KEYEVENT_KEYCODE_POWER:
-                        // STB_REQUEST_COMMAND_TYPES misses case 抑制. ※RELAY_RESULT_ERROR 応答時は requestCommand に KEYEVENT_KEYCODE_POWER は設定されない
-                        break;
+                        // STB_REQUEST_COMMAND_TYPES misses case 抑制.
+                        // ※RELAY_RESULT_ERROR 応答時は requestCommand に KEYEVENT_KEYCODE_POWER は設定されない
                     case START_APPLICATION:
                     case TITLE_DETAIL:
-                        RemoteControlRelayClient.STB_APPLICATION_TYPES appId
-                                = ((RemoteControlRelayClient.ResponseMessage) msg.obj).getApplicationTypes();
-                        startApplicationErrorHandler(resultcode, appId);
+                        // STB_REQUEST_COMMAND_TYPES misses case 抑制.
+                        // ※RELAY_RESULT_ERROR 応答時は requestCommand に START_APPLICATION/TITLE_DETAIL は設定されない
                         break;
                     case IS_USER_ACCOUNT_EXIST:
-                    case SET_DEFAULT_USER_ACCOUNT:
                         switch (resultcode) {
                             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_INTERNAL_ERROR://サーバエラー
                             case RemoteControlRelayClient.ResponseMessage.RELAY_RESULT_NOT_REGISTERED_SERVICE://ユーザアカウントチェックサービス未登録
@@ -956,6 +957,9 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                             default:
                                 break;
                         }
+                        break;
+                    case SET_DEFAULT_USER_ACCOUNT:
+                        // ※RELAY_RESULT_ERROR 応答時は requestCommand に SET_DEFAULT_USER_ACCOUNT は設定されない
                         break;
                     case CHECK_APPLICATION_VERSION_COMPATIBILITY:
                         switch (resultcode) {
