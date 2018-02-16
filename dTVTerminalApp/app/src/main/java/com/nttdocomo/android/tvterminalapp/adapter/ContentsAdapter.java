@@ -28,6 +28,7 @@ import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.SearchServiceType;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecordingReservationListDataProvider;
+import com.nttdocomo.android.tvterminalapp.dataprovider.RentalDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
@@ -645,8 +646,19 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 case TYPE_WEEKLY_RANK: // 週間ランキング
                     holder.tv_time.setText(DateUtils.getRecordShowListItem(Long.parseLong(listContentInfo.getTime())));
                     break;
-                case TYPE_VIDEO_RANK: // ビデオランキング
                 case TYPE_RENTAL_RANK: // レンタル一覧
+                    String time = listContentInfo.getTime();
+                    if (!time.equals(RentalDataProvider.ENABLE_VOD_WATCH_CONTENTS_UNLIMITED_HYPHEN)) {
+                        //視聴期限表示
+                        //TODO:現状の表示は〇/〇(曜日)→表示変更は別チケットで対応予定
+                        holder.tv_time.setVisibility(View.VISIBLE);
+                        holder.tv_time.setText(StringUtils.getConnectStrings(listContentInfo.getTime(),
+                                mContext.getString(R.string.contents_detail_until_date)));
+                    } else {
+                        holder.tv_time.setVisibility(View.GONE);
+                    }
+                    break;
+                case TYPE_VIDEO_RANK: // ビデオランキング
                 case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
                 case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
                 case TYPE_RECORDING_RESERVATION_LIST: // 録画予約一覧
@@ -841,7 +853,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         if (listContentInfo.getServiceId().equals(SearchServiceType.ServiceId.HIKARI_TV_FOR_DOCOMO)) {
             holder.tv_clip.setVisibility(View.VISIBLE);
 
-            holder.tv_clip.setOnClickListener(new View.OnClickListener() {
+            holder.tv_clip.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(final View view) {
                     //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、画像比較でクリップ済/未を判定する

@@ -9,10 +9,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
@@ -33,7 +35,7 @@ import java.util.List;
  * レンタル一覧を表示.
  */
 public class RentalListActivity extends BaseActivity implements AdapterView.OnItemClickListener,
-        AbsListView.OnScrollListener, RentalDataProvider.ApiDataProviderCallback {
+        AbsListView.OnScrollListener, RentalDataProvider.ApiDataProviderCallback, AbsListView.OnTouchListener {
 
     /**
      * レンタル一覧を取得するデータプロパイダ.
@@ -71,6 +73,22 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
      * データの追加読み込みディレイ時間.
      */
     private static final int LOAD_PAGE_TIME_DELAY = 1000;
+    /**
+     * スクロール位置の記録.
+     */
+    private int mFirstVisibleItem = 0;
+    /**
+     * 最後のスクロール方向が上ならばtrue.
+     */
+    private boolean mLastScrollUp = false;
+    /**
+     * 指を置いたY座標.
+     */
+    private float mStartY = 0;
+    /**
+     * プログレスダイアログ.
+     */
+    private RelativeLayout mRelativeLayout = null;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -90,7 +108,6 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
         setStatusBarColor(true);
 
         resetPaging();
-
         initView();
     }
 
@@ -103,6 +120,11 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
         mListView = findViewById(R.id.rental_list);
         mListView.setOnItemClickListener(this);
         mListView.setOnScrollListener(this);
+        mRelativeLayout = findViewById(R.id.rental_list_progress);
+        mRelativeLayout.setVisibility(View.VISIBLE);
+        mListView.setVisibility(View.GONE);
+        //スクロールの上下方向検知用のリスナーを設定
+        mListView.setOnTouchListener(this);
         if (mContentsList == null) {
             mContentsList = new ArrayList<>();
         }
@@ -148,6 +170,8 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
 
     @Override
     public void rentalListCallback(final List<ContentsData> dataList) {
+        mRelativeLayout.setVisibility(View.GONE);
+        mListView.setVisibility(View.VISIBLE);
         if (null == dataList) {
             //TODO:データ取得失敗時の仕様が未定のため仮実装
             resetPaging();
@@ -178,6 +202,8 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
     @Override
     public void rentalListNgCallback() {
         DTVTLogger.start();
+        mRelativeLayout.setVisibility(View.GONE);
+        mListView.setVisibility(View.VISIBLE);
         //データ取得失敗時
         resetCommunication();
     }
@@ -232,6 +258,11 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
                     return;
                 }
 
+                //スクロール位置がリストの先頭で上スクロールだった場合は、更新をせずに帰る
+                if (mFirstVisibleItem == 0 && mLastScrollUp) {
+                    return;
+                }
+
                 DTVTLogger.debug("onScrollStateChanged, do paging");
 
                 displayMoreData(true);
@@ -253,6 +284,13 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
     public void onScroll(final AbsListView absListView, final int firstVisibleItem,
                          final int visibleItemCount, final int totalItemCount) {
         synchronized (this) {
+            if (null == mContentsAdapter) {
+                return;
+            }
+
+            //現在のスクロール位置の記録
+            mFirstVisibleItem = firstVisibleItem;
+
             if (firstVisibleItem + visibleItemCount == totalItemCount && 0 != totalItemCount) {
                 DTVTLogger.debug("onScroll, paging, firstVisibleItem=" + firstVisibleItem
                         + ", totalItemCount=" + totalItemCount + ", visibleItemCount="
@@ -307,5 +345,40 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
         stopConnect.execute(mRentalDataProvider);
         StopContentsAdapterConnect stopAdapterConnect = new StopContentsAdapterConnect();
         stopAdapterConnect.execute(mContentsAdapter);
+    }
+
+
+    @Override
+    public boolean onTouch(final View view, final MotionEvent motionEvent) {
+        if (!(view instanceof ListView)) {
+            //今回はリストビューの事しか考えないので、他のビューならば帰る
+            return false;
+        }
+
+        //指を動かした方向を検知する
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                //指を降ろしたので、位置を記録
+                mStartY = motionEvent.getY();
+                break;
+            case MotionEvent.ACTION_UP:
+                //指を離したので、位置を記録
+                float mEndY = motionEvent.getY();
+
+                mLastScrollUp = false;
+
+                //スクロール方向の判定
+                if (mStartY < mEndY) {
+                    //終了時のY座標の方が大きいので、上スクロール
+                    mLastScrollUp = true;
+                }
+
+                break;
+
+            default:
+                //現状処理は無い・警告対応
+        }
+
+        return false;
     }
 }

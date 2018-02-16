@@ -147,6 +147,8 @@ public class VodMetaFullData implements Serializable {
     private boolean mClipExec = false;
     // クリップ未/済
     private boolean mClipStatus = false;
+    // ESTフラグ
+    private String mEstFlag = null;
 
     private static final long serialVersionUID = 3855428172716406303L;
 
@@ -1175,6 +1177,10 @@ public class VodMetaFullData implements Serializable {
                     // dTVフラグ
                     mDtvType = (String) data;
                     break;
+                case JsonConstants.META_RESPONSE_EST_FLAG:
+                    // ESTフラグ
+                    mEstFlag = (String) data;
+                    break;
                 case JsonConstants.META_RESPONSE_CHSVOD:
                     //CHSVOD
                     mChsvod = (String) data;
@@ -1453,5 +1459,13 @@ public class VodMetaFullData implements Serializable {
 
     public void setDtvType(String mDtvType) {
         this.mDtvType = mDtvType;
+    }
+
+    public String getEstFlag() {
+        return mEstFlag;
+    }
+
+    public void setEstFlag(String mEstFlag) {
+        this.mEstFlag = mEstFlag;
     }
 }

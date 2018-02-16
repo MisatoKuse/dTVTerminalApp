@@ -160,7 +160,12 @@ public class DateUtils {
     /**
      * 日付フォーマット.
      */
-    public static final String DATE_MMDDE = "MM/dd (E)";
+    private static final String DATE_PATTERN_HYPHEN = "yyyy-MM-dd HH:mm:ss";
+
+    /**
+     * 日付フォーマット.
+     */
+    public static final String DATE_MDE = "M/d (E)";
 
     /**
      * 日付フォーマット.
@@ -395,13 +400,24 @@ public class DateUtils {
     }
 
     /**
-     * エポック秒を YYYY/MM/DD かつString値に変換.
+     * エポック秒を YYYY/MM/DD HH:mm:ss かつString値に変換.
      *
      * @param epochTime エポック秒
      * @return YYYY/MM/DD日付
      */
     public static String formatEpochToString(final long epochTime) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_PATTERN);
+        return dateFormat.format(new Date(epochTime * 1000));
+    }
+
+    /**
+     * エポック秒を MM/DD かつString値に変換.
+     *
+     * @param epochTime エポック秒
+     * @return YYYY/MM/DD日付
+     */
+    public static String formatEpochToDateString(final long epochTime) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_MDE);
         return dateFormat.format(new Date(epochTime * 1000));
     }
 
@@ -602,6 +618,32 @@ public class DateUtils {
     }
 
     /**
+     * エポック秒に変換する(yyyy-MM-dd HH:mm:ss形式).
+     *
+     * @param strDate 現在日付
+     * @return エポック秒
+     */
+    public static long getHyphenEpochTime(final String strDate) {
+        long epochTime = 0;
+        if (null != strDate) {
+            SimpleDateFormat formatter = new SimpleDateFormat(DATE_PATTERN_HYPHEN);
+            //APIレスポンスの値がJSTとのこと
+            formatter.setTimeZone(TimeZone.getTimeZone("JST"));
+            Date gmt = null;
+            try {
+                gmt = formatter.parse(strDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            if (gmt != null) {
+                //ミリ秒を外す
+                epochTime = gmt.getTime() / 1000;
+            }
+        }
+        return epochTime;
+    }
+
+    /**
      * 現在時刻が指定したエポック秒の範囲内に収まっているかどうかを調べる.
      *
      * @param timeArray 検査したい日時
@@ -609,7 +651,7 @@ public class DateUtils {
      */
     public static boolean isBetweenNowTime(long... timeArray) {
         //パラメータが一つしかないなら即座に帰る
-        if(timeArray.length <= 1) {
+        if (timeArray.length <= 1) {
             return false;
         }
 
@@ -617,14 +659,14 @@ public class DateUtils {
         long finalTime = timeArray[0];
 
         //パラメータを展開する
-        for(long checkTime : timeArray) {
+        for (long checkTime : timeArray) {
             //より大きな値を取得
-            if(finalTime < checkTime) {
+            if (finalTime < checkTime) {
                 finalTime = checkTime;
             }
 
             //より小さな値を取得
-            if(startTime > checkTime) {
+            if (startTime > checkTime) {
                 startTime = checkTime;
             }
         }
