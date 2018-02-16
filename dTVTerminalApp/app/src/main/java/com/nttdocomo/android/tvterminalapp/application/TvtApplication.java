@@ -11,9 +11,6 @@ import android.os.Bundle;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * クラス機能：
  * プロセスとして起動する際に呼び出されるApplicationクラス.
@@ -21,54 +18,19 @@ import java.util.Map;
 
 public class TvtApplication extends Application implements Application.ActivityLifecycleCallbacks {
     /**
-     * ActivityのLifecycle記録用マップ.
+     * Started状態のActivityの数.
      */
-    private Map<String, Map<LIFECYCLE_TYPE, Integer>> mActivityMap = null;
+    private int mOnStartedCounter = 0;
     /**
-     * アプリケーションの起動時、最初のActivityであるかどうかのフラグ.
+     * Started状態の前回状態を保存.
      */
-    private boolean mIsFirstActivityStartUp = true;
-    /**
-     * 最前面にいるActivityのLocalClassNameを保持.
-     */
-    private String mShowActivityLocalName = null;
-
-    /**
-     * LifecycleMap用のキー値.
-     */
-    private enum LIFECYCLE_TYPE {
-        /**
-         * LifecycleMap用のキー値（onStart).
-         */
-        START,
-        /**
-         * LifecycleMap用のキー値（onResume).
-         */
-        RESUME,
-        /**
-         * LifecycleMap用のキー値（onPause).
-         */
-        PAUSE,
-        /**
-         * LifecycleMap用のキー値（onStop).
-         */
-        STOP
-    }
-    /**
-     * 非表示 → 表示 判定.
-     */
-    private boolean mIsChangeApplicationVisible = false;
-    /**
-     * BG → FG 判定.
-     */
-    private boolean mIsChangeApplicationForeground = false;
+    private int mTmpStartedCounter = 0;
 
     @Override
     public void onCreate() {
         super.onCreate();
         registerActivityLifecycleCallbacks(this);
         DTVTLogger.debug("application onCreate");
-        mActivityMap = new HashMap<>();
     }
 
     @Override
@@ -89,80 +51,50 @@ public class TvtApplication extends Application implements Application.ActivityL
     @Override
     public void onActivityCreated(final Activity activity, final Bundle savedInstanceState) {
         DTVTLogger.start("ActivityLocalClassName : " + activity.getLocalClassName());
-        mShowActivityLocalName = activity.getLocalClassName();
-        if (!mActivityMap.containsKey(activity.getLocalClassName())) {
-            mActivityMap.put(activity.getLocalClassName(), createNewActivityMap());
-        }
         DTVTLogger.end();
     }
 
     @Override
     public void onActivityDestroyed(final Activity activity) {
         DTVTLogger.start("ActivityLocalClassName : " + activity.getLocalClassName());
-        mActivityMap.remove(activity.getLocalClassName());
         DTVTLogger.end();
     }
 
     @Override
     public void onActivityResumed(final Activity activity) {
         DTVTLogger.start("ActivityLocalClassName : " + activity.getLocalClassName());
-
-        Map<LIFECYCLE_TYPE, Integer> map = mActivityMap.get(activity.getLocalClassName());
-        // Pause後であるならばカウントは一致する
-        mIsChangeApplicationForeground = (map.get(LIFECYCLE_TYPE.RESUME) != 0
-                && map.get(LIFECYCLE_TYPE.RESUME).equals(map.get(LIFECYCLE_TYPE.PAUSE)));
-        Integer cnt = map.get(LIFECYCLE_TYPE.RESUME) + 1;
-        map.put(LIFECYCLE_TYPE.RESUME, cnt);
-        mActivityMap.put(activity.getLocalClassName(), map);
-        DTVTLogger.debug("LifecycleCnt : " + cnt);
         DTVTLogger.end();
     }
 
     @Override
     public void onActivityPaused(final Activity activity) {
         DTVTLogger.start("ActivityLocalClassName : " + activity.getLocalClassName());
-        Map<LIFECYCLE_TYPE, Integer> map = mActivityMap.get(activity.getLocalClassName());
-        Integer cnt = map.get(LIFECYCLE_TYPE.PAUSE) + 1;
-        map.put(LIFECYCLE_TYPE.PAUSE, cnt);
-        mActivityMap.put(activity.getLocalClassName(), map);
-        DTVTLogger.debug("LifecycleCnt : " + cnt);
         DTVTLogger.end();
     }
 
     @Override
     public void onActivitySaveInstanceState(final Activity activity, final Bundle outState) {
+        DTVTLogger.start();
+        DTVTLogger.end();
     }
 
     @Override
     public void onActivityStarted(final Activity activity) {
         DTVTLogger.start("ActivityLocalClassName : " + activity.getLocalClassName());
-        Map<LIFECYCLE_TYPE, Integer> map = mActivityMap.get(activity.getLocalClassName());
-        // 表示中のActivity名とonStartを実行したActivityが異なる場合、バックキーによる画面遷移と判定
-        if (mShowActivityLocalName.equals(activity.getLocalClassName())) {
-            // Stop後であるならばカウントは一致する
-            mIsChangeApplicationVisible = (map.get(LIFECYCLE_TYPE.START) != 0
-                    && map.get(LIFECYCLE_TYPE.START).equals(map.get(LIFECYCLE_TYPE.STOP)));
-        } else {
-            // 表示中のActivity名を変更
-            mShowActivityLocalName = activity.getLocalClassName();
-            mIsChangeApplicationVisible = false;
-        }
-        Integer cnt = map.get(LIFECYCLE_TYPE.START) + 1;
-        map.put(LIFECYCLE_TYPE.START, cnt);
-        mActivityMap.put(activity.getLocalClassName(), map);
-        DTVTLogger.debug("LifecycleCnt : " + cnt);
+        // Startedのカウントを増やす
+        mTmpStartedCounter = mOnStartedCounter;
+        mOnStartedCounter++;
+
+        DTVTLogger.debug("Started : " + mOnStartedCounter);
         DTVTLogger.end();
     }
 
     @Override
     public void onActivityStopped(final Activity activity) {
         DTVTLogger.start("ActivityLocalClassName : " + activity.getLocalClassName());
+        mOnStartedCounter--;
 
-        Map<LIFECYCLE_TYPE, Integer> map = mActivityMap.get(activity.getLocalClassName());
-        Integer cnt = map.get(LIFECYCLE_TYPE.STOP) + 1;
-        map.put(LIFECYCLE_TYPE.STOP, cnt);
-        mActivityMap.put(activity.getLocalClassName(), map);
-        DTVTLogger.debug("LifecycleCnt : " + cnt);
+        DTVTLogger.debug("Started : " + mOnStartedCounter);
         DTVTLogger.end();
     }
 
@@ -172,50 +104,7 @@ public class TvtApplication extends Application implements Application.ActivityL
      * @return 判定結果
      */
     public boolean getIsChangeApplicationVisible() {
-        return mIsChangeApplicationVisible;
+        return !(mTmpStartedCounter > 0);
     }
 
-    /**
-     * アプリケーションがFGに変わったかどうかを判定.
-     *
-     * @return 判定結果
-     */
-    public boolean getIsChangeApplicationInForeground() {
-        return mIsChangeApplicationForeground;
-    }
-
-    /**
-     * 新規Activity用のLifecycleMapを生成.
-     *
-     * @return 初期化されたLifecycleMap
-     */
-    private Map<LIFECYCLE_TYPE, Integer> createNewActivityMap() {
-        DTVTLogger.start();
-        Map<LIFECYCLE_TYPE, Integer> lifecycleMap = new HashMap<>();
-        lifecycleMap.put(LIFECYCLE_TYPE.START, 0);
-        lifecycleMap.put(LIFECYCLE_TYPE.RESUME, 0);
-        lifecycleMap.put(LIFECYCLE_TYPE.PAUSE, 0);
-        lifecycleMap.put(LIFECYCLE_TYPE.STOP, 0);
-
-        DTVTLogger.end();
-        return lifecycleMap;
-    }
-
-    /**
-     * 起動後初回判定実行フラグを変更する（海外判定実行用）.
-     *
-     * @param isFirstActivityStartUp 起動後初回判定実施要否
-     */
-    public void setIsFirstActivityStartUp(final boolean isFirstActivityStartUp) {
-        mIsFirstActivityStartUp = isFirstActivityStartUp;
-    }
-
-    /**
-     * 起動後初回判定実行フラグを取得（海外判定実行用）.
-     *
-     * @return true:起動後初回判定 false:初回判定済み
-     */
-    public boolean getIsFirstActivityStartUp() {
-        return mIsFirstActivityStartUp;
-    }
 }
