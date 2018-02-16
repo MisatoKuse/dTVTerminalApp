@@ -609,8 +609,7 @@ public class BaseActivity extends FragmentActivity implements
         DTVTLogger.start();
         TvtApplication app = (TvtApplication) getApplication();
         // BG → FG でのonResumeかを判定
-        if (app.getIsChangeApplicationVisible()
-                || app.getIsFirstActivityStartUp()) {
+        if (app.getIsChangeApplicationVisible()) {
             permissionCheckExec();
         } else {
             // 通常のライフサイクル
@@ -650,7 +649,6 @@ public class BaseActivity extends FragmentActivity implements
         DTVTLogger.start();
         mRemoteControlRelayClient.resetHandler();
         //unregisterDevListDlna();
-        DlnaInterface.dlnaOnStop();
         DTVTLogger.end();
     }
 
@@ -1192,6 +1190,7 @@ public class BaseActivity extends FragmentActivity implements
             remoteControllerView.closeRemoteControllerUI();
         }
         dismissDialog();
+        DlnaInterface.dlnaOnStop();
         super.onPause();
     }
 
@@ -1941,16 +1940,11 @@ public class BaseActivity extends FragmentActivity implements
      */
     private void onReStartCommunication() {
         TvtApplication app = (TvtApplication) getApplication();
-        if (!app.getIsFirstActivityStartUp()) {
-            setRelayClientHandler();
-            checkDAccountOnRestart();
-            boolean r = DlnaInterface.dlnaOnResume();
-            if (!r) {
-                DTVTLogger.debug("BaseActivity.onResume, dlnaOnResume failed");
-            }
-        } else {
-            // アプリが起動して最初の1回のみ通る
-            app.setIsFirstActivityStartUp(false);
+        setRelayClientHandler();
+        checkDAccountOnRestart();
+        boolean r = DlnaInterface.dlnaOnResume();
+        if (!r) {
+            DTVTLogger.debug("BaseActivity.onResume, dlnaOnResume failed");
         }
         onStartCommunication();
     }

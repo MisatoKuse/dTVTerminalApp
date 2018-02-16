@@ -649,6 +649,8 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                         if (!oldHashMap.containsKey(info.get(i).mUdn)) {
                             mContentsList.add(hashMap);
                             mDlnaDmsItemList.add(info.get(i));
+                            //デバイス追加されたらbreak
+                            break;
                         }
                     }
                 } else {
