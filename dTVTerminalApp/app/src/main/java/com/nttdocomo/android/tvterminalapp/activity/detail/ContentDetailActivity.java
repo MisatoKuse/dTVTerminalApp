@@ -411,18 +411,20 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     public void onStartCommunication() {
         DTVTLogger.start();
         super.onStartCommunication();
-        if(mDetailDataProvider != null){
-            mDetailDataProvider.enableConnect();
-        }
-        if(mScaledDownProgramListDataProvider != null){
-            mScaledDownProgramListDataProvider.enableConnect();
-        }
-        enableThumbnailConnect();
-        //FragmentにContentsAdapterの通信を止めるように通知する
-        Fragment fragment = getCurrentFragment(1);
-        if(fragment != null){
-            DtvContentsChannelFragment channelFragment = (DtvContentsChannelFragment)fragment;
-            channelFragment.enableContentsAdapterCommunication();
+        if(!mIsPlayer){
+            if(mDetailDataProvider != null){
+                mDetailDataProvider.enableConnect();
+            }
+            if(mScaledDownProgramListDataProvider != null){
+                mScaledDownProgramListDataProvider.enableConnect();
+            }
+            enableThumbnailConnect();
+            //FragmentにContentsAdapterの通信を止めるように通知する
+            Fragment fragment = getCurrentFragment(1);
+            if(fragment != null){
+                DtvContentsChannelFragment channelFragment = (DtvContentsChannelFragment)fragment;
+                channelFragment.enableContentsAdapterCommunication();
+            }
         }
         DTVTLogger.end();
     }
