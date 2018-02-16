@@ -104,7 +104,7 @@ public class BaseActivity extends FragmentActivity implements
     /**
      * 中継アプリ連携クライアント.
      */
-    private RemoteControlRelayClient mRemoteControlRelayClient = null;
+    protected RemoteControlRelayClient mRemoteControlRelayClient = null;
     private UserState mUserState = UserState.LOGIN_NG;
 
     private long mLastClickTime = 0;
@@ -584,10 +584,8 @@ public class BaseActivity extends FragmentActivity implements
         mContext = this;
         mActivity = this;
         initView();
-
-        // TODO STBのIPアドレスはSTBにDMS機能が搭載された暁にはペアリング時に保存した値を用いるようにする.
         mRemoteControlRelayClient = RemoteControlRelayClient.getInstance();
-        mRemoteControlRelayClient.setDebugRemoteIp("192.168.11.15");
+
         //dアカウントの検知処理を追加する
         setDaccountControl();
         setRelayClientHandler();
