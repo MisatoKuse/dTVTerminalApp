@@ -31,6 +31,7 @@ import com.nttdocomo.android.tvterminalapp.utils.DBUtils;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -94,6 +95,10 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      * カテゴリ おすすめ番組(ホーム).
      */
     private final static int HOME_CONTENTS_SORT_RECOMMEND_PROGRAM = HOME_CONTENTS_SORT_CHANNEL + 1;
+    /**
+     * カテゴリ おすすめビデオ(ホーム).
+     */
+    private final static int HOME_CONTENTS_SORT_RECOMMEND_VOD = HOME_CONTENTS_SORT_CHANNEL + 2;
     /**
      * カテゴリ 今日のテレビランキング(ホーム).
      */
@@ -171,6 +176,14 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
      * ゼロ.
      */
     private final static String ZERO = "0";
+    /**
+     * サービスアイコン　カテゴリーID判定条件(ひかりTVのみ)
+     */
+    private final static String categoryId_Hikari[] = {"01", "02", "03", "04", "05", "06", "07", "08"};
+    /**
+     * サービスアイコン　カテゴリーID判定条件(ひかりTV、dTV)
+     */
+    private final static String categoryId_Hikari_dtv = "10";
 
     /**
      * コンストラクタ.
@@ -242,6 +255,8 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         viewHolder.mTime = view.findViewById(R.id.home_main_recyclerview_item_tv_time);
         viewHolder.mNew = view.findViewById(R.id.home_main_recyclerview_item_iv_new);
         viewHolder.mRankNum = view.findViewById(R.id.home_main_recyclerview_item_iv_rank_num);
+        viewHolder.mServiceIconFirst = view.findViewById(R.id.home_main_recyclerview_item_iv_service_icon_first);
+        viewHolder.mServiceIconSecond = view.findViewById(R.id.home_main_recyclerview_item_iv_service_icon_second);
         return viewHolder;
     }
 
@@ -274,6 +289,8 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
             case HOME_CONTENTS_SORT_RECOMMEND_PROGRAM:
                 //おすすめ番組 (1行目:タイトル 2行目:放送時間)
                 setRecommendInfo(contentsData, viewHolder);
+            case HOME_CONTENTS_SORT_RECOMMEND_VOD:
+                setRecommendServiceIcon(contentsData, viewHolder);
                 break;
             case HOME_CONTENTS_SORT_TODAY:
             case RANKING_CONTENTES_TODAY_SORT:
@@ -362,6 +379,53 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
                 mContext.startActivity(intent);
             }
         });
+    }
+
+    /**
+     * レコメンドしているコンテンツに対してサービスアイコンを表示する
+     *
+     * @param contentsData コンテンツデータ
+     * @param viewHolder ViewHolder
+     */
+    private void setRecommendServiceIcon(final ContentsData contentsData, final ViewHolder viewHolder) {
+        String serviceId = contentsData.getServiceId();
+        viewHolder.mServiceIconFirst.setVisibility(View.GONE);
+        viewHolder.mServiceIconSecond.setVisibility(View.GONE);
+        if(!TextUtils.isEmpty(serviceId) && DBUtils.isNumber(serviceId)){
+            String categoryId = contentsData.getCategoryId();
+            switch (Integer.parseInt(serviceId)){
+                //ひかりTV
+                case OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID:
+                    List<String> list = Arrays.asList(categoryId_Hikari);
+                    if(list.contains(categoryId)){
+                        viewHolder.mServiceIconFirst.setVisibility(View.VISIBLE);
+                        viewHolder.mServiceIconFirst.setImageResource(R.mipmap.label_service_hikari);
+                    } else if(categoryId_Hikari_dtv.equals(categoryId)){
+                        viewHolder.mServiceIconFirst.setVisibility(View.VISIBLE);
+                        viewHolder.mServiceIconSecond.setVisibility(View.VISIBLE);
+                        viewHolder.mServiceIconSecond.setImageResource(R.mipmap.label_service_hikari);
+                        viewHolder.mServiceIconFirst.setImageResource(R.mipmap.label_service_dtv_white);
+                    }
+                    break;
+                //dTV
+                case OtherContentsDetailData.DTV_CONTENTS_SERVICE_ID:
+                    viewHolder.mServiceIconFirst.setVisibility(View.VISIBLE);
+                    viewHolder.mServiceIconFirst.setImageResource(R.mipmap.label_service_dtv);
+                    break;
+                //アニメ
+                case OtherContentsDetailData.D_ANIMATION_CONTENTS_SERVICE_ID:
+                    viewHolder.mServiceIconFirst.setVisibility(View.VISIBLE);
+                    viewHolder.mServiceIconFirst.setImageResource(R.mipmap.label_service_danime);
+                    break;
+                //dTVチャンネル
+                case OtherContentsDetailData.DTV_CHANNEL_CONTENTS_SERVICE_ID:
+                    viewHolder.mServiceIconFirst.setVisibility(View.VISIBLE);
+                    viewHolder.mServiceIconFirst.setImageResource(R.mipmap.label_service_dch);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     /**
@@ -572,6 +636,14 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
          * ※ランキングコンテンツonly
          */
         TextView mRankNum;
+        /**
+         * おすすめサービスアイコン.
+         */
+        ImageView mServiceIconFirst;
+        /**
+         * おすすめサービスアイコン.
+         */
+        ImageView mServiceIconSecond;
     }
 
     /**
