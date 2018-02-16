@@ -695,9 +695,19 @@ public class BaseActivity extends FragmentActivity implements
             DTVTLogger.debug(String.format("msg:%s", msg));
             setRemoteProgressVisible(View.GONE);
             onStbClientResponse(msg);
-            mRemoteControlRelayClient.resetHandler();
+            resetRelayClientHandler();
         }
     };
+
+    /**
+     * STBからの応答を通知ハンドラーを解除する.
+     * ※リモコンの電源ON/OFF操作中の応答時にリモコンが表示されている間は解除しない
+     */
+    private void resetRelayClientHandler() {
+        if (null != remoteControllerView && !remoteControllerView.isTopRemoteControllerUI()) {
+            mRemoteControlRelayClient.resetHandler();
+        }
+    }
 
     /**
      * STB応答時処理.
