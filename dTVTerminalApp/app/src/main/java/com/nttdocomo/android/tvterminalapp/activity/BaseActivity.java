@@ -648,7 +648,7 @@ public class BaseActivity extends FragmentActivity implements
     protected void onStop() {
         super.onStop();
         DTVTLogger.start();
-        mRemoteControlRelayClient.resetHandler();
+        resetRelayClientHandler(true);
         //unregisterDevListDlna();
         DlnaInterface.dlnaOnStop();
         DTVTLogger.end();
@@ -695,18 +695,21 @@ public class BaseActivity extends FragmentActivity implements
             DTVTLogger.debug(String.format("msg:%s", msg));
             setRemoteProgressVisible(View.GONE);
             onStbClientResponse(msg);
-            resetRelayClientHandler();
+            resetRelayClientHandler(false);
         }
     };
 
     /**
      * STBからの応答を通知ハンドラーを解除する.
-     * ※リモコンの電源ON/OFF操作中の応答時にリモコンが表示されている間は解除しない
      *
      */
-    private void resetRelayClientHandler() {
-        if (null != remoteControllerView && !remoteControllerView.isTopRemoteControllerUI()) {
-            mRemoteControlRelayClient.resetHandler();
+    private void resetRelayClientHandler(boolean isTopRemoteControllerUI) {
+        if (null != remoteControllerView) {
+            // ※リモコンの電源ON/OFF操作中の応答時にリモコンが表示されている間は解除しない
+            if ((isTopRemoteControllerUI == remoteControllerView.isTopRemoteControllerUI())
+                    || isTopRemoteControllerUI) {
+                mRemoteControlRelayClient.resetHandler();
+            }
         }
     }
 
@@ -1904,7 +1907,7 @@ public class BaseActivity extends FragmentActivity implements
     private void showTransoceanicCommunicationDialog() {
         DTVTLogger.start();
         showTransoceanicCommunicationFlag = true;
-        mRemoteControlRelayClient.resetHandler();
+        resetRelayClientHandler(true);
         unregisterDevListDlna();
         DlnaInterface.dlnaOnStop();
         // TODO dアカウント通信を止める
