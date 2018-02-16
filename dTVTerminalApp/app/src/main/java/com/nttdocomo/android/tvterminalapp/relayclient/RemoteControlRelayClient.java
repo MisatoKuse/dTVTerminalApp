@@ -35,7 +35,7 @@ public class RemoteControlRelayClient {
 
     private static final int KEYCODE_UNKNOWN = 0;
     // TODO: STBがDMSとして動作しないためDMS機能が実装されるまで固定IPを使用する
-    private String ｍRemoteHost = "192.168.11.23";
+    private String mRemoteHost = "192.168.11.23";
 
     private static final String KEYCODE_DPAD_UP = "KEYCODE_DPAD_UP";
     private static final String KEYCODE_DPAD_DOWN = "KEYCODE_DPAD_DOWN";
@@ -658,7 +658,7 @@ public class RemoteControlRelayClient {
         @Override
         public void run() {
             StbConnectRelayClient stbDatagram = StbConnectRelayClient.getInstance();  // Socket通信
-            stbDatagram.setRemoteIp(ｍRemoteHost);
+            stbDatagram.setRemoteIp(mRemoteHost);
             if (mKeycodeRequest != null) {
                 stbDatagram.sendDatagram(mKeycodeRequest);
             }
@@ -732,7 +732,7 @@ public class RemoteControlRelayClient {
      */
     public boolean startApplicationDtvChannelRequest(final STB_APPLICATION_TYPES applicationType,
                                                      final DTVCHANNEL_SERVICE_CATEGORY_TYPES serviceCategoryType,
-                                                    final String crid, final String chno, Context context) {
+                                                     final String crid, final String chno, Context context) {
         String applicationId = getApplicationId(applicationType);
         String requestParam;
 
@@ -766,7 +766,7 @@ public class RemoteControlRelayClient {
     public boolean startApplicationHikariTvCategoryTerrestrialDigitalRequest(final String chno,
                                                                              final Context context) {
         return startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_TERRESTRIAL_DIGITAL,
-                    context, setCommandArgumentServiceRef(chno));
+                context, setCommandArgumentServiceRef(chno));
     }
 
     /**
@@ -779,7 +779,7 @@ public class RemoteControlRelayClient {
      * @return
      */
     public boolean startApplicationHikariTvCategorySatelliteBsRequest(final String chno,
-                                                                             final Context context) {
+                                                                      final Context context) {
         return startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_SATELLITE_BS,
                 context, setCommandArgumentServiceRef(chno));
     }
@@ -838,7 +838,7 @@ public class RemoteControlRelayClient {
      * @return
      */
     public boolean startApplicationHikariTvCategoryDtvchannelBroadcastRequest(final String chno,
-                                                                             final Context context) {
+                                                                              final Context context) {
         return startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_BROADCAST,
                 context, chno);
     }
@@ -853,7 +853,7 @@ public class RemoteControlRelayClient {
      * @return
      */
     public boolean startApplicationHikariTvCategoryDtvchannelMissedRequest(final String tvCid,
-                                                                              final Context context) {
+                                                                           final Context context) {
         return startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_MISSED,
                 context, rfc3986UrlEncode(tvCid));
     }
@@ -868,7 +868,7 @@ public class RemoteControlRelayClient {
      * @return
      */
     public boolean startApplicationHikariTvCategoryDtvchannelRelationRequest(final String tvCid,
-                                                                           final Context context) {
+                                                                             final Context context) {
         return startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES.H4D_CATEGORY_DTVCHANNEL_RELATION,
                 context, rfc3986UrlEncode(tvCid));
     }
@@ -940,7 +940,7 @@ public class RemoteControlRelayClient {
      * @return
      */
     private boolean startApplicationHikariTvCategoryRequest(H4D_SERVICE_CATEGORY_TYPES serviceCategoryTypes,
-                                                                    Context context, String ...args) {
+                                                            Context context, String ...args) {
         String requestParam;
 
         //ユーザID取得
@@ -1089,7 +1089,7 @@ public class RemoteControlRelayClient {
             ResponseMessage response = new ResponseMessage();
 
             if (mRequestParam != null) {
-                stbConnection.setRemoteIp(ｍRemoteHost);
+                stbConnection.setRemoteIp(mRemoteHost);
                 // アプリ起動要求をSTBへ送信して処理結果応答を取得する
                 if (stbConnection.connect()) {
                     if (stbConnection.send(mRequestParam)) {
@@ -1300,7 +1300,7 @@ public class RemoteControlRelayClient {
      */
     private String setTitleDetailDtvChannelRequest(String applicationId,
                                                    DTVCHANNEL_SERVICE_CATEGORY_TYPES serviceCategoryType,
-                                                    String crid, String chno, String userId) {
+                                                   String crid, String chno, String userId) {
 
         JSONObject requestJson = new JSONObject();
         String request = null;
@@ -1397,7 +1397,7 @@ public class RemoteControlRelayClient {
             DTVTLogger.debug(e);
             DTVTLogger.debug(String.format("serviceCategoryType:[%s] probably, the argument is insufficient"
                             + "service_ref:[%s] cid[%s] crid[%s] chno[%s] tv_cid[%s] episode_id[%s]",
-                            serviceCategoryType, serviceRef, cid, crid, chno, tvCid, episodeId));
+                    serviceCategoryType, serviceRef, cid, crid, chno, tvCid, episodeId));
         }
         return request;
     }
@@ -1464,8 +1464,9 @@ public class RemoteControlRelayClient {
      *
      * @param remoteIp
      */
-    public void setDebugRemoteIp(String remoteIp) {
-        ｍRemoteHost = remoteIp;
+    public void setRemoteIp(String remoteIp) {
+        //TODO 本番のSTBとペアリングしたい方はここをコメントアウトを外してください
+//        mRemoteHost = remoteIp;
     }
 
     /**

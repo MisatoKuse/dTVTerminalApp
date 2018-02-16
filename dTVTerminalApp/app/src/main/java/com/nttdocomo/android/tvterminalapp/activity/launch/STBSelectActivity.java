@@ -128,7 +128,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         if (intent != null) {
             mStartMode = intent.getIntExtra(FROM_WHERE, -1);
         }
-        //
         if (mStartMode == STBSelectFromMode.STBSelectFromMode_Launch.ordinal()) {
             setContentView(R.layout.stb_select_main_layout);
             initLaunchView();
@@ -546,11 +545,12 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         DTVTLogger.start();
+        //選択されたSTB番号を保持
+        mSelectDevice = i;
+        mRemoteControlRelayClient.setRemoteIp(mDlnaDmsItemList.get(i).mIPAddress);
 
         showPairingeView();
 
-        //選択されたSTB番号を保持
-        mSelectDevice = i;
         checkDAccountApp();
 //        //dカウント登録状態チェック
 //        checkDAccountLogin();
@@ -578,8 +578,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 }
             }
         }
-        //dアカチェックテスト終わったら、コメントアウト
-//        startActivity(STBConnectActivity.class, null);
         DTVTLogger.end();
     }
 
@@ -862,8 +860,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         intent.setClassName(D_ACCOUNT_APP_PACKAGE_NAME,
                 D_ACCOUNT_APP_PACKAGE_NAME + D_ACCOUNT_APP_ACTIVITY_NAME);
         try {
-            //端末内にdアカウントアプリがある場合はアプリ起動
-//            startActivity(intent);
 
             //dカウント登録状態チェック
             boolean isDAccountFlag = checkDAccountLogin();
@@ -874,7 +870,9 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
 
                 storeSTBData(mSelectDevice);
             } else {
+                //端末内にdアカウントアプリがある場合はアプリ起動
                 startActivity(intent);
+                mDaccountFlag = true;
             }
             //ログイン後にユーザ操作でこの画面に戻ってきた際には再度STB選択を行わせる
         } catch (ActivityNotFoundException e) {
@@ -906,9 +904,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                         menuRemoteController();
                         break;
                     case IS_USER_ACCOUNT_EXIST:
-                        //TODO 皆さんに影響内容ないようにコメントアウト
                         SharedPreferencesUtils.setSharedPreferencesStbInfo(this, mDlnaDmsItemList.get(mSelectDevice));
-//                        startActivity(STBConnectActivity.class, null);
                         Intent intent = new Intent(this, STBConnectActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
@@ -1037,7 +1033,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             }
         });
         failedRecordingReservationDialog.showDialog();
-//        return failedRecordingReservationDialog;
     }
 
     /**
@@ -1059,12 +1054,11 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         }
 
         //ペアリング画面の時はダイアログ出さない
-        if (getTitleText().equals(
-                getString(R.string.str_app_title))) {
+        if (mStartMode == STBSelectFromMode.STBSelectFromMode_Launch.ordinal()) {
             return;
         }
         //ペアリング設定画面かつユーザーがデバイスを選択してDアカウントを登録の場合はダイアログ出さない
-        if (getTitleText().equals(getString(R.string.str_stb_paring_setting_title)) && mDaccountFlag) {
+        if (mStartMode == STBSelectFromMode.STBSelectFromMode_Setting.ordinal() && mDaccountFlag) {
             mDaccountFlag = false;
             return;
         }
