@@ -627,8 +627,6 @@ public class DateUtils {
         long epochTime = 0;
         if (null != strDate) {
             SimpleDateFormat formatter = new SimpleDateFormat(DATE_PATTERN_HYPHEN);
-            //APIレスポンスの値がJSTとのこと
-            formatter.setTimeZone(TimeZone.getTimeZone("JST"));
             Date gmt = null;
             try {
                 gmt = formatter.parse(strDate);

@@ -59,7 +59,7 @@ public class RentalListDataManager {
                 JsonConstants.META_RESPONSE_DTV, JsonConstants.META_RESPONSE_TV_SERVICE,
                 JsonConstants.META_RESPONSE_CONTENT_TYPE, JsonConstants.META_RESPONSE_DTV_TYPE,
                 JsonConstants.META_RESPONSE_RATING, JsonConstants.META_RESPONSE_EPISODE_ID,
-                JsonConstants.META_RESPONSE_EST_FLAG
+                JsonConstants.META_RESPONSE_EST_FLAG, JsonConstants.META_RESPONSE_CID
         };
 
         //Daoクラス使用準備

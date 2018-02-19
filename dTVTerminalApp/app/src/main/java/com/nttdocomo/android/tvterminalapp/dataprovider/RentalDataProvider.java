@@ -222,31 +222,27 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
             VodMetaFullData vodMetaFullData = new VodMetaFullData();
             String dispType = vodMetaList.get(i).get(JsonConstants.META_RESPONSE_DISP_TYPE);
             String estFlg = vodMetaList.get(i).get(JsonConstants.META_RESPONSE_EST_FLAG);
-            //「estflg」が「0」または未設定かつ「disp_type」が「video_program」または「video_package」
-            if ((estFlg == null || estFlg.length() == 0 || estFlg.equals(EST_FLAG_FALSE))
-                    && (dispType != null && dispType.equals(DISP_TYPE_VIDEO_PROGRAM) || dispType.equals(DISP_TYPE_VIDEO_PACKAGE))) {
-                vodMetaFullData.setTitle(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_TITLE));
-                vodMetaFullData.setmThumb_448_252(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_THUMB_448));
-                vodMetaFullData.setAvail_start_date(Long.parseLong(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_START_DATE)));
-                vodMetaFullData.setAvail_end_date(Long.parseLong(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
-                vodMetaFullData.setDisp_type(dispType);
-                vodMetaFullData.setmService_id(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_SERVICE_ID));
-                vodMetaFullData.setPublish_end_date(Long.parseLong(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE)));
-                vodMetaFullData.setmSearch_ok(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_SEARCH_OK));
-                vodMetaFullData.setCrid(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_CRID));
-                vodMetaFullData.setmEvent_id(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_EVENT_ID));
-                vodMetaFullData.setTitle_id(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_TITLE_ID));
-                vodMetaFullData.setR_value(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_R_VALUE));
-                vodMetaFullData.setDtv(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_DTV));
-                vodMetaFullData.setmTv_service(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_TV_SERVICE));
-                vodMetaFullData.setmContent_type(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_CONTENT_TYPE));
-                vodMetaFullData.setDtvType(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_DTV_TYPE));
-                vodMetaFullData.setRating(Double.parseDouble(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_RATING)));
-                vodMetaFullData.setCid(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_CID));
-                vodMetaFullData.setEpisode_id(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_EPISODE_ID));
-                vodMetaFullData.setEstFlag(estFlg);
-                vodMetaFullDataList.add(vodMetaFullData);
-            }
+            vodMetaFullData.setTitle(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_TITLE));
+            vodMetaFullData.setmThumb_448_252(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_THUMB_448));
+            vodMetaFullData.setAvail_start_date(Long.parseLong(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_START_DATE)));
+            vodMetaFullData.setAvail_end_date(Long.parseLong(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_AVAIL_END_DATE)));
+            vodMetaFullData.setDisp_type(dispType);
+            vodMetaFullData.setmService_id(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_SERVICE_ID));
+            vodMetaFullData.setPublish_end_date(Long.parseLong(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_PUBLISH_END_DATE)));
+            vodMetaFullData.setmSearch_ok(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_SEARCH_OK));
+            vodMetaFullData.setCrid(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_CRID));
+            vodMetaFullData.setmEvent_id(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_EVENT_ID));
+            vodMetaFullData.setTitle_id(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_TITLE_ID));
+            vodMetaFullData.setR_value(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_R_VALUE));
+            vodMetaFullData.setDtv(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_DTV));
+            vodMetaFullData.setmTv_service(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_TV_SERVICE));
+            vodMetaFullData.setmContent_type(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_CONTENT_TYPE));
+            vodMetaFullData.setDtvType(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_DTV_TYPE));
+            vodMetaFullData.setRating(Double.parseDouble(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_RATING)));
+            vodMetaFullData.setCid(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_CID));
+            vodMetaFullData.setEpisode_id(vodMetaList.get(i).get(JsonConstants.META_RESPONSE_EPISODE_ID));
+            vodMetaFullData.setEstFlag(estFlg);
+            vodMetaFullDataList.add(vodMetaFullData);
         }
         ArrayList<ActiveData> activeDataList = new ArrayList<>();
         for (int i = 0; i < activeList.size(); i++) {
@@ -287,6 +283,10 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
         List<ContentsData> list = new ArrayList<>();
         ArrayList<VodMetaFullData> metaFullData = response.getVodMetaFullData();
         ArrayList<ActiveData> activeDataList = response.getVodActiveData();
+        //activeDataListとmetaFullDataは別系統のJsonから取得するため、サイズチェックを入れる
+        if (metaFullData.size() != activeDataList.size()) {
+            return list;
+        }
         for (int i = 0; i < response.getVodMetaFullData().size(); i++) {
             VodMetaFullData vodMetaFullData = metaFullData.get(i);
             //「estflg」が「0」または未設定かつ「disp_type」が「video_program」または「video_package」
