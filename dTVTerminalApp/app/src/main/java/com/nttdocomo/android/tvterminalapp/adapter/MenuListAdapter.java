@@ -332,7 +332,7 @@ public class MenuListAdapter extends BaseAdapter {
      */
     private int dip2px(final int dip) {
         float density = mContext.getResources().getDisplayMetrics().density;
-        DTVTLogger.debug("density: " + density);
+//        DTVTLogger.debug("density: " + density);
         return (int) (dip * density + 0.5f);
     }
 }
