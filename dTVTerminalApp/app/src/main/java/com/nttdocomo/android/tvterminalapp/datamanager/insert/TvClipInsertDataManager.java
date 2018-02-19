@@ -70,5 +70,6 @@ public class TvClipInsertDataManager {
             }
             tvClipListDao.insert(values);
         }
+        db.close();
     }
 }

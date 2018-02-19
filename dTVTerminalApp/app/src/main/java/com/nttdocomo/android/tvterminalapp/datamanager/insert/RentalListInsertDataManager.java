@@ -104,6 +104,7 @@ public class RentalListInsertDataManager {
 
             rentalListDao.insertActiveList(activeValues);
         }
+        db.close();
     }
 
     /**
@@ -161,5 +162,6 @@ public class RentalListInsertDataManager {
 
             rentalListDao.insertChActiveList(activeValues);
         }
+        db.close();
     }
  }

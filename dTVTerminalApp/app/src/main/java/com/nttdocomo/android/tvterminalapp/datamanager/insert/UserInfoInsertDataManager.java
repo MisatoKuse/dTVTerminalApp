@@ -99,7 +99,7 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
 
             makeRecord(userInfoListDao, list2, H4D_HEADER);
         }
-
+        db.close();
         DTVTLogger.end();
     }
 
@@ -165,6 +165,7 @@ public class UserInfoInsertDataManager extends AsyncTask<List<UserInfoList>, Voi
         //データを読み込む
         List<Map<String, String>> readMap = userInfoListDao.findById(DATA_COLUMNS);
 
+        db.close();
         //データを戻す
         mUserData = decodeData(readMap);
 

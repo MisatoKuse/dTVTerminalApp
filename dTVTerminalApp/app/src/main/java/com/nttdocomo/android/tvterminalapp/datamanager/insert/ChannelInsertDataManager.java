@@ -75,6 +75,7 @@ public class ChannelInsertDataManager {
             }
             channelListDao.insert(values);
         }
+        database.close();
         dbm.closeDatabase();
     }
 }

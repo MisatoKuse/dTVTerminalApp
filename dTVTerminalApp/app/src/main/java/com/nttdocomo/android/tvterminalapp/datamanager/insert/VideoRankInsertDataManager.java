@@ -57,5 +57,6 @@ public class VideoRankInsertDataManager {
             }
             weeklyRankListDao.insert(values);
         }
+        db.close();
     }
 }
