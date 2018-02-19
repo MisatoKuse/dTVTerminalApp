@@ -119,7 +119,7 @@ public class DaccountRegistService {
                         setDefIdReceiver, userAuthReceiver, deleteIdReceiver,
                         invalidateIdReceiver, callback);
             } catch (RemoteException e) {
-                e.printStackTrace();
+                DTVTLogger.debug(e);
                 //例外が発生した場合は、自前で内部エラーにする
                 result = IDimDefines.RESULT_INTERNAL_ERROR;
             }

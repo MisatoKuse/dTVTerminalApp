@@ -299,7 +299,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                 setDlParam(getDownLoadParam());
                 start();
             } catch (Exception e){
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             }
         } else {
             stopService();
@@ -486,7 +486,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                                 DTVTLogger.debug("delete download file fail ");
                             }
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            DTVTLogger.debug(e);
                         }
                     }
                 }

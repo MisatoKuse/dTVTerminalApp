@@ -254,7 +254,6 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
             SimpleDateFormat formatDialog = new SimpleDateFormat(DateUtils.DATE_YYYY_MM_DD_J, Locale.JAPAN);
             mToDay = formatDialog.format(date.getTime());
         } catch (ParseException e){
-            e.printStackTrace();
             DTVTLogger.debug(e);
         }
     }
@@ -293,7 +292,6 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
             }
             return formatDay;
         } catch (ParseException e){
-            e.printStackTrace();
             DTVTLogger.debug(e);
         }
         return sdf.format(calendar.getTime());

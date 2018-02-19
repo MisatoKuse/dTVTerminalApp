@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.MyChannelInsertDataManager;
@@ -56,7 +57,7 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
                     DbThread t = new DbThread(handler, this, MY_CHANNEL_UPDATE);
                     t.start();//データをDBに入れる
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    DTVTLogger.debug(e);
                 }
             }
             if(mApiDataProviderCallback != null){
