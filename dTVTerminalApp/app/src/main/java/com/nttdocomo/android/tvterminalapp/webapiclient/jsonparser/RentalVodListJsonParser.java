@@ -160,9 +160,8 @@ public class RentalVodListJsonParser extends AsyncTask<Object, Object, Object> {
                     }
                     if (!listData.isNull(JsonConstants.META_RESPONSE_VAILD_END_DATE)) {
                         // active_list の valid_end_date は yyyy/MM/dd HH:mm:ss 形式で返却されるためエポック秒変換
-//                        activeData.setValidEndDate(DateUtils.getHyphenEpochTime(listData.getString(
-//                                JsonConstants.META_RESPONSE_VAILD_END_DATE)));
-                        activeData.setValidEndDate(DateUtils.getHyphenEpochTime("2018-02-28 12:00:00"));
+                        activeData.setValidEndDate(DateUtils.getHyphenEpochTime(listData.getString(
+                                JsonConstants.META_RESPONSE_VAILD_END_DATE)));
                     }
 
                     vodActiveDataList.add(activeData);
