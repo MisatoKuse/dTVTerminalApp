@@ -206,6 +206,11 @@ public class BaseActivity extends FragmentActivity implements
      * 国内通信 MCC (441 Japan).
      */
     private static final int DOMESTIC_COMMUNICATION_MCC_2 = 441;
+    /**
+     * 国内通信Flg
+     */
+    private boolean mIsInJapan = true;
+
 
     /**
      * 関数機能：
@@ -1816,7 +1821,6 @@ public class BaseActivity extends FragmentActivity implements
         dialog.setApiCancelCallback(new CustomDialog.ApiCancelCallback() {
             @Override
             public void onCancelCallback() {
-                onTransoceanicCommunicationDialogNo();
                 mShowDialog = createPermissionDeniedDialog();
                 mShowDialog.showDialog();
             }
@@ -1888,9 +1892,11 @@ public class BaseActivity extends FragmentActivity implements
             if (intMcc == DOMESTIC_COMMUNICATION_MCC_1
                     || intMcc == DOMESTIC_COMMUNICATION_MCC_2) {
                 // 国内通信
+                mIsInJapan = true;
                 onReStartCommunication();
             } else {
                 // 海外通信
+                mIsInJapan = false;
                 showTransoceanicCommunicationDialog();
                 mShowDialog = createTransoceanicCommunicationDialog();
                 mShowDialog.showDialog();
@@ -1978,10 +1984,7 @@ public class BaseActivity extends FragmentActivity implements
         onStartCommunication();
     }
 
-    /**
-     * DTCP持ち出しダウンロード中Override
-     */
-    protected void onTransoceanicCommunicationDialogNo(){
-
+    protected boolean isInJapan(){
+        return mIsInJapan;
     }
 }

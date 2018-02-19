@@ -751,12 +751,4 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             fra.delItemData(dlPaht);
         }
     }
-
-    /**
-     * DTCP持ち出しダウンロード中Override
-     */
-    @Override
-    protected void onTransoceanicCommunicationDialogNo(){
-        DlDataProvider.cancelAll();
-    }
 }
