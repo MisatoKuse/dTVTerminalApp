@@ -738,11 +738,15 @@ public class BaseActivity extends FragmentActivity implements
                         showRemoteControllerView();
                         break;
                     case IS_USER_ACCOUNT_EXIST:
+                        // 処理なし
+                        break;
                     case SET_DEFAULT_USER_ACCOUNT:
                     case CHECK_APPLICATION_VERSION_COMPATIBILITY:
-                        // STB_REQUEST_COMMAND_TYPES misses case 抑制. ※RELAY_RESULT_OK 応答時は requestCommand に SET_DEFAULT_USER_ACCOUNT/CHECK_APPLICATION_VERSION_COMPATIBILITY は設定されない
+                        // STB_REQUEST_COMMAND_TYPES misses case 抑制.
+                        // ※RELAY_RESULT_OK 応答時は requestCommand に SET_DEFAULT_USER_ACCOUNT/CHECK_APPLICATION_VERSION_COMPATIBILITY は設定されない
                     case KEYEVENT_KEYCODE_POWER:
                     case COMMAND_UNKNOWN:
+                        // 処理なし
                         break;
                     default:
                         break;
@@ -753,7 +757,8 @@ public class BaseActivity extends FragmentActivity implements
                 DTVTLogger.debug(String.format("resultCode:%s", resultCode));
                 switch (requestCommand) {
                     case KEYEVENT_KEYCODE_POWER:
-                        // STB_REQUEST_COMMAND_TYPES misses case 抑制. ※RELAY_RESULT_ERROR 応答時は requestCommand に KEYEVENT_KEYCODE_POWER は設定されない
+                        // STB_REQUEST_COMMAND_TYPES misses case 抑制.
+                        // ※RELAY_RESULT_ERROR 応答時は requestCommand に KEYEVENT_KEYCODE_POWER は設定されない
                         break;
                     case START_APPLICATION:
                     case TITLE_DETAIL:
