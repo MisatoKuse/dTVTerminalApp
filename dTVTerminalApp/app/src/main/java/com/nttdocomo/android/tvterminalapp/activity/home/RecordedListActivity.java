@@ -264,24 +264,29 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
      * DMSデバイスを取り始める
      */
     private void getData() {
-        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-        // 未ペアリング時
-        if (dlnaDmsItem.mControlUrl.isEmpty()) {
-            Toast.makeText(this, getString(R.string.main_setting_not_paring) ,Toast.LENGTH_SHORT).show();
-            setProgressBarGone();
-        } else {
-            if (mDlnaProvRecVideo == null) {
-                mDlnaProvRecVideo = new DlnaProvRecVideo();
-            }
-            if (mDlnaProvRecVideo.start(dlnaDmsItem, this)) {
-                clearFragment(0);
-                boolean res = mDlnaProvRecVideo.browseRecVideoDms();
-                if(!res){
-                    DTVTLogger.debug("browseRecVideoDms false");
-                }
-            } else {
+        if(isInJapan()) {
+            DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
+            // 未ペアリング時
+            if (dlnaDmsItem.mControlUrl.isEmpty()) {
+                Toast.makeText(this, getString(R.string.main_setting_not_paring), Toast.LENGTH_SHORT).show();
                 setProgressBarGone();
+            } else {
+                if (mDlnaProvRecVideo == null) {
+                    mDlnaProvRecVideo = new DlnaProvRecVideo();
+                }
+                if (mDlnaProvRecVideo.start(dlnaDmsItem, this)) {
+                    clearFragment(0);
+                    boolean res = mDlnaProvRecVideo.browseRecVideoDms();
+                    if (!res) {
+                        DTVTLogger.debug("browseRecVideoDms false");
+                    }
+                } else {
+                    setProgressBarGone();
+                }
             }
+        } else {
+            DlDataProvider.cancelAll();
+            setProgressBarGone();
         }
     }
 
