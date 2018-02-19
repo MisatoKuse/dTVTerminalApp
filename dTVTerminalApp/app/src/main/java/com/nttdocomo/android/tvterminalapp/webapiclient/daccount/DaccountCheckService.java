@@ -19,25 +19,28 @@ import com.nttdocomo.android.tvterminalapp.common.DaccountConstants;
 import static android.content.Context.BIND_AUTO_CREATE;
 
 /**
- * dアカウント連携・サービス登録状況取得
+ * dアカウント連携・サービス登録状況取得.
  */
-public class DaccountCheckService {
-
-    //コンテキストの控え
+class DaccountCheckService {
+    /**
+     * コンテキストの控え.
+ */
     private Context mContext = null;
-
-    //コールバックの控え
+    /**
+     * コールバックの控え.
+     */
     private DaccountCheckServiceCallBack mDaccountCheckServiceCallBack = null;
-
-    //dアカウント設定アプリの接続用のクラス
+    /**
+     * dアカウント設定アプリの接続用のクラス.
+     */
     private IDimServiceAppService mService = null;
 
     /**
-     * 結果を返すコールバック
+     * 結果を返すコールバック.
      */
-    public interface DaccountCheckServiceCallBack {
+    interface DaccountCheckServiceCallBack {
         /**
-         * チェック結果を返す
+         * チェック結果を返す.
          *
          * @param result 結果コード 0ならば成功
          */
@@ -45,14 +48,12 @@ public class DaccountCheckService {
     }
 
     /**
-     * 各コールバックの動作を定義する
+     * 各コールバックの動作を定義する.
      */
     private final IDimServiceAppCallbacks callback = new IDimServiceAppCallbacks.Stub() {
         @Override
-        public void onCompleteCheckService(int appReqId,
-                                           int result,
-                                           String version,
-                                           String protocolVersion) throws RemoteException {
+        public void onCompleteCheckService(final int appReqId, final int result,
+                                           final String version, final String protocolVersion) throws RemoteException {
             //dアカウント設定アプリと切断する
             daccountServiceEnd();
 
@@ -66,44 +67,40 @@ public class DaccountCheckService {
 
         // 以下のメソッドはJavaのインターフェースの仕様により宣言を強要されているだけで、ここで使われることはない
         @Override
-        public void onCompleteRegistService(int appReqId, int result) throws RemoteException {
+        public void onCompleteRegistService(final int appReqId, final int result) throws RemoteException {
 
         }
 
         @Override
-        public void onCompleteGetAuthToken(int appReqId, int result, String id,
-                                           String token,
-                                           String appCheckKey) throws RemoteException {
-
+        public void onCompleteGetAuthToken(final int appReqId, final int result, final String id,
+                                           final String token, final String appCheckKey) throws RemoteException {
         }
 
         @Override
-        public void onCompleteGetIdStatus(int appReqId, int result, String id,
-                                          boolean isDefault, boolean hasMsn,
-                                          boolean authStatus) throws RemoteException {
-
+        public void onCompleteGetIdStatus(final int appReqId, final int result,
+                                          final String id, final boolean isDefault,
+                                          final boolean hasMsn, final boolean authStatus) throws RemoteException {
         }
 
         @Override
-        public void onCompleteGetOneTimePassword(int appReqId, int result, String id,
-                                                 String oneTimePassword,
-                                                 String appCheckKey) throws RemoteException {
-
+        public void onCompleteGetOneTimePassword(final int appReqId, final int result,
+                                                 final String id, final String oneTimePassword,
+                                                 final String appCheckKey) throws RemoteException {
         }
     };
 
     /**
-     * dアカウント設定アプリ接続・切断処理のコールバック
+     * dアカウント設定アプリ接続・切断処理のコールバック.
      */
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
-        public void onServiceDisconnected(ComponentName name) {
+        public void onServiceDisconnected(final ComponentName name) {
             //切断されたのでヌルを格納
             mService = null;
         }
 
         @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
+        public void onServiceConnected(final ComponentName name, final IBinder service) {
             //dアカウント設定アプリとの接続に成功したので、中のメソッドを呼び出せるようにする
             mService = IDimServiceAppService.Stub.asInterface(service);
 
@@ -128,8 +125,8 @@ public class DaccountCheckService {
             }
 
             //結果コードを判定
-            if (IDimDefines.REQUEST_ACCEPTED != result &&
-                    mDaccountCheckServiceCallBack != null) {
+            if (IDimDefines.REQUEST_ACCEPTED != result
+                    && mDaccountCheckServiceCallBack != null) {
                 //正常以外の結果ならば、コールバックを呼んで終わらせる
                 mDaccountCheckServiceCallBack.checkServiceCallBack(result);
             }
@@ -137,19 +134,19 @@ public class DaccountCheckService {
     };
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      */
-    public DaccountCheckService() {
+    DaccountCheckService() {
     }
 
     /**
-     * サービスチェック処理を開始する
+     * サービスチェック処理を開始する.
      *
      * @param context                      コンテキスト
      * @param daccountCheckServiceCallBack 結果を返すコールバック
      */
-    public synchronized void execDaccountCheckService(
-            Context context, DaccountCheckServiceCallBack daccountCheckServiceCallBack) {
+    synchronized void execDaccountCheckService(
+            final Context context, final DaccountCheckServiceCallBack daccountCheckServiceCallBack) {
         DTVTLogger.start();
 
         //コンテキストとコールバックの取得
@@ -161,7 +158,7 @@ public class DaccountCheckService {
     }
 
     /**
-     * dアカウントアプリをバインドする
+     * dアカウントアプリをバインドする.
      */
     private void bindDimServiceAppService() {
         //dアカウント設定アプリを指定して、接続を試みる
@@ -179,9 +176,9 @@ public class DaccountCheckService {
     }
 
     /**
-     * dアカウントアプリを切り離す
+     * dアカウントアプリを切り離す.
      */
-    private void daccountServiceEnd() {
+    void daccountServiceEnd() {
         mContext.unbindService(mServiceConnection);
     }
 }

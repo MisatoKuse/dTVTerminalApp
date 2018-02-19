@@ -11,7 +11,7 @@ public class IDimDefines {
 
     /**
      * <pre>
-     * 処理結果定義. 
+     * 処理結果定義.
      *     ユーザ状態異常.
      * </pre>
      */
@@ -19,7 +19,7 @@ public class IDimDefines {
 
     /**
      * <pre>
-     * 処理結果定義. 
+     * 処理結果定義.
      *     端末識別キー未払い出し.
      * </pre>
      */
@@ -27,7 +27,7 @@ public class IDimDefines {
 
     /**
      * <pre>
-     * 処理結果定義. 
+     * 処理結果定義.
      *     有効IDなし.
      * </pre>
      */
@@ -35,7 +35,7 @@ public class IDimDefines {
 
     /**
      * <pre>
-     * 処理結果定義. 
+     * 処理結果定義.
      *     認証状態無効.
      * </pre>
      */
@@ -43,7 +43,7 @@ public class IDimDefines {
 
     /**
      * <pre>
-     * 処理結果定義. 
+     * 処理結果定義.
      *     サービス未登録.
      * </pre>
      */
@@ -51,7 +51,7 @@ public class IDimDefines {
 
     /**
      * <pre>
-     * 処理結果定義. 
+     * 処理結果定義.
      *     ブラックリスト一致.
      * </pre>
      */
@@ -59,7 +59,7 @@ public class IDimDefines {
 
     /**
      * <pre>
-     * 処理結果定義. 
+     * 処理結果定義.
      *     ホワイトリスト不一致.
      * </pre>
      */
@@ -67,7 +67,7 @@ public class IDimDefines {
 
     /**
      * <pre>
-     * 処理結果定義. 
+     * 処理結果定義.
      *     利用不可.
      * </pre>
      */
@@ -75,7 +75,7 @@ public class IDimDefines {
 
     /**
      * <pre>
-     * 処理結果定義. 
+     * 処理結果定義.
      *     動作対象外.
      * </pre>
      */
@@ -83,7 +83,7 @@ public class IDimDefines {
 
     /**
      * <pre>
-     * 処理結果定義. 
+     * 処理結果定義.
      *     ユーザタイムアウト.
      * </pre>
      */
@@ -91,7 +91,7 @@ public class IDimDefines {
 
     /**
      * <pre>
-     * 処理結果定義. 
+     * 処理結果定義.
      *     ユーザキャンセル.
      * </pre>
      */
@@ -99,7 +99,7 @@ public class IDimDefines {
 
     /**
      * <pre>
-     * 処理結果定義. 
+     * 処理結果定義.
      *     サーバエラー.
      * </pre>
      */
@@ -107,7 +107,7 @@ public class IDimDefines {
 
     /**
      * <pre>
-     * 処理結果定義. 
+     * 処理結果定義.
      *     ネットワークエラー.
      * </pre>
      */
@@ -115,7 +115,7 @@ public class IDimDefines {
 
     /**
      * <pre>
-     * 処理結果定義. 
+     * 処理結果定義.
      *     内部エラー.
      * </pre>
      */
@@ -123,7 +123,7 @@ public class IDimDefines {
 
     /**
      * <pre>
-     * 処理結果定義. 
+     * 処理結果定義.
      *     正常終了.
      * </pre>
      */
@@ -131,7 +131,7 @@ public class IDimDefines {
 
     /**
      * <pre>
-     * 処理結果定義. 
+     * 処理結果定義.
      *     サービス利用可能.
      * </pre>
      */
@@ -139,7 +139,7 @@ public class IDimDefines {
 
     /**
      * <pre>
-     * 処理結果定義. 
+     * 処理結果定義.
      *     サービス登録済み.
      * </pre>
      */
@@ -147,7 +147,7 @@ public class IDimDefines {
 
     /**
      * <pre>
-     * 処理結果定義. 
+     * 処理結果定義.
      *     ID利用可.
      * </pre>
      */
@@ -155,7 +155,7 @@ public class IDimDefines {
 
     /**
      * <pre>
-     * 処理結果定義. 
+     * 処理結果定義.
      *     セキュリティコード認証成功.
      * </pre>
      */
@@ -164,7 +164,7 @@ public class IDimDefines {
     // 要求結果.
     /**
      * <pre>
-     * 要求結果. 
+     * 要求結果.
      *     要求受付成功.
      * </pre>
      */
@@ -172,7 +172,7 @@ public class IDimDefines {
 
     /**
      * <pre>
-     * 要求結果. 
+     * 要求結果.
      *     要求受付失敗.
      * </pre>
      */
@@ -306,8 +306,8 @@ public class IDimDefines {
          */
         public static final int NO_ID = -1;
     }
-    
-        /**
+
+    /**
      * <pre>
      * セキュリティコード認証の認証オプション.
      * </pre>

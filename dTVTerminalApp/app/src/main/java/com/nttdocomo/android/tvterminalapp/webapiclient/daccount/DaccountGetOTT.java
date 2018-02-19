@@ -19,55 +19,67 @@ import com.nttdocomo.android.tvterminalapp.common.DaccountConstants;
 import static android.content.Context.BIND_AUTO_CREATE;
 
 /**
- * dアカウント連携・OTT取得
+ * dアカウント連携・OTT取得.
  */
 public class DaccountGetOTT {
 
-    //コンテキストの控え
+    /**
+     * コンテキストの控え.
+     */
     private Context mContext = null;
 
-    //コールバックの控え
+    /**
+     * コールバックの控え.
+     */
     private DaccountGetOttCallBack mDaccountGetOttCallBack = null;
 
-    //dアカウント設定アプリの接続用のクラス
+    /**
+     * dアカウント設定アプリの接続用のクラス.
+     */
     private IDimServiceAppService mService = null;
 
     /**
-     * 結果を返すコールバック
+     * 結果を返すコールバック.
      */
     public interface DaccountGetOttCallBack {
         /**
-         * OTT取得結果を返す
+         * OTT取得結果を返す.
          *
          * @param result          結果コード 0ならば成功
+         * @param id              id
          * @param oneTimePassword OTT
          */
         void getOttCallBack(int result, String id, String oneTimePassword);
     }
 
     /**
-     * 各コールバックの動作を定義する
+     * 各コールバックの動作を定義する.
      */
     private final IDimServiceAppCallbacks callback = new IDimServiceAppCallbacks.Stub() {
         @Override
-        public void onCompleteGetOneTimePassword(int appReqId, int result,
-                                                 String id,
-                                                 String oneTimePassword,
-                                                 String appCheckKey) throws RemoteException {
+        public void onCompleteGetOneTimePassword(final int appReqId, final int result, final String id,
+                                                 final String oneTimePassword, final String appCheckKey) throws RemoteException {
             //dアカウント設定アプリと切断する
             daccountServiceEnd();
 
+            String resultId;
+            String resultOneTimePassword;
+
             //ヌルなら空文字に変更
             if (id == null) {
-                id = "";
+                resultId = "";
+            } else {
+                resultId = id;
             }
             if (oneTimePassword == null) {
-                oneTimePassword = "";
+                resultOneTimePassword = "";
+            } else {
+                resultOneTimePassword = oneTimePassword;
             }
 
             if (mDaccountGetOttCallBack != null) {
                 //結果を呼び出し元に返す
-                mDaccountGetOttCallBack.getOttCallBack(result, id, oneTimePassword);
+                mDaccountGetOttCallBack.getOttCallBack(result, resultId, resultOneTimePassword);
             }
 
             DTVTLogger.end();
@@ -75,38 +87,38 @@ public class DaccountGetOTT {
 
         // 以下のメソッドはJavaのインターフェースの仕様により宣言を強要されているだけで、ここで使われることはない
         @Override
-        public void onCompleteCheckService(int appReqId, int result, String version,
-                                           String protocolVersion) throws RemoteException {
+        public void onCompleteCheckService(final int appReqId, final int result, final String version,
+                                           final String protocolVersion) throws RemoteException {
         }
 
         @Override
-        public void onCompleteRegistService(int appReqId, int result) throws RemoteException {
+        public void onCompleteRegistService(final int appReqId, final int result) throws RemoteException {
         }
 
         @Override
-        public void onCompleteGetAuthToken(int appReqId, int result, String id, String token,
-                                           String appCheckKey) throws RemoteException {
+        public void onCompleteGetAuthToken(final int appReqId, final int result, final String id,
+                                           final String token, final String appCheckKey) throws RemoteException {
         }
 
         @Override
-        public void onCompleteGetIdStatus(int appReqId, int result, String id,
-                                          boolean isDefault, boolean hasMsn,
-                                          boolean authStatus) throws RemoteException {
+        public void onCompleteGetIdStatus(final int appReqId, final int result, final String id,
+                                          final boolean isDefault, final boolean hasMsn,
+                                          final boolean authStatus) throws RemoteException {
         }
     };
 
     /**
-     * dアカウント設定アプリ接続・切断処理のコールバック
+     * dアカウント設定アプリ接続・切断処理のコールバック.
      */
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
-        public void onServiceDisconnected(ComponentName name) {
+        public void onServiceDisconnected(final ComponentName name) {
             //切断されたのでヌルを格納
             mService = null;
         }
 
         @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
+        public void onServiceConnected(final ComponentName name, final IBinder service) {
             //dアカウント設定アプリとの接続に成功したので、中のメソッドを呼び出せるようにする
             mService = IDimServiceAppService.Stub.asInterface(service);
 
@@ -143,19 +155,19 @@ public class DaccountGetOTT {
     };
 
     /**
-     * コンストラクタ
+     * コンストラクタ.
      */
     public DaccountGetOTT() {
     }
 
     /**
-     * OTT取得処理を開始する
+     * OTT取得処理を開始する.
      *
      * @param context                コンテキスト
      * @param daccountGetOttCallBack 結果を返すコールバック
      */
-    public synchronized void execDaccountGetOTT(Context context,
-                                                DaccountGetOttCallBack daccountGetOttCallBack) {
+    public synchronized void execDaccountGetOTT(final Context context,
+                                                final DaccountGetOttCallBack daccountGetOttCallBack) {
         DTVTLogger.start();
 
         //コンテキストとコールバックの取得
@@ -167,7 +179,7 @@ public class DaccountGetOTT {
     }
 
     /**
-     * dアカウントアプリをバインドする
+     * dアカウントアプリをバインドする.
      */
     private void bindDimServiceAppService() {
         //dアカウント設定アプリを指定して、接続を試みる
@@ -184,9 +196,9 @@ public class DaccountGetOTT {
     }
 
     /**
-     * dアカウントアプリを切り離す
+     * dアカウントアプリを切り離す.
      */
-    private void daccountServiceEnd() {
+    void daccountServiceEnd() {
         mContext.unbindService(mServiceConnection);
     }
 }

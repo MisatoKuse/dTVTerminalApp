@@ -24,6 +24,8 @@ public class TutorialActivity extends BaseActivity implements View.OnClickListen
         setContentView(R.layout.tutorial_main_layout);
 
         setContents();
+        // dアカウント処理は不要
+        setUnnecessaryDaccountRegistService();
     }
 
     private void setContents() {
