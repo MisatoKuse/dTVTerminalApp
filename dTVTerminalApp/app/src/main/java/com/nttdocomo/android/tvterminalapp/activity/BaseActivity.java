@@ -723,11 +723,10 @@ public class BaseActivity extends FragmentActivity implements
      * リモコンの表示.
      */
     private void showRemoteControllerView() {
-        // グローバルメニューまたはコンテンツ詳細からのサービスアプリ連携の正常応答時にリモコンが表示されてない場合のみ表示する
-        if (null != remoteControllerView) {
-            if (!remoteControllerView.isTopRemoteControllerUI()) {
+        // グローバルメニューまたはコンテンツ詳細からのサービスアプリ連携の正常応答時にリモコンが表示されてない場合のみ表示する.
+        if ((null != remoteControllerView && !remoteControllerView.isTopRemoteControllerUI())
+                || null == remoteControllerView) {
                 menuRemoteController();
-            }
         }
     }
 
