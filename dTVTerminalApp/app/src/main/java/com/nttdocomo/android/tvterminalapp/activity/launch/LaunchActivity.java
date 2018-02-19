@@ -66,6 +66,8 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
              */
         }
         setContents();
+        // dアカウントチェック処理は不要
+        setUnnecessaryDaccountRegistService();
     }
 
     /**

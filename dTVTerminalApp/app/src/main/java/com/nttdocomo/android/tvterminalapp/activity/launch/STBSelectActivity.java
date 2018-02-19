@@ -136,6 +136,8 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             initSettingView();
         }
         mDlnaDmsItemList = new ArrayList<>();
+        // dアカウントチェック処理はonResumeで自身で呼び出しているため不要
+        setUnnecessaryDaccountRegistService();
         DTVTLogger.end();
     }
 

@@ -117,7 +117,6 @@ public class BaseActivity extends FragmentActivity implements
      * クリップ対象.
      */
     private String mClipTarget = null;
-
     /**
      * stb status icon状態.
      */
@@ -206,6 +205,10 @@ public class BaseActivity extends FragmentActivity implements
      * 国内通信 MCC (441 Japan).
      */
     private static final int DOMESTIC_COMMUNICATION_MCC_2 = 441;
+    /**
+     * dアカウント関連処理の必要有無判定.
+     */
+    private boolean mNecessaryDaccountRegistService = true;
     /**
      * 国内通信Flg
      */
@@ -564,11 +567,7 @@ public class BaseActivity extends FragmentActivity implements
      */
     public boolean isPairing() {
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
-        if (dlnaDmsItem == null || dlnaDmsItem.mControlUrl.isEmpty()) {
-            // 未ペアリング時
-            return false;
-        }
-        return true;
+        return !(dlnaDmsItem == null || dlnaDmsItem.mControlUrl.isEmpty());
     }
 
     /**
@@ -592,7 +591,6 @@ public class BaseActivity extends FragmentActivity implements
         mRemoteControlRelayClient = RemoteControlRelayClient.getInstance();
 
         //dアカウントの検知処理を追加する
-        setDaccountControl();
         setRelayClientHandler();
         //ユーザー情報の変更検知
         // TODO 検討中
@@ -704,7 +702,7 @@ public class BaseActivity extends FragmentActivity implements
      *
      * @param isTopRemoteControllerUI 応答ハンドラの解除条件 false:リモコンが表示されていない／true:無条件で解除
      */
-    private void resetRelayClientHandler(boolean isTopRemoteControllerUI) {
+    private void resetRelayClientHandler(final boolean isTopRemoteControllerUI) {
         if (null != remoteControllerView) {
             // ※リモコンの電源ON/OFF操作中の応答時にリモコンが表示されている間は解除しない
             if ((isTopRemoteControllerUI == remoteControllerView.isTopRemoteControllerUI())
@@ -716,7 +714,6 @@ public class BaseActivity extends FragmentActivity implements
 
     /**
      * リモコンの表示.
-     *
      */
     private void showRemoteControllerView() {
         // グローバルメニューまたはコンテンツ詳細からのサービスアプリ連携の正常応答時にリモコンが表示されてない場合のみ表示する
@@ -1225,7 +1222,9 @@ public class BaseActivity extends FragmentActivity implements
             remoteControllerView.closeRemoteControllerUI();
         }
         dismissDialog();
-        DlnaInterface.dlnaOnStop();
+        if (!mShowPermissionDialogFlag) {
+        	DlnaInterface.dlnaOnStop();
+        }
         super.onPause();
     }
 
@@ -1931,9 +1930,11 @@ public class BaseActivity extends FragmentActivity implements
         showTransoceanicCommunicationFlag = true;
         resetRelayClientHandler(true);
         unregisterDevListDlna();
-        DlnaInterface.dlnaOnStop();
-        // TODO dアカウント通信を止める
-//        mDaccountControl.stopCommunication();
+//        DlnaInterface.dlnaOnStop();
+        // dアカウント通信を止める
+        if (mDaccountControl != null) {
+            mDaccountControl.stopCommunication();
+        }
         DTVTLogger.end();
     }
 
@@ -1945,6 +1946,9 @@ public class BaseActivity extends FragmentActivity implements
      */
     public void onStartCommunication() {
         DTVTLogger.start();
+        if (mNecessaryDaccountRegistService) {
+            setDaccountControl();
+        }
         registerDevListDlna();
         DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(this);
         if (null == dlnaDmsItem) {
@@ -1976,7 +1980,6 @@ public class BaseActivity extends FragmentActivity implements
      * アプリがBGからFGに遷移した際のResume処理.
      */
     private void onReStartCommunication() {
-        TvtApplication app = (TvtApplication) getApplication();
         setRelayClientHandler();
         checkDAccountOnRestart();
         boolean r = DlnaInterface.dlnaOnResume();
@@ -1992,5 +1995,13 @@ public class BaseActivity extends FragmentActivity implements
      */
     protected boolean isInJapan(){
         return mIsInJapan;
+    }
+
+    /**
+     * dアカウント処理が不要なクラスはこのメソッドを実行する.
+     */
+    protected void setUnnecessaryDaccountRegistService() {
+        // STBSelectActivity以前のActivityが対象
+        mNecessaryDaccountRegistService = false;
     }
 }
