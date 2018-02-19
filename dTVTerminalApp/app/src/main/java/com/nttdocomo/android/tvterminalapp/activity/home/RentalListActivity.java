@@ -173,9 +173,10 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
         mRelativeLayout.setVisibility(View.GONE);
         mListView.setVisibility(View.VISIBLE);
         if (null == dataList) {
-            //TODO:データ取得失敗時の仕様が未定のため仮実装
             resetPaging();
             resetCommunication();
+            RentalDataProvider dataProvider = new RentalDataProvider(this);
+            dataProvider.getDbRentalList();
             return;
         }
 

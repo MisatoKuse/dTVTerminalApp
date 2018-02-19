@@ -215,6 +215,11 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
          */
         TYPE_RENTAL_RANK,
         /**
+         * プレミアムビデオ.
+         */
+        TYPE_PREMIUM_VIDEO_LIST,
+
+        /**
          * 録画予約一覧.
          */
         TYPE_RECORDING_RESERVATION_LIST,
@@ -247,8 +252,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
          */
         TYPE_CONTENT_DETAIL_CHANNEL_LIST,
         /**
-         *
-         * おすすめ番組・ビデオ
+         * おすすめ番組・ビデオ.
          */
         TYPE_RECOMMEND_LIST
     }
@@ -403,6 +407,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 contentView.findViewById(R.id.item_common_result_show_status_area).setLayoutParams(layoutParamsClip);
                 break;
             case TYPE_RENTAL_RANK:
+            case TYPE_PREMIUM_VIDEO_LIST: //プレミアムビデオ
                 textMargin = STATUS_MARGINTOP10;
                 setTextMargin(textMargin, holder, contentView);
                 layoutParamsClip.addRule(RelativeLayout.ALIGN_PARENT_END, R.id.parent_relative_layout);
@@ -647,6 +652,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                     holder.tv_time.setText(DateUtils.getRecordShowListItem(Long.parseLong(listContentInfo.getTime())));
                     break;
                 case TYPE_RENTAL_RANK: // レンタル一覧
+                case TYPE_PREMIUM_VIDEO_LIST: //プレミアムビデオ
                     String time = listContentInfo.getTime();
                     if (!time.equals(RentalDataProvider.ENABLE_VOD_WATCH_CONTENTS_UNLIMITED_HYPHEN)) {
                         //視聴期限表示
@@ -987,6 +993,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 break;
             case TYPE_VIDEO_RANK: // ビデオランキング
             case TYPE_RENTAL_RANK: // レンタル一覧
+            case TYPE_PREMIUM_VIDEO_LIST: //プレミアムビデオ
             case TYPE_VIDEO_CONTENT_LIST: // ビデオコンテンツ一覧
             case TYPE_WATCHING_VIDEO_LIST: //視聴中ビデオ一覧
             case TYPE_CLIP_LIST_MODE_VIDEO: //ビデオタブ(クリップ)
@@ -1063,6 +1070,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_rank.setVisibility(View.GONE);
                 break;
             case TYPE_RENTAL_RANK: // レンタル一覧
+            case TYPE_PREMIUM_VIDEO_LIST: //プレミアムビデオ
                 holder.tv_rank.setVisibility(View.GONE);
                 holder.tv_clip.setVisibility(View.GONE);
                 break;
