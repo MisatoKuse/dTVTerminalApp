@@ -71,6 +71,12 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
     private boolean mClipExec = false;
     // クリップ未/済
     private boolean mClipStatus = false;
+    // レーティング値
+    private double mRating = 0;
+    // シーズン名
+    private String mEpititle = "";
+    // Tvサービス
+    private String mTvService = "";
 
     public String getChannelDate() {
         return mChannelDate;
@@ -336,6 +342,30 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         this.mClipStatus = mClipStatus;
     }
 
+    public double getRating() {
+        return mRating;
+    }
+
+    public void setRating(double mRating) {
+        this.mRating = mRating;
+    }
+
+    public String getEpititle() {
+        return mEpititle;
+    }
+
+    public void setEpititle(String mEpititle) {
+        this.mEpititle = mEpititle;
+    }
+
+    public String getTvService() {
+        return mTvService;
+    }
+
+    public void setTvService(String mTvService) {
+        this.mTvService = mTvService;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -375,6 +405,9 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         dest.writeString(this.mSearchOk);
         dest.writeString(this.mDtv);
         dest.writeString(this.mDtvType);
+        dest.writeDouble(this.mRating);
+        dest.writeString(this.mEpititle);
+        dest.writeString(this.mTvService);
         dest.writeByte(this.mClipExec ? (byte) 1 : (byte) 0);
         dest.writeByte(this.mClipStatus ? (byte) 1 : (byte) 0);
     }
@@ -415,6 +448,9 @@ public class OtherContentsDetailData extends RecordedContentsDetailData {
         this.mSearchOk = in.readString();
         this.mDtv = in.readString();
         this.mDtvType = in.readString();
+        this.mRating = in.readDouble();
+        this.mEpititle = in.readString();
+        this.mTvService = in.readString();
         this.mClipExec = in.readByte() != 0;
         this.mClipStatus = in.readByte() != 0;
     }

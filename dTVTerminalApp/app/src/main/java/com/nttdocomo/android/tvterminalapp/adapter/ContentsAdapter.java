@@ -18,8 +18,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -34,6 +32,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
+import com.nttdocomo.android.tvterminalapp.view.RatingBarLayout;
 
 import java.util.List;
 
@@ -727,15 +726,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         if (!TextUtils.isEmpty(listContentInfo.getRatStar())) { //評価
             //評価値が範囲外の場合は"-"を表示、星は非表示
             float ratNumber = Float.parseFloat(listContentInfo.getRatStar());
-            if (ratNumber > 0) {
-                holder.rb_rating.setVisibility(View.VISIBLE);
-                holder.rb_rating.setRating(Float.parseFloat(listContentInfo.getRatStar()));
-                holder.tv_rating_num.setText(listContentInfo.getRatStar());
-            } else {
-                holder.rb_rating.setVisibility(View.GONE);
-                holder.tv_rating_num.setText(R.string.contents_hyphen);
-            }
-            holder.rb_rating.setNumStars(NUM_STARS_TOTAL);
+            holder.ll_rating.setRating(ratNumber);
         }
     }
 
@@ -973,8 +964,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         holder.tv_time = view.findViewById(R.id.item_common_result_content_time);
         holder.tv_title = view.findViewById(R.id.item_common_result_content_title);
         holder.ll_rating = view.findViewById(R.id.item_common_result_content_rating);
-        holder.rb_rating = view.findViewById(R.id.item_common_result_content_rating_star);
-        holder.tv_rating_num = view.findViewById(R.id.item_common_result_content_rating_num);
         holder.tv_line = view.findViewById(R.id.item_common_result_line);
         return holder;
     }
@@ -1082,24 +1071,23 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                 holder.tv_clip.setVisibility(View.GONE);
                 holder.rl_thumbnail.setVisibility(View.GONE);
                 holder.iv_thumbnail.setVisibility(View.GONE);
-                holder.rb_rating.setVisibility(View.GONE);
-                holder.tv_rating_num.setVisibility(View.GONE);
+                holder.ll_rating.setVisibility(View.GONE);
                 break;
             case TYPE_RECORDED_LIST: // 録画番組一覧
                 holder.tv_rank.setVisibility(View.GONE);
                 holder.rl_thumbnail.setVisibility(View.GONE);
                 holder.iv_thumbnail.setVisibility(View.GONE);
-                holder.rb_rating.setVisibility(View.GONE);
+                holder.ll_rating.setVisibility(View.GONE);
                 break;
             case TYPE_CONTENT_DETAIL_CHANNEL_LIST: // コンテンツ詳細チャンネル一覧
                 holder.tv_rank.setVisibility(View.GONE);
-                holder.rb_rating.setVisibility(View.GONE);
+                holder.ll_rating.setVisibility(View.GONE);
                 holder.tv_line.setVisibility(View.VISIBLE);
                 break;
             case TYPE_SEARCH_LIST: //検索
                 holder.tv_time.setVisibility(View.GONE);
                 holder.tv_rank.setVisibility(View.GONE);
-                holder.rb_rating.setVisibility(View.GONE);
+                holder.ll_rating.setVisibility(View.GONE);
             default:
                 break;
         }
@@ -1200,15 +1188,7 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         /**
          * 評価の親レイアウト.
          */
-        LinearLayout ll_rating;
-        /**
-         * 評価（星）.
-         */
-        RatingBar rb_rating;
-        /**
-         * 評価（count）.
-         */
-        TextView tv_rating_num;
+        RatingBarLayout ll_rating;
         /**
          * ラベル.
          */

@@ -45,6 +45,13 @@
     <dimen name="global_menu_list_item_count_right_margin">6dp</dimen>
     <dimen name="global_menu_list_item_title_icon_left_margin">32dp</dimen>
 
+    <!--rating共通-->
+    <dimen name="rating_star_numbers_width">24dp</dimen>
+    <dimen name="rating_star_mini_numbers_width">21dp</dimen>
+    <dimen name="rating_star_numbers_margin">3dp</dimen>
+    <dimen name="rating_star_width_height">14dp</dimen>
+    <dimen name="rating_star_mini_width_height">11dp</dimen>
+
     <!--Common-->
     <dimen name="main_header_height">44dp</dimen>
     <dimen name="main_header_title_text_size">15dp</dimen>
@@ -163,6 +170,8 @@
     <dimen name="contents_detail_channel_sub_title_padding_top">24dp</dimen>
     <dimen name="contents_detail_channel_sub_title_padding_bottom">10dp</dimen>
     <dimen name="contents_detail_channel_sub_title_txt_size">15dp</dimen>
+    <dimen name="contents_detail_service_icon_label_margin">8dp</dimen>
+    <dimen name="contents_detail_service_icon_label_height">20dp</dimen>
 
     <!--リモコン -->
     <dimen name="remote_watch_by_tv_bottom_corners">8dp</dimen>

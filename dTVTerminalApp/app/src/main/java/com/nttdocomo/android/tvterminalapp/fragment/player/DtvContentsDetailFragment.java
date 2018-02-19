@@ -13,7 +13,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.text.Layout;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -22,19 +21,18 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.dataprovider.ThumbnailProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.utils.StringUtils;
+import com.nttdocomo.android.tvterminalapp.view.RatingBarLayout;
 
 import java.io.File;
 import java.util.List;
@@ -42,44 +40,99 @@ import java.util.List;
 
 public class DtvContentsDetailFragment extends Fragment {
 
+    /**
+     * コンテクスト.
+     */
     public Context mActivity = null;
+    /**
+     * フラグメントビュー.
+     */
     private View mView = null;
+    /**
+     * 詳細情報.
+     */
     public OtherContentsDetailData mOtherContentsDetailData = null;
+    /**
+     * スタッフビュー.
+     */
     private LinearLayout mStaffLayout = null;
-    private LinearLayout mRecommendLayout = null;
+    /**
+     * タイトル/詳細一部文字.
+     */
     private TextView mTxtTitleShortDetail = null;
+    /**
+     * タイトル/詳細全文字.
+     */
     private TextView mTxtTitleAllDetail = null;
+    /**
+     * 評価.
+     */
+    private RatingBarLayout mRatingBar;
+    /**
+     * moreボタン.
+     */
     private TextView mTxtMoreText = null;
+    /**
+     * ヘッダー.
+     */
     private TextView mTextHeader = null;
+    /**
+     * サブヘッダー.
+     */
     private TextView mTextSubHeader = null;
-    private ImageView mImgServiceName = null;
+    /**
+     * サービスアイコン.
+     */
+    private ImageView mImgServiceIcon = null;
+    /**
+     * サービスアイコン dTV(白背景ロゴ).
+     */
+    private ImageView mImgServiceIconDtv = null;
+    /**
+     * チャンネル名.
+     */
     private TextView mTxtChannelName = null;
+    /**
+     * チャンネル日付.
+     */
     private TextView mTxtChannelDate = null;
-    private TextView mTxtChannelLabel = null;
+    /**
+     * 全文表示フラグ.
+     */
     private boolean mIsAllText = false;
     /**
      * 契約フラグ.
      */
     private boolean mIsContract = true;
-    //クリップボタン
+    /**
+     * クリップボタン.
+     */
     private ImageView mClipButton = null;
-    //サムネイルmargintop
-    private final static int THUMBNAIL_MARGINTOP = 10;
-    //サムネイルmarginright
-    private final static int THUMBNAIL_MARGINRIGHT = 8;
-    //サムネイルmarginbottom
-    private final static int THUMBNAIL_MARGINBOTTOM = 10;
-    //サムネイル幅さ display3分の1
-    private final static int THUMBNAIL_WIDTH = 3;
-    //サムネイル高さ サムネイル幅2分の1
-    private final static int THUMBNAIL_HEIGHT = 2;
-    //margin0
-    private final static int THUMBNAIL_MARGIN0 = 0;
-    //ライン高さ
-    private final static int LINE_HEIGHT = 1;
+    /**
+     * 録画リスナー.
+     */
     private RecordingReservationIconListener mIconClickListener = null;
+    /**
+     * スタッフ文字サイズ(title).
+     */
     private final static int TEXT_SIZE_12 = 12;
+    /**
+     * スタッフ文字サイズ(内容).
+     */
     private final static int TEXT_SIZE_14 = 14;
+    /**
+     * スタッフ margin 0.
+     */
+    private final static int STAFF_MARGIN_0 = 0;
+    /**
+     * dTVフラグ.
+     */
+    private final static String DTV_FLG = "1";
+    /**
+     * display type.
+     */
+    private static final String VIDEO_PROGRAM = "video_program";
+    private static final String VIDEO_SERIES = "video_series";
 
     @Override
     public Context getContext() {
@@ -106,23 +159,23 @@ public class DtvContentsDetailFragment extends Fragment {
             mView = LayoutInflater.from(getContext()).inflate(R.layout.dtv_contents_detail_fragment, container, false);
         }
         //サービス/提供元
-        mImgServiceName = mView.findViewById(R.id.dtv_contents_detail_fragment_service_provider);
+        mImgServiceIcon = mView.findViewById(R.id.dtv_contents_detail_fragment_service_provider);
+        mImgServiceIconDtv = mView.findViewById(R.id.dtv_contents_detail_fragment_service_provider_dtv);
         //ヘッダー
         mTextHeader = mView.findViewById(R.id.dtv_contents_detail_fragment_contents_title);
         mTextSubHeader = mView.findViewById(R.id.dtv_contents_detail_fragment_contents_sub_title);
         mTxtChannelName = mView.findViewById(R.id.dtv_contents_detail_fragment_channel_name);
         mTxtChannelDate = mView.findViewById(R.id.dtv_contents_detail_fragment_channel_date);
-
         //省略
         mTxtTitleShortDetail = mView.findViewById(R.id.dtv_contents_detail_fragment_detail_info);
+        //評価
+        mRatingBar = mView.findViewById(R.id.dtv_contents_detail_fragment_rating);
         //全表示
         mTxtTitleAllDetail = mView.findViewById(R.id.dtv_contents_detail_fragment_all_info);
         //more
         mTxtMoreText = mView.findViewById(R.id.dtv_contents_detail_fragment_more_button);
         //スタッフ情報
         mStaffLayout = mView.findViewById(R.id.dtv_contents_detail_fragment_staff);
-        //おすすめ作品情報
-        mRecommendLayout = mView.findViewById(R.id.dtv_contents_detail_fragment_recommend_item);
         mTxtMoreText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -217,24 +270,51 @@ public class DtvContentsDetailFragment extends Fragment {
      * 各Viewにコンテンツの詳細情報を渡す.
      */
     private void setDetailData() {
+        //タイトル
         mTextHeader.setText(mOtherContentsDetailData.getTitle());
-        mTextSubHeader.setText("サブタイトル");//TODO 画面効果表示のため、一時表示
+        //サブタイトル
+        if(!TextUtils.isEmpty(mOtherContentsDetailData.getEpititle())){
+            mTextSubHeader.setText(mOtherContentsDetailData.getEpititle());
+        } else {
+            mTextSubHeader.setVisibility(View.GONE);
+        }
         //画面表示
         StringUtils util = new StringUtils(getContext());
-        int serviceName = util.getContentsServiceName(mOtherContentsDetailData.getServiceId());
+        //サービスアイコン
+        int serviceIcon = util.getContentsServiceName(mOtherContentsDetailData.getServiceId());
+        mImgServiceIcon.setImageResource(serviceIcon);
+        String dtv = mOtherContentsDetailData.getDtv();
+        //dtvの場合
+        if(DTV_FLG.equals(dtv)){
+            mImgServiceIconDtv.setVisibility(View.VISIBLE);
+            mImgServiceIconDtv.setImageResource(R.mipmap.label_service_dtv_white);
+            mRatingBar.setVisibility(View.GONE);
+            //チャンネル名
+            if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelName())) {
+                mTxtChannelName.setText(mOtherContentsDetailData.getChannelName());
+            } else {
+                mTxtChannelName.setVisibility(View.GONE);
+            }
+        } else {
+            //VODの場合
+            if(mOtherContentsDetailData.getServiceId() == 0 && (VIDEO_SERIES.equals(mOtherContentsDetailData.getDispType())
+                    || VIDEO_PROGRAM.equals(mOtherContentsDetailData.getDispType()))){
+                //評価
+                mRatingBar.setMiniFlg(false);
+                mRatingBar.setRating((float) mOtherContentsDetailData.getRating());
+                mTxtChannelName.setVisibility(View.GONE);
+            } else {
+                mRatingBar.setVisibility(View.GONE);
+            }
+        }
         String contentsDetailInfo;
-        mImgServiceName.setImageResource(serviceName);
         setLabelStatus();
         contentsDetailInfo = selectDetail();
-        if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelName())) {
-            mTxtChannelName.setText(mOtherContentsDetailData.getChannelName());
-        } else {
-            mTxtChannelName.setText("FOX HD");//TODO 画面効果表示のため、一時表示
-        }
+        //日付
         if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelDate())) {
             mTxtChannelDate.setText(mOtherContentsDetailData.getChannelDate());
         } else {
-            mTxtChannelDate.setText("7/6 （水）19:00 - 20:00");//TODO 画面効果表示のため、一時表示
+            mTxtChannelDate.setVisibility(View.GONE);
         }
         if (mOtherContentsDetailData.getStaffList() != null) {
             setStaff();
@@ -246,7 +326,6 @@ public class DtvContentsDetailFragment extends Fragment {
             mTxtTitleAllDetail.setText(contentsDetailInfo);
         }
         setClipButton(mClipButton);
-        /*setRecommendLayout();*///TODO おすすめ作品、一時コメントアウト
     }
 
     private void setLabelStatus() {
@@ -260,10 +339,8 @@ public class DtvContentsDetailFragment extends Fragment {
                     LinearLayout.LayoutParams.WRAP_CONTENT);
             if (i != 0) {
                 if (isAdded()) {
-                    imageParams.setMargins((int) getResources().getDimension(R.dimen.contents_detail_clip_margin),
-                            (int) getResources().getDimension(R.dimen.contents_tab_top_margin),
-                            (int) getResources().getDimension(R.dimen.contents_tab_top_margin),
-                            (int) getResources().getDimension(R.dimen.contents_tab_top_margin));
+                    imageParams.setMargins((int) getResources().getDimension(R.dimen.contents_detail_clip_margin), (int) getResources().getDimension(R.dimen.contents_tab_top_margin),
+                            (int) getResources().getDimension(R.dimen.contents_tab_top_margin), (int) getResources().getDimension(R.dimen.contents_tab_top_margin));
                 }
             }
             Context context = getContext();
@@ -283,31 +360,18 @@ public class DtvContentsDetailFragment extends Fragment {
         List<String> staffList = mOtherContentsDetailData.getStaffList();
         mStaffLayout.setVisibility(View.VISIBLE);
         mStaffLayout.removeAllViews();
-        for (int i = 0; i < staffList.size(); i++) {
-            Context context = getContext();
-            if (context != null) {
-                RelativeLayout itemLayout = new RelativeLayout(context);
-            /*itemLayout.setBackgroundResource(R.drawable.rectangele_contents_detail);*/
+        Context context = getContext();
+        if (context != null) {
+            for (int i = 0; i < staffList.size(); i++) {
                 TextView tabTextView = new TextView(context);
-                RelativeLayout.LayoutParams contentParams = new RelativeLayout.LayoutParams(
+                LinearLayout.LayoutParams contentParams = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.WRAP_CONTENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT);
-                contentParams.addRule(RelativeLayout.ALIGN_PARENT_START);
-                RelativeLayout.LayoutParams imageParams = new RelativeLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        (int) getResources().getDimension(R.dimen.contents_detail_tabs_height));
-                // TODO: スタッフ詳細画面への遷移が行われるようになった場合にアイコンが復活する可能性があるのでコメント化
-                //ImageView imageView = new ImageView(context);
-                //imageView.setImageResource(R.mipmap.ic_chevron_right_white_24dp);
-                //imageParams.addRule(RelativeLayout.ALIGN_PARENT_END);
-                //imageView.setLayoutParams(imageParams);
-                contentParams.addRule(RelativeLayout.ALIGN_PARENT_START);
                 String text = staffList.get(i);
                 tabTextView.setGravity(Gravity.CENTER_VERTICAL);
-                itemLayout.setTag(i);
                 tabTextView.setTextColor(ContextCompat.getColor(context, R.color.contents_detail_schedule_detail_sub_title));
                 tabTextView.setLineSpacing(getResources().getDimension(R.dimen.contents_detail_content_line_space), 1);
-                contentParams.setMargins(0, (int) getResources().getDimension(R.dimen.contents_detail_staff_margin_top), 0, 0);
+                contentParams.setMargins(STAFF_MARGIN_0, (int) getResources().getDimension(R.dimen.contents_detail_staff_margin_top), STAFF_MARGIN_0, STAFF_MARGIN_0);
                 if (text.contains(File.separator)) {
                     tabTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_12);
                     tabTextView.setText(text.substring(0, text.length() - 1));
@@ -316,51 +380,8 @@ public class DtvContentsDetailFragment extends Fragment {
                     tabTextView.setText(text);
                 }
                 tabTextView.setLayoutParams(contentParams);
-                itemLayout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        // TODO スタッフ詳細画面へ遷移　今回はやらない
-                    }
-                });
-                itemLayout.addView(tabTextView);
-                //TODO: ">"アイコンの追加はひとまず中止
-                //itemLayout.addView(imageView);
-                mStaffLayout.addView(itemLayout);
+                mStaffLayout.addView(tabTextView);
             }
-        }
-    }
-
-    /**
-     * スタッフ情報を表示する.TODO 関連作品実装
-     */
-    private void setRecommendLayout() {
-        mRecommendLayout.removeAllViews();
-        ThumbnailProvider mThumbnailProvider = new ThumbnailProvider(getContext());
-        for (int i = 0; i < 2; i++) {
-            View view = LayoutInflater.from(getContext()).inflate(R.layout.item_common_result, null, false);
-            LinearLayout ratingLayout = view.findViewById(R.id.item_common_result_content_rating);
-            ImageView thumbnail = view.findViewById(R.id.item_common_result_thumbnail_iv);
-            TextView line = view.findViewById(R.id.item_common_result_line);
-            TextView time = view.findViewById(R.id.item_common_result_content_time);
-            time.setText("test" + i);
-            ratingLayout.setVisibility(View.GONE);
-            DisplayMetrics DisplayMetrics = getContext().getResources().getDisplayMetrics();
-            float density = DisplayMetrics.density;
-            float mWidth = (float) DisplayMetrics.widthPixels / THUMBNAIL_WIDTH;
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int) mWidth, (int) mWidth / THUMBNAIL_HEIGHT);
-            layoutParams.setMargins(THUMBNAIL_MARGIN0, (int) density * THUMBNAIL_MARGINTOP,
-                    (int) density * THUMBNAIL_MARGINRIGHT, (int) density * THUMBNAIL_MARGINBOTTOM);
-            thumbnail.setLayoutParams(layoutParams);
-            layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, (int) density * LINE_HEIGHT);
-            line.setLayoutParams(layoutParams);
-            line.setBackgroundResource(R.drawable.rectangele_contents_detail);
-            thumbnail.setImageResource(R.drawable.test_image);
-            thumbnail.setTag("https://img.hikaritv.net/thumbnail/VOD640/a032c9b.jpg");
-            Bitmap bitmap = mThumbnailProvider.getThumbnailImage(thumbnail, "https://img.hikaritv.net/thumbnail/VOD640/a032c9b.jpg");
-            if (bitmap != null) {
-                thumbnail.setImageBitmap(bitmap);
-            }
-            mRecommendLayout.addView(view);
         }
     }
 

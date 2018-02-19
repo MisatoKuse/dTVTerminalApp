@@ -107,8 +107,6 @@ public class DtvContentsChannelFragment extends Fragment implements AbsListView.
         mChannelImg = mHeaderView.findViewById(R.id.dtv_contents_channel_header_img);
         mChannelTxt = mHeaderView.findViewById(R.id.dtv_contents_channel_header_name);
         mChannelListView.addHeaderView(mHeaderView);
-        //TODO 一時表示のため、削除予定
-        mChannelImg.setImageResource(R.drawable.test_image);
         DTVTLogger.end();
         return mView;
     }
