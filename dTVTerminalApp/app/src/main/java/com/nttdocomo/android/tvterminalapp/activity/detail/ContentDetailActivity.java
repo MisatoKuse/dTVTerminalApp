@@ -2623,21 +2623,23 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             mExternalDisplayHelper.onPause();
         }
         finishPlayer();
-        //通信を止める
-        if(mDetailDataProvider != null){
-            StopContentDetailDataConnect stopContentDetailDataConnect = new StopContentDetailDataConnect();
-            stopContentDetailDataConnect.execute(mDetailDataProvider);
-        }
-        if(mScaledDownProgramListDataProvider != null){
-            StopScaledProListDataConnect stopScaledProListDataConnect = new StopScaledProListDataConnect();
-            stopScaledProListDataConnect.execute(mScaledDownProgramListDataProvider);
-        }
-        stopThumbnailConnect();
-        //FragmentにContentsAdapterの通信を止めるように通知する
-        Fragment fragment = getCurrentFragment(1);
-        if(fragment != null){
-            DtvContentsChannelFragment channelFragment = (DtvContentsChannelFragment)fragment;
-            channelFragment.stopContentsAdapterCommunication();
+        if(!mIsPlayer){
+            //通信を止める
+            if(mDetailDataProvider != null){
+                StopContentDetailDataConnect stopContentDetailDataConnect = new StopContentDetailDataConnect();
+                stopContentDetailDataConnect.execute(mDetailDataProvider);
+            }
+            if(mScaledDownProgramListDataProvider != null){
+                StopScaledProListDataConnect stopScaledProListDataConnect = new StopScaledProListDataConnect();
+                stopScaledProListDataConnect.execute(mScaledDownProgramListDataProvider);
+            }
+            stopThumbnailConnect();
+            //FragmentにContentsAdapterの通信を止めるように通知する
+            Fragment fragment = getCurrentFragment(1);
+            if(fragment != null){
+                DtvContentsChannelFragment channelFragment = (DtvContentsChannelFragment)fragment;
+                channelFragment.stopContentsAdapterCommunication();
+            }
         }
     }
 
