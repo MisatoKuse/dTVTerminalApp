@@ -8,6 +8,7 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.RecommendDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VodMetaFullData;
@@ -22,6 +23,14 @@ public class SendOperateLog extends WebApiBase {
 
     //SSLチェック用コンテキスト
     private Context mContext;
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
+    /**
+     * HTTP通信スレッド.
+     */
+    private HttpThread mHttpThread = null;
 
     /**
      * コンストラクタ
@@ -34,7 +43,7 @@ public class SendOperateLog extends WebApiBase {
     }
 
     public void sendOpeLog(final OtherContentsDetailData mDetailData, VodMetaFullData mDetailFullData) {
-        if (mDetailData != null) {
+        if (!mIsCancel && mDetailData != null) {
             if (OtherContentsDetailData.DTV_HIKARI_CONTENTS_SERVICE_ID == mDetailData.getServiceId()) {
                 mCategoryId = getCategoryId(mDetailFullData);
             } else {
@@ -47,8 +56,9 @@ public class SendOperateLog extends WebApiBase {
                     @Override
                     public void getOttCallBack(int result, String id, String oneTimePassword) {
                         //ワンタイムパスワードの取得後に呼び出す
-                        new HttpThread(getUrl(mDetailData), null,
-                                mContext,oneTimePassword).start();
+                        mHttpThread = new HttpThread(getUrl(mDetailData), null,
+                                mContext,oneTimePassword);
+                        mHttpThread.start();
                     }
                 });
             }
@@ -135,4 +145,22 @@ public class SendOperateLog extends WebApiBase {
         return "";
     }
 
+    /**
+     * 通信を止める.
+     */
+    public void stopConnection() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        if (mHttpThread != null) {
+            mHttpThread.disconnect();
+        }
+    }
+
+    /**
+     * 通信可能状態にする.
+     */
+    public void enableConnection() {
+        DTVTLogger.start();
+        mIsCancel = false;
+    }
 }
