@@ -37,9 +37,9 @@ public class BaseUrlConstants {
     /**
      * APIアクセスプロキシパス・現在のところPLALA_AUTHを使用する物は無いが、将来の為に残しておく.
      */
-    public static final String PLALA_C_CLIENT = PLALA_BASE_URL + "dtt_stub_mix/c_client/";
-    public static final String PLALA_AUTH = PLALA_BASE_URL + "dtt_stub_mix/auth/";
-    public static final String PLALA_CLIENT = PLALA_BASE_URL + "dtt_stub_mix/client/";
+    public static final String PLALA_C_CLIENT = PLALA_BASE_URL + "dtt/c_client/";
+    public static final String PLALA_AUTH = PLALA_BASE_URL + "dtt/auth/";
+    public static final String PLALA_CLIENT = PLALA_BASE_URL + "dtt/client/";
 
     /**
      * ぷららサーバー ID管理ファイルアクセス用のベースURL.
