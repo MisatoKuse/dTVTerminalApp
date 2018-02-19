@@ -347,21 +347,21 @@ public class StringUtils {
 
             return new String(base64);
         } catch (IOException e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         } finally {
             try {
                 if (objectOutputStream != null) {
                     objectOutputStream.close();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             }
             try {
                 if (byteArrayOutputStream != null) {
                     byteArrayOutputStream.close();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             }
         }
 
@@ -386,21 +386,21 @@ public class StringUtils {
             objectInputStream = new ObjectInputStream(byteArrayInputStream);
             return (GenreListResponse) objectInputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         } finally {
             try {
                 if (objectInputStream != null) {
                     objectInputStream.close();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             }
             try {
                 if (byteArrayInputStream != null) {
                     byteArrayInputStream.close();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             }
         }
         return null;

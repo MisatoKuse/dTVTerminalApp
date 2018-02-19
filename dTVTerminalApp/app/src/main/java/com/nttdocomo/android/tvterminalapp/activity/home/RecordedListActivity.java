@@ -375,7 +375,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         try {
             resultList = dlDataProvider.getDownloadListData();
         } catch (Exception e){
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
         return resultList;
     }

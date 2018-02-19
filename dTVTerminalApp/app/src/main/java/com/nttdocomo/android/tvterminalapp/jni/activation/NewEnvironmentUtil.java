@@ -8,6 +8,7 @@ import android.content.Context;
 
 import com.digion.dixim.android.util.EnvironmentUtil;
 import com.digion.dixim.android.util.FileSystemUtil;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 import java.io.File;
 import java.util.Iterator;
@@ -42,8 +43,8 @@ public class NewEnvironmentUtil extends EnvironmentUtil{
             }
 
             return e.getAbsolutePath();
-        } catch (Exception var3) {
-            var3.printStackTrace();
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
             return null;
         }
     }

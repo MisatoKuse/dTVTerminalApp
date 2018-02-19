@@ -5,13 +5,12 @@
 package com.digion.dixim.android.activation.helper;
 
 import android.content.Context;
-import android.util.Log;
 
-import com.nttdocomo.android.tvterminalapp.BuildConfig;
 import com.digion.dixim.android.definitions.DeveloperOptionDefinitions;
 import com.digion.dixim.android.util.DeveloperOption;
 import com.digion.dixim.android.util.EnvironmentUtil;
 import com.digion.dixim.android.util.EnvironmentUtil.ACTIVATE_DATA_HOME;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.jni.activation.ActivationEnvironment;
 
 public class ActivationHelper {
@@ -64,8 +63,7 @@ public class ActivationHelper {
 	public String getMacAddress() {
 		String id = EnvironmentUtil.getCalculatedUniqueId(context,
 				ACTIVATE_DATA_HOME.DMP);
-		if (BuildConfig.DEBUG)
-			Log.i("ActivationHelper","getCalculatedUniqueId = "+id);
+		DTVTLogger.debug("getCalculatedUniqueId = "+id);
 		return id;
 	}
 }

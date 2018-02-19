@@ -13,32 +13,47 @@ import java.io.InputStream;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.digion.dixim.android.util.EnvironmentUtil;
 import com.digion.dixim.android.util.FileSystemUtil;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 
 import android.content.Context;
-import android.util.Log;
 
+/**
+ * DTCP-IPアクティベーション処理クラス.
+ */
 public class ActivationEnvironment {
-	/*------- seed関連データ  --------*/
-	private static final String[] SEED = {"cEksLk32", "OG3LaLiW", "okTyxETR", "riFc3DUX", "68YIyKRX", "6p3MG86q", "3j4do3t9", "OpwJ6LAq", "y5b2pIlE", "odt5PW6b"};
+	/**
+	 * seed情報クラス.
+	 */
+	private static final String[] SEED = {"cEksLk32", "OG3LaLiW", "okTyxETR", "riFc3DUX", "68YIyKRX",
+			"6p3MG86q", "3j4do3t9", "OpwJ6LAq", "y5b2pIlE", "odt5PW6b"};
 	private static final int CA_SEED_INDEX = 2;
 	private static final int CERT_SEED_INDEX = 9;
 	private static final int PVK_SEED_INDEX = 8;
-	/*--------------------------*/
 
+	/**
+	 * ファイル情報.
+	 */
 	public static class JniLibrary {
-		public static String name = "dixim_activation_helper_jni";
-		public static String CA_PEM = "ca.pem";
-		public static String CERT_PEM = "cert.pem";
-		public static String PVK_PEM = "pvk.pem";
-		public static String CA_DAT = "ca.dat";
-		public static String CERT_DAT = "cert.dat";
-		public static String PVK_DAT = "pvk.dat";
+		public static final String name = "dixim_activation_helper_jni";
+		public static final  String CA_PEM = "ca.pem";
+		public static final String CERT_PEM = "cert.pem";
+		public static final String PVK_PEM = "pvk.pem";
+		public static final String CA_DAT = "ca.dat";
+		public static final String CERT_DAT = "cert.dat";
+		public static final String PVK_DAT = "pvk.dat";
 	}
 
-	public static boolean prepareActivation(Context context,
-			String deviceKeyPath) {
-		if (!EnvironmentUtil.makeNoDir(deviceKeyPath))
+	/**
+	 * デバイスキー生成.
+	 * @param context コンテキスト
+	 * @param deviceKeyPath デバイスキー保存パス
+	 * @return 成否
+	 */
+	public static boolean prepareActivation(final Context context,
+											final String deviceKeyPath) {
+		if (!EnvironmentUtil.makeNoDir(deviceKeyPath)) {
 			return false;
+		}
 		try {
 			String datFileName = deviceKeyPath + File.separator
 					+ JniLibrary.CA_DAT;
@@ -62,22 +77,29 @@ public class ActivationEnvironment {
 			convert(datFileName, pemFileName, SEED[PVK_SEED_INDEX]);
 			FileSystemUtil.deleteFile(new File(datFileName));
 		} catch (IOException e) {
-			Log.e("ActivationEnvironment", "Can't prepare pems.");
+			DTVTLogger.error("Can't prepare pems.");
 			return false;
 		}
 		return true;
 	}
 
-	private static void writeOut(Context context, int resId, String pathname)
+	/**
+	 * ファイル書き出し.
+	 * @param context コンテキスト
+	 * @param resId リソースID
+	 * @param pathname ファイルパス
+	 */
+	private static void writeOut(final Context context, final int resId, final String pathname)
 			throws IOException {
 		File pemFile = new File(pathname);
-		if (pemFile.exists())
+		if (pemFile.exists()) {
 			return;
+		}
 
 		InputStream is = context.getResources().openRawResource(resId);
 		FileOutputStream out = null;
-		byte buf[] = new byte[65536];
-		int size = 0;
+		byte[] buf = new byte[65536];
+		int size;
 
 		try {
 			out = new FileOutputStream(pathname);
@@ -87,33 +109,39 @@ public class ActivationEnvironment {
 			out.flush();
 			out.getFD().sync();
 		} finally {
-			if (out != null)
+			if (out != null) {
 				out.close();
+			}
 			if (!pemFile.exists()) {
-				Log.e("ActivationEnvironment", "can't writeOut : " + pathname);
+				DTVTLogger.error("can't writeOut : " + pathname);
 				throw new IOException();
 			}
 		}
 	}
 
-	private static void convert(String srcPath, String destPath, String seed)
+	/**
+	 * キー情報変換.
+	 * @param srcPath 変換元ファイルパス
+	 * @param destPath 変換先ファイルパス
+	 * @param seed seed情報
+	 */
+	private static void convert(final String srcPath, final String destPath, final String seed)
 			throws IOException {
 		File destFile = new File(destPath);
 		if (destFile.exists()) {
 			if (!destFile.delete()) {
-				Log.e(ActivationEnvironment.class.getSimpleName(),
-						"Can't remove:" + destPath);
+				DTVTLogger.error("Can't remove:" + destPath);
 				return;
 			}
 		}
 
-		byte seedBytes[] = seed.getBytes();
+		byte[] seedBytes = seed.getBytes();
 		FileInputStream inFile = null;
 		FileOutputStream outFile = null;
 		try {
 			inFile = new FileInputStream(srcPath);
 			outFile = new FileOutputStream(destPath);
-			byte b[] = new byte[seedBytes.length];
+			byte[] b = new byte[seedBytes.length];
 			int c;
 			while ((c = inFile.read(b)) > 0) {
 				for (int i = 0; i < seedBytes.length && i < c; i++) {
@@ -124,11 +152,14 @@ public class ActivationEnvironment {
 			outFile.getFD().sync();
 		} finally {
 			try {
-				if (inFile != null)
+				if (inFile != null) {
 					inFile.close();
-				if (outFile != null)
+				}
+				if (outFile != null) {
 					outFile.close();
+				}
 			} catch (IOException e) {
+				DTVTLogger.debug("File close Error", e);
 			}
 			if (!destFile.exists()) {
 				throw new IOException();

@@ -85,7 +85,7 @@ public class ApplicationInfoActivity extends BaseActivity {
             ApplicationInfo info = mPackageManager.getApplicationInfo(mPackageName, 0);
             return info.loadLabel(mPackageManager).toString();
         } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
         return null;
     }
@@ -100,7 +100,7 @@ public class ApplicationInfoActivity extends BaseActivity {
             PackageInfo info = mPackageManager.getPackageInfo(mPackageName, 0);
             return info.versionName;
         } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
         return null;
     }

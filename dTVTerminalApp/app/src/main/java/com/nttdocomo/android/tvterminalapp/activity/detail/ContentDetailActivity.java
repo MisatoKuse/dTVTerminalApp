@@ -1065,7 +1065,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         return true;
     }
 
-    //test TODO テストのため、便利なので
+    //TODO: 削除予定(テスト用処理)
     public String ReadFile(File file) {
         FileInputStream inStream = null;
         ByteArrayOutputStream outStream = null;
@@ -1081,7 +1081,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
 
             data = outStream.toByteArray();
         } catch (Exception e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
             return null;
         } finally {
             try {
@@ -1092,7 +1092,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                     inStream.close();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             }
         }
 
@@ -1283,7 +1283,6 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 mDateIndex++;
             } catch (ParseException e){
                 channelLoadCompleted();
-                e.printStackTrace();
                 DTVTLogger.debug(e);
             }
             mScaledDownProgramListDataProvider.getProgram(channelNos, dateList, 1);

@@ -202,7 +202,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 try {
                     mDlDataProvider = DlDataProvider.getInstance(activity);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    DTVTLogger.debug(e);
                     showMessage("DlDataProvider初期化失敗しまして、ダウンロードできません。");
                     return;
                 }
@@ -308,7 +308,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                 mDlDataProvider.setDlParam(downloadParam);
                 mDlDataProvider.start();
             } catch (Exception e){
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             }
         }
     }
@@ -649,7 +649,7 @@ public class RecordedBaseFragment extends Fragment implements AbsListView.OnScro
                             try {
                                 mDlDataProvider = DlDataProvider.getInstance(activity);
                             } catch (Exception e) {
-                                e.printStackTrace();
+                                DTVTLogger.debug(e);
                                 showMessage("DlDataProvider初期化失敗しまして、ダウンロードできません。");
                             }
                         }

@@ -227,7 +227,7 @@ public class DlnaInterfaceRI {
             temp = InputStreamToString(is, "UTF-8");
             temp = temp.replace(whatToReplace, replace);
         } catch (Exception e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
         }
 
         try {

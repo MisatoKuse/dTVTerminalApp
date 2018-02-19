@@ -62,7 +62,7 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
                     DbThread t = new DbThread(handler, this, MY_CHANNEL_UPDATE);
                     t.start();//データをDBに入れる
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    DTVTLogger.debug(e);
                 }
             }
             if (mApiDataProviderCallback != null) {

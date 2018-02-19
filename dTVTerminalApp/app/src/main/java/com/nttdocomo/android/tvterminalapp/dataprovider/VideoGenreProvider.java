@@ -276,7 +276,7 @@ public class VideoGenreProvider implements
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            DTVTLogger.debug(e);
             DTVTLogger.error("response genreListData error");
             mRankGenreListCallback.onRankGenreListCallback(null);
         }

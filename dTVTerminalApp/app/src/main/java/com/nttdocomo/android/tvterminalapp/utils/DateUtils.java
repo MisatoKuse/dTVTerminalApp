@@ -572,7 +572,7 @@ public class DateUtils {
             try {
                 gmt = formatter.parse(strDate);
             } catch (ParseException e) {
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             }
             if (gmt != null) {
                 epochTime = gmt.getTime();
@@ -597,7 +597,7 @@ public class DateUtils {
             try {
                 gmt = formatter.parse(strDate);
             } catch (ParseException e) {
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             }
             if (gmt != null) {
                 epochTime = gmt.getTime();
@@ -631,7 +631,7 @@ public class DateUtils {
             try {
                 gmt = formatter.parse(strDate);
             } catch (ParseException e) {
-                e.printStackTrace();
+                DTVTLogger.debug(e);
             }
             if (gmt != null) {
                 //ミリ秒を外す
