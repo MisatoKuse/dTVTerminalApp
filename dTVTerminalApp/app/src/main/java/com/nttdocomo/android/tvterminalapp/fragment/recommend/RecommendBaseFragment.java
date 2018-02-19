@@ -104,17 +104,13 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
         if (null != mRecommendListBaseAdapter) {
             if (tabPosition == POSITION_TV) {
                 mRecommendListBaseAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_TV);
-            }
-            if (tabPosition == POSITION_D_TV) {
+            } else if (tabPosition == POSITION_D_TV) {
                 mRecommendListBaseAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_D_TV);
-            }
-            if (tabPosition == POSITION_D_ANIMATION) {
+            } else if (tabPosition == POSITION_D_ANIMATION) {
                 mRecommendListBaseAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_D_ANIMATE);
-            }
-            if (tabPosition == POSITION_D_CHANNEL) {
+            } else if (tabPosition == POSITION_D_CHANNEL) {
                 mRecommendListBaseAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_D_CHANNEL);
-            }
-            if (tabPosition == POSITION_VIDEO) {
+            } else if (tabPosition == POSITION_VIDEO) {
                 mRecommendListBaseAdapter.setTabTypeItem(ContentsAdapter.TabTypeItem.TAB_VIDEO);
             }
             mRecommendListBaseAdapter.notifyDataSetChanged();
@@ -253,15 +249,6 @@ public class RecommendBaseFragment extends Fragment implements AbsListView.OnScr
         DTVTLogger.start();
         if (mRecommendListBaseAdapter != null) {
             mRecommendListBaseAdapter.enableConnect();
-        }
-    }
-
-    /**
-     * リストの表示を更新する.
-     */
-    public void invalidateViews() {
-        if (null != mRecommendListview) {
-            mRecommendListview.invalidateViews();
         }
     }
 }
