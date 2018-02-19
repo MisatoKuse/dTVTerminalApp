@@ -56,6 +56,10 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
      */
     private PurchasedVodListResponse mPurchasedVodListResponse = null;
     /**
+     * 呼び出し元画面タイプ.
+     */
+    private RentalType mActivityType = null;
+    /**
      * 期限付きレンタルコンテンツフラグ.
      */
     private static final int ENABLE_VOD_WATCH_CONTENTS_UNLIMITED = 0;
@@ -83,6 +87,32 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
      * レンタルコンテンツ判定(0).
      */
     private static final String EST_FLAG_FALSE = "0";
+    /**
+     * プレミアムビデオコンテンツ判定(0).
+     */
+    private static final String CHSVOD_FLAG_FALSE = "0";
+    /**
+     * プレミアムビデオコンテンツ判定(subscription_package).
+     */
+    private static final String DISP_TYPE_SUBSCRIPTION_PACKAGE = "subscription_package";
+    /**
+     * プレミアムビデオコンテンツ判定(series_svod).
+     */
+    private static final String DISP_TYPE_SERIES_SVOD = "series_svod";
+
+    /**
+     * Activity指定.
+     */
+    public enum RentalType {
+        /**
+         * レンタル一覧.
+         */
+        RENTAL_LIST,
+        /**
+         * プレミアムビデオ.
+         */
+        PREMIUM_VIDEO
+    }
 
     @Override
     public void onRentalVodListJsonParsed(final PurchasedVodListResponse response) {
@@ -132,13 +162,15 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
     /**
      * コンストラクタ.
      *
-     * @param mContext コンテキスト
+     * @param mContext     コンテキスト
+     * @param activityType 呼び出し元画面
      */
-    public RentalDataProvider(final Context mContext) {
+    public RentalDataProvider(final Context mContext, final RentalType activityType) {
         super(mContext);
         this.mContext = mContext;
         this.mApiDataProviderCallback = (ApiDataProviderCallback) mContext;
         this.mSetDB = false;
+        mActivityType = activityType;
     }
 
     /**
@@ -289,9 +321,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
         }
         for (int i = 0; i < response.getVodMetaFullData().size(); i++) {
             VodMetaFullData vodMetaFullData = metaFullData.get(i);
-            //「estflg」が「0」または未設定かつ「disp_type」が「video_program」または「video_package」
-            if ((vodMetaFullData.getEstFlag() == null || vodMetaFullData.getEstFlag().length() == 0 || vodMetaFullData.getEstFlag().equals(EST_FLAG_FALSE))
-                    && (vodMetaFullData.getDisp_type() != null && vodMetaFullData.getDisp_type().equals(DISP_TYPE_VIDEO_PROGRAM) || vodMetaFullData.getDisp_type().equals(DISP_TYPE_VIDEO_PACKAGE))) {
+            if (displayFlg(vodMetaFullData)) {
                 ContentsData data = new ContentsData();
 
                 int rentalType = isEnableRentalContents(activeDataList.get(i).getValidEndDate());
@@ -369,6 +399,28 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
             }
         }
         return list;
+    }
+
+    /**
+     * レンタル/プレミアムビデオコンテンツ判定.
+     *
+     * @param vodMetaFullData コンテンツメタデータ
+     * @return レンタル/プレミアムビデオコンテンツ判定結果
+     */
+    private boolean displayFlg(final VodMetaFullData vodMetaFullData) {
+
+        switch (mActivityType) {
+            case RENTAL_LIST:
+                //「estflg」が「0」または未設定かつ「disp_type」が「video_program」または「video_package」
+                return (vodMetaFullData.getEstFlag() == null || vodMetaFullData.getEstFlag().length() == 0 || vodMetaFullData.getEstFlag().equals(EST_FLAG_FALSE))
+                        && (vodMetaFullData.getDisp_type() != null && (vodMetaFullData.getDisp_type().equals(DISP_TYPE_VIDEO_PROGRAM) || vodMetaFullData.getDisp_type().equals(DISP_TYPE_VIDEO_PACKAGE)));
+            case PREMIUM_VIDEO:
+                //「chsvod」が「0」または未設定かつ「disp_type」が「subscription_package」または「series_svod」のコンテンツ
+                return (vodMetaFullData.getmChsvod() == null || vodMetaFullData.getmChsvod().length() == 0 || vodMetaFullData.getmChsvod().equals(CHSVOD_FLAG_FALSE))
+                        && (vodMetaFullData.getDisp_type() != null && (vodMetaFullData.getDisp_type().equals(DISP_TYPE_SUBSCRIPTION_PACKAGE) || vodMetaFullData.getDisp_type().equals(DISP_TYPE_SERIES_SVOD)));
+            default:
+                return false;
+        }
     }
 
     /**

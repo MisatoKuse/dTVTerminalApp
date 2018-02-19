@@ -20,13 +20,13 @@ import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.BaseActivity;
 import com.nttdocomo.android.tvterminalapp.activity.detail.ContentDetailActivity;
 import com.nttdocomo.android.tvterminalapp.adapter.ContentsAdapter;
+import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
+import com.nttdocomo.android.tvterminalapp.dataprovider.RentalDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
 import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopRentalDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
-import com.nttdocomo.android.tvterminalapp.common.DTVTConstants;
-import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
-import com.nttdocomo.android.tvterminalapp.dataprovider.RentalDataProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * レンタル一覧を表示.
  */
-public class RentalListActivity extends BaseActivity implements AdapterView.OnItemClickListener,
+public class PremiumVideoActivity extends BaseActivity implements AdapterView.OnItemClickListener,
         AbsListView.OnScrollListener, RentalDataProvider.ApiDataProviderCallback, AbsListView.OnTouchListener {
 
     /**
@@ -93,11 +93,11 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.rental_list_main_layout);
+        setContentView(R.layout.premium_video_main_layout);
         mContentsList = new ArrayList<>();
 
         //Headerの設定
-        setTitleText(getString(R.string.rental_title));
+        setTitleText(getString(R.string.nav_menu_item_premium_video));
         Intent intent = getIntent();
         mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
         if (mIsMenuLaunch) {
@@ -117,10 +117,10 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
     private void initView() {
         //テレビアイコンをタップされたらリモコンを起動する
         findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
-        mListView = findViewById(R.id.rental_list);
+        mListView = findViewById(R.id.premium_video_list);
         mListView.setOnItemClickListener(this);
         mListView.setOnScrollListener(this);
-        mRelativeLayout = findViewById(R.id.rental_list_progress);
+        mRelativeLayout = findViewById(R.id.premium_video_progress);
         mRelativeLayout.setVisibility(View.VISIBLE);
         mListView.setVisibility(View.GONE);
         //スクロールの上下方向検知用のリスナーを設定
@@ -129,7 +129,7 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
             mContentsList = new ArrayList<>();
         }
         mContentsAdapter = new ContentsAdapter(this, mContentsList,
-                ContentsAdapter.ActivityTypeItem.TYPE_RENTAL_RANK);
+                ContentsAdapter.ActivityTypeItem.TYPE_PREMIUM_VIDEO_LIST);
         mListView.setAdapter(mContentsAdapter);
         mLoadMoreView = LayoutInflater.from(this).inflate(R.layout.search_load_more, null);
     }
@@ -175,7 +175,7 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
         if (null == dataList) {
             resetPaging();
             resetCommunication();
-            RentalDataProvider dataProvider = new RentalDataProvider(this, RentalDataProvider.RentalType.RENTAL_LIST);
+            RentalDataProvider dataProvider = new RentalDataProvider(this, RentalDataProvider.RentalType.PREMIUM_VIDEO);
             dataProvider.getDbRentalList();
             return;
         }
@@ -332,7 +332,7 @@ public class RentalListActivity extends BaseActivity implements AdapterView.OnIt
 
         if (mContentsList == null || mContentsList.size() == 0) {
             //コンテンツ情報が無ければ取得を行う
-            mRentalDataProvider = new RentalDataProvider(this, RentalDataProvider.RentalType.RENTAL_LIST);
+            mRentalDataProvider = new RentalDataProvider(this, RentalDataProvider.RentalType.PREMIUM_VIDEO);
             mRentalDataProvider.getRentalData(true);
         }
     }
