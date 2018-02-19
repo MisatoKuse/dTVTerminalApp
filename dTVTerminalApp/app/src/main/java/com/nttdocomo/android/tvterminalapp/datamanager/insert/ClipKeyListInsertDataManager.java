@@ -74,6 +74,7 @@ public class ClipKeyListInsertDataManager {
             }
             ClipKeyListDao.insert(type, values);
         }
+        db.close();
         DTVTLogger.end();
     }
 
@@ -103,6 +104,7 @@ public class ClipKeyListInsertDataManager {
         values.put(JsonConstants.META_RESPONSE_TYPE, ClipKeyListDataProvider.CLIP_KEY_LIST_TYPE_OTHER_CHANNEL);
         values.put(JsonConstants.META_RESPONSE_TITLE_ID, titleId);
         clipKeyListDao.insert(tableType, values);
+        db.close();
         DTVTLogger.end();
     }
 
@@ -132,6 +134,7 @@ public class ClipKeyListInsertDataManager {
 
         String[] columns = {crId, serviceId, eventId, ClipKeyListDataProvider.CLIP_KEY_LIST_TYPE_OTHER_CHANNEL, titleId};
         clipKeyListDao.deleteRowData(tableType, query, columns);
+        db.close();
         DTVTLogger.end();
     }
 }

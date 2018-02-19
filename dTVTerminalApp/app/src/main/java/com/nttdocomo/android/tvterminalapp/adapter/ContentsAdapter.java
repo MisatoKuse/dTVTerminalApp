@@ -836,9 +836,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         }
 
         if (!ActivityTypeItem.TYPE_RECORDED_LIST.equals(mType)) {
-            if (ActivityTypeItem.TYPE_RECOMMEND_LIST.equals(mType)) {
-
-                setRecommendClipButton(holder, listContentInfo);
+            if (ActivityTypeItem.TYPE_RECOMMEND_LIST.equals(mType) || ActivityTypeItem.TYPE_SEARCH_LIST.equals(mType)) {
+                holder.tv_clip.setVisibility(View.GONE);
             } else {
                 setClipButton(holder, listContentInfo);
             }
@@ -846,39 +845,6 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
         }
 
         DTVTLogger.end();
-    }
-
-    private void setRecommendClipButton(ViewHolder holder, ContentsData listContentInfo) {
-        holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
-        final ImageView clipTextView = holder.tv_clip;
-        final ContentsData recommendListInfo = listContentInfo;
-        if (listContentInfo.getServiceId().equals(SearchServiceType.ServiceId.HIKARI_TV_FOR_DOCOMO)) {
-            holder.tv_clip.setVisibility(View.VISIBLE);
-
-            holder.tv_clip.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(final View view) {
-                    //同じ画面で複数回クリップ操作をした時にクリップ済/未の判定ができないため、画像比較でクリップ済/未を判定する
-                    //TODO:レコメンドではクリップ判定データが不足していること、AdapterをContentsAdapterに統合予定のため、最低限の実装にとどめます
-                    Bitmap clipButtonBitmap = ((BitmapDrawable)  clipTextView.getBackground()).getBitmap();
-                    Bitmap activeClipBitmap = ((BitmapDrawable) ResourcesCompat.getDrawable(mContext.getResources(),
-                            R.mipmap.icon_circle_active_clip, null)).getBitmap();
-                    if (clipButtonBitmap.equals(activeClipBitmap)) {
-                        recommendListInfo.getRequestData().setClipStatus(true);
-                    } else {
-                        recommendListInfo.getRequestData().setClipStatus(false);
-                    }
-                    //クリップボタンイベント
-                    ((BaseActivity) mContext).sendClipRequest(
-                            recommendListInfo.getRequestData(), clipTextView);
-                }
-            });
-
-        } else {
-            //クリップを非表示にする
-            holder.tv_clip.setVisibility(View.GONE);
-        }
-
     }
 
     /**

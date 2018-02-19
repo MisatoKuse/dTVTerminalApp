@@ -57,5 +57,6 @@ public class WeeklyRankInsertDataManager {
             }
             weeklyRankListDao.insert(values);
         }
+        db.close();
     }
 }

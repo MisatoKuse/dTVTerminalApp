@@ -57,5 +57,6 @@ public class DailyRankInsertDataManager {
             }
             dailyRankListDao.insert(values);
         }
+        db.close();
     }
 }

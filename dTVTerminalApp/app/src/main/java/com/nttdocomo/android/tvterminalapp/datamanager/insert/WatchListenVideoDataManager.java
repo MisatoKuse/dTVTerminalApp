@@ -62,5 +62,6 @@ public class WatchListenVideoDataManager {
             }
             watchListenVideoListDao.insert(values);
         }
+        db.close();
     }
 }

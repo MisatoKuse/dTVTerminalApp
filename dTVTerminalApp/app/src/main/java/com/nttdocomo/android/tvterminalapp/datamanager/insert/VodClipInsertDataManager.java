@@ -59,5 +59,6 @@ public class VodClipInsertDataManager {
             }
             vodClipListDao.insert(values);
         }
+        db.close();
     }
 }
