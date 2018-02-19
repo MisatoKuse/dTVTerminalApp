@@ -82,11 +82,11 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      */
     private String mAnswerBuffer = "";
     /**
-     * ワンタイムトークン情報
+     * ワンタイムトークン情報.
      */
     private OneTimeTokenData mOneTimeTokenData = null;
     /**
-     * クッキーマネージャー
+     * クッキーマネージャー.
      */
     private CookieManager mCookieManager;
     /**
@@ -94,7 +94,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      */
     protected static final String REQUEST_METHOD = "POST";
     /**
-     * リダイレクト処理用にGETも定義
+     * リダイレクト処理用にGETも定義.
      */
     protected static final String REQUEST_METHOD_GET = "GET";
     /**
@@ -138,7 +138,7 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      */
     private boolean mIsStop = false;
     /**
-     * サービストークンのクッキーでのキー名
+     * サービストークンのクッキーでのキー名.
      */
     private static final String SERVICE_TOKEN_KEY_NAME = "daccount_auth";
     /**
@@ -146,9 +146,13 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
      */
     private static final String DATE_PATTERN = "yyyyMMdd";
     /**
-     * リダイレクト用飛び先関連情報取得
+     * リダイレクト用飛び先関連情報取得.
      */
     private static final String REDIRECT_JUMP_URL_GET = "Location";
+    /**
+     * SSL失効チェック時にコンテキストが存在しない場合の例外用テキスト.
+     */
+    private static final String NO_CONTEXT_ERROR = "No context";
 
     /**
      * データ受け渡しコールバック.
@@ -748,8 +752,8 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
             HttpsURLConnection.setDefaultAllowUserInteraction(true);
             httpsConnection.setInstanceFollowRedirects(true);
 
-            httpsConnection.connect();
-            DTVTLogger.debug("header=" + httpsConnection.getHeaderFields().toString());
+            //SSL失効チェック
+            checkSsl(httpsConnection);
 
             //ステータスを取得する
             int status = httpsConnection.getResponseCode();
@@ -777,10 +781,22 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                 }
             }
 
+        } catch (SSLHandshakeException e) {
+            //SSL証明書が失効している
+            mReturnCode.errorType = DTVTConstants.ERROR_TYPE.SSL_ERROR;
+            DTVTLogger.debug(e);
+        } catch (SSLPeerUnverifiedException e) {
+            //SSLチェックライブラリの初期化が行われていない
+            mReturnCode.errorType = DTVTConstants.ERROR_TYPE.SSL_ERROR;
+            DTVTLogger.debug(e);
         } catch (IOException e) {
             DTVTLogger.debug(e);
             //エラーコードを設定
             mReturnCode.errorType = DTVTConstants.ERROR_TYPE.OTHER_ERROR;
+        } catch (OcspParameterException e) {
+            //SSLチェックの初期化に失敗している・通常は発生しないとの事
+            mReturnCode.errorType = DTVTConstants.ERROR_TYPE.SSL_ERROR;
+            DTVTLogger.debug(e);
         } finally {
             //通信の切断処理
             if (httpsConnection != null) {
@@ -788,6 +804,35 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
             }
             httpsConnection = null;
         }
+    }
+
+    /**
+     * SSL失効チェック.
+     *
+     * @param httpsConnection HTTPSコネクション
+     * @throws OcspParameterException SSL証明書失効例外
+     * @throws IOException            IO例外
+     */
+    private void checkSsl(HttpsURLConnection httpsConnection) throws OcspParameterException, IOException {
+        //コンテキストがあればSSL証明書失効チェックを行う
+        if (mContext != null) {
+            DTVTLogger.debug(httpsConnection.getURL().toString());
+            //SSL証明書失効チェックライブラリの初期化を行う
+            OcspUtil.init(mContext);
+
+            //通信開始時にSSL証明書失効チェックを併せて行う
+            OcspURLConnection ocspURLConnection = new OcspURLConnection(httpsConnection);
+            ocspURLConnection.connect();
+            DTVTLogger.debug("SSL checked");
+        } else {
+            //既にSSL専用なので、コンテキストが無くて証明書チェックが行えないならばエラーとする
+            //SSLチェック初期化失敗の例外を投げる
+            DTVTLogger.debug("SSL NO CONTEXT ERROR");
+            throw new SSLPeerUnverifiedException(NO_CONTEXT_ERROR);
+        }
+
+        DTVTLogger.debug("header=" + httpsConnection.getHeaderFields().toString());
+
     }
 
     /**
@@ -1140,9 +1185,12 @@ public class WebApiBasePlala implements DaccountGetOTT.DaccountGetOttCallBack {
                     //通信開始時にSSL証明書失効チェックを併せて行う
                     OcspURLConnection ocspURLConnection = new OcspURLConnection(mUrlConnection);
                     ocspURLConnection.connect();
+                    DTVTLogger.debug("redirect SSL checked");
                 } else {
-                    //SSL失効チェックライブラリは動かせないので、既存の通信開始処理
-                    mUrlConnection.connect();
+                    DTVTLogger.debug("redirect SSL check error");
+                    //将来はSSL専用になるので、コンテキストが無くて証明書チェックが行えないならばエラーとする
+                    //SSLチェック初期化失敗の例外を投げる
+                    throw new SSLPeerUnverifiedException(NO_CONTEXT_ERROR);
                 }
 
                 //パラメータを渡す
