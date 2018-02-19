@@ -24,6 +24,8 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.VideoContentProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.OtherContentsDetailData;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopContentsAdapterConnect;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopVideoContentConnect;
 import com.nttdocomo.android.tvterminalapp.struct.ContentsData;
 import com.nttdocomo.android.tvterminalapp.struct.VideoGenreListDataInfo;
 
@@ -81,12 +83,14 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
         // コンテンツツリー画面からのデータ受け取り
         VideoGenreListDataInfo info = getIntent().getParcelableExtra(VIDEO_CONTENTS_BUNDLE_KEY);
         mGenreId = info.getGenreId();
-        setTitleText(info.getVideoGenreListShowData().getTitle());
+        if (info.getVideoGenreListShowData() == null) {
+            setTitleText(getString(R.string.video_list_genre_all));
+        } else {
+            setTitleText(info.getVideoGenreListShowData().getTitle());
+        }
         resetPaging();
 
         initView();
-        mVideoContentProvider = new VideoContentProvider(this);
-        mVideoContentProvider.getVideoContentData(mGenreId, 1);
     }
 
     /**
@@ -104,16 +108,6 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
 
         //スクロールの上下方向検知用のリスナーを設定
         mListView.setOnTouchListener(this);
-
-        //アナライズの警告対応のsynchronized
-        synchronized (this) {
-            mContentsAdapter = new ContentsAdapter(
-                    this,
-                    mContentsList,
-                    ContentsAdapter.ActivityTypeItem.TYPE_DAILY_RANK);
-            mListView.setAdapter(mContentsAdapter);
-        }
-
         mContentsAdapter = new ContentsAdapter(
                 this,
                 mContentsList,
@@ -279,9 +273,7 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
             }
         }
         resetCommunication();
-        synchronized (this) {
-            mContentsAdapter.notifyDataSetChanged();
-        }
+        mContentsAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -339,5 +331,33 @@ public class VideoContentListActivity extends BaseActivity implements View.OnCli
                 //現状処理は無い・警告対応
         }
         return false;
+    }
+
+    @Override
+    public void onStartCommunication() {
+        super.onStartCommunication();
+        DTVTLogger.start();
+        if (mVideoContentProvider != null) {
+            mVideoContentProvider.enableConnect();
+        }
+        if (mListView != null) {
+            mListView.invalidateViews();
+        }
+        if (mContentsList == null || mContentsList.size() == 0) {
+            //コンテンツ情報が無ければ取得を行う
+            mVideoContentProvider = new VideoContentProvider(this);
+            mVideoContentProvider.getVideoContentData(mGenreId, 1);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        DTVTLogger.start();
+        //通信を止める
+        StopVideoContentConnect stopConnect = new StopVideoContentConnect();
+        stopConnect.execute(mVideoContentProvider);
+        StopContentsAdapterConnect stopAdapterConnect = new StopContentsAdapterConnect();
+        stopAdapterConnect.execute(mContentsAdapter);
     }
 }

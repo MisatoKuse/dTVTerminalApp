@@ -22,6 +22,7 @@ import com.nttdocomo.android.tvterminalapp.dataprovider.VideoGenreProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreCountGetMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.GenreListMetaData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.VideoGenreList;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopVideoGenreConnect;
 import com.nttdocomo.android.tvterminalapp.struct.VideoGenreListDataInfo;
 
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
     private VideoGenreListDataInfo mVideoGenreListDataInfo = null;
     private List<VideoGenreList> mShowContentsList = null;
     private VideoGenreProvider mVideoGenreProvider = null;
+    private ListView mListView;
 
     // ジャンルIDのIntent KEY
     private static final String VIDEO_GENRE_ID_BUNDLE_KEY = "videoContentKey";
@@ -54,52 +56,7 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
         mMenuImageView.setVisibility(View.VISIBLE);
         mMenuImageView.setOnClickListener(this);
 
-        mVideoGenreProvider = new VideoGenreProvider(this);
 
-        Intent intent = getIntent();
-        if (intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false)) {
-            mVideoGenreListDataInfo = null;
-        } else {
-            mVideoGenreListDataInfo = intent.getParcelableExtra(VIDEO_GENRE_ID_BUNDLE_KEY);
-        }
-        VideoGenreList showData = null;
-        // 初回 + VideoTopActivityが消えていない状態で遷移した際に初期画面を表示する
-        if (mVideoGenreListDataInfo == null
-                || mVideoGenreListDataInfo.getVideoGenreListShowData() == null
-                || mVideoGenreListDataInfo.getVideoGenreListShowData().getSubGenre() == null) {
-            mVideoGenreListDataInfo = new VideoGenreListDataInfo();
-            mShowContentsList = new ArrayList<VideoGenreList>();
-            DTVTLogger.debug("mVideoGenreListData is Null");
-            // ジャンル画面のタイトル
-            setTitleText(getString(R.string.video_content_top_title));
-            //ジャンル一覧表示データ取得要求開始
-            mVideoGenreProvider.getGenreListDataRequest();
-        } else {
-            DTVTLogger.debug("Show SubGenreList");
-            showData = mVideoGenreListDataInfo.getVideoGenreListShowData();
-            // サブジャンル画面のタイトル
-            setTitleText(showData.getTitle());
-            mShowContentsList = new ArrayList<VideoGenreList>();
-            if (!GenreListMetaData.VIDEO_LIST_GENRE_ID_NOD.equals(mVideoGenreListDataInfo.getGenreId())) {
-                // "すべて" を一番上に表示する
-                VideoGenreList firstList = mVideoGenreListDataInfo.getVideoGenreListData(GenreListMetaData.VIDEO_LIST_GENRE_ID_ALL_CONTENTS);
-                firstList.setGenreId(mVideoGenreListDataInfo.getGenreId());
-                mShowContentsList.add(firstList);
-            }
-            List<String> genreIdList = new ArrayList<String>();
-            // リスト表示データ取得
-            for (int i = 0; i < showData.getSubGenre().size(); i++) {
-                mShowContentsList.add(mVideoGenreListDataInfo.getVideoGenreListData(showData.getSubGenre().get(i)));
-                genreIdList.add(showData.getSubGenre().get(i));
-            }
-
-            // 表示データのコンテンツ数を取得
-            mVideoGenreProvider.getContentCountListData(genreIdList);
-        }
-        mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
-        if (mIsMenuLaunch) {
-            enableHeaderBackIcon(false);
-        }
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
@@ -116,14 +73,14 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
         if (mContentsList == null) {
             mContentsList = new ArrayList();
         }
-        ListView listView = findViewById(R.id.genre_list);
-        listView.setOnItemClickListener(this);
-        listView.setOnScrollListener(this);
+        mListView = findViewById(R.id.genre_list);
+        mListView.setOnItemClickListener(this);
+        mListView.setOnScrollListener(this);
         mVideoGenreAdapter = new VideoGenreAdapter(
                 this,
                 mContentsList
         );
-        listView.setAdapter(mVideoGenreAdapter);
+        mListView.setAdapter(mVideoGenreAdapter);
     }
 
     /**
@@ -284,5 +241,74 @@ public class VideoTopActivity extends BaseActivity implements VideoGenreProvider
             return false;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+
+    @Override
+    public void onStartCommunication() {
+        super.onStartCommunication();
+        DTVTLogger.start();
+        if (mVideoGenreProvider != null) {
+            mVideoGenreProvider.enableConnect();
+        }
+        if (mListView != null) {
+            mListView.invalidateViews();
+        }
+        if (mContentsList == null || mContentsList.size() == 0) {
+            //コンテンツ情報が無ければ取得を行う
+            mVideoGenreProvider = new VideoGenreProvider(this);
+            Intent intent = getIntent();
+            if (intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false)) {
+                mVideoGenreListDataInfo = null;
+            } else {
+                mVideoGenreListDataInfo = intent.getParcelableExtra(VIDEO_GENRE_ID_BUNDLE_KEY);
+            }
+            VideoGenreList showData = null;
+            // 初回 + VideoTopActivityが消えていない状態で遷移した際に初期画面を表示する
+            if (mVideoGenreListDataInfo == null
+                    || mVideoGenreListDataInfo.getVideoGenreListShowData() == null
+                    || mVideoGenreListDataInfo.getVideoGenreListShowData().getSubGenre() == null) {
+                mVideoGenreListDataInfo = new VideoGenreListDataInfo();
+                mShowContentsList = new ArrayList<VideoGenreList>();
+                DTVTLogger.debug("mVideoGenreListData is Null");
+                // ジャンル画面のタイトル
+                setTitleText(getString(R.string.video_content_top_title));
+                //ジャンル一覧表示データ取得要求開始
+                mVideoGenreProvider.getGenreListDataRequest();
+            } else {
+                DTVTLogger.debug("Show SubGenreList");
+                showData = mVideoGenreListDataInfo.getVideoGenreListShowData();
+                // サブジャンル画面のタイトル
+                setTitleText(showData.getTitle());
+                mShowContentsList = new ArrayList<VideoGenreList>();
+                if (!GenreListMetaData.VIDEO_LIST_GENRE_ID_NOD.equals(mVideoGenreListDataInfo.getGenreId())) {
+                    // "すべて" を一番上に表示する
+                    VideoGenreList firstList = mVideoGenreListDataInfo.getVideoGenreListData(GenreListMetaData.VIDEO_LIST_GENRE_ID_ALL_CONTENTS);
+                    firstList.setGenreId(mVideoGenreListDataInfo.getGenreId());
+                    mShowContentsList.add(firstList);
+                }
+                List<String> genreIdList = new ArrayList<String>();
+                // リスト表示データ取得
+                for (int i = 0; i < showData.getSubGenre().size(); i++) {
+                    mShowContentsList.add(mVideoGenreListDataInfo.getVideoGenreListData(showData.getSubGenre().get(i)));
+                    genreIdList.add(showData.getSubGenre().get(i));
+                }
+                // 表示データのコンテンツ数を取得
+                mVideoGenreProvider.getContentCountListData(genreIdList);
+            }
+            mIsMenuLaunch = intent.getBooleanExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, false);
+            if (mIsMenuLaunch) {
+                enableHeaderBackIcon(false);
+            }
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        DTVTLogger.start();
+        //通信を止める
+        StopVideoGenreConnect stopConnect = new StopVideoGenreConnect();
+        stopConnect.execute(mVideoGenreProvider);
     }
 }

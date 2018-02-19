@@ -99,7 +99,11 @@ public class VideoGenreProvider implements
     @Override
     public void onGenreCountGetJsonParsed(final GenreCountGetResponse genreCountGetResponse) {
         if (mApiGenreListDataProviderCallback != null) {
-            mApiGenreListDataProviderCallback.genreListCallback(genreCountGetResponse.getGenreCountGetMetaData());
+            if (genreCountGetResponse != null) {
+                mApiGenreListDataProviderCallback.genreListCallback(genreCountGetResponse.getGenreCountGetMetaData());
+            } else {
+                mApiGenreListDataProviderCallback.genreListCallback(null);
+            }
         }
     }
 

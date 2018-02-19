@@ -40,6 +40,18 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
      * ビデオランキングリスト.
      */
     private VideoRankList mVideoRankList = null;
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel = false;
+    /**
+     * ジャンル毎コンテンツ一覧取得用webクライアント.
+     */
+    private ContentsListPerGenreWebClient mGenreListWebClient = null;
+    /**
+     * クリップキー一覧取得プロバイダ.
+     */
+    private ClipKeyListDataProvider mClipKeyListDataProvider = null;
 
     /**
      * コンストラクタ.
@@ -72,11 +84,19 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
      */
     public void getVideoContentData(final String genreId, final int offset) {
         mVideoRankList = null;
-        if (mRequiredClipKeyList) {
-            getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+        if (!mIsCancel) {
+            if (mRequiredClipKeyList) {
+                mClipKeyListDataProvider = new ClipKeyListDataProvider(mContext);
+                mClipKeyListDataProvider.getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
+            }
+            // コンテンツ数
+            getVideoContentListData(genreId, offset);
+        } else {
+            DTVTLogger.error("VideoContentProvider is stopping connection");
+            if (null != mApiVideoContentDataProviderCallback) {
+                mApiVideoContentDataProviderCallback.videoContentCallback(null);
+            }
         }
-        // コンテンツ数
-        getVideoContentListData(genreId, offset);
     }
 
     /**
@@ -85,14 +105,21 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
      */
     private void getVideoContentListData(final String genreId, final int offset) {
         //通信クラスにデータ取得要求を出す
-        ContentsListPerGenreWebClient webClient = new ContentsListPerGenreWebClient(mContext);
-        int upperPageLimit = 20;
-        UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
-        int ageReq = userInfoDataProvider.getUserAge();
-        //TODO：暫定的に人気順でソートする
-        String sort = JsonConstants.GENRE_PER_CONTENTS_SORT_PLAY_COUNT_DESC;
+        mGenreListWebClient = new ContentsListPerGenreWebClient(mContext);
+        if (!mIsCancel) {
+            int upperPageLimit = 20;
+            UserInfoDataProvider userInfoDataProvider = new UserInfoDataProvider(mContext);
+            int ageReq = userInfoDataProvider.getUserAge();
+            //TODO：暫定的に人気順でソートする
+            String sort = JsonConstants.GENRE_PER_CONTENTS_SORT_PLAY_COUNT_DESC;
 
-        webClient.getContentsListPerGenreApi(upperPageLimit, offset, WebApiBasePlala.FILTER_RELEASE, ageReq, genreId, sort, this);
+            mGenreListWebClient.getContentsListPerGenreApi(upperPageLimit, offset, WebApiBasePlala.FILTER_RELEASE, ageReq, genreId, sort, this);
+        } else {
+            DTVTLogger.error("VideoContentProvider is stopping connection");
+            if (null != mApiVideoContentDataProviderCallback) {
+                mApiVideoContentDataProviderCallback.videoContentCallback(null);
+            }
+        }
     }
 
     /**
@@ -196,5 +223,33 @@ public class VideoContentProvider extends ClipKeyListDataProvider implements
             sendContentListData(mVideoRankList.getVrList());
         }
         DTVTLogger.end();
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnect() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        if (mClipKeyListDataProvider != null) {
+            mClipKeyListDataProvider.stopConnection();
+        }
+        if (mGenreListWebClient != null) {
+            mGenreListWebClient.stopConnect();
+        }
+    }
+
+    /**
+     * 通信を許可する.
+     */
+    public void enableConnect() {
+        DTVTLogger.start();
+        mIsCancel = false;
+        if (mClipKeyListDataProvider != null) {
+            mClipKeyListDataProvider.enableConnection();
+        }
+        if (mGenreListWebClient != null) {
+            mGenreListWebClient.enableConnect();
+        }
     }
 }
