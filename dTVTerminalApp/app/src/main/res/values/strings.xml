@@ -205,6 +205,7 @@
 
     <!-- レンタル -->
     <string name="rental_title">レンタル</string>
+    <string name="delivery_end_message">配信終了</string>
 
     <!--コンテンツ詳細-->
     <string name="contents_info_more_text">more</string>

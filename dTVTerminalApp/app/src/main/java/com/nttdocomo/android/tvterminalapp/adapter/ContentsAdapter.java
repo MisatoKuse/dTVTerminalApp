@@ -656,10 +656,14 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                     String time = listContentInfo.getTime();
                     if (!time.equals(RentalDataProvider.ENABLE_VOD_WATCH_CONTENTS_UNLIMITED_HYPHEN)) {
                         //視聴期限表示
-                        //TODO:現状の表示は〇/〇(曜日)→表示変更は別チケットで対応予定
                         holder.tv_time.setVisibility(View.VISIBLE);
-                        holder.tv_time.setText(StringUtils.getConnectStrings(listContentInfo.getTime(),
-                                mContext.getString(R.string.contents_detail_until_date)));
+                        if (time.equals(mContext.getString(R.string.delivery_end_message))) {
+                            holder.tv_time.setText(listContentInfo.getTime());
+                        } else {
+                            //TODO:現状の表示は〇/〇(曜日)まで→表示変更は別チケットで対応予定
+                            holder.tv_time.setText(StringUtils.getConnectStrings(listContentInfo.getTime(),
+                                    mContext.getString(R.string.contents_detail_until_date)));
+                        }
                     } else {
                         holder.tv_time.setVisibility(View.GONE);
                     }
