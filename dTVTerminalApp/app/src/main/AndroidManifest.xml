@@ -51,6 +51,9 @@
             android:name=".activity.home.RentalListActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".activity.home.PremiumVideoActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".activity.home.WatchingVideoListActivity"
             android:screenOrientation="portrait" />
         <!-- ======================================  Home グループ End ====================================== -->

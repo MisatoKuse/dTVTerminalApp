@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.nttdocomo.android.tvterminalapp.R;
 import com.nttdocomo.android.tvterminalapp.activity.home.ClipListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.HomeActivity;
+import com.nttdocomo.android.tvterminalapp.activity.home.PremiumVideoActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecommendActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordReservationListActivity;
 import com.nttdocomo.android.tvterminalapp.activity.home.RecordedListActivity;
@@ -211,6 +212,13 @@ public class MenuDisplay implements AdapterView.OnItemClickListener {
                         intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
                         mActivity.startActivity(intent);
                     }
+            } else if (menuName.equals(mActivity.getString(R.string.nav_menu_item_premium_video))) {
+                if (!(mActivity instanceof PremiumVideoActivity)) {
+                    intent.setClass(mActivity, PremiumVideoActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra(DTVTConstants.GLOBAL_MENU_LAUNCH, true);
+                    mActivity.startActivity(intent);
+                }
             } else if (menuName.equals(mActivity.getString(R.string.rental_title))) {
                     if (!(mActivity instanceof RentalListActivity)) {
                         intent.setClass(mActivity, RentalListActivity.class);
