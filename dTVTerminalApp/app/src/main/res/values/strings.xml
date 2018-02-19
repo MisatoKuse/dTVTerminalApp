@@ -216,10 +216,13 @@
     <string name="contents_detail_contract_text">このコンテンツをご覧になるには契約が必要です</string>
     <string name="dtv_content_service_start_text">dTVで視聴</string>
     <string name="dtv_content_service_start_dialog">dTVアプリを起動します</string>
-    <string name="dtv_content_service_update_dialog">ドコモテレビターミナルのdTVのバージョンアップが必要です</string>
+    <string name="dtv_content_service_update_dialog">dTVアプリのアップデートが必要です</string>
     <string name="d_anime_store_content_service_start_text">dアニメストアで視聴</string>
     <string name="d_anime_store_content_service_start_dialog">dアニメストアアプリを起動します</string>
-    <string name="d_anime_store_content_service_update_dialog">ドコモテレビターミナルのdアニメストアのバージョンアップが必要です</string>
+    <string name="d_anime_store_content_service_update_dialog">dアニメストアアプリのアップデートが必要です</string>
+    <string name="dtv_channel_service_start_text">dtvチャンネルで視聴</string>
+    <string name="dtv_channel_service_start_dialog">dtvチャンネルアプリを起動します</string>
+    <string name="dtv_channel_service_update_dialog">ｄTVチャンネルアプリのアップデートが必要です</string>
     <string name="d_tv_terminal_application_version_update_dialog">ドコモテレビターミナルを操作したい場合は、ドコモテレビターミナルアプリをアップデートしてください。</string>
     <string name="stb_application_version_update">ご利用のドコモテレビターミナルの最新版がありますドコモテレビターミナルのアップデートをしてください。</string>
     <string name="contents_detail_thumbnail_text">テレビで視聴できます</string>
