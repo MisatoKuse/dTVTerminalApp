@@ -368,7 +368,8 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                     Bitmap clipButtonBitmap = ((BitmapDrawable) clipButton.getBackground()).getBitmap();
                     Bitmap activeClipBitmap = ((BitmapDrawable) ResourcesCompat.getDrawable(mContext.getResources(),
                             R.mipmap.icon_circle_active_clip, null)).getBitmap();
-                    if (clipButtonBitmap.equals(activeClipBitmap)) {
+                    Object str = clipButton.getTag();
+                    if (str.equals(BaseActivity.CLIP_ACTIVE_STATUS)) {
                         requestData.setClipStatus(true);
                     } else {
                         requestData.setClipStatus(false);
@@ -1110,8 +1111,10 @@ public class ContentsAdapter extends BaseAdapter implements OnClickListener {
                     if (listContentInfo.isClipExec()) {
                         if (listContentInfo.isClipStatus()) {
                             holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+                            holder.tv_clip.setTag(BaseActivity.CLIP_ACTIVE_STATUS);
                         } else {
                             holder.tv_clip.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
+                            holder.tv_clip.setTag(BaseActivity.CLIP_OPACITY_STATUS);
                         }
                     } else {
                         holder.tv_clip.setVisibility(View.GONE);

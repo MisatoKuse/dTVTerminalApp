@@ -322,13 +322,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         if (watchListenVideoList != null && watchListenVideoList.size() > 0) {
             WatchListenVideoList list = watchListenVideoList.get(0);
             setStructDB(list);
-            List<Map<String,String>> vcList = list.getVcList();
-            if ((!mRequiredClipKeyList || mResponseEndFlag) && vcList != null
-                    && vcList.size() > 0 && !vcList.get(0).isEmpty()) {
-                sendWatchingVideoListData(vcList);
-            } else {
-                mApiDataProviderCallback.watchingVideoCallback(null);
-            }
+            List<Map<String, String>> vcList = list.getVcList();
+            sendWatchingVideoListData(vcList);
         } else {
             if (null != mApiDataProviderCallback) {
                 mApiDataProviderCallback.watchingVideoCallback(null);

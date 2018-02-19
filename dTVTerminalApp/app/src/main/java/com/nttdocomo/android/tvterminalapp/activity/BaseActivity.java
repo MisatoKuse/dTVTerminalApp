@@ -214,7 +214,14 @@ public class BaseActivity extends FragmentActivity implements
      */
     private boolean mIsInJapan = true;
 
-
+    /**
+     * クリップ状態.
+     */
+    public static final String CLIP_ACTIVE_STATUS = "active";
+    /**
+     * 未クリップ状態.
+     */
+    public static final String CLIP_OPACITY_STATUS = "opacity";
     /**
      * 関数機能：
      * Activityを起動する.
@@ -1507,6 +1514,7 @@ public class BaseActivity extends FragmentActivity implements
     @Override
     public void onClipRegistResult() {
         mClipButton.setBackgroundResource(R.mipmap.icon_circle_active_clip);
+        mClipButton.setTag(CLIP_ACTIVE_STATUS);
         showClipToast(R.string.clip_regist_result_message);
 
         //DB登録開始
@@ -1524,6 +1532,7 @@ public class BaseActivity extends FragmentActivity implements
     public void onClipDeleteResult() {
         mClipButton.setBackgroundResource(R.mipmap.icon_circle_opacity_clip);
         showClipToast(R.string.clip_delete_result_message);
+        mClipButton.setTag(CLIP_OPACITY_STATUS);
 
         //DB削除開始
         ClipKeyListDataProvider clipKeyListDataProvider = new ClipKeyListDataProvider(this);
