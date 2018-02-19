@@ -1984,6 +1984,10 @@ public class BaseActivity extends FragmentActivity implements
         onStartCommunication();
     }
 
+    /**
+     * 持ち出しダウンロード中判定用
+     * @return mIsInJapan mIsInJapan
+     */
     protected boolean isInJapan(){
         return mIsInJapan;
     }
