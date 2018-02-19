@@ -9,7 +9,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
-//import android.support.v7.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat;
 
 import com.nttdocomo.android.tvterminalapp.R;
@@ -18,23 +17,30 @@ import com.nttdocomo.android.tvterminalapp.jni.download.DlnaProvDownload;
 import java.util.ArrayList;
 import java.util.List;
 
+//import android.support.v7.app.NotificationCompat;
+
 public class DownloadService extends Service implements DownloadListener {
     private DownloadServiceListener mDownloadServiceListener;
     private DownloaderBase mDownloaderBase;
     private String mData;
     private static final int DOWNLOAD_SERVICE_ID = 1;
     private static List<DlData> sDlDataQue = new ArrayList<>();
-    private static int BINDSTATUS = 1;
-    public static final int UNBINED = 1;
-    public static final int BINDED = 2;
-    public static final int BACKGROUD = 3;
     private boolean mIsUiRunning = false;
 
-    public static final String DONWLOAD_UPDATE = "update";
-    public static final String DONWLOAD_SUCCESS = "success";
-    public static final String DONWLOAD_FAIL = "fail";
-    public static final String DONWLOAD_PATH = "path";
-    public static final String DONWLOAD_LowStorageSpace = "lowStorageSpace";
+    //broadcast type
+    public static final String DONWLOAD_OnProgress = "onProgress";
+    public static final String DONWLOAD_OnSuccess = "onSuccess";
+    public static final String DONWLOAD_OnFail = "onFail";
+    public static final String DONWLOAD_OnLowStorageSpace = "onLowStorageSpace";
+    public static final String DONWLOAD_OnCancelAll = "OnCancelAll";
+    public static final String DONWLOAD_OnCancel = "onCancel";
+    public static final String DONWLOAD_OnStart = "onStart";
+    public static final String DONWLOAD_DlDataProviderAvailable = "onDlDataProviderAvailable";
+    public static final String DONWLOAD_DlDataProviderUnavailable = "onDDataProviderUnavailable";
+
+    //broadcast param type
+    public static final String DONWLOAD_ParamInt = "paramInt";
+    public static final String DONWLOAD_ParamString = "paramString";
 
 
     public synchronized static void setDlDataQue(List<DlData> dlDataQue){
@@ -56,17 +62,13 @@ public class DownloadService extends Service implements DownloadListener {
     public synchronized static  List<DlData> getDlDataQue(){
         return sDlDataQue;
     }
-    
+
+    public static synchronized boolean isDownloadServiceRunning(){
+        return (null != sDlDataQue ) && 0 < sDlDataQue.size();
+    }
+
     public void setDownloadServiceListener(DownloadServiceListener dlServiceListener){
         mDownloadServiceListener=dlServiceListener;
-    }
-
-    public static void setBindStatus(int status){
-        BINDSTATUS = status;
-    }
-
-    public static int getBindStatus(){
-        return BINDSTATUS;
     }
 
     /**
@@ -83,24 +85,6 @@ public class DownloadService extends Service implements DownloadListener {
     public void start(){
         if(null!=mDownloaderBase){
             mDownloaderBase.start();
-        }
-    }
-
-    /**
-     * ダウンロード一時停止
-     */
-    public void pause(){
-        if(null!=mDownloaderBase){
-            mDownloaderBase.pause();
-        }
-    }
-
-    /**
-     * ダウンロード再開
-     */
-    public void resume(){
-        if(null!=mDownloaderBase){
-            mDownloaderBase.resume();
         }
     }
 
@@ -150,26 +134,16 @@ public class DownloadService extends Service implements DownloadListener {
 
     @Override
     public boolean onUnbind(Intent intent) {
-        return super.onUnbind(intent);
+        return true;
+    }
+
+    @Override
+    public void onRebind(Intent intent) {
+        super.onRebind(intent);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        /*String msg = intent.getExtras().getString("downloadStatus");
-        String url = intent.getExtras().getString("url");
-        String path = intent.getExtras().getString("path");
-        String fileName =intent.getExtras().getString("fileName");
-        if (msg.equals("start")) {
-            startDownload();
-        } else if (msg.equals("pause")) {
-            downloader.pause();
-        } else if (msg.equals("resume")) {
-            downloader.resume();
-        } else if (msg.equals("stop")) {
-            downloader.cancel();
-            stopForeground(true);
-            stopSelf();
-        }*/
         startService();
         return super.onStartCommand(intent, flags, startId);
     }
@@ -178,18 +152,10 @@ public class DownloadService extends Service implements DownloadListener {
         startForeground(DOWNLOAD_SERVICE_ID ,getNotification(getResources().getString(R.string.record_download_notification), 0));
     }
 
-//    private void notifyProgress(String message, int progress){
-//        getNotificationManager().notify(1, getNotification(message, progress));
-//    }
-
     private Notification getNotification(String title, int progress) {
-//        Intent intent = new Intent(this, RecordedListActivity.class);
-//        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
-        //NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "");
         builder.setSmallIcon(R.mipmap.icd_app_tvterminal);
         builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.icd_app_tvterminal));
-//        builder.setContentIntent(pi);
         builder.setContentTitle(title);
         builder.setPriority(NotificationCompat.PRIORITY_HIGH);
         if (progress > 0) {
@@ -198,10 +164,6 @@ public class DownloadService extends Service implements DownloadListener {
         }
         return builder.build();
     }
-
-//    private NotificationManager getNotificationManager() {
-//        return (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-//    }
 
     public void stopService(){
         stopForeground(true);
@@ -213,7 +175,7 @@ public class DownloadService extends Service implements DownloadListener {
         }
     }
 
-    private boolean isUiRunning(){
+    public boolean isUiRunning(){
         return mIsUiRunning;
     }
 
@@ -246,26 +208,6 @@ public class DownloadService extends Service implements DownloadListener {
     public void onStart(int totalFileByteSize) {
         if(null!=mDownloadServiceListener){
             mDownloadServiceListener.onStart(totalFileByteSize);
-        }
-    }
-
-    /**
-     * コールバック
-     */
-    @Override
-    public void onPause() {
-        if(null!=mDownloadServiceListener){
-            mDownloadServiceListener.onPause();
-        }
-    }
-
-    /**
-     * コールバック
-     */
-    @Override
-    public void onResume() {
-        if(null!=mDownloadServiceListener){
-            mDownloadServiceListener.onResume();
         }
     }
 
@@ -352,5 +294,12 @@ public class DownloadService extends Service implements DownloadListener {
      */
     public void setUiRunning(boolean yn){
         mIsUiRunning = yn;
+    }
+
+    public synchronized boolean isDownloading(){
+        if (null == mDownloaderBase) {
+            return false;
+        }
+        return mDownloaderBase.isDownloading();
     }
 }

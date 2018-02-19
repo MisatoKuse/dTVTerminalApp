@@ -4,7 +4,7 @@
 
 package com.nttdocomo.android.tvterminalapp.service.download;
 
-interface DownloadListener {
+public interface DownloadListener {
 
     /**
      * ダウンロードエラー定義
@@ -27,16 +27,6 @@ interface DownloadListener {
      * @param totalFileByteSize totalFileByteSize
      */
     void onStart(int totalFileByteSize);
-
-    /**
-     * ダウンロード一時停止の時、コールされる
-     */
-    void onPause();
-
-    /**
-     * ダウンロード再開の時、コールされる
-     */
-    void onResume();
 
     /**
      * ダウンロード進捗通知の時、コールされる

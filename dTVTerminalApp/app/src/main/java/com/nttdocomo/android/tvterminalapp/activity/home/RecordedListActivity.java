@@ -39,6 +39,7 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoListener;
 import com.nttdocomo.android.tvterminalapp.jni.download.DlnaProvDownload;
+import com.nttdocomo.android.tvterminalapp.service.download.DownloadListener;
 import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.service.download.DlDataProvider;
 import com.nttdocomo.android.tvterminalapp.service.download.DownloadService;
@@ -69,8 +70,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     private RecordedFragmentFactory mRecordedFragmentFactory = null;
     public static final String RECORD_LIST_KEY = "recordListKey";
     public static final String sMinus = "-";
-
-    //private boolean mIsDlOk=false;
+	public static final String RLA_FragmentName_All = "all";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,22 +90,18 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         enableStbStatusIcon(true);
         enableGlobalMenuIcon(true);
         setStatusBarColor(true);
-
-//        initDl();
-//        initView();
-//        getData();
-//        initTabVIew();
-//        setPagerAdapter();
         DTVTLogger.end();
     }
 
     private void initDl() {
         boolean isRunning= isDownloadServiceRunning();
         if(isRunning){
-            //mIsDlOk=true;
+            
         }else {
-            //mIsDlOk= DlnaProvDownload.initGlobalDl(DownloaderBase.getDownloadPath(this));
-            DlnaProvDownload.initGlobalDl(DownloaderBase.getDownloadPath(this));
+            boolean res = DlnaProvDownload.initGlobalDl(DownloaderBase.getDownloadPath(this));
+            if(!res){
+                DTVTLogger.debug("initGlobalDl failed");
+            }
         }
     }
 
@@ -244,7 +240,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                             detailData.setDuration(duration);
                             detailData.setTitle(title);
                             detailData.setVideoType(videoType);
-//                            detailData.setClearTextSize(totalSize);
+                            detailData.setClearTextSize(totalSize);
                             baseFragment.mContentsList.add(detailData);
                         }
                     }
@@ -279,7 +275,10 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             }
             if (mDlnaProvRecVideo.start(dlnaDmsItem, this)) {
                 clearFragment(0);
-                mDlnaProvRecVideo.browseRecVideoDms();
+                boolean res = mDlnaProvRecVideo.browseRecVideoDms();
+                if(!res){
+                    DTVTLogger.debug("browseRecVideoDms false");
+                }
             } else {
                 setProgressBarGone();
             }
@@ -297,7 +296,11 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         } else {
             tabIndex = mViewPager.getCurrentItem();
         }
-        return mRecordedFragmentFactory.createFragment(tabIndex, this);
+        RecordedBaseFragment f= mRecordedFragmentFactory.createFragment(tabIndex, this);
+        if(0 == tabIndex && null != f){
+            f.setFragmentName(RLA_FragmentName_All);
+        }
+        return f;
     }
 
     public int getCurrentPosition(){
@@ -358,7 +361,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
     }
 
     private boolean isDownloadServiceRunning(){
-        return DownloadService.getDlDataQue() != null && DownloadService.getDlDataQue().size() > 0;
+        return DownloadService.isDownloadServiceRunning();
     }
 
     private List<Map<String, String>> getDownloadListFromDb(){
@@ -396,6 +399,7 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     private void setVideoBrows(ArrayList<DlnaRecVideoItem>  dlnaRecVideoItems) {
         final RecordedBaseFragment baseFrgament = getCurrentRecordedBaseFragment(0);
+		baseFrgament.setFragmentName(RLA_FragmentName_All);
         baseFrgament.mContentsList = new ArrayList<>();
         List<Map<String, String>> resultList = getDownloadListFromDb();
         setTakeOutContentsToAll(dlnaRecVideoItems, resultList);
@@ -543,33 +547,61 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
     private void registReceiver(){
         IntentFilter filter = new IntentFilter();
-        filter.addAction(DownloadService.DONWLOAD_UPDATE);
-        filter.addAction(DownloadService.DONWLOAD_SUCCESS);
-        filter.addAction(DownloadService.DONWLOAD_FAIL);
+        filter.addAction(DownloadService.DONWLOAD_OnProgress);
+        filter.addAction(DownloadService.DONWLOAD_OnSuccess);
+        filter.addAction(DownloadService.DONWLOAD_OnFail);
+        filter.addAction(DownloadService.DONWLOAD_OnLowStorageSpace);
+        filter.addAction(DownloadService.DONWLOAD_OnCancelAll);
+        filter.addAction(DownloadService.DONWLOAD_OnCancel);
+        filter.addAction(DownloadService.DONWLOAD_OnStart);
+        filter.addAction(DownloadService.DONWLOAD_DlDataProviderAvailable);
+        filter.addAction(DownloadService.DONWLOAD_DlDataProviderUnavailable);
         registerReceiver(downloadReceiver, filter);
     }
 
     private BroadcastReceiver downloadReceiver = new BroadcastReceiver(){
 
         @Override
-        public void onReceive(Context context, Intent intent) {
-            if (DownloadService.DONWLOAD_UPDATE.equals(intent.getAction())) {
-                int progress = intent.getIntExtra(DownloadService.DONWLOAD_UPDATE, 0);
-                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
-                baseFragment.setDownladProgressByBg(progress);
-            } else if (DownloadService.DONWLOAD_SUCCESS.equals(intent.getAction())) {
-                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
-                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_PATH);
-                baseFragment.setDownladSuccessByBg(fullPath);
-            } else if (DownloadService.DONWLOAD_FAIL.equals(intent.getAction())) {
-                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
-                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_PATH);
-                baseFragment.setDownladFailByBg(fullPath);
-            } else if (DownloadService.DONWLOAD_LowStorageSpace.equals(intent.getAction())) {
-                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
-                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_PATH);
-                baseFragment.onLowStorageSpace(fullPath);
-            }
+	    public void onReceive(Context context, Intent intent) {
+			try {
+		            if (DownloadService.DONWLOAD_OnProgress.equals(intent.getAction())) {
+		                int progress = intent.getIntExtra(DownloadService.DONWLOAD_ParamInt, 0);
+		                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+		                baseFragment.onDownladProgressByBg(progress);
+		            } else if (DownloadService.DONWLOAD_OnSuccess.equals(intent.getAction())) {
+		                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+		                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_ParamString);
+		                baseFragment.onDownladSuccessByBg(fullPath);
+		            } else if (DownloadService.DONWLOAD_OnFail.equals(intent.getAction())) {
+		                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+		                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_ParamString);
+		                int error = intent.getIntExtra(DownloadService.DONWLOAD_ParamInt, DownloadListener.DLError.DLError_NoError.ordinal());
+		                baseFragment.onDownladFailByBg(fullPath, DownloadListener.DLError.values()[error]);
+		            } else if (DownloadService.DONWLOAD_OnLowStorageSpace.equals(intent.getAction())) {
+		                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+		                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_ParamString);
+		                baseFragment.onLowStorageSpaceByBg(fullPath);
+		            }  else if (DownloadService.DONWLOAD_OnCancelAll.equals(intent.getAction())) {
+		                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+		                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_ParamString);
+		                baseFragment.onCancelAll(fullPath);
+		            }  else if (DownloadService.DONWLOAD_OnCancel.equals(intent.getAction())) {
+		                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+		                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_ParamString);
+		                baseFragment.onCancelByBg(fullPath);
+		            } else if (DownloadService.DONWLOAD_OnStart.equals(intent.getAction())) {
+		                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+		                baseFragment.onStartBg();
+		            } else if (DownloadService.DONWLOAD_DlDataProviderAvailable.equals(intent.getAction())) {
+		                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+		                baseFragment.onDlDataProviderAvailable();
+		            }  else if (DownloadService.DONWLOAD_DlDataProviderUnavailable.equals(intent.getAction())) {
+		                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+		                baseFragment.onDlDataProviderUnavailable();
+		            }
+				} catch (Exception e ) {
+					DTVTLogger.debug(e);
+				}
         }
     };
 
@@ -621,7 +653,11 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         public Fragment getItem(int position) {
             synchronized (this) {
                 DTVTLogger.start();
-                return mRecordedFragmentFactory.createFragment(position, RecordedListActivity.this);
+                RecordedBaseFragment f= mRecordedFragmentFactory.createFragment(position, RecordedListActivity.this);
+                if(0 == position && null != f){
+                    f.setFragmentName(RLA_FragmentName_All);
+                }
+                return f;
             }
         }
 
@@ -711,22 +747,16 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
             if(fra == thiz){
                 return;
             }
+			fra.setFragmentName(RLA_FragmentName_All);
             fra.delItemData(dlPaht);
         }
     }
 
     /**
-     * 「すべて」タッブから情報を取得
-     * @return yn yn
+     * DTCP持ち出しダウンロード中Override
      */
-    public boolean isDownloading() {
-        if(null == mRecordedFragmentFactory){
-            return false;
-        }
-        RecordedBaseFragment fra = mRecordedFragmentFactory.createFragment(0, RecordedListActivity.this);
-        if(null != fra){
-            return fra.checkIsDownloading();
-        }
-        return false;
+    @Override
+    protected void onTransoceanicCommunicationDialogNo(){
+        DlDataProvider.cancelAll();
     }
 }

@@ -28,8 +28,7 @@ import java.util.Map;
  * Activityからこのクラスを利用する
  */
 public class DlDataProvider implements ServiceConnection, DownloadServiceListener, DbThread.DbOperation {
-    private DlDataProviderListener mDlDataProviderListener;
-    private /*static*/ DownloadService.Binder mBinder;
+    private DownloadService.Binder mBinder;
     private Activity mActivity;
     private DlData dlData;
     private String itemId;
@@ -40,7 +39,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
 
     }
 
-    public static DlDataProvider getInstance(Activity activity, DlDataProviderListener dlDataProviderListener) throws Exception {
+    public static DlDataProvider getInstance(Activity activity) throws Exception {
         if (null == activity) {
             throw new Exception("DlDataProvider.DlDataProvider, null activity");
         }
@@ -48,7 +47,6 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
             sDlDataProvider = new DlDataProvider();
         }
         sDlDataProvider.mActivity = activity;
-        sDlDataProvider.mDlDataProviderListener = dlDataProviderListener;
         return sDlDataProvider;
     }
 
@@ -57,10 +55,6 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
             return;
         }
         sDlDataProvider = null;
-    }
-
-    public void setIsRegistered(boolean yn){
-        isRegistered = yn;
     }
 
     public boolean getIsRegistered(){
@@ -74,32 +68,24 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
     /**
      * DlDataProvider機能を有効
      */
-    public void beginProvider() {
-        if (null == mActivity) {
+    public void beginProvider(Activity act) {
+        if (null == act) {
+            start();
             return;
         }
-        DownloadService.setBindStatus(DownloadService.BINDED);
+        mActivity = act;
         Intent intent = new Intent(mActivity, DownloadService.class);
         isRegistered = mActivity.bindService(intent, this, Context.BIND_AUTO_CREATE);
         startService();
     }
 
     /**
-     * 再バインド
-     */
-    public void rebind() {
-        if (null == mActivity) {
-            return;
-        }
-        DownloadService.setBindStatus(DownloadService.BINDED);
-        Intent intent = new Intent(mActivity, DownloadService.class);
-        isRegistered = mActivity.bindService(intent, this, Context.BIND_AUTO_CREATE);
-    }
-
-    /**
      * サービス起動する
      */
     public void startService() {
+        if(DownloadService.isDownloadServiceRunning()) {
+            return;
+        }
         if (null == mActivity) {
             return;
         }
@@ -111,11 +97,14 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
      * DlDataProvider機能を無効
      */
     public void endProvider() {
-        if (null == mActivity || DownloadService.getBindStatus() == DownloadService.UNBINED) {
+        if (null == mActivity) {
             return;
         }
-        DownloadService.setBindStatus(DownloadService.UNBINED);
-        mActivity.unbindService(this);
+        try {
+            mActivity.unbindService(this);
+        } catch (Exception e){
+            DTVTLogger.debug(e);
+        }
     }
 
     public void setDlParam(DownloadParam param) throws Exception {
@@ -139,26 +128,6 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         DownloadService ds = getDownloadService();
         if (null != ds) {
             ds.start();
-        }
-    }
-
-    /**
-     * ダウンロード一時停止
-     */
-    public void pause() {
-        DownloadService ds = getDownloadService();
-        if (null != ds) {
-            ds.pause();
-        }
-    }
-
-    /**
-     * ダウンロード再開
-     */
-    public void resume() {
-        DownloadService ds = getDownloadService();
-        if (null != ds) {
-            ds.resume();
         }
     }
 
@@ -223,66 +192,74 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         if (null != ds) {
             ds.setDownloadServiceListener(this);
         }
-        if (null != mDlDataProviderListener) {
-            mDlDataProviderListener.dlDataProviderAvailable();
-        }
+        sendBroadcast(DownloadService.DONWLOAD_DlDataProviderAvailable);
     }
 
     @Override
     public void onServiceDisconnected(ComponentName componentName) {
         mBinder = null;
-        if (null != mDlDataProviderListener) {
-            mDlDataProviderListener.dlDataProviderUnavailable();
-        }
+        sendBroadcast(DownloadService.DONWLOAD_DlDataProviderUnavailable);
     }
 
     @Override
     public void onStart(int totalFileByteSize) {
-        if (null != mDlDataProviderListener && DownloadService.getBindStatus() == DownloadService.BINDED) {
-            mDlDataProviderListener.onStart(totalFileByteSize);
-            saveDownLoad(totalFileByteSize);
-        }
-    }
-
-    @Override
-    public void onPause() {
-        if (null != mDlDataProviderListener) {
-            mDlDataProviderListener.onPause();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        if (null != mDlDataProviderListener) {
-            mDlDataProviderListener.onResume();
-        }
+        sendBroadcast(DownloadService.DONWLOAD_OnStart, DownloadService.DONWLOAD_ParamInt, totalFileByteSize);
     }
 
     @Override
     public void onProgress(int receivedBytes, int percent) {
-        DownloadService ds = getDownloadService();
-        if (null != ds) {
-            Intent intent = new Intent();
-            intent.setAction(DownloadService.DONWLOAD_UPDATE);
-            intent.putExtra(DownloadService.DONWLOAD_UPDATE, percent);
-            ds.sendBroadcast(intent);
-        }
+        sendBroadcast(DownloadService.DONWLOAD_OnProgress, DownloadService.DONWLOAD_ParamInt, percent);
     }
 
     @Override
     public void onFail(final DLError error, final String savePath) {
-        if (null != mDlDataProviderListener && DownloadService.getBindStatus() == DownloadService.BINDED) {
-            mDlDataProviderListener.onFail(error, savePath);
-        } else if(DownloadService.getBindStatus() == DownloadService.BACKGROUD){
-            DownloadService ds = getDownloadService();
-            if (null != ds) {
-                Intent intent = new Intent();
-                intent.setAction(DownloadService.DONWLOAD_FAIL);
-                intent.putExtra(DownloadService.DONWLOAD_PATH, savePath);
-                ds.sendBroadcast(intent);
-            }
-        } else {
+        int paramInt = error.ordinal();
+        sendBroadcast(DownloadService.DONWLOAD_OnFail, DownloadService.DONWLOAD_ParamString, savePath, DownloadService.DONWLOAD_ParamInt, paramInt);
+        DownloadService ds = getDownloadService();
+        if(!ds.isUiRunning()){
             setNextDownLoad();
+        }
+    }
+
+    private void sendBroadcast(String broad, String paramName, String param){
+        DownloadService ds = getDownloadService();
+        if (null != ds) {
+            Intent intent = new Intent();
+            intent.setAction(broad);
+            intent.putExtra(paramName, param);
+            ds.sendBroadcast(intent);
+        }
+    }
+
+    private void sendBroadcast(String broad, String paramName, String param, String paramName2, int intParam){
+        DownloadService ds = getDownloadService();
+        if (null != ds) {
+            Intent intent = new Intent();
+            intent.setAction(broad);
+            intent.putExtra(paramName, param);
+            intent.putExtra(paramName2, intParam);
+            ds.sendBroadcast(intent);
+        }
+    }
+
+
+
+    private void sendBroadcast(String broad){
+        DownloadService ds = getDownloadService();
+        if (null != ds) {
+            Intent intent = new Intent();
+            intent.setAction(broad);
+            ds.sendBroadcast(intent);
+        }
+    }
+
+    private void sendBroadcast(String broad, String paramName, int param){
+        DownloadService ds = getDownloadService();
+        if (null != ds) {
+            Intent intent = new Intent();
+            intent.setAction(broad);
+            intent.putExtra(paramName, param);
+            ds.sendBroadcast(intent);
         }
     }
 
@@ -300,20 +277,9 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                 }
             }
         }
-        if (null != mDlDataProviderListener && DownloadService.getBindStatus() == DownloadService.BINDED) {
-            DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok 2");
-            mDlDataProviderListener.onSuccess(fullPath);
-        } else if(DownloadService.getBindStatus() == DownloadService.BACKGROUD){
-            DownloadService ds = getDownloadService();
-            if (null != ds) {
-                Intent intent = new Intent();
-                intent.setAction(DownloadService.DONWLOAD_SUCCESS);
-                intent.putExtra(DownloadService.DONWLOAD_PATH, fullPath);
-                ds.sendBroadcast(intent);
-            } else {
-                DTVTLogger.debug("ダウンロードサービス取得失敗しました。");
-            }
-        } else {
+        sendBroadcast(DownloadService.DONWLOAD_OnSuccess, DownloadService.DONWLOAD_ParamString, fullPath);
+        DownloadService ds = getDownloadService();
+        if(!ds.isUiRunning()){
             setNextDownLoad();
         }
     }
@@ -328,7 +294,7 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                 return;
             }
             try {
-                Thread.sleep(1000*2);
+                Thread.sleep(1000*1);
                 DTVTLogger.debug(">>>>>>>>>>>>>>>>>> new dl");
                 setDlParam(getDownLoadParam());
                 start();
@@ -366,44 +332,20 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
 
     @Override
     public void onCancel(final String filePath) {
-        if (null != mDlDataProviderListener && DownloadService.getBindStatus() == DownloadService.BINDED) {
-            DTVTLogger.debug(">>>>>>>>>>>>>>>>>> dl ok 1");
-            mDlDataProviderListener.onCancel(filePath);
-        } else if(DownloadService.getBindStatus() == DownloadService.BACKGROUD){
-            DownloadService ds = getDownloadService();
-            if (null != ds) {
-                Intent intent = new Intent();
-                intent.setAction(DownloadService.DONWLOAD_FAIL);
-                intent.putExtra(DownloadService.DONWLOAD_PATH, filePath);
-                ds.sendBroadcast(intent);
-            } else {
-                DTVTLogger.debug("ダウンロードはキャンセルしました。");
-            }
-        } else {
+        sendBroadcast(DownloadService.DONWLOAD_OnCancel, DownloadService.DONWLOAD_ParamString, filePath);
+        DownloadService ds = getDownloadService();
+        if(!ds.isUiRunning()){
             setNextDownLoad();
         }
     }
 
     @Override
     public void onLowStorageSpace(final String fullPath) {
-        if (null != mDlDataProviderListener && DownloadService.getBindStatus() == DownloadService.BINDED) {
-            DTVTLogger.debug(">>>>>>>>>>>>>>>>>> onLowStorageSpace ok 1");
-            mDlDataProviderListener.onLowStorageSpace(fullPath);
-        } else if(DownloadService.getBindStatus() == DownloadService.BACKGROUD){
-            DownloadService ds = getDownloadService();
-            if (null != ds) {
-                Intent intent = new Intent();
-                intent.setAction(DownloadService.DONWLOAD_LowStorageSpace);
-                intent.putExtra(DownloadService.DONWLOAD_PATH, fullPath);
-                ds.sendBroadcast(intent);
-            } else {
-                DTVTLogger.debug("容量は足りないので、ダウンロードできませんでした。");
-            }
-        } else {
-            //mDlDataProviderListener.onCancel(fullPath);
+        sendBroadcast(DownloadService.DONWLOAD_OnLowStorageSpace, DownloadService.DONWLOAD_ParamString, fullPath);
+        DownloadService ds = getDownloadService();
+        if(!ds.isUiRunning()){
             setNextDownLoad();
         }
-
     }
 
     private static final int DOWNLOAD_STATUS_SELECT = 1;
@@ -435,16 +377,6 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
                         mDlData.setDownLoadStatus(downloadStatus);
                         statusList.add(mDlData);
                     }
-                    if (null != mDlDataProviderListener) {
-                        mDlDataProviderListener.onDownLoadListCallBack(statusList);
-                    }
-                    break;
-                case DOWNLOAD_TOTALSIZE_SELECT:
-                    if (null != mDlDataProviderListener) {
-                        if (resultSet != null && resultSet.size() > 5) {
-                            mDlDataProviderListener.onFail(DLError.DLError_Other, "");
-                        }
-                    }
                     break;
                 default:
                     break;
@@ -459,9 +391,6 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         switch (operationId) {
             case DOWNLOAD_STATUS_SELECT:
                 resultSet = downLoadListDataManager.selectDownLoadListVideoData();
-                break;
-            case DOWNLOAD_TOTALSIZE_SELECT:
-                downLoadListDataManager.selectDownLoadList();
                 break;
             case DOWNLOAD_INSERT:
                 if(dlData != null){
@@ -565,12 +494,6 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         }
     }
 
-    private void saveDownLoad(int totalFileByteSize) {
-        if (dlData != null) {
-            dlData.setTotalSize(String.valueOf(totalFileByteSize));
-        }
-    }
-
     public void setDlData(DlData dlData) throws Exception{
         try {
             this.dlData = dlData;
@@ -595,7 +518,6 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
             DownloadService.setDlDataQueClear();
         }
         DownloadService.setDlDataQue(dlData);
-        DownloadService.setBindStatus(DownloadService.UNBINED);
     }
 
     private void dbOperationByThread(int operationId) {
@@ -616,5 +538,28 @@ public class DlDataProvider implements ServiceConnection, DownloadServiceListene
         if (null != ds) {
             ds.setUiRunning(yn);
         }
+    }
+
+    /**
+     * 機能：海外になる時、すべてのDLをキャンセル
+     */
+    public static synchronized void cancelAll() {
+        if(null == sDlDataProvider){
+            return;
+        }
+        DownloadService ds = sDlDataProvider.getDownloadService();
+        if (null != ds) {
+            if(ds.isUiRunning()){
+                sDlDataProvider.sendBroadcast(DownloadService.DONWLOAD_OnCancelAll);
+            }
+        }
+    }
+
+    public synchronized boolean isDownloading(){
+        DownloadService ds = getDownloadService();
+        if (null != ds) {
+            return ds.isDownloading();
+        }
+        return false;
     }
 }

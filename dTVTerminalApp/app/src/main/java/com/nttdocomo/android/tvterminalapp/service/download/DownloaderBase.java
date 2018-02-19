@@ -20,11 +20,9 @@ public abstract class DownloaderBase {
     private int mDownloadedBytes;
     private int mTotalBytes;
     private DownloadListener.DLError mError;
-//    private boolean mIsPause;
-//    private boolean mIsCanceled;
     private DownloadListener mDownloadListener;
-//    private int mNotifiedBytes;
     public static final String sDlPrefix = "d_";
+    private boolean mIsDownloading = false;
 
     protected void setDownloadedBytes(int bytesDone){
         mDownloadedBytes=bytesDone;
@@ -68,8 +66,7 @@ public abstract class DownloaderBase {
         mDownloadedBytes=0;
         mTotalBytes=0;
         mError= DownloadListener.DLError.DLError_NoError;
-//        mIsPause=false;
-//        mIsCanceled=false;
+        setDownloading(false);
     }
 
     /**
@@ -82,19 +79,17 @@ public abstract class DownloaderBase {
      * ダウンロード開始
      */
     public void start(){
-//        synchronized (this) {
-//            mIsPause=false;
-//            mIsCanceled=false;
-//        }
         mTotalBytes = calculateTotalBytes();
         if(isStorageSpaceLow()){
             setLowStorageSpace();
             return;
         }
-        if(null!=mDownloadListener){
-            mDownloadListener.onStart(mTotalBytes);
+        if(!isDownloading()) {
+            if (null != mDownloadListener) {
+                mDownloadListener.onStart(mTotalBytes);
+            }
+            newDl();
         }
-        newDl();
     }
 
     private void newDl(){
@@ -145,45 +140,13 @@ public abstract class DownloaderBase {
         }
     }
 
-    /**
-     * ダウンロード一時停止
-     */
-    void pause(){
-//        synchronized (this) {
-//            mIsPause=true;
-//            mIsCanceled=false;
-//        }
-        if(null==mDownloadListener){
-            return;
-        }
-        mDownloadListener.onPause();
-    }
-
     class DownLoadThread extends Thread {
         @Override
         public void run() {
-//            if (mIsCanceled || mIsPause) {
-//                cancelImpl();
-//                return;
-//            }
-            //DTVTLogger.start();
+            setDownloading(true);
             download();
-            //DTVTLogger.end();
+            setDownloading(false);
         }
-    }
-
-    /**
-     * ダウンロード再開
-     */
-    void resume(){
-//        synchronized (this) {
-//            mIsPause=false;
-//            mIsCanceled=false;
-//        }
-        if(null!=mDownloadListener){
-            mDownloadListener.onResume();
-        }
-        newDl();
     }
 
     /**
@@ -215,8 +178,6 @@ public abstract class DownloaderBase {
      */
     void cancel(){
         synchronized (this) {
-//            mIsPause=false;
-//            mIsCanceled=true;
             cancelImpl();
         }
     }
@@ -247,9 +208,6 @@ public abstract class DownloaderBase {
      * ダウンロード容量不足
      */
     void setLowStorageSpace(){
-//        synchronized (this) {
-//            mIsPause=true;
-//        }
         if(null!=mDownloadListener){
             if(null!=mDownloadParam){
                 String path=getFullFilePath();
@@ -261,17 +219,17 @@ public abstract class DownloaderBase {
     }
 
     /**
-     * todo
      * @return MB
      */
-    long getInnerStorageSafeSpace(){
-        return 200;
+    long getInnerStorageSafeSpaceMB(){
+        return 300;
     }
 
     /**
      * Sub Classでダウンロード成功したとき、この関数をコール
      */
     protected void onFail(DownloadListener.DLError error) {
+        setDownloading(false);
         if(null!=mDownloadListener && null!=mDownloadParam){
             final String savePath= mDownloadParam.getSavePath() + File.separator + mDownloadParam.getSaveFileName();
             mDownloadListener.onFail(error, savePath);
@@ -282,6 +240,7 @@ public abstract class DownloaderBase {
      *
      */
     protected void onCancel(){
+        setDownloading(false);
         if(null!=mDownloadListener && null!=mDownloadParam){
             final String savePath= mDownloadParam.getSavePath() + File.separator + mDownloadParam.getSaveFileName();
             mDownloadListener.onCancel(savePath);
@@ -358,5 +317,13 @@ public abstract class DownloaderBase {
             return "";
         }
         return ret.substring(i+1, l);
+    }
+
+    private synchronized void setDownloading(boolean yn){
+        mIsDownloading = yn;
+    }
+
+    public synchronized boolean isDownloading(){
+        return mIsDownloading;
     }
 }

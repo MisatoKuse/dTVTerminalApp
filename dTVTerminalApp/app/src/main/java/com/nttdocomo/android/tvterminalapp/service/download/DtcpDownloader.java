@@ -4,7 +4,6 @@
 
 package com.nttdocomo.android.tvterminalapp.service.download;
 
-
 import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
@@ -18,7 +17,6 @@ import java.io.File;
 public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
 
     private DlnaProvDownload mDlnaProvDownload;
-    //private int mFinishedBytes;
 
     public DtcpDownloader(DownloadParam param, DownloadListener downloadListener)throws Exception{
         super(param, downloadListener);
@@ -64,22 +62,6 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
 
         res= mDlnaProvDownload.download(param);
         errors(res);
-//        switch (res){
-//            case DownloadRet_CopyKeyFileFailed:
-//                onFail(DownloadListener.DLError.DLError_CopyKeyFileFailed);
-//                break;
-//            case DownloadRet_ParamError:
-//                onFail(DownloadListener.DLError.DLError_ParamError);
-//                break;
-//            case DownloadRet_Unactivated:
-//                onFail(DownloadListener.DLError.DLError_Unactivated);
-//                break;
-//            case DownloadRet_OtherError:
-//                onFail(DownloadListener.DLError.DLError_Other);
-//                break;
-//            case DownloadRet_Succeed:
-//                break;
-//        }
     }
 
     private void errors(DlnaDownloadRet res){
@@ -119,9 +101,9 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
                     return true;
                 }
             }
-            long usableSpace= f.getUsableSpace();
-            long safeSpace= getInnerStorageSafeSpace();
-            int dlSize=dp.getCleartextSize() * 1024 * 1024; //MB-->Byte
+            long usableSpace= (f.getUsableSpace()/1024)/1024;  //-->MB
+            long safeSpace= getInnerStorageSafeSpaceMB();
+            int dlSize=(dp.getCleartextSize()/1024)/1024; //-->MB
             return (usableSpace - dlSize) < safeSpace;
         } catch (Exception e){
             DTVTLogger.debug(e);
@@ -138,13 +120,6 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
 
     @Override
     public void dlProgress(int sizeFinished) {
-//        if(isStorageSpaceLow()){
-//            setLowStorageSpace();
-//            return;
-//        }
-//        int diff= sizeFinished - mFinishedBytes;
-//        onProgress(diff);
-        //mFinishedBytes = sizeFinished;
         onProgress(sizeFinished);
     }
 
@@ -195,23 +170,9 @@ public class DtcpDownloader extends DownloaderBase implements DlnaDlListener {
     }
 
     private void onStopIt(){
-        //mFinishedBytes=0;
         DTVTLogger.debug("dtcp download end, files");
         printDlPathFiles();
     }
-
-//    /**
-//     * 機能：
-//     *      １．Download Uiがなくなる場合、必ずこれをコールする
-//     *      ２．Download Uiがない場合、Serviceは閉じる時、必ずこれをコールする
-//     */
-//    @Override
-//    public void finishDl() {
-//        if (null == mDlnaProvDownload) {
-//            return;
-//        }
-//        mDlnaProvDownload.finishDl();
-//    }
 
     /**
      * 機能：
