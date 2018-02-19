@@ -1465,8 +1465,7 @@ public class RemoteControlRelayClient {
      * @param remoteIp
      */
     public void setRemoteIp(String remoteIp) {
-        //TODO 本番のSTBとペアリングしたい方はここをコメントアウトを外してください
-//        mRemoteHost = remoteIp;
+        mRemoteHost = remoteIp;
     }
 
     /**

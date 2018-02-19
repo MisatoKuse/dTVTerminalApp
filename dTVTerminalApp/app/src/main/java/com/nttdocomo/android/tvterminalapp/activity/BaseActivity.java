@@ -1148,6 +1148,10 @@ public class BaseActivity extends FragmentActivity implements
         }
         if (dlnaDmsItem.mUdn.equals(newItem.mUdn)) {
             SharedPreferencesUtils.setSharedPreferencesStbInfo(this, newItem);
+            //IPアドレス変わった場合、IPアドレスを設定し直す
+            if (!dlnaDmsItem.mIPAddress.equals(newItem.mIPAddress)) {
+                mRemoteControlRelayClient.setRemoteIp(newItem.mIPAddress);
+            }
             setStbStatus(true);
         }
     }

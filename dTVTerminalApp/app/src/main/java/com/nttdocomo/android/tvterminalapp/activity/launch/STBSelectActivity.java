@@ -244,7 +244,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
             }
             setStbStatus(status);
 
-//            mUseWithoutPairingSTBParingInvitationTextView.setVisibility(View.GONE);
             ImageView mMenuImageView = findViewById(R.id.header_layout_menu);
             mMenuImageView.setVisibility(View.VISIBLE);
             mMenuImageView.setOnClickListener(new View.OnClickListener() {
@@ -299,7 +298,6 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         //dアカウント情報取得
         setDaccountControl();
         initView();
-//        setContents();
         if (mIsAppDL) {
             //dアカウントアプリDLからの戻り時、各種Viewを初期状態に戻す
             mIsAppDL = false;
@@ -549,13 +547,12 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
         DTVTLogger.start();
         //選択されたSTB番号を保持
         mSelectDevice = i;
+        //IPアドレスを設定する
         mRemoteControlRelayClient.setRemoteIp(mDlnaDmsItemList.get(i).mIPAddress);
-
+        //ペアリング中画面を出す
         showPairingeView();
-
+        //dアカチェック
         checkDAccountApp();
-//        //dカウント登録状態チェック
-//        checkDAccountLogin();
     }
 
     /**
@@ -565,8 +562,8 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
     private void storeSTBData( int selectDevice) {
         DTVTLogger.start();
         if (mCallbackTimer.getTimerStatus() != TimerStatus.TIMER_STATUS_DURING_STARTUP) {
-            // SharedPreferencesにSTBデータを保存
-            //SharedPreferencesUtils.setSharedPreferencesStbInfo(this, mDlnaDmsItemList.get(selectDevice));
+            //TODO ナスネとペアリングしたい時は以下をコメントイン SharedPreferencesにSTBデータを保存
+//            SharedPreferencesUtils.setSharedPreferencesStbInfo(this, mDlnaDmsItemList.get(selectDevice));
             if (mDlnaDmsItemList != null) {
                 if (mStartMode == STBSelectFromMode.STBSelectFromMode_Setting.ordinal()
                         && mParingDevice.getVisibility() == View.VISIBLE) {
@@ -580,6 +577,8 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                 }
             }
         }
+        //TODO ナスネとペアリングしたい時は以下をコメントイン
+//        startActivity(STBConnectActivity.class, null);
         DTVTLogger.end();
     }
 
@@ -907,6 +906,7 @@ public class STBSelectActivity extends BaseActivity implements View.OnClickListe
                         // ※RELAY_RESULT_OK 応答時は requestCommand に START_APPLICATION/TITLE_DETAIL は設定されない
                         break;
                     case IS_USER_ACCOUNT_EXIST:
+                        //TODO ナスネとペアリングしたいときは以下をコメントアウト　SharedPreferencesにSTBデータを保存
                         SharedPreferencesUtils.setSharedPreferencesStbInfo(this, mDlnaDmsItemList.get(mSelectDevice));
                         Intent intent = new Intent(this, STBConnectActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

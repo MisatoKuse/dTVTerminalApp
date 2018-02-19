@@ -1261,7 +1261,8 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
         } else {
             //WEBAPIを取得できなかった時はDBのデータを使用
             List<ContentsData> recommendChannelInfoList;
-            RecommendDataProvider recommendDataProvider = new RecommendDataProvider(mContext);
+            RecommendDataProvider recommendDataProvider = new RecommendDataProvider();
+            recommendDataProvider.setmContext(mContext);
             recommendChannelInfoList = recommendDataProvider.getRecommendListDataCache(
                     DateUtils.RECOMMEND_CH_LAST_INSERT, RecommendDataProvider.TV_NO,
                     SearchConstants.RecommendList.FIRST_POSITION,

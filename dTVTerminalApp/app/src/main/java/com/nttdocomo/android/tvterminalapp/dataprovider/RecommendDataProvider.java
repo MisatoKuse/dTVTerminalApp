@@ -214,6 +214,18 @@ public class RecommendDataProvider implements RecommendWebClient.RecommendCallba
         this.mApiDataProviderCallback = (RecommendApiDataProviderCallback) mContext;
     }
 
+    public RecommendDataProvider() {
+    }
+
+    /**
+     * コンストラクタ.
+     *
+     * @param mContext コンテキスト
+     */
+    public void setmContext(final Context mContext) {
+        this.mContext = mContext;
+    }
+
     /**
      * コンストラクタ. コールバックを明示指定する場合.
      *
