@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 
 import com.nttdocomo.android.tvterminalapp.R;
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.datamanager.databese.thread.DbThread;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.MyChannelInsertDataManager;
@@ -46,6 +47,11 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
     private ArrayList<MyChannelMetaData> mMyChannelMetaDataList;
     private MyChannelInsertDataManager mMyChannelInsertDataManager;
 
+    /**
+     * マイ番組表ウェブクライアント
+     */
+    private MyChannelWebClient mMyChannelListWebClient;
+
     @Override
     public void onMyChannelListJsonParsed(MyChannelListResponse myChannelListResponse) {
         if (myChannelListResponse != null && myChannelListResponse.getMyChannelMetaData() != null) {
@@ -59,7 +65,7 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
                     e.printStackTrace();
                 }
             }
-            if(mApiDataProviderCallback != null){
+            if (mApiDataProviderCallback != null) {
                 mApiDataProviderCallback.onMyChannelListCallback(mMyChannelMetaDataList);
             }
         }
@@ -185,8 +191,8 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
                     break;
                 }//キャシューないなら通信のほうに進む
             case R.layout.my_channel_edit_main_layout://通信してデータ取得
-                MyChannelWebClient myChannelList = new MyChannelWebClient(mContext);
-                myChannelList.getMyChanelListApi(this);
+                mMyChannelListWebClient = new MyChannelWebClient(mContext);
+                mMyChannelListWebClient.getMyChanelListApi(this);
                 break;
             default:
                 break;
@@ -199,7 +205,7 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
     public void getMyChannelRegisterStatus(String service_id, String title, String r_value, String adult_type, int index) {
         MyChannelRegisterWebClient myChannelRegisterStatus = new MyChannelRegisterWebClient(mContext);
         boolean result = myChannelRegisterStatus.getMyChanelRegisterApi(service_id, title, r_value, adult_type, index, this);
-        if(!result){
+        if (!result) {
             mApiDataProviderCallback.onMyChannelRegisterCallback("パラメータ不正");
         }
     }
@@ -210,8 +216,28 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
     public void getMyChannelDeleteStatus(String service_id) {
         MyChannelDeleteWebClient myChannelDeleteStatus = new MyChannelDeleteWebClient(mContext);
         boolean result = myChannelDeleteStatus.getMyChanelDeleteApi(service_id, this);
-        if(!result){
+        if (!result) {
             mApiDataProviderCallback.onMyChannelDeleteCallback("パラメータ不正");
+        }
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnect() {
+        DTVTLogger.start();
+        if (mMyChannelListWebClient != null) {
+            mMyChannelListWebClient.stopConnection();
+        }
+    }
+
+    /**
+     * 通信を許可する.
+     */
+    public void enableConnect() {
+        DTVTLogger.start();
+        if (mMyChannelListWebClient != null) {
+            mMyChannelListWebClient.enableConnection();
         }
     }
 

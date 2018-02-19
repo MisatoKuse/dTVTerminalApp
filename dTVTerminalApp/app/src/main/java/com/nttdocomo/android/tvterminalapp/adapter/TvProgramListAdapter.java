@@ -7,7 +7,6 @@ package com.nttdocomo.android.tvterminalapp.adapter;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
@@ -83,6 +82,10 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
     private boolean isShowThumb;
     private int CLIP_BUTTON_SIZE = 32;
     private int CHANNEL_WIDTH = 720;
+    /**
+     * ダウンロード禁止判定フラグ.
+     */
+    private boolean isDownloadStop = false;
 
     /**
      * コンストラクタ.
@@ -229,7 +232,7 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
                 itemViewHolder.mThumbnail.setImageResource(R.mipmap.error_ch_mini);
                 //URLによって、サムネイル取得
                 String thumbnailURL = itemSchedule.get(i).getImageUrl();
-                if (!TextUtils.isEmpty(thumbnailURL)) {
+                if (!TextUtils.isEmpty(thumbnailURL) && !isDownloadStop) {
                     itemViewHolder.mThumbnail.setTag(thumbnailURL);
                     Bitmap bitmap = mThumbnailProvider.getThumbnailImage(itemViewHolder.mThumbnail, thumbnailURL);
                     if (bitmap != null) {
@@ -553,5 +556,23 @@ public class TvProgramListAdapter extends RecyclerView.Adapter<TvProgramListAdap
         detailData.setRecommendFlg(recommendFlg);
 
         return detailData;
+    }
+
+    /**
+     * サムネイル取得処理を止める.
+     */
+    public void stopConnect() {
+        DTVTLogger.start();
+        isDownloadStop = true;
+        if (mThumbnailProvider != null) {
+            mThumbnailProvider.stopConnect();
+        }
+    }
+
+    /**
+     * サムネイル取得処理を再度可能な状態にする.
+     */
+    public void enableConnect() {
+        isDownloadStop = false;
     }
 }

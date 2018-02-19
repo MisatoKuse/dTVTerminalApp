@@ -29,13 +29,16 @@ import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.dataprovider.MyChannelDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.ScaledDownProgramListDataProvider;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelMetaData;
-import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopMyProgramListAdapterConnect;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopMyProgramListDataConnect;
+import com.nttdocomo.android.tvterminalapp.dataprovider.stop.StopScaledProListDataConnect;
 import com.nttdocomo.android.tvterminalapp.struct.CalendarComparator;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.utils.DateUtils;
 import com.nttdocomo.android.tvterminalapp.view.ProgramRecyclerView;
 import com.nttdocomo.android.tvterminalapp.view.ProgramScrollView;
+import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -81,6 +84,14 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
     private static final String WEEK_LEFT = " (";
     private static final String WEEK_RIGHT = ")";
     private static final String DATE_LINE = "-";
+    /**
+     * マイ番組表データプロバイダー
+     */
+    private MyChannelDataProvider mMyChannelDataProvider;
+    /**
+     * 番組表データプロバイダー
+     */
+    private ScaledDownProgramListDataProvider mScaledDownProgramListDataProvider;
 
 
     @Override
@@ -425,7 +436,7 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
 
     /**
      * 機能
-     * 番組表を設定
+     * チャンネルを設定
      */
     private void setChannelContentsView(ArrayList<ChannelInfo> channels) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -441,11 +452,11 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
      */
     private void getChannelData() {
         if(mTabIndex != INDEX_TAB_MY_CHANNEL){//ひかり、dTVチャンネル
-            ScaledDownProgramListDataProvider scaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
-            scaledDownProgramListDataProvider.getChannelList(0, 0, "", mTabIndex);
+            mScaledDownProgramListDataProvider = new ScaledDownProgramListDataProvider(this);
+            mScaledDownProgramListDataProvider.getChannelList(0, 0, "", mTabIndex);
         } else {//MY番組表
-            MyChannelDataProvider myChannelDataProvider = new MyChannelDataProvider(this);
-            myChannelDataProvider.getMyChannelList(R.layout.tv_program_list_main_layout);
+            mMyChannelDataProvider = new MyChannelDataProvider(this);
+            mMyChannelDataProvider.getMyChannelList(R.layout.tv_program_list_main_layout);
         }
     }
 
@@ -755,5 +766,37 @@ public class TvProgramListActivity extends BaseActivity implements View.OnClickL
                 break;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onStartCommunication() {
+        super.onStartCommunication();
+        //マイ番組表通信許可
+        if (mMyChannelDataProvider != null) {
+            mMyChannelDataProvider.enableConnect();
+        }
+        //番組表通信許可
+        if (mScaledDownProgramListDataProvider != null) {
+            mScaledDownProgramListDataProvider.enableConnect();
+        }
+        //サムネルタスク通信許可
+        if (mTvProgramListAdapter != null) {
+            mTvProgramListAdapter.enableConnect();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        DTVTLogger.start();
+        //マイ番組表通信を止める
+        StopMyProgramListDataConnect stopMyConnect = new StopMyProgramListDataConnect();
+        stopMyConnect.execute(mMyChannelDataProvider);
+        //番組表通信を止める
+        StopScaledProListDataConnect stopTvConnect = new StopScaledProListDataConnect();
+        stopTvConnect.execute(mScaledDownProgramListDataProvider);
+        //サムネルタスクを止める
+        StopMyProgramListAdapterConnect stopAdapterConnect = new StopMyProgramListAdapterConnect();
+        stopAdapterConnect.execute(mTvProgramListAdapter);
     }
 }
