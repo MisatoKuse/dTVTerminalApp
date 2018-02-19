@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.PowerManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -410,18 +411,20 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     public void onStartCommunication() {
         DTVTLogger.start();
         super.onStartCommunication();
-        if(mDetailDataProvider != null){
-            mDetailDataProvider.enableConnect();
-        }
-        if(mScaledDownProgramListDataProvider != null){
-            mScaledDownProgramListDataProvider.enableConnect();
-        }
-        enableThumbnailConnect();
-        //FragmentにContentsAdapterの通信を止めるように通知する
-        Fragment fragment = getCurrentFragment(1);
-        if(fragment != null){
-            DtvContentsChannelFragment channelFragment = (DtvContentsChannelFragment)fragment;
-            channelFragment.enableContentsAdapterCommunication();
+        if(!mIsPlayer){
+            if(mDetailDataProvider != null){
+                mDetailDataProvider.enableConnect();
+            }
+            if(mScaledDownProgramListDataProvider != null){
+                mScaledDownProgramListDataProvider.enableConnect();
+            }
+            enableThumbnailConnect();
+            //FragmentにContentsAdapterの通信を止めるように通知する
+            Fragment fragment = getCurrentFragment(1);
+            if(fragment != null){
+                DtvContentsChannelFragment channelFragment = (DtvContentsChannelFragment)fragment;
+                channelFragment.enableContentsAdapterCommunication();
+            }
         }
         DTVTLogger.end();
     }
@@ -530,8 +533,17 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
         mPlayerController.setOnFormatChangeListener(this);
         mPlayerController.setOnPlayerEventListener(this);
         mPlayerController.setOnErrorListener(this);
-        //mPlayerController.setWakeMode(this, PowerManager.FULL_WAKE_LOCK);
-        mPlayerController.setWakeMode(this, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        try {
+            //実機でandroid 5.xとandroid4.xの場合は「mPlayerController.setWakeMode(this, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);」失敗したので、
+            //バージョンチェックする
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M ) {
+                mPlayerController.setWakeMode(this, PowerManager.FULL_WAKE_LOCK);
+            } else {
+                mPlayerController.setWakeMode(this, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
+        } catch (Exception e) {
+            DTVTLogger.debug(e);
+        }
         mPlayerController.setCaptionDataListener(this);
         mPlayerController.setCurrentCaption(0); // start caption.
         boolean ret = isActivited();

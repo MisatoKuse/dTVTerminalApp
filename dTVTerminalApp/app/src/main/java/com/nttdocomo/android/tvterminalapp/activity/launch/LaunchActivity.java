@@ -50,9 +50,6 @@ public class LaunchActivity extends BaseActivity implements View.OnClickListener
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        DlnaProvTerChList dlnaProvTerChList;
-        DlnaProvBsChList dlnaProvBsChList;
-
         setContentView(R.layout.launch_main_layout);
         setTitleText(getString(R.string.str_launch_title));
         enableHeaderBackIcon(false);

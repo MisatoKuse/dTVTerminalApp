@@ -370,6 +370,8 @@ public class JsonConstants {
     public static final String META_RESPONSE_END_SCHEDULE_TIME = "end_schedule_time";
     // 番組のPG値
     public static final String META_RESPONSE_PARENTAL_AGE_ATTRIBUTE_OF_PROGRAM = "parental_age_attribute_of_program";
+    // ESTフラグ
+    public static final String META_RESPONSE_EST_FLAG = "estflg";
 
     /**
      * dTVタイプ.

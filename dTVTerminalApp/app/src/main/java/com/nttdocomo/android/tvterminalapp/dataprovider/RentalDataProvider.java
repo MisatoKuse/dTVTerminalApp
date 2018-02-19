@@ -8,6 +8,8 @@ import android.content.Context;
 
 import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.datamanager.insert.RentalListInsertDataManager;
+import com.nttdocomo.android.tvterminalapp.datamanager.select.RentalListDataManager;
+import com.nttdocomo.android.tvterminalapp.dataprovider.data.ActiveData;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListRequest;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipKeyListResponse;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.ClipRequestData;
@@ -20,6 +22,7 @@ import com.nttdocomo.android.tvterminalapp.webapiclient.hikari.RentalVodListWebC
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * レンタル一覧DataProvider.
@@ -50,6 +53,22 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
      * 購入済みVODレスポンス.
      */
     private PurchasedVodListResponse mPurchasedVodListResponse = null;
+    /**
+     * 期限付きレンタルコンテンツフラグ.
+     */
+    private static final int ENABLE_VOD_WATCH_CONTENTS_UNLIMITED = 0;
+    /**
+     * 無期限レンタルコンテンツ.
+     */
+    private static final int ENABLE_VOD_WATCH_CONTENTS_LIMITED = 1;
+    /**
+     * 視聴不可レンタルコンテンツ.
+     */
+    private static final int DISABLE_WATCH_CONTENTS = -1;
+    /**
+     * 無期限レンタルコンテンツ判定文字列.
+     */
+    public static final String ENABLE_VOD_WATCH_CONTENTS_UNLIMITED_HYPHEN = "-";
 
     @Override
     public void onRentalVodListJsonParsed(final PurchasedVodListResponse response) {
@@ -147,11 +166,27 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
      * レンタル一覧を取得する.
      */
     private void getRentalListData() {
-        //通信クラスにデータ取得要求を出す
-        mWebClient = new RentalVodListWebClient(mContext);
-        mWebClient.getRentalVodListApi(this);
+        DateUtils dateUtils = new DateUtils(mContext);
+        String lastDate = dateUtils.getLastDate(DateUtils.VIDEO_RANK_LAST_INSERT);
+        List<Map<String, String>> vodMetaList = new ArrayList<>();
+        List<Map<String, String>> activeList = new ArrayList<>();
+        PurchasedVodListResponse response;
+        //Vodクリップ一覧のDB保存履歴と、有効期間を確認
+        boolean fromDb = lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate);
+        if (fromDb) {
+            RentalListDataManager rentalListDataManager = new RentalListDataManager(mContext);
+            vodMetaList = rentalListDataManager.selectRentalChListData();
+            activeList = rentalListDataManager.selectRentalActiveListData();
+        } else {
+            //通信クラスにデータ取得要求を出す
+            mWebClient = new RentalVodListWebClient(mContext);
+            mWebClient.getRentalVodListApi(this);
+        }
     }
 
+    private void makeVodMetaData(List<Map<String, String>> vodMetaList) {
+        VodMetaFullData vodMetaFullData = new VodMetaFullData();
+    }
     /**
      * DB保存.
      *
@@ -174,66 +209,124 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
      * @return コンテンツリスト
      */
     private List<ContentsData> makeContentsData(final PurchasedVodListResponse response) {
+        final String DISP_TYPE_VIDEO_PROGRAM = "video_program";
+        final String DISP_TYPE_VIDEO_PACKAGE = "video_package";
+        final String EST_FLAG_FALSE = "0";
         List<ContentsData> list = new ArrayList<>();
         ArrayList<VodMetaFullData> metaFullData = response.getVodMetaFullData();
+        ArrayList<ActiveData> activeDataList = response.getVodActiveData();
         for (int i = 0; i < response.getVodMetaFullData().size(); i++) {
-            ContentsData data = new ContentsData();
-
             VodMetaFullData vodMetaFullData = metaFullData.get(i);
+            //「estflg」が「0」または未設定かつ「disp_type」が「video_program」または「video_package」
+            if ((vodMetaFullData.getEstFlag() == null || vodMetaFullData.getEstFlag().length() == 0 || vodMetaFullData.getEstFlag().equals(EST_FLAG_FALSE))
+                    && (vodMetaFullData.getDisp_type().equals(DISP_TYPE_VIDEO_PROGRAM) || vodMetaFullData.getDisp_type().equals(DISP_TYPE_VIDEO_PACKAGE))) {
+                ContentsData data = new ContentsData();
 
-            String title = vodMetaFullData.getTitle();
-            String searchOk = vodMetaFullData.getmSearch_ok();
-            String dispType = vodMetaFullData.getDisp_type();
-            String dtv = vodMetaFullData.getDtv();
-            String dtvType = vodMetaFullData.getDtvType();
-            data.setTitle(title);
-            //エポック秒から文字に変換
-            data.setTime(DateUtils.formatEpochToString(vodMetaFullData.getAvail_end_date()));
-            data.setRatStar(String.valueOf(vodMetaFullData.getRating()));
-            data.setThumURL(vodMetaFullData.getmThumb_448_252());
-            data.setSearchOk(searchOk);
-            data.setContentsType(vodMetaFullData.getmContent_type());
-            data.setDtv(dtv);
-            data.setDtvType(dtvType);
-            data.setDispType(dispType);
-            data.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
-            data.setContentsId(vodMetaFullData.getCid());
+                int rentalType = isEnableRentalContents(activeDataList.get(i).getValidEndDate());
 
-            //クリップリクエストデータ作成
-            ClipRequestData requestData = new ClipRequestData();
+                switch (rentalType) {
+                    case DISABLE_WATCH_CONTENTS:
+                        break;
+                    case ENABLE_VOD_WATCH_CONTENTS_LIMITED:
+                    case ENABLE_VOD_WATCH_CONTENTS_UNLIMITED:
+                        switch (rentalType) {
+                            case ENABLE_VOD_WATCH_CONTENTS_LIMITED:
+                                //期限付きの場合のみ日付を設定する
+                                data.setTime(DateUtils.formatEpochToDateString(activeDataList.get(i).getValidEndDate()));
+                                break;
+                            case ENABLE_VOD_WATCH_CONTENTS_UNLIMITED:
+                                //期限付きの場合のみ日付を設定する
+                                data.setTime(ENABLE_VOD_WATCH_CONTENTS_UNLIMITED_HYPHEN);
+                                break;
+                            default:
+                                break;
+                        }
+                        String title = vodMetaFullData.getTitle();
+                        String searchOk = vodMetaFullData.getmSearch_ok();
+                        String dispType = vodMetaFullData.getDisp_type();
+                        String dtv = vodMetaFullData.getDtv();
+                        String dtvType = vodMetaFullData.getDtvType();
+                        data.setTitle(title);
+                        //エポック秒から文字に変換
+                        data.setRatStar(String.valueOf(vodMetaFullData.getRating()));
+                        data.setThumURL(vodMetaFullData.getmThumb_448_252());
+                        data.setSearchOk(searchOk);
+                        data.setContentsType(vodMetaFullData.getmContent_type());
+                        data.setDtv(dtv);
+                        data.setDtvType(dtvType);
+                        data.setDispType(dispType);
+                        data.setClipExec(ClipUtils.isCanClip(dispType, searchOk, dtv, dtvType));
+                        data.setContentsId(vodMetaFullData.getCid());
 
-            String linearEndDate = String.valueOf(vodMetaFullData.getAvail_end_date());
+                        //クリップリクエストデータ作成
+                        ClipRequestData requestData = new ClipRequestData();
 
-            requestData.setCrid(vodMetaFullData.getCrid());
-            requestData.setServiceId(vodMetaFullData.getmService_id());
-            requestData.setEventId(vodMetaFullData.getmEvent_id());
-            requestData.setTitleId(vodMetaFullData.getEpisode_id());
-            requestData.setTitle(title);
-            requestData.setRValue(vodMetaFullData.getR_value());
-            requestData.setLinearStartDate(String.valueOf(vodMetaFullData.getAvail_start_date()));
-            requestData.setLinearEndDate(linearEndDate);
-            requestData.setSearchOk(searchOk);
+                        String linearEndDate = String.valueOf(vodMetaFullData.getAvail_end_date());
 
-            //視聴通知判定生成
-            String contentsType = vodMetaFullData.getmContent_type();
-            String tvService = vodMetaFullData.getmTv_service();
-            String dTv = vodMetaFullData.getDtv();
-            requestData.setIsNotify(dispType, contentsType, linearEndDate, tvService, dTv);
-            requestData.setDispType(dispType);
-            requestData.setContentType(contentsType);
-//            requestData.setTableType(decisionTableType(contentsType, contentsType));
-            data.setRequestData(requestData);
+                        requestData.setCrid(vodMetaFullData.getCrid());
+                        requestData.setServiceId(vodMetaFullData.getmService_id());
+                        requestData.setEventId(vodMetaFullData.getmEvent_id());
+                        requestData.setTitleId(vodMetaFullData.getEpisode_id());
+                        requestData.setTitle(title);
+                        requestData.setRValue(vodMetaFullData.getR_value());
+                        requestData.setLinearStartDate(String.valueOf(vodMetaFullData.getAvail_start_date()));
+                        requestData.setLinearEndDate(linearEndDate);
+                        requestData.setSearchOk(searchOk);
 
-            if (mRequiredClipKeyList) {
-                // クリップ状態をコンテンツリストに格納
-                data.setClipStatus(getClipStatus(dispType, contentsType, dTv,
-                        requestData.getCrid(), requestData.getServiceId(),
-                        requestData.getEventId(), requestData.getTitleId()));
+                        //視聴通知判定生成
+                        String contentsType = vodMetaFullData.getmContent_type();
+                        String tvService = vodMetaFullData.getmTv_service();
+                        String dTv = vodMetaFullData.getDtv();
+                        requestData.setIsNotify(dispType, contentsType, linearEndDate, tvService, dTv);
+                        requestData.setDispType(dispType);
+                        requestData.setContentType(contentsType);
+                        data.setRequestData(requestData);
+
+                        if (mRequiredClipKeyList) {
+                            // クリップ状態をコンテンツリストに格納
+                            data.setClipStatus(getClipStatus(dispType, contentsType, dTv,
+                                    requestData.getCrid(), requestData.getServiceId(),
+                                    requestData.getEventId(), requestData.getTitleId()));
+                        }
+
+                        list.add(data);
+                        break;
+                    default:
+                        break;
+                }
             }
-
-            list.add(data);
         }
         return list;
+    }
+
+    /**
+     * レンタルコンテンツの有効期限判定.
+     *
+     * @param validEndDate 視聴期限
+     * @return 視聴可否判定結果
+     */
+    public static int isEnableRentalContents(final long validEndDate) {
+        DTVTLogger.start();
+        final int ONE_MONTH = 30;
+
+        //視聴期限 > 現在時刻の場合
+        if (validEndDate > DateUtils.getNowTimeFormatEpoch()) {
+            //視聴可能期限まで一ヶ月以内かどうか
+            if (validEndDate - DateUtils.getNowTimeFormatEpoch()
+                    < DateUtils.EPOCH_TIME_ONE_DAY * ONE_MONTH) {
+                //視聴可能(一ヶ月以内)
+                DTVTLogger.debug("Viewable. Within ENABLE_VOD_WATCH_CONTENTS_LIMITED");
+                return ENABLE_VOD_WATCH_CONTENTS_LIMITED;
+            } else {
+                //視聴可能(一ヶ月超)
+                DTVTLogger.debug("Viewable. Within ENABLE_VOD_WATCH_CONTENTS_UNLIMITED");
+                return ENABLE_VOD_WATCH_CONTENTS_UNLIMITED;
+            }
+        } else {
+            //視聴期限範囲外のため視聴不可
+            DTVTLogger.debug("UnViewable. Within DISABLE_WATCH_CONTENTS");
+            return DISABLE_WATCH_CONTENTS;
+        }
     }
 
     /**

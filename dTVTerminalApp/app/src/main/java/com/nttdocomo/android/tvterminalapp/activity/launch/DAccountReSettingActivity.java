@@ -124,7 +124,6 @@ public class DAccountReSettingActivity extends BaseActivity implements View.OnCl
      */
     private void onDAccountRegButton() {
         Intent intent = new Intent(getApplicationContext(), DAccountSettingHelpActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 
