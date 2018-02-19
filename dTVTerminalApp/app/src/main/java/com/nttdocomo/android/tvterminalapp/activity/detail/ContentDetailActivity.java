@@ -290,10 +290,13 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      * プレイヤー横画面時のフルスクリーンボタンの右マージン.
      */
     private static final int FULL_SCREEN_BUTTON_RIGHT_MARGIN = 16;
-
-    // 他サービスフラグ
+    /**
+     * 他サービスフラグ.
+     */
     private boolean mIsOtherService = false;
-    //年齢
+    /**
+     * 年齢.
+     */
     private int mAge = 0;
 
     //視聴判定
@@ -349,17 +352,13 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      * 視聴可能かどうか.
      */
     private int mIsEnableWatch = ENABLE_WATCH_NO_DEFINE;
-    /**
-     * サムネイルにかけるシャドウのアルファ値.
-     */
-    private static final float THUMBNAIL_SHADOW_ALPHA = 0.5f;
 
     private boolean mIsLocalPlaying = false;
-
-    //外部出力制御
+    /**
+     * 外部出力制御.
+     */
     private ExternalDisplayHelper mExternalDisplayHelper;
     private boolean mExternalDisplayFlg = false;
-
     /**
      * アクティベーション.
      */
@@ -367,6 +366,10 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
     private ActivationHelper mActivationHelper;
     private String mDeviceKey;
     private ActivationThread mActivationThread;
+    /**
+     * 操作履歴送信.
+     */
+    private SendOperateLog mSendOperateLog = null;
 
     private Runnable mHideCtrlViewThread = new Runnable() {
 
@@ -422,6 +425,9 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             }
             if(mScaledDownProgramListDataProvider != null){
                 mScaledDownProgramListDataProvider.enableConnect();
+            }
+            if (mSendOperateLog != null){
+                mSendOperateLog.enableConnection();
             }
             enableThumbnailConnect();
             //FragmentにContentsAdapterの通信を止めるように通知する
@@ -1342,7 +1348,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
      */
     private void setThumbnailText(final String content) {
         mThumbnailBtn.setVisibility(View.VISIBLE);
-        setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
+        setThumbnailShadow();
         TextView startAppIcon = findViewById(R.id.view_contents_button_text);
         startAppIcon.setVisibility(View.VISIBLE);
         startAppIcon.setText(content);
@@ -1884,8 +1890,10 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
             }
             //ログイン状態でしか送信しない
             if (!TextUtils.isEmpty(SharedPreferencesUtils.getSharedPreferencesDaccountId(this))) {
-                new SendOperateLog(getApplicationContext()).sendOpeLog(
-                        mDetailData, mDetailFullData);
+                if (mSendOperateLog == null) {
+                    mSendOperateLog = new SendOperateLog(getApplicationContext());
+                }
+                mSendOperateLog.sendOpeLog(mDetailData, mDetailFullData);
             }
             if (mDetailData == null) {
                 mDetailData = mIntent.getParcelableExtra(PLALA_INFO_BUNDLE_KEY);
@@ -2707,6 +2715,9 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 StopScaledProListDataConnect stopScaledProListDataConnect = new StopScaledProListDataConnect();
                 stopScaledProListDataConnect.execute(mScaledDownProgramListDataProvider);
             }
+            if (mSendOperateLog != null){
+                mSendOperateLog.stopConnection();
+            }
             stopThumbnailConnect();
             //FragmentにContentsAdapterの通信を止めるように通知する
             Fragment fragment = getCurrentFragment(1);
@@ -3386,7 +3397,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 vodButton.setAllCaps(false);
 
                 //サムネイルにシャドウをかける
-                setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
+                setThumbnailShadow();
 
                 //サムネイル上のdTVで視聴、dアニメストアで視聴を非表示
                 if (mThumbnailBtn != null) {
@@ -3405,7 +3416,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 chButton.setAllCaps(false);
 
                 //サムネイルにシャドウをかける
-                setThumbnailShadow(THUMBNAIL_SHADOW_ALPHA);
+                setThumbnailShadow();
 
                 //サムネイル上のdTVで視聴、dアニメストアで視聴を非表示
                 if (mThumbnailBtn != null) {
@@ -3468,12 +3479,9 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
 
     /**
      * サムネイル画像にシャドウをかける(アルファをかける).
-     *
-     * @param alpha アルファ値
      */
-    private void setThumbnailShadow(final float alpha) {
+    private void setThumbnailShadow() {
         if (mThumbnail != null) {
-            //mThumbnail.setAlpha(alpha);
             mThumbnailShadow.setVisibility(View.VISIBLE);
         }
     }
