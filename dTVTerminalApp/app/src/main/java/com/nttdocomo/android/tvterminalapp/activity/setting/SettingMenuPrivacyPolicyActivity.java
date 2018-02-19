@@ -43,8 +43,11 @@ public class SettingMenuPrivacyPolicyActivity extends BaseActivity {
 
         mPrivacyPolicyWebView = findViewById(R.id.setting_menu_main_webview);
         mPrivacyPolicyWebView.setWebViewClient(new WebViewClient());
-        mPrivacyPolicyWebView.getSettings().setJavaScriptEnabled(false);
-        mPrivacyPolicyWebView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
+        WebSettings webSettings = mPrivacyPolicyWebView.getSettings();
+        webSettings.setJavaScriptEnabled(false);
+        webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        webSettings.setAllowUniversalAccessFromFileURLs(false);
+        webSettings.setAllowFileAccessFromFileURLs(false);
         mPrivacyPolicyWebView.loadUrl(SETTING_MENU_PRIVACY_POLICY_URL);
 
         //テレビアイコンをタップされたらリモコンを起動する

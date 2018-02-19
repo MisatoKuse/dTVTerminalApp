@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.activity.setting;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -33,6 +34,9 @@ public class SettingMenuTermsOfServiceActivity extends BaseActivity {
         mTermsOfServiceWebView = findViewById(R.id.setting_menu_main_webview);
         mTermsOfServiceWebView.setWebViewClient(new WebViewClient());
         mTermsOfServiceWebView.setBackgroundColor(Color.TRANSPARENT);
+        WebSettings webSettings = mTermsOfServiceWebView.getSettings();
+        webSettings.setJavaScriptEnabled(false);
+        webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
         mTermsOfServiceWebView.loadUrl(SETTING_MENU_TERMS_OF_SERVICE_HTML);
 
         //テレビアイコンをタップされたらリモコンを起動する

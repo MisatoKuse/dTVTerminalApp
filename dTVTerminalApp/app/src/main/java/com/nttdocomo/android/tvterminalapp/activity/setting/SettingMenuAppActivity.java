@@ -43,8 +43,11 @@ public class SettingMenuAppActivity extends BaseActivity {
 
         mAppWebView = findViewById(R.id.setting_menu_main_webview);
         mAppWebView.setWebViewClient(new WebViewClient());
-        mAppWebView.getSettings().setJavaScriptEnabled(false);
-        mAppWebView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
+        WebSettings webSettings = mAppWebView.getSettings();
+        webSettings.setJavaScriptEnabled(false);
+        webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        webSettings.setAllowUniversalAccessFromFileURLs(false);
+        webSettings.setAllowFileAccessFromFileURLs(false);
         mAppWebView.loadUrl(SETTING_MENU_APP_URL);
 
         //テレビアイコンをタップされたらリモコンを起動する

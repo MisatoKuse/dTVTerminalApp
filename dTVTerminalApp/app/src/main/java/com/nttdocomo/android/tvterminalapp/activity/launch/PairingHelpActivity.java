@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -60,10 +61,15 @@ public class PairingHelpActivity extends BaseActivity {
         setContentView(R.layout.setting_menu_item_main_view);
         mFirstPairingHelpWebView = findViewById(R.id.setting_menu_main_webview);
         mFirstPairingHelpWebView.setWebViewClient(new WebViewClient());
+        WebSettings webSettings = mFirstPairingHelpWebView.getSettings();
+        webSettings.setJavaScriptEnabled(false);
+        webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
         mFirstPairingHelpWebView.setBackgroundColor(Color.TRANSPARENT);
         if (mFromMode == ParingHelpFromMode.ParingHelpFromMode_Launch.ordinal()) {
             mFirstPairingHelpWebView.loadUrl(SETTING_MENU_LICENSE_URL);
         } else if (mFromMode == ParingHelpFromMode.ParingHelpFromMode_Setting.ordinal()) {
+            webSettings.setAllowUniversalAccessFromFileURLs(false);
+            webSettings.setAllowFileAccessFromFileURLs(false);
             mFirstPairingHelpWebView.loadUrl(SETTING_HTTP_LICENSE_URL);
         }
         mFirstPairingHelpWebView.setWebViewClient(new WebViewClient());
