@@ -646,7 +646,6 @@ public class BaseActivity extends FragmentActivity implements
         super.onStop();
         DTVTLogger.start();
         resetRelayClientHandler(true);
-        //unregisterDevListDlna();
         DTVTLogger.end();
     }
 
@@ -1144,6 +1143,7 @@ public class BaseActivity extends FragmentActivity implements
             return;
         }
         if (dlnaDmsItem.mUdn.equals(newItem.mUdn)) {
+            SharedPreferencesUtils.setSharedPreferencesStbInfo(this, newItem);
             setStbStatus(true);
         }
     }
