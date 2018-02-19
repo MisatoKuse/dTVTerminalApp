@@ -50,6 +50,8 @@ public class NewsActivity extends BaseActivity implements View.OnClickListener {
         WebSettings webSettings = mNewsWebView.getSettings();
         webSettings.setJavaScriptEnabled(false);
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        webSettings.setAllowUniversalAccessFromFileURLs(false);
+        webSettings.setAllowFileAccessFromFileURLs(false);
         mNewsWebView.loadUrl(NEWS_URL);
 
         //Headerの設定
