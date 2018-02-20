@@ -166,6 +166,12 @@ public class SelectChannelActivity extends BaseActivity implements ScaledDownPro
         if (mHikariTvChDataProvider != null) {
             mHikariTvChDataProvider.enableConnect();
         }
+        if (mSelectListView != null) {
+            mSelectListView.invalidateViews();
+        }
+        if (mSelectList == null || mSelectList.size() == 0) {
+            loadData();
+        }
     }
 
     @Override
