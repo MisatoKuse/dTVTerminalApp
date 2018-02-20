@@ -76,10 +76,6 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
      */
     private List<Map<String, String>> mPurchasedChActiveList = null;
     /**
-     * チャンネルリスト情報を保持.
-     */
-    private ChannelList mChannelList = null;
-    /**
      * ロールリスト情報を保持.
      */
     private ArrayList<RoleListMetaData> mRoleListInfo = null;
@@ -345,10 +341,6 @@ public class DtvContentsDetailDataProvider extends ClipKeyListDataProvider imple
             case ROLELIST_SELECT: //DBからロールリストデータを取得して、画面に返却する
                 HomeDataManager homeDataManager = new HomeDataManager(mContext);
                 resultSet = homeDataManager.selectRoleListData();
-                break;
-            case CHANNEL_UPDATE: //サーバーから取得したチャンネルデータをDBに保存する
-                ChannelInsertDataManager channelInsertDataManager = new ChannelInsertDataManager(mContext);
-                channelInsertDataManager.insertChannelInsertList(mChannelList);
                 break;
             case CHANNEL_SELECT: //DBからチャンネルデータを取得して、画面に返却する
                 ProgramDataManager channelDataManager = new ProgramDataManager(mContext);
