@@ -25,15 +25,17 @@ public class ServiceTokenClient
      * 正常時識別パラメータ.
      * 自動リダイレクト処理を強制的に中断させる為、プロトコル名を敢えて不正な物にしている
      */
-    //private static final String SUCCESS_STRING = "https://www.google.co.jp";
-    private static final String SUCCESS_STRING = "aaaa%3a%2f%2fwww%2egoogle%2eco%2ejp";
+    //private static final String SUCCESS_STRING = "aaaa://com.nttdocomo.android.tvterminalapp/redirectstop";
+    private static final String SUCCESS_STRING =
+            "aaaa%3A%2F%2Fcom.nttdocomo.android.tvterminalapp%2Fredirectstop";
 
     /**
      * エラー時識別パラメータ.
      * 自動リダイレクト処理を強制的に中断させる為、プロトコル名を敢えて不正な物にしている
      */
-    //private static final String ERROR_STRING = "https://www.goo.ne.jp/";
-    private static final String ERROR_STRING = "bbbb%3a%2f%2fwww%2egoo%2ene%2ejp%2f";
+    //private static final String ERROR_STRING = "bbbb://com.nttdocomo.android.tvterminalapp/redirectstop";
+    private static final String ERROR_STRING =
+            "bbbb%3a%2f%2fcom.nttdocomo.android.tvterminalapp%2Fredirectstop";
 
     // 送信パラメータの最初の固定部
     private static final String FIRST_PARAMETER = "state=client=dremote urlok=";

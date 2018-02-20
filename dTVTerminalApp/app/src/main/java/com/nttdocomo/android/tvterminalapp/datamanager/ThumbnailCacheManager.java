@@ -222,7 +222,16 @@ public class ThumbnailCacheManager {
             return;
         }
 
-        for(File nowFile : folder.listFiles()) {
+        //ファイル配列の取得
+        File[] files = folder.listFiles();
+
+        //配列に1件も存在しなければ帰る
+        if(files == null || files.length <= 0) {
+            return;
+        }
+
+        //ファイルの数だけ回る
+        for(File nowFile : files) {
             try {
                 //ファイルが存在していた場合は消す
                 if(nowFile != null && nowFile.isFile()) {
