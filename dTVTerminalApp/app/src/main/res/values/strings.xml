@@ -227,6 +227,7 @@
     <string name="d_tv_terminal_application_version_update_dialog">ドコモテレビターミナルを操作したい場合は、ドコモテレビターミナルアプリをアップデートしてください。</string>
     <string name="stb_application_version_update">ご利用のドコモテレビターミナルの最新版がありますドコモテレビターミナルのアップデートをしてください。</string>
     <string name="contents_detail_thumbnail_text">テレビで視聴できます</string>
+    <string name="contents_detail_contract_leading_button">契約する</string>
     <string-array name="other_service_contents_detail_tabs">
         <item>作品情報</item>
     </string-array>
