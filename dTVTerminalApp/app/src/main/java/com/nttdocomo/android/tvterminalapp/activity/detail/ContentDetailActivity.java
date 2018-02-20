@@ -1926,7 +1926,19 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 //ひかりTV未契約の場合
                 if (contractInfo == null || contractInfo.isEmpty() || UserInfoUtils.CONTRACT_INFO_NONE.equals(contractInfo)) {
                     DTVTLogger.debug("contractInfo:---" + contractInfo);
-                    leadingContract();
+                    mThumbnailBtn.setVisibility(View.GONE);
+                    LinearLayout contractLeadingView = findViewById(R.id.contract_leading_view);
+                    contractLeadingView.setVisibility(View.VISIBLE);
+                    TextView contractLeadingText = findViewById(R.id.contract_leading_text);
+                    contractLeadingText.setText(getResources().getString(R.string.contents_detail_contract_text));
+                    Button contractLeadingButton = findViewById(R.id.contract_leading_button);
+                    contractLeadingButton.setText(getResources().getString(R.string.contents_detail_contract_leading_button));
+                    contractLeadingButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            onStartRemoteControl(true);
+                        }
+                    });
                 } else { //ひかりTV契約者の場合
                     //ひかりTV中にDTVの場合
                     if (VIDEO_PROGRAM.equals(mDetailData.getDispType())
@@ -1948,6 +1960,7 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                 if (getStbStatus()) {
                     createRemoteControllerView(true);
                     mIsControllerVisible = true;
+                    setStartRemoteControllerUIListener(this);
                 } else {
                     createRemoteControllerView(false);
                     mIsControllerVisible = false;
