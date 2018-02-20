@@ -203,6 +203,9 @@
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity
+            android:name=".activity.tvprogram.SelectChannelActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".activity.tvprogram.TvProgramListActivity"
             android:screenOrientation="portrait"
             android:exported="false" />

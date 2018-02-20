@@ -51,6 +51,14 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
      * マイ番組表ウェブクライアント
      */
     private MyChannelWebClient mMyChannelListWebClient;
+    /**
+     * My番組表登録ウェブクライアント
+     */
+    private MyChannelRegisterWebClient mMyChannelRegisterStatus;
+    /**
+     * My番組表解除ウェブクライアント
+     */
+    private MyChannelDeleteWebClient mMyChannelDeleteStatus;
 
     @Override
     public void onMyChannelListJsonParsed(MyChannelListResponse myChannelListResponse) {
@@ -203,8 +211,8 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
      * My番組表登録
      */
     public void getMyChannelRegisterStatus(String service_id, String title, String r_value, String adult_type, int index) {
-        MyChannelRegisterWebClient myChannelRegisterStatus = new MyChannelRegisterWebClient(mContext);
-        boolean result = myChannelRegisterStatus.getMyChanelRegisterApi(service_id, title, r_value, adult_type, index, this);
+        mMyChannelRegisterStatus = new MyChannelRegisterWebClient(mContext);
+        boolean result = mMyChannelRegisterStatus.getMyChanelRegisterApi(service_id, title, r_value, adult_type, index, this);
         if (!result) {
             mApiDataProviderCallback.onMyChannelRegisterCallback("パラメータ不正");
         }
@@ -214,8 +222,8 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
      * My番組表解除
      */
     public void getMyChannelDeleteStatus(String service_id) {
-        MyChannelDeleteWebClient myChannelDeleteStatus = new MyChannelDeleteWebClient(mContext);
-        boolean result = myChannelDeleteStatus.getMyChanelDeleteApi(service_id, this);
+        mMyChannelDeleteStatus = new MyChannelDeleteWebClient(mContext);
+        boolean result = mMyChannelDeleteStatus.getMyChanelDeleteApi(service_id, this);
         if (!result) {
             mApiDataProviderCallback.onMyChannelDeleteCallback("パラメータ不正");
         }
@@ -226,8 +234,17 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
      */
     public void stopConnect() {
         DTVTLogger.start();
+        //マイ番組表取得
         if (mMyChannelListWebClient != null) {
             mMyChannelListWebClient.stopConnection();
+        }
+        //マイ番組表登録
+        if (mMyChannelRegisterStatus != null) {
+            mMyChannelRegisterStatus.stopConnection();
+        }
+        //マイ番組表解除
+        if (mMyChannelDeleteStatus != null) {
+            mMyChannelDeleteStatus.stopConnection();
         }
     }
 
@@ -236,8 +253,17 @@ public class MyChannelDataProvider implements MyChannelWebClient.MyChannelListJs
      */
     public void enableConnect() {
         DTVTLogger.start();
+        //マイ番組表取得
         if (mMyChannelListWebClient != null) {
             mMyChannelListWebClient.enableConnection();
+        }
+        //マイ番組表登録
+        if (mMyChannelRegisterStatus != null) {
+            mMyChannelRegisterStatus.enableConnection();
+        }
+        //マイ番組表解除
+        if (mMyChannelDeleteStatus != null) {
+            mMyChannelDeleteStatus.enableConnection();
         }
     }
 

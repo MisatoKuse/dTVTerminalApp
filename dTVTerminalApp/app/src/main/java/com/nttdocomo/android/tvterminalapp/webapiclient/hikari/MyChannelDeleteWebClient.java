@@ -7,6 +7,7 @@ package com.nttdocomo.android.tvterminalapp.webapiclient.hikari;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.nttdocomo.android.tvterminalapp.common.DTVTLogger;
 import com.nttdocomo.android.tvterminalapp.common.JsonConstants;
 import com.nttdocomo.android.tvterminalapp.common.UrlConstants;
 import com.nttdocomo.android.tvterminalapp.dataprovider.data.MyChannelDeleteResponse;
@@ -17,6 +18,11 @@ import org.json.JSONObject;
 
 public class MyChannelDeleteWebClient
         extends WebApiBasePlala implements WebApiBasePlala.WebApiBasePlalaCallback {
+
+    /**
+     * 通信禁止判定フラグ.
+     */
+    private boolean mIsCancel;
 
     /**
      * コールバック.
@@ -74,6 +80,11 @@ public class MyChannelDeleteWebClient
      * @return パラメータエラー等が発生した場合はfalse
      */
     public boolean getMyChanelDeleteApi(String serviceId, MyChannelDeleteJsonParserCallback myChannelDeleteJsonParserCallback) {
+        if (mIsCancel) {
+            DTVTLogger.error("MyChannelDeleteWebClient is stopping connection");
+            return false;
+        }
+
         //パラメーターのチェック
         if (!checkNormalParameter(serviceId, myChannelDeleteJsonParserCallback)) {
             //パラメーターがおかしければ通信不能なので、falseで帰る
@@ -144,5 +155,22 @@ public class MyChannelDeleteWebClient
 
         //何もエラーが無いのでtrue
         return true;
+    }
+
+    /**
+     * 通信を止める.
+     */
+    public void stopConnection() {
+        DTVTLogger.start();
+        mIsCancel = true;
+        stopAllConnections();
+    }
+
+    /**
+     * 通信可能状態にする.
+     */
+    public void enableConnection() {
+        DTVTLogger.start();
+        mIsCancel = false;
     }
 }
