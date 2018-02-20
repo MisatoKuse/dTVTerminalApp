@@ -1426,11 +1426,13 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                         setThumbnailText(getResources().getString(R.string.dtv_content_service_start_text));
                     }
                     //dtvチャンネルの場合
-                } else if (mDetailData.getServiceId() == DTV_CHANNEL_CONTENTS_SERVICE_ID) {
+                } else if (serviceId == DTV_CHANNEL_CONTENTS_SERVICE_ID) {
                     setThumbnailText(getResources().getString(R.string.dtv_channel_service_start_text));
                 }
             }
             setTitleAndThumbnail(mDetailData.getTitle(), mDetailData.getThumb());
+        } else {  //plalaサーバーから
+            mDetailData = mIntent.getParcelableExtra(PLALA_INFO_BUNDLE_KEY);
         }
         if (mIsOtherService) {
             // コンテンツ詳細(他サービスの時は、タブ一つに設定する)
@@ -1941,6 +1943,14 @@ public class ContentDetailActivity extends BaseActivity implements DtvContentsDe
                             setThumbnailText(getResources().getString(R.string.dtv_channel_service_start_text));
                         }
                     }
+                }
+            } else { //レコメンドサーバー以外のひかりTV
+                if (getStbStatus()) {
+                    createRemoteControllerView(true);
+                    mIsControllerVisible = true;
+                } else {
+                    createRemoteControllerView(false);
+                    mIsControllerVisible = false;
                 }
             }
         } else {
