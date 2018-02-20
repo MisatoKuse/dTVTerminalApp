@@ -5,6 +5,7 @@
 package com.nttdocomo.android.tvterminalapp.activity.tvprogram;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -15,7 +16,6 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -35,30 +35,25 @@ import com.nttdocomo.android.tvterminalapp.jni.DlnaDmsItem;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvBsChList;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvRecVideo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaProvTerChList;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoInfo;
-import com.nttdocomo.android.tvterminalapp.jni.DlnaRecVideoListener;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListInfo;
 import com.nttdocomo.android.tvterminalapp.jni.DlnaTerChListListener;
-import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfo;
 import com.nttdocomo.android.tvterminalapp.struct.ChannelInfoList;
 import com.nttdocomo.android.tvterminalapp.utils.SharedPreferencesUtils;
+import com.nttdocomo.android.tvterminalapp.view.TabItemLayout;
 
 import java.util.ArrayList;
 
 public class ChannelListActivity extends BaseActivity implements
         View.OnClickListener, ChannelListFragment.ChannelListFragmentListener,
-        DlnaRecVideoListener, DlnaTerChListListener, DlnaBsChListListener,
+        DlnaTerChListListener, DlnaBsChListListener,
         ScaledDownProgramListDataProvider.ApiDataProviderCallback, TabItemLayout.OnClickTabTextListener {
 
     private String[] mTabNames = null;
-    private int screenWidth = 0;
     private float mLastY = 0;
     private static final float sScrollThreshold = 20.0f;
     private boolean mIsScrollUp = false;
     private Boolean mIsMenuLaunch = false;
-
-    private LinearLayout mTabsLayout = null;
     private ViewPager mViewPager = null;
     private TabItemLayout mTabLayout = null;
     private ChannelListFragmentFactory mFactory = null;
@@ -67,16 +62,12 @@ public class ChannelListActivity extends BaseActivity implements
     private DlnaProvTerChList mDlnaProvTerChList = null;
     private HikariTvChDataProvider mHikariTvChDataProvider = null;
     private DTvChDataProvider mDTvChDataProvider = null;
-    private int mPagingOffset = 1;
-    //ToDo: 開発中テストデータは不足なので、ページング数は一時に「10」に設定していますが、
-    //       リリースの時、仕様より、再設定する必要がある。
-    private final int CH_LIST_ACTI_PAGING_NUMBER = 10;
     private final int CHANNEL_LIST_TAB_HIKARI = 0;
     private final int CHANNEL_LIST_TAB_TER = 1;
     private final int CHANNEL_LIST_TAB_BS = 2;
     private final int CHANNEL_LIST_TAB_DTV = 3;
     private final int CHANNEL_LIST_TAB_DELAY_TIME = 1300;
-
+    private ChannelListAdapter.ChListDataType mCurrentType = ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_INVALID;
     private Handler mHandle = new Handler();
 
     /**
@@ -100,7 +91,6 @@ public class ChannelListActivity extends BaseActivity implements
         enableStbStatusIcon(true);
 
         setContentView(R.layout.channel_list_main_layout);
-        screenWidth = getWidthDensity();
         initView();
         initData();
         firstMore();
@@ -112,7 +102,8 @@ public class ChannelListActivity extends BaseActivity implements
      */
     private void firstMore() {
         DTVTLogger.start();
-        new Handler().postDelayed(new Runnable() {
+        Handler h = new Handler();
+        h.postDelayed(new Runnable() {
             @Override
             public void run() {
                 displayMore(true, CHANNEL_LIST_TAB_HIKARI, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI);
@@ -121,12 +112,11 @@ public class ChannelListActivity extends BaseActivity implements
         DTVTLogger.end();
     }
 
-    /**
-     * onResume処理
-     */
     @Override
-    protected void onResume() {
+    public void onStartCommunication() {
         DTVTLogger.start();
+        super.onStartCommunication();
+
         if (null == mDlnaProvRecVideo) {
             mDlnaProvRecVideo = new DlnaProvRecVideo();
         }
@@ -142,7 +132,40 @@ public class ChannelListActivity extends BaseActivity implements
         if (null == mDTvChDataProvider) {
             mDTvChDataProvider = new DTvChDataProvider(this);
         }
-        super.onResume();
+
+        if(null != mHikariTvChDataProvider){
+            mHikariTvChDataProvider.enableConnect();
+        }
+        if(null != mDTvChDataProvider){
+            mDTvChDataProvider.enableConnect();
+        }
+
+        DlnaDmsItem dlnaDmsItem = SharedPreferencesUtils.getSharedPreferencesStbInfo(getActivity());
+        if (!mDlnaProvTerChList.start(dlnaDmsItem, getActivity())) {
+            onError("Get Ter channel list datas failed");
+        }
+        if (!mDlnaProvBsChList.start(dlnaDmsItem, getActivity())) {
+            onError("Get Bs channel list datas failed");
+        }
+
+        synchronized (mCurrentType) {
+            switch (mCurrentType) {
+                case CH_LIST_DATA_TYPE_BS:
+                    getBsData();
+                    break;
+                case CH_LIST_DATA_TYPE_TER:
+                    getTerData();
+                    break;
+                case CH_LIST_DATA_TYPE_HIKARI:
+                    getHikariData();
+                    break;
+                case CH_LIST_DATA_TYPE_DTV:
+                    getDtvData();
+                    break;
+                case CH_LIST_DATA_TYPE_INVALID:
+                    break;
+            }
+        }
         DTVTLogger.end();
     }
 
@@ -159,9 +182,40 @@ public class ChannelListActivity extends BaseActivity implements
         if (mDlnaProvTerChList != null) {
             mDlnaProvTerChList.stopListen();
         }
-        onPageChange(CHANNEL_LIST_TAB_HIKARI);
-        onPageChange(CHANNEL_LIST_TAB_BS);
+        if(null != mHikariTvChDataProvider){
+            mHikariTvChDataProvider.stopConnect();
+        }
+        if(null != mDTvChDataProvider){
+            mDTvChDataProvider.stopConnect();
+        }
+        mHandle.removeCallbacks(mRunableBs);
+        mHandle.removeCallbacks(mRunableDtv);
+        mHandle.removeCallbacks(mRunableTer);
+        mHandle.removeCallbacks(mRunableHikari);
+        displayMore(false, CHANNEL_LIST_TAB_DTV, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_DTV);
+        displayMore(false, CHANNEL_LIST_TAB_TER, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER);
+        displayMore(false, CHANNEL_LIST_TAB_BS, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS);
+        displayMore(false, CHANNEL_LIST_TAB_HIKARI, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI);
+        clearAllFrames();
         DTVTLogger.end();
+    }
+
+    /**
+     * Clear datas for all frames
+     */
+    private void clearAllFrames(){
+        if(null == mTabNames || null == mFactory){
+            return;
+        }
+        for(int i = 0; i < mTabNames.length; ++i) {
+            ChannelListAdapter.ChListDataType type = ChannelListAdapter.ChListDataType.values()[ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_INVALID.ordinal() + i];
+            ChannelListFragment fragment = mFactory.createFragment(i, this, type);
+            if(null == fragment){
+                continue;
+            }
+            fragment.clearDatas();
+            fragment.noticeRefresh();
+        }
     }
 
     /**
@@ -179,7 +233,11 @@ public class ChannelListActivity extends BaseActivity implements
     private void initView() {
         DTVTLogger.start();
         //テレビアイコンをタップされたらリモコンを起動する
-        findViewById(R.id.header_stb_status_icon).setOnClickListener(mRemoteControllerOnClickListener);
+        View view = findViewById(R.id.header_stb_status_icon);
+        if(null == view){
+            return;
+        }
+        view.setOnClickListener(mRemoteControllerOnClickListener);
         //mViewPager = findViewById(R.id.channel_list_main_layout_channel_body_vp);
         initChannelListTab();
         ChannelListPagerAdapter adp = new ChannelListPagerAdapter(getSupportFragmentManager());
@@ -199,9 +257,9 @@ public class ChannelListActivity extends BaseActivity implements
     /**
      * Loading...を表示
      *
-     * @param yn
-     * @param tabNo
-     * @param type
+     * @param yn yn
+     * @param tabNo tabNo
+     * @param type type
      */
     private void displayMore(boolean yn, int tabNo, ChannelListAdapter.ChListDataType type) {
         DTVTLogger.start();
@@ -319,9 +377,22 @@ public class ChannelListActivity extends BaseActivity implements
     /**
      * Paging処理
      *
-     * @param tabPosition
+     * @param tabPosition tabPosition
      */
     private void onPageChange(int tabPosition) {
+        DTVTLogger.start();
+        clearOthers(tabPosition);
+        mLastY = 0;
+        mIsScrollUp = false;
+        DTVTLogger.end();
+    }
+
+    /**
+     * 内容削除処理
+     *
+     * @param tabPosition tabPosition
+     */
+    private void clearOthers(int tabPosition) {
         DTVTLogger.start();
         if (null == mHandle) {
             return;
@@ -362,9 +433,6 @@ public class ChannelListActivity extends BaseActivity implements
             default:
                 break;
         }
-        mPagingOffset = 1;
-        mLastY = 0;
-        mIsScrollUp = false;
         DTVTLogger.end();
     }
 
@@ -372,7 +440,8 @@ public class ChannelListActivity extends BaseActivity implements
      * tab関連Viewの初期化
      */
     private void initChannelListTab() {
-        mTabNames = getResources().getStringArray(R.array.channel_list_tab_names);
+        Resources res = getResources();
+        mTabNames = res.getStringArray(R.array.channel_list_tab_names);
         if (mTabLayout == null) {
             mTabLayout = new TabItemLayout(this);
             mTabLayout.setTabClickListener(this);
@@ -397,7 +466,7 @@ public class ChannelListActivity extends BaseActivity implements
     /**
      * Activityを取得
      *
-     * @return
+     * @return this this
      */
     ChannelListActivity getActivity() {
         return this;
@@ -406,11 +475,11 @@ public class ChannelListActivity extends BaseActivity implements
     /**
      * Scroll処理
      *
-     * @param fragment
-     * @param absListView
-     * @param firstVisibleItem
-     * @param visibleItemCount
-     * @param totalItemCount
+     * @param fragment fragment
+     * @param absListView absListView
+     * @param firstVisibleItem firstVisibleItem
+     * @param visibleItemCount visibleItemCount
+     * @param totalItemCount totalItemCount
      */
     @Override
     public void onScroll(ChannelListFragment fragment, AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
@@ -499,6 +568,7 @@ public class ChannelListActivity extends BaseActivity implements
         }
 
         ChannelListAdapter.ChListDataType type = fragment.getChListDataType();
+        setCurrentType(type);
         switch (type) {
             case CH_LIST_DATA_TYPE_BS:
                 getBsData();
@@ -522,50 +592,10 @@ public class ChannelListActivity extends BaseActivity implements
         DTVTLogger.end();
     }
 
-    //test begin
-    private ChannelListAdapter.ChListDataType testType;
-    //test end
-
-    //仮データ関数 begin
-    @Override
-    public void onVideoBrows(DlnaRecVideoInfo curInfo) {
-        DTVTLogger.start();
-        int pos = mViewPager.getCurrentItem();
-        //STBにチャンネル機能を提供していないで、仮データを使うために、testデータを一時コメントしている。
-        //final ChannelListFragment fragment= mFactory.createFragment(pos, this, ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS);
-        //test b
-        DlnaRecVideoInfo curInfo2 = new DlnaRecVideoInfo();
-        if (testType == ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_BS) {
-            for (int i = 0; i < curInfo.size(); ++i) {
-                curInfo2.addItemByValue(curInfo.get(i));
-                curInfo2.get(i).mTitle = "BSチャンネル " + i;
-            }
-            pos = 2;
-        } else if (testType == ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_TER) {
-            for (int i = 0; i < curInfo.size(); ++i) {
-                curInfo2.addItemByValue(curInfo.get(i));
-                curInfo2.get(i).mTitle = "地上波チャンネル " + i;
-            }
-            pos = 1;
-        } else if (testType == ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_HIKARI) {
-            pos = 0;
-        } else if (testType == ChannelListAdapter.ChListDataType.CH_LIST_DATA_TYPE_DTV) {
-            pos = 3;
-        }
-        final ChannelListFragment fragment = mFactory.createFragment(pos, this, testType);
-        ArrayList<Object> tmp = new ArrayList();
-        for (int i = 0; i < curInfo2.size(); ++i) {
-            tmp.add(curInfo2.get(i));
-        }
-        paging(fragment, tmp);
-        updateUi(fragment);
-        DTVTLogger.end();
-    }
-
     /**
      * UI更新
      *
-     * @param fragment
+     * @param fragment fragment
      */
     private void updateUi(final ChannelListFragment fragment) {
         runOnUiThread(new Runnable() {
@@ -620,7 +650,7 @@ public class ChannelListActivity extends BaseActivity implements
     /**
      * 実現しない
      *
-     * @return
+     * @return null
      */
     @Override
     public String getCurrentDmsUdn() {
@@ -630,8 +660,8 @@ public class ChannelListActivity extends BaseActivity implements
     /**
      * データタイプ取得
      *
-     * @param viewPagerIndex
-     * @return
+     * @param viewPagerIndex viewPagerIndex
+     * @return ChListDataType
      */
     private ChannelListAdapter.ChListDataType getTypeFromViewPagerIndex(int viewPagerIndex) {
         DTVTLogger.start();
@@ -745,7 +775,7 @@ public class ChannelListActivity extends BaseActivity implements
 
     /**
      * Paging処理
-     *
+     * 新しい仕様は将来チャンネルリストは一回サーバから取得するので、ページング機能は削除
      * @param fragment fragment
      * @param list     list
      */
@@ -759,16 +789,9 @@ public class ChannelListActivity extends BaseActivity implements
                 if (null == fragment2 || null == list2) {
                     return;
                 }
-                int addedCnt = 0;
+                fragment2.clearDatas();
                 for (Object objBs : list2) {
-                    if (addedCnt >= CH_LIST_ACTI_PAGING_NUMBER) {
-                        break;
-                    }
-                    boolean has = fragment2.hasData(objBs);
-                    if (!has) {
-                        fragment2.addData(objBs);
-                        ++addedCnt;
-                    }
+                    fragment2.addData(objBs);
                 }
                 noticeRefresh(fragment2);
             }
@@ -828,11 +851,12 @@ public class ChannelListActivity extends BaseActivity implements
     /**
      * showMessage
      *
-     * @param msg
+     * @param msg msg
      */
     private void showMessage(String msg) {
         DTVTLogger.start();
-        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+        Toast t = Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT);
+        t.show();
         DTVTLogger.end();
     }
 
@@ -850,5 +874,13 @@ public class ChannelListActivity extends BaseActivity implements
                 break;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    /**
+     * type値設定
+     * @param type type
+     */
+    private synchronized void setCurrentType(ChannelListAdapter.ChListDataType type) {
+        mCurrentType = type;
     }
 }
