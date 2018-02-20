@@ -214,7 +214,7 @@ public class RentalDataProvider extends ClipKeyListDataProvider implements Renta
      */
     private void getRentalListData() {
         DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(DateUtils.VIDEO_RANK_LAST_INSERT);
+        String lastDate = dateUtils.getLastDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
         //Vodクリップ一覧のDB保存履歴と、有効期間を確認
         boolean fromDb = lastDate != null && lastDate.length() > 0 && !dateUtils.isBeforeLimitDate(lastDate);
         if (fromDb) {

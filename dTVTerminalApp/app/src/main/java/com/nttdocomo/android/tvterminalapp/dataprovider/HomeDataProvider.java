@@ -993,7 +993,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
      */
     private void getRentalData() {
         DateUtils dateUtils = new DateUtils(mContext);
-        String lastDate = dateUtils.getLastDate(DateUtils.VIDEO_RANK_LAST_INSERT);
+        String lastDate = dateUtils.getLastDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
         // クリップキー一覧を取得
         if (mRequiredClipKeyList) {
             getClipKeyList(new ClipKeyListRequest(ClipKeyListRequest.REQUEST_PARAM_TYPE.VOD));
@@ -1383,7 +1383,7 @@ public class HomeDataProvider extends ClipKeyListDataProvider implements
                 rentalChListInsertDataManager.insertChRentalListInsertList(mPurchasedChListResponse);
                 break;
             case RENTAL_VOD_LIST:
-                dateUtils.addLastDate(DateUtils.VIDEO_RANK_LAST_INSERT);
+                dateUtils.addLastDate(DateUtils.RENTAL_VOD_LAST_UPDATE);
                 RentalListInsertDataManager rentalListInsertDataManager = new RentalListInsertDataManager(mContext);
                 rentalListInsertDataManager.insertRentalListInsertList(mPurchasedVodListResponse);
                 break;
