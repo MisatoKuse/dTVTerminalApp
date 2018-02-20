@@ -60,8 +60,6 @@ public class ContentsData {
     private String mContentsId = null;
     // あらすじ
     private String mSynop = null;
-    // コメント
-    private String mComment = null;
     // カテゴリID
     private String mCategoryId = null;
     // 開始時刻
@@ -76,8 +74,6 @@ public class ContentsData {
     private String mReserved4 = null;
     // mobileViewingFlg
     private String  mobileViewingFlg = null;
-    // みどころ
-    private String mHighlight = null;
     // クリップボタン
     private ImageView mClipButton = null;
     // クリップリクエストデータ
@@ -318,14 +314,6 @@ public class ContentsData {
         //TODO:レスポンスがないためダミー
 //        this.mSynop = mSynop;
         this.mSynop = "";
-    }
-
-    public String getComment() {
-        return mComment;
-    }
-
-    public String getHighlight() {
-        return mHighlight;
     }
 
     public String getCategoryId() {
