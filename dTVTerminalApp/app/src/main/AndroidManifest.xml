@@ -170,6 +170,9 @@
             android:name=".activity.tvprogram.MyChannelEditActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".activity.tvprogram.SelectChannelActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".activity.tvprogram.TvProgramListActivity"
             android:screenOrientation="portrait" />
         <activity
