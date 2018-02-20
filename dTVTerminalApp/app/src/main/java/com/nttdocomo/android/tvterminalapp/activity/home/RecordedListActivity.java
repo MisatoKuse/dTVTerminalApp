@@ -161,10 +161,8 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         DTVTLogger.start("position = " + position);
         mViewPager.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.VISIBLE);
-        if (null != mViewPager) {
-            DTVTLogger.debug("viewpager not null");
-            mViewPager.setCurrentItem(position);
-        }
+        DTVTLogger.debug("viewpager not null");
+        mViewPager.setCurrentItem(position);
         DTVTLogger.end();
     }
 
@@ -472,7 +470,6 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
         // TODO 年齢取得未実装の為、固定値を返却
         boolean isAge = true;
         ContentsData contentsData = new ContentsData();
-        int currentPageNo = mViewPager.getCurrentItem();
         if (isAge) {
             contentsData.setTitle(dlnaRecVideoItem.mTitle);
             contentsData.setAllowedUse(dlnaRecVideoItem.mAllowedUse);
@@ -488,11 +485,9 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
                             DateUtils.STRING_DAY_OF_WEEK[calendar.get(Calendar.DAY_OF_WEEK)], ") ",
                             String.valueOf(calendar.get(Calendar.HOUR_OF_DAY)), ":",
                             String.valueOf(calendar.get(Calendar.MINUTE))};
-                    if(null != strings && 0<strings.length){
-                        int mon = Integer.parseInt(strings[0]);
-                        ++mon;
-                        strings[0] = String.valueOf(mon);
-                    }
+                    int mon = Integer.parseInt(strings[0]);
+                    ++mon;
+                    strings[0] = String.valueOf(mon);
                     selectDate = util.getConnectString(strings);
                 } catch (ParseException e) {
                     DTVTLogger.debug(e);
@@ -568,45 +563,41 @@ public class RecordedListActivity extends BaseActivity implements View.OnClickLi
 
         @Override
 	    public void onReceive(Context context, Intent intent) {
-			try {
-		            if (DownloadService.DONWLOAD_OnProgress.equals(intent.getAction())) {
-		                int progress = intent.getIntExtra(DownloadService.DONWLOAD_ParamInt, 0);
-		                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
-		                baseFragment.onDownladProgressByBg(progress);
-		            } else if (DownloadService.DONWLOAD_OnSuccess.equals(intent.getAction())) {
-		                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
-		                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_ParamString);
-		                baseFragment.onDownladSuccessByBg(fullPath);
-		            } else if (DownloadService.DONWLOAD_OnFail.equals(intent.getAction())) {
-		                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
-		                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_ParamString);
-		                int error = intent.getIntExtra(DownloadService.DONWLOAD_ParamInt, DownloadListener.DLError.DLError_NoError.ordinal());
-		                baseFragment.onDownladFailByBg(fullPath, DownloadListener.DLError.values()[error]);
-		            } else if (DownloadService.DONWLOAD_OnLowStorageSpace.equals(intent.getAction())) {
-		                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
-		                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_ParamString);
-		                baseFragment.onLowStorageSpaceByBg(fullPath);
-		            }  else if (DownloadService.DONWLOAD_OnCancelAll.equals(intent.getAction())) {
-		                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
-		                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_ParamString);
-		                baseFragment.onCancelAll(fullPath);
-		            }  else if (DownloadService.DONWLOAD_OnCancel.equals(intent.getAction())) {
-		                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
-		                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_ParamString);
-		                baseFragment.onCancelByBg(fullPath);
-		            } else if (DownloadService.DONWLOAD_OnStart.equals(intent.getAction())) {
-		                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
-		                baseFragment.onStartBg();
-		            } else if (DownloadService.DONWLOAD_DlDataProviderAvailable.equals(intent.getAction())) {
-		                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
-		                baseFragment.onDlDataProviderAvailable();
-		            }  else if (DownloadService.DONWLOAD_DlDataProviderUnavailable.equals(intent.getAction())) {
-		                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
-		                baseFragment.onDlDataProviderUnavailable();
-		            }
-				} catch (Exception e ) {
-					DTVTLogger.debug(e);
-				}
+            if (DownloadService.DONWLOAD_OnProgress.equals(intent.getAction())) {
+                int progress = intent.getIntExtra(DownloadService.DONWLOAD_ParamInt, 0);
+                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+                baseFragment.onDownladProgressByBg(progress);
+            } else if (DownloadService.DONWLOAD_OnSuccess.equals(intent.getAction())) {
+                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_ParamString);
+                baseFragment.onDownladSuccessByBg(fullPath);
+            } else if (DownloadService.DONWLOAD_OnFail.equals(intent.getAction())) {
+                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_ParamString);
+                int error = intent.getIntExtra(DownloadService.DONWLOAD_ParamInt, DownloadListener.DLError.DLError_NoError.ordinal());
+                baseFragment.onDownladFailByBg(fullPath, DownloadListener.DLError.values()[error]);
+            } else if (DownloadService.DONWLOAD_OnLowStorageSpace.equals(intent.getAction())) {
+                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_ParamString);
+                baseFragment.onLowStorageSpaceByBg(fullPath);
+            }  else if (DownloadService.DONWLOAD_OnCancelAll.equals(intent.getAction())) {
+                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_ParamString);
+                baseFragment.onCancelAll(fullPath);
+            }  else if (DownloadService.DONWLOAD_OnCancel.equals(intent.getAction())) {
+                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+                String fullPath = intent.getStringExtra(DownloadService.DONWLOAD_ParamString);
+                baseFragment.onCancelByBg(fullPath);
+            } else if (DownloadService.DONWLOAD_OnStart.equals(intent.getAction())) {
+                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+                baseFragment.onStartBg();
+            } else if (DownloadService.DONWLOAD_DlDataProviderAvailable.equals(intent.getAction())) {
+                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+                baseFragment.onDlDataProviderAvailable();
+            }  else if (DownloadService.DONWLOAD_DlDataProviderUnavailable.equals(intent.getAction())) {
+                RecordedBaseFragment baseFragment = getCurrentRecordedBaseFragment(0);
+                baseFragment.onDlDataProviderUnavailable();
+            }
         }
     };
 
