@@ -289,12 +289,6 @@ public class DtvContentsDetailFragment extends Fragment {
             mImgServiceIconDtv.setVisibility(View.VISIBLE);
             mImgServiceIconDtv.setImageResource(R.mipmap.label_service_dtv_white);
             mRatingBar.setVisibility(View.GONE);
-            //チャンネル名
-            if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelName())) {
-                mTxtChannelName.setText(mOtherContentsDetailData.getChannelName());
-            } else {
-                mTxtChannelName.setVisibility(View.GONE);
-            }
         } else {
             //VODの場合
             if(mOtherContentsDetailData.getServiceId() == 0 && (VIDEO_SERIES.equals(mOtherContentsDetailData.getDispType())
@@ -306,6 +300,12 @@ public class DtvContentsDetailFragment extends Fragment {
             } else {
                 mRatingBar.setVisibility(View.GONE);
             }
+        }
+        //チャンネル名
+        if (!TextUtils.isEmpty(mOtherContentsDetailData.getChannelName())) {
+            mTxtChannelName.setText(mOtherContentsDetailData.getChannelName());
+        } else {
+            mTxtChannelName.setVisibility(View.GONE);
         }
         String contentsDetailInfo;
         setLabelStatus();

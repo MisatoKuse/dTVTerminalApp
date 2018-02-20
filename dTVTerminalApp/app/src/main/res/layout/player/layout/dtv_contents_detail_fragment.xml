@@ -103,7 +103,7 @@
                         android:layout_toStartOf="@+id/contents_detail_clip_button"
                         android:scaleType="fitXY"
                         android:src="@drawable/recording_reservation_rec_icon_selector"
-                        android:visibility="invisible"
+                        android:visibility="gone"
                         android:contentDescription="@null"/>
 
                     <ImageView
